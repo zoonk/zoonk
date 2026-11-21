@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type WriteListeningSetParams,
@@ -21,9 +22,10 @@ export const writeListeningSetTask: Task<
   name: "Write listening set",
   priorities: {
     comparison: {
-      criteria: { examRealism: "counts", keys: "disqualifies", naturalSpeech: "counts" },
+      criteria: { examRealism: "counts", keys: "counts", naturalSpeech: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { keys: 3 },
     },
     distribution: "shared",
     first: "quality",

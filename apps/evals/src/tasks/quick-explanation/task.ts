@@ -1,4 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type QuickExplanation,
@@ -46,7 +47,8 @@ export const quickExplanationTask: Task<
         practicalExample: "counts",
       },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "latency",

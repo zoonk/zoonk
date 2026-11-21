@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import { type WriteLessonDraftParams, writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { readCriteria } from "../plain-language-criterion";
@@ -30,7 +31,8 @@ export const lessonWriterTask: Task<
         teacher: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

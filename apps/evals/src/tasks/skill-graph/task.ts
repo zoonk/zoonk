@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { readCriteria } from "../plain-language-criterion";
@@ -30,7 +31,7 @@ export const skillGraphTask: Task<SkillGraphCase, SkillGraphOutput> = {
         orderAndPrerequisites: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
     },
     distribution: "shared",
     first: "quality",

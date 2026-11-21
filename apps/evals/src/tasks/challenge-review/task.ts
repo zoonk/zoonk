@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
 import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
@@ -60,7 +61,7 @@ export const challengeReviewTask: Task<
     comparison: {
       criteria: { catchesErrors: "counts", noFalseFlags: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
     },
     distribution: "shared",
     first: "quality",

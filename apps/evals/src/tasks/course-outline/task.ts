@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type CourseOutlineParams,
@@ -32,7 +33,7 @@ export const courseOutlineTask: Task<
         order: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
     },
     distribution: "shared",
     first: "quality",

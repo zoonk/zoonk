@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type PassMarkTranslations,
@@ -27,9 +28,10 @@ export const translatePassMarksTask: Task<TranslatePassMarksParams, PassMarkTran
   name: "Translate pass marks",
   priorities: {
     comparison: {
-      criteria: { natural: "counts", numbersKept: "disqualifies" },
+      criteria: { natural: "counts", numbersKept: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { numbersKept: 3 },
     },
     distribution: "shared",
     first: "cost",

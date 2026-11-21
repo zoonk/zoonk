@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type ExtractPastQuestionsParams,
@@ -21,14 +22,10 @@ export const pastQuestionsTask: Task<
   name: "Past questions",
   priorities: {
     comparison: {
-      criteria: {
-        citation: "counts",
-        feedback: "counts",
-        keys: "disqualifies",
-        selection: "counts",
-      },
+      criteria: { citation: "counts", feedback: "counts", keys: "counts", selection: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { keys: 3 },
     },
     distribution: "shared",
     first: "quality",

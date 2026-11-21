@@ -1,3 +1,5 @@
+import { LEARNER_INSTRUCTIONS } from "@/lib/comparisons/learner-instructions";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type ExplainSpokenAnswerParams,
@@ -9,7 +11,11 @@ import { EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
 export const explainSpokenAnswerTask: Task<ExplainSpokenAnswerParams, ExplainSpokenAnswerSchema> = {
-  criteria: readCriteria(EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES, PLAIN_LANGUAGE_CRITERION),
+  criteria: readCriteria(
+    EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES,
+    PLAIN_LANGUAGE_CRITERION,
+    LEARNER_INSTRUCTIONS,
+  ),
   description:
     "Explain the words of a spoken answer that didn't match, from how the learner's own language works (stored and reused)",
   generate: explainSpokenAnswer,
@@ -20,11 +26,13 @@ export const explainSpokenAnswerTask: Task<ExplainSpokenAnswerParams, ExplainSpo
       criteria: {
         accuracy: "counts",
         helpfulness: "counts",
+        learnerInstructions: "disqualifies",
         plainLanguage: "counts",
         style: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

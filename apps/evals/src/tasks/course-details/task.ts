@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type CourseDetails,
@@ -28,12 +29,13 @@ export const courseDetailsTask: Task<
       criteria: {
         audience: "counts",
         fit: "counts",
-        honesty: "disqualifies",
+        honesty: "counts",
         language: "counts",
         promise: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { honesty: 3 },
     },
     distribution: "shared",
     first: "quality",

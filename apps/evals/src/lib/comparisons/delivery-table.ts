@@ -1,10 +1,26 @@
 import { meetsLatencyBudget, summarizeLatency } from "../latency";
+import { checkCriteria, criterionWeight, hasBlockingCheck, hasCheckFailure } from "./check-policy";
 import { type Decision } from "./decision-schema";
 import { type caseVotes, opposite, sides, type verifiedClaims } from "./evidence";
 import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
 
 type Quality = Decision["rows"][number]["quality"];
+
+export function weightedAffectedRuns(quality: Quality, language: string) {
+  const runs = new Map<string, number>();
+
+  for (const metric of quality.filter(
+    (entry) => entry.language === language && entry.weight !== null,
+  )) {
+    for (const entry of metric.affected) {
+      const key = caseRunKey(entry);
+      runs.set(key, Math.max(runs.get(key) ?? 0, metric.weight ?? 1));
+    }
+  }
+
+  return runs;
+}
 
 function affectedRuns(runs: Quality[number]["affected"]) {
   return new Map(runs.map(({ caseId, run }) => [caseRunKey({ caseId, run }), { caseId, run }]));
@@ -18,7 +34,7 @@ export function deliveryTable(
   const { manifest } = comparison;
   const rules = manifest.priorities.comparison;
   const languages = [...new Set(cases.map((item) => item.language))];
-  const failedChecks = comparison.checks.filter((check) => check.passed < check.total);
+  const failedChecks = comparison.checks.filter(hasCheckFailure);
 
   const missing = manifest.runsCompared.filter(
     (record) => (Boolean(manifest.variants.incumbent) && !record.incumbent) || !record.challenger,
@@ -88,23 +104,24 @@ export function deliveryTable(
             criterion,
             language,
             ...(ownerAffected.length > 0 && { ownerAffected }),
+            weight: criterionWeight(rules, criterion),
           };
         }),
         ...checkFailures({
           checks: failedChecks.filter((check) => languagesByCase.get(check.caseId) === language),
           language,
+          rules,
           subject,
+          taskId: manifest.taskId,
         }),
       ]);
 
       const disqualified =
         quality.some(
           (qualityRow) =>
-            qualityRow.affected.length > 0 &&
-            !qualityRow.check &&
-            rules?.criteria[qualityRow.criterion] === "disqualifies",
+            qualityRow.affected.length > 0 && !qualityRow.check && qualityRow.weight === null,
         ) ||
-        failedChecks.some((check) => check.side === subject && check.name === "answer keys") ||
+        comparison.checks.some((check) => check.side === subject && hasBlockingCheck(check)) ||
         failures.some((failure) => failure.reason === "schema") ||
         (missing === 0 &&
           slots.length > 0 &&
@@ -132,6 +149,15 @@ export function deliveryTable(
         succeeded: slots.length,
         ties: cases.filter((item) => item.result === "tie").length,
         unresolved: cases.filter((item) => item.result === "unresolved").length,
+        weightedMajorsByLanguage: Object.fromEntries(
+          languages.map((language) => [
+            language,
+            [...weightedAffectedRuns(quality, language).values()].reduce(
+              (sum, weight) => sum + weight,
+              0,
+            ),
+          ]),
+        ),
         wins: cases.filter((item) => item.result === subject).length,
       };
     });
@@ -140,15 +166,30 @@ export function deliveryTable(
 function checkFailures({
   checks,
   language,
+  rules,
   subject,
+  taskId,
 }: {
   checks: Comparison["checks"];
   language: string;
+  rules: Comparison["manifest"]["priorities"]["comparison"];
   subject: (typeof sides)[number];
+  taskId: string;
 }) {
-  return [...new Set(checks.map((check) => check.name))].map((name) => {
+  const findings = checks.flatMap((check) =>
+    (check.criteria ?? checkCriteria(taskId, check.name)).map((criterion) => ({
+      check,
+      criterion,
+    })),
+  );
+
+  return [...new Set(findings.map(({ criterion }) => criterion))].map((criterion) => {
     const onSide = (side: typeof subject) =>
-      affectedRuns(checks.filter((check) => check.name === name && check.side === side));
+      affectedRuns(
+        findings
+          .filter((item) => item.criterion === criterion && item.check.side === side)
+          .map((item) => item.check),
+      );
 
     const affected = [...onSide(subject).values()];
     const other = onSide(opposite(subject));
@@ -157,8 +198,13 @@ function checkFailures({
       affected,
       both: affected.filter((run) => other.has(caseRunKey(run))),
       check: true as const,
-      criterion: name,
+      criterion,
       language,
+      weight:
+        rules?.weights?.[criterion] ??
+        (findings.some((item) => item.criterion === criterion && item.check.name === "answer keys")
+          ? 3
+          : 1),
     };
   });
 }

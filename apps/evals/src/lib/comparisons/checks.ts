@@ -1,4 +1,5 @@
 import path from "node:path";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import z from "zod";
 import { runInOrder } from "../concurrency";
 import { checkImageEdges } from "../image-edges";
@@ -6,6 +7,7 @@ import { solveAnswerKeys } from "../key-check";
 import { type RegisteredTask } from "../types";
 import { uncheckedAnswerKeys } from "./decision";
 import { hash } from "./identity";
+import { lessonBlockingProblems } from "./lesson-save-check";
 import { type Comparison, checkSchema } from "./schemas";
 import { directory, readOptional, writeRecord } from "./storage";
 
@@ -109,9 +111,19 @@ export async function checkRuns(task: RegisteredTask | null, comparison: Compari
       } as never);
 
       if (!complete) {
+        const blockingProblems =
+          task.id === "lesson-writer"
+            ? await lessonBlockingProblems({
+                context: frozen.input as WriteLessonDraftParams,
+                output,
+              })
+            : checks.blockingProblems;
+
         await writeRecord(`${prefix}.json`, checkSchema, {
           ...base,
+          blockingProblems,
           costUsd: 0,
+          criteria: checks.criteria,
           name: "code checks",
           passed: checks.passed,
           problems: checks.problems,

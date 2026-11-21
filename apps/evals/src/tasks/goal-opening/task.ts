@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type GoalOpeningParams,
@@ -37,7 +38,7 @@ export const goalOpeningTask: Task<GoalOpeningParams, GoalOpeningOutput> = {
     comparison: {
       criteria: { course: "counts", firstChapter: "counts", firstSkill: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
     },
     distribution: "shared",
     first: "latency",

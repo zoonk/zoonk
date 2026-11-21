@@ -15,6 +15,12 @@ const CRITERION_RULES: Record<Rules["criteria"][string], string> = {
 
 function criterionRule(rules: Rules, criterion: string): string {
   const rule = rules.criteria[criterion];
+  const weight = rules.weights?.[criterion] ?? 1;
+
+  if (rule === "counts" && weight > 1) {
+    return `Counts as ${weight} major-affected cases per affected case`;
+  }
+
   return rule ? CRITERION_RULES[rule] : "not stated";
 }
 
@@ -25,10 +31,10 @@ function tradeText(trade: Rules["trade"]): string {
 
   const savings = [
     trade.saveCostShare !== null && `${Math.round(trade.saveCostShare * 100)}% of the cost`,
-    trade.saveSeconds !== null && `${trade.saveSeconds}s of wait`,
+    trade.saveSeconds !== null && `${trade.saveSeconds}s at p50`,
   ].filter(Boolean);
 
-  return `Up to ${trade.majorIncreasePer100} more cases with a major problem per 100, in each language, when it saves at least ${savings.join(" or ")}.`;
+  return `Up to ${trade.majorIncreasePer100} more weighted major-affected cases per 100 matched cases, in each language, when it saves at least ${savings.join(" or ")}.`;
 }
 
 function Fact({ children, label }: React.PropsWithChildren<{ label: string }>) {

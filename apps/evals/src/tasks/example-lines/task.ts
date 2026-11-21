@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type GenerateExampleLinesParams,
@@ -34,7 +35,8 @@ export const exampleLinesTask: Task<
     comparison: {
       criteria: { accuracy: "counts", fit: "counts", plainLanguage: "counts", writing: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.private,
+      weights: { accuracy: 3 },
     },
     distribution: "private",
     first: "cost",

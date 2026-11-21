@@ -176,19 +176,21 @@ function ProblemItem({
   );
 }
 
-/** Named with the check's name, as the decision table's row is, so a row's link lands on what it counted. */
+/** Show the check receipts at the run the decision table links to. */
 function FailedChecks({ checks }: { checks: FailedCheck[] }) {
   return checks.map((check) => (
     <Fold
       key={check.name}
       title={
         <span className="text-destructive-text">
-          Failed {check.total - check.passed} of {check.total} {check.name}
+          {check.blockingProblems?.length
+            ? "Failed the production save gate"
+            : `Issues from ${check.name}`}
         </span>
       }
     >
       <ul className="flex flex-col gap-1 pb-2">
-        {[...new Set(check.problems)].map((problem) => (
+        {[...new Set([...(check.blockingProblems ?? []), ...check.problems])].map((problem) => (
           <li className="text-muted-foreground text-xs" key={problem}>
             {problem}
           </li>

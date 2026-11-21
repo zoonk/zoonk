@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { generateLanguageSentenceOrders } from "@zoonk/ai/tasks/language/language-sentence-orders";
 import {
@@ -47,9 +48,10 @@ export const languageSentenceOrdersTask: Task<
   name: "Language sentence orders",
   priorities: {
     comparison: {
-      criteria: { precision: "disqualifies", recall: "counts" },
+      criteria: { precision: "counts", recall: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { precision: 3 },
     },
     distribution: "shared",
     first: "quality",

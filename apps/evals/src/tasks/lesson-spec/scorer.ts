@@ -127,6 +127,10 @@ function checkLessonSpecs({
   const expectedChecks = checkExpected({ expected, lessons });
 
   return {
+    criteria: [
+      ...(passing.length === lessons.length && lessons.length > 0 ? [] : ["screenPlan"]),
+      ...(expectedChecks.problems.length > 0 ? ["activitiesAndVisuals"] : []),
+    ],
     judgedOutput: JSON.stringify({ lessons: passing.map((result) => result.lesson) }, null, 2),
     passed:
       passing.length === 0

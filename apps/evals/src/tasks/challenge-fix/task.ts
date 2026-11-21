@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { type ChallengeEdit, fixChallengeCase } from "@zoonk/ai/tasks/challenge/fix";
 import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
@@ -47,7 +48,11 @@ export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
   id: "challenge-fix",
   name: "Challenge fix",
   priorities: {
-    comparison: { criteria: { plainLanguage: "counts" }, preference: "canBlock", trade: null },
+    comparison: {
+      criteria: { plainLanguage: "counts" },
+      preference: "canBlock",
+      trade: COMPARISON_TRADES.core,
+    },
     distribution: "shared",
     first: "quality",
     reads: "Code applies the edits to the case a learner plays",

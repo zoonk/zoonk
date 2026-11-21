@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { meterAsExtra } from "@zoonk/ai/billed-calls";
 import { readCriteria } from "../plain-language-criterion";
@@ -42,7 +43,7 @@ export const liveConversationTask: Task<
     comparison: {
       criteria: { level: "counts", memory: "counts", objectives: "counts", role: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.private,
     },
     distribution: "private",
     first: "latency",

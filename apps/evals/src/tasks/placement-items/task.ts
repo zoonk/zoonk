@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type PlacementItemsParams,
@@ -22,13 +23,14 @@ export const placementItemsTask: Task<
   priorities: {
     comparison: {
       criteria: {
-        correctness: "disqualifies",
+        correctness: "counts",
         misconceptionsAndFeedback: "counts",
         realism: "counts",
         skillFit: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { correctness: 3 },
     },
     distribution: "shared",
     first: "quality",

@@ -12,7 +12,7 @@ import {
   verifiedClaims,
 } from "./evidence";
 import { type Comparison } from "./schemas";
-import { tradeBounds } from "./trade-bounds";
+import { meetsWaitSaving, tradeBounds } from "./trade-bounds";
 
 export { decisionSchema, type Decision } from "./decision-schema";
 export function decide(comparison: Comparison): Decision {
@@ -25,6 +25,12 @@ export function decide(comparison: Comparison): Decision {
 
 type Claims = ReturnType<typeof verifiedClaims>;
 type Cases = ReturnType<typeof caseVotes>;
+
+function hasMoreWeightedMajors(row: Decision["rows"][number], rival: Decision["rows"][number]) {
+  return Object.entries(row.weightedMajorsByLanguage ?? {}).some(
+    ([language, count]) => count > (rival.weightedMajorsByLanguage?.[language] ?? 0),
+  );
+}
 
 function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Decision {
   const readers = readerRecords(comparison, acceptedReads(comparison));
@@ -45,6 +51,7 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
     const dominates =
       rival.wins >= row.wins &&
       rival.losses <= row.losses &&
+      !hasMoreWeightedMajors(rival, row) &&
       row.costPer1000 !== null &&
       rival.costPer1000 !== null &&
       rival.costPer1000 <= row.costPer1000 &&
@@ -67,10 +74,19 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
       return { ...row, status: "dominated" };
     }
 
-    return { ...row, status: row.losses > 0 ? "trade" : "eligible" };
+    return {
+      ...row,
+      status: row.losses > 0 || hasMoreWeightedMajors(row, rival) ? "trade" : "eligible",
+    };
   });
 
-  return decisionSchema.parse({ cases, readers, rows: classified, ...choice });
+  return decisionSchema.parse({
+    cases,
+    readers,
+    replay: comparison.replay,
+    rows: classified,
+    ...choice,
+  });
 }
 
 function assessComparison(comparison: Comparison) {
@@ -149,7 +165,6 @@ export function decisiveUnresolved(comparison: Comparison) {
 
 type Choice = Pick<Decision, "outcome" | "reason" | "reasonCode">;
 type TableRow = Decision["rows"][number];
-type Side = TableRow["side"];
 
 export function uncheckedAnswerKeys({ manifest, checks }: Comparison) {
   if (!manifest.requiresAnswerKeyCheck) {
@@ -236,8 +251,6 @@ function assessReading({
   );
 }
 
-const keyChoice = result("insufficient evidence", "Some answer keys are unchecked.");
-
 const hardChoice = result(
   "insufficient evidence",
   "A pending major claim could rule out a variant.",
@@ -271,10 +284,10 @@ function assess(comparison: Comparison, cases: Cases, claims: Claims, rows: Deci
     );
   }
 
-  const unchecked = new Set(uncheckedAnswerKeys(comparison).map(({ side }) => side));
+  const unchecked = uncheckedAnswerKeys(comparison);
 
   if (challengerFailed) {
-    const open = hardRequirementChoice(unchecked.has("incumbent"), hard);
+    const open = hardRequirementChoice(hard);
 
     return assessment(open ?? result("retain", "The challenger failed a hard requirement."), hard);
   }
@@ -332,27 +345,36 @@ function assessEligibleChallenger({
   incumbent: TableRow;
   pending: Claims;
   rules: NonNullable<Comparison["manifest"]["priorities"]["comparison"]>;
-  unchecked: Set<Side>;
+  unchecked: ReturnType<typeof uncheckedAnswerKeys>;
 }) {
   const { manifest } = comparison;
   const preferences = preferenceBounds(manifest, cases);
-  const trade = tradeBounds({ cases, challenger, comparison, incumbent, pending, rules });
+
+  const trade = tradeBounds({
+    cases,
+    challenger,
+    comparison,
+    incumbent,
+    pending,
+    rules,
+    uncheckedKeys: unchecked,
+  });
 
   const decideWithinBounds = (votes: typeof preferences.best, deficit: string | undefined) =>
     eligibleChoice({ challenger, deficit, incumbent, manifest, votes });
 
   const best = decideWithinBounds(preferences.best, trade.best);
   const worst = decideWithinBounds(preferences.worst, trade.worst);
-  const incumbentFailed = incumbent.status === "disqualified";
-
-  const keyMatters =
-    (unchecked.has("challenger") && (incumbentFailed || best.outcome === "switch")) ||
-    (unchecked.has("incumbent") && !incumbentFailed && worst.outcome === "retain");
-
-  const open = hardRequirementChoice(keyMatters, hard);
+  const open = hardRequirementChoice(hard);
 
   if (open) {
     return assessment(open, hard);
+  }
+
+  if (best.outcome === "switch" && unchecked.some((slot) => slot.side === "challenger")) {
+    return assessment(
+      result("insufficient evidence", "Some challenger answer keys are unchecked."),
+    );
   }
 
   if (best.outcome !== worst.outcome) {
@@ -396,11 +418,7 @@ function assessment(choice: Choice, decisive: Claims = [], modelReads = false) {
   return { choice, decisive, modelReads };
 }
 
-function hardRequirementChoice(keyMatters: boolean, hard: Claims) {
-  if (keyMatters) {
-    return keyChoice;
-  }
-
+function hardRequirementChoice(hard: Claims) {
   // One verifier can confirm a hard failure on both outputs, regardless of whom the reader named.
   return hard.length > 0 ? hardChoice : null;
 }
@@ -461,6 +479,28 @@ function assessOpenTradeOrReads({
 
 const preferenceReason = "More cases prefer the incumbent.";
 
+function meetsWaitTrade({
+  challenger,
+  incumbent,
+  manifest,
+}: {
+  challenger: TableRow;
+  incumbent: TableRow;
+  manifest: Comparison["manifest"];
+}) {
+  const target = manifest.priorities.comparison?.trade?.saveSeconds ?? null;
+  const languages = Object.entries(incumbent.deliveryByLanguage);
+
+  return (
+    target !== null &&
+    languages.length > 0 &&
+    languages.every(([language, delivery]) => {
+      const rival = challenger.deliveryByLanguage[language];
+      return rival && meetsWaitSaving(delivery, rival, target);
+    })
+  );
+}
+
 function eligibleChoice({
   challenger,
   deficit,
@@ -481,6 +521,7 @@ function eligibleChoice({
   const { priorities } = manifest;
   const savings = (incumbent.costPer1000 ?? 0) - (challenger.costPer1000 ?? 0);
   const seconds = (incumbent.p95 ?? 0) - (challenger.p95 ?? 0);
+  const faster = meetsWaitTrade({ challenger, incumbent, manifest });
 
   if (
     (priorities.comparison?.preference === "canBlock" || savings === 0) &&
@@ -494,30 +535,42 @@ function eligibleChoice({
     return result("retain", deficit);
   }
 
-  if (savings < 0) {
+  if (savings < 0 && !faster) {
     return result("retain", "A pricier challenger needs owner judgment.");
   }
 
-  if (priorities.first === "latency" && seconds < 0) {
+  if (priorities.first === "latency" && seconds < 0 && !faster) {
     return result("retain", "The challenger lengthens the wait.");
   }
 
-  if (savings === 0 && !votes.includes("challenger") && seconds <= 0) {
+  if (savings === 0 && !votes.includes("challenger") && seconds <= 0 && !faster) {
     return result("retain", "No demonstrated improvement.");
   }
 
-  return result("switch", switchReason(manifest, savings));
+  return result("switch", switchReason({ faster, manifest, savings }));
 }
 
-function switchReason(manifest: Comparison["manifest"], savings: number) {
+function switchReason({
+  faster,
+  manifest,
+  savings,
+}: {
+  faster: boolean;
+  manifest: Comparison["manifest"];
+  savings: number;
+}) {
+  if (savings <= 0 && faster) {
+    return "The challenger saves the required median wait and meets the weighted quality trade in every language.";
+  }
+
   if (manifest.priorities.comparison?.trade) {
-    return "The challenger meets the accepted trade in every language.";
+    return "The challenger meets the weighted quality trade in every language.";
   }
 
   const cost = savings > 0 ? " It costs less per successful delivery." : "";
   const unit = manifest.runs > 1 ? "runs" : "cases";
 
-  return `The challenger has no more ${unit} with a confirmed major problem in any language.${cost}`;
+  return `The challenger has no more weighted major-affected ${unit} in any language.${cost}`;
 }
 
 function result(outcome: Decision["outcome"], reason: string): Choice {

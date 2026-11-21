@@ -1,3 +1,5 @@
+import { LEARNER_INSTRUCTIONS } from "@/lib/comparisons/learner-instructions";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type FindMistakePatternParams,
@@ -14,7 +16,7 @@ export const mistakePatternTask: Task<
   FindMistakePatternSchema,
   MistakePatternExpected
 > = {
-  criteria: readCriteria(MISTAKE_PATTERN_SCORE_CATEGORIES),
+  criteria: readCriteria(MISTAKE_PATTERN_SCORE_CATEGORIES, LEARNER_INSTRUCTIONS),
   description:
     "Name one repeated pattern in a learner's recent language mistakes with a rule, contrast and drill, or say they were typos or unrelated: code checks, then a judge",
   generate: findMistakePattern,
@@ -22,9 +24,15 @@ export const mistakePatternTask: Task<
   name: "Mistake pattern",
   priorities: {
     comparison: {
-      criteria: { drill: "counts", language: "counts", rule: "counts" },
+      criteria: {
+        drill: "counts",
+        language: "counts",
+        learnerInstructions: "disqualifies",
+        rule: "counts",
+      },
       preference: "separates",
-      trade: null,
+      trade: { ...COMPARISON_TRADES.private, saveSeconds: null },
+      weights: { rule: 3 },
     },
     distribution: "private",
     first: "cost",

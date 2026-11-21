@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type PublishedAlphabetLesson,
@@ -19,7 +20,7 @@ export const alphabetLessonFixTask: Task<AlphabetLessonFixInput, PublishedAlphab
     comparison: {
       criteria: { fixed: "counts", language: "counts", plainLanguage: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
     },
     distribution: "shared",
     first: "quality",

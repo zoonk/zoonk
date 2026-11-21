@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type SourceChangeNoticeParams,
@@ -13,7 +14,11 @@ export const sourceChangeNoticeTask: Task<SourceChangeNoticeParams, { message: s
   id: "source-change-notice",
   name: "Source change notice",
   priorities: {
-    comparison: { criteria: { plainLanguage: "counts" }, preference: "separates", trade: null },
+    comparison: {
+      criteria: { plainLanguage: "counts" },
+      preference: "separates",
+      trade: COMPARISON_TRADES.shared,
+    },
     distribution: "shared",
     first: "cost",
     reads: "A learner reads notices on their goal's news",

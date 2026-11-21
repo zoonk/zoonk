@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type GenerateLevelTestBankParams,
@@ -19,9 +20,10 @@ export const levelTestBankTask: Task<GenerateLevelTestBankParams, GenerateLevelT
   name: "Level test bank",
   priorities: {
     comparison: {
-      criteria: { answers: "disqualifies", calibration: "counts", language: "counts" },
+      criteria: { answers: "counts", calibration: "counts", language: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { answers: 3 },
     },
     distribution: "shared",
     first: "quality",

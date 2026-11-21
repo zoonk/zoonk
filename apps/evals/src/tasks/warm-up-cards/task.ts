@@ -1,4 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type RawWarmUpCard,
@@ -53,7 +54,8 @@ export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, Warm
     comparison: {
       criteria: { accuracy: "counts", format: "counts", language: "counts", pretest: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

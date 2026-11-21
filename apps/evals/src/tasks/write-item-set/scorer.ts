@@ -7,7 +7,11 @@ import {
 } from "@zoonk/ai/tasks/items/write-set";
 import { checkItem } from "@zoonk/core/library/items/checks";
 import { repairItem } from "@zoonk/core/library/items/repairs";
-import { checkWrittenItemSet, repairWrittenItemSet } from "@zoonk/core/library/items/set-checks";
+import {
+  MIN_SET_QUESTIONS,
+  checkWrittenItemSet,
+  repairWrittenItemSet,
+} from "@zoonk/core/library/items/set-checks";
 import { WRITE_ITEM_SET_SCORE_CATEGORIES } from "./score-categories";
 
 type WriteItemSetCase = Pick<WriteItemSetParams, "examFormat" | "format" | "language" | "skills">;
@@ -38,6 +42,12 @@ export const checkWriteItemSetOutput: TaskCodeChecks = ({ output, testCase }) =>
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
+    blockingProblems: [
+      ...check.set,
+      ...(passing.length < MIN_SET_QUESTIONS
+        ? [`Fewer than ${MIN_SET_QUESTIONS} questions passed the set checks.`]
+        : []),
+    ],
     judgedOutput: JSON.stringify(
       {
         ...set,

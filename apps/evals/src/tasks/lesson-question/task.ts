@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type GenerateLessonQuestionAnswerParams,
@@ -18,7 +19,11 @@ export const lessonQuestionTask: Task<
   id: "lesson-question",
   name: "Lesson question",
   priorities: {
-    comparison: { criteria: { plainLanguage: "counts" }, preference: "separates", trade: null },
+    comparison: {
+      criteria: { plainLanguage: "counts" },
+      preference: "separates",
+      trade: COMPARISON_TRADES.private,
+    },
     distribution: "private",
     first: "cost",
     reads: "A learner reads the streamed answer to their question",

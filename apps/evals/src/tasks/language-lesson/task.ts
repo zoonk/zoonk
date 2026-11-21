@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type LanguageLessonContent,
@@ -27,7 +28,8 @@ export const languageLessonTask: Task<LanguageLessonParams, LanguageLessonConten
         style: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

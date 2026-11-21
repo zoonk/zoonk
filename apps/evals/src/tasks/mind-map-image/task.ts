@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { scoreImageEdges } from "@/lib/image-edges";
 import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
@@ -145,14 +146,10 @@ export const mindMapImageTask: Task<MindMapImageInput, MindMapImageOutput> = {
   output: "image",
   priorities: {
     comparison: {
-      criteria: {
-        layout: "disqualifies",
-        legibility: "counts",
-        style: "counts",
-        text: "disqualifies",
-      },
+      criteria: { layout: "counts", legibility: "counts", style: "counts", text: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { layout: 3, text: 3 },
     },
     distribution: "shared",
     first: "cost",

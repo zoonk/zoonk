@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { type GenerateConversationScenarioSchema } from "@zoonk/ai/tasks/language/conversation-scenario";
 import {
@@ -28,7 +29,7 @@ export const speakingMockScenarioTask: Task<
         objectives: "counts",
       },
       preference: "separates",
-      trade: null,
+      trade: { ...COMPARISON_TRADES.private, saveSeconds: null },
     },
     distribution: "private",
     first: "cost",

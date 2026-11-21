@@ -8,17 +8,21 @@ export function formatDecision(decision: Decision, comparison: Comparison) {
 
   return [
     `## ${decision.outcome}\n\n${decision.reason}`,
-    "| Variant | Cases by language | Successful / attempted | Missing pairs | Wins / losses / ties / unresolved | USD / 1,000 | p50 / p95 seconds | Status |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Variant | Cases by language | Successful / attempted | Missing pairs | Wins / losses / ties / unresolved | Weighted majors by language | USD / 1,000 | p50 / p95 seconds | Status |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...decision.rows.map(
       (row) =>
-        `| ${manifest.variants[row.side]?.model} | ${JSON.stringify(row.casesByLanguage)} | ${row.succeeded} / ${row.attempted} | ${row.missingMatches} | ${row.wins} / ${row.losses} / ${row.ties} / ${row.unresolved} | ${row.costPer1000?.toFixed(4) ?? "unknown"} | ${row.p50?.toFixed(2) ?? "unknown"} / ${row.p95?.toFixed(2) ?? "unknown"} | ${row.status} |`,
+        `| ${manifest.variants[row.side]?.model} | ${JSON.stringify(row.casesByLanguage)} | ${row.succeeded} / ${row.attempted} | ${row.missingMatches} | ${row.wins} / ${row.losses} / ${row.ties} / ${row.unresolved} | ${JSON.stringify(row.weightedMajorsByLanguage)} | ${row.costPer1000?.toFixed(4) ?? "unknown"} | ${row.p50?.toFixed(2) ?? "unknown"} / ${row.p95?.toFixed(2) ?? "unknown"} | ${row.status} |`,
     ),
     "",
     ...decision.rows.flatMap((row) =>
       row.quality.map(
         (item) =>
           `${row.side}, ${item.language}, ${item.criterion}: ${item.affected.length} major-affected ${showRun ? "runs" : "cases"} (${item.both.length} on both).${
+            item.weight && item.weight > 1
+              ? ` These count as ${item.affected.length * item.weight} at weight ${item.weight}.`
+              : ""
+          }${
             item.ownerAffected
               ? ` Owner findings: ${item.ownerAffected
                   .map(({ caseId, run }) => (showRun ? `${caseId} (run ${run})` : caseId))
@@ -55,5 +59,9 @@ function checkText(check: Comparison["checks"][number]) {
     return "none to check.";
   }
 
-  return `${check.passed}/${check.total}. ${check.problems.join(" ")}`;
+  const blocking = check.blockingProblems?.length
+    ? ` Blocks saving: ${check.blockingProblems.join(" ")}`
+    : "";
+
+  return `${check.passed}/${check.total}. ${check.problems.join(" ")}${blocking}`;
 }

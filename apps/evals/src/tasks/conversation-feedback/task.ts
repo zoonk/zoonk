@@ -1,3 +1,5 @@
+import { LEARNER_INSTRUCTIONS } from "@/lib/comparisons/learner-instructions";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type WriteConversationFeedbackParams,
@@ -13,7 +15,11 @@ export const conversationFeedbackTask: Task<
   WriteConversationFeedbackParams,
   WriteConversationFeedbackSchema
 > = {
-  criteria: readCriteria(CONVERSATION_FEEDBACK_SCORE_CATEGORIES, PLAIN_LANGUAGE_CRITERION),
+  criteria: readCriteria(
+    CONVERSATION_FEEDBACK_SCORE_CATEGORIES,
+    PLAIN_LANGUAGE_CRITERION,
+    LEARNER_INSTRUCTIONS,
+  ),
   description:
     "Write feedback after a live call: phrases said well, one fix, hard words for the learner's language and a kind line: code checks, then a judge",
   generate: writeConversationFeedback,
@@ -25,11 +31,13 @@ export const conversationFeedbackTask: Task<
         fix: "counts",
         honesty: "counts",
         language: "counts",
+        learnerInstructions: "disqualifies",
         plainLanguage: "counts",
-        tone: "disqualifies",
+        tone: "counts",
       },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.private,
+      weights: { fix: 3, honesty: 3, tone: 3 },
     },
     distribution: "private",
     first: "latency",

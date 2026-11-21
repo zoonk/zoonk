@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import { type WriteItemSetParams, writeItemSet } from "@zoonk/ai/tasks/items/write-set";
 import { readCriteria } from "../plain-language-criterion";
@@ -18,9 +19,10 @@ export const writeItemSetTask: Task<
   name: "Write item set",
   priorities: {
     comparison: {
-      criteria: { examRealism: "counts", keys: "disqualifies", stimulus: "counts" },
+      criteria: { examRealism: "counts", keys: "counts", stimulus: "counts" },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { keys: 3 },
     },
     distribution: "shared",
     first: "quality",

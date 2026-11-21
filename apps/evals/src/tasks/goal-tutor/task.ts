@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type GenerateGoalTutorAnswerParams,
@@ -171,7 +172,11 @@ export const goalTutorTask: Task<GoalTutorInput, GoalTutorOutput> = {
   latencyBudget: { p50: 8, p95: 15 },
   name: "Goal tutor",
   priorities: {
-    comparison: { criteria: { plainLanguage: "counts" }, preference: "separates", trade: null },
+    comparison: {
+      criteria: { plainLanguage: "counts" },
+      preference: "separates",
+      trade: COMPARISON_TRADES.private,
+    },
     distribution: "private",
     first: "cost",
     reads: "A learner reads the buddy's streamed answer",

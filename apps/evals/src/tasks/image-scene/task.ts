@@ -1,4 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, type TestCase } from "@/lib/types";
 import { type ImageSceneInput, generateImageScene } from "@zoonk/ai/tasks/images/scene";
@@ -112,7 +113,8 @@ export const imageSceneTask: Task<ImageSceneInput, ImageSceneOutput, ImageSceneE
     comparison: {
       criteria: { fields: "counts", labels: "counts", simplicity: "counts", teaches: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { labels: 3, teaches: 3 },
     },
     distribution: "shared",
     first: "cost",

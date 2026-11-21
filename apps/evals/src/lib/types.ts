@@ -164,6 +164,8 @@ export type TaskScorer<TExpected = unknown> = (
 
 /** What code checked in an output, out of `total` parts, before any judge reads it. */
 export type CodeCheckResult = {
+  blockingProblems?: string[];
+  criteria?: string[];
   passed: number;
   total: number;
   problems: string[];

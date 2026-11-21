@@ -86,6 +86,23 @@ function CaseLinks({
   );
 }
 
+function weightedLabel(label: string, manifest: Comparison["manifest"], criterion: string) {
+  const weight = manifest.priorities.comparison?.weights?.[criterion] ?? 1;
+  return weight > 1 ? `${label} (counts ×${weight})` : label;
+}
+
+function weightedTotalCell(row: Row) {
+  return (
+    <ul>
+      {Object.entries(row.weightedMajorsByLanguage ?? {}).map(([language, count]) => (
+        <li key={language}>
+          {languageName(language)} · {count}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function qualityCell({
   row,
   criterion,
@@ -274,11 +291,12 @@ export function DecisionTable({
           <FactRow cell={deliveredCell} label="Runs delivered" rows={rows} />
 
           <GroupRow label={`${showRun ? "Runs" : "Cases"} with a confirmed major problem`} />
+          <FactRow cell={weightedTotalCell} label="Weighted total" rows={rows} />
           {manifest.criteria.map((criterion) => (
             <FactRow
               cell={(row) => qualityCell({ criterion: criterion.id, row, showRun })}
               key={criterion.id}
-              label={criterion.label}
+              label={weightedLabel(criterion.label, manifest, criterion.id)}
               rows={rows}
             />
           ))}
@@ -286,7 +304,11 @@ export function DecisionTable({
             <FactRow
               cell={(row) => qualityCell({ check: true, criterion: check, row, showRun })}
               key={check}
-              label={`Failed ${check}`}
+              label={`Code check · ${weightedLabel(
+                manifest.criteria.find((criterion) => criterion.id === check)?.label ?? check,
+                manifest,
+                check,
+              )}`}
               rows={rows}
             />
           ))}

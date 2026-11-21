@@ -6,15 +6,23 @@ import {
 } from "@zoonk/ai/tasks/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
+import { toCheckedItem } from "@zoonk/core/library/items/create";
 import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";
 
 type PlacementItemsCase = Pick<
   PlacementItemsParams,
-  "examFormat" | "language" | "quickCount" | "quickFormat" | "skills" | "typedCount"
+  | "examFormat"
+  | "language"
+  | "quickCount"
+  | "quickFormat"
+  | "skills"
+  | "targetLanguage"
+  | "typedCount"
 >;
 
 type RoleCheck = {
+  saveChecks: string[][];
   passing: (GeneratedItem & { itemLocator: string })[];
   problems: string[];
   wanted: number;
@@ -27,6 +35,7 @@ function checkRole({
   label,
   language,
   optionCount,
+  optionLanguage,
   wanted,
 }: {
   format: GeneratedItem["format"];
@@ -35,6 +44,7 @@ function checkRole({
   label: string;
   language: string;
   optionCount: number | null;
+  optionLanguage: string | null | undefined;
   wanted: number;
 }): RoleCheck {
   const checked = items.map((item, index) => ({
@@ -55,6 +65,17 @@ function checkRole({
       ...(items.length === wanted ? [] : [`${label}: ${items.length} instead of ${wanted}.`]),
       ...checked.flatMap((entry) => entry.problems),
     ],
+    saveChecks: items.map((item, index) =>
+      toCheckedItem({
+        answerFormat: {},
+        format,
+        index,
+        item,
+        language,
+        optionCount,
+        optionLanguage,
+      }).problems.map((problem) => `${label} ${index + 1}: ${problem}`),
+    ),
     wanted,
   };
 }
@@ -77,6 +98,7 @@ export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
         label: `${skill.name}, quick`,
         language: input.language,
         optionCount,
+        optionLanguage: input.targetLanguage,
         wanted: input.quickCount,
       }),
       checkRole({
@@ -86,6 +108,7 @@ export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
         label: `${skill.name}, typed`,
         language: input.language,
         optionCount: null,
+        optionLanguage: input.targetLanguage,
         wanted: input.typedCount,
       }),
     ];
@@ -95,7 +118,10 @@ export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
 
   const roles = perSkill.flatMap((skill) => skill.roles);
 
+  const saveChecks = roles.flatMap((role) => role.saveChecks);
+
   return {
+    blockingProblems: saveChecks.every((problems) => problems.length > 0) ? saveChecks.flat() : [],
     judgedOutput: JSON.stringify(
       {
         skills: perSkill.map(({ name, roles: [quick, typed] }) => ({

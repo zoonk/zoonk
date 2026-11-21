@@ -429,6 +429,8 @@
     "./library/products/read-sources": "./src/library/products/read-product-sources.ts",
     "./library/products/save-research": "./src/library/products/save-product-research.ts",
     "./library/products/sites": "./src/library/products/product-sites.ts",
+    "./library/quality/gate": "./src/library/quality/lesson-quality-gate.ts",
+    "./library/quality/repairs": "./src/library/quality/lesson-repairs.ts",
     "./library/quality/code-checks": "./src/library/quality/lesson-code-checks.ts",
     "./library/quality/pull-lesson-for-fix": "./src/library/quality/pull-lesson-for-fix.ts",
     "./library/quality/program-checks": "./src/library/quality/lesson-program-checks.ts",

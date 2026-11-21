@@ -68,6 +68,7 @@ export const checkStatuteDrillsOutput: TaskCodeChecks = ({ output, testCase }) =
   ].filter((problem) => typeof problem === "string");
 
   return {
+    blockingProblems: drills.length === 0 ? dropped.flatMap((entry) => entry.problems) : [],
     judgedOutput: JSON.stringify(
       { drills: passing.map(({ drill, itemLocator }) => ({ ...drill, itemLocator })) },
       null,

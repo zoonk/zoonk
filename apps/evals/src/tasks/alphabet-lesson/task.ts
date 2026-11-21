@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type AlphabetLessonContent,
@@ -19,13 +20,14 @@ export const alphabetLessonTask: Task<GenerateAlphabetLessonParams, AlphabetLess
   priorities: {
     comparison: {
       criteria: {
-        accuracy: "disqualifies",
+        accuracy: "counts",
         language: "counts",
         pedagogy: "counts",
         plainLanguage: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

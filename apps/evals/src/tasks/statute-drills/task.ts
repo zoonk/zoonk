@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type StatuteDrillParams,
@@ -24,11 +25,12 @@ export const statuteDrillsTask: Task<
       criteria: {
         boardTraps: "counts",
         coverage: "counts",
-        legalAccuracy: "disqualifies",
+        legalAccuracy: "counts",
         styleAndLanguage: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { legalAccuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

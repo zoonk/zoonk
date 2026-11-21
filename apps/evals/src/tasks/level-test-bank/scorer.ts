@@ -84,6 +84,7 @@ export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
 
   return {
     ...checkBankStructure(bank),
+    blockingProblems: questions.length === 0 ? ["No placement question passed its check."] : [],
     judgedOutput: JSON.stringify({ ...bank, questions }),
     keyFlawLocators: questions.map((question) => question.itemLocator),
   };

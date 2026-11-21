@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import { type LessonMarksParams, tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { PLAIN_LANGUAGE_CRITERION, readCriteria } from "../plain-language-criterion";
@@ -34,7 +35,7 @@ export const lessonMarksTask: Task<MarksCaseInput, LessonMarksEvalOutput> = {
         plainLanguage: "counts",
       },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
     },
     distribution: "shared",
     first: "cost",

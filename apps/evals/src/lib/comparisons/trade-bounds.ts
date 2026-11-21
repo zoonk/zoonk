@@ -1,4 +1,6 @@
+import { checkCriteria, criterionWeight } from "./check-policy";
 import { type Decision } from "./decision-schema";
+import { weightedAffectedRuns } from "./delivery-table";
 import { type verifiedClaims } from "./evidence";
 import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
@@ -7,18 +9,14 @@ type Row = Decision["rows"][number];
 type Claims = ReturnType<typeof verifiedClaims>;
 type Rules = NonNullable<Comparison["manifest"]["priorities"]["comparison"]>;
 type Side = Row["side"];
+type Delivery = Row["deliveryByLanguage"][string];
 
-function affectedRuns(row: Row, language: string, rules: Rules) {
-  return new Set(
-    row.quality
-      .filter(
-        (metric) =>
-          metric.language === language &&
-          (metric.check
-            ? metric.criterion !== "answer keys"
-            : rules.criteria[metric.criterion] === "counts"),
-      )
-      .flatMap((metric) => metric.affected.map(caseRunKey)),
+export function meetsWaitSaving(incumbent: Delivery, challenger: Delivery, seconds: number | null) {
+  return (
+    seconds !== null &&
+    incumbent.p50 !== null &&
+    challenger.p50 !== null &&
+    incumbent.p50 - challenger.p50 >= seconds
   );
 }
 
@@ -27,11 +25,11 @@ function tradeLimit({
   challenger,
   trade,
 }: {
-  incumbent: Row["deliveryByLanguage"][string] | undefined;
-  challenger: Row["deliveryByLanguage"][string] | undefined;
+  incumbent: Delivery;
+  challenger: Delivery;
   trade: Rules["trade"];
 }) {
-  if (!trade || !incumbent || !challenger) {
+  if (!trade) {
     return 0;
   }
 
@@ -40,14 +38,11 @@ function tradeLimit({
       ? (incumbent.costPer1000 - challenger.costPer1000) / incumbent.costPer1000
       : null;
 
-  const seconds =
-    incumbent.p95 !== null && challenger.p95 !== null ? incumbent.p95 - challenger.p95 : null;
-
   const savingsMeetTrade =
     (trade.saveCostShare !== null && costShare !== null && costShare >= trade.saveCostShare) ||
-    (trade.saveSeconds !== null && seconds !== null && seconds >= trade.saveSeconds);
+    meetsWaitSaving(incumbent, challenger, trade.saveSeconds);
 
-  return savingsMeetTrade ? trade.majorIncreasePer100 * incumbent.successful : 0;
+  return savingsMeetTrade ? trade.majorIncreasePer100 : 0;
 }
 
 function codeCheckPending(comparison: Comparison) {
@@ -69,43 +64,55 @@ function codeCheckPending(comparison: Comparison) {
 }
 
 function runBounds({
-  confirmedIncumbent,
-  confirmedChallenger,
+  challenger,
   claims,
-  uncheckedIncumbent,
-  uncheckedChallenger,
+  incumbent,
+  pendingChallengerCheck,
+  pendingIncumbentCheck,
+  rules,
 }: {
-  confirmedIncumbent: boolean;
-  confirmedChallenger: boolean;
+  challenger: number;
   claims: Claims;
-  uncheckedIncumbent: boolean;
-  uncheckedChallenger: boolean;
+  incumbent: number;
+  pendingChallengerCheck: number;
+  pendingIncumbentCheck: number;
+  rules: Rules;
 }) {
-  const incumbent = Number(confirmedIncumbent);
-  const challenger = Number(confirmedChallenger);
+  const weight = (claim: Claims[number]) =>
+    criterionWeight(rules, claim.observation.criterion) ?? 0;
+
+  const maximum = (side: Side, confirmed: number, pendingCheck: number) =>
+    Math.max(
+      confirmed,
+      pendingCheck,
+      ...claims.filter((claim) => claim.side === side).map((claim) => weight(claim)),
+    );
+
+  const maxIncumbent = maximum("incumbent", incumbent, pendingIncumbentCheck);
+  const maxChallenger = maximum("challenger", challenger, pendingChallengerCheck);
   const current = challenger - incumbent;
-  const both = claims.length > 0 ? 0 : current;
 
-  const best =
-    uncheckedIncumbent || claims.some((claim) => claim.side === "incumbent")
-      ? challenger - 1
-      : current;
+  // A verifier can find the flaw in both outputs, even when the reader named only one.
+  const best = Math.min(
+    challenger - maxIncumbent,
+    ...claims.map(
+      (claim) => Math.max(challenger, weight(claim)) - Math.max(maxIncumbent, weight(claim)),
+    ),
+  );
 
-  const worst =
-    uncheckedChallenger || claims.some((claim) => claim.side === "challenger")
-      ? 1 - incumbent
-      : current;
+  const worst = Math.max(
+    maxChallenger - incumbent,
+    ...claims.map(
+      (claim) => Math.max(maxChallenger, weight(claim)) - Math.max(incumbent, weight(claim)),
+    ),
+  );
 
   return {
-    best: Math.min(best, both),
+    best,
     current,
-    decisive: claims.filter(
-      (claim) =>
-        (claim.side === "incumbent" ? !confirmedIncumbent : !confirmedChallenger) || current !== 0,
-    ),
-    unchecked:
-      (uncheckedIncumbent && !confirmedIncumbent) || (uncheckedChallenger && !confirmedChallenger),
-    worst: Math.max(worst, both),
+    decisive: claims.filter((claim) => weight(claim) > Math.min(incumbent, challenger)),
+    unchecked: pendingChallengerCheck > challenger || pendingIncumbentCheck > incumbent,
+    worst,
   };
 }
 
@@ -116,6 +123,7 @@ export function tradeBounds({
   incumbent,
   pending,
   rules,
+  uncheckedKeys,
 }: {
   cases: Decision["cases"];
   challenger: Row;
@@ -123,71 +131,92 @@ export function tradeBounds({
   incumbent: Row;
   pending: Claims;
   rules: Rules;
+  uncheckedKeys: { caseId: string; run: number; side: Side }[];
 }) {
   const languages = new Map(cases.map((item) => [item.caseId, item.language]));
   const unchecked = codeCheckPending(comparison);
+  const uncheckedKeySet = new Set(uncheckedKeys.map((slot) => `${caseRunKey(slot)}:${slot.side}`));
+  const taskId = comparison.manifest.taskId;
 
-  const bounds = [...new Set(languages.values())].map((language) => {
-    const incumbentAffected = affectedRuns(incumbent, language, rules);
-    const challengerAffected = affectedRuns(challenger, language, rules);
+  const codeWeight = Math.max(
+    1,
+    ...checkCriteria(taskId, comparison.manifest.codeCheck ?? "code checks").map(
+      (criterion) => criterionWeight(rules, criterion) ?? 0,
+    ),
+  );
+
+  const bounds = [...new Set(languages.values())].flatMap((language) => {
+    const incumbentDelivery = incumbent.deliveryByLanguage[language];
+    const challengerDelivery = challenger.deliveryByLanguage[language];
+
+    if (!incumbentDelivery || !challengerDelivery) {
+      return [];
+    }
+
+    const incumbentAffected = weightedAffectedRuns(incumbent.quality, language);
+    const challengerAffected = weightedAffectedRuns(challenger.quality, language);
 
     const limit = tradeLimit({
-      challenger: challenger.deliveryByLanguage[language],
-      incumbent: incumbent.deliveryByLanguage[language],
+      challenger: challengerDelivery,
+      incumbent: incumbentDelivery,
       trade: rules.trade,
     });
 
     const runs = comparison.manifest.runsCompared
-      .filter((run) => languages.get(run.caseId) === language)
+      .filter((run) => run.incumbent && run.challenger && languages.get(run.caseId) === language)
       .map((run) => {
         const key = caseRunKey(run);
 
+        const pendingCheck = (side: Side) =>
+          Math.max(
+            unchecked(key, side) ? codeWeight : 0,
+            uncheckedKeySet.has(`${key}:${side}`) ? 3 : 0,
+          );
+
         return runBounds({
+          challenger: challengerAffected.get(key) ?? 0,
           claims: pending.filter(
             (claim) =>
               rules.criteria[claim.observation.criterion] === "counts" && caseRunKey(claim) === key,
           ),
-          confirmedChallenger: challengerAffected.has(key),
-          confirmedIncumbent: incumbentAffected.has(key),
-          uncheckedChallenger: unchecked(key, "challenger"),
-          uncheckedIncumbent: unchecked(key, "incumbent"),
+          incumbent: incumbentAffected.get(key) ?? 0,
+          pendingChallengerCheck: pendingCheck("challenger"),
+          pendingIncumbentCheck: pendingCheck("incumbent"),
+          rules,
         });
       });
 
-    return {
-      best: runs.reduce((sum, run) => sum + run.best, 0) * 100 > limit,
-      current: runs.reduce((sum, run) => sum + run.current, 0) * 100 > limit,
-      decisive: runs.flatMap((run) => run.decisive),
-      language,
-      unchecked: runs.some((run) => run.unchecked),
-      worst: runs.reduce((sum, run) => sum + run.worst, 0) * 100 > limit,
-    };
+    const excessPer100 = (bound: "best" | "current" | "worst") =>
+      runs.length > 0 ? (runs.reduce((sum, run) => sum + run[bound], 0) * 100) / runs.length : 0;
+
+    return [
+      {
+        best: excessPer100("best"),
+        current: excessPer100("current"),
+        decisive: runs.flatMap((run) => run.decisive),
+        language,
+        limit,
+        unchecked: runs.some((run) => run.unchecked),
+        worst: excessPer100("worst"),
+      },
+    ];
   });
 
-  const best = bounds.find((bound) => bound.best);
-  const current = bounds.find((bound) => bound.current);
-  const worst = bounds.filter((bound) => bound.worst);
+  const best = bounds.find((bound) => bound.best > bound.limit);
+  const current = bounds.find((bound) => bound.current > bound.limit);
+  const worst = bounds.filter((bound) => bound.worst > bound.limit);
 
-  const reason = (bound: typeof best) =>
-    deficitReason(bound?.language, comparison.manifest.runs, rules.trade);
+  const unit = comparison.manifest.runs > 1 ? "runs" : "cases";
+
+  const reason = (bound: typeof best, kind: "best" | "current" | "worst") =>
+    bound &&
+    `In ${bound.language}, the challenger adds ${Number(bound[kind].toFixed(2))} weighted major-affected ${unit} per 100 matched. The trade allows ${bound.limit}.`;
 
   return {
-    best: reason(best),
-    current: reason(current),
+    best: reason(best, "best"),
+    current: reason(current, "current"),
     decisive: best ? [] : worst.flatMap((bound) => bound.decisive),
     unchecked: worst.some((bound) => bound.unchecked),
-    worst: reason(worst[0]),
+    worst: reason(worst[0], "worst"),
   };
-}
-
-function deficitReason(language: string | undefined, runs: number, trade: Rules["trade"]) {
-  if (!language) {
-    return;
-  }
-
-  const unit = runs > 1 ? "runs" : "cases";
-
-  return trade
-    ? `The confirmed quality deficit exceeds the accepted trade in ${language}.`
-    : `The challenger has more ${unit} with a confirmed major problem in ${language}.`;
 }

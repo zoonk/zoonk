@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type GenerateConversationScenarioParams,
@@ -28,7 +29,7 @@ export const conversationScenarioTask: Task<
         unitFit: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
     },
     distribution: "shared",
     first: "quality",

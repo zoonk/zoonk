@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { scoreImageEdges } from "@/lib/image-edges";
 import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
@@ -116,9 +117,10 @@ export const lessonImageTask: Task<LessonImageInput, LessonImageOutput> = {
   output: "image",
   priorities: {
     comparison: {
-      criteria: { style: "counts", teaches: "disqualifies", text: "disqualifies" },
+      criteria: { style: "counts", teaches: "counts", text: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { teaches: 3, text: 3 },
     },
     distribution: "shared",
     first: "cost",

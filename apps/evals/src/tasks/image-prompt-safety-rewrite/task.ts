@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type ImageInputSafetyRewriteParams,
@@ -32,7 +33,8 @@ export const imageInputSafetyRewriteTask: Task<
     comparison: {
       criteria: { safe: "disqualifies", stillTeaches: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.shared,
+      weights: { stillTeaches: 3 },
     },
     distribution: "shared",
     first: "cost",

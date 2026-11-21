@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import { type LessonSpecParams, generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { readCriteria } from "../plain-language-criterion";
@@ -29,7 +30,7 @@ export const lessonSpecTask: Task<
         screenPlan: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
     },
     distribution: "shared",
     first: "quality",

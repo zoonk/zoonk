@@ -1,4 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import { sumLanguageModelUsage } from "@zoonk/ai/combine-task-provenance";
 import { assembleChallengeCase } from "@zoonk/ai/tasks/challenge/assemble";
@@ -69,7 +70,8 @@ export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, Writt
         team: "counts",
       },
       preference: "canBlock",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { accuracy: 3 },
     },
     distribution: "shared",
     first: "quality",

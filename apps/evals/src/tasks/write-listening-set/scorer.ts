@@ -21,7 +21,7 @@ const SET_CHECKS = 1;
 
 export const checkWriteListeningSetOutput: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as WriteListeningSetCase;
-  const { set } = JSON.parse(output) as WriteListeningSetOutput;
+  const { problems: blockingProblems, set } = JSON.parse(output) as WriteListeningSetOutput;
 
   const request = {
     count: input.count,
@@ -50,6 +50,7 @@ export const checkWriteListeningSetOutput: TaskCodeChecks = ({ output, testCase 
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
+    blockingProblems,
     judgedOutput: JSON.stringify(
       {
         ...set,

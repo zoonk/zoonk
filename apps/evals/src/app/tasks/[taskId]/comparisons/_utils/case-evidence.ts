@@ -1,3 +1,4 @@
+import { hasCheckFailure } from "@/lib/comparisons/check-policy";
 import { type Decision, type Direction } from "@/lib/comparisons/decision-schema";
 import {
   acceptedReads,
@@ -114,10 +115,7 @@ function failedChecks(
 ): FailedCheck[] {
   return comparison.checks.filter(
     (check) =>
-      check.caseId === caseId &&
-      check.run === run &&
-      check.side === side &&
-      check.passed < check.total,
+      check.caseId === caseId && check.run === run && check.side === side && hasCheckFailure(check),
   );
 }
 

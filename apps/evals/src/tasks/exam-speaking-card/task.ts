@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type ExamSpeakingCardOutput,
@@ -20,13 +21,13 @@ export const examSpeakingCardTask: Task<GenerateExamSpeakingCardParams, ExamSpea
     comparison: {
       criteria: { examFit: "counts", languages: "counts", material: "counts", script: "counts" },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.private,
     },
     distribution: "private",
     first: "quality",
     reads: "A learner reads the speaking task card",
     reason: "Personal to one try; a cheaper model wrote it in the wrong language",
-    waits: "Code doesn't say",
+    waits: "A learner can wait when they start the speaking task",
   },
   score: scoreExamSpeakingCardOutput,
   scoreCategories: EXAM_SPEAKING_CARD_SCORE_CATEGORIES,

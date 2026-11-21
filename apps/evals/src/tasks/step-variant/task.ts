@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type GenerateStepVariantParams,
@@ -30,7 +31,8 @@ export const stepVariantTask: Task<
         writing: "counts",
       },
       preference: "separates",
-      trade: null,
+      trade: COMPARISON_TRADES.core,
+      weights: { faithful: 3 },
     },
     distribution: "shared",
     first: "cost",

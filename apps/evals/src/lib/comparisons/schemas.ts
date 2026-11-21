@@ -15,18 +15,32 @@ export const readerSchema = z.object({
 export type Reader = z.infer<typeof readerSchema>;
 const criterionSchema = z.object({ expectations: text, id: text, label: text });
 
+const tradeSchema = z.object({
+  majorIncreasePer100: z
+    .number()
+    .min(0)
+    .max(100)
+    .describe("Additional weighted major-affected runs allowed per 100 matched runs."),
+  saveCostShare: z
+    .number()
+    .min(0)
+    .max(1)
+    .nullable()
+    .describe("Minimum fraction of incumbent cost per delivery saved."),
+  saveSeconds: z
+    .number()
+    .nonnegative()
+    .nullable()
+    .describe("Minimum seconds saved at p50 when the learner waits."),
+});
+
 const prioritiesSchema = z.object({
   comparison: z
     .object({
       criteria: z.record(text, z.enum(["disqualifies", "counts"])),
       preference: z.enum(["canBlock", "separates"]),
-      trade: z
-        .object({
-          majorIncreasePer100: z.number().min(0).max(100),
-          saveCostShare: z.number().min(0).max(1).nullable(),
-          saveSeconds: z.number().nonnegative().nullable(),
-        })
-        .nullable(),
+      trade: tradeSchema.nullable(),
+      weights: z.record(text, z.int().positive()).optional(),
     })
     .optional(),
   distribution: z.enum(["shared", "private"]),
@@ -210,14 +224,22 @@ export const adjudicationSchema = z.object({
 });
 export type Adjudication = z.infer<typeof adjudicationSchema>;
 export const checkSchema = z.object({
+  blockingProblems: z.array(text).optional(),
   caseId: text,
   costUsd: z.number().nonnegative(),
+  criteria: z.array(text).optional(),
   name: text,
   passed: z.int(),
   problems: z.array(text),
   run: z.int(),
   side,
   total: z.int(),
+});
+export const replaySchema = z.object({
+  checks: z
+    .array(checkSchema.pick({ blockingProblems: true, caseId: true, run: true, side: true }))
+    .optional(),
+  priorities: prioritiesSchema,
 });
 export const verificationAttemptSchema = z.object({
   claims: z.array(
@@ -246,5 +268,6 @@ export type Comparison = {
   outputs: Record<string, string | Buffer>;
   attempts: Attempt[];
   checks: z.infer<typeof checkSchema>[];
+  replay?: z.infer<typeof replaySchema>;
   verifications: z.infer<typeof verificationAttemptSchema>[];
 };

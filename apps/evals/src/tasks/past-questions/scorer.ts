@@ -33,6 +33,7 @@ export const checkQuestions: TaskCodeChecks = ({ output, testCase }) => {
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
+    blockingProblems: passing.length === 0 ? checked.flatMap((entry) => entry.problems) : [],
     judgedOutput: JSON.stringify(
       { questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })) },
       null,

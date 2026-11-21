@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { hash } from "./identity";
+import z from "zod";
+import { caseRunKey, hash } from "./identity";
 import {
   type Comparison,
   type Manifest,
@@ -11,10 +12,10 @@ import {
   digest,
   identifier,
   manifestSchema,
+  replaySchema,
   verificationAttemptSchema,
 } from "./schemas";
 import { compactSnapshot, expandSnapshot } from "./snapshot";
-import type z from "zod";
 
 export function directory(taskId: string, id: string) {
   return path.join(
@@ -203,13 +204,34 @@ export async function loadComparison(taskId: string, id: string): Promise<Compar
     throw new Error("Comparison has no matching sealed manifest.");
   }
 
-  const [outputs, attempts, checks, verifications, adjudications] = await Promise.all([
+  const [outputs, attempts, checks, verifications, adjudications, decision] = await Promise.all([
     readOutputs(dir, manifest),
     records(path.join(dir, "verdicts"), attemptSchema),
     records(path.join(dir, "checks"), checkSchema),
     records(path.join(dir, "verifications"), verificationAttemptSchema),
     records(path.join(dir, "adjudications"), adjudicationSchema),
+    readOptional(path.join(dir, "decision.json"), z.object({ replay: replaySchema.optional() })),
   ]);
 
-  return { adjudications, attempts, checks, manifest, outputs, verifications };
+  const replay = decision?.replay;
+
+  const replayedChecks = new Map(
+    replay?.checks?.map((check) => [`${caseRunKey(check)}:${check.side}`, check.blockingProblems]),
+  );
+
+  return {
+    adjudications,
+    attempts,
+    checks: checks.map((check) => {
+      const blockingProblems = replayedChecks.get(`${caseRunKey(check)}:${check.side}`);
+
+      return check.name === "code checks" && blockingProblems
+        ? { ...check, blockingProblems }
+        : check;
+    }),
+    manifest: replay ? { ...manifest, priorities: replay.priorities } : manifest,
+    outputs,
+    replay,
+    verifications,
+  };
 }
