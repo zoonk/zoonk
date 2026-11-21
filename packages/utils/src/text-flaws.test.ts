@@ -70,6 +70,27 @@ describe(findUnrenderedMarkdown, () => {
     expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
   });
 
+  it("reads inline code as code, whatever tags or links it holds", () => {
+    const text = "O que `<div>` contém, e o que `[a](b)` mostra?";
+
+    expect(findUnrenderedMarkdown({ layout: "inline", text })).toStrictEqual([]);
+    expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
+  });
+
+  it("reads a block fenced with tildes as code, as every player draws it", () => {
+    const text = "Veja:\n~~~html\n<div>## oi</div>\n~~~";
+
+    expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
+
+    expect(
+      findUnrenderedMarkdown({ layout: "blocks", text: "Veja:\n~~~js\nconsole.log(1);" }),
+    ).toStrictEqual([expect.stringContaining("~~~")]);
+
+    expect(
+      findUnrenderedMarkdown({ layout: "inline", text: "Rode:\n~~~js\nf();\n~~~" }),
+    ).toStrictEqual([expect.stringContaining("code fence"), expect.stringContaining("code fence")]);
+  });
+
   it("finds a code block that never closes, and one with words around it where one line shows", () => {
     const open = "Veja:\n```js\nconsole.log(1);\nO console mostra 1.";
 

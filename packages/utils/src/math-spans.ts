@@ -1,4 +1,4 @@
-import { findCode } from "./inline-markup";
+import { findCode, parseInlineMarkupRanges } from "./inline-markup";
 import { mapTextCells } from "./markdown-table";
 
 export type MathSpan = { content: string; display: boolean; end: number; start: number };
@@ -199,4 +199,17 @@ export function replaceMath(text: string, replace: (formula: MathSegment) => str
 /** Spaces of the same length keep positions pointing into the text. */
 export function hideMath(text: string): string {
   return replaceMath(text, ({ end, start }) => " ".repeat(end - start));
+}
+
+/** Like `hideMath`, and inline code too, for checks that read only a line's words. */
+export function hideMathAndCode(line: string): string {
+  const withoutMath = hideMath(line);
+
+  return parseInlineMarkupRanges(withoutMath)
+    .filter((range) => range.kind === "code")
+    .reduce(
+      (text, { end, start }) =>
+        `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`,
+      withoutMath,
+    );
 }

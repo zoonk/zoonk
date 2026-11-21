@@ -366,6 +366,14 @@ describe(replaceEmDashes, () => {
     ],
     ["Rode —\n```\n— x\n```\n— Sim.", "Rode\n```\n— x\n```\nSim."],
     ["Use—`x`—e só.", "Use, `x`, e só."],
+    [
+      'Veja — isto:\n~~~js\nconsole.log("A—B");\n~~~',
+      'Veja, isto:\n~~~js\nconsole.log("A—B");\n~~~',
+    ],
+    [
+      "Rode:\r\n```\r\na — b\r\n```\r\nPronto — fim.",
+      "Rode:\r\n```\r\na — b\r\n```\r\nPronto, fim.",
+    ],
   ])("keeps code as written in %j", (text, expected) => {
     expect(replaceEmDashes(text)).toBe(expected);
   });
@@ -387,6 +395,7 @@ describe(createEmDashReplacer, () => {
     "Antes:\n\n- um ponto — outro\n— fala\nfim — \nnova linha",
     "Rode `a — b` — e veja:\n```js\nf('a — b');\n```\n— Sim — `x`.",
     "Um ` solto — e `fim — já`.\n  ```js\nx — y\n```\n— x",
+    "Veja — isto:\n~~~js\nf('a — b');\n~~~\n— Sim.",
   ];
 
   it.each(TEXTS)("reads %j as the whole text would, wherever the stream cuts it", (text) => {
@@ -409,7 +418,7 @@ describe(createEmDashReplacer, () => {
   });
 
   it("reads any text as the whole text would, wherever the stream cuts it", () => {
-    const pieces = constantFrom("a", " ", "—", "`", "```", "\n", ".", "x — y");
+    const pieces = constantFrom("a", " ", "—", "`", "```", "~", "~~~", "\n", ".", "x — y");
 
     assert(
       property(

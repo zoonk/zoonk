@@ -1,4 +1,4 @@
-import { findCodeFences, splitAtCode } from "./code-fence";
+import { editProse, findCodeFences } from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
 
 const SLUG_MAX_LENGTH = 50;
@@ -56,40 +56,19 @@ function replaceProseEmDashes(text: string): string {
     .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
 }
 
-/** Stands in for the code beside a piece of prose, so a dash next to code reads as mid-line. */
-const CODE_MARK = "x";
-
 /**
  * The app never shows em dashes in prose: one that opens a line or closes a clause before
  * punctuation goes, any other becomes a comma. En dashes stay: they join ranges ("B1–B2"). Code
  * keeps every character as written.
  */
 export function replaceEmDashes(text: string): string {
-  if (!text.includes("—")) {
-    return text;
-  }
-
-  const pieces = splitAtCode(text);
-
-  return pieces
-    .map((piece, index) => {
-      if (piece.code) {
-        return piece.text;
-      }
-
-      const before = index > 0 ? CODE_MARK : "";
-      const after = index < pieces.length - 1 ? CODE_MARK : "";
-      const replaced = replaceProseEmDashes(`${before}${piece.text}${after}`);
-
-      return replaced.slice(before.length, replaced.length - after.length);
-    })
-    .join("");
+  return text.includes("—") ? editProse(text, replaceProseEmDashes) : text;
 }
 
 const OPEN_DASH_TAIL = /[ \t—]*$/u;
 
-/** A last line that more backticks could still turn into a code block's opening fence. */
-const OPENING_FENCE_SO_FAR = /^ {0,3}`{0,2}$/u;
+/** A last line that more backticks or tildes could still turn into a code block's opening fence. */
+const OPENING_FENCE_SO_FAR = /^ {0,3}(?:`{0,2}|~{1,2})$/u;
 
 /**
  * Where code may still be starting at the end of a text being written: a last line that may open a

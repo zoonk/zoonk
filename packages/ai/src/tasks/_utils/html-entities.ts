@@ -1,4 +1,4 @@
-import { splitAtCode } from "@zoonk/utils/code-fence";
+import { editProse } from "@zoonk/utils/code-fence";
 
 /** HTML names an accent after the letter it marks ("acirc" is "â"); these are the marks. */
 const ACCENT_MARKS: Readonly<Record<string, string>> = {
@@ -77,14 +77,10 @@ function decodeEntity({
 
 /** Some models escape letters as HTML entities in plain text ("l&acirc;mpada"); code keeps them. */
 export function decodeHtmlEntities(text: string): string {
-  return splitAtCode(text)
-    .map(({ code, text: piece }) =>
-      code
-        ? piece
-        : piece.replaceAll(
-            ENTITY,
-            (entity) => decodeEntity(ENTITY_PARTS.exec(entity)?.groups ?? {}) ?? entity,
-          ),
-    )
-    .join("");
+  return editProse(text, (prose) =>
+    prose.replaceAll(
+      ENTITY,
+      (entity) => decodeEntity(ENTITY_PARTS.exec(entity)?.groups ?? {}) ?? entity,
+    ),
+  );
 }

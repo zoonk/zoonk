@@ -7,7 +7,7 @@ import {
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
-import { hideMath, splitAtMath } from "./math-spans";
+import { hideMath, hideMathAndCode, splitAtMath } from "./math-spans";
 
 /**
  * `blocks` keeps lines, lists and tables (a screen's body); `inline` shows one line, whatever its
@@ -25,7 +25,7 @@ const LIST_MARK = /^\s*(?:[-*•]|\d{1,3}[.)])\s+/u;
 const BLOCK_MARKS: readonly { pattern: RegExp; problem: string }[] = [
   { pattern: /^\s{0,3}#{1,6}\s+\S/u, problem: "a heading's # marks" },
   { pattern: /^\s*>\s/u, problem: "a quote's > mark" },
-  { pattern: /^\s*```/u, problem: "a code fence" },
+  { pattern: /^\s*(?:```|~~~)/u, problem: "a code fence" },
 ];
 
 /** CommonMark's `[text](url)`, with or without a title in quotes or parentheses. */
@@ -104,17 +104,27 @@ export function findStrayEmphasis(line: string): Set<number> {
   return new Set([...at(BOLD_MARK), ...at(UNDERSCORE_MARK), ...(stars.length >= 2 ? stars : [])]);
 }
 
-function findMarks(line: string, marks: typeof INLINE_MARKS): string[] {
-  const text = hideMath(line);
-
+function findMarks({
+  hidden,
+  line,
+  marks,
+}: {
+  hidden: string;
+  line: string;
+  marks: typeof INLINE_MARKS;
+}): string[] {
   return marks.flatMap(({ pattern, problem }) =>
-    pattern.test(text) ? [`Shows ${problem} as text: ${quote(line)}.`] : [],
+    pattern.test(hidden) ? [`Shows ${problem} as text: ${quote(line)}.`] : [],
   );
+}
+
+function findBlockMarks(line: string): string[] {
+  return findMarks({ hidden: hideMath(line), line, marks: BLOCK_MARKS });
 }
 
 function findLineProblems(line: string): string[] {
   return [
-    ...findMarks(line, INLINE_MARKS),
+    ...findMarks({ hidden: hideMathAndCode(line), line, marks: INLINE_MARKS }),
     ...(findStrayEmphasis(line).size > 0
       ? [`Shows emphasis marks the app can't pair, so learners see them: ${quote(line)}.`]
       : []),
@@ -127,13 +137,16 @@ function isStrayRow(line: string): boolean {
 }
 
 function findOpenFences(lines: readonly string[]): string[] {
-  return findCodeFences(lines).flatMap(({ closed, start }) =>
-    closed
+  return findCodeFences(lines).flatMap(({ closed, start }) => {
+    const opening = lines[start] ?? "";
+    const close = opening.trim().startsWith("~") ? "three tildes" : "three backticks";
+
+    return closed
       ? []
       : [
-          `Opens a code block it never closes, so every line after it shows as code: ${quote(lines[start] ?? "")}. End the code with a line of three backticks.`,
-        ],
-  );
+          `Opens a code block it never closes, so every line after it shows as code: ${quote(opening)}. End the code with a line of ${close}.`,
+        ];
+  });
 }
 
 function findBlockProblems(text: string): string[] {
@@ -151,7 +164,7 @@ function findBlockProblems(text: string): string[] {
     }
 
     return [
-      ...findMarks(line, BLOCK_MARKS),
+      ...findBlockMarks(line),
       ...(isStrayRow(line)
         ? [
             `Shows table pipes as text, since the rows have no header and |---| line: ${quote(line)}.`,
@@ -176,7 +189,7 @@ function findInlineProblems(text: string): string[] {
     ...(hasTableRows(text)
       ? ["Has a table where only one line of text shows; put the data in the context."]
       : []),
-    ...lines.flatMap((line) => findMarks(line, BLOCK_MARKS)),
+    ...lines.flatMap((line) => findBlockMarks(line)),
     ...findLineProblems(text.replaceAll(/\s*\n\s*/gu, " ")),
   ];
 }

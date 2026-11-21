@@ -1,6 +1,6 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { mapTextCells, readTextCells } from "./markdown-table";
-import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans";
+import { type MathSpan, findMathSpans, hideMathAndCode, toOneLine } from "./math-spans";
 import { type TextLayout, keepsLines } from "./text-flaws";
 
 /**
@@ -32,18 +32,6 @@ const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]/u;
 const BRACKETS: Readonly<Record<string, string>> = { "(": ")", "[": "]" };
 
 type BareLatex = { end: number; latex: string | null; start: number; written: string };
-
-function hideMathAndCode(cell: string): string {
-  const withoutMath = hideMath(cell);
-
-  return parseInlineMarkupRanges(withoutMath)
-    .filter((range) => range.kind === "code")
-    .reduce(
-      (text, { end, start }) =>
-        `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`,
-      withoutMath,
-    );
-}
 
 function toLatex(written: string): string | null {
   const groups = NUMERIC_POWER.exec(written)?.groups;

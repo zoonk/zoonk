@@ -39,6 +39,16 @@ describe(repairItem, () => {
     expect(checkItem({ item: repaired, language: "pt" })).toStrictEqual([]);
   });
 
+  it("keeps inline code as written while repairing the marks around it", () => {
+    const item = generatedMultipleChoice({
+      options: [option("O que `<div>` contém **5", true), option("Veja `<b>`")],
+    });
+
+    expect(repairItem({ item, language: "pt" })).toMatchObject({
+      options: [{ text: "O que `<div>` contém 5" }, { text: "Veja `<b>`" }],
+    });
+  });
+
   it("puts a plain numeric power between dollar signs and leaves other raw math to the writer", () => {
     const item = generatedMultipleChoice({
       context: "The gap is 7 × 10^-5 m and the bill is $5.",

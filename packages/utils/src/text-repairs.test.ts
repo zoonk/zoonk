@@ -177,6 +177,24 @@ describe(repairMarkdown, () => {
     );
   });
 
+  it("keeps inline code as written while repairing the words around it", () => {
+    expect(repairMarkdown({ layout: "inline", text: "O que `<div>` contém em <b>HTML</b>?" })).toBe(
+      "O que `<div>` contém em HTML?",
+    );
+
+    expect(repairMarkdown({ layout: "blocks", text: "## O que `<div>` e `[a](b)` contêm?" })).toBe(
+      "O que `<div>` e `[a](b)` contêm?",
+    );
+  });
+
+  it("keeps a tilde block's code as written", () => {
+    const code = ["~~~html", "<div># título</div>", "~~~"];
+
+    expect(repairMarkdown({ layout: "blocks", text: ["## Veja", ...code].join("\n") })).toBe(
+      ["Veja", ...code].join("\n"),
+    );
+  });
+
   it("leaves what code can't repair for a writer", () => {
     const table = "| Sensor | mm |\n|---|---:|\n| A | 49,8 |";
     const rows = "| A | 49,8 |\n| B | 50,1 |";
@@ -185,6 +203,9 @@ describe(repairMarkdown, () => {
     expect(repairMarkdown({ layout: "inline", text: table })).toBe(table);
     expect(repairMarkdown({ layout: "blocks", text: rows })).toBe(rows);
     expect(repairMarkdown({ layout: "blocks", text: fence })).toBe(fence);
+
+    const fenceInLine = `Rode **isto:\n${fence}\nagora`;
+    expect(repairMarkdown({ layout: "inline", text: fenceInLine })).toBe(fenceInLine);
   });
 });
 
