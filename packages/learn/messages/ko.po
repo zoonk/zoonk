@@ -13531,27 +13531,27 @@ msgstr "{dateKind, select, month {{count} · {start}에 시작} other {{count}�
 #: src/visuals/plot-visual.tsx
 msgctxt "VlX3Tz"
 msgid "Horizontal axis: {label}, from {min} to {max}"
-msgstr ""
+msgstr "가로축: {label}, {min}부터 {max}까지"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "8Zy2Zw"
 msgid "Vertical axis: {label}, from {min} to {max}"
-msgstr ""
+msgstr "세로축: {label}, {min}부터 {max}까지"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "QcdIBf"
 msgid "Point"
-msgstr ""
+msgstr "점"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "bhsStc"
 msgid "Reference lines"
-msgstr ""
+msgstr "기준선"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "NNFAc_"
 msgid "{label}: {value}"
-msgstr ""
+msgstr "{label}: {value}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"

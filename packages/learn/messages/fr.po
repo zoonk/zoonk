@@ -13531,27 +13531,27 @@ msgstr "{dateKind, select, month {{count} · commence en {start}} other {{count
 #: src/visuals/plot-visual.tsx
 msgctxt "VlX3Tz"
 msgid "Horizontal axis: {label}, from {min} to {max}"
-msgstr ""
+msgstr "Axe horizontal : {label}, de {min} à {max}"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "8Zy2Zw"
 msgid "Vertical axis: {label}, from {min} to {max}"
-msgstr ""
+msgstr "Axe vertical : {label}, de {min} à {max}"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "QcdIBf"
 msgid "Point"
-msgstr ""
+msgstr "Point"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "bhsStc"
 msgid "Reference lines"
-msgstr ""
+msgstr "Lignes de référence"
 
 #: src/visuals/plot-visual.tsx
 msgctxt "NNFAc_"
 msgid "{label}: {value}"
-msgstr ""
+msgstr "{label} : {value}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"
