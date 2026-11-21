@@ -5,9 +5,9 @@
   "exam_add_result": "4e47da1dbba0d704f64bbc1b6953f9e35baefab2b566498789a8d753f9a1b471",
   "exam_add_result_detail": "2f0329823487ba2fadaf6189760e47220d07b02db4ddeb9c6c12a014d54f2c4b",
   "exam_by_subject": "2eb2bffe4c8a8a340228fdcaff5a6b57448a87ef00f6e27958308107f18dba09",
-  "exam_calibration": "68a0875d13b5097c8cde4f97c581f2254c9164366664622fee059058c891982c",
-  "exam_calibration_blank_unsure": "e3101577326d80cab87abdc0b1deeeee3caa251d95a357fed1a6873ced062266",
-  "exam_calibration_keep_answering": "e59e782add756ede3623fcbde751792a9dde8f04828b00b649f0a36cab0254b8",
+  "exam_calibration": "4e196df5f572ff1fcb1262fe4c19e061660b224b33519b3680f0df61b612f503",
+  "exam_calibration_blank_unsure": "cadf1245f430cb6f93bd11f84e277bb1229c06ec82531bc60763c44dfe8366fd",
+  "exam_calibration_keep_answering": "ff7d1e938876257ef8aa8695c874a84467dda7c0ee651506cafaeb42587a3351",
   "exam_calibration_right": "6cf0e98719dbc4c3d63c6fa5867f2168ec2d1fd099fe02429eebe68f35abafbb",
   "exam_checklist_black_pen": "eadd5bbfc05af7eeb80173e706043b06bafc4b92081420599b29ab9b74eac07a",
   "exam_checklist_count": "a726b8991e9c970326091e4fe89384f1da3207d5f29e9ef7a60bf6adc003357a",
@@ -230,15 +230,15 @@
     <string name="exam_rule_irt">Sbagliare una domanda facile costa più che sbagliarne una difficile, quindi rispondi prima a quelle facili.</string>
     <string name="exam_rule_raw_title">Ogni risposta corretta vale un punto</string>
     <string name="exam_rule_raw">Rispondi a tutte le domande.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">Nelle tue simulazioni: %1$s per le risposte non contrassegnate, %2$s per quelle contrassegnate.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">Nelle simulazioni: %1$s sulle risposte date con sicurezza, %2$s su quelle segnate «In dubbio».</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d corretta su %2$d</item>
         <item quantity="many">%1$d corrette su %2$d</item>
         <item quantity="other">%1$d corrette su %2$d</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Con le risposte contrassegnate perdi più punti di quanti ne guadagni: lasciale in bianco.</string>
-    <string name="exam_calibration_keep_answering">Le risposte contrassegnate ti fanno comunque guadagnare punti: continua a rispondere.</string>
+    <string name="exam_calibration_blank_unsure">Se hai un dubbio, lascia la risposta in bianco: quelle risposte fanno perdere più punti di quanti ne facciano guadagnare.</string>
+    <string name="exam_calibration_keep_answering">Se hai un dubbio, rispondi comunque: quelle risposte fanno guadagnare punti.</string>
     <string name="exam_to_pass">Per superare l’esame</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">In %1$s, come riportato nei documenti dell’esame.</string>

@@ -40,7 +40,7 @@ final class ExamAPITests: XCTestCase {
   func testABlankDraftSavesAnExplicitNullAnswer() async throws {
     let transport = RecordingTransport(status: .noContent)
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
-    let draft = MockDraft(answer: nil, durationMs: 4200, flagged: true, itemId: itemId)
+    let draft = MockDraft(answer: nil, durationMs: 4200, unsure: true, itemId: itemId)
 
     let saved = try await api.saveAnswer(token: "token", blockId: blockId, draft: draft)
 
@@ -55,7 +55,7 @@ final class ExamAPITests: XCTestCase {
   func testAPickSavesInTheAPIsShape() async throws {
     let transport = RecordingTransport(status: .noContent)
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
-    let draft = MockDraft(answer: .choice(3), durationMs: 0, flagged: false, itemId: itemId)
+    let draft = MockDraft(answer: .choice(3), durationMs: 0, unsure: false, itemId: itemId)
 
     _ = try await api.saveAnswer(token: "token", blockId: blockId, draft: draft)
 

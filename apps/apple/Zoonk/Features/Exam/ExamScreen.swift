@@ -1106,78 +1106,55 @@ private struct ExamScoringSection: View {
     if rule != nil || exam.scoring.noticeScale != nil || exam.passMarks != nil {
       Section {
         if let rule {
-          Label {
-            VStack(alignment: .leading, spacing: 4) {
-              Text(rule.title).typeStyle(.body.weight(.semibold))
-              Text(rule.rule).foregroundStyle(.mutedForeground)
-              if let calibration = exam.calibration,
-                calibration.sure.answered + calibration.unsure.answered > 0
-              {
+          NoteRow(Text(rule.title), systemImage: "scalemass") {
+            Text(rule.rule)
+            if let calibration = exam.calibration,
+              calibration.sure.answered + calibration.unsure.answered > 0
+            {
+              Text(
+                "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when sure, \(calibration.unsure.right) of \(calibration.unsure.answered) right when not sure.",
+                tableName: "Exam"
+              )
+              .foregroundStyle(Color(.foreground))
+              if calibration.advice == .blankUnsure {
                 Text(
-                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when not flagged, \(calibration.unsure.right) of \(calibration.unsure.answered) right when flagged.",
-                  tableName: "Exam",
-                  comment:
-                    "Right answers in mock exams among questions not flagged, against flagged ones"
-                )
-                Group {
-                  if calibration.advice == .blankUnsure {
-                    Text(
-                      "Your flagged answers cost more than they earn: leave those blank.",
-                      tableName: "Exam", comment: "Advice")
-                  } else if calibration.advice == .keepAnswering {
-                    Text(
-                      "Your flagged answers still earn points: keep answering them.",
-                      tableName: "Exam", comment: "Advice")
-                  }
-                }
-                .foregroundStyle(.mutedForeground)
+                  "When you're not sure, leave it blank: those answers cost more than they earn.",
+                  tableName: "Exam")
+              } else if calibration.advice == .keepAnswering {
+                Text(
+                  "When you're not sure, still answer: those answers earn points.",
+                  tableName: "Exam")
               }
             }
-          } icon: {
-            Image(systemName: "scalemass")
           }
         }
 
         if let scale = exam.scoring.noticeScale {
-          Label {
-            VStack(alignment: .leading, spacing: 4) {
-              Group {
-                if let name = scale.name {
-                  Text("Scored on the \(name) scale", tableName: "Exam", comment: "Notice scale")
-                } else {
-                  Text("Scored on its own scale", tableName: "Exam", comment: "Notice scale")
-                }
-              }
-              .typeStyle(.body.weight(.semibold))
+          NoteRow(
+            scale.name.map {
+              Text("Scored on the \($0) scale", tableName: "Exam", comment: "Notice scale")
+            } ?? Text("Scored on its own scale", tableName: "Exam", comment: "Notice scale"),
+            systemImage: "gauge.with.dots.needle.33percent"
+          ) {
+            Text(
+              "From \(MockLabels.number(scale.min)) to \(MockLabels.number(scale.max)).",
+              tableName: "Exam", comment: "The scale's range")
+            if let pass = scale.passScore {
               Text(
-                "From \(MockLabels.number(scale.min)) to \(MockLabels.number(scale.max)).",
-                tableName: "Exam", comment: "The scale's range"
-              )
-              .foregroundStyle(.mutedForeground)
-              if let pass = scale.passScore {
-                Text(
-                  "To pass: \(MockLabels.number(pass)) or more.", tableName: "Exam",
-                  comment: "The pass score"
-                )
-                .foregroundStyle(.mutedForeground)
-              }
+                "To pass: \(MockLabels.number(pass)) or more.", tableName: "Exam",
+                comment: "The pass score")
             }
-          } icon: {
-            Image(systemName: "gauge.with.dots.needle.33percent")
           }
         }
 
         if let passMarks = exam.passMarks {
-          Label {
-            VStack(alignment: .leading, spacing: 4) {
-              Text("To pass", tableName: "Exam", comment: "What it takes to pass").typeStyle(
-                .body.weight(.semibold))
-              ForEach(passMarks.texts, id: \.self) { text in
-                Text(text).foregroundStyle(.mutedForeground)
-              }
+          NoteRow(
+            Text("To pass", tableName: "Exam", comment: "What it takes to pass"),
+            systemImage: "flag"
+          ) {
+            ForEach(passMarks.texts, id: \.self) { text in
+              Text(text)
             }
-          } icon: {
-            Image(systemName: "flag")
           }
         }
       } header: {

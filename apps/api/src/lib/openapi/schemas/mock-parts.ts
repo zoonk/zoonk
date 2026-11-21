@@ -1,3 +1,4 @@
+import { MOCK_REVIEW_OUTCOMES } from "@zoonk/core/exams/mocks/view-contract";
 import { sectionNavigationSchema } from "@zoonk/core/library/exams/blueprint-contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -182,10 +183,10 @@ export const mockReviewSchema = z.object({
   learnerAnswer: z.string().nullable(),
   number: z.number().int().min(1).meta({ description: "The question's position in its section" }),
   outcome: z
-    .enum(["blank", "partial", "wrong"])
+    .enum(MOCK_REVIEW_OUTCOMES)
     .meta({
       description:
-        "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit",
+        "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit. `right`: answered correctly and marked as unsure",
     }),
   question: z.string(),
   section: z.number().int().min(0).optional().meta({ description: "The zero-based section index" }),
@@ -196,4 +197,5 @@ export const mockReviewSchema = z.object({
     .min(1)
     .optional()
     .meta({ description: "The number of numbered questions in this section" }),
+  unsure: z.boolean().meta({ description: "Whether the learner marked the question as unsure" }),
 });
