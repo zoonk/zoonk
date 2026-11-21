@@ -118,6 +118,7 @@ internal fun ColumnScope.PlacementSetup(
         plan =
             attempt?.let {
                 PlanAttempt(it, onLeave = navigator::closeTask, leaving = false) { result ->
+                    val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
                     LevelResult(
                         result = result,
                         walks = result.result?.wholeCourseReady == true,
@@ -128,10 +129,7 @@ internal fun ColumnScope.PlacementSetup(
                         onDone = { end.continueWith(null) },
                         onWalkTopics = assessment::walkTopics,
                         onTestOut = {},
-                        undo = {
-                            val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
-                            PlacementUndo(plans, goalId, changeId, enabled = !assessment.busy)
-                        },
+                        undo = rememberPlacementUndo(plans, goalId, changeId),
                     )
                 }
             },

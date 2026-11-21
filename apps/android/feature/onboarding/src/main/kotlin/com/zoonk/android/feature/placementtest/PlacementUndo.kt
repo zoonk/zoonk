@@ -5,8 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,32 +20,49 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.focustest.Note
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.OutlinedButton
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Composable
-internal fun PlacementUndo(
+internal fun rememberPlacementUndo(
     plans: PlanStore,
     goalId: UUID,
     changeId: UUID?,
-    enabled: Boolean = true,
-) {
-    if (changeId == null) return
+): PlacementUndoViewModel? {
+    if (changeId == null) return null
     val vm = viewModel(key = "placement-undo:$goalId:$changeId") { PlacementUndoViewModel(plans, goalId, changeId) }
     VisitOf(vm.visit)
-    val restoredLessons = vm.restoredLessons
-    if (restoredLessons != null) {
-        Note(pluralStringResource(R.plurals.testout_lessons_back, restoredLessons))
-    } else {
-        TextButton(busy = vm.saving, enabled = enabled && !vm.saving, onClick = vm::undo) {
-            Text(stringResource(R.string.plan_undo))
-        }
-        if (vm.failed) Note(stringResource(R.string.plan_undo_failed))
+    return vm
+}
+
+@Composable
+internal fun PlacementUndoButton(
+    undo: PlacementUndoViewModel?,
+    enabled: Boolean,
+) {
+    if (undo == null || undo.restoredLessons != null) return
+    OutlinedButton(
+        busy = undo.saving,
+        enabled = enabled && !undo.saving,
+        onClick = undo::undo,
+        leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
+    ) {
+        Text(stringResource(R.string.plan_undo))
     }
 }
 
-private class PlacementUndoViewModel(
+@Composable
+internal fun PlacementUndoStatus(undo: PlacementUndoViewModel?) {
+    val lessons = undo?.restoredLessons ?: return
+    Note(
+        pluralStringResource(R.plurals.testout_lessons_back, lessons),
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+    )
+}
+
+internal class PlacementUndoViewModel(
     private val plans: PlanStore,
     private val goalId: UUID,
     private val changeId: UUID,

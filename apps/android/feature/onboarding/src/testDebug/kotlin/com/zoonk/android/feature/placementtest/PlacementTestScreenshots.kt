@@ -123,20 +123,36 @@ class PlacementTestScreenshots(
     @Test
     fun betweenParts() =
         shoot("between-parts") {
-            BetweenParts(lessonsSkipped = 6, minutesLeft = 25, pressed = null, failed = false, onFinishForToday = {
-            }, onKeepGoing = {}, undo = { Undo() })
+            BetweenParts(
+                lessonsSkipped = 6,
+                minutesLeft = 25,
+                pressed = null,
+                failed = false,
+                onFinishForToday = {},
+                onKeepGoing = {},
+                undo = undo(),
+            )
         }
 
     @Test
     fun betweenOnboardingParts() =
         shoot("between-onboarding-parts") {
-            BetweenParts(6, 25, pressed = null, failed = false, onFinishForToday = {}, onKeepGoing = {}, undo = { Undo() }, inSetup = true)
+            BetweenParts(
+                lessonsSkipped = 6,
+                minutesLeft = 25,
+                pressed = null,
+                failed = false,
+                onFinishForToday = {},
+                onKeepGoing = {},
+                undo = undo(),
+                inSetup = true,
+            )
         }
 
     @Test
     fun resultQuick() =
         shoot("result-quick") {
-            PlacementResult(PlacementLength.QUICK, lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = { Undo() })
+            PlacementResult(PlacementLength.QUICK, lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = undo())
         }
 
     @Test
@@ -158,14 +174,14 @@ class PlacementTestScreenshots(
                 onDone = {},
                 onWalkTopics = {},
                 onTestOut = {},
-                undo = { Undo() },
+                undo = undo(),
             )
         }
 
     @Test
     fun testOutResult() =
         shoot("test-out-result") {
-            TestOutResult(ApiJson.decodeFromString(LanguageLevelTestOut.serializer(), TEST_OUT), onDone = {}, undo = { Undo() })
+            TestOutResult(ApiJson.decodeFromString(LanguageLevelTestOut.serializer(), TEST_OUT), onDone = {}, undo = undo())
         }
 
     @Test
@@ -193,13 +209,13 @@ class PlacementTestScreenshots(
     )
 
     @Composable
-    private fun Undo() {
+    private fun undo(): PlacementUndoViewModel? {
         val plans =
             remember {
                 val session = FakeSession(AuthenticatedSession("learner", "token", "local"))
                 PlanStore(FakePlanApi(), AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
             }
-        PlacementUndo(plans, UUID.fromString(GOAL_ID), UUID(0, 1))
+        return rememberPlacementUndo(plans, UUID.fromString(GOAL_ID), UUID(0, 1))
     }
 
     private fun shoot(

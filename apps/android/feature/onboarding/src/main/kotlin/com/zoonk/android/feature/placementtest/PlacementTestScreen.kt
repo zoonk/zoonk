@@ -262,7 +262,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 onKeepGoing = {
                     if (onboarding == null) vm.start(shown.attempt.length) else onboarding.continueWith(shown.attempt.id)
                 },
-                undo = { PlacementUndo(plans, goalId, shown.changeId, enabled = !vm.busy && onboarding?.saving != true) },
+                undo = rememberPlacementUndo(plans, goalId, shown.changeId),
                 inSetup = onboarding != null,
             )
         }
@@ -273,7 +273,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 shown.lessonsSkipped,
                 plan.value?.plan?.nextTopic(),
                 onDone = { if (onboarding == null) onLeave() else onboarding.continueWith(checkNotNull(shown.attemptId)) },
-                undo = { PlacementUndo(plans, goalId, shown.changeId, enabled = onboarding?.saving != true) },
+                undo = rememberPlacementUndo(plans, goalId, shown.changeId),
                 inSetup = onboarding != null,
                 saving = onboarding?.saving == true,
             )
