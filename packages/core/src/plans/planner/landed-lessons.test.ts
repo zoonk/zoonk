@@ -185,6 +185,7 @@ describe(placeLandedLessons, () => {
     "holds a landed writing lesson of %i minutes and its drill before filling the day",
     (lessonMinutes) => {
       const minutes = lessonMinutes + WRITING_DRILL_MINUTES;
+
       const planDays = days.map((day) => ({
         ...day,
         shape: { ...day.shape, minutes: minutes * 2 },
@@ -216,7 +217,7 @@ describe(placeLandedLessons, () => {
         units: [other],
       });
 
-      expect(remaining.units[0]?.date).toEqual(addDays(TODAY, 1));
+      expect(remaining.units[0]?.date).toStrictEqual(addDays(TODAY, 1));
     },
   );
 
