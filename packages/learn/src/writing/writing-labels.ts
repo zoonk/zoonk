@@ -2,7 +2,9 @@
 
 import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { useExtracted, useFormatter } from "next-intl";
+import { daysBetween, useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
 import { useFormatRange } from "../_utils/range";
+import { roundOutward } from "./round-outward";
 
 export type WritingLevel = WritingResult["criteria"][number]["level"];
 
@@ -43,24 +45,56 @@ type Range = { high: number; low: number };
 /** A deduction's minus: the typographic one, which a hyphen only imitates. */
 const MINUS = "\u2212";
 
+/** Exactly `decimals` digits after the point, so every number of one scale reads alike. */
+export function fixedDecimals(decimals: number) {
+  return { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
+}
+
 /**
  * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
- * ends with the same decimals ("12.0–17.5", never "12–17.5"). A deduction carries its minus on
- * each end, the smaller first: "−0.3 to −0.6".
+ * ends with the same decimals ("12.0–17.5", never "12–17.5"): the scale's own (`decimals`) when the
+ * server sends them, else what the values need. A deduction carries its minus on each end, the
+ * smaller first: "−0.3 to −0.6". A `headline` rounds its low end down and its high end up, so it
+ * never claims more than its parts.
  */
 export function useFormatPointsRange() {
   const format = useFormatter();
   const formatRange = useFormatRange();
 
-  return ({ high, low }: Range, { deduction = false }: { deduction?: boolean } = {}): string => {
-    const decimals = [low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0;
-    const options = { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
+  return (
+    { high, low }: Range,
+    {
+      decimals: scaleDecimals,
+      deduction = false,
+      headline = false,
+    }: { decimals?: number; deduction?: boolean; headline?: boolean } = {},
+  ): string => {
+    const decimals =
+      scaleDecimals ?? ([low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0);
+
+    const options = fixedDecimals(decimals);
 
     const end = (value: number) => {
       const written = format.number(value, options);
       return deduction && value > 0 ? `${MINUS}${written}` : written;
     };
 
-    return formatRange(end(low), end(high));
+    const shown = headline ? roundOutward({ high, low }, decimals) : { high, low };
+    return formatRange(end(shown.low), end(shown.high));
   };
+}
+
+/**
+ * The one line a row shows when the day's grading is used up, under the row it limits: "Back
+ * tomorrow: no more grading today", or the day it returns when that's later.
+ */
+export function useGradingReturnsLine() {
+  const t = useExtracted();
+  const today = useIsoToday();
+  const formatDate = useFormatIsoDate();
+
+  return (returnsOn: string): string =>
+    daysBetween(today, returnsOn) <= 1
+      ? t("Back tomorrow: no more grading today")
+      : t("Back on {date}: no more grading today", { date: formatDate(returnsOn, "sentence") });
 }

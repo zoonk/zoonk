@@ -7,6 +7,9 @@ import { useState } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { useFormatDuration } from "../_utils/time-format";
+import { ChooseOnToday } from "../writing/writing-choice";
+import { useWritingTaskName } from "../writing/writing-header";
+import { useGradingReturnsLine } from "../writing/writing-labels";
 import { type WrittenSubject } from "./subject-written-score";
 
 /** A written test's own facts, as its notice states them: "2 questions · 3 h 30 min · 50% of the score". */
@@ -29,6 +32,50 @@ export function useWrittenFacts({
   ].filter((fact) => typeof fact === "string");
 }
 
+type WriteAction = NonNullable<WrittenSubject["writeActions"]>[number];
+
+/**
+ * The exam choices some of the part's tasks wait for, and whether every task does, so there's
+ * nothing to write until they're made. A server without write actions says it for the whole part.
+ */
+function getPendingChoice(
+  written: WrittenSubject,
+): { all: boolean; groups: string[]; task?: WriteAction } | null {
+  const actions = written.writeActions ?? [];
+
+  if (actions.length === 0) {
+    return written.availability?.status === "needsChoice"
+      ? { all: true, groups: written.availability.choiceGroups }
+      : null;
+  }
+
+  const groups = actions.flatMap(({ availability }) =>
+    availability.status === "needsChoice" ? availability.choiceGroups : [],
+  );
+
+  const all = actions.every(({ availability }) => availability.status === "needsChoice");
+
+  const waiting = actions.filter(({ availability }) => availability.status === "needsChoice");
+  const [only] = waiting;
+
+  const task = waiting.length === 1 ? only : undefined;
+
+  return groups.length > 0 ? { all, groups: [...new Set(groups)], task } : null;
+}
+
+/** When every task's grading is used up for today, the first day one returns. */
+function getReturnsOn(actions: readonly WriteAction[]): string | null {
+  const days = actions.map(({ availability }) =>
+    availability.status === "tomorrow" ? availability.returnsOn : null,
+  );
+
+  if (days.length === 0 || days.some((day) => day === null)) {
+    return null;
+  }
+
+  return days.filter((day) => day !== null).toSorted()[0] ?? null;
+}
+
 /**
  * A written part's main action is writing: its lessons are a small part of its time. An unfinished
  * task opens where it was left, and once the day's grading is used the bar says when it returns
@@ -44,6 +91,8 @@ export function WriteBottomBar({
   written: WrittenSubject;
 }) {
   const t = useExtracted();
+  const gradingReturns = useGradingReturnsLine();
+  const taskName = useWritingTaskName();
   const [busy, setBusy] = useState(false);
   const actions = written.writeActions ?? [];
   const unfinished = actions.find((action) => action.availability.status === "continue");
@@ -64,19 +113,43 @@ export function WriteBottomBar({
     );
   }
 
-  if (actions.length > 0 && actions.every((action) => action.availability.status === "tomorrow")) {
+  const choice = getPendingChoice(written);
+  const waiting = choice?.task;
+
+  const waitingName =
+    waiting &&
+    taskName({
+      task: waiting.writingTask,
+      title: written.points.tasks.find(({ key }) => key === waiting.taskKey)?.name ?? "",
+    });
+
+  const choiceNote = choice && (
+    <ChooseOnToday choiceGroups={choice.groups} task={choice.all ? undefined : waitingName} />
+  );
+
+  if (choice?.all) {
+    return (
+      <BottomBar>
+        <div className="flex min-h-11 items-center lg:justify-end">{choiceNote}</div>
+      </BottomBar>
+    );
+  }
+
+  const returnsOn = getReturnsOn(actions);
+
+  if (returnsOn) {
     return (
       <BottomBar>
         <p className="text-muted-foreground flex min-h-11 items-center justify-center gap-2 text-sm lg:justify-end">
           <ClockIcon aria-hidden="true" className="size-4" />
-          {t("Back tomorrow: no more grading today")}
+          {gradingReturns(returnsOn)}
         </p>
       </BottomBar>
     );
   }
 
   return (
-    <BottomBar>
+    <BottomBar note={choiceNote}>
       <BottomBarActions>
         <EnterButton
           busy={busy}

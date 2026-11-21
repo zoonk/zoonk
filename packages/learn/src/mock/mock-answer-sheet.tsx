@@ -22,6 +22,7 @@ import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MovesNote } from "./mock-moves";
+import { getSectionPlace } from "./mock-place";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
 import { useQuestionCellLabel } from "./use-question-cell-label";
@@ -43,6 +44,17 @@ const CELL_CURRENT_CLASS =
 const CELL_FLAGGED_CLASS =
   "bg-warning/14 enabled:hover:bg-warning/14 contrast-more:ring-warning ring-transparent contrast-more:ring-2";
 
+/** A written test's questions are numbered, so two of them don't look the same. */
+function getWrittenTestNumber(
+  index: number,
+  questions: readonly MockQuestion[],
+): number | undefined {
+  const place =
+    questions[index]?.format === "essay" ? getSectionPlace({ position: index, questions }) : null;
+
+  return place && place.total > 1 ? place.number : undefined;
+}
+
 function QuestionCell({
   index,
   onPick,
@@ -54,11 +66,16 @@ function QuestionCell({
 }) {
   const { runner } = useMockScreen();
   const draft = runner.drafts[question.itemId];
-  const isEssay = question.format === "essay";
   const isCurrent = index === runner.position;
-  const isAnswered = countsTowardMockProgress(runner, question.itemId);
+  const writtenNumber = getWrittenTestNumber(index, runner.view.current?.questions ?? []);
 
-  const label = useQuestionCellLabel({ flagged: Boolean(draft?.flagged), question });
+  const label = useQuestionCellLabel({
+    flagged: Boolean(draft?.flagged),
+    number: writtenNumber,
+    question,
+  });
+
+  const isAnswered = countsTowardMockProgress(runner, question.itemId);
 
   return (
     <button
@@ -74,7 +91,12 @@ function QuestionCell({
       onClick={() => onPick(index)}
       type="button"
     >
-      {isEssay ? <PenLineIcon aria-hidden="true" className="size-4" /> : question.number}
+      {writtenNumber ??
+        (question.format === "essay" ? (
+          <PenLineIcon aria-hidden="true" className="size-4" />
+        ) : (
+          question.number
+        ))}
       {draft?.flagged && (
         <span
           aria-hidden="true"

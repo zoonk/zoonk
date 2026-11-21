@@ -6,15 +6,15 @@ import { Eyebrow } from "../_components/eyebrow";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { ESSAY_QUOTE_CLASS } from "../essay/essay-labels";
 
+/** Every criterion complete and every line read: there's no next step, so no chip says there is. */
 export function NothingLeftComment() {
   const t = useExtracted();
 
   return (
     <StepCard>
       <StepHeader>
-        <Eyebrow>{t("Next step")}</Eyebrow>
         <StepTitle>{t("Nothing left to work on")}</StepTitle>
-        <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
+        <StepDetail>{t("Every criterion is complete.")}</StepDetail>
       </StepHeader>
     </StepCard>
   );

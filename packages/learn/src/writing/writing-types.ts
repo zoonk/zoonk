@@ -3,10 +3,11 @@ import {
   type WritingDraft,
   type WritingTaskSummary,
 } from "@zoonk/core/exams/essays/writing-contract";
+import { type WritingTaskPlace } from "./writing-header";
 
 export type WritingStartAnswer =
   | { admissionId: string; status: "ready" }
-  | { generationId: string; status: "writing" }
+  | { generationId: string; status: "writing"; unit?: WritingTaskSummary["unit"] }
   | { returnsOn: string; status: "limitReached"; task?: WritingTaskSummary }
   | { status: "failed" | "signUpRequired" | "taskRemoved" };
 
@@ -37,4 +38,5 @@ export type TomorrowTask = {
   minutes: number | null;
   title: string;
   unit?: WritingTaskSummary["unit"];
+  writingTask?: WritingTaskPlace | null;
 };

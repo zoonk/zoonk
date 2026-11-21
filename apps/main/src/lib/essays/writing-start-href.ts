@@ -1,5 +1,9 @@
 import { type WritingStartAnswer } from "@zoonk/learn/writing";
-import { type WritingStartState } from "@zoonk/learn/writing/start";
+import {
+  type WritingStartState,
+  type WritingTaskPlace,
+  getRefusedTaskPlace,
+} from "@zoonk/learn/writing/start";
 
 const WRITING_START_PARAM = "writing";
 
@@ -8,14 +12,43 @@ const FAILED = "failed";
 const TASK_REMOVED = "removed";
 const TASK_PARAM = "task";
 const MINUTES_PARAM = "minutes";
+const PLACE_PARAM = "place";
 const UNIT_PARAM = "unit";
 const DRILL = "drill";
 
 type Search = Record<string, string | string[] | undefined>;
 
+/** The task's place in the written test, as "number.total.lines.distinct", so the refusal names it. */
+function placeParams(task: Parameters<typeof getRefusedTaskPlace>[0]): string[][] {
+  const place = getRefusedTaskPlace(task);
+
+  if (!place) {
+    return [];
+  }
+
+  const { distinctLines, lines, number, total } = place;
+
+  return [[PLACE_PARAM, [number, total, lines ?? 0, distinctLines ? 1 : 0].join(".")]];
+}
+
+function readPlace(search: Search): WritingTaskPlace | null {
+  const [number, total, lines, distinct] = (readParam(search, PLACE_PARAM) ?? "")
+    .split(".")
+    .map(Number);
+
+  if (!number || !total) {
+    return null;
+  }
+
+  return { distinctLines: distinct === 1, lines: lines || null, number, points: null, total };
+}
+
 function startParams(answer: Exclude<WritingStartAnswer, { status: "ready" }>): string[][] {
   if (answer.status === "writing") {
-    return [[WRITING_START_PARAM, answer.generationId]];
+    return [
+      [WRITING_START_PARAM, answer.generationId],
+      ...(answer.unit === DRILL ? [[UNIT_PARAM, DRILL]] : []),
+    ];
   }
 
   if (answer.status === "taskRemoved") {
@@ -31,6 +64,7 @@ function startParams(answer: Exclude<WritingStartAnswer, { status: "ready" }>): 
     ? [
         [TASK_PARAM, answer.task.description],
         [MINUTES_PARAM, String(answer.task.minutes)],
+        ...placeParams(answer.task),
         [UNIT_PARAM, answer.task.unit],
       ]
     : [];
@@ -60,6 +94,15 @@ function readParam(search: Search, key: string): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
+function readCount(search: Search, key: string): number | null {
+  const value = Number(readParam(search, key));
+  return Number.isInteger(value) && value > 0 ? value : null;
+}
+
+function readUnit(search: Search): "answer" | "drill" {
+  return readParam(search, UNIT_PARAM) === DRILL ? DRILL : "answer";
+}
+
 export function readWritingStart(search: Search): WritingStartState | null {
   const value = readParam(search, WRITING_START_PARAM);
 
@@ -69,15 +112,15 @@ export function readWritingStart(search: Search): WritingStartState | null {
 
   if (value === LIMIT) {
     const title = readParam(search, TASK_PARAM);
-    const minutes = Number(readParam(search, MINUTES_PARAM));
 
     return {
       status: "limitReached",
       task: title
         ? {
-            minutes: Number.isInteger(minutes) && minutes > 0 ? minutes : null,
+            minutes: readCount(search, MINUTES_PARAM),
             title,
-            unit: readParam(search, UNIT_PARAM) === DRILL ? DRILL : "answer",
+            unit: readUnit(search),
+            writingTask: readPlace(search),
           }
         : null,
     };
@@ -87,5 +130,5 @@ export function readWritingStart(search: Search): WritingStartState | null {
     return { status: "taskRemoved" };
   }
 
-  return value === FAILED ? { status: "failed" } : { generationId: value };
+  return value === FAILED ? { status: "failed" } : { generationId: value, unit: readUnit(search) };
 }

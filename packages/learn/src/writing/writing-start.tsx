@@ -6,15 +6,22 @@ import { useEffect, useState } from "react";
 import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions, TaskStopMessage } from "../_components/task-layout";
-import { WritingWait } from "../generation/writing-wait";
+import { FollowedRun } from "../generation/generation-follower";
+import { type GenerationRun } from "../generation/generation-run";
+import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { getRefusedTaskPlace } from "./writing-header";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
 import { type TomorrowTask } from "./writing-types";
 
+type WritingUnit = NonNullable<TomorrowTask["unit"]>;
+
+export { type WritingTaskPlace, getRefusedTaskPlace } from "./writing-header";
+
 export type WritingStartState =
-  | { generationId: string }
+  | { generationId: string; unit?: WritingUnit }
   | { status: "failed" | "taskRemoved" }
   | { status: "limitReached"; task: TomorrowTask | null };
 
@@ -33,7 +40,14 @@ function toStopState(
 
   return {
     status: "limitReached",
-    task: task ? { minutes: task.minutes, title: task.description, unit: task.unit } : null,
+    task: task
+      ? {
+          minutes: task.minutes,
+          title: task.description,
+          unit: task.unit,
+          writingTask: getRefusedTaskPlace(task),
+        }
+      : null,
   };
 }
 
@@ -73,13 +87,34 @@ function WritingTaskRemoved({ hrefs }: { hrefs: { exit: string } }) {
     >
       <div className="flex flex-1 flex-col gap-6 pt-4 pb-8">
         <TaskStopMessage
-          description={t("The exam notice changed. Nothing was counted.")}
+          description={t("Your exam notice changed, so it's out of your plan. Nothing was graded.")}
           heading="h1"
           icon={<CircleSlash2Icon aria-hidden="true" />}
-          title={t("This task is no longer on your exam")}
+          title={t("This question is no longer on your exam")}
         />
       </div>
     </TaskFrame>
+  );
+}
+
+/** One model call writes the question: the wait says what's coming, with no steps it doesn't have. */
+function WritingPromptWait({ run, unit }: { run: GenerationRun; unit?: WritingUnit }) {
+  const t = useExtracted();
+
+  return unit === "drill" ? (
+    <IndeterminateWait
+      description={t("A short exercise on what you just learned. It opens here when it's ready.")}
+      failedTitle={t("We couldn't write your exercise")}
+      run={run}
+      title={t("Writing your exercise…")}
+    />
+  ) : (
+    <IndeterminateWait
+      description={t("A new question like the ones on your exam. It opens here when it's ready.")}
+      failedTitle={t("We couldn't write your question")}
+      run={run}
+      title={t("Writing your question…")}
+    />
   );
 }
 
@@ -106,6 +141,7 @@ export function WritingStartScreen({
   const [state, setState] = useState(initial);
   const [asking, setAsking] = useState(false);
   const generationId = "generationId" in state ? state.generationId : null;
+  const unit = "unit" in state ? state.unit : undefined;
 
   useWritingWaitViewed({ generationId, surface: "practice" });
 
@@ -120,7 +156,7 @@ export function WritingStartScreen({
     }
 
     if (answer.status === "writing") {
-      setState({ generationId: answer.generationId });
+      setState({ generationId: answer.generationId, unit: answer.unit ?? unit });
       return answer.generationId;
     }
 
@@ -136,15 +172,6 @@ export function WritingStartScreen({
     return <WritingTaskRemoved hrefs={hrefs} />;
   }
 
-  const header = (
-    <StepHeader className="gap-3">
-      <StepTitle>{t("Writing your question…")}</StepTitle>
-      <StepDetail>
-        {t("A new question, like the ones on your exam. It opens here when it's ready.")}
-      </StepDetail>
-    </StepHeader>
-  );
-
   return (
     <TaskFrame
       exitHref={hrefs.exit}
@@ -157,15 +184,20 @@ export function WritingStartScreen({
           </TaskActions>
         )
       }
-      headerTitle={<TaskHeaderTitle title={t("Writing practice")} />}
+      headerTitle={
+        <TaskHeaderTitle title={unit === "answer" ? t("Written answer") : t("Writing practice")} />
+      }
     >
       {generationId ? (
-        <WritingWait
+        <FollowedRun
+          generationId={generationId}
+          key={generationId}
           kind="writingPrompt"
-          writing={{ generationId, onReady: () => void ask(), restart: ask }}
+          onReady={() => void ask()}
+          restart={ask}
         >
-          {header}
-        </WritingWait>
+          {(run) => <WritingPromptWait run={run} unit={unit} />}
+        </FollowedRun>
       ) : (
         <StepHeader className="gap-3">
           <StepTitle>{t("We couldn't write your question")}</StepTitle>

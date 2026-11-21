@@ -238,16 +238,8 @@ function useWritingPromptCopy(): KindCopy<"writingPrompt"> {
 
   return {
     name: t("Writing your question"),
-    phases: {
-      question: {
-        label: t("Writing a question like your exam's"),
-        lines: [
-          t("Choosing the topic…"),
-          t("Writing the support text…"),
-          t("Checking it against the exam's criteria…"),
-        ],
-      },
-    },
+    // One model call: its wait shows no steps (`IndeterminateWait`), so this names the run only.
+    phases: { question: { label: t("Writing your question"), lines: [] } },
   };
 }
 

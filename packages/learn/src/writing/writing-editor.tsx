@@ -36,6 +36,22 @@ export function WritingLineCount({
   });
 
   const over = estimatedLines - writing.lines;
+  const lines = String(writing.lines);
+
+  const countLine = () => {
+    if (!text.trim()) {
+      return t("0 of {lines} lines", { lines });
+    }
+
+    return over > 0
+      ? t({
+          description:
+            "The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.",
+          message: "about {used} of {lines} lines · {over} won't be read",
+          values: { lines, over: String(over), used: String(estimatedLines) },
+        })
+      : t("about {used} of {lines} lines", { lines, used: String(estimatedLines) });
+  };
 
   return (
     <p
@@ -46,26 +62,12 @@ export function WritingLineCount({
       )}
       id={id}
     >
-      {over > 0
-        ? t({
-            description:
-              "The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.",
-            message: "about {used} of {lines} lines · {over} won't be read",
-            values: {
-              lines: String(writing.lines),
-              over: String(over),
-              used: String(estimatedLines),
-            },
-          })
-        : t("about {used} of {lines} lines", {
-            lines: String(writing.lines),
-            used: String(estimatedLines),
-          })}
+      {countLine()}
     </p>
   );
 }
 
-/** The field fills the screen; the count of lines a board would see stays under it. */
+/** The field fills the screen; the count of lines graders would read stays under it. */
 export function WritingEditor({
   label,
   onChange,

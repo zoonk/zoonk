@@ -19,6 +19,12 @@ describe(getSectionPlace, () => {
     expect(getSectionPlace({ position: 2, questions })).toBeNull();
   });
 
+  it("counts a written test's questions, which are all written", () => {
+    const questions = [essay, essay];
+
+    expect(getSectionPlace({ position: 1, questions })).toStrictEqual({ number: 2, total: 2 });
+  });
+
   it("says nothing past the section's questions", () => {
     expect(getSectionPlace({ position: 1, questions: [question] })).toBeNull();
   });
