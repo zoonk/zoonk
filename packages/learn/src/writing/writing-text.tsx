@@ -5,16 +5,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
+import { toWordStart } from "./word-start";
 
 type Mark = { error: number | null; ignored: boolean; step: boolean };
 
 type Piece = Mark & { end: number; start: number };
-
-/** A line limit falls inside a word as often as not; the word it splits is shown as past it, whole. */
-function toWordStart(text: string, offset: number): number {
-  const splitWord = /\S*$/u.exec(text.slice(0, offset))?.[0] ?? "";
-  return offset - splitWord.length;
-}
 
 /** Offsets are UTF-16 code units into the saved text, as the grade's `start` and `ignoredFrom`. */
 function cutText({ grade, text }: { grade: WritingResult; text: string }): Piece[] {

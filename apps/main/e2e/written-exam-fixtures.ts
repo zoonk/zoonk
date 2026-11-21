@@ -191,6 +191,7 @@ export async function addGradedAnswer({
       name: text,
       quote: null,
     })),
+    decimals: 0,
     deduction: { high: 0.4, low: 0.3 },
     errors: [
       {

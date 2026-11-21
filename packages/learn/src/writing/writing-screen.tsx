@@ -13,14 +13,19 @@ import { useFinishTask } from "../essay/use-finish-essay";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { getNextStep } from "./next-step";
 import { type WritingDraftState, useWritingDraft } from "./use-writing-draft";
-import { useHeaderLabel } from "./writing-header";
+import { type WritingTaskPlace, getRefusedTaskPlace, useHeaderLabel } from "./writing-header";
 import { WritingQuestionScreen } from "./writing-question";
 import { WritingRefused } from "./writing-refused";
 import { WritingResultView } from "./writing-result";
 import { type WritingActions, type WrittenEssay } from "./writing-types";
 import { WriteScreen } from "./writing-write-screen";
 
-export type { WritingActions, WritingDraftAnswer, WritingStartAnswer } from "./writing-types";
+export type {
+  TomorrowTask,
+  WritingActions,
+  WritingDraftAnswer,
+  WritingStartAnswer,
+} from "./writing-types";
 
 type Mode = "question" | "refused" | "result" | "write";
 
@@ -31,6 +36,7 @@ function ResultScreen({
   hrefs,
   onRewrite,
   rewriting,
+  unsent,
   writing,
 }: {
   closed: boolean;
@@ -39,6 +45,8 @@ function ResultScreen({
   hrefs: { exit: string };
   onRewrite: () => void;
   rewriting: boolean;
+  /** Changes made after a send whose answer was lost: the grade is the first text's. */
+  unsent: boolean;
   writing: WritingPrompt;
 }) {
   const t = useExtracted();
@@ -70,9 +78,17 @@ function ResultScreen({
         </TaskActions>
       }
       footerNote={
-        finishing.failures > 0 &&
-        !finishing.pending && (
+        finishing.failures > 0 && !finishing.pending ? (
           <AnswersSaveError failures={finishing.failures} onRetry={() => void finishing.finish()} />
+        ) : (
+          unsent &&
+          !closed && (
+            <p className="text-muted-foreground text-sm" role="status">
+              {t(
+                "This grade is for the version you sent first. Your changes are kept for your rewrite.",
+              )}
+            </p>
+          )
         )
       }
       headerTitle={<TaskHeaderTitle title={label} />}
@@ -134,9 +150,11 @@ export function WritingScreen({
   const [results, setResults] = useState(essay.drafts);
   const [mode, setMode] = useState<Mode>(() => initialMode(essay, results));
   const [rewriting, setRewriting] = useState(false);
+  const [refusedPlace, setRefusedPlace] = useState<WritingTaskPlace | null>(null);
   const draft = useWritingDraft({ actions, essay });
   const latest = results[0];
   const closed = essay.status === "completed" || essay.status === "skipped";
+  const unsent = latest !== undefined && draft.text.trim() !== "" && draft.text !== latest.text;
 
   async function rewrite() {
     if (!latest) {
@@ -148,9 +166,10 @@ export function WritingScreen({
     setRewriting(false);
 
     if (started?.status === "ready") {
-      draft.restart({ admissionId: started.admissionId, from: latest.text });
+      draft.restart({ admissionId: started.admissionId, from: unsent ? draft.text : latest.text });
       setMode("write");
     } else if (started?.status === "limitReached") {
+      setRefusedPlace(started.task ? getRefusedTaskPlace(started.task) : null);
       setMode("refused");
     }
   }
@@ -165,6 +184,7 @@ export function WritingScreen({
             minutes: essay.pacing?.minutes ?? null,
             title: essay.writing.title,
             unit: essay.writing.unit,
+            writingTask: refusedPlace,
           }}
         />
       );
@@ -179,6 +199,7 @@ export function WritingScreen({
           hrefs={hrefs}
           onRewrite={() => void rewrite()}
           rewriting={rewriting}
+          unsent={unsent}
           writing={essay.writing}
         />
       );

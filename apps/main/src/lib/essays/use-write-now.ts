@@ -3,7 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { useCallback } from "react";
 import { writeNowFromBrowser } from "./writing-requests";
-import { getWritingHref } from "./writing-start-href";
+import { handOverWritingStart } from "./writing-start-handoff";
 
 /** "Write" on a page: starts a written task the learner asked for and opens it. */
 export function useWriteNow() {
@@ -14,7 +14,7 @@ export function useWriteNow() {
       const written = await writeNowFromBrowser(input);
 
       if (written) {
-        router.push(getWritingHref(written));
+        router.push(handOverWritingStart(written));
       }
 
       return Boolean(written);

@@ -271,7 +271,8 @@ export function WritingResultView({
         {/* A heading, not a chip: one chip sits over a title, and the next step has its own. */}
         {eyebrow && <PageSectionTitle>{eyebrow}</PageSectionTitle>}
         {grade.kind === "points" && <PointsHeader grade={grade} prompt={prompt} text={text} />}
-        <WritingProgress grade={grade} />
+        {/* A zeroed answer's one step is the rule it broke: no criterion to compare yet. */}
+        {getNextStep({ grade, text }).kind !== "zero" && <WritingProgress grade={grade} />}
         <WritingNextStep grade={grade} lines={prompt.lines} text={text} />
       </div>
       <WritingCriteria grade={grade} prompt={prompt} />

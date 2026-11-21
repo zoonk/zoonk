@@ -1,6 +1,5 @@
 "use client";
 
-import { type WritingPrompt } from "@zoonk/core/exams/essays/writing-contract";
 import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { useExtracted } from "next-intl";
 import { useFormatScore } from "../essay/essay-labels";
@@ -37,21 +36,6 @@ export function PointsReadout({
       </span>
     </span>
   );
-}
-
-/** Where a minimum falls on a scale, as a share of it. */
-export function getMinimumShare({
-  max,
-  minimum,
-}: {
-  max: number | null;
-  minimum: NonNullable<WritingPrompt["partMinimum"]>["minimum"];
-}): number | null {
-  if (minimum.unit === "percent") {
-    return minimum.value / PERCENT;
-  }
-
-  return max ? minimum.value / max : null;
 }
 
 /**

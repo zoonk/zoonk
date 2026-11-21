@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { startWritingFromBrowser } from "@/lib/essays/writing-requests";
-import { getWritingHref } from "@/lib/essays/writing-start-href";
+import { handOverWritingStart } from "@/lib/essays/writing-start-handoff";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
@@ -243,7 +243,7 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
         router.push(
           started.answer === "notWriting"
             ? `/essay/${blockId}`
-            : getWritingHref({ answer: started.answer, blockId }),
+            : handOverWritingStart({ answer: started.answer, blockId }),
         );
       } else if (destination.kind === "today") {
         router.push("/today");

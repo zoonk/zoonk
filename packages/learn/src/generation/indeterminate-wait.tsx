@@ -7,20 +7,19 @@ import {
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { GenerationFailureNotice } from "./generation-failure-notice";
-import { type GenerationRun } from "./generation-run";
+import { type GenerationRun, hasStopped } from "./generation-run";
 
 /**
  * A wait that's one model call: no steps or percentage to report, so it says what's coming and
- * spins until it's there. A failure says so, with the run's own Try again.
+ * spins until it's there. Once the run stops for good it reads as the failed screen, whose bar
+ * holds the run's Try again; a lost connection keeps the wait with its Reconnect.
  */
 export function IndeterminateWait({
-  barHasMainAction,
   description,
   failedTitle,
   run,
   title,
 }: {
-  barHasMainAction?: boolean;
   description: string;
   /** Said once the run stopped for good, so the title never claims work that isn't happening. */
   failedTitle: string;
@@ -28,8 +27,7 @@ export function IndeterminateWait({
   title: string;
 }) {
   const t = useExtracted();
-  const failure = run.status === "failed" ? (run.failure ?? "generation") : null;
-  const stopped = failure !== null && failure !== "connection";
+  const stopped = hasStopped(run);
 
   return (
     <div className="flex flex-col gap-6" data-slot="indeterminate-wait">
@@ -38,16 +36,16 @@ export function IndeterminateWait({
         <GenerationTimelineTitle render={<h1 />}>
           {stopped ? failedTitle : title}
         </GenerationTimelineTitle>
-        {!stopped && <GenerationTimelineDescription>{description}</GenerationTimelineDescription>}
+        <GenerationTimelineDescription>
+          {stopped ? t("Nothing was lost. Try again in a moment.") : description}
+        </GenerationTimelineDescription>
       </div>
 
-      {failure ? (
-        <GenerationFailureNotice
-          barHasMainAction={barHasMainAction}
-          failure={failure}
-          retry={run.retry}
-        />
-      ) : (
+      {!stopped && run.status === "failed" && (
+        <GenerationFailureNotice barHasMainAction failure="connection" retry={run.retry} />
+      )}
+
+      {run.status !== "failed" && (
         <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
           <Spinner aria-hidden="true" className="size-5" role="presentation" />
           <span className="sr-only">{t("In progress")}</span>

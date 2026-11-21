@@ -7,7 +7,7 @@ import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
 import { FactSegments } from "../_components/task-meta";
-import { ChooseOnToday, useChoiceLine } from "../writing/writing-choice";
+import { useChoiceLine } from "../writing/writing-choice";
 import { useGradingReturnsLine } from "../writing/writing-labels";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
@@ -254,7 +254,7 @@ function PracticeChooser({
           busy={busy}
           disabled={!option || blocked}
           gated={gated}
-          note={pickedChoice && <ChooseOnToday choiceGroups={pickedChoice} />}
+          choose={Boolean(pickedChoice)}
           onStart={start}
           status={shown}
         />

@@ -1,6 +1,6 @@
 "use client";
 
-import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
+import { type EssayDraft, MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import { TaskActions, TaskAsideContent, TaskBody } from "../_components/task-lay
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "../essay/essay-status-line";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
 import { type WritingDraftState } from "./use-writing-draft";
+import { WritingConflictDialog } from "./writing-conflict-dialog";
 import { WritingEditor } from "./writing-editor";
 import { useHeaderLabel } from "./writing-header";
 import { WritingCriteriaSection, WritingQuestionBody } from "./writing-question";
@@ -34,19 +35,34 @@ export function WriteScreen({
   const t = useExtracted();
   const [status, setStatus] = useState<EssayStatus>("idle");
   const label = useHeaderLabel(essay.writing);
-  const canSend = draft.text.trim().length > 0 && status !== "pending";
+  const fits = draft.text.length <= MAX_ESSAY_CHARACTERS;
+  const canSend = draft.text.trim().length > 0 && fits && status !== "pending";
 
+  const fail = () => {
+    draft.lock(false);
+    setStatus("error");
+  };
+
+  // From the tap until grading fails or the result opens, the field is read-only: what's graded
+  // is what's on screen.
   async function send() {
     setStatus("pending");
+    draft.lock(true);
     const text = draft.text;
     const admissionId = await draft.admissionId();
 
     if (!admissionId) {
-      setStatus("error");
+      fail();
       return;
     }
 
     await draft.flush();
+
+    if (draft.conflicted()) {
+      draft.lock(false);
+      setStatus("idle");
+      return;
+    }
 
     const settled = await settleWithin({
       ms: GRADING_BOUNDS.timeoutMs,
@@ -56,12 +72,17 @@ export function WriteScreen({
     const result = settled?.status === "settled" ? settled.value : null;
 
     if (!result) {
-      setStatus("error");
+      fail();
       return;
     }
 
     setStatus("idle");
-    draft.clear();
+
+    // A send whose answer was lost was graded as first sent: what's on screen now stays kept.
+    if (result.text === text) {
+      draft.clear();
+    }
+
     onGraded(result);
   }
 
@@ -70,12 +91,22 @@ export function WriteScreen({
   return (
     <TaskFrame
       aside={{ label: t("Question"), title: essay.writing.title }}
-      beforeExit={draft.pending}
+      beforeExit={() => draft.flush()}
+      confirmExit={
+        draft.saveFailed
+          ? {
+              cancel: t("Keep writing"),
+              confirm: t("Leave"),
+              description: t("It's kept on this device and saves when you're back online."),
+              title: t("Your answer isn't saved yet"),
+            }
+          : null
+      }
       exitHref={hrefs.exit}
       fit="always"
       footer={
         <>
-          <StatusLine gradesLeft={1} status={status} />
+          <StatusLine saveFailed={draft.saveFailed} status={status} />
           <TaskActions>
             <TaskMainButton
               busy={status === "pending"}
@@ -107,10 +138,12 @@ export function WriteScreen({
         <WritingEditor
           label={rewrite ? t("Rewrite what needs work") : t("Your answer")}
           onChange={draft.write}
+          readOnly={status === "pending"}
           text={draft.text}
           writing={essay.writing}
         />
       </TaskBody>
+      <WritingConflictDialog draft={draft} />
     </TaskFrame>
   );
 }

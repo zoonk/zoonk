@@ -11,8 +11,12 @@ import {
   StepRow,
   StepRows,
 } from "../_components/step-card";
-import { MinimumLegend, PointsMeter, PointsReadout, getMinimumShare } from "./points-readout";
+import { getMinimumShare } from "./minimum-points";
+import { MinimumLegend, PointsMeter, PointsReadout } from "./points-readout";
 import { useFormatPointsRange } from "./writing-labels";
+
+// A language error costs a fraction of a point, so whole points would read "−0".
+const DEDUCTION_DECIMALS = 1;
 
 type Points = Extract<WritingResult, { kind: "points" }>;
 
@@ -103,7 +107,7 @@ export function PointsHeader({
               </span>
             </span>
             <span className="font-mono text-xs tabular-nums">
-              {formatRange(grade.deduction, { deduction: true })}
+              {formatRange(grade.deduction, { decimals: DEDUCTION_DECIMALS, deduction: true })}
             </span>
           </StepRow>
         </StepRows>

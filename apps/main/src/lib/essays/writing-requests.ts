@@ -59,12 +59,15 @@ export async function startWritingFromBrowser({
 export async function saveWritingDraftFromBrowser({
   blockId,
   draft,
+  keepalive,
 }: {
   blockId: string;
   draft: { admissionId: string; revision: number; text: string };
+  keepalive: boolean;
 }): Promise<WritingDraftAnswer> {
   const response = await sendFromBrowser({
     body: draft,
+    keepalive,
     method: "PUT",
     path: essayPath(blockId, "draft"),
   });

@@ -34,7 +34,7 @@ function TomorrowTaskList({ task }: { task: TomorrowTask }) {
             <KindMark kind="essay" />
           </ListRowLeading>
           <ListRowBody>
-            <ListRowTitle>{writingTitle(task)}</ListRowTitle>
+            <ListRowTitle>{writingTitle({ ...task, task: task.writingTask })}</ListRowTitle>
           </ListRowBody>
           {task.minutes !== null && (
             <ListRowTrailing className="font-mono text-xs">
