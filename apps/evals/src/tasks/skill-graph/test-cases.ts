@@ -923,7 +923,8 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     expectations: `
       - MUST be in Korean
       - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)
-      - A small path for preparing for any written exam, in one course on study and test-taking skills and one or two phases: reading what a question asks, pacing the time, ruling out wrong options, checking answers, recalling from one's own notes, reviewing what's weakest first and a timed practice run
+      - A small path for preparing for any exam, in one course on study and test-taking skills and one or two phases: recalling from one's own notes, reviewing what's weakest first, a timed practice run, reading what a question asks, pacing the time and checking answers
+      - The exam's format is unknown too: no tactic for one question format, such as eliminating multiple-choice options or structuring an essay
       - Lesson-sized skills, a few hours in all at most
       - Nothing about the exam day's procedures, such as documents to bring or sleep
 

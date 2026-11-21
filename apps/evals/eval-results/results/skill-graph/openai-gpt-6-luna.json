@@ -5828,188 +5828,6 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "All seven requested skills are identifiable, including closed-note recall, weakest-first review and a timed run that practices both pacing and checking. All exam weights are within range, and there is no blueprint to justify weighting one technique more heavily.",
-          "score": 10,
-          "label": "Coverage",
-          "weight": 25
-        },
-        {
-          "categoryId": "orderAndPrerequisites",
-          "reasoning": "Recall precedes prioritizing weak material; understanding the prompt precedes eliminating choices and checking answers. The timed run directly builds on the pacing and checking skills it rehearses. Both phases have distinct stage titles and attainable milestones.",
-          "score": 10,
-          "label": "Order & prerequisites",
-          "weight": 20
-        },
-        {
-          "categoryId": "granularity",
-          "reasoning": "Each technique has a narrow focus, and 2.5 hours leaves room for practice and review. The main weakness is the uniform three-lesson allocation even for small actions such as checking an answer against the question’s conditions; one short lesson plus practice would better match the requested scale.",
-          "score": 8,
-          "label": "Size matched to demand",
-          "weight": 15
-        },
-        {
-          "categoryId": "noFiller",
-          "reasoning": "Diagnosing why an answer was wrong serves a different purpose from checking it before submission. The final run applies the techniques under a time limit rather than reteaching them. There is no unrelated subject matter or exam-day advice.",
-          "score": 10,
-          "label": "No filler or overlap",
-          "weight": 15
-        },
-        {
-          "categoryId": "goalFit",
-          "reasoning": "The learner-facing text is Korean, the skills are accessible at a basic level, and the single course prepares for a written exam without guessing its subject. The names are generic, verb-final actions, though shorter action labels would read more naturally as course-page entries.",
-          "score": 9,
-          "label": "Goal & level fit",
-          "weight": 15
-        },
-        {
-          "categoryId": "aiEraSkills",
-          "reasoning": "Interpreting conditions, comparing the grounds for choices, diagnosing errors and deciding what to review all exercise judgment. Unaided recall and timed practice fit the exam goal; no AI-tool skill is needed.",
-          "score": 10,
-          "label": "Skills for a world with AI",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4170,
-          "outputTokens": 675,
-          "reasoningTokens": 46
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The total of 2.5 hours is credible, but assigning three lessons to every individual technique and four to the practice run is less compact than the requested lesson-sized path.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Use short action labels such as “문항별 시간 배분하기” on the course page and keep the “할 수 있어요” wording for descriptions and milestones. This would distinguish the skill name from its outcome without changing the content.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Korean\n      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)\n      - A small path for preparing for any written exam, in one course on study and test-taking skills and one or two phases: reading what a question asks, pacing the time, ruling out wrong options, checking answers, recalling from one's own notes, reviewing what's weakest first and a timed practice run\n      - Lesson-sized skills, a few hours in all at most\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "ko-exam-named-only-by-its-date-1",
-        "userInput": {
-          "context": "{\"examDay\":\"official\",\"examMonth\":12,\"examYear\":2026,\"subject\":\"시험\"}",
-          "goal": "12월 5일 시험",
-          "goalKind": "exam",
-          "language": "ko",
-          "ownLevel": "basic"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "coverage",
-          "reasoning": "All seven pillars are explicit. In particular, identifying weak topics leads to a separate action of reviewing them first, and the timed run requires actually solving questions under a limit. No subject or blueprint is supplied that would justify unequal exam weights.",
-          "score": 10,
-          "label": "Coverage",
-          "weight": 25
-        },
-        {
-          "categoryId": "orderAndPrerequisites",
-          "reasoning": "The two stages have distinct titles and attainable milestones. Question interpretation precedes elimination and answer checking, and weakness identification precedes targeted review. The main gap is the missing edge from answer checking to the timed run that calls for checking the result.",
-          "score": 8,
-          "label": "Order & prerequisites",
-          "weight": 20
-        },
-        {
-          "categoryId": "granularity",
-          "reasoning": "The skills each focus on a concrete action. The 30 short lessons take 90 minutes, leaving another 90 minutes of the three-hour estimate for practice and review.",
-          "score": 10,
-          "label": "Size matched to demand",
-          "weight": 15
-        },
-        {
-          "categoryId": "noFiller",
-          "reasoning": "The extra planning and error-analysis skills serve exam preparation without drifting into exam-day logistics. Finding which topics need attention and diagnosing why an answer was wrong are distinct decisions.",
-          "score": 10,
-          "label": "No filler or overlap",
-          "weight": 15
-        },
-        {
-          "categoryId": "goalFit",
-          "reasoning": "The single Korean study-skills course suits a basic learner and does not guess the exam subject. Its main fit issue is the naming convention: the repeated can-do sentences are better suited to milestones than to reusable action labels.",
-          "score": 8,
-          "label": "Goal & level fit",
-          "weight": 15
-        },
-        {
-          "categoryId": "aiEraSkills",
-          "reasoning": "Learners judge what a question requires, compare options against conditions, check answers, and use errors to direct further study. Closed-note recall serves the exam goal; no AI-tool component is needed.",
-          "score": 10,
-          "label": "Skills for a world with AI",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4476,
-          "outputTokens": 634,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The timed run includes checking the result, but its prerequisites omit `check-answers`. That skill appears earlier in the list, yet the graph allows a learner to reach the run without it. The skill names are understandable Korean, but they read as milestone statements ending in ‘할 수 있어요’ rather than concise action labels.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Add `check-answers` as a prerequisite for the timed run and use action labels such as ‘답안 검토하기’, reserving can-do statements for milestones. For recall, ‘노트를 덮고 핵심 내용 떠올리기’ would make the closed-note action clear even without the description.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Korean\n      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)\n      - A small path for preparing for any written exam, in one course on study and test-taking skills and one or two phases: reading what a question asks, pacing the time, ruling out wrong options, checking answers, recalling from one's own notes, reviewing what's weakest first and a timed practice run\n      - Lesson-sized skills, a few hours in all at most\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "ko-exam-named-only-by-its-date-2",
-        "userInput": {
-          "context": "{\"examDay\":\"official\",\"examMonth\":12,\"examYear\":2026,\"subject\":\"시험\"}",
-          "goal": "12월 5일 시험",
-          "goalKind": "exam",
-          "language": "ko",
-          "ownLevel": "basic"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "coverage",
           "reasoning": "All six biological topics are taught in substance, and organelles receive the highest weights. However, none of the six required IDs is mapped, osmosis has no blueprint link, and the general transport description leaves several distinctions from the notes implicit.",
           "score": 8,
           "label": "Coverage",
@@ -6248,6 +6066,188 @@
           "hasMaterial": true,
           "language": "pt",
           "lessonBudget": 15,
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six requested actions are identifiable, including a timed run distinct from pacing. The one grounding gap is that the recall skill refers to materials generally rather than explicitly using the learner’s own notes.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The two phases progress sensibly from preparation to practice, and answer checking correctly depends on understanding the question. However, timed practice has no dependency on any of the test-taking skills it should exercise. The weakness-ranking step also precedes the recall check that would give the learner evidence for that ranking.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The eight narrowly scoped skills take two short lessons apiece. At three minutes per lesson, that leaves 48 of the estimated 96 minutes for practice and review, a credible allocation for this small goal.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Scope selection is relevant preparation, and there are no motivational lessons, subject guesses or exam-day procedures. The slight duplication is in diagnosing weaknesses: one skill uses weak areas to rank review, while another asks the learner to find those areas again rather than focusing on correcting them.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Korean, the skill names are verb-final can-do statements, and the single beginner course stays usable without knowing either the exam subject or question format.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path emphasizes judgments the learner must make during preparation and testing: identifying gaps, interpreting a request, adjusting time and spotting omissions. Manual recall is appropriate here, and the goal does not require an AI-tool skill.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4227,
+          "outputTokens": 669,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The timed practice run comes before question reading, pacing and answer checking, and lists only scope identification as a prerequisite. A beginner can start a timer at that point, but has not yet learned the skills the run should put into practice.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The recall task says to close the materials, but does not identify them as the learner’s own notes. In phase one, the learner also ranks weaknesses before using recall to find gaps, then identifies weak points again during review.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a single preparation sequence: recall a topic with the learner’s notes closed, reopen them to check what was missed, then review the weakest topic first. End phase two with a timed run that explicitly builds on reading, pacing and checking.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)\n      - A small path for preparing for any exam, in one course on study and test-taking skills and one or two phases: recalling from one's own notes, reviewing what's weakest first, a timed practice run, reading what a question asks, pacing the time and checking answers\n      - The exam's format is unknown too: no tactic for one question format, such as eliminating multiple-choice options or structuring an essay\n      - Lesson-sized skills, a few hours in all at most\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-exam-named-only-by-its-date-1",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"examMonth\":12,\"examYear\":2026,\"subject\":\"시험\"}",
+          "goal": "12월 5일 시험",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six requested abilities have explicit skills, including reviewing weak topics first rather than merely identifying them. The exam weights are within range, and no blueprint supports assigning one ability more weight than another.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Recall leads sensibly to identifying gaps and then choosing what to review. The clearest error is the prerequisite from study scheduling to timed practice: budgeting preparation time is not necessary to attempt a timed exercise. Placing the run last would also give the second phase a practical endpoint.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Each skill targets a narrow action in two or three short lessons. The 23 lessons account for 69 minutes of instruction, leaving another 69 minutes within the 2.3-hour estimate for practice and review.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills serve a small exam-preparation goal. Tracking what recall reveals and deciding what to review next are distinct actions. Allocating study time before the exam is also distinct from pacing answers during it.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Korean map fits a basic learner without inventing a subject, question format or exam-day procedure. The scheduling skill's description is clear, though its Korean action label could express that meaning more naturally.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The learner exercises judgment by interpreting question requirements, prioritizing weaknesses and checking whether an answer meets the request. Unaided recall and timed practice are appropriate for an exam goal; no AI-tool skill is needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4237,
+          "outputTokens": 627,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The timed run requires a study schedule, although a learner can set a timer without one. The Korean label “남은 시간을 공부 계획으로 나눌 수 있어요” is also awkward: the intended action is allocating time to study tasks, not dividing time into a plan.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the timed run as the final rehearsal so the learner can practice reading a question, pacing the work and checking the answer in one sitting. For recall, make the feedback step explicit: close the notes, recall the key points, then reopen them to identify gaps.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)\n      - A small path for preparing for any exam, in one course on study and test-taking skills and one or two phases: recalling from one's own notes, reviewing what's weakest first, a timed practice run, reading what a question asks, pacing the time and checking answers\n      - The exam's format is unknown too: no tactic for one question format, such as eliminating multiple-choice options or structuring an essay\n      - Lesson-sized skills, a few hours in all at most\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-exam-named-only-by-its-date-2",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"examMonth\":12,\"examYear\":2026,\"subject\":\"시험\"}",
+          "goal": "12월 5일 시험",
+          "goalKind": "exam",
+          "language": "ko",
           "ownLevel": "basic"
         }
       }
