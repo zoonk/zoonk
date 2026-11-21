@@ -105,7 +105,7 @@
   "essay_writing_question": "0d6a8462f203cc44650404a9d90511dbead6a18d09125bf02a76de72bbda318a",
   "essay_writing_question_detail": "5f2894b5a78972f07afa10ecc36985cab535f543f4b9e823e055b723e5172650",
   "essay_written_answer": "696f6e507272fc8d60b1c45dc440d3f14928ab2117ac146abf00817e4e385051",
-  "essay_you_wrote": "3a45fc6a123a964de2688e493316a19ed40688f7f012526429d29ce8bb271d83",
+  "essay_you_wrote": "cb2fcdab15c0bb96348501a608b5805745222085c2606526d0310e8b3ff0b17d",
   "essay_your_answer": "0761c14e5904802344589a465191dee0910b49af55247fdf0ffdded6f6d03aa6",
   "essay_your_text": "051f17b1ab2a34d2e55663b01da2d10e023a9e3cf40704a397fd2f5068ac2d4e",
   "essay_zero_blank_text": "f92cb0e41cf2d33cb12c9113c4923a9e79b6b4307c316751922cbb0011b8be8c",
@@ -297,8 +297,8 @@
     <string name="essay_your_text">Ton texte</string>
     <string name="essay_past_line">Au-delà de la ligne %1$d : les correcteurs ne lisent plus</string>
     <string name="essay_past_limit">Au-delà de la limite : les correcteurs ne lisent plus</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">Tu as écrit « %1$s » · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">Tu as écrit « %1$s » (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Tu as sauté cette tâche.</string>
     <string name="essay_back_to_today">Aujourd’hui</string>

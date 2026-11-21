@@ -93,7 +93,9 @@
   "mock_words": "9bd58c4117d1e040f106a9933c0febac60ad9395ed9acf89b78dd4ae526e393d",
   "mock_written_part": "9b5f77ac09eb3cee5926b9f04662514e38f6c7327a2694865fec56b6731df542",
   "mock_written_part_area": "b81bf0f873a17832f5bee8477d1b990232e570d1b92a63845c51b39479130cad",
-  "mock_written_questions_blank": "317c20c59163ea8b82c1210cce18454ca548f3c0f4d37ffc975132bf229ce3c6",
+  "mock_written_question_blank": "f8b100d1832a65bb35fde67d0e16a5d83554cfa90ec3a714679d79168bec8548",
+  "mock_written_question_place": "2c44da12b8e9e60a56936d5cab5e656a4897f93ead9e9b13be1e4d6a420ec127",
+  "mock_written_questions_blank": "89c93bf74a4b049285709a7d5788c8bda54449931e929093e943e54aa7544bdd",
   "mock_your_essay": "5412f327926c6ffbbeff8701778178cc0d1970a3a93722825c89239f0bc2b321"
 }
 -->
@@ -132,6 +134,8 @@
     <!-- %1$s is the essay's area, such as Portuguese. -->
     <string name="mock_written_part_area">Partie écrite · %1$s</string>
     <string name="mock_question_place">Question %1$d sur %2$d</string>
+    <!-- A question's position among the questions in an exam's written test. -->
+    <string name="mock_written_question_place">Question %1$d sur %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d sur %2$d · %3$s</string>
     <string name="mock_flag">Marquer</string>
@@ -176,8 +180,10 @@
     <string name="mock_every_answered">Toutes les questions ont une réponse.</string>
     <string name="mock_essay_blank">La rédaction est vide.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <string name="mock_written_question_blank">La réponse rédigée est vide.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
-        <item quantity="one">%d réponse rédigée est vide.</item>
+        <item quantity="one">%d question écrite est sans réponse.</item>
         <item quantity="many">%d réponses rédigées sont vides.</item>
         <item quantity="other">%d réponses rédigées sont vides.</item>
     </plurals>

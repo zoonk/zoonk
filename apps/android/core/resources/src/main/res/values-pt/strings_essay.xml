@@ -105,7 +105,7 @@
   "essay_writing_question": "2e9fc5371ccc75414b8ec9b9b4c46dc4f908bf934a65cd109a88b7d96e825c4b",
   "essay_writing_question_detail": "f4d43293be8fdc2371b27f5478f86b52a9cb5d5a3769fbe6f1bcbe2358ce0804",
   "essay_written_answer": "d94f50563297769ad37570d532ba54bc1c43125f3b584230e3f064a5d67e880b",
-  "essay_you_wrote": "0219087910b99157462a48e77ead2cf325be7a914868bacd832c202546f84ba1",
+  "essay_you_wrote": "1545f0f64af1927dc4b773a397e83d6bd3f88a000914cfe751e71add3042d5bc",
   "essay_your_answer": "f194a0610576106b62d662d76f277f98f1549d388cf4f8ebd3333314bd26d055",
   "essay_your_text": "11731898b946902393937f83a704bfb635fa47e458de335ff688f94203398bd9",
   "essay_zero_blank_text": "81430645ae48f916a468aeadd71818380890053052bb8e6c5c95d7697baccb25",
@@ -302,8 +302,8 @@
     <string name="essay_your_text">Seu texto</string>
     <string name="essay_past_line">Depois da linha %1$d: os corretores param de ler aqui</string>
     <string name="essay_past_limit">Depois do limite: os corretores param de ler aqui</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">Você escreveu “%1$s” · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">Você escreveu “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Você pulou esta tarefa.</string>
     <string name="essay_back_to_today">Hoje</string>

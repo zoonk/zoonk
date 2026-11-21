@@ -86,7 +86,8 @@
   "goalcontent_topics_studied_spoken": "8c46bd7cf551a6174895f711dcb89b9e453fcb6ccc9d6862e2b8fdd696c2b933",
   "goalcontent_written_answers": "3bb5a5aeea2fbccb801dc106210763c5b5122f854f0b3a1aa7936524fb4a27ae",
   "goalcontent_written_estimated": "1daccf2c69513a900bd300817db4fa9effa6db1dee97ebe009c62f478031bb43",
-  "goalcontent_written_last_answers": "d96319e9172bb7939c0eea567040bbb645abc09e53866a9c3b98d3954272efc7",
+  "goalcontent_written_last_answer": "a624737bf6517282fc892f68123b158918c5956bfe0d803fbeb6e8d02347a71f",
+  "goalcontent_written_last_answers": "8bded5b0e67f1f9d261e9db4fae9a7eec3c0280531b9f7bcea029a9abc7c664b",
   "goalcontent_written_levels": "66667443b83385120a180bf142bb4590e171f0cd5fc4fd4f199b86c10bf69b36",
   "goalcontent_written_lines": "dcaf490fc4cf3e44b0e1d07876733e395fc4577d411c3e1297d68f82b19905ea",
   "goalcontent_written_minimum": "f04ad2a9fa07b0669b6eef9b0e37bbf870c63fb73495aa0f656f0cb7f1efc21c",
@@ -265,6 +266,10 @@
     <string name="goalcontent_written_share">점수의 %1$s</string>
     <string name="goalcontent_written_minimum_share">합격에 필요한 최소 점수: 총점의 %1$s</string>
     <string name="goalcontent_written_progress">내 진도</string>
+    <string name="goalcontent_written_last_answer">마지막 답변</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="other">마지막 답변 %d개</item>
+    </plurals>
     <string name="goalcontent_written_presentation">표현 및 구성</string>
     <string name="goalcontent_written_answers">내 답변</string>
     <plurals name="goalcontent_written_lines">
@@ -273,8 +278,5 @@
     <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
     <plurals name="goalcontent_written_versions">
         <item quantity="other">%d개 버전</item>
-    </plurals>
-    <plurals name="goalcontent_written_last_answers">
-        <item quantity="other">마지막 답변 %d개</item>
     </plurals>
 </resources>

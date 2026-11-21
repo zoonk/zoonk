@@ -187,8 +187,9 @@
     <string name="goalcontent_written_share">%1$s of the score</string>
     <string name="goalcontent_written_minimum_share">Minimum to pass: %1$s of the points</string>
     <string name="goalcontent_written_progress">Your progress</string>
+    <string name="goalcontent_written_last_answer">last answer</string>
     <plurals name="goalcontent_written_last_answers">
-        <item quantity="one">last answer</item>
+        <item quantity="one">last %d answer</item>
         <item quantity="other">last %d answers</item>
     </plurals>
     <string name="goalcontent_written_presentation">Presentation and structure</string>

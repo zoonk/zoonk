@@ -86,7 +86,8 @@
   "goalcontent_topics_studied_spoken": "e2c715bbd47a96b637721ed0b3fa1a2c54dd1ad9fe282c658818c33b576c15d1",
   "goalcontent_written_answers": "41000b7e3845e6233b245116648f3e66b224df784c58b70c43b4c41e989b704d",
   "goalcontent_written_estimated": "9dd80eb4812dc17b427b209fdc8f109d61c943ec338faaad7841baba6a6fda30",
-  "goalcontent_written_last_answers": "7f7ddbe01a7e149915752135f16af5a30ab719a343b64cd9edf5b6e06cde5971",
+  "goalcontent_written_last_answer": "74423c9c2cef264acf328638d5edc6d1ab7971d9a4f693dee9973bbcb070d1de",
+  "goalcontent_written_last_answers": "b29a7c8fa9f2487b268110a4e9d5e2f18848e498c7a210160f6588c88d989903",
   "goalcontent_written_levels": "6998990949d54f206314ebeec4bcd29599b8b4558c8b04483faddfbd48be0521",
   "goalcontent_written_lines": "687e5613d90de629c58982295bce7245cc9838bd3c4d52d311288952c4adfa3c",
   "goalcontent_written_minimum": "e02037f3ba112ad917fc9b1d976e5f9d16b76c11bd4a73691434d2f901e91037",
@@ -325,11 +326,12 @@
     <string name="goalcontent_written_share">%1$s wyniku</string>
     <string name="goalcontent_written_minimum_share">Minimum do zaliczenia: %1$s punktów</string>
     <string name="goalcontent_written_progress">Twoje postępy</string>
+    <string name="goalcontent_written_last_answer">ostatnia odpowiedź</string>
     <plurals name="goalcontent_written_last_answers">
-        <item quantity="one">ostatnia odpowiedź</item>
+        <item quantity="one">ostatnia %d odpowiedź</item>
         <item quantity="few">ostatnie %d odpowiedzi</item>
         <item quantity="many">ostatnich %d odpowiedzi</item>
-        <item quantity="other">końcowe odpowiedzi: %d</item>
+        <item quantity="other">ostatnich %d odpowiedzi</item>
     </plurals>
     <string name="goalcontent_written_presentation">Prezentacja i struktura</string>
     <string name="goalcontent_written_answers">Twoje odpowiedzi</string>

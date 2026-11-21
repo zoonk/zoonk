@@ -93,7 +93,9 @@
   "mock_words": "43cb4068a9544f3d72f790e638c502d1828d1b86e4806c87964d672de5bfac9a",
   "mock_written_part": "d196438ea20f94b45d2f9805f8c98fcbcccb3bcb5dd38dd8144a801edbe2c607",
   "mock_written_part_area": "776f3ec7232d13e89256437497dc23d49d65a49a112494e884770df52bc01bff",
-  "mock_written_questions_blank": "90865fb6357369cbcba08e6717970b36fe61ac3edffea1c3399460f5c1aa2175",
+  "mock_written_question_blank": "8f60bffdba1ade2fd5efb1060f68149eeb888f485af31fc3ab3bda709ac0ae17",
+  "mock_written_question_place": "f00f325dcc5f1a2d3f808f7b030b46d3ec8d62b6d2a22884fcb1f802a7409b46",
+  "mock_written_questions_blank": "9a89a53026b9937bca7731ad9f916d11b82c81b21592ef7a71533bf7e7afaa83",
   "mock_your_essay": "04196ed6283cb810c4839e7f3f9ca3ed6688833c419018ed4366763340a9e9a9"
 }
 -->
@@ -132,6 +134,8 @@
     <!-- %1$s is the essay's area, such as Portuguese. -->
     <string name="mock_written_part_area">Parte escrita · %1$s</string>
     <string name="mock_question_place">Pergunta %1$d de %2$d</string>
+    <!-- A question's position among the questions in an exam's written test. -->
+    <string name="mock_written_question_place">Questão %1$d de %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Questão %1$d de %2$d · %3$s</string>
     <string name="mock_flag">Marcar</string>
@@ -175,6 +179,14 @@
     </plurals>
     <string name="mock_every_answered">Todas as perguntas foram respondidas.</string>
     <string name="mock_essay_blank">A redação está em branco.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <string name="mock_written_question_blank">A questão discursiva está em branco.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">Há %d questão discursiva em branco.</item>
+        <item quantity="many">%d questões discursivas estão em branco.</item>
+        <item quantity="other">%d questões discursivas estão em branco.</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d redação está em branco.</item>
         <item quantity="many">%d redações estão em branco.</item>
@@ -257,10 +269,4 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Você concluiu todas as tarefas. Depois de entregar, não dá para fazer elas de novo neste simulado.</string>
     <string name="mock_keep_going">Continuar</string>
-    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
-    <plurals name="mock_written_questions_blank">
-        <item quantity="one">%d questão discursiva está em branco.</item>
-        <item quantity="many">%d questões discursivas estão em branco.</item>
-        <item quantity="other">%d questões discursivas estão em branco.</item>
-    </plurals>
 </resources>

@@ -168,8 +168,8 @@
     <string name="essay_your_text">Your text</string>
     <string name="essay_past_line">Past line %1$d: graders stop reading here</string>
     <string name="essay_past_limit">Past the limit: graders stop reading here</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">You wrote “%1$s” · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">You wrote “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">You skipped this task.</string>
     <string name="essay_back_to_today">Today</string>

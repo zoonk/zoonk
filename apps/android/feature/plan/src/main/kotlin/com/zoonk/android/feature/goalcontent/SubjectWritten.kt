@@ -68,7 +68,13 @@ internal fun LazyListScope.subjectWritten(
         sectionTitle(
             key = "written-trend-title",
             title = { stringResource(R.string.goalcontent_written_progress) },
-            detail = { pluralStringResource(R.plurals.goalcontent_written_last_answers, trend.size, trend.size) },
+            detail = {
+                if (trend.size == 1) {
+                    stringResource(R.string.goalcontent_written_last_answer)
+                } else {
+                    pluralStringResource(R.plurals.goalcontent_written_last_answers, trend.size, trend.size)
+                }
+            },
         )
         item(key = "written-trend", contentType = "written-trend") { WrittenTrend(written) }
     }

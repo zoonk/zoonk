@@ -105,7 +105,7 @@
   "essay_writing_question": "bc7212147765f40d23730500fdb5eb56280c94385a667ac116a436ae885d2299",
   "essay_writing_question_detail": "08efc9adb8fe8480b179467fb33fda75bf1efe141764a37d688cf43bf40f62fc",
   "essay_written_answer": "eef3f21c595c19161cc004eebd930e456706da138f87cad11b587588080dd2f8",
-  "essay_you_wrote": "1c23f549e60fa94e4fdccde41228cfd1b586c3c80e9f06059a15ee835773030e",
+  "essay_you_wrote": "a3a69f95ece8ad4fc11f489c81e51a62bd93b51a206c8374c4af98ace63e3708",
   "essay_your_answer": "e186183a2b983253026ecfcc29923515a92a825f9a57eca5b904db3378f9926c",
   "essay_your_text": "1532e26279ab1e47fd3f346ab6a65db6c7dc9b2a2c69cf880a6d42ecd4caa4b0",
   "essay_zero_blank_text": "809ec5651453344f64447b6b1a88830e1385838d8719860f48d96a4fce16fee1",
@@ -293,8 +293,8 @@
     <string name="essay_your_text">Metnin</string>
     <string name="essay_past_line">%1$d satır geçildikten sonra değerlendirenler okumayı bırakır</string>
     <string name="essay_past_limit">Sınırdan sonrası: değerlendirenler okumayı bırakır</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">“%1$s” yazdın · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">“%1$s” yazdın (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Bu görevi atladın.</string>
     <string name="essay_back_to_today">Bugün</string>

@@ -105,7 +105,7 @@
   "essay_writing_question": "e21e5f6e5a751cf250b7d0edbdd984d56832764c7efaf5017d2d623f2e1a8e56",
   "essay_writing_question_detail": "15f33d88ae354a0d612dbc5b6c32653f769b362c590a63b0d0fec42f843fe989",
   "essay_written_answer": "8044a7281cbd1f3e414d060701cf1f96e73ecd22f2032c2be3d9784b2b73a3f2",
-  "essay_you_wrote": "14b4e739a5100d8f21875d690eaa53f03802d5201bdc2fae446c649f20ef9ffd",
+  "essay_you_wrote": "68950f38e107c6c059c714ad5eb5b0e885ffa9a74192414feea85ac54b45af15",
   "essay_your_answer": "04e5a86eabfa87a4023b57c4ff5da710ff77f541e13daaa3185a38e0004dffe5",
   "essay_your_text": "6a563a8cbca28ee58fb33db19ea57e264eaf3d3a8ec6843abc129b94c99efea3",
   "essay_zero_blank_text": "1cbdc307d56a8a97b6607d0711e067d7c5694182e4be72c124d2b21f7ed25a26",
@@ -311,8 +311,8 @@
     <string name="essay_your_text">Twój tekst</string>
     <string name="essay_past_line">Poza linią %1$d: sprawdzający nie czytają dalej</string>
     <string name="essay_past_limit">Poza limitem: sprawdzający nie czytają dalej</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">Napisano „%1$s” · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">Wpisano „%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">To zadanie zostało pominięte.</string>
     <string name="essay_back_to_today">Dziś</string>

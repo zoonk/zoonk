@@ -86,7 +86,8 @@
   "goalcontent_topics_studied_spoken": "9e9a63555ffc37a80d8902415d1fa6df58aac40912ba314e53fbdf258cec5782",
   "goalcontent_written_answers": "e3788d7c80223ec1ce205a649f59a6c1667e4722adb59a6e06273a705755ad5e",
   "goalcontent_written_estimated": "6794996279fb85ea35a98d36eb19afdee8a052ea45057d744452bc106b04265d",
-  "goalcontent_written_last_answers": "dd95fcf3d5d7151f53f6490b040f24a332a8d1af45127b297fb03c0c25e3f406",
+  "goalcontent_written_last_answer": "f95792075057a829140d9ec808a73252770fc46ccf425dd8a6a6f59c9b1ca4aa",
+  "goalcontent_written_last_answers": "7dcf074f080c2e777444c40005b8a9e8201dbdb87b25c7368cd1aedab3967680",
   "goalcontent_written_levels": "7dd8c8b16189b7137dbb2ff3228db639e6b1de513cea942ebd6c86875d8c4182",
   "goalcontent_written_lines": "35a151ce3ed0b738a2789f05440538ba36d1231878d30d65ecbec29ed0b60bc2",
   "goalcontent_written_minimum": "ea33af182b91e3f90221147a4c9970f6f3aeef29df3d40431f8bf584c622bdad",
@@ -265,6 +266,10 @@
     <string name="goalcontent_written_share">スコアのうち%1$s</string>
     <string name="goalcontent_written_minimum_share">合格に必要な最低点：得点の%1$s以上</string>
     <string name="goalcontent_written_progress">進み具合</string>
+    <string name="goalcontent_written_last_answer">直近の解答</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="other">直近の%d件の解答</item>
+    </plurals>
     <string name="goalcontent_written_presentation">表現と構成</string>
     <string name="goalcontent_written_answers">解答一覧</string>
     <plurals name="goalcontent_written_lines">
@@ -273,8 +278,5 @@
     <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
     <plurals name="goalcontent_written_versions">
         <item quantity="other">%d回分</item>
-    </plurals>
-    <plurals name="goalcontent_written_last_answers">
-        <item quantity="other">直近の%d件の解答</item>
     </plurals>
 </resources>

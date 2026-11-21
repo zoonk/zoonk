@@ -331,7 +331,7 @@ internal fun questionPlace(
         // A written test counts its questions; the screen's header already names the test.
         sectionPlace(run.position, run.questions)
             ?.takeIf { it.total > 1 }
-            ?.let { return stringResource(R.string.mock_question_place, it.number, it.total) }
+            ?.let { return stringResource(R.string.mock_written_question_place, it.number, it.total) }
         return area?.let { stringResource(R.string.mock_written_part_area, it) }
             ?: stringResource(R.string.mock_written_part)
     }
@@ -514,6 +514,7 @@ private fun HandInDialog(
             enem && blankEssays == 1 -> stringResource(R.string.mock_essay_blank)
             enem -> pluralStringResource(R.plurals.mock_essays_blank, blankEssays, blankEssays)
             counts.total == counts.essays -> pluralStringResource(R.plurals.mock_left_blank_only, blankEssays, blankEssays)
+            blankEssays == 1 -> stringResource(R.string.mock_written_question_blank)
             else -> pluralStringResource(R.plurals.mock_written_questions_blank, blankEssays, blankEssays)
         }
 

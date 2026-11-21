@@ -105,7 +105,7 @@
   "essay_writing_question": "192d1cca5b2f134ccaa1878d53b1125159f0ff2b2154a043b19216f8b3ccf972",
   "essay_writing_question_detail": "6f1c73f22440ff0c73c3f2674bcc2a1c334ec6415dd84885928699db0ce7b54b",
   "essay_written_answer": "7069699ad9155a697b2f3d28ebb7cf2406337affe2591ad8f09129eb0fcae8f8",
-  "essay_you_wrote": "2985e167a463a8da38a66286e65b20c2eba24e7cd28d1c3b780d87898702c2ee",
+  "essay_you_wrote": "b33e12e5a41984c40129f35ee0e476f36489ef7a5c5106d436729a9564957038",
   "essay_your_answer": "8d75c5c0bfb6a90c8ffff44e75d6009fe2a6cf70ffe5e21b49306d46ee299cdb",
   "essay_your_text": "0741229ac53703a02420d1c340e31c6c18c1b34ac6e23238cb406f91e23dea88",
   "essay_zero_blank_text": "5833e17abb7f64664c618d1ca0e0f0d1f7ebffe7c5a952ca410f32d58729c329",
@@ -284,8 +284,8 @@
     <string name="essay_your_text">テキスト</string>
     <string name="essay_past_line">%1$d行目以降は採点者は読みません</string>
     <string name="essay_past_limit">上限を超えた部分は採点者は読みません</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">「%1$s」と書きました · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">「%1$s」と書いています（%2$s）</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">このタスクをスキップしました。</string>
     <string name="essay_back_to_today">今日</string>

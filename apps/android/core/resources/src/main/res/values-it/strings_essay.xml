@@ -105,7 +105,7 @@
   "essay_writing_question": "12b9aa599ac3dba512cd5d40e83e5c774b1ceb8579d90016e42f3727c5a2ab74",
   "essay_writing_question_detail": "b05ef84ad4d1253f5445fdda5ed663c119fe3c2fece097df3bdccfa0596b1c6b",
   "essay_written_answer": "ebeb4cfd629b7310e257444bd113f6ece04536c8d62f82bc7c1deab1944f6108",
-  "essay_you_wrote": "c58295c0568733d4fb9326bd1478c1cfc34fb9b0e83d5576ab6e17bb8855eeb2",
+  "essay_you_wrote": "9b458e57abc2f029f38f4f709c72b959b866bc292a45776fe05e39f2ab6da4ce",
   "essay_your_answer": "bae2f9e301b7069406bac07fea1b03abe9f8d6f018afd03364de0692fb91be7c",
   "essay_your_text": "d5ce1b1e558c69facf415dc0faa5fc82eb7679a67981c944e48f45d1e85dc145",
   "essay_zero_blank_text": "2776528a7c89fdc0991e51b8a9ff5226b9e55dc43e152f3ad47039da72f3825f",
@@ -302,8 +302,8 @@
     <string name="essay_your_text">Il tuo testo</string>
     <string name="essay_past_line">Oltre la riga %1$d: chi corregge smette di leggere qui</string>
     <string name="essay_past_limit">Oltre il limite: chi corregge smette di leggere qui</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">Hai scritto «%1$s» · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">Hai scritto “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Hai saltato questo compito.</string>
     <string name="essay_back_to_today">Oggi</string>

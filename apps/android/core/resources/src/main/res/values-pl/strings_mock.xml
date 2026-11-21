@@ -93,7 +93,9 @@
   "mock_words": "1d9d3c22f10d27d0c771f21a8dd4f8140daf039ccd35e27e4748379889dd711a",
   "mock_written_part": "0f496cce0ce85beefb50cc21b9700a774139685f84d918b585e6872c26c21d06",
   "mock_written_part_area": "f56b68c4b6c7021f13e3cf0635f9ddb3c5b1b4a85f58e40a02d9940d8c2651ca",
-  "mock_written_questions_blank": "bef5cf43df21512c303d9dcc45593561d1421f2238291e115ca285cc599e04e1",
+  "mock_written_question_blank": "55b5cb269742fc57d059d47f1ffef8e3fa6ad7fefd6bf12b26d9753f9c5c90f6",
+  "mock_written_question_place": "cb412559b9de307fa0e0139444616aec8a4573a49fec6c3951c3211cec2c899d",
+  "mock_written_questions_blank": "a1a36440772a6a7ba554298a3a6be3fcd928a1b90bd9bb4482dd4c2e1680f547",
   "mock_your_essay": "f3b2541f02e0bcb52782b2a069156e4b16b7c6862b01f1fa2e3ecd781cf88b6c"
 }
 -->
@@ -134,6 +136,8 @@
     <!-- %1$s is the essay's area, such as Portuguese. -->
     <string name="mock_written_part_area">Część pisemna · %1$s</string>
     <string name="mock_question_place">Pytanie %1$d z %2$d</string>
+    <!-- A question's position among the questions in an exam's written test. -->
+    <string name="mock_written_question_place">Pytanie %1$d z %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Pytanie %1$d z %2$d · %3$s</string>
     <string name="mock_flag">Oznacz</string>
@@ -183,11 +187,13 @@
     <string name="mock_every_answered">Na wszystkie pytania udzielono odpowiedzi.</string>
     <string name="mock_essay_blank">Wypracowanie jest puste.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <string name="mock_written_question_blank">Brak odpowiedzi na pytanie pisemne.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
-        <item quantity="one">Pytanie opisowe jest puste.</item>
-        <item quantity="few">%d pytania opisowe są puste.</item>
-        <item quantity="many">%d pytań opisowych jest pustych.</item>
-        <item quantity="other">%d pytania opisowe pozostają puste.</item>
+        <item quantity="one">Brak odpowiedzi na %d pytanie pisemne.</item>
+        <item quantity="few">Brak odpowiedzi na %d pytania pisemne.</item>
+        <item quantity="many">Brak odpowiedzi na %d pytań pisemnych.</item>
+        <item quantity="other">Liczba pustych odpowiedzi pisemnych: %d.</item>
     </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d wypracowanie jest puste.</item>

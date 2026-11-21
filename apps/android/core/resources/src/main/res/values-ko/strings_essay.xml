@@ -105,7 +105,7 @@
   "essay_writing_question": "172db6d1696ae5234034a1286a08aaa45556e9eacd7032d389f9db444877e70d",
   "essay_writing_question_detail": "2d1edd6637c6764e695a917d0aac62fd713208595f9e262f7a386821e3ec72e4",
   "essay_written_answer": "7068a039f6a4c4f450fb32dd76b355450fd6630002b280a7d05d075303a3b3d6",
-  "essay_you_wrote": "f8819a0568d5f8caf0d15062238d0bbadfcd80d0e12b9b664f76d08037595fc9",
+  "essay_you_wrote": "38a8b31bac1fafa5486ee9c36c1d30ccf1d2de3290266bea535f586c8841322a",
   "essay_your_answer": "d8840b4c37d478cc8b77814e31ccddc82fe87f13890004cc314af4903b582cea",
   "essay_your_text": "10b88f939db6b4a5f16d0398a248865f025295e8f19233f48c7bd904ffbcd1d9",
   "essay_zero_blank_text": "d84300cff083a73927d20e254fdf86479bbeee648f18b986342c4513a3e58b41",
@@ -284,8 +284,8 @@
     <string name="essay_your_text">내 텍스트</string>
     <string name="essay_past_line">%1$d번째 줄 이후: 여기부터 채점자가 읽지 않아요</string>
     <string name="essay_past_limit">분량 제한 이후: 여기부터 채점자가 읽지 않아요</string>
-    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
-    <string name="essay_you_wrote">“%1$s”라고 썼어요 · %2$s</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">작성한 내용: “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
     <string name="essay_skipped">이 과제를 건너뛰었어요.</string>
     <string name="essay_back_to_today">오늘</string>

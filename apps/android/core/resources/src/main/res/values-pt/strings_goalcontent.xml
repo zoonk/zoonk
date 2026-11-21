@@ -86,7 +86,8 @@
   "goalcontent_topics_studied_spoken": "f7aeeaa701d90c4f730937028cf42d2ba1b858b1dc1164ac5113c4b5c29d5d07",
   "goalcontent_written_answers": "1eecf8c389ebf2485124d571c6a6e59f2363b3f29ce9923bd12aced52ffe9ab4",
   "goalcontent_written_estimated": "ef3fc23e70745586bf609befe0ae91fd1a57d8bc92a10da5ccf6b8dac96e099b",
-  "goalcontent_written_last_answers": "4f94ef87b52740081c55565d468319c41ae438eea4f00ad80a2f526a434d770e",
+  "goalcontent_written_last_answer": "cfc1ba20a990b7ea2a55579ac60ea66f41258c6143c1b55f2e366d34a7b9ad37",
+  "goalcontent_written_last_answers": "496e26769f9779a9351ae3a9978338d661a1132d868b97b205199f56fef279c1",
   "goalcontent_written_levels": "955bb4c10041cb3aceb9178ebfbdcbd795d4427b45750142a1e137fc3bacd063",
   "goalcontent_written_lines": "b44f19ceca2005ac0030a9c02a04361a7cac872fddd5fc05942cfa02bec84b47",
   "goalcontent_written_minimum": "fc589d65e71207b1990c6dfcaa40c215324d2328a9f914d408b5252e096bb26c",
@@ -305,6 +306,12 @@
     <string name="goalcontent_written_share">%1$s da pontuação</string>
     <string name="goalcontent_written_minimum_share">Mínimo para passar: %1$s dos pontos</string>
     <string name="goalcontent_written_progress">Seu progresso</string>
+    <string name="goalcontent_written_last_answer">última resposta</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">última resposta %d</item>
+        <item quantity="many">últimas %d respostas</item>
+        <item quantity="other">últimas %d respostas</item>
+    </plurals>
     <string name="goalcontent_written_presentation">Apresentação e estrutura</string>
     <string name="goalcontent_written_answers">Suas respostas</string>
     <plurals name="goalcontent_written_lines">
@@ -317,10 +324,5 @@
         <item quantity="one">%d versão</item>
         <item quantity="many">%d versões</item>
         <item quantity="other">%d versões</item>
-    </plurals>
-    <plurals name="goalcontent_written_last_answers">
-        <item quantity="one">%d última resposta</item>
-        <item quantity="many">últimas %d respostas</item>
-        <item quantity="other">últimas %d respostas</item>
     </plurals>
 </resources>

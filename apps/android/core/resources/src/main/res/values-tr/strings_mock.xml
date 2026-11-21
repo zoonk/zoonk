@@ -93,7 +93,9 @@
   "mock_words": "09bea6696784497561148eb3b0daa415cfadf75894d07ef11e3c5cd4857b7e35",
   "mock_written_part": "6394e671851eb17368937215e9a5700250292edfa3dbd6f32df4769d8c3706a6",
   "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
-  "mock_written_questions_blank": "dbeaa453f26d727d7da7a0365dc4df4c9a3f96980102fd90b972b631a4a434d4",
+  "mock_written_question_blank": "fb2fc1b8d52772c88d0568981f4195d50f95908590c5378ab5c479991a2d8cc0",
+  "mock_written_question_place": "ccb91ac827e2d41d57e7446d018f44ede91385b31eacec6aab20f680206ee45b",
+  "mock_written_questions_blank": "109d0bed451a63fa23226906969084adf58eab6ccd2b0917ec8fbdbdd8147b54",
   "mock_your_essay": "724e58e8832e908e0d0c917af8d1825bb46d456b8931e292c59ab41a37af3eb1"
 }
 -->
@@ -130,6 +132,8 @@
     <!-- %1$s is the essay's area, such as Portuguese. -->
     <string name="mock_written_part_area">Yazılı bölüm · %1$s</string>
     <string name="mock_question_place">Soru %1$d / %2$d</string>
+    <!-- A question's position among the questions in an exam's written test. -->
+    <string name="mock_written_question_place">Soru %1$d / %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Soru %1$d / %2$d · %3$s</string>
     <string name="mock_flag">İşaretle</string>
@@ -169,9 +173,11 @@
     <string name="mock_every_answered">Tüm sorular cevaplandı.</string>
     <string name="mock_essay_blank">Kompozisyon boş.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <string name="mock_written_question_blank">Yazılı sorunun cevabı boş.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
-        <item quantity="one">Yazılı soruya cevap verilmemiş.</item>
-        <item quantity="other">%d yazılı soruya cevap verilmemiş.</item>
+        <item quantity="one">%d yazılı sorunun cevabı boş.</item>
+        <item quantity="other">%d yazılı sorunun cevabı boş.</item>
     </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d kompozisyon boş.</item>

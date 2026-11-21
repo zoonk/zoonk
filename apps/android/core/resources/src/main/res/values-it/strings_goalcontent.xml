@@ -86,7 +86,8 @@
   "goalcontent_topics_studied_spoken": "75b32bbcb91b11e9696e5bde9e60f93d54707269a56af652a85631e0fe3d4e71",
   "goalcontent_written_answers": "42ed6890e62c652b908d89423b39ec708e3c3793278fd4673e10927b3a97b834",
   "goalcontent_written_estimated": "91237212099d9605c0859ea75b0e227376ebd4f541b277e1fcc4071f160848c1",
-  "goalcontent_written_last_answers": "8f1ff57162caff67083acedb04728bfb2b16422934bee00c6981faea3ab42913",
+  "goalcontent_written_last_answer": "9c54458b34c8cc307cb1f22b85aa2e505336d94483b88a5849245ed9daea558e",
+  "goalcontent_written_last_answers": "af0c81683d32c59fbc8cac0c940f4a6ae8c7680dfccf703d0c1162287e2fc7f1",
   "goalcontent_written_levels": "d4c3a440909649bc25a8935e5341334df4891366d193133d596434422e7c0b10",
   "goalcontent_written_lines": "a9227311581e74b283b1cd81c3877b54ba5de9dca28642273b96b9a9b4a14ca4",
   "goalcontent_written_minimum": "c7034cb52f7cad6a5d8fb405a6870bef4c169b19d854e444b80fddf787f36a94",
@@ -305,8 +306,9 @@
     <string name="goalcontent_written_share">%1$s del punteggio</string>
     <string name="goalcontent_written_minimum_share">Minimo per superare la prova: %1$s dei punti</string>
     <string name="goalcontent_written_progress">I tuoi progressi</string>
+    <string name="goalcontent_written_last_answer">ultima risposta</string>
     <plurals name="goalcontent_written_last_answers">
-        <item quantity="one">ultima risposta</item>
+        <item quantity="one">ultima %d risposta</item>
         <item quantity="many">ultime %d risposte</item>
         <item quantity="other">ultime %d risposte</item>
     </plurals>

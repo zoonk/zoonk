@@ -86,7 +86,8 @@
   "goalcontent_topics_studied_spoken": "5407318bf34887f1aef6aaac3982db68ecd8e3c5f70542f10daa20fed60f3c09",
   "goalcontent_written_answers": "0c842e17d45aae36b133400f62cf174edc1c98bc6fb2dbd513f4cdb7b7973da7",
   "goalcontent_written_estimated": "f219875b5d28b979e508c3202c53bb3ef88c313173582edb1e5fbf89c4955656",
-  "goalcontent_written_last_answers": "d79cc501901d3fc8db373cc4de01660391ac35fa4df59d7626e3688a1a9f4398",
+  "goalcontent_written_last_answer": "13ae9a86b68db03e5ffd2e3f7b929cb5c4753c0ea55590f3957558301496424d",
+  "goalcontent_written_last_answers": "a4be39dd29f266ab5df59ef6dbda21e25233fbe375ff84feee1e1ed46ccf27d0",
   "goalcontent_written_levels": "0726c5ed744a92b99510c1d56b03eb5d41359906508ed024688a861bec4395e7",
   "goalcontent_written_lines": "6d0118d854356239ec3209ea16ed7dc219a6046ae8f878b8a4c22751a2f66327",
   "goalcontent_written_minimum": "0bb57d0bc5aeb3e5c0038502a13c5264fddc81eda1ec11677b9509ae53e9b437",
@@ -285,8 +286,9 @@
     <string name="goalcontent_written_share">Puanın %1$s kadarı</string>
     <string name="goalcontent_written_minimum_share">Geçmek için gereken minimum puan oranı: %1$s</string>
     <string name="goalcontent_written_progress">İlerlemen</string>
+    <string name="goalcontent_written_last_answer">son cevap</string>
     <plurals name="goalcontent_written_last_answers">
-        <item quantity="one">son cevap</item>
+        <item quantity="one">son %d cevap</item>
         <item quantity="other">son %d cevap</item>
     </plurals>
     <string name="goalcontent_written_presentation">Sunum ve yapı</string>
