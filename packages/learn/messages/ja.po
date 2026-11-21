@@ -11631,6 +11631,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "例：パン作り、車、天文学"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "追加"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11660,6 +11666,12 @@ msgstr "{field}：コースや科目（任意）"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "例：ジャーナリズム"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "{tool}を削除"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11729,9 +11741,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "興味を持てる例を選ぶために使います。"
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "以前学んだことも、今学んでいることも、修了していなくても選べます。3つまで選んでください。"
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "過去のことでも現在のことでも、終わっていてもいなくても。"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11747,11 +11759,6 @@ msgstr "任意です。選んだ内容に合わせて、学習内容を調整し
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "役立ちそうなものを選んでください。"
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "3つまで選んでください。"
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

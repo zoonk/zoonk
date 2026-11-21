@@ -11631,6 +11631,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "예: 빵 굽기, 자동차, 천문학"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "추가"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11661,6 +11667,12 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "예: 언론학"
 
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "{tool} 삭제"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -11669,7 +11681,7 @@ msgstr "지금은 어떤 일을 하고 있나요?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "가장 자주 쓰는 앱과 도구는 무엇인가요?"
+msgstr "어떤 앱과 도구를 가장 자주 쓰나요?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
@@ -11729,9 +11741,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "이 정보를 바탕으로 관심이 갈 만한 예시를 골라요."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "예전에 했든 지금 하고 있든, 마쳤든 아니든 괜찮아요. 최대 3개까지 고르세요."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "과거든 현재든, 끝났든 아니든."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11747,11 +11759,6 @@ msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞�
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "도움이 되는 항목은 모두 고르세요."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "3개까지 골라 주세요."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

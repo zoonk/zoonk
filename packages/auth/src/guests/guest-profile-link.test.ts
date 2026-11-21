@@ -144,6 +144,100 @@ describe("guest profile linking", () => {
     },
   );
 
+  it.each([
+    { account: null, expected: ["Tasy"] },
+    { account: [], expected: ["Tasy"] },
+    { account: ["Figma"], expected: ["Figma"] },
+  ])("preserves suggested tools with account list $account", async ({ account, expected }) => {
+    const { userId, guestUserId } = await learners();
+
+    await Promise.all([
+      account
+        ? prisma.userLearningProfile.update({
+            data: { suggestedTools: account },
+            where: { userId },
+          })
+        : prisma.userLearningProfile.delete({ where: { userId } }),
+      prisma.userLearningProfile.update({
+        data: { suggestedTools: ["Tasy"] },
+        where: { userId: guestUserId },
+      }),
+    ]);
+
+    await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+    ).resolves.toMatchObject({ suggestedTools: expected });
+  });
+
+  it.each(["work", "studies"] as const)(
+    "keeps the general fallback when the account's %s answer takes precedence",
+    async (question) => {
+      const { userId, guestUserId } = await learners();
+
+      await Promise.all([
+        answer(userId, question),
+        answer(guestUserId, question),
+        prisma.userLearningProfile.update({ data: { memoryEnabled: true }, where: { userId } }),
+        prisma.userLearningProfile.update({
+          data: { suggestedTools: ["Tasy"] },
+          where: { userId: guestUserId },
+        }),
+      ]);
+
+      await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+      ).resolves.toMatchObject({ suggestedTools: [] });
+    },
+  );
+
+  it.each(["absent", "pending", "failed"] as const)(
+    "keeps the guest's pending suggestions owed when the account's follow-up is %s",
+    async (accountAsk) => {
+      const [userId, guestUserId] = await Promise.all([
+        createLearner({ isAnonymous: false }),
+        createLearner({ isAnonymous: true }),
+      ]);
+
+      const key = "profile";
+      const kind = "suggestProfileTools";
+      const requestedAt = new Date("2026-01-01T00:00:00Z");
+
+      const [guest] = await Promise.all([
+        prisma.followUp.create({
+          data: { input: { language: "pt" }, key, kind, requestedAt, userId: guestUserId },
+        }),
+        accountAsk === "absent"
+          ? null
+          : prisma.followUp.create({
+              data: {
+                failedAt: accountAsk === "failed" ? new Date() : null,
+                input: { language: "en" },
+                key,
+                kind,
+                userId,
+              },
+            }),
+      ]);
+
+      await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+      await expect(
+        prisma.followUp.findUniqueOrThrow({ where: { userKindKey: { key, kind, userId } } }),
+      ).resolves.toMatchObject({
+        failedAt: null,
+        input: { language: accountAsk === "pending" ? "en" : "pt" },
+        requestedAt,
+        revision: accountAsk === "absent" ? 0 : 1,
+      });
+
+      await expect(prisma.followUp.findUnique({ where: { id: guest.id } })).resolves.toBeNull();
+    },
+  );
+
   it("honors an account decline before moving conditions, facts and question rows", async () => {
     const { userId, guestUserId } = await learners();
 

@@ -1,7 +1,9 @@
+export const PROFILE_FAVORITES_SEPARATOR = /[,;、，\r\n]/u;
+
 export function splitProfileFavorites(text: string): string[] {
   const seen = new Set<string>();
 
-  return text.split(/[,;、，\r\n]/u).flatMap((item) => {
+  return text.split(PROFILE_FAVORITES_SEPARATOR).flatMap((item) => {
     const trimmed = item.trim();
     const key = trimmed.toLowerCase();
 
