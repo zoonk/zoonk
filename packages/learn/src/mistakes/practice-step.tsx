@@ -8,6 +8,7 @@ import {
   FeedbackPanel,
   FeedbackVerdict,
 } from "../_components/feedback-panel";
+import { MainActionSlot } from "../_components/main-action-slot";
 import { QuestionDontKnow, QuestionMainAction } from "../_components/question-actions";
 import { ItemText } from "../questions/item-text";
 import { RightAnswerLine } from "../questions/right-answer-line";
@@ -96,7 +97,9 @@ export function PracticeStepActions({
       )}
 
       {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
-        <QuestionMainAction {...getMainAction(run)} />
+        <MainActionSlot>
+          <QuestionMainAction {...getMainAction(run)} />
+        </MainActionSlot>
       )}
 
       {ask}

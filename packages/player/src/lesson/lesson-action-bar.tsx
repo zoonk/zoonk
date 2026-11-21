@@ -1,5 +1,6 @@
 "use client";
 
+import { useCheckNote } from "@zoonk/learn/check-note";
 import { MainActionSlot, usePlacedMainActionNote } from "@zoonk/learn/main-action-slot";
 import {
   BackWithSecondAction,
@@ -95,17 +96,28 @@ function DontKnow() {
   );
 }
 
+/** A check that names its own problem (no words heard, a limit) says it where the learner answers. */
+function useLessonCheckNote(): React.ReactNode {
+  const { state } = useLessonPlayer();
+
+  return useCheckNote({
+    checking: state.phase === "checking",
+    failed: state.checkFailed && !state.checkIssue,
+  });
+}
+
 export function LessonActionBar() {
   const { actions, screen } = useLessonPlayer();
   const primary = useLessonPrimary();
-  const note = usePlacedMainActionNote();
+  const checkNote = useLessonCheckNote();
+  const placedNote = usePlacedMainActionNote();
 
   if (!primary) {
     return null;
   }
 
   return (
-    <TaskActionBar note={note}>
+    <TaskActionBar note={checkNote ?? placedNote}>
       <QuestionActions>
         <BackWithSecondAction
           back={

@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "Schreibaufgaben sind für heute ausgeschaltet."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Wir prüfen noch. Das dauert länger als üblich."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "Hör noch einmal zu"
@@ -3548,18 +3538,6 @@ msgstr "Einfach raten, das zählt nicht"
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Schreib deine Antwort"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Wir hören zu… Tipp zum Prüfen auf Stopp."
-
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Tippe auf „Aufnehmen“ und sprich es laut aus"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"

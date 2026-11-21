@@ -1,10 +1,10 @@
 "use client";
 
 import { toListeningStep } from "@zoonk/core/lesson-player/grade";
-import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
 import { MainActionInBar } from "@zoonk/learn/main-action-slot";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { RecordButton } from "@zoonk/learn/speech/record-button";
+import { useRecordNote } from "@zoonk/learn/speech/record-note";
 import {
   type MicrophoneProblem,
   useCanRecord,
@@ -47,28 +47,6 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-function RecordNote({ isRecording, noSpeech }: { isRecording: boolean; noSpeech: string | null }) {
-  const t = useExtracted();
-
-  if (noSpeech) {
-    return <p className="text-destructive-text">{noSpeech}</p>;
-  }
-
-  return (
-    <p className="text-muted-foreground">
-      {isRecording
-        ? t({
-            description: "“Stop” is the label of the button that ends the recording.",
-            message: "Listening… Tap Stop to check.",
-          })
-        : t({
-            description: "“Record” is the label of the button that starts the recording.",
-            message: "Tap Record and say it out loud",
-          })}
-    </p>
-  );
-}
-
 /** Recording is this step's answer, so Record and Stop take the bar's place where Check is. */
 function RecordAnswer({
   onProblem,
@@ -98,10 +76,14 @@ function RecordAnswer({
     }
   };
 
-  const noSpeech = useNoSpeechMessage();
   const isIdle = recorder.status === "idle" || recorder.status === "acquiring";
   const issue = isIdle ? state.checkIssue : null;
   const limit = issue?.status === "noSpeech" ? null : issue;
+
+  const note = useRecordNote({
+    problem: issue?.status === "noSpeech" ? "noSpeech" : null,
+    recording: isRecording,
+  });
 
   return (
     <>
@@ -109,17 +91,7 @@ function RecordAnswer({
         {limit && <LessonHelpLimitNotice limit={limit} />}
       </div>
 
-      <MainActionInBar
-        note={
-          !limit &&
-          (isIdle || isRecording) && (
-            <RecordNote
-              isRecording={isRecording}
-              noSpeech={issue?.status === "noSpeech" ? noSpeech : null}
-            />
-          )
-        }
-      >
+      <MainActionInBar note={!limit && (isIdle || isRecording) && note}>
         <RecordButton
           busy={recorder.status === "acquiring"}
           elapsedMs={recorder.elapsedMs}
@@ -152,7 +124,10 @@ function getAnswerMode({
   return cantTalk || micProblem || !canSpeak ? "type" : "speak";
 }
 
-/** An answer shows the way it was given, whatever this device would offer now. */
+/**
+ * An answer shows the way it was given, whatever this device would offer now. A take sent for
+ * checking has no text until it's heard.
+ */
 function getGivenMode({
   answer,
   result,
@@ -161,15 +136,15 @@ function getGivenMode({
   LessonStepViewProps<StepOf<"spokenAnswer">>,
   "answer" | "result" | "step"
 >): AnswerMode | null {
-  if (answer?.kind === "spokenAnswer") {
+  if (result?.heard) {
+    return "speak";
+  }
+
+  if (answer?.kind === "spokenAnswer" && answer.text !== "") {
     return "type";
   }
 
-  if (answer?.kind === "listening" && step.listening) {
-    return "listen";
-  }
-
-  return result?.heard ? "speak" : null;
+  return answer?.kind === "listening" && step.listening ? "listen" : null;
 }
 
 function useAnswerMode({

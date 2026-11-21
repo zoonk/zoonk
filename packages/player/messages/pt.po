@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "Perguntas de escrita desativadas por hoje."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "Não conseguimos conferir sua resposta desta vez. Tente de novo."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Ainda estamos conferindo. Está demorando mais que o normal."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "Ouvir de novo"
@@ -3548,18 +3538,6 @@ msgstr "Só um palpite, não vale ponto"
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Escreva sua resposta"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Ouvindo… Toque em Parar para conferir."
-
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Toque em Gravar e fale em voz alta"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"

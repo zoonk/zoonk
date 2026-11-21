@@ -39,6 +39,14 @@ function allowMicrophone() {
   );
 }
 
+function barNote() {
+  return document.querySelector("[data-slot=bottom-bar-note]");
+}
+
+function hang<T>(): Promise<T> {
+  return new Promise<T>(() => {});
+}
+
 async function sayIt() {
   await page.getByRole("button", { name: "Record" }).click();
   await page.getByRole("button", { name: /^Stop/u }).click();
@@ -66,6 +74,26 @@ describe("spoken answers", () => {
 
     pending.resolve({ status: "failed" });
     await expect.element(page.getByRole("button", { name: /^Record/u })).toHaveFocus();
+  });
+
+  it("says over Record what to do, keeping the listening line out of what a screen reader announces", async () => {
+    allowMicrophone();
+    openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(() => hang()) });
+
+    await expect.poll(() => barNote()?.textContent).toBe("Tap Record and say it out loud");
+    await page.getByRole("button", { name: "Record" }).click();
+
+    await expect
+      .poll(() => barNote()?.querySelector("[aria-hidden=true]")?.textContent)
+      .toBe("Listening… Tap Stop to check.");
+
+    await page.getByRole("button", { name: /^Stop/u }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: /^Check/u }))
+      .toHaveAttribute("aria-busy", "true");
+
+    expect(barNote()?.textContent).toBe("");
   });
 
   it("keeps the way back in place, turned off, while a recording is checked", async () => {

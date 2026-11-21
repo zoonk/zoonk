@@ -3,7 +3,6 @@
 import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -29,7 +28,6 @@ import { type LessonScreen } from "./lesson-player-screen";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
-import { CHECK_BOUNDS } from "./use-step-grading";
 
 function NoticeLine({
   action,
@@ -121,35 +119,6 @@ function LessonNotice() {
     default:
       return state.notice satisfies never;
   }
-}
-
-/** A check that names its own problem (no words heard, a limit) says it where the learner records. */
-function LessonCheckNote() {
-  const t = useExtracted();
-  const { state } = useLessonPlayer();
-  const isFailed = state.checkFailed && !state.checkIssue;
-
-  const isSlow = useTakingLong({
-    active: state.phase === "checking",
-    afterMs: CHECK_BOUNDS.slowMs,
-  });
-
-  if (!isFailed && !isSlow) {
-    return null;
-  }
-
-  return (
-    <PlayerContentFrame className="pb-6">
-      <p
-        className={cn("text-sm", isFailed ? "text-destructive-text" : "text-muted-foreground")}
-        role="status"
-      >
-        {isFailed
-          ? t("We couldn't check your answer this time. Try again.")
-          : t("Still checking. This is taking longer than usual.")}
-      </p>
-    </PlayerContentFrame>
-  );
 }
 
 /** An activity's verdict is in its own card, so the lesson's notes go inside that card. */
@@ -329,7 +298,6 @@ export function LessonStage({
         </WordBankCheckContext>
       </LessonScreenFrame>
 
-      {isShown && <LessonCheckNote />}
       {isShown && !isLanguageStep(step) && <LessonCitation citation={step.citation} />}
 
       {added && !inBank && <PlayerContentFrame className="pb-6">{added}</PlayerContentFrame>}

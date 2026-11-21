@@ -194,7 +194,7 @@ describe("exact lesson mistake practice", () => {
     await audio.close();
   });
 
-  it("keeps a spoken recording for a network retry and sends its original step", async () => {
+  it("keeps a spoken recording for a network retry, still offering Record in the bar, and sends its original step", async () => {
     const audio = new AudioContext();
 
     vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
@@ -221,6 +221,11 @@ describe("exact lesson mistake practice", () => {
     await page.getByRole("button", { exact: true, name: "Record" }).click();
     await page.getByRole("button", { name: /^Stop/u }).click();
     await expect.element(page.getByRole("alert")).toBeVisible();
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+
+    const recordButton = page.getByRole("button", { exact: true, name: "Record" });
+    await expect.element(recordButton).toBeVisible();
+    expect(recordButton.element().closest("[data-slot=bottom-bar]")).not.toBeNull();
     await page.getByRole("button", { name: "Try again" }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
     expect(record.mock.calls[0]?.[0]).toStrictEqual(record.mock.calls[1]?.[0]);

@@ -89,6 +89,16 @@ msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Listo"
 
+#: src/_components/check-note.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "No pudimos comprobar tu respuesta esta vez. Inténtalo de nuevo."
+
+#: src/_components/check-note.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "Aún estamos comprobando tu respuesta. Está tardando más de lo habitual."
+
 #: src/_components/checklist.tsx
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
@@ -3291,8 +3301,7 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento."
 
 #: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
+#: src/speech/record-note.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "Crea tu cuenta gratis para seguir."
@@ -6318,29 +6327,6 @@ msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "Recibiste un mensaje de voz. Escucha y responde."
 
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "El micrófono no está disponible aquí. Puedes saltarte esta parte."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "2IdQrb"
-msgid "Listening to what you said…"
-msgstr "Escuchando lo que dijiste…"
-
-#. "Stop" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "Vi6bgi"
-msgid "Recording… Press Stop when you're done."
-msgstr "Grabando… Presiona Detener cuando termines."
-
-#. "Record" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "_lLAdM"
-msgid "Press Record and say it out loud"
-msgstr "Presiona Grabar y dilo en voz alta"
-
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
 msgid "Your plan starts from the level you gave, and your first days fine-tune it."
@@ -6367,19 +6353,14 @@ msgid "I didn't understand the audio"
 msgstr "No entendí el audio"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "No pudimos comprobarlo. Inténtalo de nuevo."
+msgctxt "TEizt2"
+msgid "The microphone isn't available here. You can skip this part."
+msgstr "El micrófono no está disponible aquí. Puedes saltarte esta parte."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Saltar esta parte"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "Dilo en voz alta"
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
@@ -6590,6 +6571,11 @@ msgid "Nothing said this time"
 msgstr "Esta vez no dijiste nada"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "y1aleL"
+msgid "The microphone isn't available here. You can skip this word."
+msgstr "El micrófono no está disponible aquí. Puedes saltar esta palabra."
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "Dilo de nuevo"
@@ -6628,32 +6614,6 @@ msgstr "La palabra que vas a decir"
 msgctxt "O1LlS-"
 msgid "Say it like"
 msgstr "Se pronuncia así"
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "l4x7Td"
-msgid "We couldn't hear the word. Try again a little closer."
-msgstr "No pudimos oír la palabra. Acércate un poco e inténtalo de nuevo."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "75OFKI"
-msgid "That didn't go through. Try again."
-msgstr "Algo falló. Inténtalo de nuevo."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "El micrófono no está disponible aquí. Puedes saltar esta palabra."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "VcLERf"
-msgid "Listening to how it sounded…"
-msgstr "Escuchando cómo sonó…"
-
-#. "Record" is the label of the record button.
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "we8m4p"
-msgid "Press Record and say the word out loud"
-msgstr "Presiona Grabar y di la palabra en voz alta"
 
 #: src/language/today/language-today-section.tsx
 msgctxt "VR3SAU"
@@ -12757,6 +12717,18 @@ msgstr "Detener"
 msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Grabar"
+
+#. “Stop” is the label of the button that ends the recording.
+#: src/speech/record-note.tsx
+msgctxt "CzQFwa"
+msgid "Listening… Tap Stop to check."
+msgstr "Escuchando… Toca Detener para comprobar."
+
+#. “Record” is the label of the button that starts the recording.
+#: src/speech/record-note.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Toca Grabar y dilo en voz alta"
 
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"

@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "Yazma soruları bugün kapalı."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "Bu kez cevabını kontrol edemedik. Tekrar dene."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Hâlâ kontrol ediyoruz. Normalden uzun sürüyor."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "Tekrar dinle"
@@ -3548,18 +3538,6 @@ msgstr "Sadece bir tahmin, puanlanmaz"
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Cevabını yaz"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Dinliyoruz… Kontrol etmek için Durdur düğmesine dokun."
-
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Kaydet düğmesine dokun ve sesli söyle"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"

@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "오늘은 쓰기 문제를 건너뛰어요."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "이번에는 답을 확인하지 못했어요. 다시 시도해 보세요."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "다시 들어 보세요"
@@ -3548,18 +3538,6 @@ msgstr "예상일 뿐, 점수에는 반영되지 않아요"
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "답을 써 주세요"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "듣고 있어요… 답을 확인하려면 중지를 누르세요."
-
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
