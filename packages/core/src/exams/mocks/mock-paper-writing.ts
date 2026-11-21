@@ -1,24 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { isUuid } from "@zoonk/utils/uuid";
 import { followUpSchema } from "../../follow-ups/follow-up-contract";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { mockPaperKey, readMockSupplyRequest } from "./_utils/mock-supply-request";
+import { readScheduledPaper } from "./_utils/scheduled-mock";
 
 export type MockPaperWriting =
   | { goalId: string; owed: boolean; paper: string | null; status: "ready" }
   | { status: "notFound" | "unauthorized" };
-
-async function readScheduledPaper({ goalId, planItemId }: { goalId: string; planItemId: string }) {
-  const item = isUuid(planItemId)
-    ? await prisma.planItem.findFirst({
-        select: { scheduledFor: true },
-        where: { id: planItemId, kind: "mock", plan: { goalId } },
-      })
-    : null;
-
-  return item ? (item.scheduledFor?.toISOString() ?? null) : undefined;
-}
 
 async function isPaperOwed({
   goalId,
@@ -60,7 +49,7 @@ export async function getMockPaperWriting({
   const { shape } = readMockSupplyRequest(goal.requestedMock);
 
   const paper = planItemId
-    ? await readScheduledPaper({ goalId, planItemId })
+    ? await readScheduledPaper({ client: prisma, goalId, planItemId })
     : shape && mockPaperKey(shape);
 
   if (paper === undefined) {

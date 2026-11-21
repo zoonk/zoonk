@@ -8,6 +8,7 @@ import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
 import { clearStartedPaperRequest, recordMockPaperRequest } from "./mock-supply-request";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
 import { readScheduledStructure, readUnpickedChoices } from "./read-mock-structure";
+import { readScheduledPaper } from "./scheduled-mock";
 
 export async function startScheduledSitting({
   tx,
@@ -88,9 +89,13 @@ export async function startScheduledSitting({
     },
   });
 
-  const scheduledDate = sessionDate.toISOString();
+  const scheduledPaper = payload.planItemId
+    ? await readScheduledPaper({ client: tx, goalId: goal.id, planItemId: payload.planItemId })
+    : null;
 
-  if (!complete && !(await recordMockPaperRequest({ goal, paper: scheduledDate, tx }))) {
+  const paper = scheduledPaper ?? sessionDate.toISOString();
+
+  if (!complete && !(await recordMockPaperRequest({ goal, paper, tx }))) {
     return "preparing";
   }
 
@@ -102,7 +107,7 @@ export async function startScheduledSitting({
           examBlueprintId: goal.examBlueprintId,
           goalId: goal.id,
           later: complete,
-          ...(!complete && { paper: scheduledDate }),
+          ...(!complete && { paper }),
         },
         kind: "prepareMockSupply",
       },
@@ -127,6 +132,6 @@ export async function startScheduledSitting({
   });
 
   await claimMockItems({ conditions, mockExamId: sitting.id, now, tx, userId });
-  await clearStartedPaperRequest({ goal, paper: scheduledDate, tx });
+  await clearStartedPaperRequest({ goal, paper, tx });
   return "created";
 }
