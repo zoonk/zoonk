@@ -1,3 +1,4 @@
+import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { withUnit } from "@zoonk/utils/math-answer";
 import { formatTicks, getChartValueAxis, getPlotAxes } from "@zoonk/utils/plot-scale";
 import { type ChallengeContent } from "../steps/contract/challenge-content";
@@ -93,11 +94,9 @@ function axisLabel(label: string, unit: string | null): string {
   return unit ? `${label} (${unit})` : label;
 }
 
-/** The labels a learner's screen prints under each tick, in English notation like the rest of the map. */
-function tickLabels(axis: "x" | "y", ticks: number[]): string {
-  return formatTicks({ axis, locale: "en", ticks })
-    .map((label) => `"${label}"`)
-    .join(" ");
+/** The labels a learner's screen prints beside each tick, in English notation like the rest of the map. */
+function quoteTicks(labels: string[]): string {
+  return labels.map((label) => `"${label}"`).join(" ");
 }
 
 function formatPlot(visual: PlotVisual): string[] {
@@ -106,8 +105,8 @@ function formatPlot(visual: PlotVisual): string[] {
   return [
     `  X axis: ${axisLabel(visual.xLabel, visual.xUnit)}`,
     `  Y axis: ${axisLabel(visual.yLabel, visual.yUnit)}`,
-    `  X tick labels (at most these): ${tickLabels("x", axes.x.ticks)}`,
-    `  Y tick labels: ${tickLabels("y", axes.y.ticks)}`,
+    `  X tick labels (at most these): ${quoteTicks(formatTicks({ axis: "x", locale: "en", ticks: axes.x.ticks }))}`,
+    `  Y tick labels: ${quoteTicks(formatTicks({ axis: "y", locale: "en", ticks: axes.y.ticks }))}`,
     ...visual.series.map(({ mark, name, points }) => {
       const positions = points.map(
         ({ label, x, y }) => `${label ? `"${label}" ` : ""}(${x}, ${y})`,
@@ -124,11 +123,18 @@ function formatCategoryChart(visual: ChartVisual): string[] {
   const { numberUnit } = placeChartUnit(visual);
   const mark = visual.chart === "bar" ? "bar" : "lineWithPoints";
 
+  const tickLabels = formatTicks({
+    axis: "y",
+    format: (value, options) =>
+      withUnit(formatLocalizedNumber({ ...options, locale: "en", value }), numberUnit),
+    ticks,
+  });
+
   return [
     `  Category axis: ${visual.categoryLabel}`,
     `  Value axis: ${axisLabel(visual.valueLabel, visual.unit)}`,
     `  Categories: ${visual.categories.join(", ")}`,
-    `  Value ticks: ${ticks.join(", ")}`,
+    `  Value tick labels (at most these): ${quoteTicks(tickLabels)}`,
     ...visual.series.map(({ name, values }) => {
       const points = values.map((value, index) => `${visual.categories[index]} = ${value}`);
       const labels = values.map((value) => withUnit(String(value), numberUnit ?? undefined));

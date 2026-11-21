@@ -97,8 +97,36 @@ describe("challenge review rendering", () => {
       summary: [],
     });
 
-    expect(rendered.text).toContain("Value ticks: 9, 10, 11");
+    expect(rendered.text).toContain('Value tick labels (at most these): "9%" "10%" "11%"');
     expect(rendered.text).toContain("Value labels when they fit: 9%, 11%");
+  });
+
+  it("prints a category chart's tick labels the way a learner's screen does", () => {
+    const base = challengeCaseFixture();
+
+    const rendered = renderChallengeMap({
+      ...base,
+      nodes: base.nodes.map((node) => ({
+        ...node,
+        visual: {
+          axisStart: 10_000,
+          categories: ["May", "June", "July"],
+          categoryLabel: "Month",
+          chart: "line",
+          kind: "chart",
+          series: [{ name: "Visitors", values: [10_050, 10_200, 10_380] }],
+          source: null,
+          title: "Visitors",
+          unit: null,
+          valueLabel: "Visitors",
+        },
+      })),
+      summary: [],
+    });
+
+    expect(rendered.text).toContain(
+      'Value tick labels (at most these): "10K" "10.1K" "10.2K" "10.3K" "10.4K"',
+    );
   });
 
   it("clamps meters at each choice before applying the next effect", () => {
