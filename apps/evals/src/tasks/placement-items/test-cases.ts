@@ -7,18 +7,29 @@ type PlacementItemsInput = Omit<
   "model" | "useFallback" | "reasoning"
 >;
 
-const PLACEMENT_COUNTS = { quickCount: 2, typedCount: 0 } as const;
+type CaseSkill = Omit<PlacementItemsInput["skills"][number], "quickCount" | "tapCount">;
 
-const TRUE_FALSE_PLACEMENT_COUNTS = { quickCount: 3, typedCount: 0 } as const;
+/** Every skill of a case gets the same counts. */
+type CaseInput = Omit<PlacementItemsInput, "skills"> & {
+  quickCount: number;
+  skills: CaseSkill[];
+  tapCount: number;
+};
 
-const LANGUAGE_PLACEMENT_COUNTS = { quickCount: 1, typedCount: 1 } as const;
+/** Mocks and test-outs ask an exam's own format, a few quick questions per skill. */
+const EXAM_COUNTS = { quickCount: 2, tapCount: 0 } as const;
 
-export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
+const TRUE_FALSE_EXAM_COUNTS = { quickCount: 3, tapCount: 0 } as const;
+
+/** Placement asks one quick question, then three tap questions that confirm it. */
+const PLACEMENT_COUNTS = { quickCount: 1, tapCount: 3 } as const;
+
+const CASES: TestCase<unknown, CaseInput>[] = [
   {
     expectations: `Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).`,
     id: "pt-constitutional-mock-avoids-used-situations",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...EXAM_COUNTS,
       language: "pt",
       quickFormat: "multipleChoice",
       skills: [
@@ -54,7 +65,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     expectations: `Placement questions in Brazilian Portuguese for three ENEM skills, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row). Each question tests only its own skill, and a skill's two questions use different situations, ask different things and never give away each other's answer. Tables go in \`context\` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.`,
     id: "pt-enem-placement-three-skills",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...EXAM_COUNTS,
       examFormat: ENEM,
       language: "pt",
       quickFormat: "multipleChoice",
@@ -84,7 +95,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     expectations: `Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes). Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, and a skill's two questions use different situations and never give away each other's answer.`,
     id: "pt-enem-placement-large-numbers",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...EXAM_COUNTS,
       examFormat: ENEM,
       language: "pt",
       quickFormat: "multipleChoice",
@@ -114,7 +125,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     expectations: `Placement questions in Brazilian Portuguese for one ENEM test-taking skill: two ENEM-style multiple-choice questions, both set in a situation during the exam, each asking how to handle a question in the exam, with one best option and wrong options that are tempting but worse strategies, never a sound strategy marked wrong because another one is listed as right. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.`,
     id: "pt-enem-placement-test-taking",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...EXAM_COUNTS,
       examFormat: ENEM,
       language: "pt",
       quickFormat: "multipleChoice",
@@ -132,7 +143,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     expectations: `Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as "apenas", "exquisito" or "embarazada", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has two ENEM-style multiple-choice questions with 5 options; a skill's two questions use different texts.`,
     id: "pt-enem-placement-spanish-option",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...EXAM_COUNTS,
       examFormat: ENEM,
       language: "pt",
       quickFormat: "multipleChoice",
@@ -156,7 +167,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     expectations: `Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill has three Cebraspe-style assertions judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, a skill's three statements test different points of it and never settle each other's judgment, and about half of all statements are true.`,
     id: "pt-cebraspe-placement-true-false",
     userInput: {
-      ...TRUE_FALSE_PLACEMENT_COUNTS,
+      ...TRUE_FALSE_EXAM_COUNTS,
       examFormat: CEBRASPE,
       language: "pt",
       quickFormat: "trueFalse",
@@ -210,14 +221,14 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
           ],
         },
       ],
-      typedCount: 0,
+      tapCount: 0,
     },
   },
   {
     expectations: `Placement questions in US English for three Digital SAT skills, each with two SAT-style multiple-choice questions (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value). The math must be right. Each question tests only its own skill, and a skill's two questions use different situations and ask different things.`,
     id: "en-sat-placement-three-skills",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...EXAM_COUNTS,
       examFormat: SAT_MATH,
       language: "en",
       quickFormat: "multipleChoice",
@@ -244,7 +255,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets two multiple-choice questions with a misconception behind every wrong option, in different situations and asking different things (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). Each question tests only its own skill.`,
+    expectations: `Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets one typical multiple-choice question with a misconception behind every wrong option, then three tap questions that confirm it: match pairs (4 to 6 pairs), an order (4 to 7 steps) or "select all that apply" (5 or 6 options, at least 2 right and 2 wrong), each in its own situation and checking the skill from another angle (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). An order question has one order only, a matching has one match per item, and a select-all question has one defensible set of right options. No tap question hints at another's answer. Each question tests only its own skill.`,
     id: "en-biology-placement-no-exam",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -273,10 +284,10 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions for a Brazilian learning US English for a job interview in Toronto, three situation skills at B1 to B2 (intermediate). Every question practices English itself: what the learner reads, chooses or writes as the language (the interviewer's line, the reply options, the typed answer) is in natural US English at about B1 to B2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. Never a question about interview manners or steps that a learner could answer without knowing English, and never a question written entirely in Portuguese. Each skill also has one typed question whose answer is written in English, with key points saying what it must express. Situations are a data analyst's interview, varied, without the learner's own name.`,
+    expectations: `Placement questions for a Brazilian learning US English for a job interview in Toronto, three situation skills at B1 to B2 (intermediate). Every question practices English itself: what the learner reads, chooses or writes as the language (the interviewer's line, the reply options, the typed answer) is in natural US English at about B1 to B2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. Never a question about interview manners or steps that a learner could answer without knowing English, and never a question written entirely in Portuguese. Each skill also has three tap questions (match pairs, an order or "select all that apply") on the language itself, such as putting a reply's words or an answer's parts in order or picking every natural reply, each in its own situation and answered by tapping alone. Situations are a data analyst's interview, varied, without the learner's own name.`,
     id: "pt-en-language-interview-placement",
     userInput: {
-      ...LANGUAGE_PLACEMENT_COUNTS,
+      ...PLACEMENT_COUNTS,
       language: "pt",
       quickFormat: "multipleChoice",
       skills: [
@@ -302,10 +313,10 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions for a Brazilian starting Italian, two everyday situation skills at A1 to A2 (beginner). Every question practices Italian itself: what someone says and the reply options are in natural Italian at about A1 to A2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. The situations happen in Italy: the people have Italian names, any city or town named is Italian, and any money is in euros. A question that sets the learner in a Brazilian city (Santarém, Maringá, São Luís) or pays in reais fails. Each skill also has one typed question whose answer is written in Italian.`,
+    expectations: `Placement questions for a Brazilian starting Italian, two everyday situation skills at A1 to A2 (beginner). Every question practices Italian itself: what someone says and the reply options are in natural Italian at about A1 to A2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. The situations happen in Italy: the people have Italian names, any city or town named is Italian, and any money is in euros. A question that sets the learner in a Brazilian city (Santarém, Maringá, São Luís) or pays in reais fails. Each skill also has three tap questions (match pairs, an order or "select all that apply") on the Italian itself, each in its own situation and answered by tapping alone.`,
     id: "pt-it-language-beginner-placement-in-italy",
     userInput: {
-      ...LANGUAGE_PLACEMENT_COUNTS,
+      ...PLACEMENT_COUNTS,
       language: "pt",
       quickFormat: "multipleChoice",
       skills: [
@@ -323,4 +334,34 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
       targetLanguage: "it",
     },
   },
+  {
+    expectations: `Only tap questions, in US English, for two skills a learner said they know, asked as a session's check questions: three per skill, no quick question. Each is match pairs (4 to 6 pairs), an order (4 to 7 steps) or "select all that apply" (5 or 6 options, at least 2 right and 2 wrong), in the format that fits the skill (an order for the steps of a procedure, never forced on a skill without one), each in its own situation, answered by tapping alone and right only as a whole. Facts must be right: a household budget follows income minus fixed costs, then savings; first aid for a burn cools it under running water and never uses ice or butter.`,
+    id: "en-session-check-taps-only",
+    userInput: {
+      language: "en",
+      quickCount: 0,
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Make a monthly budget: list income, fixed and variable costs, and set savings.",
+          level: "beginner",
+          name: "Making a monthly budget",
+        },
+        {
+          description: "Give first aid for a minor burn at home and know when to get medical help.",
+          level: "beginner",
+          name: "First aid for minor burns",
+        },
+      ],
+      tapCount: 3,
+    },
+  },
 ];
+
+export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = CASES.map(
+  ({ userInput: { quickCount, skills, tapCount, ...input }, ...testCase }) => ({
+    ...testCase,
+    userInput: { ...input, skills: skills.map((skill) => ({ ...skill, quickCount, tapCount })) },
+  }),
+);
