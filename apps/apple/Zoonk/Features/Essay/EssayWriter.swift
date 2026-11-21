@@ -105,7 +105,8 @@ final class EssayWriter {
     case .done(.saved(let saved)):
       revision = saved.revision
       savedText = current
-      KeptWriting.keep(.init(base: saved.revision, text: current), blockId: blockId)
+      // What's typed while this save was out is newer than what it sent: keep that.
+      KeptWriting.keep(.init(base: saved.revision, text: text), blockId: blockId)
     // Another device saved first: what was typed here goes over it, once.
     case .done(.conflict(let newer)) where !retried:
       revision = newer.revision

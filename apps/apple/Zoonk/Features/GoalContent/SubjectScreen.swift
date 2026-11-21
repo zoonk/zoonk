@@ -120,11 +120,18 @@ private struct SubjectContent: View {
       // A written part's main action is writing: its lessons are a small part of its time.
       // An unfinished task opens where it was left; once the day's grading is used the bar says
       // when it returns instead of offering a tap that would be refused.
-      if let written, written.waitsForTomorrow {
+      // Every task waiting for an exam choice leaves nothing to write until it's made, on Today.
+      if let written, written.pendingChoice?.all == true {
+        Button {
+          router.showRoot(of: .today)
+        } label: {
+          Text("Choose on Today", tableName: "Plan")
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      } else if let written, let returnsOn = written.returnsOn {
         Label {
-          Text(
-            "More grading tomorrow", tableName: "Plan",
-            comment: "Every written task waits for tomorrow")
+          Text(WritingLabels.gradingReturns(returnsOn))
         } icon: {
           Image(systemName: "clock")
         }
@@ -161,12 +168,24 @@ private struct SubjectContent: View {
   }
 
   private var writeNote: BarNote? {
-    writeFailed
-      ? BarNote(
+    if writeFailed {
+      return BarNote(
         LocalizedStringResource(
           "That didn't go through. Try again in a moment.", table: "Plan",
           comment: "Starting a written answer failed"))
-      : nil
+    }
+
+    guard let choice = written?.pendingChoice else { return nil }
+
+    if choice.all {
+      return BarNote(WritingLabels.choiceLine(choice.groups), tone: .status)
+    }
+
+    return BarNote(
+      WritingLabels.choiceLine(choice.groups, task: choice.task), tone: .status,
+      action: .init(
+        label: Text("Choose on Today", tableName: "Plan"),
+        perform: { router.showRoot(of: .today) }))
   }
 
   private var nextChapterId: String? {
@@ -202,7 +221,7 @@ private struct SubjectContent: View {
       written.minutes.map { studyDuration(minutes: $0) },
       written.share.map {
         String(
-          localized: "\($0.formatted(.percent.precision(.fractionLength(0)))) of the score",
+          localized: "\(WritingLabels.share($0)) of the score",
           table: "Plan", comment: "A written part's share of the exam's final score")
       },
     ].compactMap(\.self)

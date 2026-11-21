@@ -216,7 +216,10 @@ private struct MockQuestionMeta: View {
         Chip(Text(area))
       }
       Spacer(minLength: 0)
-      if question.format == .essay {
+      if let place = writtenTestPlace {
+        // A written test counts its questions; the chip already names the test.
+        Text("Question \(String(place.number)) of \(String(place.total))", tableName: "Mock")
+      } else if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
       } else if let place = sectionPlace {
         Text("\(place.number) of \(place.total)", tableName: "Mock", comment: "Question place")
@@ -235,7 +238,15 @@ private struct MockQuestionMeta: View {
     return (index + 1, questions.count)
   }
 
+  private var writtenTestPlace: (number: Int, total: Int)? {
+    run.questions.writtenTestPlace(of: question)
+  }
+
   private var accessibilityPlace: Text {
+    if let place = writtenTestPlace {
+      return Text("Question \(String(place.number)) of \(String(place.total))", tableName: "Mock")
+    }
+
     if question.format == .essay {
       return question.area.map {
         Text("Written part\u{00A0}· \($0)", tableName: "Mock", comment: "An essay's place")
@@ -357,7 +368,7 @@ private struct MockEssayBox: View {
         .frame(minHeight: 280)
         .scrollContentBackground(.hidden)
         .focused($isFocused)
-        .fieldBorder(isFocused: isFocused)
+        .fieldBorder(isFocused: isFocused, holdsFocus: true)
         .disabled(isLocked)
         .accessibilityLabel(label)
         .accessibilityHint(Text(count?.words ?? ""))
@@ -514,6 +525,12 @@ struct MockSectionCounts {
 
       if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
     }
+
+    // A written test numbers its questions, so a blank one is a blank question, never "the essay".
+    if essays > 1, essays == total {
+      blank = blankEssays
+      blankEssays = 0
+    }
   }
 
   var leftOpen: String {
@@ -650,11 +667,14 @@ private struct MockAnswerSheet: View {
   private func row(_ question: MockQuestion, at index: Int) -> some View {
     let draft = run.drafts[question.itemId]
 
+    let writtenNumber = run.questions.writtenTestPlace(of: question)?.number
+
     return MockSheetRow(
-      name: question.format == .essay
+      name: question.format == .essay && writtenNumber == nil
         ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
         : String(
-          localized: "Question \(question.number)", table: "Mock", comment: "A question by number"),
+          localized: "Question \(writtenNumber ?? question.number)", table: "Mock",
+          comment: "A question by number"),
       answered: run.isCountedAsAnswered(question.itemId),
       flagged: draft?.flagged ?? false,
       isCurrent: index == run.position,
@@ -662,6 +682,17 @@ private struct MockAnswerSheet: View {
     ) {
       onPick(index)
     }
+  }
+}
+
+extension [MockQuestion] {
+  /// A written test (a section of essays only) numbers its questions, so two never look the same;
+  /// nil for an essay beside objective questions, or the only one.
+  func writtenTestPlace(of question: MockQuestion) -> (number: Int, total: Int)? {
+    guard count > 1, allSatisfy({ $0.format == .essay }), let index = firstIndex(of: question)
+    else { return nil }
+
+    return (index + 1, count)
   }
 }
 

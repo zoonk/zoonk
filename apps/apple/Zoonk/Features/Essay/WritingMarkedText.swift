@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The learner's text as sent, each language error marked and numbered, the passage to rewrite
-/// underlined, and what the board wouldn't read set apart (main's `WritingMarkedText`).
+/// underlined, and what graders wouldn't read set apart (main's `WritingMarkedText`).
 struct WritingMarkedTextSection: View {
   let grade: WritingResult
   let lines: Int?
@@ -59,7 +59,7 @@ enum WritingMarks {
   /// Offsets are UTF-16 code units into the saved text, as the grade's `start` and `ignoredFrom`.
   static func pieces(grade: WritingResult, text: String) -> [Piece] {
     let length = text.utf16.count
-    let stepQuote = grade.nextStep?.quote
+    let stepQuote = WritingNextStep(grade: grade, text: text).quote
     let stepStart = stepQuote.flatMap { quote in
       text.range(of: quote).map { text.utf16.distance(from: text.startIndex, to: $0.lowerBound) }
     }
@@ -112,12 +112,9 @@ enum WritingMarks {
           "\n"
             + (lines.map {
               String(
-                localized: "Past line \($0): the board won't read from here", table: "Essay",
-                comment: "Where an answer passes the question's line limit")
+                localized: "Past line \(String($0)): graders stop reading here", table: "Essay")
             }
-              ?? String(
-                localized: "Past the limit: the board won't read from here", table: "Essay",
-                comment: "Where an answer passes the question's limit"))
+              ?? String(localized: "Past the limit: graders stop reading here", table: "Essay"))
             + "\n")
         note.foregroundColor = .warningText
         note.font = noteFont

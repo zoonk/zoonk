@@ -6,25 +6,52 @@ struct SubjectWrittenSections: View {
   let written: GoalPlan.WrittenPractice.Subject
 
   var body: some View {
-    SubjectWrittenPoints(points: written.points)
+    switch written.shownScale {
+    case .points:
+      SubjectWrittenPoints(
+        points: written.points, decimals: written.points.decimals ?? written.decimals)
+    case .levels:
+      SubjectWrittenLevels(points: written.points)
+    }
     SubjectWrittenTrend(samples: Array(written.trend.suffix(4)))
     SubjectWrittenAnswers(answers: written.answers)
+  }
+}
+
+/// No points estimate for this test yet: how answers are graded, instead of "not measured".
+private struct SubjectWrittenLevels: View {
+  let points: WrittenPartPoints
+
+  var body: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(
+          "Your answers are graded by level. A points estimate isn't available for this test yet.",
+          tableName: "Plan")
+        if let minimum = points.minimum {
+          minimumText(minimum, max: points.max)
+        }
+      }
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+    }
   }
 }
 
 /// The part's estimated points, its own minimum, and each question's share of them.
 private struct SubjectWrittenPoints: View {
   let points: WrittenPartPoints
+  let decimals: Int?
 
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Text("Estimated score", tableName: "Plan", comment: "A written part's projected points")
-          .typeStyle(.label)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
         if let range = points.range, let max = points.max {
-          PointsReadout(range: range, max: max)
+          PointsReadout(range: range, max: max, decimals: decimals)
         } else {
           Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
             .typeStyle(.stepHeading)
@@ -41,7 +68,7 @@ private struct SubjectWrittenPoints: View {
         }
 
         if let minimum = points.minimum {
-          MinimumLegend(minimumText(minimum))
+          MinimumLegend(minimumText(minimum, max: points.max))
         }
       }
       .padding(.vertical, 4)
@@ -49,7 +76,7 @@ private struct SubjectWrittenPoints: View {
       ForEach(points.tasks) { task in
         LabeledContent {
           if let range = task.range, let max = task.max {
-            Text(verbatim: WritingLabels.range(range, of: max))
+            Text(verbatim: WritingLabels.range(range, of: max, decimals: decimals))
               .typeStyle(.data)
           } else {
             Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
@@ -57,7 +84,7 @@ private struct SubjectWrittenPoints: View {
               .foregroundStyle(.mutedForeground)
           }
         } label: {
-          Text(task.name)
+          Text(WritingLabels.taskName(task.writingTask, title: task.name))
         }
       }
     }
@@ -69,14 +96,23 @@ private func minimumShare(_ minimum: PointsMinimum, max: Double) -> Double? {
   minimum.unit == .percent ? minimum.value / 100 : max > 0 ? minimum.value / max : nil
 }
 
-private func minimumText(_ minimum: PointsMinimum) -> Text {
-  minimum.unit == .percent
-    ? Text(
-      "Minimum to pass: \((minimum.value / 100).formatted(.percent.precision(.fractionLength(0)))) of the points",
+/// "Minimum to pass: 50 of 100", or a share of the points when the notice gives one.
+private func minimumText(_ minimum: PointsMinimum, max: Double?) -> Text {
+  if minimum.unit == .percent {
+    return Text(
+      "Minimum to pass: \(WritingLabels.share(minimum.value / 100)) of the points",
       tableName: "Plan", comment: "A written part's own minimum, as a share of its points")
-    : Text(
+  }
+
+  guard let max else {
+    return Text(
       "Minimum to pass: \(WritingLabels.points(minimum.value))", tableName: "Plan",
       comment: "A written part's own minimum")
+  }
+
+  return Text(
+    "Minimum to pass: \(WritingLabels.points(minimum.value)) of \(WritingLabels.points(max))",
+    tableName: "Plan")
 }
 
 /// One small bar per answer, oldest first, the latest in full color.
@@ -113,7 +149,7 @@ private struct SubjectWrittenTrend: View {
   }
 
   private func share(_ value: Double?) -> String {
-    value.map { $0.formatted(.percent.precision(.fractionLength(0))) } ?? ""
+    value.map(WritingLabels.share) ?? ""
   }
 
   @ViewBuilder
@@ -169,11 +205,14 @@ private struct SubjectWrittenAnswers: View {
           Button {
             router.open(.writingAnswer(attemptId: answer.attemptId))
           } label: {
-            ListRow(Text(answer.title), descriptionFacts: facts(answer)) {
+            ListRow(
+              Text(answer.title), description: criteriaResult(answer).map { Text($0) },
+              descriptionFacts: facts(answer)
+            ) {
               EmptyView()
             } trailing: {
               if let range = answer.range {
-                Text(verbatim: WritingLabels.range(range))
+                Text(verbatim: WritingLabels.range(range, decimals: answer.decimals))
                   .typeStyle(.data)
               }
             }
@@ -207,8 +246,21 @@ private struct SubjectWrittenAnswers: View {
     }
   }
 
+  /// A levels answer's result, on its own line: as a trailing value it would squeeze the title.
+  private func criteriaResult(_ answer: GoalPlan.WrittenPractice.Subject.Answer) -> String? {
+    guard let criteria = answer.criteria, answer.range == nil else { return nil }
+
+    return String(
+      localized: "\(String(criteria.complete)) of \(String(criteria.total)) criteria complete",
+      table: "Plan",
+      comment:
+        "A past written answer graded by level: how many of its criteria were fully met, out of all of them."
+    )
+  }
+
   private func facts(_ answer: GoalPlan.WrittenPractice.Subject.Answer) -> [String] {
     [
+      answer.unit == .drill ? WritingLabels.taskTitle(unit: .drill, task: nil, fallback: nil) : nil,
       lineFact(answer),
       answer.versions > 1
         ? String(

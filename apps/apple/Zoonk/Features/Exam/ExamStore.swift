@@ -199,6 +199,8 @@ final class ExamStore {
         return .refused(limit)
       case .writingLimitReached(let returnsOn):
         return .writingLimitReached(returnsOn: returnsOn)
+      case .needsChoice(let groups):
+        return .needsChoice(choiceGroups: groups)
       case .ready, .preparing:
         break
       }
