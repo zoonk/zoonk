@@ -1,5 +1,5 @@
 import { type ItemFormat } from "@zoonk/db";
-import { isLowGuessTap, isQuickChoice } from "./placement-guess-rate";
+import { LOW_GUESS_ANSWERS_TO_SKIP, isLowGuessTap, isQuickChoice } from "./placement-guess-rate";
 
 /** Test answers can skip lessons but still need practice confirmation; a later miss reopens the gap. */
 export type SkillClaim = "confirmed" | "gap" | "toConfirm";
@@ -58,7 +58,7 @@ export function isSkillConfirmed({ answers }: { answers: readonly SkillEvidence[
 
   return (
     quick.length > 0 &&
-    lowGuess.length >= 3 &&
+    lowGuess.length >= LOW_GUESS_ANSWERS_TO_SKIP &&
     (reset === -1 ||
       (blockedOn !== undefined &&
         [...quick, ...lowGuess].some((answer) => answer.localDate && answer.localDate > blockedOn)))
