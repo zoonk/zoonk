@@ -19,7 +19,12 @@ export async function screenshot(
     await Promise.all(
       releases
         .filter((release) => release !== null)
-        .map((release) => release.evaluate((resume) => resume()).catch(() => null)),
+        .map((release) =>
+          release
+            .evaluate((resume) => resume())
+            .finally(() => release.dispose())
+            .catch(() => null),
+        ),
     );
   }
 }
