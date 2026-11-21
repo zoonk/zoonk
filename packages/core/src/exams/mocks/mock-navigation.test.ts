@@ -190,7 +190,7 @@ describe("a mock section that moves like the real exam's", () => {
     const reviewed = await readMock(id);
 
     expect(reviewed.current).toMatchObject({ changesLeft: 0, resume: QUESTIONS - 1 });
-    expect(reviewed.current?.changedItemIds.toSorted()).toStrictEqual([first, third].toSorted());
+    expect(new Set(reviewed.current?.changedItemIds)).toStrictEqual(new Set([first, third]));
   });
 
   it("keeps a section that moves freely as it was: any answer changes, and it opens again past the last answer", async () => {
