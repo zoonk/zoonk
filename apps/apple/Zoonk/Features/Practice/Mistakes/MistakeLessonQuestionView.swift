@@ -19,6 +19,7 @@ struct MistakeLessonQuestionView: View {
   @State private var state: LessonPlayerState
   @State private var work = ActivityWork()
   @State private var prompt = LessonPromptAudio()
+  @State private var soundOwner = UUID().uuidString
   @State private var cantTalk = LessonTodayChoices.standard.isChosenToday(.cantTalk)
   @State private var cantListen = LessonTodayChoices.standard.isChosenToday(.cantListen)
   @State private var micBlocked = false
@@ -69,8 +70,13 @@ struct MistakeLessonQuestionView: View {
       .compactMap { $0 }.joinedSentences()
   }
 
+  private var sounds: LessonAudio {
+    audio.owned(by: soundOwner)
+  }
+
   private var shownPrompt: URL? {
-    replay.step.shownPromptAudio(
+    guard !showsIdea else { return nil }
+    return replay.step.shownPromptAudio(
       spokenMode: SpokenAnswerMode(
         canListen: true, canSpeak: recording.input != nil, cantTalk: cantTalk,
         cantListen: cantListen, micBlocked: micBlocked),
@@ -196,6 +202,7 @@ struct MistakeLessonQuestionView: View {
     }
     .environment(work)
     .environment(prompt)
+    .environment(\.lessonAudio, sounds)
     .announcesStatus(announcement)
     .onChange(of: grade) { _, grade in
       if grade != nil, pressedWithFocus != nil {
@@ -213,9 +220,10 @@ struct MistakeLessonQuestionView: View {
     .onChange(of: cantListen) { _, value in
       LessonTodayChoices.standard.setChosenToday(.cantListen, value)
     }
-    .onChange(of: shownPrompt) { _, url in
-      prompt.enter(prompt: url, audio: audio)
+    .onChange(of: shownPrompt, initial: true) { _, url in
+      prompt.enter(prompt: url, audio: sounds)
     }
+    .onDisappear { sounds.stop() }
   }
 
   private func content(_ part: LessonStepPart) -> some View {
