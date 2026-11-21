@@ -61,6 +61,7 @@ export function PatternDrillQuestion({
       }}
       question={toChoiceQuestion({ index, question })}
       selected={selectedIndex === -1 ? null : { selectedIndex }}
+      translation={question.translation}
     />
   );
 }

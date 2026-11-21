@@ -1,9 +1,9 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { LightbulbIcon, MessageCircleMoreIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../_components/lesson-rich-text";
 import { type PlayableWordHints } from "../lesson-player-types";
 
 function WordHint({

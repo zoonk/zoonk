@@ -44654,13 +44654,19 @@
                 },
                 "sentence": {
                   "type": "string"
+                },
+                "translation": {
+                  "default": "",
+                  "description": "The sentence, answered, in the learner's language, shown under it so they know what it says. Empty when they learn the language they read the app in, and for drills written before it.",
+                  "type": "string"
                 }
               },
               "required": [
                 "answer",
                 "feedback",
                 "options",
-                "sentence"
+                "sentence",
+                "translation"
               ],
               "additionalProperties": false
             }
@@ -90986,9 +90992,10 @@
                   "enum": [
                     "blank",
                     "partial",
+                    "right",
                     "wrong"
                   ],
-                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit"
+                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit. `right`: answered correctly and marked as unsure"
                 },
                 "question": {
                   "type": "string"
@@ -91012,6 +91019,10 @@
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 9007199254740991
+                },
+                "unsure": {
+                  "type": "boolean",
+                  "description": "Whether the learner marked the question as unsure"
                 }
               },
               "required": [
@@ -91026,7 +91037,8 @@
                 "number",
                 "outcome",
                 "question",
-                "set"
+                "set",
+                "unsure"
               ],
               "additionalProperties": false
             }
@@ -91343,6 +91355,10 @@
           "text": {
             "nullable": true,
             "type": "string"
+          },
+          "unsure": {
+            "type": "boolean",
+            "description": "Whether the learner marked the essay as unsure"
           }
         },
         "required": [
@@ -91352,7 +91368,8 @@
           "itemId",
           "question",
           "status",
-          "text"
+          "text",
+          "unsure"
         ],
         "additionalProperties": false
       },

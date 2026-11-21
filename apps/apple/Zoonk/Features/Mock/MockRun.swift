@@ -200,12 +200,12 @@ final class MockRun {
     }
   }
 
-  func toggleFlag() {
+  func toggleUnsure() {
     guard let question, !timeUp else { return }
     unsavedText = nil
     saveText()
     var draft = withTimeSpent(question.itemId)
-    draft.flagged.toggle()
+    draft.unsure.toggle()
     persist(draft)
   }
 

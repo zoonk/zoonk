@@ -1,7 +1,7 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../_components/lesson-rich-text";
 import { getTutorQuoteText } from "../_utils/lesson-aside";
 import { useLessonPlayer } from "../lesson-player-context";
 import { type LessonPlayerAnswer } from "../lesson-player-types";

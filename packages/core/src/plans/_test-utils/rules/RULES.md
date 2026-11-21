@@ -188,7 +188,7 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 
 ### R42. A finished lesson comes back when its memory comes due
 
-- **Owner's words:** a finished lesson comes back on the day the memory model makes the first of its skills due (`getLessonComesBack`); "never claim something about the plan that isn't true" (round 11). The lead (10 Oct): a studied skill gets its first review or practice on the schedule the learner was promised.
+- **Owner's words:** a finished lesson comes back on the day the memory model makes the first of its skills due (`loadSealedCapsules`); "never claim something about the plan that isn't true" (round 11). The lead (10 Oct): a studied skill gets its first review or practice on the schedule the learner was promised.
 - **Check:** for each lesson the learner finished that has a day due, by the second study session on or after that day (a day's reviews have a cap, so a full day may hold it to the next), some session after the day they finished it asked a skill the lesson trained, in a review or in practice: the plan's skill it counts for or one of the lesson's own, where its answers land. A lesson of an area the learner took out is left out (practice leaves that area out), and so is one with no day due. Found by the learner simulator (10 Oct): answers land on a lesson's own skills while reviews and practice read only the plan's, so in a plan whose lessons teach finer skills of their own nothing studied came back.
 - **Reads:** `finishedLessons`, `sessions`, `after.settings`.
 

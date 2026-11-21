@@ -1,11 +1,11 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { ArrowDown, Eye } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { useCanvasQuestion } from "../_utils/canvas-question";
 import { computeActivityValue } from "../_utils/compute-activity-value";

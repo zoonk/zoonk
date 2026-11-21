@@ -53,7 +53,7 @@
 - “share” (personal facts): “알려 주다”, not “공유하다”
 - “task” (a speaking exam's task): “과제”
 - “hand in” (a mock or one of its parts): “제출하다”
-- “flag” (a mock question to come back to): “표시하다”
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “헷갈려요”
 - “pattern” (a mistake that recurs): “실수 패턴”
 - “link” (between a cause and its effect): “연결 고리”, not “링크”
 - “score”: “점수”; an exam's “band”: “밴드”

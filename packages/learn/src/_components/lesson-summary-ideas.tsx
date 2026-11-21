@@ -1,4 +1,4 @@
-import { LessonRichText } from "./lesson-rich-text";
+import { LessonRichText } from "../rich-text/lesson-rich-text";
 import { NumberedLine } from "./numbered-line";
 
 export function LessonSummaryIdeas({ ideas }: { ideas: string[] }) {

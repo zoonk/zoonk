@@ -5,7 +5,7 @@ import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref } from "@/lib/public/public-hrefs";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
-import { LessonRichText } from "@zoonk/player/lesson/rich-text";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";

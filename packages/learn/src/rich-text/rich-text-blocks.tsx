@@ -12,7 +12,7 @@ import { typesetNumbers, typesetProse } from "./rich-text-typography";
 import { SpokenMath } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
 
-function typeset({
+export function typesetLessonText({
   locale,
   segments,
 }: {
@@ -23,7 +23,7 @@ function typeset({
 }
 
 function typesetBlock({ block, locale }: { block: RichBlock; locale: string }): RichBlock {
-  const each = (segments: RichInlineSegment[]) => typeset({ locale, segments });
+  const each = (segments: RichInlineSegment[]) => typesetLessonText({ locale, segments });
 
   switch (block.kind) {
     case "list":
