@@ -1035,6 +1035,12 @@ msgctxt "7KwTGn"
 msgid "~{date}"
 msgstr "~{date}"
 
+#. A range whose ends carry a minus sign, such as the points language errors take away: "−0.3 to −0.6".
+#: src/_utils/range.ts
+msgctxt "zi1f8F"
+msgid "{low} to {high}"
+msgstr ""
+
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
@@ -2250,6 +2256,7 @@ msgstr "Vedrai il risultato alla fine."
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
 #: src/writing/writing-screen.tsx
+#: src/writing/writing-start.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Oggi"
@@ -7690,6 +7697,16 @@ msgid "Your last mock exam"
 msgstr "La tua ultima simulazione d’esame"
 
 #: src/mock/mock-chooser-page.tsx
+msgctxt "Wkboq2"
+msgid "No more grading today. The written test is back tomorrow."
+msgstr ""
+
+#: src/mock/mock-chooser-page.tsx
+msgctxt "Fb4qO3"
+msgid "No more grading today. The written test is back on {date}."
+msgstr ""
+
+#: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
 msgid "Not enough questions for this one yet. Pick another."
 msgstr "Non ci sono ancora abbastanza domande per questa simulazione. Scegline un’altra."
@@ -12422,11 +12439,6 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nuova lezione"
 
-#: src/session/use-block-copy.ts
-msgctxt "Jo0iJd"
-msgid "Writing practice"
-msgstr "Esercitazione di scrittura"
-
 #. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "60PbK5"
@@ -12462,6 +12474,7 @@ msgid "Mixed practice"
 msgstr "Esercizi misti"
 
 #: src/session/use-block-copy.ts
+#: src/syllabus/subject-write-bar.tsx
 msgctxt "bL2guL"
 msgid "Back tomorrow: no more grading today"
 msgstr ""
@@ -12469,6 +12482,11 @@ msgstr ""
 #: src/session/use-block-copy.ts
 msgctxt "0cmsKD"
 msgid "Your draft is saved"
+msgstr ""
+
+#: src/session/use-block-copy.ts
+msgctxt "uE8joa"
+msgid "Use what you just learned"
 msgstr ""
 
 #: src/session/use-block-copy.ts
@@ -12831,11 +12849,6 @@ msgstr "{total, plural, one {{done, number} su # argomento studiato} other {{don
 #: src/syllabus/subject-write-bar.tsx
 msgctxt "dCMmZj"
 msgid "{share} of the score"
-msgstr ""
-
-#: src/syllabus/subject-write-bar.tsx
-msgctxt "uWjDGe"
-msgid "More grading tomorrow"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
@@ -13648,13 +13661,19 @@ msgctxt "6omgAR"
 msgid "about {used} of {lines} lines · {over} won't be read"
 msgstr ""
 
+#. A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer.
 #: src/writing/writing-header.ts
-msgctxt "eRWD_e"
-msgid "Writing drill"
+msgctxt "k2IfPK"
+msgid "Short writing exercise"
 msgstr ""
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "Esercitazione di scrittura"
+
+#: src/writing/writing-header.ts
 msgctxt "neJLv4"
 msgid "Written answer"
 msgstr ""
@@ -13834,6 +13853,16 @@ msgid "Rewrite"
 msgstr "Riscrivi"
 
 #: src/writing/writing-start.tsx
+msgctxt "vlT3zF"
+msgid "The exam notice changed. Nothing was counted."
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "kJEao3"
+msgid "This task is no longer on your exam"
+msgstr ""
+
+#: src/writing/writing-start.tsx
 msgctxt "xj8ORz"
 msgid "Writing your question…"
 msgstr ""
@@ -13868,9 +13897,10 @@ msgctxt "agrPL7"
 msgid ", language error"
 msgstr ""
 
+#. Under a correction: what the learner wrote, then the kind of error, like "grammar".
 #: src/writing/writing-text.tsx
-msgctxt "7rMeeQ"
-msgid "You wrote “{quote}” · {kind}"
+msgctxt "9GNJHe"
+msgid "You wrote “{quote}” ({kind})"
 msgstr ""
 
 #: src/writing/writing-write-screen.tsx
