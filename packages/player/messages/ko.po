@@ -1309,16 +1309,6 @@ msgctxt "b0QQkx"
 msgid "The sound plays: {notes}"
 msgstr "재생되는 음: {notes}"
 
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "xAzh1Y"
-msgid "I can listen now"
-msgstr "이제 들을 수 있어요"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "K8wsFm"
-msgid "I can't listen now"
-msgstr "지금은 들을 수 없어요"
-
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
 msgid "Spot {number}: empty"
@@ -2816,6 +2806,16 @@ msgstr "내 답"
 msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "단어를 골라 답을 만드세요"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "이제 들을 수 있어요"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "지금은 들을 수 없어요"
 
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx

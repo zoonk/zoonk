@@ -1,14 +1,18 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AlphabetStep } from "../../components/alphabet-step";
+import { CantListenSwitch } from "../../components/cant-listen-switch";
 import { FillBlankStep } from "../../components/fill-blank-step";
 import { ListeningStep } from "../../components/listening-step";
 import { MatchColumnsStep } from "../../components/match-columns-step";
 import { MultipleChoiceStep } from "../../components/multiple-choice-step";
 import { ReadingStep } from "../../components/reading-step";
+import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../../components/step-layouts";
 import { TranslationStep } from "../../components/translation-step";
 import { VocabularyStep } from "../../components/vocabulary-step";
+import { getPlayerStepAudioUrl } from "../../player-step";
 import { type SelectedAnswer, type StepResult } from "../../step-answer";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 import {
@@ -16,6 +20,7 @@ import {
   type PlayableLanguageStep,
   type PlayableWordHints,
 } from "../lesson-player-types";
+import { CANT_LISTEN_TODAY, useTodayChoice } from "../use-today-choice";
 import { type LessonStepViewProps } from "./lesson-step-view-props";
 import { WordHints } from "./word-hints";
 
@@ -47,13 +52,40 @@ function useDefinesWords(): boolean {
   return targetLanguage ? isSameLanguage({ learnerLanguage: language, targetLanguage }) : false;
 }
 
+function ListeningWayOuts({
+  canListen,
+  children,
+  wayOut,
+}: {
+  canListen: boolean;
+  children: React.ReactNode;
+  wayOut: React.ReactNode;
+}) {
+  const [cantListen, setCantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+
+  return (
+    <div className={cn("flex flex-col", FILL_SCREEN_CLASS)}>
+      {children}
+
+      <PlayerContentFrame className="flex flex-col gap-3 pb-6 empty:hidden">
+        {canListen && <CantListenSwitch cantListen={cantListen} onChange={setCantListen} />}
+        {wayOut}
+      </PlayerContentFrame>
+    </div>
+  );
+}
+
 export function ExerciseStepView({
   answer,
   isLocked,
   onAnswer,
   result,
   step,
-}: LessonStepViewProps<PlayableLanguageStep>) {
+  wayOut,
+}: LessonStepViewProps<PlayableLanguageStep> & {
+  /** Another way around the step, shown under "I can't listen now" ("I can talk now"). */
+  wayOut?: React.ReactNode;
+}) {
   const { exercise } = step;
   const selectedAnswer = toSelectedAnswer(answer);
   const definesWords = useDefinesWords();
@@ -89,7 +121,14 @@ export function ExerciseStepView({
     case "fillBlank":
       return <FillBlankStep {...shared} result={stepResult} />;
     case "listening":
-      return <ListeningStep {...shared} isLocked={isLocked} result={stepResult} />;
+      return (
+        <ListeningWayOuts
+          canListen={!isLocked && getPlayerStepAudioUrl(exercise) !== null}
+          wayOut={wayOut}
+        >
+          <ListeningStep {...shared} isLocked={isLocked} result={stepResult} />
+        </ListeningWayOuts>
+      );
     case "matchColumns":
       return <MatchColumnsStep {...shared} />;
     case "multipleChoice":
