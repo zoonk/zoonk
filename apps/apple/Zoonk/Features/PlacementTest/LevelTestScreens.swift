@@ -135,9 +135,7 @@ struct LevelTestOutResult: View {
             "There aren't enough questions for \(view.level) yet.", tableName: "Onboarding",
             comment: "After a level's test-out that had too few questions to check, such as B2")
           : lessons > 0
-            ? Text(
-              "You already know them. They stay in your practice.", tableName: "Onboarding",
-              comment: "Under how many lessons a test skipped")
+            ? Text(PlacementTestCopy.knownLessons(lessons))
             : Text(
               "Your lessons keep adjusting as you answer.", tableName: "Onboarding",
               comment: "Under a level test's result that skipped no level")),

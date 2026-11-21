@@ -22859,8 +22859,9 @@
         }
       }
     },
+    "You already know it. It stays in your practice." : {
+    },
     "You already know them. They stay in your practice." : {
-      "comment" : "Under how many lessons a test skipped"
     },
     "You can change all of this later." : {
       "comment" : "Under an understood goal",

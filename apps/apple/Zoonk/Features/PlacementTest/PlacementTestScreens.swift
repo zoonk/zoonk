@@ -185,9 +185,7 @@ struct PlacementTestResultView: View {
       title: Text(PlacementTestCopy.lessonsSkipped(lessonsSkipped)),
       description: undo?.restored
         ?? (lessonsSkipped > 0
-          ? Text(
-            "You already know them. They stay in your practice.", tableName: "Onboarding",
-            comment: "Under how many lessons a test skipped")
+          ? Text(PlacementTestCopy.knownLessons(lessonsSkipped))
           : Text(
             "Your plan stays as it is.", tableName: "Onboarding",
             comment: "Under \"No lessons skipped\" after a test")),
