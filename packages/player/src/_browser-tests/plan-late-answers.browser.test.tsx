@@ -157,6 +157,8 @@ function renderPlan(
     return answer.promise;
   });
 
+  const readPlanAgain = vi.fn<PlanActions["readPlanAgain"]>();
+
   const actions: PlanActions = {
     adviseOnBases,
     change,
@@ -165,6 +167,7 @@ function renderPlan(
     decide: async () => false,
     findTimeToCover,
     preview,
+    readPlanAgain,
   };
 
   const screenFor = (plan: PlanView) => (
@@ -185,6 +188,7 @@ function renderPlan(
   return {
     change,
     preview,
+    readPlanAgain,
     releaseChange: () => heldChange.resolve({ change: null, status: "applied" }),
     /** Answers the oldest check still waiting; `null` is a check that failed. */
     releasePreview: (answer: PlanChangePreview | null = TODAY_PREVIEW) =>
@@ -424,6 +428,20 @@ describe("the Plan's offer to fit more lessons", () => {
       await expect.poll(() => held.change).toHaveBeenCalledOnce();
       expect(held.preview).toHaveBeenCalledOnce();
       held.releaseChange();
+      held.screen.unmount();
+    });
+  });
+
+  it("reads the plan again when today's check finds the plan already holds it", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromCard(held);
+
+      held.release({ ...TODAY_PREVIEW, effect: null, unchanged: true });
+
+      await expect.poll(() => held.readPlanAgain).toHaveBeenCalledOnce();
+      expect(page.getByText("Your plan stays as it is.").query()).toBeNull();
+      expect(held.change).not.toHaveBeenCalled();
       held.screen.unmount();
     });
   });

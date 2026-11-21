@@ -301,7 +301,7 @@ class PlanViewModelTest {
             viewModel.addExtraOffer(plan, plan.extraOffer!!)
 
             assertEquals(listOf(listOf(PlanOp.Extras(listOf("strategy-time")))), api.changes)
-            assertEquals(SlotItem.ExtraOffer, viewModel.slotState.result?.item)
+            assertEquals(SlotItem.ExtraOffer(plan.extraOffer!!), viewModel.slotState.result?.item)
         }
 
     @Test
@@ -340,6 +340,19 @@ class PlanViewModelTest {
         runTest {
             val plan = shown(FIT_PLAN)
             api.previewFailure = ApiException(ApiError.Unavailable, "PLAN_CHANGE_INVALID", 422)
+
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+
+            assertEquals(2, api.plans)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertTrue(api.changes.isEmpty())
+        }
+
+    @Test
+    fun aLaterDaysOfferThePlanAlreadyHoldsReadsThePlanAgainInsteadOfSayingItStaysAsItIs() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = true, unchanged = true)
 
             viewModel.addFitOffer(plan, plan.fitOffer!!)
 

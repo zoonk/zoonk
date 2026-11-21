@@ -53,15 +53,18 @@ internal data class SubjectGroup(
 
 /**
  * Subjects with no group of their own first, so none reads as part of the group above it; then the notice's groups in
- * its order; then the optional study the learner added. A plan's modules are one group.
+ * its order, or one run of modules; then the optional study the learner added.
  */
 internal fun groupSubjects(
     subjects: List<SyllabusSubject>,
     modules: Boolean,
 ): List<SubjectGroup> {
-    if (modules) return listOf(SubjectGroup(extra = false, name = null, subjects = subjects))
-
-    fun key(subject: SyllabusSubject) = if (subject.isExtra) null else subject.group.orEmpty()
+    fun key(subject: SyllabusSubject) =
+        when {
+            subject.isExtra -> null
+            modules -> ""
+            else -> subject.group.orEmpty()
+        }
 
     return subjects
         .map(::key)

@@ -22,7 +22,7 @@ export function StepsClient(props: {
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   onboarding: OnboardingView;
-  planActions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
+  planActions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover" | "readPlanAgain">;
   userId: string;
 }) {
   const navigation = useOnboardingNavigation();

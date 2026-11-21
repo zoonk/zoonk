@@ -48,6 +48,8 @@ export type PlanActions = {
     system: ToolSystem | null;
     tools: string[];
   }) => Promise<boolean | { generationId: string }>;
+  /** Shows the plan as it now is, such as when a check finds it already holds what was offered. */
+  readPlanAgain: () => void;
 };
 
 /** A null `buddy` uses the default buddy. */

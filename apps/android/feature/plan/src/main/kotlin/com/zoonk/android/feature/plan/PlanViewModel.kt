@@ -587,19 +587,20 @@ class PlanViewModel(
     fun addFitOffer(
         plan: Plan,
         offer: PlanFitOffer,
-    ) = addOffer(plan, SlotItem.FitLessons, offer.operations.map { it.op }, offer.effect, offer.canApply)
+    ) = addOffer(plan, SlotItem.FitLessons(offer), offer.operations.map { it.op }, offer.effect, offer.canApply)
 
     fun addExtraOffer(
         plan: Plan,
         offer: PlanExtraOffer,
-    ) = addOffer(plan, SlotItem.ExtraOffer, offer.operations.map { it.op }, offer.effect, offer.canApply)
+    ) = addOffer(plan, SlotItem.ExtraOffer(offer), offer.operations.map { it.op }, offer.effect, offer.canApply)
 
     /**
      * Main's fit offer, which the exam strategy offer shares: adds its lessons when its numbers are
      * today's, and applies the numbers a check showed instead on the next tap. Otherwise it checks
      * today's first, in the slot's preview, and adds them only when they're the card's, while the
      * suggestion's opening that asked lasts: Not now, closing the suggestion, a recreated layout that
-     * no longer shows it, or leaving the Plan drops the check, so a late answer adds nothing.
+     * no longer shows it, or leaving the Plan drops the check, so a late answer adds nothing. A check
+     * the plan refuses, or one that finds the plan already holds the offer, reads the plan again.
      */
     private fun addOffer(
         plan: Plan,
@@ -620,12 +621,12 @@ class PlanViewModel(
         viewModelScope.launch {
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
-            if (result.refused()) {
+            val today = (result as? MutationResult.Done)?.value
+            if (result.refused() || (today?.ready == true && today.unchanged)) {
                 store.plan[goalId].refresh()
                 slotPreviewState.compareAndSet(request, PlanPreviewState.Idle)
                 return@launch
             }
-            val today = (result as? MutationResult.Done)?.value
             val same = today != null && today.ready && !today.unchanged && today.effect == effect
             val asking = opened == outcomes.suggestion.number
             var wanted = false

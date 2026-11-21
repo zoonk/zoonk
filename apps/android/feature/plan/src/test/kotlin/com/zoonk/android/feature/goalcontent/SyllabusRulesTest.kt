@@ -44,6 +44,14 @@ class SyllabusRulesTest {
     }
 
     @Test
+    fun aPlansModulesAreOneGroupWithOptionalStudyAfterThem() {
+        val groups = groupSubjects(examSyllabus(strategy = true).subjects, modules = true)
+
+        assertEquals(listOf(false to null, true to null), groups.map { it.extra to it.name })
+        assertEquals(listOf("Exam strategy"), groups[1].subjects.map { it.shortName })
+    }
+
+    @Test
     fun aNoticeNumberSplitsFromItsWords() {
         assertEquals(NumberedTopic(0, "1", "Mechanics"), splitTopicNumber("1 Mechanics"))
         assertEquals(NumberedTopic(2, "5.7.1", "Waves on strings"), splitTopicNumber("5.7.1. Waves on strings"))
