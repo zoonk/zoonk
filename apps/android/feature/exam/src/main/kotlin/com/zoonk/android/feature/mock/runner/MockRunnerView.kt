@@ -120,7 +120,11 @@ internal fun MockRunnerView(
     }
 
     // Keys reach the focused field first, so the runner's shortcuts never take its typing; a new question takes them back.
-    LaunchedEffect(question.itemId) { focus.requestFocus() }
+    // The tip is about the question it was shown on.
+    LaunchedEffect(question.itemId) {
+        focus.requestFocus()
+        tip.dismiss()
+    }
 
     TaskScaffold(
         onClose = onClose,
@@ -243,7 +247,7 @@ private fun SheetCounts(run: MockRun) {
     )
 }
 
-/** Keys as on main, once however long they're held: the arrows move, Enter goes on, F marks not sure, numbers pick. */
+/** Keys as on main, once however long they're held: the arrows move, Enter goes on, U marks not sure, numbers pick. */
 private fun runnerKey(
     event: KeyEvent,
     viewModel: MockRunnerViewModel,
@@ -272,7 +276,7 @@ private fun runnerKey(
             true
         }
 
-        Key.F -> {
+        Key.U -> {
             onUnsure()
             true
         }
@@ -392,7 +396,7 @@ private fun RunnerActions(
 
     TaskActionBar {
         TaskActions { width ->
-            UnsureButton(on = unsure, tip = tip, onClick = onUnsure)
+            UnsureButton(on = unsure, tip = tip, forwardOnly = run.moves.forwardOnly, onClick = onUnsure)
             MockMainButton(
                 text =
                     when {
