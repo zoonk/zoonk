@@ -64,21 +64,28 @@ function MockWritingProgress({ run, title }: { run: GenerationRun; title: string
   const weights = progress.phases.map((phase) => phase.seconds);
   const timeLeft = useTimeLeft({ seconds: sumOf(weights), value });
 
+  // The bar's note reads out what changes in it; the step's status says each step once instead
+  // of every tick of the bar and the time left.
   return (
-    <div className="flex min-w-0 flex-col gap-1.5" data-slot="mock-writing">
+    <div
+      className="flex w-full min-w-0 flex-col gap-1.5 lg:ms-auto lg:max-w-sm"
+      data-slot="mock-writing"
+    >
       <p className="text-sm font-medium">{title}</p>
 
-      <GenerationTimelineProgress
-        aria-label={copy.name}
-        locale={locale}
-        statuses={progress.phases.map((phase) => phase.status)}
-        value={value}
-        weights={weights}
-      />
+      <div aria-live="off" className="flex flex-col gap-1.5">
+        <GenerationTimelineProgress
+          aria-label={copy.name}
+          locale={locale}
+          statuses={progress.phases.map((phase) => phase.status)}
+          value={value}
+          weights={weights}
+        />
 
-      <p className="text-muted-foreground text-sm">
-        {progress.progress === 100 ? step : [step, timeLeft].filter(Boolean).join(FACT_SEPARATOR)}
-      </p>
+        <p className="text-muted-foreground text-sm">
+          {progress.progress === 100 ? step : [step, timeLeft].filter(Boolean).join(FACT_SEPARATOR)}
+        </p>
+      </div>
 
       <GenerationTimelineStatus>{step}</GenerationTimelineStatus>
     </div>

@@ -50,8 +50,13 @@ private struct MockWritingProgress: View {
   let title: LocalizedStringResource
   let wait: GenerationWait
 
+  /// A wide bottom bar's note ends with its buttons, in main's `max-w-sm` column there.
+  @Environment(\.multilineTextAlignment) private var textAlignment
+
+  private var endsWithButtons: Bool { textAlignment == .trailing }
+
   var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
+    VStack(alignment: endsWithButtons ? .trailing : .leading, spacing: 6) {
       Text(title)
         .typeStyle(.rowTitle)
         .foregroundStyle(Color(.foreground))
@@ -65,7 +70,7 @@ private struct MockWritingProgress: View {
       }
     }
     .fixedSize(horizontal: false, vertical: true)
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: endsWithButtons ? 384 : .infinity)
   }
 
   /// The step it's on and about how long is left, from the phases' usual durations as the bar is.

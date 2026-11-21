@@ -14,6 +14,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -78,15 +80,17 @@ private fun MockWritingProgress(
     val seconds = progress.phases.sumOf { it.phase.seconds } * (1 - share)
     val minutes = ceil(seconds / SECONDS_PER_MINUTE).toLong().coerceAtLeast(1)
     val left = stringResource(R.string.mock_writing_time_left, formatDuration(minutes * SECONDS_PER_MINUTE, currentLocale()))
-    val done = run.status == GenerationRun.Status.Ready
+    val line = if (run.status == GenerationRun.Status.Ready) stringResource(R.string.mock_writing_done) else listOf(step, left).factsLine()
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall)
-        GenerationProgressBar(kind, run, share)
-        Text(
-            if (done) stringResource(R.string.mock_writing_done) else listOf(step, left).factsLine(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        // The bar's note is a live region: TalkBack hears the line as it changes (a step, a minute), not every tick of the bar.
+        Column(
+            Modifier.clearAndSetSemantics { contentDescription = line },
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            GenerationProgressBar(kind, run, share)
+            Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }
