@@ -141,13 +141,11 @@ export function StarsStep({
       {lost && conversation.locked && <ChallengeCallGate form="inPlace" />}
 
       {lost && !conversation.locked && (
-        <p className="text-muted-foreground text-compact text-pretty">
-          {t("Rematch next time you study")}
-        </p>
+        <p className="text-muted-foreground text-compact">{t("Rematch next time you study")}</p>
       )}
 
       {!lost && result.stars < MAX_STARS && (
-        <p className="text-muted-foreground text-compact text-pretty">
+        <p className="text-muted-foreground text-compact">
           {t("A star for finishing, one for getting everything across and one without Help.")}
         </p>
       )}

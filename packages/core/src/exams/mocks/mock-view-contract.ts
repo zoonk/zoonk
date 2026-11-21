@@ -34,11 +34,13 @@ export type MockDraft = {
 };
 
 export type MockCurrentSection = {
+  changedItemIds: string[];
   changesLeft: number | null;
   deadline: string;
   drafts: MockDraft[];
   kind: "listening" | "speaking" | null;
   plays: { played: number; setId: string }[];
+  questionTotal: number;
   questions: MockQuestion[];
   resume: number;
   section: number;
@@ -56,6 +58,8 @@ export type MockSectionView = {
   tools: string | null;
 };
 
+export const MOCK_REVIEW_OUTCOMES = ["blank", "partial", "right", "wrong"] as const;
+
 export type MockReviewEntry = {
   area: string | null;
   citation: ItemCitation | null;
@@ -67,8 +71,11 @@ export type MockReviewEntry = {
   itemId: string;
   learnerAnswer: string | null;
   number: number;
-  outcome: "blank" | "partial" | "wrong";
+  outcome: (typeof MOCK_REVIEW_OUTCOMES)[number];
   question: string;
+  section: number;
+  total: number;
+  unsure: boolean;
 };
 
 export type MockEssayView = {
@@ -79,6 +86,7 @@ export type MockEssayView = {
   question: string;
   status: "blank" | "graded" | "pending";
   text: string | null;
+  unsure: boolean;
 };
 
 export type MockSizeSource = {

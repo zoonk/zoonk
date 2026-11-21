@@ -13,6 +13,10 @@ import { speechClips } from "./speech-clips";
 
 export type Actions = ComponentProps<typeof MistakePracticeRun>["actions"];
 
+type PracticeDrill = ComponentProps<typeof MistakePracticeRun>["practice"][number]["drill"];
+
+const RETRY_DRILL: PracticeDrill = { kind: "retry", lesson: null, timeLimitSeconds: null };
+
 function result(checked = true): LessonStepCheckResult {
   return {
     checked,
@@ -48,6 +52,7 @@ export function openPractice(
   step: PlayableLibraryStep | null,
   overrides: Partial<Actions> = {},
   question?: ComponentProps<typeof MistakePracticeRun>["practice"][number]["questions"][number],
+  drill: PracticeDrill = RETRY_DRILL,
 ) {
   const answer = vi.fn<Actions["answer"]>().mockResolvedValue(practiceFeedback());
   const finish = vi.fn<Actions["finish"]>().mockResolvedValue(null);
@@ -56,7 +61,7 @@ export function openPractice(
   const practice: ComponentProps<typeof MistakePracticeRun>["practice"] = [
     {
       cause: null,
-      drill: { kind: "retry", lesson: null, timeLimitSeconds: null },
+      drill,
       lesson: step
         ? {
             language: "en",

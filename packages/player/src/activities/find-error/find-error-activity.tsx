@@ -1,6 +1,7 @@
 "use client";
 
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
@@ -8,7 +9,6 @@ import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { usePlayerInteractionState } from "../../player-context";
 import {
   ACTIVITY_CARD_CLASS,

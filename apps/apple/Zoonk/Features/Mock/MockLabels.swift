@@ -8,9 +8,37 @@ enum MockLabels {
       : LocalizedStringResource("\(count) answered", table: "Mock")
   }
 
+  /// Never 0: the answer sheet says it only once the learner marked one.
+  static func unsure(_ count: Int) -> LocalizedStringResource {
+    LocalizedStringResource(
+      "\(count) not sure", table: "Mock",
+      comment:
+        "On the mock exam's answer sheet, after \"34 answered ·\": how many answers the learner marked with the \"Not sure\" button, as in \"34 answered · 3 not sure\". Keep it as short as the English. The number is 1 or more."
+    )
+  }
+
   static func title(number: Int) -> String {
     String(
       localized: "Mock exam \(number)", table: "Mock", comment: "A mock exam's name, by its number")
+  }
+
+  static func sectionTitle(_ section: MockSection) -> String {
+    section.name
+      ?? String(
+        localized: "Section \(section.index + 1)", table: "Mock",
+        comment: "A section without a name")
+  }
+
+  static func questionPlace(number: Int, total: Int, area: String? = nil) -> LocalizedStringResource
+  {
+    if let area {
+      return LocalizedStringResource(
+        "Question \(number) of \(total)\u{00A0}· \(area)", table: "Mock",
+        comment: "A question's place in the mock, with its subject")
+    }
+
+    return LocalizedStringResource(
+      "Question \(number) of \(total)", table: "Mock", comment: "A question's place in the mock")
   }
 
   static func daySize(fullLength: Bool, day: Int?) -> String {
@@ -230,4 +258,17 @@ struct QuestionsSourceText: View {
 /// Main's `getSourceHost`: a source by its site, without "www.".
 func sourceHost(_ url: URL) -> String {
   url.host(percentEncoded: false)?.replacing(/^www\./, with: "") ?? url.absoluteString
+}
+
+extension FactSegments.Fact {
+  /// A result's mark on an answer the learner pressed "Not sure" on.
+  static var unsure: FactSegments.Fact {
+    FactSegments.Fact(
+      text: String(
+        localized: "Not sure", table: "Mock",
+        comment:
+          "A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed."
+      ),
+      color: .warningText, symbol: "bookmark.fill", symbolColor: .warning)
+  }
 }

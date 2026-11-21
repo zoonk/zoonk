@@ -6,7 +6,6 @@
   "profile_questions_activities_title": "43c3accc8578746ecd5516a4e06ca3bfe4fc0b409ab479ef5c4459a45fa81730",
   "profile_questions_add": "7f3b24371ea3cfb893d2e197d71a4b20f5cfea19669d052ccae333d1cca1dcdf",
   "profile_questions_address_title": "681eda92c42a26e80731eeea53b70b3b39633e8f580accf5368caf0651bb6a1d",
-  "profile_questions_cap": "d53c70b37d98e52129481b1805214d325022d2b08769b8ed9dfc104f79218a95",
   "profile_questions_condition_note": "501c6125d895fab57aa884cad89a346bf60b11bb85487b4c9b491c3938a4150b",
   "profile_questions_conditions_description": "603c0f9ac947293f12933a9a5e6395ae500d0712ab977e32ff5b08a3659694bb",
   "profile_questions_conditions_description_settings": "e25154d0f0cec5a2d73d437455a426f9e62f9ddc81cd57b09d41e95e40ba824c",
@@ -16,7 +15,6 @@
   "profile_questions_earlier_answer": "d49b1cf755b54bd53204342560383dc0dd42b8c65b7492f980fd037bb014534a",
   "profile_questions_for_fun": "ef909e3db5f0e38b4e291c231ed27e3d67dd1bcddedca291653e3da8e46b2882",
   "profile_questions_how_learn": "98c0aa531886e68a66d93a0b9f5812a93124d446a83873e29479169bebfa4882",
-  "profile_questions_interest_description": "0b646d56df2f4d0775471f839b3df38ebbae40d0e33c39fbdc3eec56a9ae3c5d",
   "profile_questions_job": "c2df9041428d5236c119cb47267bea1f51deb4f2517ae72ca6c068683cdd43b4",
   "profile_questions_job_placeholder": "1f957070696742590beaf4ddc299f6a6f2d024e51b3bd1e8feacb9d754b1bd27",
   "profile_questions_lesson_ready": "9fc5707cc19883fb0506fa6cd14d763abd4bfd6215423c2eac4bd14ddd8856b3",
@@ -35,6 +33,7 @@
   "profile_questions_read_favorites": "96bd662867ce9fb4ae26b1e8d9ba6bf65053b3fc4415ca1eb80372ae90162d6c",
   "profile_questions_read_placeholder": "0f4cf5ea55efe5506b042bd2b501fa86a02b2b1be6cf0febdae22265fc59876e",
   "profile_questions_read_title": "5884a03f9d7fcdeeaf324d3b8974b335231487a5a28bbef310bcafa8423e8fbf",
+  "profile_questions_remove_tool": "b08eebdaff9daca07a43f4fe4930203ad401bc43563a92966149db56510c0eef",
   "profile_questions_row_activities": "f6071c372d915be921cfce650219e7ef170686619b4342beb830f06a15649b6e",
   "profile_questions_row_address": "c93e4bf12e9f6652f1459a33848f5f9d67e50a9bd0c14bd10b7bf880180ce122",
   "profile_questions_row_conditions": "4d4b81df240b73a65542e8899c90abc85db2dc789dca9da45ce44280b74a3fa6",
@@ -52,7 +51,7 @@
   "profile_questions_skip_all_label": "52eaf7e67076606a3de0e43ad642e7b446542cc9220518e48f6484d4ae5be6d5",
   "profile_questions_something_else": "29e0ea51f42396998530ce10fc3e7af02b46909b0586f49e140e1aaf556db85e",
   "profile_questions_start_lesson": "fed500bc49d61c5b992739082b450e06e7eab9189c162f47d5637c550150b1ae",
-  "profile_questions_studies_description": "5c21112e4bea4d493c04ec9ed78965fab4e6cdd97f962d4869f1132ecc489e45",
+  "profile_questions_studies_description": "321bc9358b7c441ea82f519f344e2b45812178c06226172750ea3b2be619156d",
   "profile_questions_studies_title": "7c8265ad975341d837b5abbf7fe949d22380e4ee0465f27b6c30ca71fa0b2bdb",
   "profile_questions_subject": "c437180ffa3329dada1124d7c689b44e5d134f6c3a62bbe3c1f87d2c26b54483",
   "profile_questions_subject_placeholder": "d508e5bb15eaa92a4e5d6e369383065ded339e3a0b9dc1d5ec462e2d048e6f9f",
@@ -64,7 +63,6 @@
   "profile_questions_support_placeholder": "ec9cf8fde8ecb3660478757dfab3d35bfe7e393971117841bfb82875dae0a035",
   "profile_questions_support_title": "6ac3c3964dc0aaf53be08a0970ca72d242592cee013cbb4aff5a79f8d209044e",
   "profile_questions_title": "647e7ca5ce7ba31e19450d033c3803d64c5e21786ced096bed2cff0b09ea0a2e",
-  "profile_questions_tools_description": "32c2f13cae9f25c636cfe27c52fc70d1c0c66d836106c58b3b495f1246f7d9c8",
   "profile_questions_tools_other": "430a5844031efe74098a9713a52585af06da9ec7d1995cc346bb9bcb2268d397",
   "profile_questions_tools_placeholder": "cc62a650cd5c1ff37b6eea6ef86c7bd8da9a85d3bbdb6e76ce756813eb5c2b9b",
   "profile_questions_tools_title": "273b3749f9712e7ec73f6096cb30f345e2d4081a30a38909315d23ded52a59f6",
@@ -85,7 +83,6 @@
     <string name="profile_questions_skip_all_label">プロフィールに関する残りの質問をスキップする</string>
     <string name="profile_questions_never_ask">今後これらの質問を表示しない</string>
     <string name="profile_questions_never_ask_help">設定 › プロフィールでいつでも回答できます。</string>
-    <string name="profile_questions_cap">3つまで選べます。</string>
     <string name="profile_questions_work_title">今はどんな仕事や活動をしていますか？</string>
     <string name="profile_questions_work_description">普段の仕事や生活の場面を、学習で使う例に取り入れます。</string>
     <string name="profile_questions_job">職業（任意）</string>
@@ -93,15 +90,13 @@
     <string name="profile_questions_earlier_answer">以前の回答から</string>
     <string name="profile_questions_prefer_not">回答しない</string>
     <string name="profile_questions_tools_title">よく使うアプリやツールは何ですか？</string>
-    <string name="profile_questions_tools_description">3つまで選べます。学習で使う例に取り入れます。</string>
     <string name="profile_questions_tools_other">その他（任意）</string>
     <string name="profile_questions_tools_placeholder">例：Photoshop、Python、SAP</string>
     <string name="profile_questions_studies_title">これまでにどんなことを学んできましたか？</string>
-    <string name="profile_questions_studies_description">以前学んだことも、今学んでいることも含みます。学び終えていなくても、仕事と違う分野でも大丈夫です。</string>
+    <string name="profile_questions_studies_description">過去のことでも現在のことでも、終わっていてもいなくても。</string>
     <string name="profile_questions_subject">%1$s：コースや科目（任意）</string>
     <string name="profile_questions_which_field">どの分野ですか？</string>
     <string name="profile_questions_subject_placeholder">例：ジャーナリズム</string>
-    <string name="profile_questions_interest_description">3つまで選べます。レッスンで使う例に取り入れます。</string>
     <string name="profile_questions_watch_title">何を見るのが好きですか？</string>
     <string name="profile_questions_watch_favorites">好きな番組、映画、チーム、チャンネル（任意）</string>
     <string name="profile_questions_watch_placeholder">例：Star Trek、Formula 1</string>
@@ -159,6 +154,8 @@
     <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">保存済み</string>
     <string name="profile_questions_add">追加</string>
+    <!-- Removes a tool the learner typed. {tool} is its name, such as Photoshop. -->
+    <string name="profile_questions_remove_tool">%1$sを削除</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="other">%1$d件保存済み</item>
     </plurals>

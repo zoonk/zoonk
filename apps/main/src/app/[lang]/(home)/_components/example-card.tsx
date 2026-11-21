@@ -25,7 +25,7 @@ export async function ExampleCardHead({ detail, title }: { detail?: ReactNode; t
 
   return (
     <div className="flex min-w-0 flex-col gap-0.5">
-      <p className={cn(EXAMPLE_TITLE_CLASS, "text-pretty")}>{title}</p>
+      <p className={EXAMPLE_TITLE_CLASS}>{title}</p>
       <p className="text-muted-foreground text-compact">
         {t("Example")}
         {detail && (

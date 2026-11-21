@@ -1,11 +1,11 @@
 "use client";
 
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivityCheckQuestion } from "../_components/activity-check-question";
-import { ActivityHorizontalScroll } from "../_components/activity-horizontal-scroll";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -100,13 +100,11 @@ export function PatternTableActivity(props: PatternTableProps) {
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <div className="bg-background rounded-xl py-3">
-        <ActivityHorizontalScroll
-          box={{
-            label: t("Forms of {model} and {word}", {
-              model: fields.modelWord,
-              word: fields.newWord,
-            }),
-          }}
+        <SidewaysScroll
+          label={t("Forms of {model} and {word}", {
+            model: fields.modelWord,
+            word: fields.newWord,
+          })}
         >
           <table className="w-full border-collapse text-base [&_tr>*:first-child]:ps-3 [&_tr>*:last-child]:pe-3">
             <PatternTableHead fields={fields} />
@@ -128,7 +126,7 @@ export function PatternTableActivity(props: PatternTableProps) {
               ))}
             </tbody>
           </table>
-        </ActivityHorizontalScroll>
+        </SidewaysScroll>
       </div>
 
       {!isChecked && activeRow && (

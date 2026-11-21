@@ -57,7 +57,8 @@ jobs:
 
           echo "Comparing with $passed, the head of the newest passing run"
           files=$(git diff --name-only --no-renames "$passed" HEAD -- \
-            "apps/$APP/" ".github/workflows/$APP.yml" ".github/workflows/native-changes.yml")
+            "apps/$APP/" ".github/workflows/$APP.yml" ".github/workflows/native-changes.yml" \
+            ".github/actions/$APP-last-build/")
           if [[ -n "$files" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else

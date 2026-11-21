@@ -105,17 +105,24 @@ describe("a language goal's aim", () => {
     await expect(plannedSkills(plan.id)).resolves.not.toContain(skills.fluent);
   });
 
-  it("keeps a plan laid out before aims stopped there as it was, every band and a half band's hours", async () => {
+  it("keeps planning past the aim in a plan laid out before aims stopped there, sizing a half band's hours", async () => {
     const { goal, plan, skills } = await setup({ level: "basic", targetScore: "B1+" }, OLDER_PLAN);
 
     await refreshGoalPlan({ goalId: goal.id, mode: "forced" });
 
-    await expect(plannedSkills(plan.id)).resolves.toContain(skills.fluent);
+    const planned = await plannedSkills(plan.id);
+    expect(planned).toContain(skills.work);
+    expect(planned).toContain(skills.fluent);
+    expect(planned).not.toContain(skills.trip);
+    expect(planned).not.toContain(skills.everyday);
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    const graph = saved.graph as { skills: { lessons: number }[] };
+    const graph = saved.graph as { skills: { lessons: number; pastLevel?: true }[] };
 
-    expect(graph.skills.reduce((total, skill) => total + skill.lessons, 0)).toBe(2044);
+    const pastLevel = graph.skills.map((skill) => skill.pastLevel ?? false);
+
+    expect(graph.skills.map((skill) => skill.lessons)).toStrictEqual([4, 4, 2044, 4]);
+    expect(pastLevel).toStrictEqual([true, true, false, false]);
   });
 
   it("stops an older plan at its aim once the learner moves the aim", async () => {

@@ -49,7 +49,7 @@ function ChapterLessonLinks({
   params: OutlineParams;
 }) {
   return (
-    <ul className="text-muted-foreground mt-1.5 max-w-140 text-sm text-pretty">
+    <ul className="text-muted-foreground mt-1.5 max-w-140 text-sm">
       {chapter.lessons.map((lesson) => (
         <li key={lesson.id}>
           <Link

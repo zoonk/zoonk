@@ -1,9 +1,9 @@
 "use client";
 
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isBlackKey } from "../_utils/music-notes";
 import { useRovingFocus } from "../_utils/use-roving-focus";
-import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 import { NoteMark, type NoteMarkKind } from "./note-mark";
 
 const OCTAVE = 12;
@@ -70,7 +70,7 @@ export function PianoKeyboard({
 
   // The octave fits the card on every phone at the usual text size; only larger text makes it scroll, the same in every state, so Check moves no key.
   return (
-    <ActivityHorizontalScroll box={isInteractive ? { label } : undefined} className={className}>
+    <SidewaysScroll className={className} label={label}>
       <div
         aria-hidden={isInteractive ? undefined : true}
         className="relative flex h-36 w-full touch-manipulation select-none"
@@ -132,6 +132,6 @@ export function PianoKeyboard({
           );
         })}
       </div>
-    </ActivityHorizontalScroll>
+    </SidewaysScroll>
   );
 }

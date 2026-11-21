@@ -126,14 +126,14 @@
     <string name="exam_rule_irt">Missing an easy question costs more than missing a hard one, so solve the easy ones first.</string>
     <string name="exam_rule_raw_title">Each right answer counts one point</string>
     <string name="exam_rule_raw">Answer every question.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">In your mock exams: %1$s when not flagged, %2$s when flagged.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">In your mock exams: %1$s when sure, %2$s when not sure.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d of %2$d right</item>
         <item quantity="other">%1$d of %2$d right</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Your flagged answers cost more than they earn: leave those blank.</string>
-    <string name="exam_calibration_keep_answering">Your flagged answers still earn points: keep answering them.</string>
+    <string name="exam_calibration_blank_unsure">When you\'re not sure, leave it blank: those answers cost more than they earn.</string>
+    <string name="exam_calibration_keep_answering">When you\'re not sure, still answer: those answers earn points.</string>
     <string name="exam_to_pass">To pass</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">In %1$s, as the exam\'s documents say it.</string>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSettledSkillIds } from "./settled-skills";
+import { getSettledSkillIds, getStartedSkillIds } from "./settled-skills";
 
 describe(getSettledSkillIds, () => {
   it("settles a stand-in's skill a test-out found known, not one set aside for time", () => {
@@ -27,5 +27,19 @@ describe(getSettledSkillIds, () => {
     });
 
     expect([...settled]).toStrictEqual(["known"]);
+  });
+});
+
+describe(getStartedSkillIds, () => {
+  it("lists the skills with a finished lesson, not ones only planned, skipped or tested out", () => {
+    const started = getStartedSkillIds([
+      { kind: "lesson", skillId: "studied", status: "done" },
+      { kind: "lesson", skillId: "planned", status: "todo" },
+      { kind: "lesson", skillId: "set-aside", status: "skipped" },
+      { kind: "lesson", skillId: "known", status: "testedOut" },
+      { kind: "boss", skillId: "challenged", status: "done" },
+    ]);
+
+    expect([...started]).toStrictEqual(["studied"]);
   });
 });

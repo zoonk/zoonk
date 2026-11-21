@@ -12,5 +12,5 @@ export function useResumeEffectText() {
 
 export function ResumeEffect({ preview }: { preview: boolean }) {
   const text = useResumeEffectText();
-  return preview ? <p className="text-muted-foreground text-sm text-pretty">{text}</p> : null;
+  return preview ? <p className="text-muted-foreground text-sm">{text}</p> : null;
 }

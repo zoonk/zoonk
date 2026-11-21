@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -102,19 +103,28 @@ fun itemLine(text: String): SpokenText = richText(remember(text) { parseItemLine
 @Composable
 fun spokenItemLine(text: String): String = itemLine(text).let { it.spoken ?: it.text.text }
 
-/** The question itself, with its math, as a TalkBack heading; quiet once it's graded. */
+/**
+ * The question itself, with its math, as a TalkBack heading; quiet once it's graded. A [translation]
+ * reads under it in the learner's language.
+ */
 @Composable
 fun QuestionTitle(
     text: String,
     modifier: Modifier = Modifier,
     graded: Boolean = false,
+    translation: String = "",
 ) {
     val style = MaterialTheme.typography.titleLarge
-    RichText(
-        text = text,
-        modifier = modifier.semantics { heading() },
-        style = if (graded) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style,
-    )
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        RichText(
+            text = text,
+            modifier = Modifier.semantics { heading() },
+            style = if (graded) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style,
+        )
+        if (translation.isNotBlank()) {
+            Text(translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+        }
+    }
 }
 
 internal fun parseItemText(text: String): List<ItemBlock> {

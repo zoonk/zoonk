@@ -5,9 +5,9 @@
   "exam_add_result": "1fd372262b816cc8070249e7a3585e2ff867cd2739589f8dd9ac18ab4a6f7554",
   "exam_add_result_detail": "1470087d3bf58f2c99ba48090c1efe18cad61bfb15e8ab38a2073d27ba9eb230",
   "exam_by_subject": "b295fd745a47af7832819a2e5986a3a13b686559a2ca1d9f9bba084f75bf755c",
-  "exam_calibration": "4a15e645902cf307118b81736d4ef94c41a7b73033c87ff82865e9cbcb833cd2",
-  "exam_calibration_blank_unsure": "0296b1589624fdd3e87dc6511e124ea019b8f0ec8285b14f2f1eaf03b480d274",
-  "exam_calibration_keep_answering": "9b190089aa6102dde04f6d2e0a9d46a3de087cc137b9f5bf8ba91c8bf71eba9f",
+  "exam_calibration": "50f72f4873d5ae8f8de1c0fac8c7e29ceecb0ed94d0128e25c9c165d455acb1e",
+  "exam_calibration_blank_unsure": "412565186d3880fd25076569e998d3820c13390ed217b83299c7b2d576bb574f",
+  "exam_calibration_keep_answering": "af1e71abc220dfcb27f375027d03c5a75c9bc2e1704f8c5bed4d1a6a5cc38aa3",
   "exam_calibration_right": "b169673ec23f37542494e4b625ea2d8aba69beaf78c4726ae447a835d2dbd0fa",
   "exam_checklist_black_pen": "26c2cb00268b20e4ea0338904d5e7914821e1d75850f4a8a0bbbd3a0f5e5f3d7",
   "exam_checklist_count": "4ed46201cd744f7fcbdcf6d8f3e3871ee3caffb7fe82ddb094bfc77d76d7b4d3",
@@ -224,14 +224,14 @@
     <string name="exam_rule_irt">Eine falsche Antwort auf eine leichte Frage kostet mehr als bei einer schweren. Löse deshalb zuerst die leichten Fragen.</string>
     <string name="exam_rule_raw_title">Jede richtige Antwort zählt einen Punkt</string>
     <string name="exam_rule_raw">Beantworte jede Frage.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">In deinen Probeprüfungen: %1$s bei unmarkierten Antworten, %2$s bei markierten.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">In deinen Probeprüfungen: %1$s, wenn du dir sicher warst, %2$s, wenn nicht.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d von %2$d richtig</item>
         <item quantity="other">%1$d von %2$d richtig</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Deine markierten Antworten kosten mehr Punkte, als sie bringen: Lass solche Fragen unbeantwortet.</string>
-    <string name="exam_calibration_keep_answering">Deine markierten Antworten bringen dir trotzdem Punkte: Beantworte solche Fragen weiter.</string>
+    <string name="exam_calibration_blank_unsure">Wenn du dir unsicher bist, lass die Antwort leer: Diese Antworten kosten mehr, als sie einbringen.</string>
+    <string name="exam_calibration_keep_answering">Wenn du dir unsicher bist, beantworte die Frage trotzdem: Dafür gibt es Punkte.</string>
     <string name="exam_to_pass">Zum Bestehen</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">Auf %1$s, wie in den Prüfungsunterlagen angegeben.</string>

@@ -53,6 +53,7 @@ model OnboardingDraft {
   runId         String?               @map("run_id")
   createdAt     DateTime              @default(now()) @map("created_at")
   updatedAt     DateTime              @default(now()) @updatedAt @map("updated_at")
+  goals         Goal[]
 
   @@index([userId, updatedAt])
   @@map("onboarding_drafts")

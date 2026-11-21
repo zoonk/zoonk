@@ -11,6 +11,7 @@ import { type StepsItem } from "../_components/steps";
 import { EssayGradeCard, NextStepComment } from "../essay/essay-feedback";
 import { useWritingName } from "../essay/essay-labels";
 import { useMockScreen } from "./mock-context";
+import { UnsureFact } from "./mock-labels";
 
 const SLOW_GRADING_MS = 30_000;
 
@@ -62,6 +63,7 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
         <StepTitle>{writingName(runner.view.essayRubric ?? "custom")}</StepTitle>
         {essay.status === "blank" && <StepDetail>{t("You left it blank.")}</StepDetail>}
         {tooShort && <StepDetail>{t("Too short to grade")}</StepDetail>}
+        {essay.unsure && <UnsureFact className="text-sm" />}
       </StepHeader>
       {essay.status === "pending" && <PendingState />}
     </StepCard>
@@ -90,7 +92,16 @@ export function useEssayItems(): StepsItem[] {
     }
 
     return [
-      { content: <EssayGradeCard grade={grade} rubric={essayRubric ?? "custom"} />, id },
+      {
+        content: (
+          <EssayGradeCard
+            grade={grade}
+            mark={essay.unsure && <UnsureFact className="text-sm" />}
+            rubric={essayRubric ?? "custom"}
+          />
+        ),
+        id,
+      },
       { content: <NextStepComment grade={grade} />, id: `${id}-next` },
     ];
   });

@@ -15,10 +15,7 @@ export function ResultRows({ className, ...props }: React.ComponentProps<"ul">) 
 export function ResultRow({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
-      className={cn(
-        "flex min-h-11 items-center justify-between gap-3 py-2.5 text-sm text-pretty",
-        className,
-      )}
+      className={cn("flex min-h-11 items-center justify-between gap-3 py-2.5 text-sm", className)}
       data-slot="result-row"
       {...props}
     />
@@ -43,5 +40,5 @@ export function ResultGroup({
 }
 
 export function EstimateNote({ children }: { children: React.ReactNode }) {
-  return <p className="text-muted-foreground text-compact leading-snug text-pretty">{children}</p>;
+  return <p className="text-muted-foreground text-compact leading-snug">{children}</p>;
 }

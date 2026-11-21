@@ -117,7 +117,7 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
     <DropdownMenuRadioItem closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
-      <span className="flex min-w-0 flex-col text-pretty">
+      <span className="flex min-w-0 flex-col">
         <span>
           {goal.displayName}
           <GoalCountryName goal={goal} />
@@ -134,7 +134,7 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
       <LineMarker aria-hidden="true">
         <LightbulbIcon className="text-muted-foreground size-4 shrink-0" />
       </LineMarker>
-      <span className="min-w-0 text-pretty">{goal.displayName}</span>
+      <span className="min-w-0">{goal.displayName}</span>
     </DropdownMenuItem>
   );
 }

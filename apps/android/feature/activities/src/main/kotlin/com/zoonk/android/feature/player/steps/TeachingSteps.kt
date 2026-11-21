@@ -20,7 +20,6 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -98,6 +97,7 @@ import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LessonSummaryIdeas
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -581,24 +581,7 @@ internal fun SummaryView(content: StepContent.Summary) {
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
-        SummaryIdeas(ideas.map { it.text })
-    }
-}
-
-@Composable
-private fun SummaryIdeas(ideas: List<String>) {
-    Column {
-        ideas.forEachIndexed { index, idea ->
-            if (index > 0) HorizontalDivider()
-            Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = count(index + 1),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
-                )
-                RichInlineText(text = idea, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-            }
-        }
+        LessonSummaryIdeas(ideas.map { it.text })
     }
 }
 

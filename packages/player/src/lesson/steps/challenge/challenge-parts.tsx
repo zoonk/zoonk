@@ -1,10 +1,10 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { LearnerBubble } from "@zoonk/ui/components/message";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type StepOf } from "../lesson-step-view-props";
 import { type ChallengeNames } from "./use-challenge-names";
 
@@ -65,7 +65,7 @@ export function ChallengePanelView({
             <dd className="flex flex-col gap-0.5">
               <span
                 className={cn(
-                  "text-foreground font-semibold text-pretty",
+                  "text-foreground font-semibold",
                   METRIC_NUMBER.test(metric.value) && "text-2xl tabular-nums",
                 )}
               >

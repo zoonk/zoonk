@@ -47,7 +47,7 @@ export function ScheduleAim({
         <span className="text-muted-foreground text-compact">
           {words.title(languageAim.targetLanguage)}
         </span>
-        <span className="text-reading font-medium text-pretty">
+        <span className="text-reading font-medium">
           <AimName aim={named} />
         </span>
       </div>

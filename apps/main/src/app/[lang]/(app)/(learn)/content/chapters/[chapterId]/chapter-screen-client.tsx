@@ -8,7 +8,7 @@ import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { type AreaPracticeOutcome, type ChapterHrefs, ChapterScreen } from "@zoonk/learn/chapter";
-import { LessonRichText } from "@zoonk/player/lesson/rich-text";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { practiceAreaAction } from "./chapter-actions";

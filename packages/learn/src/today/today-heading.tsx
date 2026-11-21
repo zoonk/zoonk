@@ -17,7 +17,7 @@ function NotEnoughTime() {
   const routes = useLearnRoutes();
 
   return (
-    <p className="text-pretty">
+    <p>
       {t("Not enough time left for all your lessons.")}{" "}
       <LearnLink
         className="text-foreground hit-area focus-visible:ring-ring/50 relative inline-flex items-center gap-0.5 rounded-sm font-medium outline-none focus-visible:ring-[3px]"
@@ -44,9 +44,7 @@ function TodayLine() {
   if (welcomeBack) {
     return (
       <PageSubtitle data-slot="today-welcome-back">
-        <p className="text-pretty">
-          {t("Welcome back. Today is short, so it's easy to start again.")}
-        </p>
+        <p>{t("Welcome back. Today is short, so it's easy to start again.")}</p>
       </PageSubtitle>
     );
   }

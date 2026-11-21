@@ -99,7 +99,7 @@ function LevelRow({ level }: { level: LanguageSkillLevel }) {
   return (
     <li className={`${ROW_GRID} min-h-11 py-2.5`}>
       <span className="sr-only">{estimatedLevel(level)}</span>
-      <span aria-hidden="true" className="min-w-0 text-sm font-medium text-pretty">
+      <span aria-hidden="true" className="min-w-0 text-sm font-medium">
         {skillName(level.skill)}
       </span>
       <LevelBar score={level.score} />
