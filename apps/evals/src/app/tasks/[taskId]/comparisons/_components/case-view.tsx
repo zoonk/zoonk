@@ -198,7 +198,13 @@ function FailedChecks({ checks }: { checks: FailedCheck[] }) {
   ));
 }
 
+/**
+ * Beside the other answer, its label, checks, output and problems share rows with it, so both
+ * outputs start level whatever sits above them.
+ */
 function OutputColumn({
+  aligned,
+  checksRow,
   criteria,
   failedChecks,
   imageIndex,
@@ -207,6 +213,8 @@ function OutputColumn({
   observations,
   output,
 }: {
+  aligned: boolean;
+  checksRow: boolean;
   criteria: CriterionLabels;
   failedChecks: FailedCheck[];
   imageIndex: number;
@@ -216,9 +224,20 @@ function OutputColumn({
   output: PacketOutput | null;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-3">
+    <div
+      className={cn(
+        "flex min-w-0 flex-col gap-3",
+        aligned && "lg:grid lg:grid-rows-subgrid",
+        aligned && (checksRow ? "lg:row-span-4" : "lg:row-span-3"),
+      )}
+    >
       <p className="text-sm font-medium">{label}</p>
-      <FailedChecks checks={failedChecks} />
+
+      {checksRow && (
+        <div className={cn("flex flex-col", failedChecks.length === 0 && "hidden lg:block")}>
+          <FailedChecks checks={failedChecks} />
+        </div>
+      )}
 
       {imageIndex === -1 ? (
         <div className="rounded-xl border p-4">
@@ -343,12 +362,16 @@ function RunSection({
     <div className="flex flex-col gap-4">
       {showRun && <p className="text-muted-foreground font-mono text-xs">Run {run.run}</p>}
 
-      <div className={cn("grid gap-6", sides.length === 2 ? "lg:grid-cols-2" : "max-w-3xl")}>
+      <div
+        className={cn("grid gap-6", sides.length === 2 ? "lg:grid-cols-2 lg:gap-y-3" : "max-w-3xl")}
+      >
         {sides.map((side) => {
           const variant = side === "incumbent" ? incumbent : challenger;
 
           return (
             <OutputColumn
+              aligned={sides.length === 2}
+              checksRow={sides.some((entry) => run.failedChecks[entry].length > 0)}
               criteria={criteria}
               failedChecks={run.failedChecks[side]}
               imageIndex={pictured.findIndex((image) => image.side === side)}
