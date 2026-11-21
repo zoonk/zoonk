@@ -207,7 +207,7 @@ function OutputColumn({
       )}
 
       {observations.length > 0 && (
-        <div className="flex flex-col">
+        <div className="flex flex-col pt-3">
           <p className="text-muted-foreground text-xs">
             {observations.length === 1
               ? "1 problem found"
