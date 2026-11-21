@@ -205,7 +205,7 @@ function decimalsOf(step: number): number {
   return decimals.replace(/0+$/u, "").length;
 }
 
-export type TickFormat = { compact: boolean; grouping: boolean; maximumFractionDigits: number };
+type TickFormat = { compact: boolean; grouping: boolean; maximumFractionDigits: number };
 
 /** Prints one tick in a chart's own notation, such as with its unit or currency. */
 export type TickFormatter = (value: number, options: TickFormat) => string;

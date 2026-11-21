@@ -8,7 +8,7 @@ import { z } from "zod";
 const LABEL_TARGET = 40;
 const TITLE_TARGET = 120;
 const DETAIL_TARGET = 240;
-export const CHART_UNIT_TARGET = 12;
+const CHART_UNIT_TARGET = 12;
 
 const label = aimForCharacters(z.string(), LABEL_TARGET);
 const title = aimForCharacters(z.string(), TITLE_TARGET);
