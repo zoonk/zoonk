@@ -61,6 +61,9 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let fits: Bool
     /// `exam` or `goal`.
     let measure: String
+    /// The share whose topics get at least their first lessons by the deadline: 1 when every topic
+    /// is in. Nil without a deadline.
+    let reachedShare: Double?
     let timeCovers: Bool
   }
 

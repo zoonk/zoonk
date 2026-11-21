@@ -316,7 +316,7 @@ struct ScheduleQuestion: View {
             timeChoices.map(\.minutes), with: minutes, marked.suggested, marked.full),
           id: \.self
         ) { time in
-          Text(TimeAnswer.choiceLabel(time, suggested: marked.suggested))
+          Text(TimeAnswer.choiceLabel(time, marked: marked))
             .tag(time)
         }
       } label: {
@@ -409,8 +409,8 @@ struct ScheduleQuestion: View {
     let answer = shown.answer
 
     return TimeAnswer(
-      date: goalDate(shown), exam: isExam, line: answer.line, minutes: shown.minutes,
-      offer: ScheduleTime.offer(found: answer.found, line: answer.line, minutes: shown.minutes),
+      date: goalDate(shown), exam: isExam, found: answer.found, line: answer.line,
+      minutes: shown.minutes,
       split: days.isEmpty
         ? nil
         : ScheduleTime.split(

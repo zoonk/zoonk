@@ -255,136 +255,7 @@
         }
       }
     },
-    "%@ a day covers about %@ of your exam topics" : {
-      "comment" : "The share of an exam's topics a time a day covers; the first argument is a duration",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag deckst du etwa %2$@ deiner Prüfungsthemen ab"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day covers about %2$@ of your exam topics"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día cubres aproximadamente el %2$@ de los temas de tu examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu peux étudier environ %2$@ des sujets de ton examen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al giorno studi circa il %2$@ degli argomenti del tuo esame"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%1$@で試験に出るトピックの約%2$@を学習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %1$@씩 공부하면 시험 주제의 약 %2$@를 학습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy %1$@ nauki dziennie plan obejmuje około %2$@ tematów egzaminacyjnych"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, dá para estudar cerca de %2$@ dos tópicos da sua prova"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %1$@ çalışarak sınav konularının yaklaşık %2$@ kadarını bitirebilirsin"
-          }
-        }
-      }
-    },
-    "%@ a day covers about %@ of your goal" : {
-      "comment" : "The share of a goal a time a day covers; the first argument is a duration",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag erreichst du etwa %2$@ deines Ziels"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day covers about %2$@ of your goal"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día cubres aproximadamente el %2$@ de tu objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu peux atteindre environ %2$@ de ton objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al giorno raggiungi circa il %2$@ del tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%1$@で目標に必要な内容の約%2$@を学習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %1$@씩 공부하면 목표 학습량의 약 %2$@를 채울 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy %1$@ nauki dziennie plan obejmuje około %2$@ materiału"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, dá para estudar cerca de %2$@ do conteúdo do seu objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %1$@ çalışarak hedefinin yaklaşık %2$@ kadarını tamamlayabilirsin"
-          }
-        }
-      }
-    },
+    "%@ a day covers as much as any time can." : {},
     "%@ a day covers everything" : {
       "comment" : "The time a day that covers the whole goal; the argument is a duration",
       "localizations" : {
@@ -444,6 +315,28 @@
         }
       }
     },
+    "%@ a day covers the first lessons of about %@ of your exam" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day covers the first lessons of about %2$@ of your exam"
+          }
+        }
+      }
+    },
+    "%@ a day covers the first lessons of about %@ of your goal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day covers the first lessons of about %2$@ of your goal"
+          }
+        }
+      }
+    },
+    "%@ a day covers the first lessons of every exam topic" : {},
+    "%@ a day covers the first lessons of every part of your goal" : {},
     "%@ a day isn't enough time to cover your goal." : {
       "comment" : "The time a day covers next to nothing",
       "localizations" : {
@@ -25250,6 +25143,9 @@
         }
       }
     },
+    "Not in your plan · other topics come first" : {
+      "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first."
+    },
     "Not in your plan · you took this subject out" : {
       "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
       "localizations" : {
@@ -25305,65 +25201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planında yok · bu branşı plandan çıkardın"
-          }
-        }
-      }
-    },
-    "Not in your plan · your time doesn't cover it" : {
-      "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht in deinem Plan · deine Lernzeit reicht dafür nicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No está en tu plan · no te alcanza el tiempo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas dans ton plan · le temps prévu ne suffit pas"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è nel tuo piano · il tempo non basta"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画に含まれていません・学習時間が足りません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획에 없어요 · 학습 시간이 부족해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poza twoim planem · nie wystarczy na to czasu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fora do seu plano · não cabe no tempo que você tem"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planında yok · çalışma süren yetmiyor"
           }
         }
       }
@@ -32334,71 +32171,6 @@
         }
       }
     },
-    "The most you can cover is about %@, at %@ a day." : {
-      "comment" : "No time a day covers everything: the most any covers, and at what time a day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Am meisten schaffst du ungefähr %1$@, wenn du täglich %2$@ lernst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The most you can cover is about %1$@, at %2$@ a day."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo máximo que puedes cubrir es aproximadamente %1$@, con %2$@ al día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux couvrir au maximum environ %1$@, à raison de %2$@ par jour."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi coprire al massimo circa %1$@, dedicando %2$@ al giorno."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日の学習時間を%2$@にすると、最大で約%1$@まで進められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루에 %2$@씩 공부하면 최대 %1$@ 정도까지 할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maksymalnie możesz przerobić około %1$@, poświęcając %2$@ dziennie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O máximo que dá para estudar é cerca de %1$@, com %2$@ por dia."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %2$@ çalışarak en fazla yaklaşık %1$@ kadarını tamamlayabilirsin."
-          }
-        }
-      }
-    },
     "The official exam date is %@. Use it?" : {
       "localizations" : {
         "de" : {
@@ -32870,6 +32642,7 @@
         }
       }
     },
+    "There isn't enough time to cover everything." : {},
     "These lessons aren't ready yet. Try again later." : {
       "comment" : "A topic whose lessons can't be made ready now",
       "localizations" : {

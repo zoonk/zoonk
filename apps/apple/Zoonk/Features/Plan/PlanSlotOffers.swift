@@ -460,11 +460,15 @@ struct PlanCoverageSlot: View {
         comment: "The time a day that covers everything couldn't be worked out")
     case .time(let time):
       if let suggested, offerMinutes != nil {
-        return suggested.kind == .everything
-          ? title
-          : planCoverageLine(
-            minutes: suggested.minutes, share: suggested.coveredShare,
+        guard suggested.kind == .focus else {
+          return title
+        }
+
+        return suggested.reachedShare.map {
+          planCoverageLine(
+            minutes: suggested.minutes, share: $0,
             exam: context.plan.feasibility?.measure == "exam")
+        }
       }
 
       return nothingToOffer(time)
@@ -473,20 +477,11 @@ struct PlanCoverageSlot: View {
 
   private func nothingToOffer(_ time: TimeToCover) -> String {
     if let minutes = time.recommendedMinutes {
-      return String(
-        localized:
-          "Covering everything takes about \(planDurationText(minutes: Double(minutes))) a day.",
-        table: "Plan",
-        comment: "The time a day that would cover everything; the argument is a duration"
-      )
+      return planEverythingTakesText(minutes: minutes)
     }
 
     if let most = time.most {
-      return String(
-        localized:
-          "The most you can cover is about \(most.coveredShare.formatted(.percent.precision(.fractionLength(0)))), at \(planDurationText(minutes: Double(most.minutes))) a day.",
-        table: "Plan",
-        comment: "No time a day covers everything: the most any covers, and at what time a day")
+      return planMostTimeText(minutes: most.minutes)
     }
 
     let date = context.plan.schedule.targetDate.map {
@@ -681,19 +676,47 @@ extension PlanStore {
   }
 }
 
-/// "{time} a day covers about {share} of your exam topics".
+/// Main's `timeCovers`: what a time a day reaches, where no picker shows the time. `share` is 1 when
+/// every topic gets its first lessons, though not everything.
 func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
   let time = planDurationText(minutes: Double(minutes))
+
+  guard share < 1 else {
+    return exam
+      ? String(
+        localized: "\(time) a day covers the first lessons of every exam topic", table: "Plan")
+      : String(
+        localized: "\(time) a day covers the first lessons of every part of your goal",
+        table: "Plan")
+  }
+
   let percent = share.formatted(.percent.precision(.fractionLength(0)))
 
   return exam
     ? String(
-      localized: "\(time) a day covers about \(percent) of your exam topics", table: "Plan",
-      comment: "The share of an exam's topics a time a day covers; the first argument is a duration"
-    )
+      localized:
+        "\(time) a day covers the first lessons of about \(percent) of your exam",
+      table: "Plan")
     : String(
-      localized: "\(time) a day covers about \(percent) of your goal", table: "Plan",
-      comment: "The share of a goal a time a day covers; the first argument is a duration")
+      localized: "\(time) a day covers the first lessons of about \(percent) of your goal",
+      table: "Plan")
+}
+
+func planEverythingTakesText(minutes: Int) -> String {
+  String(
+    localized:
+      "Covering everything takes about \(planDurationText(minutes: Double(minutes))) a day.",
+    table: "Plan",
+    comment: "The time a day that would cover everything; the argument is a duration"
+  )
+}
+
+/// No time covers everything by the date: the fewest minutes that cover as much as any time does.
+func planMostTimeText(minutes: Int) -> String {
+  String(
+    localized:
+      "\(planDurationText(minutes: Double(minutes))) a day covers as much as any time can.",
+    table: "Plan")
 }
 
 extension PlanContext {

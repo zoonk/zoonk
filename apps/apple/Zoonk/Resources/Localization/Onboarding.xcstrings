@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ (covers everything)" : {
+      "comment" : "A daily study time in a list of times: the one that covers the learner's whole goal by its date. {time} is like \"10 h\"."
+    },
     "%@ (suggested)" : {
       "comment" : "The time a day the plan suggests, among the times to pick",
       "localizations" : {
@@ -1283,65 +1286,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Metin ekle"
-          }
-        }
-      }
-    },
-    "Add time" : {
-      "comment" : "Opens the plan's time a day, beside the line saying it doesn't cover the goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehr Lernzeit einplanen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar tiempo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter du temps"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi tempo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習時間を増やす"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시간 늘리기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zwiększ czas nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aumentar tempo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Süre ekle"
           }
         }
       }
@@ -3996,266 +3940,6 @@
         }
       }
     },
-    "Covers about %@ of your exam topics by %@." : {
-      "comment" : "The share of an exam a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deckt etwa %1$@ deiner Prüfungsthemen bis zum %2$@ ab."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your exam topics by %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre aproximadamente el %1$@ de los temas de tu examen para el %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permet d’étudier environ %1$@ des sujets de ton examen d’ici le %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copre circa un %1$@ degli argomenti del tuo esame entro il %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験範囲の約%1$@を%2$@までに学べます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험 주제의 약 %1$@를 %2$@까지 공부할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan obejmuje około %1$@ tematów egzaminacyjnych do %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cobre cerca de %1$@ dos tópicos da sua prova até %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınav konularının yaklaşık %1$@ kadarını %2$@ tarihine kadar tamamlayabilirsin."
-          }
-        }
-      }
-    },
-    "Covers about %@ of your exam topics by the start of %@." : {
-      "comment" : "The share of an exam a time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deckt etwa %1$@ deiner Prüfungsthemen bis Anfang %2$@ ab."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your exam topics by the start of %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre aproximadamente el %1$@ de los temas de tu examen para el inicio de %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permet d’étudier environ %1$@ des sujets de ton examen d’ici début %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copre circa un %1$@ degli argomenti del tuo esame entro l’inizio di %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験範囲の約%1$@を%2$@の初めまでに学べます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험 주제의 약 %1$@를 %2$@이 시작될 때까지 공부할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan obejmuje około %1$@ tematów egzaminacyjnych do początku miesiąca (%2$@)."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cobre cerca de %1$@ dos tópicos da sua prova até o início de %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınav konularının yaklaşık %1$@ kadarını %2$@ ayının başına kadar tamamlayabilirsin."
-          }
-        }
-      }
-    },
-    "Covers about %@ of your goal by %@." : {
-      "comment" : "The share of a goal a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit erreichst du etwa %1$@ deines Ziels bis zum %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your goal by %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre aproximadamente el %1$@ de tu objetivo para el %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permet d’atteindre environ %1$@ de ton objectif d’ici le %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copre circa un %1$@ del tuo obiettivo entro il %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標に必要な内容の約%1$@を%2$@までに学べます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표의 약 %1$@를 %2$@까지 달성할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan obejmuje około %1$@ materiału do %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cobre cerca de %1$@ do seu objetivo até %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hedefinin yaklaşık %1$@ kadarını %2$@ tarihine kadar tamamlayabilirsin."
-          }
-        }
-      }
-    },
-    "Covers about %@ of your goal by the start of %@." : {
-      "comment" : "The share of a goal a time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damit erreichst du etwa %1$@ deines Ziels bis Anfang %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Covers about %1$@ of your goal by the start of %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubre aproximadamente el %1$@ de tu objetivo para el inicio de %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permet d’atteindre environ %1$@ de ton objectif d’ici début %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copre circa un %1$@ del tuo obiettivo entro l’inizio di %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標に必要な内容の約%1$@を%2$@の初めまでに学べます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표의 약 %1$@를 %2$@이 시작될 때까지 달성할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan obejmuje około %1$@ materiału do początku miesiąca (%2$@)."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cobre cerca de %1$@ do seu objetivo até o início de %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hedefinin yaklaşık %1$@ kadarını %2$@ ayının başına kadar tamamlayabilirsin."
-          }
-        }
-      }
-    },
     "Covers all your exam topics by %@." : {
       "comment" : "The time a day picked covers a whole exam; the argument is a date like 'May 5, 2027'",
       "localizations" : {
@@ -4373,6 +4057,62 @@
           }
         }
       }
+    },
+    "Covers the first lessons of about %@ of your exam by %@." : {
+      "comment" : "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers the first lessons of about %1$@ of your exam by %2$@."
+          }
+        }
+      }
+    },
+    "Covers the first lessons of about %@ of your exam by the start of %@." : {
+      "comment" : "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers the first lessons of about %1$@ of your exam by the start of %2$@."
+          }
+        }
+      }
+    },
+    "Covers the first lessons of about %@ of your goal by %@." : {
+      "comment" : "The share of a goal whose parts get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers the first lessons of about %1$@ of your goal by %2$@."
+          }
+        }
+      }
+    },
+    "Covers the first lessons of about %@ of your goal by the start of %@." : {
+      "comment" : "The share of a goal whose parts get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers the first lessons of about %1$@ of your goal by the start of %2$@."
+          }
+        }
+      }
+    },
+    "Covers the first lessons of every exam topic by %@." : {
+      "comment" : "A time a day reaches every exam topic, not all of each; the argument is a date like 'May 5, 2027'"
+    },
+    "Covers the first lessons of every exam topic by the start of %@." : {
+      "comment" : "A time a day reaches every exam topic, not all of each; the argument is the month the learner named, like 'May 2027'"
+    },
+    "Covers the first lessons of every part of your goal by %@." : {
+      "comment" : "A time a day reaches every part of a goal, not all of each; the argument is a date like 'May 5, 2027'"
+    },
+    "Covers the first lessons of every part of your goal by the start of %@." : {
+      "comment" : "A time a day reaches every part of a goal, not all of each; the argument is the month the learner named, like 'May 2027'"
     },
     "Covers your whole goal by %@." : {
       "comment" : "The time a day picked covers a whole goal; the argument is a date like 'May 5, 2027'",
@@ -18993,65 +18733,6 @@
         }
       }
     },
-    "Use %@ to cover more" : {
-      "comment" : "Picks the longer time a day that covers as much of the goal as any time can, when part of it never fits; the argument is a time like '8 h'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ mehr abdecken"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usar %@ para cubrir más"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choisir %@ pour en couvrir plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli %@ per coprire di più"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@でより広い範囲をカバーする"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 많은 범위를 다루는 %@ 선택하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustaw %@, by plan objął więcej materiału"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usar %@ para cobrir mais"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daha fazlasına yetişmek için %@ ayır"
-          }
-        }
-      }
-    },
     "Use it at work" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -19166,65 +18847,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uygulamayı %@ dilinde kullan"
-          }
-        }
-      }
-    },
-    "Use the suggested %@" : {
-      "comment" : "Picks the time a day the plan suggests, at most 4 hours; the argument is a time like '4 h'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vorschlag von %@ übernehmen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usar el tiempo sugerido: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choisir la durée conseillée de %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli la durata suggerita: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "おすすめの%@にする"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "추천 시간인 %@ 선택하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustaw %@ zgodnie z sugestią"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usar a sugestão de %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önerilen süreyi seç: %@"
           }
         }
       }

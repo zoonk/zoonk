@@ -675,7 +675,7 @@ final class PlanReadsOnScreenTests: XCTestCase {
     let api = PlanAPIStub()
     await api.setSuggested(
       TimeToCover.Suggested(
-        coveredShare: 1, everyTopic: true, kind: .everything, minutes: 60, split: nil))
+        kind: .everything, minutes: 60, reachedShare: 1, split: nil))
     let rows = try await rowUnderTimeSection(api: api) { await api.releaseHeldCall() }
 
     XCTAssertEqual(rows.count, 1, "The row under it moved: \(rows)")
@@ -1111,7 +1111,7 @@ extension GoalPlan {
       targetDate.map {
         """
         {"coreFits": false, "coveredShare": 0.6, "deadline": "\($0)", "deepensMostAsked": false,
-         "fits": false, "measure": "goal", "timeCovers": false}
+         "fits": false, "measure": "goal", "reachedShare": 0.8, "timeCovers": false}
         """
       } ?? "null"
     let json = """
