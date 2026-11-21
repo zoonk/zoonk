@@ -6,8 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import com.zoonk.android.R
 import androidx.compose.ui.text.AnnotatedString
+import com.zoonk.android.R
 import com.zoonk.android.ui.richtext.RichTextLine
 import com.zoonk.android.ui.richtext.SpokenText
 
