@@ -636,8 +636,9 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
     var id: String { extra ? "extra" : "notice:\(name ?? "")" }
   }
 
-  /// Main's `groupSubjects`: the notice's groups in its order, then the optional study; a plan's
-  /// modules are one group.
+  /// Main's `groupSubjects`: the subjects with no group first, so none reads as part of the group
+  /// above it, then the notice's groups in its order, then the optional study; a plan's modules
+  /// are one group.
   var subjectGroups: [SubjectGroup] {
     guard kind == "notice" else {
       return [SubjectGroup(extra: false, name: nil, subjects: subjects)]
@@ -653,11 +654,13 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
       keys.append(key(subject))
     }
 
-    return (keys.filter { $0 != nil } + keys.filter { $0 == nil }).map { groupKey in
+    let ungrouped = keys.filter { $0 == "" }
+    let named = keys.filter { $0 != nil && $0 != "" }
+
+    return (ungrouped + named + keys.filter { $0 == nil }).map { groupKey in
       let inGroup = subjects.filter { key($0) == groupKey }
       return SubjectGroup(
-        extra: groupKey == nil, name: groupKey == nil ? nil : inGroup.first?.group,
-        subjects: inGroup)
+        extra: groupKey == nil, name: groupKey.flatMap { $0.isEmpty ? nil : $0 }, subjects: inGroup)
     }
   }
 
