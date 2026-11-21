@@ -151,14 +151,18 @@ export function caseVotes(comparison: Comparison, reads: ReturnType<typeof accep
     );
 
     const modelResult = settle(Object.values(families));
+    const canSettle = canAdjudicate(manifest, { votes: families });
 
-    const ruling = canAdjudicate(manifest, { votes: families })
-      ? comparison.adjudications.find((entry) => entry.caseId === caseId)
+    const adjudication = canSettle
+      ? latestRuling(
+          comparison.adjudications.find((entry) => entry.caseId === caseId),
+          blindOwner,
+        )
       : undefined;
 
-    const adjudication = latestRuling(ruling, blindOwner);
-
-    const result = modelResult === "unresolved" ? (blindOwner?.vote ?? modelResult) : modelResult;
+    const result = canSettle
+      ? (adjudication?.direction ?? blindOwner?.vote ?? modelResult)
+      : modelResult;
 
     return {
       ...(adjudication && { adjudication }),
@@ -166,7 +170,7 @@ export function caseVotes(comparison: Comparison, reads: ReturnType<typeof accep
       language,
       legacyOwner: legacyOwner ?? null,
       owner: blindOwner?.vote ?? legacyOwner ?? null,
-      result: adjudication?.direction ?? result,
+      result,
       votes: families,
     };
   });

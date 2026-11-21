@@ -1,6 +1,14 @@
 import { type Decision, decisionSchema } from "./decision-schema";
 import { deliveryTable } from "./delivery-table";
-import { acceptedReads, caseVotes, readerRecords, settle, sides, verifiedClaims } from "./evidence";
+import {
+  acceptedReads,
+  canAdjudicate,
+  caseVotes,
+  readerRecords,
+  settle,
+  sides,
+  verifiedClaims,
+} from "./evidence";
 import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
 
@@ -286,6 +294,27 @@ function preferenceSettlesOpenEvidence({
   );
 }
 
+function unresolvedChoice({ cases, manifest }: Pick<Facts, "cases" | "manifest">) {
+  const unresolved = cases.filter((item) => item.result === "unresolved");
+
+  if (unresolved.some((item) => !canAdjudicate(manifest, item))) {
+    return result(
+      "insufficient evidence",
+      "Some unresolved cases are awaiting qualified model reads.",
+    );
+  }
+
+  return unresolved.some(
+    (item) =>
+      !item.legacyOwner || item.legacyOwner === "split" || Object.keys(item.votes).length < 2,
+  )
+    ? {
+        ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
+        reasonCode: "owner_blind_read_required" as const,
+      }
+    : null;
+}
+
 function choose({
   manifest,
   rows,
@@ -336,17 +365,10 @@ function choose({
     );
   }
 
-  if (
-    cases.some(
-      (item) =>
-        item.result === "unresolved" &&
-        (!item.legacyOwner || item.legacyOwner === "split" || Object.keys(item.votes).length < 2),
-    )
-  ) {
-    return {
-      ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
-      reasonCode: "owner_blind_read_required" as const,
-    };
+  const reading = unresolvedChoice({ cases, manifest });
+
+  if (reading) {
+    return reading;
   }
 
   const pending = claims.filter(

@@ -45,8 +45,8 @@ function ownerProgress(route: ComparisonRoute) {
 function OwnerStatus({ route }: { route: ComparisonRoute }) {
   const progress = ownerProgress(route);
 
-  const needCall = route.decision.cases.filter((item) =>
-    canAdjudicate(route.comparison.manifest, item),
+  const needCall = route.decision.cases.filter(
+    (item) => item.result === "unresolved" && canAdjudicate(route.comparison.manifest, item),
   );
 
   if (progress.cases === 0) {
@@ -72,9 +72,8 @@ function OwnerStatus({ route }: { route: ComparisonRoute }) {
               </a>
             </span>
           ))}
-          , so your blind read settles {needCall.length === 1 ? "it" : "them"}. You can also rule on{" "}
-          {needCall.length === 1 ? "it" : "each"} with the model names shown; the later of the two
-          counts.
+          . Your blind read can settle {needCall.length === 1 ? "it" : "them"}. You can also rule
+          with the model names shown.
         </p>
       )}
     </>
