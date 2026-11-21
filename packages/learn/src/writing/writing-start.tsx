@@ -138,6 +138,11 @@ function StartMessage({ state, task }: { state: WritingStartState; task: Tomorro
     return (
       <StepHeader className="gap-3">
         <StepTitle>{t("This needs a free account")}</StepTitle>
+        <StepDetail>
+          {task.unit === "drill"
+            ? t("With one, we write your exercise and grade what you write.")
+            : t("With one, we write your question and grade what you write.")}
+        </StepDetail>
       </StepHeader>
     );
   }
