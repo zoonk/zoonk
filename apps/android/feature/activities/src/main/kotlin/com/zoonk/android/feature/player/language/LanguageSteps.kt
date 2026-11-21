@@ -96,8 +96,8 @@ class LessonLanguage internal constructor(
 fun rememberLessonLanguage(
     learner: String,
     target: String?,
+    speech: SpeechPlayer? = LocalLessonSpeech.current,
 ): LessonLanguage {
-    val speech = LocalLessonSpeech.current
     val languages = remember(learner, target) { LessonLanguages(learner, target) }
     val prompt = speech?.let { rememberPromptAudio(it, languages.target) }
     return remember(languages, prompt, speech) { LessonLanguage(languages, prompt, speech) }
