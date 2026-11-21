@@ -6,15 +6,24 @@ type Placed = { action: React.ReactNode; note: React.ReactNode };
 
 type Place = (placed: Placed | null) => void;
 
+type PlaceSound = (sound: React.ReactNode) => void;
+
 const PlaceContext = createContext<Place | null>(null);
 const PlacedContext = createContext<Placed | null>(null);
+const PlaceSoundContext = createContext<PlaceSound | null>(null);
+const PlacedSoundContext = createContext<React.ReactNode>(null);
 
 export function MainActionSlotProvider({ children }: { children: React.ReactNode }) {
   const [placed, setPlaced] = useState<Placed | null>(null);
+  const [sound, setSound] = useState<React.ReactNode>(null);
 
   return (
     <PlaceContext value={setPlaced}>
-      <PlacedContext value={placed}>{children}</PlacedContext>
+      <PlaceSoundContext value={setSound}>
+        <PlacedContext value={placed}>
+          <PlacedSoundContext value={sound}>{children}</PlacedSoundContext>
+        </PlacedContext>
+      </PlaceSoundContext>
     </PlaceContext>
   );
 }
@@ -63,4 +72,24 @@ export function MainActionInBar({
       {children}
     </>
   );
+}
+
+export function usePlacedSound(): React.ReactNode {
+  return use(PlacedSoundContext);
+}
+
+/**
+ * A question asked by ear plays its sound from the bar, beside the main action, where a reading
+ * screen has its own. Without a bar that offers the slot it stays in place.
+ */
+export function SoundInBar({ children }: { children: React.ReactNode }) {
+  const place = use(PlaceSoundContext);
+
+  useLayoutEffect(() => {
+    place?.(children);
+  }, [children, place]);
+
+  useLayoutEffect(() => () => place?.(null), [place]);
+
+  return place ? null : children;
 }

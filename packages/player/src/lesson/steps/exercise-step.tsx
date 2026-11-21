@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AlphabetStep } from "../../components/alphabet-step";
 import { CantListenSwitch } from "../../components/cant-listen-switch";
@@ -9,7 +8,6 @@ import { ListeningStep } from "../../components/listening-step";
 import { MatchColumnsStep } from "../../components/match-columns-step";
 import { MultipleChoiceStep } from "../../components/multiple-choice-step";
 import { ReadingStep } from "../../components/reading-step";
-import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../../components/step-layouts";
 import { TranslationStep } from "../../components/translation-step";
 import { VocabularyStep } from "../../components/vocabulary-step";
 import { getPlayerStepAudioUrl } from "../../player-step";
@@ -54,12 +52,10 @@ function useDefinesWords(): boolean {
 
 function ListeningWayOuts({
   canListen,
-  children,
   onCantListenChange,
   wayOut,
 }: {
   canListen: boolean;
-  children: React.ReactNode;
   onCantListenChange?: () => void;
   wayOut: React.ReactNode;
 }) {
@@ -71,14 +67,10 @@ function ListeningWayOuts({
   };
 
   return (
-    <div className={cn("flex flex-col", FILL_SCREEN_CLASS)}>
-      {children}
-
-      <PlayerContentFrame className="flex flex-col gap-3 pb-6 empty:hidden">
-        {canListen && <CantListenSwitch cantListen={cantListen} onChange={change} />}
-        {wayOut}
-      </PlayerContentFrame>
-    </div>
+    <>
+      {canListen && <CantListenSwitch cantListen={cantListen} onChange={change} />}
+      {wayOut}
+    </>
   );
 }
 
@@ -91,7 +83,7 @@ export function ExerciseStepView({
   step,
   wayOut,
 }: LessonStepViewProps<PlayableLanguageStep> & {
-  /** Another way around the step, shown under "I can't listen now" ("I can talk now"). */
+  /** Another way around the step, shown after "I can't listen now" ("I can talk now"). */
   wayOut?: React.ReactNode;
   onCantListenChange?: () => void;
 }) {
@@ -131,13 +123,18 @@ export function ExerciseStepView({
       return <FillBlankStep {...shared} result={stepResult} />;
     case "listening":
       return (
-        <ListeningWayOuts
-          canListen={!isLocked && getPlayerStepAudioUrl(exercise) !== null}
-          onCantListenChange={onCantListenChange}
-          wayOut={wayOut}
-        >
-          <ListeningStep {...shared} isLocked={isLocked} result={stepResult} />
-        </ListeningWayOuts>
+        <ListeningStep
+          {...shared}
+          isLocked={isLocked}
+          result={stepResult}
+          wayOuts={
+            <ListeningWayOuts
+              canListen={!isLocked && getPlayerStepAudioUrl(exercise) !== null}
+              onCantListenChange={onCantListenChange}
+              wayOut={wayOut}
+            />
+          }
+        />
       );
     case "matchColumns":
       return <MatchColumnsStep {...shared} />;

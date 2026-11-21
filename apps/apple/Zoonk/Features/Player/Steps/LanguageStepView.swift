@@ -615,13 +615,17 @@ private struct ArrangeWordsView: View {
       )
       .typeStyle(.question)
       .accessibilityAddTraits(.isHeader)
-      LessonAudioButton(url: audio)
+      FlowLayout(spacing: 12) {
+        LessonAudioButton(url: audio)
+        cantListenButton
+      }
     } else if isListening {
       Chip(
         Text(
           "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
         ))
       LessonQuestionText(text: sentence.sentence)
+      cantListenButton
     } else {
       Chip(
         Text(
@@ -681,8 +685,12 @@ private struct ArrangeWordsView: View {
         .accessibilityFocused($focus, equals: .tile(index))
       }
     }
+  }
 
-    if isListening, !context.isLocked, exercise.promptAudio != nil {
+  /// Beside what it's about, away from the word bank, where it would read as one more word.
+  @ViewBuilder
+  private var cantListenButton: some View {
+    if !context.isLocked, exercise.promptAudio != nil {
       CantListenButton(cantListen: cantListen) { cantListen.toggle() }
     }
   }

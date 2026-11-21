@@ -504,7 +504,8 @@ private struct SpokenAnswerStepView: View {
         exercise: listening, wordHints: nil, context: context, part: part,
         cantListen: typingWhenCantListen)
 
-      if part == .turn {
+      // Up with "I can't listen now", never under the word bank.
+      if part == .screen {
         modeSwitch
       }
     } else {

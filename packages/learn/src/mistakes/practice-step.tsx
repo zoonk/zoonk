@@ -8,7 +8,7 @@ import {
   FeedbackPanel,
   FeedbackVerdict,
 } from "../_components/feedback-panel";
-import { MainActionSlot } from "../_components/main-action-slot";
+import { MainActionSlot, usePlacedSound } from "../_components/main-action-slot";
 import { QuestionDontKnow, QuestionMainAction } from "../_components/question-actions";
 import { ItemText } from "../questions/item-text";
 import { RightAnswerLine } from "../questions/right-answer-line";
@@ -87,6 +87,7 @@ export function PracticeStepActions({
   const answering = phase.kind !== "feedback";
   const sender = phase.kind === "checking" ? phase.sender : null;
   const checking = sender !== null;
+  const sound = usePlacedSound();
 
   return (
     <>
@@ -95,6 +96,8 @@ export function PracticeStepActions({
           {step.entry.drill.kind === "noGuessing" && t("I'm not sure")}
         </QuestionDontKnow>
       )}
+
+      {sound}
 
       {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
         <MainActionSlot>

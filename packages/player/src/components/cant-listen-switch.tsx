@@ -4,7 +4,7 @@ import { EarIcon, EarOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepWayOut } from "./step-way-out";
 
-/** The way around listening, under the step on the column, where a speaking screen has "I can't talk now". */
+/** The way around a question asked by ear, as "I can't talk now" is for one said out loud. */
 export function CantListenSwitch({
   cantListen,
   onChange,

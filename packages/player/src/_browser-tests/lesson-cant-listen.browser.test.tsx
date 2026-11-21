@@ -56,6 +56,26 @@ describe("a learner who can't listen now", () => {
     vi.restoreAllMocks();
   });
 
+  it("finds the way out under the question and Play in the bar, as on a speaking screen", async () => {
+    countPlays();
+    openLesson(spokenStepWithListening());
+
+    await page.getByRole("button", { name: "I can't talk now" }).click();
+    const wayOut = page.getByRole("button", { name: "I can't listen now" }).element();
+    const bank = page.getByRole("group", { name: "Word bank" }).element();
+    const play = page.getByRole("button", { name: "Play pronunciation" }).element();
+
+    expect(wayOut.getBoundingClientRect().bottom).toBeLessThan(bank.getBoundingClientRect().top);
+    expect(play.closest("[data-slot=bottom-bar]")).not.toBeNull();
+
+    await page.getByRole("button", { name: "I can't listen now" }).click();
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Play pronunciation" }))
+      .not.toBeInTheDocument();
+  });
+
   it("reads a listening sentence instead of hearing it, for the rest of the day", async () => {
     const plays = countPlays();
     const first = openLesson(listeningStep());

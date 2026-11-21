@@ -655,8 +655,9 @@ internal fun SpokenAnswerView(
 
     if (listening != null) {
         val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
-        LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part)
-        if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
+        val canTalkNow: (@Composable () -> Unit)? =
+            if (locked) null else ({ GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) } })
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part, canTalkNow)
         return
     }
 
@@ -847,18 +848,19 @@ internal fun ExplainFirstButton(
     actions: StepActions,
 ) {
     if (screen.canExplainFirst) {
-        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), actions::explainFirst)
+        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), onClick = actions::explainFirst)
     }
 }
 
-/** Main's ghost actions line their icon up with the column's text. */
+/** Main's ghost actions line their icon up with the column's text, unless they follow another control on its row ([edge] null). */
 @Composable
 internal fun GhostAction(
     icon: Int,
     label: String,
+    edge: ButtonEdge? = ButtonEdge.Start,
     onClick: () -> Unit,
 ) {
-    GhostAction(label, onClick) { Icon(painterResource(icon), contentDescription = null) }
+    GhostAction(label, onClick, edge = edge) { Icon(painterResource(icon), contentDescription = null) }
 }
 
 @Composable
@@ -866,11 +868,12 @@ internal fun GhostAction(
     label: String,
     onClick: () -> Unit,
     color: Color = Color.Unspecified,
+    edge: ButtonEdge? = ButtonEdge.Start,
     leading: (@Composable () -> Unit)?,
 ) {
     TextButton(
         onClick = onClick,
-        edge = ButtonEdge.Start,
+        edge = edge,
         colors = ButtonDefaults.textButtonColors(contentColor = color),
     ) {
         leading?.let { Box(Modifier.padding(end = 8.dp)) { it() } }

@@ -1,7 +1,11 @@
 "use client";
 
 import { useCheckNote } from "@zoonk/learn/check-note";
-import { MainActionSlot, usePlacedMainActionNote } from "@zoonk/learn/main-action-slot";
+import {
+  MainActionSlot,
+  usePlacedMainActionNote,
+  usePlacedSound,
+} from "@zoonk/learn/main-action-slot";
 import {
   BackWithSecondAction,
   QuestionActions,
@@ -61,6 +65,11 @@ export function useLessonPrimary(): LessonScreen["primary"] {
 function PromptAudio() {
   const { screen } = useLessonPlayer();
   const audio = usePromptAudio();
+  const placed = usePlacedSound();
+
+  if (placed) {
+    return placed;
+  }
 
   if (!audio || !screen.step || !isReadStep(screen.step)) {
     return null;
