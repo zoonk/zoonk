@@ -107,7 +107,7 @@ private struct PlanChangePanel: ViewModifier {
 /// One thing at a time, with "{count} more" bringing up the next, as main's slot does: "Not now"
 /// puts one off for as long as the app runs.
 /// An answer that changes the plan says what it did, with Undo, for a moment. A change to the plan
-/// (its coverage, a date that passed) is the whole card at every width, as main's; any other in the
+/// (its coverage, an offer, a date that passed) is the whole card at every width, as main's; any other in the
 /// page's column is main's suggestion line, its summary with "View" opening the whole suggestion in
 /// a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
 /// suggestion.
@@ -444,7 +444,7 @@ struct PlanSuggestionSection: View {
   /// Main's `PlanChangeSuggestion`: a change to the plan, one card at every width.
   private func isPlanChange(_ item: PlanSlotItem) -> Bool {
     switch item {
-    case .coverage, .extraLessons: true
+    case .coverage, .fitLessons, .extraLessons: true
     case .pastDate: !isStatement(item)
     default: false
     }

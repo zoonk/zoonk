@@ -4,8 +4,7 @@ import XCTest
 @testable import Zoonk
 
 /// PR comment 33: "Add to plan" waiting for its numbers belongs to the suggestion's opening. Put
-/// off, paged past or its sheet closed, the answer arrives and nothing is added; shown through a
-/// resize, it adds once.
+/// off or paged past, the answer arrives and nothing is added; shown through a resize, it adds once.
 @MainActor
 final class PlanSlotOpeningTests: XCTestCase {
   func testNotNowDropsAnAddStillWaiting() async throws {
@@ -67,26 +66,11 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(changes.count, 1, "The newly shown suggestion keeps its preview")
   }
 
-  func testClosingTheSheetDropsAnAddStillWaiting() async throws {
-    let api = try await waitingAdd()
-    let window = try await showPlan(api: api, width: .narrow)
-
-    try await activate(String(localized: "View", table: "Plan"), in: window)
-    try await activate(Self.add, in: window)
-    try await api.waitForHeldCall()
-    try await closeRequestSheet(in: window)
-    try await answer(api)
-
-    let changes = await api.calls.changes
-    XCTAssertEqual(changes, [], "Its sheet closed, the offer adds nothing")
-  }
-
-  /// The sheet stays open while the window turns wide: the answer adds the lessons, once.
+  /// The card stays shown while the window turns wide: the answer adds the lessons, once.
   func testAnAddStillShownThroughAResizeAddsOnce() async throws {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .narrow)
 
-    try await activate(String(localized: "View", table: "Plan"), in: window)
     try await activate(Self.add, in: window)
     try await api.waitForHeldCall()
     window.frame = Width.wide.frame
