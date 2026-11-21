@@ -29,7 +29,7 @@ function useDifficultySentence() {
   };
 }
 
-export function useFollowsGuideSentence() {
+function useFollowsGuideSentence() {
   const t = useExtracted();
 
   return (document: ExamDocument): string =>
