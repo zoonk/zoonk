@@ -39,7 +39,8 @@ function Agreement({ owner, reads }: { owner: ReadView | undefined; reads: ReadV
   return (
     <div className="flex flex-col gap-2">
       <p className="text-sm">
-        You preferred <span className="font-medium">{choiceText(owner.overall.choice)}</span>.
+        Reading blind, you preferred{" "}
+        <span className="font-medium">{choiceText(owner.overall.choice)}</span>.
       </p>
       {others.length === 0 ? (
         <p className="text-muted-foreground text-sm">No model reader has read this case yet.</p>
