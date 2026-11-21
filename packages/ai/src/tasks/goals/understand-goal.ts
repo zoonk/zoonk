@@ -1,16 +1,18 @@
 import "server-only";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import {
   type RawGoalUnderstanding,
   normalizeGoalUnderstanding,
 } from "./normalize-goal-understanding";
-import systemPrompt from "./understand-goal.prompt.md";
+import template from "./understand-goal.prompt.md";
 
 export type { GoalUnderstanding, UnderstoodGoal } from "./normalize-goal-understanding";
 
@@ -62,9 +64,17 @@ const schema = z.object({
   studyTimeNote: z.string().nullable(),
 }) satisfies z.ZodType<RawGoalUnderstanding>;
 
+export type GoalMaterial = {
+  /** What the learner chose to do with it; null when they didn't say. */
+  intent: "exam" | "understand" | null;
+  /** The learner's files, links or pasted text: whole when short, one line per page when long. */
+  overview: string;
+};
+
 export type UnderstandGoalInput = {
   goal: string;
   language: string;
+  material?: GoalMaterial | null;
   /** For relative dates. */
   today: string;
 };
@@ -78,12 +88,53 @@ export type UnderstandGoalParams = UnderstandGoalInput & {
   useFallback?: boolean;
 };
 
+function getSystemPrompt({
+  hasMaterial,
+  language,
+}: {
+  hasMaterial: boolean;
+  language: string;
+}): string {
+  return fillPromptLanguages({
+    learnerLanguage: language,
+    template: selectPromptVariants({ template, variants: { material: hasMaterial } }),
+  });
+}
+
+function toUntrustedFields(input: UnderstandGoalInput): Record<string, string> {
+  return input.material
+    ? { GOAL: input.goal, MATERIAL: input.material.overview }
+    : { GOAL: input.goal };
+}
+
+const DAYS_PER_WEEK = 7;
+const WEEKDAY = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "long" });
+
+/** A short test's date is usually a weekday ("on Friday"), which models count wrong from a date alone. */
+function listComingDays(today: string): string {
+  const start = Date.parse(`${today}T00:00:00Z`);
+
+  return Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
+    const day = new Date(start + (index + 1) * MS_PER_DAY);
+    return `${WEEKDAY.format(day)} ${day.toISOString().slice(0, 10)}`;
+  }).join(", ");
+}
+
+function buildMaterialLines(input: UnderstandGoalInput): string {
+  if (!input.material) {
+    return "";
+  }
+
+  const intent = input.material.intent ? `\n    MATERIAL_INTENT: ${input.material.intent}` : "";
+  return `\n    COMING_DAYS: ${listComingDays(input.today)}${intent}`;
+}
+
 function buildUserPrompt(input: UnderstandGoalInput): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: input.language })}
-    TODAY: ${input.today}
+    TODAY: ${input.today}${buildMaterialLines(input)}
 
-${formatUntrustedInput({ GOAL: input.goal })}
+${formatUntrustedInput(toUntrustedFields(input))}
   `;
 }
 
@@ -91,6 +142,12 @@ ${formatUntrustedInput({ GOAL: input.goal })}
 export async function understandGoal(params: UnderstandGoalParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);
+
+  const systemPrompt = getSystemPrompt({
+    hasMaterial: Boolean(params.material),
+    language: params.language,
+  });
+
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -110,6 +167,7 @@ export async function understandGoal(params: UnderstandGoalParams) {
 
   const data = normalizeGoalUnderstanding({
     dailyMinutesLimits: params.dailyMinutesLimits,
+    materialIntent: params.material?.intent ?? null,
     raw: result.output,
     today: params.today,
   });
@@ -117,13 +175,9 @@ export async function understandGoal(params: UnderstandGoalParams) {
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-function toClassifierInput(input: UnderstandGoalInput): Record<string, string> {
-  return { GOAL: input.goal };
-}
-
 /** Only the route: evaluation models can pick one but can't fill goals, dates or titles. */
 export const goalRouteClassifier = {
-  instructions: systemPrompt,
+  instructions: selectPromptVariants({ template, variants: { material: false } }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",
     goals: "Something to study for: an exam, a language, a subject, a skill or a project.",
@@ -131,5 +185,5 @@ export const goalRouteClassifier = {
     unclear: "Doesn't say what to learn, or asks for something other than learning.",
     unsafe: "A harmful goal, gambling or cheating.",
   } satisfies Record<RawGoalUnderstanding["route"], string>,
-  toInput: toClassifierInput,
+  toInput: toUntrustedFields,
 };
