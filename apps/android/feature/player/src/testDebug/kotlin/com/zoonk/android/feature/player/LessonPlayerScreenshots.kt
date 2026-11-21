@@ -284,6 +284,15 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("case", stepResult(false), counts = true),
                 )
             },
+            "challenge-chart-deciding" to { played(listOf(CHART_CASE), LessonAction.Continue) },
+            "challenge-chart-second" to {
+                played(
+                    listOf(CHART_CASE),
+                    LessonAction.Continue,
+                    LessonAction.SelectAnswer("chart", LessonAnswer.Challenge(listOf("fine-scan"))),
+                    LessonAction.Continue,
+                )
+            },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
             "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
             "not-found" to { at(LessonAction.RunRefused(LessonRefusal.NotFound)) },
@@ -449,6 +458,8 @@ class LessonPlayerScreenshots {
         println("Screenshot ${file.path}")
     }
 }
+
+private val CHART_CASE = chartChallengeStep("chart")
 
 private const val NESTED_TITLE = "Níveis de organização ecológica"
 
