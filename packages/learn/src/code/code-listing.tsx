@@ -9,8 +9,8 @@ import { useSpokenCode } from "./spoken-code";
 
 const TAB_SIZE = 4;
 
-/** Code reads at a table's size. */
-const CODE_TEXT = "font-mono text-sm leading-6 [tab-size:4]";
+/** Code is set a step under the text around it, as a table is (`text-block`). */
+const CODE_TEXT = "font-mono text-block [tab-size:4]";
 
 /** Code with a field in it: below 16px, iOS zooms in when the field takes focus. */
 export const CODE_FIELD_TEXT = "font-mono text-base leading-7 sm:text-sm sm:leading-6 [tab-size:4]";

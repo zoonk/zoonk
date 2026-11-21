@@ -52,7 +52,7 @@ export function RichTable<TCell>({
       data-slot="rich-table"
     >
       <SidewaysScroll className="pb-0.5" label={label} role="region">
-        <table className="text-foreground w-full border-collapse text-sm leading-snug">
+        <table className="text-foreground text-block w-full border-collapse leading-snug">
           <thead className="bg-muted">
             <tr>
               {header.map((cell, index) => {
