@@ -202,6 +202,13 @@ enum RichTextBlock: Equatable {
   /// Its code exactly as written.
   case code(code: String, language: String?)
 
+  var scrollsSideways: Bool {
+    switch self {
+    case .table, .code: true
+    case .paragraph, .list: false
+    }
+  }
+
   /// Mirrors main's `parseRichBlocks`. A code block is read before a table, so a `|` line inside one
   /// stays code.
   static func parse(_ text: String) -> [RichTextBlock] {
