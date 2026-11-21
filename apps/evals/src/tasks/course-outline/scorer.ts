@@ -2,10 +2,10 @@ import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-sc
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { findMixedAreaChapters } from "@zoonk/ai/tasks/curriculum/outline-areas";
+import { selectOutlineChapters } from "@zoonk/core/library/curriculum/select-outline-chapters";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 
-/** A case-insensitive pattern matched against practical chapters' tool names. */
-export type CourseOutlineExpected = { tool: string };
+export type CourseOutlineExpected = { existingBand?: true; tool?: string };
 
 type OutlineTool = { essential: boolean; name: string };
 type OutlineChapter = { skillKeys?: string[]; title: string; tools: OutlineTool[] };
@@ -97,6 +97,29 @@ function checkChapters({
   };
 }
 
+function getKeptChapters({
+  chapters,
+  existingBand,
+  params,
+}: {
+  chapters: OutlineChapter[];
+  existingBand: boolean;
+  params: CourseOutlineParams;
+}) {
+  if (!existingBand) {
+    return chapters;
+  }
+
+  return selectOutlineChapters({
+    chapters: chapters.map((chapter) => ({ ...chapter, skillKeys: chapter.skillKeys ?? [] })),
+    plan: {
+      extensions: (params.extendSkills ?? []).map((skill) => ({ skill })),
+      isNewBand: false,
+      otherChapterTitles: params.otherLevelChapters ?? [],
+    },
+  });
+}
+
 function checkOutline({
   expected,
   output,
@@ -107,45 +130,56 @@ function checkOutline({
   params: CourseOutlineParams;
 }): CodeCheckResult {
   const { chapters, uncoveredSkillKeys } = parseOutline(output);
+  const kept = getKeptChapters({ chapters, existingBand: expected?.existingBand === true, params });
+  const { extendSkills = [], requiredSkills = [] } = params;
+  const coversSkills = requiredSkills.length + extendSkills.length > 0;
+  const toolName = expected?.tool;
+  const pattern = toolName ? new RegExp(toolName, "iu") : null;
+  const total = Math.max(chapters.length + Number(Boolean(pattern)) + Number(coversSkills), 1);
 
-  const coversSkills =
-    (params.requiredSkills?.length ?? 0) + (params.extendSkills?.length ?? 0) > 0;
+  if (kept.length === 0) {
+    const problem =
+      chapters.length === 0
+        ? "The output has no chapters."
+        : "Production would discard every chapter in the outline.";
 
-  const checked = checkChapters({ chapters, params });
+    return {
+      blockingProblems: [problem],
+      criteria: ["coverage"],
+      judgedOutput: output,
+      passed: 0,
+      problems: [problem],
+      total,
+    };
+  }
 
-  const pattern = expected ? new RegExp(expected.tool, "iu") : null;
+  const checked = checkChapters({ chapters: kept, params });
 
   const found =
     !pattern ||
-    chapters.some((chapter) => (chapter.tools ?? []).some((tool) => pattern.test(tool.name)));
+    kept.some((chapter) => (chapter.tools ?? []).some((tool) => pattern.test(tool.name)));
 
+  const dropped = chapters.length - kept.length;
   const leavesSkillsOut = coversSkills && uncoveredSkillKeys.length > 0;
 
   const problems = [
     ...checked.problems,
-    !found && `No chapter names the tool the course practices with (${expected?.tool}).`,
+    dropped > 0 && `Production would discard ${dropped} of ${chapters.length} chapters.`,
+    !found && `No chapter names the tool the course practices with (${toolName}).`,
     leavesSkillsOut &&
       `No chapter teaches ${uncoveredSkillKeys.length} required skill(s): ${uncoveredSkillKeys.join(", ")}.`,
   ].filter((problem) => typeof problem === "string");
 
-  const blockingProblems = chapters.length === 0 ? ["The output has no chapters."] : [];
-  const hasToolExpectation = Boolean(pattern);
-
   return {
-    blockingProblems,
     criteria: [
       ...(checked.hasToolProblems || !found ? ["levelFit"] : []),
-      ...(checked.hasAreaProblems || leavesSkillsOut || blockingProblems.length > 0
-        ? ["coverage"]
-        : []),
+      ...(checked.hasAreaProblems || leavesSkillsOut || dropped > 0 ? ["coverage"] : []),
     ],
     judgedOutput: output,
     passed:
-      checked.passed +
-      Number(hasToolExpectation && found) +
-      Number(coversSkills && !leavesSkillsOut),
-    problems: blockingProblems.length > 0 ? blockingProblems : problems,
-    total: Math.max(chapters.length + Number(hasToolExpectation) + Number(coversSkills), 1),
+      checked.passed + Number(Boolean(pattern) && found) + Number(coversSkills && !leavesSkillsOut),
+    problems,
+    total,
   };
 }
 
