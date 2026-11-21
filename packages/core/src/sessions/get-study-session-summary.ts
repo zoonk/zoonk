@@ -35,7 +35,7 @@ import { EMPTY_WEEK, toStudySessionView } from "./_utils/session-view";
 import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-session-access";
 import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
-import { type ExtraTime } from "./extra-time";
+import { type ExtraTime, getExtraTime } from "./extra-time";
 import { type Mission } from "./missions";
 import { getDayMissions } from "./missions/get-day-missions";
 
@@ -216,14 +216,12 @@ export async function getStudySessionSummary({
     loadCeremony(userId),
     loadUnshownCertificates(userId),
     loadTomorrow({ session }),
-    viewRead.then((loaded) =>
-      withExtraStudyCheck({
-        extraTime: loaded.extraTime,
-        readSkillIds: () => readGoalSkillIds(session.goalId),
-        session,
-        userId,
-      }),
-    ),
+    withExtraStudyCheck({
+      extraTime: getExtraTime({ blocks: session.blocks, current }),
+      readSkillIds: () => readGoalSkillIds(session.goalId),
+      session,
+      userId,
+    }),
     netScoredItemIds.length > 0
       ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
       : null,
