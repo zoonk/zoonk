@@ -24,14 +24,13 @@ export function toShownShare({ coveredShare, fits }: { coveredShare: number; fit
 }
 
 export function toShownCoverage({
-  coreFits,
   coveredShare,
   fits,
   reachedShare,
-}: TimeCoverage & { fits: boolean }) {
+}: Omit<TimeCoverage, "coreFits"> & { fits: boolean }) {
   return {
     coveredShare: toShownShare({ coveredShare, fits }),
-    reachedShare: toShownShare({ coveredShare: reachedShare, fits: coreFits }),
+    reachedShare: toShownShare({ coveredShare: reachedShare, fits: reachedShare === 1 }),
   };
 }
 
@@ -67,7 +66,7 @@ export function toFeasibilityView(
     coreFits,
     ...(reachedShare === null
       ? { coveredShare, reachedShare: null }
-      : toShownCoverage({ coreFits, coveredShare, fits, reachedShare })),
+      : toShownCoverage({ coveredShare, fits, reachedShare })),
     deadline: feasibility.deadline ? toIsoDate(feasibility.deadline) : null,
     deepensMostAsked: feasibility.deepensMostAsked,
     fits: feasibility.fits,

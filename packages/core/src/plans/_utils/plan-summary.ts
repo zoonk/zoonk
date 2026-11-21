@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { planChangeInputSchema } from "../plan-contract";
 import { toIsoDate } from "../planner/plan-calendar";
-import { measureCoverage } from "../planner/selected-coverage";
+import { measureDepth } from "../planner/selected-coverage";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import {
@@ -134,7 +134,7 @@ function creditShortLessons({
 
   return {
     ...coverage,
-    ...measureCoverage(skills),
+    ...measureDepth({ coreFits: coverage.coreFits, skills }),
     shortLessons: coverage.shortLessons.filter((lesson) => !credited.has(lesson.lessonId)),
     skills,
   };

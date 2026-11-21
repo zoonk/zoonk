@@ -69,7 +69,6 @@ async function postedPlan({
         skills: [
           {
             coveredRaw: (short ? 5 : 10) * lessonIds.length,
-            inPlan: true,
             requiredRaw: 10 * lessonIds.length,
             skillId: skill.id,
             state: "measured",

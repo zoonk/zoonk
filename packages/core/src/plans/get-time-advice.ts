@@ -229,7 +229,7 @@ export async function getPlanTimeAdvice({
   ]);
 
   const { feasibility } = computed;
-  const { coreFits, coveredShare, fits, reachedShare } = feasibility;
+  const { coveredShare, fits, reachedShare } = feasibility;
   const end = computed.built.estimate.endDate;
   const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 
@@ -237,7 +237,7 @@ export async function getPlanTimeAdvice({
     advice: {
       ...(reachedShare === null
         ? { coveredShare: null, reachedShare: null }
-        : toShownCoverage({ coreFits, coveredShare, fits, reachedShare })),
+        : toShownCoverage({ coveredShare, fits, reachedShare })),
       endDate: getCourseFinish(computed),
       focusSubjects:
         feasibility.deadline !== null && !feasibility.fits ? readFocusSubjects(context.goal) : [],

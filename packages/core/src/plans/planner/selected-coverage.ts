@@ -224,21 +224,17 @@ export function getSkillValue(skill: SelectedSkill): number {
   return skill.state === "unknown" ? 0 : Math.min(1, skill.coveredRaw / skill.requiredRaw);
 }
 
-export function measureCoverage(skills: readonly SelectedSkill[]) {
-  const { coreFits, covered, reached, total } = skills.reduce(
-    (coverage, skill) => {
-      const value = getSkillValue(skill);
-      const isReached = skill.inPlan || value > 0;
-
-      return {
-        coreFits: coverage.coreFits && isReached,
-        covered: coverage.covered + skill.worth * value,
-        reached: coverage.reached + (isReached ? skill.worth : 0),
-        total: coverage.total + skill.worth,
-      };
-    },
-    { coreFits: true, covered: 0, reached: 0, total: 0 },
-  );
+/** How much of each skill's lessons the plan holds before the deadline. */
+export function measureDepth({
+  coreFits,
+  skills,
+}: {
+  coreFits: boolean;
+  skills: readonly SelectedSkill[];
+}) {
+  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
+  const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
+  const limit = coreFits ? 1 : LARGEST_PARTIAL_SHARE;
 
   const whole = skills.every(
     (skill) =>
@@ -246,14 +242,20 @@ export function measureCoverage(skills: readonly SelectedSkill[]) {
       (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
   );
 
-  const limit = coreFits ? 1 : LARGEST_PARTIAL_SHARE;
-  const reachedShare = total > 0 ? Math.min(limit, reached / total) : 0;
+  return {
+    coveredShare: total > 0 ? Math.min(limit, Math.max(0, covered / total)) : null,
+    fits: coreFits && total > 0 && whole,
+  };
+}
+
+function measureReach(skills: readonly (SelectedSkill & { reached: boolean })[]) {
+  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
+  const reached = skills.reduce((sum, skill) => sum + (skill.reached ? skill.worth : 0), 0);
+  const coreFits = skills.every((skill) => skill.reached);
 
   return {
     coreFits,
-    coveredShare: total > 0 ? Math.min(limit, Math.max(0, covered / total)) : null,
-    fits: coreFits && total > 0 && whole,
-    reachedShare: coreFits ? 1 : reachedShare,
+    reachedShare: coreFits ? 1 : Math.min(LARGEST_PARTIAL_SHARE, total > 0 ? reached / total : 0),
   };
 }
 
@@ -289,7 +291,7 @@ export function getCoverage({
     skills: input.graph.skills,
   });
 
-  const skills = scope.skills.map(({ skillId, worth }) => {
+  const measured = scope.skills.map(({ skillId, worth }) => {
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
     const requiredRaw = lessonMinutes + (required?.standIn ?? 0);
@@ -301,7 +303,7 @@ export function getCoverage({
     if (settled.has(skillId)) {
       return {
         coveredRaw: requiredRaw,
-        inPlan: true,
+        reached: true,
         requiredRaw,
         skillId,
         state: "settled" as const,
@@ -309,21 +311,27 @@ export function getCoverage({
       };
     }
 
-    return {
+    const skill = {
       coveredRaw: Math.min(requiredRaw, coveredRaw),
-      inPlan: isInPlan(skillId),
       requiredRaw,
       skillId,
       state: requiredRaw > PLAN_EPSILON ? ("measured" as const) : ("unknown" as const),
       worth,
     };
+
+    return { ...skill, reached: isInPlan(skillId) || getSkillValue(skill) > 0 };
   });
+
+  const skills = measured.map(({ reached: _reached, ...skill }) => skill);
+  const { coreFits, reachedShare } = measureReach(measured);
 
   return {
     basis: "selected",
-    ...measureCoverage(skills),
+    coreFits,
+    ...measureDepth({ coreFits, skills }),
     deadline,
     measure: scope.measure,
+    reachedShare,
     shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
     skills,
     targetDate,

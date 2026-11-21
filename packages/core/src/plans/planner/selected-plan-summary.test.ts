@@ -299,7 +299,6 @@ describe(summarizeSelectedPlan, () => {
 
     expect(coverage.skills.find((entry) => entry.skillId === "s3")).toStrictEqual({
       coveredRaw: 0,
-      inPlan: false,
       requiredRaw: 0,
       skillId: "s3",
       state: "unknown",

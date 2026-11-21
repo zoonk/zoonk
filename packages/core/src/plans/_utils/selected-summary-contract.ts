@@ -52,7 +52,6 @@ const coverageSchema = z.object({
   skills: z.array(
     z.object({
       coveredRaw: minutesSchema,
-      inPlan: z.boolean(),
       requiredRaw: minutesSchema,
       skillId: z.string(),
       state: z.enum(["measured", "settled", "unknown"]),

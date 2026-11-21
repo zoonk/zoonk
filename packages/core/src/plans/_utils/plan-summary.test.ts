@@ -6,6 +6,7 @@ import {
   reduceCompletedSummary,
   reduceRestoredSummary,
 } from "./plan-summary";
+import { readSavedFeasibility } from "./saved-plan-advice";
 import { type SelectedCoverage } from "./selected-summary-contract";
 
 const plan = { id: "plan-a", userId: "learner-a", version: 7 };
@@ -23,8 +24,8 @@ const coverage: SelectedCoverage = {
     { countedRaw: 4, lessonId: "shared", requiredRaw: 10, skillIds: ["s1", "s2"] },
   ],
   skills: [
-    { coveredRaw: 14, inPlan: true, requiredRaw: 20, skillId: "s1", state: "measured", worth: 1 },
-    { coveredRaw: 4, inPlan: true, requiredRaw: 20, skillId: "s2", state: "measured", worth: 1 },
+    { coveredRaw: 14, requiredRaw: 20, skillId: "s1", state: "measured", worth: 1 },
+    { coveredRaw: 4, requiredRaw: 20, skillId: "s2", state: "measured", worth: 1 },
   ],
   targetDate: "2026-11-01",
 };
@@ -177,34 +178,31 @@ describe(reduceCompletedSummary, () => {
     expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(true);
   });
 
-  it("reaches a topic when its first lesson finishes past the deadline", () => {
-    const [first, second] = coverage.skills;
-
-    if (!first || !second) {
-      throw new Error("Expected two covered skills");
-    }
-
+  it("keeps the reach it was built with, whatever is done", () => {
     const missingTopic = {
       ...summary,
       selected: {
         ...summary.selected,
-        coverage: {
-          ...coverage,
-          coreFits: false,
-          reachedShare: 0.5,
-          skills: [first, { ...second, coveredRaw: 0, inPlan: false }],
-        },
+        coverage: { ...coverage, coreFits: false, reachedShare: 0.5 },
       },
     };
 
     const reduction = reduceCompletedSummary({
-      completed: [{ lessonId: "after" }],
+      completed: [{ lessonId: "shared" }, { lessonId: "after" }],
       summary: missingTopic,
     });
 
-    expect(reduction).toMatchObject({
-      kind: "reduced",
-      summary: { selected: { coverage: { coreFits: true, fits: false, reachedShare: 1 } } },
+    const reduced = reduction.kind === "reduced" ? reduction.summary : null;
+
+    expect(reduced?.selected.coverage).toMatchObject({
+      coreFits: false,
+      fits: false,
+      reachedShare: 0.5,
+    });
+
+    expect(readSavedFeasibility(reduced)).toMatchObject({
+      coveredShare: 0.99,
+      reachedShare: 0.99,
     });
   });
 
