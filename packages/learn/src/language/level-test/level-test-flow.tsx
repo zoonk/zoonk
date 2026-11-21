@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { StepLoadFailed, StepLoading } from "../../onboarding/steps/step-parts";
 import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
+import { LevelTestPreparing } from "./level-test-preparing";
 import { LevelResult, TestOutResult } from "./level-test-results";
 import { TestStep } from "./level-test-step";
 import { type LanguagePlanTestActions, useLanguagePlanTest } from "./use-language-plan-test";
@@ -49,7 +50,15 @@ export function LanguagePlanTestFlow({
         />
       );
     case "waiting":
-      return <StepLoading />;
+      return (
+        <LevelTestPreparing
+          fromPlan
+          onSkip={test.onLeave}
+          run={test.bankRun}
+          skipping={pressed === "other"}
+          targetLanguage={targetLanguage}
+        />
+      );
     case "test":
       return (
         <TestStep

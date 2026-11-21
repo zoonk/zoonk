@@ -3,6 +3,7 @@
 import {
   answerLevelTestAction,
   speakLevelTestAction,
+  startLevelTestBankAction,
 } from "@/app/[lang]/(app)/(onboarding)/start/language-level-test-actions";
 import { useRouter } from "@/i18n/navigation";
 import {
@@ -32,6 +33,7 @@ function getActions({
     answer: (input) => answerLevelTestAction(goalId, input),
     finish: (attemptId) => finishLevelTestAttemptAction(goalId, attemptId),
     get: () => getLevelTestAttemptAction(goalId),
+    prepare: () => startLevelTestBankAction(goalId),
     speak: (audio) => {
       const form = new FormData();
       form.set("audio", audio);

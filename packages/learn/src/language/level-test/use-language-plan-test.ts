@@ -13,6 +13,14 @@ import { usePoll } from "../../_utils/use-poll";
 import { type PlacementAnswer, type PlacementQuestion } from "../../onboarding/onboarding-actions";
 import { useReadOnOpen } from "../../onboarding/steps/use-read-on-open";
 import { type PlacementPressed } from "../../placement-test/use-placement-test";
+import {
+  type BankWait,
+  INITIAL_BANK_WAIT,
+  askedBankWait,
+  isBankStopped,
+  toBankRun,
+  updateBankWait,
+} from "./level-test-bank";
 import { type LanguageLevelTestActions } from "./level-test-step";
 
 const POLL_MS = 3000;
@@ -25,7 +33,7 @@ type TestOutQuestion = NonNullable<TestOutView["next"]>;
 
 type TestOutAnswer = PlacementAnswer;
 
-export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "speak"> & {
+export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" | "speak"> & {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   /** Null when it wasn't saved. */
   finish: (attemptId: string) => Promise<{ result: LevelTestResult | null } | null>;
@@ -104,6 +112,7 @@ export function useLanguagePlanTest({
   const [failed, setFailed] = useState(false);
   const [pressed, setPressed] = useState<PlacementPressed>(null);
   const [isPending, startTransition] = useTransition();
+  const [bank, setBank] = useState<BankWait>(INITIAL_BANK_WAIT);
 
   const reopen = useReadOnOpen({
     onRead: (view) => setPhase(toOpenedPhase(view)),
@@ -124,6 +133,7 @@ export function useLanguagePlanTest({
   /** A test that asks nothing more closes in the same save. */
   const show = async (view: LanguageLevelTestView, attemptId: string): Promise<boolean> => {
     if (view.status === "preparing") {
+      setBank((current) => updateBankWait({ preparing: view, wait: current }));
       setPhase({ attemptId, kind: "waiting" });
       return true;
     }
@@ -137,7 +147,7 @@ export function useLanguagePlanTest({
   };
 
   const poll = usePoll({
-    active: phase.kind === "waiting",
+    active: phase.kind === "waiting" && !isBankStopped(bank),
     intervalMs: POLL_MS,
     onPoll: async () => {
       const view = await actions.get();
@@ -146,7 +156,7 @@ export function useLanguagePlanTest({
         throw new Error("The level test couldn't be read");
       }
 
-      if (view.status === "ready" && view.attemptId) {
+      if (view.attemptId) {
         await show(view, view.attemptId);
       }
     },
@@ -172,10 +182,22 @@ export function useLanguagePlanTest({
     return true;
   };
 
+  /** Writing the questions again, only from the learner's "Try again". */
+  const retry = () =>
+    startTransition(async () => {
+      const started = await actions.prepare().catch(() => false);
+
+      setBank((current) =>
+        current.preparing ? askedBankWait({ preparing: current.preparing, started }) : current,
+      );
+    });
+
   return {
+    bankRun: toBankRun({ poll: poll.status, recheck: poll.restart, retry, wait: bank }),
     failed,
     isPending,
     onDone: () => save("main", () => onDone().catch(() => false)),
+    onLeave: () => save("other", () => onDone().catch(() => false)),
     onStart: (length: LevelTestLength) =>
       save("main", async () => {
         const view = await actions.start(length);
