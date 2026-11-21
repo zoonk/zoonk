@@ -28,13 +28,17 @@ describe(getSuggestedMinutes, () => {
   });
 });
 
+function coversAt(reachedShare: number | null) {
+  return getTimeLine({ ...LINE, advice: adviceAt({ coveredShare: 1, reachedShare }), minutes: 60 });
+}
+
 describe(getTimeLine, () => {
   it("asks for a study day before anything else", () => {
     expect(getTimeLine({ ...LINE, hasDays: false })).toStrictEqual({ kind: "noDays" });
   });
 
   it("says why the suggested time without asking the plan again", () => {
-    expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything" });
+    expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything", whole: true });
 
     expect(getTimeLine({ ...LINE, found: foundTime(focusAt(805)), minutes: 240 })).toStrictEqual({
       kind: "share",
@@ -55,7 +59,29 @@ describe(getTimeLine, () => {
 
     expect(
       getTimeLine({ ...LINE, advice: adviceAt({ coveredShare: 1 }), minutes: 60 }),
-    ).toStrictEqual({ kind: "everything" });
+    ).toStrictEqual({ kind: "everything", whole: true });
+  });
+
+  it("says a time covers the whole goal only when no part of it was taken out of the plan", () => {
+    expect(coversAt(1)).toStrictEqual({ kind: "everything", whole: true });
+    expect(coversAt(0.79)).toStrictEqual({ kind: "everything", whole: false });
+    expect(coversAt(null)).toStrictEqual({ kind: "everything", whole: true });
+
+    const keptOnly = foundTime({
+      suggested: {
+        coveredShare: 1,
+        everyTopic: false,
+        kind: "everything",
+        minutes: 35,
+        reachedShare: 0.79,
+        split: null,
+      },
+    });
+
+    expect(getTimeLine({ ...LINE, found: keptOnly })).toStrictEqual({
+      kind: "everything",
+      whole: false,
+    });
   });
 
   it("says the time is being worked out, or that it couldn't be", () => {
@@ -100,7 +126,7 @@ describe(getOffer, () => {
   });
 
   it("offers nothing to a time that already covers everything", () => {
-    const covers = { kind: "everything" } as const;
+    const covers = { kind: "everything", whole: true } as const;
 
     expect(
       getOffer({ found: foundTime(everythingAt(240)), line: covers, minutes: 900 }),
@@ -109,7 +135,7 @@ describe(getOffer, () => {
 
   it("never offers another time beside a focus suggestion", () => {
     const found = foundTime(focusAt(805));
-    const covers = { kind: "everything" } as const;
+    const covers = { kind: "everything", whole: true } as const;
 
     expect(getOffer({ found, line: SHORT, minutes: 240 })).toBeNull();
     expect(getOffer({ found, line: SHORT, minutes: 120 })).toBeNull();

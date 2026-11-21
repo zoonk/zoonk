@@ -3,7 +3,8 @@ import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/tim
 export type TimeLine =
   | { kind: "asking" }
   | { kind: "askFailed" }
-  | { kind: "everything" }
+  /** `whole` is false when the learner took part of the goal out, so everything is what they kept. */
+  | { kind: "everything"; whole: boolean }
   | { kind: "findFailed" }
   | { kind: "finish"; endDate: string }
   | { kind: "noDays" }
@@ -84,6 +85,11 @@ export function getOffer({
     : null;
 }
 
+/** A share of 1 or none says nothing was taken out; any other means the learner took part out. */
+function getEverythingLine(reachedShare: number | null): TimeLine {
+  return { kind: "everything", whole: reachedShare === null || reachedShare >= 1 };
+}
+
 function getDatedLine({
   advice,
   askFailed,
@@ -105,13 +111,13 @@ function getDatedLine({
 
   if (suggested?.minutes === minutes) {
     return suggested.kind === "everything"
-      ? { kind: "everything" }
+      ? getEverythingLine(suggested.reachedShare)
       : { kind: "share", share: suggested.reachedShare };
   }
 
   if (advice) {
     return (advice.coveredShare ?? 0) >= 1
-      ? { kind: "everything" }
+      ? getEverythingLine(advice.reachedShare)
       : { kind: "share", share: advice.reachedShare };
   }
 

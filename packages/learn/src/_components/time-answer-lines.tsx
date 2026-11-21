@@ -79,6 +79,16 @@ function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line:
 
   switch (line.kind) {
     case "everything":
+      if (!line.whole) {
+        return t({
+          description:
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {Covers everything in your plan by {date}.} other {Covers everything in your plan by {date}.}}",
+          values: shown,
+        });
+      }
+
       return exam
         ? t({
             description:
