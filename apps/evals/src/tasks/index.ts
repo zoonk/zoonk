@@ -95,6 +95,7 @@ import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
 import { speakingScoreTask } from "./speaking-score/task";
 import { statuteDrillsTask } from "./statute-drills/task";
 import { stepVariantTask } from "./step-variant/task";
+import { suggestProfileToolsTask } from "./suggest-profile-tools/task";
 import { teachingChaptersTask } from "./teaching-chapters/task";
 import { topicSkillNamesTask } from "./topic-skill-names/task";
 import { transcribeSpeechTask } from "./transcribe-speech/task";
@@ -227,6 +228,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       memoryRelevanceTask,
       memoryInsightTask,
       memorySessionPatternsTask,
+      suggestProfileToolsTask,
     ],
   },
   {

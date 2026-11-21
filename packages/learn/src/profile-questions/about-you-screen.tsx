@@ -4,6 +4,7 @@ import {
   type ProfileQuestionView,
   type ProfileQuestionsView,
 } from "@zoonk/core/profile/questions/contract";
+import { splitProfileFavorites } from "@zoonk/core/profile/questions/favorites";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
@@ -142,6 +143,7 @@ function useSavedSummary(question: ProfileQuestionView): string | null {
     case "learningSupport":
       return labelsOf(question, picks).join(", ") || text;
     case "tools":
+      return [...labelsOf(question, picks), ...splitProfileFavorites(text)].join(", ");
     case "watch":
     case "listen":
     case "play":

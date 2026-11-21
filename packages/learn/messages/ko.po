@@ -587,13 +587,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "왼쪽으로 스크롤하기"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "오른쪽으로 스크롤하기"
@@ -1315,7 +1313,6 @@ msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배�
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "이전 질문"
@@ -7767,11 +7764,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {답한 문제 #개} other {답한 문제 #개}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "뒤쪽 문제"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -7967,6 +7959,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "계속 풀기"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "파트 {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "{number}번 문제 (총 {total}문제) · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "{number}번 문제 (총 {total}문제)"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8159,16 +8166,6 @@ msgstr "서술형 파트 · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "서술형"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "{number}번 문제 (총 {total}문제) · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "{number}번 문제 (총 {total}문제)"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8532,12 +8529,6 @@ msgid "After this mock exam"
 msgstr "이번 모의고사 이후"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "{number}번 문제"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "다시 볼 문제"
@@ -8672,6 +8663,11 @@ msgstr "가장 잘한 부분: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "더 공부할 부분: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "{number}번 문제"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11586,6 +11582,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "예: 빵 굽기, 자동차, 천문학"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "추가"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11616,6 +11618,12 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "예: 언론학"
 
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "{tool} 삭제"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -11624,7 +11632,7 @@ msgstr "지금은 어떤 일을 하고 있나요?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "가장 자주 쓰는 앱과 도구는 무엇인가요?"
+msgstr "어떤 앱과 도구를 가장 자주 쓰나요?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
@@ -11684,9 +11692,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "이 정보를 바탕으로 관심이 갈 만한 예시를 골라요."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "예전에 했든 지금 하고 있든, 마쳤든 아니든 괜찮아요. 최대 3개까지 고르세요."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "과거든 현재든, 끝났든 아니든."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11702,11 +11710,6 @@ msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞�
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "도움이 되는 항목은 모두 고르세요."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "3개까지 골라 주세요."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

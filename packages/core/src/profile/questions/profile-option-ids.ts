@@ -95,3 +95,5 @@ export const PROFILE_OPTION_IDS = {
   ],
   work: ["work", "student", "workAndStudy", "neither"],
 } as const;
+
+export const GENERAL_TOOL_IDS = new Set<string>(PROFILE_OPTION_IDS.tools);

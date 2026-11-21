@@ -14,13 +14,13 @@ import { PROFILE_OPTION_IDS } from "./profile-option-ids";
 export const PROFILE_QUESTIONS = [
   "addressForm",
   "work",
-  "tools",
   "studies",
   "watch",
   "listen",
   "play",
   "read",
   "activities",
+  "tools",
   "conditions",
   "learningSupport",
 ] as const satisfies readonly ProfileQuestion[];
@@ -57,6 +57,7 @@ export const profileQuestionSchema = z
   .meta({ description: "The optional question about the learner", id: "ProfileQuestion" });
 
 export const MAX_PROFILE_FAVORITES_LENGTH = 120;
+export const MAX_PROFILE_TOOL_PICKS = 100;
 export const MAX_PROFILE_JOB_LENGTH = 80;
 export const MAX_PROFILE_SUBJECT_LENGTH = 80;
 export const MAX_CONDITION_NOTE_LENGTH = 120;
@@ -69,7 +70,7 @@ const declined = z
 const optionalText = (limit: number, description: string) =>
   z.string().trim().max(limit).nullable().default(null).meta({ description });
 
-const picksAnswer = <const T extends readonly [string, ...string[]]>(ids: T) =>
+const picksAnswer = <T extends z.ZodType<string>>(optionId: T) =>
   z
     .object({
       declined,
@@ -82,10 +83,7 @@ const picksAnswer = <const T extends readonly [string, ...string[]]>(ids: T) =>
           description:
             "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
         }),
-      picks: z
-        .array(z.enum(ids))
-        .default([])
-        .meta({ description: "Up to three distinct option ids" }),
+      picks: z.array(optionId).default([]).meta({ description: "Distinct option ids" }),
     })
     .strict();
 
@@ -129,37 +127,49 @@ export const profileAnswerInputSchema = z
       })
       .strict(),
     z
-      .object({ answer: picksAnswer(PROFILE_OPTION_IDS.tools), question: z.literal("tools") })
+      .object({
+        answer: picksAnswer(z.string()).extend({
+          picks: z
+            .array(z.string().trim().min(1).max(MAX_PROFILE_FAVORITES_LENGTH))
+            .max(MAX_PROFILE_TOOL_PICKS)
+            .default([])
+            .meta({ description: "Distinct tool names or general tool option ids" }),
+        }),
+        question: z.literal("tools"),
+      })
       .strict(),
     z
       .object({
         answer: z
           .object({
             declined,
-            studies: z
-              .array(studySchema)
-              .default([])
-              .meta({ description: "Up to three distinct fields" }),
+            studies: z.array(studySchema).default([]).meta({ description: "Distinct fields" }),
           })
           .strict(),
         question: z.literal("studies"),
       })
       .strict(),
     z
-      .object({ answer: picksAnswer(PROFILE_OPTION_IDS.watch), question: z.literal("watch") })
-      .strict(),
-    z
-      .object({ answer: picksAnswer(PROFILE_OPTION_IDS.listen), question: z.literal("listen") })
-      .strict(),
-    z
-      .object({ answer: picksAnswer(PROFILE_OPTION_IDS.play), question: z.literal("play") })
-      .strict(),
-    z
-      .object({ answer: picksAnswer(PROFILE_OPTION_IDS.read), question: z.literal("read") })
+      .object({
+        answer: picksAnswer(z.enum(PROFILE_OPTION_IDS.watch)),
+        question: z.literal("watch"),
+      })
       .strict(),
     z
       .object({
-        answer: picksAnswer(PROFILE_OPTION_IDS.activities),
+        answer: picksAnswer(z.enum(PROFILE_OPTION_IDS.listen)),
+        question: z.literal("listen"),
+      })
+      .strict(),
+    z
+      .object({ answer: picksAnswer(z.enum(PROFILE_OPTION_IDS.play)), question: z.literal("play") })
+      .strict(),
+    z
+      .object({ answer: picksAnswer(z.enum(PROFILE_OPTION_IDS.read)), question: z.literal("read") })
+      .strict(),
+    z
+      .object({
+        answer: picksAnswer(z.enum(PROFILE_OPTION_IDS.activities)),
         question: z.literal("activities"),
       })
       .strict(),

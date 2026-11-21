@@ -69,6 +69,25 @@ const CASES = [
 ] as const;
 
 describe("profile write analytics", () => {
+  it("reports counts without exposing personalized tool ids or entered names", async () => {
+    const user = await learner();
+    await learningProfileFixture({ suggestedTools: ["PRIVATE suggestion"], userId: user.id });
+    const flush = runDeferredWork();
+
+    await save({
+      answer: { favorites: "PRIVATE tool", picks: ["PRIVATE suggestion"] },
+      question: "tools",
+    });
+
+    await flush();
+
+    expect(events("Profile Question Saved")).toMatchObject([
+      { properties: { options: [], picks: 1, question: "tools", typedText: true } },
+    ]);
+
+    expect(JSON.stringify(vi.mocked(trackServerEvent).mock.calls)).not.toContain("PRIVATE");
+  });
+
   it.each(CASES)(
     "sends only counts and allowed option ids for $input.question in settings",
     async ({ input, properties }) => {
