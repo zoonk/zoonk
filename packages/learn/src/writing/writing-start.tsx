@@ -14,7 +14,7 @@ import { type GenerationRun, hasStopped } from "../generation/generation-run";
 import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
-import { getRefusedTaskPlace, useWritingTaskTitle } from "./writing-header";
+import { useWritingTaskTitle } from "./writing-header";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
 import { type TomorrowTask } from "./writing-types";
@@ -47,7 +47,7 @@ export function toWritingStartState(
           minutes: task.minutes,
           title: task.description,
           unit: task.unit,
-          writingTask: getRefusedTaskPlace(task),
+          writingTask: task.writingTask ?? null,
         }
       : null,
   };

@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  type WritingPrompt,
-  type WritingTaskSummary,
-} from "@zoonk/core/exams/essays/writing-contract";
+import { type WritingPrompt } from "@zoonk/core/exams/essays/writing-contract";
 import { useExtracted } from "next-intl";
 import { type StudyBlock } from "../session/session-types";
 import { useGradingReturnsLine } from "./writing-labels";
@@ -14,15 +11,6 @@ type WritingAvailability = NonNullable<StudyBlock["writingAvailability"]>;
 
 /** Where a task sits in the exam's written test, as the server says it before any question is assigned. */
 export type WritingTaskPlace = NonNullable<StudyBlock["writingTask"]>;
-
-/** A refused start names its task's place in flat fields: null when the server didn't send it. */
-export function getRefusedTaskPlace(task: WritingTaskSummary): WritingTaskPlace | null {
-  const { distinctLines, lines, number, points, total } = task;
-
-  return number === undefined || total === undefined
-    ? null
-    : { distinctLines: distinctLines ?? false, lines, number, points, total };
-}
 
 /**
  * A writing task by the name a learner knows it: a whole answer by its line limit when that tells
