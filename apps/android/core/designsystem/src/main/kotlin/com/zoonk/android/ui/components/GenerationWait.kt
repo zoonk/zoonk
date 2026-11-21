@@ -138,38 +138,22 @@ fun GenerationWait(
 
 /**
  * Main's `IndeterminateWait`: a wait that's one model call has no steps or percentage to report, so
- * it says what's coming and spins until it's there. A failure says so, with the run's own Try again,
- * and the title never claims work that stopped.
+ * it says what's coming and spins until it's there. A failed run is its screen's failure page, never
+ * this wait.
  */
 @Composable
 fun IndeterminateWait(
     title: String,
     description: String,
-    failedTitle: String,
-    run: GenerationRun,
-    onRetry: (() -> Unit)?,
     modifier: Modifier = Modifier,
     titleModifier: Modifier = Modifier,
 ) {
-    val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
-    val stopped = failure != null && failure != GenerationFailure.Connection
-
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(
-                if (stopped) failedTitle else title,
-                titleModifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            if (!stopped) {
-                Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-            }
+            Text(title, titleModifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
-        if (failure != null) {
-            GenerationFailureNotice(failure, onRetry)
-        } else {
-            CircularProgressIndicator(Modifier.size(24.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
-        }
+        CircularProgressIndicator(Modifier.size(24.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
     }
 }
 

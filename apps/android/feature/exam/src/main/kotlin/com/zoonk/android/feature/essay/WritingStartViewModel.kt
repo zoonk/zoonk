@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** Before the question exists: it's being written, its writing failed, or the day's extra grades are used. */
+/** Before the question exists: it's being written, its writing failed, it needs an account, or the day's extra grades are used. */
 sealed interface WritingStartState {
     /** [drill]: the run writes a short exercise after a lesson, so its wait says so. */
     data class Writing(
@@ -24,6 +24,9 @@ sealed interface WritingStartState {
     ) : WritingStartState
 
     data object Failed : WritingStartState
+
+    /** A guest's question would cost a model call: signing up funds it, so the way on is an account. */
+    data object SignUpRequired : WritingStartState
 
     /** The notice no longer asks this task. */
     data object Removed : WritingStartState
@@ -53,6 +56,7 @@ class WritingStartViewModel(
             when (initial) {
                 is WritingBefore.Writing -> WritingStartState.Writing(initial.generationId, drill)
                 WritingBefore.Failed -> WritingStartState.Failed
+                WritingBefore.SignUpRequired -> WritingStartState.SignUpRequired
                 WritingBefore.Removed -> WritingStartState.Removed
                 WritingBefore.LimitReached -> WritingStartState.LimitReached()
             },
@@ -124,7 +128,8 @@ class WritingStartViewModel(
                 is WritingStartAnswer.Ready -> WritingStartState.Ready.also { store.essays[blockId].refresh() }
                 is WritingStartAnswer.LimitReached -> WritingStartState.LimitReached(answer.task)
                 WritingStartAnswer.Removed -> WritingStartState.Removed
-                else -> WritingStartState.Failed
+                WritingStartAnswer.SignUpRequired -> WritingStartState.SignUpRequired
+                is WritingStartAnswer.Writing -> WritingStartState.Failed
             }
     }
 }

@@ -90,6 +90,15 @@
         <item quantity="one">about %1$d of %2$d line · %3$d won\'t be read</item>
         <item quantity="other">about %1$d of %2$d lines · %3$d won\'t be read</item>
     </plurals>
+    <!-- A dialog when a written answer was saved on another device after the learner started typing on this one. -->
+    <string name="essay_conflict_title">This answer changed on another device</string>
+    <string name="essay_conflict_body">Keep the version you\'re writing here, or switch to the other one.</string>
+    <!-- Keeps the answer as typed on this device, saving it over the other device's version. -->
+    <string name="essay_conflict_keep">Keep this one</string>
+    <!-- Replaces the answer typed on this device with the version saved on the other device. -->
+    <string name="essay_conflict_use_other">Use the other</string>
+    <!-- Over a written answer's result, when an earlier send was graded before the learner changed the text. -->
+    <string name="essay_graded_earlier_version">This grade is for the version you sent first. Your changes are kept: rewrite to continue from them.</string>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>

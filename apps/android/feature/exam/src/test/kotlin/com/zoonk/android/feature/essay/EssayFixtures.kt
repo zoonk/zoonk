@@ -15,6 +15,7 @@ import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.WritingAttempt
 import com.zoonk.api.models.WritingDraft
 import com.zoonk.api.models.WritingResultOutput
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -57,14 +58,14 @@ internal const val LEVELS_RESULT =
 internal const val POINTS_RESULT =
     """{"kind":"points","criteria":$CRITERIA,"errors":$ERRORS,"ignoredFrom":null,"nextStep":$NEXT_STEP,
     "progress":{"fixed":["a1"],"persists":["a2"]},"max":30,"content":{"low":17,"high":19.2},"deduction":{"low":0.3,"high":0.4},
-    "total":{"low":16.6,"high":18.9},"zeroReason":null,
-    "rows":[{"id":"a1","earned":9.5,"max":9.5},{"id":"a2","earned":4.75,"max":9.5},{"id":"presentation","earned":3,"max":11}]}"""
+    "total":{"low":16.6,"high":18.9},"zeroReason":null,"decimals":0,
+    "rows":[{"id":"a1","earned":9.5,"max":9.5,"decimals":1},{"id":"a2","earned":4.75,"max":9.5,"decimals":1},{"id":"presentation","earned":3,"max":11,"decimals":0}]}"""
 
 /** Off topic, under the notice's rule that zeroes it. */
 internal const val ZEROED_RESULT =
     """{"kind":"points","criteria":$CRITERIA,"errors":[],"ignoredFrom":null,"nextStep":null,"progress":null,
-    "max":30,"content":{"low":0,"high":0},"deduction":{"low":0,"high":0},"total":{"low":0,"high":0},
-    "zeroReason":"An answer off the topic asked gets zero.","rows":[{"id":"a1","earned":0,"max":9.5}]}"""
+    "max":30,"content":{"low":0,"high":0},"deduction":{"low":0,"high":0},"total":{"low":0,"high":0},"decimals":0,
+    "zeroReason":"An answer off the topic asked gets zero.","rows":[{"id":"a1","earned":0,"max":9.5,"decimals":1}]}"""
 
 private const val COMPLETE_CRITERIA =
     """[{"comment":"Both controls, told apart.","id":"a1","level":"complete","name":"Internal and external control","quote":null},
@@ -78,17 +79,17 @@ internal const val DONE_RESULT =
 
 /** Full marks, but the text runs past the limit: the step is to fit it in. */
 internal const val LIMIT_RESULT =
-    """{"kind":"points","criteria":$COMPLETE_CRITERIA,"errors":[],"ignoredFrom":180,"decimals":1,
+    """{"kind":"points","criteria":$COMPLETE_CRITERIA,"errors":[],"ignoredFrom":180,"decimals":0,
     "nextStep":{"criterionId":"a1","kind":"limit","title":null,"text":"","quote":null,"example":null},"progress":null,
     "max":30,"content":{"low":29,"high":30},"deduction":{"low":0,"high":0},"total":{"low":29,"high":30},"zeroReason":null,
-    "rows":[{"id":"a1","earned":9.5,"max":9.5},{"id":"a2","earned":9.5,"max":9.5},{"id":"presentation","earned":11,"max":11}]}"""
+    "rows":[{"id":"a1","earned":9.5,"max":9.5,"decimals":1},{"id":"a2","earned":9.5,"max":9.5,"decimals":1},{"id":"presentation","earned":11,"max":11,"decimals":0}]}"""
 
 /** Zeroed off topic, with the kind the server now names. */
 internal const val ZEROED_KIND_RESULT =
     """{"kind":"points","criteria":$CRITERIA,"errors":[],"ignoredFrom":null,"progress":null,"zeroKind":"offTopic",
     "nextStep":{"criterionId":"a1","kind":"zero","title":null,"text":"","quote":null,"example":null},
-    "max":30,"content":{"low":0,"high":0},"deduction":{"low":0,"high":0},"total":{"low":0,"high":0},"decimals":1,
-    "zeroReason":"An answer off the topic asked gets zero.","rows":[{"id":"a1","earned":0,"max":9.5}]}"""
+    "max":30,"content":{"low":0,"high":0},"deduction":{"low":0,"high":0},"total":{"low":0,"high":0},"decimals":0,
+    "zeroReason":"An answer off the topic asked gets zero.","rows":[{"id":"a1","earned":0,"max":9.5,"decimals":1}]}"""
 
 internal fun result(json: String): WritingResultOutput = ApiJson.decodeFromString(WritingResultOutput.serializer(), json)
 
@@ -144,6 +145,12 @@ internal class FakeEssayApi(
     val saveAnswers = ArrayDeque<DraftSave>()
     val saved = mutableListOf<SaveWritingDraft>()
 
+    /** While set, a save waits for it, as a slow network would. */
+    var saveGate: CompletableDeferred<Unit>? = null
+
+    /** While set, a save fails with it, as with no connection. */
+    var saveError: com.zoonk.android.data.ApiException? = null
+
     var grade: suspend (EssaySubmissionInput) -> WritingResultOutput = { awaitCancellation() }
     val submitted = mutableListOf<EssaySubmissionInput>()
 
@@ -169,6 +176,8 @@ internal class FakeEssayApi(
         draft: SaveWritingDraft,
     ): DraftSave {
         saved += draft
+        saveGate?.await()
+        saveError?.let { throw it }
         return saveAnswers.removeFirstOrNull() ?: DraftSave.Saved(WritingDraft(draft.admissionId, draft.revision + 1, draft.text))
     }
 
@@ -213,7 +222,15 @@ internal fun essayViewModel(
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
     val store = EssayStore(api, cache, DraftStore(drafts, CoroutineScope(SupervisorJob()))) { "UTC" }
-    val viewModel = EssayViewModel(api.read.blockId, api.read.sessionId, store, null, UnusedSessionSteps)
+    val viewModel =
+        EssayViewModel(
+            api.read.blockId,
+            api.read.sessionId,
+            store,
+            null,
+            UnusedSessionSteps,
+            CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+        )
     runBlocking { viewModel.essay.refresh() }
     viewModel.arrive((viewModel.essay.state.value as LoadState.Loaded<*>).value as Essay)
     return viewModel

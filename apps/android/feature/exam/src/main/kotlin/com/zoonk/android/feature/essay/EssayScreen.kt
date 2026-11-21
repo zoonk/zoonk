@@ -48,6 +48,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
@@ -68,6 +69,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.IndeterminateWait
@@ -75,6 +77,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LocalStepHeading
@@ -203,12 +206,22 @@ private fun WritingStart(
         }
 
         WritingStartState.Removed -> {
-            WritingRemoved(header, onToday = { navigator.showRoot(AppTab.Today) }, onClose = navigator::closeTask)
+            WritingRemoved(header, onClose = navigator::closeTask)
         }
 
         is WritingStartState.Writing -> {
-            TrackShown(AnalyticsEvent.WritingPromptWaitViewed(shown.generationId, AnalyticsEvent.WritingSurface.Practice))
             val exercise = shown.drill
+            if (run.status == GenerationRun.Status.Failed) {
+                WritingFailed(
+                    stringResource(if (exercise) R.string.essay_writing_practice else R.string.essay_written_answer),
+                    exercise,
+                    busy = false,
+                    onRetry = viewModel::retryRun,
+                    onClose = navigator::closeTask,
+                )
+                return
+            }
+            TrackShown(AnalyticsEvent.WritingPromptWaitViewed(shown.generationId, AnalyticsEvent.WritingSurface.Practice))
             TaskScaffold(
                 onClose = navigator::closeTask,
                 title = { BarTitle(stringResource(if (exercise) R.string.essay_writing_practice else R.string.essay_written_answer)) },
@@ -221,9 +234,6 @@ private fun WritingStart(
                             stringResource(
                                 if (exercise) R.string.essay_writing_exercise_detail else R.string.essay_writing_question_detail,
                             ),
-                        failedTitle = stringResource(if (exercise) R.string.essay_exercise_failed else R.string.essay_question_failed),
-                        run = run,
-                        onRetry = viewModel::retryRun,
                         titleModifier = Modifier.pageTitle(),
                     )
                 }
@@ -231,43 +241,29 @@ private fun WritingStart(
         }
 
         WritingStartState.Failed -> {
-            RunPage(
-                onClose = navigator::closeTask,
-                title = { BarTitle(header) },
-                bottomBar = {
-                    TaskActionBar {
-                        TaskActions { width ->
-                            Button(
-                                onClick = viewModel::retry,
-                                modifier = width,
-                                busy = asking,
-                            ) { Text(stringResource(R.string.essay_try_again)) }
-                        }
-                    }
-                },
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        stringResource(if (drill) R.string.essay_exercise_failed else R.string.essay_question_failed),
-                        Modifier.pageTitle(),
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    Text(
-                        stringResource(R.string.essay_nothing_lost),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
+            WritingFailed(header, drill, busy = asking, onRetry = viewModel::retry, onClose = navigator::closeTask)
+        }
+
+        WritingStartState.SignUpRequired -> {
+            RunPage(onClose = navigator::closeTask, title = { BarTitle(header) }) {
+                LimitNotice(
+                    Limit.SignUpRequired,
+                    LimitSubject.Help,
+                    onCreateAccount = { navigator.open(AppRoute.Login) },
+                    onSubscribe = {},
+                )
             }
         }
     }
 }
 
-/** A notice read again dropped this task: nothing was admitted or graded, and Today goes on without it. */
+/** The question couldn't be written, whether its start or its run failed: nothing was lost, and Try again asks again. */
 @Composable
-internal fun WritingRemoved(
+private fun WritingFailed(
     header: String,
-    onToday: () -> Unit,
+    drill: Boolean,
+    busy: Boolean,
+    onRetry: () -> Unit,
     onClose: () -> Unit,
 ) {
     RunPage(
@@ -276,7 +272,39 @@ internal fun WritingRemoved(
         bottomBar = {
             TaskActionBar {
                 TaskActions { width ->
-                    Button(onClick = onToday, modifier = width) { Text(stringResource(R.string.essay_back_to_today)) }
+                    Button(onClick = onRetry, modifier = width, busy = busy) { Text(stringResource(R.string.essay_try_again)) }
+                }
+            }
+        },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(
+                stringResource(if (drill) R.string.essay_exercise_failed else R.string.essay_question_failed),
+                Modifier.pageTitle(),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Text(
+                stringResource(R.string.essay_nothing_lost),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+    }
+}
+
+/** A notice read again dropped this task: nothing was admitted or graded, and Today goes on without it. */
+@Composable
+internal fun WritingRemoved(
+    header: String,
+    onClose: () -> Unit,
+) {
+    RunPage(
+        onClose = onClose,
+        title = { BarTitle(header) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.essay_continue)) }
                 }
             }
         },
@@ -301,7 +329,16 @@ private fun EssayLoaded(
 ) {
     val viewModel =
         viewModel(key = "essay:${essay.blockId}:${signedIn.localId}") {
-            EssayViewModel(essay.blockId, essay.sessionId, app.essays, app.essays.keptText(signedIn, essay.blockId), app.studyOpener)
+            EssayViewModel(
+                essay.blockId,
+                essay.sessionId,
+                app.essays,
+                app.essays.keptText(signedIn, essay.blockId),
+                app.studyOpener,
+                app.scope,
+                app.networkAvailable,
+                app.timeSource,
+            )
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val move by viewModel.move.collectAsStateWithLifecycle()
@@ -309,6 +346,9 @@ private fun EssayLoaded(
     LaunchedEffect(essay) { viewModel.arrive(essay) }
     LaunchedEffect(move.leaving) { move.leaving?.let(navigator::leaveTaskFor) }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
+
+    // Asked wherever the answer shows, so a draft from another device never waits behind the question.
+    ui.conflict?.let { DraftConflictDialog(onKeepThis = viewModel::keepThis, onUseOther = viewModel::useOther) }
 
     val saveReport = rememberSaveFailureReport(app, "essay")
     val finishing = ui.finishing || move.busy
@@ -450,8 +490,9 @@ internal fun WriteScreen(
                 OutlinedTextField(
                     value = value.copy(text = ui.text),
                     onValueChange = {
-                        value = it
-                        if (it.text != ui.text) viewModel.write(it.text)
+                        // The field stops at the longest answer the API saves and grades, as a paste past it is cut there.
+                        value = it.copy(text = it.text.take(MAX_WRITING_CHARACTERS))
+                        if (value.text != ui.text) viewModel.write(value.text)
                     },
                     modifier =
                         Modifier
@@ -482,6 +523,24 @@ internal fun WriteScreen(
             }
         }
     }
+}
+
+/**
+ * Another device saved this answer after it was typed here: nothing is overwritten on either side
+ * until the learner picks, so the dialog only closes with a choice.
+ */
+@Composable
+private fun DraftConflictDialog(
+    onKeepThis: () -> Unit,
+    onUseOther: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = {},
+        title = { Text(stringResource(R.string.essay_conflict_title)) },
+        text = { Text(stringResource(R.string.essay_conflict_body)) },
+        confirmButton = { TextButton(onClick = onKeepThis) { Text(stringResource(R.string.essay_conflict_keep)) } },
+        dismissButton = { TextButton(onClick = onUseOther) { Text(stringResource(R.string.essay_conflict_use_other)) } },
+    )
 }
 
 /** "about 23 of 30 lines": the count stays in view under the field, and what's past the limit says so. */
@@ -565,7 +624,8 @@ internal fun WritingResultScreen(
     val heading = remember { FocusRequester() }
     val moveFocus = rememberMoveFocus()
     val grade = remember(latest.grade) { latest.grade.toGrade() }
-    val done = remember(grade, latest.text) { grade.nextStep(latest.text) == NextStep.Done }
+    // Changes the grade isn't for still have a rewrite to go to.
+    val done = remember(grade, latest.text) { grade.nextStep(latest.text) == NextStep.Done } && ui.unsent == null
 
     LaunchedEffect(latest) { if (ui.switched) moveFocus(heading) }
 
@@ -574,6 +634,14 @@ internal fun WritingResultScreen(
         title = { BarTitle(writingLabel(essay.writing)) },
         bottomBar = {
             TaskActionBar {
+                if (ui.unsent != null && !ui.closed) {
+                    Text(
+                        stringResource(R.string.essay_graded_earlier_version),
+                        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
                 if (ui.rewriteFailed && !ui.rewriting) {
                     Text(
                         stringResource(R.string.essay_finish_failed),

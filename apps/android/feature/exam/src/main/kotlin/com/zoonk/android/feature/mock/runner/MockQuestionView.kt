@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.essay.MAX_WRITING_CHARACTERS
 import com.zoonk.android.feature.essay.WritingLineCount
 import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.questions.Answer
@@ -254,7 +255,7 @@ private fun EssayAnswer(
 
     OutlinedTextField(
         value = text,
-        onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
+        onValueChange = { viewModel.write(Answer.Text(it.take(MAX_WRITING_CHARACTERS))) },
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
         colors = writingAreaColors(),
@@ -450,7 +451,6 @@ internal fun ItemCountdown(
 private const val NUMBER_DIGITS = 4
 
 /** The API's longest written answer. */
-private const val MAX_ESSAY_CHARACTERS = 48_000
 private const val ESSAY_LINES = 10
 private val ESSAY_HEIGHT = 288.dp
 private const val MS_PER_SECOND = 1000L

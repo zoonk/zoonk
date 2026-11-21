@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.mock.chooser
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,6 +22,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
@@ -31,8 +33,11 @@ import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
@@ -119,7 +124,24 @@ internal fun MockChooser(
         return
     }
 
-    ChooserFrame(navigator, title = loaded?.let { stringResource(R.string.mock_chooser_title) }) {
+    // A written test's questions that couldn't be written get the page every writing failure has, with Try again in the bar.
+    val writtenFailed = writing && viewModel.writtenTestRun != null && run.status == GenerationRun.Status.Failed
+    ChooserFrame(
+        navigator,
+        title = loaded?.let { stringResource(R.string.mock_chooser_title) },
+        bottomBar =
+            if (writtenFailed) {
+                {
+                    TaskActionBar {
+                        TaskActions { width ->
+                            Button(onClick = retry, modifier = width) { Text(stringResource(R.string.essay_try_again)) }
+                        }
+                    }
+                }
+            } else {
+                null
+            },
+    ) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
@@ -171,11 +193,13 @@ private fun Leave(
 private fun ChooserFrame(
     navigator: AppNavigator,
     title: String? = null,
+    bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     PageScaffold(
         onBack = { navigator.back() },
         title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        bottomBar = bottomBar,
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }

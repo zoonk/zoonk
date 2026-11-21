@@ -278,16 +278,31 @@ internal fun MockWriting(
     BeforeFold { beforeFold ->
         Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
             if (writtenTestRun != null) {
-                // The written test's questions are one model call: the wait says what's coming, with no steps it doesn't have.
-                IndeterminateWait(
-                    title = stringResource(R.string.mock_chooser_writing_written),
-                    description = stringResource(R.string.mock_chooser_writing_written_detail),
-                    failedTitle = stringResource(R.string.mock_chooser_writing_written_failed),
-                    run = run,
-                    onRetry = onRetry,
-                    modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
-                    titleModifier = titleModifier,
-                )
+                val failed = run.status == GenerationRun.Status.Failed
+                Column(
+                    Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (failed) {
+                        Text(
+                            stringResource(R.string.mock_chooser_writing_written_failed),
+                            titleModifier,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            stringResource(R.string.essay_nothing_lost),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    } else {
+                        // The written test's questions are one model call: the wait says what's coming, with no steps it doesn't have.
+                        IndeterminateWait(
+                            title = stringResource(R.string.mock_chooser_writing_written),
+                            description = stringResource(R.string.mock_chooser_writing_written_detail),
+                            titleModifier = titleModifier,
+                        )
+                    }
+                }
                 return@Box
             }
             GenerationWait(

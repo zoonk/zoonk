@@ -259,7 +259,7 @@ fun WritingStartAnswer.routeValue(): String? =
         is WritingStartAnswer.Ready -> null
         is WritingStartAnswer.Writing -> generationId
         is WritingStartAnswer.LimitReached -> WRITING_LIMIT
-        WritingStartAnswer.SignUpRequired -> WRITING_FAILED
+        WritingStartAnswer.SignUpRequired -> WRITING_SIGN_UP
         WritingStartAnswer.Removed -> WRITING_REMOVED
     }
 
@@ -273,6 +273,9 @@ sealed interface WritingBefore {
 
     data object Failed : WritingBefore
 
+    /** A guest whose question would cost a model call: an account funds it, so trying again can't. */
+    data object SignUpRequired : WritingBefore
+
     data object Removed : WritingBefore
 
     companion object {
@@ -281,6 +284,7 @@ sealed interface WritingBefore {
                 null, "" -> null
                 WRITING_LIMIT -> LimitReached
                 WRITING_FAILED -> Failed
+                WRITING_SIGN_UP -> SignUpRequired
                 WRITING_REMOVED -> Removed
                 else -> Writing(value)
             }
@@ -290,6 +294,7 @@ sealed interface WritingBefore {
 private const val WRITING_LIMIT = "limit"
 private const val WRITING_FAILED = "failed"
 private const val WRITING_REMOVED = "removed"
+private const val WRITING_SIGN_UP = "signUp"
 
 suspend fun EssayApi.startAnswer(
     session: AuthenticatedSession,
@@ -364,18 +369,6 @@ class EssayStore(
             .mutate { session ->
                 api.startAnswer(session, blockId, previousAttemptId)
             }.also { if (it is MutationResult.Done) dayChanged(blockId) }
-
-    /** What [StudyOpener] asks as a tap opens a written block, so the essay opens past its start. */
-    suspend fun startAnswer(
-        session: AuthenticatedSession,
-        blockId: UUID,
-        previousAttemptId: UUID? = null,
-    ): WritingStartAnswer =
-        try {
-            api.start(session, blockId, previousAttemptId)
-        } catch (e: ApiException) {
-            if (e.code == SIGN_UP_REQUIRED) WritingStartAnswer.SignUpRequired else throw e
-        }
 
     suspend fun saveDraft(
         blockId: UUID,

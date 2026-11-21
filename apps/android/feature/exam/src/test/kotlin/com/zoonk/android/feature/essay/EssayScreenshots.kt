@@ -191,5 +191,5 @@ class EssayScreenshots {
 
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
-    fun taskRemoved() = show("13-task-removed") { _, _, _ -> WritingRemoved("Written answer", onToday = {}, onClose = {}) }
+    fun taskRemoved() = show("13-task-removed") { _, _, _ -> WritingRemoved("Written answer", onClose = {}) }
 }
