@@ -49,7 +49,7 @@ const fallbackModels = [
 ] as const;
 
 /** A level's questions per skill: enough for a whole-course test to stop on its own. */
-export const LEVEL_TEST_QUESTIONS_PER_SKILL = 12;
+const LEVEL_TEST_QUESTIONS_PER_SKILL = 12;
 
 /** Short calls side by side, so a learner waiting on the bank waits for the longest of them. */
 const QUESTIONS_PER_CALL = 4;
@@ -181,21 +181,12 @@ function chunk<Item>(items: readonly Item[], size: number): Item[][] {
   );
 }
 
-/**
- * Writes `count` more questions of one skill at one level, on the situations after the `from` it
- * already has, so a bank grows without rewriting the questions it holds.
- */
-export async function generateLevelTestQuestions({
+/** `count` questions of one skill at one level, each on its own situation. */
+async function generateLevelTestQuestions({
   count = LEVEL_TEST_QUESTIONS_PER_SKILL,
-  from = 0,
   ...params
-}: GenerateLevelTestBankParams & {
-  count?: number;
-  from?: number;
-  level: TestLevel;
-  skill: LevelTestSkill;
-}) {
-  const situations = QUESTION_SITUATIONS[params.level][params.skill].slice(from, from + count);
+}: GenerateLevelTestBankParams & { count?: number; level: TestLevel; skill: LevelTestSkill }) {
+  const situations = QUESTION_SITUATIONS[params.level][params.skill].slice(0, count);
 
   const calls = await Promise.all(
     chunk(situations, QUESTIONS_PER_CALL).map((slice) =>

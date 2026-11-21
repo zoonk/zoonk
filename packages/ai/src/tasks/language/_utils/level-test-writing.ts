@@ -26,8 +26,7 @@ export const QUESTION_TESTS = {
 
 /**
  * Questions of a level are written in several calls at once, so each takes its own situations;
- * topics move from concrete at A1 to abstract at C2, as CEFR's descriptors do. The first two of
- * each list are the ones the first banks used, so a bank that grows takes the ones after them.
+ * topics move from concrete at A1 to abstract at C2, as CEFR's descriptors do.
  */
 export const QUESTION_SITUATIONS = {
   A1: {

@@ -1,11 +1,7 @@
 import { type LanguageModelUsage, generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { QUESTION_SITUATIONS } from "./_utils/level-test-writing";
-import {
-  generateLevelTestBank,
-  generateLevelTestBankLevel,
-  generateLevelTestQuestions,
-} from "./level-test-bank";
+import { generateLevelTestBank, generateLevelTestBankLevel } from "./level-test-bank";
 import { generateLevelTestConfirmations } from "./level-test-confirmations";
 import type * as Ai from "ai";
 
@@ -160,31 +156,46 @@ describe(generateLevelTestBankLevel, () => {
   });
 });
 
-describe(generateLevelTestQuestions, () => {
+describe(generateLevelTestBank, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     answerAsAsked();
   });
 
-  it("grows a level on the situations after the ones it has", async () => {
-    const { data } = await generateLevelTestQuestions({
-      count: 10,
-      from: 2,
+  it("writes every level's questions through C2, as many per skill as asked, in calls of four", async () => {
+    const { data } = await generateLevelTestBank({
       learnerLanguage: "pt",
-      level: "A1",
-      skill: "listening",
+      questionsPerSkill: 10,
       targetLanguage: "it",
     });
 
-    expect(data.questions.map((question) => question.passage)).toStrictEqual(
+    expect([...new Set(data.questions.map((question) => question.level))]).toStrictEqual([
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1",
+      "C2",
+    ]);
+
+    expect(
+      data.questions
+        .filter((question) => question.level === "A1" && question.skill === "listening")
+        .map((question) => question.passage),
+    ).toStrictEqual(
       QUESTION_SITUATIONS.A1.listening
-        .slice(2)
+        .slice(0, 10)
         .map((situation) => `passage A1 listening ${situation}`),
     );
 
     const prompts = vi.mocked(generateText).mock.calls.map(([options]) => promptOf(options));
+    const sizes = prompts.map((prompt) => prompt.match(/^- \d+: /gmu)?.length ?? 0);
 
-    expect(prompts.map((prompt) => prompt.match(/^- \d+: /gmu)?.length)).toStrictEqual([4, 4, 2]);
+    expect(sizes.toSorted((first, second) => first - second)).toStrictEqual([
+      ...Array.from({ length: 12 }, () => 2),
+      ...Array.from({ length: 24 }, () => 4),
+    ]);
+
     expect(prompts.every((prompt) => prompt.includes("- Place: Italy"))).toBe(true);
     expect(prompts.some((prompt) => /Brazil|Register/u.test(prompt))).toBe(false);
   });
@@ -202,17 +213,16 @@ describe(generateLevelTestQuestions, () => {
       });
     });
 
-    const { data } = await generateLevelTestQuestions({
-      count: 2,
+    const { data } = await generateLevelTestBank({
       learnerLanguage: "pt",
-      level: "B1",
-      skill: "reading",
+      questionsPerSkill: 2,
       targetLanguage: "en",
     });
 
-    expect(data.questions.map((question) => question.passage)).toStrictEqual(["passage long"]);
-    expect(data.questions[0]?.options).toHaveLength(4);
-    expect(data.questions[0]?.options).not.toContain("wrong 4 long");
+    expect(data.questions).toHaveLength(12);
+    expect(data.questions.every((question) => question.passage === "passage long")).toBe(true);
+    expect(data.questions.every((question) => question.options.length === 4)).toBe(true);
+    expect(data.questions.flatMap((question) => question.options)).not.toContain("wrong 4 long");
   });
 });
 
@@ -257,31 +267,5 @@ describe(generateLevelTestConfirmations, () => {
     expect(
       confirmation?.answerIndices.map((index) => confirmation.options[index]).toSorted(),
     ).toStrictEqual(["right 1 good", "right 2 good"]);
-  });
-});
-
-describe(generateLevelTestBank, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    answerAsAsked();
-  });
-
-  it("writes every level's questions through C2, as many per skill as asked", async () => {
-    const { data } = await generateLevelTestBank({
-      learnerLanguage: "pt",
-      questionsPerSkill: 2,
-      targetLanguage: "en",
-    });
-
-    expect([...new Set(data.questions.map((question) => question.level))]).toStrictEqual([
-      "A1",
-      "A2",
-      "B1",
-      "B2",
-      "C1",
-      "C2",
-    ]);
-
-    expect(data.questions).toHaveLength(6 * 2 * 2);
   });
 });
