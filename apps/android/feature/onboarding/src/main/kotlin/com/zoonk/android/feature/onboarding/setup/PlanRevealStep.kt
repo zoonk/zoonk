@@ -3,7 +3,6 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.liveRegion
@@ -33,7 +31,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.RevealStructure
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.ADJUST_CHOICES
-import com.zoonk.android.feature.plan.ADJUST_TIME
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.coveredText
@@ -155,10 +152,6 @@ internal fun ColumnScope.PlanRevealStep(
                     onChangeChoice = {
                         navigator.closeSection()
                         navigator.open(AppRoute.Plan(focus = ADJUST_CHOICES))
-                    },
-                    onAddTime = {
-                        navigator.closeSection()
-                        navigator.open(AppRoute.Plan(focus = ADJUST_TIME))
                     },
                     onUseNoticeDay = onUseNoticeDay,
                     onCreateAccount = { navigator.open(AppRoute.Login) },
@@ -318,7 +311,6 @@ private fun ColumnScope.RevealBody(
     startError: Int?,
     onStart: () -> Unit,
     onAdjust: () -> Unit,
-    onAddTime: () -> Unit,
     onChangeChoice: () -> Unit,
     onUseNoticeDay: (LocalDate) -> Unit,
     onCreateAccount: () -> Unit,
@@ -329,7 +321,7 @@ private fun ColumnScope.RevealBody(
     val choices: @Composable () -> Unit = {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
             RevealReadouts(plan, goal, today)
-            RevealCoverageLine(plan, onAddTime)
+            RevealCoverageLine(plan)
             PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
             NoticeDayLine(plan, enabled = !starting, onUse = onUseNoticeDay)
             if (plan.notice == Plan.Notice.USUAL) {
@@ -389,29 +381,18 @@ private fun RevealPlanPane(choices: @Composable () -> Unit) {
 }
 
 /**
- * Main's `RevealCoverage`: the one thing about the plan a learner may want to change before starting, their time not
- * covering the goal. A plan that keeps going after the exam covers the rest then.
+ * Main's `RevealCoverage`: what the learner's time covers when it doesn't cover the whole goal; "Adjust plan" below
+ * opens the editor to change it. A plan that keeps going after the exam covers the rest then.
  */
 @Composable
-private fun RevealCoverageLine(
-    plan: Plan,
-    onAddTime: () -> Unit,
-) {
+private fun RevealCoverageLine(plan: Plan) {
     val coverage = planCoverage(plan)
     if (coverage == null || plan.schedule.fullCourse) return
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        itemVerticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            coveredText(plan, coverage),
-            Modifier.weight(1f),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(onClick = onAddTime) { Text(stringResource(R.string.today_more_time_a_day)) }
-    }
+    Text(
+        coveredText(plan, coverage),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 /** Main's `RevealNoticeDay`: the exam's day research found after the plan was built, with the way to use it. */

@@ -166,8 +166,8 @@
     <string name="today_plan_keep_mine">Keep mine</string>
     <string name="today_next_suggestion">Next suggestion</string>
     <string name="today_notice_falling_behind">Plan change</string>
-    <string name="today_behind_exam">%1$s a day now covers %2$s of the exam, down from %3$s.</string>
-    <string name="today_behind_goal">%1$s a day now covers %2$s of your goal, down from %3$s.</string>
+    <string name="today_behind_lessons_exam">Some lessons no longer fit before your exam.</string>
+    <string name="today_behind_lessons_goal">Some lessons no longer fit before your date.</string>
     <string name="today_more_time_a_day">Add time</string>
     <string name="today_choose_focus">Choose where to focus</string>
     <string name="today_study_everything">Remove end date</string>

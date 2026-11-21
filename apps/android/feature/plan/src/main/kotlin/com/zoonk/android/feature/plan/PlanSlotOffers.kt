@@ -132,7 +132,7 @@ private fun answerOffer(
         is CoverageChange.Time -> {
             if (answer is TimeToCoverAnswer.Focus) {
                 CoverageOffer(
-                    description = listOf(timeCoversText(page.isExam, answer.minutes, answer.coveredShare)),
+                    description = listOf(timeCoversText(page.isExam, answer.minutes, answer.reachedShare)),
                     operations = change.operations,
                     title = stringResource(R.string.plan_time_suggest_title, formatMinutes(change.minutes, locale)),
                 )

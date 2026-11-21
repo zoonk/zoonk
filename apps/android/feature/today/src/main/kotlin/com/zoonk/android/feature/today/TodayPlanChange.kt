@@ -27,9 +27,6 @@ import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeBehind
 import com.zoonk.api.models.PlanChangeDecisionInput
@@ -205,19 +202,10 @@ private fun FallingBehindNotice(
 ) {
     val viewModel = state.viewModel
     val today = state.read.today
-    val locale = currentLocale()
-    val values =
-        arrayOf(
-            formatMinutes(behind.currentMinutes.toInt(), locale),
-            formatPercent(behind.coveredAfter, locale),
-            formatPercent(behind.coveredBefore, locale),
-        )
     val sentence =
-        if (behind.measure == PlanChangeBehind.Measure.EXAM) {
-            stringResource(R.string.today_behind_exam, *values)
-        } else {
-            stringResource(R.string.today_behind_goal, *values)
-        }
+        stringResource(
+            if (behind.measure == PlanChangeBehind.Measure.EXAM) R.string.today_behind_lessons_exam else R.string.today_behind_lessons_goal,
+        )
     val kept =
         viewModel.planChangeAnswer?.takeIf {
             it.visit == state.read.noticeVisit() && it.change.id == change.id &&

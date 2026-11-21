@@ -31,7 +31,6 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFeasibility
 import kotlinx.datetime.toJavaLocalDate
@@ -51,27 +50,16 @@ fun coveredText(
     plan: Plan,
     coverage: PlanFeasibility,
 ): String {
-    val time = formatMinutes(plan.schedule.dailyMinutes.toInt(), currentLocale())
-    if (coverage.coveredShare < MIN_SHOWN_SHARE || plan.schedule.targetDate == null) {
-        return stringResource(R.string.plan_covered_not_enough, time)
+    val minutes = plan.schedule.dailyMinutes.toInt()
+    val reached = coverage.reachedShare ?: 0.0
+    if (reached < MIN_SHOWN_SHARE || plan.schedule.targetDate == null) {
+        return stringResource(R.string.plan_covered_not_enough, formatMinutes(minutes, currentLocale()))
     }
-    return stringResource(
-        if (coverage.measure ==
-            PlanFeasibility.Measure.EXAM
-        ) {
-            R.string.plan_time_covers_share_exam
-        } else {
-            R.string.plan_time_covers_share_goal
-        },
-        time,
-        formatPercent(coverage.coveredShare, currentLocale()),
-    )
+    return timeCoversText(coverage.measure == PlanFeasibility.Measure.EXAM, minutes, reached)
 }
 
 /** Below half a percent, the share would read "0%". */
 private const val MIN_SHOWN_SHARE = 0.005
-
-private const val DAYS_PER_WEEK = 7
 
 /** A goal's date as learn's `useGoalDateValues` writes it: a date standing for its month says the month. */
 @Composable
@@ -120,7 +108,12 @@ internal fun DailyCoverage(
     val found = (search as? TimeToCoverState.Answered)?.time
     val line =
         timeLine(
-            advice = LineAdvice(coveredShare = if (feasibility.fits) 1.0 else feasibility.coveredShare, endDate = null),
+            advice =
+                LineAdvice(
+                    coveredShare = if (feasibility.fits) 1.0 else feasibility.coveredShare,
+                    reachedShare = feasibility.reachedShare,
+                    endDate = null,
+                ),
             askFailed = false,
             dated = true,
             findFailed = false,
@@ -128,7 +121,6 @@ internal fun DailyCoverage(
             hasDays = true,
             minutes = minutes,
         )
-    val studiesEveryDay = plan.schedule.weekdayMinutes.count { it > 0 } == DAYS_PER_WEEK
     val fittingDate = found?.fittingDate?.takeIf { !page.isExam && line !is TimeLine.Everything }
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -151,7 +143,7 @@ internal fun DailyCoverage(
                     exam = page.isExam,
                     line = line,
                     minutes = minutes,
-                    note = fullTimeNote(found, line, studiesEveryDay),
+                    takes = everythingTakesNote(found),
                     // Asked as the editor opens, so a search not answered yet is being found; one that failed shows nothing.
                     finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
                     offer = timeOffer(found, line, minutes),
@@ -222,7 +214,7 @@ private fun FinishLine(
  * Main's `invisible`: laid out, so the block keeps its height, but not placed, so it's neither drawn,
  * tapped nor read.
  */
-private fun Modifier.hiddenIf(hidden: Boolean): Modifier =
+internal fun Modifier.hiddenIf(hidden: Boolean): Modifier =
     if (!hidden) {
         this
     } else {

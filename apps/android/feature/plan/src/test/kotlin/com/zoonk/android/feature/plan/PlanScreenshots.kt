@@ -726,6 +726,11 @@ class PlanScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeWhenNoTimeCoversEverything() =
+        captureEditorTime("plan-editor-time-none", minutes = 240, share = 0.32, reached = 0.71, recommended = null)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
     fun editorTimeOnTheFullTime() = captureEditorTime("plan-editor-time-full", minutes = 805, share = 1.0, reached = 1.0)
 
     @Test
@@ -734,7 +739,8 @@ class PlanScreenshots {
 
     /**
      * An exam whose whole syllabus takes 13 h 25 min a day, at [minutes] a day, with the time question's answer in;
-     * [reached] is the share whose topics get their first lessons, at [minutes] and at the suggested 4 h alike.
+     * [reached] is the share whose topics get their first lessons, at [minutes] and at the suggested 4 h alike;
+     * [recommended] null when no time covers everything.
      */
     private fun captureEditorTime(
         name: String,
@@ -742,6 +748,7 @@ class PlanScreenshots {
         share: Double,
         reached: Double,
         dark: Boolean = false,
+        recommended: Long? = 805,
     ) {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
         val fits = share >= 1
@@ -756,7 +763,11 @@ class PlanScreenshots {
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = 805, focus = 240, reachedShare = reached))
+        val found =
+            TimeToCoverState.Answered(
+                planAdviceRevision(plan),
+                timeToCover(recommended = recommended, focus = 240, reachedShare = reached),
+            )
         compose.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
