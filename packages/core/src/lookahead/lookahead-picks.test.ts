@@ -340,7 +340,7 @@ describe(pickPlacementItemSkills, () => {
       picks.map((pick) => [pick.quickFormat, pick.confirmingCount, pick.skills[0]?.tapsNeeded]),
     ).toStrictEqual([
       ["multipleChoice", 0, 3],
-      ["trueFalse", 0, 3],
+      ["multipleChoice", 0, 3],
       ["multipleChoice", 0, 3],
       ["multipleChoice", 0, 3],
     ]);
@@ -359,6 +359,33 @@ describe(pickPlacementItemSkills, () => {
 
     expect(placement.skills).toMatchObject([{ id: skill.id, needsQuick: false, tapsNeeded: 3 }]);
     expect(practice).toMatchObject({ confirmingCount: 0, skills: [] });
+  });
+
+  it("lets an exam's placement count and write general questions, whatever the exam's format", async () => {
+    const { blueprint, goal, skillIds } = await examGoalWithSkills({
+      count: 2,
+      structure: CEBRASPE_STRUCTURE,
+    });
+
+    const [covered = "", uncovered = ""] = skillIds;
+
+    await Promise.all([
+      itemFixture({ content: choiceContent(4), skillId: covered }),
+      tapFixtures({ skillId: covered }),
+      itemFixture({
+        content: TRUE_FALSE_CONTENT,
+        examBlueprintId: blueprint.id,
+        format: "trueFalse",
+        skillId: uncovered,
+      }),
+    ]);
+
+    await expect(
+      pickPlacementItemSkills({ forPlacement: true, goalId: goal.id, skillIds }),
+    ).resolves.toMatchObject({
+      quickFormat: "multipleChoice",
+      skills: [{ exam: null, id: uncovered, needsQuick: true, tapsNeeded: 3 }],
+    });
   });
 
   it("counts only low-guess tap questions toward the three a skill needs", async () => {
