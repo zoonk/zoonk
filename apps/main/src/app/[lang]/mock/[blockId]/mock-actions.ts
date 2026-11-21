@@ -32,7 +32,10 @@ async function readMock(blockId: string): Promise<MockView | null> {
   return result.status === "ready" ? result.mock : null;
 }
 
-/** Never says whether the answer is right; null when signed out, so the answer is sent again. */
+/**
+ * Never says whether the answer is right. Null when signed out or signed in as someone else, so the
+ * answer stays on the device and goes again once its owner is back.
+ */
 export async function saveMockAnswerAction(
   blockId: unknown,
   answer: unknown,
@@ -45,7 +48,12 @@ export async function saveMockAnswerAction(
   }
 
   const result = await saveMockAnswer({ blockId: id.data, input: input.data });
-  return result.status === "unauthorized" ? null : result.status === "saved";
+
+  if (result.status === "unauthorized" || result.status === "notFound") {
+    return null;
+  }
+
+  return result.status === "saved";
 }
 
 export async function submitMockSectionAction(
