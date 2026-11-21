@@ -113,7 +113,9 @@ test.describe("Written exam practice", () => {
         page.getByRole("heading", { level: 1, name: "No more grading today" }),
       ).toBeVisible();
 
-      await expect(page.getByText(SHORT_TITLE)).toBeVisible();
+      // Tomorrow's task is named as Today names it, never by the question's topic.
+      await expect(page.getByText("Write the 30-line question")).toBeVisible();
+      await expect(page.getByText(SHORT_TITLE)).toBeHidden();
       await expect(page.getByLabel("Rewrite what needs work")).toBeHidden();
 
       // The written test's page knows the day's grading is used, so it offers no tap to refuse.
