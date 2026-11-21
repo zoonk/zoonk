@@ -1,4 +1,5 @@
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { writesExamExtras } from "./_utils/skill-graph-extras";
 import { type SkillGraphParams } from "./skill-graph-calls";
 import template from "./skill-graph.prompt.md";
 
@@ -47,6 +48,7 @@ export function buildSkillGraphSystemPrompt({
     variants: {
       budget: Boolean(lessonBudget),
       exam: goalKind === "exam",
+      extras: writesExamExtras({ goalKind, hasMaterial, lessonBudget }),
       firstSkill: goalKind === "learn" && Boolean(firstSkill),
       language: goalKind === "language",
       learn: goalKind === "learn",

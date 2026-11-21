@@ -111,6 +111,12 @@ export const studyBlockSchema = z
         description:
           "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
       }),
+    subjectExtra: z
+      .enum(["notice", "optional"])
+      .optional()
+      .describe(
+        "The optional exam study a lesson belongs to, with or without an official guide respectively.",
+      ),
     title: z.string().nullable(),
     topics: z
       .array(z.string())

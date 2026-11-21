@@ -130,7 +130,7 @@ export async function loadUnstartedDayView({
         blockedTestOutChapters,
         blocks,
         oftenTestedSkillIds,
-        subject: subjects.get(block.position) ?? null,
+        ...subjects.get(block.position),
       }),
     ),
     catchUp: previewCatchUp,

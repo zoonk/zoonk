@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
@@ -36,7 +37,7 @@ function isSteering(operation: PlanChangeInput["operations"][number]): boolean {
   return operation.kind === "focusAreas" || operation.kind === "reduceAreas";
 }
 
-async function undoSetBack({
+async function resolveExistingPlanChange({
   context,
   operations,
 }: {
@@ -45,10 +46,21 @@ async function undoSetBack({
 }): Promise<PlanChangeResult | null> {
   const result = await applyChangeOperations({ context, operations });
 
-  const change =
-    "error" in result || !isPlanReady(context)
-      ? null
-      : await findSetBackChange({ context, operations, state: result.state });
+  if ("error" in result) {
+    return null;
+  }
+
+  if (
+    operations.length > 0 &&
+    operations.every(({ kind }) => kind === "setExtras") &&
+    isDeepStrictEqual(new Set(result.state.settings.extras), new Set(context.state.settings.extras))
+  ) {
+    return { reason: "alreadyIn", status: "unchanged" };
+  }
+
+  const change = isPlanReady(context)
+    ? await findSetBackChange({ context, operations, state: result.state })
+    : null;
 
   if (!change || (await undoChange({ change, context }))) {
     return null;
@@ -84,10 +96,18 @@ async function applyGoalPlanChange({
 
     assertPlanTargetDates({ context: owned.context, operations: input.operations });
 
-    const { goal } = owned.context;
-    const setBack = await undoSetBack({ context: owned.context, operations: input.operations });
+    const existing = await resolveExistingPlanChange({
+      context: owned.context,
+      operations: input.operations,
+    });
 
-    if (setBack) {
+    if (existing?.status === "unchanged") {
+      return existing;
+    }
+
+    const { goal } = owned.context;
+
+    if (existing) {
       trackPlanEdited({
         changeKind: input.operations.map((operation) => operation.kind).join(","),
         enabled: trackAnalytics,
@@ -95,7 +115,7 @@ async function applyGoalPlanChange({
         userId: goal.userId,
       });
 
-      return setBack;
+      return existing;
     }
 
     const request = {

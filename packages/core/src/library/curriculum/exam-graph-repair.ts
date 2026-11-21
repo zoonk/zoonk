@@ -1,16 +1,20 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { findUncoveredTopics, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
+import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { toGoalCandidateExams } from "../exams/candidate-exams";
 import { applyGraphCoverage } from "./add-coverage-skills";
 import { type CurriculumScope } from "./curriculum-scope";
-import { toExamOutline } from "./goal-curriculum-inputs";
+import { toExamOutline } from "./exam-curriculum-outline";
 import { toGoalPlanGraph } from "./goal-plan-graph";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
+import { noticeSubjects } from "./prune-notice-skills";
+import { prunePlanNoticeGraph } from "./prune-plan-notice-graph";
 import {
   type GoalSkillGraph,
   linkGoalSkillPrerequisites,
@@ -76,7 +80,7 @@ function insertAddedSkills({ added, stored }: { added: PlanGraph; stored: PlanGr
   const isComplete = stored.skills.every((skill) => skills.includes(skill));
 
   return {
-    phases: stored.phases,
+    ...stored,
     skills: isComplete
       ? skills
       : [...stored.skills, ...skills.filter((skill) => !kept.has(skill.skillId))],
@@ -153,10 +157,82 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
     stored: parsePlanGraph(stored.graph),
   });
 
-  await writePlanInputs(async (tx) => {
+  const saved = await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
-    await tx.examSkillGraph.update({ data: { graph }, where: { examBlueprintId } });
+    const current = await tx.examSkillGraph.findUnique({ where: { examBlueprintId } });
+
+    if (!current || !isDeepStrictEqual(current.graph, stored.graph)) {
+      return false;
+    }
+
+    const currentBlueprint = await tx.examBlueprint.findUniqueOrThrow({
+      where: { id: examBlueprintId },
+    });
+
+    const pruned = await prunePlanNoticeGraph({
+      db: tx,
+      graph,
+      subjects: toExamOutline(currentBlueprint).subjects,
+    });
+
+    await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
+    return true;
   });
 
-  return added.map((skill) => skill.name);
+  return saved ? added.map((skill) => skill.name) : [];
+}
+
+type NoticeSubjects = ReturnType<typeof noticeSubjects>;
+
+function toNoticeRepair({ graph, subjects }: { graph: PlanGraph; subjects: NoticeSubjects }) {
+  return { extraSkills: graph.extraSkills ?? [], skills: joinOptionSkills(graph).skills, subjects };
+}
+
+export async function prepareNoticeGraphRepair(examBlueprintId: string) {
+  const [stored, blueprint] = await Promise.all([
+    prisma.examSkillGraph.findUnique({ select: { graph: true }, where: { examBlueprintId } }),
+    prisma.examBlueprint.findUnique({
+      select: { structure: true },
+      where: { id: examBlueprintId },
+    }),
+  ]);
+
+  if (!blueprint) {
+    return null;
+  }
+
+  const graph = parsePlanGraph(stored?.graph);
+  const subjects = noticeSubjects(blueprint.structure);
+  const { dropped } = await prunePlanNoticeGraph({ graph, subjects });
+
+  if (dropped.length === 0) {
+    return toNoticeRepair({ graph, subjects });
+  }
+
+  return writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+
+    const [current, notice] = await Promise.all([
+      tx.examSkillGraph.findUnique({ select: { graph: true }, where: { examBlueprintId } }),
+      tx.examBlueprint.findUnique({ select: { structure: true }, where: { id: examBlueprintId } }),
+    ]);
+
+    if (!notice) {
+      return null;
+    }
+
+    const currentSubjects = noticeSubjects(notice.structure);
+
+    const pruned = await prunePlanNoticeGraph({
+      db: tx,
+      graph: parsePlanGraph(current?.graph),
+      subjects: currentSubjects,
+    });
+
+    if (pruned.dropped.length > 0) {
+      await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
+    }
+
+    return toNoticeRepair({ graph: pruned.graph, subjects: currentSubjects });
+  });
 }

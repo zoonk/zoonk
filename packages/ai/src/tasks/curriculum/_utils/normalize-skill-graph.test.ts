@@ -57,6 +57,38 @@ function choiceOption(name: string, topic: string) {
 }
 
 describe(normalizeSkillGraph, () => {
+  it("keeps strategy out of required hours, phases and prerequisites", () => {
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ key: "math", prerequisites: ["time-limit"] }),
+        rawSkill({
+          area: "Exam strategy",
+          estimatedLessons: 45,
+          extra: true,
+          key: "time-limit",
+          outcome: true,
+          phase: 2,
+          prerequisites: ["math"],
+        }),
+      ]),
+    );
+
+    expect(graph.skills).toMatchObject([{ key: "math", prerequisites: [] }]);
+    expect(graph.estimatedHours).toBe(1);
+    expect(graph.phases).toHaveLength(1);
+
+    expect(graph.extraSkills).toMatchObject([
+      {
+        area: "Exam strategy",
+        key: "extra:time-limit",
+        outcome: false,
+        phase: 1,
+        prerequisites: [],
+        topics: [],
+      },
+    ]);
+  });
+
   it("keeps the first subject course even if the model calls it supporting", () => {
     const source = rawGraph([
       rawSkill({ course: "physics", key: "phenomena" }),

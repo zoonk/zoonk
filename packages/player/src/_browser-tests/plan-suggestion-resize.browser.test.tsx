@@ -114,6 +114,7 @@ function renderEditor(plan: PlanView = PLAN) {
     decide: async () => false,
     findTimeToCover: async () => null,
     preview: async () => null,
+    readPlanAgain: () => {},
   };
 
   render(
@@ -154,6 +155,7 @@ function renderPlanSlots({
     decide: async () => false,
     findTimeToCover,
     preview: async () => null,
+    readPlanAgain: () => {},
   };
 
   const screen = (shown: { host: PlanSuggestionHost; plan: PlanView }) => (
@@ -519,6 +521,7 @@ describe("the Plan's requests belong to its screen", () => {
         decide,
         findTimeToCover: async () => null,
         preview: async () => null,
+        readPlanAgain: () => {},
       };
 
       function Screen() {

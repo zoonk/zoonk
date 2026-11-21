@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
@@ -29,6 +30,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.StudyBlock
 
@@ -48,6 +50,7 @@ fun DayStepRow(
     day: DayView,
     step: DayStep,
     isNext: Boolean,
+    examDocument: ExamDocument,
     modifier: Modifier = Modifier,
     lessonStatus: Map<String, LessonGenerationStatus> = emptyMap(),
     writingStalled: Boolean = false,
@@ -83,7 +86,7 @@ fun DayStepRow(
                     if (openFailed) StepOpenFailed()
                     if (!finished) {
                         tag?.invoke()
-                        StepLines(lessonStatus, writingStalled, step)
+                        StepLines(lessonStatus, writingStalled, step, examDocument)
                         testOut?.invoke()
                     }
                 }
@@ -121,8 +124,10 @@ private fun StepLines(
     lessonStatus: Map<String, LessonGenerationStatus>,
     writingStalled: Boolean,
     step: DayStep,
+    examDocument: ExamDocument,
 ) {
     val count = step.questions.toInt()
+    val extra = step.subjectExtra
     val line =
         when {
             !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
@@ -130,6 +135,7 @@ private fun StepLines(
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
             step.fullReview -> stringResource(R.string.today_step_every_topic)
+            extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
             else -> step.subject
         }
 

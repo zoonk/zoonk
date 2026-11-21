@@ -64,7 +64,7 @@ export async function loadSessionBlockViews({
           blockedTestOutChapters: blockedChapters,
           blocks: session.blocks,
           oftenTestedSkillIds,
-          subject: subjects.get(block.position) ?? null,
+          ...subjects.get(block.position),
         }),
       ),
       current,

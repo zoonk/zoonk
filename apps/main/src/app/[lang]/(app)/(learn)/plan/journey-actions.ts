@@ -15,13 +15,14 @@ import { previewPlanChange } from "@zoonk/core/plans/preview";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { type PlanChangeOutcome } from "@zoonk/learn/journey";
+import { type PlanChangeReply } from "@zoonk/learn/journey";
+import { refresh } from "next/cache";
 import { z } from "zod";
 
 export async function changePlanAction(
   goalId: string,
   operations: unknown,
-): Promise<PlanChangeOutcome | null> {
+): Promise<PlanChangeReply | null> {
   const input = planChangeInputSchema.safeParse({ operations });
 
   if (!input.success) {
@@ -30,8 +31,18 @@ export async function changePlanAction(
 
   const result = await changeGoalPlan({ goalId, input: input.data });
 
+  // Such as an offer another device already accepted, or one its change no longer allows: the page
+  // reads the plan again, so it offers only what the plan still allows.
+  if (result.status === "unchanged" || result.status === "invalid") {
+    refresh();
+  }
+
   if (result.status === "unchanged") {
     return { reason: result.reason, status: "unchanged" };
+  }
+
+  if (result.status === "invalid") {
+    return { status: "refused" };
   }
 
   if (result.status !== "applied") {

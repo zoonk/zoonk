@@ -116,6 +116,7 @@ export function toCoursePlanGraph({
   const names = getCourseLevelNames(course.language);
   const examSkills = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill]));
   const skillAreas = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill.area]));
+  const extras = new Set(examGraph?.extraSkills?.map((skill) => skill.skillId));
 
   function getExamSkill(chapter: CourseOutlineChapter, skillId: string) {
     return (
@@ -128,26 +129,38 @@ export function toCoursePlanGraph({
 
   const skills = planned.flatMap((chapter) =>
     toChapterSkills({ chapter, lessonCounts, ownTags }).map(
-      ({ lessons, skill }): PlanGraphSkill => ({
-        area: chapter.area ?? getExamSkill(chapter, skill.id)?.area ?? course.title,
-        courseIds: [course.id],
-        lessons: Math.max(1, lessons),
-        name: skill.name,
-        outcome: getExamSkill(chapter, skill.id)?.outcome,
-        outlined: true,
-        phase: levels.indexOf(chapter.level),
-        skillId: skill.id,
-        topics: getExamSkill(chapter, skill.id)?.topics,
-        weight: getExamSkill(chapter, skill.id)?.weight ?? null,
-      }),
+      ({ lessons, skill }): PlanGraphSkill => {
+        const evidence = getExamSkill(chapter, skill.id);
+
+        return {
+          area: chapter.area ?? evidence?.area ?? course.title,
+          courseIds: [course.id],
+          lessons: Math.max(1, lessons),
+          name: skill.name,
+          outcome: evidence?.outcome,
+          outlined: true,
+          phase: levels.indexOf(chapter.level),
+          skillId: skill.id,
+          topics: examGraph && !evidence ? [] : evidence?.topics,
+          weight: evidence?.weight ?? null,
+        };
+      },
     ),
   );
 
   return {
     courseOutline: { courseId: course.id, levels, startChapterId },
+    ...(examGraph?.extraSkills && {
+      extraSkills: examGraph.extraSkills.map((skill) => ({
+        ...skill,
+        phase: Math.max(0, levels.length - 1),
+      })),
+    }),
     phases: levels.map((level) => ({ milestone: null, name: names[level] })),
     skills: skills.filter(
-      (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
+      (skill, index) =>
+        !extras.has(skill.skillId) &&
+        skills.findIndex((other) => other.skillId === skill.skillId) === index,
     ),
   };
 }

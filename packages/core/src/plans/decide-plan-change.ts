@@ -7,8 +7,9 @@ import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-c
 import { keepTestFocus } from "../learner/placement/_utils/focus-test-record";
 import { FOCUS_TEST_SOURCE } from "../learner/placement/focus-test-contract";
 import { commitPlan } from "./_utils/commit-plan";
-import { computeChange } from "./_utils/compute-change";
+import { computeCheckedChange } from "./_utils/extra-offer";
 import { followPlanToday } from "./_utils/follow-plan-today";
+import { proposesNoticeGraph } from "./_utils/notice-graph-proposal";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
 import {
@@ -90,22 +91,27 @@ async function acceptProposal({
 }: Decision & { quote: PlanChangeQuote | null }) {
   const payload = parsePlanChangePayload(change.payload);
 
-  const result = await applyChangeOperations({
-    context,
-    noticeGraph: payload.noticeGraph,
-    operations: payload.operations,
-  });
+  if (proposesNoticeGraph(payload.operations)) {
+    return { status: "conflict" as const };
+  }
+
+  const result = await applyChangeOperations({ context, operations: payload.operations });
 
   if ("error" in result) {
     return { error: result.error, status: "invalid" as const };
   }
 
-  const {
-    bringsBackSetAside,
-    computed,
-    effect,
-    unchanged: changesNothing,
-  } = await computeChange({ context, operations: result.operations, state: result.state });
+  const checked = await computeCheckedChange({
+    context,
+    operations: result.operations,
+    state: result.state,
+  });
+
+  if ("error" in checked) {
+    return { ...checked, status: "invalid" as const };
+  }
+
+  const { bringsBackSetAside, computed, effect, unchanged: changesNothing } = checked;
 
   const repriced = await repriceProposal({
     change,

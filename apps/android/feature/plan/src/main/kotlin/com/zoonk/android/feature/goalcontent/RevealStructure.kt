@@ -20,6 +20,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterRow
 import com.zoonk.android.feature.plan.PhaseRow
 import com.zoonk.android.feature.plan.isWritingAhead
+import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.feature.plan.sameWords
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -114,10 +115,8 @@ private fun RevealSubjects(
             SectionHeader(stringResource(if (exam) R.string.goalcontent_subjects else R.string.goalcontent_modules))
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 groups.forEach { group ->
-                    val name = if (group.extra) stringResource(R.string.goalcontent_also_in_plan) else group.name
-                    if (name !=
-                        null
-                    ) {
+                    val name = if (group.extra) optionalStudyLabel(syllabus.hasNotice == true, syllabus.examDocument) else group.name
+                    if (name != null) {
                         SectionLabel(name, Modifier.padding(start = LIST_ITEM_INSET, end = LIST_ITEM_INSET, top = 16.dp, bottom = 4.dp))
                     }
                     group.subjects.forEachIndexed { index, subject ->

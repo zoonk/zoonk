@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.QuietDisclosure
@@ -48,6 +49,7 @@ fun PlanSyllabusSection(
 ) {
     val groups = groupSubjects(syllabus.subjects, modules = syllabus.kind == Syllabus.Kind.MODULES)
     val exam = syllabus.goal.kind == GoalContentGoal.Kind.EXAM
+    val extraLabel = optionalStudyLabel(syllabus.hasNotice == true, syllabus.examDocument)
 
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val layout =
@@ -76,7 +78,7 @@ fun PlanSyllabusSection(
             }
 
             groups.forEach { group ->
-                val name = if (group.extra) stringResource(R.string.goalcontent_also_in_plan) else group.name
+                val name = if (group.extra) extraLabel else group.name
                 if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
                     if (index > 0) ListDivider()
@@ -118,6 +120,9 @@ private fun SubjectRow(
     val bar = if (notPlanned) null else subject.bar
     val share = bar?.share ?: subject.preparation
     val locale = currentLocale()
+    val progressText = if (subject.isExtra) lessonsDoneText(subject) else share?.let { formatProgressShare(it, locale) }.orEmpty()
+    // Optional study's count says its progress; a bar would sit under Preparation, which the exam doesn't measure for it.
+    val showsBar = !notPlanned && !subject.isExtra
     val questions = subject.questions?.takeIf { it > 0 }?.toInt()
 
     val name: @Composable (Modifier) -> Unit = { nameModifier ->
@@ -161,15 +166,15 @@ private fun SubjectRow(
                             maxLines = 1,
                         )
                     }
-                    if (!notPlanned) progress(Modifier.width(barWidth))
+                    if (showsBar) progress(Modifier.width(barWidth))
                 }
             }
         },
         onClick = onClick,
-        supporting = if (layout == RowLayout.Stacked || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
+        supporting = if ((layout == RowLayout.Stacked && showsBar) || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
         meta = {
             Text(
-                text = share?.let { formatProgressShare(it, locale) }.orEmpty(),
+                text = progressText,
                 modifier = Modifier.widthIn(min = SHARE_WIDTH),
                 color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 style = factsStyle(),
@@ -199,7 +204,7 @@ private fun sectionCount(syllabus: Syllabus): String {
         }
 
         syllabus.goal.kind == GoalContentGoal.Kind.EXAM -> {
-            val count = if (syllabus.kind == Syllabus.Kind.NOTICE) subjects else syllabus.subjects.size
+            val count = if (syllabus.kind == Syllabus.Kind.NOTICE) subjects else syllabus.subjects.count { !it.isExtra }
             pluralStringResource(R.plurals.goalcontent_subject_count, count, count)
         }
 
@@ -207,6 +212,13 @@ private fun sectionCount(syllabus: Syllabus): String {
             pluralStringResource(R.plurals.goalcontent_module_count, syllabus.subjects.size, syllabus.subjects.size)
         }
     }
+}
+
+/** Optional study isn't on the exam, so its row counts the lessons done instead of a readiness share. */
+@Composable
+private fun lessonsDoneText(subject: SyllabusSubject): String {
+    val total = subject.lessonsTotal.toInt()
+    return pluralStringResource(R.plurals.plan_lessons_of, total, subject.lessonsDone.toInt(), total)
 }
 
 @Composable

@@ -16,6 +16,7 @@ import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { readSyllabusInput } from "../../view-models/syllabus/_utils/read-syllabus-input";
+import { hasSyllabusNotice } from "../../view-models/syllabus/_utils/syllabus-input";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
@@ -149,6 +150,17 @@ function isPlanReady(context: PlanContext): boolean {
   );
 }
 
+function readExtraOffer({
+  fresh,
+  pastDate,
+}: {
+  fresh: ReturnType<typeof readFreshPlanSummary>;
+  pastDate: boolean;
+}): PlanView["extraOffer"] {
+  const offer = pastDate ? null : fresh?.advice.extraOffer;
+  return offer ? { ...offer, canApply: true } : null;
+}
+
 export async function buildPlanView({
   context: savedContext,
   now,
@@ -244,7 +256,8 @@ export async function buildPlanView({
     value: context.plan.summary,
   });
 
-  const fitOffer = status?.kind === "pastDate" ? null : (summary?.advice.fitOffer ?? null);
+  const pastDate = status?.kind === "pastDate";
+  const fitOffer = pastDate ? null : (summary?.advice.fitOffer ?? null);
 
   return {
     access,
@@ -266,6 +279,7 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
+    extraOffer: readExtraOffer({ fresh, pastDate }),
     feasibility: readSavedFeasibility(summary),
     fitOffer: fitOffer && {
       ...foldChangeAreas({ change: fitOffer, partAreas }),
@@ -273,6 +287,7 @@ export async function buildPlanView({
     },
     focusTest: readPlanFocusTest(context),
     goalId: goal.id,
+    hasNotice: hasSyllabusNotice(syllabus?.notice),
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })

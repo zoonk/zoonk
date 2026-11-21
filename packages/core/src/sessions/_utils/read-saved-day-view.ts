@@ -99,7 +99,7 @@ export async function readSavedDayView({
       block,
       blockedTestOutChapters,
       blocks: refill.blocks,
-      subject: subjects.get(block.position) ?? null,
+      ...subjects.get(block.position),
     });
   });
 

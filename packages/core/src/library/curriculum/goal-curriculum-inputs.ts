@@ -1,10 +1,9 @@
 import "server-only";
-import { type ExamOutline, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
+import { formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
-import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { type Course, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
 import { unpinnedCourseSourceId } from "../../goals/course-start-details";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
@@ -15,14 +14,7 @@ import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding-contract";
 import { getMissingQuestions } from "../../view-models/onboarding/onboarding-steps";
 import { getContentCountryScope } from "../content-country";
-import {
-  type ExamStructure,
-  examStructureSchema,
-  topicFrequencySchema,
-} from "../exams/blueprint-contract";
 import { type CandidateExam, toGoalCandidateExams } from "../exams/candidate-exams";
-import { getSubjectQuestions } from "../exams/subject-questions";
-import { listTopicLevels } from "../exams/topic-frequency";
 import { GOAL_PRODUCT_SELECT, type GoalProduct, toGoalProduct } from "../products/goal-product";
 import { loadGoalMaterial } from "../sources/goal-material";
 import {
@@ -31,6 +23,7 @@ import {
   toMaterialPages,
 } from "../sources/material-pages";
 import { type StartedCourse, toStartedCourse } from "./course-start-graph";
+import { toExamOutline } from "./exam-curriculum-outline";
 import { listGoalReferences } from "./goal-references";
 import { getLessonBudget } from "./lesson-budget";
 import { toExamIdentity, toSharedContext } from "./shared-graph-prompt";
@@ -116,60 +109,6 @@ function toContext({
   const context = parts.filter(Boolean).join("\n\n");
 
   return context || undefined;
-}
-
-function toExamNotes(structure: ExamStructure | undefined): string[] {
-  if (!structure) {
-    return [];
-  }
-
-  const scoring = structure.mock?.scoring.description;
-
-  return [
-    ...structure.formats.map((format) => `Format: ${format.description}`),
-    scoring ? `Scoring: ${scoring}` : "",
-    ...structure.rules.map((rule) => `Rule: ${rule.text}`),
-  ].filter((note) => note.trim().length > 0);
-}
-
-export function toExamOutline(
-  blueprint: Pick<ExamBlueprint, "name" | "structure" | "topicFrequency">,
-): ExamOutline {
-  const structure = examStructureSchema.safeParse(blueprint.structure).data;
-  const frequency = topicFrequencySchema.safeParse(blueprint.topicFrequency).data ?? [];
-
-  const choices = structure ? listChoiceGroups(structure) : [];
-
-  const takenOf = (name?: string | null) => {
-    const choice = choices.find((item) => item.name === name);
-    return choice ? { choiceTake: choice.take } : {};
-  };
-
-  const subjects = structure
-    ? structure.subjects.map((subject) => ({
-        choiceGroup: subject.choiceGroup ?? null,
-        ...takenOf(subject.choiceGroup),
-        group: subject.group ?? null,
-        name: subject.name,
-        questions: getSubjectQuestions({ structure, subject }),
-        shortName: subject.shortName ?? null,
-        topics: subject.topics,
-        weight: subject.weight,
-      }))
-    : [];
-
-  const looked = structure ? listTopicLevels({ structure, topicFrequency: [] }) : [];
-
-  return {
-    name: blueprint.name,
-    notes: toExamNotes(structure),
-    subjects,
-    topicFrequency: [...frequency, ...looked].map(({ level, subject, topic }) => ({
-      level,
-      subject,
-      topic,
-    })),
-  };
 }
 
 function toLessonBudget({

@@ -243,6 +243,8 @@ struct TodayPlanChangeSection: View {
           .controlSize(.small)
         }
         .listRowSeparator(.hidden)
+      } else if change.kind == "noticeChanged" {
+        followsGuide
       } else if isBehind, let behind = change.behind {
         missedDays(behind)
       } else {
@@ -380,33 +382,26 @@ struct TodayPlanChangeSection: View {
       : Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
   }
 
-  // MARK: Missed days
-
-  @ViewBuilder
-  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
+  /// A change the plan made that the learner answers on Today itself: its title, one sentence and
+  /// its answers under them, small, as main's suggestion panel draws them.
+  private func statement<Answers: View>(
+    title: Text, sentence: String?, @ViewBuilder answers: () -> Answers
+  ) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("You missed a few days", tableName: "Today", comment: "Title after missed study days")
+        title
           .typeStyle(.body.weight(.semibold))
 
-        Text(behindSentence(behind))
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        if let sentence {
+          Text(sentence)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
       }
 
       ButtonRow(wraps: true) {
-        // On a return after a break, nothing that asks for more hours leads.
-        if view.session.freshStart == .welcomeBack {
-          keepTimeButton
-          addTimeButton
-        } else {
-          addTimeButton
-          keepTimeButton
-        }
-
-        missedDaysMenu(behind)
+        answers()
       }
-      // A notice's answers beside its words, as main's suggestion panel draws them.
       .controlSize(.small)
       .disabled(isSaving)
     }
@@ -414,6 +409,56 @@ struct TodayPlanChangeSection: View {
     .padding(14)
     .panel()
     .listRowSeparator(.hidden)
+  }
+
+  // MARK: The official guide
+
+  /// Done without a tap, so it says what left and only takes "Got it".
+  private var followsGuide: some View {
+    statement(
+      title: change.examDocument == .notice
+        ? Text(
+          LocalizedStringResource(
+            "planFollowsNotice", defaultValue: "Your plan now follows the official guide",
+            table: "Today",
+            comment:
+              "Title once the plan changed by itself to follow the exam's public notice, the document that lists its subjects"
+          ))
+        : Text(
+          "Your plan now follows the official guide", tableName: "Today",
+          comment:
+            "Title once the plan changed by itself to follow the official guide of a language certificate"
+        ),
+      sentence: noticeRemovedSentence(change.effect?.noticeRemoved ?? [])
+    ) {
+      BusyButton(isBusy: isSaving) {
+        answer(.seen)
+      } label: {
+        Text("Got it", tableName: "Today")
+      }
+      .buttonStyle(.outline)
+    }
+  }
+
+  // MARK: Missed days
+
+  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
+    statement(
+      title: Text(
+        "You missed a few days", tableName: "Today", comment: "Title after missed study days"),
+      sentence: behindSentence(behind)
+    ) {
+      // On a return after a break, nothing that asks for more hours leads.
+      if view.session.freshStart == .welcomeBack {
+        keepTimeButton
+        addTimeButton
+      } else {
+        addTimeButton
+        keepTimeButton
+      }
+
+      missedDaysMenu(behind)
+    }
   }
 
   private func missedDaysMenu(_ behind: TodayView.PlanChange.Behind) -> some View {
@@ -1225,4 +1270,19 @@ private struct TodayMockRow: View {
         "Whenever you want: a full exam day or half a day", tableName: "Today",
         comment: "When and how long the learner's mock exams can be")
   }
+}
+
+/// "Out of your plan: Língua Portuguesa, Raciocínio Lógico and 2 more": every name up to three, else
+/// the first two and how many others. Nil when nothing left.
+private func noticeRemovedSentence(_ names: [String]) -> String? {
+  guard !names.isEmpty else {
+    return nil
+  }
+
+  return String(
+    localized: "Out of your plan: \(shortList(names, named: names.count > 3 ? 2 : 3))",
+    table: "Today",
+    comment:
+      "Lists the subjects or topics the plan no longer holds, like \"Portuguese, Logic and 2 more\"."
+  )
 }

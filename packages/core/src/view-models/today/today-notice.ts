@@ -27,7 +27,10 @@ type NoticeTodayView = {
   examChoice: Pick<NonNullable<TodayView["examChoice"]>, "group"> | null;
   focusTest: TodayView["focusTest"];
   insight: Pick<NonNullable<TodayView["insight"]>, "kind" | "planChange"> | null;
-  planChange: Pick<NonNullable<TodayView["planChange"]>, "behind" | "id" | "status"> | null;
+  planChange: Pick<
+    NonNullable<TodayView["planChange"]>,
+    "behind" | "id" | "kind" | "status"
+  > | null;
   session: {
     blocks: Pick<TodaySession["blocks"][number], "status">[];
     freshStart: TodaySession["freshStart"];
@@ -52,15 +55,16 @@ function getInsightChange(insight: NoticeTodayView["insight"]) {
   return insight?.kind === "planChange" ? (insight.planChange?.status ?? null) : null;
 }
 
-function getPlanChangeStatus({
-  insight,
-  planChange,
-}: Pick<NoticeTodayView, "insight" | "planChange">) {
+function showsPlanChange({ insight, planChange }: Pick<NoticeTodayView, "insight" | "planChange">) {
   if (!planChange || insight?.planChange?.id === planChange.id) {
-    return null;
+    return false;
   }
 
-  return planChange.behind ? "proposed" : planChange.status;
+  return (
+    planChange.behind !== null ||
+    planChange.kind === "noticeChanged" ||
+    planChange.status === "proposed"
+  );
 }
 
 /** A return after days away, until the learner starts: the day's own welcome leads it. */
@@ -84,7 +88,7 @@ export function pickTodayNotice({
 }): TodayNoticeKind | null {
   const { exam, insight } = today;
   const insightChange = getInsightChange(insight);
-  const planChange = getPlanChangeStatus(today);
+  const planChange = showsPlanChange(today);
 
   const pressing: [TodayNoticeKind, boolean][] = [["exam", isExamDay(exam)]];
 
@@ -92,7 +96,7 @@ export function pickTodayNotice({
     ? pressing
     : [
         ...pressing,
-        ["planChange", planChange === "proposed"],
+        ["planChange", planChange],
         ["insight", insightChange === "proposed"],
         ["sourceChange", host.sourceChange],
         ["exam", exam?.stage === "finalStretch"],

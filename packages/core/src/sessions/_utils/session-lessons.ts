@@ -1,11 +1,7 @@
-import { MIN_BLOCK_MINUTES, toMinutes } from "../block-minutes";
+import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { toBlockPayload } from "../block-payload";
 import { isFullReviewDay } from "../full-review";
 import { type PlannedBlock, type PlannedLesson, type SessionBuildInput } from "../session-builder";
-
-export function canAddSessionLessons({ reviewDay }: { reviewDay: boolean }): boolean {
-  return !reviewDay;
-}
 
 export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
   return {
@@ -55,5 +51,49 @@ export function isSessionReviewDay(input: SessionBuildInput): boolean {
 }
 
 export function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
-  return canAddSessionLessons({ reviewDay: isSessionReviewDay(input) }) ? input.lessons : [];
+  return canAddSessionLessons(input) ? input.lessons : [];
+}
+
+export function canAddSessionLessons(input: SessionBuildInput): boolean {
+  return (
+    !isSessionReviewDay(input) || (input.allowsReviewLessons === true && !isFullReviewDay(input))
+  );
+}
+
+function getReviewLessonMinutes({
+  input,
+  writingMinutes,
+}: {
+  input: SessionBuildInput;
+  writingMinutes: number;
+}): number {
+  return input.allowsReviewLessons && canAddSessionLessons(input)
+    ? getLessonMinutes(input.lessons) + writingMinutes
+    : 0;
+}
+
+/** Preserve the opened day's practice share; unused question capacity returns time to lessons. */
+export function getPracticeMinutes({
+  budget,
+  input,
+  remaining,
+  writingMinutes,
+}: {
+  budget: number;
+  input: SessionBuildInput;
+  remaining: number;
+  writingMinutes: number;
+}): number {
+  const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
+  const practice = input.practice;
+  const opened = input.openedPractice;
+
+  // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
+  const target = opened
+    ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
+    : remaining * share;
+
+  const study = getReviewLessonMinutes({ input, writingMinutes });
+  const room = study > 0 ? Math.max(0, remaining - study) : target;
+  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION, room);
 }

@@ -193,7 +193,11 @@ function putBeyondNoticeUnitsLast(input: RestInput): readonly QueueUnit[] {
     return input.units;
   }
 
-  const beyond = findBeyondNoticeSkillIds(input.graph);
+  const beyond = findBeyondNoticeSkillIds({
+    graph: input.graph,
+    prerequisites: input.queue.prerequisites,
+  });
+
   const planned = new Set(input.units.flatMap((unit) => (unit.skillId ? [unit.skillId] : [])));
 
   return putBeyondNoticeLast(input.units, {

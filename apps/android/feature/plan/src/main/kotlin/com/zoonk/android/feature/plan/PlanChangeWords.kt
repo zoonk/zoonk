@@ -50,6 +50,7 @@ fun planChangeWords(
     val ops = change.operations.map { it.op }
     val first = ops.firstOrNull()
 
+    if (change.kind == NOTICE_CHANGED) return noticeChangedWords(change)
     systemChangeSentence(change)?.let { return ChangeWords(it, null) }
     if (change.source == OWN_LEVEL_SOURCE && first is PlanOp.AddSkills) {
         return ChangeWords(stringResource(R.string.plan_change_own_level_first, shortList(first.names, ListKind.Topics)), null)
@@ -63,7 +64,7 @@ fun planChangeWords(
         return ChangeWords(if (ops.isEmpty()) stringResource(R.string.plan_change_changed) else statements(), null)
     }
 
-    if (change.source == NOTICE_SOURCE) return ChangeWords(guideQuestion(ops, change.examDocument), change.reason)
+    if (change.source == NOTICE_SOURCE) return ChangeWords(guideQuestion(ops), change.reason)
     if (change.source == PHASE_DATES_SOURCE) {
         val phaseDates = phaseDatesQuestion(change.effect)
         return ChangeWords(phaseDates.title, change.reason ?: phaseDates.why)
@@ -123,6 +124,7 @@ internal fun shownEndMove(effect: PlanEffect?): Pair<LocalDate, LocalDate>? {
 }
 
 private const val NOTICE_SOURCE = "notice"
+private const val NOTICE_CHANGED = "noticeChanged"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val OWN_LEVEL_SOURCE = "ownLevel"
 
@@ -174,36 +176,22 @@ internal fun topicWords(name: String): String = (ITEM_NUMBER.matchEntire(name) ?
 private val ITEM_NUMBER = Regex("""^\s*(\d{1,3}(?:\.\d{1,3})*)\.?\s+(\S.*)$""", RegexOption.DOT_MATCHES_ALL)
 private val ITEM_CODE = Regex("""^\s*([A-Z]{1,3}\d{1,3})\s*[-–—:]\s+(\S.*)$""", RegexOption.DOT_MATCHES_ALL)
 
-/** Main's `useGuideQuestion`: following the exam's guide, its date, or both. */
+/** Main's `useGuideQuestion`: the date the exam's guide gives. Its subjects and topics need no answer: the plan follows them. */
 @Composable
-private fun guideQuestion(
-    ops: List<PlanOp>,
-    document: ExamDocument,
-): String {
-    val follows = ops.any { it is PlanOp.FollowNotice }
-    val day = ops.filterIsInstance<PlanOp.NoticeDate>().firstOrNull()
-    val date = day?.let { longDate(it.date) }
+private fun guideQuestion(ops: List<PlanOp>): String {
+    val day = ops.filterIsInstance<PlanOp.NoticeDate>().firstOrNull() ?: return stringResource(R.string.plan_change_follows_guide)
+    return stringResource(if (day.estimated) R.string.plan_ask_exam_date_around else R.string.plan_ask_exam_date, longDate(day.date))
+}
 
-    return when {
-        follows && date != null -> {
-            stringResource(
-                if (day.estimated) R.string.plan_ask_follow_guide_around else R.string.plan_ask_follow_guide_on,
-                date,
-            )
-        }
-
-        follows -> {
-            stringResource(R.string.plan_ask_follow_guide)
-        }
-
-        date != null -> {
-            stringResource(if (day.estimated) R.string.plan_ask_exam_date_around else R.string.plan_ask_exam_date, date)
-        }
-
-        else -> {
-            stringResource(R.string.plan_change_follows_guide)
-        }
-    }
+/** The plan followed the exam's guide by itself: what left it, by name, never as a count of lessons. */
+@Composable
+private fun noticeChangedWords(change: PlanChange): ChangeWords {
+    val removed = change.effect?.noticeRemoved.orEmpty()
+    val notice = change.examDocument == ExamDocument.NOTICE
+    val title = stringResource(if (notice) R.string.plan_change_now_follows_notice else R.string.plan_change_now_follows_guide)
+    // Three names fit a line; past that, two and how many more.
+    val names = if (removed.size <= NAMED) joinList(removed) else shortList(removed, ListKind.Lessons, named = NAMED - 1)
+    return ChangeWords(title, if (removed.isEmpty()) null else stringResource(R.string.plan_change_out_of_plan, names))
 }
 
 @Composable
@@ -317,6 +305,10 @@ private fun operationQuestion(
             stringResource(R.string.plan_ask_fit_lessons)
         }
 
+        is PlanOp.Extras -> {
+            stringResource(if (op.skillIds.isEmpty()) R.string.plan_ask_remove_extras else R.string.plan_extra_offer_title)
+        }
+
         else -> {
             null
         }
@@ -428,6 +420,10 @@ private fun operationStatement(
 
         PlanOp.FitLessons -> {
             stringResource(R.string.plan_change_fit_lessons)
+        }
+
+        is PlanOp.Extras -> {
+            stringResource(if (op.skillIds.isEmpty()) R.string.plan_change_extras_removed else R.string.plan_change_extras_added)
         }
 
         is PlanOp.ExamChoice -> {

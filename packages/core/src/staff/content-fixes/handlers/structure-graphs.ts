@@ -1,5 +1,7 @@
 import { type TransactionClient, sql } from "@zoonk/db";
 import { z } from "zod";
+import { toExamOutline } from "../../../library/curriculum/exam-curriculum-outline";
+import { prunePlanNoticeGraph } from "../../../library/curriculum/prune-plan-notice-graph";
 import { type PlanGraph, planGraphSchema } from "../../../plans/planner/plan-state";
 import { type Json, toJson } from "../_utils/resolved-change";
 import { collectionHandler } from "./collection-handler";
@@ -21,7 +23,7 @@ async function graphProblem(
   language: string | null,
   previous: Json,
 ): Promise<string | undefined> {
-  const skills = [...graph.skills, ...(graph.optionSkills ?? [])];
+  const skills = [...graph.skills, ...(graph.optionSkills ?? []), ...(graph.extraSkills ?? [])];
   const ids = skills.map((skill) => skill.skillId);
 
   const invalidShape = graphShapeProblem(graph);
@@ -96,10 +98,13 @@ async function graphProblem(
 }
 
 function graphShapeProblem(graph: PlanGraph): string | undefined {
-  const skills = [...graph.skills, ...(graph.optionSkills ?? [])];
+  const skills = [...graph.skills, ...(graph.optionSkills ?? []), ...(graph.extraSkills ?? [])];
   const ids = skills.map((skill) => skill.skillId);
 
-  if (ids.length === 0 || new Set(ids).size !== ids.length) {
+  if (
+    graph.skills.length + (graph.optionSkills?.length ?? 0) === 0 ||
+    new Set(ids).size !== ids.length
+  ) {
     return "The graph needs unique skills and at least one skill.";
   }
 
@@ -115,7 +120,11 @@ function graphShapeProblem(graph: PlanGraph): string | undefined {
     return "A graph skill needs a usable lesson count, a phase in range and weight null or 1–5.";
   }
 
-  if (graph.optionSkills?.some((skill) => skill.after !== null && !ids.includes(skill.after))) {
+  const plannedIds = new Set(
+    [...graph.skills, ...(graph.optionSkills ?? [])].map((skill) => skill.skillId),
+  );
+
+  if (graph.optionSkills?.some((skill) => skill.after !== null && !plannedIds.has(skill.after))) {
     return "optionSkills.after must name a skill in the graph.";
   }
 
@@ -129,7 +138,7 @@ function graphReferenceProblem(graph: PlanGraph, ids: readonly string[]): string
     return "Every graph reference must be a valid UUID.";
   }
 
-  const skills = [...graph.skills, ...(graph.optionSkills ?? [])];
+  const skills = [...graph.skills, ...(graph.optionSkills ?? []), ...(graph.extraSkills ?? [])];
 
   return skills.some((skill) => new Set(skill.courseIds).size !== (skill.courseIds ?? []).length)
     ? "A graph skill's course ids must be unique."
@@ -177,14 +186,14 @@ async function outlineProblem(
 }
 
 const GRAPH_RULES =
-  "setGraph: { graph, primaryCourseId? }, the whole plan graph. Its skills and courses are public, unmerged and in its language; phases, weights (1-5 or null) and option skills are checked. Existing plans keep their graph copies; only future plans use it.";
+  "setGraph: { graph, primaryCourseId? }, the whole plan graph. Its skills and courses are public, unmerged and in its language; phases, weights (1-5 or null) and option and extra skills are checked. Existing plans keep their graph copies; only future plans use it.";
 
 export const examGraph = collectionHandler({
   load: async (db, id, value) => {
     const next = graphSchema.parse(value);
 
     const row = await db.examSkillGraph.findUnique({
-      include: { examBlueprint: { select: { language: true, ownerId: true, visibility: true } } },
+      include: { examBlueprint: true },
       where: { id },
     });
 
@@ -195,22 +204,30 @@ export const examGraph = collectionHandler({
     const primaryCourseId =
       next.primaryCourseId === undefined ? row.primaryCourseId : next.primaryCourseId;
 
+    const { examBlueprint: blueprint } = row;
+    const isShared = blueprint.ownerId === null && blueprint.visibility === "public";
+
+    const problem = isShared
+      ? await graphProblem(db, next.graph, primaryCourseId, blueprint.language, toJson(row.graph))
+      : "The exam blueprint must be public with no owner.";
+
+    const pruned = problem
+      ? null
+      : await prunePlanNoticeGraph({
+          db,
+          graph: next.graph,
+          subjects: toExamOutline(blueprint).subjects,
+        });
+
     return {
       before: toJson({
         graph: row.graph,
         ...(next.primaryCourseId === undefined ? {} : { primaryCourseId: row.primaryCourseId }),
       }),
       effects: [{ kind: "existingPlanGraphsKept" as const }],
-      problem:
-        row.examBlueprint.ownerId || row.examBlueprint.visibility !== "public"
-          ? "The exam blueprint must be public with no owner."
-          : await graphProblem(
-              db,
-              next.graph,
-              primaryCourseId,
-              row.examBlueprint.language,
-              toJson(row.graph),
-            ),
+      problem: pruned?.dropped.length
+        ? "The graph includes skills outside the notice. Put exam strategy in extraSkills."
+        : problem,
       roots: { blueprintIds: [row.examBlueprintId] },
       unit: { id, kind: "examSkillGraph" },
     };

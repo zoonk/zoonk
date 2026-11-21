@@ -1,6 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { findNamingSections } from "../_utils/name-match";
 import { isObjectiveSection } from "./written-subject";
 

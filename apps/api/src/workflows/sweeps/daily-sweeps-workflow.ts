@@ -5,6 +5,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
+import { listNoticeRepairBlueprintsStep } from "../goals/steps/notice-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
 import {
   getLevelTestBankCheckToken,
@@ -17,6 +18,10 @@ import {
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { startOwedMindMapRedraws } from "../mind-maps/start-owed-mind-map-redraws";
 import { updateCoursesBehind } from "../products/product-releases";
+import {
+  examNoticePlansWorkflow,
+  getExamNoticePlansToken,
+} from "../research/exam-notice-plans-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   checkLevelTestAnswersStep,
@@ -158,6 +163,29 @@ async function rewriteFlaggedContent(): Promise<boolean> {
   return true;
 }
 
+/** A notice's reading repairs its plans as it lands; this catches the ones that repair missed. */
+async function startExamNoticeRepairs(): Promise<void> {
+  let after: string | null = null;
+
+  do {
+    // oxlint-disable-next-line no-await-in-loop -- Each page starts after the last blueprint.
+    const ids = await listNoticeRepairBlueprintsStep(after);
+
+    // oxlint-disable-next-line no-await-in-loop -- Start the page before loading more work.
+    await Promise.all(
+      ids.map((examBlueprintId) =>
+        startOnce(
+          examNoticePlansWorkflow,
+          [{ examBlueprintId }],
+          getExamNoticePlansToken(examBlueprintId),
+        ),
+      ),
+    );
+
+    after = ids.at(-1) ?? null;
+  } while (after);
+}
+
 async function sweep(): Promise<SweepCounts> {
   const [
     checks,
@@ -195,6 +223,7 @@ async function sweep(): Promise<SweepCounts> {
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
     startOwedMindMapRedraws(),
+    startExamNoticeRepairs(),
   ]);
 
   return {

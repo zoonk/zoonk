@@ -1,7 +1,7 @@
 import "server-only";
 import { isPlanReady } from "./_utils/apply-plan-change";
-import { computeChange } from "./_utils/compute-change";
 import { getCourseFinish } from "./_utils/course-finish";
+import { computeCheckedChange } from "./_utils/extra-offer";
 import { foldChangeAreas } from "./_utils/fold-part-areas";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations, loadGraphPartAreas } from "./_utils/part-areas";
@@ -58,11 +58,17 @@ export async function previewPlanChange({
       return { preview: BUILDING, status: "ready" };
     }
 
-    const { computed, effect, unchanged } = await computeChange({
+    const checked = await computeCheckedChange({
       context,
       operations: result.operations,
       state: result.state,
     });
+
+    if ("error" in checked) {
+      return { ...checked, status: "invalid" };
+    }
+
+    const { computed, effect, unchanged } = checked;
 
     const { coreFits, coveredShare, fits, measure } = computed.feasibility;
 

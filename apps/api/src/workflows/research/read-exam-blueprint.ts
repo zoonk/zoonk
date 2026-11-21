@@ -1,5 +1,10 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { listNoticeGoalsStep, proposeNoticeDatesStep } from "../goals/steps/notice-steps";
+import {
+  listNoticeGoalsStep,
+  logNoticeRepairFailureStep,
+  prepareNoticeGraphRepairStep,
+  repairNoticePlanStep,
+} from "../goals/steps/notice-steps";
 import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
@@ -12,23 +17,49 @@ export function describeExam(identity: ExamIdentity): string {
   return identity.role ? `${identity.name}, ${identity.role}` : identity.name;
 }
 
-async function proposeNoticeDates({
+export async function updateExamNoticePlans({
   examBlueprintId,
   exceptGoalId,
+  movesExamDays,
   noticeId,
 }: {
   examBlueprintId: string;
   exceptGoalId: string | null;
+  movesExamDays: boolean;
   noticeId: string | null;
 }): Promise<void> {
+  const notice = await prepareNoticeGraphRepairStep(examBlueprintId);
+
+  if (!notice) {
+    return;
+  }
+
   let after: string | null = null;
 
   do {
     // oxlint-disable-next-line no-await-in-loop -- Each page starts after the last one's goal.
     const page = await listNoticeGoalsStep({ after, examBlueprintId, exceptGoalId });
 
-    // oxlint-disable-next-line no-await-in-loop -- One page at a time spares the database.
-    await proposeNoticeDatesStep({ goalIds: page.goalIds, noticeId });
+    for (const goalId of page.goalIds) {
+      try {
+        // oxlint-disable-next-line no-await-in-loop -- One replan per blueprint at a time.
+        await repairNoticePlanStep({
+          blueprintId: examBlueprintId,
+          goalId,
+          movesExamDays,
+          notice,
+          noticeId,
+        });
+      } catch (error) {
+        // oxlint-disable-next-line no-await-in-loop -- Report a failed goal before continuing.
+        await logNoticeRepairFailureStep({
+          blueprintId: examBlueprintId,
+          error: String(error),
+          goalId,
+        });
+      }
+    }
+
     after = page.next;
   } while (after);
 }
@@ -99,13 +130,12 @@ export async function readExamBlueprint({
 
   await refreshFollowerSummariesStep(saved.examBlueprintId);
 
-  if (saved.movesExamDays) {
-    await proposeNoticeDates({
-      examBlueprintId: saved.examBlueprintId,
-      exceptGoalId,
-      noticeId: saved.noticeId,
-    });
-  }
+  await updateExamNoticePlans({
+    examBlueprintId: saved.examBlueprintId,
+    exceptGoalId,
+    movesExamDays: saved.movesExamDays,
+    noticeId: saved.noticeId,
+  });
 
   return saved;
 }

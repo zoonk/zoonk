@@ -11,6 +11,7 @@ import { getVerbForm } from "../_utils/verb-form";
 import { COURSE_LEVELS } from "./_utils/course-levels";
 import { normalizeDraft } from "./_utils/graph-drafts";
 import { type ExamLibrary } from "./_utils/library-skills";
+import { writesExamExtras } from "./_utils/skill-graph-extras";
 import { type GraphFrameSection } from "./_utils/skill-graph-sections";
 import { type OnSkillNamed, finishStreamedPart } from "./_utils/streamed-skill-names";
 import { type ExamOutline, formatExamOutline } from "./exam-outline";
@@ -77,10 +78,17 @@ const frameSchema = z.object({
   ),
 });
 
+const examSkillSchema = skillSchema.extend({ extra: z.boolean() });
+
 const sectionSchema = z.object({ skills: z.array(skillSchema) });
+const examSectionSchema = z.object({ skills: z.array(examSkillSchema) });
 
 const librarySectionSchema = z.object({
   skills: z.array(skillSchema.extend({ reuse: z.string().nullable() })),
+});
+
+const examLibrarySectionSchema = z.object({
+  skills: z.array(examSkillSchema.extend({ reuse: z.string().nullable() })),
 });
 
 type GraphFrame = z.infer<typeof frameSchema>;
@@ -298,11 +306,19 @@ async function writePart<TOutput>({
   return { output: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
+function wholeSchema(params: SkillGraphParams) {
+  if (writesExamExtras(params)) {
+    return schema.extend(examSectionSchema.shape);
+  }
+
+  return startsWithSubject(params) ? subjectStartSchema : schema;
+}
+
 export async function generateWholeSkillGraph(params: SkillGraphParams) {
   const whole = await writePart({
     params,
     part: { kind: "whole" },
-    partSchema: startsWithSubject(params) ? subjectStartSchema : schema,
+    partSchema: wholeSchema(params),
   });
 
   return {
@@ -327,7 +343,14 @@ export function generateSkillGraphSection({
   params: SkillGraphParams;
   part: SkillsPart;
 }) {
+  const extras = writesExamExtras(params);
+  const sections = { ...part, kind: "skills" as const };
+
   return part.library === null
-    ? writePart({ params, part: { ...part, kind: "skills" }, partSchema: sectionSchema })
-    : writePart({ params, part: { ...part, kind: "skills" }, partSchema: librarySectionSchema });
+    ? writePart({ params, part: sections, partSchema: extras ? examSectionSchema : sectionSchema })
+    : writePart({
+        params,
+        part: sections,
+        partSchema: extras ? examLibrarySectionSchema : librarySectionSchema,
+      });
 }
