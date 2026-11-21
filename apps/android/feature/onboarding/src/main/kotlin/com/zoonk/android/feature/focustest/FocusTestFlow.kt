@@ -16,7 +16,6 @@ import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.android.feature.onboarding.setup.LocalSetupDrafts
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementUnavailable
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
@@ -24,8 +23,6 @@ import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
 import com.zoonk.android.feature.onboarding.setup.isStopped
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
-import com.zoonk.android.feature.onboarding.setup.rememberUnsentWords
-import com.zoonk.android.feature.onboarding.setup.typedDraftStep
 import com.zoonk.android.feature.onboarding.setup.withPoll
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
@@ -63,8 +60,7 @@ internal fun ColumnScope.FocusTestFlow(
     onLeft: () -> Unit = {},
     onProgressLabel: (String?) -> Unit = {},
 ) {
-    val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle(), handBack) }
+    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, createSavedStateHandle(), handBack) }
     VisitOf(vm.visit)
     ActOn(vm.left) { onLeft() }
     val resource = store.placements[goalId]
@@ -208,7 +204,6 @@ private fun ColumnScope.TestQuestion(
                         stringResource(R.string.focustest_question_number, sitting.answered.toInt() + 1, sitting.questions.toInt()),
                     ),
                 labels = question.labels,
-                typedWords = rememberUnsentWords(goalId, typedDraftStep(question.item.itemId), count = 1),
                 pending = vm.answering,
                 saveFailures = vm.saveFailures,
                 onReportSaveFailure = onReportSaveFailure,

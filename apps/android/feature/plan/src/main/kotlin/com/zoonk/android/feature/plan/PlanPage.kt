@@ -118,6 +118,9 @@ class PlanLinks(
 
     fun focusTest() = open(AppRoute.FocusTest(page.goal.id.toString()))
 
+    fun placementTest(levelTest: Boolean) =
+        open(if (levelTest) AppRoute.LevelTest(page.goal.id.toString()) else AppRoute.PlacementTest(page.goal.id.toString()))
+
     /** Null where the page shows no far topic's sheet. */
     fun farTopic(topic: FarTopic): (() -> Unit)? =
         openFarTopic?.let { open ->
@@ -257,7 +260,11 @@ internal fun PlanPage(
         countryRebuild = countryRebuild,
         standing = standing,
         alphabet = alphabet?.let { shown -> skip?.let { { AlphabetRow(shown, page.goal.id, it, navigator::open) } } },
-        focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
+        focusTest =
+            focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } }
+                ?: page.plan.placementTest?.takeIf { it.isShown() }?.let { test ->
+                    { PlanPlacementTestRow(test) { links.placementTest(test.opensLevelTest) } }
+                },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =

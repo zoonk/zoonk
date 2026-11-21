@@ -631,7 +631,20 @@ private fun Content(
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
                 if (ownEnd == null) {
-                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure)
+                    LessonCompletionView(
+                        state,
+                        ending,
+                        buddy,
+                        finishedChapter,
+                        onReportSaveFailure,
+                        LevelCheck(
+                            dismissed = viewModel.offerDismissed,
+                            dismissing = viewModel.dismissingOffer,
+                            failed = viewModel.offerFailed,
+                            onOpen = navigator::open,
+                            onDismiss = viewModel::dismissOffer,
+                        ),
+                    )
                 } else {
                     ownEnd.body(state)
                 }

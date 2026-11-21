@@ -319,6 +319,15 @@ internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName
         it.naming
     }
 
+/** The lesson end's offer to check the learner's level, once its "Not now" is in hand. */
+class LevelCheck(
+    val dismissed: Boolean,
+    val dismissing: Boolean,
+    val failed: Boolean,
+    val onOpen: (AppRoute) -> Unit,
+    val onDismiss: () -> Unit,
+)
+
 @Composable
 fun LessonCompletionView(
     state: LessonPlayerState,
@@ -326,6 +335,7 @@ fun LessonCompletionView(
     buddy: LearnerSummaryBuddy? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
+    levelCheck: LevelCheck? = null,
 ) {
     val completion = state.completion ?: return
 
@@ -418,6 +428,10 @@ fun LessonCompletionView(
                         supporting = { Text(reveal.goalTitle) },
                     )
                 }
+            }
+            val offer = completion.result?.placementOffer
+            if (completion.status == CompletionStatus.Saved && offer != null && levelCheck != null && !levelCheck.dismissed) {
+                LevelCheckOffer(offer, levelCheck.dismissing, levelCheck.failed, levelCheck.onOpen, levelCheck.onDismiss)
             }
             if (completion.result?.planReveal == null && completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }

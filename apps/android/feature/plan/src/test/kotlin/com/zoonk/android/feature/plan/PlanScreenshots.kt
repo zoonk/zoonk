@@ -44,6 +44,7 @@ import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
+import com.zoonk.api.models.PlanPlacementTest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -58,6 +59,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
 import java.util.UUID
+import kotlinx.serialization.decodeFromString
 
 /** Review screenshots of the Plan, written only with `-Pzoonk.shots=<folder>`. No goldens. */
 @RunWith(AndroidJUnit4::class)
@@ -879,8 +881,9 @@ class PlanScreenshots {
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
         exam: PlanPageState? = null,
+        placementTest: String? = null,
     ) {
-        show(dark, moreContrast, paused, failure, examOver, exam)
+        show(dark, moreContrast, paused, failure, examOver, exam, placementTest)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -892,9 +895,14 @@ class PlanScreenshots {
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
         exam: PlanPageState? = null,
+        placementTest: String? = null,
     ) {
         val page =
             when {
+                placementTest != null -> {
+                    page().let { it.copy(plan = it.plan.copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(placementTest))) }
+                }
+
                 exam != null -> {
                     exam
                 }
@@ -944,6 +952,21 @@ class PlanScreenshots {
     }
 
     private companion object {
+        const val LEARN_TEST_START = """{"kind":"learn","state":"start","estimatedMinutes":40,"attempt":null,"result":null}"""
+
+        const val LEARN_TEST_CONTINUE =
+            """{"kind":"learn","state":"continue","estimatedMinutes":25,"result":null,
+             "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":2,"partComplete":false,"estimatedMinutes":25}}"""
+
+        const val LEARN_TEST_RESULT =
+            """{"kind":"learn","state":"result","estimatedMinutes":30,"attempt":null,
+             "result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-18T14:00:00Z","lessonsSkipped":6}}"""
+
+        const val LANGUAGE_TEST_RESULT =
+            """{"kind":"language","state":"result","estimatedMinutes":30,"attempt":null,"nextTestOutLevel":"B2",
+             "result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-18T14:00:00Z","lessonsSkipped":12,
+              "levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}}}}"""
+
         val EDITOR_CHOICES =
             """
             "examChoices":[{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},"options":[{"name":"Inglês","shortName":null},

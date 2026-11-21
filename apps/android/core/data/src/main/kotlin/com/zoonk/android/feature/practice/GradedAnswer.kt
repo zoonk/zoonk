@@ -1,8 +1,8 @@
 package com.zoonk.android.feature.practice
 
-import com.zoonk.android.data.recode
 import com.zoonk.android.feature.questions.Answer
-import com.zoonk.api.models.ItemAnswerInput
+import com.zoonk.android.feature.questions.tap
+import com.zoonk.api.models.ChapterTestOutInputAnswersInner
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
@@ -14,7 +14,8 @@ data class GradedAnswer(
     val durationMs: Long,
 )
 
-fun GradedAnswer.input() = ItemAnswerInput(answer.recode(), durationMs, UUID.fromString(itemId))
+/** A chapter test-out asks by taps alone, so its answers are always taps. */
+fun GradedAnswer.input() = ChapterTestOutInputAnswersInner(checkNotNull(answer.tap()), durationMs, UUID.fromString(itemId))
 
 /** A run's answers so far and the id they're sent with, kept until graded so a send that never answered counts once. */
 @Serializable

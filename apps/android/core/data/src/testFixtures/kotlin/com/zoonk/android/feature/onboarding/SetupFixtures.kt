@@ -26,10 +26,11 @@ fun trueFalseQuestion(itemId: String = ITEM_ID) =
      "options":null,"question":"A contract needs consideration to be binding."}
     """.trimIndent()
 
-fun typedQuestion() =
+/** A low-guess tap: four steps to put in order. */
+fun orderQuestion() =
     """
-    {"context":"A witness repeats what a neighbor told them.","image":null,"itemId":"$ITEM_ID","skillId":"$SKILL_ID","visual":null,
-     "format":"typed","options":null,"question":"In your own words, what is hearsay?"}
+    {"context":null,"image":null,"itemId":"$ITEM_ID","skillId":"$SKILL_ID","visual":null,"format":"order",
+     "options":["Complaint","Answer","Discovery","Trial"],"question":"Put a civil case's stages in order."}
     """.trimIndent()
 
 fun placementOf(

@@ -42,6 +42,7 @@ import com.zoonk.android.feature.stats.statsEntries
 import com.zoonk.android.feature.subscription.subscriptionEntries
 import com.zoonk.android.feature.testout.testOutEntries
 import com.zoonk.android.feature.today.todayEntries
+import com.zoonk.android.feature.placementtest.placementTestEntries
 
 /**
  * Every route's screen, one call per feature's `<Name>Navigation.kt`, where each feature registers
@@ -75,6 +76,7 @@ fun appEntries(
         challengeEntries(app, navigator)
         testOutEntries(app, navigator)
         focusTestEntries(app, navigator)
+        placementTestEntries(app, navigator)
         essayEntries(app, navigator)
         patternEntries(app, navigator)
         examEntries(app, navigator)

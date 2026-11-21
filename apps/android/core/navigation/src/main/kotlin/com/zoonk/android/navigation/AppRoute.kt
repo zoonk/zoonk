@@ -241,6 +241,19 @@ sealed interface AppRoute : NavKey {
         val start: Boolean = false,
     ) : AppRoute
 
+    /** `/placement-test`: a learn course's test of what the learner knows, opened from its plan or a lesson's offer. */
+    @Serializable
+    data class PlacementTest(
+        val goalId: String? = null,
+    ) : AppRoute
+
+    /** `/level-test`: a language course's level test from its plan; [testOut] comes with the level's test-out picked. */
+    @Serializable
+    data class LevelTest(
+        val goalId: String? = null,
+        val testOut: Boolean = false,
+    ) : AppRoute
+
     @Serializable
     data class Challenge(
         val planItemId: String,
@@ -404,8 +417,8 @@ val AppRoute.presentation: Presentation
 
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook, is AppRoute.Lesson,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.TestOut,
-            is AppRoute.FocusTest, is AppRoute.Challenge, is AppRoute.Checkpoint, is AppRoute.Essay,
-            is AppRoute.Mock, is AppRoute.MindMap, is AppRoute.MindMapStudy, is AppRoute.Pronunciation,
+            is AppRoute.FocusTest, is AppRoute.PlacementTest, is AppRoute.LevelTest, is AppRoute.Challenge,
+            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.Mock, is AppRoute.MindMap, is AppRoute.MindMapStudy, is AppRoute.Pronunciation,
             is AppRoute.Conversation, is AppRoute.Explain, is AppRoute.PlanLink, AppRoute.Login,
             -> Presentation.Task
 
@@ -418,6 +431,7 @@ val AppRoute.requirement: Requirement
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
             AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap, is AppRoute.MindMapStudy,
             AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
+            is AppRoute.PlacementTest, is AppRoute.LevelTest,
             -> Requirement.Goal
 
             is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.PrivacySettings, AppRoute.Reminders, AppRoute.Profile,
