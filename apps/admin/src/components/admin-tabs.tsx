@@ -1,5 +1,4 @@
 import { readQueryParam } from "@/lib/query-param";
-import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -66,7 +65,7 @@ export function AdminRecordTabs<Value extends string>({
 export function AdminTabs({ label, options }: { label: string; options: AdminTabOption[] }) {
   return (
     <nav aria-label={label} className="-mx-2.5 -my-2 min-w-0">
-      <HorizontalScroll labels={SCROLL_LABELS}>
+      <HorizontalScroll labels={{ left: "Scroll left", right: "Scroll right" }}>
         <ul className={cn(TAB_LIST_CLASS, "w-max min-w-full py-2")}>
           {options.map((option) => (
             <li key={option.href}>

@@ -1,27 +1,23 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { HorizontalScroll } from "./horizontal-scroll";
+import { SidewaysScroll } from "./sideways-scroll";
 import type * as React from "react";
 
-/** Wider than its room, it scrolls with the scroll sign; `scrollLabels` name the box and its buttons. */
+/** Wider than its room, it scrolls sideways; `scrollLabel` names it for the keyboard. */
 function Table({
   className,
-  scrollLabels,
+  scrollLabel,
   ...props
-}: React.ComponentProps<"table"> & { scrollLabels: { box: string; left: string; right: string } }) {
+}: React.ComponentProps<"table"> & { scrollLabel: string }) {
   return (
-    <HorizontalScroll
-      box={{ label: scrollLabels.box }}
-      className="w-full min-w-0"
-      labels={scrollLabels}
-    >
+    <SidewaysScroll className="w-full" label={scrollLabel}>
       <table
         className={cn("w-full caption-bottom text-sm tabular-nums", className)}
         data-slot="table"
         {...props}
       />
-    </HorizontalScroll>
+    </SidewaysScroll>
   );
 }
 

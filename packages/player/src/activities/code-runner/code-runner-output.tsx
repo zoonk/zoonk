@@ -1,13 +1,13 @@
 "use client";
 
 import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-limits";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
-import { ActivityHorizontalScroll } from "../_components/activity-horizontal-scroll";
 import { type ProgramRun } from "../_sandbox/run-program";
 
 const MS_PER_SECOND = 1000;
@@ -24,7 +24,7 @@ function OutputCell({
   return (
     <div className={cn("flex min-w-0 flex-col gap-0.5 px-3 py-3", className)}>
       <p className="text-muted-foreground text-xs font-medium">{label}</p>
-      <ActivityHorizontalScroll box={{ label }}>{children}</ActivityHorizontalScroll>
+      <SidewaysScroll label={label}>{children}</SidewaysScroll>
     </div>
   );
 }
@@ -148,11 +148,11 @@ export function CodeRunnerOutput({
       {run && !isStale && <StopNotice language={language} run={run} />}
 
       {run?.errorOutput && !isStale && (
-        <ActivityHorizontalScroll box={{ label: t("Error") }}>
+        <SidewaysScroll label={t("Error")}>
           <pre className="text-muted-foreground min-w-max font-mono text-xs whitespace-pre">
             {run.errorOutput}
           </pre>
-        </ActivityHorizontalScroll>
+        </SidewaysScroll>
       )}
 
       {mistake && !isStale && (
