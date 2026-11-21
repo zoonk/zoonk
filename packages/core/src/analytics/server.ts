@@ -9,7 +9,7 @@ import { type EventOptions, PostHog } from "posthog-node";
 import { type ServerAnalyticsEvent } from "./events";
 import { type SharedEventProperties } from "./shared-properties";
 
-const POSTHOG_LIMITS = { fetchRetryCount: 1, fetchRetryDelay: 500, requestTimeout: 2000 };
+const POSTHOG_LIMITS = { fetchRetryCount: 1, requestTimeout: 2000 };
 
 type EventProperties = Record<string, boolean | number | string | string[] | null | undefined>;
 

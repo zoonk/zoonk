@@ -38,7 +38,6 @@ describe(trackServerEvent, () => {
 
     expect(PostHog).toHaveBeenCalledExactlyOnceWith("project-token", {
       fetchRetryCount: 1,
-      fetchRetryDelay: 500,
       flushAt: 1,
       flushInterval: 0,
       host: "https://posthog.test",
