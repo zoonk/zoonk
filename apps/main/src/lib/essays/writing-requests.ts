@@ -52,7 +52,7 @@ export async function startWritingFromBrowser({
   }
 
   return parsed.data.status === "writing"
-    ? { generationId: parsed.data.runId, status: "writing" }
+    ? { generationId: parsed.data.runId, status: "writing", unit: parsed.data.unit }
     : parsed.data;
 }
 
