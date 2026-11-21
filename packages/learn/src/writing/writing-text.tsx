@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
+import { FactSegments } from "../_components/task-meta";
 
 type Mark = { error: number | null; ignored: boolean; step: boolean };
 
@@ -138,7 +139,9 @@ export function WritingMarkedText({
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-pretty">{error.correction}</span>
                 <span className="text-muted-foreground text-xs text-pretty">
-                  {t("You wrote “{quote}” · {kind}", { kind: error.kind, quote: error.quote })}
+                  <FactSegments
+                    facts={[t("You wrote “{quote}”", { quote: error.quote }), error.kind]}
+                  />
                 </span>
               </span>
             </StepRow>
