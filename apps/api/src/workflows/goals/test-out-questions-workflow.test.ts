@@ -50,11 +50,16 @@ describe(testOutQuestionsWorkflow, () => {
     vi.mocked(generatePlacementItems).mockReset();
   });
 
-  it("writes multiple-choice questions for the skills without one, saying so on its stream", async () => {
+  it("writes multiple-choice questions for the skills without one and tap questions for both, saying so on its stream", async () => {
     const { goal, withItem, withoutItems } = await goalWithSkills();
 
-    vi.mocked(generatePlacementItems).mockResolvedValue(
-      taskResult({ skills: [{ quick: [writtenItem], typed: [] }] }),
+    vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
+      taskResult({
+        skills: params.skills.map((skill) => ({
+          quick: skill.quickCount > 0 ? [writtenItem] : [],
+          taps: [],
+        })),
+      }),
     );
 
     await expect(
@@ -66,14 +71,17 @@ describe(testOutQuestionsWorkflow, () => {
       }),
     ).resolves.toStrictEqual({ status: "written" });
 
-    expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        quickCount: 3,
-        quickFormat: "multipleChoice",
-        skills: [expect.objectContaining({ name: "Rectangle area" })],
-        typedCount: 0,
-      }),
-    );
+    expect(
+      vi
+        .mocked(generatePlacementItems)
+        .mock.calls.map(([params]) =>
+          params.skills.map((skill) => [skill.name, skill.quickCount, skill.tapCount]),
+        ),
+    ).toStrictEqual([
+      [["Rectangle area", 3, 0]],
+      [["Rectangle area", 0, 3]],
+      [["Triangle area", 0, 3]],
+    ]);
 
     await expect(
       prisma.item.count({ where: { format: "multipleChoice", skillId: withoutItems.id } }),
@@ -89,7 +97,7 @@ describe(testOutQuestionsWorkflow, () => {
     const { goal, withItem } = await goalWithSkills();
 
     vi.mocked(generatePlacementItems).mockResolvedValue(
-      taskResult({ skills: [{ quick: [writtenItem], typed: [] }] }),
+      taskResult({ skills: [{ quick: [writtenItem], taps: [] }] }),
     );
 
     await testOutQuestionsWorkflow({
@@ -99,8 +107,10 @@ describe(testOutQuestionsWorkflow, () => {
       skillIds: [withItem.id],
     });
 
-    expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ quickCount: 6, skills: [expect.objectContaining({})] }),
+    expect(generatePlacementItems).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skills: [expect.objectContaining({ quickCount: 6, tapCount: 0 })],
+      }),
     );
   });
 

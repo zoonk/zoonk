@@ -184,16 +184,12 @@ const warmUpCards = [
   },
 ];
 
-const typedPlacementItem = {
-  acceptedAnswers: [],
-  context: null,
+const tapPlacementItem = {
   difficulty: "medium" as const,
-  format: "typed" as const,
-  image: null,
-  keyPoints: ["A vaccine trains the immune system to recognize a germ before an infection"],
-  question: "In your own words: how does a vaccine protect you?",
-  sampleAnswer: "It trains the immune system to recognize a germ before a real infection.",
-  visual: null,
+  format: "order" as const,
+  question: "Put the steps of a vaccine's protection in order.",
+  reason: "The body must meet the antigen before it can remember it.",
+  steps: ["Vaccine given", "Antigen recognized", "Antibodies made", "Memory cells kept"],
 };
 
 const freeResponseItem = {
@@ -232,9 +228,12 @@ function placementBatchFor(params: PlacementItemsParams) {
   const quick = params.quickFormat === "trueFalse" ? trueFalsePlacementItem : placementItem;
 
   return taskResult({
-    skills: params.skills.map(() => ({
-      quick: Array.from({ length: params.quickCount }, () => quick),
-      typed: params.typedCount > 0 ? [typedPlacementItem] : [],
+    skills: params.skills.map((skill) => ({
+      quick: Array.from({ length: skill.quickCount }, () => quick),
+      taps: Array.from({ length: skill.tapCount }, (_, index) => ({
+        ...tapPlacementItem,
+        question: `${tapPlacementItem.question} (${index + 1})`,
+      })),
     })),
   });
 }
@@ -916,18 +915,17 @@ describe(goalContentWorkflow, () => {
 
     expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
     const placementCalls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
-    const placementSkills = placementCalls.reduce((total, call) => total + call.skills.length, 0);
 
     expect(placementCalls.length).toBeGreaterThan(0);
-    expect(placementCalls.length).toBeLessThan(placementSkills);
+
+    expect(placementCalls.filter((call) => call.serviceTier === "priority")).toHaveLength(2);
 
     expect(
       placementCalls.every(
-        (call, index) =>
-          call.serviceTier === (index === 0 ? "priority" : undefined) &&
+        (call) =>
+          call.serviceTier !== "flex" &&
           call.skills.length <= 2 &&
-          call.quickCount === 2 &&
-          call.typedCount === 0,
+          call.skills.every((skill) => skill.quickCount <= 1 && [0, 3].includes(skill.tapCount)),
       ),
     ).toBe(true);
 

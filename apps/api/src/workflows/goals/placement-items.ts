@@ -1,9 +1,10 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { isTapWorthStoring } from "@zoonk/core/lookahead/placement-item-skills";
 import { type ContentAnalytics, toContentAnalytics } from "../_shared/content-analytics";
 import { checkItemKeysStep } from "./steps/item-keys-step";
 import {
   type CheckedSkillItems,
-  DEFAULT_QUICK_COUNT,
   type PlacementBatch,
   type PlacementItemsRequest,
   getQuickOptionCount,
@@ -15,58 +16,94 @@ import {
 
 export type PlacementItemsWritten = { failed: number; written: number };
 
-function getBatchWait({ index, later }: { index: number; later: boolean }): CallWait {
+/** The first pick's tap questions come right after its quick one, so both are a learner's wait. */
+function getBatchWait({
+  batch,
+  first,
+  later,
+}: {
+  batch: PlacementBatch["skills"];
+  first: string | undefined;
+  later: boolean;
+}): CallWait {
   if (later) {
     return "later";
   }
 
-  return index === 0 ? "learner" : "soon";
+  return batch[0]?.id === first ? "learner" : "soon";
 }
 
+/** A skill counts once, though the first pick's quick and tap questions are written apart. */
 function countWritten({
   batches,
   results,
 }: {
-  batches: readonly unknown[][];
-  results: readonly PromiseSettledResult<number>[];
+  batches: readonly PlacementBatch["skills"][];
+  results: readonly PromiseSettledResult<string[]>[];
 }): PlacementItemsWritten {
-  return results.reduce<PlacementItemsWritten>(
-    (total, result, index) => {
-      const size = batches[index]?.length ?? 0;
-      const written = result.status === "fulfilled" ? result.value : 0;
+  const picked = new Set(batches.flat().map((skill) => skill.id));
 
-      return { failed: total.failed + size - written, written: total.written + written };
-    },
-    { failed: 0, written: 0 },
+  const stored = new Set(
+    results.flatMap((result) => (result.status === "fulfilled" ? result.value : [])),
   );
+
+  return { failed: picked.size - stored.size, written: stored.size };
 }
 
-/** The batch's key check runs at the batch's own wait, so the first question stays a learner's call. */
-async function preparePlacementBatch(batch: PlacementBatch & { wait: CallWait }): Promise<number> {
+type SkillItem = { item: GeneratedItem; skill: number };
+
+/** The batch's key checks run at the batch's own wait, so the first question stays a learner's call. */
+async function preparePlacementBatch(
+  batch: PlacementBatch & { wait: CallWait },
+): Promise<string[]> {
   const { analytics, quickFormat, skills, wait, workflowRunId } = batch;
   const [first] = skills;
   const written = await writePlacementBatchStep(batch);
 
   if (!first || !written) {
-    return 0;
+    return [];
   }
 
-  const quick = written.items.flatMap((items, skill) =>
+  const quick: SkillItem[] = written.items.flatMap((items, skill) =>
     items.quick.map((item) => ({ item, skill })),
   );
 
-  const { kept } = await checkItemKeysStep({
-    analytics: toContentAnalytics({ analytics, scope: first, workflowRunId }),
-    items: quick.map(({ item }) => item),
-    language: first.language,
-    optionCount: getQuickOptionCount({ quickFormat, skill: first }),
-    optionLanguage: first.targetLanguage,
-    wait,
-  });
+  const taps: SkillItem[] = written.items.flatMap((items, skill) =>
+    items.taps.filter((item) => isTapWorthStoring(item)).map((item) => ({ item, skill })),
+  );
 
-  const items: CheckedSkillItems[] = written.items.map(({ typed }, skill) => ({
-    quick: kept.filter(({ index }) => quick[index]?.skill === skill).map(({ item }) => item),
-    typed,
+  const selectAll = taps.filter(({ item }) => item.format === "multipleChoice");
+
+  const check = { language: first.language, optionLanguage: first.targetLanguage, wait };
+  const checkAnalytics = toContentAnalytics({ analytics, scope: first, workflowRunId });
+
+  const checkKeys = (
+    entries: SkillItem[],
+    answer: { optionCount?: number | null; select?: "all" },
+  ) =>
+    entries.length === 0
+      ? { kept: [] }
+      : checkItemKeysStep({
+          ...check,
+          ...answer,
+          analytics: checkAnalytics,
+          items: entries.map(({ item }) => item),
+        });
+
+  const [quickKept, selectAllKept] = await Promise.all([
+    checkKeys(quick, { optionCount: getQuickOptionCount({ quickFormat, skill: first }) }),
+    checkKeys(selectAll, { select: "all" }),
+  ]);
+
+  const ofSkill = (kept: (typeof quickKept)["kept"], entries: SkillItem[], skill: number) =>
+    kept.filter(({ index }) => entries[index]?.skill === skill).map(({ item }) => item);
+
+  const items: CheckedSkillItems[] = written.items.map((_, skill) => ({
+    quick: ofSkill(quickKept.kept, quick, skill),
+    selectAll: ofSkill(selectAllKept.kept, selectAll, skill),
+    taps: taps
+      .filter((tap) => tap.skill === skill && tap.item.format !== "multipleChoice")
+      .map(({ item }) => item),
   }));
 
   return storePlacementBatchStep({
@@ -82,18 +119,18 @@ async function preparePlacementBatch(batch: PlacementBatch & { wait: CallWait })
 export async function preparePlacementItems(
   request: PlacementItemsRequest,
 ): Promise<PlacementItemsWritten> {
-  const { analytics, later = false, quickCount = DEFAULT_QUICK_COUNT, workflowRunId } = request;
-  const { batches, confirmingCount, quickFormat } = await pickPlacementBatchesStep(request);
+  const { analytics, later = false, workflowRunId } = request;
+  const { batches, quickFormat } = await pickPlacementBatchesStep(request);
+
+  const first = batches[0]?.[0]?.id;
 
   const results = await Promise.allSettled(
-    batches.map((skills, index) =>
+    batches.map((skills) =>
       preparePlacementBatch({
         analytics,
-        confirmingCount,
-        quickCount,
         quickFormat,
         skills,
-        wait: getBatchWait({ index, later }),
+        wait: getBatchWait({ batch: skills, first, later }),
         workflowRunId,
       }),
     ),

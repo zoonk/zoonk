@@ -15,7 +15,7 @@ export type TestOutQuestionsInput = {
   skillIds: string[];
 };
 
-const TEST_OUT_FORMATS = ["multipleChoice"] as const;
+const TEST_OUT_FORMATS = ["multipleChoice", "tap"] as const;
 
 /** At least a few per skill, so a retake has questions the learner hasn't seen. */
 const TEST_OUT_QUESTIONS_PER_SKILL = 3;
