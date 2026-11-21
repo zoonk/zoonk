@@ -57,47 +57,85 @@ enum WritingMarks {
   }
 
   /// Offsets are UTF-16 code units into the saved text, as the grade's `start` and `ignoredFrom`.
+  /// A mark only begins or ends between characters: one whose edge falls inside a character, such
+  /// as between an "e" and its accent, takes in the whole character, and one that doesn't fit in
+  /// the text isn't drawn.
   static func pieces(grade: WritingResult, text: String) -> [Piece] {
+    let edges = characterEdges(text)
     let length = text.utf16.count
     let stepQuote = WritingNextStep(grade: grade, text: text).quote
-    let stepStart = stepQuote.flatMap { quote in
-      text.range(of: quote).map { text.utf16.distance(from: text.startIndex, to: $0.lowerBound) }
+    let step = stepQuote.flatMap { quote in
+      text.range(of: quote).map {
+        (
+          start: text.utf16.distance(from: text.startIndex, to: $0.lowerBound),
+          end: text.utf16.distance(from: text.startIndex, to: $0.upperBound)
+        )
+      }
     }
-    let stepLength = stepQuote?.utf16.count ?? 0
-    let ignoredFrom = grade.ignoredFrom.map { wordStart(text, min($0, length)) } ?? length
+    let ignoredFrom =
+      grade.ignoredFrom.map { snap(wordStart(text, min(max($0, 0), length)), edges, up: false) }
+      ?? length
+    let errors = grade.errors.map { error -> (start: Int, end: Int)? in
+      let end = error.start + error.quote.utf16.count
+      guard error.start >= 0, end <= length, end > error.start else { return nil }
+      return (snap(error.start, edges, up: false), snap(end, edges, up: true))
+    }
     var cuts: Set<Int> = [0, length, ignoredFrom]
 
-    for error in grade.errors {
-      cuts.insert(min(error.start, length))
-      cuts.insert(min(length, error.start + error.quote.utf16.count))
+    for error in errors.compactMap(\.self) {
+      cuts.insert(error.start)
+      cuts.insert(error.end)
     }
 
-    if let stepStart {
-      cuts.insert(stepStart)
-      cuts.insert(stepStart + stepLength)
+    if let step {
+      cuts.insert(step.start)
+      cuts.insert(step.end)
     }
 
-    let points = cuts.filter { $0 <= length }.sorted()
+    let points = cuts.sorted()
 
     return zip(points, points.dropFirst()).map { start, end in
       Piece(
         start: start, end: end,
-        error: grade.errors.firstIndex {
-          start >= $0.start && start < $0.start + $0.quote.utf16.count
-        },
+        error: errors.firstIndex { $0.map { start >= $0.start && start < $0.end } ?? false },
         ignored: start >= ignoredFrom,
-        step: stepStart.map { start >= $0 && start < $0 + stepLength } ?? false)
+        step: step.map { start >= $0.start && start < $0.end } ?? false)
     }
   }
 
-  /// A line limit falls inside a word as often as not; the word it splits is shown as past it, whole.
+  /// A line limit falls inside a word as often as not; the word it splits is shown as past it,
+  /// whole. A limit on the space after a word leaves that word read.
   static func wordStart(_ text: String, _ offset: Int) -> Int {
-    let before = text.utf16.prefix(offset)
-    let splitWord = before.reversed().prefix { unit in
-      guard let scalar = Unicode.Scalar(unit) else { return true }
-      return !scalar.properties.isWhitespace
+    let units = Array(text.utf16)
+    let isWordUnit = { (unit: UInt16) in
+      Unicode.Scalar(unit).map { !$0.properties.isWhitespace } ?? true
     }
+
+    guard offset > 0, offset < units.count, isWordUnit(units[offset]) else { return offset }
+
+    let splitWord = units[..<offset].reversed().prefix(while: isWordUnit)
     return offset - splitWord.count
+  }
+
+  /// Where each character of `text` starts, in UTF-16 code units, and where the text ends.
+  private static func characterEdges(_ text: String) -> [Int] {
+    var edges = [0]
+    edges.reserveCapacity(text.utf16.count + 1)
+
+    for character in text {
+      edges.append(edges[edges.count - 1] + character.utf16.count)
+    }
+
+    return edges
+  }
+
+  /// The nearest edge between characters at or before `offset`, or at or after it when `up`.
+  private static func snap(_ offset: Int, _ edges: [Int], up: Bool) -> Int {
+    if up {
+      return edges.first { $0 >= offset } ?? edges[edges.count - 1]
+    }
+
+    return edges.last { $0 <= offset } ?? 0
   }
 
   static func attributed(
@@ -149,14 +187,17 @@ enum WritingMarks {
     return result
   }
 
+  /// `start` and `end` fall between characters, as every piece's do.
   private static func slice(_ text: String, _ start: Int, _ end: Int) -> Substring {
     let utf16 = text.utf16
-    let from =
-      utf16.index(utf16.startIndex, offsetBy: start, limitedBy: utf16.endIndex) ?? utf16.endIndex
-    let to =
-      utf16.index(utf16.startIndex, offsetBy: end, limitedBy: utf16.endIndex) ?? utf16.endIndex
-    return text[
-      (String.Index(from, within: text) ?? text.endIndex)..<(String.Index(to, within: text)
-        ?? text.endIndex)]
+    guard
+      let from = utf16.index(utf16.startIndex, offsetBy: start, limitedBy: utf16.endIndex),
+      let to = utf16.index(utf16.startIndex, offsetBy: end, limitedBy: utf16.endIndex),
+      let lower = String.Index(from, within: text),
+      let upper = String.Index(to, within: text),
+      lower <= upper
+    else { return "" }
+
+    return text[lower..<upper]
   }
 }

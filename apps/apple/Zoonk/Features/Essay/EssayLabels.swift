@@ -37,13 +37,15 @@ enum WritingLabels {
   }
 
   /// A range of points, one number when both ends read alike ("29.8", never "29.79–29.8"), both
-  /// ends with the same decimals ("12.0–17.5", never "12–17.5"), joined by an en dash. A
-  /// `headline` rounds outward.
-  static func range(_ range: WritingRange, decimals scale: Int? = nil, headline: Bool = false)
-    -> String
-  {
+  /// ends with the same decimals ("12.0–17.5", never "12–17.5"), joined by an en dash. Its ends
+  /// round outward, the low one down and the high one up, so it never claims more than it knows;
+  /// nothing at all reads "0", never "0.0".
+  static func range(_ range: WritingRange, decimals scale: Int? = nil) -> String {
     let decimals = decimals(range, scale: scale)
-    let shown = headline ? roundedOutward(range, decimals: decimals) : range
+    let shown = roundedOutward(range, decimals: decimals)
+
+    if shown.low == 0, shown.high == 0 { return points(0, decimals: 0) }
+
     let low = points(shown.low, decimals: decimals)
     let high = points(shown.high, decimals: decimals)
 
@@ -57,10 +59,11 @@ enum WritingLabels {
   /// What language errors take away: "−0.3 to −0.6", or one number when both ends read alike.
   static func deduction(_ range: WritingRange, decimals scale: Int? = nil) -> String {
     let decimals = decimals(range, scale: scale)
-    let low = points(range.low, decimals: decimals)
-    let high = points(range.high, decimals: decimals)
+    let shown = roundedOutward(range, decimals: decimals)
+    let low = points(shown.low, decimals: decimals)
+    let high = points(shown.high, decimals: decimals)
 
-    if range.high <= 0 { return low }
+    if shown.high <= 0 { return points(0, decimals: 0) }
 
     return low == high
       ? "−\(low)"
@@ -69,10 +72,11 @@ enum WritingLabels {
         comment: "Points language errors take off an answer, as a range, like '−0.3 to −0.6'")
   }
 
+  /// "16–19 of 30": the scale with the range's own decimals, so a 1.25-point question reads 1.25.
   static func range(_ range: WritingRange, of max: Double, decimals: Int? = nil) -> String {
     String(
-      localized: "\(self.range(range, decimals: decimals)) of \(points(max))", table: "Essay",
-      comment: "A range of points of a question's total, like '16–19 of 30'")
+      localized: "\(self.range(range, decimals: decimals)) of \(points(max, decimals: decimals))",
+      table: "Essay", comment: "A range of points of a question's total, like '16–19 of 30'")
   }
 
   /// A count of language errors, which is often none.

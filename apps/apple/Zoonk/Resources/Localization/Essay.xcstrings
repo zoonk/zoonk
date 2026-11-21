@@ -1588,65 +1588,6 @@
     "Question" : {
       "comment" : "Opens the question while writing"
     },
-    "Reading your essay against each criterion. It can take up to 30 seconds." : {
-      "comment" : "Grading a draft",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir prüfen deinen Aufsatz anhand der einzelnen Kriterien. Das kann bis zu 30 Sekunden dauern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous examinons ta rédaction selon chaque critère. Cela peut prendre jusqu’à 30 s."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo valutando il tuo tema criterio per criterio. Può richiedere fino a 30 secondi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "小論文を評価項目ごとに採点しています。最大30秒かかることがあります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "평가 항목별로 에세이를 검토하고 있어요. 최대 30초가 걸릴 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oceniamy twoje wypracowanie według każdego kryterium. To może potrwać do 30 sek."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Analisando seu texto de acordo com cada critério. Isso pode levar até 30 segundos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kompozisyonunu her ölçüte göre değerlendiriyoruz. Bu işlem 30 saniyeye kadar sürebilir."
-          }
-        }
-      }
-    },
     "Report" : {
       "comment" : "Reports a save that keeps failing"
     },

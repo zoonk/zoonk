@@ -1,5 +1,6 @@
 import HTTPTypes
 import OpenAPIRuntime
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -78,6 +79,73 @@ final class WritingLinesTests: XCTestCase {
 
     XCTAssertEqual(pieces.first { $0.error == 0 }.map { ($0.start, $0.end) }?.0, 3)
     XCTAssertEqual(pieces.first { $0.error == 0 }.map { ($0.start, $0.end) }?.1, 6)
+  }
+
+  /// Core places marks by JavaScript's UTF-16 offsets, which can fall inside a character.
+  func testAMarkInsideACharacterTakesInTheWholeCharacter() throws {
+    let cases: [(text: String, errors: String, marked: [String])] = [
+      // "cafe" ends between the "e" and its accent.
+      (
+        "cafe\u{301} teh",
+        #"[{"correction":"café","kind":"accent","quote":"cafe","start":0},{"correction":"the","kind":"spelling","quote":"teh","start":6}]"#,
+        ["cafe\u{301}", "teh"]
+      ),
+      // A mark starting on the second half of a thumbs-up and ending inside its skin tone.
+      (
+        "👍🏽 ok",
+        #"[{"correction":"x","kind":"style","quote":"x","start":1}]"#,
+        ["👍🏽"]
+      ),
+      // A mark ending between a family's members.
+      (
+        "👨‍👩‍👧 go",
+        #"[{"correction":"x","kind":"style","quote":"xxx","start":0}]"#,
+        ["👨‍👩‍👧"]
+      ),
+    ]
+
+    for item in cases {
+      let grade = try decode(WritingResult.self, Self.levels(ignoredFrom: nil, errors: item.errors))
+      let pieces = WritingMarks.pieces(grade: grade, text: item.text)
+      let utf16 = Array(item.text.utf16)
+      let marked = pieces.filter { $0.error != nil }.map {
+        String(decoding: utf16[$0.start..<$0.end], as: UTF16.self)
+      }
+
+      XCTAssertEqual(marked, item.marked, item.text.debugDescription)
+      XCTAssertEqual(
+        pieces.map { String(decoding: utf16[$0.start..<$0.end], as: UTF16.self) }.joined(),
+        item.text, "the whole text is still shown")
+    }
+  }
+
+  func testAMarkThatDoesntFitTheTextIsLeftOutAndTheTextStaysReadable() throws {
+    let grade = try decode(
+      WritingResult.self,
+      Self.levels(
+        ignoredFrom: 99,
+        errors:
+          #"[{"correction":"x","kind":"style","quote":"far beyond","start":40},{"correction":"x","kind":"style","quote":"a","start":-3}]"#
+      ))
+
+    let pieces = WritingMarks.pieces(grade: grade, text: "e\u{301}🙂 short")
+
+    XCTAssertEqual(pieces.map(\.error), [nil])
+    XCTAssertEqual(pieces.map(\.ignored), [false])
+    XCTAssertFalse(
+      WritingMarks.attributed(
+        grade: grade, lines: 30, text: "e\u{301}🙂 short", noteFont: .body, numberFont: .body
+      ).characters.isEmpty)
+  }
+
+  func testALimitOnTheSpaceAfterAWordLeavesThatWordRead() {
+    XCTAssertEqual(WritingMarks.wordStart("abc def", 3), 3)
+    XCTAssertEqual(WritingMarks.wordStart("alpha beta", 5), 5)
+    XCTAssertEqual(WritingMarks.wordStart("abc defghij", 6), 4)
+    XCTAssertEqual(WritingMarks.wordStart("abc\ndef", 4), 4)
+
+    let cut = WritingLines.count("abc def", charactersPerLine: 3, limit: 1).ignoredFrom
+    XCTAssertEqual(cut.map { WritingMarks.wordStart("abc def", $0) }, 3)
   }
 
   static func levels(ignoredFrom: Int?, errors: String) -> String {
@@ -197,9 +265,27 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(
       WritingLabels.roundedOutward(.init(high: 0.3, low: 0.3), decimals: 1),
       .init(high: 0.3, low: 0.3))
-    XCTAssertEqual(
-      WritingLabels.range(.init(high: 26.8, low: 22.8), decimals: 0, headline: true), "22–27")
+    XCTAssertEqual(WritingLabels.range(.init(high: 26.8, low: 22.8), decimals: 0), "22–27")
     XCTAssertEqual(WritingLabels.range(.init(high: 27, low: 24), decimals: 1), "24.0–27.0")
+  }
+
+  func testEveryRangeRoundsOutwardAndItsScaleKeepsItsDecimals() {
+    XCTAssertEqual(WritingLabels.range(.init(high: 1.34, low: 1.26), decimals: 1), "1.2–1.4")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 1.25, low: 1.25), of: 1.25, decimals: 2), "1.25 of 1.25")
+    XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 9.5, decimals: 1), "0 of 9.5")
+  }
+
+  func testAMinimumInPercentIsSaidInThePartsPoints() throws {
+    let part = try decode(
+      WrittenPartPoints.self,
+      #"{"max":40,"minimum":{"unit":"percent","value":50},"name":"Written test","range":{"low":10,"high":15},"standing":"below","tasks":[]}"#
+    )
+
+    XCTAssertEqual(part.minimumPoints, 20)
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 20 - 10, low: 20 - 15), decimals: 0), "5–10",
+      "5–10 points short of the 20 needed, never 35–40 of 50")
   }
 
   func testAWholeAnswerIsNamedByItsLineLimitOnlyWhenNoOtherTaskSharesIt() {
@@ -287,52 +373,220 @@ final class WritingResultDecodingTests: XCTestCase {
   }
 }
 
-/// Typing goes to the block's saved draft; a draft saved on another device never takes away what
-/// this one typed and hasn't sent.
+/// What a learner writes is never lost: a draft saved elsewhere, a late save's answer, a lost
+/// grade, the network going away or a paste too long for the server each keep what was typed.
 @MainActor
 final class WritingDraftTests: XCTestCase {
   private let blockId = "01a1fac7-1f8c-7827-b3b7-6f5f50afc190"
+  private static let admission = "00000000-0000-4000-8000-0000000000a1"
 
   override func tearDown() {
     KeptWriting.clear(blockId)
     super.tearDown()
   }
 
-  func testATypedDraftWinsOnlyOverTheRevisionItWasTypedOn() {
+  func testAnEditBelongsToItsAdmissionAndWinsOnlyOverTheRevisionItWasTypedOn() {
     let saved = WritingDraft(admissionId: "a1", revision: 2, text: "Saved elsewhere.")
+    let recover = { (kept: KeptWriting.Kept?) in
+      KeptWriting.recover(kept, saved: saved, admissionId: "a1", graded: nil)
+    }
 
     XCTAssertEqual(
-      KeptWriting.choose(kept: .init(base: 2, text: "Typed here."), saved: saved), "Typed here.")
+      recover(.init(admissionId: "a1", base: 2, text: "Typed here.")), .kept("Typed here."))
     XCTAssertEqual(
-      KeptWriting.choose(kept: .init(base: 1, text: "Typed here."), saved: saved),
-      "Saved elsewhere.")
+      recover(.init(admissionId: "a1", base: 1, text: "Typed here.")), .conflict("Typed here."),
+      "A newer draft saved elsewhere is the learner's call, never dropped")
+    XCTAssertEqual(recover(.init(admissionId: "a1", base: 1, text: "Saved elsewhere.")), .saved)
+    XCTAssertEqual(recover(nil), .saved)
     XCTAssertEqual(
-      KeptWriting.choose(kept: .init(base: 2, text: "  "), saved: saved), "Saved elsewhere.")
-    XCTAssertEqual(KeptWriting.choose(kept: nil, saved: nil), "")
+      recover(.init(admissionId: "old", base: 9, text: "First answer.")), .saved,
+      "A first draft is never offered for a rewrite started since, whatever its revision")
   }
 
-  func testASaveThatFindsANewerDraftSavesTheUnsentEditOverIt() async {
-    let transport = DraftTransport(conflictRevision: 3)
-    let writer = makeWriter(transport)
+  func testAClearedAnswerStaysCleared() {
+    XCTAssertEqual(
+      KeptWriting.recover(
+        .init(admissionId: "a1", base: 3, text: ""),
+        saved: .init(admissionId: "a1", revision: 3, text: "old"), admissionId: "a1", graded: nil),
+      .kept(""))
+  }
+
+  func testAnEditTypedWhileItsOwnSaveLandedBuildsOnThatSave() {
+    let kept = KeptWriting.Kept(
+      admissionId: "a1", base: 0, text: "second", sending: "first")
+
+    XCTAssertEqual(
+      KeptWriting.recover(
+        kept, saved: .init(admissionId: "a1", revision: 1, text: "first"), admissionId: "a1",
+        graded: nil),
+      .kept("second"))
+  }
+
+  func testEditsAfterAGradedAnswerWaitForTheRewrite() {
+    let kept = KeptWriting.Kept(admissionId: "a1", base: 2, text: "Edited after.")
+
+    XCTAssertEqual(
+      KeptWriting.recover(kept, saved: nil, admissionId: nil, graded: "Graded."),
+      .afterGrading("Edited after."))
+    XCTAssertEqual(
+      KeptWriting.recover(
+        .init(admissionId: "a1", base: 2, text: "Graded."), saved: nil, admissionId: nil,
+        graded: "Graded."),
+      .saved)
+  }
+
+  func testADraftSavedElsewhereStopsSavingUntilTheLearnerPicks() async {
+    let server = WritingServer(draft: .init(revision: 3, text: "Saved on the phone."))
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
 
     writer.write("My edit, typed offline.")
     await writer.flush()
+    await writer.flush()
 
-    let saves = await transport.saves
-    XCTAssertEqual(saves.map(\.revision), [1, 3])
-    XCTAssertEqual(saves.last?.text, "My edit, typed offline.")
+    var saves = await server.saves
+    XCTAssertEqual(saves.map(\.revision), [1], "Nothing goes over the other draft unasked")
+    XCTAssertEqual(writer.conflict?.text, "Saved on the phone.")
     XCTAssertEqual(writer.text, "My edit, typed offline.")
+    XCTAssertEqual(KeptWriting.read(blockId)?.text, "My edit, typed offline.")
+    XCTAssertFalse(writer.canSend)
+
+    await writer.keepThisOne()
+
+    saves = await server.saves
+    XCTAssertEqual(saves.last?.revision, 3, "Kept from the server's current revision")
+    let stored = await server.draft
+    XCTAssertEqual(stored.text, "My edit, typed offline.")
+    XCTAssertNil(writer.conflict)
+    XCTAssertNil(KeptWriting.read(blockId), "Saved, so nothing is left to recover")
+  }
+
+  func testUsingTheOtherDraftReplacesTheTextHere() async {
+    let server = WritingServer(draft: .init(revision: 3, text: "Saved on the phone."))
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write("My edit.")
+    await writer.flush()
+    writer.useTheOther()
+    await writer.flush()
+
+    XCTAssertEqual(writer.text, "Saved on the phone.")
+    XCTAssertNil(writer.conflict)
+    let saves = await server.saves
+    XCTAssertEqual(saves.count, 1, "The other draft is already saved")
+    XCTAssertNil(KeptWriting.read(blockId))
+  }
+
+  func testASavesAnswerNeverErasesNewerTyping() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), holdsSaves: true)
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write("first")
+    let saving = Task { await writer.flush() }
+    await server.waitForSaves(1)
+    writer.write("first plus a new paragraph")
+    await server.releaseSaves()
+    await saving.value
+
+    XCTAssertEqual(writer.text, "first plus a new paragraph")
+    XCTAssertEqual(
+      KeptWriting.read(blockId),
+      .init(admissionId: Self.admission, base: 2, text: "first plus a new paragraph"))
+
+    await writer.flush()
+    let stored = await server.draft
+    XCTAssertEqual(stored, .init(revision: 3, text: "first plus a new paragraph"))
+  }
+
+  func testItsOwnSaveThatLandedWithItsAnswerLostIsBuiltOn() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), losesFirstAnswer: true)
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write("first")
+    await writer.flush()
+    writer.write("first and second")
+    await writer.flush()
+
+    XCTAssertNil(writer.conflict)
+    let stored = await server.draft
+    XCTAssertEqual(stored, .init(revision: 3, text: "first and second"))
+  }
+
+  func testTextTypedOfflineIsSavedWhenTheConnectionReturnsWithoutAnotherKeystroke() async throws {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), failsSaves: 1)
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write("Typed on the train.")
+    await writer.flush()
+    XCTAssertTrue(writer.saveFailed)
+
+    var waited = 0
+    while await server.draft.text != "Typed on the train.", waited < 100 {
+      try await Task.sleep(for: .milliseconds(50))
+      waited += 1
+    }
+
+    let stored = await server.draft
+    XCTAssertEqual(stored.text, "Typed on the train.")
+    XCTAssertFalse(writer.saveFailed)
+  }
+
+  func testNothingTypedWhileGradingIsLost() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), holdsGrading: true)
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write("first")
+    let sending = Task { await writer.send() }
+    await server.waitForGrading()
+    writer.write("first plus correction")
+    XCTAssertEqual(writer.text, "first", "The field is read-only while its text is graded")
+    await server.releaseGrading()
+    await sending.value
+
+    XCTAssertEqual(writer.latest?.text, "first")
+    XCTAssertEqual(writer.mode, .result)
+  }
+
+  func testARetryAfterALostGradeKeepsTheEditsMadeSince() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), losesFirstGrade: true)
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write("A")
+    await writer.send()
+    XCTAssertEqual(writer.status, .failed)
+
+    writer.write("A, improved")
+    await writer.send()
+
+    XCTAssertEqual(writer.latest?.text, "A", "The grade is the first text's")
+    XCTAssertEqual(writer.editsAfterGrading, "A, improved")
+    XCTAssertEqual(KeptWriting.read(blockId)?.text, "A, improved")
+
+    await writer.rewrite()
+    XCTAssertEqual(writer.text, "A, improved", "The rewrite starts from the edits")
+    XCTAssertNil(writer.editsAfterGrading)
+  }
+
+  func testTheFieldStopsAtTheLongestAnswerTheServerTakes() {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."))
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    writer.write(String(repeating: "a", count: 48_001))
+    XCTAssertEqual(writer.text.utf16.count, 48_000)
+
+    // A character the limit would split stays out whole.
+    writer.write(String(repeating: "a", count: 47_999) + "👍🏽")
+    XCTAssertEqual(writer.text, String(repeating: "a", count: 47_999))
   }
 
   func testAnAnswerSentIsGradedUnderItsAdmissionAndOpensTheResult() async {
-    let transport = DraftTransport(conflictRevision: nil)
-    let writer = makeWriter(transport)
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."))
+    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
 
     writer.write("My answer.")
     await writer.send()
 
-    let submitted = await transport.submittedAdmissions
-    XCTAssertEqual(submitted, ["00000000-0000-4000-8000-0000000000a1"])
+    let submitted = await server.submitted
+    XCTAssertEqual(submitted.map(\.admissionId), [Self.admission])
     XCTAssertEqual(writer.mode, .result)
     XCTAssertNil(writer.latest?.grade.points)
     XCTAssertEqual(
@@ -341,19 +595,26 @@ final class WritingDraftTests: XCTestCase {
     XCTAssertNil(KeptWriting.read(blockId), "What was sent leaves this device")
   }
 
-  private func makeWriter(_ transport: DraftTransport) -> EssayWriter {
-    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+  private func makeWriter(_ server: WritingServer, draftRevision: Int, draftText: String)
+    -> EssayWriter
+  {
+    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: server))
     let store = ExamStore(api: api, cache: AppCache(session: .preview(account: .writingTest)))
-    let view = try! decode(EssayView.self, Self.essay(blockId: blockId))
+    let view = try! decode(
+      EssayView.self,
+      Self.essay(
+        blockId: blockId,
+        draft:
+          #"{"admissionId":"\#(Self.admission)","revision":\#(draftRevision),"text":"\#(draftText)"}"#,
+        drafts: "[]"))
     return EssayWriter(store: store, view: view, admissionId: nil)
   }
 
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 
-  nonisolated static func essay(blockId: String) -> String {
+  nonisolated static func essay(blockId: String, draft: String, drafts: String) -> String {
     """
-    {"blockId":"\(blockId)","context":null,"drafts":[],\
-    "draft":{"admissionId":"00000000-0000-4000-8000-0000000000a1","revision":1,"text":"Started."},\
+    {"blockId":"\(blockId)","context":null,"drafts":\(drafts),"draft":\(draft),\
     "gradesLeft":6,"pacing":{"minutes":70,"source":"estimated"},"question":"Write it.",\
     "rubric":"points","sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
     "writing":{"charactersPerLine":55,"criteria":[{"id":"c1","name":"Content","points":null}],\
@@ -363,20 +624,73 @@ final class WritingDraftTests: XCTestCase {
   }
 }
 
-/// Saves the draft, answering the first save with a newer one when `conflictRevision` is set, and
-/// grades a submission with levels.
-private actor DraftTransport: ClientTransport {
+/// The API's draft and grading rules on one block: a save over a stale revision is refused with
+/// the current draft, and an admission graded once replays that grade. Each switch makes one
+/// thing go wrong the way a real network does.
+private actor WritingServer: ClientTransport {
+  struct Draft: Codable, Equatable {
+    var revision: Int
+    var text: String
+  }
+
   struct Save: Decodable {
     let revision: Int
     let text: String
   }
 
-  private let conflictRevision: Int?
-  private(set) var saves: [Save] = []
-  private(set) var submittedAdmissions: [String] = []
+  struct Submit: Decodable {
+    let admissionId: String
+    let text: String
+  }
 
-  init(conflictRevision: Int?) {
-    self.conflictRevision = conflictRevision
+  private(set) var draft: Draft
+  private(set) var saves: [Save] = []
+  private(set) var submitted: [Submit] = []
+  private var graded: String?
+  private var holdsSaves: Bool
+  private var holdsGrading: Bool
+  private var losesFirstAnswer: Bool
+  private var losesFirstGrade: Bool
+  private var failsSaves: Int
+  private var released: [CheckedContinuation<Void, Never>] = []
+
+  init(
+    draft: Draft, holdsSaves: Bool = false, holdsGrading: Bool = false,
+    losesFirstAnswer: Bool = false, losesFirstGrade: Bool = false, failsSaves: Int = 0
+  ) {
+    self.draft = draft
+    self.holdsSaves = holdsSaves
+    self.holdsGrading = holdsGrading
+    self.losesFirstAnswer = losesFirstAnswer
+    self.losesFirstGrade = losesFirstGrade
+    self.failsSaves = failsSaves
+  }
+
+  func waitForSaves(_ count: Int) async {
+    while saves.count < count { await Task.yield() }
+  }
+
+  func waitForGrading() async {
+    while submitted.isEmpty { await Task.yield() }
+  }
+
+  func releaseSaves() {
+    holdsSaves = false
+    resumeHeld()
+  }
+
+  func releaseGrading() {
+    holdsGrading = false
+    resumeHeld()
+  }
+
+  private func resumeHeld() {
+    for continuation in released { continuation.resume() }
+    released = []
+  }
+
+  private func hold() async {
+    await withCheckedContinuation { released.append($0) }
   }
 
   func send(
@@ -392,40 +706,82 @@ private actor DraftTransport: ClientTransport {
       let save = try JSONDecoder().decode(Save.self, from: data)
       saves.append(save)
 
-      if let conflictRevision, saves.count == 1 {
-        return json(
-          .conflict,
-          #"{"admissionId":"00000000-0000-4000-8000-0000000000a1","revision":\#(conflictRevision),"text":"Saved on the phone."}"#
-        )
+      if holdsSaves { await hold() }
+
+      if failsSaves > 0 {
+        failsSaves -= 1
+        return (HTTPResponse(status: .serviceUnavailable), nil)
       }
 
-      return json(
-        .ok,
-        #"{"admissionId":"00000000-0000-4000-8000-0000000000a1","revision":\#(save.revision + 1),"text":\#(String(data: try JSONEncoder().encode(save.text), encoding: .utf8)!)}"#
-      )
+      guard save.revision == draft.revision else {
+        return try json(.conflict, draft)
+      }
+
+      draft = Draft(revision: draft.revision + 1, text: save.text)
+
+      if losesFirstAnswer {
+        losesFirstAnswer = false
+        return (HTTPResponse(status: .serviceUnavailable), nil)
+      }
+
+      return try json(.ok, draft)
     case "submitEssay":
-      struct Submit: Decodable { let admissionId: String }
-      submittedAdmissions.append(try JSONDecoder().decode(Submit.self, from: data).admissionId)
-      return json(
-        .ok,
-        WritingLinesTests.levels(ignoredFrom: nil, errors: "[]")
+      let submit = try JSONDecoder().decode(Submit.self, from: data)
+      submitted.append(submit)
+
+      if holdsGrading { await hold() }
+
+      graded = graded ?? submit.text
+
+      if losesFirstGrade {
+        losesFirstGrade = false
+        return (HTTPResponse(status: .gatewayTimeout), nil)
+      }
+
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))
       )
     case "getEssay":
       let drafts =
-        submittedAdmissions.isEmpty
-        ? "[]"
-        : #"[{"attemptId":"3674d948-e89d-8489-851c-fd3687fcb325","submittedAt":"2026-11-20T12:00:00.000Z","text":"My answer.","grade":\#(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))}]"#
-      return json(
-        .ok,
-        WritingDraftTests.essay(blockId: "01a1fac7-1f8c-7827-b3b7-6f5f50afc190")
-          .replacingOccurrences(of: #""drafts":[]"#, with: #""drafts":\#(drafts)"#))
+        graded.map {
+          #"[{"attemptId":"3674d948-e89d-8489-851c-fd3687fcb325","submittedAt":"2026-11-20T12:00:00.000Z","text":\#(String(data: try! JSONEncoder().encode($0), encoding: .utf8)!),"grade":\#(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))}]"#
+        } ?? "[]"
+      let current =
+        graded == nil
+        ? #"{"admissionId":"00000000-0000-4000-8000-0000000000a1","revision":\#(draft.revision),"text":\#(String(data: try JSONEncoder().encode(draft.text), encoding: .utf8)!)}"#
+        : "null"
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(
+          WritingDraftTests.essay(
+            blockId: "01a1fac7-1f8c-7827-b3b7-6f5f50afc190", draft: current, drafts: drafts))
+      )
+    case "startWriting":
+      graded = nil
+      draft = Draft(revision: 0, text: "")
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(#"{"status":"ready","admissionId":"00000000-0000-4000-8000-0000000000a2"}"#)
+      )
     default:
       return (HTTPResponse(status: .notFound), nil)
     }
   }
 
-  private func json(_ status: HTTPResponse.Status, _ body: String) -> (HTTPResponse, HTTPBody?) {
-    (HTTPResponse(status: status, headerFields: [.contentType: "application/json"]), HTTPBody(body))
+  private func json(_ status: HTTPResponse.Status, _ draft: Draft) throws -> (
+    HTTPResponse, HTTPBody?
+  ) {
+    struct Wire: Encodable {
+      let admissionId = "00000000-0000-4000-8000-0000000000a1"
+      let revision: Int
+      let text: String
+    }
+
+    return (
+      HTTPResponse(status: status, headerFields: [.contentType: "application/json"]),
+      HTTPBody(try JSONEncoder().encode(Wire(revision: draft.revision, text: draft.text)))
+    )
   }
 }
 

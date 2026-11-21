@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// A written question of an exam: read it, write it, read the grade, rewrite. Opening it was its
 /// start (`start`), which admitted the grading, or is writing the question, or was refused.
@@ -89,6 +90,8 @@ private struct EssayContent: View {
   @State private var finishFailures = 0
   @State private var sheet: Sheet?
   @State private var showsSaveReport = false
+  /// A close whose save didn't get through asks first: the text is kept on this device.
+  @State private var asksToLeave = false
 
   enum Sheet: String, Identifiable {
     case question
@@ -111,8 +114,13 @@ private struct EssayContent: View {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
             Task {
-              await writer.flush()
-              dismiss()
+              let saved = await writer.flush()
+
+              if saved || !writer.saveFailed || writer.mode != .write {
+                dismiss()
+              } else {
+                asksToLeave = true
+              }
             }
           }
         }
@@ -156,6 +164,49 @@ private struct EssayContent: View {
         isPresented: $showsSaveReport,
         context: FeedbackContext(screen: "essay", reportType: .saveFailure), isReport: true
       )
+      .alert(
+        Text("This answer changed on another device", tableName: "Essay"),
+        isPresented: Binding(get: { writer.conflict != nil }, set: { _ in })
+      ) {
+        Button {
+          Task { await writer.keepThisOne() }
+        } label: {
+          Text(
+            "Keep this one", tableName: "Essay",
+            comment:
+              "A choice between two versions of one written answer: keep what's typed on this device and save it over the other."
+          )
+        }
+        Button {
+          writer.useTheOther()
+        } label: {
+          Text(
+            "Use the other", tableName: "Essay",
+            comment:
+              "A choice between two versions of one written answer: replace what's typed here with the version saved on another device."
+          )
+        }
+      } message: {
+        Text(
+          "Keep the version you're writing here, or switch to the other one.", tableName: "Essay")
+      }
+      .alert(
+        Text("Your answer isn't saved yet", tableName: "Essay"),
+        isPresented: $asksToLeave
+      ) {
+        Button(role: .cancel) {
+        } label: {
+          Text("Keep writing", tableName: "Essay")
+        }
+        Button {
+          dismiss()
+        } label: {
+          Text("Leave", tableName: "Essay")
+        }
+      } message: {
+        Text("It's kept on this device and saves when you're back online.", tableName: "Essay")
+      }
+      .task { writer.resumeSaving() }
       .onDisappear { finishing.leave() }
   }
 
@@ -174,7 +225,11 @@ private struct EssayContent: View {
       }
     case .refused:
       WritingRefusedView(
-        task: .init(title: essay.writing.title, minutes: essay.pacing.minutes),
+        task: .init(
+          title: WritingLabels.taskTitle(
+            unit: essay.writing.unit, task: nil, fallback: essay.writing.title)
+            ?? essay.writing.title,
+          minutes: essay.pacing.minutes),
         isBusy: finishing.isRunning, onContinue: finish)
     }
   }
@@ -227,7 +282,9 @@ private struct EssayContent: View {
     .bottomBar(note: resultNote) {
       if essay.isClosed {
         todayButton
-      } else if WritingNextStep(grade: answer.grade, text: answer.text) == .done {
+      } else if WritingNextStep(grade: answer.grade, text: answer.text) == .done,
+        writer.editsAfterGrading == nil
+      {
         // Nothing left to rewrite: the one way on.
         BusyButton(isBusy: finishing.isRunning) {
           finish()
@@ -270,7 +327,14 @@ private struct EssayContent: View {
   }
 
   private var resultNote: BarNote? {
-    guard finishFailures > 0 || writer.failures > 0, !finishing.isRunning else { return nil }
+    guard finishFailures > 0 || writer.failures > 0, !finishing.isRunning else {
+      return writer.editsAfterGrading == nil
+        ? nil
+        : BarNote(
+          LocalizedStringResource(
+            "This grade is for the version you sent first. Your changes are kept for your rewrite.",
+            table: "Essay"), tone: .status)
+    }
 
     return BarNote(
       LocalizedStringResource(
@@ -316,6 +380,7 @@ private struct WritingEditorPage: View {
   let essay: EssayView
   let onSend: () -> Void
   @FocusState private var isFocused: Bool
+  @Environment(\.scenePhase) private var scenePhase
 
   private var label: Text {
     writer.answers.isEmpty
@@ -331,6 +396,8 @@ private struct WritingEditorPage: View {
         .typeStyle(.writing)
         .scrollContentBackground(.hidden)
         .focused($isFocused)
+        // What's being graded is what was sent.
+        .disabled(writer.status == .grading)
         .fieldBorder(isFocused: isFocused, holdsFocus: true)
         .frame(maxHeight: .infinity)
         .accessibilityLabel(label)
@@ -356,8 +423,29 @@ private struct WritingEditorPage: View {
       .buttonStyle(.mainAction)
       .disabled(!writer.canSend)
     }
+    .onAppear { writer.startTiming() }
     .onDisappear {
+      writer.stopTiming()
       Task { await writer.flush() }
+    }
+    .onChange(of: scenePhase) { _, phase in
+      if phase == .active {
+        writer.startTiming()
+      } else {
+        writer.stopTiming()
+        flushInBackground()
+      }
+    }
+  }
+
+  /// The app leaving the screen saves the last edit, with the time iOS gives a task to finish.
+  private func flushInBackground() {
+    let writer = writer
+    let task = UIApplication.shared.beginBackgroundTask(withName: "Save writing")
+
+    Task {
+      await writer.flush()
+      UIApplication.shared.endBackgroundTask(task)
     }
   }
 
@@ -375,8 +463,12 @@ private struct WritingEditorPage: View {
             "Still grading. This is taking longer than usual.", table: "Essay",
             comment: "Grading is slow")
           : LocalizedStringResource(
-            "Reading your essay against each criterion. It can take up to 30 seconds.",
-            table: "Essay", comment: "Grading a draft"),
+            "Reading your answer against each criterion. It can take up to 30 seconds.",
+            table: "Essay"),
+        tone: .status)
+    case .idle where writer.saveFailed:
+      BarNote(
+        LocalizedStringResource("Not saved yet. It's kept on this device.", table: "Essay"),
         tone: .status)
     case .idle:
       nil
