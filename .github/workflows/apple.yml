@@ -3,10 +3,18 @@ name: Apple App
 on:
   push:
     branches: [main]
-    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
+    paths:
+      - apps/apple/**
+      - .github/workflows/apple.yml
+      - .github/workflows/native-changes.yml
+      - .github/actions/apple-last-build/**
   pull_request:
     branches: [main]
-    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
+    paths:
+      - apps/apple/**
+      - .github/workflows/apple.yml
+      - .github/workflows/native-changes.yml
+      - .github/actions/apple-last-build/**
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -58,32 +66,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
-      - name: Identify Xcode toolchain
-        id: xcode
-        run: |
-          set -o pipefail
-          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
-
-      # Only main saves these caches. A pull request's own entries serve only its later runs, and in
-      # the repository's shared cache storage they evict main's, which every pull request restores.
-      - name: Restore Swift packages
-        id: swiftpm
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      - name: Restore the last build
+        id: last
+        uses: ./.github/actions/apple-last-build
         with:
-          path: ${{ runner.temp }}/apple-source-packages
-          # Frozen resolution needs a cache containing this lockfile's revisions.
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
-
-      - name: Restore Xcode compilations
-        id: compilations
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/apple/DerivedData/Make/CompilationCache.noindex
-          # Any app edit recompiles the whole app module, so the key follows the packages, the API
-          # client and the project; Xcode or build flag changes start from an empty cache.
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
+          build: device
 
       - name: Build iPhone and iPad app
         env:
@@ -92,32 +79,26 @@ jobs:
             -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
             -onlyUsePackageVersionsFromResolvedFile
             -skipPackageUpdates
-            COMPILATION_CACHE_ENABLE_CACHING=YES
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         run: make -C apps/apple build
 
       - name: Save Swift packages
-        if: github.ref == 'refs/heads/main' && steps.swiftpm.outputs.cache-hit != 'true'
+        if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
-          key: ${{ steps.swiftpm.outputs.cache-primary-key }}
-
-      - name: Save Xcode compilations
-        if: github.ref == 'refs/heads/main' && steps.compilations.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/apple/DerivedData/Make/CompilationCache.noindex
-          key: ${{ steps.compilations.outputs.cache-primary-key }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: package.json
+          key: ${{ steps.last.outputs.packages-key }}
 
       - name: Check String Catalogs
         run: make -C apps/apple strings-check
+
+      - name: Save this build
+        if: github.ref == 'refs/heads/main' && steps.last.outputs.build-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/apple/DerivedData/Make
+          key: ${{ steps.last.outputs.build-key }}
 
   test:
     needs: changes
@@ -128,27 +109,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Identify Xcode toolchain
-        id: xcode
-        run: |
-          set -o pipefail
-          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
-
-      - name: Cache Swift packages
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ${{ runner.temp }}/apple-source-packages
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
-
       # The simulator build compiles differently from the build job's device build, so it keeps its
-      # own entry, keyed the same way.
-      - name: Cache Xcode compilations
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      # own saved build.
+      - name: Restore the last build
+        id: last
+        uses: ./.github/actions/apple-last-build
         with:
-          path: apps/apple/DerivedData/Make/CompilationCache.noindex
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
+          build: simulator
 
       - name: Run unit tests
         env:
@@ -157,7 +124,6 @@ jobs:
             -onlyUsePackageVersionsFromResolvedFile
             -skipPackageUpdates
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
-            COMPILATION_CACHE_ENABLE_CACHING=YES
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         # The newest runtime the image installs, which can trail Xcode's SDK while a new image rolls out
@@ -173,3 +139,10 @@ jobs:
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
           xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-unit-tests.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save this build
+        if: steps.last.outputs.build-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/apple/DerivedData/Make
+          key: ${{ steps.last.outputs.build-key }}

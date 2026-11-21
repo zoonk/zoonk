@@ -30,6 +30,17 @@ function isLandedStandIn({
   );
 }
 
+/** The queue keeps no stand-in once its skill needs no more lessons outlined, so this one holds no work and nothing will ever outline it. */
+function isSpentStandIn({
+  item,
+  queued,
+}: {
+  item: ExistingPlanItem;
+  queued: Pick<ReadonlySet<string>, "has">;
+}) {
+  return isStandIn(item) && !queued.has(getItemKey(item));
+}
+
 function listWrittenLessons(input: BuildPlanInput) {
   return (skillId: string) =>
     input.lessons.flatMap((lesson) => (lesson.skillIds.includes(skillId) ? [lesson.lessonId] : []));
@@ -69,9 +80,11 @@ export function splitExistingItems({
   const thisWeek = listThisWeekItems({ input, keepsRest }).filter(
     (item) => !input.extras?.activeItemIds.has(item.id),
   );
+  const queued = new Set(queue.map((unit) => unit.key));
 
   const landed = thisWeek.filter(
     (item) =>
+      isSpentStandIn({ item, queued }) ||
       (!keepsRest && isLandedStandIn({ item, planned, written })) ||
       (isStandIn(item) && landedSkillIds?.has(item.skillId ?? "") === true),
   );
@@ -257,15 +270,19 @@ export function keepThisWeek({
 export function setAsideLeftWork({
   input,
   placed,
+  queue,
   yielded = new Set(),
 }: {
   input: BuildPlanInput;
   placed: readonly { key: string; skillId: string | null }[];
+  queue: readonly QueueUnit[];
   yielded?: ReadonlySet<string>;
 }): PlannedItem[] {
   if (!input.setAsideLeftWork && yielded.size === 0) {
     return [];
   }
+
+  const queued = new Set(queue.map((unit) => unit.key));
 
   const placedKeys = new Set(placed.map((entry) => entry.key));
   const placedSkills = new Set(placed.flatMap((entry) => entry.skillId ?? []));
@@ -284,6 +301,7 @@ export function setAsideLeftWork({
       LEARN_KINDS.has(item.kind) &&
       (isOverdue || yielded.has(key)) &&
       !placedKeys.has(key) &&
+      !isSpentStandIn({ item, queued }) &&
       !(
         placedSkills.has(item.skillId ?? "") &&
         isLandedStandIn({ item, planned, written: listWrittenLessons(input) })

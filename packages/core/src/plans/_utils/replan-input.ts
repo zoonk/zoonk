@@ -9,7 +9,7 @@ import { sizeLanguageGraph } from "../planner/language-size";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
 import { getBossKey } from "../planner/plan-units";
-import { getSettledSkillIds } from "../planner/settled-skills";
+import { getSettledSkillIds, getStartedSkillIds } from "../planner/settled-skills";
 import { loadRunBossFacts } from "./boss-plan-facts";
 import { isTodayShown, loadPlanCarryOver } from "./carried-lessons";
 import { choosePlanSettings } from "./choose-plan-pace";
@@ -99,6 +99,7 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     bands: loaded.bands,
     goal: context.goal,
     graph: resolved,
+    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
     state,
   });
