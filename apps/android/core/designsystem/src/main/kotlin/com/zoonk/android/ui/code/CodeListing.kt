@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.code
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,10 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +38,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,12 +63,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.zIndex
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.TagUnder
+import com.zoonk.android.ui.components.CodeWords
 import com.zoonk.android.ui.components.arrowKeyScroll
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.components.focusRing
-import com.zoonk.android.ui.richtext.oneLineCode
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -86,7 +91,8 @@ private val WRAPS_BELOW = 480.dp
 /** Half the room between a line's number and its code; the other half pads the line's tone. */
 private val NUMBER_GAP = 6.dp
 private val CURRENT_MARK = 3.dp
-private val PANEL_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
+private val PANEL_PADDING = 12.dp
+private val PANEL_PADDING_Y = 10.dp
 private const val TONE_ALPHA = 0.12f
 private const val EDGE_ALPHA = 0.4f
 
@@ -146,12 +152,24 @@ private fun AnnotatedString.Builder.appendBreakPoint() {
     withStyle(BREAK_POINT_STYLE) { append(BREAK_POINT) }
 }
 
-/** [text] with its break points, for inline code in a sentence. */
+/**
+ * A word of inline code this short fits on a line of the narrowest column, larger text included, so
+ * it moves to the next line whole; only a longer one splits at its break points (main's
+ * `withWordBreakPoints`).
+ */
+private const val WHOLE_WORD_LENGTH = 20
+
+private val WORDS = Regex("\\s+|\\S+")
+
+/** [text] with break points only in a word too long to fit on a line, for inline code in a sentence. */
 fun withBreakPoints(text: String): AnnotatedString =
     buildAnnotatedString {
-        text.forEachIndexed { index, char ->
-            if (index > 0 && breaksBetween(text[index - 1], char)) appendBreakPoint()
-            append(char)
+        WORDS.findAll(text).forEach { match ->
+            val word = match.value
+            word.forEachIndexed { index, char ->
+                if (index > 0 && word.length > WHOLE_WORD_LENGTH && breaksBetween(word[index - 1], char)) appendBreakPoint()
+                append(char)
+            }
         }
     }
 
@@ -278,9 +296,20 @@ fun CodeLineText(
     )
 }
 
+/** What a [CodeFrame] that scrolls gives its lines: its scroll, the ground under its numbers, and where they end. */
+private class CodeScroll(
+    val state: ScrollState,
+    val surface: Color,
+    val gutter: MutableIntState,
+)
+
+private val LocalCodeScroll = staticCompositionLocalOf<CodeScroll?> { null }
+
 /**
- * A line of code after its number, which TalkBack skips; the number keeps its width across a
- * listing ([digits]) and stays clear of the line's [tone], which starts after it.
+ * A line of code after its number; the number keeps its width across a listing ([digits]), stays
+ * clear of the line's [tone], which starts after it, and stays put while the code scrolls under it.
+ * TalkBack says [spoken] for the line (`rememberSpokenCode`), in place of its code, or skips the
+ * number of a line of fields, which label themselves.
  */
 @Composable
 fun CodeLine(
@@ -289,9 +318,11 @@ fun CodeLine(
     modifier: Modifier = Modifier,
     tone: CodeLineTone = CodeLineTone.Plain,
     state: String? = null,
+    spoken: String? = null,
     style: TextStyle = MaterialTheme.zoonkType.code,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val scroll = LocalCodeScroll.current
     val colors = MaterialTheme.colorScheme
     val highlight = MaterialTheme.zoonk.vizHighlight
     val shape =
@@ -325,13 +356,40 @@ fun CodeLine(
     Row(
         modifier
             .fillMaxWidth()
-            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state }),
+            .then(
+                when {
+                    spoken != null -> {
+                        Modifier.clearAndSetSemantics {
+                            text = AnnotatedString(spoken)
+                            state?.let { stateDescription = it }
+                        }
+                    }
+
+                    state != null -> {
+                        Modifier.semantics { stateDescription = state }
+                    }
+
+                    else -> {
+                        Modifier
+                    }
+                },
+            ),
     ) {
         Text(
             number.toString().padStart(digits),
             Modifier
                 .alignByBaseline()
-                .padding(end = NUMBER_GAP)
+                .zIndex(1f)
+                .then(
+                    if (scroll == null) {
+                        Modifier
+                    } else {
+                        Modifier
+                            .onPlaced { scroll.gutter.intValue = it.size.width }
+                            .graphicsLayer { translationX = scroll.state.value.toFloat() }
+                            .background(scroll.surface)
+                    },
+                ).padding(end = NUMBER_GAP)
                 .clearAndSetSemantics {},
             color = colors.onSurfaceVariant,
             style = style,
@@ -350,12 +408,12 @@ fun CodeLine(
 }
 
 /**
- * Lines of code under one sideways scroller. On a phone's width the lines wrap; on a wider one they
- * keep their shape and the frame scrolls, by touch and by the arrow keys, taking keyboard focus
- * while there's more to see. [wraps] decides it instead, as for code with fields in it. For
- * TalkBack it's one stop that says its [label] and then the lines as written, or, with
- * [stopPerLine], one stop per line, for a line the learner edits or one marked as the current
- * step. Code reads left to right in every language.
+ * Lines of code under one sideways scroller. In a narrow frame the lines wrap; in a wider one they
+ * keep their shape and the code scrolls under its line numbers, by touch and by the arrow keys,
+ * Home and End, taking keyboard focus while there's more to see. [wraps] decides it instead, as for
+ * code with fields in it. For TalkBack it's one stop that says its [label] and then each line's
+ * reading, or, with [stopPerLine], one stop per line, for a line the learner edits or one marked as
+ * the current step. Code reads left to right in every language.
  */
 @Composable
 fun CodeFrame(
@@ -369,6 +427,8 @@ fun CodeFrame(
     val panel = variant == CodeFrameVariant.Panel
     val shape = RoundedCornerShape(if (panel) ZoonkRadius.xl else ZoonkRadius.md)
     val scroll = rememberScrollState()
+    val gutter = remember { mutableIntStateOf(0) }
+    val surface = if (panel) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface
     var focused by remember { mutableStateOf(false) }
 
     ProvideLayoutDirection(LayoutDirection.Ltr) {
@@ -384,21 +444,34 @@ fun CodeFrame(
         ) {
             val wrapped = wraps ?: (maxWidth < WRAPS_BELOW)
 
+            // The panel's start padding stays outside what scrolls, so the numbers stay put at its edge.
+            val start = if (panel) PANEL_PADDING else 0.dp
+
             Column(
                 (
                     if (wrapped) {
                         Modifier.fillMaxWidth()
                     } else {
                         Modifier
-                            .fadingHorizontalScroll(scroll)
+                            .padding(start = start)
+                            .fadingHorizontalScroll(scroll) { gutter.intValue.toFloat() }
                             .arrowKeyScroll(scroll) { focused = it }
-                            .widthIn(min = maxWidth)
+                            .widthIn(min = maxWidth - start)
                             .width(IntrinsicSize.Max)
                     }
-                ).then(if (panel) Modifier.padding(PANEL_PADDING) else Modifier),
+                ).then(
+                    when {
+                        !panel -> Modifier
+                        wrapped -> Modifier.padding(horizontal = PANEL_PADDING, vertical = PANEL_PADDING_Y)
+                        else -> Modifier.padding(end = PANEL_PADDING, top = PANEL_PADDING_Y, bottom = PANEL_PADDING_Y)
+                    },
+                ),
                 verticalArrangement = Arrangement.spacedBy(if (panel) 0.dp else 2.dp),
             ) {
-                CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) { content(wrapped) }
+                CompositionLocalProvider(
+                    LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+                    LocalCodeScroll provides if (wrapped) null else CodeScroll(scroll, surface, gutter),
+                ) { content(wrapped) }
             }
         }
     }
@@ -419,11 +492,12 @@ fun CodeListing(
     val lines = remember(code, language) { highlightCode(code, language) }
     val digits = lines.size.toString().length
     val column = columnWidth(MaterialTheme.zoonkType.code)
+    val spoken = rememberSpokenCode()
 
     CodeFrame(label, modifier, variant, stopPerLine = stopPerLine) { wraps ->
         lines.forEachIndexed { index, tokens ->
             val number = index + 1
-            CodeLine(number, digits, tone = toneOf(number), state = stateOf(number)) {
+            CodeLine(number, digits, tone = toneOf(number), state = stateOf(number), spoken = spoken.line(codeLineText(tokens), number)) {
                 CodeLineText(tokens, wraps, Modifier.weight(1f, fill = wraps), column = column)
             }
         }
@@ -443,7 +517,7 @@ fun CodeBlock(
 /**
  * Code inside something the learner presses or reads in one line, such as an answer option (main's
  * `CodeSnippet`): no panel and no line numbers, every line wrapped, its extra rows indented. An
- * option's tag goes under it, rather than squeezing the code.
+ * option's tag sits beside its last line when its widest line leaves room, and under it otherwise.
  */
 @Composable
 fun CodeSnippet(
@@ -453,10 +527,10 @@ fun CodeSnippet(
 ) {
     val lines = remember(code, language) { highlightCode(code, language) }
     val column = columnWidth(MaterialTheme.zoonkType.code)
+    val spoken = rememberSpokenCode()
 
     ProvideLayoutDirection(LayoutDirection.Ltr) {
-        // Main's option names its code as the browser reads it: the lines on one line, unindented.
-        Column(modifier.fillMaxWidth().then(TagUnder).clearAndSetSemantics { text = AnnotatedString(oneLineCode(code)) }) {
+        Column(modifier.fillMaxWidth().then(CodeWords).clearAndSetSemantics { text = AnnotatedString(spoken.snippet(code)) }) {
             lines.forEach { tokens -> CodeLineText(tokens, wraps = true, hang = SNIPPET_HANG, marksRows = false, column = column) }
         }
     }

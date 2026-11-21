@@ -2,6 +2,24 @@
 <resources>
     <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
     <string name="richtext_code">Code</string>
+    <!-- Read by screen readers for a line of a program: its number, then its code as written. -->
+    <string name="richtext_code_line">Line %1$d: %2$s</string>
+    <!-- Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_line_indented">Line %1$d, indented %2$s: %3$s</string>
+    <!-- Read by screen readers for an empty line of a program. -->
+    <string name="richtext_code_line_blank">Line %1$d: blank</string>
+    <!-- Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_indented">Indented %1$s: %2$s</string>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”. -->
+    <plurals name="richtext_code_spaces">
+        <item quantity="one">%d space</item>
+        <item quantity="other">%d spaces</item>
+    </plurals>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”. -->
+    <plurals name="richtext_code_tabs">
+        <item quantity="one">%d tab</item>
+        <item quantity="other">%d tabs</item>
+    </plurals>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">squared</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

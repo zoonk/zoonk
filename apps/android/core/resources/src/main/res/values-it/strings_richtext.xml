@@ -2,6 +2,12 @@
 <!-- eloqnt-fingerprints-v1
 {
   "richtext_code": "9121c8d0cbd254cf96dff86ebf6ffac94be919eee511fe11e3567b6da12aabc8",
+  "richtext_code_indented": "4627ff2feb4a6d2d4ba8be4f35886a0d8620058c8afaf67ea1428bbae2f6b632",
+  "richtext_code_line": "62be15945a8c5af7ba815b8117745980d389459798e716d350eea1e1e6b1502a",
+  "richtext_code_line_blank": "a3e6e6e48953fb5ba874aa065eeacc761dd8ff34ae8419b31da45d99b435cf3c",
+  "richtext_code_line_indented": "20b66edb4282fd781049f285f86e93955d4a0ead36f6abfdd507d8f66933463a",
+  "richtext_code_spaces": "ebb45623edcbae3c675d400a082a8820fa9bfdee381397a7a4c6d9bd94289118",
+  "richtext_code_tabs": "503bb827bb43483052a586916202fa98924038fa9a75dbe059aacb80606aa5a7",
   "richtext_math_bar": "ed12031cdda249574b1b41ab732438a3549f27b9380ba183722d09226fbf347f",
   "richtext_math_cube_root": "f42661794a688ec3022c8aac6f200e26d2c3f0161c1edea107c7e0a330c8a63f",
   "richtext_math_cubed": "f7df217d5be54f9b5edff4e1bb77b186dfa4c45f6b3f5a83160ecf1e3db5c3e6",
@@ -20,6 +26,26 @@
 <resources>
     <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
     <string name="richtext_code">Codice</string>
+    <!-- Read by screen readers for a line of a program: its number, then its code as written. -->
+    <string name="richtext_code_line">Riga %1$d: %2$s</string>
+    <!-- Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_line_indented">Riga %1$d, con rientro di %2$s: %3$s</string>
+    <!-- Read by screen readers for an empty line of a program. -->
+    <string name="richtext_code_line_blank">Riga %1$d: vuota</string>
+    <!-- Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_indented">Con rientro di %1$s: %2$s</string>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”. -->
+    <plurals name="richtext_code_spaces">
+        <item quantity="one">%d spazio</item>
+        <item quantity="many">%d spazi</item>
+        <item quantity="other">%d spazi</item>
+    </plurals>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”. -->
+    <plurals name="richtext_code_tabs">
+        <item quantity="one">%d tabulazione</item>
+        <item quantity="many">%d tabulazioni</item>
+        <item quantity="other">%d tabulazioni</item>
+    </plurals>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">al quadrato</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

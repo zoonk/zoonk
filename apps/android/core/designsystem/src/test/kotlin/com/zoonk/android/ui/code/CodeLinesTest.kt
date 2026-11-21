@@ -33,4 +33,13 @@ class CodeLinesTest {
         assertEquals("a   b", shown("a\tb", "python"))
         assertEquals(6, indentOf(highlightCode("\t  if x:", "python").first()))
     }
+
+    @Test
+    fun `keeps a short word of inline code whole and splits only a word too long for a line`() {
+        assertEquals("print(fruta) e for i in range(3):", withBreakPoints("print(fruta) e for i in range(3):").text)
+        assertEquals(
+            "x = numeros|.append(|valor_muito_grande)",
+            withBreakPoints("x = numeros.append(valor_muito_grande)").text.replace('\u200B', '|'),
+        )
+    }
 }

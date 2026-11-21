@@ -2,6 +2,12 @@
 <!-- eloqnt-fingerprints-v1
 {
   "richtext_code": "68523074f8d36c525b0e128a7d3972acf671980502ee1d15b33b5752f82a5d79",
+  "richtext_code_indented": "ccdadd5d2cfb886f5f4515ff590acbec49b513d51cab85f36259a0dd1fd96bb2",
+  "richtext_code_line": "75dc0616d99ef134c6c0cb515353e4e59601c077e19d86040229fccdcc7e9dca",
+  "richtext_code_line_blank": "c7600d61870a8eb1c88245cf00146e552563749ddca8a79e41e2f70e81791e88",
+  "richtext_code_line_indented": "e602a52247b6b1f95db547e0634b7e84e3e462ef18ebcc97b5fb4adf3db94762",
+  "richtext_code_spaces": "850c0fa34a684c5af61f1cd0930fa3be137b2d42a59ed1f6010135049a39fb25",
+  "richtext_code_tabs": "c2f90bbfedbe4996d828d523b9ed0ada28e5d6c9b3c4965ee879f2b8c602e51f",
   "richtext_math_bar": "59f0599b15c0b469379168709fffd93d2502d6b711ad0cbdcfa68debc31ceb84",
   "richtext_math_cube_root": "5a38b108e0429dd0c659f98d629973175b6f45e39760744069928928aea45462",
   "richtext_math_cubed": "3db2ceed1016d046d3cf0b5b0a7350ec4bee36f7d5010216adb3ee332d67a640",
@@ -20,6 +26,22 @@
 <resources>
     <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
     <string name="richtext_code">코드</string>
+    <!-- Read by screen readers for a line of a program: its number, then its code as written. -->
+    <string name="richtext_code_line">%1$d번째 줄: %2$s</string>
+    <!-- Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_line_indented">%1$d번째 줄, 들여쓰기 %2$s: %3$s</string>
+    <!-- Read by screen readers for an empty line of a program. -->
+    <string name="richtext_code_line_blank">%1$d번째 줄: 빈 줄</string>
+    <!-- Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_indented">들여쓰기 %1$s: %2$s</string>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”. -->
+    <plurals name="richtext_code_spaces">
+        <item quantity="other">공백 %d개</item>
+    </plurals>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”. -->
+    <plurals name="richtext_code_tabs">
+        <item quantity="other">탭 %d개</item>
+    </plurals>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">제곱</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

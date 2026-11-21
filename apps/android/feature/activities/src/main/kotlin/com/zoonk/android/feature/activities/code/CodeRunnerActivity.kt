@@ -50,6 +50,7 @@ import com.zoonk.android.ui.code.CodeLine
 import com.zoonk.android.ui.code.CodeLineText
 import com.zoonk.android.ui.code.CodeLineTone
 import com.zoonk.android.ui.code.highlightCode
+import com.zoonk.android.ui.code.rememberSpokenCode
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
@@ -203,6 +204,7 @@ private fun CodePanel(
                 }
             }
         }
+        val spoken = rememberSpokenCode()
         // Editable lines are one-line fields, so the program keeps its lines' shape and scrolls.
         CodeFrame(stringResource(R.string.activities_code_code), wraps = false, stopPerLine = true) {
             lines.forEachIndexed { index, line ->
@@ -228,7 +230,13 @@ private fun CodePanel(
                         )
                     }
                 } else {
-                    CodeLine(number, digits, tone = if (isError) CodeLineTone.Error else CodeLineTone.Plain, style = style) {
+                    CodeLine(
+                        number,
+                        digits,
+                        tone = if (isError) CodeLineTone.Error else CodeLineTone.Plain,
+                        spoken = spoken.line(line, number),
+                        style = style,
+                    ) {
                         CodeLineText(highlightedLines.getOrElse(index) { emptyList() }, wraps = false, style = style)
                     }
                 }

@@ -24,6 +24,7 @@ import com.zoonk.android.ui.richtext.MarkdownText
 import com.zoonk.android.ui.richtext.MathText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkTheme
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -71,6 +72,23 @@ class ArrowKeyScrollTest {
 
     @Test
     fun `a buddy answer's code block`() = assertScrollsByKeys { MarkdownText("Here it is:\n\n```js\n$longCode\n```\n", onOpenLink = {}) }
+
+    @Test
+    fun `Home and End take a code block to either end`() {
+        compose.setContent { ZoonkTheme { Surface { Column(Modifier.padding(16.dp)) { RichText("```js\n$longCode\n```") } } } }
+        val scroller = compose.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.HorizontalScrollAxisRange))
+        val range = { scroller.fetchSemanticsNode().config[SemanticsProperties.HorizontalScrollAxisRange] }
+
+        compose.onRoot().performKeyInput { pressKey(Key.Tab) }
+        scroller.assertIsFocused()
+        compose.onRoot().performKeyInput { pressKey(Key.MoveEnd) }
+        compose.waitForIdle()
+        assertEquals(range().maxValue(), range().value())
+
+        compose.onRoot().performKeyInput { pressKey(Key.MoveHome) }
+        compose.waitForIdle()
+        assertEquals(0f, range().value())
+    }
 
     @Test
     fun `a formula`() = assertScrollsByKeys { MathText((1..40).joinToString(" + ") { "a_{$it}" }) }

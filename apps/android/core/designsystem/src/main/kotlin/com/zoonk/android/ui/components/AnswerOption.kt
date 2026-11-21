@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -193,9 +194,9 @@ private fun NumberKey(
     }
 }
 
-/** Content that keeps an option's tag under it whatever its width, as code does, so one list never puts it two ways. */
-internal object TagUnder : ParentDataModifier {
-    override fun Density.modifyParentData(parentData: Any?): Any = this@TagUnder
+/** Code as an option's words: its tag sits beside its last line when its widest line leaves room, and under it otherwise. */
+internal object CodeWords : ParentDataModifier {
+    override fun Density.modifyParentData(parentData: Any?): Any = this@CodeWords
 }
 
 @Composable
@@ -247,16 +248,21 @@ fun TagBesideOrUnder(
         val tagWidth = tagPlaceable?.width ?: 0
         val tagHeight = tagPlaceable?.height ?: 0
         val besideWidth = max(0, contentWidth - gap - tagWidth)
-        // Beside whenever the words' longest word fits there, so the options of one list never put it two ways.
+        val isCode = text?.parentData == CodeWords
+        // Beside whenever the words' longest word fits there, so the options of one list never put it two ways. Code
+        // never wraps to make room: its widest line has to fit.
         val beside =
             tagPlaceable == null || text == null ||
-                (text.parentData != TagUnder && text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth)
+                (if (isCode) text.maxIntrinsicWidth(constraints.maxHeight) else text.minIntrinsicWidth(constraints.maxHeight)) <=
+                besideWidth
         // A tag that isn't there yet holds its room only under the words; beside them it would narrow every option for nothing.
         val reservedBeside = tagReserved && beside
         val wordsWidth = if (beside && tagPlaceable != null && !reservedBeside) besideWidth else contentWidth
         val wordsPlaceable = text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
         val wordsBaseline = wordsPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
+        // Beside code, the tag sits on its last line, as it follows the last of an answer's words.
+        val tagLine = if (isCode) wordsPlaceable?.get(LastBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0 else wordsBaseline
         val keyBaseline = keyPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
         val keyY = if (keyBeside && !leadingAtTop) max(0, wordsBaseline - keyBaseline) else 0
         val contentY =
@@ -270,7 +276,7 @@ fun TagBesideOrUnder(
         val tagBaseline = tagPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
         val tagY =
             if (beside) {
-                contentY + max(0, wordsBaseline - tagBaseline)
+                contentY + max(0, tagLine - tagBaseline)
             } else {
                 max(contentY + wordsHeight, if (tagAcross) keyBottom else 0) + gap / 2
             }

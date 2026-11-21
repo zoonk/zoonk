@@ -41,9 +41,9 @@ private fun arrowStep(
 
 /**
  * Lets a keyboard scroll a region that scrolls sideways with [state], as main's scrollers do: while
- * there's more to see, the region takes focus and Left and Right move it. Compose scrolls with touch
- * and the mouse wheel but not arrow keys. [onFocus] says when the region holds focus, so it can
- * draw its focus ring.
+ * there's more to see, the region takes focus, Left and Right move it, and Home and End take it to
+ * either end. Compose scrolls with touch and the mouse wheel but not keys. [onFocus] says when the
+ * region holds focus, so it can draw its focus ring.
  */
 @Composable
 fun Modifier.arrowKeyScroll(
@@ -57,10 +57,26 @@ fun Modifier.arrowKeyScroll(
     return onFocusChanged { onFocus(it.isFocused) }
         .onKeyEvent { event ->
             val step = arrowStep(event, rtl)
-            if (step != 0) scope.launch { state.scrollBy(step * stepPx) }
-            step != 0
+            val end = endOf(event, state.maxValue)
+            when {
+                step != 0 -> scope.launch { state.scrollBy(step * stepPx) }
+                end != null -> scope.launch { state.scrollTo(end) }
+            }
+            step != 0 || end != null
         }.focusable(enabled = state.maxValue > 0)
 }
+
+/** Home's or End's scroll position; a scroll's 0 is its start in either direction. */
+private fun endOf(
+    event: KeyEvent,
+    max: Int,
+): Int? =
+    when {
+        event.type != KeyEventType.KeyDown -> null
+        event.key == Key.MoveHome -> 0
+        event.key == Key.MoveEnd -> max
+        else -> null
+    }
 
 /** How a region scrolled by [arrowKeyScroll] shows it holds focus: a ring on its [shape]. */
 @Composable

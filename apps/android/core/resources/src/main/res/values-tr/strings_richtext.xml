@@ -2,6 +2,12 @@
 <!-- eloqnt-fingerprints-v1
 {
   "richtext_code": "18379e12f04d6cd8f949616a3c13c930335b8050a857c489ed7fdca379a45ca9",
+  "richtext_code_indented": "ddfc87f2e62f1846b024ad1d1ebed8845fd7266c890276f45f3df91ec96c39b9",
+  "richtext_code_line": "c8b68a86d4ee75fd34e3a65b9281320f905b98bd83af58f51016eaf1488c7ea2",
+  "richtext_code_line_blank": "708fd1e4599880b573afbe24b172764e3409f424dbf95b1716c2cc9ad0920c6c",
+  "richtext_code_line_indented": "78a12b927a84cc43d76114511c93194c8177ca7174ed97eef1e58112e714e44c",
+  "richtext_code_spaces": "b6a115f4bae8257b2b3ee1cd4ad7b1bcd06191ed2cfc0a943b1251c97442f3cd",
+  "richtext_code_tabs": "04c796914a9e1c6414b6b9b490216fe9d1be8deb217ba6de06e973377cec4620",
   "richtext_math_bar": "d9a8584051d97e70946fe9311700600efe618b22fec456a6b7aa9ad763fac7e5",
   "richtext_math_cube_root": "d46dc551542a6885067d365a7baf2a567db0c9aa475aae2b5f44e701ed4b9578",
   "richtext_math_cubed": "6bfa548cade12f11df451231a8bd8ddd20dbd7b05ded71c0f60340c6bbc91d42",
@@ -20,6 +26,24 @@
 <resources>
     <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
     <string name="richtext_code">Kod</string>
+    <!-- Read by screen readers for a line of a program: its number, then its code as written. -->
+    <string name="richtext_code_line">Satır %1$d: %2$s</string>
+    <!-- Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_line_indented">Satır %1$d, %2$s girintili: %3$s</string>
+    <!-- Read by screen readers for an empty line of a program. -->
+    <string name="richtext_code_line_blank">Satır %1$d: boş</string>
+    <!-- Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_indented">%1$s girintili: %2$s</string>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”. -->
+    <plurals name="richtext_code_spaces">
+        <item quantity="one">%d boşluk</item>
+        <item quantity="other">%d boşluk karakteri</item>
+    </plurals>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”. -->
+    <plurals name="richtext_code_tabs">
+        <item quantity="one">%d sekme</item>
+        <item quantity="other">%d sekme karakteri</item>
+    </plurals>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">karesi</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->
