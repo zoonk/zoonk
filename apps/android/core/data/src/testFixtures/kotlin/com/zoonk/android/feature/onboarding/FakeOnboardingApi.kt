@@ -16,6 +16,7 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
@@ -153,7 +154,7 @@ class FakeOnboardingApi : OnboardingApi {
     var refusal: ApiException? = null
     var events: Flow<GenerationEvent> = flowOf()
     val generationSessions = mutableListOf<AuthenticatedSession?>()
-    val understandCalls = mutableListOf<Pair<String, String>>()
+    val understandCalls = mutableListOf<GoalUnderstandingInput>()
     val drafts = mutableListOf<String>()
     val created = mutableListOf<GoalCreateInput>()
     val fromPlans = mutableListOf<Pair<String, PlanLinkStartInput>>()
@@ -161,13 +162,12 @@ class FakeOnboardingApi : OnboardingApi {
 
     override suspend fun understand(
         session: AuthenticatedSession,
-        goal: String,
-        language: String,
+        input: GoalUnderstandingInput,
     ): OnboardingDraft {
         sessions += session
-        understandCalls += goal to language
+        understandCalls += input
         refusal?.let { throw it }
-        return understood(goal)
+        return understood(input.goal)
     }
 
     override suspend fun draft(

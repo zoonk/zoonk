@@ -28,6 +28,7 @@ import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
@@ -177,9 +178,19 @@ class OnboardingStore(
     suspend fun sendGoal(
         goal: String,
         language: String,
+        sourceIds: List<UUID>? = null,
+        materialIntent: GoalUnderstandingInput.MaterialIntent? = null,
     ): WriteOutcome<OnboardingDraft> {
         startAsGuest()?.let { return it }
-        return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, goal, language) }
+        val input =
+            GoalUnderstandingInput(
+                goal = goal,
+                language = language,
+                materialIntent = materialIntent,
+                sourceIds = sourceIds,
+                timeZone = TimeZone.getDefault().id,
+            )
+        return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, input) }
             .also {
                 if (it is WriteOutcome.Done) sent += it.value.id.toString()
                 unfinishedGoal.invalidate()

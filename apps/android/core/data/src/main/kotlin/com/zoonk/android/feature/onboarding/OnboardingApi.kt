@@ -73,8 +73,7 @@ class PickedFile(
 interface OnboardingApi {
     suspend fun understand(
         session: AuthenticatedSession,
-        goal: String,
-        language: String,
+        input: GoalUnderstandingInput,
     ): OnboardingDraft
 
     suspend fun draft(
@@ -262,13 +261,8 @@ class LiveOnboardingApi(
 ) : OnboardingApi {
     override suspend fun understand(
         session: AuthenticatedSession,
-        goal: String,
-        language: String,
-    ) = perform {
-        api.clients(session).onboarding.createGoalUnderstanding(
-            GoalUnderstandingInput(goal = goal, language = language, timeZone = TimeZone.getDefault().id),
-        )
-    }
+        input: GoalUnderstandingInput,
+    ) = perform { api.clients(session).onboarding.createGoalUnderstanding(input) }
 
     override suspend fun draft(
         session: AuthenticatedSession,

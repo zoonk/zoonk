@@ -28,11 +28,13 @@ import com.zoonk.android.feature.onboarding.goalLimitReason
 import com.zoonk.android.feature.onboarding.startError
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalUnderstanding
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 enum class MaterialIntent { Exam, Understand, Questions }
@@ -271,14 +273,21 @@ class StartGoalViewModel(
         language: String,
     ) {
         if (isSending) return
+        val sourceIds = flow.attached.map { UUID.fromString(it.id) }.ifEmpty { null }
+        val materialIntent =
+            when (flow.intent.takeIf { sourceIds != null }) {
+                MaterialIntent.Exam -> GoalUnderstandingInput.MaterialIntent.EXAM
+                MaterialIntent.Understand -> GoalUnderstandingInput.MaterialIntent.UNDERSTAND
+                MaterialIntent.Questions, null -> null
+            }
         isSending = true
-        val attempt = AnalyticsEvent.GoalTyped(hasAttachment = flow.attached.isNotEmpty())
+        val attempt = AnalyticsEvent.GoalTyped(hasAttachment = sourceIds != null)
         analytics.track(attempt)
         draftId?.let(store::forgetSent)
         entryError = null
         update { it.copy(screen = StartScreen.Sending(goal), waitStartedAt = attempt.submittedAt, attemptId = attempt.attemptId) }
         viewModelScope.launch {
-            val outcome = store.sendGoal(goal, language)
+            val outcome = store.sendGoal(goal, language, sourceIds, materialIntent)
             isSending = false
             when (outcome) {
                 is WriteOutcome.Done -> {
@@ -304,6 +313,11 @@ class StartGoalViewModel(
     }
 
     fun backToEntry(words: String) = showEntry(words)
+
+    fun editDraft(draft: OnboardingDraft) {
+        restoreDraftMaterial(draft)
+        showEntry(draft.prompt)
+    }
 
     /**
      * Another learner, or none, sees nothing of this one's words, material or answers. A guest who
@@ -409,9 +423,23 @@ class StartGoalViewModel(
     }
 
     fun rewrite(
+        draft: OnboardingDraft,
         words: String,
         language: String,
-    ) = send(words, language)
+    ) {
+        restoreDraftMaterial(draft)
+        send(words, language)
+    }
+
+    private fun restoreDraftMaterial(draft: OnboardingDraft) {
+        val intent =
+            when (draft.materialIntent) {
+                OnboardingDraft.MaterialIntent.EXAM -> MaterialIntent.Exam
+                OnboardingDraft.MaterialIntent.UNDERSTAND -> MaterialIntent.Understand
+                null -> null
+            }
+        update { it.copy(attached = draft.sources.map { source -> AttachedSource(source.id.toString(), source.title) }, intent = intent) }
+    }
 
     fun confirm(input: GoalCreateInput) = create(input, GoalOpens.Setup)
 
