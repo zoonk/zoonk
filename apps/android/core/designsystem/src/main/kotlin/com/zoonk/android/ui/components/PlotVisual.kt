@@ -286,15 +286,28 @@ private class PlotGeometry(
     val yTicks = axes.second.ticks.map { PlotTick(it, text.label(formatAmount(it, text.locale, compact = compactY))) }
     val left = (yTicks.maxOfOrNull { it.label.size.width } ?: 0) + gap
 
-    /** Reference names sit past the plot's right edge, so they never cover the data. */
+    /**
+     * Reference names sit past the plot's right edge, so they never cover the data. They wrap to a
+     * share of the width, but never narrower than their longest word, which would break inside it.
+     */
     private val room =
-        visual.references
-            .maxOfOrNull {
-                text
-                    .label(it.label)
-                    .size.width
-                    .toFloat()
-            }?.let { min(it, width * MAX_GUTTER_SHARE) } ?: 0f
+        visual.references.takeIf { it.isNotEmpty() }?.let { references ->
+            val widest =
+                references.maxOf {
+                    text
+                        .label(it.label)
+                        .size.width
+                        .toFloat()
+                }
+            val word =
+                references.flatMap { it.label.split(' ') }.maxOf {
+                    text
+                        .label(it)
+                        .size.width
+                        .toFloat()
+                }
+            min(widest, max(width * MAX_GUTTER_SHARE, word))
+        } ?: 0f
     val plotRight = max(width - if (room > 0) room + gap else with(text.density) { CHART_PLOT_END.toPx() }, left + 1)
 
     val x = LinearScale(axes.first.domain, left to plotRight)
