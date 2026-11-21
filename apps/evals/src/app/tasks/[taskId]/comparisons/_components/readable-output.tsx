@@ -129,8 +129,11 @@ function Prose({ marks, text }: { marks: OutputMark[]; text: string }) {
   );
 }
 
-function FieldLabel({ children }: { children: string }) {
-  return <p className="text-muted-foreground text-xs">{children}</p>;
+/** A group's label (a list or a set of fields) is set apart from the labels of the fields inside it. */
+function FieldLabel({ children, group }: { children: string; group: boolean }) {
+  return (
+    <p className={cn("text-xs", group ? "font-medium" : "text-muted-foreground")}>{children}</p>
+  );
 }
 
 function Fields({
@@ -177,7 +180,9 @@ function Fields({
 
         return (
           <div className="flex flex-col gap-1" key={key}>
-            <FieldLabel>{humanizeKey(key)}</FieldLabel>
+            <FieldLabel group={isRecord(value) || Array.isArray(value)}>
+              {humanizeKey(key)}
+            </FieldLabel>
             <Value marks={marks} value={value} />
           </div>
         );
