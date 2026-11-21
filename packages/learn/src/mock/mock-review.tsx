@@ -1,6 +1,6 @@
 "use client";
 
-import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
+import { type MockReviewEntry, type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import {
   Collapsible,
@@ -32,6 +32,7 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
+import { useMockQuestionLabel, useMockSectionTitle } from "./mock-labels";
 
 function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
   const { answerText } = useTrueFalseLabels(labels);
@@ -54,12 +55,14 @@ function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: True
 }
 
 /** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
-function useEntryFacts() {
+function useEntryFacts(section: MockSectionView | undefined) {
   const t = useExtracted();
+  const title = useMockSectionTitle();
+  const label = useMockQuestionLabel();
 
   return (entry: MockReviewEntry): (string | null)[] => [
-    t("Question {number}", { number: String(entry.number) }),
-    entry.area,
+    label({ number: entry.number, total: entry.total }),
+    section ? title(section) : entry.area,
     { blank: t("Blank"), partial: t("Partly right"), wrong: null }[entry.outcome],
   ];
 }
@@ -92,8 +95,16 @@ function ReviewEntryBody({ entry, labels }: { entry: MockReviewEntry; labels: Tr
   );
 }
 
-function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
-  const facts = useEntryFacts();
+function ReviewEntry({
+  entry,
+  labels,
+  section,
+}: {
+  entry: MockReviewEntry;
+  labels: TrueFalseLabels;
+  section: MockSectionView | undefined;
+}) {
+  const facts = useEntryFacts(section);
 
   return (
     <li data-slot="mock-review-entry">
@@ -123,9 +134,11 @@ function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFa
  */
 export function MockReview({
   review,
+  sections,
   trueFalseLabels,
 }: {
   review: readonly MockReviewEntry[];
+  sections: readonly MockSectionView[];
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
@@ -145,7 +158,12 @@ export function MockReview({
       <ListGroup>
         <ol>
           {review.map((entry) => (
-            <ReviewEntry entry={entry} key={entry.itemId} labels={trueFalseLabels} />
+            <ReviewEntry
+              entry={entry}
+              key={entry.itemId}
+              labels={trueFalseLabels}
+              section={sections.length > 1 ? sections[entry.section] : undefined}
+            />
           ))}
         </ol>
       </ListGroup>

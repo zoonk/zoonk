@@ -230,7 +230,8 @@ struct MockResultView: View {
   private var reviewSections: some View {
     if !view.review.isEmpty {
       MockReviewSection(
-        items: view.review, labels: view.trueFalseLabels, opened: $choices.opened)
+        items: view.review, labels: view.trueFalseLabels, sections: view.sections,
+        opened: $choices.opened)
     }
 
   }
@@ -1252,6 +1253,7 @@ private struct MockReviewSection: View {
 
   let items: [MockReviewItem]
   let labels: PracticeTrueFalseLabels
+  let sections: [MockSection]
   @Binding var opened: Set<String>
 
   var body: some View {
@@ -1313,11 +1315,14 @@ private struct MockReviewSection: View {
       case .wrong: nil
       }
 
-    return [
-      String(localized: "Question \(item.number)", table: "Mock", comment: "A question by number"),
-      item.area, outcome,
-    ]
-    .compactMap { $0 }
+    let place =
+      item.total.map { String(localized: MockLabels.questionPlace(number: item.number, total: $0)) }
+      ?? String(
+        localized: "Question \(item.number)", table: "Mock", comment: "A question by number")
+    let section = item.section.flatMap { index in
+      sections.count > 1 ? sections.first { $0.index == index } : nil
+    }
+    return [place, section.map(MockLabels.sectionTitle) ?? item.area, outcome].compactMap { $0 }
   }
 }
 

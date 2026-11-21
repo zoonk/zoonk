@@ -64,8 +64,9 @@ internal fun currentSection(
     drafts: String = "",
     deadline: String = "${Clock.System.now() + 1.hours}",
     kind: String = "null",
+    questionTotal: Int? = null,
 ) =
-    """{"changesLeft":null,"deadline":"$deadline","drafts":[$drafts],"kind":$kind,"plays":[],"questions":[$questions],"resume":0,"section":$section}"""
+    """{"changesLeft":null,"deadline":"$deadline","drafts":[$drafts],"kind":$kind,"plays":[],"questionTotal":$questionTotal,"questions":[$questions],"resume":0,"section":$section}"""
 
 /** A running mock whose first section moves by [navigation], main's section rules. */
 internal fun navigatedMock(navigation: String) =
@@ -81,7 +82,12 @@ internal const val A_MINUTE_EACH = """{"answerChanges":null,"forwardOnly":true,"
 /** The second section, as the mock reads once the first is handed in. */
 internal fun secondSection() =
     runningMock(
-        current = currentSection(section = 1, questions = question(ITEM_THREE, 3, "Which word is a noun?", listOf("run", "house"))),
+        current =
+            currentSection(
+                section = 1,
+                questions = question(ITEM_THREE, 1, "Which word is a noun?", listOf("run", "house")),
+                questionTotal = 1,
+            ),
         extra =
             """"sections":[{"breakAfterMinutes":null,"essays":0,"index":0,"minutes":30,"name":"Mathematics","navigation":null,"questions":2,"status":"done","tools":null},
             {"breakAfterMinutes":null,"essays":0,"index":1,"minutes":30,"name":"Languages","navigation":null,"questions":1,"status":"current","tools":null}]""",

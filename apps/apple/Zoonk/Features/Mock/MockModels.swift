@@ -120,6 +120,7 @@ struct MockCurrent: Hashable, Decodable, Sendable {
   var drafts: [MockDraft]
   var kind: Kind?
   var plays: [Plays]
+  var questionTotal: Int?
   var questions: [MockQuestion]
   var resume: Int
   var section: Int
@@ -338,6 +339,8 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   var number: Int
   var outcome: Outcome
   var question: String
+  var section: Int?
+  var total: Int?
 
   var id: String { itemId }
 }

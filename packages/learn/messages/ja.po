@@ -7988,6 +7988,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "解答を続ける"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "セクション{number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "第{number}問（全{total}問） · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "第{number}問（全{total}問）"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8174,16 +8189,6 @@ msgstr "記述問題 · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "記述問題"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "第{number}問（全{total}問） · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "第{number}問（全{total}問）"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8547,12 +8552,6 @@ msgid "After this mock exam"
 msgstr "今回の模試のあと"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "第{number}問"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "見直す問題"
@@ -8615,11 +8614,6 @@ msgstr "回答は保存されています。"
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "提出済み"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "セクション{number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8719,6 +8713,11 @@ msgstr "いちばん得意なのは{best}です。"
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "{worst}に力を入れましょう。"
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "第{number}問"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts

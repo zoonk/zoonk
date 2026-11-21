@@ -39,6 +39,7 @@ export type MockCurrentSection = {
   drafts: MockDraft[];
   kind: "listening" | "speaking" | null;
   plays: { played: number; setId: string }[];
+  questionTotal: number;
   questions: MockQuestion[];
   resume: number;
   section: number;
@@ -69,6 +70,8 @@ export type MockReviewEntry = {
   number: number;
   outcome: "blank" | "partial" | "wrong";
   question: string;
+  section: number;
+  total: number;
 };
 
 export type MockEssayView = {

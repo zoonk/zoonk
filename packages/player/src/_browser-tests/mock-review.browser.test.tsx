@@ -16,7 +16,9 @@ function entry(overrides: Partial<MockReviewEntry> & { number: number }): MockRe
     learnerAnswer: "The picked option",
     outcome: "wrong",
     question: `What does question ${overrides.number} ask?`,
+    section: 0,
     set: null,
+    total: 10,
     ...overrides,
   };
 }
@@ -36,19 +38,19 @@ function top(number: number): number {
 
 describe("a mock exam's questions to review", () => {
   it("lists every missed question as a closed row, with how many there are", async () => {
-    render(<MockReview review={REVIEW} trueFalseLabels="trueFalse" />);
+    render(<MockReview review={REVIEW} sections={[]} trueFalseLabels="trueFalse" />);
 
     const list = page.getByRole("region", { name: "Questions to review" });
 
     await expect.element(list.getByRole("listitem")).toHaveLength(REVIEW.length);
     await expect.element(list.getByText("3", { exact: true })).toBeVisible();
     await expect.element(row(4)).toHaveAttribute("aria-expanded", "false");
-    expect(row(4).element().textContent).toMatch(/Question 4.+Languages$/u);
+    expect(row(4).element().textContent).toMatch(/Question 4 of 10.+Languages$/u);
     await expect.element(page.getByText("Why question 4 went wrong.")).not.toBeInTheDocument();
   });
 
   it("opens a row in place to its passage, both answers and why, moving no row above it", async () => {
-    render(<MockReview review={REVIEW} trueFalseLabels="trueFalse" />);
+    render(<MockReview review={REVIEW} sections={[]} trueFalseLabels="trueFalse" />);
 
     await expect.element(row(7)).toBeVisible();
     const before = { first: top(4), pressed: top(7) };
@@ -68,7 +70,7 @@ describe("a mock exam's questions to review", () => {
   });
 
   it("says on its row that a question was left blank, and shows only the right answer", async () => {
-    render(<MockReview review={REVIEW} trueFalseLabels="trueFalse" />);
+    render(<MockReview review={REVIEW} sections={[]} trueFalseLabels="trueFalse" />);
 
     await expect.element(row(9)).toBeVisible();
 
@@ -84,7 +86,9 @@ describe("a mock exam's questions to review", () => {
   });
 
   it("draws nothing when every answer was right", async () => {
-    const { container } = render(<MockReview review={[]} trueFalseLabels="trueFalse" />);
+    const { container } = render(
+      <MockReview review={[]} sections={[]} trueFalseLabels="trueFalse" />,
+    );
 
     expect(container).toBeEmptyDOMElement();
   });

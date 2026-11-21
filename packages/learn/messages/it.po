@@ -7988,6 +7988,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Continua a rispondere"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Sezione {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Domanda {number} di {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Domanda {number} di {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8174,16 +8189,6 @@ msgstr "Parte scritta · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Parte scritta"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Domanda {number} di {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Domanda {number} di {total}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8547,12 +8552,6 @@ msgid "After this mock exam"
 msgstr "Dopo questa simulazione"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Domanda {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Domande da rivedere"
@@ -8615,11 +8614,6 @@ msgstr "Abbiamo salvato le tue risposte."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Consegnata"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Sezione {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8719,6 +8713,11 @@ msgstr "Punto forte: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Da migliorare: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Domanda {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
