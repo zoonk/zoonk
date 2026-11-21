@@ -20,6 +20,7 @@ import {
   readTextLines,
   showMarks,
 } from "./press-probe.mts";
+import { screenshot } from "./screenshot.mts";
 import { type Action, type Comparison, snapshotLayout } from "./states-probe.mts";
 
 /**
@@ -69,7 +70,7 @@ export function pressWalk(
     await mkdir(folder, { recursive: true });
     const file = join(folder, `${String(number).padStart(PICTURE_DIGITS, "0")}-${name}.png`);
     await page.evaluate(showMarks, { on: true, targetId });
-    await page.screenshot({ animations: "disabled", path: file, scale: "css" }).catch(() => null);
+    await screenshot(page, { path: file, scale: "css" }).catch(() => null);
     await page.evaluate(showMarks, { on: false, targetId });
     return file;
   }
