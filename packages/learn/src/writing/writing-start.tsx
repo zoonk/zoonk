@@ -21,8 +21,6 @@ import { type TomorrowTask } from "./writing-types";
 
 type WritingUnit = NonNullable<TomorrowTask["unit"]>;
 
-export { type WritingTaskPlace, getRefusedTaskPlace } from "./writing-header";
-
 export type WritingStartState =
   | { generationId: string; unit?: WritingUnit }
   | { status: "failed" | "signUpRequired" | "taskRemoved" | "unasked" }
