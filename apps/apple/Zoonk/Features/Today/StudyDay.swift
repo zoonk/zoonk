@@ -240,6 +240,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case unknown
   }
 
+  /// Whether the exam that leaves the optional study out has an official guide.
+  enum SubjectExtra: String, Decodable, Hashable, Sendable {
+    case notice
+    case optional
+  }
+
   struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
@@ -288,6 +294,9 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let screen: Screen
   var status: Status
   let subject: String?
+  /// Set on a lesson of the exam's optional study, such as its strategy, which the row names
+  /// instead of a subject.
+  let subjectExtra: SubjectExtra?
   let title: String?
   let topics: [String]
   let waitReason: WaitReason?

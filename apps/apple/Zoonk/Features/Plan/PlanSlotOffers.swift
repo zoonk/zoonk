@@ -580,19 +580,22 @@ struct PlanCoverageSlot: View {
   }
 }
 
-/// Main's fit offer: more lessons fit the learner's time. The tap checks today's numbers: the
-/// same ones apply, other ones show with "Your plan changed since you saw this. Here's what it does now." and the next tap
-/// applies them.
-struct PlanFitSlot: View {
+/// Main's fit and optional-study offers: a change that fits the learner's time. The tap checks
+/// today's numbers: the same ones apply, other ones show with "Your plan changed since you saw
+/// this. Here's what it does now." and the next tap applies them.
+struct PlanOfferSlot: View {
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
-  let offer: GoalPlan.FitOffer
+  let item: PlanSlotItem
+  let offer: GoalPlan.Offer
   let title: Text
+  /// Facts under the title, which then say what the change does until today's numbers differ.
+  var facts: [String] = []
   let actions: PlanSlotActions
 
   private var check: PlanSlotCheck {
-    context.slotCheck(.fitLessons)
+    context.slotCheck(item)
   }
 
   var body: some View {
@@ -600,9 +603,17 @@ struct PlanFitSlot: View {
     let unchanged = repriced?.unchanged == true
 
     PlanSlotCard(title: title, mark: .sparkle, description: nil) {
-      PlanEffectDiff(
-        effect: unchanged ? nil : repriced?.effect ?? offer.effect, today: context.plan.today,
-        options: context.changeOptions, repriced: repriced != nil, saysLessonsAdded: true)
+      if !facts.isEmpty {
+        FactSegments(facts)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if facts.isEmpty || repriced != nil {
+        PlanEffectDiff(
+          effect: unchanged ? nil : repriced?.effect ?? offer.effect, today: context.plan.today,
+          options: context.changeOptions, repriced: repriced != nil, saysLessonsAdded: true)
+      }
 
       if check.failed {
         SuggestionSaveError()
@@ -639,7 +650,7 @@ struct PlanFitSlot: View {
 
     let landing: ([PlanEdit]) -> Void = { [actions] edits in check.land { actions.apply(edits) } }
 
-    switch await store.addFitOffer(offer, goalId: context.goal.id, apply: landing) {
+    switch await store.addOffer(offer, goalId: context.goal.id, apply: landing) {
     case .repriced(let repriced): check.repriced = repriced
     case .failed: check.failed = true
     case .applied, nil: break
@@ -648,7 +659,7 @@ struct PlanFitSlot: View {
 }
 
 /// What "Add to plan" found.
-enum FitOfferCheck: Equatable {
+enum OfferCheck: Equatable {
   /// Today's numbers are the offer's, so its edits were applied.
   case applied
   /// Other numbers, shown before the next tap applies them.
@@ -659,9 +670,9 @@ enum FitOfferCheck: Equatable {
 extension PlanStore {
   /// Checks the offer against today's numbers and applies its edits when they're the same. Nil when
   /// the check was canceled, as a dismissed suggestion's is: then nothing is applied.
-  func addFitOffer(
-    _ offer: GoalPlan.FitOffer, goalId: String, apply: ([PlanEdit]) -> Void
-  ) async -> FitOfferCheck? {
+  func addOffer(
+    _ offer: GoalPlan.Offer, goalId: String, apply: ([PlanEdit]) -> Void
+  ) async -> OfferCheck? {
     let edits = offer.operations.map { PlanEdit.operation($0) }
     let result = await ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
@@ -755,8 +766,8 @@ final class PlanSlotChecks {
   }
 }
 
-/// The fit offer's numbers today, when they aren't the offer's, with the edits they're for: the
-/// next tap applies those edits.
+/// An offer's numbers today, when they aren't the offer's, with the edits they're for: the next
+/// tap applies those edits.
 struct PlanSlotRepriced: Equatable {
   let edits: [PlanEdit]
   let preview: PlanChangePreview
@@ -767,7 +778,7 @@ struct PlanSlotRepriced: Equatable {
 final class PlanSlotCheck {
   /// The change a tap worked out, asked before it applies.
   var asked: PlanSlotAskedChange?
-  /// The fit offer's numbers today, when they aren't the offer's.
+  /// An offer's numbers today, when they aren't the offer's.
   var repriced: PlanSlotRepriced?
   var isWorking = false
   var failed = false

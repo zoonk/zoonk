@@ -229,7 +229,9 @@ extension StudyBlock {
           comment: "A practice block's questions")
     }
 
-    return subject
+    // Today doesn't know which document an exam has; an exam's notice is by far the usual one.
+    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: .notice) }
+      ?? subject
   }
 }
 
