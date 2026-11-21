@@ -103,9 +103,7 @@ export function toKeptItem({
   };
 }
 
-export type KeptLessons = { chapterId: string | null; lessons: number; skillId: string };
-
-export function listKeptLessons({
+export function countKeptLessons({
   gaps = new Set(),
   kept,
   lessons,
@@ -115,8 +113,8 @@ export function listKeptLessons({
   kept: readonly ExistingPlanItem[];
   lessons: readonly QueueUnit[];
   units: ReadonlyMap<string, QueueUnit>;
-}): KeptLessons[] {
-  return [
+}): Map<string, number> {
+  const counted = [
     ...kept.flatMap((item) =>
       item.kind === "lesson" &&
       item.skillId &&
@@ -124,21 +122,16 @@ export function listKeptLessons({
       !(item.status === "testedOut" && gaps.has(item.skillId))
         ? [
             {
-              chapterId: item.chapterId,
               lessons: item.lessonId ? 1 : (units.get(getItemKey(item))?.lessons ?? 1),
               skillId: item.skillId,
             },
           ]
         : [],
     ),
-    ...lessons.flatMap((unit) =>
-      unit.skillId ? [{ chapterId: unit.chapterId, lessons: 1, skillId: unit.skillId }] : [],
-    ),
+    ...lessons.flatMap((unit) => (unit.skillId ? [{ lessons: 1, skillId: unit.skillId }] : [])),
   ];
-}
 
-export function countKeptLessons(kept: readonly KeptLessons[]): Map<string, number> {
-  return kept.reduce(
+  return counted.reduce(
     (counts, entry) => counts.set(entry.skillId, (counts.get(entry.skillId) ?? 0) + entry.lessons),
     new Map<string, number>(),
   );

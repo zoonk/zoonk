@@ -49,11 +49,17 @@ function topicsOf(units: readonly QueueUnit[]): string {
   return units.map((unit) => (unit.kind === "boss" ? "|" : unit.skillId)).join("");
 }
 
+/** The units left once `done` lessons are finished, laid out from the whole order. */
+function replay(order: readonly QueueUnit[], done: readonly string[]): (string | null)[] {
+  const units = order.filter((unit) => !unit.lessonId || !done.includes(unit.lessonId));
+  return rotateTopics({ order, prerequisites: new Map(), units }).map((unit) => unit.lessonId);
+}
+
 describe(rotateTopics, () => {
   it("takes turns of two lessons between three topics, each staying for one chapter", () => {
     const units = ["a", "b", "c", "d"].map((skillId) => standIn(skillId, 20));
 
-    const order = topicsOf(rotateTopics({ kept: [], prerequisites: new Map(), units }));
+    const order = topicsOf(rotateTopics({ order: units, prerequisites: new Map(), units }));
 
     expect(order.slice(0, 30)).toBe("aabbccaabbccaabbccaabbccaabbcc");
     expect(order.slice(30, 42)).toBe("ddaabbddaabb");
@@ -69,7 +75,7 @@ describe(rotateTopics, () => {
       ...written("d", 1, 6),
     ];
 
-    const order = topicsOf(rotateTopics({ kept: [], prerequisites: new Map(), units }));
+    const order = topicsOf(rotateTopics({ order: units, prerequisites: new Map(), units }));
 
     expect(order.slice(0, 14)).toBe("aabbccaabbccdd");
   });
@@ -77,26 +83,46 @@ describe(rotateTopics, () => {
   it("keeps each topic's lessons in their own order", () => {
     const units = [...written("a", 1, 3), ...written("a", 2, 3, 4), ...written("b", 1, 2)];
 
-    const placed = rotateTopics({ kept: [], prerequisites: new Map(), units });
+    const placed = rotateTopics({ order: units, prerequisites: new Map(), units });
 
     expect(
       placed.filter((unit) => unit.skillId === "a").map((unit) => unit.lessonId),
     ).toStrictEqual(["a1", "a2", "a3", "a4", "a5", "a6"]);
   });
 
+  const fourChapters = ["a", "b", "c", "d"].flatMap((skillId) => written(skillId, 1, 10));
+
   it("resumes the same turns after a re-plan, counting the lessons already done", () => {
-    const units = [
-      ...written("a", 1, 9, 2),
-      ...written("b", 1, 10),
-      ...written("c", 1, 10),
-      ...written("d", 1, 10),
-    ];
+    expect(replay(fourChapters, ["a1"]).slice(0, 6)).toStrictEqual([
+      "a2",
+      "b1",
+      "b2",
+      "c1",
+      "c2",
+      "a3",
+    ]);
+  });
 
-    const done = [{ chapterId: "a-ch1", lessons: 1, skillId: "a" }];
+  it("gives the next topic its turn after finished turns, so no topic waits for a re-plan", () => {
+    expect(replay(fourChapters, ["a1", "a2", "b1", "b2"]).slice(0, 4)).toStrictEqual([
+      "c1",
+      "c2",
+      "a3",
+      "a4",
+    ]);
+  });
 
-    const placed = rotateTopics({ kept: done, prerequisites: new Map(), units });
+  it("keeps a finished topic's place in the turns", () => {
+    const short = ["a", "b", "c", "d"].flatMap((skillId) => written(skillId, 1, 4));
 
-    expect(placed.slice(0, 7).map((unit) => unit.lessonId)).toStrictEqual([
+    expect(
+      replay(short, ["a1", "a2", "b1", "b2", "c1", "c2", "a3", "a4"]).slice(0, 6),
+    ).toStrictEqual(["b3", "b4", "c3", "c4", "d1", "d2"]);
+  });
+
+  it("takes a lesson studied ahead out of its own turn only", () => {
+    expect(replay(fourChapters, ["b5"]).slice(0, 8)).toStrictEqual([
+      "a1",
       "a2",
       "b1",
       "b2",
@@ -107,29 +133,11 @@ describe(rotateTopics, () => {
     ]);
   });
 
-  it("gives the next topic its turn after finished turns, so no topic waits for a re-plan", () => {
-    const units = [
-      ...written("a", 1, 8, 3),
-      ...written("b", 1, 8, 3),
-      ...written("c", 1, 10),
-      ...written("d", 1, 10),
-    ];
-
-    const done = [
-      { chapterId: "a-ch1", lessons: 2, skillId: "a" },
-      { chapterId: "b-ch1", lessons: 2, skillId: "b" },
-    ];
-
-    const order = topicsOf(rotateTopics({ kept: done, prerequisites: new Map(), units }));
-
-    expect(order.slice(0, 6)).toBe("ccaabb");
-  });
-
   it("opens a topic only once each topic it builds on has had its first stay", () => {
     const units = ["a", "b", "c", "d"].map((skillId) => standIn(skillId, 20));
     const prerequisites = new Map([["b", ["a"]]]);
 
-    const order = topicsOf(rotateTopics({ kept: [], prerequisites, units }));
+    const order = topicsOf(rotateTopics({ order: units, prerequisites, units }));
 
     expect(order.slice(0, 12)).toBe("aaccddaaccdd");
     expect(order.indexOf("b")).toBeGreaterThan(order.indexOf("a") + 9);
@@ -145,7 +153,7 @@ describe(rotateTopics, () => {
       boss(1),
     ];
 
-    const order = topicsOf(rotateTopics({ kept: [], prerequisites: new Map(), units }));
+    const order = topicsOf(rotateTopics({ order: units, prerequisites: new Map(), units }));
 
     expect(order).toBe("aabbaabb|ccddccdd|");
   });

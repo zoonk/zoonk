@@ -1332,6 +1332,34 @@ describe("language plans", () => {
     ]);
   });
 
+  it("keeps a finished situation's place in the turns after a re-plan", () => {
+    const input = {
+      ...writtenSituations(),
+      lessons: ["order", "work", "plans", "directions"].flatMap((skillId) =>
+        writtenLessons(skillId, 1, 4),
+      ),
+    };
+
+    const first = buildPlan(input);
+    const firstEight = todoLessonItems(first).slice(0, 8);
+    const done = new Set(firstEight.map((item) => item.key));
+
+    const items = store(first, done).map((item) =>
+      item.status === "done" ? { ...item, completedAt: item.scheduledFor } : item,
+    );
+
+    const next = todoLessonItems(buildPlan({ ...input, items, mode: "forced" })).slice(0, 6);
+
+    expect(next.map((item) => item.lessonId)).toStrictEqual([
+      "work-3",
+      "work-4",
+      "plans-3",
+      "plans-4",
+      "directions-1",
+      "directions-2",
+    ]);
+  });
+
   it("keeps the same turns when the plan is made again after each lesson", () => {
     const input = writtenSituations();
 

@@ -1,5 +1,4 @@
 import { chunk } from "@zoonk/utils/chunk";
-import { type KeptLessons } from "./kept-items";
 import { isStandInUnit } from "./plan-item-rules";
 import { type QueueUnit } from "./plan-units";
 import { splitStandIns } from "./stand-in-parts";
@@ -8,61 +7,32 @@ import { CHAPTER_LESSONS } from "./stand-in-size";
 const OPEN_TOPICS = 3;
 const TURN_LESSONS = 2;
 
-/** A lesson the learner already has, kept in the replay so every re-plan resumes the same turns. */
-type Slot = QueueUnit | null;
+type Topic = { skillId: string; stays: QueueUnit[][]; stayed: number };
 
-type Topic = { skillId: string; stays: Slot[][]; stayed: number };
-
-type Stay = { slots: Slot[]; taken: number; topic: Topic };
-
-function listDone(count: number): Slot[] {
-  return Array.from({ length: count }, () => null);
-}
+type Stay = { taken: number; topic: Topic; units: QueueUnit[] };
 
 /** One stay per written chapter, then the lessons not written yet in chapter-sized stays. */
-function listStays({
-  kept,
-  units,
-}: {
-  kept: readonly KeptLessons[];
-  units: readonly QueueUnit[];
-}): Slot[][] {
-  const doneIn = (chapterId: string | null) =>
-    kept.reduce((total, entry) => total + (entry.chapterId === chapterId ? entry.lessons : 0), 0);
-
-  const unwritten = units.filter((unit) => isStandInUnit(unit));
-
+function listStays(units: readonly QueueUnit[]): QueueUnit[][] {
   const chapters = Map.groupBy(
     units.filter((unit) => !isStandInUnit(unit)),
     (unit) => unit.chapterId ?? unit.key,
   );
 
-  const finished = [
-    ...new Set(kept.flatMap((entry) => (entry.chapterId === null ? [] : [entry.chapterId]))),
-  ].filter((chapterId) => !chapters.has(chapterId));
-
   return [
-    ...finished.map((chapterId) => listDone(doneIn(chapterId))),
-    ...[...chapters].map(([chapterId, own]) => [...listDone(doneIn(chapterId)), ...own]),
-    ...chunk([...listDone(doneIn(null)), ...splitStandIns(unwritten)], CHAPTER_LESSONS),
+    ...chapters.values(),
+    ...chunk(splitStandIns(units.filter((unit) => isStandInUnit(unit))), CHAPTER_LESSONS),
   ];
 }
 
 function rotatePhase({
-  kept,
   prerequisites,
   units,
 }: {
-  kept: readonly KeptLessons[];
   prerequisites: ReadonlyMap<string, readonly string[]>;
   units: readonly QueueUnit[];
 }): QueueUnit[] {
   const topics = [...Map.groupBy(units, (unit) => unit.skillId ?? "")].map(
-    ([skillId, own]): Topic => ({
-      skillId,
-      stayed: 0,
-      stays: listStays({ kept: kept.filter((entry) => entry.skillId === skillId), units: own }),
-    }),
+    ([skillId, own]): Topic => ({ skillId, stayed: 0, stays: listStays(own) }),
   );
 
   const bySkill = new Map(topics.map((topic) => [topic.skillId, topic]));
@@ -87,7 +57,7 @@ function rotatePhase({
       }
 
       waiting.splice(waiting.indexOf(next), 1);
-      open.push({ slots: next.stays.shift() ?? [], taken: 0, topic: next });
+      open.push({ taken: 0, topic: next, units: next.stays.shift() ?? [] });
     }
   };
 
@@ -98,11 +68,11 @@ function rotatePhase({
       return 0;
     }
 
-    const turn = stay.slots.splice(0, TURN_LESSONS - (stay.taken % TURN_LESSONS));
+    const turn = stay.units.splice(0, TURN_LESSONS - (stay.taken % TURN_LESSONS));
     stay.taken += turn.length;
-    placed.push(...turn.filter((slot) => slot !== null));
+    placed.push(...turn);
 
-    if (stay.slots.length > 0) {
+    if (stay.units.length > 0) {
       return at + 1;
     }
 
@@ -126,22 +96,14 @@ function rotatePhase({
   return placed;
 }
 
-/**
- * A language phase teaches three topics at a time, two lessons each in turn, each staying for one
- * chapter before the next topic takes its place; every topic comes back on later rounds with its
- * next chapter. The order is replayed from each topic's first lesson, so a re-plan resumes the same
- * turns.
- */
-export function rotateTopics({
-  kept,
+function rotateOrder({
+  order,
   prerequisites,
-  units,
 }: {
-  kept: readonly KeptLessons[];
+  order: readonly QueueUnit[];
   prerequisites: ReadonlyMap<string, readonly string[]>;
-  units: readonly QueueUnit[];
 }): QueueUnit[] {
-  const runs = units.reduce<QueueUnit[][]>((list, unit) => {
+  const runs = order.reduce<QueueUnit[][]>((list, unit) => {
     const run = list.at(-1);
     const first = run?.[0];
     const rotates = unit.kind === "lesson" && unit.skillId !== null;
@@ -156,8 +118,31 @@ export function rotateTopics({
   }, []);
 
   return runs.flatMap((run) =>
-    run[0]?.kind === "lesson" && run[0].skillId
-      ? rotatePhase({ kept, prerequisites, units: run })
-      : run,
+    run[0]?.kind === "lesson" && run[0].skillId ? rotatePhase({ prerequisites, units: run }) : run,
   );
+}
+
+/**
+ * A language phase teaches three topics at a time, two lessons each in turn, each staying for one
+ * chapter before the next topic takes its place; every topic comes back on later rounds with its
+ * next chapter. The turns come from the plan's whole `order`, finished lessons included, so a
+ * re-plan lays `units`, what's left, out in the turns it already had.
+ */
+export function rotateTopics({
+  order,
+  prerequisites,
+  units,
+}: {
+  order: readonly QueueUnit[];
+  prerequisites: ReadonlyMap<string, readonly string[]>;
+  units: readonly QueueUnit[];
+}): QueueUnit[] {
+  const pending = Map.groupBy(splitStandIns(units), (unit) => unit.key);
+
+  const placed = rotateOrder({ order, prerequisites }).flatMap((slot) => {
+    const next = pending.get(slot.key)?.shift();
+    return next ? [next] : [];
+  });
+
+  return [...placed, ...[...pending.values()].flat()];
 }

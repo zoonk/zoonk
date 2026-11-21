@@ -8,7 +8,6 @@ import {
 import { getCadencedAreas } from "./cadenced-areas";
 import { putCoresFirst } from "./core-first";
 import { getAreasOf, getCyclePhases, getWrittenTestAreas } from "./graph-areas";
-import { type KeptLessons } from "./kept-items";
 import { keepPhaseEnds } from "./kept-phase-ends";
 import { scheduleCoresFirst } from "./least-worth-cores";
 import { type PlanGraph, type PlanSettings } from "./plan-state";
@@ -34,10 +33,11 @@ type RestInput = {
   goal: { kind: GoalKind; targetDate: Date | null };
   graph: PlanGraph;
   kept: ReadonlyMap<string, number>;
-  keptLessons: readonly KeptLessons[];
   knownSkillIds?: ReadonlySet<string>;
   missedSkillIds: ReadonlySet<string>;
   opening: { knownAreas: ReadonlySet<string>; noticeAreas: ReadonlySet<string> | null };
+  /** The plan's whole queue, finished lessons included, in teaching order. */
+  order: readonly QueueUnit[];
   phaseEnds: ReadonlyMap<number, Date>;
   planStart: Date;
   queue: {
@@ -139,7 +139,7 @@ function scheduleWith({
 
   const arrange = (list: readonly QueueUnit[]) =>
     rotates
-      ? rotateTopics({ kept: input.keptLessons, prerequisites: queue.prerequisites, units: list })
+      ? rotateTopics({ order: input.order, prerequisites: queue.prerequisites, units: list })
       : list;
 
   const whole = schedulePending(arrange(input.units));
