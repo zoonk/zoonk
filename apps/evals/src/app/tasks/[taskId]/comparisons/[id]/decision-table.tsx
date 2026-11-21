@@ -212,7 +212,7 @@ function waitCell(row: Row, percentile: "p50" | "p95") {
 function GroupRow({ label }: { label: string }) {
   return (
     <TableRow className="border-b-0">
-      <TableCell className="pt-5 font-medium whitespace-normal" colSpan={3}>
+      <TableCell className="pt-5 pb-0 font-medium whitespace-normal" colSpan={3}>
         {label}
       </TableCell>
     </TableRow>
