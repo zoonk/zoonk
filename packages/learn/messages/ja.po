@@ -13086,7 +13086,6 @@ msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "お休みを楽しんでください！"
 
-#. On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions.
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"
 msgid "Getting today's lessons ready…"
