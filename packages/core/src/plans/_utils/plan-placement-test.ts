@@ -2,8 +2,8 @@ import { readLevelTestSummary } from "../../language/level-test/read-level-test-
 import {
   getPlacementEstimate,
   placementAttemptView,
+  readPendingTopicWalkAssessmentId,
   readPlacementAttempt,
-  readReadyAssessmentId,
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
@@ -34,13 +34,8 @@ export function readPlanPlacementTest(context: PlanContext): PlanView["placement
 
   if (goal.kind === "language") {
     const summary = readLevelTestSummary(goal);
-    const readyAssessmentId = readReadyAssessmentId(goal.details);
-
-    const waitingForTopicWalk =
-      readyAssessmentId !== null && readyAssessmentId !== placement.assessmentId;
-
+    const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
     const continuing = attempt || summary.attempt || waitingForTopicWalk;
-
     const idleState = summary.result ? "result" : "start";
 
     return {

@@ -63,6 +63,14 @@ export function readReadyAssessmentId(details: unknown): string | null {
   return attempt.attemptId;
 }
 
+export function readPendingTopicWalkAssessmentId(
+  goal: { details: unknown },
+  record = readPlacementAttempt(goal),
+): string | null {
+  const assessmentId = readReadyAssessmentId(goal.details);
+  return record.assessmentId === assessmentId ? null : assessmentId;
+}
+
 export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemptView {
   const { estimatedMinutes, id, length, part, partComplete } = attempt;
   return { estimatedMinutes, id, length, part, partComplete };

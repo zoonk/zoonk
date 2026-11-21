@@ -6,6 +6,7 @@ import { getGoalsCacheTag } from "../../cache/tags";
 import { createLearnerAttempt } from "../../learner/_utils/create-learner-attempt";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { readPendingTopicWalkAssessmentId } from "../../learner/placement/_utils/placement-attempt-record";
 import { gradeSessionAnswer, parseSessionItem } from "../../sessions/_utils/session-items";
 import { pickTestOutQuestions } from "./_utils/level-test-out-items";
 import {
@@ -72,6 +73,7 @@ export async function startLanguageLevelTestOut({
 
     if (
       hasOpenLanguageTopicWalk(current) ||
+      readPendingTopicWalkAssessmentId(current) !== null ||
       (attempt && (!attempt.result || attempt.placement?.unannounced.length))
     ) {
       return unchanged(null);

@@ -6,6 +6,7 @@ import { getGoalsCacheTag } from "../../cache/tags";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { readPendingTopicWalkAssessmentId } from "../../learner/placement/_utils/placement-attempt-record";
 import { readGoalDetails } from "../_utils/language-goal";
 import { loadCurrentLanguageLevel } from "../levels/current-language-level";
 import { type LanguagePair, findBankRow, readBank } from "./_utils/level-test-bank";
@@ -76,6 +77,12 @@ export async function startLanguageLevelTest({
       (testOut && (!testOut.result || testOut.result.unannounced.length > 0))
     ) {
       return unchanged(null);
+    }
+
+    const pendingAssessment = readPendingTopicWalkAssessmentId(current);
+
+    if (pendingAssessment) {
+      return unchanged({ attemptId: pendingAssessment, opened: false });
     }
 
     if (attempt?.attemptId && (!attempt.result || attempt.placement?.unannounced.length)) {

@@ -631,6 +631,13 @@ describe("a post-start level test", () => {
     });
 
     await expect(
+      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
+    ).resolves.toMatchObject({
+      status: "ready",
+      test: { attemptId: nextAttemptId, result: { wholeCourseReady: true } },
+    });
+
+    await expect(
       prisma.languageSkillLevel.findUniqueOrThrow({ where: { id: partialWindow.id } }),
     ).resolves.toMatchObject({ windowCeiling: 4, windowCorrect: 2, windowTotal: 3 });
 
