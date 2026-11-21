@@ -1,44 +1,23 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { keepOpenSessionSelection } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
+import {
+  appendLivingPlanBatch,
+  listChangeTopics,
+  loadLivingPlanBatch,
+  mergeChangeTopics,
+} from "./_utils/living-plan-change";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { type ComputedPlan, computePlan } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 import { getSkillArea } from "./planner/graph-areas";
-import { type AreaTopics } from "./planner/plan-effect";
-import { type PlanGraph } from "./planner/plan-state";
 
 /** For logs and admin only; the apps word it from its topics. */
 const RELEARN_NOTE = "A miss in practice brought back the lessons of a topic taken as known.";
-
-function listMissedTopics({
-  graph,
-  skillIds,
-}: {
-  graph: PlanGraph;
-  skillIds: readonly string[];
-}): AreaTopics[] {
-  const missed = graph.skills.filter((skill) => skillIds.includes(skill.skillId));
-  const byArea = Map.groupBy(missed, (skill) => skill.area ?? "");
-
-  return [...byArea].map(([area, skills]) => ({
-    area,
-    topics: [...new Set(skills.map((skill) => skill.topics?.[0] ?? skill.name))],
-  }));
-}
-
-function joinTopics(missed: readonly AreaTopics[], seen: readonly AreaTopics[] = []): AreaTopics[] {
-  const byArea = new Map(missed.map((entry) => [entry.area, [...entry.topics]]));
-
-  for (const { area, topics } of seen) {
-    byArea.set(area, [...new Set([...(byArea.get(area) ?? []), ...topics])]);
-  }
-
-  return [...byArea].map(([area, topics]) => ({ area, topics }));
-}
 
 async function findTestedOutItemIds({
   context,
@@ -47,6 +26,10 @@ async function findTestedOutItemIds({
   context: PlanContext;
   skillIds: ReadonlySet<string>;
 }): Promise<Set<string>> {
+  if (skillIds.size === 0) {
+    return new Set();
+  }
+
   const testedOut = context.items.filter((item) => item.status === "testedOut");
   const lessonIds = testedOut.flatMap((item) => item.lessonId ?? []);
 
@@ -96,6 +79,10 @@ async function planWithRestored({
   return { computed, restored };
 }
 
+function recheckChangeDay(day: string | undefined) {
+  return day ? { livingPlanDay: day, todaySession: "unchanged" as const } : {};
+}
+
 function getPlannedIds({
   computed,
   ids,
@@ -114,11 +101,13 @@ function getPlannedIds({
  */
 export async function bringBackMissedLessons({
   goalId,
+  livingPlanDay,
   now,
   skillIds,
   timeZone,
 }: {
   goalId: string;
+  livingPlanDay?: string;
   now: Date;
   skillIds: readonly string[];
   timeZone: string;
@@ -145,11 +134,15 @@ export async function bringBackMissedLessons({
 
     const missed = skillIds.filter((skillId) => !takenOut.has(skillId));
 
-    if (missed.length === 0) {
+    const [ids, batch] = await Promise.all([
+      findTestedOutItemIds({ context, skillIds: new Set(missed) }),
+      livingPlanDay ? loadLivingPlanBatch({ context, day: livingPlanDay }) : null,
+    ]);
+
+    if (ids.size === 0) {
       return;
     }
 
-    const ids = await findTestedOutItemIds({ context, skillIds: new Set(missed) });
     const first = await planWithRestored({ context, ids, now });
     const plannedIds = getPlannedIds({ computed: first.computed, ids });
 
@@ -159,33 +152,69 @@ export async function bringBackMissedLessons({
         : await planWithRestored({ context, ids: plannedIds, now });
 
     const restoredIds = getPlannedIds({ computed, ids: plannedIds });
-    const seen = computed.effect;
+
+    if (restoredIds.size === 0) {
+      return;
+    }
+
+    const previous = batch?.payload;
+
+    const effect = {
+      ...computed.effect,
+      endDateBefore: previous?.effect?.endDateBefore ?? computed.effect.endDateBefore,
+      topicsAdded: mergeChangeTopics(
+        previous?.effect?.topicsAdded,
+        listChangeTopics({ graph, skillIds: new Set(missed) }),
+        computed.effect.topicsAdded,
+      ),
+      topicsLeftOut: mergeChangeTopics(
+        previous?.effect?.topicsLeftOut,
+        computed.effect.topicsLeftOut,
+      ),
+    };
+
+    const payload = {
+      carriedItemIds: [...new Set([...(previous?.carriedItemIds ?? []), ...restoredIds])],
+      effect,
+      ...recheckChangeDay(livingPlanDay),
+      recheckedSkillIds: [...new Set([...(previous?.recheckedSkillIds ?? []), ...missed])],
+      source: "system",
+    };
+
+    const save = async (tx: TransactionClient) => {
+      await tx.planItem.updateMany({
+        data: { completedAt: null, status: "todo" },
+        where: { id: { in: [...restoredIds] }, planId: context.plan.id, status: "testedOut" },
+      });
+
+      if (livingPlanDay) {
+        await keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 });
+      }
+
+      if (batch) {
+        await appendLivingPlanBatch({
+          batch,
+          kind: "relearn",
+          payload: { ...payload, versionAfter: context.plan.version + 1 },
+          tx,
+        });
+      }
+    };
 
     await commitPlan({
-      change: {
-        kind: "relearn",
-        payload: toPlanChangePayload({
-          carriedItemIds: [...restoredIds],
-          effect: {
-            ...seen,
-            topicsAdded: joinTopics(
-              listMissedTopics({ graph, skillIds: missed }),
-              seen.topicsAdded,
-            ),
+      change: batch
+        ? null
+        : {
+            kind: "relearn",
+            payload: toPlanChangePayload(payload),
+            reason: RELEARN_NOTE,
+            status: "applied",
           },
-          source: "system",
-        }),
-        reason: RELEARN_NOTE,
-        status: "applied",
-      },
       computed,
       context: restored,
-      extraWrites: (tx) =>
-        tx.planItem.updateMany({
-          data: { completedAt: null, status: "todo" },
-          where: { id: { in: [...restoredIds] }, planId: context.plan.id, status: "testedOut" },
-        }),
+      extraWrites: save,
       phaseDates: { mode: "forced", pace: "saved" },
+      snapshotContext: context,
     });
   });
 }

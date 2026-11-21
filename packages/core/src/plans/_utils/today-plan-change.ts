@@ -7,6 +7,7 @@ import { type PlanChangeView } from "../plan-view-contract";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { asksAboutAutomaticChange } from "./automatic-plan-change";
 import { foldChangeAreas } from "./fold-part-areas";
+import { latestLivingPlanChanges } from "./living-plan-change";
 import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { toPlanChangeView } from "./plan-change-view";
@@ -38,13 +39,14 @@ async function findTodayChanges({
       where: {
         createdAt: { gte: new Date(now.getTime() - RECENT_CHANGE_MS) },
         planId,
-        status: "applied",
+        status: { in: ["applied", "undone"] },
       },
     }),
   ]);
 
-  const automatic = recent.find(
+  const automatic = latestLivingPlanChanges(recent).find(
     (change) =>
+      change.status === "applied" &&
       asksAboutAutomaticChange({ change, dateReached }) &&
       parsePlanChangePayload(change.payload).seenAt === null,
   );
