@@ -830,6 +830,10 @@ private struct MockEssaySections: View {
       VStack(alignment: .leading, spacing: 6) {
         LessonTextBlocks(essay.question)
           .typeStyle(.body.weight(.semibold))
+        if essay.unsure {
+          FactSegments(facts: [.unsure])
+            .typeStyle(.note)
+        }
         status
       }
     } header: {
@@ -1266,8 +1270,12 @@ private struct MockReviewSection: View {
             {
               MistakeAnswerRow(text: answer, isRight: false, isLiteral: item.format == "typed")
             }
+            // A typed question can accept more than one answer, so a right one shows the
+            // learner's own.
             if let correct = TrueFalseWords.savedAnswer(
-              item.correctAnswer, format: item.format, labels: labels)
+              item.outcome == .right
+                ? item.learnerAnswer ?? item.correctAnswer : item.correctAnswer,
+              format: item.format, labels: labels)
             {
               MistakeAnswerRow(text: correct, isRight: true, isLiteral: item.format == "typed")
             }
@@ -1279,8 +1287,8 @@ private struct MockReviewSection: View {
             }
           }
         } label: {
-          // What it asked, then which question it was and how it went: a wrong answer needs no
-          // word, the list is of them.
+          // What it asked, then which question it was and how it went, in a word for every
+          // outcome: the list holds right answers marked "Not sure" too.
           VStack(alignment: .leading, spacing: 2) {
             LessonRichText(item.question)
               .typeStyle(.body.weight(.medium))
@@ -1303,30 +1311,22 @@ private struct MockReviewSection: View {
   }
 
   private func facts(_ item: MockReviewItem) -> [FactSegments.Fact] {
-    let outcome: String? =
+    let outcome =
       switch item.outcome {
       case .blank: String(localized: "Blank", table: "Mock", comment: "A blank question")
       case .partial:
         String(localized: "Partly right", table: "Mock", comment: "Partly right answers")
       case .right:
         String(localized: "Right", table: "Mock", comment: "Right answers")
-      case .wrong: nil
+      case .wrong: String(localized: "Wrong", table: "Mock", comment: "Wrong answers")
       }
-
-    let unsure = FactSegments.Fact(
-      text: String(
-        localized: "Not sure", table: "Mock",
-        comment:
-          "A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed."
-      ),
-      color: .warningText, symbol: "bookmark.fill", symbolColor: .warning)
 
     return [
       String(localized: "Question \(item.number)", table: "Mock", comment: "A question by number"),
       item.area, outcome,
     ]
     .compactMap { $0.map { FactSegments.Fact(text: $0) } }
-      + (item.unsure ? [unsure] : [])
+      + (item.unsure ? [.unsure] : [])
   }
 }
 

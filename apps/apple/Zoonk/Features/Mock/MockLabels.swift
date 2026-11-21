@@ -240,3 +240,16 @@ struct QuestionsSourceText: View {
 func sourceHost(_ url: URL) -> String {
   url.host(percentEncoded: false)?.replacing(/^www\./, with: "") ?? url.absoluteString
 }
+
+extension FactSegments.Fact {
+  /// A result's mark on an answer the learner pressed "Not sure" on.
+  static var unsure: FactSegments.Fact {
+    FactSegments.Fact(
+      text: String(
+        localized: "Not sure", table: "Mock",
+        comment:
+          "A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed."
+      ),
+      color: .warningText, symbol: "bookmark.fill", symbolColor: .warning)
+  }
+}
