@@ -1320,7 +1320,7 @@ private struct MockReviewSection: View {
       ?? String(
         localized: "Question \(item.number)", table: "Mock", comment: "A question by number")
     let section = item.section.flatMap { index in
-      sections.count > 1 ? sections.first { $0.index == index } : nil
+      sections.count { $0.questions > 0 } > 1 ? sections.first { $0.index == index } : nil
     }
     return [place, section.map(MockLabels.sectionTitle) ?? item.area, outcome].compactMap { $0 }
   }

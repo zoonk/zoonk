@@ -148,6 +148,8 @@ export function MockReview({
     return null;
   }
 
+  const severalQuestionSections = sections.filter((section) => section.questions > 0).length > 1;
+
   return (
     <PageSection aria-labelledby={titleId} className="w-full gap-1" data-slot="mock-review">
       <PageSectionHeader>
@@ -162,7 +164,7 @@ export function MockReview({
               entry={entry}
               key={entry.itemId}
               labels={trueFalseLabels}
-              section={sections.length > 1 ? sections[entry.section] : undefined}
+              section={severalQuestionSections ? sections[entry.section] : undefined}
             />
           ))}
         </ol>

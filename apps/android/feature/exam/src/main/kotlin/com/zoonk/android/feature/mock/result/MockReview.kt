@@ -156,6 +156,7 @@ private fun ReviewList(
     onToggle: (String) -> Unit,
 ) {
     val words = view.trueFalseWords
+    val severalQuestionSections = view.sections.count { it.questions > 0 } > 1
     val scope = rememberCoroutineScope()
     val requesters = remember(view.review.size) { List(view.review.size) { BringIntoViewRequester() } }
     val restore = remember { Restore(place.restoring()) }
@@ -166,7 +167,7 @@ private fun ReviewList(
             val key = "$REVIEW${entry.itemId}"
             val section =
                 entry.section?.let { sectionIndex ->
-                    view.sections.takeIf { it.size > 1 }?.firstOrNull { it.index == sectionIndex }
+                    view.sections.firstOrNull { severalQuestionSections && it.index == sectionIndex }
                 }
             ReviewEntry(
                 entry,

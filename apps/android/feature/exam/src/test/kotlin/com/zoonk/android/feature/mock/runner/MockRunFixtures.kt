@@ -64,7 +64,7 @@ internal fun currentSection(
     drafts: String = "",
     deadline: String = "${Clock.System.now() + 1.hours}",
     kind: String = "null",
-    questionTotal: Int? = null,
+    questionTotal: Int = if (questions.isEmpty()) 0 else 2,
 ) =
     """{"changesLeft":null,"deadline":"$deadline","drafts":[$drafts],"kind":$kind,"plays":[],"questionTotal":$questionTotal,"questions":[$questions],"resume":0,"section":$section}"""
 
