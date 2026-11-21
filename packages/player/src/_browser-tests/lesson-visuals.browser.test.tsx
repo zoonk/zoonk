@@ -328,6 +328,21 @@ describe("lesson visuals", () => {
     expect(labels.filter((label) => label?.includes("km"))).toStrictEqual([]);
   });
 
+  it("keeps a percent on each number and out of the value label", async () => {
+    const share: LessonVisual = { ...lettersChart, title: "Participação", unit: "%" };
+    renderLessonPlayer({ lesson: buildLesson([check({ visual: share })]) });
+
+    const chart = page.getByRole("figure", { name: share.title });
+    await expect.element(chart).toBeVisible();
+
+    const labels = [...chart.element().querySelectorAll("svg text")].map(
+      (text) => text.textContent,
+    );
+
+    expect(labels).toStrictEqual(expect.arrayContaining(["0%", "35%"]));
+    expect(chart.element().textContent).not.toContain("(%)");
+  });
+
   it("keeps a currency on each number, with the rest of its unit beside the value label", async () => {
     const pay: LessonVisual = { ...lettersChart, title: "Salário", unit: "R$ por hora" };
     renderLessonPlayer({ lesson: buildLesson([check({ visual: pay })]) });

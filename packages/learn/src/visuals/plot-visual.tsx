@@ -1,6 +1,7 @@
 "use client";
 
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
+import { placeChartUnit } from "@zoonk/core/library/steps/contract/chart-unit";
 import { isLarge } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../_utils/locale";
@@ -15,10 +16,6 @@ import { SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";
 
 const REFERENCE_DASH = "4 4";
 const HALO_WIDTH = 3;
-
-function axisTitle(label: string, unit: string | null): string {
-  return unit ? `${label} (${unit})` : label;
-}
 
 function XTicks({ layout }: { layout: PlotLayout }) {
   return layout.xTicks.map((tick) => (
@@ -223,7 +220,9 @@ export function PlotVisualView({ className, visual }: { className?: string; visu
       />
 
       <div aria-hidden="true" className="flex flex-col gap-1">
-        <p className="text-muted-foreground text-xs">{axisTitle(visual.yLabel, visual.yUnit)}</p>
+        <p className="text-muted-foreground text-xs">
+          {placeChartUnit({ label: visual.yLabel, unit: visual.yUnit }).label}
+        </p>
 
         <ChartDrawing boxWidth={boxWidth} height={HEIGHT} ref={ref} scale={scale} width={width}>
           <ValueGrid
@@ -238,7 +237,9 @@ export function PlotVisualView({ className, visual }: { className?: string; visu
           <XTicks layout={layout} />
         </ChartDrawing>
 
-        <p className="text-muted-foreground text-xs">{axisTitle(visual.xLabel, visual.xUnit)}</p>
+        <p className="text-muted-foreground text-xs">
+          {placeChartUnit({ label: visual.xLabel, unit: visual.xUnit }).label}
+        </p>
       </div>
 
       <PlotKey layout={layout} />

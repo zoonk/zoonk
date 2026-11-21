@@ -102,6 +102,16 @@ function touches(a: ReturnType<typeof labelBox>, b: ReturnType<typeof labelBox>)
 }
 
 describe(getPlotLayout, () => {
+  it("keeps a percent on each tick, the way a category chart does", () => {
+    const percent = layoutFor({ ...control, references: [], yLabel: "Yield", yUnit: "%" });
+    const labels = percent.yTicks.map((tick) => tick.label);
+    const millilitres = layoutFor({ ...control, references: [] }).yTicks.map((tick) => tick.label);
+
+    expect(labels.length).toBeGreaterThan(0);
+    expect(labels.every((label) => label.endsWith("%"))).toBe(true);
+    expect(millilitres.some((label) => label.includes("ml"))).toBe(false);
+  });
+
   it("spaces points by their x value, so unequal intervals get unequal gaps", () => {
     const layout = layoutFor({
       ...scan,

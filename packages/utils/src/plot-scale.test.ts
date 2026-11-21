@@ -160,6 +160,20 @@ describe(formatTicks, () => {
     );
   });
 
+  it("keeps a unit that is part of how the number is written on each tick", () => {
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [9, 10, 11], unit: "%" })).toStrictEqual([
+      "9%",
+      "10%",
+      "11%",
+    ]);
+
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [0, 5, 10], unit: "BRL" })).toStrictEqual([
+      "R$0",
+      "R$5",
+      "R$10",
+    ]);
+  });
+
   it("writes years on the x axis without a thousands separator, in the learner's notation", () => {
     expect(formatTicks({ axis: "x", locale: "en", ticks: [1960, 1980] })).toStrictEqual([
       "1960",

@@ -50,6 +50,20 @@ describe("challenge review rendering", () => {
     );
   });
 
+  it("keeps a plot's percent on each tick and out of its axis title", () => {
+    const base = challengeCaseFixture();
+    const visual = { ...challengePlotFixture(), yLabel: "Yield", yUnit: "%" };
+
+    const rendered = renderChallengeMap({
+      ...base,
+      nodes: base.nodes.map((node) => ({ ...node, visual })),
+      summary: [],
+    });
+
+    expect(rendered.text).toContain("  Y axis: Yield\n");
+    expect(rendered.text).toContain('Y tick labels: "25%" "30%" "35%" "40%"');
+  });
+
   it("prints the tick labels a learner reads, so ticks that differ never read the same", () => {
     const base = challengeCaseFixture();
 
@@ -97,9 +111,9 @@ describe("challenge review rendering", () => {
       summary: [],
     });
 
-    expect(rendered.text).toContain("Value axis: Fill rate (%)");
-    expect(rendered.text).toContain('Value tick labels (at most these): "9" "10" "11"');
-    expect(rendered.text).toContain("Value labels when they fit: 9, 11");
+    expect(rendered.text).toContain("Value axis: Fill rate\n");
+    expect(rendered.text).toContain('Value tick labels (at most these): "9%" "10%" "11%"');
+    expect(rendered.text).toContain("Value labels when they fit: 9%, 11%");
   });
 
   it("keeps a category chart's currency on each number and the rest of its unit in the title", () => {

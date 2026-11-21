@@ -213,11 +213,15 @@ export function ChartVisualView({
   const format = useFormatNumber();
   const { boxWidth, ref, scale, width } = useChartSize();
   const textWidth = useTextWidth(ref);
-  const { currency, valueLabel } = placeChartUnit(visual);
+
+  const { label: valueLabel, numberUnit } = placeChartUnit({
+    label: visual.valueLabel,
+    unit: visual.unit,
+  });
 
   const layout = getLayout({
-    formatTick: (tick, options) => format(tick, { ...options, unit: currency ?? undefined }),
-    formatValue: (value) => format(value, { unit: currency ?? undefined }),
+    formatTick: (tick, options) => format(tick, { ...options, unit: numberUnit ?? undefined }),
+    formatValue: (value) => format(value, { unit: numberUnit ?? undefined }),
     textWidth,
     visual,
     width,
@@ -248,7 +252,7 @@ export function ChartVisualView({
           width={width}
         >
           {layout.orientation === "horizontal" ? (
-            <BarRows layout={layout} unit={currency} visual={visual} />
+            <BarRows layout={layout} unit={numberUnit} visual={visual} />
           ) : (
             <>
               <ValueGrid
@@ -258,9 +262,9 @@ export function ChartVisualView({
                 y={layout.y}
               />
               {visual.chart === "bar" ? (
-                <Bars layout={layout} textWidth={textWidth} unit={currency} visual={visual} />
+                <Bars layout={layout} textWidth={textWidth} unit={numberUnit} visual={visual} />
               ) : (
-                <Lines layout={layout} textWidth={textWidth} unit={currency} visual={visual} />
+                <Lines layout={layout} textWidth={textWidth} unit={numberUnit} visual={visual} />
               )}
               <CategoryLabels layout={layout} visual={visual} />
             </>

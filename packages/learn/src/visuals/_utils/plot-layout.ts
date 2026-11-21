@@ -1,4 +1,5 @@
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
+import { placeChartUnit } from "@zoonk/core/library/steps/contract/chart-unit";
 import {
   type LinearScale,
   createLinearScale,
@@ -61,7 +62,8 @@ function getGutters({
   visual: PlotVisual;
 }) {
   const axes = getPlotAxes(visual);
-  const labels = formatTicks({ axis: "y", locale, ticks: axes.y.ticks });
+  const { numberUnit } = placeChartUnit({ label: visual.yLabel, unit: visual.yUnit });
+  const labels = formatTicks({ axis: "y", locale, ticks: axes.y.ticks, unit: numberUnit });
   const names = visual.references.map(({ label }) => label);
 
   return {
@@ -274,7 +276,12 @@ export function getPlotLayout({
     x,
     xTickY: plotBottom + AXIS_LABEL_OFFSET,
     xTicks: placeXTicks({
-      labels: formatTicks({ axis: "x", locale, ticks: axes.x.ticks }),
+      labels: formatTicks({
+        axis: "x",
+        locale,
+        ticks: axes.x.ticks,
+        unit: placeChartUnit({ label: visual.xLabel, unit: visual.xUnit }).numberUnit,
+      }),
       left,
       measured,
       ticks: axes.x.ticks,

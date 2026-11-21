@@ -1,4 +1,5 @@
-import { formatLocalizedNumber, fractionDigitsFor } from "./localized-number";
+import { fractionDigitsFor } from "./localized-number";
+import { formatWithUnit } from "./math-answer";
 
 export type NumericDomain = readonly [min: number, max: number];
 
@@ -220,7 +221,7 @@ export function formatTicks({
   ...notation
 }: { axis: "x" | "y"; ticks: readonly number[] } & (
   | { format: TickFormatter }
-  | { locale: string }
+  | { locale: string; unit?: string | null }
 )): string[] {
   const [first = 0, second] = ticks;
   const large = isLarge(ticks);
@@ -230,7 +231,8 @@ export function formatTicks({
   const print: TickFormatter =
     "format" in notation
       ? notation.format
-      : (value, options) => formatLocalizedNumber({ ...options, locale: notation.locale, value });
+      : (value, options) =>
+          formatWithUnit({ ...options, locale: notation.locale, unit: notation.unit, value });
 
   const format = (options: { compact: boolean; maximumFractionDigits: number }) =>
     ticks.map((value) => print(value, { ...options, grouping }));
