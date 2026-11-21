@@ -198,7 +198,7 @@ enum RichTextBlock: Equatable {
 
   case paragraph(lines: [String])
   /// A numbered list starts at its first item's number, as in CommonMark, so steps split by a code
-  /// block number on; `start` is nil for bullets.
+  /// block or an example's frame number on; `start` is nil for bullets.
   case list(items: [String], start: Int?)
   case table(header: [String], alignments: [ColumnAlignment], rows: [[String]])
   /// Its code exactly as written.
@@ -245,26 +245,6 @@ enum RichTextBlock: Equatable {
   }
 
   static var orderedItem: Regex<(Substring, Substring, Substring)> { /\s*(\d{1,3})[.)]\s+(.+)/ }
-
-  /// A list numbers its items from 1, so text split inside a numbered list restarts its numbers.
-  static func cutsNumberedList(_ text: String, at cut: String.Index) -> Bool {
-    guard cut > text.startIndex, cut < text.endIndex else {
-      return false
-    }
-
-    let start = text[..<cut].lastIndex(of: "\n").map(text.index(after:)) ?? text.startIndex
-    let end = text[cut...].firstIndex(of: "\n") ?? text.endIndex
-    let isItem = { (line: Substring) in line.wholeMatch(of: orderedItem) != nil }
-
-    guard start == cut else {
-      return isItem(text[start..<end])
-    }
-
-    let previousStart =
-      text[..<text.index(before: cut)].lastIndex(of: "\n").map(text.index(after:))
-      ?? text.startIndex
-    return isItem(text[previousStart..<text.index(before: cut)]) && isItem(text[cut..<end])
-  }
 
   static func lines(_ text: String) -> [String] {
     text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
