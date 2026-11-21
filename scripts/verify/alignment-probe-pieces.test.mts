@@ -192,6 +192,17 @@ describe("a bottom bar's note", () => {
     document.body.innerHTML = noteBar(16).replace("16,656,300,20", "16,648,300,20");
     assert.equal(evaluateCapture(read()).find((finding) => finding.rule === "room")?.measured, 8);
   });
+
+  it("measures to the buttons past an empty status region kept for screen readers", () => {
+    const barRow = `<div data-slot="bottom-bar-row" data-box="0,700,390,100">`;
+    const region = `<div role="status" style="clip-path: inset(50%)" data-box="0,0,1,1"></div>`;
+    document.body.innerHTML = noteBar(16).replace(barRow, `${barRow}${region}`);
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.piece === "bottom-bar"),
+      [],
+    );
+  });
 });
 
 /** A rail's row: its icon (a glyph) at `x`, its label only for screen readers. */
