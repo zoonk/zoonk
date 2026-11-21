@@ -162,6 +162,7 @@ class LessonMarksScreenshots {
             "untagged" to { at(BIOLOGY.copy(steps = listOf(CAT.copy(marks = null)), map = null)) },
             "renda-example" to { at(FINANCE) },
             "renda-worked" to { at(FINANCE, LessonAction.Continue) },
+            "renda-numbered-example" to { at(FINANCE.copy(steps = listOf(NET_PAY_STEPS))) },
             "map" to { at(BIOLOGY.copy(steps = listOf(CELL)), LessonAction.Continue) },
             "map-three" to
                 {
@@ -501,6 +502,23 @@ private val NET_PAY =
             ),
         ),
         marks = marks(3, underline = "o valor que cai na conta", example = CINTIA_CASE, icon = "money"),
+    )
+
+private const val CINTIA_STEP = "3. Cíntia ganha R$ 3.200,00 e tem R$ 330,00 de descontos: sobram R$ 2.870,00."
+
+private val NET_PAY_STEPS =
+    LessonStep(
+        "steps",
+        null,
+        StepContent.Explanation(
+            ExplanationStepContent(
+                title = "Como achar a renda líquida",
+                text =
+                    "Para achar sua renda líquida:\n\n1. Comece pela **renda bruta** do contracheque.\n" +
+                        "2. Some os descontos, como INSS e vale-transporte.\n$CINTIA_STEP\n4. O que sobra é o que cai na sua conta.",
+            ),
+        ),
+        marks = marks(3, underline = "O que sobra é o que cai na sua conta", example = CINTIA_STEP, icon = "money"),
     )
 
 private val NET_PAY_WORKED =

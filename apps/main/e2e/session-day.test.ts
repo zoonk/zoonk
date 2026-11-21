@@ -81,7 +81,7 @@ async function playCapsules(page: Page) {
 }
 
 async function finishLesson(page: Page, started: Promise<unknown>) {
-  await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+$/u);
+  await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+(?:&block=[\w-]+)?$/u);
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
   await page.keyboard.press("2");
 
@@ -257,8 +257,13 @@ test.describe("Today's session", () => {
     const page = await openAs(browser, user);
     await page.goto("/session");
     await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
-    const started = waitForLessonStart(page, bonus.id);
     await page.getByRole("button", { name: "Keep learning" }).click();
+    await page.goto("/today");
+    await page.getByRole("link", { name: "See summary" }).click();
+    await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
+    await page.goto("/today");
+    const started = waitForLessonStart(page, bonus.id);
+    await page.getByRole("link", { name: /^Continue/u }).click();
     await finishLesson(page, started);
 
     const proceed = page

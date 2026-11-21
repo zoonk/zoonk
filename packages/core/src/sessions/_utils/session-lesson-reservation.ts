@@ -12,11 +12,14 @@ import { type ExamPrepAccess } from "./exam-access";
 import { canAddSessionLessons } from "./session-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionRow } from "./study-session-access";
+import { holdUnwrittenTime } from "./unwritten-time";
 
 type ReservationBlock = Pick<
   StudySessionBlock,
   "estimatedMinutes" | "lessonId" | "payload" | "status"
 >;
+
+type ReservationGoal = Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
 
 type ReservationPlan = { graph: unknown; settings: unknown; items: readonly SessionPlanItem[] };
 
@@ -29,7 +32,7 @@ export function getSessionLessonCandidates({
   prerequisites = new Map(),
 }: {
   access: ExamPrepAccess;
-  goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
+  goal: ReservationGoal;
   localDate: Date;
   plan: ReservationPlan;
   blocks: readonly ReservationBlock[];
@@ -69,6 +72,45 @@ export function getSessionLessonCandidates({
     .filter((item) => !item.lessonId || !held.has(item.lessonId));
 }
 
+function estimateLessonMinutes({ item, plan }: { item: SessionPlanItem; plan: ReservationPlan }) {
+  const pace = parsePlanSettings(plan.settings).pace?.factor ?? 1;
+
+  return Math.max(
+    1,
+    Math.round(readSelectedItemFacts(item.facts)?.parts.written ?? (item.minutes ?? 3) * pace),
+  );
+}
+
+/**
+ * The day's room goes to its candidates in plan order: each unwritten one holds what the written
+ * lessons before it leave (`holdUnwrittenTime`), and whether the day reaches it at all.
+ */
+export function holdCandidateTime({
+  candidates,
+  plan,
+  room,
+  today,
+}: {
+  candidates: readonly SessionPlanItem[];
+  plan: ReservationPlan;
+  room: number;
+  today: Date;
+}) {
+  return holdUnwrittenTime({
+    lessons: candidates
+      .filter((item) => !isStandIn(item))
+      .map((item) => ({ minutes: estimateLessonMinutes({ item, plan }), position: item.position })),
+    room,
+    unwritten: candidates
+      .filter((item) => isStandIn(item))
+      .map((item) => ({
+        item,
+        minutes: getUnwrittenMinutesOn({ items: [item], today }),
+        position: item.position,
+      })),
+  });
+}
+
 function getReservedCandidates({
   access,
   session,
@@ -76,8 +118,9 @@ function getReservedCandidates({
   prerequisites,
 }: {
   access: ExamPrepAccess;
-  session: Pick<StudySessionRow, "goal" | "freshStart" | "localDate" | "plannedMinutes"> & {
+  session: Pick<StudySessionRow, "freshStart" | "localDate" | "plannedMinutes"> & {
     blocks: readonly ReservationBlock[];
+    goal: ReservationGoal | null;
     status?: StudySessionRow["status"];
   };
   plan: ReservationPlan | null;
@@ -106,19 +149,15 @@ function getReservedCandidates({
     prerequisites,
   });
 
-  const pace = parsePlanSettings(plan.settings).pace?.factor ?? 1;
+  const held = holdCandidateTime({ candidates, plan, room, today: session.localDate });
   const next = candidates[0];
 
   const reserved =
     room >= 1 &&
     next !== undefined &&
-    (candidates.some((item) => !item.lessonId) ||
-      Math.max(
-        1,
-        Math.round(readSelectedItemFacts(next.facts)?.parts.written ?? (next.minutes ?? 3) * pace),
-      ) <= room);
+    (held.some((hold) => hold.reached) || estimateLessonMinutes({ item: next, plan }) <= room);
 
-  return reserved ? candidates : null;
+  return reserved ? held : null;
 }
 
 export function hasSessionLessonReservation(
@@ -128,18 +167,19 @@ export function hasSessionLessonReservation(
 }
 
 export function getSessionLessonReservation(input: Parameters<typeof getReservedCandidates>[0]) {
-  const candidates = getReservedCandidates(input);
+  const held = getReservedCandidates(input);
 
-  if (!candidates) {
-    return { lessonPlaceholder: null, lessonRoom: false };
+  if (!held) {
+    return { lessonPlaceholder: null, lessonRoom: false, unwrittenRoom: false };
   }
 
-  const placeholder = candidates
-    .filter((item) => isStandIn(item))
-    .flatMap((item) => {
-      const minutes = getUnwrittenMinutesOn({ items: [item], today: input.session.localDate });
-      return minutes > 0 ? [{ minutes, title: item.titleSnapshot }] : [];
-    })[0];
+  const placeholder = held.find((hold) => hold.held > 0);
 
-  return { lessonPlaceholder: placeholder ?? null, lessonRoom: true };
+  return {
+    lessonPlaceholder: placeholder
+      ? { minutes: placeholder.held, title: placeholder.unwritten.item.titleSnapshot }
+      : null,
+    lessonRoom: true,
+    unwrittenRoom: held.some((hold) => hold.reached),
+  };
 }

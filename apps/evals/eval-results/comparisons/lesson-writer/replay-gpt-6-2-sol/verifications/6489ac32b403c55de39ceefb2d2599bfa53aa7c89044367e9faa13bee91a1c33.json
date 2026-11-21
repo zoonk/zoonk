@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-particle-in-a-box-advanced",
+        "claimId": "4550d8fe58d40dac",
+        "criterion": "fitAndApplication",
+        "observationId": "076a0872b2091427522eaad32e3a22b591effe35337654ca21b0f85d200ad713.first.c8326f0b-df95-4161-b118-41ba6ec6d81e.1",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00430465,
+    "id": "6489ac32b403c55de39ceefb2d2599bfa53aa7c89044367e9faa13bee91a1c33",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
+          "format": "text"
+        },
+        "claim": "The worked example on screen 3 concludes that −3 °C plus a 5-degree rise is 8 °C instead of 2 °C.",
+        "claimId": "3e4b5e027b557e10",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c0460e6737b7b59cbc992e2edac270e8780f697d45e221275bce7ad07c66286b",
+          "format": "text"
+        },
+        "claim": "The lesson never introduces or explains the terms 'wave function', 'boundary condition', or 'quantized' (using informal substitutes like 'a particle's wave', 'the walls', and 'only specific energies'), breaking the expectation that each term is explained when it first appears.",
+        "claimId": "4550d8fe58d40dac",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "across screens 2 to 5",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "3e4b5e027b557e10",
+          "finding": "doesn't hold",
+          "reason": "Output A's worked example on screen 3 concludes \"It's 2 °C\" (−3 + 3 = 0, then 2 more degrees), which is correct, and it never gives 8 °C. Output B's worked example gives 3 °C, which is wrong, but it doesn't give 8 °C either, so the claim's numbers don't match either output."
+        },
+        {
+          "claimId": "4550d8fe58d40dac",
+          "finding": "doesn't hold",
+          "reason": "Output A never uses the terms 'wave function', 'boundary condition' or 'quantized', so it has no unexplained term and doesn't break the expectation that each term is explained when it first appears. The factual part is right, since A uses 'a particle's wave', 'the walls' and 'only specific energies' instead, but that avoidance doesn't break the stated expectation."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

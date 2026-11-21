@@ -9,6 +9,13 @@ export const wordIpaTask: Task<Parameters<typeof writeWordIpa>[0], WordIpa, Word
   generate: writeWordIpa,
   id: "word-ipa",
   name: "Word IPA",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "A voice model reads by it, and a check compares against it",
+    reason: "A wrong IPA makes the voice and its check agree on a wrong word",
+    waits: "Code doesn't say: inside voice generation",
+  },
   score: scoreWordIpa,
   skippedLanguages: {
     en: "language audio writes IPA only for words of other languages, which a voice could read the English way",

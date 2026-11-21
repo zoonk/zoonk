@@ -1,3 +1,5 @@
+import { findCodeFences, removeCodeFences } from "@zoonk/utils/code-fence";
+
 /** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
 const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
 const SENTENCE_END = /[.!?…:;]["'”’»)\]」』]*$/u;
@@ -8,6 +10,8 @@ const SENTENCE_BREAK = /[.!?…:;]["'”’»)\]」』]*\s+$/u;
 const LINE_BREAK = /\n\s*$/u;
 /** In cased scripts a sentence never starts lowercase: "She said “Hello.” and left." */
 const LOWERCASE_START = /^\p{Ll}/u;
+/** A numbered item's marker ("2. ") ends in a period, but the item's sentence starts after it. */
+const LIST_MARKER = /(?:^|\n)[^\S\n]*\d{1,3}[.)][^\S\n]+$/u;
 const BOLD = "**";
 
 /**
@@ -19,7 +23,7 @@ export function isUnderlineQuote({ quote, text }: { quote: string; text: string 
     quote.length > 0 &&
     quote.trim() === quote &&
     !MARKUP.test(quote) &&
-    text.replaceAll(BOLD, "").includes(quote)
+    removeCodeFences(text).replaceAll(BOLD, "").includes(quote)
   );
 }
 
@@ -34,8 +38,17 @@ function startsSentence({ before, quote }: { before: string; quote: string }): b
 
   return (
     !LOWERCASE_START.test(quote) &&
+    !LIST_MARKER.test(before) &&
     (SENTENCE_BREAK.test(before) || CJK_SENTENCE_BREAK.test(before) || LINE_BREAK.test(before))
   );
+}
+
+/** A code block ends where its closing fence does, and the next line starts a new block. */
+function endsWithCodeBlock(text: string): boolean {
+  const lines = text.split("\n");
+  const block = findCodeFences(lines).at(-1);
+
+  return block?.closed === true && block.end === lines.length;
 }
 
 function endsSentence({ after, quote }: { after: string; quote: string }): boolean {
@@ -47,8 +60,47 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
 
   return (
     !LOWERCASE_START.test(next) &&
-    ((SENTENCE_END.test(quote) && /^\s/u.test(after)) || CJK_SENTENCE_END.test(quote))
+    ((SENTENCE_END.test(quote) && /^\s/u.test(after)) ||
+      CJK_SENTENCE_END.test(quote) ||
+      (endsWithCodeBlock(quote) && after.startsWith("\n")))
   );
+}
+
+/** Where each code block starts and ends in the text, counted in characters. */
+function findCodeSpans(text: string): { end: number; start: number }[] {
+  const lines = text.split("\n");
+
+  const starts = lines.reduce<number[]>(
+    (offsets, line, index) => [...offsets, (offsets[index] ?? 0) + line.length + 1],
+    [0],
+  );
+
+  return findCodeFences(lines).map(({ end, start }) => ({
+    end: (starts[end] ?? text.length + 1) - 1,
+    start: starts[start] ?? 0,
+  }));
+}
+
+/** The example box splits the text around the quote, so it takes a code block whole or not at all. */
+function keepsCodeWhole({
+  end,
+  start,
+  text,
+}: {
+  end: number;
+  start: number;
+  text: string;
+}): boolean {
+  return findCodeSpans(text).every(
+    (code) => end <= code.start || start >= code.end || (start <= code.start && end >= code.end),
+  );
+}
+
+/** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
+export function withListMarker({ quote, text }: { quote: string; text: string }): string {
+  const start = text.indexOf(quote);
+  const marker = start === -1 ? null : LIST_MARKER.exec(text.slice(0, start));
+  return marker ? `${marker[0].trimStart()}${quote}` : quote;
 }
 
 /**
@@ -65,7 +117,8 @@ export function isExampleQuote({ quote, text }: { quote: string; text: string })
   const after = text.slice(start + quote.length);
 
   return (
-    countBold(quote) % 2 === 0 &&
+    countBold(removeCodeFences(quote)) % 2 === 0 &&
+    keepsCodeWhole({ end: start + quote.length, start, text }) &&
     startsSentence({ before: text.slice(0, start), quote }) &&
     endsSentence({ after, quote })
   );

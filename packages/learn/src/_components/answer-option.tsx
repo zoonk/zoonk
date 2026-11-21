@@ -168,7 +168,9 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
         />
       ))}
 
-      {children && <span className="col-start-1 row-start-1 min-w-0">{children}</span>}
+      {children && (
+        <span className={cn(ANSWER_TAG_CLASS, "col-start-1 row-start-1")}>{children}</span>
+      )}
     </span>
   );
 }
@@ -300,6 +302,17 @@ const ROW_FORMULA_CLASS =
   "has-data-[slot=inline-math]:@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
 
 /**
+ * Code keeps its shape, so its tag holds the card's end edge instead of following the words: on the
+ * code's last line while that line leaves room, and otherwise on a line under it. Code never wraps
+ * to make room.
+ */
+const ROW_CODE_CLASS =
+  "has-data-[slot=code-snippet]:flex has-data-[slot=code-snippet]:flex-wrap has-data-[slot=code-snippet]:items-baseline-last has-data-[slot=code-snippet]:gap-x-3 [&_:has([data-slot=code-snippet-line])]:contents [&_[data-slot=code-snippet-line]]:basis-full [&_[data-slot=code-snippet-line]:last-child]:basis-auto";
+
+const TAG_AFTER_CODE_CLASS =
+  "[:has([data-slot=code-snippet])>&]:ms-auto [:has([data-slot=code-snippet])>&]:text-end";
+
+/**
  * `reservesTag` holds room for the verdict from the start. The space before the inline tag
  * disappears at a line break, so the tag starts at the text edge if it needs its own line.
  */
@@ -330,12 +343,16 @@ export function TagBesideOrUnder({
   }
 
   return (
-    <span className={cn("block w-full grow basis-1/2", ROW_FORMULA_CLASS)}>
+    <span className={cn("block w-full grow basis-1/2", ROW_FORMULA_CLASS, ROW_CODE_CLASS)}>
       {children}
 
-      {(tag || reservesTag) && <span className="[word-spacing:0.5rem]"> </span>}
       {(tag || reservesTag) && (
-        <LineMarker className="inline-flex h-auto min-h-lh max-w-full align-top">
+        <span className="[word-spacing:0.5rem] [:has([data-slot=code-snippet])>&]:hidden"> </span>
+      )}
+      {(tag || reservesTag) && (
+        <LineMarker
+          className={cn("inline-flex h-auto min-h-lh max-w-full align-top", TAG_AFTER_CODE_CLASS)}
+        >
           {reservesTag ? <ReservedTag>{tag}</ReservedTag> : tag}
         </LineMarker>
       )}

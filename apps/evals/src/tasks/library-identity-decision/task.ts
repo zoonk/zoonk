@@ -49,6 +49,13 @@ export const libraryIdentityDecisionTask: Task<
   generate: decideIdentityPair,
   id: "library-identity-decision",
   name: "Library identity decision",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code decides whether to reuse a Library entry or write a new one",
+    reason: "Each miss writes content the Library already has",
+    waits: "A learner on a new goal's path; code doesn't set the wait",
+  },
   score: scoreLibraryIdentityDecision,
   testCases: TEST_CASES,
 };

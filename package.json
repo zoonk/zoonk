@@ -32,7 +32,6 @@
     "e2e:api": "pnpm --filter @zoonk/db db:setup:e2e && turbo build:e2e --filter api && pnpm --filter api e2e",
     "e2e:main": "node scripts/dev/queue.mts node scripts/e2e/live-call-services.mts",
     "evals": "cd apps/evals && pnpm build-and-start",
-    "evals:export": "./apps/evals/scripts/export-test-case.sh",
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
     "format": "oxfmt --check",
     "format:fix": "oxfmt .",
@@ -66,6 +65,7 @@
     "verify:pages": "node scripts/verify/pages.mts",
     "verify:scenarios": "node scripts/verify/scenarios/run.mts",
     "worktree:setup": "node scripts/worktree/setup.mts",
+    "worktree:sweep": "node scripts/worktree/sweep.mts",
     "zoonk": "node apps/cli/src/main.ts"
   },
   "devDependencies": {

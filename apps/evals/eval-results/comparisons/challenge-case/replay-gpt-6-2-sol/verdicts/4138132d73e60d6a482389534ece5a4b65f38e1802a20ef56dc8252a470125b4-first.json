@@ -1,0 +1,197 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01314119,
+  "failures": [],
+  "packetId": "4138132d73e60d6a482389534ece5a4b65f38e1802a20ef56dc8252a470125b4",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither gives the learner more real work.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the decisions and their consequences are the same.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the colleagues and the AI help are the same.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the debrief notes are the same.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and the numbers are consistent in both.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the depth and language are the same.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the wording is equally easy or hard to follow.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same, so neither serves the reader better."
+        },
+        "pairId": "47b8ff3e-b317-4ce9-b4ad-da290b92eb12"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is set on a hospital ward with a charge nurse and a supply deadline, which is the work this learner would do; B is a clinic training review.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices lead to different results, including a time jump with new numbers, and a strong choice is not always the first one.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give a small set of colleagues with different roles and a useful AI check.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give specific, strategy-focused debrief notes with example wording for the improve notes.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "A's ending invents a savings figure and a 6.5% redness result that no panel shows, while B's statistics check out, including the Fisher p-value and the sample size of about 82.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B's statistics are honest about what a small pilot can and cannot show, while A's ending presents an unsupported result as a real outcome.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A turns the statistics into patient counts and a coin-toss comparison that a non-data colleague can follow; B relies more on named tests.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The ending invents a $5,400 yearly saving and a 6.5% redness rate from better skin-prep swabs. The case never gives either number, and it presents the swabs as a proven result.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may carry away a made-up result about skin-prep swabs and a budget figure that was never measured.",
+            "location": {
+              "detail": "redirected $5,400.00 a year to better skin-prep swabs that cut redness to 6.5%",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The setting is a clinic training day where a staff nurse reviews a training format, not a hospital ward decision. This misses the ward setting the case was meant to use.",
+            "criterion": "realism",
+            "learnerCost": "The learner practices reviewing training material rather than the ward decision they will face, so the case feels less like their job.",
+            "location": {
+              "detail": "Training day at Willow Bay Clinic",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The sentence names Fisher's exact test and a p-value without explaining either in plain words. The term is not explained before it is used.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A reader with no statistics background may not follow why the test was chosen or what the 0.30 means.",
+            "location": {
+              "detail": "Using Fisher's exact test, which works with small counts, the p-value is about 0.30.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The option text uses the terms statistically insignificant and underpowered with no plain explanation for a beginner.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A beginner may not understand the option they are choosing, although the feedback later gives a plain version.",
+            "location": {
+              "detail": "Tell {{charge}} the result is statistically insignificant at $p = 0.50$, so the study is underpowered and must continue.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A's ending invents a savings figure and a redness result for the swabs, which teaches an unsupported claim; B's setting misses the ward, but its statistics and advice are accurate and honest."
+        },
+        "pairId": "b3c37f6e-6616-462a-aff5-2dd6694d56cc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is a real scan request with a 2:00 p.m. deadline and a reviewer, a standard task in this field.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices change the observed and fitted entries and lead to different endings, with a repair step that adds weight to the decision.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give a small set of colleagues with distinct roles and a useful AI assistant.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give specific notes that praise the strategy and show a better way to do the step.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both cases give plot readings and arithmetic that match the metrics and the axis labels.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both pitch the level and language for a beginner in research with similar terms explained.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use similar terms such as fitted curve and axis tick, and explain them in the same way.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "A is a real scan request that separates the measured dot from the fitted estimate with numbers that all match the panels, while B is a booking decision with similar teaching but less varied work."
+        },
+        "pairId": "d351225c-b66a-4efc-91b0-1560c076aed4"
+      }
+    ]
+  }
+}

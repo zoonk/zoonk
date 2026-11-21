@@ -37,3 +37,13 @@ export async function settleWithConcurrency<TItem, TResult>({
     .toSorted((a, b) => a.index - b.index)
     .map((entry) => entry.result);
 }
+
+export function runInOrder<T>(
+  items: readonly T[],
+  work: (item: T) => Promise<void>,
+): Promise<void> {
+  return items.reduce(async (previous, item) => {
+    await previous;
+    await work(item);
+  }, Promise.resolve());
+}

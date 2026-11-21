@@ -1,0 +1,240 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Davi tem uma oficina de bicicletas em Joinville. Há dinheiro no caixa e ferramentas na parede, mas também um empréstimo do banco para pagar. Se ele quitasse tudo o que deve, quanto da oficina seria dele de verdade?",
+      "image": {
+        "prompt": "Pequena oficina de bicicletas, bem iluminada. Davi, homem adulto de avental, está atrás do balcão. Na parede há chaves e ferramentas penduradas. Sobre o balcão, uma gaveta de caixa aberta com notas de dinheiro e, ao lado, um papel de cobrança de empréstimo do banco. Sem texto legível.",
+        "alt": "Davi no balcão da oficina, com ferramentas na parede, dinheiro no caixa e um papel de cobrança de empréstimo ao lado."
+      },
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "O que sobra depois das dívidas",
+      "text": "A oficina de Davi tem bens, como ferramentas e dinheiro, e direitos, que são valores a receber de clientes. Ela também tem obrigações, que são o que ela deve. Bens mais direitos, menos obrigações, dá o **patrimônio líquido**. Ele não é o preço de venda da oficina, é só essa conta. Suba as obrigações e o resultado cai.",
+      "exampleLineIdea": "o que o aluno tem, como dinheiro na conta e o celular, menos o que ele deve, como a fatura do cartão",
+      "image": null,
+      "visual": null,
+      "explore": {
+        "template": "formulaModel",
+        "content": "{\"fields\":{\"title\":\"Oficina do Davi\",\"variables\":[{\"name\":\"bens\",\"label\":\"Bens (o que tem)\",\"min\":0,\"max\":10000,\"step\":500,\"initial\":6000,\"unit\":\"R$\"},{\"name\":\"direitos\",\"label\":\"Direitos (a receber)\",\"min\":0,\"max\":10000,\"step\":500,\"initial\":2000,\"unit\":\"R$\"},{\"name\":\"obrigacoes\",\"label\":\"Obrigações (o que deve)\",\"min\":0,\"max\":10000,\"step\":500,\"initial\":3000,\"unit\":\"R$\"}],\"outputs\":[{\"id\":\"pl\",\"label\":\"Patrimônio líquido\",\"formula\":\"bens + direitos - obrigacoes\",\"unit\":\"R$\"}],\"plot\":{\"x\":\"obrigacoes\",\"y\":\"pl\"}},\"data\":{\"isExample\":true}}"
+      }
+    },
+    {
+      "kind": "workedExample",
+      "title": "A conta da oficina",
+      "problem": "Davi anotou os valores da oficina. Qual é o patrimônio líquido dela?\n\n| Item | Valor |\n|---|---:|\n| Bens | R$ 6.000,00 |\n| Direitos | R$ 2.000,00 |\n| Obrigações | R$ 3.000,00 |\n",
+      "steps": [
+        {
+          "text": "Primeiro, junte tudo o que a oficina tem e o que ela tem a receber. Para isso, some os bens e os direitos.",
+          "math": "6.000 + 2.000 = 8.000"
+        },
+        {
+          "text": "Agora tire o que a oficina deve. Subtraia as obrigações desse total.",
+          "math": "8.000 - 3.000 = 5.000"
+        }
+      ],
+      "result": "O patrimônio líquido da oficina é R$ 5.000,00. É o que sobra para Davi depois de descontar tudo o que a oficina deve.",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "Uma papelaria em Maringá tem estes valores:\n\n| Item | Valor |\n|---|---:|\n| Bens | R$ {bens} |\n| Direitos | R$ {direitos} |\n| Obrigações | R$ {obrigacoes} |\n",
+      "question": "Qual é o patrimônio líquido da papelaria, em reais?",
+      "math": {
+        "variables": [
+          {
+            "name": "bens",
+            "value": 4000,
+            "min": 3000,
+            "max": 9000,
+            "step": 500,
+            "unit": "R$"
+          },
+          {
+            "name": "direitos",
+            "value": 1000,
+            "min": 500,
+            "max": 3000,
+            "step": 500,
+            "unit": "R$"
+          },
+          {
+            "name": "obrigacoes",
+            "value": 2000,
+            "min": 500,
+            "max": 3000,
+            "step": 500,
+            "unit": "R$"
+          }
+        ],
+        "solution": "bens + direitos - obrigacoes",
+        "answer": 3000,
+        "unit": "R$",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0
+        },
+        "steps": [
+          {
+            "text": "Some os bens e os direitos: {bens} + {direitos} = {result}.",
+            "expression": "bens + direitos"
+          },
+          {
+            "text": "Tire as obrigações desse total para chegar a {result}.",
+            "expression": "bens + direitos - obrigacoes"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "bens + direitos",
+            "misconception": "Não descontar as obrigações",
+            "reason": "Você somou o que a papelaria tem e tem a receber, mas esqueceu de tirar o que ela deve."
+          },
+          {
+            "expression": "bens + direitos + obrigacoes",
+            "misconception": "Somar as obrigações",
+            "reason": "Você somou a dívida como se fosse um recurso. O que a papelaria deve sai da conta, não entra."
+          },
+          {
+            "expression": "bens - obrigacoes",
+            "misconception": "Esquecer os direitos",
+            "reason": "Você deixou de fora o que a papelaria tem a receber. Os direitos também entram na soma."
+          }
+        ]
+      },
+      "correctReason": "Você somou bens e direitos e tirou as obrigações: {bens} + {direitos} − {obrigacoes}.",
+      "image": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Bens mais direitos, menos obrigações, dá o **patrimônio líquido**."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Quando a dívida passa",
+      "text": "Imagine um ano ruim, em que a oficina de Davi tivesse menos recursos e mais dívida. Os bens e direitos somam R$ 4.000,00, mas as obrigações chegam a R$ 5.000,00. A conta dá −R$ 1.000,00. Quando a oficina deve mais do que tem, o patrimônio líquido fica negativo.\n\n| Conta | Valor |\n|---|---:|\n| Bens e direitos | R$ 4.000,00 |\n| Obrigações | R$ 5.000,00 |\n| Patrimônio líquido | −R$ 1.000,00 |\n",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "activity",
+      "template": "formulaModel",
+      "content": "{\"template\":\"formulaModel\",\"prompt\":\"Aumente as obrigações da oficina de R$ 3.000,00 para R$ 5.000,00.\",\"fields\":{\"title\":\"Oficina do Davi\",\"variables\":[{\"name\":\"obrigacoes\",\"label\":\"Obrigações (o que deve)\",\"min\":0,\"max\":10000,\"step\":500,\"initial\":3000,\"unit\":\"R$\"}],\"outputs\":[{\"id\":\"pl\",\"label\":\"Patrimônio líquido\",\"formula\":\"6000 + 2000 - obrigacoes\",\"unit\":\"R$\"}],\"plot\":{\"x\":\"obrigacoes\",\"y\":\"pl\"},\"compareAt\":3000},\"check\":{\"kind\":\"choice\",\"question\":\"Com bens de R$ 6.000,00 e direitos de R$ 2.000,00, qual é o patrimônio líquido quando as obrigações chegam a R$ 5.000,00?\",\"inputs\":[{\"name\":\"obrigacoes\",\"value\":5000}],\"output\":\"pl\",\"options\":[{\"id\":\"a\",\"text\":\"R$ 3.000,00\",\"value\":3000,\"isCorrect\":true,\"reason\":\"Bens e direitos somam R$ 8.000,00. Tirando R$ 5.000,00 de obrigações, sobram R$ 3.000,00.\"},{\"id\":\"b\",\"text\":\"R$ 10.000,00\",\"value\":10000,\"isCorrect\":false,\"reason\":\"Esse valor soma a nova dívida ao patrimônio líquido de antes. Mas dívida a mais faz o patrimônio líquido cair, não subir.\"},{\"id\":\"c\",\"text\":\"R$ 5.000,00\",\"value\":5000,\"isCorrect\":false,\"reason\":\"Esse era o patrimônio líquido com R$ 3.000,00 de obrigações. Com R$ 2.000,00 a mais de dívida, ele cai.\"}]},\"data\":{\"isExample\":true}}"
+    },
+    {
+      "kind": "mathCheck",
+      "context": "No fim do mês, Davi confere a oficina. O empréstimo é do banco, e um cliente ainda vai pagar um conserto por Pix.\n\n| Item | Valor |\n|---|---:|\n| Dinheiro no caixa | R$ {dinheiro} |\n| Ferramentas | R$ {ferramentas} |\n| A receber de cliente | R$ {receber} |\n| Empréstimo do banco | R$ {banco} |\n| Devido ao fornecedor | R$ {fornecedor} |\n",
+      "question": "Qual é o patrimônio líquido da oficina, em reais?",
+      "math": {
+        "variables": [
+          {
+            "name": "dinheiro",
+            "value": 1000,
+            "min": 500,
+            "max": 3000,
+            "step": 500,
+            "unit": "R$"
+          },
+          {
+            "name": "ferramentas",
+            "value": 7000,
+            "min": 4000,
+            "max": 9000,
+            "step": 500,
+            "unit": "R$"
+          },
+          {
+            "name": "receber",
+            "value": 2000,
+            "min": 500,
+            "max": 3000,
+            "step": 500,
+            "unit": "R$"
+          },
+          {
+            "name": "banco",
+            "value": 4000,
+            "min": 1000,
+            "max": 5000,
+            "step": 500,
+            "unit": "R$"
+          },
+          {
+            "name": "fornecedor",
+            "value": 1500,
+            "min": 500,
+            "max": 2000,
+            "step": 500,
+            "unit": "R$"
+          }
+        ],
+        "solution": "dinheiro + ferramentas + receber - banco - fornecedor",
+        "answer": 4500,
+        "unit": "R$",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0
+        },
+        "steps": [
+          {
+            "text": "Some os bens, dinheiro e ferramentas, com o direito a receber do cliente: {result}.",
+            "expression": "dinheiro + ferramentas + receber"
+          },
+          {
+            "text": "Some as obrigações, o banco e o fornecedor: {result}.",
+            "expression": "banco + fornecedor"
+          },
+          {
+            "text": "Tire as obrigações do total de bens e direitos: {result}.",
+            "expression": "dinheiro + ferramentas + receber - banco - fornecedor"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "dinheiro + ferramentas + receber - fornecedor",
+            "misconception": "Descontar só o fornecedor",
+            "reason": "Você tirou só o que a oficina deve ao fornecedor. O empréstimo do banco também é uma obrigação."
+          },
+          {
+            "expression": "dinheiro + ferramentas - banco - fornecedor",
+            "misconception": "Esquecer o valor a receber",
+            "reason": "Você deixou de fora o que o cliente ainda vai pagar. Esse valor é um direito e entra na soma."
+          },
+          {
+            "expression": "dinheiro + ferramentas + receber - banco",
+            "misconception": "Descontar só o banco",
+            "reason": "Você tirou só o empréstimo. O valor devido ao fornecedor também é uma obrigação."
+          }
+        ]
+      },
+      "correctReason": "Você somou bens e direitos, {dinheiro} + {ferramentas} + {receber}, e tirou as duas obrigações, {banco} e {fornecedor}.",
+      "image": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Bens mais direitos, menos obrigações, dá o **patrimônio líquido**."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Bens, direitos e obrigações",
+        "text": "Uma oficina tem bens, como ferramentas e dinheiro, direitos, que são valores a receber, e obrigações, que são o que ela deve."
+      },
+      {
+        "label": "A conta do patrimônio líquido",
+        "text": "Bens mais direitos, menos obrigações, dá o patrimônio líquido, que não é o preço de venda da oficina."
+      },
+      {
+        "label": "Patrimônio líquido negativo",
+        "text": "Quando a oficina deve mais do que tem, as obrigações passam da soma de bens e direitos e o patrimônio líquido fica negativo."
+      }
+    ],
+    "shape": "hub"
+  }
+}

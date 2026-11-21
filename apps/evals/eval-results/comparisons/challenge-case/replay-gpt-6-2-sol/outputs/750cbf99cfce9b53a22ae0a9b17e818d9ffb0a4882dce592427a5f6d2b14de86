@@ -1,0 +1,339 @@
+{
+  "deadline": null,
+  "endings": [
+    {
+      "id": "together",
+      "outcome": "Com as duas aberturas livres e a luz bem fraca, os pontos separados se acumularam em faixas claras e escuras, não apenas em duas manchas diante das aberturas. As chegadas separadas construíram um desenho típico de ondas."
+    },
+    {
+      "id": "spread",
+      "outcome": "Com uma abertura coberta e a luz bem fraca, os pontos separados formaram uma mancha central larga. Na região central observada, não apareceram as faixas estreitas produzidas pelas duas aberturas juntas."
+    },
+    {
+      "id": "stripes",
+      "outcome": "Com as duas aberturas livres e a luz forte, as faixas claras e escuras apareceram depressa. As chegadas ficaram sobrepostas, sem pontos separados a olho para acompanhar a construção do desenho."
+    }
+  ],
+  "meters": [],
+  "mission": "Um quantum é um pacote de energia. Explore essa sala com {{friend}} para descobrir **como a luz chega e que desenho deixa**.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "brighten",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "improve",
+              "text": "Aumentar a claridade deixou o brilho visível, mas sobrepôs as marcas. Para investigar a energia de cada pacote, faltou observar chegadas separadas.",
+              "example": "Enfraqueça a luz, mantendo a cor, e acompanhe a energia indicada em cada chegada."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Agora dá para enxergar bem! Mas virou um brilho contínuo nesse trecho: as chegadas se sobrepõem e não consigo distinguir os pontos a olho."
+            },
+            {
+              "from": "friend",
+              "text": "Cada quantum é um pacote de energia da luz. Com tudo misturado assim, não consigo comparar a energia dos pacotes separados."
+            }
+          ],
+          "text": "Vou aumentar a claridade e olhar esse trecho da tela com mais facilidade.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "ask-friend",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Perguntar a quem já observou trouxe uma pista útil: com a mesma cor, as chegadas ficaram mais espaçadas, sem mudança na energia de cada pacote.",
+              "example": null
+            },
+            {
+              "skill": "packets",
+              "kind": "improve",
+              "text": "O relato esclareceu o que aconteceu, mas faltou acompanhar a mudança na tela. Experimentar também permitiria conferir a diferença entre o intervalo das chegadas e a energia de cada uma.",
+              "example": "Enfraqueça essa luz e observe o intervalo entre as marcas e a energia indicada em cada chegada."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Eu vi as chegadas ficarem mais espaçadas quando enfraqueci a luz sem mudar a cor. A energia indicada em cada chegada continuou igual."
+            },
+            {
+              "from": "friend",
+              "text": "Esse pacote de energia é um quantum: ele não ficou menor. Te contei o que vi, mas você não acompanhou a mudança comigo."
+            }
+          ],
+          "text": "Vou perguntar a {{friend}} o que ela viu quando deixou essa luz mais fraca.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "dim",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você separou as chegadas e conferiu a energia indicada em cada uma. Isso permitiu observar que enfraquecer a luz, mantendo a cor, espaça os pacotes sem diminuir a energia de cada um.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Olha, as chegadas ficaram mais espaçadas! A cor não mudou, e cada chegada continua trazendo a mesma quantidade de energia."
+            },
+            {
+              "from": "friend",
+              "text": "Então esse é o quantum, o pacote de energia da luz: não encolheu! Demora mais acompanhar assim, e ainda estamos só nesse pedacinho da tela."
+            }
+          ],
+          "text": "Vou enfraquecer a luz e acompanhar a energia que a tela indica em cada chegada.",
+          "timeJump": null
+        }
+      ],
+      "id": "arrivals",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "Será que, deixando a luz mais fraquinha, cada chegada traz menos energia? Fiquei com essa dúvida."
+        },
+        {
+          "from": "friend",
+          "text": "Minha vontade é aumentar a claridade. Pelo menos fica fácil enxergar esse pedacinho da tela!"
+        }
+      ],
+      "prompt": "O que você quer experimentar nesse trecho da tela?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "gather-dots",
+          "next": "together",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "A luz bem fraca permitiu distinguir as chegadas como pontos separados. Você pôde acompanhar cada marca em vez de ver apenas um brilho sobreposto.",
+              "example": null
+            },
+            {
+              "skill": "both",
+              "kind": "good",
+              "text": "Manter as duas aberturas livres e esperar os pontos se acumularem revelou os dois jeitos da luz na mesma observação: chegadas separadas formando faixas típicas de ondas.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Ué, não ficaram só manchas diante das aberturas! Os pontos chegaram separados, mas, depois de esperar bastante, dá para ver faixas, como num desenho de ondas."
+            }
+          ],
+          "text": "Vou manter as duas aberturas livres e a luz bem fraca para acompanhar os pontos se juntando.",
+          "timeJump": {
+            "label": "Depois de acumular muitos pontos",
+            "panel": {
+              "title": "Depois de muitas chegadas",
+              "metrics": [
+                {
+                  "label": "Luz",
+                  "value": "Bem fraca",
+                  "note": null
+                },
+                {
+                  "label": "Aberturas",
+                  "value": "As duas livres",
+                  "note": null
+                },
+                {
+                  "label": "Chegadas",
+                  "value": "Pontos separados",
+                  "note": null
+                },
+                {
+                  "label": "Desenho acumulado",
+                  "value": "Faixas claras e escuras",
+                  "note": "Em vez de apenas duas manchas diante das aberturas."
+                }
+              ],
+              "note": "As faixas aparecem com o acúmulo de muitas chegadas."
+            }
+          }
+        },
+        {
+          "effects": [],
+          "id": "cover-opening",
+          "next": "spread",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Usar luz bem fraca manteve as chegadas distinguíveis. Acompanhar seu acúmulo mostrou que os pontos se espalham mesmo com apenas uma abertura livre.",
+              "example": null
+            },
+            {
+              "skill": "both",
+              "kind": "improve",
+              "text": "Cobrir uma abertura simplificou a exploração, mas mudou o desenho investigado. Faltou observar como chegadas separadas formam as faixas com as duas aberturas disponíveis.",
+              "example": "Mantenha a luz bem fraca, descubra a outra abertura e acompanhe o acúmulo dos pontos."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Mesmo com só uma abertura livre, os pontos se espalharam! Depois da espera, vejo uma mancha central larga, sem aquelas faixas estreitas das duas aberturas juntas."
+            },
+            {
+              "from": "friend",
+              "text": "Deu para acompanhar as chegadas separadas. Mas tampar a abertura deixou de fora o desenho que as duas passagens produzem juntas."
+            }
+          ],
+          "text": "Vou cobrir uma das aberturas e usar a luz bem fraca para acompanhar onde os pontos caem.",
+          "timeJump": {
+            "label": "Depois de acumular muitos pontos",
+            "panel": {
+              "title": "Depois de muitas chegadas",
+              "metrics": [
+                {
+                  "label": "Luz",
+                  "value": "Bem fraca",
+                  "note": null
+                },
+                {
+                  "label": "Aberturas",
+                  "value": "Uma coberta",
+                  "note": null
+                },
+                {
+                  "label": "Chegadas",
+                  "value": "Pontos separados",
+                  "note": null
+                },
+                {
+                  "label": "Desenho acumulado",
+                  "value": "Mancha central larga",
+                  "note": "Na região central, sem as faixas estreitas produzidas pelas duas aberturas juntas."
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [],
+          "id": "quick-pattern",
+          "next": "stripes",
+          "notes": [
+            {
+              "skill": "both",
+              "kind": "improve",
+              "text": "A luz forte revelou as faixas rapidamente, mas as marcas sobrepostas esconderam sua construção por chegadas separadas. Faltou juntar essas duas observações na mesma experiência.",
+              "example": "Deixe as duas aberturas livres, enfraqueça a luz e acompanhe os pontos até reconhecer as faixas."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Nossa, apareceram faixas claras e escuras, não só manchas diante das aberturas! Com as duas livres e a luz forte, o desenho veio depressa."
+            },
+            {
+              "from": "friend",
+              "text": "Só que as chegadas se sobrepõem: não dá para separar os pontos a olho. Vejo o desenho típico de ondas, mas não acompanho os pontos formando essas faixas."
+            }
+          ],
+          "text": "Vou manter as duas aberturas livres e aumentar a luz para ver o desenho aparecer mais depressa.",
+          "timeJump": null
+        }
+      ],
+      "id": "pattern",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "Vamos olhar de mais longe? Quero ver a região central inteira da tela. Aposto que aparecem manchas bem na frente das aberturas."
+        },
+        {
+          "from": "friend",
+          "text": "Dá vontade de deixar a luz forte para o desenho aparecer logo. Estou curiosa!"
+        },
+        {
+          "from": "friend",
+          "text": "Ou a gente pode tampar uma abertura. Parece mais fácil acompanhar onde a luz vai parar com só uma passagem livre."
+        }
+      ],
+      "prompt": "Como você quer acompanhar o desenho na tela?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "As regras da sala",
+      "metrics": [
+        {
+          "label": "Luz",
+          "value": "Sempre da mesma cor",
+          "note": null
+        },
+        {
+          "label": "Passagem",
+          "value": "Duas aberturas estreitas",
+          "note": "Nada registra por qual abertura a luz passou."
+        },
+        {
+          "label": "Tela imaginária",
+          "value": "Marca chegadas e energia",
+          "note": "Marcas sobrepostas parecem um brilho contínuo."
+        },
+        {
+          "label": "Seu olhar",
+          "value": "Um pequeno trecho da tela",
+          "note": "Ao se afastar, você vê toda a região central."
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Uma sala imaginária de luz",
+  "skills": [
+    {
+      "id": "packets",
+      "name": "Explicar os pacotes de energia",
+      "practice": "Compare, em duas frases, diminuir a claridade com diminuir o tamanho de cada pacote, mantendo a mesma cor."
+    },
+    {
+      "id": "both",
+      "name": "Reconhecer os dois jeitos da luz",
+      "practice": "Descreva, em duas frases, como chegadas separadas podem formar um desenho típico de ondas."
+    }
+  ],
+  "startNodeId": "arrivals",
+  "summary": [
+    "Um quantum é um pacote de energia.",
+    "Enfraquecer a luz sem mudar sua cor deixa as chegadas mais espaçadas, sem diminuir a energia de cada pacote.",
+    "Com duas aberturas livres e sem registrar por qual delas a luz passou, chegadas separadas podem formar faixas típicas de ondas."
+  ],
+  "team": [
+    {
+      "id": "friend",
+      "role": "Amiga curiosa",
+      "expertise": "Gosta de brincar com sombras e quer descobrir se uma luz mais fraca chega em pedacinhos menores.",
+      "ai": false
+    }
+  ],
+  "title": "E se desse para espiar a luz chegando?"
+}

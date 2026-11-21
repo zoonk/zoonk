@@ -1,12 +1,11 @@
 "use client";
 
+import { CodeListing } from "@zoonk/learn/code";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, StepBack, StepForward, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ActivityCodeListing } from "../_components/activity-code";
-import { type CodeLanguage } from "../_utils/highlight-code";
 import { type WatchedValue } from "./tracer-steps";
 
 export function TracerVariables({ values }: { values: readonly WatchedValue[] }) {
@@ -57,12 +56,12 @@ export function TracerCode({
 }: {
   code: string;
   currentLine: number | null;
-  language: CodeLanguage;
+  language: string;
 }) {
   const t = useExtracted();
 
   return (
-    <ActivityCodeListing
+    <CodeListing
       code={code}
       label={t("Code")}
       language={language}

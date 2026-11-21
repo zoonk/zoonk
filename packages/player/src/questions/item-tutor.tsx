@@ -1,7 +1,7 @@
 "use client";
 
 import { type QuestionTutor, type TutorItem } from "@zoonk/learn/question-tutor";
-import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
+import { LessonRichLine } from "@zoonk/learn/rich-text/lesson";
 import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { useExtracted } from "next-intl";
@@ -15,7 +15,7 @@ import { TutorAskButton, TutorConversationLink, TutorDock } from "./tutor-dock";
 
 function ItemQuote({ item }: { item: TutorItem }) {
   const t = useExtracted();
-  const question = () => <LessonRichText text={item.text} />;
+  const question = () => <LessonRichLine text={item.text} />;
 
   return (
     <p

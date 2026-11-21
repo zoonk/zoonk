@@ -29,7 +29,7 @@ const studyDayProgressSchema = z
       .enum(["done", "left", "open", "complete"])
       .meta({
         description:
-          "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the session is complete.",
+          "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the day first finished.",
       }),
     lessonsComing: z
       .boolean()
@@ -45,7 +45,7 @@ const studyDayProgressSchema = z
       .nullable()
       .meta({
         description:
-          "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
+          "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the day first finishes and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
       }),
   })
   .meta({ description: "Today's session progress after this block.", id: "StudyDayProgress" });

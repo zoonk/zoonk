@@ -1,0 +1,393 @@
+{
+  "deadline": "O cliente espera o preço final para decidir a compra.",
+  "endings": [
+    {
+      "id": "released",
+      "outcome": "A etiqueta de R$ 200,00 está liberada com os percentuais previstos: a sobra de R$ 40,00 representa margem de 20%, exatamente o mínimo permitido. {{sales}} pode apresentar a oferta, mas a decisão de compra continua com o cliente."
+    },
+    {
+      "id": "conservative",
+      "outcome": "A oferta de R$ 225,00 está liberada, com desconto de 10% e margem de aproximadamente 28,9%. Ela atende à regra, mas o cliente recebe um desconto menor sem que o limite da loja exigisse essa mudança."
+    },
+    {
+      "id": "held",
+      "outcome": "{{pricing}} retém a etiqueta de R$ 210,00 antes de ela chegar ao cliente, e o atendimento aguarda a revisão. Os 31,25% medem a sobra sobre o custo, não a margem sobre a venda, e não confirmam a aplicação dos percentuais no preço."
+    }
+  ],
+  "meters": [
+    {
+      "id": "reliability",
+      "label": "Confiabilidade da oferta",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Fôlego da equipe no balcão",
+      "start": 80,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Uma oferta está sendo montada enquanto o cliente aguarda no balcão. Você precisa **liberar um preço que aplique os percentuais corretamente e respeite a margem mínima da loja**.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "rough",
+          "next": "rough-margin",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "A prévia saiu rápido, mas subtrair as taxas não reproduz a oferta: o reajuste usa o preço anterior e o desconto usa o preço reajustado.",
+              "example": "“Vou calcular o preço após o reajuste e aplicar o desconto nesse valor.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "Com essa conta, a prévia fica em R$ 210,00. Já consigo continuar a conversa no balcão."
+            },
+            {
+              "from": "pricing",
+              "text": "Cada porcentagem representa uma parte de um valor. Essa prévia trata os valores de referência como iguais, mas o desconto é sobre o preço reajustado."
+            }
+          ],
+          "text": "Usar o saldo entre reajuste e desconto e seguir para a análise da sobra.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "ask-ai",
+          "next": "checked-margin",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você pediu as etapas e os valores usados em cada uma. Isso mostrou que o desconto incide sobre R$ 250,00 e que o preço final volta a R$ 200,00, sem depender do saldo entre as taxas.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Cada porcentagem representa uma parte de um valor. O reajuste de 25% leva a R$ 250,00; o desconto de 20% sobre esse preço leva a R$ 200,00, com efeito combinado de 0%."
+            },
+            {
+              "from": "sales",
+              "text": "Vou manter o atendimento enquanto você acompanha a conta. Agora temos os valores de cada etapa pra conferir a etiqueta."
+            }
+          ],
+          "text": "Pedir para {{ai}} calcular reajuste e desconto, mostrando o valor usado em cada etapa.",
+          "timeJump": null
+        }
+      ],
+      "id": "price",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "O cliente está esperando pra decidir. Dá pra usar o saldo do reajuste menos o desconto e já seguir com a prévia?"
+        },
+        {
+          "from": "pricing",
+          "text": "Preciso conseguir conferir a conta da etiqueta depois. Você me passa como chegou ao preço?"
+        }
+      ],
+      "prompt": "Como você monta a prévia do preço?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "release",
+          "next": "released",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você comparou a sobra de R$ 40,00 com o preço de venda de R$ 200,00. A margem de 20% atende exatamente à regra, então foi possível manter o desconto previsto.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "Após o custo, sobram R$ 40,00: R$ 40,00 ÷ R$ 200,00 = 20%. Essa é a margem, a parte da venda que sobra após o custo; o limite exato permite liberar."
+            },
+            {
+              "from": "sales",
+              "text": "Recebi a etiqueta com a conta registrada. Esse registro tomou um tempo no balcão, mas posso manter o desconto previsto."
+            }
+          ],
+          "text": "Calcular a sobra em relação ao preço de venda e liberar se atingir o mínimo.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "reduce-discount",
+          "next": "conservative",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você conferiu a margem da nova oferta usando o preço de venda como referência. A alternativa de R$ 225,00 atende à regra e deixa uma sobra maior por unidade.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "A redução do desconto exigiu refazer a proposta e tirou atrativo da oferta. Faltou verificar se a venda por R$ 200,00 já atendia ao mínimo antes de mudar o desconto.",
+              "example": "“Quanto sobra na oferta prevista, e que parte do preço de venda essa sobra representa?”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "Com desconto de 10% sobre R$ 250,00, fica R$ 225,00 e sobram R$ 65,00. A margem, parte da venda que sobra após o custo, é de aproximadamente 28,9%."
+            },
+            {
+              "from": "sales",
+              "text": "Vou refazer a proposta com o desconto menor. Isso toma mais tempo e deixa a oferta menos atraente, embora a anterior já atendesse à regra."
+            }
+          ],
+          "text": "Mudar o desconto para 10% e conferir a sobra em relação à venda para liberar.",
+          "timeJump": null
+        }
+      ],
+      "id": "checked-margin",
+      "messages": [
+        {
+          "from": "pricing",
+          "text": "O preço conferido ficou em R$ 200,00. Preciso da sua decisão sobre a sobra mínima para liberar a etiqueta."
+        },
+        {
+          "from": "sales",
+          "text": "Ainda não anunciei o desconto. Que tal oferecer um desconto menor pra deixar uma folga maior na venda?"
+        }
+      ],
+      "prompt": "Qual oferta você libera?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -15
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "cost-basis",
+          "next": "held",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Os 31,25% mostram a sobra em relação ao custo, mas a regra da loja pede a sobra em relação ao preço de venda. Use o valor da venda como base para conferir a margem.",
+              "example": "“Vou comparar a sobra com o preço de venda, que é a base pedida pela loja.”"
+            },
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "Encaminhar a prévia agilizou o envio, mas deixou a sequência sem conferência e a etiqueta foi retida. Uma sobra positiva não confirma que reajuste e desconto foram aplicados como previsto.",
+              "example": "“Vou conferir o preço após o reajuste e depois aplicar o desconto nesse valor.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "Encaminhei a prévia de R$ 210,00. Sobram R$ 50,00 após o custo, o que representa 31,25% do que gastamos na mercadoria."
+            },
+            {
+              "from": "pricing",
+              "text": "Retive a etiqueta antes de chegar ao cliente: ela não reproduz os percentuais previstos. A margem é a parte da venda que sobra após o custo; comparar com o custo mede outra coisa."
+            }
+          ],
+          "text": "Comparar a sobra com o custo da mercadoria e encaminhar a prévia para emissão da etiqueta.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 25
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "rebuild",
+          "next": "released",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você pediu a reconstrução das etapas e conferiu os valores usados. Isso corrigiu a prévia de R$ 210,00 para R$ 200,00, aplicando o desconto sobre o preço reajustado.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você também conferiu a sobra em relação ao preço de venda. Os R$ 40,00 representam margem de 20%, permitindo liberar a oferta prevista mesmo após o retrabalho.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "O reajuste de 25% leva a R$ 250,00. O desconto de 20% sobre esse valor leva a R$ 200,00: efeito combinado de 0% em relação ao preço anterior."
+            },
+            {
+              "from": "ai",
+              "text": "Após o custo, sobram R$ 40,00: R$ 40,00 ÷ R$ 200,00 = 20%. Essa é a margem, a parte da venda que sobra após o custo; atende ao mínimo."
+            },
+            {
+              "from": "sales",
+              "text": "Substituí a prévia pela etiqueta conferida. Deu mais trabalho com o cliente esperando, mas mantivemos o desconto previsto."
+            }
+          ],
+          "text": "Pedir para {{ai}} refazer as etapas e calcular a sobra em relação à venda; conferir e liberar.",
+          "timeJump": null
+        }
+      ],
+      "id": "rough-margin",
+      "messages": [
+        {
+          "from": "pricing",
+          "text": "Recebi a prévia de R$ 210,00. Ainda não tenho a conferência das etapas do preço."
+        },
+        {
+          "from": "sales",
+          "text": "O cliente continua esperando. Dá pra comparar o que sobra com o que gastamos na mercadoria e encaminhar a etiqueta?"
+        }
+      ],
+      "prompt": "Como você decide se a prévia pode ser liberada?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Preparação da oferta",
+      "metrics": [
+        {
+          "label": "Preço anterior",
+          "value": "R$ 200,00",
+          "note": "Preço antes do reajuste."
+        },
+        {
+          "label": "Reajuste previsto",
+          "value": "25%",
+          "note": "Sobre o preço anterior."
+        },
+        {
+          "label": "Desconto previsto",
+          "value": "20%",
+          "note": "Sobre o preço reajustado."
+        }
+      ],
+      "note": "A oferta ainda não foi anunciada ao cliente."
+    },
+    {
+      "title": "Regra de liberação",
+      "metrics": [
+        {
+          "label": "Custo por unidade",
+          "value": "R$ 160,00",
+          "note": "Inclui todos os valores considerados nesta decisão."
+        },
+        {
+          "label": "Margem mínima sobre a venda",
+          "value": "20%",
+          "note": "O limite exato permite liberar a oferta."
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Balcão da loja Nuvem de Cedro",
+  "skills": [
+    {
+      "id": "successive",
+      "name": "Aumentos e descontos sucessivos",
+      "practice": "Parta de R$ 100,00, aplique um aumento de 20% e depois um desconto de 20%, anotando o preço após cada etapa."
+    },
+    {
+      "id": "margin",
+      "name": "Margem sobre o preço de venda",
+      "practice": "Para uma venda de R$ 80,00 com custo de R$ 60,00, calcule a sobra e explique qual valor deve ficar na base da divisão da margem."
+    }
+  ],
+  "startNodeId": "price",
+  "summary": [
+    "Em aumentos e descontos sucessivos, cada porcentagem deve ser aplicada ao valor resultante da etapa anterior.",
+    "A margem sobre a venda é calculada dividindo a sobra após o custo pelo preço de venda.",
+    "Uma margem que atende ao mínimo não confirma que os aumentos e descontos do preço foram aplicados corretamente."
+  ],
+  "team": [
+    {
+      "id": "pricing",
+      "role": "Responsável por preços",
+      "expertise": "Conhece a regra de margem da loja e quer uma etiqueta que possa conferir depois.",
+      "ai": false
+    },
+    {
+      "id": "sales",
+      "role": "Vendedor",
+      "expertise": "Atende o cliente no balcão e quer apresentar a oferta sem prolongar a espera.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de cálculo",
+      "expertise": "Calcula preços e margens a partir das bases informadas; a liberação continua com você.",
+      "ai": true
+    }
+  ],
+  "title": "Qual preço pode ir para a etiqueta?"
+}

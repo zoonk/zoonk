@@ -11,6 +11,7 @@ import {
   type ScheduledUnit,
 } from "./schedule-units";
 import { listThisWeekItems } from "./this-week-items";
+import { getKeptShare } from "./this-week-work";
 
 function isLandedStandIn({
   item,
@@ -148,45 +149,6 @@ export function countKeptLessons({
   );
 }
 
-export type KeptPiece = { date: Date; key: string; saved: boolean; share: number };
-
-function getKeptShare({
-  item,
-  units,
-}: {
-  item: ExistingPlanItem;
-  units: ReadonlyMap<string, QueueUnit>;
-}): number {
-  const total = units.get(getItemKey(item))?.lessons;
-  return item.lessonId === null && item.lessons && total ? Math.min(1, item.lessons / total) : 1;
-}
-
-export function listThisWeekWork({
-  frozen,
-  landed,
-  units,
-}: {
-  frozen: readonly ExistingPlanItem[];
-  landed: readonly { date: Date; key: string }[];
-  units: ReadonlyMap<string, QueueUnit>;
-}): KeptPiece[] {
-  return [
-    ...frozen.flatMap((item) =>
-      item.scheduledFor
-        ? [
-            {
-              date: item.scheduledFor,
-              key: getItemKey(item),
-              saved: true,
-              share: getKeptShare({ item, units }),
-            },
-          ]
-        : [],
-    ),
-    ...landed.map((unit) => ({ date: unit.date, key: unit.key, saved: false, share: 1 })),
-  ];
-}
-
 export function listKeptStandInCuts({
   frozen,
   units,
@@ -202,16 +164,6 @@ export function listKeptStandInCuts({
   });
 }
 
-function listThisWeekKeys({
-  frozen,
-  landed,
-}: {
-  frozen: readonly ExistingPlanItem[];
-  landed: readonly { key: string }[];
-}): Set<string> {
-  return new Set([...frozen.map((item) => getItemKey(item)), ...landed.map((unit) => unit.key)]);
-}
-
 export function keepThisWeek({
   days,
   frozen,
@@ -225,7 +177,7 @@ export function keepThisWeek({
   schedule: { dropped: DroppedUnit[]; events: ScheduledEvent[]; units: ScheduledUnit[] };
   start: Date;
 }) {
-  const hidden = listThisWeekKeys({ frozen, landed });
+  const hidden = new Set(frozen.map((item) => getItemKey(item)));
 
   const first = days.find((day) => day.date >= start);
   const isNew = (unit: QueueUnit) => !hidden.has(unit.key);

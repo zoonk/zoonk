@@ -1,9 +1,9 @@
 package com.zoonk.android.ui.richtext
 
 /**
- * Lesson text is Markdown limited to emphasis, short lists, GFM tables of data, inline code and
- * `$...$` math (main's `@zoonk/learn/rich-text/parser`). This parser covers exactly that subset,
- * so generated headings or links can never change a screen's layout.
+ * Lesson text is Markdown limited to emphasis, short lists, GFM tables of data, fenced code blocks,
+ * inline code and `$...$` math (main's `@zoonk/learn/rich-text/parser`). This parser covers exactly
+ * that subset, so generated headings or links can never change a screen's layout.
  */
 enum class SegmentKind { Bold, Code, DisplayMath, Italic, Math, Text }
 
@@ -24,15 +24,24 @@ sealed interface RichBlock {
         val lines: List<List<RichSegment>>,
     ) : RichBlock
 
+    /**
+     * A numbered list starts at its first item's number, as in CommonMark, so steps split by a code
+     * block or an example's frame number on; [start] is null for bullets.
+     */
     data class ListBlock(
         val items: List<List<RichSegment>>,
-        val ordered: Boolean,
+        val start: Int?,
     ) : RichBlock
 
     data class Table(
         val align: List<TableAlign?>,
         val header: List<List<RichSegment>>,
         val rows: List<List<List<RichSegment>>>,
+    ) : RichBlock
+
+    data class Code(
+        val code: String,
+        val language: String?,
     ) : RichBlock
 }
 
@@ -50,7 +59,7 @@ private const val SPACE = "[\\t\\n\\u000B\\f\\r \\u00A0\\u1680\\u2000-\\u200A\\u
 private val MATH_WHITESPACE = Regex(SPACE)
 private val PRICE_AFTER_SIGN = Regex("^$SPACE?[0-9]")
 private val UNORDERED_ITEM = Regex("^$SPACE*[-*•]$SPACE+(.+)$")
-private val ORDERED_ITEM = Regex("^$SPACE*[0-9]{1,3}[.)]$SPACE+(.+)$")
+private val ORDERED_ITEM = Regex("^$SPACE*([0-9]{1,3})[.)]$SPACE+(.+)$")
 private val LINE_BREAK = Regex("$SPACE*\\n$SPACE*")
 private val LINE_END = Regex("\\r?\\n")
 
@@ -184,7 +193,7 @@ private fun parseMarkup(text: String): List<RichSegment> =
 fun toOneLine(text: String): String = text.replace(LINE_BREAK, " ")
 
 /** Lesson text without its markup, for TalkBack to read out. */
-fun plainText(text: String): String = parseRichInline(text).joinToString("") { it.text }
+fun plainText(text: String): String = parseRichLine(text, ::parseRichInline).joinToString("") { it.text }
 
 /** Math first, so emphasis markers never touch LaTeX; `findMath` leaves inline code whole. */
 fun parseRichInline(text: String): List<RichSegment> =
@@ -205,7 +214,7 @@ private sealed interface Line {
 
     data class Item(
         val text: String,
-        val ordered: Boolean,
+        val number: Int?,
     ) : Line
 
     data class Text(
@@ -214,8 +223,8 @@ private sealed interface Line {
 }
 
 private fun classifyLine(line: String): Line {
-    UNORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[1], ordered = false) }
-    ORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[1], ordered = true) }
+    UNORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[1], number = null) }
+    ORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[2], number = it.groupValues[1].toInt()) }
     return line.trim().let { if (it.isEmpty()) Line.Blank else Line.Text(it) }
 }
 
@@ -234,10 +243,10 @@ private fun appendLine(
 
         is Line.Item -> {
             val inline = parseRichInline(line.text)
-            if (last is RichBlock.ListBlock && last.ordered == line.ordered && previous is Line.Item) {
+            if (last is RichBlock.ListBlock && (last.start == null) == (line.number == null) && previous is Line.Item) {
                 head + last.copy(items = last.items + listOf(inline))
             } else {
-                blocks + RichBlock.ListBlock(listOf(inline), line.ordered)
+                blocks + RichBlock.ListBlock(listOf(inline), line.number)
             }
         }
 
@@ -260,28 +269,64 @@ private fun parseTextLines(lines: List<String>): List<RichBlock> {
     }
 }
 
+/** A code block or a table that starts on this line, with the line after it. Code comes first, so a `|` in it is code. */
+private fun readBlockAt(
+    lines: List<String>,
+    index: Int,
+): Pair<RichBlock, Int>? {
+    readCodeFence(lines, index)?.let { return RichBlock.Code(it.code, it.language) to it.end }
+
+    val read = readMarkdownTable(lines, index) ?: return null
+    val (align, header, rows) = read.table
+
+    return RichBlock.Table(
+        align = align,
+        header = header.map(::parseRichInline),
+        rows = rows.map { row -> row.map(::parseRichInline) },
+    ) to read.end
+}
+
 private fun readBlocks(
     lines: List<String>,
     from: Int,
 ): List<RichBlock> {
-    val index = (from until lines.size).firstOrNull { readMarkdownTable(lines, it) != null }
-    val read = index?.let { readMarkdownTable(lines, it) } ?: return parseTextLines(lines.subList(from, lines.size))
-    val (align, header, rows) = read.table
+    val (index, read) =
+        (from until lines.size).firstNotNullOfOrNull { index -> readBlockAt(lines, index)?.let { index to it } }
+            ?: return parseTextLines(lines.subList(from, lines.size))
+    val (block, end) = read
 
-    val table =
-        RichBlock.Table(
-            align = align,
-            header = header.map(::parseRichInline),
-            rows = rows.map { row -> row.map(::parseRichInline) },
-        )
-
-    return parseTextLines(lines.subList(from, index)) + table + readBlocks(lines, read.end)
+    return parseTextLines(lines.subList(from, index)) + block + readBlocks(lines, end)
 }
 
 fun parseRichBlocks(text: String): List<RichBlock> = readBlocks(text.split(LINE_END), 0)
 
-/** A line the parser reads as a numbered list's item, which lists number by their place. */
-fun isNumberedItem(line: String): Boolean = ORDERED_ITEM.containsMatchIn(line)
+private val SPACE_SEGMENT = RichSegment(SegmentKind.Text, " ")
+
+private fun inlineCode(code: String): RichSegment = RichSegment(SegmentKind.Code, oneLineCode(code))
+
+/**
+ * Text drawn on one line, such as a heading or an answer quoted in a sentence (main's
+ * `parseRichLine`): [parseProse] reads its words, and a code block in it reads as one run of
+ * inline code, with a space between it and the words around it.
+ */
+fun parseRichLine(
+    text: String,
+    parseProse: (String) -> List<RichSegment>,
+): List<RichSegment> {
+    val lines = text.split(LINE_END)
+    val fences = findCodeFences(lines)
+    if (fences.isEmpty()) return parseProse(text)
+
+    val pieces =
+        fences.flatMapIndexed { index, fence ->
+            val from = fences.getOrNull(index - 1)?.end ?: 0
+            listOf(parseProse(lines.subList(from, fence.start).joinToString("\n")), listOf(inlineCode(fence.code)))
+        } + listOf(parseProse(lines.subList(fences.last().end, lines.size).joinToString("\n")))
+
+    return pieces
+        .filter { piece -> piece.any { it.text.isNotBlank() } }
+        .flatMapIndexed { index, piece -> if (index == 0) piece else listOf(SPACE_SEGMENT) + piece }
+}
 
 private fun List<RichSegment>.shownText(): String = joinToString("") { it.text }
 
@@ -353,7 +398,7 @@ private fun markBlock(
     when (block) {
         is RichBlock.Paragraph -> markLines(block.lines, quote, mark)?.let { block.copy(lines = it) }
         is RichBlock.ListBlock -> markLines(block.items, quote, mark)?.let { block.copy(items = it) }
-        is RichBlock.Table -> null
+        is RichBlock.Table, is RichBlock.Code -> null
     }
 
 /**

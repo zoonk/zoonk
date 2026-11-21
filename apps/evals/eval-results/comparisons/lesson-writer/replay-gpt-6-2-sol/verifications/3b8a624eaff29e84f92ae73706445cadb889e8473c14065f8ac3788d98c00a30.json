@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "c59eaee43fe09f0f",
+        "criterion": "clarity",
+        "observationId": "544f87b1f20a3d20e32ca4a167644cf2ec62bc2d7a164aec93f21cb2f65f75b5.first.d0e673dc-620a-4c74-aab0-9133dac51c6a.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0020507499999999996,
+    "id": "3b8a624eaff29e84f92ae73706445cadb889e8473c14065f8ac3788d98c00a30",
+    "packet": [
+      {
+        "A": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "claim": "Breaks the expectation to explain processo administrativo in everyday words when it first appears; screen 4 explains ampla defesa but never explains what a processo administrativo is.",
+        "claimId": "c59eaee43fe09f0f",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "- um processo administrativo, se cometer uma falta;",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "e12af4e39b929670",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "c59eaee43fe09f0f",
+          "finding": "holds",
+          "reason": "In output A, \"processo administrativo\" appears first in screen 4's bullet list (\"um processo administrativo, se cometer uma falta\") and is never explained in everyday words, while \"ampla defesa\" is explained. Output B does give a plain description of a processo administrativo (\"ela pode dar sua versão e apresentar provas\"), so the problem is in A only."
+        },
+        {
+          "claimId": "e12af4e39b929670",
+          "finding": "doesn't hold",
+          "reason": "The term \"additive inverse\" appears in neither output. Screen 5 of output A is \"Zero is a stop, not a wall\" and of output B is \"Decomposing the increment\", and neither uses that term."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

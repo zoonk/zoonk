@@ -52,6 +52,13 @@ export const skillLevelsTask: Task<
   generate: classifySkillLevels,
   id: "skill-levels",
   name: "Skill levels",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code tags language skills with levels",
+    reason: "Code checks the tag; the cheapest that placed as well as top models",
+    waits: "Nobody: after a goal build or in a daily sweep",
+  },
   score: scoreSkillLevels,
   testCases: TEST_CASES,
 };

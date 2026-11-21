@@ -53,7 +53,6 @@ msgstr "PM"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -798,6 +797,11 @@ msgid "The test didn't open. Try again."
 msgstr "Il test non si è aperto. Riprova."
 
 #: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "Conosci già il prossimo capitolo?"
+
+#: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
 msgid "Already know this chapter?"
 msgstr "Conosci già questo capitolo?"
@@ -1007,6 +1011,63 @@ msgstr "Giusto, attenzione all’ortografia"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Non controllata questa volta"
+
+#: src/_components/week-row.tsx
+#: src/generation/generation-wait.tsx
+msgctxt "B7ijKz"
+msgid "done"
+msgstr "completato"
+
+#: src/_components/week-row.tsx
+msgctxt "F8phHs"
+msgid "studied"
+msgstr "hai studiato"
+
+#: src/_components/week-row.tsx
+msgctxt "uMBOLl"
+msgid "exam day"
+msgstr "giorno dell’esame"
+
+#: src/_components/week-row.tsx
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "data di fine"
+
+#: src/_components/week-row.tsx
+msgctxt "KQR6jo"
+msgid "before your plan"
+msgstr "prima dell’inizio del tuo piano"
+
+#: src/_components/week-row.tsx
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "dopo il tuo esame"
+
+#: src/_components/week-row.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "dopo la data di fine"
+
+#: src/_components/week-row.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "giorno di riposo"
+
+#: src/_components/week-row.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "oggi"
+
+#: src/_components/week-row.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "in programma"
+
+#: src/_components/week-row.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "non hai studiato"
 
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
@@ -2582,6 +2643,48 @@ msgstr "Rivincita domani"
 msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "Rivincita la prossima volta che studi"
+
+#. Name of a block of program code in a lesson or a question, read by screen readers.
+#: src/code/code-listing.tsx
+msgctxt "h2vipu"
+msgid "Code"
+msgstr "Codice"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, one {# tabulazione} other {# tabulazioni}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, one {# spazio} other {# spazi}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "Riga {number}: vuota"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "Riga {number}, con rientro di {indent}: {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "Riga {number}: {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "Con rientro di {indent}: {code}"
 
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -4222,13 +4325,6 @@ msgid "in progress"
 msgstr "in corso"
 
 #: src/generation/generation-wait.tsx
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "B7ijKz"
-msgid "done"
-msgstr "completato"
-
-#: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
 msgid "stopped here"
 msgstr "interrotto qui"
@@ -5250,31 +5346,6 @@ msgstr "Fine del piano"
 msgctxt "pwcc1H"
 msgid "exam"
 msgstr "esame"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "non hai studiato"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "giorno di riposo"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "oggi"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-segment-popover.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "in programma"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -12593,34 +12664,17 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nuova lezione"
 
-#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
-#: src/session/use-block-copy.ts
-msgctxt "60PbK5"
-msgid "Bonus practice: {topic}"
-msgstr "Esercizi extra: {topic}"
-
 #. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "YGPuF7"
 msgid "Practice: {topic}"
 msgstr "Esercizi: {topic}"
 
-#. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
-#: src/session/use-block-copy.ts
-msgctxt "7zIxxl"
-msgid "Bonus practice: {areas}"
-msgstr "Esercizi extra: {areas}"
-
 #. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "I85zr9"
 msgid "Practice: {areas}"
 msgstr "Esercizi: {areas}"
-
-#: src/session/use-block-copy.ts
-msgctxt "JfeRyY"
-msgid "Bonus practice"
-msgstr "Esercizi extra"
 
 #: src/session/use-block-copy.ts
 msgctxt "MbAJ4_"
@@ -13114,6 +13168,12 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Stiamo preparando…"
 
+#. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
+#: src/today/today-block-row.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr "Extra"
+
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
 msgid "What changed"
@@ -13467,36 +13527,6 @@ msgstr "sfida settimanale"
 msgctxt "J3eMtx"
 msgid "every topic"
 msgstr "tutti gli argomenti"
-
-#: src/today/today-week-day.tsx
-msgctxt "F8phHs"
-msgid "studied"
-msgstr "hai studiato"
-
-#: src/today/today-week-day.tsx
-msgctxt "uMBOLl"
-msgid "exam day"
-msgstr "giorno dell’esame"
-
-#: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "data di fine"
-
-#: src/today/today-week-day.tsx
-msgctxt "KQR6jo"
-msgid "before your plan"
-msgstr "prima dell’inizio del tuo piano"
-
-#: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "dopo il tuo esame"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "dopo la data di fine"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

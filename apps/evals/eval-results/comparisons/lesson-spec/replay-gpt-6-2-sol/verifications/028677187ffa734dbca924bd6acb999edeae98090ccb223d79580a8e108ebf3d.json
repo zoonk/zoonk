@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "8bbf845fd8aefbc7",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "ca4916fd1c2fb21f27966be46e23be91907a1fceada525bd9c840d6ad1f3e4d4.first.5fafe3f5-c2e1-442a-b808-b02fabd53490.3",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0027901499999999995,
+    "id": "028677187ffa734dbca924bd6acb999edeae98090ccb223d79580a8e108ebf3d",
+    "packet": [
+      {
+        "A": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "claim": "The guess asks where the forwards will spread across the field but provides no field visual showing those positions.",
+        "claimId": "8bbf845fd8aefbc7",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The guess screen about the front three spreading out across the field.",
+          "kind": "range"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "f62fff60c8e345b5",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "8bbf845fd8aefbc7",
+          "finding": "holds",
+          "reason": "In output B, the guess screen asks where the three forwards spread (left, center and right, or together through the center) and has visual null, so the positions are never shown. Output A's guess is about the formation label and needs no field picture, so the problem is specific to B."
+        },
+        {
+          "claimId": "f62fff60c8e345b5",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear in output A or in output B. Output A's first explanation defines custo variável, and the claim names a term that isn't in the named output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

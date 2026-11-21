@@ -1,0 +1,453 @@
+{
+  "deadline": "Às 14h30, {{checkout}} fecha a troca de preços para abrir a oferta.",
+  "endings": [
+    {
+      "id": "best-offer",
+      "outcome": "A oferta abre com 20% de desconto e R$ 96,00 tanto na etiqueta quanto no caixa. A margem de 25% fica no mínimo aceito pela loja."
+    },
+    {
+      "id": "smaller-offer",
+      "outcome": "A oferta abre a R$ 102,00, com 15% de desconto e margem de 29,4%. A loja fica com mais dinheiro por jogo, mas deixa de oferecer os 20% de desconto que ainda cabiam na regra."
+    },
+    {
+      "id": "thin-margin",
+      "outcome": "A oferta entra a R$ 90,00, com 25% de desconto. Os R$ 18,00 que sobram são 25% do custo, mas só 20% do preço de venda, abaixo da margem mínima."
+    },
+    {
+      "id": "reprint",
+      "outcome": "No teste de abertura, {{checkout}} vê R$ 96,00 no caixa e R$ 100,00 na etiqueta impressa. A troca de preços fica pendente até a equipe corrigir a etiqueta."
+    }
+  ],
+  "meters": [
+    {
+      "id": "price-risk",
+      "label": "Risco de preço errado",
+      "start": 55,
+      "goodWhen": "low"
+    },
+    {
+      "id": "crew-room",
+      "label": "Folga da equipe",
+      "start": 75,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Você vai trocar a etiqueta de um jogo de toalhas que acabou de subir de preço. Escolha **o maior desconto que mantém a margem mínima**, com o mesmo preço na prateleira e no caixa.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": -17
+            },
+            {
+              "meter": "crew-room",
+              "change": -9
+            }
+          ],
+          "id": "show-bases",
+          "next": "margin-base",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você conferiu o preço reajustado na ficha e usou esse valor pra comparar os descontos. Assim, o desconto não caiu sobre o preço da etiqueta antiga.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "O reajuste de +20% sobre R$ 100,00 leva a R$ 120,00. É sobre R$ 120,00 que entram os descontos: 15% dá R$ 102,00, 20% dá R$ 96,00 e 25% dá R$ 90,00."
+            },
+            {
+              "from": "pricing",
+              "text": "Bate com a ficha. Deixei a impressão esperando enquanto conferia, mas agora tenho como refazer a conta de cada faixa."
+            }
+          ],
+          "text": "Peça para {{ai}} calcular o reajuste e os descontos, e confira os valores com a ficha.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": 12
+            },
+            {
+              "meter": "crew-room",
+              "change": 9
+            }
+          ],
+          "id": "offset",
+          "next": "draft-check",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "O rascunho adiantou a fila, mas tratou o aumento e o desconto como se partissem do mesmo preço. Anote o preço depois do reajuste e aplique o desconto sobre ele.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "checkout",
+              "text": "Já pus na fila o rascunho de R$ 100,00 com 20% de desconto, sem parar a configuração do caixa. Ainda não testei esse valor no sistema."
+            },
+            {
+              "from": "pricing",
+              "text": "Pra voltar ao preço antigo, o desconto teria que tirar em reais o mesmo que o reajuste acrescentou. Ter o mesmo percentual não garante isso."
+            }
+          ],
+          "text": "Use o desconto de 20% pra compensar o reajuste e ponha o preço antigo no rascunho.",
+          "timeJump": null
+        }
+      ],
+      "id": "price-base",
+      "messages": [
+        {
+          "from": "pricing",
+          "text": "A etiqueta antiga ainda tá na prateleira. Preciso deixar a conta anotada pra explicar o preço novo se alguém perguntar."
+        },
+        {
+          "from": "checkout",
+          "text": "O preço no caixa fecha às 14h30. Já que o aumento e o desconto de 20% têm o mesmo percentual, dá pra adiantar a etiqueta com o valor antigo, não dá?"
+        }
+      ],
+      "prompt": "Como você chega aos preços da oferta?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": 24
+            },
+            {
+              "meter": "crew-room",
+              "change": 10
+            }
+          ],
+          "id": "return-on-cost",
+          "next": "thin-margin",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Comparar a sobra com o custo diz quanto voltou em relação ao que a loja pagou. Pra testar a margem da oferta, divida os R$ 18,00 que sobram pelos R$ 90,00 cobrados.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "checkout",
+              "text": "Fechei a configuração com a chamada de 25% de desconto. No caixa, o jogo ficou a R$ 90,00."
+            },
+            {
+              "from": "pricing",
+              "text": "A R$ 90,00, sobram R$ 18,00: isso dá 25% do custo, mas só 20% do preço de venda. Pela regra da loja, a margem ficou abaixo do mínimo."
+            }
+          ],
+          "text": "Compare a sobra com o custo e libere o desconto de 25% se alcançar o mínimo.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": -11
+            },
+            {
+              "meter": "crew-room",
+              "change": -7
+            }
+          ],
+          "id": "share-of-sale",
+          "next": "set-offer",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você comparou a sobra de cada faixa com o próprio preço de venda. Isso mostrou que 20% de desconto atende à regra, mas 25% de desconto não.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "A R$ 96,00, sobram R$ 24,00 depois do custo: 25% do preço de venda. Com 15% de desconto, sobram R$ 30,00 e a margem é de 29,4%; com 25%, sobram R$ 18,00 e a margem é de 20%."
+            },
+            {
+              "from": "pricing",
+              "text": "Segurei a liberação enquanto anotava as contas. As faixas de 15% e 20% passam pela regra."
+            }
+          ],
+          "text": "Calcule a sobra em cada faixa e compare com o preço de venda de cada uma.",
+          "timeJump": null
+        }
+      ],
+      "id": "margin-base",
+      "messages": [
+        {
+          "from": "pricing",
+          "text": "Tô com os preços na tela. Preciso conferir a margem de cada faixa: é a parte da venda que sobra depois de pagar o custo do jogo."
+        },
+        {
+          "from": "checkout",
+          "text": "Queria pôr 25% de desconto na prateleira, que chama mais atenção. Dá pra ver quanto sobra em relação ao que a gente pagou pelo jogo?"
+        }
+      ],
+      "prompt": "Que conta você usa pra liberar o desconto?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": 10
+            },
+            {
+              "meter": "crew-room",
+              "change": 6
+            }
+          ],
+          "id": "use-draft",
+          "next": "reprint",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "A margem de 28% vale pro preço do rascunho, não pro que apareceu no caixa. Use o preço que vai ser cobrado pra calcular a margem da oferta.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "Se a venda fosse a R$ 100,00, a sobra depois do custo seria 28% desse preço. Com essa conta, a etiqueta já saiu."
+            },
+            {
+              "from": "checkout",
+              "text": "No teste de abertura, o caixa mostrou R$ 96,00 e a etiqueta impressa dizia R$ 100,00. A conta da margem ficou com um preço que eu não vou cobrar."
+            }
+          ],
+          "text": "Calcule a margem com os R$ 100,00 do rascunho, mande imprimir e mantenha o teste de abertura.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": -40
+            },
+            {
+              "meter": "crew-room",
+              "change": -19
+            }
+          ],
+          "id": "preview-checkout",
+          "next": "set-offer",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você pediu a prévia do caixa e confirmou em que ordem os preços mudavam: o reajuste entrou no preço de partida, e o desconto veio sobre esse novo valor.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você refez as margens com os preços que o caixa cobraria. Assim, a decisão não ficou dependendo da sobra que só existia no rascunho.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "checkout",
+              "text": "Tirei a etiqueta da fila e parei a configuração pra rodar a prévia. O caixa partiu do preço reajustado de R$ 120,00: deu R$ 102,00 com 15%, R$ 96,00 com 20% e R$ 90,00 com 25%."
+            },
+            {
+              "from": "pricing",
+              "text": "Com o preço da prévia, a sobra já é da venda que o caixa faria. Com 15%, sobram R$ 30,00 (29,4% de margem); com 20%, R$ 24,00 (25%); com 25%, R$ 18,00 (20%)."
+            }
+          ],
+          "text": "Tire o rascunho da fila, peça a prévia dos descontos no caixa e calcule as margens com esses preços.",
+          "timeJump": null
+        }
+      ],
+      "id": "draft-check",
+      "messages": [
+        {
+          "from": "checkout",
+          "text": "Os 20% já tão configurados e o rascunho de R$ 100,00 tá na fila. Dá pra rodar a conta com esse valor e deixar a conferência pro teste de abertura, que eu já ia fazer."
+        },
+        {
+          "from": "pricing",
+          "text": "Antes de soltar a etiqueta, preciso da margem: é quanto da venda fica com a loja depois de pagar o jogo."
+        }
+      ],
+      "prompt": "Qual preço você usa pra conferir a margem da oferta?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": -7
+            }
+          ],
+          "id": "leave-cushion",
+          "next": "smaller-offer",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você escolheu uma faixa que respeita a margem mínima e manteve o mesmo preço no caixa e na etiqueta.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Os 15% preservaram mais sobra por jogo, mas a meta era dar o maior desconto que coubesse. Como a regra aceita a margem no mínimo, dava pra liberar 20%.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "A R$ 102,00, ficam R$ 30,00 por jogo depois do custo. É mais sobra, mas com o custo do lote fechado, os 20% de desconto também atendiam à regra."
+            },
+            {
+              "from": "checkout",
+              "text": "Conferi: R$ 102,00 na etiqueta e no caixa."
+            }
+          ],
+          "text": "Coloque 15% de desconto no caixa e mande imprimir a etiqueta de R$ 102,00.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "price-risk",
+              "change": -7
+            }
+          ],
+          "id": "hit-floor",
+          "next": "best-offer",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você usou a margem mínima como limite, não como meta a superar. Assim, liberou os 20% de desconto sem sair da regra da loja.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "checkout",
+              "text": "Cadastrei os 20% e conferi a impressão: R$ 96,00 dos dois lados."
+            },
+            {
+              "from": "pricing",
+              "text": "Sobram R$ 24,00 por jogo, menos do que na faixa de 15%. A margem fica em 25%, que já é o bastante pra liberar o maior desconto que cabe."
+            }
+          ],
+          "text": "Coloque 20% de desconto no caixa e mande imprimir a etiqueta de R$ 96,00.",
+          "timeJump": null
+        }
+      ],
+      "id": "set-offer",
+      "messages": [
+        {
+          "from": "pricing",
+          "text": "As duas faixas passam: 15% de desconto deixa margem de 29,4%, e 20% deixa 25%. Eu iria de 15% pra sobrar mais por jogo."
+        },
+        {
+          "from": "checkout",
+          "text": "Só me confirma a faixa que entra. Vou usar o mesmo valor no caixa e na etiqueta."
+        }
+      ],
+      "prompt": "Qual desconto você libera pra oferta?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Ficha do jogo de toalhas",
+      "metrics": [
+        {
+          "label": "Preço antes do reajuste",
+          "value": "R$ 100,00",
+          "note": "Preço da etiqueta anterior. Reajuste cadastrado: +20%."
+        },
+        {
+          "label": "Custo por jogo",
+          "value": "R$ 72,00",
+          "note": "Custo fechado para o lote."
+        },
+        {
+          "label": "Descontos no caixa",
+          "value": "15%, 20% ou 25%",
+          "note": "Faixas disponíveis sobre o preço reajustado."
+        },
+        {
+          "label": "Margem mínima",
+          "value": "25%",
+          "note": "Sobre o preço de venda. O mínimo já atende à regra."
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Troca de etiquetas na Loja Virela",
+  "skills": [
+    {
+      "id": "successive",
+      "name": "Aumentos e descontos sucessivos",
+      "practice": "Pegue um preço redondo e anote quanto ele fica após subir 20% e depois cair 20%, sem pular o preço do meio."
+    },
+    {
+      "id": "margin",
+      "name": "Calcular a margem",
+      "practice": "Pegue um custo e um preço de venda, calcule quanto sobra em reais e descubra que porcentagem do preço de venda essa sobra representa."
+    }
+  ],
+  "startNodeId": "price-base",
+  "summary": [
+    "Quando um desconto vem depois de um reajuste, ele é calculado sobre o preço já reajustado.",
+    "Pra calcular a margem, divida a sobra depois do custo pelo preço de venda."
+  ],
+  "team": [
+    {
+      "id": "pricing",
+      "role": "Encarregada de precificação",
+      "expertise": "Confere o custo do lote e precisa de uma conta que consiga explicar se alguém questionar a etiqueta.",
+      "ai": false
+    },
+    {
+      "id": "checkout",
+      "role": "Líder de frente de caixa",
+      "expertise": "Prepara a oferta no caixa e quer fechar a troca de preços sem atrasar a abertura.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de IA",
+      "expertise": "Refaz as contas com os valores que você informa; a escolha e a liberação do preço ficam com a equipe.",
+      "ai": true
+    }
+  ],
+  "title": "Qual desconto cabe na etiqueta?"
+}

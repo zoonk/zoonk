@@ -2,48 +2,29 @@
   "modelId": "microsoft/mai-image-2.6-flash",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The discount reads at a glance. The old tag has its price crossed out, the amber -25% badge sits between the two tags, dashed arrows lead the eye downward, and the new tag shows the lower price. The math is consistent (25% off 80 is 60). Only the notched badge shape is slightly odd.",
-          "score": 9,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "Portrait layout with flat shapes, rounded corners, soft shadows, dashed movement lines and a plain light background. The palette is limited to navy, cream and beige with an amber accent. Weak points: the badge has a malformed notch, the dark navy tag is heavy, and the elements fill much of the frame.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Read letter by letter, all text matches the scene exactly: 'antes R$ 80' (price struck through), '-25%', and 'você paga R$ 60' with a correct circumflex. Each label is legible and on the object it names, with no extra text. The badge text is slightly crowded against the edges.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3406,
-          "outputTokens": 902,
-          "reasoningTokens": 281
+          "cacheWriteTokens": 0,
+          "inputTokens": 3861,
+          "outputTokens": 763,
+          "reasoningTokens": 212
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The round badge has an odd V-shaped notch cut into its bottom edge, so it reads as a broken circle rather than a clean round badge. The '-25%' text nearly touches the badge's left and right edges, which looks cramped. The large dark navy old tag is visually heavier than the new tag it leads to.",
+          "conclusion": "The picture is in portrait orientation instead of the landscape format the house style requires. The tags and badge are stacked vertically, which breaks the expected lesson layout.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The round badge has an odd notched, chevron-like cut at its bottom edge, so it reads less clearly as a simple round badge. The strike line on the old price is amber like the badge, which slightly blurs the accent color's role.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the badge a clean full circle with more padding around '-25%'. Lighten or soften the old tag's color so the new price stands out as the end of the sequence. Shrink the tags slightly to give the composition more breathing room.",
+          "conclusion": "Rebuild in landscape as a left-to-right sequence: old tag, then the -25% badge, then the new tag. Make the badge a clean circle and give the tags more breathing room.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -57,62 +38,84 @@
           "language": "pt",
           "scene": {
             "labels": [
-              { "target": "on the old tag", "text": "antes R$ 80" },
-              { "target": "on the new tag", "text": "você paga R$ 60" },
-              { "target": "on the round badge", "text": "-25%" }
+              {
+                "target": "on the old tag",
+                "text": "antes R$ 80"
+              },
+              {
+                "target": "on the new tag",
+                "text": "você paga R$ 60"
+              },
+              {
+                "target": "on the round badge",
+                "text": "-25%"
+              }
             ],
             "layout": "sequence",
             "motion": null,
             "relation": "a round amber badge sits between the old tag and the new tag",
-            "supportingObjects": ["a round badge"],
+            "supportingObjects": [
+              "a round badge"
+            ],
             "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The electron cloud around a red nucleus is clearly recognizable, and the dots are denser near the center, which conveys the probability idea. The gradient is a bit subtle, and the nucleus is somewhat large.",
+          "reasoning": "The discount reads clearly to a beginner. The old tag shows a crossed-out R$ 80, dashed arrows lead through the -25% badge, and the new tag shows R$ 60, which is the correct math. Only the badge's odd notch slightly distracts.",
           "score": 8,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The portrait image uses flat shapes, a plain white background, a soft blue palette with a red accent, a single focal object and generous space. It closely matches the house style.",
-          "score": 9,
+          "reasoning": "The image uses flat shapes, rounded corners, soft colors with one amber accent, a pure white background and thin dashed lines. However, it is portrait rather than landscape, and the badge shape is irregular.",
+          "score": 6,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "Only the two requested labels appear, 'electron cloud' and 'nucleus'. Both are spelled correctly, legible and connected by leader lines to what they name.",
+          "reasoning": "All three labels are spelled exactly as given ('antes R$ 80', '-25%', 'você paga R$ 60'). Each is legible, sits on the correct object, and there is no extra text.",
           "score": 10,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3362,
-          "outputTokens": 716,
-          "reasoningTokens": 233
+          "cacheWriteTokens": 0,
+          "inputTokens": 3817,
+          "outputTokens": 737,
+          "reasoningTokens": 197
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The density gradient is somewhat subtle: the outer dots remain fairly numerous and evenly dark, so the fade outward is less pronounced than it could be. The nucleus is also fairly large relative to the cloud, which weakens the 'small nucleus' impression.",
+          "conclusion": "The image is portrait rather than the landscape format the house style calls for, which leaves large empty bands at the top and bottom.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The nucleus is fairly large for a 'small' nucleus. The dot gradient is visible but subtle, since the dense core is partly hidden behind the nucleus. The 'electron cloud' leader line ends in a sparse outer area rather than the denser cloud. The background looks very slightly off-white rather than pure white.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Strengthen the falloff by making the outer dots sparser and lighter and the core noticeably denser. Shrink the nucleus slightly. Point the 'electron cloud' leader line toward the denser inner region.",
+          "conclusion": "Recompose in landscape. Shrink the nucleus. Make the density falloff stronger, with a tight dense halo near the nucleus and very sparse outer dots. Point the 'electron cloud' leader into the cloud body.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -126,8 +129,14 @@
           "language": "en",
           "scene": {
             "labels": [
-              { "target": "next to the small red nucleus", "text": "nucleus" },
-              { "target": "next to the dense cloud of dots", "text": "electron cloud" }
+              {
+                "target": "next to the small red nucleus",
+                "text": "nucleus"
+              },
+              {
+                "target": "next to the dense cloud of dots",
+                "text": "electron cloud"
+              }
             ],
             "layout": "single",
             "motion": null,
@@ -136,55 +145,62 @@
             "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The microwave heating the soup and the spinning molecules are recognizable, so the idea partly comes through. However, the requested single link from the soup to one spinning molecule is broken up across extra molecules and panels. The dashed line starts at the control panel, and the straight molecule shape misrepresents water.",
-          "score": 5,
+          "reasoning": "The image clearly shows a red nucleus surrounded by a dot cloud that is denser near the center and thinner outward, so the probability idea reads well. The nucleus is a bit large and the gradient could be stronger.",
+          "score": 8,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The flat shapes and soft palette fit the style. But the image is a multi-panel sequence with a duplicated focal object, a busy molecule cluster, a large dark window area and a gradient panel box. These break the one-focal-object, plain-background rule.",
-          "score": 4,
+          "reasoning": "The flat shapes, soft colors, single focal object and near-white background match the style, with no frame. However, the picture is portrait instead of landscape, a clear departure from the house format.",
+          "score": 6,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "The only text is 'water molecules', spelled correctly, legible and placed beside the circled molecule. It sits next to the molecule without spin arrows rather than the spinning one, but that is minor.",
-          "score": 9,
+          "reasoning": "Only 'electron cloud' and 'nucleus' appear, both spelled correctly, legible and connected to their parts by leader lines.",
+          "score": 10,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3410,
-          "outputTokens": 993,
-          "reasoningTokens": 298
+          "cacheWriteTokens": 0,
+          "inputTokens": 3865,
+          "outputTokens": 677,
+          "reasoningTokens": 0
         }
       },
       "steps": [
         {
-          "conclusion": "The image becomes a two-panel sequence with a second large bowl scene of many spinning molecules, which the scene did not request and the house style forbids. Instead of one dashed line from the soup to one circled spinning molecule, there are two dashed arrows. One starts at the control panel and points to a separate, uncircled molecule, and the other points down to the second panel. The circled molecule has no spin arrows. All molecules are drawn as straight lines, although water is bent, so they look more like CO2.",
+          "conclusion": "The image is portrait, not landscape. It is laid out as two stacked panels: the microwave on top and a large zoomed-in bowl panel below, with a gray gradient tinted background. This departs from the single-focal, plain-white house style. Instead of one dashed line from the soup to the molecule, there are several dashed arrows (one from the control panel, one pointing down to the second panel), so the relation is muddled. The water molecules are drawn as linear chains (blue-red-blue in a straight line) rather than the bent shape of H2O, which is a factual inaccuracy. The extra molecule beside the circle is a garbled, partial shape.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The composition is crowded, with three molecule depictions and two bowls. The microwave window is a large dark area against the light style. The lower panel has its own gradient box, which breaks up the plain background.",
+          "conclusion": "The dashed link starts at the microwave controls rather than the soup. Duplicate, redundant molecule depictions crowd the composition. The 'water molecules' label is attached to the single circled molecule while the spinning arrows appear elsewhere.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Keep only the microwave with the soup. Draw one dashed line from the soup to a single circled, bent water molecule with curved spin arrows, and put the 'water molecules' label beside it. Lighten the oven window, and use a portrait layout with more empty space.",
+          "conclusion": "Use a single landscape scene on plain white. Draw one dashed line from the soup to one circled, bent water molecule with curved spin arrows, and place the label beside it.",
           "kind": "potentialImprovements",
           "score": 7
         }
@@ -197,65 +213,79 @@
           "category": "science",
           "language": "en",
           "scene": {
-            "labels": [{ "target": "next to the spinning molecule", "text": "water molecules" }],
+            "labels": [
+              {
+                "target": "next to the spinning molecule",
+                "text": "water molecules"
+              }
+            ],
             "layout": "sequence",
             "motion": "curved arrows show the water molecule spinning",
             "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
-            "supportingObjects": ["a water molecule in a circle"],
+            "supportingObjects": [
+              "a water molecule in a circle"
+            ],
             "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Both systems are recognizable, but the core relation of same-size orbits is not shown: the atom orbit is much smaller. The near-equal sizes of Earth and Sun are also misleading.",
+          "reasoning": "The microwave heating soup is recognizable and spinning molecules are shown. However, the molecule geometry is wrong (linear instead of bent), and the single dashed link from the soup to the molecule is confused by multiple arrows and a second panel.",
           "score": 5,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "Flat shapes, a light background, soft red and blue colors and dashed orbits fit the house style. The faces, the divider line, the arrows, the boxed labels and the detailed Earth map add clutter.",
-          "score": 7,
+          "reasoning": "The image is portrait with two panels, a tinted gradient background in the lower panel, and a cluttered set of many molecules. These count as the multiple-panels and tinted-background failures, which cap this category.",
+          "score": 3,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "Both labels, \"Earth and Sun\" and \"Electron and nucleus?\", are spelled exactly and legible beneath their objects. The only extra mark is the small minus sign on the electron, which is acceptable.",
+          "reasoning": "The only text is 'water molecules', spelled correctly, legible, and placed next to the circled molecule. There is no extra text.",
           "score": 9,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3410,
-          "outputTokens": 1074,
-          "reasoningTokens": 427
+          "cacheWriteTokens": 0,
+          "inputTokens": 3865,
+          "outputTokens": 913,
+          "reasoningTokens": 359
         }
       },
       "steps": [
         {
-          "conclusion": "The two orbits are not the same size, as the scene requires: the electron's orbit is less than half the width of the Earth–Sun orbit, which weakens the intended comparison. Earth is also drawn almost as large as the Sun, a misleading scale detail. The Earth orbit is placed oddly, with the dashed ellipse running through Earth and around both bodies.",
+          "conclusion": "The two orbits are stacked vertically and are not the same size: the atom's orbit is much smaller than the Earth–Sun orbit. This weakens the same-size comparison the scene asks for. The image is portrait rather than landscape, and a horizontal divider line splits it into two panels, which departs from the house style.",
           "kind": "majorErrors",
-          "score": 6.5
+          "score": 6
         },
         {
-          "conclusion": "The objects are stacked vertically with a divider line rather than sitting side by side. The cute faces on the Sun, Earth and nucleus add decoration beyond the house style. Earth's continent map is detailed, and the label arrows and boxes add infographic-like elements.",
+          "conclusion": "The background looks slightly off-white rather than pure white. The Sun sits off-center within Earth's orbit, so the orbit reads loosely. The cartoon faces add decoration that pulls attention from the comparison.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "Draw both dashed ellipses at an identical size and align them side by side. Make the Sun clearly larger than Earth and put Earth on the orbit with the Sun at its center. Remove the faces, the arrows and the divider line, and place each label directly beneath its orbit.",
+          "conclusion": "Use a landscape layout with the two orbits side by side at equal size and no divider. Center the Sun and the nucleus inside their orbits. Drop the faces and keep the background pure white.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 7
         }
       ],
       "testCase": {
@@ -267,61 +297,80 @@
           "language": "en",
           "scene": {
             "labels": [
-              { "target": "under the Sun and Earth", "text": "Earth and Sun" },
-              { "target": "under the nucleus and electron", "text": "Electron and nucleus?" }
+              {
+                "target": "under the Sun and Earth",
+                "text": "Earth and Sun"
+              },
+              {
+                "target": "under the nucleus and electron",
+                "text": "Electron and nucleus?"
+              }
             ],
             "layout": "comparison",
             "motion": null,
             "relation": "the two orbits sit side by side at the same size",
-            "supportingObjects": ["a tiny nucleus with an electron on a dashed elliptical orbit"],
+            "supportingObjects": [
+              "a tiny nucleus with an electron on a dashed elliptical orbit"
+            ],
             "focalObject": "the Sun with Earth on a dashed elliptical orbit"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The nucleus, the electron on its dashed orbit and an inward red dashed path with an arrowhead are all present. However, the path is a brief arc rather than a spiral, which weakens the idea of an electron gradually falling into the nucleus.",
-          "score": 7,
+          "reasoning": "Both systems are recognizable, and the question label prompts the comparison. However, the orbits are not the same size or side by side, so the key relation is only partly shown.",
+          "score": 5,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The image is a flat portrait picture on a very light background with generous space, soft colors, thin dashed lines and soft shadows. Small deductions apply for the faint gradient tint in the corners, the slight gloss on the electron and the flower-like nucleus shape.",
-          "score": 8,
+          "reasoning": "The flat shapes, soft colors and dashed orbits fit the style. But the image is portrait, uses a divider to form two panels, adds cartoon faces and likely has a slightly off-white background. The panel split caps this category.",
+          "score": 4,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "Only the requested label \"electron\" appears. It is spelled correctly, easy to read and connected to the blue electron by a short leader line.",
-          "score": 10,
+          "reasoning": "Both labels are spelled exactly as given, legible and placed under their objects. The only other mark is a minus sign on the electron, and there are no extra words.",
+          "score": 9,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3386,
-          "outputTokens": 874,
-          "reasoningTokens": 356
+          "cacheWriteTokens": 0,
+          "inputTokens": 3841,
+          "outputTokens": 835,
+          "reasoningTokens": 260
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The red dashed path is a short quarter-turn arc rather than a true inward spiral, and its arrowhead stops before the nucleus, so the classical collapse reads less clearly. The five-lobed nucleus also looks a bit like a flower, and the electron has slight glossy shading.",
+          "conclusion": "The background is not plain white: faint lavender-blue gradients tint the top-left and bottom-right corners. The image is also portrait rather than the required landscape. The red dashed path is a short hooked arc that stops short of the nucleus, not a spiral that winds inward around it.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The nucleus is a five-lobed flower shape, which looks more like a blossom or a blood cell than a nucleus. There is a large amount of empty vertical space above and below the atom.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Draw the red path as a clear spiral of one to two shrinking turns that ends at the nucleus edge. Make the nucleus a simple round cluster or circle. Keep the electron fully flat.",
+          "conclusion": "Draw the red dashed path as a true inward spiral that circles the nucleus at least once and ends at it. Use a pure white, landscape canvas. Make the nucleus a simple round cluster.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -334,7 +383,12 @@
           "category": "science",
           "language": "en",
           "scene": {
-            "labels": [{ "target": "next to the blue electron", "text": "electron" }],
+            "labels": [
+              {
+                "target": "next to the blue electron",
+                "text": "electron"
+              }
+            ],
             "layout": "single",
             "motion": "a red dashed path spirals inward from the electron to the nucleus, with one arrowhead",
             "relation": null,
@@ -342,51 +396,62 @@
             "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The house is clearly recognizable, with the yellow door as requested. A sign on a post stands beside it showing only a red key, so the rental idea reads reasonably well. The key is a bit small, but nothing contradicts the scene.",
-          "score": 9,
+          "reasoning": "The electron, its orbit and an inward-pointing red dashed arrow are all present, so the idea of the electron falling inward is partly conveyed. However, the path is a short hook rather than a spiral and never reaches the nucleus. The flower-shaped nucleus is also less recognizable than a simple round one.",
+          "score": 6,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The image is a flat illustration with rounded shapes, a soft ground shadow and a plain white background. The palette is lavender and blue with yellow, plus a red-coral key as the accent. Minor weaknesses are the wide, low-placed composition in the portrait frame and the sign sitting near the edge.",
-          "score": 8,
+          "reasoning": "The flat shapes, soft shadow and thin dashed lines fit the house style. However, the background has visible tinted gradients in the corners rather than plain white, which caps this score. The portrait orientation also departs from the required landscape format.",
+          "score": 4,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image, which is exactly what the case requires.",
+          "reasoning": "The only text is \"electron\", spelled correctly, legible and placed right next to the blue electron. There is no other text.",
           "score": 10,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3309,
-          "outputTokens": 504,
-          "reasoningTokens": 0
+          "cacheWriteTokens": 0,
+          "inputTokens": 3764,
+          "outputTokens": 705,
+          "reasoningTokens": 234
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The composition sits wide and low-centered in the portrait frame, with large empty bands above and below. The sign is pushed close to the right edge, so the group feels slightly off-balance. The key on the sign is fairly small and could read as a generic key rather than a 'for rent' signal.",
+          "conclusion": "The image is in portrait orientation rather than the landscape format the house style requires, which departs from the lesson's style.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The house and sign sit in the upper-middle of the canvas, leaving a large empty band below, so the composition feels unbalanced. The yellow door and the coral key compete as two accents rather than one.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Center the house-and-sign group vertically and pull the sign slightly inward. Enlarge the key symbol on the sign so the rental meaning reads more strongly at a glance.",
+          "conclusion": "Recompose in a landscape frame with the house and sign centered. Keep the key as the single accent. Make the sign slightly larger so the key, which signals the rental, reads at a glance.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -403,59 +468,68 @@
             "layout": "single",
             "motion": null,
             "relation": "a sign on a post stands beside the house and shows only a key symbol",
-            "supportingObjects": ["a sign on a post with a key symbol"],
+            "supportingObjects": [
+              "a sign on a post with a key symbol"
+            ],
             "focalObject": "a small house with a yellow door"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "This is clearly a left-side view: the frontal lobe faces left, and the cerebellum and brainstem sit at the lower back. All four lobes are in distinct colors and in roughly the right positions, so the whole-and-parts idea reads at a glance. However, the occipital lobe is oversized, and the frontal and parietal pinks are similar.",
-          "score": 7,
+          "reasoning": "A recognizable small house with a yellow door has a sign on a post beside it showing only a key symbol, exactly as the scene describes. The rental idea comes through as well as a key-only sign allows.",
+          "score": 9,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The image is portrait, on a plain white background, with one focal object and soft, muted colors. The gyri carry noticeable shading and detail, which is less flat and geometric than the house style. The composition crowds the right side, where a line runs off the edge.",
-          "score": 7,
+          "reasoning": "The drawing has flat shapes, rounded corners, soft colors, a soft ground shadow and a plain white background with no frame. However, the canvas is portrait instead of landscape, and the subject is placed high, leaving uneven empty space.",
+          "score": 6,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "Reading letter by letter, all four labels are spelled exactly as requested: 'frontal lobe', 'parietal lobe', 'temporal lobe' and 'occipital lobe'. They are legible and there is no extra text. The occipital label lacks a connecting leader, and its line dangles off-canvas, so its placement is unclear.",
-          "score": 7,
+          "reasoning": "There are no letters, numbers or captions anywhere, as required.",
+          "score": 10,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3416,
-          "outputTokens": 1342,
-          "reasoningTokens": 611
+          "cacheWriteTokens": 0,
+          "inputTokens": 3871,
+          "outputTokens": 936,
+          "reasoningTokens": 346
         }
       },
       "steps": [
         {
-          "conclusion": "The occipital lobe label is broken: 'occipital lobe' floats at the top right with no leader line, while a separate leader line from the grey occipital lobe runs off the right edge of the canvas to nothing. A learner will notice the dangling line, and the label could be read as pointing at the parietal/occipital border.",
+          "conclusion": "The canvas is portrait rather than the landscape the house style requires. The occipital label floats unconnected while its leader line runs off the right edge of the canvas. This makes the occipital labeling look broken.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "The frontal and parietal lobes are two close shades of pink, which weakens the separation between parts. The occipital region is oversized and pushes toward the right edge, crowding that side. The gyri use fairly detailed shading and texture rather than plain flat shapes.",
+          "conclusion": "The grey occipital lobe is drawn far too large and extends up into parietal territory, so the anatomy is less accurate. The grey occipital also blends visually with the grey cerebellum and brainstem. The brain fills much of the frame, leaving the occipital line clipped at the edge.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Connect the 'occipital lobe' label to its lobe with a short leader line and remove the off-canvas line. Make the frontal and parietal colors more distinct. Simplify the folds into flatter, rounder shapes. Shrink or center the brain slightly to leave more even margins.",
+          "conclusion": "Use a landscape canvas with more margin. Connect the occipital lobe label to its lobe with a short leader line that stays inside the frame. Shrink the occipital lobe to its true size at the back, and give it a color distinct from the cerebellum.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -469,10 +543,22 @@
           "language": "en",
           "scene": {
             "labels": [
-              { "target": "next to the lobe at the front", "text": "frontal lobe" },
-              { "target": "next to the lobe on top", "text": "parietal lobe" },
-              { "target": "next to the lobe low at the side", "text": "temporal lobe" },
-              { "target": "next to the lobe at the back", "text": "occipital lobe" }
+              {
+                "target": "next to the lobe at the front",
+                "text": "frontal lobe"
+              },
+              {
+                "target": "next to the lobe on top",
+                "text": "parietal lobe"
+              },
+              {
+                "target": "next to the lobe low at the side",
+                "text": "temporal lobe"
+              },
+              {
+                "target": "next to the lobe at the back",
+                "text": "occipital lobe"
+              }
             ],
             "layout": "single",
             "motion": null,
@@ -481,51 +567,62 @@
             "focalObject": "a human brain seen from the left side, its four lobes each a different soft color"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Earth is clearly blue with green land and white clouds. Mars is rusty red. Mars is drawn at about half Earth's width (about 333 px vs. 643 px), stacked vertically, so the size comparison reads at a glance.",
-          "score": 9,
+          "reasoning": "The left-side brain is clear, and the frontal, parietal and temporal lobes are correctly placed and colored. However, the occipital lobe is oversized, and its label is visually disconnected from it, which weakens a beginner's read of the back lobe.",
+          "score": 7,
           "label": "Shows the idea",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The image is a portrait on a light, plain background with soft colors and soft ground shadows. However, the planet textures are detailed and painterly rather than flat geometric shapes. The divider line adds a diagram or panel feel, and Earth crowds the frame.",
-          "score": 7,
+          "reasoning": "The flat soft shapes, gentle shadows, soft palette and plain white background fit the house style. The picture is portrait instead of landscape, and the brain crowds the frame, with a line cut off at the edge.",
+          "score": 6,
           "label": "House style",
           "weight": 35
         },
         {
           "categoryId": "text",
-          "reasoning": "Only the two requested labels appear. \"Terra\" and \"Marte\" are spelled exactly as given, are legible, and connect to their planets with short leader lines.",
-          "score": 10,
+          "reasoning": "All four labels are spelled correctly, legible, and there is no extra text. The occipital label is not linked to its lobe, and its leader line dangles off-canvas.",
+          "score": 7,
           "label": "Text",
           "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 3391,
-          "outputTokens": 755,
-          "reasoningTokens": 208
+          "cacheWriteTokens": 0,
+          "inputTokens": 3846,
+          "outputTokens": 693,
+          "reasoningTokens": 197
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The horizontal divider line with a center dot is unrequested and gives the image a slight infographic or two-panel feel. Both planets use painterly, mottled textures instead of clean flat shapes. Earth is very large and nearly fills the frame width, which leaves little empty space around the focal object.",
+          "conclusion": "The image is portrait (taller than wide) instead of the landscape format the house style requires, which departs from the lesson style.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "An unrequested horizontal divider line with a dot separates the planets and adds clutter. The Earth and Mars surfaces carry fairly detailed texture rather than clean flat shapes. The Earth's pale halo slightly softens its edge.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Remove the divider line and set the planets on one open, light field. Simplify the land, clouds and Mars surface into fewer flat geometric shapes. Shrink both planets slightly, keeping the roughly 2:1 width ratio, so there is more empty space around them.",
+          "conclusion": "Recompose in landscape with Earth and Mars side by side, remove the divider, and simplify the planet surfaces to flatter shapes with fewer tones.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -539,17 +636,55 @@
           "language": "pt",
           "scene": {
             "labels": [
-              { "target": "next to Earth", "text": "Terra" },
-              { "target": "next to Mars", "text": "Marte" }
+              {
+                "target": "next to Earth",
+                "text": "Terra"
+              },
+              {
+                "target": "next to Mars",
+                "text": "Marte"
+              }
             ],
             "layout": "comparison",
             "motion": null,
             "relation": "Mars is drawn about half as wide as Earth",
-            "supportingObjects": ["Mars, a smaller rusty red planet"],
+            "supportingObjects": [
+              "Mars, a smaller rusty red planet"
+            ],
             "focalObject": "Earth, blue with green land and white clouds"
           }
         }
-      }
+      },
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Earth is clearly blue with green land and white clouds. Mars is rusty red and about half Earth's width (about 330 px vs. about 640 px), so the size comparison reads correctly for a beginner.",
+          "score": 9,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The background is white with soft shadows and no frame, but the picture is portrait rather than landscape. It adds an unrequested divider line, and the planet textures are more detailed than flat shapes.",
+          "score": 6,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Only \"Terra\" and \"Marte\" appear. Both are spelled correctly, legible, and placed next to their planets with short leader lines.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
+        }
+      ]
     }
   ],
   "taskId": "lesson-image"

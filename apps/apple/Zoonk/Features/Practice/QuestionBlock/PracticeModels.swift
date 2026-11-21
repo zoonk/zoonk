@@ -343,7 +343,6 @@ struct PracticeBlock: Hashable, Sendable, Decodable {
   let capsules: [PracticeCapsule]
   let checkpoint: PracticeBlockCheckpoint?
   let estimatedMinutes: Int
-  let extra: Bool
   let fullReview: Bool
   let id: String
   let kind: Kind

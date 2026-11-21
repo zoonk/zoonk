@@ -26,6 +26,13 @@ export const changingFactsTask: Task<
   generate: classifyChangingFacts,
   id: "changing-facts",
   name: "Changing facts",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code routes a goal to exam, regulation or product research",
+    reason: "A label decided by code checks; the cheapest model that matches the labels",
+    waits: "Code doesn't say: it runs in the research workflow",
+  },
   score: createDeterministicStringFieldScorer<ChangingFactsExpected>({
     expectedLabel: "Expected topic",
     field: "topic",

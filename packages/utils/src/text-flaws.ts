@@ -1,20 +1,26 @@
+import { findCodeFenceLines, findCodeFences, readWholeCodeFence, removeCode } from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
-import { hideMath, splitAtMath } from "./math-spans";
+import { hideMath, hideMathAndCode, splitAtMath } from "./math-spans";
 
 /**
  * `blocks` keeps lines, lists and tables (a screen's body); `inline` shows one line, whatever its
- * line breaks (an option, a title).
+ * line breaks (an option, a title), unless it's one code block and nothing else (an option that is
+ * code), which keeps its lines.
  */
 export type TextLayout = "blocks" | "inline";
+
+export function keepsLines({ layout, text }: { layout: TextLayout; text: string }): boolean {
+  return layout === "blocks" || readWholeCodeFence(text) !== null;
+}
 
 const LIST_MARK = /^\s*(?:[-*•]|\d{1,3}[.)])\s+/u;
 
 const BLOCK_MARKS: readonly { pattern: RegExp; problem: string }[] = [
   { pattern: /^\s{0,3}#{1,6}\s+\S/u, problem: "a heading's # marks" },
   { pattern: /^\s*>\s/u, problem: "a quote's > mark" },
-  { pattern: /^\s*```/u, problem: "a code fence" },
+  { pattern: /^\s*(?:```|~~~)/u, problem: "a code fence" },
 ];
 
 /** CommonMark's `[text](url)`, with or without a title in quotes or parentheses. */
@@ -93,17 +99,27 @@ export function findStrayEmphasis(line: string): Set<number> {
   return new Set([...at(BOLD_MARK), ...at(UNDERSCORE_MARK), ...(stars.length >= 2 ? stars : [])]);
 }
 
-function findMarks(line: string, marks: typeof INLINE_MARKS): string[] {
-  const text = hideMath(line);
-
+function findMarks({
+  hidden,
+  line,
+  marks,
+}: {
+  hidden: string;
+  line: string;
+  marks: typeof INLINE_MARKS;
+}): string[] {
   return marks.flatMap(({ pattern, problem }) =>
-    pattern.test(text) ? [`Shows ${problem} as text: ${quote(line)}.`] : [],
+    pattern.test(hidden) ? [`Shows ${problem} as text: ${quote(line)}.`] : [],
   );
+}
+
+function findBlockMarks(line: string): string[] {
+  return findMarks({ hidden: hideMath(line), line, marks: BLOCK_MARKS });
 }
 
 function findLineProblems(line: string): string[] {
   return [
-    ...findMarks(line, INLINE_MARKS),
+    ...findMarks({ hidden: hideMathAndCode(line), line, marks: INLINE_MARKS }),
     ...(findStrayEmphasis(line).size > 0
       ? [`Shows emphasis marks the app can't pair, so learners see them: ${quote(line)}.`]
       : []),
@@ -115,17 +131,35 @@ function isStrayRow(line: string): boolean {
   return trimmed.startsWith("|") && (trimmed.match(/\|/gu)?.length ?? 0) >= 2;
 }
 
+function findOpenFences(lines: readonly string[]): string[] {
+  return findCodeFences(lines).flatMap(({ closed, start }) => {
+    const opening = lines[start] ?? "";
+    const close = opening.trim().startsWith("~") ? "three tildes" : "three backticks";
+
+    return closed
+      ? []
+      : [
+          `Opens a code block it never closes, so every line after it shows as code: ${quote(opening)}. End the code with a line of ${close}.`,
+        ];
+  });
+}
+
 function findBlockProblems(text: string): string[] {
   const lines = text.split(/\r?\n/u);
   const tableLines = findMarkdownTableLines(lines);
+  const code = findCodeFenceLines(lines);
 
-  return lines.flatMap((line, index) => {
+  const problems = lines.flatMap((line, index) => {
+    if (code.has(index)) {
+      return [];
+    }
+
     if (tableLines.has(index)) {
       return splitTableCells(line).flatMap((cell) => findLineProblems(cell));
     }
 
     return [
-      ...findMarks(line, BLOCK_MARKS),
+      ...findBlockMarks(line),
       ...(isStrayRow(line)
         ? [
             `Shows table pipes as text, since the rows have no header and |---| line: ${quote(line)}.`,
@@ -134,6 +168,8 @@ function findBlockProblems(text: string): string[] {
       ...findLineProblems(line),
     ];
   });
+
+  return [...problems, ...findOpenFences(lines)];
 }
 
 export function hasTableRows(text: string): boolean {
@@ -148,14 +184,14 @@ function findInlineProblems(text: string): string[] {
     ...(hasTableRows(text)
       ? ["Has a table where only one line of text shows; put the data in the context."]
       : []),
-    ...lines.flatMap((line) => findMarks(line, BLOCK_MARKS)),
+    ...lines.flatMap((line) => findBlockMarks(line)),
     ...findLineProblems(text.replaceAll(/\s*\n\s*/gu, " ")),
   ];
 }
 
 /**
- * Must match what the player renders: emphasis, inline code, `$...$` math, short lists and GFM
- * tables in block text, and one line of emphasis, code and math in inline text.
+ * Must match what the player renders: emphasis, inline code, `$...$` math, short lists, GFM tables
+ * and fenced code blocks in block text, and one line of emphasis, code and math in inline text.
  */
 export function findUnrenderedMarkdown({
   layout,
@@ -164,7 +200,7 @@ export function findUnrenderedMarkdown({
   layout: TextLayout;
   text: string;
 }): string[] {
-  return layout === "blocks" ? findBlockProblems(text) : findInlineProblems(text);
+  return keepsLines({ layout, text }) ? findBlockProblems(text) : findInlineProblems(text);
 }
 
 /** Quoted source text keeps its punctuation, so callers leave it out. */
@@ -203,14 +239,23 @@ const PLACEHOLDERS: readonly RegExp[] = [
   /<\s*(?:insert|inserir|insira|placeholder|nome|name)\b[^>]*>/iu,
 ];
 
-/** An elision in a quote ("[...]") is real text. */
+/** The words a writer wrote: code left out, and each mark read as the words it marks. */
+function readWrittenWords(text: string): string {
+  return parseInlineMarkupRanges(removeCode(text))
+    .map((range) => range.text)
+    .join("");
+}
+
+/** An elision in a quote ("[...]") is real text, and so is code (a template's `{{ name }}`). */
 export function findPlaceholderText(text: string): string[] {
   if (EMPTY.test(text)) {
     return ["The text is empty."];
   }
 
+  const prose = readWrittenWords(text);
+
   return PLACEHOLDERS.flatMap((pattern) => {
-    const match = pattern.exec(text);
+    const match = pattern.exec(prose);
     return match ? [`Has a placeholder a writer left: ${quote(match[0])}.`] : [];
   });
 }

@@ -1,0 +1,265 @@
+{
+  "attempt": "first",
+  "costUsd": 0.013142725000000001,
+  "failures": [],
+  "packetId": "ebda549d88ec8bfaa097e19d5cd0e73abceffa7a77d3495b419d7b975ab64236",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is a ward scene with a charge nurse pushing a switch before a supply deadline; B is a training-design review that reads further from ward work.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices have different consequences (a two-week extension, a 40-per-group compromise, a peek-and-stop trap) and the trial results follow from them; B's choices are sound but change less.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "A",
+            "reason": "A's charge nurse pushes back and the quality analyst and AI give useful checks; B's educator and quality nurse are fine but less vivid.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give specific, kind notes that praise the checking strategy and offer concrete example wording.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "A's ending invents a swab result (6.5% redness) and a $5,400 saving that the case never supports; B's numbers and Fisher test result check out.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are at the right depth for a beginner and avoid promises of results.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A explains p-values in everyday counts and coin-toss terms; B leans on named tests and study-design terms with less plain explanation.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The ending says the swab change cut redness to 6.5% and saved $5,400 a year, but the case has no data on swabs, so the number is invented and taught as a result.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may carry a made-up result about swabs and a budget figure into real planning.",
+            "location": {
+              "detail": "redirected $5,400.00 a year to better skin-prep swabs that cut redness to 6.5%",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The choice text puts raw math notation and a textbook phrase into a charge nurse's line at huddle.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader meets symbols and jargon they can't parse, which is the opposite of the plain explanation this skill trains.",
+            "location": {
+              "detail": "fail to reject the null hypothesis and must keep Standard",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The test is named and only loosely explained ('which works with small counts'), with no plain account of what it checks.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A reader without a statistics background may accept the p-value without knowing what produced it.",
+            "location": {
+              "detail": "Using Fisher's exact test, which works with small counts",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A has a major problem: its ending presents an invented swab result as fact, which outweighs its stronger ward realism and decisions."
+        },
+        "pairId": "0aef1dca-583a-4141-b186-1e997d3933b5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both put the reader in a realistic analyst job with a launch or copy deadline and a colleague pushing for speed.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give several paths with different consequences and sensible trade-offs between speed and evidence.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both have a pushing colleague, an analyst, and an AI assistant who gives useful calculations.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debriefs name the strategy used and give specific wording for improvements.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The p-values and rates in both cases check out against their counts.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both explain the test in plain steps and avoid promising results.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A states its results as counts and percentages with a plain p-value explanation; B uses terms such as lift and chance-check cutoff without defining them.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The panel note uses the notation p < 0.05 without saying in words what it means for the reader.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A reader without a statistics background may not know what the threshold asks for.",
+            "location": {
+              "detail": "Does not meet p < 0.05",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The term lift is used without definition in the panel and the replies.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader has to guess what lift means, which slows down the decision.",
+            "location": {
+              "detail": "Lift used for planning",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The ending phrase is unclear about why the change is not adopted for the template.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader can't tell what the ending means for the Friday template.",
+            "location": {
+              "detail": "the change doesn’t make this template",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both cases are sound; A's counts-first explanations are easier for a non-statistician to follow, while B's undefined lift and unclear ending add friction."
+        },
+        "pairId": "54423d6b-4a7d-4224-975b-af715d55927e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The term lift is used without definition in the panel.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader has to guess what lift means, which slows down the decision.",
+            "location": {
+              "detail": "Lift used for planning",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The ending phrase is unclear about why the change is not adopted for the template.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader can't tell what the ending means for the Friday template.",
+            "location": {
+              "detail": "the change doesn’t make this template",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The term lift is used without definition in the panel.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader has to guess what lift means, which slows down the decision.",
+            "location": {
+              "detail": "Lift used for planning",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The ending phrase is unclear about why the change is not adopted for the template.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The reader can't tell what the ending means for the Friday template.",
+            "location": {
+              "detail": "the change doesn’t make this template",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the reader better."
+        },
+        "pairId": "b8510d2f-30cd-4900-ab47-93873471ab2b"
+      }
+    ]
+  }
+}

@@ -86,6 +86,14 @@ export const assessPronunciationTask: Task<
   generate: assessClip,
   id: "assess-pronunciation",
   name: "Assess pronunciation",
+  priorities: {
+    distribution: "private",
+    first: "quality",
+    reads: "A learner reads per-word marks; code scores the attempt",
+    reason:
+      "A wrong mark teaches the learner to fix a sound they said right; only some providers accept the audio format",
+    waits: "A learner waits in the request",
+  },
   score: scorePronunciation,
   testCases: TEST_CASES,
 };

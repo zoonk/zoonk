@@ -1,0 +1,10 @@
+{
+  "caseId": "visual-pt-deslocamento-demanda",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 2,
+  "problems": [],
+  "run": 1,
+  "side": "incumbent",
+  "total": 2
+}

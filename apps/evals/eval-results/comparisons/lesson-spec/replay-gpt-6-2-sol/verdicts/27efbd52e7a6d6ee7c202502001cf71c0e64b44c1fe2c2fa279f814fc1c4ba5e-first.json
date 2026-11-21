@@ -1,0 +1,231 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00525834,
+  "failures": [],
+  "packetId": "27efbd52e7a6d6ee7c202502001cf71c0e64b44c1fe2c2fa279f814fc1c4ba5e",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same two closely related skills: locating the lobes and connecting them with their jobs.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both have the same screen sequence and prompts, including a location question in the guess without a brain diagram.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same visual gaps: the lobe diagrams do not identify the lobes by name or number, and the guess has no diagram.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in US English and stay within the lesson’s scope at a beginner level.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The explanatory diagrams show regions labeled by location, but do not label the regions as lobes or highlight the lobe being taught; the required brain-with-lobes visual is missing.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner may not be able to connect each lobe name and job to its place on the brain.",
+            "location": {
+              "detail": "The explanatory screens about frontal, occipital, temporal, and parietal lobes",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess asks where the brain processes visual signals but provides no brain diagram or marked location.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must answer a location question without the visual support the prompt requires.",
+            "location": {
+              "detail": "The guess screen",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanatory diagrams show regions labeled by location, but do not label the regions as lobes or highlight the lobe being taught; the required brain-with-lobes visual is missing.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner may not be able to connect each lobe name and job to its place on the brain.",
+            "location": {
+              "detail": "The explanatory screens about frontal, occipital, temporal, and parietal lobes",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess asks where the brain processes visual signals but provides no brain diagram or marked location.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must answer a location question without the visual support the prompt requires.",
+            "location": {
+              "detail": "The guess screen",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so their strengths and visual gaps are the same."
+        },
+        "pairId": "06d33c51-f677-4d5a-ad4f-02908a712b28"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both organize the same two related actions: locating the lobes and connecting them with their jobs.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide a hook, an early prediction, explanations, and a realistic application; each also includes a location question without the visual support it needs.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A labels the relevant lobe on its explanatory diagrams and shows a marked brain in its guess. B’s explanatory images use unnamed regions, and its guess has no diagram.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English and stay within the beginner lesson’s scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check asks the learner to choose a brain location but does not show a brain diagram or mark the locations.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to identify a location without the visual support required for this question.",
+            "location": {
+              "detail": "The check asking whether the target is near the forehead or back of the head",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The labeledDiagram template is assigned to an explanation screen, but the brief says the completed map has all names visible and gives the learner no task; this does not fit a template meant for matching numbered parts to names.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The writer may produce an unexplained interaction that either gives away the answers or asks the learner to do nothing.",
+            "location": {
+              "detail": "The explanation screen using the labeledDiagram template",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The explanatory diagrams use colored regions, but do not identify them as lobes by name or number, or highlight the lobe being taught.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner may not be able to connect the lobe names and jobs with the regions shown in the brain.",
+            "location": {
+              "detail": "The explanatory screens about lobe locations and functions",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess asks the learner to choose a brain location but has no diagram or marked spot.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must answer a location question without the visual support required for it.",
+            "location": {
+              "detail": "The guess screen",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A’s diagrams and guess better meet the explicit requirement to show brain locations. Both plans have a missing visual in a location check, but B also leaves the lobe regions unnamed throughout its explanatory visuals."
+        },
+        "pairId": "0ecce033-7add-44f4-bceb-5fe700c9bf00"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both teach one coherent skill: calculating a percent change from the starting value.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B names 13.04%—the result of dividing by the new fee—as the tempting wrong answer. A instead calls 15% tempting, though 15% is the correct change; both also contain the same incorrect tie in the wage-table key.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use text for calculations and tables for data, with no misplaced or decorative visuals.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in US English, introduce the formula after concrete examples, and stay within the lesson’s scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check names 15% as the tempting answer from dividing by the old fee, but $6 ÷ $40 × 100 is the correct answer, 15%. It omits the required trap of dividing by the new fee, which gives about 13.04%.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner may be taught that the correct method is a mistake and does not get practice spotting the specified error.",
+            "location": {
+              "detail": "The check about the service fee rising from $40 to $46",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The table check says jobs A and B are tied because both add $4, but their percent increases differ: A is 25% ($4 ÷ $16), while B is 16% ($4 ÷ $25).",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner may choose an incorrect answer and confuse equal dollar changes with equal percent changes.",
+            "location": {
+              "detail": "The check with hourly wages for jobs A, B, and C",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The table check says jobs A and B are tied because both add $4, but their percent increases differ: A is 25% ($4 ÷ $16), while B is 16% ($4 ÷ $25).",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner may choose an incorrect answer and confuse equal dollar changes with equal percent changes.",
+            "location": {
+              "detail": "The check with hourly wages for jobs A, B, and C",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both share an incorrect answer key in the wage-table check, but B correctly includes the required wrong-new-value trap in the service-fee check. A mistakenly presents the correct answer as the tempting error."
+        },
+        "pairId": "768fef55-8d0c-4f12-a36c-cf28555226a0"
+      }
+    ]
+  }
+}

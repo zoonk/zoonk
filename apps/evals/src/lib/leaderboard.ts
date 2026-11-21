@@ -2,6 +2,7 @@ import { type LanguageSummary, summarizeByLanguage } from "@/lib/case-languages"
 import { type EvalSummary, aggregateEvalResults } from "@/lib/eval-summary";
 import { meetsLatencyBudget } from "@/lib/latency";
 import { getModelById, getModelDisplayName, getModelFamily, getReasoningLabel } from "@/lib/models";
+import { hasValidScore } from "@/lib/score-calculation";
 import { summarizeCategoryScores } from "@/lib/score-categories";
 import { getStatsFromResults } from "@/lib/stats";
 import { type CategoryScoreSummary, type RegisteredTask, type TaskEvalResults } from "@/lib/types";
@@ -50,7 +51,9 @@ export function getLeaderboardEntries({
         accuracy: stats.classification?.accuracy ?? null,
         averageScore: summary.averageScore,
         categoryScores: summarizeCategoryScores(
-          result.results.map((evalResult) => evalResult.categoryScores),
+          result.results
+            .filter((evalResult) => hasValidScore(evalResult))
+            .map((evalResult) => evalResult.categoryScores),
         ),
         costPer1000Runs: stats.costPer1000Runs,
         displayName: getModelDisplayName(model),

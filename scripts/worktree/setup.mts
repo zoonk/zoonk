@@ -23,6 +23,7 @@ import {
   writeEnvironment,
 } from "./environment.mts";
 import { findPostgresProblem, run, together, withDatabaseLock } from "./postgres.mts";
+import { startSweep } from "./sweep.mts";
 
 const worktree = realpathSync(resolve(import.meta.dirname, "../.."));
 
@@ -154,6 +155,11 @@ async function main(): Promise<void> {
 
     await installDependencies();
     await prisma({ args: ["generate"], worktree });
+  }
+
+  if (!process.env.CI) {
+    // Each new worktree makes room for itself by clearing what idle ones left behind.
+    startSweep();
   }
 
   log(`Ready in ${((performance.now() - started) / 1000).toFixed(2)}s.`);

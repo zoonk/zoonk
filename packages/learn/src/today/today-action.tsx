@@ -17,7 +17,13 @@ import { useTodayScreen } from "./today-context";
 import { TodayExamOver } from "./today-exam-over";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { useContinueSession } from "./use-continue-session";
-import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
+import {
+  useDayState,
+  useHasNextBlock,
+  useSessionState,
+  useTodayPastDate,
+  useUpNextLessons,
+} from "./use-today-copy";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 
@@ -37,10 +43,9 @@ const TodayContinueContext = createContext<TodayContinue | null>(null);
  */
 export function TodayContinueProvider({ children }: { children: React.ReactNode }) {
   const { actions } = useTodayScreen();
-  const underway = useDayState() === "underway";
   const keepLearning = useUpNextLessons().length > 0;
-  const hasAction = useTodayActionKind() !== null;
-  const session = useContinueSession({ enterKey: underway });
+  const kind = useTodayActionKind();
+  const session = useContinueSession({ enterKey: kind === "continue" });
   const wait = useSlowWait(session.isPending);
   const keep = useSessionAction({ action: actions.addExtraTime, enterKey: keepLearning });
   const keepWait = useSlowWait(keep.isPending);
@@ -55,7 +60,7 @@ export function TodayContinueProvider({ children }: { children: React.ReactNode 
 
   return (
     <TodayContinueContext value={{ ...session, keep: keepAction, wait }}>
-      <PageHasMainAction value={hasAction}>{children}</PageHasMainAction>
+      <PageHasMainAction value={kind !== null}>{children}</PageHasMainAction>
     </TodayContinueContext>
   );
 }
@@ -259,6 +264,7 @@ function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
   const { today } = useTodayScreen();
   const state = useDayState();
   const pastDate = useTodayPastDate();
+  const hasNext = useHasNextBlock();
   const keepLearning = useUpNextLessons().length > 0;
 
   if (pastDate) {
@@ -270,12 +276,13 @@ function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
     return today.session.blocks.length === 0 ? "prepare" : null;
   }
 
-  if (keepLearning) {
-    return "keepLearning";
+  // A done day keeps its "done" while an extra is next, and Continue plays it.
+  if (hasNext) {
+    return "continue";
   }
 
-  if (state === "underway") {
-    return "continue";
+  if (keepLearning) {
+    return "keepLearning";
   }
 
   if (state === "done") {

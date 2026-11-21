@@ -1,0 +1,243 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01188749,
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "d8ec1110345aebb2a9c5e66d063156bb1eb2bdbe8a87d99fad26a56692e234ad",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither serves the learner better on realism.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so decisions are equally strong or weak.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the team is equally well built.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the debrief notes are equally specific and kind.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and their numbers check out equally.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so depth and language are equal.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so ease of following is equal.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The chance-number note is written in statistics phrasing that a non-data learner may not follow on the first read.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner may need to reread the note to understand what the chance number means.",
+            "location": {
+              "detail": "a gap at least this large in either direction",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The chance-number note is written in statistics phrasing that a non-data learner may not follow on the first read.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner may need to reread the note to understand what the chance number means.",
+            "location": {
+              "detail": "a gap at least this large in either direction",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": null,
+        "pairId": "248872c3-154d-4bdc-8894-26663bb88400"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A is set on a hospital ward with a charge nurse, a quality analyst and a real supply deadline, which is the nursing work the case should train.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A gives several real choices with different sample sizes and endings, while Output B has fewer paths that change the result.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use distinct colleagues with clear roles and let the learner ask the AI or a colleague for help.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs give specific, kind debrief notes that praise the checking strategy and name what to do next.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A invents a $5,400 saving and a 6.5% redness rate that the case never tests, while Output B's numbers are consistent.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs fit a beginner's level and explain the core ideas in the chat.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A explains the p-value with a coin-toss comparison and patient counts, while Output B leans on test names such as Fisher's exact test.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The ending states a $5,400 yearly saving and that the swabs cut redness to 6.5%. Neither figure comes from the trial, and the case never tests swabs, so an invented result is presented as true.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may carry an unsupported figure and a claim that skin-prep swabs reduce redness into real budget talk.",
+            "location": {
+              "detail": "redirected $5,400.00 a year to better skin-prep swabs that cut redness to 6.5%",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The choice text uses a statistical phrase and a formula without any everyday explanation of what it means.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A learner who is not a data person can't tell what the option means and may pick it without understanding it.",
+            "location": {
+              "detail": "fail to reject the null hypothesis and must keep Standard",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The case is a review of a training format, so the learner plans a training memo rather than making a ward decision.",
+            "criterion": "realism",
+            "learnerCost": "The learner practises writing a planning recommendation rather than the ward work the case is meant to train.",
+            "location": {
+              "detail": "The whole case is a training-format review with no ward or patient-care decision for the nurse to make.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The test name Fisher's exact test is given with no plain explanation for a reader who isn't a data specialist.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner meets an unfamiliar test name and may skip the sentence that explains the result.",
+            "location": {
+              "detail": "Fisher's exact test",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A has a major accuracy problem with an invented saving and redness result that the learner could carry into real work, which outweighs its stronger ward realism. Output B's numbers and conclusions are sound."
+        },
+        "pairId": "9d1621f7-1950-459a-840e-fbe171ded0c5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are plausible online or store analyst cases with a colleague pushing for a fast call.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A has more decision points, including a headline trap and a revenue-claim trap, with endings that follow from each choice.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs give a clear analyst, a store or web manager pushing for a decision, and an AI check.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs give specific, kind debrief notes that praise the strategy and name the next step.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs' p-values, counts and sample sizes check out and are consistent across panels.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A covers a fuller range of stakes and sample options with consistent timing, while Output B covers fewer paths.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B uses the plainer term chance number and fewer named statistics, so it is easier for a non-data reader to follow.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The note uses the phrase underlying purchase rates, a term the reader must already know, without a plain-words explanation.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A reader without a data background may not follow why the equal-rates condition matters.",
+            "location": {
+              "detail": "the underlying purchase rates being equal",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The rollout rule is stated in dense, abstract phrasing that a non-data reader may find hard to follow.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner may have to reread the rule to know what counts as enough evidence.",
+            "location": {
+              "detail": "Rollout rule: evidence of a gain, with an observed gain at least as large as the target.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A offers more real decision points and consequences, and its numbers are as accurate as Output B's, so it serves the learner a little better."
+        },
+        "pairId": "c5ee3c13-df69-447b-a035-c8b67b7f479e"
+      }
+    ]
+  }
+}

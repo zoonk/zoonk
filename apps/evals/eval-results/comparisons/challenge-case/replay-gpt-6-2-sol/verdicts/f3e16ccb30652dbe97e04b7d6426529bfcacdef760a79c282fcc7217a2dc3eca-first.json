@@ -1,0 +1,164 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00442514,
+  "failures": [],
+  "packetId": "f3e16ccb30652dbe97e04b7d6426529bfcacdef760a79c282fcc7217a2dc3eca",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A cria uma situação de plantão com prazo curto, pressão do médico e uma dose que precisa ser conferida. B também se passa numa enfermaria, mas a cena tem menos pressão concreta.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "B",
+            "reason": "Em B, as escolhas podem levar tanto à dose revisada e administrada quanto a mantê-la suspensa; isso dá consequência prática às decisões. Em A, os caminhos acabam convergindo para corrigir a dose e seguir.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "A oferece uma farmacêutica, um médico e a IA; B oferece uma enfermeira de referência, um médico e a IA. Ambos dão à pessoa uma opção útil de consulta e mantêm os papéis de gênero pedidos.",
+            "criterion": "team"
+          },
+          {
+            "preference": "B",
+            "reason": "As notas de B dão orientações concretas e gentis, incluindo uma frase-modelo para comunicar a divergência. A também tem notas específicas, mas uma delas ensina uma afirmação clínica não sustentada sobre a eficácia de uma dose menor.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "B mantém os cálculos coerentes e evita afirmar que uma redução específica da dose causará uma perda proporcional de eficácia. A apresenta essa relação como fato clínico.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B apresenta os passos de conferência com linguagem mais direta e sem a alegação de um teto pediátrico geral. A traz detalhes profissionais úteis, mas alguns termos e fórmulas deixam a leitura menos imediata.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "B",
+            "reason": "B usa frases mais simples para explicar o cálculo e a conduta. A inclui mais termos técnicos e fórmulas, apesar de ser destinada a um nível intermediário.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A afirma que deixar de administrar 20 mg reduziria a eficácia do tratamento em cerca de 7,4%, mas essa proporção aritmética não permite concluir uma redução correspondente da eficácia clínica.",
+            "criterion": "accuracy",
+            "learnerCost": "A pessoa pode levar para o trabalho uma conclusão clínica inventada sobre o efeito de uma dose menor.",
+            "location": {
+              "detail": "Arredondar a dose de antimicrobiano por conta própria reduz a eficácia do tratamento em cerca de 7,4%.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A tem uma cena de plantão mais pressionada, mas a afirmação clínica quantitativa sobre a eficácia é um problema importante num caso de enfermagem. B ensina uma conferência segura e mantém os cálculos consistentes."
+        },
+        "pairId": "4fa85f01-2247-4c41-80d5-2defe35ae84e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os textos são idênticos e ambos usam uma brincadeira com luz e aberturas para explorar o tema.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As escolhas oferecem caminhos diferentes de observação, e os dois textos são iguais.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos têm a mesma amiga curiosa, com a mesma fala e as mesmas opções de interação.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "As notas de debrief são as mesmas nos dois textos.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os textos e as explicações científicas são idênticos.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos ficam no nível introdutório, em português brasileiro e sem fórmulas.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "A linguagem e os exemplos são iguais nos dois textos.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os dois outputs são idênticos."
+        },
+        "pairId": "ba778ba8-d66a-4d60-b807-0d6b47efe9e6"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Ambos criam uma situação imaginativa para explorar a luz, adequada a um caso leve de “E se?”.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A segunda decisão de A oferece três resultados distintos, incluindo o efeito de cobrir uma abertura ou aumentar o brilho; as escolhas têm consequências claras. B oferece menos variação nos caminhos e resultados.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos têm uma amiga curiosa que dá pistas úteis e pode ser consultada.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois textos dão feedback ligado às escolhas e sugestões práticas nos caminhos mais fracos.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "As explicações de ambos são cientificamente adequadas para uma introdução e não atribuem efeitos quânticos a um observador consciente.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos explicam o quantum como pacote de energia, evitam fórmulas e mantêm duas decisões por caminho.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois usam linguagem acessível e explicam as ideias com imagens simples de pontos e faixas.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "A dá mais consequências distintas às escolhas sem deixar de cumprir o formato leve e introdutório. B é claro, mas oferece menos variação no que acontece conforme as decisões."
+        },
+        "pairId": "c5c9708c-61d3-408b-9061-c3ea3957566e"
+      }
+    ]
+  }
+}

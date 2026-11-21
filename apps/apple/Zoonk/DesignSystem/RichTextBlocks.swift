@@ -5,6 +5,9 @@ import SwiftUI
 struct RichInline {
   var text: AttributedString
   var spoken: String? = nil
+  /// A text that is one code block, such as an option that is a program: a view with room draws it
+  /// as a `CodeSnippet`, and `text` reads it on one line.
+  var snippet: CodeFence? = nil
 
   /// For a label or an announcement.
   var said: String {
@@ -35,24 +38,25 @@ extension Text {
   }
 }
 
-/// Anything beyond paragraphs, lists and GFM tables stays text, so a stray marker never changes a
-/// screen's layout.
+/// Anything beyond paragraphs, lists, GFM tables and fenced code blocks stays text, so a stray
+/// marker never changes a screen's layout.
 struct RichTextBlocks: View {
   let text: String
   /// A quote of the text, in its markup, to highlight where it first shows.
   let mark: String?
   let marks: RichTextMarks?
+  /// For the words only, as main's heading holds a question's paragraphs and not its code.
+  let wordTraits: AccessibilityTraits
   let inline: (String) -> RichInline
-
-  @Environment(\.legibilityWeight) private var legibilityWeight
 
   init(
     _ text: String, mark: String? = nil, marks: RichTextMarks? = nil,
-    inline: @escaping (String) -> RichInline
+    wordTraits: AccessibilityTraits = [], inline: @escaping (String) -> RichInline
   ) {
     self.text = text
     self.mark = mark
     self.marks = marks
+    self.wordTraits = wordTraits
     self.inline = inline
   }
 
@@ -70,10 +74,14 @@ struct RichTextBlocks: View {
         switch block {
         case .paragraph(let lines):
           line(inline(lines.joined(separator: "\n")), mark: mark, underline: underline)
-        case .list(let items, let ordered):
-          list(items, ordered: ordered, mark: mark, underline: underline)
+            .accessibilityAddTraits(wordTraits)
+        case .list(let items, let start):
+          list(items, start: start, mark: mark, underline: underline)
+            .accessibilityAddTraits(wordTraits)
         case .table(let header, let alignments, let rows):
           RichTable(header: header, alignments: alignments, rows: rows, inline: inline)
+        case .code(let code, let language):
+          CodeBlock(code: code, language: language)
         }
       }
     }
@@ -81,19 +89,20 @@ struct RichTextBlocks: View {
   }
 
   private func list(
-    _ items: [String], ordered: Bool, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
+    _ items: [String], start: Int?, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
   ) -> some View {
     VStack(alignment: .leading, spacing: 6) {
       ForEach(Array(items.enumerated()), id: \.offset) { index, item in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-          Text(ordered ? "\(index + 1)." : "•")
+          Text(start.map { "\($0 + index)." } ?? "•")
             .monospacedDigit()
-            .accessibilityHidden(true)
+            .accessibilityHidden(start == nil)
 
           line(
             inline(item), mark: mark?.item == index ? mark : nil,
             underline: underline?.item == index ? underline : nil)
         }
+        .accessibilityElement(children: .combine)
       }
     }
   }
@@ -101,14 +110,11 @@ struct RichTextBlocks: View {
   private func line(
     _ inline: RichInline, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
   ) -> some View {
-    let drawn = highlighting(inline, mark)
-
-    return Text(drawn, legibility: legibilityWeight)
-      .handMarks(
-        InlineMarks(
-          drawn.text, underline: underline?.text, highlightsTerms: marks?.highlightsTerms == true)
-      )
-      .fixedSize(horizontal: false, vertical: true)
+    RichInlineText(
+      highlighting(inline, mark), underline: underline?.text,
+      highlightsTerms: marks?.highlightsTerms == true
+    )
+    .fixedSize(horizontal: false, vertical: true)
   }
 
   private func highlighting(_ inline: RichInline, _ mark: RichTextBlock.Mark?) -> RichInline {
@@ -130,7 +136,6 @@ private struct RichTable: View {
   let rows: [[String]]
   let inline: (String) -> RichInline
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
   @ScaledMetric(relativeTo: .subheadline) private var minimumColumnWidth = 88
   @State private var visibleWidth: CGFloat?
 
@@ -157,7 +162,7 @@ private struct RichTable: View {
     Grid(alignment: .leading, horizontalSpacing: columnSpacing, verticalSpacing: 8) {
       GridRow {
         ForEach(Array(header.enumerated()), id: \.offset) { index, cell in
-          Text(inline(cell), legibility: legibilityWeight)
+          RichInlineText(inline(cell))
             .typeStyle(.body.weight(.semibold))
             .fixedSize(horizontal: false, vertical: true)
             .gridColumnAlignment(alignments[index].horizontal)
@@ -169,7 +174,7 @@ private struct RichTable: View {
       ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
         GridRow {
           ForEach(Array(row.enumerated()), id: \.offset) { index, cell in
-            Text(inline(cell), legibility: legibilityWeight)
+            RichInlineText(inline(cell))
               .typeStyle(alignments[index] == .leading ? .body : .body.monospacedDigit())
               .fixedSize(horizontal: false, vertical: true)
           }
@@ -193,10 +198,21 @@ enum RichTextBlock: Equatable {
   }
 
   case paragraph(lines: [String])
-  case list(items: [String], ordered: Bool)
+  /// A numbered list starts at its first item's number, as in CommonMark, so steps split by a code
+  /// block or an example's frame number on; `start` is nil for bullets.
+  case list(items: [String], start: Int?)
   case table(header: [String], alignments: [ColumnAlignment], rows: [[String]])
+  case code(code: String, language: String?)
 
-  /// Mirrors main's `parseRichBlocks`.
+  var scrollsSideways: Bool {
+    switch self {
+    case .table, .code: true
+    case .paragraph, .list: false
+    }
+  }
+
+  /// Mirrors main's `parseRichBlocks`. A code block is read before a table, so a `|` line inside one
+  /// stays code.
   static func parse(_ text: String) -> [RichTextBlock] {
     let lines = Self.lines(text)
     var blocks: [RichTextBlock] = []
@@ -204,6 +220,13 @@ enum RichTextBlock: Equatable {
     var index = 0
 
     while index < lines.count {
+      if let fence = CodeFence.read(lines, at: index) {
+        blocks.append(.code(code: fence.code, language: fence.language))
+        previous = nil
+        index = fence.end
+        continue
+      }
+
       if let table = Table(lines: lines, at: index) {
         blocks.append(
           .table(header: table.header, alignments: table.alignments, rows: table.rows))
@@ -221,27 +244,7 @@ enum RichTextBlock: Equatable {
     return blocks
   }
 
-  static var orderedItem: Regex<(Substring, Substring)> { /\s*\d{1,3}[.)]\s+(.+)/ }
-
-  /// A list numbers its items from 1, so text split inside a numbered list restarts its numbers.
-  static func cutsNumberedList(_ text: String, at cut: String.Index) -> Bool {
-    guard cut > text.startIndex, cut < text.endIndex else {
-      return false
-    }
-
-    let start = text[..<cut].lastIndex(of: "\n").map(text.index(after:)) ?? text.startIndex
-    let end = text[cut...].firstIndex(of: "\n") ?? text.endIndex
-    let isItem = { (line: Substring) in line.wholeMatch(of: orderedItem) != nil }
-
-    guard start == cut else {
-      return isItem(text[start..<end])
-    }
-
-    let previousStart =
-      text[..<text.index(before: cut)].lastIndex(of: "\n").map(text.index(after:))
-      ?? text.startIndex
-    return isItem(text[previousStart..<text.index(before: cut)]) && isItem(text[cut..<end])
-  }
+  static var orderedItem: Regex<(Substring, Substring, Substring)> { /\s*(\d{1,3})[.)]\s+(.+)/ }
 
   static func lines(_ text: String) -> [String] {
     text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
@@ -273,8 +276,8 @@ enum RichTextBlock: Equatable {
   }
 
   /// Main's `markRichBlocks`: the quote is read as one line of the text, list marker and all, and only
-  /// the first paragraph or list item that shows it is marked. `shown` turns markup into what it
-  /// displays.
+  /// the first paragraph or list item that shows it is marked, never code. `shown` turns markup into
+  /// what it displays.
   static func mark(_ quote: String, in blocks: [RichTextBlock], shown: (String) -> String) -> Mark?
   {
     let text: String
@@ -297,7 +300,7 @@ enum RichTextBlock: Equatable {
         if let item = items.firstIndex(where: { shown($0).contains(text) }) {
           return Mark(block: index, item: item, text: text)
         }
-      case .paragraph, .table:
+      case .paragraph, .table, .code:
         break
       }
     }
@@ -313,11 +316,11 @@ enum RichTextBlock: Equatable {
     switch (line, blocks.last, previous) {
     case (.blank, _, _):
       break
-    case (.item(let text, let ordered), .list(let items, let listOrdered)?, .item?)
-    where ordered == listOrdered:
-      blocks[blocks.count - 1] = .list(items: items + [text], ordered: ordered)
-    case (.item(let text, let ordered), _, _):
-      blocks.append(.list(items: [text], ordered: ordered))
+    case (.item(let text, let number), .list(let items, let start)?, .item?)
+    where (number == nil) == (start == nil):
+      blocks[blocks.count - 1] = .list(items: items + [text], start: start)
+    case (.item(let text, let number), _, _):
+      blocks.append(.list(items: [text], start: number))
     case (.text(let text), .paragraph(let lines)?, .text?):
       blocks[blocks.count - 1] = .paragraph(lines: lines + [text])
     case (.text(let text), _, _):
@@ -329,14 +332,14 @@ enum RichTextBlock: Equatable {
 
   private enum Line {
     case blank
-    case item(String, ordered: Bool)
+    case item(String, number: Int?)
     case text(String)
 
     init(_ line: String) {
       if let match = line.wholeMatch(of: /\s*[-*•]\s+(.+)/) {
-        self = .item(String(match.output.1), ordered: false)
+        self = .item(String(match.output.1), number: nil)
       } else if let match = line.wholeMatch(of: RichTextBlock.orderedItem) {
-        self = .item(String(match.output.1), ordered: true)
+        self = .item(String(match.output.2), number: Int(match.output.1))
       } else {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         self = trimmed.isEmpty ? .blank : .text(trimmed)

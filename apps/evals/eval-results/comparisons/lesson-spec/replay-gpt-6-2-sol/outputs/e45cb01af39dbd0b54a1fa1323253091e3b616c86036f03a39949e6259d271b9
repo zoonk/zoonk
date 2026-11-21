@@ -1,0 +1,14 @@
+
+      - MUST be in US English
+      - Beginner lesson on percent change: explanation first; a hook such as a price that rises 50% then falls 50% and doesn't return to the start
+      - Calculating a percent change is a procedure, so it needs a worked example with real numbers followed by a similar check with less help
+      - Checks should include the classic trap of dividing by the new value instead of the original
+      - The application uses a realistic case (a rent increase, a salary raise, a sale price)
+      - Discounts, markups and percentage points belong to the other lessons and get at most a sentence
+
+      
+  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
+  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself
+  - Don't evaluate JSON formatting
+
+    

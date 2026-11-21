@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-career-change-data-cleaning",
+        "claimId": "2907039ae1563c78",
+        "criterion": "realism",
+        "observationId": "00133382a92529500cc34cebd30adb670a6a84e8fe9ca716d0b9114535df6380.first.ff11c373-2df5-4b9f-9720-423c64484169.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00389445,
+    "id": "e73a72eb160a53cb4b4f6bf2d4b9473da06606fc80e43ce05e6105efe751d57f",
+    "packet": [
+      {
+        "A": {
+          "blob": "9df85ddac24ac8ede603a042fbdb217c963f7cd923935c990b248b1cd95a0e1b",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
+          "format": "text"
+        },
+        "claim": "The scenario has an order-desk lead and packing supervisor, but no manager who needs the numbers soon, as the case expectation requires.",
+        "claimId": "2907039ae1563c78",
+        "criterion": "realism",
+        "expectations": {
+          "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
+          "format": "json"
+        },
+        "location": {
+          "detail": "No manager is part of the scenario; the stakeholders are the order-desk lead and packing supervisor.",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
+          "format": "text"
+        },
+        "B": {
+          "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
+          "format": "text"
+        },
+        "claim": "The product manager's first message uses the term 'statistical power' without explaining it.",
+        "claimId": "8e2aedd2c853b44f",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2907039ae1563c78",
+          "finding": "holds",
+          "reason": "Output B's team has only an order-desk lead, a packing supervisor and the AI helper, and its location note says no manager is part of the scenario, so the expectation of a manager who needs numbers soon is unmet. Output A is not the one named, and the packing supervisor is a supervisor rather than a manager."
+        },
+        {
+          "claimId": "8e2aedd2c853b44f",
+          "finding": "doesn't hold",
+          "reason": "The product manager's first message in output A reads 'B got 10 more purchases with the same number of visitors… Can we call it a winner today?' and never uses 'statistical power'. The term does not appear in that message in output B either, so the claim is misquoted."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

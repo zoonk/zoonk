@@ -1,0 +1,266 @@
+{
+  "deadline": null,
+  "endings": [
+    {
+      "id": "waves",
+      "outcome": "Com as duas frestas abertas, a luz forte revelou faixas claras e escuras sem a longa espera. O desenho de ondas ficou visível, mas o aparelho não permitiu acompanhar as chegadas separadamente nesse brilho."
+    },
+    {
+      "id": "together",
+      "outcome": "Com as duas frestas abertas e a luz bem fraca, cada chegada deixou uma marca localizada e continuou entregando a mesma energia. Depois de muitas marcas, surgiram faixas claras e escuras: as chegadas em pontos separados formaram um desenho de ondas."
+    }
+  ],
+  "meters": [],
+  "mission": "Será que uma luz mais fraca entrega pacotes menores? Explore **o quantum — um pacote de energia da luz** — e descubra que desenho aparece quando você acompanha suas chegadas.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "try-dimmer",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você acompanhou tanto os intervalos quanto a energia de cada chegada. Essa comparação mostrou que, sem mudar a cor, diminuir o brilho espaça os pacotes em vez de reduzir a energia de cada um.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Nossa, demora entre uma chegada e outra! Mas a energia de cada chegada não caiu."
+            },
+            {
+              "from": "friend",
+              "text": "Esse pacote de energia da luz é um quantum. Com a mesma cor, ele não encolheu quando baixamos o brilho; só tivemos que esperar mais entre as chegadas."
+            }
+          ],
+          "text": "Vou diminuir bastante o brilho e observar a energia que cada chegada entrega na tela.",
+          "timeJump": {
+            "label": "Depois de acompanhar algumas chegadas espaçadas",
+            "panel": {
+              "title": "Depois de acompanhar as chegadas",
+              "metrics": [
+                {
+                  "label": "Brilho",
+                  "value": "Bem mais fraco",
+                  "note": "A cor continua igual."
+                },
+                {
+                  "label": "Chegadas",
+                  "value": "Mais espaçadas",
+                  "note": null
+                },
+                {
+                  "label": "Energia de cada chegada",
+                  "value": "Continua igual",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [],
+          "id": "ask-friend",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você pediu a lembrança de quem já tinha mexido no controle e obteve a distinção importante: as chegadas ficaram mais espaçadas, sem perder energia individualmente.",
+              "example": null
+            },
+            {
+              "skill": "packets",
+              "kind": "improve",
+              "text": "A lembrança de {{friend}} trouxe o resultado, mas ficou faltando acompanhar os intervalos e conferir a energia na tela. Experimentar também permitiria observar essa diferença diretamente.",
+              "example": "Diminuir o brilho mantendo a cor e acompanhar os intervalos e a energia de cada chegada."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Pelo que lembro, quando diminuí bastante o brilho sem mudar a cor, as chegadas ficaram mais espaçadas. A energia de cada chegada continuou igual."
+            },
+            {
+              "from": "friend",
+              "text": "A energia vinha em pacotes: cada pacote é um quantum de energia da luz. Te contar é mais rápido, mas faz tempo que não confiro isso na tela."
+            }
+          ],
+          "text": "Vou perguntar a {{friend}} o que ela viu ao baixar o brilho mantendo a mesma cor.",
+          "timeJump": null
+        }
+      ],
+      "id": "brightness",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "Será que, baixando o brilho, cada chegada traz um pouquinho menos de energia?"
+        },
+        {
+          "from": "friend",
+          "text": "Já brinquei com esse controle. Posso contar o que lembro e sobra mais tempo pra brincar com as frestas."
+        }
+      ],
+      "prompt": "Como você quer explorar o que muda quando o brilho diminui?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "bright-view",
+          "next": "waves",
+          "notes": [
+            {
+              "skill": "both",
+              "kind": "good",
+              "text": "Aumentar o brilho permitiu explorar as faixas claras e escuras sem a longa espera pelo acúmulo de marcas. Você viu o desenho associado ao comportamento de onda da luz.",
+              "example": null
+            },
+            {
+              "skill": "both",
+              "kind": "improve",
+              "text": "Nesse brilho, o aparelho não separa as chegadas. Ficou faltando acompanhar como marcas localizadas se acumulam no desenho de ondas.",
+              "example": "Manter as duas frestas abertas, baixar bastante o brilho e guardar as marcas na tela."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Olha as faixas claras e escuras com as duas frestas abertas e a luz forte! O desenho apareceu sem aquela espera."
+            },
+            {
+              "from": "friend",
+              "text": "Mas nesse brilho o aparelho não deixa acompanhar as chegadas separadamente. Vejo o desenho de ondas, só não consigo ver cada pacote participando dele."
+            }
+          ],
+          "text": "Vou abrir as duas frestas e aumentar o brilho para ver o desenho inteiro na tela.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "keep-marks",
+          "next": "together",
+          "notes": [
+            {
+              "skill": "both",
+              "kind": "good",
+              "text": "Você manteve a luz fraca e guardou as marcas, aceitando a espera pelo desenho. Assim, acompanhou na mesma experiência as chegadas localizadas e as faixas que elas formam juntas.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Achei que a tela ia ficar só salpicada de pontos. Demorou, mas olha as faixas aparecendo!"
+            },
+            {
+              "from": "friend",
+              "text": "Cada chegada deixa uma marca num lugar só, com a mesma energia de antes. E todas essas marcas juntas formam o desenho de ondas."
+            }
+          ],
+          "text": "Vou abrir as duas frestas, manter a luz bem fraca e guardar as marcas na tela.",
+          "timeJump": {
+            "label": "Depois de acumular muitas marcas",
+            "panel": {
+              "title": "Depois de acumular muitas marcas",
+              "metrics": [
+                {
+                  "label": "Frestas",
+                  "value": "As duas abertas",
+                  "note": "A luz continua bem fraca."
+                },
+                {
+                  "label": "Cada chegada",
+                  "value": "Uma marca localizada",
+                  "note": null
+                },
+                {
+                  "label": "Muitas marcas juntas",
+                  "value": "Faixas claras e escuras",
+                  "note": null
+                },
+                {
+                  "label": "Energia de cada chegada",
+                  "value": "Continua igual",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        }
+      ],
+      "id": "pattern",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "E se a gente abrisse as duas frestas? Quero ver que desenho aparece na tela."
+        },
+        {
+          "from": "friend",
+          "text": "Eu queria aumentar o brilho pra ver logo. Com essa espera entre chegadas, a tela fica quase vazia por um tempão."
+        }
+      ],
+      "prompt": "Como você quer explorar o desenho com as duas frestas abertas?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Pode mexer à vontade",
+      "metrics": [
+        {
+          "label": "Cor da luz",
+          "value": "Não muda com o brilho",
+          "note": null
+        },
+        {
+          "label": "Caminho até a tela",
+          "value": "Duas frestas estreitas",
+          "note": null
+        },
+        {
+          "label": "Tela",
+          "value": "Pode guardar as marcas",
+          "note": "Mostra a energia de chegadas separadas."
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Uma sala de luz imaginária",
+  "skills": [
+    {
+      "id": "packets",
+      "name": "Energia em pacotes",
+      "practice": "Imagine uma luz de cor fixa e diga, em uma frase, o que muda nas chegadas quando você diminui o brilho."
+    },
+    {
+      "id": "both",
+      "name": "Luz como onda e como chegada",
+      "practice": "Descreva, em duas frases, como chegadas em pontos separados podem formar um desenho de ondas."
+    }
+  ],
+  "startNodeId": "brightness",
+  "summary": [
+    "Com a cor fixa, diminuir o brilho espaça as chegadas da luz sem reduzir a energia de cada quantum.",
+    "Chegadas de luz em pontos separados podem se acumular e formar um desenho de ondas."
+  ],
+  "team": [
+    {
+      "id": "friend",
+      "role": "Amiga curiosa",
+      "expertise": "Já brincou com a sala e quer comparar suas lembranças com o que vocês vão encontrar.",
+      "ai": false
+    }
+  ],
+  "title": "E se desse para ver a luz chegar?"
+}

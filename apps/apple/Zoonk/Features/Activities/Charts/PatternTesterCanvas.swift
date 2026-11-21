@@ -230,7 +230,7 @@ struct PatternTesterCanvas: View {
   }
 
   private var snippets: some View {
-    ActivityHorizontalScroll {
+    HorizontalScroll {
       HStack(spacing: 6) {
         ForEach(snippetList) { snippet in
           Button {

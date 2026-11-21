@@ -17,6 +17,10 @@ export type ModelConfig = {
 
 export const DEFAULT_REASONING: Reasoning = "provider-default";
 
+export function generationModelSettings(model: ModelConfig) {
+  return { model: model.gatewayModelId, reasoning: model.reasoning ?? DEFAULT_REASONING };
+}
+
 export const REASONING_OPTIONS = [
   { label: "Provider default", value: DEFAULT_REASONING },
   { label: "None", value: "none" },
@@ -198,13 +202,4 @@ export function getModelVariantId({
 }): string {
   const configuredModelId = parseReasoningVariantId(modelId)?.configuredModelId ?? modelId;
   return reasoning === DEFAULT_REASONING ? configuredModelId : `${configuredModelId}:${reasoning}`;
-}
-
-function getFamilyFromId(modelId: string): string {
-  const model = getModelById(modelId);
-  return model ? getModelFamily(model) : (modelId.split("/")[0] ?? modelId);
-}
-
-export function canJudge({ judgeId, modelId }: { judgeId: string; modelId: string }): boolean {
-  return getFamilyFromId(judgeId) !== getFamilyFromId(modelId);
 }

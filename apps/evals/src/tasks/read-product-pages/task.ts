@@ -146,6 +146,14 @@ export const readProductPagesTask: Task<
   generate,
   id: "read-product-pages",
   name: "Read product pages",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code saves product releases and dates for plans",
+    reason:
+      "Code checks dates against expectations; a wrong release misleads every learner of the product",
+    waits: "A learner waits in product research",
+  },
   score: scoreReading,
   testCases: TEST_CASES,
 };

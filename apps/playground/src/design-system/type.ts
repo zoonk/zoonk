@@ -70,6 +70,12 @@ export const TYPE_ROLES: readonly TypeRole[] = [
     use: "What a learner reads to answer or reply: an answer option, feedback, a chat message, a public page's body (15px).",
   },
   {
+    className: "text-block",
+    name: "Block",
+    sample: "for fruta in frutas: print(fruta)",
+    use: "A program or a table set into text, in its face: 4px under the text around it and never under 14px, so 14px in a lesson on a phone and 16px where its text is 20px.",
+  },
+  {
     className: "text-compact",
     name: "Compact",
     sample: "Adjust plan",

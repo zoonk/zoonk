@@ -1,5 +1,5 @@
-import { findCode } from "./inline-markup";
-import { splitLinesAndCells } from "./markdown-table";
+import { findCode, parseInlineMarkupRanges } from "./inline-markup";
+import { mapTextCells } from "./markdown-table";
 
 export type MathSpan = { content: string; display: boolean; end: number; start: number };
 
@@ -189,20 +189,26 @@ export function toOneLine(text: string): string {
 }
 
 export function replaceMath(text: string, replace: (formula: MathSegment) => string): string {
-  return splitLinesAndCells(text)
-    .map((cells) =>
-      cells
-        .map((cell) =>
-          splitAtMath(cell)
-            .map((segment) => (segment.kind === "text" ? segment.text : replace(segment)))
-            .join(""),
-        )
-        .join("|"),
-    )
-    .join("\n");
+  return mapTextCells(text, (cell) =>
+    splitAtMath(cell)
+      .map((segment) => (segment.kind === "text" ? segment.text : replace(segment)))
+      .join(""),
+  );
 }
 
 /** Spaces of the same length keep positions pointing into the text. */
 export function hideMath(text: string): string {
   return replaceMath(text, ({ end, start }) => " ".repeat(end - start));
+}
+
+export function hideMathAndCode(line: string): string {
+  const withoutMath = hideMath(line);
+
+  return parseInlineMarkupRanges(withoutMath)
+    .filter((range) => range.kind === "code")
+    .reduce(
+      (text, { end, start }) =>
+        `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`,
+      withoutMath,
+    );
 }

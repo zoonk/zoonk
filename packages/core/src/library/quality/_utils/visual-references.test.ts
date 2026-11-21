@@ -53,6 +53,24 @@ describe("what a screen's words point at", () => {
     ).toStrictEqual(["image", "timeline"]);
   });
 
+  it("reads only the words a learner reads, never the code a screen shows", () => {
+    const text = [
+      "What does this program print?",
+      "```python",
+      'print("Look at the image below")',
+      "```",
+      "And `see the image below`?",
+    ].join("\n");
+
+    const problems = getVisualProblems({
+      language: "en",
+      shown: { hasImage: false, texts: [text], visual: null },
+    });
+
+    expect(problems).toStrictEqual([]);
+    expect(pointsAtFigure({ language: "en", text })).toBe(false);
+  });
+
   it.each([
     ["de", "Welche Kurve steigt in diesem Diagramm am stärksten?"],
     ["en", "Which label marks the steepest rise on this plot?"],
@@ -364,5 +382,20 @@ describe(getVisualProblems, () => {
     });
 
     expect(problems).toStrictEqual([expect.stringContaining("with characters")]);
+  });
+
+  it("lets code print a table of results without reading it as a drawn chart", () => {
+    const problems = getVisualProblems({
+      language: "en",
+      shown: {
+        hasImage: false,
+        texts: [
+          "The query returns:\n```sql\n+------+-------+\n| city | total |\n+------+-------+\n| Rio  |    12 |\n+------+-------+\n```",
+        ],
+        visual: null,
+      },
+    });
+
+    expect(problems).toStrictEqual([]);
   });
 });

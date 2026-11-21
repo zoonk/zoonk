@@ -68,12 +68,17 @@ export function TestOutStartStatus({
   );
 }
 
-/** Always a chapter's test, so it says so wherever it shows. */
+/**
+ * Always a chapter's test, so it says so wherever it shows. Where nothing on screen names the
+ * chapter the next lesson starts, `nextChapter` says it's that one.
+ */
 export function TestOutStartLink({
   compact = false,
+  nextChapter = false,
   onStart,
 }: {
   compact?: boolean;
+  nextChapter?: boolean;
   onStart: () => Promise<TestOutStart>;
 }) {
   const t = useExtracted();
@@ -90,7 +95,7 @@ export function TestOutStartLink({
           SENTENCE_WITH_ACTION_CLASS,
         )}
       >
-        {t("Already know this chapter?")}
+        {nextChapter ? t("Already know the next chapter?") : t("Already know this chapter?")}
         {space}
         <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
           {t("Take the test")}

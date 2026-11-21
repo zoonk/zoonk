@@ -63,6 +63,13 @@ export const memoryGateTask: Task<MemoryGateInput, MemoryGateOutput, MemoryGateE
   generate: gateCandidate,
   id: "memory-gate",
   name: "Memory gate",
+  priorities: {
+    distribution: "private",
+    first: "quality",
+    reads: "Code keeps or drops a candidate fact and flags sensitive ones",
+    reason: "A sensitive fact kept by mistake is a privacy harm; cheaper models kept one",
+    waits: "Nobody: background work",
+  },
   score: scoreMemoryGate,
   testCases: TEST_CASES,
 };

@@ -71,6 +71,13 @@ export const checkLevelTestQuestionsTask: Task<
   generate: checkLevelTestQuestions,
   id: "check-level-test-questions",
   name: "Check level test questions",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code drops flawed questions from the level-test bank",
+    reason: "A missed flaw reaches every learner of the language pair",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreCheckLevelTestQuestions,
   testCases: TEST_CASES,
 };
