@@ -1,3 +1,4 @@
+import { removeCodeFences } from "@zoonk/utils/code-fence";
 import { toOneLine } from "@zoonk/utils/math-spans";
 import { type Formula } from "./math-key";
 import { type RichInlineSegment } from "./rich-inline-segments";
@@ -27,9 +28,11 @@ function formulasIn(text: string): Formula[] {
     }
   });
 
+  const prose = removeCodeFences(text);
+
   return [
-    ...toFormulas(parseRichInline(toOneLine(text))),
-    ...toFormulas(parseRichInline(text)),
+    ...toFormulas(parseRichInline(toOneLine(prose))),
+    ...toFormulas(parseRichInline(prose)),
     ...toFormulas(blocks),
   ];
 }
