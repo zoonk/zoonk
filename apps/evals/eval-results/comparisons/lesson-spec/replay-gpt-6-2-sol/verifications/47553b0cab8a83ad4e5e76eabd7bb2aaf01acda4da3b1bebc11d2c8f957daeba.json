@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "764778ca92680e1e",
+        "criterion": "screenPlan",
+        "observationId": "61cec216f2746773073b769edffce2377e902c61bcd88d37c0f126a1df81c81d.first.ffde6430-c21e-4d9f-912f-aebe4064b059.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00357545,
+    "id": "47553b0cab8a83ad4e5e76eabd7bb2aaf01acda4da3b1bebc11d2c8f957daeba",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "4c7a4debf189d178",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "3c0d5a3afdb0cb611443adf614134972757537c64c5cc6e63cceb9f27adb13b7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "36ab87a1edd9a8f8061b5f49d55299b898ecccdc5ee6038e9f698156c8704cc0",
+          "format": "text"
+        },
+        "claim": "A lição de aquisição inclui um guess sobre completar três anos sem avaliação, mas nenhum check testa diretamente se três anos, sem aprovação na avaliação especial por comissão, bastam para adquirir estabilidade.",
+        "claimId": "764778ca92680e1e",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "2df26708f99c6cf844beb70278074a302b7865b4498818795ff8b193307b09f0",
+          "format": "text"
+        },
+        "input": {
+          "blob": "2fefb83f7488625d09823870008001a7a8e0f24d6ed44fad41c6cc0197cfc226",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Na lição de aquisição da estabilidade, o guess apresenta três anos sem avaliação; os checks tratam de uma data de início posterior à nomeação e de uma servidora com dois anos e dez meses.",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "4c7a4debf189d178",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear in output A, whose first explanation covers fixed and variable costs without it. The claim describes a problem that is not in the named output."
+        },
+        {
+          "claimId": "764778ca92680e1e",
+          "finding": "holds for both",
+          "reason": "Output A's acquisition lesson has a guess about three years with only informal praise, and its checks cover a start date and a servant with two years and ten months, not three years without approval. Output B also has a guess about three years, and its checks cover a favorable evaluation with two years and a commission-only case, so neither tests three years without approval directly. The claim is true of A and equally true of B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

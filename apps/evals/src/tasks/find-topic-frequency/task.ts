@@ -113,6 +113,13 @@ export const findTopicFrequencyTask: Task<
   id: "find-topic-frequency",
   latencyBudget: { p50: 40, p95: 70 },
   name: "Find topic frequency",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code: the planner drops the least-asked topics first",
+    reason: "Wrong frequencies cut the wrong topics for every learner of the exam",
+    waits: "Nobody: the shared-exam research workflow",
+  },
   score: scoreTopicFrequency,
   testCases: TEST_CASES,
 };

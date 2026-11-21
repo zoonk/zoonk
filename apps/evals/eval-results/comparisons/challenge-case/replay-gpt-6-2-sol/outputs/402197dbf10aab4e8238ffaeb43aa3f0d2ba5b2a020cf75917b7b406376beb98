@@ -1,0 +1,587 @@
+{
+  "deadline": "Give the print recommendation at the 1:00 p.m. huddle.",
+  "endings": [
+    {
+      "id": "revised-card",
+      "outcome": "The ward prints the revised card after the full tally showed a lead of 20 percentage points, a gap this large or larger in either direction that would show up about 0.5% of the time if the wording made no difference. Staff don't use the observed increase as a forecast for the next run."
+    },
+    {
+      "id": "current-card",
+      "outcome": "The ward keeps the current wording for this print run without saying the cards work equally well. Patients can still ask for an extra blanket."
+    },
+    {
+      "id": "trial-batch",
+      "outcome": "The ward prints a small batch of revised cards as a trial run. Staff have new wording to manage, but the batch isn't presented as a finding that the wording increased requests."
+    }
+  ],
+  "meters": [
+    {
+      "id": "evidence",
+      "label": "Evidence behind the print call",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Room for other shift work",
+      "start": 75,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "At the bedside comfort huddle, **recommend which blanket card to print for the next run**. Use the ward trial to explain what you know about the wording and what is still uncertain.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 26
+            },
+            {
+              "meter": "capacity",
+              "change": -18
+            }
+          ],
+          "id": "plan-full",
+          "next": "full-test",
+          "notes": [
+            {
+              "skill": "size",
+              "kind": "good",
+              "text": "You checked how many records the ward needed to have a good chance of spotting the change it planned for, then settled on a stopping point without seeing the request totals.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "To have about an 80% chance of spotting a real shift from 40% to 60% with the 5% cutoff, the planning check calls for about 100 records per card."
+            },
+            {
+              "from": "charge",
+              "text": "I'll leave the print task open while we finish the count. We'll fit the tally in around rounds."
+            }
+          ],
+          "text": "Ask {{ai}} to check how many records we need, then use the full tally.",
+          "timeJump": {
+            "label": "One hour later",
+            "panel": {
+              "title": "Full tally",
+              "metrics": [
+                {
+                  "label": "Planning target per card",
+                  "value": "About 100 records",
+                  "note": null
+                },
+                {
+                  "label": "Requests with current card",
+                  "value": "40 of 100",
+                  "note": null
+                },
+                {
+                  "label": "Requests with revised card",
+                  "value": "60 of 100",
+                  "note": null
+                },
+                {
+                  "label": "Lead for revised card",
+                  "value": "20 percentage points",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "use-ready",
+          "next": "early-test",
+          "notes": [
+            {
+              "skill": "size",
+              "kind": "good",
+              "text": "You locked in the early count while the blanket request totals were still hidden, so the lead didn't influence how many records you used.",
+              "example": null
+            },
+            {
+              "skill": "size",
+              "kind": "improve",
+              "text": "The early tally saved time but gave the ward a poorer chance of spotting the change it planned for. Use that change to set the count, rather than going with the records already tallied.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "trial",
+              "text": "With the count locked, here's the tally: 22 of 50 asked with the current card, and 28 of 50 with the revised card. That's a lead of 12 percentage points for the revised card."
+            },
+            {
+              "from": "charge",
+              "text": "That gets us a read without waiting on the rest of the tally. It's a smaller count, though, so we could miss the change we planned for even if it's real."
+            }
+          ],
+          "text": "Lock in the tally that's ready and open those totals for a quick read.",
+          "timeJump": null
+        }
+      ],
+      "id": "sample",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "If we use the tally that's ready, I can get the print recommendation off my list and get back to rounds."
+        },
+        {
+          "from": "trial",
+          "text": "I've kept the request totals covered. Tell me which tally you want to use, and I'll pull those numbers."
+        }
+      ],
+      "prompt": "How many records will you compare?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -8
+            },
+            {
+              "meter": "capacity",
+              "change": 9
+            }
+          ],
+          "id": "print-from-gap",
+          "next": "trial-batch",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You kept the print decision reversible by treating the revised batch as a trial run.",
+              "example": null
+            },
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The lead tells you how far apart the request rates were, not how unusual that gap would be by chance. Check the full counts against the planned cutoff before using the gap to support a switch.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I can close out the print request now. I'll call it a trial batch."
+            },
+            {
+              "from": "trial",
+              "text": "A big lead caught my eye, too. Hypothesis testing would tell us how often chance alone could give us a gap that big, and we don't have that check."
+            }
+          ],
+          "text": "Print a small batch of revised cards as a trial run based on the lead in the full tally.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 22
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "run-full-test",
+          "next": "full-huddle",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You checked the full request counts and the cutoff set ahead of time. That let you distinguish a noticeable lead from one that would be unusual if the wording made no difference.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Hypothesis testing asks how often a gap at least this big would show up in either direction if the wording made no difference. With the full counts, that's about 0.5% of the time, below the 5% cutoff."
+            },
+            {
+              "from": "trial",
+              "text": "The counts and cutoff match my sheet. That took a bit of prep time, but now we know the gap wasn't just big on paper; it'd be unusual by chance alone."
+            }
+          ],
+          "text": "Send {{ai}} the full counts for the planned check and verify the counts and cutoff against the tally sheet.",
+          "timeJump": null
+        }
+      ],
+      "id": "full-test",
+      "messages": [
+        {
+          "from": "trial",
+          "text": "I've got the full tally sheet here. The revised card came out ahead by 20 percentage points."
+        },
+        {
+          "from": "charge",
+          "text": "That's enough of a jump for me to try a small batch. Same print slot, plenty of blankets, and I can close this out now."
+        }
+      ],
+      "prompt": "How do you want to use the gap in the full tally?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -8
+            },
+            {
+              "meter": "capacity",
+              "change": 8
+            }
+          ],
+          "id": "try-small-batch",
+          "next": "trial-batch",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You limited the commitment to a small batch instead of using the early lead to change the whole run.",
+              "example": null
+            },
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "Request rates can swing more by chance in a smaller tally. Use the actual request counts and group sizes to check how unusual the early lead is.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll put in for a small batch. We can get back to rounds without committing the whole run."
+            },
+            {
+              "from": "trial",
+              "text": "With a tally this small, a few requests can swing the gap. Hypothesis testing would check how easily a lead like this could happen even if the wording didn't help."
+            }
+          ],
+          "text": "Print a small batch of revised cards as a trial run based on the early lead.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 17
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "run-early-test",
+          "next": "early-huddle",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You verified that the check used the smaller groups you actually chose. With those counts, the lead didn't clear the cutoff, even though the revised card was ahead.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Hypothesis testing checks what chance alone could produce. At 50 per card, if wording made no difference, a gap this big or bigger in either direction would show up about 23% of the time, above the 5% cutoff."
+            },
+            {
+              "from": "trial",
+              "text": "The group sizes match. That used some of the time we saved and didn't add any records, but now we know a lead like this isn't all that unusual in this tally."
+            }
+          ],
+          "text": "Ask {{ai}} to run the planned check on the early tally and verify the group sizes.",
+          "timeJump": null
+        }
+      ],
+      "id": "early-test",
+      "messages": [
+        {
+          "from": "trial",
+          "text": "The revised card is ahead by 12 percentage points in the ready tally. I've got the counts right here."
+        },
+        {
+          "from": "charge",
+          "text": "We could print a small batch now and swap it out later if we want. That'd get this off the shift list."
+        }
+      ],
+      "prompt": "How do you want to use the lead in the early tally?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -8
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "wait-for-precision",
+          "next": "current-card",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You recognized that the increase in the full tally isn't an exact stocking estimate and that more records could narrow it down.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Waiting gives up this run even though the test supports a change and the ward can handle more requests. Separate what the test says about the direction from what you still need to know for stocking.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "trial",
+              "text": "More records could help us narrow down how many extra requests to expect. We won't have them for this print run."
+            },
+            {
+              "from": "charge",
+              "text": "I'll keep the current card in the print slot. We could cover extra requests now, so we didn't need an exact stocking number to make the switch."
+            }
+          ],
+          "text": "Keep the current card for this run and collect more records so we have a better idea of how many blankets to stock.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "explain-and-print",
+          "next": "revised-card",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You gave staff a reason to use the revised card now without turning the increase in the full tally into a prediction for the next run.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll put the revised wording in the same print slot. We can cover extra requests even if we don't know exactly how many we'll get."
+            },
+            {
+              "from": "trial",
+              "text": "That gives me something I can say on the floor: the trial supports the switch, but the increase we saw isn't a stocking forecast."
+            }
+          ],
+          "text": "Print the revised card. Patients asked more often, and chance alone would rarely give a gap this big, but we may see a different increase next run.",
+          "timeJump": null
+        }
+      ],
+      "id": "full-huddle",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "We're at the huddle. I need a print call and something I can say to the floor staff."
+        },
+        {
+          "from": "trial",
+          "text": "I'd like a better idea of how many blankets to stock. Can we keep the current card and get more records after this run?"
+        }
+      ],
+      "prompt": "What do you recommend, and what do you tell staff?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 9
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "explain-and-keep",
+          "next": "current-card",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You kept the current card without writing off the revised one. The early check couldn't separate the lead from chance, but it didn't show the cards were equally effective.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll keep the current wording for this run. We might be passing up a card that helps, but I won't tell staff the cards work the same."
+            }
+          ],
+          "text": "Keep the current card this run. The revised card led in the tally, but the check couldn't tell us whether the wording helped.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -6
+            },
+            {
+              "meter": "capacity",
+              "change": -4
+            }
+          ],
+          "id": "print-as-preference",
+          "next": "trial-batch",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You made it clear that trying a small batch was a preference, not a finding that the revised wording increased requests.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The batch still gives staff a change to manage without clear evidence that the wording helped. You can keep the current card for this run without claiming the revised one doesn't work.",
+              "example": "“Let's stay with the current card this run. The revised card led, but that lead could still be due to chance.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll call it a trial batch. Staff will have a wording change to manage, even though we still don't know if the lead was more than chance."
+            }
+          ],
+          "text": "Print a small batch of revised cards this run. Say we're trying the wording, not that the check showed it helped.",
+          "timeJump": null
+        }
+      ],
+      "id": "early-huddle",
+      "messages": [
+        {
+          "from": "trial",
+          "text": "The early check came in at about 23%. Our cutoff was 5%."
+        },
+        {
+          "from": "charge",
+          "text": "The revised card still came out ahead, and a small batch is easy to swap out. What should I tell the floor staff we're printing?"
+        }
+      ],
+      "prompt": "What do you recommend, and how do you explain the early result?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Comfort-round card trial",
+      "metrics": [
+        {
+          "label": "Tallied now, per card",
+          "value": "50 records",
+          "note": "Request totals stay hidden until you pick the count to compare."
+        },
+        {
+          "label": "Tallied before huddle, per card",
+          "value": "100 records",
+          "note": "The remaining tallies are due in one hour."
+        },
+        {
+          "label": "Change used for planning",
+          "value": "40% to 60%",
+          "note": "Share of patients asking for a blanket; not a minimum for printing."
+        },
+        {
+          "label": "Chance of spotting that change",
+          "value": "About 80%",
+          "note": "Planning goal if the change is real."
+        }
+      ],
+      "note": "The trial uses a 5% cutoff for how often chance alone would give a gap at least as big, in either direction."
+    }
+  ],
+  "setting": "Day shift at Birchmere Medical Ward",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a real difference from chance",
+      "practice": "Take a pair of request rates and write what you would check before crediting the gap to the new wording."
+    },
+    {
+      "id": "size",
+      "name": "Choose a sample size",
+      "practice": "Write how many observations you would collect per group to spot a stated change, then say when you would stop counting."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Write two sentences for a huddle: what the comparison supports and what it cannot tell you."
+    }
+  ],
+  "startNodeId": "sample",
+  "summary": [
+    "Choose how many records to collect before seeing the results, based on the size of the change you want a good chance of finding.",
+    "Hypothesis testing checks how often chance alone would produce a gap at least as large as the one you saw if there were no real difference.",
+    "A result that doesn't clear the cutoff is not proof that the groups are equal."
+  ],
+  "team": [
+    {
+      "id": "trial",
+      "role": "Bedside trial nurse",
+      "expertise": "She set up the random card assignments and wants the ward to use the comparison it planned.",
+      "ai": false
+    },
+    {
+      "id": "charge",
+      "role": "Charge nurse",
+      "expertise": "He manages comfort rounds and wants a print decision at the huddle so staff can get back to the floor.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Checks sample-size calculations and runs the planned comparison on ward totals when asked; the nursing team makes the print decision.",
+      "ai": true
+    }
+  ],
+  "title": "Should we change the bedside blanket card?"
+}

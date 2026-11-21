@@ -1,5 +1,5 @@
 import { FoldRowTitle } from "@/components/fold-row-title";
-import { getScoreClassName } from "@/lib/score";
+import { getScoreClassName } from "@/lib/score-class-name";
 import { type EvalResult, type ScoreStep } from "@/lib/types";
 import {
   Accordion,

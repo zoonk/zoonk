@@ -2,29 +2,6 @@
   "modelId": "microsoft/mai-image-2.7-flash",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The discount reads at a glance: the old price is crossed out, a -25% badge sits between the tags, and a dashed arrow leads to the new price. The math is consistent, and nothing contradicts the scene.",
-          "score": 9,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat landscape illustration with rounded tags, soft shadows, a very light plain background and a soft palette of navy, cream and amber. The heavy navy fill and the tight central spacing slightly reduce the airy feel.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The image contains only the requested labels, each spelled correctly: 'antes R$ 80', 'você paga R$ 60' and '-25%'. However, the dark text on the blue old tag has low contrast, and the strikethrough lowers its legibility.",
-          "score": 7,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -35,23 +12,7 @@
           "reasoningTokens": 233
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The dark navy 'antes R$ 80' text sits on a mid-blue tag, so contrast is weak and the old price reads less clearly than the other labels. The strikethrough adds to the clutter. The badge also sits tight against both tags, which crowds the centre.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Lighten the old tag's fill, or use light text on it, so the crossed-out price stays easy to read. Leave a little more gap around the badge. Consider a muted grey for the old tag so it reads as 'past' while the new tag carries the accent.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "One idea: a discount. An old tag with \"antes R$ 80\" crossed out, a new tag with \"você paga R$ 60\" and a -25% badge between them. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "discount-pt-1",
@@ -83,32 +44,10 @@
             "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The old tag shows its price crossed out, the -25% badge sits between the tags, the new tag shows R$ 60, and a dashed arrow sets the order. The discount reads at a glance. The math is consistent: 25% off R$ 80 is R$ 60. The low contrast on the old tag slightly weakens the before/after comparison.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a flat landscape illustration with rounded shapes and soft shadows on a light plain background. It uses a limited palette of navy, cream and amber with an amber accent, plus a thin dashed movement line, and leaves plenty of empty space. The navy tag is somewhat heavy but within the house style.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "All three labels are spelled exactly as given: 'antes R$ 80', 'você paga R$ 60' and '-25%'. There is no extra text, and each label sits on the object it names. However, 'antes R$ 80' is dark text on a dark blue fill, which lowers legibility against the 'easy to read' requirement.",
-          "score": 7,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -119,23 +58,7 @@
           "reasoningTokens": 203
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "On the old tag, the dark navy text 'antes R$ 80' sits on a mid-navy fill, so contrast is weak. The crossed-out old price is harder to read than the rest of the image. The badge is scalloped rather than a plain circle, a slight departure from 'round badge'.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Give the old tag a light fill, or use light text on it, so 'antes R$ 80' reads as clearly as the new price. Make the badge a plain round circle and center it on the dashed arrow so the sequence reads more cleanly.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "One idea: a discount. An old tag with \"antes R$ 80\" crossed out, a new tag with \"você paga R$ 60\" and a -25% badge between them. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "discount-pt-2",
@@ -167,32 +90,10 @@
             "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The discount reads at a glance. The old tag shows a crossed-out price, a dashed arrow points to the new tag, and the amber -25% badge sits between them. The values are consistent: 25% off R$ 80 is R$ 60.",
-          "score": 9,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image follows the house style: flat rounded shapes, soft shadows, a light plain background, a landscape layout and a limited palette of navy, cream and amber. The middle is slightly tight, but nothing is off-style.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the three requested labels appear, and each is spelled correctly, including \"você\". Each label sits on the object it names. However, \"antes R$ 80\" has low contrast (dark text on a blue tag), which reduces legibility.",
-          "score": 7,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -203,23 +104,7 @@
           "reasoningTokens": 204
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The old tag's dark navy lettering, \"antes R$ 80\", sits on a mid-blue fill, so the contrast is weak and the label is harder to read than the other two. The amber badge also nearly touches both tag edges, which makes the middle feel slightly cramped.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Lighten the old tag's fill, or switch its text to a light color, so \"antes R$ 80\" reads clearly. Add a little more space between the badge and the tags.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "One idea: a discount. An old tag with \"antes R$ 80\" crossed out, a new tag with \"você paga R$ 60\" and a -25% badge between them. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "discount-pt-3",
@@ -251,32 +136,10 @@
             "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "A nucleus surrounded by a dot cloud is recognizable. However, the nucleus is orange, not red, and the dot density is nearly uniform, so the main concept of where the electron is most likely to be does not read clearly.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "Flat shapes, a single focal object with generous white space, a soft shadow, a plain light background and a limited palette (purple plus an orange accent) all match the house style well.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the two requested labels appear. Reading them letter by letter, 'electron cloud' and 'nucleus' are spelled correctly, legible and placed beside what they name. The cloud leader line stops at the sparse edge.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -287,23 +150,7 @@
           "reasoningTokens": 215
         }
       },
-      "steps": [
-        {
-          "conclusion": "The nucleus is drawn in orange-yellow rather than the requested small red, which contradicts the scene. The cloud also barely shows the key idea: the dots are spaced almost evenly from the centre to the edge, so the 'densest in the middle, fading outward' probability gradient is weak. Only a faint central glow and slightly lighter outer dots hint at it.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The 'electron cloud' leader line ends at the sparse outer rim instead of pointing into the denser cloud. The dots vary in size and shade fairly randomly, which adds visual noise without reinforcing the density idea.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Recolour the nucleus red. Pack the dots much more tightly near the nucleus and thin them out strongly toward the edge so the probability fall-off is obvious at a glance. Run the 'electron cloud' leader into the body of the cloud.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An electron cloud: tiny dots densest around a small red nucleus and fading outward, so the image shows where the electron is likely to be. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "electron-cloud-en-1",
@@ -329,32 +176,10 @@
             "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "An atom with a nucleus and a cloud of dots is recognizable. However, the density falloff is weak, with nearly uniform spacing, so the image does not clearly show where the electron is likely to be. The nucleus is also not red.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "Flat landscape layout with a plain white background, one focal object, ample space, a soft shadow and a restrained palette. Matches the house style well.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only 'nucleus' and 'electron cloud' appear, both spelled correctly and legible. 'nucleus' sits right next to the nucleus. The 'electron cloud' leader line points to the sparse edge rather than the dense cloud, which is a minor placement issue.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -365,23 +190,7 @@
           "reasoningTokens": 204
         }
       },
-      "steps": [
-        {
-          "conclusion": "The nucleus is drawn golden-orange instead of the requested red. The dots are spaced almost evenly from the center to the edge, so the key idea, densest near the nucleus and fading outward, barely reads. The cloud looks like a uniform disc rather than a probability gradient.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The 'electron cloud' leader line ends at the sparse outer edge rather than in the dense region the scene names. The large label pill sits far from the cloud body.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Recolor the nucleus red as the single accent. Pack the dots tightly around the nucleus and thin them sharply toward the edge, with some dots fading out completely. Point the 'electron cloud' leader line into the dense region of the cloud.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An electron cloud: tiny dots densest around a small red nucleus and fading outward, so the image shows where the electron is likely to be. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "electron-cloud-en-2",
@@ -407,32 +216,10 @@
             "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "It is recognizable as an atom with a cloud of dots around a nucleus. However, the density gradient is subtle, with near-uniform spacing, and the nucleus is orange instead of red, which contradicts the scene.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image matches the house style well: flat shapes, a plain white background, a soft shadow, one centered focal object with generous space, a soft purple palette and an orange accent, in landscape format.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the two requested labels appear: 'nucleus' and 'electron cloud'. Both are spelled correctly, legible and placed with leader lines. The cloud label's line points to the outer edge rather than the dense part.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -443,23 +230,7 @@
           "reasoningTokens": 278
         }
       },
-      "steps": [
-        {
-          "conclusion": "The nucleus is drawn in orange/gold rather than the requested red. The dots are also spaced almost evenly from the center to the edge. Only their color lightens slightly, so the 'densest in the middle, fading outward' probability idea reads weakly.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The 'electron cloud' leader line stops at the sparse outer edge rather than pointing into the dense region. The 'nucleus' leader ends on a dot just short of the nucleus.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the nucleus clearly red. Pack the dots much more tightly around the nucleus and thin them steeply toward the edge so the probability gradient is obvious. Point the cloud label's line into the denser area.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An electron cloud: tiny dots densest around a small red nucleus and fading outward, so the image shows where the electron is likely to be. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "electron-cloud-en-3",
@@ -485,32 +256,10 @@
             "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The microwave, steaming soup, wavy heating lines and spinning water molecule in a circle are all clear and recognizable. The cause-and-effect reads. However, the link is two separate arrows rather than one dashed line, which slightly weakens the connection.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "Flat rounded shapes, soft shadows, a light plain background, a lavender palette with an orange accent, and a landscape layout with plenty of space. The dark oven interior is the main deviation.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The only text is \"water molecules\", spelled correctly, legible and placed beside the molecule with a leader line. There is no stray text.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -521,23 +270,7 @@
           "reasoningTokens": 422
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The cause-and-effect link is split into two dashed arrows: an orange arrow from the soup stops on the microwave's door edge, and a separate grey arrow continues to the circle. This muddies the single soup-to-molecule connection the scene asked for. The dark navy oven interior is also the heaviest area in an otherwise light palette.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw one continuous thin dashed line from the soup to the molecule circle in a single color. Lighten the oven interior to a soft tone. Make the bent water molecule's spin read more strongly, for example by placing the rotation arrows closer around the molecule.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating a bowl of soup, linked by one dashed line to a spinning water molecule. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "microwave-en-1",
@@ -561,32 +294,10 @@
             "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The microwave with steaming soup and wave lines is clearly recognizable. It links to a water molecule (one oxygen, two hydrogens) with curved arrows showing spin. Cause and effect reads at a glance. The two-segment link is a slight distraction.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "Flat landscape illustration with rounded shapes, soft shadows, a plain light background, a lavender palette and an orange accent, and generous space. The dark oven interior and slight 3D perspective on the oven are small deviations.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The only text is \"water molecules\", spelled correctly, legible and placed next to the molecule with a leader line. There is no stray text.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -597,23 +308,7 @@
           "reasoningTokens": 314
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The link from the soup is split into two parts: an orange dashed arrow that crosses the door and stops at the oven edge, then a separate grey dashed arrow to the circle. This reads as two connectors rather than one thin dashed line. The oven's dark interior is also fairly heavy against the light palette.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw one continuous thin dashed line from the soup to the molecule circle. Lighten the oven interior so it matches the soft palette. Move the label pill slightly closer to the circle.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating a bowl of soup, linked by one dashed line to a spinning water molecule. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "microwave-en-2",
@@ -637,32 +332,10 @@
             "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The microwave, steaming soup, wavy lines inside the oven and the spinning water molecule with curved arrows are all clear. The cause-and-effect idea reads at a glance. The split, two-color link interrupts the single connection slightly.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat landscape illustration with rounded shapes, soft shadows, a plain light background, lavender tones and an orange accent. The dark oven window is a heavy area that departs slightly from the soft palette.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The only text is \"water molecules\", spelled correctly and legible. It sits next to the molecule circle with a short leader line. No other text appears.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -673,23 +346,7 @@
           "reasoningTokens": 334
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The link from soup to molecule is not one continuous dashed line. An orange dashed arrow leaves the soup and stops on the oven's control panel, then a separate gray dashed arrow starts beside the oven and points to the circle. This weakens the single cause-and-effect link. The dark oven interior is also heavier than the light palette elsewhere.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw one continuous thin dashed line in a single color from the soup to the molecule circle. Lighten the oven window interior to a soft tone so the bowl still reads clearly without a dark block. Move the label slightly closer to the molecule so its leader line is shorter.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating a bowl of soup, linked by one dashed line to a spinning water molecule. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "microwave-en-3",
@@ -713,32 +370,10 @@
             "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "Sun with Earth and nucleus with electron sit side by side on dashed elliptical orbits of comparable size, so the analogy question is clear. The orbit orientations differ slightly, which weakens the 'same size' match a little.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "Flat shapes on a light, plain background with soft colors (orange, indigo, lavender), dashed orbit lines and generous space. Minor deviations: glossy highlights on the Sun, a panel-like divider line, and label pills.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the two requested labels appear: 'Earth and Sun' and 'Electron and nucleus?'. Both are spelled exactly, legible and placed under their objects.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -749,23 +384,7 @@
           "reasoningTokens": 278
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The two orbits are similar in size but not matched: the Earth's ellipse is tilted while the electron's is level. The vertical divider makes the image read slightly like two panels. The Sun's highlight blobs add a mildly glossy touch. Earth is drawn almost as large as the Sun.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw both orbits as identical ellipses with the same tilt and size so the 'same picture?' question reads instantly. Drop the divider line or soften it. Flatten the Sun's highlights. Shrink Earth relative to the Sun.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A comparison: Earth orbiting the Sun next to an electron orbiting a nucleus, same size, so the question becomes visible. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "orbits-comparison-en-1",
@@ -793,32 +412,10 @@
             "focalObject": "the Sun with Earth on a dashed elliptical orbit"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The side-by-side orbits are roughly the same size, with the Sun–Earth system on one side and a nucleus with an electron on the other, so the comparison and its question read clearly. Oversized bodies and the mismatched tilt slightly weaken the 'same size' reading.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat, light landscape illustration with soft colors, dashed orbits and plenty of white space. The glossy highlights on the Sun, the crowded left orbit and the panel-like divider are minor deviations.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the two requested labels appear: 'Earth and Sun' and 'Electron and nucleus?'. Both are spelled exactly, legible and placed under the systems they name.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -829,23 +426,7 @@
           "reasoningTokens": 299
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The Sun and Earth are oversized for their orbit: the Sun nearly fills the ellipse and Earth overlaps the dashed path, which crowds the left side. The two orbits differ in tilt, so the 'same size' match is a little less obvious. The Sun's glossy highlight spots lean slightly away from the flat style. The vertical divider gives the image a two-panel feel.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Shrink the Sun and Earth so the left orbit reads as open space like the right one. Give both ellipses the same tilt so their sizes are clearly identical. Remove the specular highlights on the Sun. Consider dropping the divider line.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A comparison: Earth orbiting the Sun next to an electron orbiting a nucleus, same size, so the question becomes visible. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "orbits-comparison-en-2",
@@ -873,32 +454,10 @@
             "focalObject": "the Sun with Earth on a dashed elliptical orbit"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The Sun with Earth and the nucleus with an electron each sit on dashed elliptical orbits of similar size, side by side. The comparison and the question read clearly. The crowded Sun and the off-orbit Earth slightly weaken the 'same size' parallel.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a flat, landscape illustration on a light plain background with soft purple, orange and lavender colors and dashed lines. The Sun's glossy highlights and the crowded left composition fall a bit short of the house style. The divider line is acceptable for a comparison layout.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the two requested labels appear: 'Earth and Sun' and 'Electron and nucleus?'. Both are spelled exactly as given, legible, and placed under the objects they name.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -909,23 +468,7 @@
           "reasoningTokens": 361
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The left half is crowded: the Sun nearly fills its orbit, and its rays touch the dashed path. The oversized Earth sits on the orbit's edge and spills outside it. This makes the two orbits feel less like an equal side-by-side comparison. The Sun's glossy highlight spots also lean slightly toward a 3D look rather than flat shading.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Shrink the Sun and Earth so the left orbit has as much open space as the right one. Center Earth cleanly on its dashed path. Make the two ellipses match in size and tilt so the scale parallel reads instantly. Flatten the Sun's highlights.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A comparison: Earth orbiting the Sun next to an electron orbiting a nucleus, same size, so the question becomes visible. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "orbits-comparison-en-3",
@@ -953,32 +496,10 @@
             "focalObject": "the Sun with Earth on a dashed elliptical orbit"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The nucleus, the electron on its orbit and an inward red dashed path with an arrowhead are all present, so the idea of the electron falling inward is recognizable. However, the path is a hook plus a separate orange loop rather than a clear spiral, which weakens how the fall reads at a glance.",
-          "score": 7,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is flat, with a plain light background, generous space, thin dashed lines and soft colors. The multi-ball nucleus adds orange tones, which makes the palette slightly busier than one soft set plus one accent.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The only text is \"electron\", spelled correctly, legible and placed right next to the blue electron.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -989,23 +510,7 @@
           "reasoningTokens": 411
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The inward path does not read as one clean spiral. A red dashed hook runs from the electron to the arrowhead, and a separate orange dashed loop curls above the nucleus, so the fall looks like a hook plus a stray loop. The nucleus is a cluster of red and orange balls rather than a small red nucleus, which adds extra colors. The orbit is a tilted ellipse rather than a faint circle.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw one continuous red dashed spiral that winds inward from the electron, with a single arrowhead at the nucleus. Make the nucleus one small red shape and the orbit a faint circle.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Motion with a few lines: an electron on a dashed orbit around a nucleus, with a red dashed path spiraling inward and one arrowhead, showing the fall classical physics predicted. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "spiral-en-1",
@@ -1027,32 +532,10 @@
             "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The electron, orbit and nucleus are recognizable, and an arrowed path leads toward the nucleus. However, the path is a hook plus a disconnected orange loop, so the inward spiral (classical collapse) is not clearly shown.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is flat, uses soft shapes and a plain light background, and keeps a single focal object with lots of space. The extra orange shades in the nucleus and path slightly dilute the limited palette.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The only text is 'electron', spelled correctly, legible, and placed right next to the blue electron.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1063,23 +546,7 @@
           "reasoningTokens": 458
         }
       },
-      "steps": [
-        {
-          "conclusion": "The inward 'spiral' does not read as one: the red dashed path is a single hook from the electron to an arrowhead beside the nucleus, while a separate orange dashed loop floats near the nucleus. The decaying-orbit idea is only partly conveyed and the motion is ambiguous.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The nucleus is a multi-colored red, orange and peach cluster rather than a small red nucleus, which adds extra colors. The orbit is drawn as a tilted ellipse rather than a faint circle, and the composition sits slightly off-center with a lot of empty space at the bottom.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw one continuous red dashed spiral that makes one to two shrinking loops from the electron into the nucleus, with a single arrowhead at the end, and remove the separate orange loop. Use a simple red nucleus on a circular orbit.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Motion with a few lines: an electron on a dashed orbit around a nucleus, with a red dashed path spiraling inward and one arrowhead, showing the fall classical physics predicted. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "spiral-en-2",
@@ -1101,32 +568,10 @@
             "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The electron, orbit, nucleus and the inward arrow toward the nucleus are all present, so the idea of the electron falling inward reads. However, the extra orange loop and the hooked rather than spiral path weaken the image at a glance.",
-          "score": 7,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat illustration on a plain white landscape background with generous space, soft colors and a soft shadow under the nucleus. It matches the house style well; the nucleus cluster adds some color variety.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the label \"electron\" appears. It is spelled correctly, legible and placed right next to the blue electron.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1137,23 +582,7 @@
           "reasoningTokens": 510
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The inward path does not read as a clean spiral. The red dashed line hooks once toward the nucleus. A separate orange dashed arc loops above it, which looks like an extra second path and blurs the single-spiral motion. The orbit is a tilted ellipse rather than a faint circle. The nucleus is a multi-colored cluster rather than a small red nucleus.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw the falling path as one continuous red dashed spiral that makes about one and a half turns and ends at the nucleus with a single arrowhead. Remove the orange arc. Use a circular orbit and a simpler small red nucleus.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Motion with a few lines: an electron on a dashed orbit around a nucleus, with a red dashed path spiraling inward and one arrowhead, showing the fall classical physics predicted. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "spiral-en-3",
@@ -1175,32 +604,10 @@
             "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The small house with a yellow door is clear, and a sign on a post beside it shows only a key symbol. The 'for rent' idea reads reasonably well, though the sign is fairly small.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is flat and landscape, with rounded shapes, a light plain background and a soft palette of purple, lavender and teal with a yellow accent. The focal object is clear with good space around it. There is some decorative clutter, and the dashed line is unmotivated.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The image contains no text, letters or numbers anywhere.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1211,23 +618,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "A stray dashed curve hangs below the sign and suggests movement that does not exist. The sign is small relative to the house, so the 'for rent' cue is easy to overlook. The house has many small details (shutters, planter, steps, bushes) that add mild busyness.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Remove the dashed line. Enlarge the sign or place it slightly closer to the house so the rental idea reads faster. Trim some of the decorative bushes and details to strengthen the single focal point.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A language course scene: a small house with a sign for rent that shows a key symbol. The image must contain no text at all: any letters, numbers or captions are a major error.",
         "id": "house-language-1",
@@ -1246,32 +637,10 @@
             "focalObject": "a small house with a yellow door"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "A small house with a yellow door is clearly the focal object. A sign on a post beside it shows only a key symbol, so the 'for rent' idea reads well. The sign is somewhat small.",
-          "score": 9,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image uses flat rounded shapes, soft colors (purple, lavender, teal) with a yellow accent, and a plain white landscape background with good space. The decorative shrubs and the stray dashed line add minor clutter.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The image contains no letters, numbers or captions, as required.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1282,23 +651,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "A stray dashed curve hangs below the sign and implies motion that the scene does not call for. The sign also sits at the far right edge of the composition, so it reads as slightly detached from the house. The bushes add mild clutter around the base.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Remove the unnecessary dashed line. Make the sign slightly larger and closer to the house so the 'for rent' idea reads more strongly. Reduce the decorative shrubs.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A language course scene: a small house with a sign for rent that shows a key symbol. The image must contain no text at all: any letters, numbers or captions are a major error.",
         "id": "house-language-2",
@@ -1317,32 +670,10 @@
             "focalObject": "a small house with a yellow door"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The small house with a yellow door is clearly the focal object. A sign on a post beside it shows only a key symbol, so the rental idea reads quickly. The sign is a bit small but still clear.",
-          "score": 8.5,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat, landscape illustration with rounded shapes, soft shadows and a plain white background. It uses soft purples and lavender, with teal and yellow as accents, and leaves plenty of empty space. There is slight extra detail in the foliage, and the dashed line is unmotivated. The palette is close to the limit.",
-          "score": 8.5,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1353,23 +684,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "A dashed curved line hangs from the sign toward the ground and implies a motion that has no meaning in the scene. The bushes, window box plants and porch details add some small clutter around the focal house.",
-          "kind": "minorErrors",
-          "score": 8.5
-        },
-        {
-          "conclusion": "Remove the stray dashed line. Make the sign slightly larger so the key symbol reads instantly as a 'for rent' cue. Simplify the foliage so the house and sign stand out more cleanly.",
-          "kind": "potentialImprovements",
-          "score": 8.5
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A language course scene: a small house with a sign for rent that shows a key symbol. The image must contain no text at all: any letters, numbers or captions are a major error.",
         "id": "house-language-3",
@@ -1388,32 +703,10 @@
             "focalObject": "a small house with a yellow door"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The brain is clearly shown from the left side, and all four lobes sit in the correct positions with correct leader lines. The idea reads at a glance, but the shared colors on the cerebellum and brainstem and the two near-identical pinks slightly weaken the lobe distinction.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat, clean landscape illustration with a light plain background, a soft ground shadow and one whole with its parts. It uses soft pink, slate and teal with a teal accent. The thin outlines and gyri details are fine. It is a bit detailed but stays on style.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are exactly four labels: 'frontal lobe', 'parietal lobe', 'temporal lobe' and 'occipital lobe'. All are spelled correctly, legible and connected by leader lines to the right lobes. There is no extra text.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1424,23 +717,7 @@
           "reasoningTokens": 302
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The colors blur the lobe boundaries. The frontal and parietal lobes are two close pinks, and the cerebellum uses the same pale pink as the parietal lobe. The brainstem shares the temporal lobe's slate gray, so non-lobe structures read as parts of the labeled lobes. The parietal color also extends forward over the precentral gyrus, so the central boundary looks slightly off.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Give the four lobes more distinct soft hues, and render the cerebellum and brainstem in a neutral light gray so only the lobes carry color. Move the frontal–parietal boundary to the central sulcus.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A whole with its parts: the brain seen from the left side, its four lobes in different soft colors, each label next to its own lobe (frontal at the front, parietal on top, temporal low at the side, occipital at the back). Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "brain-lobes-en-1",
@@ -1474,32 +751,10 @@
             "focalObject": "a human brain seen from the left side, its four lobes each a different soft color"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The left-side brain is clear. All four lobes sit in the correct places, and each label's leader line points to the right lobe. The shared colors on the brainstem and cerebellum blur the lobe boundaries slightly.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat landscape illustration with rounded shapes, a soft ground shadow, a plain light background and generous space around one whole with its parts. The gray is a little heavy, and the two pinks are close in tone.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only the four requested labels appear: 'frontal lobe', 'parietal lobe', 'temporal lobe' and 'occipital lobe'. Each is spelled correctly, easy to read and placed next to its lobe with a leader line.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1510,23 +765,7 @@
           "reasoningTokens": 472
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The brainstem has the same slate-gray fill as the temporal lobe, and the cerebellum matches the parietal lobe's pale pink. A learner could read these structures as parts of those lobes. The frontal and parietal pinks are also close in tone, so the boundary between them is weak.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Give the cerebellum and brainstem a neutral, unlabeled tone such as light gray. Pick more distinct soft hues for the frontal and parietal lobes. Soften the heavy slate gray of the temporal lobe so it fits the palette of soft colors with one accent.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A whole with its parts: the brain seen from the left side, its four lobes in different soft colors, each label next to its own lobe (frontal at the front, parietal on top, temporal low at the side, occipital at the back). Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "brain-lobes-en-2",
@@ -1560,32 +799,10 @@
             "focalObject": "a human brain seen from the left side, its four lobes each a different soft color"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "This is a correct left-side view with the frontal lobe at the front, parietal on top, temporal low and occipital at the back. Each lobe has its own color and leader line. The cerebellum and brainstem reuse lobe colors, and two pinks are close, which adds minor ambiguity.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat landscape illustration on a very light plain background with soft line work, one focal whole with its parts, a soft ground shadow and generous space. It uses a soft palette with teal as the accent. The slate gray is slightly heavy.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are exactly four labels: \"frontal lobe\", \"parietal lobe\", \"temporal lobe\" and \"occipital lobe\". All are spelled correctly, legible and connected to the right lobe by leader lines, with no extra text.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1596,23 +813,7 @@
           "reasoningTokens": 464
         }
       },
-      "steps": [
-        {
-          "conclusion": "The cerebellum uses nearly the same pale pink as the parietal lobe, and the brainstem uses the same slate gray as the temporal lobe. A learner could read these unlabeled structures as parts of those lobes, which blurs the four-lobe idea.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The frontal pink and parietal pale pink are close in hue, which weakens the contrast between adjacent lobes. The slate gray of the temporal lobe is heavier than the other soft colors.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Render the cerebellum and brainstem in a neutral light gray, distinct from every lobe. Give the parietal lobe a clearly different soft color, such as soft yellow or lavender, so all four lobes separate at a glance.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A whole with its parts: the brain seen from the left side, its four lobes in different soft colors, each label next to its own lobe (frontal at the front, parietal on top, temporal low at the side, occipital at the back). Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "brain-lobes-en-3",
@@ -1646,32 +847,10 @@
             "focalObject": "a human brain seen from the left side, its four lobes each a different soft color"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "Both planets are recognizable, Earth is correctly colored, and the side-by-side comparison reads clearly. However, the size ratio is about 2:3 instead of the requested 2:1, and Mars leans orange rather than rusty red, so the size lesson is weakened.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image uses flat shapes, soft ground shadows, a light plain background, a soft palette and generous space. The vertical divider adds a slight panel feel.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only \"Terra\" and \"Marte\" appear, both spelled correctly, legible and connected to the right planet. The labels sit a bit low and away from the planets.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1682,23 +861,7 @@
           "reasoningTokens": 229
         }
       },
-      "steps": [
-        {
-          "conclusion": "Mars is about two-thirds of Earth's width (roughly 320 px against 475 px), not about half. This understates the size difference the comparison is meant to teach. Mars also reads as mostly golden-orange, with rusty patches only on its lower half, rather than clearly rusty red.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "A vertical divider line splits the frame into two halves, which nudges the image toward a two-panel layout. The label leader lines attach to the planets' lower edges and the pills sit low and off to the side.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Shrink Mars to about half of Earth's diameter and shift it to a more uniform rusty red. Remove the divider so both planets sit in one shared space. Place each label closer to its planet.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Two planets compared side by side at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "earth-mars-pt-1",
@@ -1726,32 +889,10 @@
             "focalObject": "Earth, blue with green land and white clouds"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "Both planets are recognizable and Mars is smaller, so the comparison reads. However, the ratio is about 0.67 instead of the requested half, and Mars's colour is more orange than rusty red, which weakens the lesson.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image is a flat landscape illustration with soft shadows, a light plain background and a soft palette with generous space. The divider line suggests a panel split, a slight deviation from the house style.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only \"Terra\" and \"Marte\" appear. Both are spelled correctly, legible and connected to their planets by leader lines.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1762,23 +903,7 @@
           "reasoningTokens": 218
         }
       },
-      "steps": [
-        {
-          "conclusion": "Mars is drawn about two-thirds of Earth's width (about 320 px versus 475 px) rather than about half, which understates the size difference the image is meant to teach. Mars also reads largely golden-orange rather than rusty red.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The vertical divider line makes the picture feel like two panels instead of one comparison. Earth's land and clouds are recognizable but nearly fill the globe.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Shrink Mars to about half of Earth's width and shift its palette toward a deeper rust red. Remove the divider and place both planets on one shared baseline so the sizes compare directly.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Two planets compared side by side at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "earth-mars-pt-2",
@@ -1806,32 +931,10 @@
             "focalObject": "Earth, blue with green land and white clouds"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "Both planets are recognizable and Mars is clearly smaller. However, the size ratio is about 0.67 rather than 0.5, and Mars's coloring leans orange-yellow rather than rusty red.",
-          "score": 6,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image uses flat shapes, soft ground shadows, a light plain background, a soft palette and generous space. The divider line gives a slight two-panel feel.",
-          "score": 8,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Only 'Terra' and 'Marte' appear. Both are spelled correctly, legible and placed with leader lines to their planets.",
-          "score": 10,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1842,23 +945,7 @@
           "reasoningTokens": 253
         }
       },
-      "steps": [
-        {
-          "conclusion": "Mars is drawn about two-thirds of Earth's width (about 320 px versus 475 px) instead of about half. This understates the size difference the comparison is meant to teach.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Mars reads more golden-orange than rusty red, since its upper half is mostly yellow-orange. The vertical divider line also splits the image into two panel-like halves, which weakens the sense of one side-by-side comparison.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Shrink Mars to about half of Earth's width and shift its palette to a deeper rust red. Remove the divider line and let both planets sit on a shared baseline so their sizes compare more directly.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "Two planets compared side by side at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
         "id": "earth-mars-pt-3",
@@ -1886,7 +973,8 @@
             "focalObject": "Earth, blue with green land and white clouds"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     }
   ],
   "taskId": "lesson-image"

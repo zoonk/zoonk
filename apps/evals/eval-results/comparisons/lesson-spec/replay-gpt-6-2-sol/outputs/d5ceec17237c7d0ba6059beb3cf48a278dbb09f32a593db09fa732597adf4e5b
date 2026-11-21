@@ -1,0 +1,150 @@
+{
+  "lessons": [
+    {
+      "canDo": "Draw a simple sentence as a syntax tree",
+      "description": "Group a simple English sentence into phrases and draw a tree that shows how those phrases fit together.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": "An unlabeled top point with six equal branches ending, from left to right, in The, puppy, chewed, the, slipper; use five branches, one for each displayed word, with no grouping or grammatical labels.",
+          "visualKind": "picture",
+          "brief": "A grammar app gives every word in “The puppy chewed the slipper” an equal branch. What relationships between the words does that picture miss?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A small syntax-tree fragment with one unlabeled group point branching down to the words the and puppy in left-to-right order.",
+          "visualKind": "picture",
+          "brief": "A syntax tree shows words grouped under shared branches: “the” and “puppy” belong together rather than standing separately. Show only this small fragment, not the sentence’s full structure.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ask: “How many groups will sit directly below the whole sentence in our tree for ‘The puppy chewed the slipper’?” Options: Two, Three, Five; answer: Two; tempting: Three, treating the animal, action, and affected thing as equal branches.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A noun phrase (NP) is a group centered on a noun: “the puppy” centers on “puppy.” In this sentence, that whole group tells us who chewed.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A verb phrase (VP) groups a verb with words that complete it: “chewed the slipper” belongs together. Naming an animal, an action, and an affected thing does not make three equal sentence-level groups.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A phrase-level syntax tree with S at the top, branching left to NP above The puppy and right to VP above chewed the slipper; do not expand either phrase internally.",
+          "visualKind": "picture",
+          "brief": "For these simple statements, put S, meaning sentence, above two branches: the subject NP and the VP. Show “The puppy” under NP and “chewed the slipper” under VP.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ask where to place the main division in “The hungry fox caught a mouse”: after “fox,” after “caught,” or after “hungry.” Answer: after “fox”; the tempting division after “caught” wrongly separates the verb from the rest of its VP.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A noun phrase can contain just one word: “mice” is the whole NP in “Mice hide.” Phrase labels describe a word’s grouping role, not a minimum number of words.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A syntax tree with S branching to NP and VP; the left NP ends in The puppy; VP branches to V ending in chewed and NP ending in the slipper; each multiword NP is shown as an unexpanded phrase, not as separate word branches.",
+          "visualKind": "picture",
+          "brief": "Inside “chewed the slipper,” the VP branches into the verb, labeled V, and another NP, “the slipper.” Keep each NP’s internal words grouped together in these phrase-level trees.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "A progressively revealed syntax tree for The owl catches insects: S branches to NP containing The owl and VP; VP branches to V containing catches and NP containing insects; leave the internal structure of The owl unexpanded.",
+          "visualKind": "picture",
+          "brief": "Build “The owl catches insects” one move at a time: divide “The owl | catches insects”; draw S → NP + VP; expand VP → V + NP. Place “The owl,” “catches,” and “insects” under their matching labels, preserving word order.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Have the learner draw the phrase-level tree for “The rabbit eats carrots,” supplying S, NP, VP, and V with less guidance. Answer: S contains NP “The rabbit” and VP containing V “eats” plus NP “carrots”; include the tempting error of attaching “carrots” directly to S.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A syntax tree for Birds sing with S branching to NP containing Birds and VP containing V containing sing; VP has only the V branch, with no empty NP or extra branch.",
+          "visualKind": "picture",
+          "brief": "A VP does not need a following NP when its verb is complete alone: in “Birds sing,” the VP contains only V “sing.” Do not invent an empty noun phrase to make every tree look alike.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "An incorrect worksheet syntax tree for The crickets chirp: S branches directly to NP containing The crickets and V containing chirp; beside it, the reviewer’s text says Add an empty NP after chirp?; do not show a corrected tree.",
+          "visualKind": "picture",
+          "brief": "A worksheet draws “The crickets chirp” with NP and V directly below S, and a reviewer suggests adding an empty NP after “chirp.” Ask the learner to redraw it and decide whether to accept that suggestion: insert VP above V, reject the empty NP, and explain that “chirp” is complete alone.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Split a simple English statement into its subject noun phrase and verb phrase, then draw their nested structure.",
+          "example": "“The owl catches insects” becomes S → NP + VP, with VP → V + NP.",
+          "hard": true,
+          "name": "Draw simple syntax trees",
+          "topic": "Syntax trees",
+          "useCase": "Analyze sentence structure or check whether a grammar diagram groups words correctly."
+        }
+      ],
+      "title": "Syntax trees"
+    }
+  ]
+}

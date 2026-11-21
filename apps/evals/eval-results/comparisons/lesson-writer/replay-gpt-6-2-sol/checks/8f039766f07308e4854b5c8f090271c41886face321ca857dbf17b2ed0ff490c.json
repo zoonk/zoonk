@@ -1,0 +1,16 @@
+{
+  "caseId": "en-particle-in-a-box-advanced",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 11,
+  "problems": [
+    "Screen 8: fields.outputs.0.unit: Too small: expected string to have >=1 characters",
+    "Screen 8: fields.outputs.1.unit: Too small: expected string to have >=1 characters",
+    "Screen 8: fields.outputs.2.unit: Too small: expected string to have >=1 characters",
+    "Screen 8: fields.variables.0.unit: Too small: expected string to have >=1 characters",
+    "Screen 8: fields.variables.1.unit: Too small: expected string to have >=1 characters"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 12
+}

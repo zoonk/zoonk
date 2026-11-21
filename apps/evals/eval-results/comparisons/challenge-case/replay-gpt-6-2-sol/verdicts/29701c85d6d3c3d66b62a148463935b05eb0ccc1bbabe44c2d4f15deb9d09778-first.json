@@ -1,0 +1,175 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01092659,
+  "failures": [],
+  "packetId": "29701c85d6d3c3d66b62a148463935b05eb0ccc1bbabe44c2d4f15deb9d09778",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are realistic ward nursing scenes with a deadline, a physician, a nurse and an AI assistant, so neither is clearly more like real work.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both branch through several choices with meters and different endings, and the strong and weak paths lead to different outcomes.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give two or three colleagues with distinct roles and a useful AI check at the right moment.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debrief notes are specific to the decision and praise the strategy, and both include concrete improve examples.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The calculations I checked are correct in both (for example 18 kg × 50 mg/kg/dia = 900 mg, 300 mg = 3 mL at 100 mg/mL; 18 kg × 15 mg/kg = 270 mg).",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are intermediate-level work cases in Brazilian Portuguese with appropriate depth and no promised outcomes.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use everyday terms with nursing jargon that fits an intermediate work case; neither is clearly easier to follow.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are accurate, consistent and realistic, and each teaches the same core check; neither serves its reader noticeably better."
+        },
+        "pairId": "2350ff1c-ff11-4da9-8c39-53494fef0bde"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A has a fuller pediatric emergency scene with a pharmacist, a resident and an AI, and an urgent deadline, which feels closer to real ward pressure than B.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A gives more branching paths with clear consequences on safety and time meters, though some options are heavily weighted towards one answer.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's pharmacist and resident talk like real colleagues who push back and disagree, while B's team mostly just answers questions.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debriefs are specific and kind, and both name the strategy the learner used.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A teaches an invented figure, that rounding the dose cuts efficacy by about 7.4%, as fact; B's numbers (200 mg vs 180 mg, 18 mL at 10 mg/mL) check out.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B stays clean and readable, while A mixes raw LaTeX markup into learner-facing text and includes an unsupported efficacy number.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use short sentences and nursing terms explained in context, so neither is clearly easier to follow.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The note asserts that rounding the antimicrobial dose by aspirating one whole vial reduces treatment efficacy by about 7.4%. No source is given, and the figure is not supported by the case's numbers; it is an invented statistic taught as fact.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may remember a precise efficacy figure that has no basis and apply it in wrong dosing decisions.",
+            "location": {
+              "detail": "Arredondar a dose de antimicrobiano por conta própria reduz a eficácia do tratamento em cerca de 7,4%.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Learner-facing practice text, choice labels and replies contain raw LaTeX-style markup (dollar signs and \\text commands) instead of plain units, which may display as code.",
+            "criterion": "depth",
+            "learnerCost": "The learner has to read through formatting noise to find the dose and volume, which slows the reading of a short screen.",
+            "location": {
+              "detail": "Raw LaTeX markup appears in the practice line for calculo-peso, in the AI and pharmacist replies of the calculation and volume choices, and in the volume prompt.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A is more immersive but teaches an invented efficacy figure as fact, which is a major problem; Output B is accurate and consistent and does the core checks correctly."
+        },
+        "pairId": "66f1f803-8fff-44f7-b7d6-120ca4944e0e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither is more realistic.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the decision structure is the same.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the team is the same.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the debrief is the same.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and the calculations are correct (18 kg × 15 mg/kg = 270 mg), so neither is more accurate.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so depth and language are the same.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so ease of following is the same.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical in every respect, so neither serves its reader better."
+        },
+        "pairId": "858c3643-90fa-4684-bb85-a54b498d6aea"
+      }
+    ]
+  }
+}

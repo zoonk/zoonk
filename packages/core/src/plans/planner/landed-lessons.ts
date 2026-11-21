@@ -1,12 +1,8 @@
 import { type BuildPlanInput } from "./build-plan";
 import { withBaseChoices } from "./chosen-bases";
-import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
-import { type ExistingPlanItem } from "./plan-items";
+import { isStandIn } from "./plan-item-rules";
 import { buildPlanQueue } from "./plan-queue";
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
-import { withoutRepeatedTitles } from "./repeated-titles";
-import { type DroppedUnit } from "./schedule-units";
-import { type SkillMinutes, getSkillMinutes } from "./skill-minutes";
 
 const MAX_LINK_ROUNDS = 4;
 
@@ -134,17 +130,20 @@ function withoutGainedLinks({
   return withoutGainedLinks({ input, lessons: unlinked, plannedUnder, round: round + 1, standIns });
 }
 
+/** The lessons a landing's topics still have to place: the newly written ones, then the ones not written yet. */
 export function listLandedUnits({
   input,
   landing,
+  queue,
 }: {
   input: BuildPlanInput;
   landing: Landing;
+  queue: readonly QueueUnit[];
 }): LandedUnits {
   const planned = new Set(input.items.flatMap((item) => item.lessonId ?? []));
 
   const own = Map.groupBy(
-    buildPlanQueue(input).units.filter(
+    queue.filter(
       (unit) =>
         unit.kind === "lesson" &&
         landing.skillIds.has(unit.skillId ?? "") &&
@@ -154,56 +153,4 @@ export function listLandedUnits({
   );
 
   return new Map([...own].filter(([, units]) => units.some((unit) => unit.lessonId !== null)));
-}
-
-export function withoutRepeatedLandings({
-  kept,
-  landed,
-}: {
-  kept: readonly ExistingPlanItem[];
-  landed: LandedUnits | null;
-}): LandedUnits | null {
-  return (
-    landed &&
-    new Map(
-      [...landed].map(([skillId, units]) => [skillId, withoutRepeatedTitles({ kept, units })]),
-    )
-  );
-}
-
-export function getLandingSkillMinutes({
-  dropped,
-  kept,
-  landed,
-  pending,
-}: {
-  dropped: readonly DroppedUnit[];
-  kept: readonly QueueUnit[];
-  landed: LandedUnits | null;
-  pending: readonly QueueUnit[];
-}): SkillMinutes[] {
-  const isHeld = (unit: QueueUnit) =>
-    isUnwrittenLesson(unit) && landed?.has(unit.skillId ?? "") === true;
-
-  return getSkillMinutes({
-    dropped: dropped.filter((unit) => !isHeld(unit)),
-    kept,
-    pending: [...pending.filter((unit) => !isHeld(unit)), ...[...(landed?.values() ?? [])].flat()],
-  });
-}
-
-export function withoutWrittenStandIns({
-  dropped,
-  landed,
-}: {
-  dropped: readonly DroppedUnit[];
-  landed: LandedUnits;
-}): DroppedUnit[] {
-  const written = new Set(
-    [...landed].flatMap(([skillId, units]) =>
-      units.every((unit) => unit.lessonId !== null) ? [skillId] : [],
-    ),
-  );
-
-  return dropped.filter((unit) => !(isUnwrittenLesson(unit) && written.has(unit.skillId ?? "")));
 }

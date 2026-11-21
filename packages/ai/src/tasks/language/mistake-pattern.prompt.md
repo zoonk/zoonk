@@ -23,14 +23,15 @@ A wrong word in a spoken answer may be a recognition slip: count it only when it
 - `drill`: for `pattern`, exactly 5 new fill-in-the-blank questions on this pattern. Empty for `typos` and `none`.
   - `sentence`: a natural {{TARGET_LANGUAGE}} sentence with exactly one blank written as three underscores, `___`, where the answer goes. Don't copy the learner's mistakes; write new everyday sentences, with the names, places and money of a place where {{TARGET_LANGUAGE}} is spoken, never the learner's country. The sentence settles everything except the pattern: who is spoken to (a name alone doesn't say whether it's "tú" or "usted"), the person, the number and the tense, so only the pattern decides the blank.
   - `answer`: the one right word or words for the blank.
-  - `options`: 2 or 3 different {{TARGET_LANGUAGE}} options, one of them `answer`, and only the forms this pattern confuses: "since" and "for", "much" and "many", "es" and "está". Never add other words the mistakes didn't show ("during", "few", "little"). Put each wrong option in the blank and read the sentence: if it could be right in any reading ("little photos" as small photos), replace the sentence.
+  - `translation`: the whole sentence, with `answer` in the blank, in natural {{LEARNER_LANGUAGE}}. The learner reads it under the sentence, so they know what it says before they pick. When the forms this pattern confuses differ in meaning (leaving and arriving, borrowing and lending), it's what tells them which one is meant. When {{LEARNER_LANGUAGE}} is {{TARGET_LANGUAGE}}, leave it empty.
+  - `options`: 2 or 3 different {{TARGET_LANGUAGE}} options, one of them `answer`, and only the forms this pattern confuses: "since" and "for", "much" and "many", "es" and "está". Never add other words the mistakes didn't show ("during", "few", "little"). Put each wrong option in the blank and read the sentence with its translation: if it could be right in any reading ("little photos" as small photos), replace the sentence.
   - `feedback`: one sentence in {{LEARNER_LANGUAGE}} on why the answer fits, using the rule's own plain words.
   - Mix the answers across the 5 questions (for "since" and "for", some of each) so the learner has to apply the rule, not repeat one word.
 
 # Style
 
 - Speak to the learner as "you". Kind and plain, no grammar jargon ("countable", "uncountable", "copula") unless you explain it in everyday words, no blame.
-- `title`, `rule`, every contrast `label` and every drill `feedback` are in {{LEARNER_LANGUAGE}}: an English speaker learning Spanish reads "Use 'está' for where something is", never "Se usa 'está' para lugares". Only the drill sentences, answers, options and contrast examples are in {{TARGET_LANGUAGE}}.
+- `title`, `rule`, every contrast `label`, every drill `translation` and every drill `feedback` are in {{LEARNER_LANGUAGE}}: an English speaker learning Spanish reads "Use 'está' for where something is", never "Se usa 'está' para lugares". Only the drill sentences, answers, options and contrast examples are in {{TARGET_LANGUAGE}}.
 - Quote {{TARGET_LANGUAGE}} words inside {{LEARNER_LANGUAGE}} text in quotes, and write every other word around them in {{LEARNER_LANGUAGE}} ("Use 'está' for a place", never "Use 'está' para a place"). Read each line once more for a stray {{TARGET_LANGUAGE}} word outside quotes.
 - No emojis. Use commas or periods instead of dashes between clauses.
 
@@ -45,4 +46,4 @@ A wrong word in a spoken answer may be a recognition slip: count it only when it
 - `title`
 - `rule`
 - `contrast`: each with `label` and `example`
-- `drill`: each with `sentence`, `answer`, `options` and `feedback`
+- `drill`: each with `sentence`, `answer`, `translation`, `options` and `feedback`

@@ -1,0 +1,130 @@
+{
+  "lessons": [
+    {
+      "canDo": "Read a 4-3-3 formation and describe where each line plays",
+      "description": "See how a 4-3-3 spreads players across the field and recognize its shape during a game.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Leah hears a commentator say “4-3-3,” but sees players spread all over the field. What do those three numbers tell her?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A top-down soccer field with the bottom goal labeled “Own goal,” the top goal labeled “Opponent's goal,” an upward attacking arrow, and three shaded horizontal bands labeled 4, 3 and 3 from bottom to top; no individual player markers.",
+          "visualKind": "picture",
+          "brief": "A formation describes a team's basic shape: read 4-3-3 from its own goal toward the opponent's goal. Show the three groups as bands containing 4, 3 and 3 players, without specifying positions within each band.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ask where the front three will usually spread out as the team attacks: “Together through the center” or “Across the left, center and right.” The second is correct; the tempting first choice puts everyone closest to the direct route to goal.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A top-down soccer field with “Own goal” at the bottom, “Opponent's goal” at the top and an upward attacking arrow; three player markers across the upper field labeled “Left forward,” “Center forward” and “Right forward,” joined by a bracket labeled “Forwards.”",
+          "visualKind": "picture",
+          "brief": "The three forwards usually spread across the left, center and right, making the opposing team cover more width. Crowding all three into the center also crowds their routes toward goal.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A top-down soccer field with “Own goal” at the bottom, “Opponent's goal” at the top and an upward attacking arrow; four player markers across the lower field, two central and two wider, joined by a bracket labeled “Defenders.”",
+          "visualKind": "picture",
+          "brief": "The four defenders form the deepest group of field players, nearest their own goal. Show two nearer the center and one toward each side.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A top-down soccer field with “Own goal” at the bottom, “Opponent's goal” at the top and an upward attacking arrow; four lower markers bracketed “Defenders,” three middle markers arranged in a triangle bracketed “Midfielders,” and three upper markers spread left, center and right bracketed “Forwards.”",
+          "visualKind": "picture",
+          "brief": "The three midfielders play between the defenders and forwards, helping connect those groups. Their triangle still counts as one group of three.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "A top-down soccer field with the top goal labeled “Own goal,” the bottom goal labeled “Opponent's goal” and a downward attacking arrow; four unlabeled player markers nearest the top, three in a central triangle and three spread across the bottom.",
+          "visualKind": "picture",
+          "brief": "Show the team attacking downward and ask which group is nearest its own goal: “Four defenders” or “Three forwards.” The defenders are correct; the tempting error is reading the page from bottom to top instead of checking the goals.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A top-down soccer field with “Own goal” at the bottom, “Opponent's goal” at the top and an upward attacking arrow; one marker beside the bottom goal labeled “Goalkeeper,” four lower markers bracketed “Defenders,” three middle markers in a triangle bracketed “Midfielders,” and three upper markers spread left, center and right bracketed “Forwards.”",
+          "visualKind": "picture",
+          "brief": "The goalkeeper is separate from the three numbers: a full 4-3-3 has ten field players plus one goalkeeper. Place the goalkeeper behind the four defenders.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A top-down soccer field with “Own goal” at the bottom, “Opponent's goal” at the top and an upward attacking arrow; a goalkeeper, four defenders, three midfielders and three forwards in a 4-3-3, with a dashed arrow from the right defender toward open space farther up the right side; the groups are labeled.",
+          "visualKind": "picture",
+          "brief": "A formation is a basic shape, not a set of fixed spots: a defender can run forward to help an attack. One player's run does not automatically change the team's formation.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "activity",
+          "visual": "An unlabeled top-down soccer field showing one goalkeeper nearest the bottom goal, four defenders above, three midfielders in a triangle in the middle and three forwards spread across the upper field; numbered callouts mark the goalkeeper and each complete group, and an upward arrow indicates the direction of attack.",
+          "visualKind": "template",
+          "brief": "Have the learner label a complete team's goalkeeper and three groups: part 1 goalkeeper, part 2 defenders, part 3 midfielders, part 4 forwards. Check the placements; address swapping the two groups of three by pointing to their positions relative to the goals.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "A top-down soccer field rotated so the team attacks from left to right, with “Own goal” on the left, “Opponent's goal” on the right and a rightward attacking arrow; one goalkeeper nearest the left goal, four defenders farther right, three midfielders in a triangle beyond them and three forwards spread across the width nearest the right goal, with no position labels.",
+          "visualKind": "picture",
+          "brief": "A teammate asks you to explain this lineup before kickoff; choose its formation and tap the group expected to play nearest the opponent's goal. The answers are “4-3-3” and the front three; include “3-3-4” as the tempting reversed reading.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Identify the four defenders, three midfielders and three forwards by their positions, with the goalkeeper counted separately.",
+          "example": "In a 4-3-3, four defenders play behind three midfielders and three forwards, with a separate goalkeeper.",
+          "hard": false,
+          "name": "Describe the lines of a 4-3-3 formation",
+          "topic": "4-3-3 formation",
+          "useCase": "Understand a lineup graphic or a commentator's description while watching soccer."
+        }
+      ],
+      "title": "The 4-3-3 formation"
+    }
+  ]
+}

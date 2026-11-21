@@ -497,10 +497,13 @@ struct TodayPlanChangeSection: View {
   }
 }
 
-/// Today's missions: the header, and the missions behind a press on its title (B1-002).
+/// Today's missions: the header, and the missions behind a press on its title (B1-002). Beside the
+/// week in the iPad's grid, the missions show without the press, filling the room the week leaves.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.isGridBlock) private var isGridBlock
+  @Environment(\.stacksContent) private var isStacked
 
   @State private var showsMissions = false
 
@@ -513,15 +516,16 @@ struct TodayMissionsSection: View {
 
   var body: some View {
     let earned = view.session.fullMeal.earned
+    let listed = isGridBlock && !isStacked
 
     PageSection(isPanel: true) {
       MissionsSummary(
         missions: missions, bonus: view.session.fullMeal.bonus, earned: earned,
-        isOpen: $showsMissions
+        isOpen: listed ? nil : $showsMissions
       )
       .rowSeparatorHiddenBelow()
 
-      if !earned, showsMissions {
+      if !earned, listed || showsMissions {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
           let block = view.session.blocks.first { mission.opens($0) }
           let tap = block.map { TodayDayView.Tap.mission($0.position) }

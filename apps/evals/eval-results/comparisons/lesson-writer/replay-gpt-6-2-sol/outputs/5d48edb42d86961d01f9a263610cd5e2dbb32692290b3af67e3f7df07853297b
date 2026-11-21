@@ -1,0 +1,298 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Under the same lamp, tiny crystals of cadmium selenide glow blue at 2 nanometers across and red at 6. How can changing just their size change the color they give off?",
+      "image": {
+        "prompt": "A single row of four clear laboratory vials under one UV lamp, glowing blue, green, orange and red from left to right. Label the vials 2 nm, 3.5 nm, 5 nm and 6 nm. The labels give approximate crystal diameters, not vial sizes.",
+        "alt": "Four vials under one lamp glow blue, green, orange and red, with crystal sizes labeled 2 nm, 3.5 nm, 5 nm and 6 nm."
+      },
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Pinned at both ends",
+      "text": "The box has zero potential energy inside and infinite walls outside: $V(x)=0$ for $0<x<L$. The wave function $\\psi$, which gives position probabilities when squared in magnitude, is zero outside. It meets the walls at zero, like a pinned guitar string: $\\psi(0)=\\psi(L)=0$.",
+      "exampleLineIdea": null,
+      "image": {
+        "prompt": "Draw an infinite potential well: a flat floor at V = 0 from x = 0 to x = L, with vertical walls ending in upward arrows labeled ∞. A thin wave inside meets the floor at both walls, with a dot at each endpoint. Label the exterior on both sides ψ = 0.",
+        "alt": "A wave touches zero at both walls of a flat-bottomed well, and both regions outside the walls are marked ψ = 0."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Waves inside the box",
+      "text": "Inside, the wave bends back toward zero: $-(\\hbar^2/2m)\\psi''=E\\psi$, or $\\psi''=-k^2\\psi$, with $k=\\sqrt{2mE}/\\hbar$. Here $m$ is mass, $E$ is energy, and $\\hbar=h/(2\\pi)$ sets the quantum scale, where $h$ is Planck’s constant. For $E>0$, $\\psi(x)=A\\sin(kx)+B\\cos(kx)$. At $x=0$, sine is zero and cosine is one.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Inside the box, $\\psi(x)=A\\sin(kx)+B\\cos(kx)$. At the left wall, you need $\\psi(0)=0$.",
+      "question": "Which term can you keep, and why?",
+      "options": [
+        {
+          "text": "You can keep the sine term because it already vanishes at the wall.",
+          "isCorrect": true,
+          "reason": "At $x=0$, the sine term is zero and the cosine term equals $B$. So the wall forces $B=0$ but doesn’t constrain $A$.",
+          "picture": null
+        },
+        {
+          "text": "You can keep the cosine term because cosine peaks at the wall.",
+          "isCorrect": false,
+          "reason": "The peak is exactly the problem. Since $\\cos(0)=1$, the cosine term contributes $B$ at a wall where the wave must be zero.",
+          "picture": null
+        },
+        {
+          "text": "You can keep both terms because they can cancel at the wall.",
+          "isCorrect": false,
+          "reason": "The sine term is already zero there, so it can’t cancel a nonzero cosine term.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 3,
+        "quote": "At $x=0$, sine is zero and cosine is one."
+      }
+    },
+    {
+      "kind": "workedExample",
+      "title": "What the right wall allows",
+      "problem": "The left wall leaves $\\psi(x)=A\\sin(kx)$. Which energies also make the wave zero at $x=L$?",
+      "steps": [
+        {
+          "text": "Set the wave to zero at the right wall. The wave can’t be zero everywhere if it describes a particle, so $A$ can’t be zero.",
+          "math": "A\\sin(kL)=0\\quad\\Rightarrow\\quad\\sin(kL)=0"
+        },
+        {
+          "text": "Sine is zero at whole multiples of $\\pi$. So only evenly spaced values of $k$ can fit.",
+          "math": "kL=n\\pi\\quad\\Rightarrow\\quad k_n=\\frac{n\\pi}{L}"
+        },
+        {
+          "text": "Setting $n=0$ makes the sine wave zero everywhere. Solving the zero-energy equation directly gives a straight line, and the only line that meets both walls at zero is also zero everywhere.",
+          "math": "E=0\\quad\\Rightarrow\\quad\\psi''=0"
+        },
+        {
+          "text": "A negative $n$ just flips the wave’s sign without changing its energy or probabilities. So you only need the positive integers.",
+          "math": "n=1,2,3,\\ldots"
+        },
+        {
+          "text": "Inside the box all the energy comes from motion, so it can’t be negative. Solve for $E$ in terms of $k$, then put in each allowed $k_n$.",
+          "math": "E_n=\\frac{\\hbar^2 k_n^2}{2m}=\\frac{n^2\\pi^2\\hbar^2}{2mL^2}=\\frac{n^2h^2}{8mL^2}"
+        }
+      ],
+      "result": "The two walls allow only separate energy levels. The lowest is $E_1>0$, and at fixed $n$ and mass, the energy goes as $1/L^2$.",
+      "image": {
+        "prompt": "Clean vertical derivation diagram. Show A sin(kL) = 0 at the top, highlight sin(kL) = 0 beneath it, then show kL = nπ. Finish with a horizontal k axis with three equally spaced dots at π/L, 2π/L and 3π/L.",
+        "alt": "The right-wall condition reduces to sin(kL) = 0, with allowed points at π/L, 2π/L and 3π/L on the k axis."
+      },
+      "visual": null
+    },
+    {
+      "kind": "check",
+      "context": "You need a wave for the lowest-energy particle in the box.",
+      "question": "Which argument tells you where to start counting the states?",
+      "options": [
+        {
+          "text": "Start at $n=1$ because $n=0$ gives no particle wave at all.",
+          "isCorrect": true,
+          "reason": "A wave that is zero everywhere gives zero probability of finding the particle anywhere. The lowest allowed state has positive energy even though it’s the lowest possible one. That’s its zero-point energy.",
+          "picture": null
+        },
+        {
+          "text": "Start at $n=0$ because the lowest state has zero energy.",
+          "isCorrect": false,
+          "reason": "You can put zero into the energy formula, but that doesn’t make it an allowed state. At zero energy, the only wave that meets both walls is zero everywhere.",
+          "picture": null
+        },
+        {
+          "text": "Start at $n=2$ because the lowest wave needs a zero inside the box.",
+          "isCorrect": false,
+          "reason": "The wave needs to reach zero at the two walls, not between them. One half of a sine wave already fits.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 5,
+        "quote": "Setting $n=0$ makes the sine wave zero everywhere."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Waves that fit",
+      "text": "Each wave fits $n$ half-wavelengths in the box, with $n-1$ zeros inside. These zeros are called **nodes**. To make the total probability one, set $\\int_0^L|\\psi|^2dx=1$, which gives $\\psi_n(x)=\\sqrt{2/L}\\sin(n\\pi x/L)$. The wave pattern stays put, and the energy gaps grow because $E_n=n^2E_1$.",
+      "exampleLineIdea": null,
+      "image": {
+        "prompt": "Draw a vertical energy ladder with rungs at E₁, 4E₁, 9E₁ and 16E₁, spaced to scale. Draw matching sine waves centered on the four rungs, with 1, 2, 3 and 4 half-waves between the same two wall guides. Dot the interior crossings only.",
+        "alt": "Four waves fit one to four half-wavelengths, with zero to three interior crossings, on rungs at 1, 4, 9 and 16 times the lowest energy."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "activity",
+      "template": "formulaModel",
+      "content": "{\"template\":\"formulaModel\",\"prompt\":\"Compare the waves and energy ratios for n from 1 to 6.\",\"fields\":{\"title\":\"Standing waves in a box\",\"variables\":[{\"name\":\"n\",\"label\":\"Wave number index n\",\"unit\":\"index\",\"min\":1,\"max\":6,\"step\":1,\"initial\":1},{\"name\":\"position\",\"label\":\"Position x/L\",\"unit\":\"fraction\",\"min\":0,\"max\":1,\"step\":0.001,\"initial\":0.25}],\"outputs\":[{\"id\":\"wave\",\"label\":\"Wave divided by its peak\",\"unit\":\"ratio\",\"formula\":\"sin(n*pi*position)\"},{\"id\":\"density\",\"label\":\"Probability density / peak\",\"unit\":\"ratio\",\"formula\":\"sin(n*pi*position)^2\"},{\"id\":\"energy\",\"label\":\"Energy Eₙ/E₁\",\"unit\":\"ratio\",\"formula\":\"n^2\"}],\"plot\":{\"x\":\"position\",\"y\":\"wave\"}},\"check\":{\"kind\":\"choice\",\"question\":\"At n = 4, how many zeros are inside the box, and what does the energy pattern predict for E₃/E₁?\",\"options\":[{\"id\":\"correct\",\"text\":\"There are 3 zeros inside, and the ratio is 9.\",\"isCorrect\":true,\"reason\":\"Four half-waves meet at three points inside the walls. The energy grows with the square of the index, so the third level has 3² times the first level’s energy.\"},{\"id\":\"linear\",\"text\":\"There are 3 zeros inside, and the ratio is 3.\",\"isCorrect\":false,\"reason\":\"The count is right, but energy doesn’t grow in direct proportion to n. You square the index to get the ratio.\"},{\"id\":\"lobes\",\"text\":\"There are 4 zeros inside, and the ratio is 9.\",\"isCorrect\":false,\"reason\":\"The wave has four half-waves, but only three meeting points between them. The endpoints don’t count.\"}]},\"data\":{\"isExample\":true},\"image\":{\"prompt\":\"On one set of axes from x = 0 to x = L, overlay the n = 4 sine wave and its square, both scaled by their peaks. The sine alternates above and below zero across four lobes. The square has four lobes above zero and vanishes wherever the sine does. Label the two curves Wave and Squared wave.\",\"alt\":\"For n = 4, the wave alternates above and below zero, while its square stays above zero between the same crossings.\"}}"
+    },
+    {
+      "kind": "workedExample",
+      "title": "From an energy drop to light",
+      "problem": "An electron drops from $n=2$ to $n=1$ in a box 1.0 nm wide. What wavelength does it give off?",
+      "steps": [
+        {
+          "text": "Use the electron’s mass, $m_e$, in the lowest level. An electron volt, or eV, is the energy an electron gains across a one-volt drop in electric potential.",
+          "math": "E_1=\\frac{h^2}{8m_eL^2}\\approx 6.0\\times10^{-20}\\,\\mathrm{J}\\approx0.376\\,\\mathrm{eV}"
+        },
+        {
+          "text": "Double the index and the energy goes up by a factor of four.",
+          "math": "E_2=4E_1\\approx1.50\\,\\mathrm{eV}"
+        },
+        {
+          "text": "The electron gives off the energy it loses in one packet of light. That packet is called a **photon**.",
+          "math": "\\Delta E=E_2-E_1=3E_1\\approx1.13\\,\\mathrm{eV}"
+        },
+        {
+          "text": "Divide $hc$ by the photon’s energy to get its wavelength. Here $c$ is the speed of light. A bigger energy drop means a shorter wavelength, toward blue in visible light.",
+          "math": "\\lambda=\\frac{hc}{\\Delta E}\\approx\\frac{1{,}240\\,\\mathrm{eV\\,nm}}{1.13\\,\\mathrm{eV}}\\approx1{,}100\\,\\mathrm{nm}"
+        }
+      ],
+      "result": "The electron gives off light near 1,100 nm. That’s near infrared, beyond the red end of visible light.",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "An electron in a {referenceWidth} nm box has a lowest energy of about {referenceEnergy} eV. You put the same electron in a {width} nm box instead.",
+      "question": "What is its new lowest energy in eV, rounded to two decimal places?",
+      "math": {
+        "variables": [
+          {
+            "name": "referenceWidth",
+            "value": 1,
+            "min": 1,
+            "max": 1,
+            "step": 0.1,
+            "unit": "nm"
+          },
+          {
+            "name": "referenceEnergy",
+            "value": 0.376,
+            "min": 0.376,
+            "max": 0.376,
+            "step": 0.001,
+            "unit": "eV"
+          },
+          {
+            "name": "width",
+            "value": 0.5,
+            "min": 0.4,
+            "max": 0.6,
+            "step": 0.05,
+            "unit": "nm"
+          }
+        ],
+        "solution": "round(referenceEnergy * (referenceWidth / width)^2, 2)",
+        "answer": 1.5,
+        "unit": "eV",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0.005
+        },
+        "steps": [
+          {
+            "text": "Divide the old width by the new width, then square it. The energy grows by a factor of {result}.",
+            "expression": "(referenceWidth / width)^2"
+          },
+          {
+            "text": "Multiply the old energy of {referenceEnergy} eV by that factor and round. The new lowest energy is {result} eV.",
+            "expression": "round(referenceEnergy * (referenceWidth / width)^2, 2)"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "round(referenceEnergy * referenceWidth / width, 2)",
+            "misconception": "Use the width ratio without squaring",
+            "reason": "You used one power of the width ratio. The box energy depends on the inverse square of the width, so square that ratio first."
+          },
+          {
+            "expression": "round(referenceEnergy * (width / referenceWidth)^2, 2)",
+            "misconception": "Square the width ratio backward",
+            "reason": "You squared the new width divided by the old width, which makes the energy fall. A narrower box raises the energy, so use the old width over the new one."
+          },
+          {
+            "expression": "round(referenceEnergy, 2)",
+            "misconception": "Keep the original energy",
+            "reason": "The index stays at the lowest level, but its energy changes because the walls are closer together."
+          }
+        ]
+      },
+      "correctReason": "The mass and level index stay the same. Multiply {referenceEnergy} eV by the square of {referenceWidth} divided by {width}.",
+      "image": null,
+      "basis": {
+        "screen": 5,
+        "quote": "The lowest is $E_1>0$, and at fixed $n$ and mass, the energy goes as $1/L^2$."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "Back at the glowing vials, you model a 6 nm crystal and a 3 nm crystal as boxes. You keep the material the same and use each diameter as the box width.",
+      "question": "How does the energy added by the box change, and why does the light shift toward blue?",
+      "options": [
+        {
+          "text": "The added energy quadruples, so the photons have more energy and shorter wavelengths.",
+          "isCorrect": true,
+          "reason": "Halving the width makes the box contribution four times as large. That raises the energy of the emitted photon, but it doesn’t quadruple the photon’s total energy because the material also contributes.",
+          "picture": null
+        },
+        {
+          "text": "The added energy doubles, so the photons have more energy and shorter wavelengths.",
+          "isCorrect": false,
+          "reason": "Doubling would follow from an inverse-width rule. The box energy goes as the inverse square, so the contribution quadruples instead.",
+          "picture": null
+        },
+        {
+          "text": "The added energy quadruples, so the photons have more energy and longer wavelengths.",
+          "isCorrect": false,
+          "reason": "The factor of four is right, but wavelength goes the other way. A photon with more energy has a shorter wavelength.",
+          "picture": null
+        }
+      ],
+      "image": {
+        "prompt": "Compare two schematic energy ladders, labeled 6 nm and 3 nm, on a shared vertical scale. Both share a lower emission reference and the same material energy baseline. Above that baseline, draw two rungs per ladder, with heights four times greater in the 3 nm ladder. Draw downward photon arrows from the lowest rungs to the reference, red for 6 nm and blue for 3 nm. No numerical energy labels.",
+        "alt": "The 3 nm box has more widely spaced levels and a longer blue photon arrow than the red arrow for the 6 nm box.",
+        "parts": null
+      },
+      "visual": null,
+      "basis": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Pinned ends",
+        "text": "The wave must reach zero at both walls, so only evenly spaced values of $k$ can fit."
+      },
+      {
+        "label": "Allowed energies",
+        "text": "The allowed energies grow as $n^2$, fall as $1/L^2$ at fixed mass and index, and start at $n=1$ because $n=0$ gives no particle wave."
+      },
+      {
+        "label": "Zeros inside",
+        "text": "The wave for level $n$ fits $n$ half-wavelengths and has $n-1$ nodes between the walls."
+      },
+      {
+        "label": "Energy drops",
+        "text": "When an electron drops to a lower level, it emits a photon, and a bigger energy drop gives a shorter wavelength."
+      }
+    ],
+    "shape": "hub"
+  }
+}

@@ -115,6 +115,27 @@ function listWaiting({
   return grow();
 }
 
+/** Marks the chapter in progress's lessons and the next one's promised day, in place. */
+export function markChapterInProgress({
+  items,
+  units,
+}: {
+  items: readonly ProgressItem[];
+  units: readonly QueueUnit[];
+}): QueueUnit[] {
+  const chapterId = findChapterInProgress(items);
+
+  if (!chapterId) {
+    return [...units];
+  }
+
+  const todo = items.filter(
+    (item) => item.kind === "lesson" && item.status === "todo" && item.chapterId === chapterId,
+  );
+
+  return markSeen({ chapterId, todo, units });
+}
+
 export function putChapterInProgressFirst({
   items,
   lessons = [],
@@ -132,11 +153,7 @@ export function putChapterInProgressFirst({
     return [...units];
   }
 
-  const todo = items.filter(
-    (item) => item.kind === "lesson" && item.status === "todo" && item.chapterId === chapterId,
-  );
-
-  const marked = markSeen({ chapterId, todo, units });
+  const marked = markChapterInProgress({ items, units });
 
   const chapter = marked.filter((unit) => unit.chapterId === chapterId);
   const studied = listStudiedSkills({ items, lessons });

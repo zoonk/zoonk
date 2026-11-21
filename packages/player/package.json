@@ -6,7 +6,6 @@
     "./base-map-view": "./src/activities/_assets/base-maps/base-map-view.ts",
     "./lesson": "./src/lesson/lesson-player-provider.tsx",
     "./lesson/shell": "./src/lesson/lesson-player-shell.tsx",
-    "./lesson/rich-text": "./src/lesson/_components/lesson-rich-text.tsx",
     "./lesson/practice": "./src/lesson/lesson-practice-step.tsx",
     "./lesson/types": "./src/lesson/lesson-player-types.ts",
     "./messages": "./src/messages.ts",

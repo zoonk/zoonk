@@ -1,0 +1,316 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Under a UV lamp, a row of vials glows from blue to red. Every vial holds the same cadmium selenide crystals. Only their size changes, from 2 nm in the blue vial to 6 nm in the red one. How can size alone set the color of the light?",
+      "image": {
+        "prompt": "A row of six small glass vials on a dark lab bench under ultraviolet light, glowing in sequence blue, cyan, green, yellow, orange, red. Each vial has a small label with its crystal diameter: 2 nm, 2.5 nm, 3 nm, 4 nm, 5 nm, 6 nm.",
+        "alt": "Six glowing vials in a row, from blue labeled 2 nm to red labeled 6 nm."
+      },
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "A box with impossible walls",
+      "text": "Let a particle move on a line where $V = 0$ for $0 < x < L$ and $V = \\infty$ outside. It can never get out, so $\\psi = 0$ beyond the walls. Since ψ must be continuous, $\\psi(0) = 0$ and $\\psi(L) = 0$, like a guitar string pinned at both ends. This model is the **infinite square well**.",
+      "exampleLineIdea": null,
+      "image": {
+        "prompt": "Physics potential diagram: a horizontal x axis with a flat floor labeled V = 0 between x = 0 and x = L, and two infinitely tall vertical walls at 0 and L. Outside the walls the text ψ = 0. Two dots pin the wave at x = 0 and x = L.",
+        "alt": "A flat floor from 0 to L between two infinitely tall walls, with ψ = 0 marked outside and dots at both walls."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Inside: a plain oscillation",
+      "text": "Inside the box $V = 0$, so the Schrödinger equation reduces to $-\\frac{\\hbar^2}{2m}\\psi'' = E\\psi$, or $\\psi'' = -k^2\\psi$ with $k = \\sqrt{2mE}/\\hbar$. Every function like that is a mix of sine and cosine: $\\psi(x) = A\\sin kx + B\\cos kx$. This is the **general solution**, the same oscillation as a vibrating string.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": null,
+      "question": "You impose $\\psi(0) = 0$ on $\\psi(x) = A\\sin kx + B\\cos kx$. What does that condition tell you?",
+      "options": [
+        {
+          "text": "B = 0, so only the sine term survives",
+          "isCorrect": true,
+          "reason": "At x = 0, sin 0 = 0 and cos 0 = 1, so ψ(0) = B. Setting that to zero forces B = 0.",
+          "picture": null
+        },
+        {
+          "text": "A = 0, so the cosine term survives because cos is largest at 0",
+          "isCorrect": false,
+          "reason": "Being largest at 0 is exactly the problem. Since cos 0 = 1, a cosine term makes ψ(0) = B, not zero, so B must vanish.",
+          "picture": null
+        },
+        {
+          "text": "k = 0, so ψ is a constant",
+          "isCorrect": false,
+          "reason": "At x = 0 the product kx is 0 for any k, so this condition can't fix k. It only fixes the coefficients.",
+          "picture": null
+        },
+        {
+          "text": "Nothing yet, both terms survive until ψ(L) = 0 is used",
+          "isCorrect": false,
+          "reason": "The left wall already decides something: it gives ψ(0) = B = 0. The far wall then restricts k.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Since ψ must be continuous, $\\psi(0) = 0$ and $\\psi(L) = 0$, like a guitar string pinned at both ends."
+      }
+    },
+    {
+      "kind": "workedExample",
+      "title": "Pinning the far end",
+      "problem": "With B = 0, the state is ψ = A sin kx. Which values of k, and which energies, does ψ(L) = 0 allow?",
+      "steps": [
+        {
+          "text": "At x = L the wave must vanish, so A sin kL = 0. A can't be zero, or there would be no particle at all.",
+          "math": "A\\sin kL = 0,\\quad A \\neq 0"
+        },
+        {
+          "text": "So sin kL = 0, which happens only when kL is a whole multiple of π.",
+          "math": "kL = n\\pi \\;\\Rightarrow\\; k_n = \\frac{n\\pi}{L}"
+        },
+        {
+          "text": "Drop n = 0: it makes ψ zero everywhere. Drop negative n: since sin(−x) = −sin x, they repeat the same states with a flipped sign. That leaves n = 1, 2, 3, …, so the lowest energy is above zero.",
+          "math": "n = 1, 2, 3, \\dots"
+        },
+        {
+          "text": "Solve k = √(2mE)/ħ for E, which gives E = ħ²k²/2m. Then put in k_n and use ħ = h/2π.",
+          "math": "E_n = \\frac{\\hbar^2 k_n^2}{2m} = \\frac{n^2\\pi^2\\hbar^2}{2mL^2} = \\frac{n^2h^2}{8mL^2}"
+        }
+      ],
+      "result": "Only discrete energies are allowed: $E_n = n^2h^2/(8mL^2)$ with $n = 1, 2, 3, \\dots$. Energies limited to a ladder like this are called **quantized**.",
+      "image": {
+        "prompt": "A clean derivation column on a light panel: ψ(L) = 0, then A sin kL = 0, then sin kL = 0 highlighted in yellow, then kL = nπ. Below it a horizontal k axis with evenly spaced dots labeled π/L, 2π/L, 3π/L, 4π/L.",
+        "alt": "A derivation column with sin kL = 0 highlighted, above a k axis with evenly spaced dots at π/L, 2π/L, 3π/L and 4π/L."
+      },
+      "visual": null
+    },
+    {
+      "kind": "check",
+      "context": "Ryan says an electron in an infinite well could sit still at the bottom. He takes n = 0 in $E_n = n^2h^2/(8mL^2)$ and gets E = 0.",
+      "question": "What's wrong with Ryan's claim?",
+      "options": [
+        {
+          "text": "n = 0 makes ψ zero everywhere, so there is no electron at all",
+          "isCorrect": true,
+          "reason": "With k = 0, sin(0·x) = 0 at every x. The lowest real state is n = 1, so the particle always keeps E_1 > 0. That leftover energy is called zero-point energy.",
+          "picture": null
+        },
+        {
+          "text": "Nothing, n = 0 is the ground state with zero energy",
+          "isCorrect": false,
+          "reason": "The formula does give E = 0 at n = 0, which makes it tempting. But the matching ψ is zero everywhere and describes no particle, so n = 0 isn't a state.",
+          "picture": null
+        },
+        {
+          "text": "n = 0 is allowed, but n = −1 has even lower energy",
+          "isCorrect": false,
+          "reason": "Energy depends on n², so n = −1 has the same energy as n = 1. Its ψ is just −ψ₁, the same state with a flipped sign.",
+          "picture": null
+        },
+        {
+          "text": "n = 0 is ruled out only for very narrow boxes",
+          "isCorrect": false,
+          "reason": "The width doesn't matter, since sin(0·x) = 0 for any L. n = 0 is ruled out in every infinite well.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 5,
+        "quote": "Drop n = 0: it makes ψ zero everywhere."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Standing waves on a ladder",
+      "text": "The particle must be somewhere in the box, so $\\int_0^L|\\psi|^2\\,dx = 1$. That sets $A = \\sqrt{2/L}$, so $\\psi_n(x) = \\sqrt{2/L}\\,\\sin(n\\pi x/L)$. Each $\\psi_n$ is a standing wave with n half-wavelengths in the box, so it crosses zero n − 1 times inside. Those points are called **nodes**. The levels climb as $n^2$: $E_1, 4E_1, 9E_1, 16E_1$.",
+      "exampleLineIdea": null,
+      "image": {
+        "prompt": "An energy ladder diagram inside an infinite well: four horizontal rungs at heights labeled E1, 4E1, 9E1, 16E1, spaced wider as they rise. On each rung a sine wave ψ1 to ψ4 with 1 to 4 half-wavelengths, and small dots marking the zero crossings inside the well.",
+        "alt": "Four rungs at E1, 4E1, 9E1 and 16E1, each with a wave of 1 to 4 half-wavelengths and dots on its inside zero crossings."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "activity",
+      "template": "formulaModel",
+      "content": "{\"template\":\"formulaModel\",\"prompt\":\"Change n from 1 to 6 and watch how ψ_n and its energy change.\",\"fields\":{\"title\":\"Particle in a box\",\"variables\":[{\"name\":\"x\",\"label\":\"Position x/L\",\"min\":0,\"max\":1,\"step\":0.01,\"initial\":0.5},{\"name\":\"n\",\"label\":\"Level n\",\"min\":1,\"max\":6,\"step\":1,\"initial\":1}],\"outputs\":[{\"id\":\"psi\",\"label\":\"ψ_n · √L\",\"formula\":\"sqrt(2)*sin(n*pi*x)\"},{\"id\":\"prob\",\"label\":\"|ψ_n|² · L\",\"formula\":\"2*sin(n*pi*x)^2\"},{\"id\":\"ratio\",\"label\":\"E_n / E_1\",\"formula\":\"n^2\"}],\"plot\":{\"x\":\"x\",\"y\":\"psi\"}},\"check\":{\"kind\":\"choice\",\"inputs\":[{\"name\":\"n\",\"value\":4},{\"name\":\"x\",\"value\":0.5}],\"question\":\"Count where ψ_4 crosses zero strictly inside the box, then look at n = 3. Which pair is right?\",\"options\":[{\"id\":\"a\",\"text\":\"ψ_4 has 3 interior nodes, and E_3 = 9E_1\",\"isCorrect\":true,\"reason\":\"ψ_4 fits 4 half-wavelengths, so it crosses zero 4 − 1 = 3 times inside. Energy grows as n², so E_3 = 3²E_1 = 9E_1.\"},{\"id\":\"b\",\"text\":\"ψ_4 has 4 interior nodes, and E_3 = 9E_1\",\"isCorrect\":false,\"reason\":\"The zeros at x = 0 and x = L are the walls, not interior nodes. Inside the box, ψ_4 crosses zero only 3 times.\"},{\"id\":\"c\",\"text\":\"ψ_4 has 3 interior nodes, and E_3 = 3E_1\",\"isCorrect\":false,\"reason\":\"Energy grows as n², not n, so E_3 = 9E_1. That's why the rungs spread apart as n rises.\"},{\"id\":\"d\",\"text\":\"ψ_4 has 4 interior nodes, and E_3 = 3E_1\",\"isCorrect\":false,\"reason\":\"The walls don't count as nodes, so ψ_4 has 3. Energy scales as n², so E_3 = 9E_1, not 3E_1.\"}]}}"
+    },
+    {
+      "kind": "workedExample",
+      "title": "An electron in a 1 nm box",
+      "problem": "An electron is trapped in a box with L = 1.0 nm. Find E_1 and E_2, then the wavelength of the photon it emits when it drops from n = 2 to n = 1.",
+      "steps": [
+        {
+          "text": "Put the electron's mass and the box width into the energy formula with n = 1.",
+          "math": "E_1 = \\frac{h^2}{8m_eL^2} = \\frac{(6.63\\times10^{-34}\\ \\text{J s})^2}{8\\,(9.11\\times10^{-31}\\ \\text{kg})\\,(1.0\\times10^{-9}\\ \\text{m})^2} \\approx 6.0\\times10^{-20}\\ \\text{J}"
+        },
+        {
+          "text": "Convert to electron volts, the natural unit for atomic-scale energies.",
+          "math": "E_1 \\approx \\frac{6.0\\times10^{-20}\\ \\text{J}}{1.60\\times10^{-19}\\ \\text{J/eV}} \\approx 0.38\\ \\text{eV}"
+        },
+        {
+          "text": "Since E_n grows as n², the next level is 4 times higher. Keeping the unrounded E_1 ≈ 0.376 eV, the gap between them is 3E_1.",
+          "math": "E_2 = 4E_1 \\approx 1.50\\ \\text{eV},\\quad \\Delta E = 3E_1 \\approx 1.13\\ \\text{eV}"
+        },
+        {
+          "text": "The emitted photon carries exactly that gap, so its wavelength is hc divided by ΔE.",
+          "math": "\\lambda = \\frac{hc}{\\Delta E} \\approx \\frac{1240\\ \\text{eV nm}}{1.13\\ \\text{eV}} \\approx 1100\\ \\text{nm}"
+        }
+      ],
+      "result": "The photon has λ ≈ 1100 nm, in the near infrared, just past the red light your eyes can see.",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "An electron in a box {L0} nm wide has E_1 ≈ {E0} eV. Now the box is squeezed to {L} nm.",
+      "question": "What is E_1, in eV, in the narrower box?",
+      "math": {
+        "variables": [
+          {
+            "name": "E0",
+            "value": 0.38,
+            "min": 0.38,
+            "max": 0.38,
+            "step": 0.01,
+            "unit": "eV"
+          },
+          {
+            "name": "L0",
+            "value": 1,
+            "min": 1,
+            "max": 1,
+            "step": 0.1,
+            "unit": "nm"
+          },
+          {
+            "name": "L",
+            "value": 0.5,
+            "min": 0.3,
+            "max": 0.9,
+            "step": 0.1,
+            "unit": "nm"
+          }
+        ],
+        "solution": "E0*(L0/L)^2",
+        "answer": 1.52,
+        "unit": "eV",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0.01
+        },
+        "steps": [
+          {
+            "text": "Energy scales as 1/L², so the factor is ({L0}/{L})² = {result}.",
+            "expression": "(L0/L)^2"
+          },
+          {
+            "text": "Multiply {E0} eV by that factor: E_1 ≈ {result} eV.",
+            "expression": "E0*(L0/L)^2"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "E0*L0/L",
+            "misconception": "Scaling E with 1/L",
+            "reason": "You divided by the width only once. E_1 depends on 1/L², so the width ratio must be squared."
+          },
+          {
+            "expression": "E0*L/L0",
+            "misconception": "Thinking a narrower box lowers E",
+            "reason": "You made the energy shrink with the box. A narrower box forces shorter waves, so the energy rises."
+          },
+          {
+            "expression": "E0*(L/L0)^2",
+            "misconception": "Scaling E with L²",
+            "reason": "You squared the ratio but flipped it. L sits in the denominator, so E_1 grows as the box shrinks."
+          }
+        ]
+      },
+      "correctReason": "Because E_1 ∝ 1/L², the new energy is {E0} eV times ({L0}/{L})².",
+      "image": null,
+      "basis": {
+        "screen": 5,
+        "quote": "Only discrete energies are allowed: $E_n = n^2h^2/(8mL^2)$ with $n = 1, 2, 3, \\dots$."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "A QLED TV screen glows thanks to a layer of CdSe crystals like the ones in the vials. Model each crystal's confinement energy as a particle in a box, so it scales as $1/L^2$.",
+      "question": "Going from a 6 nm crystal to a 3 nm crystal, what happens to the confinement energy and the light?",
+      "options": [
+        {
+          "text": "It grows 4 times, so the photons carry more energy and look bluer",
+          "isCorrect": true,
+          "reason": "Halving L multiplies 1/L² by 4. The levels spread apart, so each photon carries more energy and has a shorter, bluer wavelength.",
+          "picture": null
+        },
+        {
+          "text": "It grows 2 times, so the light shifts somewhat toward blue",
+          "isCorrect": false,
+          "reason": "The direction is right, but energy goes as 1/L², not 1/L. Halving the size multiplies it by 4.",
+          "picture": null
+        },
+        {
+          "text": "It grows 4 times, so the photons have longer wavelengths and look redder",
+          "isCorrect": false,
+          "reason": "Since λ = hc/ΔE, more energy means a shorter wavelength. The light moves toward blue, not red.",
+          "picture": null
+        },
+        {
+          "text": "It drops to a quarter, because a smaller box holds less energy",
+          "isCorrect": false,
+          "reason": "A smaller box seems like it should hold less, but it squeezes the waves. Shorter waves mean larger k and higher energy.",
+          "picture": null
+        }
+      ],
+      "image": {
+        "prompt": "Two energy ladders side by side drawn to the same scale, labeled 6 nm and 3 nm. The 6 nm ladder has closely spaced rungs and a short red arrow pointing down between its lowest levels; the 3 nm ladder has widely spaced rungs and a long blue arrow pointing down between its lowest levels.",
+        "alt": "A 6 nm ladder with close rungs and a short red arrow beside a 3 nm ladder with wide rungs and a long blue arrow.",
+        "parts": null
+      },
+      "visual": null,
+      "basis": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Infinite square well",
+        "text": "In an infinite square well, ψ must be zero at both walls, so ψ(0) = 0 and ψ(L) = 0."
+      },
+      {
+        "label": "Allowed wavenumbers k_n",
+        "text": "The wall conditions keep only the sine term of ψ and allow only k_n = nπ/L with n = 1, 2, 3, …."
+      },
+      {
+        "label": "Quantized energies E_n",
+        "text": "A particle in a box can only have energies E_n = n²h²/(8mL²), so even its lowest level, n = 1, sits above zero."
+      },
+      {
+        "label": "Standing waves and nodes",
+        "text": "Each normalized state ψ_n = √(2/L) sin(nπx/L) fits n half-wavelengths into the box and crosses zero n − 1 times inside."
+      },
+      {
+        "label": "Photons from level jumps",
+        "text": "A jump from n = 2 to n = 1 emits a photon with ΔE = 3E_1 and λ = hc/ΔE, about 1100 nm for an electron in a 1.0 nm box."
+      }
+    ],
+    "shape": "hub"
+  }
+}

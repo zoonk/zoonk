@@ -1,0 +1,111 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Sua célula quebra a glicose, o açúcar que vem da comida, e ganha 4 ATP, a moeda de energia dela. Só que, para começar, ela também teve um gasto. Quantos ATP sobram de verdade para cada glicose?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Primeiro, um investimento",
+      "text": "Essa quebra da glicose se chama **glicólise**. Ela acontece no citoplasma, o líquido que enche a célula (o C do macete CMC). No começo, a célula gasta 2 ATP para ativar a glicose. É como um empréstimo: ela investe 2 para ganhar mais depois.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Depois, o rendimento",
+      "text": "Na segunda fase, a glicose ativada rende 4 ATP. Ela também gera 2 **NADH**, moléculas que levam elétrons até a última etapa da respiração. O que sobra é o que a célula produz menos o que gastou no começo.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Uma glicose passa inteira pela glicólise, do investimento até o rendimento.",
+      "question": "Qual é o saldo de ATP que fica para a célula no fim?",
+      "options": [
+        {
+          "text": "2 ATP",
+          "isCorrect": true,
+          "reason": "A célula produz 4 ATP, mas gastou 2 para ativar a glicose. Então sobram 4 menos 2, ou seja, 2.",
+          "picture": null
+        },
+        {
+          "text": "4 ATP",
+          "isCorrect": false,
+          "reason": "4 é o que a glicólise produz, não o que sobra. Esse número é tentador porque aparece primeiro, mas falta tirar os 2 ATP gastos no começo.",
+          "picture": null
+        },
+        {
+          "text": "6 ATP",
+          "isCorrect": false,
+          "reason": "Você somou o gasto ao ganho. Os 2 ATP do começo saíram da célula, então eles são descontados dos 4, e não somados a eles.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 3,
+        "quote": "O que sobra é o que a célula produz menos o que gastou no começo."
+      }
+    },
+    {
+      "kind": "check",
+      "context": null,
+      "question": "Em que parte da célula acontece a glicólise?",
+      "options": [
+        {
+          "text": "No citoplasma",
+          "isCorrect": true,
+          "reason": "A glicólise acontece no citoplasma, o líquido que enche a célula. É o C de Cito no macete CMC.",
+          "picture": null
+        },
+        {
+          "text": "Na mitocôndria",
+          "isCorrect": false,
+          "reason": "A mitocôndria é onde acontecem as etapas seguintes da respiração, e por isso ela engana. A glicólise vem antes e acontece fora dela, no citoplasma.",
+          "picture": null
+        },
+        {
+          "text": "No núcleo",
+          "isCorrect": false,
+          "reason": "O núcleo guarda o material genético da célula. A quebra da glicose acontece no citoplasma, o líquido que enche a célula.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Ela acontece no citoplasma, o líquido que enche a célula (o C do macete CMC)."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Glicólise no citoplasma",
+        "text": "A glicólise é a quebra da glicose e acontece no citoplasma, o líquido que enche a célula."
+      },
+      {
+        "label": "Investimento: gasta 2 ATP",
+        "text": "No começo da glicólise, a célula gasta 2 ATP para ativar a glicose, como num empréstimo."
+      },
+      {
+        "label": "Rendimento: 4 ATP e NADH",
+        "text": "Na segunda fase, a glicólise rende 4 ATP e 2 NADH, moléculas que levam elétrons até a última etapa da respiração."
+      },
+      {
+        "label": "Saldo: produz menos gasta",
+        "text": "O saldo de ATP da glicólise é o que a célula produz menos o que gastou no começo: 4 menos 2."
+      }
+    ],
+    "shape": "hub"
+  }
+}

@@ -7,6 +7,7 @@ import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
 import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
 import { getStandInLessons } from "../../plans/planner/plan-units";
+import { CHAPTER_LESSONS } from "../../plans/planner/stand-in-size";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
 import { needsTool } from "../chapters/chapter-tools";
@@ -17,8 +18,6 @@ import {
   type SkillExtension,
   toExamSkillAreas,
 } from "./curriculum-scope";
-
-const MAX_EXTENSION_LESSONS = 10;
 
 type SkillChapter = { chapterId: string; lessons: string[]; title: string };
 
@@ -130,7 +129,7 @@ function planExtension({
         lessons: entry.lessons.map((lesson) => lesson.title),
         title: entry.placement.chapter.title,
       })),
-      lessons: Math.min(extension.lessons, MAX_EXTENSION_LESSONS),
+      lessons: Math.min(extension.lessons, CHAPTER_LESSONS),
       level: last.placement.level,
       skill: extension.skill,
     },

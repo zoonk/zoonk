@@ -1,0 +1,160 @@
+{
+  "lessons": [
+    {
+      "canDo": "Draw a simple sentence as a syntax tree",
+      "description": "Break a simple English sentence into its main groups, then draw a tree that shows which words belong together.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "At an animal shelter, Tyler hears “The terrier chased the beagle” but repeats it with the dogs swapped. How could a drawing show which words name the dog that did the chasing?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "In “The terrier chased the beagle,” the words “the terrier” form a noun phrase (NP), a group built around a noun. That whole group names the dog doing the chasing.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A drawing of “The dog barked” puts “barked” in its own group; what happens to that group if you change the sentence to “The dog barked a warning”? Right: it grows to include “a warning”; tempting: it stays the same, with “a warning” in a separate group beside it.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A verb phrase (VP) is built around a verb: “barked” can stand alone, but in “The dog barked a warning,” the VP is “barked a warning.” The words that tell what the dog barked belong in the verb’s group.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "“A warning” is still an NP because it’s built around the noun “warning.” It sits inside the VP rather than forming a third main group.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Split “The drummer dropped a stick” one move at a time: first group “the drummer” as the NP that names who acted, then group “dropped a stick” as the VP. Keep “a stick” with “dropped” because it tells what the drummer dropped.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ask for the two main groups in “The radiator rattled”: NP “the radiator” and VP “rattled.” Include the tempting answer that there’s no VP because “rattled” is only one word.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A two-branch tree for “The kite clipped a branch,” with S at the top, NP on the left above “The kite,” and VP on the right above “clipped a branch”; leave both phrases unexpanded.",
+          "visualKind": "picture",
+          "brief": "A syntax tree shows which groups sit inside larger ones. For “The kite clipped a branch,” put S for the whole sentence at the top, with one branch to NP and one to VP.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An NP branching left to Det above “the” and right to N above “kite,” with each word connected to its label.",
+          "visualKind": "picture",
+          "brief": "In “the kite,” the word “the” is a determiner (Det), a word that introduces the noun (N). Draw Det and N on separate branches directly below NP.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A VP branching left to V above “clipped” and right to NP above the unexpanded phrase “a branch.”",
+          "visualKind": "picture",
+          "brief": "In “clipped a branch,” the VP branches to the verb (V) “clipped” and the NP “a branch.” This puts the second NP inside the VP, not directly under S.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "A syntax tree with S branching to NP and VP; the first NP branches to Det over “The” and N over “mechanic,” and VP branches to V over “tightened” and NP with Det over “a” and N over “bolt”; reveal each set of branches as introduced.",
+          "visualKind": "picture",
+          "brief": "Build the tree for “The mechanic tightened a bolt” one move at a time: branch S into NP and VP, expand the first NP into Det and N, then branch VP into V and NP. Finish by expanding the second NP into Det and N.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Have the learner sketch a labeled tree for “A gardener planted the bulbs,” with “the bulbs” grouped as an NP under VP. Include a tempting alternative that attaches “the” and “bulbs” directly to VP instead of grouping them first.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "A draft tree with S branching directly to NP, V and NP; the left NP has Det over “The” and N over “cashier,” V sits over “counted,” and the right NP has Det over “the” and N over “bills.”",
+          "visualKind": "picture",
+          "brief": "A tutoring handout shows three branches straight from S for “The cashier counted the bills.” Ask the learner to redraw the tree and write a one-line correction explaining why “counted” and “the bills” belong under the same VP.",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Find the noun phrase that names who or what the sentence is about and the verb phrase that says what happened.",
+          "example": "In “The usher opened the doors,” the main groups are “the usher” and “opened the doors.”",
+          "hard": true,
+          "name": "Split a sentence into NP and VP",
+          "topic": "Sentence structure",
+          "useCase": "Identify the main word groups before diagramming an English sentence."
+        },
+        {
+          "description": "Draw labeled branches that show which words go together and which phrases sit inside larger phrases.",
+          "example": "In “The fox crossed the road,” put “the road” under VP as a noun phrase alongside “crossed.”",
+          "hard": true,
+          "name": "Draw a simple syntax tree",
+          "topic": "Syntax trees",
+          "useCase": "Make a sentence analysis visible in a linguistics assignment or tutoring handout."
+        }
+      ],
+      "title": "Syntax trees"
+    }
+  ]
+}

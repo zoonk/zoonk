@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-syntax-tree",
+        "claimId": "a1662a02819cf858",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "12ef784f7ef5635991c57e4e816db111a5ac733d9bcdd20079937b7bffff1de6.first.ed04e563-a90a-4ea6-a0ae-3073608a2e96.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00290515,
+    "id": "6b42a8fc4bc1628d2abd55d1f1b05daf153d1b964d4658033800cb9140058f9f",
+    "packet": [
+      {
+        "A": {
+          "blob": "cc2fe5638354ae5d6013fdbdbe10dc4e85b923da8b87acd8895d12d8ad0593e0",
+          "format": "text"
+        },
+        "B": {
+          "blob": "d5ceec17237c7d0ba6059beb3cf48a278dbb09f32a593db09fa732597adf4e5b",
+          "format": "text"
+        },
+        "claim": "The guess asks what happens to a drawing of “The dog barked” when the sentence changes, but provides no tree picture to inspect.",
+        "claimId": "a1662a02819cf858",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6ba709473bea4b4f9e1e1887f2671f167af27ce422d6179ad491b27b05ff20dc",
+          "format": "text"
+        },
+        "input": {
+          "blob": "7d05a8e8c2858f458147a122567ce4832bbf94e6aeb49550a0a3fa33425fc550",
+          "format": "json"
+        },
+        "location": {
+          "detail": "A drawing of “The dog barked” puts “barked” in its own group; what happens to that group if you change the sentence to “The dog barked a warning”?",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "ad93abf83d637b26",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "a1662a02819cf858",
+          "finding": "holds",
+          "reason": "Output A's guess screen has visual set to null, so no tree picture is provided. Its brief describes the drawing only in words ('puts \"barked\" in its own group'), so the claim is true of A."
+        },
+        {
+          "claimId": "ad93abf83d637b26",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A computes 3 ÷ 20 = 0.15 and reports a 15% increase, dividing by the original $20, not $23. The 13% figure does not appear, so the claim misquotes the output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

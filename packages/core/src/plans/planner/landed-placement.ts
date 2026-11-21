@@ -1,323 +1,354 @@
+import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
-import { type Held, findHeld, listHeldFrom, listHeldTime, sumByDay, sumMinutes } from "./held-time";
-import { getOneDayStudy } from "./interval-study-minutes";
-import { getBaseDays, getLastKeptLessonDays, getStandInDays } from "./landed-days";
-import { type LandedUnits, withoutWrittenStandIns } from "./landed-lessons";
-import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
-import { type ExistingPlanItem, getItemKey } from "./plan-items";
+import { listBegunSkillIds } from "./carried-bases";
+import { type LandedUnits, type Landing, listLandedUnits } from "./landed-lessons";
+import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { isStandIn } from "./plan-item-rules";
+import { type ExistingPlanItem, fromUnit, getItemKey } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import {
   type DroppedUnit,
   type PlanDay,
   type ScheduledUnit,
+  getCumulativeCapacity,
   getLessonCapacity,
+  scheduleUnits,
 } from "./schedule-units";
+import { splitStandIns } from "./stand-in-parts";
 
-const BETWEEN = 0.5;
+type DayMinutes = Map<string, number>;
 
-type KeptTime = { date: Date; minutes: number };
-
-export function listKeptTime({
-  frozen,
-  units,
-}: {
-  frozen: readonly ExistingPlanItem[];
-  units: ReadonlyMap<string, QueueUnit>;
-}): KeptTime[] {
-  return frozen.flatMap((item) => {
-    const unit = units.get(getItemKey(item));
-
-    return unit && item.scheduledFor && !isStandIn(item)
-      ? [{ date: item.scheduledFor, minutes: unit.minutes }]
-      : [];
-  });
+function sumMinutes(units: readonly Pick<QueueUnit, "minutes">[]): number {
+  return units.reduce((total, unit) => total + unit.minutes, 0);
 }
 
-type Placed = { anchor: number; unit: ScheduledUnit };
-
-type Layout = {
-  dayOn: (date: Date) => PlanDay | undefined;
-  days: readonly PlanDay[];
-  laid: readonly ScheduledUnit[];
-  limitOn: (date: Date) => number;
-  taken: Map<number, number>;
-  usedOn: (date: Date) => number;
-};
-
-function toPlaced({
-  anchor,
-  date,
-  layout,
-  part,
+/**
+ * The lesson time an item's saved days take from today to `end`; a lesson saved without them
+ * takes its day.
+ */
+function listSavedTime({
+  end = null,
+  item,
+  today,
   unit,
 }: {
-  anchor: number;
-  date: Date;
-  layout: Layout;
-  part: ScheduledUnit | undefined;
-  unit: QueueUnit;
-}): Placed {
-  const shape = layout.dayOn(date)?.shape;
+  end?: Date | null;
+  item: ExistingPlanItem;
+  today: Date;
+  unit?: QueueUnit;
+}): [string, number][] {
+  const days = readSelectedItemFacts(item.facts)?.days;
+  const first = toIsoDate(today);
+  const last = end && toIsoDate(end);
+  const isKept = (date: string) => date >= first && (!last || date <= last);
 
-  layout.taken.set(date.getTime(), (layout.taken.get(date.getTime()) ?? 0) + unit.minutes);
-
-  return {
-    anchor,
-    unit: {
-      ...unit,
-      date,
-      phase: shape?.phase ?? part?.phase ?? unit.phase,
-      ...getOneDayStudy({ date, lessonMinutes: unit.minutes, share: shape?.share ?? 1 }),
-    },
-  };
-}
-
-function findRoom({
-  after,
-  layout,
-  slot,
-  unit,
-}: {
-  after: Date | null;
-  layout: Layout;
-  slot: Held;
-  unit: QueueUnit;
-}): Date | undefined {
-  const from = after && after > slot.date ? after : slot.date;
-
-  const hasRoom = (date: Date) => {
-    const limit = layout.limitOn(date);
-    const used = layout.usedOn(date);
-
-    return (
-      used + unit.minutes <= limit + PLAN_EPSILON ||
-      (used <= PLAN_EPSILON && limit > PLAN_EPSILON && unit.minutes > limit)
-    );
-  };
-
-  return layout.days.find(({ date }) => date >= from && hasRoom(date))?.date;
-}
-
-function findDay({
-  after,
-  first,
-  floor,
-  index,
-  layout,
-  slot,
-  unit,
-}: {
-  after: Date | null;
-  first: Date | undefined;
-  floor: Date | undefined;
-  index: number;
-  layout: Layout;
-  slot: Held;
-  unit: QueueUnit;
-}): Date | undefined {
-  if (index === 0) {
-    const day = first && first < slot.date ? first : slot.date;
-    return floor && floor > day ? floor : day;
+  if (days) {
+    return days.flatMap(([date, , minutes]) => (isKept(date) ? [[date, minutes]] : []));
   }
 
-  return findRoom({ after, layout, slot, unit });
-}
-
-function placeSkill({
-  cut,
-  first,
-  floor,
-  held,
-  layout,
-  perLesson,
-  units,
-}: {
-  cut: boolean;
-  first: Date | undefined;
-  floor: Date | undefined;
-  held: readonly Held[];
-  layout: Layout;
-  perLesson: number;
-  units: readonly QueueUnit[];
-}): { leftOut: QueueUnit[]; placed: Placed[] } {
-  const total = sumMinutes(held);
-  const written = units.filter((unit) => unit.lessonId !== null);
-
-  const lessons = cut
-    ? written.filter((_, index) => index * perLesson < total - PLAN_EPSILON)
-    : written;
-
-  const leftOut: QueueUnit[] = [];
-  const placed: Placed[] = [];
-
-  lessons.forEach((unit, index) => {
-    const slot = findHeld(held, index * perLesson) ?? held.at(-1);
-    const after = placed.at(-1)?.unit.date ?? null;
-    const date = slot && findDay({ after, first, floor, index, layout, slot, unit });
-
-    if (!slot || !date) {
-      leftOut.push(unit);
-      return;
-    }
-
-    const part = layout.laid[slot.index];
-    const anchor = date > slot.date ? findAnchor({ date, laid: layout.laid }) : slot.index;
-
-    placed.push(toPlaced({ anchor, date, layout, part, unit }));
-  });
-
-  const rest = units.find((unit) => unit.lessonId === null);
-  const from = lessons.length * perLesson;
-  const minutes = Math.min(rest?.minutes ?? 0, total - from);
-
-  const pieces = rest
-    ? listHeldFrom({ from, held, minutes }).map((piece) =>
-        toPlaced({
-          anchor: piece.index,
-          date: piece.date,
-          layout,
-          part: layout.laid[piece.index],
-          unit: { ...rest, minutes: piece.minutes },
-        }),
-      )
-    : [];
-
-  return {
-    leftOut: [...leftOut, ...written.slice(lessons.length)],
-    placed: [...placed, ...pieces],
-  };
-}
-
-function findAnchor({ date, laid }: { date: Date; laid: readonly ScheduledUnit[] }): number {
-  const index = laid.findIndex((unit) => unit.date >= date);
-  return (index === -1 ? laid.length : index) - BETWEEN;
-}
-
-export function putLandedLessons({
-  days,
-  dropped = [],
-  input,
-  kept = null,
-  keptParts,
-  landed,
-  start,
-  units,
-}: {
-  days: readonly PlanDay[];
-  dropped?: readonly DroppedUnit[];
-  input: BuildPlanInput;
-  kept?: readonly KeptTime[] | null;
-  keptParts: readonly ScheduledUnit[];
-  landed: LandedUnits | null;
-  start: Date;
-  units: readonly ScheduledUnit[];
-}): { dropped: DroppedUnit[]; laidOut: ScheduledUnit[]; landed: ScheduledUnit[] } {
-  if (!landed || landed.size === 0) {
-    return { dropped: [...dropped], laidOut: kept ? [] : [...units], landed: [] };
+  if (!unit || !item.scheduledFor || isStandIn(item)) {
+    return [];
   }
 
-  const isPart = (unit: ScheduledUnit) => isUnwrittenLesson(unit) && landed.has(unit.skillId ?? "");
+  const date = toIsoDate(item.scheduledFor < today ? today : item.scheduledFor);
+  return isKept(date) ? [[date, unit.minutes]] : [];
+}
 
-  const laid = [...units, ...keptParts.filter((unit) => isPart(unit))].toSorted(
-    (a, b) => a.date.getTime() - b.date.getTime(),
-  );
+function addTime(total: DayMinutes, time: readonly [string, number][], sign = 1) {
+  for (const [date, minutes] of time) {
+    total.set(date, (total.get(date) ?? 0) + sign * minutes);
+  }
+}
 
-  const byDate = new Map(days.map((day) => [day.date.getTime(), day]));
-  const dayOn = (date: Date) => byDate.get(date.getTime());
-
-  const capacityOn = (date: Date) => {
-    const day = dayOn(date);
-    return day ? getLessonCapacity(day) : 0;
-  };
-
-  const others = kept
-    ? [...kept, ...laid.filter((unit) => isUnwrittenLesson(unit) && !isPart(unit))]
-    : laid.filter((unit) => !isPart(unit));
-
-  const other = sumByDay(others);
-  const otherOn = (date: Date) => other.get(date.getTime()) ?? 0;
-  const claimed = new Map<number, number>();
-  const lastDays = getLastKeptLessonDays({ input, keeps: kept !== null });
-
-  const heldBySkill = new Map(
-    [...landed.keys()].map((skillId) => [
-      skillId,
-      listHeldTime({
-        claimed,
-        days,
-        floor: lastDays.get(skillId),
-        free: (date) => capacityOn(date) - otherOn(date),
-        laid,
-        parts: laid.flatMap((unit, index) =>
-          isPart(unit) && unit.skillId === skillId ? [index] : [],
-        ),
-      }),
+function listPlacedTime(
+  placed: readonly Pick<ScheduledUnit, "studyPortions">[],
+): [string, number][] {
+  return placed.flatMap((unit) =>
+    (unit.studyPortions ?? []).map((portion): [string, number] => [
+      portion.date,
+      portion.lessonMinutes,
     ]),
   );
+}
 
-  const heldByDay = sumByDay([...heldBySkill.values()].flat());
-  const shownUntil = input.todayShown ? input.today : null;
-  const taken = new Map<number, number>();
+function fitsHeldTime({ input, landed }: { input: BuildPlanInput; landed: LandedUnits }): boolean {
+  return [...landed].every(([skillId, units]) => {
+    const standIns = input.items.filter(
+      (item) => item.status === "todo" && isStandIn(item) && item.skillId === skillId,
+    );
 
-  const layout: Layout = {
-    dayOn,
-    days,
-    laid,
-    limitOn: (date) => {
-      const before = otherOn(date) + (heldByDay.get(date.getTime()) ?? 0);
-      const most = Math.max(capacityOn(date), kept ? otherOn(date) : before);
-      return shownUntil && date <= shownUntil ? Math.min(before, most) : most;
-    },
-    taken,
-    usedOn: (date) => otherOn(date) + (taken.get(date.getTime()) ?? 0),
-  };
+    const saved = standIns.some((item) => readSelectedItemFacts(item.facts)?.days);
+    const lessons = units.reduce((total, unit) => total + (unit.lessons ?? 1), 0);
 
-  const firstDays = getStandInDays(input);
-  const baseDays = getBaseDays({ input, keeps: kept !== null, laid, landed });
-  const perLesson = DEFAULT_LESSON_MINUTES * input.paceFactor;
+    const held = saved
+      ? standIns
+          .flatMap((item) => listSavedTime({ item, today: input.today }))
+          .reduce((total, [, minutes]) => total + minutes, 0)
+      : lessons * DEFAULT_LESSON_MINUTES * input.paceFactor;
 
-  const cut = new Set(dropped.flatMap((unit) => unit.skillId ?? []));
+    return sumMinutes(units) <= held + PLAN_EPSILON;
+  });
+}
 
-  const skills = [...landed].map(([skillId, skillUnits]) =>
-    placeSkill({
-      cut: cut.has(skillId),
-      first: firstDays.get(skillId),
-      floor: baseDays.get(skillId),
-      held: heldBySkill.get(skillId) ?? [],
-      layout,
-      perLesson,
-      units: skillUnits,
-    }),
-  );
-
-  const placed = skills.flatMap((skill) => skill.placed);
-
-  const all = [
-    ...laid.flatMap((unit, index) => (isPart(unit) ? [] : [{ anchor: index, unit }])),
-    ...placed,
-  ]
-    .toSorted((a, b) => a.anchor - b.anchor)
-    .map((entry) => entry.unit);
-
-  const ours = new Set(placed.map((entry) => entry.unit));
-
-  const restStart = new Map(
-    placed
-      .toReversed()
-      .flatMap(({ unit }) => (unit.lessonId ? [] : [[unit.skillId ?? "", unit.date] as const])),
-  );
-
-  const isThisWeek = (unit: ScheduledUnit) =>
-    ours.has(unit) &&
-    (unit.lessonId ? unit.date : (restStart.get(unit.skillId ?? "") ?? unit.date)) < start;
+/**
+ * The topics whose lessons landed. A run whose only news is the landing keeps every other item's
+ * saved days while the landed lessons need no more time than their stand-ins still hold; longer
+ * lessons make the plan longer, which the days after this week have to show.
+ */
+export function findLandedUnits({
+  input,
+  landing,
+  queue,
+}: {
+  input: BuildPlanInput;
+  landing: Landing | null;
+  queue: readonly QueueUnit[];
+}): { keepsRest: boolean; landedUnits: LandedUnits | null } {
+  const landedUnits = landing && listLandedUnits({ input, landing, queue });
 
   return {
-    dropped: [
-      ...withoutWrittenStandIns({ dropped, landed }),
-      ...skills.flatMap((skill) => skill.leftOut.map((unit) => ({ ...unit, fittedMinutes: 0 }))),
-    ],
-    laidOut: all.filter((unit) => !isThisWeek(unit) && (!kept || ours.has(unit))),
-    landed: all.filter((unit) => isThisWeek(unit)),
+    keepsRest:
+      landedUnits !== null &&
+      input.landedOnly === true &&
+      fitsHeldTime({ input, landed: landedUnits }),
+    landedUnits,
   };
+}
+
+/**
+ * A topic's lessons start where its stand-in's time did, after the lessons of it the run keeps
+ * and the first lesson of a base the learner hasn't begun.
+ */
+function getFirstDay({
+  frozen,
+  input,
+  landed,
+  own,
+  skillId,
+}: {
+  frozen: readonly ExistingPlanItem[];
+  input: BuildPlanInput;
+  landed: Pick<ReadonlySet<string>, "has">;
+  own: readonly [string, number][];
+  skillId: string;
+}): Date {
+  const begun = listBegunSkillIds({ carried: [], items: input.items });
+
+  const firstOf = (base: string) =>
+    input.items.flatMap((entry) =>
+      entry.status === "todo" &&
+      entry.kind === "lesson" &&
+      entry.skillId === base &&
+      entry.scheduledFor
+        ? [entry.scheduledFor.getTime()]
+        : [],
+    );
+
+  const bases = (input.prerequisites.get(skillId) ?? []).flatMap((base) => {
+    const days = landed.has(base) || begun.has(base) ? [] : firstOf(base);
+    return days.length > 0 ? [Math.min(...days)] : [];
+  });
+
+  const kept = frozen.flatMap((entry) =>
+    entry.lessonId && entry.skillId === skillId && entry.scheduledFor
+      ? [entry.scheduledFor.getTime()]
+      : [],
+  );
+
+  const first = own.map(([date]) => date).toSorted()[0];
+
+  return new Date(
+    Math.max(input.today.getTime(), first ? fromIsoDate(first).getTime() : 0, ...bases, ...kept),
+  );
+}
+
+function withRoom({ day, room }: { day: PlanDay; room: number }): PlanDay {
+  const open = getLessonCapacity({ ...day, shape: { ...day.shape, reserved: 0 } });
+  return { ...day, shape: { ...day.shape, reserved: open - room } };
+}
+
+/** The units that begin by `end` fill the room in order, as the schedule lays any units out. */
+function fillRoom({
+  days,
+  end,
+  units,
+}: {
+  days: readonly PlanDay[];
+  end: Date | null;
+  units: readonly QueueUnit[];
+}) {
+  if (!end) {
+    return scheduleUnits({ days, units });
+  }
+
+  const open = getCumulativeCapacity(days.filter((day) => day.date <= end)).at(-1) ?? 0;
+
+  const begun = units.filter((_, index) => sumMinutes(units.slice(0, index)) < open - PLAN_EPSILON);
+
+  return { ...scheduleUnits({ days, units: begun }), dropped: [] };
+}
+
+/**
+ * Newly written lessons take the place of their stand-in: the topic's lessons, then the lessons
+ * it still has to write, fill the room every item the run keeps leaves free, from the day the
+ * stand-in started. Each kept item holds the time of its saved days, and the stand-in's own
+ * saved time stays the topic's, so no day gets more than it had or than the learner's time. With
+ * `end`, only the lessons that begin by it are placed and the rest are laid out after it.
+ */
+export function placeLandedLessons({
+  days,
+  end,
+  frozen,
+  input,
+  landed,
+  units,
+  unitsByKey,
+}: {
+  days: readonly PlanDay[];
+  end: Date | null;
+  frozen: readonly ExistingPlanItem[];
+  input: BuildPlanInput;
+  landed: LandedUnits | null;
+  units: readonly QueueUnit[];
+  unitsByKey: ReadonlyMap<string, QueueUnit>;
+}): {
+  dropped: DroppedUnit[];
+  kept: ExistingPlanItem[];
+  lessons: Map<string, ScheduledUnit[]>;
+  placed: ScheduledUnit[];
+} {
+  const savedTime = (item: ExistingPlanItem) =>
+    listSavedTime({ end, item, today: input.today, unit: unitsByKey.get(getItemKey(item)) });
+
+  // A stand-in saved without its days holds whatever its day and the ones before it have free.
+  const isHeld = (item: ExistingPlanItem) =>
+    readSelectedItemFacts(item.facts)?.days
+      ? savedTime(item).length > 0
+      : !end || (item.scheduledFor !== null && item.scheduledFor <= end);
+
+  const items = input.items.filter(
+    (item) =>
+      item.status === "todo" &&
+      isStandIn(item) &&
+      landed?.has(item.skillId ?? "") === true &&
+      isHeld(item),
+  );
+
+  if (!landed || items.length === 0) {
+    return { dropped: [], kept: [], lessons: new Map(), placed: [] };
+  }
+
+  const keptKeys = new Set(frozen.map((item) => getItemKey(item)));
+  const held: DayMinutes = new Map();
+
+  for (const item of [...frozen, ...items]) {
+    addTime(held, savedTime(item));
+  }
+
+  const laidOut = items.reduce<{ dropped: DroppedUnit[]; placed: ScheduledUnit[] }>(
+    (state, item) => {
+      const saved = savedTime(item);
+      const own = new Map(saved);
+      const skillId = item.skillId ?? "";
+      const from = getFirstDay({ frozen, input, landed, own: saved, skillId });
+
+      addTime(held, saved, -1);
+
+      const roomy = days
+        .filter((day) => day.date >= from)
+        .map((day) => {
+          const date = toIsoDate(day.date);
+          const free = getLessonCapacity(day) - (held.get(date) ?? 0);
+          return withRoom({ day, room: Math.max(own.get(date) ?? 0, free) });
+        });
+
+      const laid = fillRoom({
+        days: roomy,
+        end,
+        units: splitStandIns(
+          units.filter(
+            (unit) => unit.kind === "lesson" && unit.skillId === skillId && !keptKeys.has(unit.key),
+          ),
+        ),
+      });
+
+      addTime(held, listPlacedTime(laid.units));
+
+      return {
+        dropped: [...state.dropped, ...laid.dropped],
+        placed: [...state.placed, ...laid.units],
+      };
+    },
+    { dropped: [], placed: [] },
+  );
+
+  const lessons = laidOut.placed.filter((unit) => unit.lessonId !== null);
+
+  return {
+    ...laidOut,
+    // The layout counts a placed lesson as work the run keeps, like the items it keeps this week.
+    kept: lessons.map((unit) => ({ ...fromUnit(unit), id: unit.key, position: 0 })),
+    lessons: Map.groupBy(lessons, (unit) => unit.skillId ?? ""),
+  };
+}
+
+/** What the layout still has to place: a stand-in keeps the lessons its placed parts left. */
+export function withoutPlaced({
+  placed,
+  units,
+}: {
+  placed: readonly Pick<QueueUnit, "key" | "minutes">[];
+  units: readonly QueueUnit[];
+}): QueueUnit[] {
+  const taken = placed.reduce(
+    (total, unit) => total.set(unit.key, (total.get(unit.key) ?? 0) + unit.minutes),
+    new Map<string, number>(),
+  );
+
+  return units.flatMap((unit) => {
+    const minutes = unit.minutes - (taken.get(unit.key) ?? 0);
+
+    if (minutes === unit.minutes) {
+      return [unit];
+    }
+
+    if (unit.lessonId !== null || minutes <= PLAN_EPSILON) {
+      return [];
+    }
+
+    return [
+      {
+        ...unit,
+        minutes,
+        ...(unit.lessons !== undefined && {
+          lessons: Math.max(1, Math.round((unit.lessons * minutes) / unit.minutes)),
+        }),
+      },
+    ];
+  });
+}
+
+/** The layout plans around the time the placed lessons take. */
+export function reservePlaced({
+  days,
+  placed,
+}: {
+  days: readonly PlanDay[];
+  placed: readonly Pick<ScheduledUnit, "studyPortions">[];
+}): readonly PlanDay[] {
+  if (placed.length === 0) {
+    return days;
+  }
+
+  const taken: DayMinutes = new Map();
+  addTime(taken, listPlacedTime(placed));
+
+  return days.map((day) => {
+    const minutes = taken.get(toIsoDate(day.date)) ?? 0;
+
+    return minutes > 0
+      ? { ...day, shape: { ...day.shape, reserved: (day.shape.reserved ?? 0) + minutes } }
+      : day;
+  });
 }

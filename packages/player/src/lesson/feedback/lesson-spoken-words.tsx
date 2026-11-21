@@ -1,11 +1,11 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SnailIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { LessonRichText } from "../_components/lesson-rich-text";
 import { type SpokenAnswerHeard } from "../lesson-player-types";
 import { usePracticeWordAudio } from "./use-practice-word-audio";
 

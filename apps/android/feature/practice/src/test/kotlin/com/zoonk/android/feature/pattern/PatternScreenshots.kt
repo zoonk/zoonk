@@ -52,6 +52,7 @@ class PatternScreenshots {
     private fun show(
         name: String,
         kind: MistakePattern.Kind = MistakePattern.Kind.PATTERN,
+        translated: Boolean = true,
         dark: Boolean = false,
         sheet: Boolean = false,
         fold: Boolean = false,
@@ -59,7 +60,7 @@ class PatternScreenshots {
         play: () -> Unit = {},
     ) {
         val viewModel = patternViewModel()
-        viewModel.begin(pattern(kind))
+        viewModel.begin(pattern(kind, translated = translated))
 
         rule.setContent {
             ZoonkTheme(darkTheme = dark) {
@@ -112,10 +113,52 @@ class PatternScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneQuestionWithoutTranslation() = show("question-phone-untranslated", translated = false) { start() }
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xhdpi")
+    fun phoneLongQuestionAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("long-question-phone-font200") {
+            start()
+            answer("partenza")
+            rule.onNodeWithText("Continue").performClick()
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xhdpi")
+    fun phoneLongQuestionAtTwiceTheFontSizeWithoutTranslation() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("long-question-phone-font200-untranslated", translated = false) {
+            start()
+            answer("partenza")
+            rule.onNodeWithText("Continue").performClick()
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneWrongAnswerWithoutTranslation() =
+        show("wrong-phone-untranslated", translated = false) {
+            start()
+            answer("salita")
+        }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookQuestion() =
+        show("question-book", fold = true) {
+            start()
+            answer("salita")
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneWrongAnswer() =
         show("wrong-phone") {
             start()
-            answer("am agree")
+            answer("salita")
         }
 
     @Test
@@ -123,7 +166,7 @@ class PatternScreenshots {
     fun phoneRightAnswerDark() =
         show("right-phone-dark", dark = true) {
             start()
-            answer("agree")
+            answer("partenza")
         }
 
     @Test
@@ -139,7 +182,7 @@ class PatternScreenshots {
     fun tabletQuestion() =
         show("question-tablet") {
             start()
-            answer("agree")
+            answer("partenza")
         }
 
     @Test
@@ -202,9 +245,9 @@ class PatternScreenshots {
 
     private fun finish() {
         start()
-        answer("agree")
+        answer("partenza")
         rule.onNodeWithText("Continue").performClick()
-        answer("are agree")
+        answer("discesa")
         rule.onNodeWithText("See result").performClick()
     }
 

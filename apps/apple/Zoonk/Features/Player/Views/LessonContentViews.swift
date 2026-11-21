@@ -34,6 +34,27 @@ struct LessonRichText: View {
   }
 }
 
+struct LessonSummaryIdeas: View {
+  let ideas: [String]
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      ForEach(Array(ideas.enumerated()), id: \.offset) { index, idea in
+        if index > 0 { Divider() }
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+          Text(index + 1, format: .number)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+          LessonRichText(idea)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, 12)
+        .accessibilityElement(children: .combine)
+      }
+    }
+  }
+}
+
 struct LessonTextBlocks: View {
   @Environment(\.highlightsLessonTerms) private var highlightsTerms
 

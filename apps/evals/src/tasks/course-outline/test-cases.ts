@@ -187,6 +187,7 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, OptionalCountry<CourseO
 
       ${SHARED_EXPECTATIONS}
     `,
+    expected: { existingBand: true },
     id: "pt-ingles-beginner-extend-interview",
     userInput: {
       courseTitle: "Inglês",
@@ -412,6 +413,7 @@ Obs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (
 
       ${SHARED_EXPECTATIONS}
     `,
+    expected: { existingBand: true },
     id: "pt-enem-intermediate-one-area-per-chapter",
     userInput: {
       courseTitle: "ENEM",

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "99314a6cc520a110",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "3a11fd14ee9be3e84a0611969e7670dea20755f6239031c525c9d24b9bee0b09.first.1b1afe2e-58b8-48c7-84d1-dba55f349a47.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0030355499999999997,
+    "id": "224bc1d65f1c575c87fe88960e8226a50d112b158e396880ced291fd06d0a780",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "7599930d57d09e35",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "B": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "claim": "The guess’s physical map has no political boundaries and does not show Roman ports or territory, so it does not support the question about which shores had Roman ports.",
+        "claimId": "99314a6cc520a110",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The guess screen’s map description: \"Mapa físico simples do Mediterrâneo, sem fronteiras políticas, com Roma marcada na península Itálica e os nomes Itália, mar Mediterrâneo, Europa, África e Ásia.\"",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "7599930d57d09e35",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen says the confeitaria must keep the R$ 900,00 aluguel in the reserve during the paused month, and it lists aluguel as a cost that still needs to be covered. The rent does not stop being paid, so the claim is false."
+        },
+        {
+          "claimId": "99314a6cc520a110",
+          "finding": "doesn't hold",
+          "reason": "The claim's facts are right: the map has no political boundaries and shows no Roman ports or territory. But its conclusion is wrong. The question asks which shores had ports, and the map names Europa, África and Ásia and marks Roma, so the labels needed to answer are there without the answer being shown, which is what the criterion asks for."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

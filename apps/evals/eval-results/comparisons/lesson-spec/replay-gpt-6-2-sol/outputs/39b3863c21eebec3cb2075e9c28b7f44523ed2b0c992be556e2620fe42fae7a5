@@ -1,0 +1,110 @@
+{
+  "lessons": [
+    {
+      "canDo": "Prever quais lâmpadas apagam quando uma queima em série ou paralelo",
+      "description": "Siga os caminhos da eletricidade para entender por que uma lâmpada queimada às vezes apaga as outras, mas normalmente não faz isso em casa.",
+      "estimatedMinutes": 3,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Wesley acende a luz da cozinha e percebe que a lâmpada do teto queimou, mas a da bancada continua acesa. Por que uma não apaga a outra?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Desenho de uma pilha com os dois contatos visíveis e uma lâmpada acesa, com um fio ligando cada contato da pilha a um contato diferente da lâmpada.",
+          "visualKind": "picture",
+          "brief": "Para a lâmpada acender, precisa haver um caminho sem interrupções que passe por ela e ligue os dois contatos da pilha: é um circuito fechado.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Desenho das ligações de uma maquete: um fio sai de um contato da pilha, passa pelas lâmpadas A, B e C, nessa ordem, e retorna ao outro contato da pilha, sem desvios; não sinalizar quais lâmpadas ficam acesas após a falha.",
+          "visualKind": "picture",
+          "brief": "As três lâmpadas da maquete estão acesas: o que você vai ver se B queimar e interromper o caminho bem onde está ligada? Opções: «A e C acesas», «Só A acesa» (tentadora, porque A parece vir antes da falha), «Nenhuma acesa» (correta).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Desenho das ligações de uma maquete: um fio sai de um contato da pilha, passa pelas lâmpadas A, B e C, nessa ordem, e retorna ao outro contato da pilha, sem desvios; não sinalizar quais lâmpadas ficam acesas após a falha.",
+          "visualKind": "picture",
+          "brief": "Num circuito em série, as lâmpadas ficam no mesmo caminho: quando B o interrompe, todas apagam. A apaga mesmo parecendo vir antes da falha, porque o caminho precisa estar fechado por inteiro.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema simples da cozinha, com dois fios de alimentação e dois caminhos entre eles: um pela lâmpada do teto, com uma interrupção no ponto da lâmpada, e outro pela lâmpada da bancada, intacto e aceso.",
+          "visualKind": "picture",
+          "brief": "Quando cada lâmpada tem seu próprio caminho entre os dois contatos da alimentação, elas estão em paralelo. É assim na cozinha: a lâmpada do teto interrompeu só o próprio caminho, sem abrir o da bancada.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "Esquema de um painel com uma pilha ligada a dois fios verticais e três ligações horizontais entre eles, cada uma com uma lâmpada: D no alto, E no meio e F embaixo; os destaques dos caminhos entram passo a passo.",
+          "visualKind": "picture",
+          "brief": "Num painel com três lâmpadas em paralelo, mostre a previsão quando a do meio, E, queima. Revele um passo por vez: marque a interrupção em E; trace o caminho fechado por D; trace o caminho fechado por F; conclua que só D e F continuam acesas.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Esquema de uma pilha à esquerda de dois fios horizontais, com três ligações verticais distintas entre eles: L na mais próxima da pilha, M na do meio e N na mais distante; não indicar o estado das lâmpadas após a falha.",
+          "visualKind": "picture",
+          "brief": "Numa placa de sinalização, a lâmpada L, mais perto da pilha, queima e interrompe seu caminho: peça para prever quais ficam acesas. Resposta: M e N; inclua «Nenhuma» para quem confunde proximidade com dependência.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Com os fios escondidos, duas lâmpadas apagam no instante em que apenas uma queima e interrompe seu caminho; a pilha e os fios continuam funcionando. Peça para escolher entre as duas ligações estudadas: «Em série» é a correta; «Em paralelo» atrai quem acha que compartilhar a pilha basta para as duas apagarem.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Dois desenhos comparáveis, numerados 1 e 2, cada um com uma pilha e as lâmpadas A, B e C: no 1, um único caminho passa pelas três; no 2, cada lâmpada ocupa uma ligação própria entre os mesmos dois fios da pilha. Não destacar falhas nem a montagem correta.",
+          "visualKind": "picture",
+          "brief": "Uma vitrine precisa manter dois dos três produtos iluminados se qualquer uma das três lâmpadas queimar. Peça para escolher entre os dois desenhos e justificar a escolha mostrando, para uma falha à sua escolha, por onde as outras duas lâmpadas ainda se ligam aos dois contatos da fonte.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Seguir as ligações do circuito para descobrir quais lâmpadas ainda têm um caminho fechado quando uma delas queima e interrompe a passagem.",
+          "example": "Num painel com três lâmpadas em paralelo, a do meio queima e as duas outras continuam acesas.",
+          "hard": true,
+          "name": "Prever quais lâmpadas apagam num circuito",
+          "topic": "Série e paralelo",
+          "useCase": "Entender por que a lâmpada da cozinha pode queimar sem apagar a luz do corredor."
+        }
+      ],
+      "title": "Circuitos em série e em paralelo"
+    }
+  ]
+}

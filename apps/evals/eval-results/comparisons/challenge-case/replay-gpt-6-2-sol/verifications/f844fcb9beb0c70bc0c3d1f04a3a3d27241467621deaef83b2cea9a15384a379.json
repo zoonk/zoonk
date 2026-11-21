@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-plot-reading-field-research",
+        "claimId": "be1c57ad9b360250",
+        "criterion": "realism",
+        "observationId": "1ec39046e708b6b181239b8e9293e905af348261c9735a98fa11c12f532aafda.first.0c3e9ba6-012a-4165-bace-f481fb4892fa.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00441355,
+    "id": "f844fcb9beb0c70bc0c3d1f04a3a3d27241467621deaef83b2cea9a15384a379",
+    "packet": [
+      {
+        "A": {
+          "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
+          "format": "text"
+        },
+        "B": {
+          "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
+          "format": "text"
+        },
+        "claim": "The analyst calls the p-value the probability that the new dressing works no better than the old one.",
+        "claimId": "52854c95434015b3",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
+          "format": "text"
+        },
+        "claim": "The metrics give horizontal positions for individual dots but do not provide the horizontal axis range or tick interval as metric values.",
+        "claimId": "be1c57ad9b360250",
+        "criterion": "realism",
+        "expectations": {
+          "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Metrics panels, especially the measured-dots panel, omit horizontal-axis range and interval values.",
+          "kind": "whole"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "52854c95434015b3",
+          "finding": "doesn't hold",
+          "reason": "Output A is the Willow Bay handoff pilot and never mentions a dressing. Its statistics describe the p-value correctly as the chance of a gap at least this uneven if the formats worked equally well (about 30%), not as the probability that the new option works no better. The claim misquotes the output and misdefines the p-value."
+        },
+        {
+          "claimId": "be1c57ad9b360250",
+          "finding": "holds",
+          "reason": "In output B, the dot metrics give delays for each dot (\"Dot at 10 ns\", \"Dot at 12 ns\", \"Dot at 14 ns\") but no horizontal axis range or horizontal tick interval appears as a metric value. The only interval given, \"Count-axis interval: 20 counts\", is on the vertical axis, in a later time-jump panel."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

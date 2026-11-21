@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-glicolise-from-slides",
+        "claimId": "501871bf8fb2a07f",
+        "criterion": "accuracy",
+        "observationId": "2f87628605f8d71d8784e2672de8e2e18ff11b354f4e189199dc5760ca719f0c.first.2f99d97d-8ecf-470e-9b26-81c20e27bcbd.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0020731499999999997,
+    "id": "8cd9f8d59ddc0c2a813f51849a849b54eb3bc47bca3a8d476164d4d7f5056ef5",
+    "packet": [
+      {
+        "A": {
+          "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
+          "format": "text"
+        },
+        "claim": "O gancho dá a entender que a célula produz 4 ATP ao começar a quebrar a glicose, embora os 4 ATP sejam produzidos na fase de rendimento, depois do investimento inicial.",
+        "claimId": "501871bf8fb2a07f",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
+          "format": "text"
+        },
+        "input": {
+          "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
+          "format": "json"
+        },
+        "location": {
+          "detail": "a célula produz 4 moedas de energia ao começar a quebrar uma molécula de açúcar",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
+          "format": "text"
+        },
+        "claim": "The worked example on screen 3 concludes that −3 °C plus a 5-degree rise is 8 °C instead of 2 °C.",
+        "claimId": "e5def3aa119656e9",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "501871bf8fb2a07f",
+          "finding": "holds",
+          "reason": "Output A's hook says the cell 'produz 4 moedas de energia ao começar a quebrar uma molécula de açúcar', which suggests the 4 ATP come at the start, before the 2 ATP investment. The slides place the 4 ATP in the rendimento phase after the investment. Output B's hook says the cell makes 4 when it breaks sugar, but it adds right away that she doesn't keep all 4, so it doesn't give the same impression."
+        },
+        {
+          "claimId": "e5def3aa119656e9",
+          "finding": "doesn't hold",
+          "reason": "Output A's worked example on screen 3 concludes '2 °C' (−3 + 3 = 0, then 0 + 2 = 2), which is correct and contains no 8 °C. Output B's worked example concludes '3 °C', which is wrong, but it also never reaches 8 °C. Neither output gives the 8 °C result the claim describes."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-pt-circuito-serie-paralelo",
+  "challenger": {
+    "costUsd": 0.0347538,
+    "durationMs": 40910.047542000015,
+    "hash": "39b3863c21eebec3cb2075e9c28b7f44523ed2b0c992be556e2620fe42fae7a5",
+    "userPromptHash": "e069480f2ab400879d1b48f63d3317ba6e73ebf6db4e0a13d6d5cd2eb8090b42"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0392346,
+    "durationMs": 73164.81075,
+    "hash": "208110edf75c30edda90864cb7271190bc52e5921863cfb073a5e06620a90c48",
+    "userPromptHash": "e069480f2ab400879d1b48f63d3317ba6e73ebf6db4e0a13d6d5cd2eb8090b42"
+  },
+  "run": 1
+}

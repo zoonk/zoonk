@@ -1,0 +1,17 @@
+{
+  "caseId": "pt-glicolise-from-slides",
+  "challenger": {
+    "costUsd": 0.055127,
+    "durationMs": 31571.899292000002,
+    "hash": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
+    "userPromptHash": "de925b41218baf17de9cf92a95fdec596ac6f34debcfedbff9282167a5e2193e"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.210325,
+    "durationMs": 56244.971125000004,
+    "hash": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
+    "userPromptHash": "de925b41218baf17de9cf92a95fdec596ac6f34debcfedbff9282167a5e2193e"
+  },
+  "run": 1
+}

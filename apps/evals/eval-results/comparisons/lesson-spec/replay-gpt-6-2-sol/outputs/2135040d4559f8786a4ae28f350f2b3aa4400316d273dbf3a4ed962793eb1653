@@ -1,0 +1,165 @@
+{
+  "lessons": [
+    {
+      "canDo": "Identificar as partes da flor e explicar suas funções",
+      "description": "Conheça as partes de uma flor e descubra de onde vem o fruto.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Otávio vê um tomatinho crescer bem onde antes havia uma flor. Que parte da flor virou tomate?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor aberta de tomateiro vista de lado, com uma abelha pousada e uma seta com o rótulo pétala apontando para uma das pontas amarelas abertas.",
+          "visualKind": "picture",
+          "brief": "As pétalas são as partes que dão cor a muitas flores e ajudam a atrair visitantes, como as abelhas que pousam nas flores amarelas do tomateiro.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Flor de tomateiro em corte longitudinal, com A numa pétala amarela, B na parte arredondada na base da estrutura central e C numa ponta verde externa junto ao cabinho; sem nomes ou destaques que indiquem a resposta.",
+          "visualKind": "picture",
+          "brief": "Qual das regiões marcadas vai crescer e dar origem à parte carnuda do tomate? Opções: região A, região B, região C; certa: B, tentadora: C, porque as pontas verdes continuam visíveis no tomate novo.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de tomateiro em corte longitudinal com o ovário arredondado destacado e rotulado na base da estrutura central, entre as pontas verdes externas e logo acima do cabinho.",
+          "visualKind": "picture",
+          "brief": "A parte arredondada na base da estrutura central é o ovário: é ele que cresce e forma a parte carnuda do tomate, não as pontas verdes que podem ficar presas ao fruto.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Botão fechado de tomateiro visto de lado, com o rótulo sépala apontando para uma das pontas verdes que envolvem o botão e com o cabinho visível.",
+          "visualKind": "picture",
+          "brief": "As pontas verdes do tomateiro são sépalas: antes de a flor abrir, elas ficam por fora e protegem as partes ainda fechadas.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "As sépalas de uma roseira se rasgam antes de a flor abrir: o que se perde de imediato? Certa: parte da proteção da flor fechada; tentadora: a parte colorida que atrai abelhas.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Close de uma abelha pousada numa flor de abóbora, com o rótulo pólen apontando para pequenos grãos presos nos pelos do corpo, sem destacar outras partes da flor.",
+          "visualKind": "picture",
+          "brief": "O pólen é feito de grãos minúsculos: quando uma abelha visita uma flor de abóbora, alguns desses grãos podem ficar presos nos pelos do corpo.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de tomateiro em corte longitudinal mostrando os estames amarelos agrupados ao redor da estrutura central, com uma seta rotulada estame apontando para um deles.",
+          "visualKind": "picture",
+          "brief": "O estame é a parte da flor que produz pólen: no tomateiro, os estames ficam agrupados em volta da estrutura central.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de tomateiro em corte longitudinal com o pistilo inteiro contornado e rotulado, a ponta central visível e alguns grãos de pólen sobre ela.",
+          "visualKind": "picture",
+          "brief": "O pistilo é a parte da flor que recebe o pólen pela ponta: no tomateiro, essa ponta fica bem no centro da flor.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "O ovário faz parte do pistilo: no desenho explorável da flor do tomateiro em corte, mostre pétala, sépala, estame, pistilo inteiro e ovário na base do pistilo.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "activity",
+          "visual": "Uma flor de berinjela em corte longitudinal oblíquo, sem palavras, com uma pétala roxa aberta, uma ponta verde do cálice junto ao cabinho, um estame amarelo, o pistilo central inteiro marcado por uma chave e a base arredondada do pistilo visível no corte.",
+          "visualKind": "template",
+          "brief": "Numere, nesta ordem, uma pétala roxa, uma sépala verde, um estame amarelo, o pistilo inteiro e o ovário na base dele para o aluno colocar os nomes. No retorno, diferencie o pistilo inteiro do ovário, que é só a base.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Duas estruturas de um pimentão lado a lado: 1, flor em corte longitudinal, com A numa ponta verde externa junto ao cabinho, B na base arredondada da estrutura central e C numa pétala branca; 2, pimentão maduro com a coroa verde visível junto ao cabinho, sem linhas ligando a flor ao fruto.",
+          "visualKind": "picture",
+          "brief": "Débora vê uma coroa verde junto ao cabinho de um pimentão e compara o fruto com uma flor do mesmo pé. Peça que aponte na flor o que ficou preso ao cabinho sem virar a parte carnuda (sépalas) e o que cresceu para formá-la (ovário).",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Reconhecer pétalas, sépalas, estames e pistilo pela posição na flor e localizar o ovário na base do pistilo.",
+          "example": "Na flor do tomateiro, as pétalas amarelas ficam abertas e as sépalas verdes ficam junto ao cabinho.",
+          "hard": false,
+          "name": "Identificar as partes de uma flor",
+          "topic": "Anatomia da flor",
+          "useCase": "Reconhecer as mesmas partes em flores diferentes numa horta ou num jardim."
+        },
+        {
+          "description": "Distinguir o que cada parte da flor faz, inclusive qual delas dá origem ao fruto.",
+          "example": "No pimentão, o ovário cresce e forma a parte carnuda; as sépalas ficam junto ao cabinho.",
+          "hard": false,
+          "name": "Relacionar partes da flor às funções",
+          "topic": "Funções das partes florais",
+          "useCase": "Entender o que muda e o que permanece quando uma flor dá lugar a um fruto na horta."
+        }
+      ],
+      "title": "As partes da flor"
+    }
+  ]
+}

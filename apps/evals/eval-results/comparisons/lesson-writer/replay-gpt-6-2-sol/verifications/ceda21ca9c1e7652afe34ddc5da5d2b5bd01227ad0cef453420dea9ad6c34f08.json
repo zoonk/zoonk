@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-glicolise-from-slides",
+        "claimId": "32f09ce4a1be58ba",
+        "criterion": "fitAndApplication",
+        "observationId": "2f87628605f8d71d8784e2672de8e2e18ff11b354f4e189199dc5760ca719f0c.first.2f99d97d-8ecf-470e-9b26-81c20e27bcbd.2",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00186405,
+    "id": "ceda21ca9c1e7652afe34ddc5da5d2b5bd01227ad0cef453420dea9ad6c34f08",
+    "packet": [
+      {
+        "A": {
+          "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
+          "format": "text"
+        },
+        "claim": "O output não nomeia as fases como fase de investimento e fase de rendimento, embora esses termos façam parte do conteúdo pedido para a prova.",
+        "claimId": "32f09ce4a1be58ba",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
+          "format": "text"
+        },
+        "input": {
+          "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screens 2–3 e resumo",
+          "kind": "range"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
+          "format": "text"
+        },
+        "claim": "A tela 2 diz que a estabilidade vem depois de três anos, mas a fonte do input fala em dois anos de exercício.",
+        "claimId": "a7a3a8bac9f156cb",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
+          "format": "text"
+        },
+        "input": {
+          "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "32f09ce4a1be58ba",
+          "finding": "holds for both",
+          "reason": "Output A never names the phases as 'fase de investimento' or 'fase de rendimento'; its headings are 'O gasto inicial' and 'O que a célula ganha', and the 2 ATP spent is described only in running text. Output B also never uses those phase names, with headings 'Primeiro, a célula investe' and 'Depois, vem o retorno', so the claim is true of both outputs."
+        },
+        {
+          "claimId": "a7a3a8bac9f156cb",
+          "finding": "doesn't hold",
+          "reason": "The source (Art. 41 of the Constituição) says stability comes after three years of effective exercise, not two. Output A's screen 2 says 'três anos', which matches the source, so the claim misreads the source and misstates Output A. The two-year figure is in Output B, which is the one that is wrong."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}
