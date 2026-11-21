@@ -29,6 +29,7 @@ export async function claimStudySessionSummaryVisit({
     select: {
       _count: { select: { blocks: true } },
       blocks: { select: { id: true }, take: 1, where: { status: { in: ["active", "pending"] } } },
+      endedAt: true,
       localDate: true,
       stoppedAt: true,
     },
@@ -42,7 +43,9 @@ export async function claimStudySessionSummaryVisit({
   const userDate = { localDate: session.localDate, userId };
 
   const eligible =
-    session.stoppedAt !== null || (session._count.blocks > 0 && session.blocks.length === 0);
+    session.endedAt !== null ||
+    session.stoppedAt !== null ||
+    (session._count.blocks > 0 && session.blocks.length === 0);
 
   const existing = await prisma.studySummaryVisit.findUnique({ where: { userDate } });
 

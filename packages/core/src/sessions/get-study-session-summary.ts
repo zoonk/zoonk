@@ -54,7 +54,7 @@ type StudySessionSummary = {
   correct: number;
   energy: Change<number> | null;
   extraTime: ExtraTime;
-  /** False after Stop for today while unfinished blocks remain. */
+  /** True after the first finish, even while extra blocks remain. */
   finished: boolean;
   fullMeal: boolean;
   /** Actual recorded time, consistent with learner stats. */
@@ -212,7 +212,7 @@ export async function getStudySessionSummary({
       correct,
       energy: snapshot ? { after: after.energy, before: snapshot.energy } : null,
       extraTime,
-      finished: view.nextBlockId === null,
+      finished: session.endedAt !== null || view.nextBlockId === null,
       fullMeal: view.fullMeal.earned,
       minutes: Math.floor(seconds / SECONDS_PER_MINUTE),
       missions: view.missions,

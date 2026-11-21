@@ -25356,7 +25356,7 @@
     },
     "/study-sessions/{sessionId}/stops": {
       "post": {
-        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
+        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` stays true after the first finish; otherwise it is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
         "operationId": "createStudySessionStop",
         "security": [
           {
@@ -25543,7 +25543,7 @@
     },
     "/study-sessions/{sessionId}/summary/visit": {
       "post": {
-        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped or its work is finished. Retrying the first visit with its original ID returns the same result.",
+        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped, finished at least once (even with extras remaining), or every block is done or skipped. Retrying the first visit with its original ID returns the same result.",
         "operationId": "createStudySessionSummaryVisit",
         "security": [
           {
@@ -25623,7 +25623,7 @@
             }
           },
           "409": {
-            "description": "The session has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
+            "description": "The session has never finished, has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
             "content": {
               "application/json": {
                 "schema": {
@@ -97834,7 +97834,7 @@
           },
           "finished": {
             "type": "boolean",
-            "description": "Every block is done or skipped. False right after \"Stop for today\": the rest of the session waits to be picked up"
+            "description": "The session has finished at least once, or every block is done or skipped. Remains true while extra blocks wait. False after \"Stop for today\" if the session has never finished and blocks remain"
           },
           "fullMeal": {
             "type": "boolean"
