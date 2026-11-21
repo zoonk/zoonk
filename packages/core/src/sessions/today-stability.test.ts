@@ -531,12 +531,16 @@ describe("today's session the learner was shown", () => {
       }),
     ]);
 
-    expect(readSelectedItemFacts(standIn.facts)?.days?.[0]?.[0]).toBe("2026-09-30");
+    const firstAllocation = readSelectedItemFacts(standIn.facts)?.days?.[0];
+    expect(firstAllocation?.[0]).toBe("2026-09-30");
     expect(checkpoint.scheduledFor?.getTime()).toBeLessThan(standIn.scheduledFor?.getTime() ?? 0);
 
     const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
 
+    const lessonPlaceholder = { minutes: firstAllocation?.[2], title: standIn.titleSnapshot };
+
     expect(before.status === "ready" && before.today.session).toMatchObject({
+      lessonPlaceholder,
       lessonsComing: false,
       lessonsToPrepare: true,
       status: "unstarted",
@@ -544,7 +548,11 @@ describe("today's session the learner was shown", () => {
 
     const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
-    expect(opened.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
+    expect(opened.today.session).toMatchObject({
+      lessonPlaceholder,
+      lessonsComing: false,
+      lessonsToPrepare: true,
+    });
   });
 
   it.each(["completed", "running"] as const)(

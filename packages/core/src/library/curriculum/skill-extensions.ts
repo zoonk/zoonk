@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
+import { type Course, type CourseLevel, type Goal, prisma } from "@zoonk/db";
 import { getOutlineWindow } from "../../lookahead/outline-window";
 import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
@@ -163,8 +163,8 @@ export async function planSkillExtensions({
   return extensions.flatMap((extension) => planExtension({ extension, placements: usable }));
 }
 
-async function loadSoonStandInSkillIds({ days, goalId }: { days: number; goalId: string }) {
-  const outlineWindow = await getOutlineWindow({ days, goalId });
+async function loadSoonStandInSkillIds(input: Parameters<typeof getOutlineWindow>[0]) {
+  const outlineWindow = await getOutlineWindow(input);
 
   const items = await prisma.planItem.findMany({
     distinct: ["skillId"],
@@ -173,7 +173,7 @@ async function loadSoonStandInSkillIds({ days, goalId }: { days: number; goalId:
       chapterId: null,
       kind: "lesson",
       lessonId: null,
-      plan: { goalId },
+      plan: { goalId: input.goalId },
       ...outlineWindow,
       skillId: { not: null },
       status: "todo",
@@ -183,13 +183,7 @@ async function loadSoonStandInSkillIds({ days, goalId }: { days: number; goalId:
   return new Set(items.flatMap((item) => (item.skillId ? [item.skillId] : [])));
 }
 
-type ExtensionCourse = {
-  id: string;
-  language: string;
-  targetLanguage: string | null;
-  userId: string | null;
-  visibility: LibraryVisibility;
-};
+type ExtensionCourse = Pick<Course, "id" | "language" | "targetLanguage" | "userId" | "visibility">;
 
 function groupByBand({
   extensions,
@@ -258,10 +252,8 @@ function getSkillCourseId({
 export async function listSkillExtensions({
   days,
   goalId,
-}: {
-  days: number;
-  goalId: string;
-}): Promise<CourseOutlineNeed[]> {
+  skillIds = [],
+}: Parameters<typeof getOutlineWindow>[0]): Promise<CourseOutlineNeed[]> {
   const goal = await prisma.goal.findUnique({
     select: {
       details: true,
@@ -282,7 +274,7 @@ export async function listSkillExtensions({
   }
 
   const graph = parsePlanGraph(goal.plan.graph);
-  const soon = await loadSoonStandInSkillIds({ days, goalId });
+  const soon = await loadSoonStandInSkillIds({ days, goalId, skillIds });
   const graphSkills = graph.skills.filter((skill) => soon.has(skill.skillId));
 
   const courseIds = [
@@ -300,7 +292,7 @@ export async function listSkillExtensions({
     }),
     prisma.skill.findMany({
       select: { description: true, id: true, name: true },
-      where: { id: { in: graphSkills.map((skill) => skill.skillId) } },
+      where: { id: { in: [...soon] } },
     }),
     goalUsesTools(goal),
     loadGoalPlannerLessons({ goal, graph, userId: goal.userId }),

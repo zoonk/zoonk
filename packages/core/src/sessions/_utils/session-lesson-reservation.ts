@@ -1,10 +1,11 @@
 import { type Goal, type StudySessionBlock } from "@zoonk/db";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
+import { isStandIn } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
 import { getSessionDayMinutes } from "../fresh-start";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { pickDayLessons } from "./day-lessons";
+import { getUnwrittenMinutesOn, pickDayLessons } from "./day-lessons";
 import { isMockOnlyDay } from "./day-mock";
 import { isSavedReviewDay } from "./day-review";
 import { type ExamPrepAccess } from "./exam-access";
@@ -68,7 +69,7 @@ export function getSessionLessonCandidates({
     .filter((item) => !item.lessonId || !held.has(item.lessonId));
 }
 
-export function hasSessionLessonReservation({
+function getReservedCandidates({
   access,
   session,
   plan,
@@ -81,7 +82,7 @@ export function hasSessionLessonReservation({
   };
   plan: ReservationPlan | null;
   prerequisites?: ReadonlyMap<string, readonly string[]>;
-}): boolean {
+}) {
   if (
     !session.goal ||
     !plan ||
@@ -91,7 +92,7 @@ export function hasSessionLessonReservation({
       freshStart: session.freshStart,
     }) === 0
   ) {
-    return false;
+    return null;
   }
 
   const room = session.plannedMinutes - getSessionUsedMinutes(session.blocks);
@@ -108,13 +109,37 @@ export function hasSessionLessonReservation({
   const pace = parsePlanSettings(plan.settings).pace?.factor ?? 1;
   const next = candidates[0];
 
-  return (
+  const reserved =
     room >= 1 &&
     next !== undefined &&
     (candidates.some((item) => !item.lessonId) ||
       Math.max(
         1,
         Math.round(readSelectedItemFacts(next.facts)?.parts.written ?? (next.minutes ?? 3) * pace),
-      ) <= room)
-  );
+      ) <= room);
+
+  return reserved ? candidates : null;
+}
+
+export function hasSessionLessonReservation(
+  input: Parameters<typeof getReservedCandidates>[0],
+): boolean {
+  return getReservedCandidates(input) !== null;
+}
+
+export function getSessionLessonReservation(input: Parameters<typeof getReservedCandidates>[0]) {
+  const candidates = getReservedCandidates(input);
+
+  if (!candidates) {
+    return { lessonPlaceholder: null, lessonRoom: false };
+  }
+
+  const placeholder = candidates
+    .filter((item) => isStandIn(item))
+    .flatMap((item) => {
+      const minutes = getUnwrittenMinutesOn({ items: [item], today: input.session.localDate });
+      return minutes > 0 ? [{ minutes, title: item.titleSnapshot }] : [];
+    })[0];
+
+  return { lessonPlaceholder: placeholder ?? null, lessonRoom: true };
 }

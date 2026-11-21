@@ -48,6 +48,8 @@ data class DayView(
     val catchUp: CatchUp?,
     val lessonsComing: Boolean,
     val lessonsToPrepare: Boolean,
+    /** The plan topic whose lessons the day keeps time for before they're written. */
+    val lessonPlaceholderTitle: String?,
     val week: StudySessionWeek,
     val dayEndsAt: Long,
 )
@@ -233,6 +235,7 @@ fun StudySession.toDayView(): DayView =
         catchUp = catchUp?.let { CatchUp(it.lessonsLeft, it.positions, it.later) },
         lessonsComing = lessonsComing,
         lessonsToPrepare = lessonsToPrepare,
+        lessonPlaceholderTitle = lessonPlaceholder?.title,
         week = week,
         dayEndsAt = dayEndsAt,
     )
@@ -257,6 +260,7 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         catchUp = catchUp?.let { CatchUp(it.lessonsLeft, it.positions, it.later) },
         lessonsComing = lessonsComing,
         lessonsToPrepare = lessonsToPrepare,
+        lessonPlaceholderTitle = lessonPlaceholder?.title,
         week = week,
         dayEndsAt = dayEndsAt,
     )

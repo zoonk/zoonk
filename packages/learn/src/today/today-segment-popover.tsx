@@ -18,7 +18,7 @@ import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
 import { DaySegment, type DaySegmentState } from "./day-segments";
-import { useTodayScreen } from "./today-context";
+import { useComingLessons } from "./today-coming-lessons";
 
 export const DAY_SEGMENT_SLOT = "today-day-segment";
 
@@ -149,12 +149,9 @@ export function BlockSegment({ focusable, part }: { focusable: boolean; part: Da
 export function HeldSegment({ minutes }: { minutes: number }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const { today, writingStalled } = useTodayScreen();
-  const title = t("Your next lessons");
+  const { asks, title } = useComingLessons();
   const time = formatDuration(minutes);
-
-  const coming = writingStalled ? t("Taking longer than usual") : t("Getting ready…");
-  const note = today.session.lessonsToPrepare ? t("Not ready yet") : coming;
+  const note = asks ? t("Not ready yet") : t("Getting ready…");
 
   return (
     <Popover>

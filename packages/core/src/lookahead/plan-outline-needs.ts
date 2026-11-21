@@ -133,21 +133,13 @@ export function toPlanCourseScope({
 }
 
 /** Workflow bridge: authorize goalId first. Returns only wholly untaught skills; partially taught ones need extensions. */
-export async function listPlanOutlineNeeds({
-  days,
-  goalId,
-}: {
-  days: number;
-  goalId: string;
-}): Promise<CourseOutlineNeed[]> {
-  const outlineWindow = await getOutlineWindow({ days, goalId });
-  const standIns = await loadStandIns({ goalId, outlineWindow });
+export async function listPlanOutlineNeeds(
+  input: Parameters<typeof getOutlineWindow>[0],
+): Promise<CourseOutlineNeed[]> {
+  const outlineWindow = await getOutlineWindow(input);
+  const standIns = await loadStandIns({ goalId: input.goalId, outlineWindow });
 
-  if (!standIns || standIns.skillIds.length === 0) {
-    return [];
-  }
-
-  return toOutlineNeeds(standIns);
+  return standIns?.skillIds.length ? toOutlineNeeds(standIns) : [];
 }
 
 type StandIns = NonNullable<Awaited<ReturnType<typeof loadStandIns>>>;
