@@ -301,7 +301,7 @@ private struct MistakeEntryView: View {
       ItemSupportView(
         context: snapshot.context,
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
-        visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
+        visual: try? snapshot.visual.map { try PracticeJSON.recode($0) }, isMuted: true)
 
       QuestionTitle(text: snapshot.question, isHeading: false)
 
