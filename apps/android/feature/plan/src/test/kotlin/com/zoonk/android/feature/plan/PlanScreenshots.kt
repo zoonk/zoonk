@@ -77,6 +77,38 @@ class PlanScreenshots {
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun placementPhone() = capture("plan-placement-phone", placementTest = LEARN_TEST_START)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun placementPhoneDark() = capture("plan-placement-phone-dark", dark = true, placementTest = LEARN_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun placementTablet() = capture("plan-placement-tablet", placementTest = LEARN_TEST_CONTINUE)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun placementTabletDark() = capture("plan-placement-tablet-dark", dark = true, placementTest = LEARN_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun languagePlacementPhone() = capture("plan-language-placement-phone", placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun languagePlacementPhoneDark() = capture("plan-language-placement-phone-dark", dark = true, placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun languagePlacementTablet() = capture("plan-language-placement-tablet", placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun languagePlacementTabletDark() = capture("plan-language-placement-tablet-dark", dark = true, placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
     fun phone() = capture("plan-phone")
 
@@ -900,7 +932,25 @@ class PlanScreenshots {
         val page =
             when {
                 placementTest != null -> {
-                    page().let { it.copy(plan = it.plan.copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(placementTest))) }
+                    val summary =
+                        if (placementTest ==
+                            LANGUAGE_TEST_RESULT
+                        ) {
+                            learnerSummary(kind = "language", title = "Italian")
+                        } else {
+                            learnerSummary()
+                        }
+                    val changes =
+                        if (placementTest == LEARN_TEST_RESULT) {
+                            listOf(planChange().copy(kind = "testedOut", lessonsSkipped = 6))
+                        } else {
+                            emptyList()
+                        }
+                    PlanPageState(
+                        summary.goals.first(),
+                        learnPlan().copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(placementTest), changes = changes),
+                        summary,
+                    )
                 }
 
                 exam != null -> {
@@ -933,6 +983,7 @@ class PlanScreenshots {
                         resume = Resume.Plain,
                         isSaving = false,
                         onSetStatus = {},
+                        focusTest = page.plan.placementTest?.let { test -> { PlanPlacementTestRow(test, onOpen = {}) } },
                         resumeFailure = failure,
                         onAdjust = {},
                     )
