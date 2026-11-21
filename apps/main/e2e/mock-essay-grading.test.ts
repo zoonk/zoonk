@@ -246,7 +246,7 @@ test.describe("Mock essays need a learner's grading request", () => {
         .poll(() => prisma.mockExam.findUnique({ where: { id: mock.id } }))
         .toMatchObject({ status: "finished" });
 
-      await continueToStep(page, "Your answer");
+      await continueToStep(page, "Controle externo");
       await expect(page.getByText("That didn't go through. Try again in a moment.")).toBeVisible();
       expect(gradingRequests).toHaveLength(1);
       expect(sectionRequests).toHaveLength(1);
