@@ -18,7 +18,7 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 import { startPictureChecks } from "../../images/start-picture-checks";
 import { type PlacementSkillWrite, toPlacementItemBatches } from "../placement-item-batches";
 
-export const DEFAULT_QUICK_COUNT = 1;
+const DEFAULT_QUICK_COUNT = 1;
 
 type WriteContext = { analytics?: ContentAnalytics; workflowRunId: string };
 
