@@ -1,26 +1,14 @@
 import { readCodeFence } from "@zoonk/utils/code-fence";
-import {
-  type MarkdownTableAlign,
-  isMarkdownTableStart,
-  readMarkdownTable,
-} from "@zoonk/utils/markdown-table";
+import { isMarkdownTableStart, readMarkdownTable } from "@zoonk/utils/markdown-table";
 import { type RichInlineSegment } from "../../rich-text/rich-inline-segments";
-import { parseRichInline, parseRichLine } from "../../rich-text/rich-text-parser";
+import { type RichBlock, parseRichInline, parseRichLine } from "../../rich-text/rich-text-parser";
 
 /**
  * Paragraphs, GFM pipe tables, fenced code blocks and lesson inline text (code, bold, italics and
  * `$…$` math), as item writers are told; anything else stays text. A code block keeps its code
  * exactly as written.
  */
-export type ItemTextBlock =
-  | { code: string; kind: "code"; language: string | null }
-  | { kind: "paragraph"; lines: RichInlineSegment[][] }
-  | {
-      align: MarkdownTableAlign[];
-      header: RichInlineSegment[][];
-      kind: "table";
-      rows: RichInlineSegment[][][];
-    };
+export type ItemTextBlock = Exclude<RichBlock, { kind: "list" }>;
 
 const LINE_BREAKS = /\s*\r?\n\s*/gu;
 const SIGN_THEN_AMOUNT = /(?<sign>\p{Sc})[ \t](?=\d)/gu;
