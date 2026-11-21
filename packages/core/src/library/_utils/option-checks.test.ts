@@ -42,6 +42,13 @@ describe(findEquivalentOptions, () => {
     ).toStrictEqual([]);
 
     expect(
+      findEquivalentOptions({
+        language: "en",
+        texts: ["~~~python\nprint(1)\n~~~", "~~~python\nprint(1.0)\n~~~"],
+      }),
+    ).toStrictEqual([]);
+
+    expect(
       findEquivalentOptions({ language: "pt", texts: ["Use `len(x)`.", "use `len(x)`"] }),
     ).toStrictEqual([expect.stringContaining("say the same thing")]);
   });

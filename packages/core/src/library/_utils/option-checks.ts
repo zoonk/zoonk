@@ -42,6 +42,10 @@ function toNumberKey({ language, text }: { language: string; text: string }): st
     : null;
 }
 
+function hasCode(text: string): boolean {
+  return text.includes("`") || readWholeCodeFence(text) !== null;
+}
+
 function isSameAnswer({
   first,
   language,
@@ -51,7 +55,7 @@ function isSameAnswer({
   language: string;
   second: string;
 }): boolean {
-  const isCode = first.includes("`") || second.includes("`");
+  const isCode = hasCode(first) || hasCode(second);
   const firstNumber = isCode ? null : toNumberKey({ language, text: first });
 
   return (
