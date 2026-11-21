@@ -28,7 +28,7 @@ Work in this order, since each step rests on the one before:
 {{#whatIf}}
 1. The surprise. Start from what most people would expect to happen in this situation and what the chapter's idea says happens instead. The gap between the two is what the decisions let the learner find.
 {{/whatIf}}
-2. The world. Fix what's true before anyone speaks: the team, the skills, the meters and the facts.
+2. The world. Fix what's true before anyone speaks: the team, the skills, the meters, the facts and the charts.
 3. The decisions, each with what its choices buy, cost and make known.
 4. The endings, each resting on what its paths really established.
 5. Walk every path from the first decision to its ending as the learner would live it, and fix whatever doesn't hold on that path.
@@ -85,12 +85,12 @@ The AI assistant gets no name and has no gender: the app shows its `role` wherev
 
 # Facts
 
-`facts` is the case's ledger: every number, quantity, date, price, rate and result that any panel, message, choice or ending will use. Nothing in the case uses a value that isn't here. Each fact has:
+`facts` is the case's ledger: every number, quantity, date, price, rate and result that any panel, chart, message, choice or ending will use. Nothing in the case uses a value that isn't here. Each fact has:
 
 - `id`: short and in English ("rate-b", "dose-ml").
 - `fact`: the statement with its value and unit, written the way the learner will read it and rounded the way someone at that job would say it ("82 patients", "31.4%").
 - `derivation`: "given" for a value you set, or the full calculation from other facts, step by step, with how it was rounded. Redo each calculation before you write its result. The second writer never sees `derivation`, so unrounded and intermediate values stay here, and a step the chat should be able to show (a daily total before the dose, a price before the margin) is a fact of its own.
-- `known`: `start` when the learner sees it before the first decision, on a panel or in the mission; `later` when it comes out only where a choice establishes it a choice establishes it.
+- `known`: `start` when the learner has it from the beginning: on a panel, in the mission or on a chart shown at the first decision; `later` when it comes out only where a choice establishes it.
 
 Numbers are realistic for the job, and a fact is something true in the case's world: a meter's level is not a fact, and no count is invented just to have a number. Include what a check would find (what the AI computes when asked, what a colleague's records show, what the numbers are after a week), even though some paths never look. When the chapter's method gives a result, compute it here from the inputs that produce it, and make sure the result supports what the strong choices do with it.
 {{#whatIf}}
@@ -106,7 +106,28 @@ A "What if" has few facts, and they may be plain statements of what happens ("Ti
 `panels`: at most one panel with the `start` facts the learner begins from: 1 to 4 `metrics`, each a short `label`, a `value` ("3.4%", "12 mg", or an amount in `LOCAL_CONTEXT`'s money) and an optional `note`; an optional `title` and a `note` line under them. A "What if" may have no panel.
 {{/whatIf}}
 
-A panel shows numbers and short facts, never a chart, table or picture drawn in text, and never instructions about how to show something: the app shows each metric as one short line. When a skill is about reading a chart, give the data the learner needs as metrics.
+A panel shows numbers and short facts, never a chart, table or picture drawn in text, and never instructions about how to show something: the app shows each metric as one short line. A panel never repeats a chart's data.
+
+# Charts
+
+`visuals`: the charts the case shows, which the app draws from their data above a decision's question. When one of `SKILLS` is about reading a chart or a graph, the decision that needs it shows one. Use a chart only where the learner reads data the job would show as one; otherwise `visuals` is empty. Each entry has:
+
+- `id`: short and in English, never the id of a fact: facts and charts share one set of ids.
+- `known`: `start` when the first decision shows it; `later` when a choice `establishes` it (a report pulled, a check run, the data after a wait) and the decision that choice leads to shows it.
+- `visual`: the chart, one of two kinds:
+  - `chart` when the x axis holds categories (groups, products, months): `bar` to compare them, `line` for change across ordered categories, short `categories`, one value per category in each of 1 to 3 `series`, and `axisStart` null, or where the value axis starts when the case is about a cropped axis.
+  - `plot` when both axes are numbers: a scatter of measured pairs (`mark` `points`), a line through measurements at uneven times or distances, spaced to scale (`line` or `lineWithPoints`, points in increasing `x`), points with a `label` the text can name, and `references`: horizontal lines at a `y` value, such as a limit, a target or a mean, each with a `label`.
+  - `title` says what it shows, and `source` is null for the case's own data.
+
+A chart is ledger data like a fact: write it once here, and never write its data into any text. Its numbers are values in the case's world, consistent with `facts`.
+
+- A decision that shows a `later` chart is reached only through choices that establish it, on every route in. A choice that establishes a chart leads to a decision, never an ending, and that decision shows it.
+- A decision whose situation or choices talk about a chart shows it, even when an earlier decision already did, so the learner never scrolls back to find it.
+- When the case has a chart, every path reaches a decision that shows one, so no path skips the data the skill is about: never only the strong choice's reward.
+- The learner does the reading. At a decision that shows a chart, the choices rest on what the chart shows (which point stands out, whether a trend holds, which values bracket a target), and the strong choice never hands the reading itself to a colleague or the AI.
+- A value the text states from a chart (a reading, a slope, a count of points above a limit) is a fact of its own, with a `derivation` that names the chart and how it's read. The choice that establishes a chart doesn't also establish what the learner is meant to read off it: those facts come out after the pick at the decision that shows the chart, or in an ending.
+- Text names a point by its `label` and a series by its `name`, never by where it sits ("the middle dot", "the top line").
+- On a phone the app draws about four ticks per axis. A point the learner must read sits on a round value near a tick, and no answer needs more precision than the ticks give. A `label` is a short name (a sample, a day, a batch); it carries a value only when that value can't be round.
 
 # The decisions
 
@@ -126,13 +147,14 @@ Each decision has:
 - `pull`: what pulls toward the tempting choice: who wants it and why they have a point (a deadline that's real, money that waiting really loses, a colleague who'd be let down).
 - `insight`: the idea from the chapter that settles this decision: what one of `SKILLS` teaches, at work in this moment, never general good sense about work (keeping to the scope, not overreacting). The learner has to bring it themselves: no colleague will say it before the pick, and it comes out afterwards, in what the choice leads to. So the decision is answerable from the chapter and what the learner has seen so far, never from something only a colleague knows.
 - `skills`: the one or two skill ids this decision trains.
+- `visual`: the id of the chart this decision shows, or null.
 - `choices`: 2 to 4 actions. Each has:
   - `id`: short and in English ("ask-ai", "ship-now"), unique within its decision.
   - `move`: what the learner does or says, in one line.
   - `quality`: `strong`, `fair` or `weak`. Every decision has at least one strong choice and at least one that isn't. The order of `choices` is kept, so vary where the strong one sits: first in one decision, last or in the middle in the others.
   - `buys`: what this choice really gets: time, money, a colleague's trust, information, an option kept open.
   - `costs`: what it really gives up or risks.
-  - `establishes`: the ids of the `later` facts this choice makes known to the learner: a check's result, a colleague's answer, the new numbers after time passes. Empty when it makes nothing known.
+  - `establishes`: the ids of the `later` facts and charts this choice makes known to the learner: a check's result, a colleague's answer, the new numbers after time passes. Empty when it makes nothing known.
   - `timePasses`: when the choice lets time pass, how much, as the learner will read it ("One week later"); otherwise null. Use it only when the wait produces something new to show, which the choice then `establishes`.
   - `next`: the id of the next decision or of an ending.
 
@@ -155,7 +177,7 @@ Make every decision a real choice:
 
 # What each path knows
 
-A `later` fact is known only on the paths where a choice established it:
+A `later` fact or chart is known only on the paths where a choice established it:
 
 - A decision that several choices lead to relies only on what every one of those paths knows. When paths arrive knowing different things and the difference matters, send them to different decisions.
 - A skipped check stays skipped: nothing later assumes its result, and no colleague quietly supplies it. A later choice may establish it, at a price.
@@ -195,4 +217,4 @@ Write everything in `LANGUAGE`, the plan's notes and facts included, with the nu
 
 # Final check
 
-Before answering, check that: `skills` has an entry for each skill in `SKILLS`; every calculation in `facts` is right, every `fact` is rounded as the job would say it and every panel value copies a fact; every choice buys and costs something real; every decision is a step the mission needs, settled by an idea from the chapter; no decision's `insight` is something only a colleague could know; every `next`, `establishes`, `restsOn`, decision `skills` and `{{id}}` points at something that exists; every path ends after the allowed number of decisions with no loops; no ending cites a fact one of its paths never established; no article, contraction or other word gives the AI assistant a gender; and every word is in `LANGUAGE`.
+Before answering, check that: `skills` has an entry for each skill in `SKILLS`; every calculation in `facts` is right, every `fact` is rounded as the job would say it and every panel value copies a fact; every chart agrees with `facts`, is shown where its skill needs it and on every path, and is read in the text by label, never by position; every choice buys and costs something real; every decision is a step the mission needs, settled by an idea from the chapter; no decision's `insight` is something only a colleague could know; every `next`, `establishes`, `restsOn`, decision `skills`, decision `visual` and `{{id}}` points at something that exists; every path ends after the allowed number of decisions with no loops; no ending cites a fact one of its paths never established; no article, contraction or other word gives the AI assistant a gender; and every word is in `LANGUAGE`.
