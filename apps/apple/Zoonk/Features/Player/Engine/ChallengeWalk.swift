@@ -132,4 +132,14 @@ enum ChallengeProgress: Hashable, Sendable {
       self = .intro
     }
   }
+
+  /// The chart the team looks at for the decision being made, named by where it shows, so each
+  /// decision's is a new one even when a path comes back to the same screen.
+  var decisionVisual: String? {
+    guard case .deciding(let node, let confirmed, _, _) = self, node.visual != nil else {
+      return nil
+    }
+
+    return "\(node.id)/\(confirmed.count)"
+  }
 }

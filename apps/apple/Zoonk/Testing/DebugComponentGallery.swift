@@ -4,7 +4,7 @@
   /// `ZOONK_DEBUG_GALLERY=1` opens every color role and shared piece in one scroll, the native side
   /// of main's `/design` and Android's `GalleryActivity`, to check light, dark, more contrast,
   /// accessibility sizes and right to left in a few screenshots. `=buttons`, `=lists` and the other
-  /// section names open at that section.
+  /// section names open at that section; `=challenge` plays a case with a chart.
   struct DebugComponentGallery: ViewModifier {
     /// Also a launch argument (`-ZOONK_DEBUG_GALLERY lists`), which device tools can pass.
     private let section = debugLaunchValue("ZOONK_DEBUG_GALLERY")
@@ -21,6 +21,8 @@
               DebugTodayNotices()
             } else if section == "rowStack" {
               DebugRowStack()
+            } else if section == "challenge" {
+              DebugChallenge()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -93,7 +95,8 @@
     }
   }
 
-  /// Charts with more series than the prompt aims for, where telling them apart is hardest.
+  /// Charts with more series than the prompt aims for, where telling them apart is hardest, a line
+  /// on a cut axis, and plots: a scatter with named points, a control chart and a timed line.
   private struct LessonCharts: View {
     private static let regions: [(String, [Double])] = [
       ("Norte", [12, 18, 24, 31]), ("Nordeste", [20, 22, 19, 27]), ("Sudeste", [8, 14, 22, 16]),
@@ -101,26 +104,110 @@
       ("Capital", [33, 29, 26, 24]), ("Interior", [5, 9, 12, 10]), ("Litoral", [24, 31, 35, 40]),
     ]
 
-    private static func chart(_ style: String, series: Int) -> LessonChart? {
-      let json: [String: Any] = [
-        "chart": style, "title": "Ofícios por região", "categoryLabel": "Mês",
-        "valueLabel": "Ofícios", "categories": ["Jan", "Fev", "Mar", "Abr"],
-        "series": regions.prefix(series).map { ["name": $0.0, "values": $0.1] },
-      ]
-
-      return (try? JSONSerialization.data(withJSONObject: json)).flatMap {
-        try? JSONDecoder().decode(LessonChart.self, from: $0)
+    private static func visual(_ json: [String: Any]) -> LessonVisual? {
+      (try? JSONSerialization.data(withJSONObject: json)).flatMap {
+        try? JSONDecoder().decode(LessonVisual.self, from: $0)
       }
     }
 
-    private let charts = [("bar", 5), ("line", 5), ("bar", 8), ("line", 8)].compactMap {
-      LessonCharts.chart($0.0, series: $0.1)
+    private static func chart(_ style: String, series: Int) -> LessonVisual? {
+      visual([
+        "kind": "chart", "chart": style, "title": "Ofícios por região", "categoryLabel": "Mês",
+        "valueLabel": "Ofícios", "categories": ["Jan", "Fev", "Mar", "Abr"],
+        "series": regions.prefix(series).map { ["name": $0.0, "values": $0.1] },
+      ])
     }
+
+    private static func points(_ values: [(Double, Double, String?)]) -> [[String: Any]] {
+      values.map { ["x": $0.0, "y": $0.1, "label": $0.2 ?? NSNull()] }
+    }
+
+    private static let cutLine = visual([
+      "kind": "chart", "chart": "line", "title": "Average fill weight by hour",
+      "categoryLabel": "Hour", "valueLabel": "Fill weight", "unit": "g", "axisStart": 490,
+      "categories": ["8:00", "9:00", "10:00", "11:00", "12:00", "13:00"],
+      "series": [["name": "Line 3", "values": [499, 501, 500, 502, 504, 506]]],
+    ])
+
+    private static let scatter = visual([
+      "kind": "plot", "title": "Study hours and exam scores", "xLabel": "Study time",
+      "xUnit": "h", "yLabel": "Score", "yUnit": "%",
+      "series": [
+        [
+          "name": "Class A", "mark": "points",
+          "points": points([
+            (2, 58, nil), (3.5, 64, nil), (5, 71, nil), (5, 66, nil), (7, 78, "Ana"),
+            (9, 84, nil), (11, 52, "Bruno"),
+          ]),
+        ],
+        [
+          "name": "Class B", "mark": "points",
+          "points": points([
+            (1, 49, nil), (4, 61, nil), (6, 69, nil), (8, 74, nil), (10, 88, "Caio"),
+          ]),
+        ],
+      ],
+      "references": [["label": "Pass mark", "y": 60]],
+    ])
+
+    private static let control = visual([
+      "kind": "plot", "title": "Line 3 fill weight, last 8 hours", "xLabel": "Hour of shift",
+      "yLabel": "Fill weight", "yUnit": "g",
+      "series": [
+        [
+          "name": "Line 3", "mark": "lineWithPoints",
+          "points": points([
+            (1, 500.4, nil), (2, 499.1, nil), (3, 501.2, nil), (4, 500.8, nil), (5, 502.9, nil),
+            (6, 503.6, nil), (7, 504.8, nil), (8, 506.3, "Hour 8"),
+          ]),
+        ]
+      ],
+      "references": [
+        ["label": "Upper limit", "y": 506], ["label": "Target", "y": 500],
+        ["label": "Lower limit", "y": 494],
+      ],
+    ])
+
+    private static let timed = visual([
+      "kind": "plot", "title": "A cyclist's distance over time", "xLabel": "Time",
+      "xUnit": "min", "yLabel": "Distance", "yUnit": "km", "source": "Strava export, May 2026",
+      "series": [
+        [
+          "name": "Rider", "mark": "line",
+          "points": points([
+            (0, 0, nil), (5, 2.1, nil), (7, 2.9, nil), (20, 7.4, "Stop"), (26, 7.4, nil),
+            (40, 13.2, nil),
+          ]),
+        ]
+      ],
+      "references": [],
+    ])
+
+    /// Names too close to sit beside their dots, so they move to a numbered key.
+    private static let crowded = visual([
+      "kind": "plot", "title": "Boiling point by altitude", "xLabel": "Altitude",
+      "xUnit": "m", "yLabel": "Boiling point", "yUnit": "°C",
+      "series": [
+        [
+          "name": "Cities", "mark": "points",
+          "points": points([
+            (0, 100, "Rio de Janeiro"), (60, 99.8, "Santos"), (120, 99.6, "Lisbon"),
+            (2_240, 92.5, "Mexico City"), (2_850, 90.6, "Quito"), (3_640, 87.9, "La Paz"),
+          ]),
+        ]
+      ],
+      "references": [],
+    ])
+
+    private let visuals =
+      [("bar", 5), ("line", 5), ("bar", 8), ("line", 8)].compactMap {
+        LessonCharts.chart($0.0, series: $0.1)
+      } + [cutLine, scatter, control, timed, crowded].compactMap(\.self)
 
     var body: some View {
       VStack(alignment: .leading, spacing: 32) {
-        ForEach(Array(charts.enumerated()), id: \.offset) { _, chart in
-          LessonChartView(chart: chart)
+        ForEach(Array(visuals.enumerated()), id: \.offset) { _, visual in
+          LessonVisualView(visual: visual)
         }
       }
     }
