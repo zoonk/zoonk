@@ -49,9 +49,9 @@ enum PlanChangeWords {
 
   static func words(
     kind: String, source: String, status: String, operations: [PlanChangeOperation],
-    reason: String?, effect: PlanEffect?, dateKind: GoalDateKind
+    reason: String?, effect: PlanEffect?, dateKind: GoalDateKind, lessonsSkipped: Int = 0
   ) -> Words {
-    if let system = systemSentence(kind: kind, effect: effect) {
+    if let system = systemSentence(kind: kind, effect: effect, lessonsSkipped: lessonsSkipped) {
       return Words(title: system, why: nil)
     }
 
@@ -111,8 +111,16 @@ enum PlanChangeWords {
   }
 
   /// A change the plan made by itself says why in one sentence.
-  private static func systemSentence(kind: String, effect: PlanEffect?) -> String? {
+  private static func systemSentence(kind: String, effect: PlanEffect?, lessonsSkipped: Int)
+    -> String?
+  {
     switch kind {
+    case "testedOut":
+      skippedSentence(lessonsSkipped)
+    case "relearn":
+      lessonsSkipped > 0
+        ? [skippedSentence(lessonsSkipped), relearnSentence(effect)].joinedSentences()
+        : relearnSentence(effect)
     case "missedDays":
       String(
         localized: "Your plan changed to make up for the days you missed.", table: "Plan",
@@ -133,6 +141,54 @@ enum PlanChangeWords {
     default:
       nil
     }
+  }
+
+  /// What a test or a day's checks took out of the plan.
+  private static func skippedSentence(_ lessons: Int) -> String {
+    String(
+      localized: "Skipped \(lessons) lessons you already know.", table: "Plan",
+      comment: "One day's plan change: how many lessons the learner's answers took out of the plan")
+  }
+
+  /// Main's `useRelearnSentence`: the topics a missed question brought back, by name while they're
+  /// few, else counted by subject.
+  private static func relearnSentence(_ effect: PlanEffect?) -> String {
+    let areas = effect?.topicsAdded ?? []
+    let topics = areas.flatMap { $0.topics.map(planTopicWords) }
+
+    guard topics.count > 3 else {
+      let names = topics.formatted(.list(type: .and))
+
+      return topics.count == 1
+        ? String(
+          localized: "\(names) is back in your plan: you missed a question on it.", table: "Plan",
+          comment: "A plan change: a topic came back after a missed question; the topic's name")
+        : String(
+          localized: "\(names) are back in your plan: you missed questions on them.", table: "Plan",
+          comment: "A plan change: topics came back after missed questions; their names")
+    }
+
+    let named = areas.prefix(3).map(\.area)
+    let more = areas.count - named.count
+    let others =
+      more > 0
+      ? [
+        String(
+          localized: "\(more) other subjects", table: "Plan",
+          comment: "The rest of the subjects a plan change names, such as \"2 other subjects\"")
+      ] : []
+    let subjects = (named + others).formatted(.list(type: .and))
+
+    let count = String(
+      localized: "\(topics.count) topics", table: "Plan",
+      comment: "How many topics a plan change brought back, such as \"5 topics\"")
+
+    return String(
+      localized: "\(count) from \(subjects) are back in your plan: you missed questions on them.",
+      table: "Plan",
+      comment:
+        "A plan change: how many topics came back after missed questions, such as \"5 topics\", then their subjects"
+    )
   }
 
   // MARK: Questions

@@ -730,7 +730,7 @@
     private static let change: TodayView.PlanChange = decode(
       #"""
       {"behind":{"canFocus":true,"coveredAfter":0.62,"coveredBefore":0.8,"currentMinutes":45,
-      "measure":"exam"},"canApply":true,"canUndo":false,"effect":null,"examDocument":"notice",
+      "measure":"exam"},"canApply":true,"canUndo":false,"effect":null,"examDocument":"notice","lessonsSkipped":0,
       "quote":"q1","id":"c1","kind":"missedDays","officialDate":null,"operations":[],"reason":"",
       "source":"memory","status":"proposed","todaySession":null}
       """#)
