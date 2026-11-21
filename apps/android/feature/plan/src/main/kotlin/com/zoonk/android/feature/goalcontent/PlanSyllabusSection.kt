@@ -120,8 +120,8 @@ private fun SubjectRow(
     val bar = if (notPlanned) null else subject.bar
     val share = bar?.share ?: subject.preparation
     val locale = currentLocale()
-    val progressText = if (subject.isExtra) lessonsDoneText(subject) else share?.let { formatProgressShare(it, locale) }.orEmpty()
-    // Optional study's count says its progress; a bar would sit under Preparation, which the exam doesn't measure for it.
+    // Optional study's count says its progress; a share or a bar would sit under Preparation, which the exam doesn't measure for it.
+    val progressText = if (subject.isExtra) "" else share?.let { formatProgressShare(it, locale) }.orEmpty()
     val showsBar = !notPlanned && !subject.isExtra
     val questions = subject.questions?.takeIf { it > 0 }?.toInt()
 
@@ -133,6 +133,13 @@ private fun SubjectRow(
             )
             if (alsoIn != null) {
                 Text(alsoIn, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            }
+            if (subject.isExtra) {
+                Text(
+                    lessonsDoneText(subject),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         }
     }
