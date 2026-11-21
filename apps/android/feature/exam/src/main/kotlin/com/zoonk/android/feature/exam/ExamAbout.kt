@@ -245,7 +245,7 @@ private fun Calibration(calibration: NetCalibration) {
             R.string.exam_calibration,
             pluralStringResource(R.plurals.exam_calibration_right, sure.right.toInt(), sure.right.toInt(), sure.answered.toInt()),
             pluralStringResource(R.plurals.exam_calibration_right, unsure.right.toInt(), unsure.right.toInt(), unsure.answered.toInt()),
-        ),
+        ).replace(NUMBER_OF_NUMBER, NUMBER_OF_NUMBER_KEPT),
         style = MaterialTheme.typography.bodyMedium,
     )
     when (calibration.advice) {
@@ -343,3 +343,7 @@ private fun Line(text: AnnotatedString) {
 
 private const val SECONDS_PER_MINUTE = 60L
 private const val NO_BREAK_SPACE = '\u00A0'
+
+/** "5 of 12", in any language's words, kept on one line: a line that breaks inside it reads as two numbers. */
+private val NUMBER_OF_NUMBER = Regex("""(\p{Nd}+) (\S+) (\p{Nd}+)""")
+private const val NUMBER_OF_NUMBER_KEPT = "$1\u00A0$2\u00A0$3"
