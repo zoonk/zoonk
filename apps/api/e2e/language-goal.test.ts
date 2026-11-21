@@ -479,6 +479,32 @@ test.describe("Language goal API", () => {
     await apiContext.dispose();
   });
 
+  test("keeps a level test-out unavailable until both skills have qualifying topic questions", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-test-out",
+    });
+
+    const { goal } = await languageGoalFixture({ userId: user.id });
+    const path = `/v1/goals/${goal.id}/language-level-test/test-outs`;
+    const attemptId = randomUUID();
+
+    const [unavailable, missing, staleAnswer, staleFinish] = await Promise.all([
+      apiContext.post(path, { data: { level: "C2" } }),
+      apiContext.get(path, { params: { attemptId } }),
+      apiContext.post(`${path}/answers`, {
+        data: { answer: { dontKnow: true }, attemptId, durationMs: 500, itemId: randomUUID() },
+      }),
+      apiContext.post(`${path}/completions`, { data: { attemptId } }),
+    ]);
+
+    expect(
+      [unavailable, missing, staleAnswer, staleFinish].map((response) => response.status()),
+    ).toStrictEqual([422, 404, 404, 404]);
+
+    await apiContext.dispose();
+  });
+
   test("never writes the questions when the test is shown: the learner's tap starts their run", async () => {
     await ensureLevelTestBank();
 
