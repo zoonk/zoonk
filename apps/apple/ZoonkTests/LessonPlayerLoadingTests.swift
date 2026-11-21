@@ -999,7 +999,10 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let start = try XCTUnwrap(requests.firstIndex(of: "start"))
     XCTAssertEqual(
       Set(requests[..<start]), ["check lost-reply", "check miss"],
-      "the run starts once they went, whatever happened; the miss goes again after it")
+      "the run starts once they went, whatever happened")
+    XCTAssertTrue(
+      requests[(start + 1)...].allSatisfy { $0 == "check miss" },
+      "once the run starts, only the held miss goes again")
     XCTAssertEqual(store.held, [miss, retry], "a screen stops at its first failure")
     XCTAssertEqual(kept.read(), [miss, retry])
     XCTAssertEqual(someoneElses.read(), [theirs])
@@ -1164,6 +1167,9 @@ final class LessonPlayerLoadingTests: XCTestCase {
       steps: ["one", "spoken"], spoken: ["spoken"], defaults: defaults, transport: transport)
     await store.load()
     XCTAssertEqual(store.state?.currentStep?.id, "spoken")
+    _ = try await waitForTestCondition("The held answer didn't go again once the run started") {
+      await transport.requests.filter { $0 == "check held" }.count == 2
+    }
     await transport.failChecks(on: [])
 
     store.resolveSpoken(
