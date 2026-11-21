@@ -125,12 +125,8 @@ describe(trackSystemEvent, () => {
     expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith({
       distinctId: "zoonk-system",
       event: "Generation Failed",
-      properties: {
-        $process_person_profile: false,
-        content_kind: "lesson",
-        model: null,
-        task: "lesson-content",
-      },
+      options: { process_person_profile: false },
+      properties: { content_kind: "lesson", model: null, task: "lesson-content" },
     });
 
     expect(posthogClient.shutdown).toHaveBeenCalledExactlyOnceWith(5000);
