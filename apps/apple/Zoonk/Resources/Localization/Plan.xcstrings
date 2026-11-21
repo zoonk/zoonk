@@ -959,6 +959,9 @@
         }
       }
     },
+    "%@ are back in your plan: you missed questions on them." : {
+      "comment" : "A plan change: topics came back after missed questions; their names"
+    },
     "%@ aren't in your plan." : {
       "comment" : "Says several subjects left the plan",
       "localizations" : {
@@ -1384,6 +1387,17 @@
         }
       }
     },
+    "%@ from %@ are back in your plan: you missed questions on them." : {
+      "comment" : "A plan change: how many topics came back after missed questions, such as \"5 topics\", then their subjects",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ from %2$@ are back in your plan: you missed questions on them."
+          }
+        }
+      }
+    },
     "%@ is a day you don't study." : {
       "comment" : "Why moving a phase's end; the argument is a weekday",
       "localizations" : {
@@ -1442,6 +1456,9 @@
           }
         }
       }
+    },
+    "%@ is back in your plan: you missed a question on it." : {
+      "comment" : "A plan change: a topic came back after a missed question; the topic's name"
     },
     "%@ isn't in your plan." : {
       "comment" : "Says one subject left the plan",
@@ -8210,6 +8227,29 @@
                       "value" : "%arg konu"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld other subjects" : {
+      "comment" : "The rest of the subjects a plan change names, such as \"2 other subjects\"",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld other subject"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld other subjects"
                 }
               }
             }
@@ -29929,6 +29969,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlandı · senin seçimin"
+          }
+        }
+      }
+    },
+    "Skipped %lld lessons you already know." : {
+      "comment" : "One day's plan change: how many lessons the learner's answers took out of the plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Skipped %lld lesson you already know."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Skipped %lld lessons you already know."
+                }
+              }
+            }
           }
         }
       }

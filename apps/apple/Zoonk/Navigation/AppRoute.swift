@@ -34,6 +34,12 @@ enum AppRoute: Hashable, Identifiable {
   case testOut(chapterId: String, resultId: String? = nil)
   /// `startsTest` opens on the first question, for a learner who already chose to start.
   case focusTest(goalId: String, startsTest: Bool = false)
+  /// A learn course's test of what the learner knows, or a language course's walk through its
+  /// topics.
+  case placementTest(goalId: String)
+  /// A language course's level test and its level test-outs; `testOutFirst` picks the test-out,
+  /// as a lesson's "Test out of" offer does.
+  case levelTest(goalId: String, testOutFirst: Bool = false)
   case challenge(planItemId: String, sessionId: String? = nil)
   case checkpoint(blockId: String, sessionId: String? = nil)
   case essay(blockId: String)

@@ -409,6 +409,8 @@ struct PlacementQuestionScreen<Media: View>: View {
   let number: Int
   /// The count promised up front, when the test has one.
   var total: Int?
+  /// Where the question sits, in place of its number, such as a whole-course test's part.
+  var position: Text?
   /// From 0 to 1.
   let progress: Double
   let question: PracticeQuestion
@@ -441,7 +443,9 @@ struct PlacementQuestionScreen<Media: View>: View {
         }
 
         Group {
-          if let total {
+          if let position {
+            position
+          } else if let total {
             Text(
               "Question \(number) of \(total)", tableName: "Onboarding",
               comment: "Which question of a test with a promised count this is")
@@ -525,6 +529,7 @@ extension PlacementQuestionScreen where Media == EmptyView {
     subject: String?,
     number: Int,
     total: Int? = nil,
+    position: Text? = nil,
     progress: Double,
     question: PracticeQuestion,
     labels: PracticeTrueFalseLabels,
@@ -537,8 +542,9 @@ extension PlacementQuestionScreen where Media == EmptyView {
     onStop: @escaping () -> Void
   ) {
     self.init(
-      subject: subject, number: number, total: total, progress: progress, question: question,
-      labels: labels, isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      subject: subject, number: number, total: total, position: position, progress: progress,
+      question: question, labels: labels, isSaving: isSaving, failures: failures,
+      saveFailure: saveFailure,
       stopHint: stopHint, onReport: onReport, onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
     )

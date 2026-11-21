@@ -394,8 +394,9 @@ struct PracticeAPI: Sendable {
     token: String, goalId: String, chapterId: String, answers: [PracticeChoiceAnswer],
     requestId: String
   ) async throws -> Components.Schemas.ChapterTestOutResult? {
-    let body = Components.Schemas.ChapterTestOutInput(
-      answers: try answers.map { try $0.input }, requestId: requestId, timeZone: timeZone)
+    let body = try PracticeJSON.recode(
+      ChapterTestOutBody(answers: answers.map(\.sent), requestId: requestId, timeZone: timeZone),
+      as: Components.Schemas.ChapterTestOutInput.self)
 
     return try await perform(token) { client in
       switch try await client.submitChapterTestOut(
@@ -569,13 +570,18 @@ struct PracticeChoiceAnswer: Equatable, Codable {
   var durationMs: Int
   var itemId: String
 
-  var input: Components.Schemas.ItemAnswerInput {
-    get throws {
-      .init(
-        answer: try PracticeJSON.recode(answer), durationMs: min(durationMs, 3_600_000),
-        itemId: itemId)
-    }
+  /// As the API takes it: a duration past an hour counts as an hour.
+  var sent: Self {
+    var sent = self
+    sent.durationMs = min(durationMs, 3_600_000)
+    return sent
   }
+}
+
+private struct ChapterTestOutBody: Encodable {
+  let answers: [PracticeChoiceAnswer]
+  let requestId: String
+  let timeZone: String
 }
 
 extension PracticeTrueFalseLabels {

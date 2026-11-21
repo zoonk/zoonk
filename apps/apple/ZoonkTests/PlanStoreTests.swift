@@ -975,7 +975,7 @@ actor PlanAPIStub: PlanAPIClient {
 
   private static let undoneChange = Data(
     #"""
-    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice","quote":"q1",
+    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice","lessonsSkipped":0,"quote":"q1",
     "id":"change-1","kind":"edited","officialDate":null,"operations":[],"reason":null,
     "source":"planEdit","status":"undone","todaySession":null}
     """#.utf8)

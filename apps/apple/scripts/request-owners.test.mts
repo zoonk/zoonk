@@ -62,7 +62,10 @@ const OWNERS: Record<string, string> = {
   "Features/PlanLink/PlanLinkScreen.swift: startTask": "A shared plan's page has no split.",
   "Features/Player/Views/LessonEndViews.swift: starting":
     "The guest gate, shown in the lesson's place, not in a split.",
-  "Features/Player/Views/LessonEndViews.swift: stopping":
+  "Features/PlacementTest/LevelTestFlow.swift: tasks": "The level test has no split.",
+  "Features/PlacementTest/PlacementTestFlow.swift: tasks":
+    "The test taken from the plan has no split.",
+  "Features/Player/Views/LessonEndViews.swift: offerDismissal, stopping":
     "The lesson's end, which holds its PaneSplit.",
   "Features/Player/Views/LessonPlayerScreen.swift: store":
     "The lesson's screen, above its stage's split.",

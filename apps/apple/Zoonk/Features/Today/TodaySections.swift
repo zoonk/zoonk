@@ -280,7 +280,7 @@ struct TodayPlanChangeSection: View {
     PlanChangeWords.words(
       kind: change.kind, source: change.source, status: change.status,
       operations: change.operations, reason: change.reason, effect: change.effect,
-      dateKind: GoalDateKind(isExam: isExam))
+      dateKind: GoalDateKind(isExam: isExam), lessonsSkipped: change.lessonsSkipped)
   }
 
   /// The question; a focus the Focus test proposes keeps the test's own words.

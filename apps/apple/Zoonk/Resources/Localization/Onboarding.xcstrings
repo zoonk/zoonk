@@ -119,6 +119,9 @@
         }
       }
     },
+    "%@ left" : {
+      "comment" : "How long the rest of an open test takes, such as \"9 min left\""
+    },
     "%@ level to reach" : {
       "comment" : "Titles the language level a learner picks to reach, like \"B2\". {language} is a language name as in a sentence, like \"English\".",
       "localizations" : {
@@ -307,6 +310,9 @@
           }
         }
       }
+    },
+    "%@ stays in your plan" : {
+      "comment" : "After a level's test-out that skipped nothing, such as \"B2 stays in your plan\""
     },
     "%@, to be confirmed" : {
       "comment" : "An exam date that isn't out yet, with the month the learner named\nAn exam date that isn't out yet, with the year the learner named",
@@ -707,6 +713,52 @@
         }
       }
     },
+    "%lld lessons" : {
+      "comment" : "How many lessons a level test took out of the plan, such as \"12 lessons\"",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons skipped" : {
+      "comment" : "After a test of what the learner knows: how many lessons it took out of the plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson skipped"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons skipped"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "A course on this is ready now" : {
       "comment" : "Under a Library course offered while the learner's plan is built",
       "localizations" : {
@@ -824,6 +876,12 @@
           }
         }
       }
+    },
+    "A quick check can skip lessons you already know." : {
+      "comment" : "A lesson end's offer to take the quick test of what the learner knows"
+    },
+    "A short test can skip %@ if you already know it." : {
+      "comment" : "A lesson end's offer to test out of a language level, such as B2"
     },
     "A short test finds the lessons you don't need." : {
       "comment" : "What the short test is",
@@ -943,6 +1001,12 @@
         }
       }
     },
+    "About %@ left. Your answers are saved." : {
+      "comment" : "Between the whole-course test's parts: how long the rest takes, such as \"15 min\""
+    },
+    "About %@ of reading and listening, so your plan starts at your level." : {
+      "comment" : "What the level test is; %@ is about how long it takes, such as \"3 minutes\""
+    },
     "About %@ of reading, listening and one sentence out loud, so your plan starts at your level." : {
       "comment" : "What the level test is; %@ is about how long it takes, such as \"3 minutes\"",
       "localizations" : {
@@ -1001,6 +1065,9 @@
           }
         }
       }
+    },
+    "About %@, in parts" : {
+      "comment" : "How long the whole-course test takes, such as \"30 min\". It's split into parts the learner can take on different days."
     },
     "About %lld days" : {
       "comment" : "How long until a goal's estimated date",
@@ -2708,6 +2775,9 @@
         }
       }
     },
+    "Check my level" : {
+      "comment" : "Opens the quick test from a lesson end's offer"
+    },
     "Checking each question has one right answer…" : {
       "comment" : "What the wait is doing while a language's level test questions are written",
       "localizations" : {
@@ -3877,6 +3947,9 @@
           }
         }
       }
+    },
+    "Continue your test" : {
+      "comment" : "Title of a whole-course test the learner came back to between its parts"
     },
     "Country" : {
       "comment" : "Row with the country a goal's lessons are about, such as Portugal",
@@ -6557,6 +6630,9 @@
         }
       }
     },
+    "Find your level and skip what you know" : {
+      "comment" : "The level test's line on a language plan before it's taken"
+    },
     "Find your level in %@" : {
       "comment" : "Title of a language goal's level test",
       "localizations" : {
@@ -6792,6 +6868,9 @@
           }
         }
       }
+    },
+    "Finish for today" : {
+      "comment" : "Leaves the whole-course test between its parts; the answers are saved"
     },
     "Finish later" : {
       "comment" : "Leaves onboarding, keeping the answers",
@@ -7973,6 +8052,9 @@
         }
       }
     },
+    "How much do you want to check?" : {
+      "comment" : "Title of the choice between the quick test and the whole-course test"
+    },
     "How much time can you study each day?" : {
       "comment" : "Onboarding question",
       "localizations" : {
@@ -8799,6 +8881,9 @@
         }
       }
     },
+    "Keep going" : {
+      "comment" : "Goes on from the whole-course level test to the course's topics\nStarts the whole-course test's next part"
+    },
     "Language" : {
       "comment" : "Row with the language a goal learns",
       "localizations" : {
@@ -9093,6 +9178,9 @@
           }
         }
       }
+    },
+    "Listening %@" : {
+      "comment" : "A CEFR level range the test found for listening, such as \"B1–B2\""
     },
     "Listing what your goal asks for…" : {
       "comment" : "What the wait is doing while a plan is built",
@@ -10097,6 +10185,9 @@
         }
       }
     },
+    "No lessons skipped" : {
+      "comment" : "After a test of what the learner knows: it took no lesson out of the plan"
+    },
     "No more material today. More tomorrow, or subscribe to keep going." : {
       "comment" : "A free learner added as much material as allowed today",
       "localizations" : {
@@ -10568,6 +10659,9 @@
           }
         }
       }
+    },
+    "Not now" : {
+      "comment" : "Leaves the test taken from the plan, or a lesson's offer to check the level, for now"
     },
     "Not started yet" : {
       "comment" : "VoiceOver: a step of a wait that hasn't started",
@@ -12935,6 +13029,9 @@
         }
       }
     },
+    "Quick" : {
+      "comment" : "The short placement test: about four minutes of questions"
+    },
     "Quick explanation · %@" : {
       "comment" : "The kind of an example goal: a short explanation of one question, and its length",
       "localizations" : {
@@ -13170,6 +13267,9 @@
           }
         }
       }
+    },
+    "Reading %@" : {
+      "comment" : "A CEFR level range the test found for reading, such as \"B1–B2\""
     },
     "Reading the exam's official documents" : {
       "comment" : "Title while an exam's official documents are read",
@@ -14705,6 +14805,12 @@
         }
       }
     },
+    "Skip %@ if you already know it" : {
+      "comment" : "What a language level's test-out does, such as \"Skip B2 if you already know it\""
+    },
+    "Skip lessons you already know" : {
+      "comment" : "The test's line on a plan before it's taken"
+    },
     "Skip the test" : {
       "comment" : "Skips a language goal's level test",
       "localizations" : {
@@ -16144,6 +16250,9 @@
         }
       }
     },
+    "Stop any time. What you pass stays skipped." : {
+      "comment" : "Under the test's length choice: leaving keeps what the answers so far skipped"
+    },
     "Stop the message" : {
       "comment" : "Stops a listening question's message while it loads or plays",
       "localizations" : {
@@ -16674,6 +16783,12 @@
           }
         }
       }
+    },
+    "Test out of %@" : {
+      "comment" : "A short test of one language level, such as \"Test out of B2\""
+    },
+    "Test what you know" : {
+      "comment" : "The test of what the learner already knows in a course, taken from the plan"
     },
     "That didn't save. Try again." : {
       "comment" : "A change couldn't be saved",
@@ -17559,6 +17674,12 @@
         }
       }
     },
+    "The whole-course test can skip more." : {
+      "comment" : "Under the quick test's result: the longer test checks every topic ahead"
+    },
+    "There aren't enough questions for %@ yet." : {
+      "comment" : "After a level's test-out that had too few questions to check, such as B2"
+    },
     "These goals share your daily time. You can change all of this later." : {
       "comment" : "Under several understood goals",
       "localizations" : {
@@ -17930,6 +18051,9 @@
           }
         }
       }
+    },
+    "This looks easy for you" : {
+      "comment" : "Title of a lesson end's offer to check the level, after a run of easy lessons"
     },
     "This needs a free account." : {
       "comment" : "Guests' shared AI budget for the day is spent",
@@ -20055,6 +20179,17 @@
         }
       }
     },
+    "We skipped %@: %@." : {
+      "comment" : "Under a level test's result: the language levels it skipped, such as \"A1 and A2\", then how many lessons the plan no longer has, such as \"12 lessons\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "We skipped %1$@: %2$@."
+          }
+        }
+      }
+    },
     "We stopped getting updates. It may still be working." : {
       "comment" : "Why a wait stopped getting updates",
       "localizations" : {
@@ -21771,6 +21906,9 @@
         }
       }
     },
+    "Whole course" : {
+      "comment" : "The long placement test: it checks every topic still ahead in the course"
+    },
     "Why are you learning it?" : {
       "comment" : "Onboarding question for a language goal",
       "localizations" : {
@@ -22714,6 +22852,9 @@
           }
         }
       }
+    },
+    "You already know them. They stay in your practice." : {
+      "comment" : "Under how many lessons a test skipped"
     },
     "You can change all of this later." : {
       "comment" : "Under an understood goal",
@@ -24195,6 +24336,9 @@
         }
       }
     },
+    "Your lessons keep adjusting as you answer." : {
+      "comment" : "Under a level test's result that skipped no level"
+    },
     "Your level" : {
       "comment" : "Row with the learner's level in a subject",
       "localizations" : {
@@ -24725,6 +24869,9 @@
           }
         }
       }
+    },
+    "Your plan stays as it is." : {
+      "comment" : "Under \"No lessons skipped\" after a test"
     },
     "Your plan will be waiting when you finish." : {
       "comment" : "Over Start, while the plan is still built",
