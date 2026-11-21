@@ -3,8 +3,9 @@
 import { type EssayDraft, MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { preloadTaskExitDialog } from "../_components/task-close";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "../essay/essay-status-line";
@@ -37,6 +38,8 @@ export function WriteScreen({
   const label = useHeaderLabel(essay.writing);
   const fits = draft.text.length <= MAX_ESSAY_CHARACTERS;
   const canSend = draft.text.trim().length > 0 && fits && status !== "pending";
+
+  useEffect(() => void preloadTaskExitDialog(), []);
 
   const fail = () => {
     draft.lock(false);
@@ -77,12 +80,7 @@ export function WriteScreen({
     }
 
     setStatus("idle");
-
-    // A send whose answer was lost was graded as first sent: what's on screen now stays kept.
-    if (result.text === text) {
-      draft.clear();
-    }
-
+    draft.graded(result.text);
     onGraded(result);
   }
 

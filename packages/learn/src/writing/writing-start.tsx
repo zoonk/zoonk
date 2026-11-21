@@ -14,7 +14,7 @@ import { type GenerationRun, hasStopped } from "../generation/generation-run";
 import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
-import { getRefusedTaskPlace, useWritingTaskTitle } from "./writing-header";
+import { useWritingTaskTitle } from "./writing-header";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
 import { type TomorrowTask } from "./writing-types";
@@ -47,7 +47,7 @@ export function toWritingStartState(
           minutes: task.minutes,
           title: task.description,
           unit: task.unit,
-          writingTask: getRefusedTaskPlace(task),
+          writingTask: task.writingTask ?? null,
         }
       : null,
   };
@@ -138,6 +138,11 @@ function StartMessage({ state, task }: { state: WritingStartState; task: Tomorro
     return (
       <StepHeader className="gap-3">
         <StepTitle>{t("This needs a free account")}</StepTitle>
+        <StepDetail>
+          {task.unit === "drill"
+            ? t("With one, we write your exercise and grade what you write.")
+            : t("With one, we write your question and grade what you write.")}
+        </StepDetail>
       </StepHeader>
     );
   }

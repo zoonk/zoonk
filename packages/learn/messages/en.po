@@ -14049,6 +14049,16 @@ msgctxt "xj8ORz"
 msgid "Writing your question…"
 msgstr "Writing your question…"
 
+#: src/writing/writing-start.tsx
+msgctxt "lECQ5R"
+msgid "With one, we write your exercise and grade what you write."
+msgstr "With one, we write your exercise and grade what you write."
+
+#: src/writing/writing-start.tsx
+msgctxt "KyaG5d"
+msgid "With one, we write your question and grade what you write."
+msgstr "With one, we write your question and grade what you write."
+
 #: src/writing/writing-text.tsx
 msgctxt "-QTlEJ"
 msgid "Past line {lines}: graders stop reading here"

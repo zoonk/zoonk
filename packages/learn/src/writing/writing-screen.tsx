@@ -13,7 +13,7 @@ import { useFinishTask } from "../essay/use-finish-essay";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { getNextStep } from "./next-step";
 import { type WritingDraftState, useWritingDraft } from "./use-writing-draft";
-import { type WritingTaskPlace, getRefusedTaskPlace, useHeaderLabel } from "./writing-header";
+import { useHeaderLabel } from "./writing-header";
 import { WritingQuestionScreen } from "./writing-question";
 import { WritingRefused } from "./writing-refused";
 import { WritingResultView } from "./writing-result";
@@ -150,7 +150,6 @@ export function WritingScreen({
   const [results, setResults] = useState(essay.drafts);
   const [mode, setMode] = useState<Mode>(() => initialMode(essay, results));
   const [rewriting, setRewriting] = useState(false);
-  const [refusedPlace, setRefusedPlace] = useState<WritingTaskPlace | null>(null);
   const draft = useWritingDraft({ actions, essay });
   const latest = results[0];
   const closed = essay.status === "completed" || essay.status === "skipped";
@@ -169,7 +168,6 @@ export function WritingScreen({
       draft.restart({ admissionId: started.admissionId, from: unsent ? draft.text : latest.text });
       setMode("write");
     } else if (started?.status === "limitReached") {
-      setRefusedPlace(started.task ? getRefusedTaskPlace(started.task) : null);
       setMode("refused");
     }
   }
@@ -184,7 +182,7 @@ export function WritingScreen({
             minutes: essay.pacing?.minutes ?? null,
             title: essay.writing.title,
             unit: essay.writing.unit,
-            writingTask: refusedPlace,
+            writingTask: essay.writingTask ?? null,
           }}
         />
       );
