@@ -1204,17 +1204,17 @@ private struct TodayMockRow: View {
   }
 }
 
-/// "Out of your plan: Língua Portuguesa, Raciocínio Lógico and 2 more": every name up to three, else
-/// the first two and how many others. Nil when nothing left.
+/// "Out of your plan: Língua Portuguesa, Raciocínio Lógico and Língua Inglesa": every name, since
+/// nothing else says what left the plan. Nil when nothing left.
 private func noticeRemovedSentence(_ names: [String]) -> String? {
   guard !names.isEmpty else {
     return nil
   }
 
   return String(
-    localized: "Out of your plan: \(shortList(names, named: names.count > 3 ? 2 : 3))",
+    localized: "Out of your plan: \(names.formatted(.list(type: .and)))",
     table: "Today",
     comment:
-      "Lists the subjects or topics the plan no longer holds, like \"Portuguese, Logic and 2 more\"."
+      "Lists every subject or topic the plan no longer holds, like \"Portuguese, Logic and English\"."
   )
 }

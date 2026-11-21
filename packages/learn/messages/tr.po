@@ -13408,7 +13408,7 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "{name} ile pratik yap"
 
-#. Lists the subjects or topics the plan no longer holds, like "Portuguese, Logic and 2 more".
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
 #: src/today/today-notice-followed.tsx
 msgctxt "YQdum0"
 msgid "Out of your plan: {names}"

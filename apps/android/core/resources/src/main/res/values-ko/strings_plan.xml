@@ -823,7 +823,7 @@
     <string name="plan_change_now_follows_notice">계획이 이제 공식 공고를 따르고 있어요</string>
     <!-- Says the plan already changed by itself. The document is the exam\'s official guide. -->
     <string name="plan_change_now_follows_guide">계획이 이제 공식 안내서를 따르고 있어요</string>
-    <!-- Lists the subjects or topics the plan no longer holds, like "Portuguese, Logic and 2 more". -->
+    <!-- Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English". -->
     <string name="plan_change_out_of_plan">계획에서 제외: %1$s</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">현재 예상 시험일은 %1$s이에요.</string>

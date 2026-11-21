@@ -2,7 +2,7 @@
 
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
 import {
   Suggestion,
@@ -13,32 +13,27 @@ import {
   SuggestionResult,
   SuggestionSaveError,
 } from "../_components/suggestion";
-import { useShortList } from "../plan/use-short-list";
 import { getChangeMark } from "./today-change-mark";
 import { useTodayScreen } from "./today-context";
 import { TodaySuggestionCard } from "./today-suggestion-card";
 
 type Change = NonNullable<TodayView["planChange"]>;
 
-/** Every name up to three; past that, two and how many more. */
-const NAMED_REMOVED = 3;
-
+/** Every name, however many: nothing else says what left the plan. */
 function useRemovedLine() {
   const t = useExtracted();
-  const shortList = useShortList();
+  const format = useFormatter();
 
   return function removedLine(removed: readonly string[]): string | null {
     if (removed.length === 0) {
       return null;
     }
 
-    const named = removed.length > NAMED_REMOVED ? NAMED_REMOVED - 1 : NAMED_REMOVED;
-
     return t({
       description:
-        'Lists the subjects or topics the plan no longer holds, like "Portuguese, Logic and 2 more".',
+        'Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".',
       message: "Out of your plan: {names}",
-      values: { names: shortList(removed, "lessons", { named }) },
+      values: { names: format.list(removed, { type: "conjunction" }) },
     });
   };
 }

@@ -7804,7 +7804,7 @@
       }
     },
     "Out of your plan: %@" : {
-      "comment" : "Lists the subjects or topics the plan no longer holds, like \"Portuguese, Logic and 2 more\".",
+      "comment" : "Lists every subject or topic the plan no longer holds, like \"Portuguese, Logic and English\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {

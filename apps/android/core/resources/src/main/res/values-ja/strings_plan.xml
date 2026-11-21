@@ -823,7 +823,7 @@
     <string name="plan_change_now_follows_notice">学習計画が公式要項に沿った内容になりました</string>
     <!-- Says the plan already changed by itself. The document is the exam\'s official guide. -->
     <string name="plan_change_now_follows_guide">学習計画が公式ガイドに沿った内容になりました</string>
-    <!-- Lists the subjects or topics the plan no longer holds, like "Portuguese, Logic and 2 more". -->
+    <!-- Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English". -->
     <string name="plan_change_out_of_plan">学習計画から外れた項目：%1$s</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">試験日は現在、%1$sの見込みです。</string>

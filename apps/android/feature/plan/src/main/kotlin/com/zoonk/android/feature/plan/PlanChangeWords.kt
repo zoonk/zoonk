@@ -189,9 +189,8 @@ private fun noticeChangedWords(change: PlanChange): ChangeWords {
     val removed = change.effect?.noticeRemoved.orEmpty()
     val notice = change.examDocument == ExamDocument.NOTICE
     val title = stringResource(if (notice) R.string.plan_change_now_follows_notice else R.string.plan_change_now_follows_guide)
-    // Three names fit a line; past that, two and how many more.
-    val names = if (removed.size <= NAMED) joinList(removed) else shortList(removed, ListKind.Lessons, named = NAMED - 1)
-    return ChangeWords(title, if (removed.isEmpty()) null else stringResource(R.string.plan_change_out_of_plan, names))
+    // Every name, however many: nothing else says what left the plan.
+    return ChangeWords(title, if (removed.isEmpty()) null else stringResource(R.string.plan_change_out_of_plan, joinList(removed)))
 }
 
 @Composable
