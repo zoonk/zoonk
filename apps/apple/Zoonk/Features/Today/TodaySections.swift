@@ -1275,20 +1275,9 @@ private func noticeRemovedSentence(_ names: [String]) -> String? {
     return nil
   }
 
-  let shown =
-    names.count > 3
-    ? Array(names.prefix(2))
-      + [
-        String(
-          localized: "\(names.count - 2) more", table: "Today",
-          comment:
-            "Ends the list of subjects that left the plan, counting the ones not named, as in “Língua Portuguesa, Raciocínio Lógico and 2 more”"
-        )
-      ]
-    : names
-
   return String(
-    localized: "Out of your plan: \(shown.formatted(.list(type: .and)))", table: "Today",
+    localized: "Out of your plan: \(shortList(names, named: names.count > 3 ? 2 : 3))",
+    table: "Today",
     comment:
       "Lists the subjects or topics the plan no longer holds, like \"Portuguese, Logic and 2 more\"."
   )
