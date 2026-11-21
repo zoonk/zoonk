@@ -111,7 +111,11 @@ export function useWritingDraft({
     () => null,
   );
 
-  const opened = openDraft({ kept: parseKeptDraft(raw), saved: essay.draft ?? null });
+  const opened = openDraft({
+    admissionId: essay.admissionId ?? null,
+    kept: parseKeptDraft(raw),
+    saved: essay.draft ?? null,
+  });
 
   // Null until the learner types or answers a conflict; before that, what the page opened with.
   const [local, setLocal] = useState<{ conflict: ServerDraft | null; text: string } | null>(null);

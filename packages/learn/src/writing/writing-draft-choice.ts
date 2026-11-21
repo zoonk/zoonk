@@ -3,7 +3,7 @@ import { deviceStorage } from "../_utils/device-storage";
 
 /**
  * What this device typed, with the admission it was typed under and the saved draft's revision it
- * was typed over. Null admission: typed before this device learned which one it was.
+ * was typed over. Null admission: typed on a block the server hadn't admitted yet.
  */
 export type Kept = { admissionId: string | null; base: number; text: string };
 
@@ -50,20 +50,25 @@ export function keepDraftText(blockId: string, kept: Kept) {
 }
 
 /**
- * What the editor opens with. This device's copy is never offered for another admission (a rewrite
- * or another device's new start), and an edit typed over an older revision than the server's isn't
- * chosen by number: the learner is asked. A cleared field is an edit like any other.
+ * What the editor opens with. This device's copy is offered only for the admission the learner is
+ * writing under now, never for an earlier one (a rewrite, another device's new start), and an edit
+ * typed over an older revision than the server's isn't chosen by number: the learner is asked. A
+ * cleared field is an edit like any other.
  */
-export function openDraft({ kept, saved }: { kept: Kept | null; saved: WritingDraft | null }): {
-  conflict: ServerDraft | null;
-  position: DraftPosition;
-  text: string;
-} {
+export function openDraft({
+  admissionId,
+  kept,
+  saved,
+}: {
+  admissionId: string | null;
+  kept: Kept | null;
+  saved: WritingDraft | null;
+}): { conflict: ServerDraft | null; position: DraftPosition; text: string } {
   const position = saved
     ? { admissionId: saved.admissionId, revision: saved.revision, text: saved.text }
-    : { admissionId: kept?.admissionId ?? null, revision: 0, text: "" };
+    : { admissionId, revision: 0, text: "" };
 
-  if (!kept || (saved && kept.admissionId && kept.admissionId !== saved.admissionId)) {
+  if (!kept || kept.admissionId !== admissionId) {
     return { conflict: null, position, text: position.text };
   }
 
