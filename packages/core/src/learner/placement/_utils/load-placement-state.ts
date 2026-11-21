@@ -89,7 +89,7 @@ async function loadPlacementFacts({
   const exam = await loadGoalExam(goalId, tx);
   const ownLevel = requestedLevel ?? exam.goalLevel;
 
-  const [answersRead, { bankItems, build }] = await readDatabaseFacts(
+  const [answersRead, build, bankItems] = await readDatabaseFacts(
     tx,
     () => loadEvidence({ sittingId: exam.test?.record?.sitting?.id ?? null, skillIds, tx, userId }),
     () =>
@@ -104,15 +104,8 @@ async function loadPlacementFacts({
         ownLevel,
         requestedSkillIds: exam.placement?.attempt?.skillIds,
         tx,
-      }).then(async (planBuild) => ({
-        bankItems: await loadPlacementItems({
-          examBlueprintId: exam.examBlueprintId,
-          skillIds,
-          tx,
-          writingSkillIds: planBuild.preparingSkillIds,
-        }),
-        build: planBuild,
-      })),
+      }),
+    () => loadPlacementItems({ examBlueprintId: exam.examBlueprintId, skillIds, tx }),
   );
 
   const answeredItems = await loadAnsweredTestItems({

@@ -53,16 +53,18 @@ function examItemFixture({ blueprintId, skillId }: { blueprintId: string; skillI
 }
 
 describe("placement questions for an exam goal", () => {
-  it("waits for the exam's question while it's written, then asks it over the general one", async () => {
-    const { blueprint, goal, skill } = await examGoalFixture();
+  it("asks a general question while placement generation is still running", async () => {
+    const { blueprint, general, goal, skill } = await examGoalFixture();
 
     await expect(readPlacement(goal.id)).resolves.toMatchObject({
-      next: null,
-      status: "waitingForQuestions",
+      next: { itemId: general.id },
+      status: "asking",
     });
 
     const exam = await examItemFixture({ blueprintId: blueprint.id, skillId: skill.id });
+    await expect(readPlacement(goal.id)).resolves.toMatchObject({ next: { itemId: general.id } });
 
+    await prisma.item.delete({ where: { id: general.id } });
     await expect(readPlacement(goal.id)).resolves.toMatchObject({ next: { itemId: exam.id } });
   });
 
@@ -80,11 +82,11 @@ describe("placement questions for an exam goal", () => {
     });
   });
 
-  it("gives a session's placement questions from the exam's own, general ones only without them", async () => {
+  it("gives session placement a general question even when the exam has one", async () => {
     const { blueprint, general, goal, skill, user } = await examGoalFixture();
     const other = await skillFixture();
 
-    const [exam, otherGeneral] = await Promise.all([
+    const [, otherGeneral] = await Promise.all([
       examItemFixture({ blueprintId: blueprint.id, skillId: skill.id }),
       itemFixture({ content: choiceItemContent(), skillId: other.id }),
     ]);
@@ -110,8 +112,7 @@ describe("placement questions for an exam goal", () => {
       userId: user.id,
     });
 
-    expect(picked.toSorted()).toStrictEqual([exam.id, otherGeneral.id].toSorted());
-    expect(picked).not.toContain(general.id);
+    expect(picked.toSorted()).toStrictEqual([general.id, otherGeneral.id].toSorted());
   });
 
   it("asks the subject worth most of the exam first, wherever the plan puts it", async () => {
@@ -182,10 +183,10 @@ describe("placement questions for an exam goal", () => {
   });
 
   it("gives a session's placement question to the subject worth most of the exam first", async () => {
-    const { blueprint, goal, skill, user } = await examGoalFixture();
+    const { blueprint, general, goal, skill, user } = await examGoalFixture();
     const ethics = await skillFixture();
 
-    const [civilItem, ethicsItem] = await Promise.all([
+    const [, ethicsItem] = await Promise.all([
       examItemFixture({ blueprintId: blueprint.id, skillId: skill.id }),
       examItemFixture({ blueprintId: blueprint.id, skillId: ethics.id }),
     ]);
@@ -225,102 +226,33 @@ describe("placement questions for an exam goal", () => {
       ),
     ).resolves.toStrictEqual([ethicsItem.id]);
 
-    await expect(pick(null)).resolves.toStrictEqual([civilItem.id]);
+    await expect(pick(null)).resolves.toStrictEqual([general.id]);
   });
 
-  it("asks only questions in the exam's own format: its option count, its kind", async () => {
-    const { blueprint, goal, skill } = await examGoalFixture();
-    const citation = { passage: "passage", sourceId: "source" };
+  it("accepts a general multiple-choice question for a true-or-false exam", async () => {
+    const { blueprint, general, goal } = await examGoalFixture();
 
-    const examFormat = (kind: "multipleChoice" | "trueFalse", options: number | null) => ({
-      formats: [{ citation, description: "The exam's items", kind, options }],
-      mock: null,
-      rules: [],
-      subjects: [],
-    });
-
-    const fiveOptions = {
-      ...choiceItemContent("Five options?"),
-      options: ["A", "B", "C", "D", "E"].map((text, index) => ({
-        isCorrect: index === 0,
-        misconception: null,
-        reason: "Why",
-        text,
-      })),
-    };
-
-    const [twoOptions, five] = await Promise.all([
-      examItemFixture({ blueprintId: blueprint.id, skillId: skill.id }),
-      prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { goalId: goal.id } }),
-      prisma.examBlueprint.update({
-        data: { structure: examFormat("multipleChoice", 5) },
-        where: { id: blueprint.id },
-      }),
-    ]).then(async ([written]) => [
-      written,
-      await itemFixture({ content: fiveOptions, examBlueprintId: blueprint.id, skillId: skill.id }),
-    ]);
-
-    await expect(readPlacement(goal.id)).resolves.toMatchObject({ next: { itemId: five?.id } });
-
-    await Promise.all([
-      prisma.item.delete({ where: { id: five?.id } }),
-      prisma.examBlueprint.update({
-        data: { structure: examFormat("trueFalse", null) },
-        where: { id: blueprint.id },
-      }),
-    ]);
-
-    const placement = await readPlacement(goal.id);
-    expect(placement?.next?.itemId).not.toBe(twoOptions?.id);
-  });
-
-  it("asks only the options the exam's latest edition had when its notice doesn't say", async () => {
-    const { blueprint, general, goal, skill } = await examGoalFixture();
-    const citation = { passage: "180 questões objetivas", sourceId: "source" };
-
-    const fiveOptions = {
-      ...choiceItemContent("Five options?"),
-      options: ["A", "B", "C", "D", "E"].map((text, index) => ({
-        isCorrect: index === 0,
-        misconception: null,
-        reason: "Why",
-        text,
-      })),
-    };
-
-    await Promise.all([
-      prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { goalId: goal.id } }),
-      prisma.examBlueprint.update({
-        data: {
-          structure: {
-            formats: [
-              { citation, description: "Objetivas", kind: "multipleChoice", options: null },
-            ],
-            mock: null,
-            pastOptions: {
-              checkedAt: "2026-10-07T00:00:00.000Z",
-              edition: "Enem 2025",
-              options: 5,
-              source: { title: null, url: "https://www.gov.br/inep" },
+    await prisma.examBlueprint.update({
+      data: {
+        structure: {
+          formats: [
+            {
+              citation: { passage: "Certo ou errado", sourceId: "notice" },
+              description: "Certo ou errado",
+              kind: "trueFalse",
+              options: null,
             },
-            rules: [],
-            subjects: [],
-          },
+          ],
+          mock: null,
+          rules: [],
+          subjects: [],
         },
-        where: { id: blueprint.id },
-      }),
-    ]);
-
-    const waiting = await readPlacement(goal.id);
-    expect(waiting?.next?.itemId).not.toBe(general.id);
-
-    const five = await itemFixture({
-      content: fiveOptions,
-      examBlueprintId: blueprint.id,
-      skillId: skill.id,
+      },
+      where: { id: blueprint.id },
     });
 
-    await expect(readPlacement(goal.id)).resolves.toMatchObject({ next: { itemId: five.id } });
+    await expect(readPlacement(goal.id)).resolves.toMatchObject({
+      next: { format: "multipleChoice", itemId: general.id },
+    });
   });
 });

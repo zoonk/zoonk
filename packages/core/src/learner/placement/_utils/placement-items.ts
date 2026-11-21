@@ -53,36 +53,3 @@ export function gradePlacementAnswer({
 }) {
   return gradeSessionAnswer({ answer, blockId: item.id, item });
 }
-
-type AudienceItem = {
-  content?: unknown;
-  examBlueprintId: string | null;
-  format: ItemFormat;
-  skillId: string;
-};
-
-/** General questions are a fallback only after matching exam-question generation ends or fails. */
-export function preferExamItems<TItem extends AudienceItem>({
-  examBlueprintId,
-  items,
-  writingSkillIds = new Set(),
-}: {
-  examBlueprintId: string | null;
-  items: readonly TItem[];
-  writingSkillIds?: ReadonlySet<string>;
-}): TItem[] {
-  if (!examBlueprintId) {
-    return [...items];
-  }
-
-  const examSkillIds = new Set(
-    items.filter((item) => item.examBlueprintId === examBlueprintId).map((item) => item.skillId),
-  );
-
-  return items.filter(
-    (item) =>
-      item.examBlueprintId === examBlueprintId ||
-      (item.examBlueprintId === null && isLowGuessTap(item)) ||
-      (!examSkillIds.has(item.skillId) && !writingSkillIds.has(item.skillId)),
-  );
-}
