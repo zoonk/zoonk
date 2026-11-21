@@ -213,7 +213,16 @@ test.describe("Written answer drafts", () => {
     const notSaved = page.getByText("Not saved yet. It's kept on this device.");
 
     try {
-      const field = await openEditor(page);
+      await page.goto("/today");
+      await page.getByRole("button", { name: "Start" }).click();
+      const write = page.getByRole("button", { exact: true, name: "Write" });
+      await expect(write).toBeEnabled();
+
+      // The connection can drop before any script requested on opening the editor arrives.
+      await page.route("**/_next/static/**/*.js", (route) => route.abort());
+      await write.click();
+      const field = page.getByLabel("Your answer");
+      await expect(field).toBeVisible();
       await page.context().setOffline(true);
       await field.fill("Typed on the train");
       await expect(notSaved).toBeVisible();

@@ -3,12 +3,12 @@
 import { type EssayDraft, MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DetailsDrawer } from "../_components/details-drawer";
-import { preloadTaskExitDialog } from "../_components/task-close";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "../essay/essay-status-line";
+import { TaskExitDialog } from "../shell/task-exit-dialog";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
 import { type WritingDraftState } from "./use-writing-draft";
 import { WritingConflictDialog } from "./writing-conflict-dialog";
@@ -38,8 +38,6 @@ export function WriteScreen({
   const label = useHeaderLabel(essay.writing);
   const fits = draft.text.length <= MAX_ESSAY_CHARACTERS;
   const canSend = draft.text.trim().length > 0 && fits && status !== "pending";
-
-  useEffect(() => void preloadTaskExitDialog(), []);
 
   const fail = () => {
     draft.lock(false);
@@ -100,6 +98,7 @@ export function WriteScreen({
             }
           : null
       }
+      exitDialog={TaskExitDialog}
       exitHref={hrefs.exit}
       fit="always"
       footer={

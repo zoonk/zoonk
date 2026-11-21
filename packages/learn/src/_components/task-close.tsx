@@ -11,15 +11,9 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { LearnLink } from "../learn-link";
 import { goBackTo, goBackToApp } from "../shell/app-history";
-import { type TaskExitConfirmation } from "../shell/task-exit-dialog";
+import { type TaskExitConfirmation, type TaskExitDialog } from "../shell/task-exit-dialog";
 
 const exitDialog = createOnDemand(() => import("../shell/task-exit-dialog"));
-
-/**
- * For a screen whose leave question comes only once something failed to save, often because the
- * connection is gone: its dialog loads while the screen opens, so it can still be asked offline.
- */
-export const preloadTaskExitDialog = exitDialog.load;
 
 type CloseLinkProps = {
   "aria-keyshortcuts"?: string;
@@ -48,6 +42,7 @@ export function TaskClose({
   beforeExit,
   className,
   confirm = null,
+  confirmationDialog: ConfirmationDialog,
   disabled = false,
   escHeld = false,
   href,
@@ -62,6 +57,8 @@ export function TaskClose({
   className?: string;
   /** Asked first, by the ✕ and by Esc, while leaving would lose something. */
   confirm?: TaskExitConfirmation | null;
+  /** A dialog the task loads with its screen so it can ask while offline. */
+  confirmationDialog?: typeof TaskExitDialog;
   disabled?: boolean;
   /** True while Esc belongs to something the screen itself opened, such as a docked panel. */
   escHeld?: boolean;
@@ -81,7 +78,8 @@ export function TaskClose({
   const linkRef = useEscapeClick<HTMLAnchorElement>({ enabled: !escHeld });
   const buttonRef = useEscapeClick<HTMLButtonElement>({ enabled: !escHeld });
   const [asking, setAsking] = useState(false);
-  const dialog = exitDialog.useModule({ enabled: Boolean(confirm) });
+  const dialog = exitDialog.useModule({ enabled: !ConfirmationDialog && Boolean(confirm) });
+  const ExitDialog = ConfirmationDialog ?? dialog?.TaskExitDialog;
 
   // What the click that presses itself again has already done: asked, or asked and saved.
   const done = useRef<"asked" | "saved" | null>(null);
@@ -96,7 +94,10 @@ export function TaskClose({
       return false;
     }
 
-    void exitDialog.load();
+    if (!ExitDialog) {
+      void exitDialog.load();
+    }
+
     setAsking(true);
     return true;
   };
@@ -148,8 +149,8 @@ export function TaskClose({
     </>
   );
 
-  const ask = confirm && dialog && (
-    <dialog.TaskExitDialog
+  const ask = confirm && ExitDialog && (
+    <ExitDialog
       confirmation={confirm}
       onLeave={() => {
         setAsking(false);
