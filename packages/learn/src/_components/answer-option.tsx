@@ -247,6 +247,17 @@ const ROW_FORMULA_CLASS =
   "has-data-[slot=inline-math]:@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
 
 /**
+ * Code keeps its shape, so its tag holds the card's end edge instead of following the words: on the
+ * code's last line while that line leaves room, and otherwise on a line under it. Code never wraps
+ * to make room.
+ */
+const ROW_CODE_CLASS =
+  "has-data-[slot=code-snippet]:flex has-data-[slot=code-snippet]:flex-wrap has-data-[slot=code-snippet]:items-baseline-last has-data-[slot=code-snippet]:gap-x-3 [&_:has([data-slot=code-snippet-line])]:contents [&_[data-slot=code-snippet-line]]:basis-full [&_[data-slot=code-snippet-line]:last-child]:basis-auto";
+
+const TAG_AFTER_CODE_CLASS =
+  "[:has([data-slot=code-snippet])>&]:ms-auto [:has([data-slot=code-snippet])>&]:min-h-0 [:has([data-slot=code-snippet])>&]:text-end";
+
+/**
  * The tag follows the words inline, and a tag on its own line starts at the text edge because the
  * space before it disappears at the break. The words wrap line by line, so a tag arriving after
  * them never moves a word, as the page's pretty wrapping would.
@@ -276,12 +287,24 @@ export function TagBesideOrUnder({
   }
 
   return (
-    <span className={cn("block w-full grow basis-1/2 [text-wrap-style:stable]", ROW_FORMULA_CLASS)}>
+    <span
+      className={cn(
+        "block w-full grow basis-1/2 [text-wrap-style:stable]",
+        ROW_FORMULA_CLASS,
+        ROW_CODE_CLASS,
+      )}
+    >
       {children}
 
-      {tag && <span className="[word-spacing:0.5rem]"> </span>}
       {tag && (
-        <LineMarker className="inline-flex h-auto min-h-lh max-w-full align-top">{tag}</LineMarker>
+        <span className="[word-spacing:0.5rem] [:has([data-slot=code-snippet])>&]:hidden"> </span>
+      )}
+      {tag && (
+        <LineMarker
+          className={cn("inline-flex h-auto min-h-lh max-w-full align-top", TAG_AFTER_CODE_CLASS)}
+        >
+          {tag}
+        </LineMarker>
       )}
     </span>
   );

@@ -1,0 +1,480 @@
+{
+  "deadline": "A dose está aprazada para 14h00. {{doctor}} atende pelo ramal do posto antes da visita das 14h20.",
+  "endings": [
+    {
+      "id": "corrected-on-time",
+      "outcome": "{{doctor}} assina a ordem de 270 mg por via oral antes das 14h00. Com a dose e a via registradas, o preparo pode seguir no horário."
+    },
+    {
+      "id": "corrected-late",
+      "outcome": "Às 14h00, a administração ainda está suspensa. O preparo só pode seguir após a visita das 14h20, quando {{doctor}} assina a ordem de 270 mg por via oral."
+    },
+    {
+      "id": "still-held",
+      "outcome": "O adendo assinado confirma a via oral, mas mantém 180 mg. {{nurse}} mantém a administração suspensa até esclarecer a dose com {{doctor}}."
+    }
+  ],
+  "meters": [
+    {
+      "id": "reliability",
+      "label": "Segurança da liberação",
+      "start": 30,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Fôlego da equipe no posto",
+      "start": 72,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Confira a dose de paracetamol de uma criança e decida **se a prescrição pode seguir para administração**. Se houver divergência, encaminhe a dúvida ao médico sem alterar a prescrição por conta própria.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 26
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "calculate-check",
+          "next": "verify",
+          "notes": [
+            {
+              "skill": "weight-dose",
+              "kind": "good",
+              "text": "Você conferiu que o peso em kg e a referência em mg/kg por dose resultavam em mg por administração. Assim, pôde apontar a diferença com o resumo sem tratar a conta como uma nova prescrição.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "18 kg × 15 mg/kg por dose = 270 mg por administração. O kg se cancela, então o resultado fica em mg por dose."
+            },
+            {
+              "from": "nurse",
+              "text": "Segurei a fila enquanto você conferia. No resumo estão 180 mg; essa diferença é pra esclarecer, não pra trocar a dose por conta própria."
+            }
+          ],
+          "text": "Peço a {{ai}} a conta só com o peso e a referência, confiro as unidades e comparo com o resumo.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 9
+            }
+          ],
+          "id": "triage-order",
+          "next": "verify",
+          "notes": [
+            {
+              "skill": "weight-dose",
+              "kind": "good",
+              "text": "Você usou os 180 mg do resumo só pra organizar a fila, sem tomar esse registro como liberação do preparo.",
+              "example": null
+            },
+            {
+              "skill": "weight-dose",
+              "kind": "improve",
+              "text": "Na conferência, multiplique o peso aferido pela referência da ficha pra ter uma dose em mg por administração que possa comparar com os 180 mg do resumo.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A fila andou sem a gente começar o preparo. Os 180 mg serviram pra organizar o posto, mas ainda falta ver se batem com o peso."
+            }
+          ],
+          "text": "Uso a dose do resumo pra organizar a fila e deixo a conta pelo peso pra conferência, sem iniciar o preparo.",
+          "timeJump": null
+        }
+      ],
+      "id": "calculate",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "O paracetamol entrou na fila de preparo. Pra organizar o posto, dá pra usar o que já está no resumo e deixar a conta pra conferência."
+        }
+      ],
+      "prompt": "Como você faz a triagem dessa dose?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 16
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "check-document",
+          "next": "brief-from-order",
+          "notes": [
+            {
+              "skill": "verify-order",
+              "kind": "good",
+              "text": "A leitura da prescrição assinada confirmou a dose em mg e mostrou que a via estava em branco. A apresentação no resumo não substituiu esse campo.",
+              "example": null
+            },
+            {
+              "skill": "weight-dose",
+              "kind": "improve",
+              "text": "Além da leitura da ordem, compare os 180 mg assinados com o resultado da conta pelo peso. Assim, a dúvida sobre a dose também entra no contato com o médico.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Na assinada estão 180 mg, e o campo da via está em branco, mesmo com solução oral no resumo. A fila andou, mas eu só conferi o que está escrito na ordem."
+            }
+          ],
+          "text": "Peço a {{nurse}} que confira a dose, a unidade e a via na prescrição assinada enquanto cuido da fila.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 22
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "reconcile",
+          "next": "brief-with-dose",
+          "notes": [
+            {
+              "skill": "verify-order",
+              "kind": "good",
+              "text": "Você conferiu o campo da via na ordem assinada em vez de deduzir a via pela apresentação no resumo.",
+              "example": null
+            },
+            {
+              "skill": "weight-dose",
+              "kind": "good",
+              "text": "Você comparou os 180 mg da ordem assinada com os 270 mg por administração calculados pelo peso. Isso deixou claro qual diferença levar ao médico.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Fiquei com a fila enquanto você cruzava os dados. São 180 mg na ordem assinada contra 270 mg por administração pela conta do peso."
+            },
+            {
+              "from": "nurse",
+              "text": "E a via ficou em branco na ordem. Solução oral é a apresentação no resumo, não a via prescrita."
+            }
+          ],
+          "text": "Confiro a dose, a unidade e a via na prescrição assinada e comparo a dose registrada com a conta pelo peso.",
+          "timeJump": null
+        }
+      ],
+      "id": "verify",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "No resumo aparece solução oral. Posso abrir a prescrição assinada e bater o olho nos campos enquanto você toca a fila."
+        }
+      ],
+      "prompt": "Como você confere o que está na prescrição assinada?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 18
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "wait-round",
+          "next": "corrected-late",
+          "notes": [
+            {
+              "skill": "brief-doctor",
+              "kind": "good",
+              "text": "Você levou ao médico tanto a diferença na dose quanto a falta da via e manteve o preparo suspenso até a correção assinada.",
+              "example": null
+            },
+            {
+              "skill": "brief-doctor",
+              "kind": "improve",
+              "text": "Como a visita era depois das 14h00, dava pra usar o ramal e passar os mesmos dados que você já tinha em mãos, sem esperar pra mostrar a tela.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Com a ficha e a ordem abertas, confirmei a dose e assinei a correção. O horário do aprazamento já passou com a administração suspensa."
+            }
+          ],
+          "text": "Mantenho o preparo suspenso e, na visita, mostro a conta e a via em branco a {{doctor}}. Peço a correção assinada.",
+          "timeJump": {
+            "label": "Até a visita das 14h20.",
+            "panel": {
+              "title": "Após a visita médica",
+              "metrics": [
+                {
+                  "label": "Visita médica",
+                  "value": "14h20",
+                  "note": null
+                },
+                {
+                  "label": "Ordem assinada",
+                  "value": "270 mg por via oral",
+                  "note": "Dose confirmada na visita."
+                },
+                {
+                  "label": "Administração às 14h00",
+                  "value": "Suspensa",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -4
+            }
+          ],
+          "id": "call-with-dose",
+          "next": "corrected-on-time",
+          "notes": [
+            {
+              "skill": "brief-doctor",
+              "kind": "good",
+              "text": "Você passou pelo ramal os dados que o médico precisava pra resolver a dose e a via no mesmo contato. O pedido foi de uma correção assinada, não só de uma confirmação por telefone.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Com esses dados, confirmei o peso de 18 kg e a dose no ramal. Já assinei a ordem de 270 mg por via oral."
+            },
+            {
+              "from": "nurse",
+              "text": "A ligação tomou um tempo no posto, mas a ordem assinada já está no prontuário, antes das 14h00. Dá pra conferir a correção sem perder o horário."
+            }
+          ],
+          "text": "Ligo pra {{doctor}} com o peso, os 180 mg registrados, os 270 mg calculados e a via em branco. Peço a correção assinada.",
+          "timeJump": null
+        }
+      ],
+      "id": "brief-with-dose",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "O preparo segue suspenso. Na ordem estão 180 mg sem via, e a conta pelo peso deu 270 mg por administração."
+        },
+        {
+          "from": "nurse",
+          "text": "Na visita das 14h20 dá pra mostrar a ficha e a ordem na mesma tela, sem interromper o atendimento no ramal. A dose está aprazada pras 14h00."
+        }
+      ],
+      "prompt": "Como você leva a divergência a {{doctor}}?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 6
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "ask-route-first",
+          "next": "still-held",
+          "notes": [
+            {
+              "skill": "brief-doctor",
+              "kind": "improve",
+              "text": "O pedido resolveu a via, mas deixou a dose pra outro contato. Leve ao médico a dose registrada e o resultado da conta pelo peso junto com a dúvida sobre a via.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Já assinei o adendo com a via oral. Os 180 mg ficaram como estavam."
+            },
+            {
+              "from": "nurse",
+              "text": "A via saiu rápido, mas a dose ainda não foi esclarecida. Vou manter a administração suspensa; falta falar com ele sobre os 180 mg."
+            }
+          ],
+          "text": "Ligo pra {{doctor}} pedindo que registre a via. Deixo a conferência da dose pra quando a equipe retomar o preparo.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 14
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "calculate-and-call",
+          "next": "corrected-on-time",
+          "notes": [
+            {
+              "skill": "weight-dose",
+              "kind": "good",
+              "text": "Você conferiu a dose por administração pelo peso, sem tomar os 180 mg da ordem como um valor já validado.",
+              "example": null
+            },
+            {
+              "skill": "brief-doctor",
+              "kind": "good",
+              "text": "Você levou a divergência de dose e a falta da via no mesmo pedido de correção assinada.",
+              "example": "“O peso aferido é 18 kg. A ordem traz 180 mg sem via, e pela ficha a conta dá 270 mg por administração. Pode confirmar a dose e assinar a correção com a via?”"
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A conta pela referência da ficha deu 270 mg por administração. Fiquei com a fila enquanto você fechava a comparação com os 180 mg."
+            },
+            {
+              "from": "doctor",
+              "text": "Confirmei os 18 kg e a dose na ligação. Assinei a ordem de 270 mg por via oral, e ela já está disponível antes das 14h00."
+            }
+          ],
+          "text": "Confiro a conta pelo peso e ligo pra {{doctor}} com o peso, as duas doses e a via em branco. Peço a correção assinada.",
+          "timeJump": null
+        }
+      ],
+      "id": "brief-from-order",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "O preparo continua suspenso. A ordem assinada traz 180 mg, e a via está em branco."
+        },
+        {
+          "from": "nurse",
+          "text": "Se for só pra pedir que ele preencha a via, a ligação é rápida. A dose fica pra gente conferir quando retomar o preparo."
+        }
+      ],
+      "prompt": "O que você vai levar a {{doctor}} na ligação?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Ficha e resumo do aprazamento",
+      "metrics": [
+        {
+          "label": "Peso aferido",
+          "value": "18 kg",
+          "note": "Registro da admissão."
+        },
+        {
+          "label": "Referência da ficha",
+          "value": "15 mg/kg por dose",
+          "note": "Paracetamol."
+        },
+        {
+          "label": "Dose no resumo",
+          "value": "180 mg",
+          "note": "Aprazamento das 14h00."
+        },
+        {
+          "label": "Apresentação",
+          "value": "solução oral",
+          "note": "Cadastro do medicamento no resumo."
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Plantão no Hospital Vale de Ipê",
+  "skills": [
+    {
+      "id": "weight-dose",
+      "name": "Calcular dose por peso",
+      "practice": "Use o peso e a referência do painel para calcular a dose por administração em mg, escrevendo as unidades até o resultado."
+    },
+    {
+      "id": "verify-order",
+      "name": "Conferir a prescrição",
+      "practice": "Na ordem deste caso, aponte a unidade da dose, a apresentação do medicamento e o campo da via, sem tratar um como substituto do outro."
+    },
+    {
+      "id": "brief-doctor",
+      "name": "Comunicar uma dúvida ao médico",
+      "practice": "Faça um pedido curto ao médico com o peso, a dose registrada, a dose calculada e o que precisa ser confirmado na prescrição."
+    }
+  ],
+  "startNodeId": "calculate",
+  "summary": [
+    "Multiplique o peso aferido em kg pela referência em mg/kg por dose pra obter a dose em mg por administração.",
+    "A apresentação do medicamento não substitui a via explícita na prescrição assinada.",
+    "Ao pedir esclarecimento ao prescritor, informe o peso, a dose registrada, a dose calculada e o que precisa ser confirmado."
+  ],
+  "team": [
+    {
+      "id": "nurse",
+      "role": "Enfermeira de referência",
+      "expertise": "Confere a pesagem e a prescrição assinada; quer manter o fluxo do plantão sem liberar uma ordem incompleta.",
+      "ai": false
+    },
+    {
+      "id": "doctor",
+      "role": "Médico do plantão",
+      "expertise": "Pode confirmar a intenção clínica e assinar a correção; precisa saber o que está divergente para resolver a pendência no mesmo contato.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Apoio de cálculo",
+      "expertise": "Refaz a conta com valores sem identificação do paciente e explicita as unidades; não valida nem altera prescrições.",
+      "ai": true
+    }
+  ],
+  "title": "A dose de paracetamol pode ser liberada?"
+}

@@ -6,6 +6,8 @@ type GenerateItemsInput = Omit<
   "model" | "useFallback" | "reasoning"
 >;
 
+export type GenerateItemsExpected = { empty: true };
+
 const ITEMS_PER_CASE = 3;
 
 export const ENEM = {
@@ -41,7 +43,7 @@ const AP_BIOLOGY = {
     "multipleChoice (4 options): questions on data, experiments and models. essay: free-response questions with parts (a), (b), (c) and (d) using task verbs (identify, describe, explain, predict, justify), scored with point-based scoring guidelines.",
 };
 
-export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
+export const TEST_CASES: TestCase<GenerateItemsExpected, GenerateItemsInput>[] = [
   {
     expectations: `One original AP Biology free-response question in English on enzyme activity, with lettered parts that use AP task verbs (identify, describe, explain, predict or justify) around an experiment or data. Its rubric must read like AP scoring guidelines: one row per point-bearing part, each description saying exactly what earns the points, and every row with whole points (1 to 3), adding up to a realistic total for a short free-response question (4 to 10). It must not copy a real College Board question.`,
     id: "en-ap-biology-free-response-essay",
@@ -264,6 +266,7 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
   },
   {
     expectations: `No items: "Words in Context" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).`,
+    expected: { empty: true },
     id: "en-sat-words-in-context-numeric-none",
     userInput: {
       count: ITEMS_PER_CASE,

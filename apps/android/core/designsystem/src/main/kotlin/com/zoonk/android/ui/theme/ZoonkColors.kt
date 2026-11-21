@@ -43,6 +43,10 @@ data class ZoonkColors(
     val vizAccent: Color,
     val vizSecondary: Color,
     val vizHighlight: Color,
+    /** Words in the three hues above, such as code's keywords, built-ins and literals: readable on any of the app's grounds. */
+    val vizAccentText: Color,
+    val vizSecondaryText: Color,
+    val vizHighlightText: Color,
     /** A chart's fourth to sixth series, after the three above; nothing else. */
     val vizSeries4: Color,
     val vizSeries5: Color,
@@ -82,6 +86,9 @@ internal fun ZoonkPalette.zoonkColors() =
         vizAccent = vizAccent,
         vizSecondary = vizSecondary,
         vizHighlight = vizHighlight,
+        vizAccentText = vizAccentText,
+        vizSecondaryText = vizSecondaryText,
+        vizHighlightText = vizHighlightText,
         vizSeries4 = vizSeries4,
         vizSeries5 = vizSeries5,
         vizSeries6 = vizSeries6,

@@ -179,7 +179,7 @@ export function useMockDrafts({
     show: (itemId: string) => {
       shown.current = { at: Date.now(), itemId };
     },
-    toggleFlag: (itemId: string) => {
+    toggleUnsure: (itemId: string) => {
       unsavedText.current = null;
       saveText();
       const draft = withTimeSpent(itemId);

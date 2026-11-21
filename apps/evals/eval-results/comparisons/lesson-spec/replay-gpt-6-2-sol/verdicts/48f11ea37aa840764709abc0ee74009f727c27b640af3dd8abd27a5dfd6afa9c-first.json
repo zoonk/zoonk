@@ -1,0 +1,297 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005289439999999999,
+  "failures": [],
+  "packetId": "48f11ea37aa840764709abc0ee74009f727c27b640af3dd8abd27a5dfd6afa9c",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and locating the lobes and connecting them to their jobs are closely linked skills for one lesson.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same screen plan, including a guess that gives its answer in the brief rather than leaving it as a prediction.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both have the same visual problems: the anatomy screens do not identify or highlight the lobes as required, and the location guess has no brain image.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English and mostly accessible beginner language, with no meaningful difference in level or scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The anatomy explanations show regions labeled only by location, not the lobe names, and do not highlight the lobe being taught; this fails the requirement to show the lobes labeled or highlight the target lobe.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is left to connect spoken lobe names to brain locations without the required visual identification.",
+            "location": {
+              "detail": "the explanation screens describing frontal, occipital, temporal, and parietal lobes",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The traffic-light guess asks where visual processing occurs but shows no brain diagram or marked location.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must imagine the brain locations to answer a question that depends on seeing them.",
+            "location": {
+              "detail": "the traffic-light guess screen",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess brief states the correct answer and identifies the tempting answer, so it does not leave the prediction unanswered.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following the brief may reveal the answer before the learner can make a meaningful guess.",
+            "location": {
+              "detail": "“near the back of the head is right, and near the forehead is tempting”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The anatomy explanations show regions labeled only by location, not the lobe names, and do not highlight the lobe being taught; this fails the requirement to show the lobes labeled or highlight the target lobe.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is left to connect spoken lobe names to brain locations without the required visual identification.",
+            "location": {
+              "detail": "the explanation screens describing frontal, occipital, temporal, and parietal lobes",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The traffic-light guess asks where visual processing occurs but shows no brain diagram or marked location.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must imagine the brain locations to answer a question that depends on seeing them.",
+            "location": {
+              "detail": "the traffic-light guess screen",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess brief states the correct answer and identifies the tempting answer, so it does not leave the prediction unanswered.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following the brief may reveal the answer before the learner can make a meaningful guess.",
+            "location": {
+              "detail": "“near the back of the head is right, and near the forehead is tempting”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, including the same major visual and guess-design problems."
+        },
+        "pairId": "0406cb2a-5009-49fe-8f9d-2f05592277be"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both teach the same single procedure: measure an increase or decrease against its starting value.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A starts with an everyday salary question; B opens with formal notation and then adds abstract concepts before the learner has intuition. Both also disclose the answer in the guess brief.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use text-only screens where appropriate and present the wage data as tables in the brief, with no meaningful visual-plan difference.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A stays focused on beginner percent change. B starts with symbols and adds percentage-point change and logarithmic returns, which are advanced and outside this lesson’s scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess brief includes the correct answer, so it is not an unanswered prediction.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following the plan may reveal the answer before the learner gets to make a guess.",
+            "location": {
+              "detail": "“Options: 50%, 100%, 200%; correct: 100%.”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The hook is a formal equation defining percent change rather than an everyday scene, and it introduces notation before intuition.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner may be put off or confused before getting a concrete entry point to the idea.",
+            "location": {
+              "detail": "“Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The opening explanation brings in percentage-point change and logarithmic returns, which are outside this lesson and not beginner-level ideas.",
+            "criterion": "levelAndScope",
+            "learnerCost": "These extra concepts distract from the basic procedure and may leave the learner unsure what they need to learn.",
+            "location": {
+              "detail": "“distinguish it from percentage-point change and from logarithmic returns.”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess brief includes the correct answer, so it is not an unanswered prediction.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following the plan may reveal the answer before the learner gets to make a guess.",
+            "location": {
+              "detail": "“Options: 50%, 100%, 200%; correct: 100%.”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A is a much better beginner plan: it opens with a concrete situation and stays on percent change. B’s formal, out-of-scope opening risks losing the learner."
+        },
+        "pairId": "66f567c4-d5d8-4139-a810-969a72d0020d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both keep the lesson to the linked skills of locating lobes and connecting them with their jobs.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives a more coherent progression from a concrete sight-related puzzle to naming and applying the lobes. A’s guess reveals its answer and lacks a visual; B also reveals its guess answer, but shows a diagram for that prediction.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B generally supplies useful brain diagrams and a numbered brain for its application, unlike A’s unillustrated location guess. B still leaves its location check without a diagram and misuses a diagram template on an explanation screen.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "B",
+            "reason": "B remains beginner-friendly and gives more concrete everyday examples; A and B both use US English and stay on the lesson topic.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The anatomy explanations show regions labeled only by location, not the lobe names, and do not highlight the lobe being taught; this fails the requirement to show the lobes labeled or highlight the target lobe.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is left to connect spoken lobe names to brain locations without the required visual identification.",
+            "location": {
+              "detail": "the explanation screens describing frontal, occipital, temporal, and parietal lobes",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The traffic-light guess asks where visual processing occurs but shows no brain diagram or marked location.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must imagine the brain locations to answer a question that depends on seeing them.",
+            "location": {
+              "detail": "the traffic-light guess screen",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess brief states the correct answer and identifies the tempting answer, so it does not leave the prediction unanswered.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following the brief may reveal the answer before the learner can make a meaningful guess.",
+            "location": {
+              "detail": "“near the back of the head is right, and near the forehead is tempting”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The location/function explanations do not consistently show all lobes labeled or highlight the lobe being taught; the diagrams describe colored regions, with only some of the lobe names included.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner may not be able to reliably connect each named lobe to its position in the brain.",
+            "location": {
+              "detail": "the explanation screens using diagrams with only some lobe names",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The check asks whether a brain region is near the forehead or the back of the head but has no brain diagram or marked spot.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner has to imagine the relevant locations to answer a question that depends on seeing them.",
+            "location": {
+              "detail": "the researcher check about the brain region for processing screen colors",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The completed labeled-diagram template is assigned to an explanation screen, even though the template is meant to be used as an activity.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The plan does not clearly tell the writer or app how the learner should encounter or use the diagram.",
+            "location": {
+              "detail": "the explanation screen with activityTemplate “labeledDiagram”",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The guess brief gives the answer and the tempting choice instead of leaving the prediction open.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following the plan may reveal the answer before the learner can make a meaningful prediction.",
+            "location": {
+              "detail": "“Answer: the back; the tempting choice is the front”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B is a substantially better-designed lesson, with a clearer sequence and much stronger brain visuals. Its missing check visual and template misuse are real flaws, but A has more severe gaps in the required brain visuals."
+        },
+        "pairId": "bf376485-f1ce-460a-bed4-acfbd6a5999c"
+      }
+    ]
+  }
+}

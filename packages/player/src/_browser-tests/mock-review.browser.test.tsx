@@ -19,6 +19,7 @@ function entry(overrides: Partial<MockReviewEntry> & { number: number }): MockRe
     section: 0,
     set: null,
     total: 10,
+    unsure: false,
     ...overrides,
   };
 }
@@ -58,7 +59,7 @@ describe("a mock exam's questions to review", () => {
     await expect.element(list.getByRole("listitem")).toHaveLength(REVIEW.length);
     await expect.element(list.getByText("3", { exact: true })).toBeVisible();
     await expect.element(row(4)).toHaveAttribute("aria-expanded", "false");
-    expect(row(4).element().textContent).toMatch(/Question 4 of 10.+Languages$/u);
+    expect(row(4).element().textContent).toMatch(/Question 4 of 10.+Languages.+Wrong$/u);
     await expect.element(page.getByText("Why question 4 went wrong.")).not.toBeInTheDocument();
   });
 
@@ -105,6 +106,49 @@ describe("a mock exam's questions to review", () => {
 
     await expect.element(answers.getByText("The right option")).toBeVisible();
     await expect.element(answers.getByText("Your answer")).not.toBeInTheDocument();
+  });
+
+  it("ends a row the learner wasn't sure of with it, and shows a right one's answer once", async () => {
+    const review = [
+      entry({ number: 4, unsure: true }),
+      entry({ learnerAnswer: "The right option", number: 8, outcome: "right", unsure: true }),
+    ];
+
+    render(<MockReview review={review} sections={[]} trueFalseLabels="trueFalse" />);
+
+    await expect.element(row(8)).toBeVisible();
+
+    expect(row(4).element().textContent).toMatch(/Question 4 of 10.+Languages.+Wrong.+Not sure$/u);
+    expect(row(8).element().textContent).toMatch(/Question 8 of 10.+Languages.+Right.+Not sure$/u);
+
+    await row(8).click();
+
+    const answers = page.getByRole("group", { name: "Your answer and the right one" });
+
+    await expect.element(answers.getByText("The right option")).toBeVisible();
+    expect(answers.element().textContent?.match(/The right option/gu)).toHaveLength(1);
+  });
+
+  it("shows a right typed answer as the learner wrote it, since the key may accept others", async () => {
+    const review = [
+      entry({
+        correctAnswer: "0.5",
+        format: "typed",
+        learnerAnswer: "1/2",
+        number: 6,
+        outcome: "right",
+        unsure: true,
+      }),
+    ];
+
+    render(<MockReview review={review} sections={[]} trueFalseLabels="trueFalse" />);
+
+    await row(6).click();
+
+    const answers = page.getByRole("group", { name: "Your answer and the right one" });
+
+    await expect.element(answers.getByText("1/2")).toBeVisible();
+    await expect.element(answers.getByText("0.5")).not.toBeInTheDocument();
   });
 
   it("draws nothing when every answer was right", async () => {

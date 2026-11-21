@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-particle-in-a-box-advanced",
+        "claimId": "7591d4c097f981c2",
+        "criterion": "fitAndApplication",
+        "observationId": "97b4b7b49fd53e697e5acd7914a46652bbfe8a2a60339a58f9a6c97e381043d0.first.37c5d6fa-efc8-470a-9f82-aaf289d76823.7",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0046079499999999995,
+    "id": "432daa13eaea055d0ea4ac9f31cc81d5f6052ec2b496509b2deec9626fa40c22",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "4e2c1e46e5012d37",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "143064c4bd0b04d7c58235ecffc4f5eb2f808336d44336c1b29849f7fd91d763",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
+          "format": "text"
+        },
+        "claim": "Introduces V(x) = 0 and the wave function ψ before the pinned guitar string analogy on screen 2, and never introduces or explains the terms 'boundary condition' or 'quantized', breaking the written expectation.",
+        "claimId": "7591d4c097f981c2",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screen 2 and whole lesson",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "4e2c1e46e5012d37",
+          "finding": "doesn't hold",
+          "reason": "The term 'additive inverse' appears in neither output. Output A's screen 5 is 'Zero is a stop, not a wall' and Output B's screen 5 is 'Decomposing the increment', and neither uses that term, so the claim misidentifies the content."
+        },
+        {
+          "claimId": "7591d4c097f981c2",
+          "finding": "holds",
+          "reason": "In Output B, screen 2 ('Pinned at both ends') introduces V(x)=0 and ψ before the guitar-string comparison, which comes last, against the expectation that the string analogy precede the notation. Output B never uses 'boundary condition' or 'quantized'. Output A does introduce 'boundary conditions' and explains them, so the missing-term problem is specific to B, though A shares the notation-before-analogy ordering."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

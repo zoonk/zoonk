@@ -228,6 +228,13 @@ export const findOfficialSourcesTask: Task<
   generate: findOfficialSources,
   id: "find-official-sources",
   name: "Find official sources",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code: the documents the research reads",
+    reason: "A missed official page loses facts for every learner of the exam",
+    waits: "Set by the caller",
+  },
   score: scoreFoundSources,
   testCases: TEST_CASES,
 };

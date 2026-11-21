@@ -52,6 +52,22 @@ private val math =
         options = listOf("\$x^6 y$", "\$C_{A0} = 2$ mol/L", "\$E_a$ = 50 kJ/mol", "costs \$5 or \$10"),
     )
 
+private val code =
+    Question(
+        itemId = "code",
+        format = QuestionFormat.MultipleChoice,
+        question = "Which version prints every number in the list?",
+        context =
+            "A student wrote this program:\n```python\nfor i in range(3):\n    if i > 0:\n" +
+                "        print(f\"item {i}\", sorted(values, key=lambda v: v.weight))\n```",
+        options =
+            listOf(
+                "```python\nfor n in numbers:\n    print(n)\n```",
+                "```python\nfor n in range(len(numbers) - 1):\n    print(numbers[n])\n```",
+                "Use `print(numbers)` once",
+            ),
+    )
+
 private val severalPicks =
     choice.copy(
         itemId = "several",
@@ -152,6 +168,21 @@ internal fun QuestionMath() {
             words = TrueFalseWords.TrueFalse,
             timedOut = false,
         )
+    }
+}
+
+@Composable
+internal fun QuestionCode() {
+    Samples {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            ItemSupport(code)
+            QuestionTitle(code.question)
+            QuestionAnswer(code, TrueFalseWords.TrueFalse, false, null, null, true, {}, {})
+        }
+        Sample(code.copy(itemId = "code-checked"), graded = true) {
+            val check = AnswerCheck(Answer.Choice(1), Answer.Choice(0), false)
+            QuestionAnswer(code, TrueFalseWords.TrueFalse, false, check, null, false, {}, {})
+        }
     }
 }
 

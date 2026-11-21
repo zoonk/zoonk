@@ -1,0 +1,209 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01155699,
+  "failures": [],
+  "packetId": "8133c96e24fad61372b52127a987ad169be98db374ac7a5ebb4708bc2ab41d8f",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A opens with an everyday question about a salary rise and explains the idea before any formula; B's opening is a formal definition.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A's first screen is a scene that ends on a question, and it keeps to one idea per screen; B's opening screen is a formula and its second screen adds percentage points and logarithmic returns.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs share the same tables and text-only screens after the first two, so neither shows more or less than the other where it matters.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A's first screen is a plain everyday scene; B brings in logarithmic returns and a formula, which a beginner cannot follow.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The first screen is a formal formula definition rather than a scene that asks a question, breaking the hook expectation and putting a formula before any intuition for a beginner.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner meets a formula before they have any sense of why percent change matters, and may stop reading.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The second explanation brings in percentage-point change and logarithmic returns, which belong to other lessons or beyond beginner level, and uses the word relative change with no everyday anchor.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner is pulled into jargon and extra ideas, so the one idea of percent change gets lost.",
+            "location": {
+              "detail": "distinguish it from percentage-point change and from logarithmic returns",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's opening scene and single-idea explanations serve a beginner; B opens with a formula and extra jargon that a learner would not follow."
+        },
+        "pairId": "aef50dcf-317d-45ad-9438-aa27e45f09fb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach one skill, following water through the cycle, in one lesson.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "Only A explains how water moves inland by wind, which the hook asks about, so its route holds together from ocean to farm.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A's activity includes the wind step and its pictures cover the route; B's ordering skips the inland move.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both stay at beginner level in plain words with no formulas.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The same condensation picture appears twice, and the second explanation repeats the picture with nothing new added.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The repeated picture adds nothing and slightly slows the reader.",
+            "location": {
+              "detail": "The visible white cloud is made of drops, not water vapor.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "No screen explains how the cloud's water moves inland from the ocean, so the hook's question about the creek's rain is left unanswered.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner can't explain the route from ocean to inland rain, which is the lesson's main point.",
+            "location": {
+              "detail": "No screen explains how the cloud's water moves inland from the ocean, so the hook's question about the creek's rain is left unanswered.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The processOrder brief skips the wind step, so the sequence jumps from cloud drops to rain on a slope with no way for the cloud to move inland.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner can't order the route correctly and misses that the water travels inland through the air.",
+            "location": {
+              "detail": "cooling turns some of it into cloud drops (`cloud`), rain falls on a slope (`cloud-rain`)",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A explains how ocean water travels inland by wind and orders the full route, so its learner can answer the hook; B never explains the inland move."
+        },
+        "pairId": "c6872bf4-23e9-4ee0-b536-faa2a9b2037e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither is better on this criterion.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither is better on this criterion.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither is better on this criterion.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither is better on this criterion.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "No screen explains how the cloud's water moves inland from the ocean, so the hook's question about the creek's rain is left unanswered.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner can't explain the route from ocean to inland rain, which is the lesson's main point.",
+            "location": {
+              "detail": "No screen explains how the cloud's water moves inland from the ocean, so the hook's question about the creek's rain is left unanswered.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The processOrder brief skips the wind step, so the sequence jumps from cloud drops to rain on a slope with no way for the cloud to move inland.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner can't order the route correctly and misses that the water travels inland through the air.",
+            "location": {
+              "detail": "cooling turns some of it into cloud drops (`cloud`), rain falls on a slope (`cloud-rain`)",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "No screen explains how the cloud's water moves inland from the ocean, so the hook's question about the creek's rain is left unanswered.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner can't explain the route from ocean to inland rain, which is the lesson's main point.",
+            "location": {
+              "detail": "No screen explains how the cloud's water moves inland from the ocean, so the hook's question about the creek's rain is left unanswered.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The processOrder brief skips the wind step, so the sequence jumps from cloud drops to rain on a slope with no way for the cloud to move inland.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner can't order the route correctly and misses that the water travels inland through the air.",
+            "location": {
+              "detail": "cooling turns some of it into cloud drops (`cloud`), rain falls on a slope (`cloud-rain`)",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "e7aa52cd-3a45-448e-ba07-8822a5e65579"
+      }
+    ]
+  }
+}

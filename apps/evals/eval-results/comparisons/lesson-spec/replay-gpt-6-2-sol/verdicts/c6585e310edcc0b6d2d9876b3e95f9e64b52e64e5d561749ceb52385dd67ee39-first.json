@@ -1,0 +1,185 @@
+{
+  "attempt": "first",
+  "costUsd": 0.011666389999999999,
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Preferred one of two identical outputs.",
+    "Verdict does not cover the sealed criteria or outputs."
+  ],
+  "packetId": "c6585e310edcc0b6d2d9876b3e95f9e64b52e64e5d561749ceb52385dd67ee39",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach the same single idea, fixed versus variable cost, with the same skill and no split.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's check teaches the wrong answer that total fabric cost stays the same when fewer shirts are made, while B's check gives the correct answer (it falls) and names the tempting 'ficar igual'.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same categorize activity and no visuals, and neither has a visual problem the other lacks.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in Brazilian Portuguese at beginner level with the same everyday examples and the same scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check's stated answer is wrong: if fewer t-shirts are made with the same fabric price, the total fabric cost used goes down, not up or stays the same.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner is taught that variable material cost does not change with output, which is the exact rule this lesson exists to teach, so they will apply it wrongly in their own business.",
+            "location": {
+              "detail": "Resposta: ficar igual, porque o preço do tecido não muda; incluir “diminuir” como a resposta tentadora.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B gets the fabric check right, which keeps the core variable-cost rule correct; A teaches the opposite of it in one check."
+        },
+        "pairId": "2b722140-42c2-420e-b771-026db94273d7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both split the lesson the same way into acquisition and loss of stability, with one skill each and no bundling of unrelated ideas.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow the screen order and cover the three-year rule, the commission evaluation and the three ways to lose the post; A has a dated worked example for counting years while B has a numeric 20% example, so each is stronger in a different spot.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B uses a comparison table for two requests and two proposals, which fits data to compare, while A uses no visual at all and the text-only screens are harder to follow.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in Brazilian Portuguese with Brazilian names and cite art. 41 correctly, and both use some legal jargon for beginners.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The worked example brief gives the steps to confirm but no dates or counting, so the learner never sees how the three years run from the start of work.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner may not understand how the start date of the three-year period is counted, which is the main skill of the lesson.",
+            "location": {
+              "detail": "Revelar os passos: conferir ingresso em cargo efetivo por concurso; conferir os três anos; conferir a avaliação especial; concluir que reúne os requisitos.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The phrase 'exercício funcional contado para essa finalidade' is vague and not explained for a beginner; the term 'efetivo exercício' is not defined in plain words.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner may not understand what counts as the three years of service, and so may miscount their own time.",
+            "location": {
+              "detail": "O prazo é de três anos de efetivo exercício, isto é, de exercício funcional contado para essa finalidade",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The fiscal limit explanation gives the rule in the abstract with no number, so the learner cannot see how much the 20% cut is or why a partial cut would not count.",
+            "criterion": "screenPlan",
+            "learnerCost": "The rule stays abstract and the learner has no concrete case to test it against, making it harder to apply in the final application.",
+            "location": {
+              "detail": "reduzir em pelo menos 20% as despesas com cargos em comissão e funções de confiança e exonerar servidores não estáveis",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": null,
+        "pairId": "7c19a093-a2d2-41d8-b2a7-26ce6ecf7221"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both split the lesson the same way into acquisition and loss of stability, with one skill each and no bundling of unrelated ideas.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow the screen order and cover the three-year rule, the commission evaluation and the three ways to lose the post; A has a dated worked example for counting years while B has a numeric 20% example, so each is stronger in a different spot.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B uses a comparison table for two requests and two proposals, which fits data to compare, while A uses no visual at all and the text-only screens are harder to follow.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in Brazilian Portuguese with Brazilian names and cite art. 41 correctly, and both use some legal jargon for beginners.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The worked example brief gives the steps to confirm but no dates or counting, so the learner never sees how the three years run from the start of work.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner may not understand how the start date of the three-year period is counted, which is the main skill of the lesson.",
+            "location": {
+              "detail": "Revelar os passos: conferir ingresso em cargo efetivo por concurso; conferir os três anos; conferir a avaliação especial; concluir que reúne os requisitos.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The phrase 'exercício funcional contado para essa finalidade' is vague and not explained for a beginner; the term 'efetivo exercício' is not defined in plain words.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner may not understand what counts as the three years of service, and so may miscount their own time.",
+            "location": {
+              "detail": "O prazo é de três anos de efetivo exercício, isto é, de exercício funcional contado para essa finalidade",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The fiscal limit explanation gives the rule in the abstract with no number, so the learner cannot see how much the 20% cut is or why a partial cut would not count.",
+            "criterion": "screenPlan",
+            "learnerCost": "The rule stays abstract and the learner has no concrete case to test it against, making it harder to apply in the final application.",
+            "location": {
+              "detail": "reduzir em pelo menos 20% as despesas com cargos em comissão e funções de confiança e exonerar servidores não estáveis",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": null,
+        "pairId": "879dc1ab-2ad2-438e-a978-84ab59a0b8d8"
+      }
+    ]
+  }
+}

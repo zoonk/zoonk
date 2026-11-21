@@ -18,6 +18,13 @@ export const setupLessonOutlineTask: Task<
   generate: generateSetupLessonOutline,
   id: "setup-lesson-outline",
   name: "Setup lesson outline",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "A lesson writer and then a learner read the new lesson outline",
+    reason: "The learner waits; the cheapest that met every rule",
+    waits: "A learner waits after choosing to set up a tool",
+  },
   score: scoreSetupLessonOutline,
   testCases: TEST_CASES,
 };

@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
@@ -53,6 +54,34 @@ export const checkLessonWriterOutput: TaskCodeChecks = async ({ output, testCase
 
   return {
     judgedOutput: output,
+    ...answerKeyEvidence((label) => ({
+      ...lesson,
+      screens: lesson.screens.map((screen, index) => {
+        const locator = `screens[${index}]`;
+
+        switch (screen.kind) {
+          case "check":
+          case "hookGuess":
+          case "mathCheck":
+          case "typedAnswer":
+            return label(screen, locator);
+          case "activity": {
+            const converted = result.screens[index];
+
+            return label(
+              converted?.ok ? { ...screen, content: converted.content } : screen,
+              locator,
+            );
+          }
+          case "explanation":
+          case "hookText":
+          case "workedExample":
+            return screen;
+          default:
+            return screen satisfies never;
+        }
+      }),
+    })),
     passed: total - failingScreens.size,
     problems: problems.map((problem) =>
       problem.screen === null

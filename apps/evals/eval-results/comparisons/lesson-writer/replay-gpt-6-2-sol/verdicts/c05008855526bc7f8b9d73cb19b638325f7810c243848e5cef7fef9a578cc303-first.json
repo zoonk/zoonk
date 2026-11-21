@@ -1,0 +1,156 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00693469,
+  "failures": [],
+  "packetId": "c05008855526bc7f8b9d73cb19b638325f7810c243848e5cef7fef9a578cc303",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs state the goal-versus-solution distinction correctly and their findError corrections are right, so neither teaches anything wrong.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both open on a scene, explain with the checkout example and use everyday words. Neither is clearly more engaging for a learner who would rather watch a teacher.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both explain the UX goal in short plain sentences and define the term before the summary, with no major clarity problems.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both checks have one defensible right answer and reasons that name what is wrong with each tempting option.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow the plan, use a concrete product team and app, and end with a realistic card-limit application.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are near-identical in quality and neither has a major problem, so neither serves the learner noticeably better."
+        },
+        "pairId": "4018d9d5-553e-40ef-9d7a-dc926b3d3c28"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs state the goal-versus-solution distinction correctly and their findError corrections are right, so neither teaches anything wrong.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both open on a scene, explain with the checkout example and use everyday words. Neither is clearly more engaging for a learner who would rather watch a teacher.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both explain the UX goal in short plain sentences and define the term before the summary, with no major clarity problems.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both checks have one defensible right answer and reasons that name what is wrong with each tempting option.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow the plan, use a concrete product team and app, and end with a realistic application.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are close in quality with no major problem in either, so neither serves its reader noticeably better."
+        },
+        "pairId": "827610d5-e480-49b9-96bd-0acaa5cb85e4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same correct numbers in their checks, the hook guess and the worked example, so neither teaches a wrong fact.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A teaches through Maya's thermometer, a rise and worked steps; output B opens with jargon and an abstract rule that a learner would stop reading.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A explains each idea in plain words with a picture of the thermometer; output B's explanation screens use terms like scalar quantity and closed under addition that a beginner cannot follow.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs share the same checks, guesses and typed answer, so their check quality is identical.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A keeps the beginner level and the thermometer context from the hook; output B drops to a formal register that does not fit the level.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The explanation uses technical vocabulary (scalar quantity, interval scale, standard atmospheric pressure) and no everyday example, which a 12-year-old beginner cannot follow.",
+            "criterion": "clarity",
+            "learnerCost": "The learner cannot follow the rule and stops reading before the worked example.",
+            "location": {
+              "detail": "Explanation screen titled Additive increments on an interval scale",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The screen introduces 'closed under addition' and 'decompose Δ' with no plain-word explanation, a beginner level breach.",
+            "criterion": "clarity",
+            "learnerCost": "The learner has no way to picture why the rule works, so the screen teaches nothing usable.",
+            "location": {
+              "detail": "Explanation screen titled Decomposing the increment",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The numberLine prompt says 7 am while the hook and mathCheck use dawn and 6 am, so the times do not match across the lesson.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A careful learner may be briefly confused about when the temperature was read.",
+            "location": {
+              "detail": "numberLine activity prompt",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output B has major clarity failures for a beginner, while output A has only a minor time inconsistency, so output A serves its learner much better."
+        },
+        "pairId": "beb734ba-876b-4674-a7ee-e54213328d26"
+      }
+    ]
+  }
+}

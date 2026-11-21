@@ -1,6 +1,6 @@
-import { cn } from "@zoonk/ui/lib/utils";
 import { Output, generateText } from "ai";
 import z from "zod";
+import { keyFlawsFor } from "./key-check";
 import keyFlawsPrompt from "./key-flaws-prompt.md";
 import { calculateScore } from "./score-calculation";
 import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
@@ -18,8 +18,6 @@ import {
 } from "./types";
 
 /**
- * Scoring mode keeps one judge so scores stay comparable across runs. Battle
- * mode is where several judges from other model families compare outputs.
  * Rejudging 64 blind-read outputs (18 Nov 2026), GPT-6.2 Astra matched 9 of 32 blind verdicts to
  * GPT-6 Astra's 5 and picked the opposite winner as often (11 to 10), at about $0.09 a judgment
  * against $0.13 and half the wait. It scores about 0.19 lower, so compare a task's models only on
@@ -28,8 +26,6 @@ import {
  */
 const SCORING_JUDGE_MODEL_ID = "openai/gpt-6.2-astra";
 
-const BAD_SCORE = 8;
-const GOOD_SCORE = 9.2;
 const SCORE_STEP_KINDS = ["majorErrors", "minorErrors", "potentialImprovements"] as const;
 
 export function createFixedScore({ conclusion, score }: { conclusion: string; score: number }) {
@@ -72,16 +68,12 @@ export async function generateScore(params: {
   `;
 
   if (scoreCategories) {
-    const keyFlawsSchema = keyFlawLocators?.length
-      ? z.array(keyFlawSchema.extend({ itemLocator: z.enum(keyFlawLocators) }))
-      : z.array(keyFlawSchema).length(0);
-
     const { output: result, usage } = await generateText({
       instructions,
       model: SCORING_JUDGE_MODEL_ID,
       output: Output.object({
         schema: keyFlawLocators
-          ? categorizedScoreSchema.extend({ keyFlaws: keyFlawsSchema })
+          ? categorizedScoreSchema.extend({ keyFlaws: keyFlawsFor(keyFlawLocators) })
           : categorizedScoreSchema,
       }),
       prompt: evalPrompt,
@@ -139,15 +131,3 @@ function resolveKeyFlaws({
 function getJudgeRun(usage: Parameters<typeof toTokenUsage>[0]): JudgeRun {
   return { modelId: SCORING_JUDGE_MODEL_ID, usage: toTokenUsage(usage) };
 }
-
-export const getScoreClassName = (score: number) => {
-  const isBadScore = score < BAD_SCORE;
-  const isAverageScore = score >= BAD_SCORE && score < GOOD_SCORE;
-  const isGoodScore = score >= GOOD_SCORE;
-
-  return cn({
-    "text-destructive-text": isBadScore,
-    "text-success-text": isGoodScore,
-    "text-warning-text": isAverageScore,
-  });
-};

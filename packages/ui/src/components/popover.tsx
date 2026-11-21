@@ -44,12 +44,17 @@ function PopoverContent({
   className,
   align = "center",
   alignOffset = 0,
+  anchor,
   backdrop = true,
+  collisionAvoidance,
   side = "bottom",
   sideOffset = 4,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+  Pick<
+    PopoverPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "anchor" | "collisionAvoidance" | "side" | "sideOffset"
+  > & {
     /** The backdrop takes the click that closes the popover; without it, the click also lands. */
     backdrop?: boolean;
   }) {
@@ -59,7 +64,9 @@ function PopoverContent({
       <PopoverPositioner
         align={align}
         alignOffset={alignOffset}
+        anchor={anchor}
         className="isolate z-50"
+        collisionAvoidance={collisionAvoidance}
         side={side}
         sideOffset={sideOffset}
       >
@@ -73,6 +80,23 @@ function PopoverContent({
         />
       </PopoverPositioner>
     </PopoverPrimitive.Portal>
+  );
+}
+
+/**
+ * Points from the popover at what it's about: a corner of the popover's own fill, edged like the
+ * popover, that covers the popover's edge where they meet.
+ */
+function PopoverArrow({ className, ...props }: PopoverPrimitive.Arrow.Props) {
+  return (
+    <PopoverPrimitive.Arrow
+      className={cn(
+        "bg-popover border-foreground/10 size-4 rotate-45 rounded-[2px] data-[side=bottom]:-top-2 data-[side=bottom]:border-t data-[side=bottom]:border-l data-[side=left]:-right-2 data-[side=left]:border-t data-[side=left]:border-r data-[side=right]:-left-2 data-[side=right]:border-b data-[side=right]:border-l data-[side=top]:-bottom-2 data-[side=top]:border-r data-[side=top]:border-b",
+        className,
+      )}
+      data-slot="popover-arrow"
+      {...props}
+    />
   );
 }
 
@@ -106,4 +130,12 @@ function PopoverDescription({ className, ...props }: PopoverPrimitive.Descriptio
   );
 }
 
-export { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger };
+export {
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+};

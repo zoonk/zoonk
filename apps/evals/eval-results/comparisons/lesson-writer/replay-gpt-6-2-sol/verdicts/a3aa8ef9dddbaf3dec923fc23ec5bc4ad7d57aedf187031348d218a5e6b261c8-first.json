@@ -1,0 +1,191 @@
+{
+  "attempt": "first",
+  "costUsd": 0.006003339999999999,
+  "failures": [],
+  "packetId": "a3aa8ef9dddbaf3dec923fc23ec5bc4ad7d57aedf187031348d218a5e6b261c8",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A e B são idênticos: nenhum serve melhor ao aprendiz.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois têm a mesma cena inicial, explicação e exemplos.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "A clareza é igual nas duas versões.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam os mesmos cálculos, perguntas e resumo.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas seguem o mesmo plano e têm os mesmos pontos de adequação e de falha.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A primeira frase do resumo dá uma instrução para somar, mas não nomeia o assunto de que trata; a exigência pede que cada frase do cartão nomeie seu tema.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "O leitor pode não perceber, ao rever o cartão, que essa frase resume o papel de bens e direitos no cálculo.",
+            "location": {
+              "detail": "Some o que a empresa tem ao que ela ainda tem a receber.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "A primeira frase do resumo dá uma instrução para somar, mas não nomeia o assunto de que trata; a exigência pede que cada frase do cartão nomeie seu tema.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "O leitor pode não perceber, ao rever o cartão, que essa frase resume o papel de bens e direitos no cálculo.",
+            "location": {
+              "detail": "Some o que a empresa tem ao que ela ainda tem a receber.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As saídas são idênticas, com os mesmos acertos e o mesmo ponto a melhorar no resumo."
+        },
+        "pairId": "2229f46a-766d-42b0-b56a-6e36aeb78c06"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "A afirma que a estabilidade vem após dois anos, mas a fonte estabelece três anos de efetivo exercício e aprovação na avaliação especial.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "A informação errada sobre os dois anos contradiz o resumo e pode fazer o aprendiz perder a confiança no restante da lição.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "A deixa o leitor com informações conflitantes: dois anos na explicação e três anos no resumo e na pergunta sobre Pedro.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "B",
+            "reason": "As perguntas são iguais, mas em A a explicação anterior contradiz a resposta esperada sobre os três anos.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "B respeita o prazo indicado na fonte e no plano; A não.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A diz que a estabilidade é adquirida depois de dois anos, mas a fonte determina três anos de efetivo exercício, além da aprovação na avaliação especial de desempenho.",
+            "criterion": "accuracy",
+            "learnerCost": "O aprendiz pode memorizar um prazo errado e fica diante de uma contradição quando a lição depois fala em três anos.",
+            "location": {
+              "detail": "Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B informa corretamente os três anos exigidos pela fonte. A ensina um prazo errado e depois se contradiz."
+        },
+        "pairId": "384b56ee-33c0-475a-904e-fc6b2fbf3db6"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os cálculos e resultados das duas versões estão corretos; a divergência sobre o nome da oficina aparece como adequação ao plano, não como erro no cálculo.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B apresenta a explicação inicial em três frases curtas. A alonga essa tela e volta a definir os termos, o que acrescenta leitura sem ser necessário para a ideia.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões explicam a fórmula de modo compreensível para iniciantes; A dá mais exemplos, mas sua explicação também fica mais longa.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "B",
+            "reason": "B transforma a aplicação em uma pergunta com opções e razões. A apresenta um cálculo numérico sem fornecer as opções, inclusive o erro tentador solicitado no plano.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "A troca a oficina de Davi por uma oficina de Fábio na explicação do resultado negativo. B mantém Davi e apresenta a aplicação com opções e razões.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A explicação inicial tem seis frases e redefine bens, direitos e obrigações, embora o plano peça uma explicação curta que apenas relembre esses termos em palavras simples.",
+            "criterion": "teacher",
+            "learnerCost": "A tela fica mais longa do que a ideia exige e repete explicações que poderiam ser retomadas sem uma nova definição.",
+            "location": {
+              "detail": "As ferramentas e o dinheiro de Davi são os bens da oficina. O que clientes ainda vão pagar a ele são os direitos. As dívidas são as obrigações. Somando bens e direitos e tirando as obrigações, você chega ao **patrimônio líquido**. Ele é um valor dos registros, não o preço de venda da oficina. Suba as obrigações e veja o resultado cair.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "O plano pede que o exemplo de patrimônio líquido negativo seja sobre a oficina de Davi, mas A atribui os valores a Fábio.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A mudança de personagem pode confundir o aprendiz sobre qual situação do exemplo continua sendo a oficina de Davi.",
+            "location": {
+              "detail": "A oficina de Fábio tem R$ 4.000 em bens e direitos, mas deve R$ 5.000.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "O resumo começa com uma instrução para somar, sem nomear bens e direitos como assunto da frase, como pede a exigência para o cartão.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Ao consultar o resumo, o aprendiz pode não identificar imediatamente qual ideia aquela instrução representa.",
+            "location": {
+              "detail": "Some o que a empresa tem ao que ela ainda tem a receber.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B segue melhor o plano e oferece opções com razões na aplicação. A é mais detalhada, mas alonga a explicação inicial e muda Davi para Fábio no exemplo de resultado negativo."
+        },
+        "pairId": "66118520-c8e3-466a-96a4-dbd0c8a63fd9"
+      }
+    ]
+  }
+}

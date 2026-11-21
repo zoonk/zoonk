@@ -1,0 +1,130 @@
+{
+  "lessons": [
+    {
+      "canDo": "Localizar no mapa até onde o Império Romano chegou no auge",
+      "description": "Veja como o domínio de Roma se estendeu da Itália às três margens do Mediterrâneo e por que isso facilitava o abastecimento por mar.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "No porto que abastece Roma, trabalhadores descarregam trigo que veio de navio do Egito. Até onde chegavam as terras governadas por Roma para que essa carga viesse de tão longe sem sair do império?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Mapa físico simples do Mediterrâneo, sem fronteiras políticas, com Roma marcada na península Itálica e os nomes Itália, mar Mediterrâneo, Europa, África e Ásia.",
+          "visualKind": "picture",
+          "brief": "Antes de governar terras do outro lado do Mediterrâneo, Roma ampliou seu domínio na Itália, a península em forma de bota onde a cidade ficava.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Mapa físico simples do Mediterrâneo, sem fronteiras políticas, com Roma marcada na península Itálica e os nomes Itália, mar Mediterrâneo, Europa, África e Ásia.",
+          "visualKind": "picture",
+          "brief": "Se você contornasse o Mediterrâneo de navio quando Roma governava sua maior extensão de terras, em que margens encontraria portos romanos? Opções: só na europeia; na europeia e na africana; na europeia, na africana e na asiática (certa); a primeira é tentadora porque Roma cresceu a partir da Itália.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "mapExplorer",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "No auge, em 117 d.C., o território romano cercava o Mediterrâneo, com portos como Óstia na Europa, Alexandria na África e Cesareia na Ásia. Use a base roman-empire-117: os toques em Óstia (41,76; 12,29), Alexandria (31,20; 29,92) e Cesareia (32,50; 34,89) revelam a margem em que cada porto ficava.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Mapa do Mediterrâneo central com Roma, a península Itálica, a Sicília e Cartago marcadas, mostrando a faixa de mar entre a Itália e a costa norte da África.",
+          "visualKind": "picture",
+          "brief": "Roma já havia atravessado o mar séculos antes do auge: ao derrotar Cartago, em 146 a.C., passou a governar terras ao redor da cidade, no norte da África.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "mapExplorer",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Na base roman-empire-117, peça que o aprendiz abra os pontos de Tarraco (41,12; 1,26), Leptis Magna (32,64; 14,29) e Éfeso (37,94; 27,34): cada toque revela o nome do porto, sem informar a margem. Pergunte quais dois portos ficavam em lados opostos do mar, um na margem europeia e outro na africana: Tarraco e Leptis Magna; use Tarraco e Éfeso como distração para quem confunde distância com mudança de margem.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Mapa do Mediterrâneo com Alexandria no Egito, Óstia e Roma na Itália e uma linha simples indicando a rota marítima de Alexandria a Óstia.",
+          "visualKind": "picture",
+          "brief": "Controlar portos em margens diferentes facilitava o abastecimento de Roma: o trigo do Egito podia sair de Alexandria e chegar ao porto de Óstia sem passar por um porto estrangeiro.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Mapa do oeste da Europa em 117 d.C., com o mar Mediterrâneo, a Itália e a ilha da Britânia identificados e o domínio romano sombreado até a faixa norte da atual Inglaterra.",
+          "visualKind": "picture",
+          "brief": "O território romano ia além do Mediterrâneo: na Britânia, a ilha onde hoje ficam a Inglaterra, o País de Gales e a Escócia, Roma governava a parte sul, não a ilha inteira.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Mapa do Mediterrâneo oriental até o golfo Pérsico, com a Mesopotâmia, os rios Tigre e Eufrates e a área sob controle romano em 117 d.C. identificados.",
+          "visualKind": "picture",
+          "brief": "A leste, Roma chegou à Mesopotâmia, a região dos rios Tigre e Eufrates: parte dela esteve sob controle romano em 117 d.C., mas essas conquistas duraram pouco.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Mapa da ilha da Britânia com Londres e Inverness marcadas e uma seta apontando o norte, sem traçar a fronteira romana.",
+          "visualKind": "picture",
+          "brief": "Duas equipes escavam na Britânia, uma em Londres e outra em Inverness, no norte da atual Escócia. Qual equipe trabalha num lugar que ficava fora do domínio romano em 117 d.C.? A de Inverness; ofereça «nenhuma» para quem supõe que Roma governava toda a ilha.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Mapa-base sem fronteiras políticas, da ilha da Britânia à Mesopotâmia, com o mar Mediterrâneo, Roma, Britânia, Mesopotâmia, Tigre e Eufrates identificados, sem sombrear o território romano.",
+          "visualKind": "picture",
+          "brief": "Um museu prepara um mapa com a legenda «Em 117 d.C., Roma dominava todas as margens do Mediterrâneo, mas seu território não ia além delas». Peça que o aprendiz mantenha o trecho correto e corrija o restante, marcando dois lugares que sustentam a mudança: o sul da Britânia e parte da Mesopotâmia.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Identificar no mapa as margens do Mediterrâneo e os territórios mais distantes que Roma governava em 117 d.C.",
+          "example": "Em 117 d.C., Roma governava Alexandria, no norte da África, e também a parte sul da Britânia, além do Mediterrâneo.",
+          "hard": false,
+          "name": "Localizar a extensão do Império Romano",
+          "topic": "Expansão do Império Romano",
+          "useCase": "Interpretar mapas de livros e museus sem confundir o domínio do Mediterrâneo com os limites de todo o império."
+        }
+      ],
+      "title": "A expansão do Império Romano"
+    }
+  ]
+}

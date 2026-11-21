@@ -103,6 +103,54 @@ describe("exact standalone bank mistake practice", () => {
     expect(feedback.element().querySelectorAll("math")).toHaveLength(1);
   });
 
+  it("typesets the formulas in a gap's lesson ideas", async () => {
+    openPractice(null, {}, question("multipleChoice"), {
+      kind: "reteach",
+      lesson: {
+        id: "gap-lesson",
+        ideas: [
+          String.raw`The index and the running total take $\Theta(1)$ extra space.`,
+          "**A copy** of the input takes $\\Theta(n)$, even with `arr.slice()`.",
+        ],
+        title: "Space complexity",
+      },
+      timeLimitSeconds: null,
+    });
+
+    const ideas = page.getByRole("list");
+    await expect.element(ideas).toBeVisible();
+    expect(ideas.element().querySelectorAll("math")).toHaveLength(2);
+    expect(ideas.element().querySelector("strong")?.textContent).toBe("A copy");
+    expect(ideas.element().querySelector("code")?.textContent).toBe("arr.slice()");
+    await expect.element(ideas).not.toHaveTextContent("$");
+  });
+
+  it("typesets the formulas in a trap drill's trap", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { selectedIndex: 0 },
+        fixed: false,
+        fixedMistakeIds: [],
+        isCorrect: false,
+        mistakeStatus: "open",
+        trap: String.raw`Counts the input as extra space: $\Theta(n)$ instead of $\Theta(1)$`,
+      });
+
+    openPractice(null, { answer }, question("multipleChoice"), {
+      kind: "spotTheTrap",
+      lesson: null,
+      timeLimitSeconds: null,
+    });
+
+    await page.getByRole("radio").nth(1).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    const trap = page.getByText("The trap:").element().parentElement;
+    await expect.poll(() => trap?.querySelectorAll("math").length).toBe(2);
+    expect(trap?.textContent).not.toContain("$");
+  });
+
   it("keeps the bank ordering controls and sends the selected order", async () => {
     const answer = vi
       .fn<Actions["answer"]>()

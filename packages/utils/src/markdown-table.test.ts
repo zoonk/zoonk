@@ -3,7 +3,9 @@ import {
   findMarkdownTableLines,
   findMarkdownTables,
   findRaggedTableRows,
+  mapTextCells,
   readMarkdownTable,
+  readTextCells,
   removeMarkdownTables,
 } from "./markdown-table";
 
@@ -56,6 +58,10 @@ describe(findMarkdownTables, () => {
   it("reads a body row that looks like a header as part of its table", () => {
     expect(findMarkdownTables("| a | b |\n|---|---|\n| c | d |\n|---|---|")).toHaveLength(1);
   });
+
+  it("finds no table in code, which shows its pipes as written", () => {
+    expect(findMarkdownTables("```text\n| a | b |\n|---|---|\n| c | d |\n```")).toStrictEqual([]);
+  });
 });
 
 describe(findMarkdownTableLines, () => {
@@ -79,6 +85,46 @@ describe(removeMarkdownTables, () => {
 
     expect(removeMarkdownTables(AFTER_PIPE_LINE)).toBe(
       "Read P(rain | clouds) from the table below:",
+    );
+  });
+});
+
+const WITH_CODE = [
+  "Veja | compare:",
+  "| A | B |",
+  "|---|---|",
+  "| 1 | 2 |",
+  "```sh",
+  "a | b",
+  "```",
+].join("\n");
+
+describe(readTextCells, () => {
+  it("reads each line and table cell the player reads as text, leaving code out", () => {
+    expect(readTextCells(WITH_CODE)).toStrictEqual([
+      "Veja | compare:",
+      "",
+      " A ",
+      " B ",
+      "",
+      "",
+      "---",
+      "---",
+      "",
+      "",
+      " 1 ",
+      " 2 ",
+      "",
+    ]);
+  });
+});
+
+describe(mapTextCells, () => {
+  it("rewrites text cell by cell and keeps table pipes and code as written", () => {
+    expect(mapTextCells(WITH_CODE, (cell) => cell.toLowerCase())).toBe(
+      ["veja | compare:", "| a | b |", "|---|---|", "| 1 | 2 |", "```sh", "a | b", "```"].join(
+        "\n",
+      ),
     );
   });
 });

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-plot-reading-field-research",
+        "claimId": "666e06d94e7dd0de",
+        "criterion": "realism",
+        "observationId": "e24dbd10416884a59544386a2de8963c5a7a11a862567830267e394f374160ba.first.9dbde607-7a44-4579-b76a-0aaebb317618.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0036194499999999998,
+    "id": "865143423ed9e894448d3e1d6e20f4071d17c4dcfae88083edebf087cf6d9e17",
+    "packet": [
+      {
+        "A": {
+          "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
+          "format": "text"
+        },
+        "claim": "O gerente explica a margem usando o termo 'EBITDA' sem dizer o que é.",
+        "claimId": "4ac29df5f1c9674c",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
+          "format": "text"
+        },
+        "input": {
+          "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
+          "format": "text"
+        },
+        "claim": "The choice asks the learner to circle a dot and refer to it in an attached crop, an annotation/display task that does not fit the text-only metrics format required for this case.",
+        "claimId": "666e06d94e7dd0de",
+        "criterion": "realism",
+        "expectations": {
+          "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
+          "format": "json"
+        },
+        "location": {
+          "detail": "\"Circle the right dot and refer to it as the right-hand reading in the attached crop.\"",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "4ac29df5f1c9674c",
+          "finding": "doesn't hold",
+          "reason": "The term 'EBITDA' does not appear anywhere in output A. The margin is explained by the analyst ('pricing'), not the manager, and it is defined as the sobra after cost divided by the sale price."
+        },
+        {
+          "claimId": "666e06d94e7dd0de",
+          "finding": "doesn't hold",
+          "reason": "The quoted instruction 'Circle the right dot and refer to it as the right-hand reading in the attached crop' is in the delay-scan case, not in output A. Output A is the detector-setting case, and none of its choices or messages ask the learner to circle a dot or refer to an attached crop."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

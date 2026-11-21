@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-career-change-data-cleaning",
+        "claimId": "ef3aea7ac8200716",
+        "criterion": "realism",
+        "observationId": "4d5f2c18c23d0858f724aaec45f9672ea19fa373bc14c61a71987417f418868d.first.130dd108-b37a-4ada-bdc4-3b83fa0a6a4b.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0037031499999999997,
+    "id": "12f6744ac770010c5491a718691656d241b38e58da56926e538271cb65a8bdc8",
+    "packet": [
+      {
+        "A": {
+          "blob": "2e81785bf63c083a6506d42282c758a9f2d47a01b404e20b2c605950ac625cd4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
+          "format": "text"
+        },
+        "claim": "The scenario centers on counting kits for pickup bays with dispatch and floor staff, rather than a junior data analyst cleaning a messy spreadsheet for a manager who needs numbers soon.",
+        "claimId": "ef3aea7ac8200716",
+        "criterion": "realism",
+        "expectations": {
+          "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The mission, setting, team and workflow throughout the case",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
+          "format": "text"
+        },
+        "B": {
+          "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
+          "format": "text"
+        },
+        "claim": "The analyst calls the p-value the probability that the new dressing works no better than the old one.",
+        "claimId": "f687e8bbafd0a98c",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "ef3aea7ac8200716",
+          "finding": "holds",
+          "reason": "Output B is built around kit counts for pickup bays, with a dispatch coordinator and a floor lead as the team and a 2:00 p.m. cart deadline. It is not a junior analyst cleaning a spreadsheet for a manager, so the claim is accurate about B. It does not describe output A, which has a senior data analyst and a sales operations manager."
+        },
+        {
+          "claimId": "f687e8bbafd0a98c",
+          "finding": "doesn't hold",
+          "reason": "Output A has no analyst; its team is a quality improvement nurse, a nurse educator and the AI. Nowhere in A is the p-value called the probability that the new format works no better. A says the p-value gives how often a gap this uneven would occur if the formats worked equally well (about 30%), which is a different statement."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

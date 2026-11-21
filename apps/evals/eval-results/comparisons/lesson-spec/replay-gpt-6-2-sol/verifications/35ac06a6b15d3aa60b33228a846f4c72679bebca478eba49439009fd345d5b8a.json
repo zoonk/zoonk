@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "be2ba9090bf0626a",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "27efbd52e7a6d6ee7c202502001cf71c0e64b44c1fe2c2fa279f814fc1c4ba5e.first.0ecce033-7add-44f4-bceb-5fe700c9bf00.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0029275499999999997,
+    "id": "35ac06a6b15d3aa60b33228a846f4c72679bebca478eba49439009fd345d5b8a",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "4d9566a6da642327",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "B": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "claim": "The check asks the learner to choose a brain location but does not show a brain diagram or mark the locations.",
+        "claimId": "be2ba9090bf0626a",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The check asking whether the target is near the forehead or back of the head",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "4d9566a6da642327",
+          "finding": "doesn't hold",
+          "reason": "The application screen in output A is about Malik's pay being cut 50% and then raised 50%, and asks for the overall change from the original pay (25% lower). It never mentions a compound annual growth rate, so the claim is false."
+        },
+        {
+          "claimId": "be2ba9090bf0626a",
+          "finding": "holds",
+          "reason": "In output A, the check screen asks whether the target should be near the forehead or the back of the head, and its visual is null with visualKind none, so no brain diagram or marked locations are shown. Output B has no check of that kind, so the claim holds for A only."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

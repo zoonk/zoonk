@@ -1,0 +1,160 @@
+{
+  "lessons": [
+    {
+      "canDo": "Calcular o saldo final e o rendimento com juros compostos",
+      "description": "Veja por que os juros compostos crescem mais rápido que os simples e calcule quanto uma aplicação pode render.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O dinheiro que Raimundo guardou para uma viagem rendeu mais no segundo mês, mesmo sem nenhum depósito novo. Como dá para prever quanto ele terá no dia do resgate?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "No primeiro mês, os juros são uma porcentagem do valor aplicado: com R$ 1.000,00 a 2% ao mês, você ganha R$ 20,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma aplicação de R$ 500,00 a 1% ao mês rendeu R$ 5,00 no primeiro mês, e esse dinheiro ficou no saldo. Quanto ela vai render só no segundo mês? Opções: R$ 5,00 (tentadora: a taxa não mudou), R$ 5,05 (certa) e R$ 10,05.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Nos juros compostos, a taxa vale sobre o saldo atualizado: no segundo mês, 1% de R$ 505,00 rende R$ 5,05. A taxa não mudou; o valor sobre o qual ela é aplicada aumentou.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Nos juros simples, a taxa vale sempre sobre o valor aplicado no início: com R$ 500,00 a 1% ao mês, o rendimento fica em R$ 5,00 por mês.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Thaís vê duas aplicações de R$ 1.500,00 a 1% ao mês renderem R$ 15,00 cada no primeiro mês. Julgue: “Uma pode usar juros simples e a outra, juros compostos” (certo); o erro tentador é achar que rendimentos iguais provam que a regra é a mesma.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Para atualizar o saldo de uma vez, multiplique por 1 mais a taxa em decimal: a 3% ao mês, R$ 600,00 × 1,03 já inclui os R$ 600,00 e os 3% de juros.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Repita a mesma multiplicação uma vez por mês: a 3% ao mês por quatro meses, multiplicar por 1,03 quatro vezes é o mesmo que multiplicar por 1,03⁴.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Calcule o montante, ou saldo final, de R$ 800,00 a 1,5% ao mês por três meses. Mostre um passo por vez: 1,5% = 0,015; 1 + 0,015 = 1,015; use 1,015³ para os três meses; calcule 800 × 1,015³ e arredonde só o resultado para R$ 836,54.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Peça o montante de R$ 1.200,00 a juros compostos de 2% ao mês por três meses (R$ 1.273,45). Inclua R$ 1.272,00 como resposta tentadora de quem soma 2% três vezes sobre o valor inicial.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Conte o prazo na mesma unidade da taxa: se a aplicação rende 1% ao mês e o resgate é daqui a um ano, use 12 multiplicações, não uma.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Para saber quanto a aplicação rendeu, subtraia o valor aplicado do saldo final: se R$ 700,00 viraram R$ 735,00, o rendimento foi de R$ 35,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "formulaModel",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Compare R$ 2.000,00 a 1% ao mês nos dois regimes: use um controle de 0 a 36 meses inteiros, mostre os saldos 2.000 × 1,01ᵐ e 2.000 × (1 + 0,01 × m) e trace a diferença, marcando o mês 1. Peça que o aluno mova o controle do mês 1 para o 24 e leia quanto a mais os juros compostos renderam ao fim desse prazo: R$ 59,47.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Murilo tem R$ 2.900,00 para aplicar por um ano a 1% ao mês com juros compostos, sem taxas nem impostos, e quer pagar um curso de R$ 3.250,00 no resgate. Peça que decida se o saldo cobre o curso e quanto a aplicação rende: o saldo chega a R$ 3.267,79, dos quais R$ 367,79 são rendimento.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Calcular o saldo final de uma aplicação com taxa fixa, aplicando os juros sobre o saldo atualizado a cada período.",
+          "example": "R$ 1.000,00 a 2% ao mês por dois meses viram R$ 1.040,40.",
+          "hard": true,
+          "name": "Calcular o montante com juros compostos",
+          "topic": "Juros compostos",
+          "useCase": "Estimar quanto você poderá resgatar de uma aplicação para pagar uma compra planejada."
+        }
+      ],
+      "title": "Juros compostos"
+    }
+  ]
+}

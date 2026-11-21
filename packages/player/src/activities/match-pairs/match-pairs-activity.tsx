@@ -2,6 +2,7 @@
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { MatchEntry, type MatchEntryState } from "@zoonk/learn/match-entry";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { CircleX } from "lucide-react";
@@ -9,7 +10,6 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { MatchBoard, MatchBoardCount } from "../../components/match-board";
 import { NotQuiteLead } from "../../components/not-quite-lead";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { usePlayerInteractionState } from "../../player-context";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";

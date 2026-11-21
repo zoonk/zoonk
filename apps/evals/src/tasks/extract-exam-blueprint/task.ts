@@ -567,6 +567,13 @@ export const extractExamBlueprintTask: Task<
   generate: generateExtraction,
   id: "extract-exam-blueprint",
   name: "Extract exam blueprint",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code stores the exam's blueprint, which planning and items use",
+    reason: "A fact left out is lost to every learner of the exam",
+    waits: "A learner waits on a new exam; refreshes run in the background",
+  },
   score: scoreExtraction,
   testCases: TEST_CASES,
 };

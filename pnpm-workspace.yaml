@@ -69,7 +69,7 @@ catalog:
   typescript: 7.1.0-beta
   undici: 8.12.4
   vite: 8.3.8
-  vitest: 5.1.0
+  vitest: 5.1.1
   zod: 4.6.7
 
 minimumReleaseAge: 0

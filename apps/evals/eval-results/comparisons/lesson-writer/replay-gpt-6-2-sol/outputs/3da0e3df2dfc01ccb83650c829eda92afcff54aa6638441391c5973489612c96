@@ -1,0 +1,112 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Hannah wants her Python loop to print the numbers 1 to 5. She writes `for n in range(1, 5): print(n)`. It prints 1, 2, 3, 4, and nothing else. Why does the 5 go missing?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "The last number is left out",
+      "text": "`range(1, 5)` starts at 1 and quits just before 5, so you get 1, 2, 3, 4. The second number is called the **stop**, and it's always left out. So to reach 5, use `range(1, 6)`. You get stop minus start numbers: 6 − 1 = 5.",
+      "exampleLineIdea": "looping over the days of a month or the pages of a document without skipping the last one",
+      "image": {
+        "prompt": "A clean number line with the numbers 1, 2, 3, 4, 5, 6 in evenly spaced circles. Circles 1 to 4 are filled in bright blue and grouped under a bracket labeled range(1, 5). Circle 5 is gray with a small label: left out. Circle 6 is plain gray. Flat, simple style on a white background.",
+        "alt": "Numbers 1 to 6 on a line. 1 to 4 are highlighted under range(1, 5), and 5 is gray, marked as left out."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "`for n in range(2, 6): print(n)`",
+      "question": "What does this loop print?",
+      "options": [
+        {
+          "text": "2, 3, 4, 5",
+          "isCorrect": true,
+          "reason": "The loop starts at 2 and quits just before the stop, 6. So 5 is the last number it prints.",
+          "picture": null
+        },
+        {
+          "text": "2, 3, 4, 5, 6",
+          "isCorrect": false,
+          "reason": "The 6 never prints, because the stop is left out. Reading range(2, 6) as 2 to 6 is the natural guess, but the loop ends at 5.",
+          "picture": null
+        },
+        {
+          "text": "3, 4, 5",
+          "isCorrect": false,
+          "reason": "The start number is included, so 2 prints. Only the stop, 6, is left out.",
+          "picture": null
+        },
+        {
+          "text": "3, 4, 5, 6",
+          "isCorrect": false,
+          "reason": "This flips which end is left out. The loop begins at 2 and stops before 6, so you get 2 to 5.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "The second number is called the **stop**, and it's always left out."
+      }
+    },
+    {
+      "kind": "activity",
+      "template": "codeRunner",
+      "content": "{\"template\":\"codeRunner\",\"prompt\":\"Fix the loop so it prints the numbers 1 to 5, one per line.\",\"fields\":{\"language\":\"python\",\"fileName\":\"count.py\",\"starterCode\":\"for n in range(1, 5):\\n    print(n)\\n\",\"editableLines\":[1],\"solution\":\"for n in range(1, 6):\\n    print(n)\\n\",\"expectedOutput\":\"1\\n2\\n3\\n4\\n5\\n\",\"mistakes\":[{\"output\":\"1\\n2\\n3\\n4\\n\",\"feedback\":\"The 5 is still missing. The stop number is left out, so range(1, 5) ends at 4. Raise the stop by one.\"},{\"output\":\"0\\n1\\n2\\n3\\n4\\n\",\"feedback\":\"Now the list starts at 0 and still ends at 4. The loop begins at its first number, so keep the start at 1 and raise the stop to 6 instead.\"},{\"output\":\"0\\n1\\n2\\n3\\n4\\n5\\n\",\"feedback\":\"You reached 5, but 0 sneaked in at the top. Keep the start at 1, because only the stop needed to change.\"}]},\"check\":{\"kind\":\"interaction\",\"explanation\":\"The stop is left out, so to print 5 the stop has to be one more: 6. range(1, 6) gives 1, 2, 3, 4, 5, which is 6 − 1 = 5 numbers.\"}}"
+    },
+    {
+      "kind": "check",
+      "context": "Rosa is coding the launch countdown for her Tucson robotics club: `for n in range(10, 0, -1): print(n)`. The third number, -1, makes it count down by one each time.",
+      "question": "What's the last number the countdown prints?",
+      "options": [
+        {
+          "text": "1",
+          "isCorrect": true,
+          "reason": "The stop here is 0, and the stop is left out even when counting down. So the loop ends one step before it, at 1.",
+          "picture": null
+        },
+        {
+          "text": "0",
+          "isCorrect": false,
+          "reason": "0 is the stop, so it never prints. A countdown feels like it should end at 0, but the loop quits just before it.",
+          "picture": null
+        },
+        {
+          "text": "2",
+          "isCorrect": false,
+          "reason": "Only the stop, 0, is skipped. Every number before it prints, so 1 still shows up.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "The second number is called the **stop**, and it's always left out."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "The stop is left out",
+        "text": "A loop with range(start, stop) begins at the start number and quits just before the stop number."
+      },
+      {
+        "label": "Stop one past the end",
+        "text": "To include the last number you want, set the stop one higher, like range(1, 6) to get 1 to 5."
+      },
+      {
+        "label": "Stop minus start",
+        "text": "The number of values range() gives is the stop minus the start, so range(1, 6) gives 5 numbers."
+      }
+    ],
+    "shape": "hub"
+  }
+}

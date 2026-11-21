@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-lever",
+        "claimId": "5a291e6058fc3732",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "7db5210ea16df200f68fb9acefee5643870fead8bda1a1a80f5d65d807994343.first.1b27a131-022f-4ab2-85e8-9f22de4167e1.2",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0030471499999999998,
+    "id": "ff12a8e04c8ede572a14fd698a526f2afb65549d0aee7d84e26f43ae5bb21601",
+    "packet": [
+      {
+        "A": {
+          "blob": "23ec55f7392e02a620ebf46011ecf8211485fedba0d6d843aa68686d44c73f91",
+          "format": "text"
+        },
+        "B": {
+          "blob": "6d723fb0be86c2907d11e6e86aa402ca2e2043628a8c081b986007a2a87636c8",
+          "format": "text"
+        },
+        "claim": "The guess compares support locations but gives no distances from the support to the crate and hand, as required for lever setups in guesses.",
+        "claimId": "5a291e6058fc3732",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "ecb3e1ce8f62834f931c552f3375a418fdf3add71626616b972edcf4570b6069",
+          "format": "text"
+        },
+        "input": {
+          "blob": "5dfdee9df303c4e1d37fbf7e82588e2ea0c51d2ea106ebe3553ff672a3250263",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Side view of a horizontal bar with a crate at the left end and a hand at the right end; three identical dotted support positions beneath the bar are labeled Near the crate, At the midpoint, and Near your hand.",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "debc815fc16c26f8",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "5a291e6058fc3732",
+          "finding": "holds",
+          "reason": "Output A's guess screen shows a crate at the left end, a hand at the right end and three support positions, with no distances marked. Output B's guess screen labels 0.30 m and 0.60 m, so the problem is specific to A."
+        },
+        {
+          "claimId": "debc815fc16c26f8",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A computes 3 ÷ 20 = 0.15 and reports a 15% increase, dividing by the original $20, not $23 and not 13%. Output B's worked example is the same, so the claim is false of both."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

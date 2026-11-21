@@ -1,0 +1,103 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Ana passou num concurso público, tomou posse e começou a trabalhar. Quanto tempo ela precisa trabalhar no cargo para ganhar mais proteção contra a demissão?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Mais que contar os anos",
+      "text": "Ana entrou por concurso num cargo permanente. Para ganhar proteção contra a perda do cargo, ela precisa trabalhar nele por três anos e passar numa avaliação especial de desempenho feita por uma comissão. Essa proteção se chama **estabilidade**.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Pedro entrou por concurso num cargo permanente e já trabalhou nele por três anos. A comissão ainda não avaliou seu desempenho.",
+      "question": "Pela regra da Constituição, Pedro já tem estabilidade?",
+      "options": [
+        {
+          "text": "Sim, porque já completou os três anos de trabalho.",
+          "isCorrect": false,
+          "reason": "Os três anos cumprem só uma parte da regra. Pedro também precisa ser aprovado na avaliação especial.",
+          "picture": null
+        },
+        {
+          "text": "Não, porque ainda precisa passar na avaliação especial.",
+          "isCorrect": true,
+          "reason": "Pedro já cumpriu o tempo de trabalho exigido, mas a aprovação pela comissão também é necessária.",
+          "picture": null
+        },
+        {
+          "text": "Sim, porque o prazo acabou sem que a comissão o reprovasse.",
+          "isCorrect": false,
+          "reason": "Não ter sido reprovado é diferente de ter sido aprovado. A regra exige aprovação na avaliação especial.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Para ganhar proteção contra a perda do cargo, ela precisa trabalhar nele por três anos e passar numa avaliação especial de desempenho feita por uma comissão."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "A proteção tem limites",
+      "text": "Por falta grave, o órgão pode tirar o cargo após um processo em que o servidor possa se defender e apresentar provas. O servidor também pode perder o cargo por decisão judicial sem mais recurso ou por avaliação periódica de desempenho, conforme lei complementar e com o mesmo direito de defesa.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Uma servidora estável da Prefeitura do Recife é acusada de uma falta grave. O chefe quer demiti-la no mesmo dia, sem abrir um processo.",
+      "question": "O que a prefeitura precisa fazer antes de demiti-la por essa falta?",
+      "options": [
+        {
+          "text": "Basta o chefe confirmar a acusação e decidir pela demissão.",
+          "isCorrect": false,
+          "reason": "Mesmo que o chefe considere a falta grave, ele não pode decidir sozinho e dispensar o processo.",
+          "picture": null
+        },
+        {
+          "text": "Precisa fazer um processo em que ela possa se defender.",
+          "isCorrect": true,
+          "reason": "A servidora precisa ter a chance de contestar a acusação e apresentar provas antes de uma decisão sobre a perda do cargo.",
+          "picture": null
+        },
+        {
+          "text": "Basta avisar a servidora por escrito e explicar a acusação.",
+          "isCorrect": false,
+          "reason": "O aviso informa do que ela é acusada, mas não substitui o processo nem a chance de apresentar sua defesa.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 4,
+        "quote": "Por falta grave, o órgão pode tirar o cargo após um processo em que o servidor possa se defender e apresentar provas."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Tempo e avaliação",
+        "text": "Quem entra por concurso num cargo permanente ganha estabilidade após três anos de trabalho no cargo se passar na avaliação especial de desempenho feita por uma comissão."
+      },
+      {
+        "label": "Perda do cargo",
+        "text": "O servidor estável pode perder o cargo por decisão judicial sem mais recurso, por processo no órgão com direito de defesa ou por avaliação periódica de desempenho conforme lei complementar e com o mesmo direito de defesa."
+      }
+    ],
+    "shape": "hub"
+  }
+}

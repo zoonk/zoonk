@@ -1,0 +1,17 @@
+{
+  "caseId": "en-career-change-data-cleaning",
+  "challenger": {
+    "costUsd": 0.11951200000000001,
+    "durationMs": 121493.41400000005,
+    "hash": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
+    "userPromptHash": "303075de91434398bfa6dec5f273f013943df146d532b4d92f5f449ae15144c9"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.1458175,
+    "durationMs": 228809.24675,
+    "hash": "2e81785bf63c083a6506d42282c758a9f2d47a01b404e20b2c605950ac625cd4",
+    "userPromptHash": "303075de91434398bfa6dec5f273f013943df146d532b4d92f5f449ae15144c9"
+  },
+  "run": 1
+}

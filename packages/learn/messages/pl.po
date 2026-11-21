@@ -2583,6 +2583,48 @@ msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "Rewanż, gdy wrócisz do nauki"
 
+#. Name of a block of program code in a lesson or a question, read by screen readers.
+#: src/code/code-listing.tsx
+msgctxt "h2vipu"
+msgid "Code"
+msgstr "Kod"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, one {# tabulator} few {# tabulatory} many {# tabulatorów} other {# tabulatora}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, one {# spacja} few {# spacje} many {# spacji} other {# spacji}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "Wiersz {number}: pusty"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "Wiersz {number}, wcięcie {indent}: {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "Wiersz {number}: {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "Wcięcie {indent}: {code}"
+
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-sections.tsx
@@ -3617,19 +3659,19 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "Odpowiedziano na {answered, number} z {questions, number}"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "5wOk8O"
-msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr "Poprawne odpowiedzi na twoich egzaminach próbnych: {sureRight, plural, =0 {# z {sureAnswered}} other {# z {sureAnswered}}} wśród nieoznaczonych, {unsureRight, plural, =0 {# z {unsureAnswered}} other {# z {unsureAnswered}}} wśród oznaczonych."
+msgctxt "FvTaDr"
+msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
+msgstr "W egzaminach próbnych: {sureRight, plural, =0 {# z {sureAnswered} poprawnych odpowiedzi} one {# z {sureAnswered} poprawnych odpowiedzi} few {# z {sureAnswered} poprawnych odpowiedzi} many {# z {sureAnswered} poprawnych odpowiedzi} other {# z {sureAnswered} poprawnych odpowiedzi}} odpowiedzi, co do których masz pewność, oraz {unsureRight, plural, =0 {# z {unsureAnswered} poprawnych odpowiedzi} one {# z {unsureAnswered} poprawnych odpowiedzi} few {# z {unsureAnswered} poprawnych odpowiedzi} many {# z {unsureAnswered} poprawnych odpowiedzi} other {# z {unsureAnswered} poprawnych odpowiedzi}} odpowiedzi, co do których nie masz pewności."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "d5aD04"
-msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr "Oznaczone odpowiedzi kosztują cię więcej punktów, niż dają: zostawiaj te pytania bez odpowiedzi."
+msgctxt "kJlaFe"
+msgid "When you're not sure, leave it blank: those answers cost more than they earn."
+msgstr "Jeśli nie masz pewności, zostaw odpowiedź pustą: takie odpowiedzi kosztują więcej punktów, niż przynoszą."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "8ghbty"
-msgid "Your flagged answers still earn points: keep answering them."
-msgstr "Oznaczone odpowiedzi nadal dają ci punkty: odpowiadaj na te pytania."
+msgctxt "FxZzRf"
+msgid "When you're not sure, still answer: those answers earn points."
+msgstr "Jeśli nie masz pewności, i tak odpowiedz: za takie odpowiedzi dostajesz punkty."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7775,6 +7817,12 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# udzielonych odpowiedzi} one {# udzielona odpowiedź} few {# udzielone odpowiedzi} other {# udzielonych odpowiedzi}}"
 
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "q_puC8"
+msgid "{unsure, plural, one {# not sure} other {# not sure}}"
+msgstr "{unsure, plural, one {# niepewna} few {# niepewne} many {# niepewnych} other {# niepewnych}}"
+
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
@@ -7935,23 +7983,23 @@ msgctxt "P-hmyB"
 msgid "An answer wasn't saved."
 msgstr "Nie udało się zapisać odpowiedzi."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, one {# pytanie jest puste} few {# pytania są puste} many {# pytań jest pustych} other {# pytania są puste}} i {flagged, plural, one {# pytanie jest oznaczone} few {# pytania są oznaczone} many {# pytań jest oznaczonych} other {# pytania są oznaczone}}."
+msgctxt "INKJBm"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
+msgstr "{blank, plural, one {# pytanie jest bez odpowiedzi} few {# pytania są bez odpowiedzi} many {# pytań jest bez odpowiedzi} other {# pytania są bez odpowiedzi}} i nie masz pewności co do {unsure, plural, one {# odpowiedzi} few {# odpowiedzi} many {# odpowiedzi} other {# odpowiedzi}}."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, one {# pytanie pozostaje bez odpowiedzi.} few {# pytania pozostają bez odpowiedzi.} other {# pytań pozostaje bez odpowiedzi.}}"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, one {# pytanie jest oznaczone.} few {# pytania są oznaczone.} many {# pytań jest oznaczonych.} other {# pytania są oznaczone.}}"
+msgctxt "MVVQnK"
+msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
+msgstr "{count, plural, one {Niepewne: # odpowiedź.} few {Niepewne: # odpowiedzi.} many {Niepewne: # odpowiedzi.} other {Niepewne: # odpowiedzi.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7979,6 +8027,12 @@ msgstr "Po oddaniu nie zmienisz już odpowiedzi."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Odpowiadaj dalej"
+
+#. A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.
+#: src/mock/mock-labels.tsx
+msgctxt "BsQPJC"
+msgid "Not sure"
+msgstr "Niepewne"
 
 #: src/mock/mock-labels.tsx
 msgctxt "4osCkq"
@@ -8183,7 +8237,6 @@ msgid "Written part"
 msgstr "Część pisemna"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "Częściowo poprawne"
@@ -8200,7 +8253,6 @@ msgid "Wrong"
 msgstr "Błędne"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Bez odpowiedzi"
@@ -8298,24 +8350,24 @@ msgid "You missed {count, plural, one {# easy question} other {# easy questions}
 msgstr "Nie udało ci się poprawnie odpowiedzieć na {count, plural, one {# łatwe pytanie} few {# łatwe pytania} many {# łatwych pytań} other {# łatwego pytania}}. Najpierw je przejrzyj."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "Gac05z"
-msgid "Flagged answers"
-msgstr "Oznaczone odpowiedzi"
+msgctxt "v-WZ1x"
+msgid "Answers you weren't sure of"
+msgstr "Odpowiedzi oznaczone jako „Niepewne”"
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "EnpXr5"
-msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "Poprawne wśród nieoznaczonych: {sureRight, plural, =0 {# z {sureAnswered}} other {# z {sureAnswered}}}. Poprawne wśród oznaczonych: {unsureRight, plural, =0 {# z {unsureAnswered}} other {# z {unsureAnswered}}}."
+msgctxt "eQCLMt"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr "Pewne: {sureRight, plural, =0 {# z {sureAnswered} poprawnych odpowiedzi} one {# z {sureAnswered} poprawnych odpowiedzi} few {# z {sureAnswered} poprawnych odpowiedzi} many {# z {sureAnswered} poprawnych odpowiedzi} other {# z {sureAnswered} poprawnych odpowiedzi}}. Niepewne: {unsureRight, plural, =0 {# z {unsureAnswered} poprawnych odpowiedzi} one {# z {unsureAnswered} poprawnych odpowiedzi} few {# z {unsureAnswered} poprawnych odpowiedzi} many {# z {unsureAnswered} poprawnych odpowiedzi} other {# z {unsureAnswered} poprawnych odpowiedzi}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "1yogM5"
-msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr "Pozostawienie oznaczonych pytań bez odpowiedzi dałoby ci dodatkowo {points, plural, one {# punkt} few {# punkty} many {# punktów} other {# punktu}}."
+msgctxt "BxnoFo"
+msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
+msgstr "Pozostawienie bez odpowiedzi tych, co do których nie masz pewności, dałoby {points, plural, one {# punkt} few {# punkty} many {# punktów} other {# punktu}} więcej."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "ZkBfTU"
-msgid "Your flagged answers still earned points, so keep answering them."
-msgstr "Oznaczone odpowiedzi też dały ci punkty, więc dalej odpowiadaj na oznaczone pytania."
+msgctxt "riHnND"
+msgid "The answers you weren't sure of still earned points, so keep answering them."
+msgstr "Za odpowiedzi, co do których nie masz pewności, też dostajesz punkty, więc odpowiadaj na nie."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8543,6 +8595,30 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Po tym egzaminie próbnym"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "Brak odpowiedzi"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "Częściowo poprawna"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "Poprawna"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "Niepoprawna"
+
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
@@ -8559,14 +8635,14 @@ msgid "{number} of {total}"
 msgstr "{number} z {total}"
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "bSCV9J"
-msgid "Flag"
-msgstr "Oznacz"
+msgctxt "d9n-z1"
+msgid "Check it again before you hand in. Your result shows how these answers went."
+msgstr "Sprawdź ją jeszcze raz przed oddaniem. Wynik pokaże, jak poszło."
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "sflabU"
-msgid "Remove flag"
-msgstr "Usuń oznaczenie"
+msgctxt "vmWccn"
+msgid "Your result shows how these answers went."
+msgstr "Twój wynik pokazuje, jak poszło ci z tymi odpowiedziami."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8711,11 +8787,11 @@ msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Pytanie {number}"
 
-#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "ETtb7q"
-msgid "{question}, flagged"
-msgstr "Oznaczono: {question}"
+msgctxt "n8sv3N"
+msgid "{question}, not sure"
+msgstr "{question}, Niepewne"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

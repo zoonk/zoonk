@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-ab-test-work",
+        "claimId": "952888881c38fe59",
+        "criterion": "depth",
+        "observationId": "6e1aae99b63fbe34b6c9d3654834dc54ab4a5dee86098940f0c375ab75ee529e.first.5258c189-c596-4fc6-8809-e191ce7ea358.4",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0037273249999999996,
+    "id": "00b6f56af2155c55d968857909efccb792bd9dae54bfd0b7bfde949b8c6fb96e",
+    "packet": [
+      {
+        "A": {
+          "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cb370277e247f7ff66dba6f0d51941dcdafb9adc0e05a6c6ebd654a7f3755479",
+          "format": "text"
+        },
+        "claim": "The opening panel lists p < 0.05 as the planned evidence threshold before the term p-value is ever introduced or explained in the chat.",
+        "claimId": "952888881c38fe59",
+        "criterion": "depth",
+        "expectations": {
+          "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "p < 0.05",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
+          "format": "text"
+        },
+        "B": {
+          "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
+          "format": "text"
+        },
+        "claim": "O caso calcula a dose como 18 kg × 50 mg/kg/dia sem dividir pelas três tomadas do dia.",
+        "claimId": "9950a33a7968b76a",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
+          "format": "text"
+        },
+        "input": {
+          "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "952888881c38fe59",
+          "finding": "holds",
+          "reason": "In output B the opening 'Checkout experiment' panel lists 'Planned evidence threshold: p < 0.05' as its own metric. The term 'p-value' first appears in chat only after the learner picks a choice in the sample node (the AI reply, 'The approximate p-value is 0.154'), so the threshold is listed before the term is explained."
+        },
+        {
+          "claimId": "9950a33a7968b76a",
+          "finding": "doesn't hold",
+          "reason": "Output A never uses 18 kg × 50 mg/kg/dia or any daily total or three daily doses. It calculates 18 kg × 10 mg/kg = 180 mg per dose, so the problem the claim describes isn't in the named output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}
