@@ -147,7 +147,7 @@ export function PlacementLengthChoice({
       />
 
       <p className="text-muted-foreground text-sm text-pretty">
-        {t("Stop any time. What you pass stays skipped.")}
+        {t("Stop any time. Lessons you already know stay skipped.")}
       </p>
       {children}
     </OnboardingColumn>

@@ -35,7 +35,7 @@
     <string name="placementtest_test_out">Test out of %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Skip %1$s if you already know it</string>
-    <string name="placementtest_choose_note">Stop any time. What you pass stays skipped.</string>
+    <string name="placementtest_choose_note">Stop any time. Lessons you already know stay skipped.</string>
     <string name="placementtest_start">Start</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Part %1$d</string>
@@ -45,6 +45,7 @@
     <string name="placementtest_continue_from_plan">You can finish the test from Plan.</string>
     <string name="placementtest_finish_for_today">Finish for today</string>
     <string name="placementtest_keep_going">Keep going</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <plurals name="placementtest_known">
         <item quantity="one">You already know it. It stays in your practice.</item>
         <item quantity="other">You already know them. They stay in your practice.</item>

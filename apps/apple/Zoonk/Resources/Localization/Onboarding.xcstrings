@@ -16253,8 +16253,7 @@
         }
       }
     },
-    "Stop any time. What you pass stays skipped." : {
-      "comment" : "Under the test's length choice: leaving keeps what the answers so far skipped"
+    "Stop any time. Lessons you already know stay skipped." : {
     },
     "Stop the message" : {
       "comment" : "Stops a listening question's message while it loads or plays",
@@ -22863,8 +22862,10 @@
       }
     },
     "You already know it. It stays in your practice." : {
+      "comment" : "After a test: \"it\" or \"them\" is the lessons the test skipped. They stay in the learner's practice reviews."
     },
     "You already know them. They stay in your practice." : {
+      "comment" : "After a test: \"it\" or \"them\" is the lessons the test skipped. They stay in the learner's practice reviews."
     },
     "You can change all of this later." : {
       "comment" : "Under an understood goal",

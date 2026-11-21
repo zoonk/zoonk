@@ -11,9 +11,12 @@ export function useSkippedLessonsSentences() {
         { count },
       ),
     known: (count: number) =>
-      t(
-        "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}",
-        { count },
-      ),
+      t({
+        description:
+          "After a test: \"it\" or \"them\" is the lessons the test skipped. They stay in the learner's practice reviews.",
+        message:
+          "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}",
+        values: { count },
+      }),
   };
 }

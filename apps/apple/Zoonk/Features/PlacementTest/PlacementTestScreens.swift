@@ -55,7 +55,7 @@ struct PlacementLengthChoice: View {
 
       Section {
         Text(
-          "Stop any time. What you pass stays skipped.", tableName: "Onboarding",
+          "Stop any time. Lessons you already know stay skipped.", tableName: "Onboarding",
           comment: "Under the test's length choice: leaving keeps what the answers so far skipped"
         )
         .typeStyle(.note)
