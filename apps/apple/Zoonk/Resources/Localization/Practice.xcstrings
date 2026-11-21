@@ -233,6 +233,29 @@
         }
       }
     },
+    "%lld mistakes fixed. They leave your notebook." : {
+      "comment" : "\"Your notebook\" is the learner's Mistakes notebook.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mistake fixed. It leaves your notebook."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mistakes fixed. They leave your notebook."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld more to win" : {
       "comment" : "Right answers still needed to break the Trickster's shield",
       "localizations" : {
