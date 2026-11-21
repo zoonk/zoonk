@@ -230,7 +230,11 @@ class OnboardingScreenshots {
         minutes: Int,
         locale: Locale,
     ) {
-        compose.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList)).onFirst().performSemanticsAction(SemanticsActions.OnClick)
+        compose
+            .onAllNodes(
+                SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList),
+            ).onFirst()
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         compose.onNodeWithText(formatMinutes(minutes, locale)).performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
