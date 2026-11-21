@@ -74,7 +74,6 @@ public struct ChallengeContent: Codable, Hashable, Sendable {
     public let id: String
     public let prompt: String
     public let messages: [Message]
-    /// A chart or a plot the team looks at while deciding.
     public let visual: LessonVisual?
     public let choices: [Choice]
   }

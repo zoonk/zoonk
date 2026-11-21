@@ -61,16 +61,11 @@ class PlotAxis(
     val ticks: List<Double>,
 )
 
-/**
- * Main's `getPlotAxes`: x is proportional and y fits the points and the reference levels, neither
- * forced to zero.
- */
 fun plotAxes(plot: LessonVisual.Plot): Pair<PlotAxis, PlotAxis> {
     val points = plot.series.flatMap { it.points }
     return plotAxis(points.map { it.x }) to plotAxis(points.map { it.y } + plot.references.map { it.y })
 }
 
-/** Whole-number data keeps whole ticks, so a day or count axis doesn't read 2.5. */
 private fun plotAxis(values: List<Double>): PlotAxis {
     val domain = niceDomain(values, includeZero = false)
     val wholeNumbers = values.all { it == Math.floor(it) }

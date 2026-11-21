@@ -238,8 +238,7 @@ private fun ChallengeConversation(
     fun said(message: ChallengeMessage): String =
         resources.getString(R.string.player_challenge_said, names.names[message.from] ?: message.from, plainText(names.fill(message.text)))
 
-    // Main's `useNewestInView`: a decision with a chart comes into view with it when both fit, and
-    // from the chart's top when they don't.
+    // A new decision comes into view with its chart when both fit, and from the chart's top when they don't.
     LaunchedEffect(moves.size) {
         if (moves.isEmpty()) return@LaunchedEffect
         withFrameNanos {}
@@ -360,7 +359,6 @@ private fun ChallengeMoves(
                     names,
                 )
             }
-            // Between the messages and the question, where it stays once the decision is made.
             progress.walk.node.visual
                 ?.let { visual ->
                     ChallengeVisual(visual, Modifier.bringIntoViewRequester(chart).onGloballyPositioned { placed.chart = it })
@@ -369,7 +367,6 @@ private fun ChallengeMoves(
     }
 }
 
-/** Where the open decision's chart and its question are, so a new decision scrolls into view with its chart. */
 private class DecisionPlace {
     var chart: LayoutCoordinates? = null
     var decision: LayoutCoordinates? = null

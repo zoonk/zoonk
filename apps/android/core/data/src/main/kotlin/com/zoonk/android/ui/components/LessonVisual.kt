@@ -15,11 +15,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-/**
- * Main's `LessonVisual`, which questions, sets, mocks, lesson steps and a challenge's decisions share.
- * A kind this version doesn't know reads as [Unknown], which draws nothing, so a newer server never
- * fails the screen it's on.
- */
+/** A kind this version doesn't know reads as [Unknown], which draws nothing, so a newer server never fails the screen it's on. */
 @Serializable(with = LessonVisualSerializer::class)
 sealed interface LessonVisual {
     val title: String?
@@ -65,7 +61,6 @@ sealed interface LessonVisual {
         )
     }
 
-    /** Numbers on both axes: a scatter, a line or both per series, with dashed reference levels. */
     @Serializable
     data class Plot(
         override val title: String,
@@ -116,7 +111,6 @@ sealed interface LessonVisual {
     }
 }
 
-/** Reads a visual by its `kind` and writes it back with one, as the API sends it. */
 internal object LessonVisualSerializer : KSerializer<LessonVisual> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("LessonVisual")
 

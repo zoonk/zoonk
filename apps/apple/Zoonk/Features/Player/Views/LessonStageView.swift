@@ -34,8 +34,8 @@ struct LessonStageView: View {
     }
   }
 
-  /// The chart of the challenge decision being made, which scrolls into view as it appears, ahead
-  /// of the turn, so the learner reads the data before the choices.
+  /// The open decision's chart scrolls into view ahead of the turn, so the learner reads the data
+  /// before the choices.
   private func decisionVisual(_ step: LessonStep) -> String? {
     guard case .challenge(let content) = step.content else {
       return nil

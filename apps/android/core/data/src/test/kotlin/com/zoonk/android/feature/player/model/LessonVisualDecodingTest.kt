@@ -11,7 +11,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** Lesson steps, questions and a challenge's decisions read their visual from what the API sends, whichever kind it is. */
 class LessonVisualDecodingTest {
     @Test
     fun readsTheChartsAndTimelinesAppsAlreadyGet() {

@@ -1,7 +1,5 @@
 import Foundation
 
-/// A category chart's value axis, the same whichever way its bars run, as main's
-/// `getChartValueAxis`: round ends, from zero for bars, cut at `axisStart` when the chart sets one.
 struct LessonChartScale {
   let domain: ClosedRange<Double>
   let ticks: [Double]
@@ -24,9 +22,6 @@ struct LessonChartScale {
   }
 }
 
-/// A plot's axes, as main's `getPlotAxes`: each fits its values with round ends and no forced zero,
-/// and y also fits the references, so every level drawn across the plot is in view. Whole-number
-/// data keeps whole ticks.
 struct LessonPlotScale {
   struct Axis {
     let domain: ClosedRange<Double>

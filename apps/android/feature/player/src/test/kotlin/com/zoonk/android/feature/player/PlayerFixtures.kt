@@ -244,7 +244,6 @@ private const val FINE_SCAN =
      "references":[{"label":"Needed tonight","y":960}],"source":null}
     """
 
-/** A case whose skill is reading a scan: each decision shows the chart it's about. */
 private val CHART_CHALLENGE =
     """
     {"variant":"work","setting":"Beamline 4, 6 pm","title":"Where should the detector sit tonight?",

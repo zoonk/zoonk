@@ -64,8 +64,7 @@ enum ChartsMath {
     return nice * magnitude
   }
 
-  /// A domain that holds every value with round ends, from zero unless `includesZero` is off
-  /// (main's `niceDomain`). One value spans from it to one more.
+  /// A lone value spans from it to one more.
   static func niceDomain(_ values: [Double], includesZero: Bool = true) -> ClosedRange<Double> {
     let finite = values.filter(\.isFinite) + (includesZero ? [0] : [])
 

@@ -133,8 +133,8 @@ enum ChallengeProgress: Hashable, Sendable {
     }
   }
 
-  /// The chart the team looks at for the decision being made, named by where it shows, so each
-  /// decision's is a new one even when a path comes back to the same screen.
+  /// New for each decision, even when a path comes back to the same node, so its chart scrolls into
+  /// view again.
   var decisionVisual: String? {
     guard case .deciding(let node, let confirmed, _, _) = self, node.visual != nil else {
       return nil

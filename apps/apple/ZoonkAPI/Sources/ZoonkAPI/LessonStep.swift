@@ -310,8 +310,8 @@ public struct LessonBasis: Codable, Hashable, Sendable {
   public let quote: String
 }
 
-/// What a lesson, a question or a challenge's decision draws from its data. A kind this build doesn't
-/// know yet is `unknown` and draws nothing, so the rest of the response still plays.
+/// A kind this build doesn't know yet is `unknown` and draws nothing, so the rest of the response
+/// still plays.
 public enum LessonVisual: Codable, Hashable, Sendable {
   case chart(LessonChart)
   case plot(LessonPlot)
@@ -373,8 +373,6 @@ public struct LessonChart: Codable, Hashable, Sendable {
   public let source: String?
 }
 
-/// Numbers against numbers, main's `PlotVisual`: x is spaced by value, so a scatter keeps repeated
-/// x and a line joins its points in order.
 public struct LessonPlot: Codable, Hashable, Sendable {
   public struct Point: Codable, Hashable, Sendable {
     public let x: Double
@@ -392,7 +390,6 @@ public struct LessonPlot: Codable, Hashable, Sendable {
     public let points: [Point]
   }
 
-  /// A level drawn across the plot, such as a limit or a target.
   public struct Reference: Codable, Hashable, Sendable {
     public let label: String
     public let y: Double

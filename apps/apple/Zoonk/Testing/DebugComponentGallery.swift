@@ -95,8 +95,7 @@
     }
   }
 
-  /// Charts with more series than the prompt aims for, where telling them apart is hardest, a line
-  /// on a cut axis, and plots: a scatter with named points, a control chart and a timed line.
+  /// Charts with more series than the prompt aims for, where telling them apart is hardest.
   private struct LessonCharts: View {
     private static let regions: [(String, [Double])] = [
       ("Norte", [12, 18, 24, 31]), ("Nordeste", [20, 22, 19, 27]), ("Sudeste", [8, 14, 22, 16]),
@@ -183,7 +182,6 @@
       "references": [],
     ])
 
-    /// Names too close to sit beside their dots, so they move to a numbered key.
     private static let crowded = visual([
       "kind": "plot", "title": "Boiling point by altitude", "xLabel": "Altitude",
       "xUnit": "m", "yLabel": "Boiling point", "yUnit": "°C",

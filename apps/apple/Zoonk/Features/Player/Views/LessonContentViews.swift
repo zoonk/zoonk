@@ -335,8 +335,6 @@ private struct LessonPrivatePicture: View {
   }
 }
 
-/// A chart, a plot or a timeline on a card, as main's `LessonVisual`. A kind this build doesn't know
-/// draws nothing.
 struct LessonVisualView: View {
   let visual: LessonVisual
 
@@ -362,7 +360,6 @@ struct LessonVisualView: View {
 }
 
 extension LessonVisual {
-  /// What VoiceOver names a visual by as it appears.
   var title: String? {
     switch self {
     case .chart(let chart): chart.title

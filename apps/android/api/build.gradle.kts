@@ -11,7 +11,6 @@ kotlin {
     }
 }
 
-/** Where the contract writes a visual inline, named so the visual maps to `JsonElement` like `LessonVisual`. */
 val inlineVisuals =
     mapOf(
         "ItemSet_visual" to "ItemSetVisual",
@@ -59,8 +58,7 @@ openApiGenerate {
             "SpokenAnswerRequest",
             "__schema0",
             "__schema1",
-            // A visual's kind picks its shape; the app reads it as its own `LessonVisual`, whose kinds it
-            // doesn't know yet draw nothing instead of failing the response they're in.
+            // The app reads a visual itself, so a kind it doesn't know yet draws nothing instead of failing the response.
             "LessonVisual",
             *inlineVisuals.values.toTypedArray(),
         ).associateWith { "kotlinx.serialization.json.JsonElement" } +
@@ -70,7 +68,7 @@ openApiGenerate {
             // A new reason still means outside the plan; the UI gives it the plain label.
             "NotPlannedReason" to "kotlin.String",
         )
-    // Inline schemas take a schema mapping only once they have a name.
+    // The generator maps an inline schema only once it has a name.
     inlineSchemaNameMappings = inlineVisuals
     // The plugin passes its own supporting-file list, which skips any ignore file; the app builds its
     // own client, so only the serializers the models use are listed.

@@ -2,7 +2,6 @@ import SwiftUI
 
 /// The team's names fill `{{slotId}}`.
 struct ChallengeStepView: View {
-  /// The chart of the decision being made, which the stage scrolls into view as it appears.
   static let decisionVisualId = "challenge-decision-visual"
 
   let step: LessonStep
@@ -259,7 +258,7 @@ struct ChallengeStepView: View {
       ForEach(Array(decision.node.messages.enumerated()), id: \.offset) { _, message in
         self.message(message)
       }
-      // Where it was while deciding, so the pick moves nothing.
+      // Stays where it was while deciding, so the pick moves nothing.
       if let visual = decision.node.visual {
         LessonVisualView(visual: visual)
       }
