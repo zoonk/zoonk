@@ -592,6 +592,10 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Covers your whole goal by %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_plan_all">Covers everything in your plan by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_plan_all_month">Covers everything in your plan by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_past_date">Your date, %1$s, has passed.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_time_past_date_month">Your date, %1$s, has passed.</string>

@@ -509,7 +509,7 @@ fun suggestionFor(
     reachedShare: Double? = 1.0,
 ): PlanTimeToCoverSuggested? =
     when {
-        recommended != null && recommended <= MOST_SUGGESTED -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
+        recommended != null && recommended <= MOST_SUGGESTED -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended, reachedShare)
         focus != null -> suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, focus, reachedShare)
         else -> null
     }

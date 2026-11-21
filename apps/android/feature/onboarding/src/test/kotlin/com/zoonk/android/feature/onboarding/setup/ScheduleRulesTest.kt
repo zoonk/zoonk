@@ -129,7 +129,7 @@ class ScheduleRulesTest {
     fun theLastAnswerStaysInPlaceMarkedAsUpdatingWhileTheNewOneIsWorkedOut() {
         val last = TimeAnswerState(found(), TimeLine.Share(0.4))
         val asking = TimeAnswerState(null, TimeLine.Asking)
-        val answered = TimeAnswerState(found(recommended = 50), TimeLine.Everything)
+        val answered = TimeAnswerState(found(recommended = 50), TimeLine.Everything(whole = true))
 
         assertEquals(last.copy(updating = true), shownAnswer(last, asking))
         assertEquals(answered, shownAnswer(last, answered))
@@ -139,7 +139,7 @@ class ScheduleRulesTest {
     @Test
     fun anExamKeepsStudyingEverythingUntilTheTimePickedCoversItAll() {
         assertTrue(keepsFullCourse(true, TimeLine.Asking))
-        assertFalse(keepsFullCourse(true, TimeLine.Everything))
+        assertFalse(keepsFullCourse(true, TimeLine.Everything(whole = true)))
         assertFalse(keepsFullCourse(false, TimeLine.Share(0.4)))
     }
 

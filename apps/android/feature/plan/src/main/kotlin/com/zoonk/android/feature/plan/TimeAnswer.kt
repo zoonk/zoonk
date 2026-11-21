@@ -103,7 +103,7 @@ fun TimeAnswer(
                 style = style,
             )
             // A time that covers everything needs no such line, but keeps its room so picking it moves nothing.
-            takesWords?.let { Text(it, Modifier.hiddenIf(line == TimeLine.Everything), color = muted, style = style) }
+            takesWords?.let { Text(it, Modifier.hiddenIf(line is TimeLine.Everything), color = muted, style = style) }
             when {
                 failed -> {
                     TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
@@ -243,11 +243,13 @@ private fun lineWords(
     val time = formatMinutes(minutes ?: 0, locale)
     val text =
         when (line) {
-            TimeLine.Everything -> {
+            is TimeLine.Everything -> {
                 date ?: return AnnotatedString("")
                 val month = date.namedMonth
                 stringResource(
                     when {
+                        !line.whole && month -> R.string.plan_time_covers_plan_all_month
+                        !line.whole -> R.string.plan_time_covers_plan_all
                         exam && month -> R.string.plan_time_covers_exam_all_month
                         exam -> R.string.plan_time_covers_exam_all
                         month -> R.string.plan_time_covers_goal_all_month

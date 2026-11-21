@@ -11,7 +11,10 @@ sealed interface TimeLine {
 
     data object AskFailed : TimeLine
 
-    data object Everything : TimeLine
+    /** [whole] is false when the learner took part of the goal out of their plan, so everything is only what they kept. */
+    data class Everything(
+        val whole: Boolean,
+    ) : TimeLine
 
     data object FindFailed : TimeLine
 
@@ -120,6 +123,9 @@ fun timeLine(
     }
 }
 
+/** A share of 1 or none says nothing was taken out; any other means the learner took part out. */
+private fun everythingLine(reachedShare: Double?) = TimeLine.Everything(whole = reachedShare == null || reachedShare >= 1)
+
 private fun datedLine(
     advice: LineAdvice?,
     asking: TimeLine,
@@ -130,13 +136,13 @@ private fun datedLine(
     val suggested = found?.suggested
     if (suggested?.minutes?.toInt() == minutes) {
         return when (suggested.kind) {
-            PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeLine.Everything
+            PlanTimeToCoverSuggested.Kind.EVERYTHING -> everythingLine(suggested.reachedShare)
             PlanTimeToCoverSuggested.Kind.FOCUS -> TimeLine.Share(suggested.reachedShare)
         }
     }
     if (advice != null) {
         val covered = advice.coveredShare ?: 0.0
-        return if (covered >= 1) TimeLine.Everything else TimeLine.Share(advice.reachedShare)
+        return if (covered >= 1) everythingLine(advice.reachedShare) else TimeLine.Share(advice.reachedShare)
     }
     if (found == null) return if (findFailed) TimeLine.FindFailed else TimeLine.Working
     return asking
