@@ -29,6 +29,10 @@ function codeLines(block: Element): string[] {
   );
 }
 
+function pixels(value: string): number {
+  return Number(value.replace("px", ""));
+}
+
 function noSidewaysScroll() {
   return document.documentElement.scrollWidth <= window.innerWidth;
 }
@@ -262,6 +266,70 @@ describe("code in a lesson", () => {
 
       await expectTagOnLastLineAtEnd("Line 1: 8 Line 2: 12");
       await expectTagOnLastLineAtEnd(`Line 1: ${LONG_LINE[0]} Line 2: ${LONG_LINE[1]}`);
+    });
+  });
+
+  it("marks each extra row of a wrapped code option, so it never reads as a line of its own", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const program = [
+        "class Exportador extends Servico, Compactador {",
+        "  void exportar() { compactar(); }",
+        "}",
+      ];
+
+      const lesson = buildLesson([
+        contentStep("check", {
+          content: {
+            basis: null,
+            options: [
+              {
+                id: "a",
+                isCorrect: true,
+                reason: "It extends both.",
+                text: fence("java", program),
+              },
+              { id: "b", isCorrect: false, reason: "It extends one.", text: "```\nok\n```" },
+            ],
+            question: "Which version does it?",
+          },
+        }),
+      ]);
+
+      renderLessonPlayer({ lesson });
+      await document.fonts.ready;
+
+      const option = page.getByRole("radio", { name: /class Exportador/u });
+      await expect.element(option).toBeVisible();
+
+      const lines = [
+        ...option.element().querySelectorAll<HTMLElement>("[data-slot='code-snippet-line']"),
+      ];
+
+      const rows = lines.map((line) => {
+        const box = line.getBoundingClientRect();
+        const style = getComputedStyle(line);
+        const height = pixels(style.lineHeight);
+        const marks = line.querySelector("[data-slot='code-wrap-marks']")?.getBoundingClientRect();
+
+        return {
+          markEnd: marks?.right ?? 0,
+          markTop: (marks?.top ?? 0) - box.top,
+          marked: Math.round((marks?.height ?? 0) / height),
+          rest: box.left + pixels(style.paddingInlineStart),
+          rowHeight: height,
+          rows: Math.round(box.height / height),
+        };
+      });
+
+      expect(rows[0]?.rows).toBeGreaterThan(1);
+
+      for (const row of rows) {
+        expect(row.marked).toBe(row.rows - 1);
+      }
+
+      const [wrapped] = rows;
+      expect(wrapped?.markTop).toBeCloseTo(wrapped?.rowHeight ?? 0, 0);
+      expect(wrapped?.markEnd).toBeLessThan(wrapped?.rest ?? 0);
     });
   });
 

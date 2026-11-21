@@ -30,13 +30,27 @@ const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
 const CONTINUATION_ARROW =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg>';
 
-// One arrow per extra row a wrapped line takes, under its number.
+// One arrow per extra row a wrapped line takes.
 const CONTINUATION_MARKS = {
   maskImage: `url("data:image/svg+xml,${encodeURIComponent(CONTINUATION_ARROW)}")`,
   maskPosition: "right top",
   maskRepeat: "repeat-y",
   maskSize: "0.75em 1lh",
 } satisfies React.CSSProperties;
+
+/**
+ * A snippet's line has no number to carry its arrows, so they sit where its extra rows hang in,
+ * at the line's own indentation, before the row's code.
+ */
+function SnippetContinuationMarks({ indent }: { indent: number }) {
+  return (
+    <span
+      className="text-muted-foreground absolute top-[1lh] bottom-0 w-[0.75em] bg-current"
+      data-slot="code-wrap-marks"
+      style={{ ...CONTINUATION_MARKS, insetInlineStart: `${indent}ch`, maskPosition: "left top" }}
+    />
+  );
+}
 
 /**
  * A line's colored runs. A `field`'s mirror wraps exactly where the field's own text does, so it
@@ -277,14 +291,14 @@ export function CodeListing(props: CodeListingProps) {
   );
 }
 
-/** With no line numbers to mark a wrapped line's extra rows, they start a little further in. */
+/** With no line numbers to carry a wrapped line's arrows, its extra rows start this far in. */
 const SNIPPET_HANG = 2;
 
 /**
  * Code inside something the learner presses or reads in one line, such as an answer option: no
- * scroller and no line numbers, each line wrapped with its extra rows indented. Spans, so it fits
- * inside a button or a sentence. Its lines are its own children, so an option can lay them out
- * with its tag.
+ * scroller and no line numbers, each line wrapped with its extra rows indented after an arrow, as a
+ * block marks them under its numbers. Spans, so it fits inside a button or a sentence. Its lines
+ * are its own children, so an option can lay them out with its tag.
  */
 export function CodeSnippet({ code, language }: { code: string; language: string | null }) {
   const { snippet } = useSpokenCode();
@@ -303,16 +317,18 @@ export function CodeSnippet({ code, language }: { code: string; language: string
 
       {highlightCode(code, language).map((tokens, index) => {
         const key = `${index}:${codeLineText(tokens)}`;
+        const indent = indentOf(tokens);
 
         return (
           <span
             aria-hidden="true"
-            className="block wrap-anywhere whitespace-pre-wrap"
+            className="relative block wrap-anywhere whitespace-pre-wrap"
             data-slot="code-snippet-line"
             key={key}
-            style={wrapIndent(indentOf(tokens) + SNIPPET_HANG)}
+            style={wrapIndent(indent + SNIPPET_HANG)}
           >
             <CodeTokens tokens={tokens} />
+            <SnippetContinuationMarks indent={indent} />
           </span>
         );
       })}
