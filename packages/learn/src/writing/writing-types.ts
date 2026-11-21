@@ -3,6 +3,7 @@ import {
   type WritingDraft,
   type WritingTaskSummary,
 } from "@zoonk/core/exams/essays/writing-contract";
+import { type WritingTaskPlace } from "./writing-header";
 
 export type WritingStartAnswer =
   | { admissionId: string; status: "ready" }
@@ -34,8 +35,8 @@ export type WrittenEssay = EssayView;
 
 /** What a refusal lists for tomorrow: the task by its name and its time. */
 export type TomorrowTask = {
-  lines?: number | null;
   minutes: number | null;
   title: string;
   unit?: WritingTaskSummary["unit"];
+  writingTask?: WritingTaskPlace | null;
 };

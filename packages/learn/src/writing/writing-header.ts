@@ -10,22 +10,66 @@ type WritingUnit = WritingPrompt["unit"];
 type WritingAvailability = NonNullable<StudyBlock["writingAvailability"]>;
 
 /**
- * A writing task by the name a learner knows it: a whole answer by its line limit ("Write the
- * 30-line question") or else as the notice names it, a drill as its own short exercise, so the two
- * never share a name on one list.
+ * Where a task sits in the exam's written test, as the server says it before any question is
+ * assigned. `distinctLines`: no other task of the test has its line limit.
+ */
+export type WritingTaskPlace = {
+  distinctLines: boolean;
+  lines: number | null;
+  number: number;
+  points: number | null;
+  total: number;
+};
+
+/**
+ * A view's `writingTask`, read where the contract doesn't carry it yet (blocks, refused starts):
+ * null when it's missing or not that shape, and the block's own title names the task then.
+ */
+export function readTaskPlace(view: object): WritingTaskPlace | null {
+  const place = "writingTask" in view ? view.writingTask : null;
+
+  if (typeof place !== "object" || place === null) {
+    return null;
+  }
+
+  const read = (key: string) => {
+    const value: unknown = key in place ? Reflect.get(place, key) : null;
+    return typeof value === "number" ? value : null;
+  };
+
+  const number = read("number");
+  const total = read("total");
+
+  if (number === null || total === null) {
+    return null;
+  }
+
+  return {
+    distinctLines: Reflect.get(place, "distinctLines") === true,
+    lines: read("lines"),
+    number,
+    points: read("points"),
+    total,
+  };
+}
+
+/**
+ * A writing task by the name a learner knows it: a whole answer by its line limit when that tells
+ * it apart ("Write the 30-line question"), else by its place in the test; a drill as its own short
+ * exercise, so the two never share a name on one list. Without its place, the block's own title.
  */
 export function useWritingTaskTitle() {
   const t = useExtracted();
 
-  return ({
-    lines,
+  return function writingTitle({
+    task,
     title,
     unit,
   }: {
-    lines?: number | null;
+    task?: WritingTaskPlace | null;
     title: string | null;
     unit?: WritingUnit;
-  }): string => {
+  }): string {
     if (unit === "drill") {
       return t({
         description:
@@ -34,12 +78,28 @@ export function useWritingTaskTitle() {
       });
     }
 
-    if (lines) {
+    if (task?.distinctLines && task.lines) {
       return t({
         description:
           "A whole answer of an exam's written test, named by its line limit, such as 30 lines.",
         message: "Write the {lines}-line question",
-        values: { lines: String(lines) },
+        values: { lines: String(task.lines) },
+      });
+    }
+
+    if (task && task.total > 1) {
+      return t({
+        description:
+          "A whole answer of an exam's written test whose questions share a line limit, named by its place in the test.",
+        message: "Write question {number}",
+        values: { number: String(task.number) },
+      });
+    }
+
+    if (task) {
+      return t({
+        description: "The whole answer of an exam's written test that has one question.",
+        message: "Write the question",
       });
     }
 

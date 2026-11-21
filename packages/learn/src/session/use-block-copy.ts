@@ -2,7 +2,7 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
-import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
+import { readTaskPlace, useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
 import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
@@ -94,7 +94,11 @@ export function useBlockTitle() {
     }
 
     if (block.kind === "produce") {
-      return writingTitle({ title: block.title, unit: block.writingUnit });
+      return writingTitle({
+        task: readTaskPlace(block),
+        title: block.title,
+        unit: block.writingUnit,
+      });
     }
 
     if (block.mistakesOnly) {

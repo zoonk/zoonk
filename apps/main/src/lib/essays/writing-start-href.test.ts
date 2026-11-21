@@ -27,7 +27,7 @@ describe(getWritingHref, () => {
 
     expect(readHref(href)).toStrictEqual({
       status: "limitReached",
-      task: { lines: 60, minutes: 140, title: "The 60-line question", unit: "answer" },
+      task: { minutes: 140, title: "The 60-line question", unit: "answer", writingTask: null },
     });
   });
 
@@ -50,8 +50,30 @@ describe(getWritingHref, () => {
 
     expect(readHref(href)).toStrictEqual({
       status: "limitReached",
-      task: { lines: 30, minutes: 8, title: "The 30-line question", unit: "drill" },
+      task: { minutes: 8, title: "The 30-line question", unit: "drill", writingTask: null },
     });
+  });
+
+  it("a refused task keeps its place in the written test, so the page names it the same way", () => {
+    const writingTask = { distinctLines: false, lines: 30, number: 2, points: null, total: 2 };
+
+    // Its place comes with the next contract; until then the task carries it beside its fields.
+    const task = {
+      description: "Questão discursiva 2, de até 30 linhas",
+      lines: 30,
+      minutes: 70,
+      points: 30,
+      taskKey: "second",
+      unit: "answer" as const,
+      writingTask,
+    };
+
+    const href = getWritingHref({
+      answer: { returnsOn: "2026-11-21", status: "limitReached", task },
+      blockId: BLOCK_ID,
+    });
+
+    expect(readHref(href)).toMatchObject({ task: { writingTask } });
   });
 
   it("a refusal without its task lists none", () => {

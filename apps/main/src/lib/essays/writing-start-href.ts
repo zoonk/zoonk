@@ -1,5 +1,9 @@
 import { type WritingStartAnswer } from "@zoonk/learn/writing";
-import { type WritingStartState } from "@zoonk/learn/writing/start";
+import {
+  type WritingStartState,
+  type WritingTaskPlace,
+  readTaskPlace,
+} from "@zoonk/learn/writing/start";
 
 const WRITING_START_PARAM = "writing";
 
@@ -8,11 +12,35 @@ const FAILED = "failed";
 const TASK_REMOVED = "removed";
 const TASK_PARAM = "task";
 const MINUTES_PARAM = "minutes";
-const LINES_PARAM = "lines";
+const PLACE_PARAM = "place";
 const UNIT_PARAM = "unit";
 const DRILL = "drill";
 
 type Search = Record<string, string | string[] | undefined>;
+
+/** The task's place in the written test, as "number.total.lines.distinct", so the refusal names it. */
+function placeParams(task: object): string[][] {
+  const place = readTaskPlace(task);
+
+  if (!place) {
+    return [];
+  }
+
+  const { distinctLines, lines, number, total } = place;
+  return [[PLACE_PARAM, [number, total, lines ?? 0, distinctLines ? 1 : 0].join(".")]];
+}
+
+function readPlace(search: Search): WritingTaskPlace | null {
+  const [number, total, lines, distinct] = (readParam(search, PLACE_PARAM) ?? "")
+    .split(".")
+    .map(Number);
+
+  if (!number || !total) {
+    return null;
+  }
+
+  return { distinctLines: distinct === 1, lines: lines || null, number, points: null, total };
+}
 
 function startParams(answer: Exclude<WritingStartAnswer, { status: "ready" }>): string[][] {
   if (answer.status === "writing") {
@@ -35,7 +63,7 @@ function startParams(answer: Exclude<WritingStartAnswer, { status: "ready" }>): 
     ? [
         [TASK_PARAM, answer.task.description],
         [MINUTES_PARAM, String(answer.task.minutes)],
-        ...(answer.task.lines ? [[LINES_PARAM, String(answer.task.lines)]] : []),
+        ...placeParams(answer.task),
         [UNIT_PARAM, answer.task.unit],
       ]
     : [];
@@ -88,10 +116,10 @@ export function readWritingStart(search: Search): WritingStartState | null {
       status: "limitReached",
       task: title
         ? {
-            lines: readCount(search, LINES_PARAM),
             minutes: readCount(search, MINUTES_PARAM),
             title,
             unit: readUnit(search),
+            writingTask: readPlace(search),
           }
         : null,
     };

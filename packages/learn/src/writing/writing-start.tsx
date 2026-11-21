@@ -11,11 +11,14 @@ import { type GenerationRun } from "../generation/generation-run";
 import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { readTaskPlace } from "./writing-header";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
 import { type TomorrowTask } from "./writing-types";
 
 type WritingUnit = NonNullable<TomorrowTask["unit"]>;
+
+export { type WritingTaskPlace, readTaskPlace } from "./writing-header";
 
 export type WritingStartState =
   | { generationId: string; unit?: WritingUnit }
@@ -38,7 +41,12 @@ function toStopState(
   return {
     status: "limitReached",
     task: task
-      ? { lines: task.lines, minutes: task.minutes, title: task.description, unit: task.unit }
+      ? {
+          minutes: task.minutes,
+          title: task.description,
+          unit: task.unit,
+          writingTask: readTaskPlace(task),
+        }
       : null,
   };
 }

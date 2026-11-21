@@ -162,7 +162,6 @@ export function WritingScreen({
           hrefs={hrefs}
           onContinue={actions.finish}
           task={{
-            lines: essay.writing.lines,
             minutes: essay.pacing?.minutes ?? null,
             title: essay.writing.title,
             unit: essay.writing.unit,

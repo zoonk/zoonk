@@ -13703,6 +13703,18 @@ msgctxt "Ys6nu8"
 msgid "Write the {lines}-line question"
 msgstr ""
 
+#. A whole answer of an exam's written test whose questions share a line limit, named by its place in the test.
+#: src/writing/writing-header.ts
+msgctxt "csNSR1"
+msgid "Write question {number}"
+msgstr ""
+
+#. The whole answer of an exam's written test that has one question.
+#: src/writing/writing-header.ts
+msgctxt "6VrHwB"
+msgid "Write the question"
+msgstr ""
+
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
 msgctxt "Jo0iJd"
