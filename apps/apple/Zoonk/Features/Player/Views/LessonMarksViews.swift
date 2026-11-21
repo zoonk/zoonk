@@ -121,6 +121,8 @@ private struct LessonExampleFrame<Content: View>: View {
   }
 
   var body: some View {
+    let rise = labelRise
+
     content
       .padding(
         EdgeInsets(
@@ -152,7 +154,7 @@ private struct LessonExampleFrame<Content: View>: View {
         // A fifth of it outside the frame, as much as the text keeps clear of it.
         if let icon {
           LessonIconImage(icon: icon, size: LessonCornerIcon.size)
-            .alignmentGuide(.top) { $0[.top] + labelRise }
+            .alignmentGuide(.top) { $0[.top] + rise }
             .alignmentGuide(.trailing) { $0[.trailing] - $0.width * 0.2 }
         }
       }
