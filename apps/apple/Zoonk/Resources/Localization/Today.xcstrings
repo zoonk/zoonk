@@ -7837,7 +7837,7 @@
       }
     },
     "Out of your plan: %@" : {
-      "comment" : "The subjects and topics that left the plan when it followed the exam's official guide; the argument lists them"
+      "comment" : "Lists the subjects or topics the plan no longer holds, like \"Portuguese, Logic and 2 more\"."
     },
     "planFollowsNotice" : {
       "comment" : "Title once the plan changed by itself to follow the exam's public notice, the document that lists its subjects",

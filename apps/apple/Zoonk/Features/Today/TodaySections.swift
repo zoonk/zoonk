@@ -1290,6 +1290,6 @@ private func noticeRemovedSentence(_ names: [String]) -> String? {
   return String(
     localized: "Out of your plan: \(shown.formatted(.list(type: .and)))", table: "Today",
     comment:
-      "The subjects and topics that left the plan when it followed the exam's official guide; the argument lists them"
+      "Lists the subjects or topics the plan no longer holds, like \"Portuguese, Logic and 2 more\"."
   )
 }
