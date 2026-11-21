@@ -625,6 +625,21 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "pasar el EXANI-II para entrar a Medicina en la UdeG",
     language: "es",
   }),
+  testCase("ko-exam-named-only-by-its-date-is-unclear", {
+    expected: { route: "unclear" },
+    goal: "12월 5일 시험",
+    language: "ko",
+  }),
+  testCase("en-test-tomorrow-without-its-subject-is-unclear", {
+    expected: { route: "unclear" },
+    goal: "I have a test tomorrow",
+    language: "en",
+  }),
+  testCase("pt-school-test-naming-its-subject-is-a-goal", {
+    expected: { goals: [{ kind: "exam" }], route: "goals" },
+    goal: "Prova de matemática na sexta sobre frações",
+    language: "pt",
+  }),
   testCase("pt-learn-music-zero", {
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },
     goal: "Aprender música do zero",

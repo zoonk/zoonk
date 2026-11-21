@@ -2635,6 +2635,327 @@
           "today": "2026-09-28"
         }
       }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "ko-exam-named-only-by-its-date-is-unclear-1",
+        "userInput": {
+          "goal": "12월 5일 시험",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "ko-exam-named-only-by-its-date-is-unclear-2",
+        "userInput": {
+          "goal": "12월 5일 시험",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "ko-exam-named-only-by-its-date-is-unclear-3",
+        "userInput": {
+          "goal": "12월 5일 시험",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-test-tomorrow-without-its-subject-is-unclear-1",
+        "userInput": {
+          "goal": "I have a test tomorrow",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-test-tomorrow-without-its-subject-is-unclear-2",
+        "userInput": {
+          "goal": "I have a test tomorrow",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-test-tomorrow-without-its-subject-is-unclear-3",
+        "userInput": {
+          "goal": "I have a test tomorrow",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-school-test-naming-its-subject-is-a-goal-1",
+        "userInput": {
+          "goal": "Prova de matemática na sexta sobre frações",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-school-test-naming-its-subject-is-a-goal-2",
+        "userInput": {
+          "goal": "Prova de matemática na sexta sobre frações",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-school-test-naming-its-subject-is-a-goal-3",
+        "userInput": {
+          "goal": "Prova de matemática na sexta sobre frações",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
     }
   ],
   "taskId": "understand-goal"
