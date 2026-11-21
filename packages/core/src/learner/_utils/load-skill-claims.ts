@@ -115,7 +115,9 @@ async function loadAnswerEvents({
       answeredAt: true,
       isCorrect: true,
       isPlacement: true,
+      item: { select: { content: true, format: true } },
       itemId: true,
+      localDate: true,
       skillId: true,
       studySessionId: true,
     },
@@ -123,26 +125,17 @@ async function loadAnswerEvents({
     where: { itemId: { not: null }, skillId: { in: [...skillIds] }, stepId: null, userId },
   });
 
-  const itemIds = [...new Set(answers.flatMap((answer) => answer.itemId ?? []))];
-
-  const items =
-    itemIds.length > 0
-      ? await prisma.item.findMany({
-          select: { format: true, id: true },
-          where: { id: { in: itemIds } },
-        })
-      : [];
-
-  const formats = new Map(items.map((item) => [item.id, item.format]));
-
   return answers.flatMap((answer): ClaimEvent[] =>
     answer.skillId
       ? [
           {
             at: answer.answeredAt,
-            format: formats.get(answer.itemId ?? "") ?? "multipleChoice",
+            content: answer.item?.content,
+            format: answer.item?.format ?? "multipleChoice",
             isCorrect: answer.isCorrect,
+            itemId: answer.itemId,
             kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
+            localDate: answer.localDate,
             skillId: answer.skillId,
           },
         ]
