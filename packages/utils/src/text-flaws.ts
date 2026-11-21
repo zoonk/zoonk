@@ -1,9 +1,4 @@
-import {
-  findCodeFenceLines,
-  findCodeFences,
-  readWholeCodeFence,
-  removeCodeFences,
-} from "./code-fence";
+import { findCodeFenceLines, findCodeFences, readWholeCodeFence, removeCode } from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
@@ -244,10 +239,10 @@ const PLACEHOLDERS: readonly RegExp[] = [
   /<\s*(?:insert|inserir|insira|placeholder|nome|name)\b[^>]*>/iu,
 ];
 
-/** Code a text shows, inline or in a block, left out of the words a writer wrote. */
-function removeCode(text: string): string {
-  return parseInlineMarkupRanges(removeCodeFences(text))
-    .map((range) => (range.kind === "code" ? " " : range.text))
+/** The words a writer wrote: code left out, and each mark read as the words it marks. */
+function readWrittenWords(text: string): string {
+  return parseInlineMarkupRanges(removeCode(text))
+    .map((range) => range.text)
     .join("");
 }
 
@@ -257,7 +252,7 @@ export function findPlaceholderText(text: string): string[] {
     return ["The text is empty."];
   }
 
-  const prose = removeCode(text);
+  const prose = readWrittenWords(text);
 
   return PLACEHOLDERS.flatMap((pattern) => {
     const match = pattern.exec(prose);
