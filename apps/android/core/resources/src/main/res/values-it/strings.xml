@@ -3,7 +3,6 @@
 {
   "activities_guess_in_unit": "d104ba2e7552d57338c9cd238ad21618b89bc548661866106fbf0307ad6a8814",
   "answer_tag_correct": "e5b276f2784d371efce25f810244bac06a23df446e47962a2640fd549aa5698b",
-  "answer_tag_your_answer": "361a827c6cf3096528ef62f7dc794783d7a05da1d52291c58ca680e808b6c991",
   "answer_tag_your_guess": "8181bc8ec2ad67ef28e1a1da25c4abd48f69e9277a32d964222870d307bc0661",
   "belt_black": "ff55f6c6e27414c95746495cf0f7090cbc110b03add869f5b2fcd7e834c127b1",
   "belt_blue": "2c6be08140644abc236a44b4a712879c1d6360a0fabcb10b6bc4d9dea0ec02ed",
@@ -125,7 +124,6 @@
     <string name="belt_level_description">%1$s, Livello %2$s</string>
     <string name="belt_level_words">Livello %1$s</string>
     <string name="answer_tag_correct">Corretto</string>
-    <string name="answer_tag_your_answer">La tua risposta</string>
     <string name="answer_tag_your_guess">La tua ipotesi</string>
     <string name="load_failed_title">Questa pagina non si è caricata</string>
     <string name="load_failed_description">Controlla la connessione e riprova.</string>

@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { SpokenMath } from "../rich-text/spoken-math";
-import { OptionMarker, ResultTag, TagBesideOrUnder } from "./answer-option";
+import { OptionMarker, TagBesideOrUnder, useAnswerTag } from "./answer-option";
 import { ANSWER_OPTION_CLASS, ANSWER_TONE } from "./answer-tone";
 
 /** An answer shown after the fact: drawn as an option with its result, but nothing to pick. */
@@ -17,6 +17,8 @@ function ShownAnswer({
   marker: React.ReactNode;
   result: "right" | "wrong";
 }) {
+  const tag = useAnswerTag({ guessed: false, picked: result === "wrong", result });
+
   return (
     <div
       className={cn(
@@ -29,9 +31,7 @@ function ShownAnswer({
     >
       <OptionMarker isChecked layout="row" marker={marker} picked={false} />
 
-      <TagBesideOrUnder
-        tag={<ResultTag guessed={false} picked={result === "wrong"} result={result} />}
-      >
+      <TagBesideOrUnder tag={tag}>
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
     </div>

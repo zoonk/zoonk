@@ -3,7 +3,6 @@
 {
   "activities_guess_in_unit": "9c0a0be44d89f5e1906dcc3d612dd3f96a1650f5a6d0f364c03d75f76cf09129",
   "answer_tag_correct": "bd7b51a991dcdf10588c9e30dc81ebfc05b3f873d09a14883252e10dcd5989a5",
-  "answer_tag_your_answer": "9549fe692fcf4980298171ba68696486a87b21e0c23480dd68987b39f0dd2263",
   "answer_tag_your_guess": "8e936ef2ccb0d8057cb72e344a9898896781bebe7b4e1f67ea6aa64cdb9dd58c",
   "belt_black": "f560266d80ef96f4035deed2fa5b659c7b7db306b70a3763c812241222e984cb",
   "belt_blue": "503129cb380c418975922aa07dc3b0225d6ec7fc6d4958e82b3bfa7f20d445d2",
@@ -125,7 +124,6 @@
     <string name="belt_level_description">%1$s, %2$s. seviye</string>
     <string name="belt_level_words">Seviye %1$s</string>
     <string name="answer_tag_correct">Doğru</string>
-    <string name="answer_tag_your_answer">Cevabın</string>
     <string name="answer_tag_your_guess">Tahminin</string>
     <string name="load_failed_title">Bu sayfa yüklenemedi</string>
     <string name="load_failed_description">Bağlantını kontrol edip tekrar dene.</string>

@@ -15015,7 +15015,7 @@
       }
     },
     "Your answer" : {
-      "comment" : "Mark beside the learner's wrong pick once a question is graded.\nPlaceholder of an answer field.",
+      "comment" : "Placeholder of an answer field.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

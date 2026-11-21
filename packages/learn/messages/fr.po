@@ -11,27 +11,17 @@ msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Choix de réponses"
 
-#: src/_components/answer-option.tsx
-#: src/checkpoints/checkpoint-review.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correct"
-
-#: src/_components/answer-option.tsx
-#: src/essay/essay-labels.tsx
-#: src/mock/mock-question.tsx
-#: src/onboarding/steps/question-steps.tsx
-#: src/questions/numeric-answer-field.tsx
-#: src/questions/typed-answer-field.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "Ta réponse"
-
 #. Tags the learner's pick when it counts as neither right nor wrong.
 #: src/_components/answer-option.tsx
 msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "Ta proposition"
+
+#: src/_components/answer-option.tsx
+#: src/checkpoints/checkpoint-review.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correct"
 
 #: src/_components/answer-pair.tsx
 msgctxt "9-6ClJ"
@@ -3186,6 +3176,15 @@ msgstr "Un détail"
 msgctxt "EWD_9X"
 msgid "Your essay"
 msgstr "Ta rédaction"
+
+#: src/essay/essay-labels.tsx
+#: src/mock/mock-question.tsx
+#: src/onboarding/steps/question-steps.tsx
+#: src/questions/numeric-answer-field.tsx
+#: src/questions/typed-answer-field.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "Ta réponse"
 
 #: src/essay/essay-prompt.tsx
 msgctxt "iyKTfM"

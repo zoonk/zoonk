@@ -369,7 +369,7 @@ describe("language lesson screens", () => {
 
     await expect
       .element(page.getByRole("radio", { name: "An orbit" }))
-      .toMatchTextContent(/Your answer/u);
+      .toHaveAttribute("data-result", "wrong");
 
     await expect
       .element(page.getByRole("radio", { name: "A cloud" }))
@@ -384,6 +384,6 @@ describe("language lesson screens", () => {
 
     await expect
       .element(page.getByRole("radio", { name: /^rent/iu }))
-      .toMatchTextContent(/Your answer/u);
+      .toHaveAttribute("data-result", "right");
   });
 });

@@ -44,7 +44,6 @@
     <string name="belt_level_description">%1$s, Level %2$s</string>
     <string name="belt_level_words">Level %1$s</string>
     <string name="answer_tag_correct">Correct</string>
-    <string name="answer_tag_your_answer">Your answer</string>
     <string name="answer_tag_your_guess">Your guess</string>
     <string name="load_failed_title">This page didn\'t load</string>
     <string name="load_failed_description">Check your connection and try again.</string>

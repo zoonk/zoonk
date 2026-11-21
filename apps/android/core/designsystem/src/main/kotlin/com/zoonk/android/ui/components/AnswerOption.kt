@@ -108,7 +108,7 @@ fun AnswerOption(
             tag ?: {
                 when {
                     result != null -> AnswerTag(picked, result, guessed = guessed)
-                    picked && role != Role.Button -> PickedTag(guessed)
+                    picked && guessed && role != Role.Button -> GuessTag()
                 }
             },
         leading =

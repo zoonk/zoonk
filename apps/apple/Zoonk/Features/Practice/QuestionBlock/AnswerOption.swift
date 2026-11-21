@@ -14,7 +14,7 @@ struct AnswerOption: View {
   var marker: Int?
   var isPicked = false
   var result: AnswerOptionResult?
-  /// The learner's pick was a guess, so it's "Your guess", never "Your answer".
+  /// The learner's pick was a guess, so it says "Your guess".
   var isGuessed = false
   var isLocked = false
   var tag: AnyView?
@@ -73,20 +73,30 @@ struct AnswerOption: View {
   private var tagContent: some View {
     if let tag {
       tag
-    } else if let result {
-      Text(resultLabel(result))
+    } else if let result, let label = resultLabel(result) {
+      Text(label)
         .typeStyle(.tag)
         .foregroundStyle(tagColor(result))
-    } else if isPicked {
+    } else if isPicked && isGuessed {
       // Unspoken: VoiceOver already says the option is selected.
-      Text(isGuessed ? yourGuess : yourAnswer)
+      Text(yourGuess)
         .typeStyle(.tag)
         .foregroundStyle(Color(.foreground))
         .accessibilityHidden(true)
     }
   }
 
-  private var hasTag: Bool { tag != nil || result != nil || isPicked }
+  private var hasTag: Bool {
+    if tag != nil {
+      return true
+    }
+
+    if let result {
+      return resultLabel(result) != nil
+    }
+
+    return isPicked && isGuessed
+  }
 
   private var yourGuess: LocalizedStringResource {
     LocalizedStringResource(
@@ -94,28 +104,20 @@ struct AnswerOption: View {
       comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
   }
 
-  private var yourAnswer: LocalizedStringResource {
-    LocalizedStringResource(
-      "Your answer", table: "Practice",
-      comment: "Mark beside the learner's wrong pick once a question is graded.")
-  }
-
-  /// A right pick says whose it is, so it isn't called correct twice under its verdict.
-  private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource {
-    switch result {
-    case .guess:
+  /// The right option says "Correct" when the learner missed it. A pick needs no word of its own:
+  /// its color and the verdict say it, and only a guess, which counts as neither, says so.
+  private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource? {
+    if result == .guess || (isPicked && isGuessed) {
       return yourGuess
-    case .right:
-      if isPicked {
-        return isGuessed ? yourGuess : yourAnswer
-      }
-
-      return LocalizedStringResource(
-        "Correct", table: "Practice",
-        comment: "Mark beside the right option once a question is graded.")
-    case .wrong:
-      return yourAnswer
     }
+
+    guard result == .right, !isPicked else {
+      return nil
+    }
+
+    return LocalizedStringResource(
+      "Correct", table: "Practice",
+      comment: "Mark beside the right option once a question is graded.")
   }
 
   private func tagColor(_ result: AnswerOptionResult) -> Color {

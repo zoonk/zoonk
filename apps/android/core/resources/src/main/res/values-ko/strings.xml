@@ -3,7 +3,6 @@
 {
   "activities_guess_in_unit": "ed9d6e4c0f0e0aa2c9affc60118d5f7b63a77df933199fc04342f30385957f99",
   "answer_tag_correct": "a46a5d3009df5c0c9e2e9711a31a97115319aab89f597c92dd203d9ee58b70f6",
-  "answer_tag_your_answer": "62b05972bb20a55ad3074547616da7ae1770e41bb49f8632ad06e76f05316a86",
   "answer_tag_your_guess": "39a470de383c99efaf21890d739721fab6ae322e5601252e3a0f42e553bd069a",
   "belt_black": "4a995cdff733ebd1c5b6b5fb246468d702f6a3943d7e5fa85835e49c740d0171",
   "belt_blue": "2695f30c8e0621232a7275b69a5181d53ca0a4df9ef1850f657d8f89a3799469",
@@ -125,7 +124,6 @@
     <string name="belt_level_description">%1$s, 레벨 %2$s</string>
     <string name="belt_level_words">레벨 %1$s</string>
     <string name="answer_tag_correct">정답</string>
-    <string name="answer_tag_your_answer">내 답</string>
     <string name="answer_tag_your_guess">내 예상</string>
     <string name="load_failed_title">페이지를 불러오지 못했어요</string>
     <string name="load_failed_description">인터넷 연결을 확인하고 다시 시도해 보세요.</string>
