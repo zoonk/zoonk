@@ -68,7 +68,7 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
             text={`Images without a score (${summary.unscoredImages.length})`}
           />
           <p className={`text-muted-foreground text-xs ${PROSE_MEASURE_CLASS}`}>
-            {UNSCORED_IMAGES_NOTE}
+            {UNSCORED_IMAGES_NOTE} Generate outputs again to score them.
           </p>
         </div>
       )}

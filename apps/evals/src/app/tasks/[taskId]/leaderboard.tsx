@@ -5,6 +5,7 @@ import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages"
 import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollarsColumn, formatLatencyVerdict, formatPercent } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { LeaderboardExport } from "./leaderboard-export";
 import {
@@ -28,13 +29,13 @@ function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns:
     <>
       {entry.summary.scored}/{totalRuns}
       {entry.summary.unscoredImages.length > 0 && (
-        <span className="text-muted-foreground">
+        <span className="text-muted-foreground font-sans">
           {FACT_SEPARATOR}
           {entry.summary.unscoredImages.length} images without a score
         </span>
       )}
       {failed > 0 ? (
-        <span className="text-destructive-text">
+        <span className="text-destructive-text font-sans">
           {FACT_SEPARATOR}
           {failed} failed
         </span>
@@ -73,7 +74,7 @@ function getColumns({
     {
       cell: (entry) => entry.averageScore?.toFixed(2) ?? "Not scored",
       cellClassName: (entry) =>
-        entry.averageScore === null ? "text-muted-foreground" : "font-semibold",
+        entry.averageScore === null ? "text-muted-foreground font-sans" : "font-semibold",
       id: "score",
       isNumber: true,
       label: "Score / 10",
@@ -186,12 +187,15 @@ export function Leaderboard({
   return (
     <LeaderboardTable
       columns={getColumns({ entries, taskId, totalRuns })}
-      description={
-        entries.some((entry) => entry.summary.unscoredImages.length > 0)
-          ? `Each output is scored on its own, against its test case. ${UNSCORED_IMAGES_NOTE}`
-          : "Each output is scored on its own, against its test case."
-      }
+      description="Each output is scored on its own, against its test case."
       entries={entries}
+      footer={
+        entries.some((entry) => entry.summary.unscoredImages.length > 0) && (
+          <p className={`text-muted-foreground text-xs ${PROSE_MEASURE_CLASS}`}>
+            {UNSCORED_IMAGES_NOTE} Open a model to generate its outputs again.
+          </p>
+        )
+      }
       moreColumns={getMoreColumns(entries, taskId)}
       renderActions={(sortedEntries) => (
         <LeaderboardExport entries={sortedEntries} taskId={taskId} />
