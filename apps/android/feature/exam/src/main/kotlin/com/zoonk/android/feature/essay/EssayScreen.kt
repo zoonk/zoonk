@@ -65,6 +65,7 @@ import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.feature.writing.WritingTaskName
+import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.feature.writing.writingTaskTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -370,7 +371,7 @@ private fun EssayLoaded(
                 task =
                     writingTaskTitle(
                         drill = essay.writing.unit == WritingPromptOutput.Unit.DRILL,
-                        task = null,
+                        task = essay.writingTask?.toName(),
                         fallback = essay.writing.title,
                         lines = essay.writing.lines?.toInt(),
                     ) to essay.pacing.minutes.toInt(),

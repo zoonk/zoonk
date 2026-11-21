@@ -240,6 +240,18 @@ class EssayViewModelTest {
         }
 
     @Test
+    fun openingAnAnswerAsksTheServerForNothing() =
+        runTest(dispatcher) {
+            val device = Device(this, FakeEssayApi())
+            with(device) { keptBefore(KeptWriting("Typed before the app closed.", 0, ADMISSION.toString())) }
+
+            val viewModel = with(device) { open() }
+
+            assertEquals("Typed before the app closed.", viewModel.ui.value.text)
+            assertEquals(emptyList<Any>(), device.api.started)
+        }
+
+    @Test
     fun aCopyKeptUnderAnotherAdmissionIsNeverOffered() =
         runTest(dispatcher) {
             val device = Device(this, FakeEssayApi(essay(draft = "The rewrite started on the laptop.", draftRevision = 1)))

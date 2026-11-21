@@ -311,8 +311,8 @@ class EssayViewModel(
         opening = true
         viewModelScope.launch {
             val draft = essay.draft
-            // With no draft saved yet the block's start answers its admission again, so what's typed is kept under it from the first key.
-            admission = draft?.admissionId ?: if (essay.closed) null else (admit() as? Admitted.Ready)?.admissionId
+            // The read names the admission being written under, a rewrite's once one starts, saved draft or not.
+            admission = essay.admissionId ?: draft?.admissionId
             revision = draft?.revision ?: 0
             savedText = draft?.text.orEmpty()
             val start = chooseDraft(keptText.takeUnless { essay.closed }, draft, admission?.toString())
