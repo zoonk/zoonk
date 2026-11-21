@@ -35,6 +35,10 @@ type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { f
 
 const FIGURE_CONTEXT = "Na figura, uma seta aponta para uma organela da célula vegetal.";
 
+function evenOption(text: string, isCorrect: boolean) {
+  return { isCorrect, misconception: isCorrect ? null : `Picks ${text}`, reason: `${text} reason.`, text };
+}
+
 function mockUploads() {
   resetImageModels();
   storeBlobUploads();
@@ -583,5 +587,54 @@ describe(createItems, () => {
       "multipleChoice",
       "typed",
     ]);
+  });
+
+  it("stores a run's one-pick and select-all questions for a skill apart, and no copies on a retry", async () => {
+    const skill = await skillFixture();
+    const shared = { language: "en", provenance: generatedProvenance(), skillId: skill.id };
+
+    const selectAll = {
+      ...shared,
+      format: "multipleChoice" as const,
+      items: [
+        generatedMultipleChoice({
+          options: [
+            evenOption("2", true),
+            evenOption("4", true),
+            evenOption("5", false),
+            evenOption("9", false),
+          ],
+          question: "Which of these numbers are even?",
+        }),
+      ],
+      select: "all" as const,
+    };
+
+    const quick = await createItems({
+      ...shared,
+      format: "multipleChoice",
+      items: [generatedMultipleChoice()],
+    });
+
+    const stored = await createItems(selectAll);
+    const retried = await createItems(selectAll);
+
+    expect(stored.created).toHaveLength(1);
+    expect(stored.created[0]?.id).not.toBe(quick.created[0]?.id);
+
+    expect(retried.created.map((item) => item.id)).toStrictEqual(
+      stored.created.map((item) => item.id),
+    );
+
+    const selects = await prisma.item.findMany({
+      select: { content: true },
+      where: { skillId: skill.id },
+    });
+
+    expect(
+      selects
+        .map(({ content }) => String((content as { select: unknown }).select))
+        .toSorted((first, second) => first.localeCompare(second)),
+    ).toStrictEqual(["1", "all"]);
   });
 });
