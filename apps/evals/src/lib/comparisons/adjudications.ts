@@ -1,5 +1,5 @@
 import path from "node:path";
-import { acceptedReads, canAdjudicate, caseVotes } from "./evidence";
+import { acceptedReads, canAdjudicate, caseVotes, needsBlindOwnerRead } from "./evidence";
 import { hash } from "./identity";
 import { type Adjudication, adjudicationSchema } from "./schemas";
 import { directory, loadComparison, writeRecord } from "./storage";
@@ -7,11 +7,7 @@ import { directory, loadComparison, writeRecord } from "./storage";
 type ImportArgs = Omit<Adjudication, "blind" | "recordedAt"> & { taskId: string; id: string };
 
 export async function importAdjudication({ taskId, id, ...ruling }: ImportArgs) {
-  const adjudication = adjudicationSchema.parse({
-    ...ruling,
-    blind: false,
-    recordedAt: new Date().toISOString(),
-  });
+  const adjudication = adjudicationSchema.parse({ ...ruling, blind: false });
 
   const comparison = await loadComparison(taskId, id);
   const previous = comparison.adjudications.find((entry) => entry.caseId === adjudication.caseId);
@@ -22,6 +18,10 @@ export async function importAdjudication({ taskId, id, ...ruling }: ImportArgs) 
 
   if (!item || (!item.adjudication && !canAdjudicate(comparison.manifest, item))) {
     throw new Error("The case must remain unresolved after every available family reads it.");
+  }
+
+  if (needsBlindOwnerRead(comparison.manifest, item)) {
+    throw new Error("Read this case blind before ruling on it.");
   }
 
   if (
@@ -40,7 +40,7 @@ export async function importAdjudication({ taskId, id, ...ruling }: ImportArgs) 
   return writeRecord(
     file,
     adjudicationSchema,
-    { ...adjudication, recordedAt: previous ? previous.recordedAt : adjudication.recordedAt },
+    { ...adjudication, recordedAt: previous ? previous.recordedAt : new Date().toISOString() },
     Boolean(previous),
   );
 }

@@ -82,8 +82,9 @@ function OwnerStatus({ route }: { route: ComparisonRoute }) {
               <CaseLink caseId={item.caseId} />
             </span>
           ))}
-          . Your blind read can settle {needCall.length === 1 ? "it" : "them"}. You can also rule
-          with the model names shown.
+          . Your blind read can settle {needCall.length === 1 ? "it" : "them"}.
+          {manifest.priorities.distribution === "private" &&
+            " You can also rule with the model names shown."}
         </p>
       )}
       {waiting.length > 0 && (
