@@ -7,24 +7,28 @@ final class WeekdayTogglesTests: XCTestCase {
   /// The narrowest iPhone's list row, 390pt less the page's margins.
   private let phoneRow: CGFloat = 358
 
-  func testTheWeekSharesOneRowOnAPhoneAtTheDefaultSizeInEveryLanguage() {
-    for identifier in ["en_US", "pt_BR", "de_DE", "es_ES", "fr_FR", "ja_JP", "ko_KR", "pl_PL"] {
-      XCTAssertTrue(
-        WeekdayToggles.fits(
-          width: phoneRow, typeSize: .large, legibility: nil, locale: Locale(identifier: identifier)
-        ), identifier)
-    }
+  private func names(
+    width: CGFloat? = nil, _ typeSize: DynamicTypeSize = .large, _ identifier: String = "en_US"
+  ) -> WeekdayToggles.Names? {
+    WeekdayToggles.names(
+      width: width ?? phoneRow, typeSize: typeSize, legibility: nil,
+      locale: Locale(identifier: identifier))
   }
 
-  func testTheWeekBecomesAListWhereSevenNamesCantShareARow() {
-    XCTAssertFalse(
-      WeekdayToggles.fits(
-        width: phoneRow, typeSize: .accessibility1, legibility: nil,
-        locale: Locale(identifier: "en_US")))
-    XCTAssertFalse(
-      WeekdayToggles.fits(
-        width: 200, typeSize: .large, legibility: nil, locale: Locale(identifier: "en_US")),
-      "a narrow pane")
+  /// Polish's "niedz." is too wide for a seventh of the narrowest iPhone, so its days show their
+  /// letters rather than seven rows.
+  func testTheWeekSharesOneRowOnAPhoneAtTheDefaultSizeInEveryLanguage() {
+    for identifier in ["en_US", "pt_BR", "de_DE", "es_ES", "fr_FR", "ja_JP", "ko_KR", "tr_TR"] {
+      XCTAssertEqual(names(.large, identifier), .short, identifier)
+    }
+
+    XCTAssertEqual(names(.large, "pl_PL"), .narrow)
+  }
+
+  func testTheWeekShowsLettersThenAListAsTheTextGrows() {
+    XCTAssertEqual(names(.xxxLarge), .narrow)
+    XCTAssertNil(names(.accessibility1), "at an accessibility size, full names in a list")
+    XCTAssertNil(names(width: 100), "a pane too narrow for letters")
   }
 
   /// VoiceOver reads each day as a switch named for its whole weekday, Monday first, on or off.
@@ -37,7 +41,6 @@ final class WeekdayTogglesTests: XCTestCase {
           WeekdayToggles(isOn: { $0 == 1 }, onToggle: { _, _ in })
         }
       }
-      .frame(width: 390)
       .zoonkStyles())
     try await waitForLayout(in: window)
 
