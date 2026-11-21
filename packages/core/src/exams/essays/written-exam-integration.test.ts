@@ -172,8 +172,9 @@ describe("CGU written exam preparation", () => {
       expect.objectContaining({
         input: expect.objectContaining({
           board: "Cebraspe",
+          choices: [],
           exam: "CGU",
-          sectionTopics: ["Government auditing"],
+          subject: { name: "Writing", topics: ["Government auditing"] },
         }),
       }),
     );

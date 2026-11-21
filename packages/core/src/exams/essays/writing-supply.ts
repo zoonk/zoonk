@@ -1,8 +1,10 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
+import { readExamPicks } from "../choices/exam-choices";
 import { readEssayContent } from "./_utils/essay-content";
 import { listPracticeWritingTasks } from "./_utils/practice-writing-tasks";
+import { getWritingScope, isSameWritingScope } from "./_utils/writing-scope";
 import { matchesWritingTaskBasis } from "./_utils/writing-task-basis";
 
 export type WritingRequest = {
@@ -70,7 +72,7 @@ export async function loadUnseenWritingPrompts({
   userId: string;
 }) {
   const goal = await tx.goal.findFirst({
-    select: { examBlueprint: true, language: true },
+    select: { examBlueprint: true, language: true, plan: { select: { settings: true } } },
     where: { id: goalId, kind: "exam", userId },
   });
 
@@ -80,11 +82,14 @@ export async function loadUnseenWritingPrompts({
     return [];
   }
 
+  const { structure } = readBlueprintContent(blueprint);
+  const picks = readExamPicks(goal.plan?.settings);
+
   const tasks = new Map(
-    listPracticeWritingTasks({
-      classTest: Boolean(blueprint.ownerId),
-      structure: readBlueprintContent(blueprint).structure,
-    }).map((task) => [task.key, task]),
+    listPracticeWritingTasks({ classTest: Boolean(blueprint.ownerId), structure }).map((task) => [
+      task.key,
+      { scope: getWritingScope({ picks, structure, task }), task },
+    ]),
   );
 
   if (tasks.size === 0) {
@@ -121,12 +126,13 @@ export async function loadUnseenWritingPrompts({
 
   return items.flatMap((item) => {
     const writing = readEssayContent(item)?.writing;
-    const task = writing && tasks.get(writing.taskKey);
+    const own = writing && tasks.get(writing.taskKey);
 
     return writing &&
-      task &&
+      own &&
       !used.has(item.id) &&
-      matchesWritingTaskBasis({ prompt: writing, task })
+      matchesWritingTaskBasis({ prompt: writing, task: own.task }) &&
+      isSameWritingScope({ choices: own.scope.choices, prompt: writing })
       ? [{ id: item.id, writing }]
       : [];
   });

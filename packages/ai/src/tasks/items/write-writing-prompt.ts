@@ -26,11 +26,12 @@ const schema = z.object({
 export type WritingPromptOutput = z.infer<typeof schema>;
 export type WritingPromptInput = {
   board?: string;
+  choices: { group: string; subject: string }[];
   drillSkillId: string | null;
   exam: string;
   language: string;
-  sectionTopics: string[];
   skills: { id: string; name: string }[];
+  subject: { name: string; topics: string[] } | null;
   task: WrittenTask;
   unit: "answer" | "drill";
   usedTitles: string[];

@@ -93,7 +93,7 @@ export async function ensureWritingPrompts(
   const runId = await startOnce(
     writingPromptWorkflow,
     [input],
-    `writing-prompt:${supply.blueprint.id}:${input.taskKey}`,
+    [`writing-prompt:${supply.blueprint.id}:${input.taskKey}`, ...supply.chosenSubjects].join(":"),
   );
 
   const current = await loadWritingSupply(input);
