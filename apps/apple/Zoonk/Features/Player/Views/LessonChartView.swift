@@ -173,13 +173,24 @@ private struct LessonChartFormat {
 
   let chart: LessonChart
   let width: (TypeStyle, String) -> Double
+  private let tickLabels: [Double: String]
+
+  init(chart: LessonChart, width: @escaping (TypeStyle, String) -> Double) {
+    let ticks = LessonChartScale(chart).ticks
+
+    self.chart = chart
+    self.width = width
+    tickLabels = Dictionary(
+      zip(ticks, LessonPlotTicks.format(ticks, locale: .courseLanguage)),
+      uniquingKeysWith: { first, _ in first })
+  }
 
   var valueCaption: String {
     chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel
   }
 
   func tick(_ value: Double) -> String {
-    ActivityNumberFormat.format(value, compact: true)
+    tickLabels[value] ?? ActivityNumberFormat.format(value)
   }
 
   func value(_ value: Double) -> String {
