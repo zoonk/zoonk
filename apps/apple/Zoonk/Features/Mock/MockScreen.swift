@@ -57,6 +57,7 @@ private struct MockStage: View {
       .onChange(of: scenePhase) { _, phase in
         if phase == .active {
           run.offerGradingOnANewDay()
+          run.queue.retryNow()
         }
       }
       .onDisappear { run.queue.stop() }

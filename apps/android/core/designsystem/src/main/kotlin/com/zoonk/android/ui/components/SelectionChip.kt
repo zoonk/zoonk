@@ -24,6 +24,7 @@ fun SelectionChip(
     modifier: Modifier = Modifier,
     role: Role? = null,
     enabled: Boolean = true,
+    trailingIcon: (@Composable () -> Unit)? = null,
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -32,6 +33,7 @@ fun SelectionChip(
         onClick = onClick,
         enabled = enabled,
         label = { Text(text) },
+        trailingIcon = trailingIcon,
         modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
         colors =
             FilterChipDefaults.filterChipColors(

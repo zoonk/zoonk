@@ -5,9 +5,12 @@ import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.ProfileAnswerInput
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
+import com.zoonk.api.models.ProfileQuestionViewOptionsInner
+import com.zoonk.api.models.ProfileQuestionViewSaved
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -97,5 +100,110 @@ class ProfileDraftTest {
         assertFalse(ProfileDraft(picks = listOf("other")).valid(ProfileQuestion.STUDIES))
         assertFalse(ProfileDraft(picks = listOf("other")).valid(ProfileQuestion.CONDITIONS))
         assertTrue(ProfileDraft(picks = listOf("noSoundEffects")).valid(ProfileQuestion.LEARNING_SUPPORT))
+    }
+
+    private val tools =
+        ProfileQuestionView(
+            ProfileQuestion.TOOLS,
+            listOf(ProfileQuestionViewOptionsInner(null, "excel", "Excel"), ProfileQuestionViewOptionsInner(null, "Tasy", "Tasy")),
+            ProfileQuestionViewSaved(listOf("Tasy"), emptyList(), "ClinicalKey; Whitebook\nclinicalkey"),
+            ProfileQuestionView.Status.ANSWERED,
+            1,
+        )
+
+    private fun favorites(draft: ProfileDraft) =
+        draft
+            .body(ProfileQuestion.TOOLS, true)
+            .getValue("answer")
+            .jsonObject
+            .getValue("favorites")
+            .jsonPrimitive.content
+
+    @Test
+    fun everyChipQuestionTakesAnyNumberOfPicks() {
+        val draft = listOf("anime", "sciFi", "sports", "comedy", "drama").fold(ProfileDraft()) { draft, id -> draft.toggle(id) }
+        assertEquals(listOf("anime", "sciFi", "sports", "comedy", "drama"), draft.picks)
+        assertEquals(
+            5,
+            draft
+                .body(ProfileQuestion.WATCH, true)
+                .getValue("answer")
+                .jsonObject
+                .getValue("picks")
+                .jsonArray.size,
+        )
+    }
+
+    @Test
+    fun savedTypedToolsComeBackAsChipsSplitLikeTheServer() {
+        val draft = ProfileDraft.from(tools)
+        assertEquals(listOf("ClinicalKey", "Whitebook"), draft.typed)
+        assertEquals("", draft.text)
+        assertEquals("ClinicalKey, Whitebook", favorites(draft))
+    }
+
+    @Test
+    fun addingPicksAnOfferedChipByNameAndSkipsRepeats() {
+        val draft = ProfileDraft.from(tools).copy(text = "excel, whitebook ;Python、 tasy").added(tools.options)
+        assertEquals(listOf("Tasy", "excel"), draft.picks)
+        assertEquals(listOf("ClinicalKey", "Whitebook", "Python"), draft.typed)
+        assertEquals("", draft.text)
+    }
+
+    @Test
+    fun aSeparatorAddsWhatCameBeforeItAndRemovingDropsOne() {
+        val draft = ProfileDraft().typing("SAP", tools.options).typing("SAP,", tools.options)
+        assertEquals(listOf("SAP"), draft.typed)
+        assertEquals("", draft.text)
+        assertEquals(emptyList<String>(), draft.removing("SAP").typed)
+    }
+
+    @Test
+    fun textLeftInTheFieldIsSentAsAdded() {
+        val draft = ProfileDraft(typed = listOf("SAP"), text = " Excel, Python ")
+        assertTrue(ProfileDraft(text = "Excel").submitted(tools).valid(ProfileQuestion.TOOLS))
+        val submitted = draft.submitted(tools)
+        assertEquals(listOf("excel"), submitted.picks)
+        assertEquals("SAP, Python", favorites(submitted))
+    }
+
+    @Test
+    fun theFieldTakesNoMoreTextThanTheServersLimitLeaves() {
+        val full = ProfileDraft(typed = listOf("a".repeat(60), "b".repeat(55)))
+        assertEquals(117, favorites(full).length)
+        val typed = full.typing("c", tools.options)
+        assertEquals("c", typed.text)
+        assertEquals(typed, typed.typing("cc", tools.options))
+        assertEquals("Microsoft Dynami", full.copy(text = "Microsoft Dynamics").typing("Microsoft Dynami", tools.options).text)
+        assertEquals(full, full.typing("Microsoft Dynamics", tools.options))
+        assertEquals(listOf("a".repeat(60), "b".repeat(55), "c"), typed.typing("c,", tools.options).typed)
+    }
+
+    @Test
+    fun aPasteAddsTheNamesThatFitWholeAndLeavesTheRestInTheField() {
+        val almostFull = ProfileDraft(typed = listOf("a".repeat(100)))
+        val pasted = almostFull.typing("Photoshop, Illustrator, excel, Figma", tools.options)
+        assertEquals(listOf("a".repeat(100), "Photoshop", "Figma"), pasted.typed)
+        assertEquals(listOf("excel"), pasted.picks)
+        assertEquals("Illustrator", pasted.text)
+        assertEquals(118, favorites(pasted).length)
+        assertFalse(pasted.canAdd(tools.options))
+        assertFalse(pasted.submitted(tools).valid(ProfileQuestion.TOOLS))
+        assertTrue(pasted.copy(text = "").submitted(tools).valid(ProfileQuestion.TOOLS))
+    }
+
+    @Test
+    fun theLimitCountsCharactersAsTheServerDoes() {
+        val almostFull = ProfileDraft(typed = listOf("a".repeat(115)))
+        val emoji = almostFull.typing("🙂🙂🙂", tools.options)
+        assertEquals("🙂🙂🙂", emoji.text)
+        assertTrue(emoji.canAdd(tools.options))
+        assertEquals(listOf("a".repeat(115), "🙂🙂🙂"), emoji.added(tools.options).typed)
+    }
+
+    @Test
+    fun addIsOffForAnEmptyField() {
+        assertFalse(ProfileDraft(text = "  ").canAdd(tools.options))
+        assertTrue(ProfileDraft(text = "Excel").canAdd(tools.options))
     }
 }

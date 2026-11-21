@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { type Page } from "@playwright/test";
+import { safeAsync } from "../../packages/utils/src/error.ts";
 import { type Finding } from "./checks.mts";
 import {
   type Press,
@@ -34,15 +35,11 @@ export type PressCoverage = {
   pressed: string[];
 };
 
-/** A failing press or text drawn over text, with its faults and pictures, the moved boxes outlined. */
-export type PressRecord = {
-  after: string;
-  before: string | null;
-  control: string;
-  faults: string[];
-};
+type Picture = { name: "after" | "before" | "overlap" } & ({ error: string } | { file: string });
 
-type Pending = { after: string | null; number: number; press: Press | null };
+export type PressRecord = { control: string; faults: string[]; pictures: Picture[] };
+
+type Pending = { after: Picture | null; number: number; press: Press | null };
 
 const PICTURE_DIGITS = 2;
 
@@ -66,13 +63,21 @@ export function pressWalk(
   const pending: Pending[] = [];
   let pictured = 0;
 
-  async function picture(number: number, name: string, targetId: string) {
-    await mkdir(folder, { recursive: true });
+  async function picture(
+    number: number,
+    name: Picture["name"],
+    targetId: string,
+  ): Promise<Picture> {
     const file = join(folder, `${String(number).padStart(PICTURE_DIGITS, "0")}-${name}.png`);
     await page.evaluate(showMarks, { on: true, targetId });
-    await screenshot(page, { path: file, scale: "css" }).catch(() => null);
+
+    const { error } = await safeAsync(async () => {
+      await mkdir(folder, { recursive: true });
+      await screenshot(page, { path: file, scale: "css" });
+    });
+
     await page.evaluate(showMarks, { on: false, targetId });
-    return file;
+    return error ? { error: error.message, name } : { file, name };
   }
 
   /** Text over text on the screen as it is now, each pair reported once per load. */
@@ -109,10 +114,9 @@ export function pressWalk(
     findings.push(...faults);
 
     records.push({
-      after: shown,
-      before: null,
       control: state,
       faults: faults.map((fault) => fault.message),
+      pictures: [shown],
     });
   }
 
@@ -167,7 +171,7 @@ export function pressWalk(
 
       const moves = pressMoves(press);
       const failing = pressFindings(press).some((finding) => finding.level === "fail");
-      let after: string | null = null;
+      let after: Picture | null = null;
 
       if (failing) {
         pictured += 1;
@@ -196,18 +200,21 @@ export function pressWalk(
       const press = { ...last.press, undone: comparison };
       const faults = pressFindings(press);
       findings.push(...faults);
+      const failures = faults.filter((fault) => fault.level === "fail");
 
       // A press that failed isn't judged on its undo, but its picture before is taken only on the
       // screen it started from: an accordion that closed another section never gets it back.
       const restored = comparison !== null && restoreMoves(comparison).length === 0;
 
-      if (last.after) {
+      if (failures.length > 0) {
         // Back on the screen before the press, the same elements outlined where they started.
+        const before =
+          last.after && restored ? await picture(last.number, "before", press.action.id) : null;
+
         records.push({
-          after: last.after,
-          before: restored ? await picture(last.number, "before", press.action.id) : null,
           control: `${press.doing} ${controlName(press.action)}`,
-          faults: faults.filter((fault) => fault.level === "fail").map((fault) => fault.message),
+          faults: failures.map((fault) => fault.message),
+          pictures: [before, last.after].filter((shot) => shot !== null),
         });
       }
 

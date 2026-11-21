@@ -11,7 +11,7 @@ import {
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
-import { ActivitySnippetBar, useInsertSnippet } from "../_components/activity-code";
+import { ActivitySnippetBar, useInsertSnippet } from "../_components/activity-snippet-bar";
 import { type CodeSnippet } from "../_utils/insert-at-cursor";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { FormulaExamples } from "./formula-examples";

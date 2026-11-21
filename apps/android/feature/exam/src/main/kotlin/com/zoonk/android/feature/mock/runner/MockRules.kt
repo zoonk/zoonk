@@ -29,6 +29,17 @@ data class SectionMoves(
 
     fun canChange(target: Int): Boolean = !forwardOnly || target >= reached || target in changed || (changesLeft ?: 0) > 0
 
+    /** What the review has changed once the answer on screen goes from [saved] to [next]; null when it may not change. */
+    fun changedAfter(
+        saved: Answer?,
+        next: Answer?,
+    ): Set<Int>? =
+        when {
+            !canChange(position) -> null
+            reviewing && position < reached && saved != next -> changed + position
+            else -> changed
+        }
+
     companion object {
         fun of(
             navigation: MockExamSectionsInnerNavigation?,
@@ -99,15 +110,13 @@ data class SectionPlace(
     val total: Int,
 )
 
-fun sectionPlace(
-    position: Int,
-    questions: List<MockQuestion>,
-): SectionPlace? {
-    val question = questions.getOrNull(position) ?: return null
+fun MockRun.sectionPlace(): SectionPlace? {
+    val question = question ?: return null
     if (question.essay) return null
+    val total = view.current?.questionTotal?.toInt()
     return SectionPlace(
-        number = questions.take(position + 1).count { !it.essay },
-        total = questions.count { !it.essay },
+        number = if (total == null) position + 1 else question.number,
+        total = total ?: questions.count { !it.essay },
     )
 }
 

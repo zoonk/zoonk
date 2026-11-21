@@ -1,6 +1,6 @@
 ---
 name: zoonk-address-issue
-description: Verify and address a zoonk/zoonk GitHub issue together with the issues related to it. Find them through its links and issue searches, make sure no other agent is already on them, mark them In Progress on the project board, close duplicates, link an open PR that covers them, question whether each still holds on the latest main and whether a better design would make it impossible, then fix a bug, research the best way to build an enhancement, or discuss a new feature before building it, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
+description: Verify and address a zoonk/zoonk GitHub issue together with the issues related to it. Find them through its links and issue searches, make sure no other agent is already on them, mark them In Progress on the project board, close duplicates, link an open PR that covers them, question whether each still holds on the latest main and whether a better design would make it impossible, then fix a bug, research the best way to build an enhancement, or build a new feature after debating its design when it's big, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
 license: MIT
 metadata:
   author: zoonk
@@ -137,17 +137,17 @@ A valid issue doesn't always need a PR:
 
 - A question, or a problem with someone's own account or payment: answer it or point them to the [Help page](https://www.zoonk.com/support), then close it.
 - A security hole, such as one learner seeing another's data: tell the user at once and add nothing about it on GitHub.
-- A new feature: discuss it first ([address them](#7-address-them)).
+- A new feature: build it as [address them](#7-address-them) says, with your calls listed in the PR.
 
 ## 7. Address them
 
 Whatever the kind, the fix or approach an issue suggests is one idea, not the plan. Work out the best way to solve the problem, and when it differs from the issue's suggestion, say why in the PR. Judge the kind from what the issue asks, not from its type, label or title. Related issues usually share one fix at their common cause.
 
-When the design holds up ([question them](#5-question-them)), fix narrowly. When the better approach changes what learners see or is a real UX or structural call, don't quietly ship either the narrow fix or the redesign: bring it to the user as a recommendation, with the narrow fix as the alternative. Check it first with a model from another family, or with a [design debate](../../guides/design-debate.md) when it's a big new flow or a structural change. The PR, or the issue while it waits on the user, says which you chose and why.
+When the design holds up ([question them](#5-question-them)), fix narrowly. When the better approach changes what learners see or is a real UX or structural call, check it with a model from another family, or with a [design debate](../../guides/design-debate.md) when it's a big new flow or a structural change, then build what you recommend, the narrow fix or the redesign. The PR lists it under **Judgment calls** with why ([make the call](../../../AGENTS.md#scope-and-completion)).
 
 - **Bug** (something doesn't do what it's meant to): fix its root cause rather than the symptom the issue shows. That cause may be the design rather than one code path ([question them](#5-question-them)). Start from a regression test that fails for the right reason ([zoonk-testing](../zoonk-testing/SKILL.md)). A bug in a dependency gets a workaround here and an upstream report ([zoonk-upstream-issue](../zoonk-upstream-issue/SKILL.md)).
-- **Enhancement** (something Zoonk does that should work better, or a specific piece of work): research the best way to do it. Find the need behind it, look at how strong products solve the same need, and check what our dependencies already offer ([zoonk-capability-research](../zoonk-capability-research/SKILL.md)). Build the simplest approach that serves learners best. If it needs a product decision, such as changing what learners pay for or removing something they use, bring it to the user first.
-- **New feature** (something Zoonk doesn't do at all, such as a new flow, screen, kind of content or platform): discuss it before any plan, design or code. Bring the user the need behind it and who has it, what Zoonk does today, the decisions it needs, the options and your recommendation. Once they decide, build it like an enhancement.
+- **Enhancement** (something Zoonk does that should work better, or a specific piece of work): research the best way to do it. Find the need behind it, look at how strong products solve the same need, and check what our dependencies already offer ([zoonk-capability-research](../zoonk-capability-research/SKILL.md)). Build the simplest approach that serves learners best. A change to what learners pay for is the user's call: ask first, with your pick.
+- **New feature** (something Zoonk doesn't do at all, such as a new flow, screen, kind of content or platform): find the need behind it and who has it, and what Zoonk does today; run a [design debate](../../guides/design-debate.md) when it's a big new flow or a structural change, then build it like an enhancement. The PR lists the calls it made under **Judgment calls**.
 
 Before you mark the PR ready, read the issues again: a comment added while you worked can widen one, and a related issue filed in the meantime belongs in this PR when it shares the fix. A bug or enhancement ends like any task ([root instructions](../../../AGENTS.md#finishing-a-task)), with a `Fixes #<n>` line in the PR body for each issue it fixes, so GitHub links them and closes each one when it merges. An issue it fixes only in part gets a mention without `Fixes`.
 
@@ -160,4 +160,4 @@ When you can't verify or address the issue without something only people know, s
 
 ## Hand back
 
-Say what you found and what you did for each issue, with links: closed as a duplicate (of which issue), closed as completed or not planned (and why, including what superseded it), linked to an open PR, left to another agent (which one) or held because someone else is likely on a related issue, a PR opened, a question waiting on an answer, or a feature waiting on the user's decision.
+Say what you found and what you did for each issue, with links: closed as a duplicate (of which issue), closed as completed or not planned (and why, including what superseded it), linked to an open PR, left to another agent (which one) or held because someone else is likely on a related issue, a PR opened, a question waiting on an answer, and the judgment calls the PR lists.

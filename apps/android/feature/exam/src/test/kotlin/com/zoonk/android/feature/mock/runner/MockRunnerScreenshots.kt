@@ -108,6 +108,7 @@ class MockRunnerScreenshots {
                 current =
                     currentSection(
                         questions = question(ITEM_ONE, 1, "Water boils at 100 °C at sea level.", emptyList(), "trueFalse"),
+                        questionTotal = 1,
                     ),
                 extra = """"scoring":"net"""",
             ),

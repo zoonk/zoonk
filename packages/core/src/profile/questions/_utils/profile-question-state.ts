@@ -7,10 +7,8 @@ import {
 } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type SupportedLocale } from "@zoonk/utils/locale";
-import { normalizeProfileAnswer } from "../profile-answer-normalization";
-import { normalizeProfileFavorites } from "../profile-favorites";
-import { PROFILE_OPTION_IDS } from "../profile-option-ids";
-import { PROFILE_CONTENT } from "../profile-options";
+import { normalizeProfileAnswer, reconcileToolAnswer } from "../profile-answer-normalization";
+import { normalizeProfileFavorites, splitProfileFavorites } from "../profile-favorites";
 import {
   PROFILE_QUESTIONS,
   PROFILE_QUESTION_VERSIONS,
@@ -19,6 +17,7 @@ import {
   getProfileSteps,
   profileAnswerInputSchema,
 } from "../profile-question-contract";
+import { getProfileQuestionOptions } from "./profile-question-options";
 
 type Client = Pick<
   TransactionClient,
@@ -164,10 +163,6 @@ function questionAnswer({
   }
 }
 
-const LOCALE_EXTRA_IDS = new Set(
-  Object.values(PROFILE_CONTENT).flatMap((content) => Object.values(content.extras).flat()),
-);
-
 export function toProfileQuestionView({
   state,
   question,
@@ -178,26 +173,30 @@ export function toProfileQuestionView({
   locale: SupportedLocale;
 }): ProfileQuestionView {
   const input = savedProfileAnswer({ question, state });
-  const content = PROFILE_CONTENT[locale];
-  const saved = toSavedView(input);
+  const params = { locale, question, suggestedTools: state.profile?.suggestedTools };
 
-  const ids = new Set([
-    ...(content.extras[question] ?? []),
-    ...PROFILE_OPTION_IDS[question].filter((id) => !LOCALE_EXTRA_IDS.has(id)),
-    ...saved.picks,
-  ]);
+  const saved = toSavedView(
+    input.question === "tools"
+      ? reconcileToolAnswer({ input, locale, options: getProfileQuestionOptions(params) })
+      : input,
+  );
+
+  const typedNames = new Set(
+    question === "tools" ? splitProfileFavorites(saved.text).map((name) => name.toLowerCase()) : [],
+  );
+
+  const options = getProfileQuestionOptions({ ...params, picks: saved.picks }).filter(
+    ({ label }) => !typedNames.has(label.toLowerCase()),
+  );
 
   return {
     id: question,
-    options: [...ids].flatMap((id) => {
-      const definingContent = LOCALE_EXTRA_IDS.has(id)
-        ? Object.values(PROFILE_CONTENT).find((item) => item.extras[question]?.includes(id))
-        : content;
-
-      const option = definingContent?.options[question][id];
-      return option ? [{ description: option.description, id, label: option.label }] : [];
-    }),
-    saved,
+    options,
+    saved: {
+      picks: options.map(({ id }) => id).filter((id) => saved.picks.includes(id)),
+      studies: options.flatMap(({ id }) => saved.studies.filter(({ field }) => field === id)),
+      text: saved.text,
+    },
     status: state.answers.find((answer) => answer.question === question)?.outcome ?? null,
     version: PROFILE_QUESTION_VERSIONS[question],
   };

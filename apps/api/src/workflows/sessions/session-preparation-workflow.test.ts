@@ -1,9 +1,12 @@
+import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -310,6 +313,51 @@ describe("session preparation records admission for its children", () => {
       ).resolves.toBe(used + expected[writes].length);
     },
   );
+
+  it("writes the learner's example lines for today's written lessons in the background", async () => {
+    const { goal, lesson, user } = await sessionWithLesson();
+
+    const [step] = await Promise.all([
+      libraryStepFixture({
+        content: {
+          exampleLineSlot: { idea: "Waiting for one thing while doing others." },
+          text: "`await` pauses only its own function.",
+        },
+        lessonId: lesson.id,
+      }),
+      prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lesson.id } }),
+      memoryFactFixture({ category: "routine", statement: "Cooks dinner", userId: user.id }),
+    ]);
+
+    vi.mocked(generateExampleLines).mockResolvedValueOnce({
+      data: { lines: ["While the pasta water boils, you keep chopping."] },
+      provenance: {
+        generatedAt: new Date().toISOString(),
+        latencyMs: 1,
+        model: "openai/gpt-6.1-terra",
+        promptVersion: "test",
+        provider: "test",
+        requestedModel: "openai/gpt-6.1-terra",
+        runId: "run",
+        usage: {},
+      },
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
+
+    expect(generateExampleLines).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ wait: "later" }),
+    );
+
+    await expect(
+      prisma.stepExampleLine.findUniqueOrThrow({
+        where: { userStep: { stepId: step.id, userId: user.id } },
+      }),
+    ).resolves.toMatchObject({ text: "While the pasta water boils, you keep chopping." });
+  });
 
   it("publishes one parent manifest for the selected children without a planner entry", async () => {
     const { goal, item, lesson, plan, user } = await sessionWithLesson();

@@ -113,19 +113,16 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
     },
   },
   {
-    expectations: `US English speaker learning Brazilian Portuguese. The "se" and "quando" clauses can come before or after the main clause in both languages, but the words of one clause never move into the other, which would change what depends on what.`,
+    expectations: `US English speaker learning Brazilian Portuguese. The "se" and "quando" clauses can come before or after the main clause in both languages, but the words of one clause never move into the other, which would change what depends on what. Whether "amanhã" and "tomorrow" may open the whole sentence ("Tomorrow, if it rains, I'll stay home") is debatable, so keeping or dropping those orders is fine.`,
     expected: {
       sentences: [
         {
           orders: {
-            invalid: ["Se eu fico em casa, chover amanhã", "Amanhã, se chover, eu fico em casa"],
+            invalid: ["Se eu fico em casa, chover amanhã"],
             valid: ["Eu fico em casa se chover amanhã"],
           },
           translationOrders: {
-            invalid: [
-              "If I'll stay home, it rains tomorrow",
-              "Tomorrow, if it rains, I'll stay home",
-            ],
+            invalid: ["If I'll stay home, it rains tomorrow"],
             valid: ["I'll stay home if it rains tomorrow"],
           },
         },
