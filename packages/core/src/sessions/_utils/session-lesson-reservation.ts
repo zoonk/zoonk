@@ -1,4 +1,4 @@
-import { type Goal, type StudySessionBlock } from "@zoonk/db";
+import { type Goal, type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { isStandIn } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
@@ -22,6 +22,7 @@ type ReservationPlan = { graph: unknown; settings: unknown; items: readonly Sess
 
 export function getSessionLessonCandidates({
   access,
+  freshStart,
   goal,
   localDate,
   plan,
@@ -29,6 +30,7 @@ export function getSessionLessonCandidates({
   prerequisites = new Map(),
 }: {
   access: ExamPrepAccess;
+  freshStart: StudyFreshStart | null;
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   localDate: Date;
   plan: ReservationPlan;
@@ -57,6 +59,7 @@ export function getSessionLessonCandidates({
 
   const { fillItems, reservedItems } = pickDayLessons({
     awaitingOutlines: false,
+    dayMinutes: getSessionDayMinutes({ dailyMinutes: goal.dailyMinutes, freshStart }),
     goal,
     localDate,
     plan: { ...plan, graph: parsePlanGraph(plan.graph), prerequisites },
@@ -100,6 +103,7 @@ function getReservedCandidates({
   const candidates = getSessionLessonCandidates({
     access,
     blocks: session.blocks,
+    freshStart: session.freshStart,
     goal: session.goal,
     localDate: session.localDate,
     plan,
@@ -131,15 +135,19 @@ export function getSessionLessonReservation(input: Parameters<typeof getReserved
   const candidates = getReservedCandidates(input);
 
   if (!candidates) {
-    return { lessonPlaceholder: null, lessonRoom: false };
+    return { lessonPlaceholder: null, lessonRoom: false, unwrittenRoom: false };
   }
 
-  const placeholder = candidates
-    .filter((item) => isStandIn(item))
-    .flatMap((item) => {
-      const minutes = getUnwrittenMinutesOn({ items: [item], today: input.session.localDate });
-      return minutes > 0 ? [{ minutes, title: item.titleSnapshot }] : [];
-    })[0];
+  const standIns = candidates.filter((item) => isStandIn(item));
 
-  return { lessonPlaceholder: placeholder ?? null, lessonRoom: true };
+  const placeholder = standIns.flatMap((item) => {
+    const minutes = getUnwrittenMinutesOn({ items: [item], today: input.session.localDate });
+    return minutes > 0 ? [{ minutes, title: item.titleSnapshot }] : [];
+  })[0];
+
+  return {
+    lessonPlaceholder: placeholder ?? null,
+    lessonRoom: true,
+    unwrittenRoom: standIns.length > 0,
+  };
 }

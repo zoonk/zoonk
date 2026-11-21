@@ -11,6 +11,7 @@ import {
 } from "../../library/language/alphabet/alphabet-intro";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { getSessionDayMinutes } from "../fresh-start";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
 import { pickDayLessons } from "./day-lessons";
@@ -139,8 +140,11 @@ export async function loadSessionBuildInput(
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
 
+  const freshStart = getDayFreshStart({ plan, today: localDate });
+
   const { heldSkillIds, learnItems, fillItems, reservedItems } = pickDayLessons({
     awaitingOutlines,
+    dayMinutes: getSessionDayMinutes({ dailyMinutes: dayMinutes, freshStart }),
     goal,
     heldDay: context.selection !== undefined,
     localDate,
@@ -243,7 +247,7 @@ export async function loadSessionBuildInput(
     dailyMinutes: dayMinutes,
 
     fillLessons,
-    freshStart: getDayFreshStart({ plan, today: localDate }),
+    freshStart,
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lastSessionChallenges: plan.lastSessionChallenges,
     lessons,

@@ -193,6 +193,7 @@ export async function refitSessionLessons(
   const candidates = getSessionLessonCandidates({
     access,
     blocks,
+    freshStart: session.freshStart,
     goal: session.goal,
     localDate: session.localDate,
     plan,
