@@ -64,10 +64,14 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let timeCovers: Bool
   }
 
-  struct FitOffer: Decodable, Equatable, Sendable {
+  /// A change the plan offers because it fits the learner's time: more lessons, or the exam's
+  /// optional study.
+  struct Offer: Decodable, Equatable, Sendable {
     let canApply: Bool
     let effect: PlanEffect
     let fits: Bool
+    /// The optional lessons the extra offer adds; nil on the fit offer.
+    let lessons: Int?
     let operations: [JSONValue]
   }
 
@@ -251,8 +255,13 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let estimate: Estimate
   let examChoices: [ExamChoice]
   let examDocument: ExamDocument
+  /// The exam's optional study, offered only when all of it fits and the fit offer has nothing.
+  let extraOffer: Offer?
   let feasibility: Feasibility?
-  let fitOffer: FitOffer?
+  let fitOffer: Offer?
+  /// The exam has an official guide or the learner's material, so optional study is "Not in the
+  /// official guide" rather than "Optional".
+  let hasNotice: Bool?
   /// An exam goal's Focus test; nil for other goals.
   var focusTest: FocusTestSummary?
   /// A learn or language goal's test of what the learner already knows; nil for others.
@@ -282,6 +291,11 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   /// phase the plan holds nothing of has no days.
   var roadPhases: [PlanPhase] {
     phases.filter { $0.kind != .afterExam && $0.state != .leftOut }
+  }
+
+  /// What the optional study's offer says it is.
+  var extraLabel: String {
+    examExtraLabel(hasNotice: hasNotice ?? true, document: examDocument)
   }
 
   var nextChapter: PlanChapter? {
@@ -573,6 +587,7 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   let examDocument: ExamDocument
   let fromMaterial: Bool
   let goal: Goal
+  let hasNotice: Bool?
   /// `notice` (an exam's own subjects) or `modules`.
   let kind: String
   let lessons: Lessons
@@ -591,7 +606,7 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   }
 
   struct SubjectGroup: Identifiable {
-    /// The subjects the plan adds outside the notice, after its own groups.
+    /// The exam's optional study, after the subjects it tests.
     let extra: Bool
     let name: String?
     let subjects: [SyllabusSubject]
@@ -599,15 +614,13 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
     var id: String { extra ? "extra" : "notice:\(name ?? "")" }
   }
 
-  /// Main's `groupSubjects`: the notice's groups in its order, then what the plan adds outside it;
-  /// a plan's modules are one group.
+  /// Main's `groupSubjects`: the subjects with no group first, so none reads as part of the group
+  /// above it, then the notice's groups in its order or one run of modules, then the optional study.
   var subjectGroups: [SubjectGroup] {
-    guard kind == "notice" else {
-      return [SubjectGroup(extra: false, name: nil, subjects: subjects)]
-    }
+    let modules = kind != "notice"
 
     func key(_ subject: SyllabusSubject) -> String? {
-      subject.source == "plan" ? nil : (subject.group ?? "")
+      subject.isExtra ? nil : modules ? "" : (subject.group ?? "")
     }
 
     var keys: [String?] = []
@@ -616,12 +629,19 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
       keys.append(key(subject))
     }
 
-    return (keys.filter { $0 != nil } + keys.filter { $0 == nil }).map { groupKey in
+    let ungrouped = keys.filter { $0 == "" }
+    let named = keys.filter { $0 != nil && $0 != "" }
+
+    return (ungrouped + named + keys.filter { $0 == nil }).map { groupKey in
       let inGroup = subjects.filter { key($0) == groupKey }
       return SubjectGroup(
-        extra: groupKey == nil, name: groupKey == nil ? nil : inGroup.first?.group,
-        subjects: inGroup)
+        extra: groupKey == nil, name: groupKey.flatMap { $0.isEmpty ? nil : $0 }, subjects: inGroup)
     }
+  }
+
+  /// What the optional study's group, subject page and lessons say it is.
+  var extraLabel: String {
+    examExtraLabel(hasNotice: hasNotice ?? true, document: examDocument)
   }
 
   func sharedExams(of subject: SyllabusSubject) -> [SharedExam] {
@@ -680,6 +700,8 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let areas: [String]
   let chapters: [Chapter]
   let displayWeight: DisplayWeight?
+  /// Set on the exam's optional study, such as its strategy, which the exam doesn't test.
+  let extra: Bool?
   /// The notice's group the subject is listed under, if it groups them.
   let group: String?
   let key: String
@@ -703,6 +725,8 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let topicsStudied: Int?
 
   var id: String { key }
+
+  var isExtra: Bool { extra == true }
 
   var lessonShare: Double {
     lessonsTotal > 0 ? Double(lessonsDone + lessonsKnown) / Double(lessonsTotal) : 0

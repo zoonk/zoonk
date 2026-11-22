@@ -33,10 +33,13 @@ import { getScreenRef, useKeptScreens } from "./use-kept-screens";
 import { useLessonKeyboard } from "./use-lesson-keyboard";
 import { useRevealFeedback } from "./use-reveal-feedback";
 import { useScreenTurn, useScreenTurns } from "./use-screen-turns";
+import { useSkipUnheardDictations } from "./use-skip-unheard-dictations";
 import { useSwipeNavigation } from "./use-swipe-navigation";
+import { useIsQuietListening } from "./use-today-choice";
 
-function getPromptAudioUrl(step: PlayableLibraryStep): string | null {
-  return isLanguageStep(step) ? getPlayerStepAudioUrl(step.exercise) : null;
+function usePromptAudioUrl(step: PlayableLibraryStep): string | null {
+  const isQuiet = useIsQuietListening(step.kind);
+  return isLanguageStep(step) && !isQuiet ? getPlayerStepAudioUrl(step.exercise) : null;
 }
 
 function LessonCompletion() {
@@ -129,6 +132,7 @@ function LessonScreen({
 }) {
   const runtime = useLessonPlayer();
   const [left, setLeft] = useState(runtime);
+  const audioUrl = usePromptAudioUrl(step);
 
   if (isShown && left !== runtime) {
     setLeft(runtime);
@@ -137,7 +141,7 @@ function LessonScreen({
   return (
     <Activity mode={isShown ? "visible" : "hidden"}>
       <LessonPlayerRuntimeContext value={isShown ? runtime : left}>
-        <PlayerAudioProvider audioUrl={getPromptAudioUrl(step)}>
+        <PlayerAudioProvider audioUrl={audioUrl}>
           <MainActionSlotProvider>
             <div className="flex flex-1 flex-col" data-screen={screenKey}>
               <LessonStage isShown={isShown} step={step} turn={turn} />
@@ -184,6 +188,7 @@ function LessonPlayerFrame() {
   const turns = useScreenTurns();
 
   useLessonKeyboard();
+  useSkipUnheardDictations();
   useRevealFeedback(mainRef);
   useSwipeNavigation({ onBack: turns.back, onForward: turns.forward, ref: mainRef });
 

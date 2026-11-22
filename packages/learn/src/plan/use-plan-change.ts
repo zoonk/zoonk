@@ -11,7 +11,11 @@ import { useReportEditorChange } from "./plan-editor-change-context";
 
 type PlanChangeAnswer = (outcome: PlanChangeOutcome | null) => void;
 
-export function usePlanChange() {
+/**
+ * A refused change reaches `answer` as one that didn't save. `offer`: the change is an offer the
+ * plan made, so a refusal says nothing, since the plan read again offers what it allows now.
+ */
+export function usePlanChange({ offer = false }: { offer?: boolean } = {}) {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
@@ -33,16 +37,18 @@ export function usePlanChange() {
 
     startTransition(async () => {
       request.start();
-      const { data: outcome } = await safeAsync(() => actions.change(operations));
+      const { data: reply } = await safeAsync(() => actions.change(operations));
+      const refused = reply?.status === "refused";
+      const outcome = refused ? null : (reply ?? null);
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
-        if (!outcome) {
+        if (!outcome && !(refused && offer)) {
           saveFailed();
         }
 
         if (isMounted()) {
-          answer?.(outcome ?? null);
+          answer?.(outcome);
         }
 
         if (outcome?.status === "applied" && outcome.change) {
@@ -50,7 +56,7 @@ export function usePlanChange() {
         }
       });
 
-      done.resolve(outcome ?? null);
+      done.resolve(outcome);
     });
 
     return done.promise;

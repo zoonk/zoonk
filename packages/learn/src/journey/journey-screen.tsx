@@ -39,7 +39,7 @@ import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 import { ResumeGoalBar } from "./resume-goal-bar";
 
 export type { PlanEnd } from "../plan/plan-suggestion-context";
-export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
+export type { PlanActions, PlanChangeReply, PlanTutor } from "../plan/plan-context";
 export type { JourneyStanding } from "./journey-hero";
 export type { GoalStatusControl, GoalStatusOutcome } from "./goal-actions";
 export type { StudyNext } from "./study-next";

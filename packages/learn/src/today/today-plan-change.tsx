@@ -31,6 +31,7 @@ import {
 } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
+import { NoticeFollowedNotice } from "./today-notice-followed";
 import { TodaySuggestionCard } from "./today-suggestion-card";
 import { useShownChange } from "./use-shown-change";
 
@@ -310,6 +311,10 @@ export function TodayPlanChange() {
         }}
       />
     );
+  }
+
+  if (change.kind === "noticeChanged") {
+    return <NoticeFollowedNotice change={change} key={change.id} onHold={hold} onNext={showNext} />;
   }
 
   if (change.kind === "missedDays" && change.behind) {

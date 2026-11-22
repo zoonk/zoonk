@@ -1,11 +1,11 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
-import { Converter as createChineseConverter } from "opencc-js/t2cn";
 import {
   expandContractions,
   isSameSpokenWord,
   joinContractions,
 } from "./_utils/english-contractions";
+import { toSimplifiedChinese } from "./_utils/simplified-chinese";
 import { alignWords } from "./_utils/word-alignment";
 
 type SpokenWordStatus = "correct" | "different" | "missed";
@@ -23,9 +23,6 @@ const MAX_WORDS_TO_EXPLAIN = 2;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
 const DIGIT_RUN = /\p{Nd}+/gu;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
-
-/** Speech recognition may return either Chinese script; compare in simplified characters. */
-const toSimplifiedChinese = createChineseConverter({ from: "t", to: "cn" });
 
 const CHINESE_SCRIPT_LANGUAGES: ReadonlySet<string> = new Set(["yue", "zh"]);
 

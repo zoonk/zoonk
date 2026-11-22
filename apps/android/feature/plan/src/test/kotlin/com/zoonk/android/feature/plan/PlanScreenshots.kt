@@ -31,6 +31,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.language.languageProgress
+import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
@@ -39,14 +40,17 @@ import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
+import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -198,6 +202,49 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun examExpanded() = capture("plan-exam-expanded", exam = examPage(dated = true))
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xxhdpi")
+    fun examStrategyOfferPhone() = capture("plan-exam-strategy-offer-phone", exam = strategyOfferPage(), structure = examSyllabus())
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-night-xxhdpi")
+    fun examStrategyOfferPhoneDarkMoreContrast() =
+        capture(
+            "plan-exam-strategy-offer-phone-dark-more-contrast",
+            dark = true,
+            moreContrast = true,
+            exam = strategyOfferPage(),
+            structure = examSyllabus(),
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h5000dp-xhdpi")
+    fun examStrategyOfferPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("plan-exam-strategy-offer-phone-font200", exam = strategyOfferPage(), structure = examSyllabus())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xxhdpi")
+    fun examWithStrategyPhone() =
+        capture("plan-exam-with-strategy-phone", exam = examPage(dated = true), structure = examSyllabus(strategy = true))
+
+    @Test
+    @Config(qualifiers = "w700dp-h2400dp-xhdpi")
+    fun examWithStrategyMedium() =
+        capture("plan-exam-with-strategy-medium", exam = examPage(dated = true), structure = examSyllabus(strategy = true))
+
+    /** Ana's ENEM with time to spare: the plan offers the exam strategy the notice doesn't list. */
+    private fun strategyOfferPage(): PlanPageState {
+        val page = examPage(dated = true)
+        val offer =
+            ApiJson.decodeFromString<PlanExtraOffer>(
+                """{"canApply":true,"fits":true,"lessons":15,"operations":[{"kind":"setExtras","skillIds":["strategy-time"]}],""" +
+                    """"effect":{"lessonsAdded":15,"lessonsRemoved":0,"topicsAdded":[]}}""",
+            )
+        return page.copy(plan = page.plan.copy(extraOffer = offer, hasNotice = true, examDocument = ExamDocument.NOTICE))
+    }
 
     /** Ana's ENEM: four phases to the exam, then After the exam; without a date, the plan's estimate ends it. */
     private fun examPage(dated: Boolean): PlanPageState {
@@ -583,7 +630,7 @@ class PlanScreenshots {
                 "plan-slot-paged" to Shot(pagedPlan, state = { SlotState(position = 1) }),
                 "plan-slot-paged-applied" to
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
-                        SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons, change) }
+                        SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons(pagedPlan.fitOffer!!), change) }
                     }),
                 "plan-slot-past-date" to Shot(pastDate),
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
@@ -940,8 +987,9 @@ class PlanScreenshots {
         examOver: Boolean = false,
         exam: PlanPageState? = null,
         placementTest: String? = null,
+        structure: Syllabus? = null,
     ) {
-        show(dark, moreContrast, paused, failure, examOver, exam, placementTest)
+        show(dark, moreContrast, paused, failure, examOver, exam, placementTest, structure)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -954,6 +1002,7 @@ class PlanScreenshots {
         examOver: Boolean = false,
         exam: PlanPageState? = null,
         placementTest: String? = null,
+        structure: Syllabus? = null,
     ) {
         val page =
             when {
@@ -1009,7 +1058,7 @@ class PlanScreenshots {
                             } else {
                                 Standing.Progress(progress(), done = 13, known = 0, total = 46)
                             },
-                        structure = null,
+                        structure = structure,
                         links = PlanLinks(navigator, page),
                         resume = Resume.Plain,
                         isSaving = false,

@@ -28,6 +28,7 @@ struct PlanChangeOperation: Decodable, Equatable, Sendable {
   var group: String?
   var minutes: Int?
   var parts: [Part]?
+  var skillIds: [String]?
   var skills: [Skill]?
   /// `pastBasics` or `basics`.
   var start: String?
@@ -382,6 +383,10 @@ enum PlanChangeWords {
       return String(
         localized: "Add the lessons that fit your time?", table: "Plan",
         comment: "Asks to bring in the lessons the learner's time fits")
+    case "setExtras":
+      return operation.skillIds?.isEmpty == false
+        ? String(localized: "Study exam strategy too?", table: "Plan")
+        : String(localized: "Take exam strategy out of your plan?", table: "Plan")
     default:
       return nil
     }
@@ -559,6 +564,10 @@ enum PlanChangeWords {
       return String(
         localized: "Lessons added to your plan.", table: "Plan",
         comment: "Says the lessons the learner's time fits joined the plan")
+    case "setExtras":
+      return operation.skillIds?.isEmpty == false
+        ? String(localized: "Exam strategy added to your plan.", table: "Plan")
+        : String(localized: "Exam strategy isn't in your plan.", table: "Plan")
     case "fitPhaseDates":
       return String(
         localized: "Your phase dates moved.", table: "Plan", comment: "Says the phases' ends moved")

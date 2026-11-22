@@ -2408,7 +2408,7 @@ describe(goalContentWorkflow, () => {
         year: Number(examDay.slice(0, 4)),
       },
       name: "Immunology board exam",
-      structure: examStructure(["Antibody structure", "Vaccines"]),
+      structure: examStructure(["Antibody structure", "Vaccines", "Immune recognition"]),
     });
 
     const weighted = {
@@ -2449,7 +2449,10 @@ describe(goalContentWorkflow, () => {
               topics: ["Antibody structure"],
             },
           ],
-          placements: [{ area: "Immunology", key: vaccines?.key ?? "", topics: ["Vaccines"] }],
+          placements: [
+            { area: "Immunology", key: vaccines?.key ?? "", topics: ["Vaccines"] },
+            { area: "Immunology", key: reweighted?.key ?? "", topics: ["Immune recognition"] },
+          ],
         },
         "google/gemini-3.8-flash",
       ),
@@ -2526,7 +2529,7 @@ describe(goalContentWorkflow, () => {
 
     const { skills } = planWeightsSchema.parse(plan.graph);
 
-    expect(skills).toHaveLength(weighted.skills.length + 1);
+    expect(skills).toHaveLength(3);
     expect(skills[0]).toStrictEqual({ skillId: added.id, weight: 5 });
 
     expect(planPlacesSchema.parse(plan.graph).skills.slice(0, 2)).toStrictEqual([
@@ -2586,7 +2589,7 @@ describe(goalContentWorkflow, () => {
     expect(events.filter((event) => event === "createPlan:completed")).toHaveLength(1);
   });
 
-  it("proposes a notice read after the learner saw the plan instead of changing it, and stops the reveal's wait", async () => {
+  it("follows a late notice and asks separately about its date", async () => {
     const { goal, user } = await newGoal({
       details: { examName: "Late board exam", level: "basic" },
       kind: "exam",
@@ -2611,7 +2614,25 @@ describe(goalContentWorkflow, () => {
 
     const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
 
-    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
+    const [opening] = graph.skills;
+
+    if (!opening) {
+      throw new Error("The graph needs an opening skill");
+    }
+
+    const strategy = {
+      ...opening,
+      area: "Exam strategy",
+      examWeight: null,
+      key: "extra:time-limit",
+      name: `Plan time during the exam ${crypto.randomUUID().slice(0, 8)}`,
+      prerequisites: [],
+      topics: [],
+    };
+
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue(
+      graphResult({ ...graph, extraSkills: [strategy] }),
+    );
 
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult(
@@ -2711,26 +2732,32 @@ describe(goalContentWorkflow, () => {
       prisma.planChange.findMany({ where: { plan: { goalId: goal.id } } }),
     ]);
 
-    expect(planWeightsSchema.parse(plan.graph).skills.map((skill) => skill.skillId)).not.toContain(
+    expect(planWeightsSchema.parse(plan.graph).skills.map((skill) => skill.skillId)).toContain(
       added.id,
     );
+
+    expect(plan.graph).toMatchObject({
+      extraSkills: [{ area: strategy.area, name: strategy.name }],
+    });
+
+    expect(plan.graph).not.toMatchObject({
+      skills: expect.arrayContaining([expect.objectContaining({ name: strategy.name })]),
+    });
 
     expect(stored.targetDate).toBeNull();
     expect(plan.noticeWaitUntil).toBeNull();
 
-    expect(changes).toHaveLength(1);
-    expect(changes[0]).toMatchObject({ kind: "edited", status: "proposed" });
+    const dateProposal = changes.find((change) => change.status === "proposed");
 
-    expect(changes[0]?.payload).toMatchObject({
-      noticeGraph: {
-        skills: expect.arrayContaining([expect.objectContaining({ skillId: added.id })]),
+    expect(dateProposal).toMatchObject({
+      payload: {
+        operations: [{ estimated: false, kind: "setNoticeDate", targetDate: examDay }],
+        source: "notice",
       },
-      operations: [
-        { kind: "followNotice" },
-        { estimated: false, kind: "setNoticeDate", targetDate: examDay },
-      ],
-      source: "notice",
     });
+
+    const applied = changes.find((change) => change.kind === "noticeChanged");
+    expect(applied).toMatchObject({ status: "applied" });
   });
 
   it("keeps the reveal waiting while the plan is checked against a reading that landed in time, however long the check takes", async () => {
@@ -2818,7 +2845,7 @@ describe(goalContentWorkflow, () => {
     expect(plan.noticeWaitEndedAt).toBeInstanceOf(Date);
   });
 
-  it("proposes a reading the reveal stopped waiting for while the plan was built again with it", async () => {
+  it("follows the notice even if the reveal stops waiting during the change", async () => {
     const { goal } = await newGoal({
       details: { examName: "Late board exam", level: "basic" },
       kind: "exam",
@@ -2867,6 +2894,8 @@ describe(goalContentWorkflow, () => {
       await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
     });
 
+    const errors = vi.spyOn(logger, "logError");
+    onTestFinished(() => errors.mockRestore());
     vi.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
 
     try {
@@ -2877,6 +2906,10 @@ describe(goalContentWorkflow, () => {
       vi.useRealTimers();
     }
 
+    expect(
+      errors.mock.calls.filter(([message]) => String(message).includes("couldn't be reconciled")),
+    ).toStrictEqual([]);
+
     const [plan, added, proposals] = await Promise.all([
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
       prisma.skill.findFirstOrThrow({ where: { name: missed } }),
@@ -2885,8 +2918,8 @@ describe(goalContentWorkflow, () => {
 
     const { skills } = planWeightsSchema.parse(plan.graph);
 
-    expect(skills.some((skill) => skill.skillId === added.id)).toBe(false);
-    expect(proposals).toBe(1);
+    expect(skills.some((skill) => skill.skillId === added.id)).toBe(true);
+    expect(proposals).toBe(0);
     expect(plan.noticeWaitUntil).toBeNull();
   });
 
@@ -2975,7 +3008,7 @@ describe(goalContentWorkflow, () => {
     );
   });
 
-  it("proposes what research that restarted after the plan was built reads, from the stored plan", async () => {
+  it("applies a restarted reading to the stored plan", async () => {
     const { goal } = await newGoal({
       details: { examName: "Restarted board exam", level: "basic" },
       kind: "exam",
@@ -3024,7 +3057,6 @@ describe(goalContentWorkflow, () => {
         }) as never,
     );
 
-    const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     await goalContentWorkflow({ goalId: goal.id, researchId: "restarted-research" });
 
     const [plan, added, changes] = await Promise.all([
@@ -3033,26 +3065,18 @@ describe(goalContentWorkflow, () => {
       prisma.planChange.findMany({ where: { plan: { goalId: goal.id } } }),
     ]);
 
-    expect(plan.graph).toStrictEqual(before.graph);
-    expect(changes).toHaveLength(1);
-    expect(changes[0]).toMatchObject({ kind: "edited", status: "proposed" });
-
-    expect(changes[0]?.payload).toMatchObject({
-      noticeGraph: {
-        skills: expect.arrayContaining([expect.objectContaining({ skillId: added.id })]),
-      },
-      source: "notice",
-    });
-
-    const proposed = planWeightsSchema.parse(
-      z.object({ noticeGraph: z.unknown() }).parse(changes[0]?.payload).noticeGraph,
+    expect(planWeightsSchema.parse(plan.graph).skills.map((skill) => skill.skillId)).toContain(
+      added.id,
     );
 
-    expect(proposed.skills.map((skill) => skill.skillId)).toStrictEqual(
-      expect.arrayContaining(
-        planWeightsSchema.parse(before.graph).skills.map((skill) => skill.skillId),
-      ),
-    );
+    expect(planPlacesSchema.parse(plan.graph).skills).toStrictEqual([
+      { area: "Immunology", topics: ["Antibody structure"] },
+      { area: "Immunology", topics: ["Vaccines"] },
+    ]);
+
+    expect(changes).toMatchObject([
+      { kind: "noticeChanged", payload: { source: "notice" }, status: "applied" },
+    ]);
   });
 
   it("keeps waiting, less often, for research that reads a slow notice, then plans to its exam day", async () => {

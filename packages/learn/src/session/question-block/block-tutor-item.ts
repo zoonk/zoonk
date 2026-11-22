@@ -1,5 +1,4 @@
-import { type QuestionTutor, type TutorItem } from "../../questions/question-tutor";
-import { type TaskFrameAside } from "../../shell/task-frame";
+import { type TutorItem } from "../../questions/question-tutor";
 import { type StudyBlockDetail, type StudyQuestion } from "../session-types";
 import { type useBlockDrill } from "./block-question";
 import { type QuestionBlockPhase } from "./question-block-state";
@@ -31,28 +30,5 @@ export function getBlockTutorItem({
     missed: phase.kind === "feedback" && !phase.feedback.isCorrect,
     position: index,
     text: question.question,
-  };
-}
-
-export function withTutorAside({
-  aside,
-  tutor,
-}: {
-  aside: TaskFrameAside;
-  tutor: QuestionTutor | null | undefined;
-}): TaskFrameAside {
-  if (!tutor) {
-    return aside;
-  }
-
-  return {
-    ...aside,
-    children: (
-      <>
-        {aside.children}
-        {tutor.aside}
-      </>
-    ),
-    meta: tutor.asideMeta(aside.meta),
   };
 }

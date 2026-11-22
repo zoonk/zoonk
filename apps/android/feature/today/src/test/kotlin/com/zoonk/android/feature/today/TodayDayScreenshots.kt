@@ -42,6 +42,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -101,6 +102,39 @@ class TodayDayScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
     fun earlierLessonsPhone() = render("today-earlier-lessons-phone", earlierLessons())
+
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
+    fun strategyLessonPhone() = render("today-strategy-lesson-phone", strategy())
+
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
+    fun strategyLessonGuidePhone() = render("today-strategy-lesson-guide-phone", strategy(document = "guide"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
+    fun followedNoticePhone() =
+        render("today-followed-notice-phone", followedNotice(listOf("Língua Portuguesa", "Raciocínio Lógico", "Língua Inglesa")))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-night-xxhdpi")
+    fun followedNoticeManyDarkPhone() =
+        render(
+            "today-followed-notice-many-dark-phone",
+            followedNotice(
+                listOf("Língua Portuguesa", "Raciocínio Lógico", "Língua Inglesa", "Direito Constitucional", "Estratégia de prova"),
+            ),
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun followedNoticeLargeTextPhone() {
+        RuntimeEnvironment.setFontScale(2f)
+        render(
+            "today-followed-notice-font200-phone",
+            followedNotice(listOf("Língua Portuguesa", "Raciocínio Lógico", "Língua Inglesa", "Direito Constitucional")),
+        )
+    }
 
     private class Day(
         val session: JsonObject,
@@ -246,6 +280,61 @@ class TodayDayScreenshots {
                 dailyGoal = 38,
             ),
         )
+
+    /** An exam day with a lesson of the exam strategy the learner added, which the notice doesn't list. */
+    private fun strategy(document: String = "notice") =
+        Day(
+            day(
+                "underway",
+                listOf(
+                    lesson(0, "Principles of public administration", "subject" to "Public administration"),
+                    lesson(1, "How the exam is built", "subjectExtra" to "notice"),
+                    lesson(2, "Conflicts of interest", "subject" to "Public ethics"),
+                ),
+                next = 0,
+            ),
+            today = listOf("goal" to examGoal(document)),
+        )
+
+    /** The plan followed the exam's notice by itself: Today names what left it. */
+    private fun followedNotice(removed: List<String>) =
+        Day(
+            day("underway", listOf(lesson(0, "Principles of public administration", "subject" to "Public administration")), next = 0),
+            today =
+                listOf(
+                    "goal" to examGoal("notice"),
+                    "notice" to "planChange",
+                    "planChange" to
+                        fixture(
+                            "plan-change",
+                            "kind" to "noticeChanged",
+                            "source" to "notice",
+                            "status" to "applied",
+                            "examDocument" to "notice",
+                            "operations" to JsonArray(listOf(buildJsonObject { put("kind", "followNotice") })),
+                            "effect" to
+                                buildJsonObject {
+                                    put("endDateAfter", null as String?)
+                                    put("endDateBefore", null as String?)
+                                    put("lessonsAdded", 0)
+                                    put("lessonsRemoved", 120)
+                                    put("noticeRemoved", JsonArray(removed.map(::JsonPrimitive)))
+                                },
+                        ),
+                ),
+        )
+
+    private fun examGoal(document: String) =
+        buildJsonObject {
+            put("dateEstimated", false)
+            put("daysLeft", 24)
+            put("id", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00")
+            put("kind", "exam")
+            put("targetDate", "2026-12-15")
+            put("title", "Câmara dos Deputados")
+            put("displayName", "Câmara dos Deputados")
+            put("examDocument", document)
+        }
 
     private fun done() =
         Day(

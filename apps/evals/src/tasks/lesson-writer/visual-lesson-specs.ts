@@ -234,6 +234,79 @@ export const VISUAL_LESSON_SPECS = {
     ],
     title: "Reading a care tag",
   },
+  "en-position-time-plot-beginner": {
+    canDo: "Read how far and how fast something moved from a position-time graph",
+    description: "Read distance and speed off a graph of positions measured over time.",
+    estimatedMinutes: 3,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Maya times her bike ride with a friend's stopwatch, calling out her distance from the gate at a few moments. Afterwards she wonders whether she slowed down. How can the numbers tell?",
+        kind: "hook",
+        skills: [],
+        visual: null,
+        visualKind: "none",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A position-time graph puts time across and distance from the start up. Maya's readings: 0 m at 0 s, 10 m at 2 s, 25 m at 5 s and 40 m at 10 s. The steeper the line, the faster she went.",
+        kind: "explanation",
+        skills: [0],
+        visual:
+          "Maya's distance from the gate against time, through her four readings: 0 m at 0 s, 10 m at 2 s, 25 m at 5 s, 40 m at 10 s, spaced to scale on the time axis.",
+        visualKind: "chart",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "On the same graph, ask how far Maya rode between 5 s and 10 s: 15 m. Tempting wrong answer: 40 m, her distance from the gate at 10 s.",
+        kind: "check",
+        skills: [0],
+        visual: "The same graph of Maya's ride.",
+        visualKind: "chart",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Speed is distance over time: 25 m in the first 5 s is 5 m/s, and 15 m in the next 5 s is 3 m/s. The flatter part of the line is the slower part.",
+        kind: "explanation",
+        skills: [1],
+        visual: null,
+        visualKind: "none",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Show a runner's graph: 0 m at 0 s, 30 m at 4 s, 40 m at 9 s. Ask in which part the runner was faster (the first 4 s, 7.5 m/s against 2 m/s). Tempting wrong answer: the second part, because it lasts longer and ends higher.",
+        kind: "application",
+        skills: [1],
+        visual:
+          "The runner's distance against time through 0 m at 0 s, 30 m at 4 s and 40 m at 9 s.",
+        visualKind: "chart",
+      },
+    ],
+    skills: [
+      {
+        description: "A position-time graph shows where something is at each moment.",
+        example: "At 5 s Maya is 25 m from the gate.",
+        hard: false,
+        name: "Read a position-time graph",
+        topic: "Motion graphs",
+        useCase: "Checking a run or a ride from timed readings.",
+      },
+      {
+        description: "The steeper the line, the higher the speed: distance over time in each part.",
+        example: "15 m in 5 s is 3 m/s.",
+        hard: true,
+        name: "Find speed from a slope",
+        topic: "Motion graphs",
+        useCase: "Telling where something sped up or slowed down.",
+      },
+    ],
+    title: "Reading a position-time graph",
+  },
   "pt-graficos-de-barras-beginner": {
     canDo: "Criar um gráfico de barras com categorias legíveis",
     description:

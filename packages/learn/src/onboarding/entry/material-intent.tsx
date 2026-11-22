@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { PageSectionTitle } from "../../_components/page";
 import { type Choice, ChoiceList } from "../choice-list";
 
 export type MaterialIntent = "exam" | "questions" | "understand";
@@ -37,7 +38,7 @@ export function MaterialIntentChoice({
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="font-medium">{t("What do you want to do?")}</h2>
+      <PageSectionTitle>{t("What do you want to do?")}</PageSectionTitle>
       <ChoiceList
         choices={choices}
         label={t("What you want to do with your material")}

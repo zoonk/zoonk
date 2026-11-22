@@ -12,11 +12,11 @@
     <string name="audio_record_stop">Stop</string>
     <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
     <string name="audio_listening">Listening… Tap Stop to check.</string>
-    <string name="audio_checking">Checking…</string>
     <string name="audio_checking_slow">Still checking. This is taking longer than usual.</string>
     <string name="audio_no_speech">We couldn\'t hear any words. Try again.</string>
     <string name="audio_check_failed">We couldn\'t check your answer this time. Try again.</string>
-    <string name="audio_say_it">Press Record and say it out loud</string>
+    <!-- “Record” is the label of the button that starts the recording. -->
+    <string name="audio_say_it">Tap Record and say it out loud</string>
     <string name="audio_microphone_off_title">The microphone is off</string>
     <string name="audio_microphone_off_answer">Turn on the microphone for Zoonk in Settings to answer out loud.</string>
     <string name="audio_open_settings">Open Settings</string>

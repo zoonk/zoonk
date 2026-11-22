@@ -187,10 +187,11 @@ private struct UnderstoodCard: View {
 
   var body: some View {
     ZoonkList {
+      RewritableWords(
+        words: draft.prompt, rewriting: $rewriting, isDisabled: isCreating, onRewrite: onRewrite)
+
       StepHeader(
-        title: Text(
-          "Here's what I understood", tableName: "Onboarding",
-          comment: "Title of the card that confirms what was read from the learner's words"),
+        title: Text("Here's what we understood", tableName: "Onboarding"),
         description: startable.count > 1
           ? Text(
             "These goals share your daily time. You can change all of this later.",
@@ -198,9 +199,6 @@ private struct UnderstoodCard: View {
           : Text(
             "You can change all of this later.", tableName: "Onboarding",
             comment: "Under an understood goal"))
-
-      RewritableWords(
-        words: draft.prompt, rewriting: $rewriting, isDisabled: isCreating, onRewrite: onRewrite)
 
       ForEach(startable, id: \.self) { index in
         Section {
@@ -477,9 +475,7 @@ private struct RewritableWords: View {
       Section {
         MultilineTextField(
           text: $value,
-          label: Text(
-            "What you wrote", tableName: "Onboarding",
-            comment: "Header over the learner's typed goal")
+          label: label
         )
         .lineLimit(1...8)
         .focused($isFocused)
@@ -509,11 +505,10 @@ private struct RewritableWords: View {
           .buttonStyle(.borderless)
         }
       } header: {
-        SectionTitle(
-          Text(
-            "What you wrote", tableName: "Onboarding",
-            comment: "Header over the learner's typed goal"
-          ))
+        label
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .accessibilityHidden(true)
       } footer: {
         SectionFooter {
           Text(
@@ -523,8 +518,13 @@ private struct RewritableWords: View {
         }
       }
     } else {
-      TypedGoalSection(goal: words)
+      LearnerBubble(words: words)
+        .listRowSeparator(.hidden)
     }
+  }
+
+  private var label: Text {
+    Text("What you wrote", tableName: "Onboarding")
   }
 }
 
@@ -866,6 +866,9 @@ private struct ExplainOutcome: View {
 
   var body: some View {
     ZoonkList {
+      LearnerBubble(words: goal)
+        .listRowSeparator(.hidden)
+
       OutcomeHeader(
         systemImage: "lightbulb",
         title: Text(question),
@@ -875,8 +878,6 @@ private struct ExplainOutcome: View {
           comment:
             "Offers a quick explanation of the learner's question, written once they tap Explain it"
         ))
-
-      TypedGoalSection(goal: goal)
 
       if let error {
         GoalErrorSection(error: error)
@@ -911,6 +912,9 @@ private struct InstrumentOutcome: View {
 
   var body: some View {
     ZoonkList {
+      LearnerBubble(words: goal)
+        .listRowSeparator(.hidden)
+
       OutcomeHeader(
         systemImage: "guitars",
         title: Text(
@@ -921,8 +925,6 @@ private struct InstrumentOutcome: View {
         description: Text(
           "You can start with the basics of music today: reading notes, rhythm and training your ear.",
           tableName: "Onboarding", comment: "Why playing an instrument is a waitlist for now"))
-
-      TypedGoalSection(goal: goal)
 
       Section {
         Label {
@@ -1007,6 +1009,9 @@ private struct DeclinedOutcome: View {
 
   var body: some View {
     ZoonkList {
+      LearnerBubble(words: goal)
+        .listRowSeparator(.hidden)
+
       OutcomeHeader(
         systemImage: "hand.raised",
         title: Text(
@@ -1015,8 +1020,6 @@ private struct DeclinedOutcome: View {
         description: Text(
           "Zoonk doesn't teach anything that could hurt you or others, gambling or ways to cheat. Is there something else you'd like to learn?",
           tableName: "Onboarding", comment: "Why a goal is declined"))
-
-      TypedGoalSection(goal: goal)
     }
     .bottomBar {
       StepButtons(
@@ -1034,6 +1037,9 @@ private struct UnclearOutcome: View {
 
   var body: some View {
     ZoonkList {
+      LearnerBubble(words: goal)
+        .listRowSeparator(.hidden)
+
       OutcomeHeader(
         systemImage: "questionmark.bubble",
         title: Text(
@@ -1041,8 +1047,6 @@ private struct UnclearOutcome: View {
         description: Text(
           "What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.",
           tableName: "Onboarding", comment: "Asks for a clearer goal, with examples"))
-
-      TypedGoalSection(goal: goal)
     }
     .bottomBar {
       StepButtons(

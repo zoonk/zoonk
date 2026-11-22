@@ -124,7 +124,11 @@ export async function loadPlannerInputs({
     loadGoalPlannerLessons({ goal, graph, userId }),
     loadSkillPrerequisites(skillIds),
     loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-    loadExamFacts({ goal, graph, picks: examPicks }),
+    loadExamFacts({
+      goal,
+      graph: { ...graph, skills: graph.skills.filter((skill) => !skill.extra) },
+      picks: examPicks,
+    }),
     loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
     findWrittenStartLessonId(goal),

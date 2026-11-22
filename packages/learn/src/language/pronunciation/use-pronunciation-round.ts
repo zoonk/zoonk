@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/language/pronunciation/contract";
 import { useMemo, useState, useTransition } from "react";
 import { type TaskSegment } from "../../_components/task-header";
+import { type RecordProblem } from "../../speech/record-note";
 
 export type PronunciationAnswerOutcome =
   | { grade: PronunciationAnswerGrade; status: "graded" }
@@ -24,14 +25,12 @@ export type PronunciationRoundActions = {
 };
 
 type WordState =
-  | { kind: "ready"; notice: PronunciationNotice | null }
+  | { kind: "ready"; notice: RecordProblem | null }
   | { grade: PronunciationAnswerGrade; kind: "graded" };
 
 type RoundStep =
   | { index: number; kind: "word"; word: WordState }
   | { kind: "result"; result: PronunciationRoundResult | null };
-
-export type PronunciationNotice = "failed" | "noSpeech" | "signUpRequired";
 
 const READY: WordState = { kind: "ready", notice: null };
 

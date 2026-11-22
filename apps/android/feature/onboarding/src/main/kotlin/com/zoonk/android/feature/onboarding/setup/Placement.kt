@@ -8,6 +8,7 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementQuestion
 import com.zoonk.api.models.PlacementStatus
 import com.zoonk.api.models.TrueFalseLabels
+import kotlinx.serialization.json.JsonElement
 
 internal sealed interface PlacementPhase {
     data object Loading : PlacementPhase

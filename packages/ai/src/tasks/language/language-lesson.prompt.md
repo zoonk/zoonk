@@ -115,7 +115,7 @@ One sentence the learner writes in `TARGET_LANGUAGE`, something they'd really wr
 - `prompt`: what to write, giving the information in other words, never a sentence to copy.
 {{/sameLanguage}}
 - `answers`: 1 to 4 correct `TARGET_LANGUAGE` answers, each a complete sentence with its punctuation (question marks, and the opening "¿" in Spanish), from the most natural to the most literal. Include the common correct variants a learner might write: the contracted and full forms ("I've had" and "I have had"), and the other natural wording, so a right answer isn't marked wrong.
-- `keyPoints`: 1 to 3 things a right answer must get right, in `LEARNER_LANGUAGE` ("Uses 'is' after 'how much'").
+- `keyPoints`: 1 to 3 things a right answer must get right, in `LEARNER_LANGUAGE` ("Uses 'is' after 'how much'"), never punctuation or capital letters, which grading ignores.
 
 # Summary
 

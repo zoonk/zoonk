@@ -1,8 +1,6 @@
 "use client";
 
-import { EarIcon, EarOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { StepWayOut } from "../../components/step-way-out";
 import { CANT_LISTEN_TODAY, useTodayChoice } from "../../lesson/use-today-choice";
 import { useNoteNames } from "../_utils/use-music-labels";
 import { type ActivityPhase } from "../activity-renderer";
@@ -45,25 +43,5 @@ export function SoundAsText({ notes }: { notes: readonly string[] }) {
         {t("The sound plays: {notes}", { notes: notes.map((note) => spoken(note)).join(", ") })}
       </span>
     </p>
-  );
-}
-
-/** The way around listening, under the card on the column, where a speaking screen has "I can't talk now". */
-export function CantListenSwitch({
-  cantListen,
-  onChange,
-}: {
-  cantListen: boolean;
-  onChange: (cantListen: boolean) => void;
-}) {
-  const t = useExtracted();
-
-  return (
-    <StepWayOut
-      icon={cantListen ? <EarIcon aria-hidden="true" /> : <EarOffIcon aria-hidden="true" />}
-      onClick={() => onChange(!cantListen)}
-    >
-      {cantListen ? t("I can listen now") : t("I can't listen now")}
-    </StepWayOut>
   );
 }

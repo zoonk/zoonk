@@ -9,11 +9,7 @@ import {
 } from "@zoonk/core/lesson-player/playable-lesson";
 import { getActivityAnswerRules } from "@zoonk/core/library/activities/answers";
 import { type StepMarks } from "@zoonk/core/library/marks/contract";
-import {
-  type ChartVisual,
-  type TimelineVisual,
-  parseStepContent,
-} from "@zoonk/core/library/steps/contract";
+import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type ExerciseKind } from "@zoonk/core/player/contracts/exercise-content";
 import {
   type ExerciseResources,
@@ -133,6 +129,7 @@ export function teachingStep<TKind extends ScreenKind>(
   return contentStep(kind, { content: playableStepContent[kind], ...options });
 }
 
+/** @internal */
 export function spokenAnswerStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
   return {
     ...contentStep("spokenAnswer", { content: playableStepContent.spokenAnswer, ...options }),
@@ -243,27 +240,18 @@ export function languageStep(
   };
 }
 
-export const lettersChart: ChartVisual = {
-  axisStart: null,
-  categories: ["Maio", "Junho", "Julho"],
-  categoryLabel: "Mês",
-  chart: "bar",
-  kind: "chart",
-  series: [{ name: "Ofícios respondidos", values: [35, 36, 40] }],
-  source: null,
-  title: "Ofícios respondidos por mês",
-  unit: null,
-  valueLabel: "Ofícios",
-};
-
-export const lawTimeline: TimelineVisual = {
-  events: [
-    { date: "1988", detail: "Promulgada em 5 de outubro.", label: "Constituição Federal" },
-    { date: "1990", detail: null, label: "Lei nº 8.112, dos servidores federais" },
-  ],
-  kind: "timeline",
-  title: "Leis que organizam o serviço público",
-};
+export function spokenSentenceStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
+  return {
+    ...spokenAnswerStep(options),
+    content: parseStepContent("spokenAnswer", {
+      language: "en",
+      prompt: "Pergunte quanto é o aluguel.",
+      targetText: "How much is the rent?",
+      translation: "Quanto é o aluguel?",
+    }),
+    listening: languageStep("listening").exercise,
+  };
+}
 
 function escapeSvgText(value: string) {
   return value

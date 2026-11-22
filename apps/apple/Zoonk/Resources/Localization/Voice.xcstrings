@@ -2511,65 +2511,6 @@
         }
       }
     },
-    "Checking…" : {
-      "comment" : "Shown while a spoken answer is graded",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir prüfen …"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comprobando…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérification…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo controllando…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答え合わせをしています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확인하고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprawdzamy…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conferindo…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontrol ediyoruz…"
-          }
-        }
-      }
-    },
     "Clear, developed answers" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -4535,65 +4476,6 @@
         }
       }
     },
-    "Listening to how it sounded…" : {
-      "comment" : "Shown while a word said out loud is graded",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir hören uns an, wie es klang…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escuchando cómo lo dijiste…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Écoute de ta prononciation…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo ascoltando la tua pronuncia…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "発音を聞いています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "발음을 듣고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Słuchamy twojej wymowy…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvindo como você falou…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Telaffuzunu dinliyoruz…"
-          }
-        }
-      }
-    },
     "Listening…" : {
       "comment" : "The call is listening",
       "localizations" : {
@@ -6133,65 +6015,6 @@
         }
       }
     },
-    "Press Record and say the word out loud" : {
-      "comment" : "Asks the learner to say the word",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe auf „Aufnehmen“ und sprich das Wort laut aus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca Grabar y di la palabra en voz alta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuie sur Enregistrer et dis le mot à voix haute"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Premi Registra e di’ la parola ad alta voce"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「録音」を押して、単語を声に出して言ってください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "녹음 버튼을 누르고 단어를 소리 내어 말하세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Naciśnij „Nagraj” i powiedz słowo na głos"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque em Gravar e fale a palavra em voz alta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaydet düğmesine bas ve kelimeyi sesli söyle"
-          }
-        }
-      }
-    },
     "Pronunciation" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -6601,65 +6424,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydet"
-          }
-        }
-      }
-    },
-    "Recording… Press Stop when you're done." : {
-      "comment" : "Shown while the learner records a word",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aufnahme läuft… Tippe auf „Stopp“, wenn du fertig bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grabando… Toca Detener cuando termines."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistrement… Appuie sur Arrêter quand tu as terminé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo registrando… Premi Interrompi quando hai finito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "録音しています…話し終わったら「停止」を押してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "녹음하고 있어요… 다 말했으면 중지 버튼을 누르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nagrywamy… Naciśnij „Zatrzymaj”, gdy skończysz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gravando… Toque em Parar quando terminar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaydediyoruz… Bitirdiğinde Durdur düğmesine bas."
           }
         }
       }
@@ -8322,65 +8086,6 @@
         }
       }
     },
-    "That didn't go through. Try again." : {
-      "comment" : "Grading a word failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se pudo procesar. Inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ça n’a pas marché. Réessaie."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qualcosa non ha funzionato. Riprova."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "うまく処理できませんでした。もう一度試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "처리하지 못했어요. 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się. Spróbuj ponownie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não deu certo. Tente de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İşlem tamamlanamadı. Tekrar dene."
-          }
-        }
-      }
-    },
     "That sounded right" : {
       "comment" : "A word said right",
       "localizations" : {
@@ -8790,65 +8495,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Değerlendiricinin genel değerlendirmesi"
-          }
-        }
-      }
-    },
-    "The microphone is off" : {
-      "comment" : "Title when the learner turned off the microphone for the app",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Mikrofon ist ausgeschaltet"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El micrófono está desactivado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le micro est désactivé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il microfono è disattivato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マイクがオフになっています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "마이크가 꺼져 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mikrofon jest wyłączony"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O microfone está desativado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mikrofon kapalı"
           }
         }
       }
@@ -10501,65 +10147,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hiçbir kelime duyamadık. Tekrar dene."
-          }
-        }
-      }
-    },
-    "We couldn't hear the word. Try again a little closer." : {
-      "comment" : "A recording had no word in it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten das Wort nicht hören. Versuch es noch einmal und geh dabei etwas näher ans Mikrofon."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos oír la palabra. Vuelve a intentarlo un poco más cerca."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous n’avons pas entendu le mot. Réessaie en te rapprochant un peu du micro."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non abbiamo sentito la parola. Riprova avvicinandoti un po’ al microfono."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "単語を聞き取れませんでした。マイクに少し近づいてもう一度試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "말소리가 들리지 않았어요. 조금 더 가까이에서 다시 말해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało nam się usłyszeć słowa. Spróbuj ponownie, trochę bliżej mikrofonu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos ouvir a palavra. Tente de novo um pouco mais perto do microfone."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kelimeyi duyamadık. Biraz daha yakından tekrar dene."
           }
         }
       }

@@ -91,6 +91,16 @@ msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Tamamlandı"
 
+#: src/_components/check-note.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "Bu kez cevabını kontrol edemedik. Tekrar dene."
+
+#: src/_components/check-note.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "Hâlâ kontrol ediyoruz. Normalden uzun sürüyor."
+
 #: src/_components/checklist.tsx
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
@@ -374,6 +384,7 @@ msgid "Take a short break, then try again."
 msgstr "Kısa bir ara ver, sonra tekrar dene."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "Bunun için ücretsiz bir hesap gerekiyor"
@@ -2414,6 +2425,7 @@ msgstr "{number, number}. ünite"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -3405,8 +3417,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene."
 
 #: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "Devam etmek için ücretsiz bir hesap oluştur."
@@ -6416,29 +6426,6 @@ msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "Sesli mesajın var. Dinle ve cevapla."
 
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "Mikrofon burada kullanılamıyor. Bu kısmı atlayabilirsin."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "2IdQrb"
-msgid "Listening to what you said…"
-msgstr "Söylediklerini dinliyoruz…"
-
-#. "Stop" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "Vi6bgi"
-msgid "Recording… Press Stop when you're done."
-msgstr "Kaydediyoruz… Bitirince Durdur’a bas."
-
-#. "Record" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "_lLAdM"
-msgid "Press Record and say it out loud"
-msgstr "Kaydet’e bas ve cümleyi sesli söyle"
-
 #. A CEFR level range the test found for reading, such as “B1–B2”.
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "hSzKEx"
@@ -6477,19 +6464,14 @@ msgid "I didn't understand the audio"
 msgstr "Dinlediğimi anlamadım"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "Bunu kontrol edemedik. Tekrar dene."
+msgctxt "TEizt2"
+msgid "The microphone isn't available here. You can skip this part."
+msgstr "Mikrofon burada kullanılamıyor. Bu kısmı atlayabilirsin."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Bu bölümü atla"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "Sesli söyle"
 
 #: src/language/level-test/level-test-results.tsx
 #: src/mock/mock-speaking.tsx
@@ -6713,6 +6695,11 @@ msgid "Nothing said this time"
 msgstr "Bu kez hiçbir şey söylemedin"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "y1aleL"
+msgid "The microphone isn't available here. You can skip this word."
+msgstr "Mikrofon burada kullanılamıyor. Bu kelimeyi atlayabilirsin."
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "Tekrar söyle"
@@ -6751,32 +6738,6 @@ msgstr "Söyleyeceğin kelime"
 msgctxt "O1LlS-"
 msgid "Say it like"
 msgstr "Şöyle söyle"
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "l4x7Td"
-msgid "We couldn't hear the word. Try again a little closer."
-msgstr "Kelimeyi duyamadık. Biraz daha yaklaşarak tekrar dene."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "75OFKI"
-msgid "That didn't go through. Try again."
-msgstr "İşlem tamamlanamadı. Tekrar dene."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "Mikrofon burada kullanılamıyor. Bu kelimeyi atlayabilirsin."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "VcLERf"
-msgid "Listening to how it sounded…"
-msgstr "Nasıl söylediğini dinliyoruz…"
-
-#. "Record" is the label of the record button.
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "we8m4p"
-msgid "Press Record and say the word out loud"
-msgstr "Kaydet düğmesine bas ve kelimeyi sesli söyle"
 
 #: src/language/today/language-today-section.tsx
 msgctxt "VR3SAU"
@@ -7732,6 +7693,7 @@ msgid "Practice mistakes"
 msgstr "Yanlışlarına çalış"
 
 #: src/mistakes/mistake-practice-run.tsx
+#: src/session/question-block/block-aside.tsx
 msgctxt "SMv32M"
 msgid "Help with this question"
 msgstr "Bu soru için yardım"
@@ -10103,7 +10065,7 @@ msgid "You can change all of this later."
 msgstr "Tüm bunları daha sonra değiştirebilirsin."
 
 #: src/onboarding/understood/understood-source-link.tsx
-#: src/visuals/chart-visual.tsx
+#: src/visuals/chart-frame.tsx
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Kaynak: {source}"
@@ -10557,11 +10519,6 @@ msgid "Adjust your plan"
 msgstr "Planını ayarla"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, other {# ders daha için zamanın var}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10571,6 +10528,17 @@ msgstr "Planın güncellendi."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "Plana ekle"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, other {# ders daha için zamanın var}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "Sınav stratejisini de çalışmak ister misin?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10933,6 +10901,7 @@ msgid "Needed to practice"
 msgstr "Pratik yapmak için gerekli"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "İsteğe bağlı"
@@ -11003,34 +10972,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, other {# ön bilgi}} · sadece ilk dersler · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {Planını resmî sınav ilanına göre düzenleyip sınav tarihini {date} civarına alalım mı?} other {Planını resmî sınav kılavuzuna göre düzenleyip sınav tarihini {date} civarına alalım mı?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {Planını resmî sınav ilanına göre düzenleyip sınav tarihini {date} olarak ayarlayalım mı?} other {Planını resmî sınav kılavuzuna göre düzenleyip sınav tarihini {date} olarak ayarlayalım mı?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {Resmî sınav ilanına göre ilerleyelim mi?} other {Resmî sınav kılavuzuna göre ilerleyelim mi?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "Sınav tarihini {date} civarına alalım mı?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {Sınav tarihini {date} olarak değiştirelim mi?} goal {Bitiş tarihini {date} olarak değiştirelim mi?} other {Tarihini {date} olarak değiştirelim mi?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11141,6 +11086,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "Bu haftaki meydan okumayı {date} tarihine alalım mı?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {Sınav tarihini {date} olarak değiştirelim mi?} goal {Bitiş tarihini {date} olarak değiştirelim mi?} other {Tarihini {date} olarak değiştirelim mi?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Bitiş tarihi olmadan çalışalım mı?"
@@ -11199,6 +11149,11 @@ msgstr "Ön bilgi tercihlerini değiştirelim mi?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "{level} düzeyine kadar çalışalım mı?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "Sınav stratejisini planından çıkaralım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11372,6 +11327,16 @@ msgstr "Planına dersler eklendi."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "Planındaki aşamaların tarihleri değişti."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "Sınav stratejisi planına eklendi."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "Sınav stratejisi planında yok."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12972,6 +12937,18 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Kaydet"
 
+#. “Stop” is the label of the button that ends the recording.
+#: src/speech/record-note.tsx
+msgctxt "CzQFwa"
+msgid "Listening… Tap Stop to check."
+msgstr "Dinliyoruz… Kontrol etmek için Durdur düğmesine dokun."
+
+#. “Record” is the label of the button that starts the recording.
+#: src/speech/record-note.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Kaydet düğmesine dokun ve sesli söyle"
+
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"
 msgid "Getting the audio ready…"
@@ -13105,12 +13082,6 @@ msgid "From your material"
 msgstr "Materyalinden"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "Planında da var"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Materyalindeki konular"
@@ -13239,6 +13210,12 @@ msgstr "Planında yok · çalışma süren yetmiyor"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "Henüz hazır değil"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {Resmi ilanda yok} other {Resmi kılavuzda yok}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13436,6 +13413,7 @@ msgid "Okay. Your time stays the same."
 msgstr "Tamam. Çalışma süren aynı kalıyor."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Plan değişikliği"
@@ -13481,6 +13459,7 @@ msgid "Move it"
 msgstr "Değiştir"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Tamam"
@@ -13498,6 +13477,7 @@ msgid "Your study time stays the same."
 msgstr "Çalışma saatin aynı kalıyor."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13529,15 +13509,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "{name} ile pratik yap"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "Benimkini koru"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "Planından çıkarılanlar: {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "Sonraki öneriye geç"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {Planın artık resmi ilana göre ilerliyor} other {Planın artık resmi kılavuza göre ilerliyor}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "Benimkini koru"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"
@@ -13717,6 +13710,31 @@ msgstr "{dateKind, select, month {{start} ayında başlar} other {{start} tarihi
 msgctxt "83fmM5"
 msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
 msgstr "{dateKind, select, month {{count} · {start} ayında başlar} other {{count} · {start} tarihinde başlar}}"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "VlX3Tz"
+msgid "Horizontal axis: {label}, from {min} to {max}"
+msgstr "Yatay eksen: {label}, {min} ile {max} arasında"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "8Zy2Zw"
+msgid "Vertical axis: {label}, from {min} to {max}"
+msgstr "Dikey eksen: {label}, {min} ile {max} arasında"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "QcdIBf"
+msgid "Point"
+msgstr "Nokta"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "bhsStc"
+msgid "Reference lines"
+msgstr "Referans çizgileri"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "NNFAc_"
+msgid "{label}: {value}"
+msgstr "{label}: {value}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"

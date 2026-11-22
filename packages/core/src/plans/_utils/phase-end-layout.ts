@@ -17,6 +17,7 @@ import { hasTakenChallenge } from "./taken-challenge";
 const MAX_END_MOVES = 8;
 
 export type MoveRequest = {
+  bringBackExtras?: boolean;
   bringBackSetAside?: boolean;
   context: PlanContext;
   mode: PlanningMode;

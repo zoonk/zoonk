@@ -29,6 +29,7 @@ export type NoticeSubject = {
 };
 
 export type SyllabusSkill = {
+  extra?: boolean;
   area: string;
   name: string;
   skillId: string;
@@ -87,3 +88,7 @@ export type SyllabusInput = {
   todayBlocks?: readonly TodayLearnBlock[];
   writtenPractice?: WrittenPractice | null;
 };
+
+export function hasSyllabusNotice(notice: SyllabusInput["notice"] | undefined): boolean {
+  return Boolean(notice?.fromMaterial || notice?.url);
+}

@@ -10,7 +10,7 @@ You check curricula for a learning app. You compare a learner's skill graph with
 - `COURSES`: the courses that teach the graph's skills, one per line as `key: title`.
 - `SKILLS`: the skill graph, one skill per line as `key: name. description`.{{#exam}} For an exam, a line ends with the skill's current weight, such as `(exam weight 3)`{{#notice}}, and, when there's an `EXAM_NOTICE`, its place in it, such as `[area: Língua Portuguesa; topics: S1.2, S1.3]`{{/notice}}.{{/exam}}
 {{#notice}}
-- `EXAM_NOTICE`: for an exam, when its notice is known: its subjects (`S1`, `S2`, …) and every topic of their syllabus under an id (`S1.1`, `S1.2`, …).
+- `EXAM_NOTICE`: for an exam, when its notice is known: its subjects (`S1`, `S2`, …) and every topic of their syllabus under an id (`S1.1`, `S1.2`, …), and the written tasks it scores under a subject (`Written task: …`).
 - `UNCOVERED_TOPICS`: the notice's topics no skill lists yet, by id.
 {{/notice}}
 - `GOAL`: what the skill graph is for.
@@ -35,7 +35,7 @@ Return the skills the graph is missing: topics a reference lists, that the goal 
 
 Only when there's an `EXAM_NOTICE`. The learner sees the plan as the notice's subjects, each with every topic of its syllabus, and trusts it only when nothing is missing. So place the whole graph in the notice:
 
-- In `placements`, give each skill whose line has no area, or an area that isn't a notice subject, its subject (`area`, the subject's name exactly as the notice writes it) and the ids of the topics it teaches (`topics`). Also add each topic of `UNCOVERED_TOPICS` that a skill already teaches, even partly or under another name, to that skill, listing all of its topics. A skill that belongs to no subject, such as the essay or when to leave an item blank, keeps an area named for that part of the exam and no topics.
+- In `placements`, give each skill whose line has no area, or an area that isn't a notice subject, its subject (`area`, the subject's name exactly as the notice writes it) and the ids of the topics it teaches (`topics`). Also add each topic of `UNCOVERED_TOPICS` that a skill already teaches, even partly or under another name, to that skill, listing all of its topics. A skill that practices a written task the notice scores, such as the essay, takes that task's name as `area`, exactly as its `Written task` line writes it, and no topics. Any other skill that belongs to no subject gets no placement.
 - For each topic of `UNCOVERED_TOPICS` that no skill teaches, add a missing skill with the topic's id as `syllabusLine`, its subject as `area` and the ids of the topics it teaches as `topics`. One skill can cover neighboring small topics of the same subject.
 - Leave out every skill that is already placed right.
 
@@ -64,14 +64,14 @@ For each missing skill:
 - `examWeight`: for an exam, 1 to 5 as described in "Exam weights"; null otherwise.
 {{/exam}}
 {{#notice}}
-- `area` and `topics`: with an `EXAM_NOTICE`, the subject it belongs to and the ids of the topics it teaches; otherwise an empty `area` and no topics.
+- `area` and `topics`: with an `EXAM_NOTICE`, the subject or scored written task it belongs to and the ids of the topics it teaches; otherwise an empty `area` and no topics.
 {{/notice}}
 {{#notice}}
 
 For each change in `placements`:
 
 - `key`: the skill's key from `SKILLS`.
-- `area`: the notice subject it belongs to, as the notice writes it.
+- `area`: the subject or scored written task, as the notice writes it.
 - `topics`: the ids of every notice topic it teaches.
 {{/notice}}
 {{#exam}}

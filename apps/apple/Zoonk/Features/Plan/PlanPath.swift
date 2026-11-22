@@ -533,10 +533,10 @@ struct PlanSyllabusSection: View {
     PageSection {
       SharedExamsNote(exams: syllabus.sharedExams)
 
-      // Main's groups: the notice's in its order, then what the plan adds outside it.
+      // Main's groups: the notice's in its order, then the optional study.
       ForEach(syllabus.subjectGroups) { group in
         if group.extra {
-          SectionLabel(Text("Also in your plan", tableName: "Plan"))
+          SectionLabel(Text(syllabus.extraLabel))
             .listRowSeparator(.hidden)
         } else if let name = group.name {
           SectionLabel(Text(name))
@@ -596,7 +596,9 @@ struct PlanSyllabusSection: View {
           comment: "How many topics a subject has"),
       ])
     } else if goalKind == .exam {
-      Text(verbatim: subjectsText(syllabus.kind == "notice" ? subjects : syllabus.subjects.count))
+      Text(
+        verbatim: subjectsText(
+          syllabus.kind == "notice" ? subjects : syllabus.subjects.count(where: { !$0.isExtra })))
     } else {
       Text(
         "\(syllabus.subjects.count) modules", tableName: "Plan",
@@ -775,6 +777,8 @@ struct SyllabusSubjectRow: View {
 
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
+    // The exam doesn't test its optional study, so its row counts lessons where others measure.
+    let measured = subject.notPlannedReason == nil && !subject.isExtra
     let isWide = !isStacked && width >= Self.barBesideFrom
 
     // The bar is part of the row's words, so the share centers on the row with the chevron the
@@ -791,7 +795,7 @@ struct SyllabusSubjectRow: View {
               .frame(width: 104, alignment: .trailing)
           }
 
-          if subject.notPlannedReason == nil {
+          if measured {
             Meter(value: share, fill: .success)
               .frame(width: min(max(width * 0.3, 112), 224))
               .accessibilityHidden(true)
@@ -801,22 +805,24 @@ struct SyllabusSubjectRow: View {
         VStack(alignment: .leading, spacing: 6) {
           name
 
-          if subject.notPlannedReason == nil {
+          if measured {
             Meter(value: share, fill: .success)
               .accessibilityHidden(true)
           }
         }
       }
     } value: {
-      // As wide as the widest share, so every subject's bar ends on one edge.
-      Text(share, format: .percent.precision(.fractionLength(0)))
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-        .frame(
-          minWidth: TypeStyle.data.width(
-            of: 1.0.formatted(.percent.precision(.fractionLength(0))),
-            dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
-          alignment: .trailing)
+      if !subject.isExtra {
+        // As wide as the widest share, so every subject's bar ends on one edge.
+        Text(share, format: .percent.precision(.fractionLength(0)))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+          .frame(
+            minWidth: TypeStyle.data.width(
+              of: 1.0.formatted(.percent.precision(.fractionLength(0))),
+              dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+            alignment: .trailing)
+      }
     }
     .onGeometryChange(for: CGFloat.self) {
       $0.size.width
@@ -837,6 +843,12 @@ struct SyllabusSubjectRow: View {
         .layoutPart(.label, text: Text(subject.shortName))
 
       AlsoInExams(exams: sharedExams)
+
+      if subject.isExtra {
+        Text("\(subject.lessonsDone) of \(subject.lessonsTotal) lessons", tableName: "Plan")
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
 
       if subject.notPlannedReason != nil {
         planOutsideReason(subject.notPlannedReason)
@@ -980,5 +992,33 @@ func planOutsideReason(_ reason: String?) -> Text {
     )
   default:
     Text("Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
+  }
+}
+
+/// Main's name for the exam's optional study, such as its strategy: outside what the official
+/// guide tests, or just optional when the exam has none.
+func examExtraLabel(hasNotice: Bool, document: ExamDocument) -> String {
+  guard hasNotice else {
+    return String(
+      localized: "Optional", table: "Plan",
+      comment:
+        "Labels an exam's optional study, such as its strategy, when the exam has no official guide"
+    )
+  }
+
+  switch document {
+  case .notice:
+    return String(
+      localized: LocalizedStringResource(
+        "notInNotice", defaultValue: "Not in the official guide", table: "Plan",
+        comment:
+          "Labels an exam's optional study, such as its strategy, which the exam's public notice doesn't list"
+      ))
+  case .guide:
+    return String(
+      localized: "Not in the official guide", table: "Plan",
+      comment:
+        "Labels a language certificate's optional study, such as its strategy, which its official guide doesn't list"
+    )
   }
 }

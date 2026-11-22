@@ -22,7 +22,6 @@ import { useTimelineAxis } from "./use-timeline-axis";
 type TimelineProps = ActivityRendererProps<"timeline">;
 type Placement = { id: string; year: number };
 
-const FALLBACK_WIDTH = 318;
 const MIN_HEIGHT = 320;
 const CHARACTER_WIDTH = 7.2;
 const CARD_CHROME = 150;
@@ -114,7 +113,7 @@ function TimelineDescription({
 
 function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
   const { fields } = content;
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>();
   const formatYear = useFormatYear(fields.start);
   const dated = [...fields.anchors, ...fields.events].toSorted((a, b) => a.year - b.year);
 
@@ -173,7 +172,7 @@ function TimelineQuestion({
 }: TimelineProps) {
   const t = useExtracted();
   const { check, fields } = content;
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>();
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [dragId, setDragId] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);

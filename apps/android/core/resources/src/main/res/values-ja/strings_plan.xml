@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "6e18273ecfa4046a016290d2e101e58c23635b4a7bd32347ae791c16f35a909d",
   "plan_ask_fit_lessons": "41c7c759ab138946fabbd6933a3f78d5b6b6f69ee56a4cf14564948658a136db",
   "plan_ask_focus": "203ef5b7beb561ecd57966a1575fc1673280f03813d15e4f0977c8a8f73315dc",
-  "plan_ask_follow_guide": "e2ba4ec28bf69fff0a41f8b4172dc601d3c0fd8d2726e3f271f757fdbc0bd51a",
-  "plan_ask_follow_guide_around": "7e48375e4a8095b0bcdf35e24f0db63c693e20219e9565a14a5ccc993290f760",
-  "plan_ask_follow_guide_on": "dc4a6cc7077472ed0c4f52e3252d8a1d920a2a946f980ba9759ae044dba49851",
   "plan_ask_from_basics": "7b39e31583d72afabb19a414e6be4e58f818fdf2369dab9390e8ee239c85b962",
   "plan_ask_harder": "c57375c1b2ce2f772bae672e153c0cc37b01ebab98e573f352fd40c9ad64a315",
   "plan_ask_keep_studying": "e7a48d92f4ec91bd4baacaf35d691e02247451f83142da7e804616e4b1ef9090",
@@ -48,6 +45,7 @@
   "plan_ask_phase_end_later": "5513f036c2513691fafa2287acd4b835bd7b0a37422e64b3739b51af6910fbe5",
   "plan_ask_phase_end_off_rest": "fdfcc9b23515c6e2443b1cd4083580c6ef95fc2b5333112cdd535b66959125c4",
   "plan_ask_prerequisites": "82dacdc991106e541757b1540ac323deb54b7b3538cd93cf356a2fa5821b7a4d",
+  "plan_ask_remove_extras": "8340f09bcda226db42fb5ade9faadc951eebd2580f20ddb5e468d818c8627cb6",
   "plan_ask_remove_focus": "0fd5783d5d4713f47dc2b552c3557cd2de5b9836f214d517b960751d6aa9e559",
   "plan_ask_rest_day": "a6bb6c7a0be3a230c2214461a97179ad25efa5d4e1780329b6399e3ffd386c06",
   "plan_ask_rest_days": "51f47003640155f8ac37d7640d83a1efc4deb0915094f4943be31eea12d491c7",
@@ -109,6 +107,8 @@
   "plan_change_estimate_updated": "e96f360d4524f397b101e01c97a0db27f87a1709f910f005e37ad1a2cbd490a1",
   "plan_change_exam_choice": "6ced66342b10ec68c71c1ff6cf7e06b8c21c6e46174f9290a40acb0c9d53b4ac",
   "plan_change_exam_date": "52c98190a9299a26b1e6c01ef4f05b3058aa99d56bb97df51329d0cb8ce626dd",
+  "plan_change_extras_added": "2f341e39e061883b6e9d888e91426f436ec4ce22f7ee05f7bad2f60e5a218b55",
+  "plan_change_extras_removed": "d73921e966fc86bf1837546e5544c68308d4d1abe80a29e2f7c43a8c58d7fc98",
   "plan_change_fewer": "ce2f4423ce368530f428615ffa99234f0b8d3a05e22143e08bf29ec6f8b3d68c",
   "plan_change_fewer_lessons": "c74c96263c1cb0b02d9464bd9dea34a726fa04cb39a8eea4bc0b80c2eb91db71",
   "plan_change_fit_lessons": "dfe53c65be26dd84a75d6cbded52a04494b16625138de387cfcc4659bc003fbe",
@@ -137,8 +137,11 @@
   "plan_change_no_deadline": "7e6cd2a9f3b775e328d35c51cce810f15aeaa2539517d53214e2c979de9f88bf",
   "plan_change_no_focus": "051de16636d5f9a684da89cf7e84e7a8db6a292cdebe1fb6d24e52a59879cff7",
   "plan_change_notice_says": "7bcca8fddd5350e462057b8a2158a22288058f078534a0bb8f5bc451143ddb19",
+  "plan_change_now_follows_guide": "06bf05620d4c376343ddc71da9a66d8970926beb4886f13e1d4f30684ad8b53c",
+  "plan_change_now_follows_notice": "62e55bf6c1ef64da6cc4f108c3aa0283632bfe3f128dadb1fe10d435b447a10b",
   "plan_change_official_date": "a8b00eebff91f047a0d2935ffbaca5b4f5933fe4766beb1f20bba35044932607",
   "plan_change_other_subjects": "701c9d22cd715c2c000e577314f333126507692f6eec26ad50ee87c51414d597",
+  "plan_change_out_of_plan": "63d405dfb85588431c0d5083d19902f2932dc30250c231a30ad478a76cb769f0",
   "plan_change_own_level_first": "6ad3d683bc06a9e105f60ec6fa9be024824d2d30978fc29122a8b841607159e8",
   "plan_change_phase_dates_moved": "81d1aa1e2cb674028338e3a991fff62374090ea3cedeb1bc0ecb40ae08106805",
   "plan_change_relearn_subjects": "3f9e3c4ac32cec1be1267a40e673d97960139139fade522e79200d7fe8d5d429",
@@ -249,6 +252,7 @@
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
   "plan_exam_date_label": "7400ea190140d2f000dfa90e05e38a0d465076e9f5995125d82e29af8f471179",
   "plan_exam_over_ask": "b9a751a78fb96c253ec4dd5bba73b58b63a6eae3672223f0b4dd0841379dc636",
+  "plan_extra_offer_title": "cf8f78caf6e622d942be3bd90e0fcf032d25e851fad3f69ccf653eeb98d1c1b7",
   "plan_far_count_from": "8546a6249ba9712ab85e58be02669cf32bddd34865d06b647855b772b76737cc",
   "plan_far_count_from_month": "83472b15f4bad13a2f66c4bfe3c90e6a8a353bcd34efc60f67605a3c2719e4ad",
   "plan_far_explain": "9c152af440aaee80d59c8fac01d5cade96f5d492f55263c4f72dee8363afa3de",
@@ -662,7 +666,7 @@
     <plurals name="plan_mock_exams_count">
         <item quantity="other">%d回の模試</item>
     </plurals>
-    <!-- %2$s is a date, such as "Nov 8". -->
+    <!-- %1$d is the lessons done, %2$d all the lessons, such as "3 of 15 lessons". -->
     <plurals name="plan_lessons_of">
         <item quantity="other">%1$d / %2$dレッスン</item>
     </plurals>
@@ -816,6 +820,12 @@
     <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
     <string name="plan_change_focus_test">重点診断の結果から、%1$sに多めに時間を充てるのがおすすめです。</string>
     <string name="plan_change_follows_guide">学習計画は試験の公式ガイドに沿っています。</string>
+    <!-- Says the plan already changed by itself. The document is the exam\'s public notice (Brazil\'s "edital"). -->
+    <string name="plan_change_now_follows_notice">学習計画が公式要項に沿った内容になりました</string>
+    <!-- Says the plan already changed by itself. The document is the exam\'s official guide. -->
+    <string name="plan_change_now_follows_guide">学習計画が公式ガイドに沿った内容になりました</string>
+    <!-- Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English". -->
+    <string name="plan_change_out_of_plan">学習計画から外れた項目：%1$s</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">試験日は現在、%1$sの見込みです。</string>
     <string name="plan_change_notice_says">公式な試験日は%1$sです。この日付を使いますか？</string>
@@ -841,6 +851,8 @@
     <string name="plan_change_date_moved">目標の日を%1$sに変更しました。</string>
     <string name="plan_change_phase_dates_moved">各フェーズの日程を変更しました。</string>
     <string name="plan_change_fit_lessons">学習計画にレッスンを追加しました。</string>
+    <string name="plan_change_extras_added">試験対策を学習計画に追加しました。</string>
+    <string name="plan_change_extras_removed">試験対策は学習計画に含まれていません。</string>
     <string name="plan_change_exam_choice">%1$s：%2$s。</string>
     <string name="plan_change_no_deadline">学習計画に終了日はありません。</string>
     <string name="plan_change_full_course">試験後も学習計画は続きます。</string>
@@ -1119,6 +1131,7 @@
     <string name="plan_couldnt_check_changes">変更内容を確認できませんでした。</string>
     <string name="plan_apply">学習計画を変更する</string>
     <string name="plan_add_to_my_plan">学習計画に追加</string>
+    <string name="plan_extra_offer_title">試験対策も学習しますか？</string>
     <string name="plan_not_now">今はしない</string>
     <string name="plan_suggestion_previous">前へ</string>
     <string name="plan_suggestion_next">次へ</string>
@@ -1270,13 +1283,8 @@
     <string name="plan_ask_prerequisites">前提知識の学び方を変更しますか？</string>
     <string name="plan_ask_aim">%1$sまで学びますか？</string>
     <string name="plan_ask_fit_lessons">時間内にできるレッスンを追加しますか？</string>
+    <string name="plan_ask_remove_extras">学習計画から試験対策を外しますか？</string>
     <string name="plan_ask_change">学習計画を変更しますか？</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">試験の公式ガイドに沿った学習計画にしますか？</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">試験日を%1$sにして、公式ガイドに沿った学習計画にしますか？</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">試験日を%1$sごろにして、公式ガイドに沿った学習計画にしますか？</string>
     <string name="plan_change_official_date">正式な試験日は%1$sです。</string>
     <string name="plan_change_estimate_updated">レッスンにかかる時間に合わせて、学習計画を変更しました。</string>
     <string name="plan_change_from_test">テストの回答をもとに、学習計画を変更しました。</string>

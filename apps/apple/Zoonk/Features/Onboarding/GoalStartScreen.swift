@@ -166,9 +166,7 @@ private struct GoalStartFlow: View {
               .announcesAlert(gate.said)
           } else {
             StepHeader(
-              title: Text(
-                "What do you want to achieve?", tableName: "Onboarding",
-                comment: "Title of the start flow's first screen"),
+              title: Text("What's your goal?", tableName: "Onboarding"),
               description: Text(
                 "Tell us in your own words. We'll build the plan.", tableName: "Onboarding",
                 comment: "Under the start flow's first title"))
@@ -415,13 +413,14 @@ struct DraftView: View {
   /// Starting it again is new work, so it waits for the learner's tap.
   private func failed(_ draft: OnboardingDraft) -> some View {
     ZoonkList {
+      LearnerBubble(words: draft.prompt)
+        .listRowSeparator(.hidden)
+
       StepHeader(
         title: Text(
           "Understanding your goal", tableName: "Onboarding",
           comment: "Title while a typed goal is read"),
         description: nil)
-
-      TypedGoalSection(goal: draft.prompt)
 
       GenerationFailureSection(
         failure: .generation, isActing: isRetrying,
@@ -466,22 +465,6 @@ struct DraftView: View {
   }
 }
 
-struct TypedGoalSection: View {
-  let goal: String
-
-  var body: some View {
-    Section {
-      Text(goal)
-        .textSelection(.enabled)
-    } header: {
-      SectionTitle(
-        Text(
-          "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"
-        ))
-    }
-  }
-}
-
 private struct UnderstandingWaitView: View {
   let goal: String
   /// The run reading them; nil right after sending, before the draft exists.
@@ -496,13 +479,13 @@ private struct UnderstandingWaitView: View {
         "Understanding your goal", table: "Onboarding",
         comment: "Title while a typed goal is read"),
       description: LocalizedStringResource(
-        "Next, you check what we understood.", table: "Onboarding",
-        comment: "Shown while a typed goal is read"),
+        "Next, we'll show you what we understood.", table: "Onboarding"),
       generationID: generationID,
       kind: .understanding,
       readResult: readResult,
       leading: {
-        TypedGoalSection(goal: goal)
+        LearnerBubble(words: goal)
+          .listRowSeparator(.hidden)
       }
     )
     .measuresWait(

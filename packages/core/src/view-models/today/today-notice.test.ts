@@ -111,6 +111,23 @@ describe(pickTodayNotice, () => {
     );
   });
 
+  it("shows an applied notice change before the source news", () => {
+    expect(
+      pick({
+        host: { sourceChange: true },
+        view: {
+          planChange: {
+            behind: null,
+            canUndo: false,
+            id: "notice",
+            kind: "noticeChanged",
+            status: "applied",
+          },
+        },
+      }),
+    ).toBe("planChange");
+  });
+
   it("puts the exam's own days first, and its final stretch after a changed notice", () => {
     expect(
       pick({

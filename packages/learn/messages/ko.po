@@ -91,6 +91,16 @@ msgctxt "JXdbo8"
 msgid "Done"
 msgstr "완료"
 
+#: src/_components/check-note.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "이번에는 답을 확인하지 못했어요. 다시 시도해 보세요."
+
+#: src/_components/check-note.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
+
 #: src/_components/checklist.tsx
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
@@ -374,6 +384,7 @@ msgid "Take a short break, then try again."
 msgstr "잠깐 쉬었다가 다시 시도해 보세요."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "무료 계정이 필요해요"
@@ -2414,6 +2425,7 @@ msgstr "챕터 {number, number}"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -3405,8 +3417,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시 후 다시 시도해 보세요."
 
 #: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "계속 이용하려면 무료 계정을 만드세요."
@@ -6416,29 +6426,6 @@ msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "음성 메시지가 도착했어요. 듣고 답해 보세요."
 
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "여기서는 마이크를 사용할 수 없어요. 이 부분은 건너뛸 수 있어요."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "2IdQrb"
-msgid "Listening to what you said…"
-msgstr "말한 내용을 듣고 있어요…"
-
-#. "Stop" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "Vi6bgi"
-msgid "Recording… Press Stop when you're done."
-msgstr "녹음하고 있어요… 다 말했으면 중지 버튼을 누르세요."
-
-#. "Record" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "_lLAdM"
-msgid "Press Record and say it out loud"
-msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
-
 #. A CEFR level range the test found for reading, such as “B1–B2”.
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "hSzKEx"
@@ -6477,19 +6464,14 @@ msgid "I didn't understand the audio"
 msgstr "무슨 말인지 못 알아들었어요"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "답변을 확인하지 못했어요. 다시 시도해 보세요."
+msgctxt "TEizt2"
+msgid "The microphone isn't available here. You can skip this part."
+msgstr "여기서는 마이크를 사용할 수 없어요. 이 부분은 건너뛸 수 있어요."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "이 부분 건너뛰기"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "소리 내어 말해 보세요"
 
 #: src/language/level-test/level-test-results.tsx
 #: src/mock/mock-speaking.tsx
@@ -6713,6 +6695,11 @@ msgid "Nothing said this time"
 msgstr "이번에는 말한 단어가 없어요"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "y1aleL"
+msgid "The microphone isn't available here. You can skip this word."
+msgstr "여기서는 마이크를 사용할 수 없어요. 이 단어는 건너뛰어도 돼요."
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "다시 소리 내어 말하기"
@@ -6751,32 +6738,6 @@ msgstr "소리 내어 말할 단어"
 msgctxt "O1LlS-"
 msgid "Say it like"
 msgstr "이렇게 소리 내어 말해 보세요"
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "l4x7Td"
-msgid "We couldn't hear the word. Try again a little closer."
-msgstr "단어가 잘 들리지 않았어요. 조금 더 가까이에서 다시 말해 보세요."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "75OFKI"
-msgid "That didn't go through. Try again."
-msgstr "처리하지 못했어요. 다시 시도해 보세요."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "여기서는 마이크를 사용할 수 없어요. 이 단어는 건너뛰어도 돼요."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "VcLERf"
-msgid "Listening to how it sounded…"
-msgstr "발음을 듣고 있어요…"
-
-#. "Record" is the label of the record button.
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "we8m4p"
-msgid "Press Record and say the word out loud"
-msgstr "녹음 버튼을 누르고 단어를 소리 내어 말해 보세요"
 
 #: src/language/today/language-today-section.tsx
 msgctxt "VR3SAU"
@@ -7732,6 +7693,7 @@ msgid "Practice mistakes"
 msgstr "틀린 문제 연습"
 
 #: src/mistakes/mistake-practice-run.tsx
+#: src/session/question-block/block-aside.tsx
 msgctxt "SMv32M"
 msgid "Help with this question"
 msgstr "이 문제 도움말"
@@ -10103,7 +10065,7 @@ msgid "You can change all of this later."
 msgstr "나중에 모두 바꿀 수 있어요."
 
 #: src/onboarding/understood/understood-source-link.tsx
-#: src/visuals/chart-visual.tsx
+#: src/visuals/chart-frame.tsx
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "출처: {source}"
@@ -10557,11 +10519,6 @@ msgid "Adjust your plan"
 msgstr "계획 조정하기"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, other {레슨 #개를 더 할 시간이 있어요}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10571,6 +10528,17 @@ msgstr "계획을 수정했어요."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "계획에 추가"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, other {레슨 #개를 더 할 시간이 있어요}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "시험 전략도 공부할까요?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10933,6 +10901,7 @@ msgid "Needed to practice"
 msgstr "실습에 필요"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "선택 사항"
@@ -11003,34 +10972,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, other {사전 지식 #가지}} · 첫 레슨만 · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꾸고, 시험일은 {date}쯤으로 할까요?} other {공식 시험 안내에 맞춰 계획을 바꾸고, 시험일은 {date}쯤으로 할까요?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꾸고, 시험일은 {date}로 할까요?} other {공식 시험 안내에 맞춰 계획을 바꾸고, 시험일은 {date}로 할까요?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꿀까요?} other {공식 시험 안내에 맞춰 계획을 바꿀까요?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "시험일을 {date}쯤으로 바꿀까요?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {시험 날짜를 {date}로 바꿀까요?} goal {종료일을 {date}로 바꿀까요?} other {날짜를 {date}로 바꿀까요?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11141,6 +11086,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "이번 주 챌린지를 {date}로 옮길까요?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {시험 날짜를 {date}로 바꿀까요?} goal {종료일을 {date}로 바꿀까요?} other {날짜를 {date}로 바꿀까요?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "종료일 없이 공부할까요?"
@@ -11199,6 +11149,11 @@ msgstr "사전 지식 설정을 바꿀까요?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "{level}까지 공부할까요?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "계획에서 시험 전략을 뺄까요?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11372,6 +11327,16 @@ msgstr "계획에 레슨이 추가돼요."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "단계별 일정이 바뀌어요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "시험 전략이 계획에 추가됐어요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "시험 전략은 계획에 없어요."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12972,6 +12937,18 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "녹음"
 
+#. “Stop” is the label of the button that ends the recording.
+#: src/speech/record-note.tsx
+msgctxt "CzQFwa"
+msgid "Listening… Tap Stop to check."
+msgstr "듣고 있어요… 답을 확인하려면 중지를 누르세요."
+
+#. “Record” is the label of the button that starts the recording.
+#: src/speech/record-note.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
+
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"
 msgid "Getting the audio ready…"
@@ -13105,12 +13082,6 @@ msgid "From your material"
 msgstr "내 자료에서 가져옴"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "내 계획에도 포함"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "내 자료에 있는 주제"
@@ -13239,6 +13210,12 @@ msgstr "계획에 없어요 · 학습 시간이 부족해요"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "아직 준비되지 않음"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {공식 공고에 없는 내용} other {공식 안내서에 없는 내용}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13436,6 +13413,7 @@ msgid "Okay. Your time stays the same."
 msgstr "알겠어요. 학습 시간은 그대로예요."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "계획 변경"
@@ -13481,6 +13459,7 @@ msgid "Move it"
 msgstr "옮기기"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "알겠어요"
@@ -13498,6 +13477,7 @@ msgid "Your study time stays the same."
 msgstr "학습 시간대는 그대로예요."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13529,15 +13509,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "{name}하고 연습하기"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "내 계획 유지하기"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "계획에서 제외: {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "다음 제안"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {계획이 이제 공식 공고를 따르고 있어요} other {계획이 이제 공식 안내서를 따르고 있어요}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "내 계획 유지하기"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"
@@ -13717,6 +13710,31 @@ msgstr "{dateKind, select, month {{start}에 시작} other {{start} 시작}}"
 msgctxt "83fmM5"
 msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
 msgstr "{dateKind, select, month {{count} · {start}에 시작} other {{count} · {start} 시작}}"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "VlX3Tz"
+msgid "Horizontal axis: {label}, from {min} to {max}"
+msgstr "가로축: {label}, {min}부터 {max}까지"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "8Zy2Zw"
+msgid "Vertical axis: {label}, from {min} to {max}"
+msgstr "세로축: {label}, {min}부터 {max}까지"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "QcdIBf"
+msgid "Point"
+msgstr "점"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "bhsStc"
+msgid "Reference lines"
+msgstr "기준선"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "NNFAc_"
+msgid "{label}: {value}"
+msgstr "{label}: {value}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"

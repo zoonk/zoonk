@@ -489,8 +489,8 @@ struct PlanContext {
 struct SuggestionOpening: Equatable {
   /// The suggestion shown, with what it says (a coverage line's time and share).
   let item: PlanSlotItem?
-  /// What the fit offer's check previewed.
-  let offer: GoalPlan.FitOffer?
+  /// What the fit or optional-study offer's check previewed.
+  let offer: GoalPlan.Offer?
   /// The same inputs the store uses to invalidate the read these previews came from.
   let inputs: PlanInputs?
   /// Its sheet: closing it ends what was asked in it.
@@ -503,7 +503,12 @@ struct SuggestionOpening: Equatable {
     self.item = item
     self.inSheet = inSheet
     self.editing = editing
-    offer = item == .fitLessons ? plan.fitOffer : nil
+    offer =
+      switch item {
+      case .fitLessons?: plan.fitOffer
+      case .extraLessons?: plan.extraOffer
+      default: nil
+      }
 
     switch item {
     case .pastDate?, .coverage?:

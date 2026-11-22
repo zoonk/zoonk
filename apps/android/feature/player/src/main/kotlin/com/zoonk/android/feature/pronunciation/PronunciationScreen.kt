@@ -78,9 +78,9 @@ import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
-import com.zoonk.android.feature.audio.VoiceIssue
 import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
@@ -102,8 +102,6 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
-import com.zoonk.android.ui.components.LimitNotice
-import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
@@ -267,6 +265,12 @@ private fun WordStep(
             },
         )
     val haptics = LocalHapticFeedback.current
+    val note =
+        when {
+            step.grade != null -> null
+            model.microphoneOff -> ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
+            else -> recordNote(recording, checking = round.pending, issue = round.issue, navigator = navigator)
+        }
 
     LaunchedEffect(step.grade) {
         val grade = step.grade ?: return@LaunchedEffect
@@ -298,37 +302,14 @@ private fun WordStep(
                     WordActions(round, step, model, status, tapRecord)
                 }
             },
+            note = note,
         ) { padding ->
             WordPages(
                 Modifier.fillMaxSize().padding(padding),
                 meter = { RoundMeter(round) },
                 word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
             ) {
-                val grade = step.grade
-                val issue = round.issue
-                when {
-                    grade != null -> {
-                        GradeNote(grade)
-                    }
-
-                    model.microphoneOff -> {
-                        MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
-                    }
-
-                    issue is VoiceIssue.Limited && !recording && !round.pending -> {
-                        LimitNotice(
-                            issue.limit,
-                            LimitSubject.Help,
-                            onCreateAccount = { navigator.open(AppRoute.Login) },
-                            onSubscribe = { navigator.open(AppRoute.Subscription) },
-                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        )
-                    }
-
-                    else -> {
-                        RecorderStatus(issue, pending = round.pending, recording = recording)
-                    }
-                }
+                step.grade?.let { GradeNote(it) }
             }
         }
     }
@@ -336,7 +317,7 @@ private fun WordStep(
 
 /**
  * A word as a spread, as a practice question: the [meter] and the [word] on the page before the split, the learner's
- * [turn] on the page after it, above the docked actions, whether it says what to do or how it sounded. The turn's page is
+ * [turn] on the page after it, above the docked actions, saying how it sounded. The turn's page is
  * the one column's place.
  */
 @Composable
@@ -508,36 +489,6 @@ private fun SayItLike(respelling: String) {
 }
 
 @Composable
-private fun RecorderStatus(
-    issue: VoiceIssue?,
-    pending: Boolean,
-    recording: Boolean,
-) {
-    val text =
-        when {
-            pending -> stringResource(R.string.pronunciation_grading)
-            recording -> stringResource(R.string.pronunciation_recording)
-            issue == VoiceIssue.NoSpeech -> stringResource(R.string.pronunciation_no_speech)
-            issue == VoiceIssue.Failed -> stringResource(R.string.pronunciation_failed)
-            else -> stringResource(R.string.pronunciation_press_record)
-        }
-    Text(
-        text,
-        // Announcing the take's start would speak into the microphone.
-        Modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
-        color =
-            if (issue != null && !pending &&
-                !recording
-            ) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-@Composable
 private fun GradeNote(grade: PronunciationAnswerGrade) {
     if (grade.isCorrect) {
         FeedbackVerdict(stringResource(R.string.pronunciation_sounded_right), FeedbackTone.Right)
@@ -634,7 +585,7 @@ private fun WordActions(
                     onStart = tapRecord,
                     onStop = model.recorder::stop,
                     modifier = width,
-                    enabled = !round.pending,
+                    busy = round.pending,
                 )
             }
         }

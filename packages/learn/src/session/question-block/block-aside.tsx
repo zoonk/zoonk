@@ -1,10 +1,9 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { type QuestionTutor } from "../../questions/question-tutor";
 import { type TaskFrameAside } from "../../shell/task-frame";
-import { useSessionQueueAside } from "../session-queue";
-import { getSessionQueue } from "../session-queue-rows";
-import { type StudyBlockDetail, type StudyQuestion, type StudySession } from "../session-types";
+import { type StudyQuestion } from "../session-types";
 import { type QuestionMaterialKind, getQuestionMaterial } from "./question-material";
 
 function useMaterialTitle() {
@@ -23,32 +22,24 @@ function useMaterialTitle() {
 }
 
 export function useBlockAside({
-  detail,
   question,
-  session,
+  tutor,
 }: {
-  detail: StudyBlockDetail;
   question: StudyQuestion | null;
-  session: Pick<StudySession, "blocks" | "minutes">;
+  tutor?: QuestionTutor | null;
 }): TaskFrameAside {
   const t = useExtracted();
   const materialTitle = useMaterialTitle();
 
-  const queue = useSessionQueueAside(
-    {
-      left: session.minutes.left,
-      rows: getSessionQueue({ blocks: session.blocks, nextId: detail.block.id }),
-    },
-    { named: true },
-  );
-
   const material = question ? getQuestionMaterial(question) : null;
+  const help = { children: tutor?.aside, meta: tutor?.asideMeta(null) };
 
   if (!material) {
-    return queue;
+    return { ...help, label: t("Help with this question") };
   }
 
   return {
+    ...help,
     label: t("What the question is about"),
     title: materialTitle(material.kind),
     width: material.long ? "half" : "default",

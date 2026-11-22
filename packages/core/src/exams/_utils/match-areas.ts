@@ -1,6 +1,6 @@
 import { namesMatchAcrossSpellings } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
-import { nameOverlap, namesMatch, namesMatchInFull } from "../../../exams/_utils/name-match";
+import { nameOverlap, namesMatch, namesMatchInFull } from "./name-match";
 
 /** Below this share of shared words, two names are different subjects that share a word. */
 const MIN_OVERLAP = 0.5;
@@ -82,4 +82,30 @@ export function followsNotice({
   matches: ReadonlyMap<string, number>;
 }): boolean {
   return areas.length > 0 && matches.size * 2 >= areas.length;
+}
+
+export function matchNoticeAreas({
+  areas,
+  subjects,
+}: {
+  areas: readonly string[];
+  subjects: readonly (SubjectNames & { writtenTasks?: readonly string[] })[];
+}) {
+  const named = matchAreasToSubjects({ areas, subjects });
+
+  const parts = new Map(
+    areas.flatMap((area) => {
+      if (named.has(area)) {
+        return [];
+      }
+
+      const asking = subjects.flatMap((subject, index) =>
+        subject.writtenTasks?.some((task) => namesMatch(area, task)) ? [index] : [],
+      );
+
+      return asking.length === 1 ? [[area, asking[0] ?? 0] as const] : [];
+    }),
+  );
+
+  return { matches: new Map([...named, ...parts]), named, parts };
 }

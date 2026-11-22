@@ -40,7 +40,7 @@ export const onboardingPaths = {
   "/goal-understandings": {
     post: {
       description:
-        "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
+        "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. The same words in the same language sent again before their draft is understood answer with that draft (202): its run still reading them at no cost, or, when that run ended without finishing, a new run counted like a retry, so a retry after a lost response or a second tab reads them once. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
       operationId: "createGoalUnderstanding",
       requestBody: {
         content: { "application/json": { schema: goalUnderstandingInputSchema } },
@@ -92,7 +92,7 @@ export const onboardingPaths = {
     },
     patch: {
       description:
-        "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
+        "One fix on the \"Here's what we understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
       operationId: "reviseGoalUnderstanding",
       requestBody: {
         content: { "application/json": { schema: onboardingDraftEditSchema } },
@@ -122,7 +122,7 @@ export const onboardingPaths = {
   "/goal-understandings/{understandingId}/generations": {
     post: {
       description:
-        "Starts reading a saved typed goal, or reads it again after its run failed or couldn't start. A run still reading it is followed instead (202 with its `generationId`), and a goal already understood needs none (200). Reading it again is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` (403 for a guest, 402 for a free learner, 429 for Plus).",
+        "Starts reading a saved typed goal, or reads it again after its run failed or couldn't start. A run still reading it is followed instead (202 with its `generationId`), and a goal already understood needs none (200). Reading it again is one of the learner's small AI calls, counted once for retries of the same run sent together: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` (403 for a guest, 402 for a free learner, 429 for Plus).",
       operationId: "createGoalUnderstandingGeneration",
       requestParams: { path: goalUnderstandingPathParamsSchema },
       responses: {

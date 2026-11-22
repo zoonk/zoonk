@@ -110,13 +110,9 @@ function openStatement() {
           refresh: vi.fn(),
           stop: vi.fn(),
         }}
+        blocks={[]}
         detail={DETAIL}
         exitHref="/today"
-        session={{
-          blocks: [],
-          id: "session",
-          minutes: { dailyGoal: 10, done: 0, left: 10, planned: 10 },
-        }}
       />
     </LearnProvider>,
   );

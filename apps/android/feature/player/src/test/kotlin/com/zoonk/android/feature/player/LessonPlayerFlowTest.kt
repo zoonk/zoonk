@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player
 
+import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.key.Key
@@ -19,6 +20,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
@@ -49,6 +51,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
 class LessonPlayerFlowTest {
@@ -314,6 +317,27 @@ class LessonPlayerFlowTest {
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNodeWithText("Each part is 20", substring = true).assertExists()
+    }
+
+    @Test
+    fun startingFiguresStayOpenOnRecreationAndFoldAtTheNextDecision() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(chartChallengeStep("case")), restoration = restoration)
+        tap("Start")
+
+        val figures = rule.onNodeWithText("8 hours")
+        rule.onNodeWithText("Starting figures").performScrollTo().performClick()
+        figures.assertExists()
+
+        rule.waitForIdle()
+        restoration.emulateSavedInstanceStateRestore()
+
+        figures.assertExists()
+        rule.onNodeWithText("Scan again in finer steps from B to D").performScrollTo().performClick()
+        tap("Confirm")
+
+        rule.onNodeWithText("Where does the detector go?").assertExists()
+        figures.assertDoesNotExist()
     }
 
     /** Going back to reread keeps the screen the learner left, so a sentence half built is still there when they return. */
@@ -909,6 +933,17 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("Leave for now?").assertIsDisplayed()
         tap("Keep writing")
         assertEquals(0, closed)
+    }
+
+    /** Enter presses what the bar shows as its main action: on a speaking screen not yet answered, Record. */
+    @Test
+    fun enterRecordsOnASpeakingScreen() {
+        play(listOf(spokenStep("say"), summaryStep("end")))
+        shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
+
+        rule.onRoot().performKeyInput { pressKey(Key.Enter) }
+
+        rule.onNodeWithText("Stop").assertExists()
     }
 
     /**

@@ -36,6 +36,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -117,6 +118,26 @@ class LessonStartTest {
             )
             assertEquals(listOf(ONE), api.checks.map { it.first })
             assertEquals(false, reopened.hasUnsent)
+        }
+
+    @Test fun theDaysChoicesAreReadWhileTheRunIsStillStarting() =
+        runTest(dispatcher) {
+            val drafts = DraftStore(folder.newFolder(), backgroundScope, dispatcher)
+            drafts.follow { DraftsChange("ana") }
+            TodayChoices(drafts).set(session.current!!, TodayChoice.CantListen, true)
+            TodayChoices(drafts).set(session.current!!, TodayChoice.CantTalk, true)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true, draftStore = drafts)
+
+            vm.open(lesson)
+            assertFalse(vm.todayChoicesRead)
+            advanceUntilIdle()
+
+            assertTrue(vm.state.value?.run !is LessonRun.Started)
+            assertTrue(vm.todayChoicesRead)
+            assertTrue(vm.cantListen)
+            assertTrue(vm.cantTalk)
+            api.startGate!!.complete(Unit)
         }
 
     @Test fun aLateRunLeavesWorkWithNoAnswerOnAPreviousScreenAlone() =

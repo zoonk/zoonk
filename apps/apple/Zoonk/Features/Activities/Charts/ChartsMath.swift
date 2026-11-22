@@ -64,27 +64,33 @@ enum ChartsMath {
     return nice * magnitude
   }
 
-  /// A domain that holds every value with round ends, from zero when every value sits on one side
-  /// of it (main's `niceDomain`).
+  /// Main's `niceDomain`: a flat line sits in the middle instead of resting on the bottom.
   static func niceDomain(_ values: [Double], includesZero: Bool = true) -> ClosedRange<Double> {
     let finite = values.filter(\.isFinite) + (includesZero ? [0] : [])
 
-    guard var low = finite.min(), var high = finite.max() else {
+    guard let low = finite.min(), let high = finite.max() else {
       return 0...1
     }
 
     if low == high {
-      let pad = max(abs(low) * 0.1, 1)
-      (low, high) = (low - pad, high + pad)
+      return includesZero ? 0...1 : padFlat(low)
     }
 
     let step = niceStep(high - low)
     let (roundedLow, roundedHigh) = (
-      clean((low / step).rounded(.down) * step), clean((high / step).rounded(.up) * step)
+      clean(clean(low / step).rounded(.down) * step),
+      clean(clean(high / step).rounded(.up) * step)
     )
 
     // Rounding out to a whole step can pass the largest number a double holds.
     return roundedLow.isFinite && roundedHigh.isFinite ? roundedLow...roundedHigh : low...high
+  }
+
+  /// One whole unit for a whole number, else its own order of magnitude: 3 gives 2–4, 0.5 gives
+  /// 0.4–0.6.
+  static func padFlat(_ value: Double) -> ClosedRange<Double> {
+    let pad = value == value.rounded() ? 1 : pow(10, log10(abs(value)).rounded(.down))
+    return clean(value - pad)...clean(value + pad)
   }
 
   /// Abramowitz and Stegun 7.1.26, as core computes it, so a readout matches grading to the digit.

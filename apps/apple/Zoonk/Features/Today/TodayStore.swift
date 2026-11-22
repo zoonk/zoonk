@@ -350,13 +350,23 @@ final class TodayStore {
 
   /// The one the learner just answered, until they ask for the next; else the day's.
   func shownPlanChange(in view: TodayView) -> AnsweredPlanChange? {
-    answeredPlanChange(in: view) ?? view.planChange.map { AnsweredPlanChange(change: $0) }
+    let answered = answeredPlanChange(in: view)
+
+    // Seen, the notice that the plan follows the official guide leaves at once: it has nothing to
+    // say after, so Today shows whatever comes next.
+    if let answered, answered.change.kind == "noticeChanged" {
+      return view.planChange.flatMap {
+        $0.id == answered.change.id ? nil : AnsweredPlanChange(change: $0)
+      }
+    }
+
+    return answered ?? view.planChange.map { AnsweredPlanChange(change: $0) }
   }
 
   /// A newer proposal waiting behind the one just answered.
   func nextPlanChange(in view: TodayView) -> TodayView.PlanChange? {
-    guard let answered = answeredPlanChange(in: view), let next = view.planChange,
-      next.status == "proposed", next.id != answered.change.id
+    guard let answered = answeredPlanChange(in: view), answered.change.kind != "noticeChanged",
+      let next = view.planChange, next.status == "proposed", next.id != answered.change.id
     else {
       return nil
     }

@@ -8,6 +8,7 @@ import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { asksAboutAutomaticChange } from "./automatic-plan-change";
 import { foldChangeAreas } from "./fold-part-areas";
 import { latestLivingPlanChanges } from "./living-plan-change";
+import { waitingPlanProposal } from "./notice-graph-proposal";
 import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { canUndoChange, toPlanChangeView } from "./plan-change-view";
@@ -34,39 +35,41 @@ async function findTodayChanges({
     prisma.planChange.findMany({
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: MAX_PROPOSALS,
-      where: { planId, status: "proposed" },
+      where: { ...waitingPlanProposal, planId },
     }),
     prisma.planChange.findMany({
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       where: {
-        createdAt: { gte: new Date(now.getTime() - RECENT_CHANGE_MS) },
+        OR: [
+          { createdAt: { gte: new Date(now.getTime() - RECENT_CHANGE_MS) } },
+          { kind: "noticeChanged" },
+        ],
         planId,
         status: { in: ["applied", "undone"] },
       },
     }),
   ]);
 
-  const changes = latestLivingPlanChanges(recent);
-
-  const testOut = changes.find((change) => {
-    const { lessonsSkipped, seenAt } = parsePlanChangePayload(change.payload);
-
-    return (
-      change.kind === "testedOut" &&
-      Boolean(lessonsSkipped) &&
-      seenAt === null &&
-      canUndoChange({ change, planVersion })
-    );
-  });
-
-  const automatic = changes.find(
-    (change) =>
-      change.status === "applied" &&
-      asksAboutAutomaticChange({ change, dateReached }) &&
-      parsePlanChangePayload(change.payload).seenAt === null,
+  const changes = latestLivingPlanChanges(recent).filter(
+    (change) => parsePlanChangePayload(change.payload).seenAt === null,
   );
 
-  return { automatic: automatic ?? null, proposals, testOut };
+  const testOut = changes.find(
+    (change) =>
+      change.kind === "testedOut" &&
+      Boolean(parsePlanChangePayload(change.payload).lessonsSkipped) &&
+      canUndoChange({ change, planVersion }),
+  );
+
+  const notice = changes.find(
+    (change) => change.status === "applied" && change.kind === "noticeChanged",
+  );
+
+  const automatic = changes.find(
+    (change) => change.status === "applied" && asksAboutAutomaticChange({ change, dateReached }),
+  );
+
+  return { automatic: automatic ?? null, notice, proposals, testOut };
 }
 
 async function pickTodayChange({
@@ -80,7 +83,7 @@ async function pickTodayChange({
   planId: string;
   planVersion: number;
 }): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
-  const { automatic, proposals, testOut } = await findTodayChanges({
+  const { automatic, notice, proposals, testOut } = await findTodayChanges({
     dateReached,
     now,
     planId,
@@ -91,7 +94,7 @@ async function pickTodayChange({
     (candidate) => parsePlanChangePayload(candidate.payload).effect !== null,
   );
 
-  const change = testOut ?? proposal ?? automatic;
+  const change = testOut ?? notice ?? proposal ?? automatic;
   return change && { change, effect: parsePlanChangePayload(change.payload).effect };
 }
 

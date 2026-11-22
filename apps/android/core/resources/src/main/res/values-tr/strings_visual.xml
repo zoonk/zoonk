@@ -4,6 +4,10 @@
   "visual_chart_point": "2c0b130a64a0636a8ab1cf5cd41e151829ff26540e2e84f6cc9ea3a798758b20",
   "visual_chart_series_value": "6c487ce70ce83a9bd1977139bdb21598313777d0511d6bd8a68a80ee17ab8d39",
   "visual_chart_summary": "3d9ba3cd91d01199fbed0340d7ded29ce7f34ad4aadb685b0784f529a2e56e3c",
+  "visual_plot_horizontal_axis": "b52dd00fbead4287123fd50d4b14a40872f115fbd4bb0577d76163a52509839f",
+  "visual_plot_point": "f77348ac5d9de99d7fdd59f6adfc03716fd1c9c2378192b305aa81cfbe8dc57d",
+  "visual_plot_references": "29a4a36f8bb449005d87804bcd7a5e47f39b9b1ca4c9d008500f0f49c10016fd",
+  "visual_plot_vertical_axis": "e2d40eda6bba290f399754269a616b7a5057b979ec17c72704293fe9b22129f2",
   "visual_source": "85f8d7e2dbce6ae1b4fba5884005f150d346820e404adc510a3bd0233566b806"
 }
 -->
@@ -15,4 +19,12 @@
     <string name="visual_chart_point">%1$s: %2$s</string>
     <!-- One series' value in a category of a chart read aloud: the series' name (%1$s) and its value (%2$s). -->
     <string name="visual_chart_series_value">%1$s %2$s</string>
+    <!-- A plot read aloud: the horizontal axis's name (%1$s) and the lowest (%2$s) and highest (%3$s) values it shows. -->
+    <string name="visual_plot_horizontal_axis">Yatay eksen: %1$s, %2$s ile %3$s arasında</string>
+    <!-- A plot read aloud: the vertical axis's name (%1$s) and the lowest (%2$s) and highest (%3$s) values it shows. -->
+    <string name="visual_plot_vertical_axis">Dikey eksen: %1$s, %2$s ile %3$s arasında</string>
+    <!-- One point of a plot read aloud: the horizontal axis's name (%1$s) and the point's value on it (%2$s), then the vertical axis's name (%3$s) and its value there (%4$s). -->
+    <string name="visual_plot_point">%1$s %2$s, %3$s %4$s</string>
+    <!-- A plot's dashed reference lines read aloud, such as a target or a limit: each line's name with its value (%1$s). -->
+    <string name="visual_plot_references">Referans çizgileri: %1$s</string>
 </resources>

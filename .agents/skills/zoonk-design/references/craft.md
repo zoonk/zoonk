@@ -443,7 +443,7 @@ The craft read takes one screen. The role read takes one role on every screen, b
 
 1. For each role the change reaches, collect a crop of every instance, from every area and not only the changed screens, at 390 and 1440, on one sheet per role: page tops, back links, bottom bars with their main action, the overlays (open, on a phone and a computer), subscription gates, empty states, the line over a title, tabs, a list's row ends. `pnpm verify:pages --roles <every page that draws it>` makes the sheets and a table of each instance's numbers ([role sheets](../../verify/references/pages.md#compare-shared-roles)); a role it has no hook for is cropped by hand.
 2. A reader that built none of them gets the sheets and this file, and nothing else. Per sheet it answers: which instances differ from the rest, in what (place, size, gap, glyph, words, what a key or a tap does), and by how much.
-3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`), with `before` saying whether main draws it so too. A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
+3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`), with `before` saying whether main draws it so too, and is fixed either way. A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
 
 ### Independent picture review
 

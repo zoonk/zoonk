@@ -62,7 +62,7 @@ fun MistakePracticeScreen(
     val key = PracticeKey(learner.activeGoalId, route.skillId?.let { runCatching { UUID.fromString(it) }.getOrNull() })
     val viewModel =
         viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") {
-            MistakePracticeViewModel(key, app.mistakes, saved = createSavedStateHandle())
+            MistakePracticeViewModel(key, app.mistakes, app.todayChoices, app.sessions, saved = createSavedStateHandle())
         }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val closed by viewModel.closed.collectAsStateWithLifecycle()

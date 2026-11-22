@@ -55,6 +55,7 @@ import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure

@@ -79,7 +79,7 @@ class VoiceAnswerTestActivity : ComponentActivity() {
                         VoiceAnswerWindow.gradings++
                         VoiceAnswerWindow.graded.await()
                     }
-                VoiceAnswerRecorder(VoiceAnswerWindow.model, rememberAppNavigator())
+                Recorder(VoiceAnswerWindow.model, rememberAppNavigator())
             }
         }
     }

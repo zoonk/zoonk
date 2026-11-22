@@ -155,6 +155,12 @@ function useLessonsQuestion() {
       return t("Study up to {level}?", { level: operation.aim });
     }
 
+    if (operation.kind === "setExtras") {
+      return operation.skillIds.length > 0
+        ? t("Study exam strategy too?")
+        : t("Take exam strategy out of your plan?");
+    }
+
     return operation.kind === "fitLessons" ? t("Add the lessons that fit your time?") : null;
   };
 }

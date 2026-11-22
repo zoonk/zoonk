@@ -54,13 +54,6 @@ function MissionRow({
 
 type RowsFold = { listId: string; onToggle: () => void; open: boolean };
 
-/**
- * Today's tablet grid (`TODAY_ASIDE_CLASS`) sets the card beside the week, which leaves it the
- * room to list the rows, so a folded card shows them there instead of an empty box.
- */
-const FOLDED_ONLY_CLASS = "sm:max-[72rem]:hidden";
-const LISTED_ONLY_CLASS = "hidden sm:max-[72rem]:inline";
-
 function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
   const t = useExtracted();
   const title = won ? t("Missions done") : t("Today's missions");
@@ -71,14 +64,11 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
 
   return (
     <>
-      <span className={LISTED_ONLY_CLASS}>{title}</span>
+      <span className="hidden sm:inline">{title}</span>
       <button
         aria-controls={fold.listId}
         aria-expanded={fold.open}
-        className={cn(
-          "hit-area focus-visible:ring-ring/50 relative rounded-sm text-left outline-none focus-visible:ring-[3px]",
-          FOLDED_ONLY_CLASS,
-        )}
+        className="hit-area focus-visible:ring-ring/50 relative rounded-sm text-left outline-none focus-visible:ring-[3px] sm:hidden"
         onClick={fold.onToggle}
         type="button"
       >
@@ -102,9 +92,8 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
 
 /**
  * One list with one look wherever it shows: every mission is a row, named by what to do, and the
- * reward says what doing them all earns. Today folds the rows behind the title (`foldRows`),
- * since most of them are already rows of the day's list right above the card, except beside the
- * week on a tablet.
+ * reward says what doing them all earns. Today folds the rows behind the title (`foldRows`) on
+ * phones, where most of them are already in the day's list right above the card.
  */
 export function MissionsCard({
   buddy,
@@ -159,7 +148,7 @@ export function MissionsCard({
       className={cn(
         SURFACE_CLASS,
         "flex flex-col px-4 pt-4",
-        open ? "pb-1.25" : "pb-4 sm:max-[72rem]:pb-1.25",
+        open ? "pb-1.25" : "pb-4 sm:pb-1.25",
         className,
       )}
       data-slot="missions-card"
@@ -182,7 +171,7 @@ export function MissionsCard({
         </span>
       </div>
 
-      <ListGroup className={cn("mt-1.5", !open && "hidden sm:max-[72rem]:flex")} id={listId}>
+      <ListGroup className={cn("mt-1.5", !open && "max-sm:hidden")} id={listId}>
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>

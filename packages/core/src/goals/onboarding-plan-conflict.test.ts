@@ -17,10 +17,12 @@ import { openStudyDay } from "../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { type OnboardingAnswerInput } from "../view-models/onboarding/onboarding-contract";
 
+const TARGET_DATE = new Date(Date.now() + 160 * 86_400_000).toISOString().slice(0, 10);
+
 const ANSWERS: OnboardingAnswerInput[] = [
   { dailyMinutes: 25, question: "schedule" },
   { level: "basic", question: "level" },
-  { question: "targetDate", targetDate: "2027-04-29" },
+  { question: "targetDate", targetDate: TARGET_DATE },
 ];
 
 async function duringPublications<T>(lessonId: string, run: () => Promise<T>): Promise<T> {

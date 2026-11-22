@@ -311,6 +311,7 @@ test.describe("Today's session", () => {
   }) => {
     const { session, user } = await createStudyDay({ reviewDone: true });
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 844, width: 390 });
 
     const practice = await prisma.studySessionBlock.findFirstOrThrow({
       where: { kind: "practice", sessionId: session.id },

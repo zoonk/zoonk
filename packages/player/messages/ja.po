@@ -1309,16 +1309,6 @@ msgctxt "b0QQkx"
 msgid "The sound plays: {notes}"
 msgstr "再生される音：{notes}"
 
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "xAzh1Y"
-msgid "I can listen now"
-msgstr "今は音を聞ける"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "K8wsFm"
-msgid "I can't listen now"
-msgstr "今は音を聞けない"
-
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
 msgid "Spot {number}: empty"
@@ -2817,6 +2807,16 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "単語を選んで答えを作ってください"
 
+#: src/components/cant-listen-switch.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "今は音を聞ける"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "今は音を聞けない"
+
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx
 msgctxt "3W8LgY"
@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "今日は記述式の問題を出しません。"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "今回は答え合わせができませんでした。もう一度試してください。"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "答え合わせを続けています。いつもより時間がかかっています。"
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "もう一度聞いてください"
@@ -3427,6 +3417,12 @@ msgstr "もう一度聞いてください"
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "惜しいです。もう一度見直して、自分で直してから答え合わせをしてください。"
+
+#. Opens the figures shown at the start of a challenge.
+#: src/lesson/steps/challenge/challenge-conversation.tsx
+msgctxt "sMBshP"
+msgid "Starting figures"
+msgstr "開始時の数値"
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
@@ -3549,18 +3545,6 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "答えを書いてください"
 
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "「録音」をタップして、声に出して言ってください"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "聞き取っています…「停止」をタップすると答え合わせができます。"
-
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
@@ -3581,11 +3565,6 @@ msgstr "今は話せる"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "声に出して答える"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "pjy2sy"
-msgid "Type what you'd say"
-msgstr "話す内容を入力してください"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "eUqe2x"

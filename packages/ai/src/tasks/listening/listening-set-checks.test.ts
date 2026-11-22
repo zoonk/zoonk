@@ -90,7 +90,7 @@ function femaleSpeakers(count: number): ListeningSet["speakers"] {
 }
 
 describe(repairListeningSet, () => {
-  it("drops what a voice would read aloud, joins one speaker's lines, puts questions in the order they're heard and keeps skills on the list", () => {
+  it("joins one speaker's lines, puts questions in the order they're heard and keeps skills on the list", () => {
     const repaired = repairListeningSet(
       setOf({
         speakers: [
@@ -99,12 +99,9 @@ describe(repairListeningSet, () => {
           { accent: "British English", gender: "male", name: "Narrator" },
         ],
         turns: [
-          {
-            speaker: "Receptionist",
-            text: "[phone rings] Good morning — Riverside Sports Centre.",
-          },
-          { speaker: "Receptionist", text: "How can I *help*?" },
-          { speaker: "Tom", text: "(laughs)" },
+          { speaker: "Receptionist", text: " Good morning — Riverside Sports Centre. " },
+          { speaker: "Receptionist", text: "How can I help?" },
+          { speaker: "Tom", text: " " },
           ...scriptOf(LINES).slice(1),
         ],
       }),
@@ -288,6 +285,55 @@ describe(findListeningSetProblems, () => {
 
   it("finds no problem in a clean set", () => {
     const set = repairListeningSet(setOf(), REQUEST);
+    expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
+  });
+
+  it.each([
+    "The answer is $x_1$.",
+    "The answer is $x + *y*$.",
+    "Run `ls -la` first.",
+    "We compare $$x + y$$ with the total.",
+    String.raw`So $\frac{1}{2}$ of them came.`,
+    String.raw`So \frac{1}{2} of them came.`,
+    "This is [a link](https://example.com).",
+    "It's urgent (we leave at dawn).",
+    "[phone rings] Hi there.",
+    "(laughs) That's a good one.",
+    "Multiply 2*3*4.",
+    "Run `find . -name '*draft*'` first.",
+  ])("preserves %s for the spoken-script check to reject", (text) => {
+    const set = repairListeningSet(setOf({ turns: scriptOf([...LINES, text]) }), REQUEST);
+
+    expect(set.turns.at(-1)?.text).toBe(text);
+
+    expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([
+      `A spoken line has written notation a voice can't say: "${text}". Write it as the words a speaker would say.`,
+    ]);
+  });
+
+  it.each(["*very important*", "**very important**", "_very important_", "__very important__"])(
+    "repairs paired emphasis %s in otherwise spoken prose",
+    (emphasis) => {
+      const turns = scriptOf([...LINES, `It's ${emphasis}.`]);
+      const set = repairListeningSet(setOf({ turns }), REQUEST);
+
+      expect(set.turns.at(-1)?.text).toBe("It's very important.");
+      expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
+    },
+  );
+
+  it("accepts spoken math and commands alongside ordinary prices and punctuation", () => {
+    const set = repairListeningSet(
+      setOf({
+        turns: scriptOf([
+          ...LINES,
+          "One half of the tickets cost $5, and the others cost $10.50.",
+          "For the files, type L S, then a space and a dash, then L A.",
+        ]),
+      }),
+      REQUEST,
+    );
+
     expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
   });
 

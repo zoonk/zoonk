@@ -161,8 +161,10 @@ test.describe("Course goals API", () => {
   });
 
   test("course starts keep a supplied date or an explicit no-date answer", async () => {
+    const ahead = new Date(Date.now() + 100 * 86_400_000).toISOString().slice(0, 10);
+
     await Promise.all(
-      ["2027-03-01", null].map(async (targetDate) => {
+      [ahead, null].map(async (targetDate) => {
         const [{ apiContext }, { course }] = await Promise.all([
           createAuthenticatedApiContext({ baseURL, prefix: "course-date" }),
           createOutlinedCourse(),
