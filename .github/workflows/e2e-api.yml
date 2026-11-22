@@ -81,6 +81,10 @@ jobs:
           cache: true
           save-cache: ${{ github.ref == 'refs/heads/main' }}
 
+      # The tests run in Google Chrome, which Celesto's image doesn't include.
+      - name: Install Google Chrome
+        run: pnpm exec playwright install --with-deps chrome
+
       # Over TCP: while the image sets up its database, Postgres only listens on its socket.
       - name: Wait for Postgres
         run: |
