@@ -85,14 +85,16 @@ export function useChangeSaveFailed(): () => void {
 export function ChangeSaveError({
   children,
   className,
+  id,
 }: {
   children?: React.ReactNode;
   className?: string;
+  id?: string;
 }) {
   const message = useChangeSaveErrorMessage();
 
   return (
-    <p className={cn("text-destructive-text text-sm", className)} role="alert">
+    <p className={cn("text-destructive-text text-sm", className)} id={id} role="alert">
       {children ?? message}
     </p>
   );

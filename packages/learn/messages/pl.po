@@ -8840,15 +8840,26 @@ msgid "Musicianship for {instrument}"
 msgstr "Podstawy muzyki: {instrument}"
 
 #: src/onboarding/entry/goal-attachments.tsx
+msgctxt "G5e8UX"
+msgid "Remove {title}"
+msgstr "Usuń: {title}"
+
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "2FABsh"
+msgid "We can't read some of your files anymore. Remove them and add them again."
+msgstr ""
+
+#. Shown when the learner's material can't be read anymore. {title} is a file's name, a link or “Your text”.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "-9IdF4"
+msgid "We can't read “{title}” anymore. Remove it and add it again."
+msgstr ""
+
+#: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "2d2ZJ4"
 msgid "Your material"
 msgstr "Twoje materiały"
-
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "G5e8UX"
-msgid "Remove {title}"
-msgstr "Usuń: {title}"
 
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx

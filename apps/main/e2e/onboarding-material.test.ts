@@ -26,8 +26,10 @@ function cellCycleCard({ draftId, prompt }: { draftId: string; prompt: string })
   };
 }
 
+const NOTES = "Interphase: G1, S and G2.\n\nMitosis: prophase, metaphase, anaphase, telophase.";
+
 test.describe("A goal sent with the learner's material", () => {
-  test("keeps the material on its card through a reload, and creates the goal with it", async ({
+  test("asks to add again material it can't read anymore, keeps it on its card through a reload, and creates the goal with it", async ({
     noProgressUser: user,
     userWithoutProgress: page,
   }) => {
@@ -36,17 +38,33 @@ test.describe("A goal sent with the learner's material", () => {
 
     await page.goto("/start");
     const attach = page.getByRole("button", { name: "Study your own material" });
+    const goalBox = page.getByRole("textbox", { name: "I want to" });
+
+    const addNotes = async () => {
+      await attach.click();
+      await page.getByRole("button", { name: "Paste text" }).click();
+      await page.getByRole("textbox", { name: "Your text" }).fill(NOTES);
+      await page.getByRole("button", { name: "Add text" }).click();
+    };
+
     await expectHydrated(attach);
-    await attach.click();
-    await page.getByRole("button", { name: "Paste text" }).click();
-
-    await page
-      .getByRole("textbox", { name: "Your text" })
-      .fill("Interphase: G1, S and G2.\n\nMitosis: prophase, metaphase, anaphase, telophase.");
-
-    await page.getByRole("button", { name: "Add text" }).click();
+    await addNotes();
     await page.getByRole("radio", { name: /^Prepare for an exam/u }).click();
-    await page.getByRole("textbox", { name: "I want to" }).fill(words);
+    await goalBox.fill(words);
+
+    await prisma.learnerSource.deleteMany({ where: { origin: "upload", userId: user.id } });
+    await page.getByRole("button", { name: "Build my plan" }).click();
+
+    const removeNotes = page.getByRole("button", { name: "Remove Your text" });
+
+    await expect(removeNotes).toHaveAccessibleDescription(
+      "We can't read “Your text” anymore. Remove it and add it again.",
+    );
+
+    await expect(goalBox).toHaveValue(words);
+    await removeNotes.click();
+    await addNotes();
+    await expect(removeNotes).toHaveAccessibleDescription("");
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(DRAFT_URL);
