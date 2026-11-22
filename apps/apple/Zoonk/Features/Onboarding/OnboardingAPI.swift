@@ -38,6 +38,9 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// Research already read this upload for an earlier ask, so it needs a different one
   /// (`UPLOAD_ALREADY_READ`).
   case alreadyRead
+  /// Material sent with a goal is gone from the learner's uploads (`MATERIAL_UNAVAILABLE`): its
+  /// ids, in the order sent. Nothing was saved or charged.
+  case materialUnavailable(sourceIDs: [String])
   case failed(APIError)
 
   /// The server's own answer, as opposed to a request that may or may not have reached it.
@@ -53,6 +56,12 @@ enum OnboardingError: Error, Equatable, Sendable {
 struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {
   let id: String
   let title: String?
+  /// A goal sent with it found it gone, so the learner removes it and adds it again.
+  var isUnavailable = false
+
+  private enum CodingKeys: String, CodingKey {
+    case id, title
+  }
 }
 
 struct MaterialInput: Encodable, Sendable {
@@ -380,6 +389,8 @@ struct OnboardingAPI: Sendable {
     case .forbidden(let response):
       throw Self.error(try response.body.json)
     case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unprocessableContent(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
       throw APIError.unauthorized
@@ -1016,9 +1027,24 @@ struct OnboardingAPI: Sendable {
     case "GOAL_LIMIT_REACHED":
       return limit(from: payload.error.details, nested: false).map(OnboardingError.goalLimit)
         ?? .failed(.unavailable)
+    case "MATERIAL_UNAVAILABLE":
+      return sourceIDs(from: payload.error.details).map(OnboardingError.materialUnavailable)
+        ?? .failed(.unavailable)
     default:
       return .failed(.unavailable)
     }
+  }
+
+  private static func sourceIDs(from details: OpenAPIValueContainer?) -> [String]? {
+    struct Details: Decodable {
+      let sourceIds: [String]
+    }
+
+    guard let details, let data = try? JSONEncoder().encode(details) else {
+      return nil
+    }
+
+    return try? JSONDecoder().decode(Details.self, from: data).sourceIds
   }
 
   /// Under `details.limit` for usage, as `details` itself for goals.

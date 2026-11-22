@@ -208,7 +208,14 @@ class UnderstoodRows(
                 id = "material",
                 label = text(R.string.onboarding_row_material),
                 value = material.joinToString(", ") { it.ifBlank { text(R.string.onboarding_your_text) } },
-                note = text(if (missing) R.string.onboarding_row_material_missing_note else R.string.onboarding_row_material_note),
+                note =
+                    text(
+                        when {
+                            !missing -> R.string.onboarding_row_material_note
+                            material.isEmpty() -> R.string.onboarding_row_material_all_missing_note
+                            else -> R.string.onboarding_row_material_missing_note
+                        },
+                    ),
             )
         }
 

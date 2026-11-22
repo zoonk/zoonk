@@ -246,9 +246,10 @@ enum UnderstoodRows {
       editValue: schedule.studyTime ?? "")
   }
 
-  /// The material the draft was sent with, by title; pasted text has none.
-  static func materialRow(titles: [String]) -> UnderstoodRow? {
-    guard !titles.isEmpty else {
+  /// The material the draft was sent with, by title; pasted text has none. Material gone since
+  /// shows only in the note, which says so even when nothing is left.
+  static func materialRow(titles: [String], missing: Bool) -> UnderstoodRow? {
+    guard !titles.isEmpty || missing else {
       return nil
     }
 
@@ -265,7 +266,24 @@ enum UnderstoodRows {
         "Your material", table: "Onboarding",
         comment: "Header over the material attached to a goal"),
       value: names.joined(separator: ", "),
-      note: String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
+      note: missingNote(missing: missing, anyLeft: !titles.isEmpty)
+        ?? String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
+  }
+
+  private static func missingNote(missing: Bool, anyLeft: Bool) -> String? {
+    guard missing else {
+      return nil
+    }
+
+    return anyLeft
+      ? String(
+        localized: "Some of your material can't be read anymore, so your plan won't follow it.",
+        table: "Onboarding",
+        comment: "On the goal's card: some of the material the goal was sent with is gone")
+      : String(
+        localized: "Your material can't be read anymore, so your plan won't follow it.",
+        table: "Onboarding",
+        comment: "On the goal's card: all the material the goal was sent with is gone")
   }
 
   private static func text(_ value: String?) -> String? {

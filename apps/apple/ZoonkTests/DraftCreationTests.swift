@@ -131,7 +131,7 @@ final class DraftCreationTests: XCTestCase {
       OnboardingDraft.self,
       from: Data(
         #"""
-        {"activeGoalsLeft":2,"generationId":null,"goalId":\#(goal),"id":"\#(draftID)","materialIntent":null,"prompt":"Why is the sky blue?","sources":[],"status":"understood","timeZone":"America/Sao_Paulo","understanding":{"question":"Why is the sky blue?","status":"explain"}}
+        {"activeGoalsLeft":2,"generationId":null,"goalId":\#(goal),"id":"\#(draftID)","materialIntent":null,"materialMissing":false,"prompt":"Why is the sky blue?","sources":[],"status":"understood","timeZone":"America/Sao_Paulo","understanding":{"question":"Why is the sky blue?","status":"explain"}}
         """#.utf8))
   }
 

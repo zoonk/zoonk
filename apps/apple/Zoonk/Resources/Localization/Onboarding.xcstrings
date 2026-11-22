@@ -2413,6 +2413,9 @@
         }
       }
     },
+    "Can't be read" : {
+      "comment" : "Read by VoiceOver after the name of an attached file a goal found gone"
+    },
     "Cancel" : {
       "comment" : "Closes the box for pasted material\nStops changing the typed words\nStops fixing an understood fact",
       "localizations" : {
@@ -14056,6 +14059,9 @@
         }
       }
     },
+    "Remove %@" : {
+      "comment" : "Removes a file, text or link from the goal's material; names it"
+    },
     "Remove date" : {
       "comment" : "Clears the goal's date",
       "localizations" : {
@@ -14998,6 +15004,9 @@
           }
         }
       }
+    },
+    "Some of your material can't be read anymore, so your plan won't follow it." : {
+      "comment" : "On the goal's card: some of the material the goal was sent with is gone"
     },
     "Something else" : {
       "comment" : "Purpose choice",
@@ -19464,6 +19473,12 @@
           }
         }
       }
+    },
+    "We can't read “%@” anymore. Remove it and add it again." : {
+      "comment" : "A file the learner attached to a goal is gone; the file's name"
+    },
+    "We can't read some of your files anymore. Remove them and add them again." : {
+      "comment" : "Several files the learner attached to a goal are gone"
     },
     "We can't read this file. Try a PDF, a photo, Word, PowerPoint or text." : {
       "comment" : "A file of a kind that can't be read",
@@ -24312,6 +24327,9 @@
           }
         }
       }
+    },
+    "Your material can't be read anymore, so your plan won't follow it." : {
+      "comment" : "On the goal's card: all the material the goal was sent with is gone"
     },
     "Your plan" : {
       "comment" : "Title of a new plan",
