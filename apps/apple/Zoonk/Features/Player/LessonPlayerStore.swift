@@ -100,7 +100,14 @@ final class LessonPlayerStore {
   /// "I can't listen now" lasts the rest of the learner's day on this device, as music's by-ear
   /// questions keep it.
   var cantListenToday: Bool {
-    didSet { choices.setChosenToday(.cantListen, cantListenToday) }
+    didSet {
+      choices.setChosenToday(.cantListen, cantListenToday)
+
+      if cantListenToday, var state {
+        leaveOutUnplayable(&state)
+        self.state = state
+      }
+    }
   }
   /// The microphone was off when a spoken screen tried it, so spoken screens are typed until the
   /// learner asks to speak again. Kept here, since both halves of a spread show it.
@@ -569,8 +576,13 @@ final class LessonPlayerStore {
   /// Interactions without a renderer can't be answered here, so they're left out of the run.
   var isUnplayable: (LessonStep) -> Bool = { _ in false }
 
+  /// A listening sentence that is its own answer can't be read instead without giving the answer
+  /// away, so while the learner can't listen it's left out too, as core leaves out one with no sound.
   private func leaveOutUnplayable(_ state: inout LessonPlayerState) {
-    state.skipSteps(state.queue.filter { state.steps[$0].map(isUnplayable) ?? false })
+    state.skipSteps(
+      state.queue.filter { id in
+        state.steps[id].map { isUnplayable($0) || (cantListenToday && $0.isDictation) } ?? false
+      })
   }
 
   private func showWaiting(_ outline: LessonOutline, identity: AuthenticatedSession?) async {

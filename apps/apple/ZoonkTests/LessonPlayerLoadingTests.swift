@@ -802,6 +802,26 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.startingOffer(about: "second"), "moving on with Ask open never asks again")
   }
 
+  func testICantListenNowMovesPastASentenceThatIsItsOwnAnswer() async throws {
+    let store = try dictationPlayer(cantListen: false)
+    await store.load()
+    XCTAssertEqual(store.state?.currentStep?.id, "dictation")
+
+    store.cantListenToday = true
+
+    XCTAssertEqual(
+      store.state?.currentStep?.id, "check", "reading it instead would show the answer")
+  }
+
+  func testALessonOpenedWhileTheLearnerCantListenLeavesOutASentenceThatIsItsOwnAnswer()
+    async throws
+  {
+    let store = try dictationPlayer(cantListen: true)
+    await store.load()
+
+    XCTAssertEqual(store.state?.currentStep?.id, "check")
+  }
+
   /// An offer is dropped once the learner leaves its screen; coming back asks nothing, and
   /// the learner taps Ask again if they still want it.
   func testAnOfferLeftWithItsScreenStaysDroppedWhenTheLearnerComesBack() async throws {
@@ -1269,10 +1289,23 @@ final class LessonPlayerLoadingTests: XCTestCase {
     return player(cache: cache, content: content, transport: transport, defaults: defaults)
   }
 
+  /// "I can't listen now" is kept in memory, so the test never changes the device's choice.
+  private func dictationPlayer(cantListen: Bool) throws -> LessonPlayerStore {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let lesson = try dictationLesson()
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    return player(
+      cache: cache, content: content, transport: OfflineLessonTransport(),
+      choices: LessonTodayChoices(
+        today: { "today" }, read: { $0 == .cantListen && cantListen ? "today" : nil },
+        write: { _, _ in }))
+  }
+
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
     defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = false,
+    choices: LessonTodayChoices = .standard,
     onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in },
     sessionStarted: @escaping @MainActor (String) -> Void = { _ in }
   ) -> LessonPlayerStore {
@@ -1284,8 +1317,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
       api: LessonPlayerAPI(
         clients: APIClientFactory(
           baseURL: URL(string: "https://api.zoonk.test")!, transport: transport)),
-      cache: cache, preferences: preferences, lessonResource: content, defaults: defaults,
-      sessionStarted: sessionStarted)
+      cache: cache, preferences: preferences, lessonResource: content, choices: choices,
+      defaults: defaults, sessionStarted: sessionStarted)
   }
 }
 
@@ -1320,6 +1353,30 @@ private func checkLesson(
   return PlayableLesson(
     id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
     steps: steps, summary: nil, tutorSuggestions: [])
+}
+
+/// A sentence to hear in the learner's own language, so its translation is the sentence itself,
+/// then a check.
+private func dictationLesson() throws -> PlayableLesson {
+  let dictation = try JSONDecoder().decode(
+    LessonStep.self,
+    from: Data(
+      """
+      {"id": "dictation", "position": 0, "skillId": null, "kind": "listening", "wordHints": null,
+       "exercise": {"id": "dictation", "position": 0, "kind": "listening", "content": {},
+         "sentence": {"id": "s", "sentence": "How much is the rent?",
+           "translation": "How much is the rent?", "explanation": null,
+           "audioUrl": "https://example.com/rent.mp3", "romanization": null, "distractors": [],
+           "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [],
+           "otherTranslationOrders": [], "readsItself": true},
+         "word": null, "wordBankOptions": [], "sentenceWordOptions": [], "readingPromptWords": [],
+         "fillBlankOptions": [], "translationOptions": [], "vocabularyOptions": [],
+         "matchColumnsRightItems": []}}
+      """.utf8))
+
+  return PlayableLesson(
+    id: "lesson", title: "A lesson", language: "en", targetLanguage: "en", chapterTitle: nil,
+    steps: [dictation] + (try checkLesson(["check"])).steps, summary: nil, tutorSuggestions: [])
 }
 
 /// The picture's wait started long ago, so following it reads once instead of polling.

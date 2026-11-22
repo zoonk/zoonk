@@ -594,7 +594,7 @@ struct ArrangeWordsView<WayOut: View>: View {
   private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
     if isListening {
       ClosingColumn(spacing: 12) {
-        if exercise.promptAudio(cantListen: cantListen) != nil {
+        if exercise.promptAudio(cantListen: cantListen) != nil || sentence.readsItself {
           Text(
             "What do you hear?", tableName: "Player",
             comment: "The question over a sentence to listen to and arrange"
