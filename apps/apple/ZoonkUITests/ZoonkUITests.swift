@@ -145,14 +145,17 @@ final class ZoonkUITests: XCTestCase {
     subscription.tap()
 
     XCTAssertTrue(
-      app.staticTexts["Subscription"].firstMatch.waitForExistence(timeout: 5),
+      app.navigationBars["Subscription"].waitForExistence(timeout: 5),
       "Expected the free account to reach the native subscription screen")
     XCTAssertTrue(
-      app.staticTexts["Plus"].firstMatch.waitForExistence(timeout: 5),
-      "Expected the subscription screen to use main's Plus offer")
-    XCTAssertTrue(
-      app.staticTexts["Plus Monthly"].waitForExistence(timeout: 5),
+      app.staticTexts["Plus Monthly"].waitForExistence(timeout: 30),
       "Expected StoreKit to load the localized monthly subscription")
+    XCTAssertTrue(
+      app.staticTexts["Subscription"].firstMatch.exists,
+      "Expected the native subscription screen to show the Subscription heading")
+    XCTAssertTrue(
+      app.staticTexts["Plus"].firstMatch.exists,
+      "Expected the subscription screen to use main's Plus offer")
     XCTAssertTrue(
       app.staticTexts["Plus Yearly"].waitForExistence(timeout: 5),
       "Expected StoreKit to load the localized yearly subscription")
