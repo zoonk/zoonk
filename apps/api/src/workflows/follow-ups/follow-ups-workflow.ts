@@ -12,7 +12,7 @@ import { startMockSupply } from "../goals/mock-questions-workflow";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { levelTestOutPreparationWorkflow } from "../language/level-test-out-preparation-workflow";
-import { replenishLevelTestChecks } from "../language/replenish-level-test-checks";
+import { replenishLevelTestChecksWorkflow } from "../language/replenish-level-test-checks";
 import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
@@ -90,14 +90,17 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       });
 
       return;
-    case "replenishLevelTestChecks":
-      await replenishLevelTestChecks({
-        ...followUp.input,
-        batchId: `${followUp.id}:${followUp.revision}`,
-        userId,
-      });
+    case "replenishLevelTestChecks": {
+      const batchId = `${followUp.id}:${followUp.revision}`;
+
+      await startOnce(
+        replenishLevelTestChecksWorkflow,
+        [{ ...followUp.input, batchId, userId }],
+        `replenish-level-test-checks:${batchId}`,
+      );
 
       return;
+    }
     case "prepareLevelTestOut":
       await startOnce(
         levelTestOutPreparationWorkflow,

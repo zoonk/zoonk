@@ -56,9 +56,15 @@ async function prepareChecks(
   return await saveChecksStep({ batchId, confirmations, pair });
 }
 
-export async function replenishLevelTestChecks(
+/**
+ * A run of its own, so a model that fails or a bank another run is still topping up never holds
+ * back or ends the learner's other follow-ups.
+ */
+export async function replenishLevelTestChecksWorkflow(
   input: Replenishment & { batchId: string; userId: string },
 ) {
+  "use workflow";
+
   const { goalId, pair, userId } = input;
   const { workflowRunId } = getWorkflowMetadata();
   const passages = await prepareChecks({ ...input, runId: workflowRunId });
