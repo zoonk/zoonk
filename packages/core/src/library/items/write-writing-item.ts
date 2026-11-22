@@ -26,6 +26,7 @@ const WHOLE_ANSWER_WORD_FLOOR = 30;
 const SHORT_ANSWER_WORD_FLOOR = 10;
 const MINIMUM_WORDS_PER_LINE = 3;
 
+/** @internal */
 export function getWritingPromptId(runId: string, slot: number): string {
   return getAnswerAttemptId({ key: String(slot), questionId: runId, userId: "writing-prompt" });
 }
