@@ -2414,7 +2414,7 @@
       }
     },
     "Can't be read" : {
-      "comment" : "Read by VoiceOver after the name of an attached file a goal found gone"
+      "comment" : "Read by screen readers after the name of an attached file that can't be read anymore."
     },
     "Cancel" : {
       "comment" : "Closes the box for pasted material\nStops changing the typed words\nStops fixing an understood fact",
@@ -8685,7 +8685,7 @@
       }
     },
     "It can't be read anymore, so your plan won't follow it." : {
-      "comment" : "On the goal's card, under \"Your material\": all the material the goal was sent with is gone"
+      "comment" : "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material."
     },
     "Join waitlist" : {
       "comment" : "Joins the waitlist for lessons that teach playing an instrument",
@@ -15009,7 +15009,7 @@
       }
     },
     "Some of your material can't be read anymore, so your plan won't follow it." : {
-      "comment" : "On the goal's card: some of the material the goal was sent with is gone"
+      "comment" : "Under the learner's material on the goal card, when some of it can't be read anymore."
     },
     "Something else" : {
       "comment" : "Purpose choice",
@@ -19478,10 +19478,10 @@
       }
     },
     "We can't read “%@” anymore. Remove it and add it again." : {
-      "comment" : "A file the learner attached to a goal is gone; the file's name"
+      "comment" : "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\"."
     },
     "We can't read some of your files anymore. Remove them and add them again." : {
-      "comment" : "Several files the learner attached to a goal are gone"
+      "comment" : "Under the learner's attached material when several items sent with their goal can't be read anymore."
     },
     "We can't read this file. Try a PDF, a photo, Word, PowerPoint or text." : {
       "comment" : "A file of a kind that can't be read",

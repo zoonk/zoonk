@@ -179,10 +179,15 @@ struct GoalMaterialSections: View {
       ? LocalizedStringResource(
         "We can't read “\(title(of: first))” anymore. Remove it and add it again.",
         table: "Onboarding",
-        comment: "A file the learner attached to a goal is gone; the file's name")
+        comment:
+          "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\"."
+      )
       : LocalizedStringResource(
         "We can't read some of your files anymore. Remove them and add them again.",
-        table: "Onboarding", comment: "Several files the learner attached to a goal are gone")
+        table: "Onboarding",
+        comment:
+          "Under the learner's attached material when several items sent with their goal can't be read anymore."
+      )
   }
 }
 
@@ -210,7 +215,8 @@ private struct MaterialRow: View {
       .accessibilityValue(
         Text(
           "Can't be read", tableName: "Onboarding",
-          comment: "Read by VoiceOver after the name of an attached file a goal found gone"),
+          comment:
+            "Read by screen readers after the name of an attached file that can't be read anymore."),
         isEnabled: isUnavailable)
 
       Spacer(minLength: 0)
