@@ -35,6 +35,15 @@ describe(readLevelTestSummary, () => {
     expect(readLevelTestSummary(goalAt("C1")).nextTestOutLevel).toBe("C1");
   });
 
+  it("checks eligibility from the weaker tap-tested skill after a test", () => {
+    const { details } = goalAt("C1");
+    const skillLevels = { listening: "C2", reading: "A2+" };
+
+    expect(
+      readLevelTestSummary({ details: { ...details, skillLevels } }).nextTestOutLevel,
+    ).toBeNull();
+  });
+
   it("moves on to the next level once one is skipped", () => {
     expect(readLevelTestSummary(goalAt("B2", ["B2"])).nextTestOutLevel).toBe("C1");
   });

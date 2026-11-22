@@ -167,6 +167,7 @@ describe("language level test", () => {
 
     expect(levels.every((level) => level.score === level.startScore)).toBe(true);
     expect(saved.details).toMatchObject({ skillLevels: { reading: expect.any(String) } });
+    expect(saved.details).toHaveProperty("level", "A2");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
   });

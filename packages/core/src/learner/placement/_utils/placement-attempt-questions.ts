@@ -1,17 +1,23 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
+import {
+  LOW_GUESS_ANSWERS_TO_SKIP,
+  isLowGuessTap,
+  isQuickChoice,
+} from "../../_utils/placement-guess-rate";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { getPlacementBudgetSpent } from "../placement-budget";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
 import { listKnownSkillIds } from "../placement-known";
 import { readWholeCourseWalk } from "../whole-course-walk";
-import { getPlacementEstimate, type readPlacementAttempt } from "./placement-attempt-record";
+import { getWholeCourseMinutes, type readPlacementAttempt } from "./placement-attempt-record";
 import { type loadEvidence, toPlacementEvidence } from "./placement-evidence";
 import { type loadPlanBuild } from "./placement-plan-build";
 
 const MINUTE_MS = 60_000;
 const PART_MS = 10 * MINUTE_MS;
 const PART_ANSWERS = 30;
+const MIN_PACED_ANSWERS = 5;
 
 type Attempt = NonNullable<ReturnType<typeof readPlacementAttempt>["attempt"]>;
 
@@ -22,26 +28,41 @@ function toScope(ids: string[] | undefined) {
 function estimateRemaining({
   attempt,
   given,
-  remaining,
+  questions,
 }: {
   attempt: Attempt;
-  given: readonly { durationMs: number }[];
-  remaining: number;
+  given: readonly { answer: unknown; durationMs: number }[];
+  questions: number;
 }) {
   if (attempt.length === "quick") {
     return attempt.estimatedMinutes;
   }
 
-  const completed = Math.max(0, attempt.topicCount - remaining);
+  const timed = given.filter(({ answer, durationMs }) => durationMs > 0 && !isDontKnow(answer));
 
-  const elapsed = given.reduce(
+  const elapsed = timed.reduce(
     (total, answer) => total + Math.min(answer.durationMs, MINUTE_MS),
     0,
   );
 
-  return completed > 0 && elapsed > 0
-    ? Math.ceil(((elapsed / completed) * remaining) / MINUTE_MS)
-    : getPlacementEstimate({ length: attempt.length, topics: remaining });
+  return getWholeCourseMinutes({
+    paceMs: timed.length >= MIN_PACED_ANSWERS ? elapsed / timed.length : undefined,
+    questions,
+  });
+}
+
+function isDontKnow(answer: unknown) {
+  return isJsonObject(answer) && answer.dontKnow === true;
+}
+
+function answersSinceMiss(answers: readonly PlacementEvidence[]) {
+  return answers.slice(answers.findLastIndex((answer) => answer.outcome !== "correct") + 1);
+}
+
+function questionsRemaining(answers: readonly PlacementEvidence[]) {
+  const hasQuick = answers.some((answer) => isQuickChoice(answer));
+  const lowGuess = answers.filter((answer) => isLowGuessTap(answer)).length;
+  return Number(!hasQuick) + Math.max(0, LOW_GUESS_ANSWERS_TO_SKIP - lowGuess);
 }
 
 function listQuickFollowUps({
@@ -115,13 +136,8 @@ export function readAttemptQuestions({
   );
 
   const nextIn = (skillId: string) => {
-    const history = bySkill.get(skillId) ?? [];
-
-    const tried = history.slice(
-      history.findLastIndex((answer) => answer.outcome !== "correct") + 1,
-    );
-
-    const hasQuick = tried.some((answer) => answer.outcome === "correct" && isQuickChoice(answer));
+    const tried = answersSinceMiss(bySkill.get(skillId) ?? []);
+    const hasQuick = tried.some((answer) => isQuickChoice(answer));
 
     const suitable = (candidates.get(skillId) ?? []).filter((item) =>
       hasQuick ? isLowGuessTap(item) : isQuickChoice(item),
@@ -164,8 +180,12 @@ export function readAttemptQuestions({
       )
       .map((skill) => skill.id) ?? [];
 
-  const remaining = walk ? remainingSkillIds.length : ready.length;
-  const estimatedMinutes = estimateRemaining({ attempt, given, remaining });
+  const questions = remainingSkillIds.reduce(
+    (total, skillId) => total + questionsRemaining(answersSinceMiss(bySkill.get(skillId) ?? [])),
+    0,
+  );
+
+  const estimatedMinutes = estimateRemaining({ attempt, given, questions });
 
   return {
     answered: part.length,

@@ -1,7 +1,10 @@
 import { availableLevelTestOut } from "../../language/level-test/_utils/level-test-out-items";
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
+import { loadPlacementPlan } from "../../learner/_utils/goal-skill-graph";
+import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
 import {
+  type PlacementAttempt,
   getPlacementEstimate,
   placementAttemptView,
   readPendingTopicWalkAssessmentId,
@@ -9,6 +12,25 @@ import {
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
+
+async function readAttemptView(
+  { goal, timeZone, today }: PlanContext,
+  attempt: PlacementAttempt | null,
+) {
+  if (attempt?.length !== "wholeCourse") {
+    return attempt && placementAttemptView(attempt);
+  }
+
+  const placement = await loadPlacementState({
+    goalId: goal.id,
+    plan: await loadPlacementPlan(goal.id),
+    timeZone,
+    today,
+    userId: goal.userId,
+  });
+
+  return placement.attempt ?? null;
+}
 
 export async function readPlanPlacementTest(
   context: PlanContext,
@@ -23,6 +45,8 @@ export async function readPlanPlacementTest(
   const placement = readPlacementAttempt(goal);
   const { attempt, result } = placement;
 
+  const attemptView = await readAttemptView(context, attempt);
+
   const settled = new Set(
     context.items.flatMap((item) =>
       item.status === "done" || item.status === "testedOut" ? (item.skillId ?? []) : [],
@@ -32,15 +56,13 @@ export async function readPlanPlacementTest(
   const ahead = context.state.graph.skills.filter((skill) => !settled.has(skill.skillId));
 
   const estimatedMinutes =
-    attempt?.estimatedMinutes ??
+    attemptView?.estimatedMinutes ??
     getPlacementEstimate({ length: "wholeCourse", topics: ahead.length });
-
-  const attemptView = attempt ? placementAttemptView(attempt) : null;
 
   if (goal.kind === "language") {
     const summary = readLevelTestSummary(goal);
     const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
-    const continuing = attempt || summary.attempt || waitingForTopicWalk;
+    const continuing = attemptView || summary.attempt || waitingForTopicWalk;
     const idleState = summary.result ? "result" : "start";
 
     const [nextTestOutLevel, levelResult] = await Promise.all([
@@ -71,6 +93,6 @@ export async function readPlanPlacementTest(
     estimatedMinutes,
     kind: "learn",
     result,
-    state: attempt ? "continue" : idleState,
+    state: attemptView ? "continue" : idleState,
   };
 }

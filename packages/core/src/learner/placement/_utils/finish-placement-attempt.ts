@@ -9,7 +9,7 @@ import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../../plans/record-test-out-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
-import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
+import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
 import { testOutKnownPlanItems } from "../../_utils/test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
 import { type PlacementCompletion } from "./complete-placement";
@@ -64,10 +64,11 @@ export async function finishPlacementAttempt({
       WHERE user_id = ${userId}::uuid AND focus_test_id = ${attemptId}::uuid AND ${SITTING_ANSWER_SQL}
     `;
 
-    const confirmed = await loadConfirmedSkills({
+    const { confirmed, heldUntilTomorrow } = await loadSkillConfirmations({
       goalId,
       skillIds: state.knownSkillIds,
       timeZone,
+      today,
       tx,
       userId,
     });
@@ -94,8 +95,10 @@ export async function finishPlacementAttempt({
 
     const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
     const finishedAt = now.toISOString();
+    const held = heldUntilTomorrow ? { heldUntilTomorrow: true as const } : {};
 
     const receipt = {
+      ...held,
       knownSkillIds: [...confirmed],
       lessonsSkipped: partLessonsSkipped,
       part,
@@ -111,7 +114,6 @@ export async function finishPlacementAttempt({
         attempt: canContinue
           ? {
               ...attempt,
-              estimatedMinutes: state.attempt?.estimatedMinutes ?? attempt.estimatedMinutes,
               lessonsSkipped,
               partComplete: true,
               remainingSkillIds: attemptRemainingSkillIds,
@@ -119,7 +121,7 @@ export async function finishPlacementAttempt({
           : null,
         finishedParts: [...finishedParts, receipt],
         ...(attempt.length === "quick" && { quickFollowUpSkillIds: attemptFollowUps ?? [] }),
-        result: canContinue ? record.result : { attemptId, finishedAt, lessonsSkipped },
+        result: canContinue ? record.result : { ...held, attemptId, finishedAt, lessonsSkipped },
       },
       tx,
     });
@@ -160,6 +162,7 @@ export async function finishPlacementAttempt({
     changeId: change?.id ?? null,
     complete: !state.attempt,
     focusTest: null,
+    ...(saved.heldUntilTomorrow && { heldUntilTomorrow: saved.heldUntilTomorrow }),
     knownSkillIds: saved.knownSkillIds,
     lessonsSkipped: saved.lessonsSkipped,
     partLessonsSkipped: saved.lessonsSkipped,

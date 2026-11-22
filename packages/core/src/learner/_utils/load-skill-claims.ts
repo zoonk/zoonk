@@ -12,12 +12,12 @@ import {
   type SkillClaim,
   listAnsweredWrong,
   listClaimed,
-  listConfirmedSkills,
   listKnownSkills,
   listSkippedRechecks,
   listTakenToKnow,
   readDatedClaims,
   readSkillClaims,
+  readSkillConfirmations,
 } from "./skill-claims";
 
 const MAX_ANSWERS = 2000;
@@ -225,26 +225,28 @@ export async function loadClaimEvents({
   return [...fromPlan.filter((event) => asked.has(event.skillId)), ...answers];
 }
 
-export async function loadConfirmedSkills({
+export async function loadSkillConfirmations({
   goalId,
   skillIds,
   timeZone,
+  today,
   tx = prisma,
   userId,
 }: {
   goalId: string;
   skillIds: readonly string[];
   timeZone: string;
+  today?: Date;
   tx?: TransactionClient;
   userId: string;
 }) {
   if (skillIds.length === 0) {
-    return new Set<string>();
+    return { confirmed: new Set<string>(), heldUntilTomorrow: false };
   }
 
   const answers = await loadAnswerEvents({ skillIds, tx, userId });
   const undone = await loadUndoneTestOuts(goalId, { timeZone, tx });
-  return listConfirmedSkills([...answers, ...undone]);
+  return readSkillConfirmations([...answers, ...undone], today);
 }
 
 export async function loadSkippedRecheckSkills({

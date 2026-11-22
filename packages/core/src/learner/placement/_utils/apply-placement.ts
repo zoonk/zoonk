@@ -6,7 +6,7 @@ import { getLearnerModelCacheTag } from "../../../cache/tags";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/plan-setup-tasks";
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
-import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
+import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
@@ -34,7 +34,7 @@ async function loadPlacement({
     userId,
   });
 
-  const confirmed = await loadConfirmedSkills({
+  const { confirmed } = await loadSkillConfirmations({
     goalId,
     skillIds: loaded.knownSkillIds,
     timeZone,

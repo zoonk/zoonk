@@ -34,6 +34,13 @@ export const placementResultSchema = z
   .object({
     attemptId: uuidSchema(),
     finishedAt: z.iso.datetime(),
+    heldUntilTomorrow: z
+      .literal(true)
+      .optional()
+      .meta({
+        description:
+          "Fresh answers met the skip rule on a topic whose skip was undone on the same local day",
+      }),
     lessonsSkipped: z.number().int().nonnegative(),
   })
   .meta({ id: "PlacementResult" });

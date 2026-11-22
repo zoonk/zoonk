@@ -5,9 +5,9 @@ import {
   formatLevels,
   getContentCeiling,
   getLevelTrend,
-  getOverallLevel,
   getStartScore,
   getStepLanguageSkill,
+  getTestStartingLevel,
 } from "./skill-level-rules";
 
 const WINDOW_ANSWERS = 20;
@@ -128,15 +128,17 @@ describe(getLevelTrend, () => {
   });
 });
 
-describe(getOverallLevel, () => {
-  it("rounds the skills' average to the nearest half step", () => {
-    expect(getOverallLevel([2, 2, 2, 1.5])).toBe("B1");
-    expect(getOverallLevel([2, 2, 1.5, 1.5])).toBe("B1");
-    expect(getOverallLevel([2, 1.5, 1.5])).toBe("A2+");
-    expect(getOverallLevel([2, 2])).toBe("B1");
+describe(getTestStartingLevel, () => {
+  it("uses the weaker measured skill even when the old aggregate and other skills disagree", () => {
+    expect(
+      getTestStartingLevel({
+        level: "B2",
+        skillLevels: { listening: "B2", reading: "A2+", speaking: "A1" },
+      }),
+    ).toBe(1.5);
   });
 
   it("is null before any skill has a level", () => {
-    expect(getOverallLevel([])).toBeNull();
+    expect(getTestStartingLevel({ level: "B2", skillLevels: { speaking: "B2" } })).toBeNull();
   });
 });

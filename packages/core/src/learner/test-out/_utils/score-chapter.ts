@@ -3,7 +3,7 @@ import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAskedItemFilter } from "../../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
-import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
+import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
 import { loadSeenPlacementItems } from "../../placement/_utils/placement-evidence";
 import {
   type PlacementItem,
@@ -137,7 +137,7 @@ export async function scoreChapter({
     })),
   });
 
-  const knownSkillIds = await loadConfirmedSkills({
+  const { confirmed: knownSkillIds } = await loadSkillConfirmations({
     goalId,
     skillIds: score.knownSkillIds,
     timeZone,

@@ -1329,7 +1329,7 @@ describe("a learner the level test placed high", () => {
     await finishLanguageLevelTest(goal.id);
 
     const placed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-    expect(placed.details).toMatchObject({ level: "B1+" });
+    expect(placed.details).toMatchObject({ skillLevels: { listening: "B1+", reading: "B1+" } });
 
     const knownId = skills[2]?.id ?? "";
     const known = plan.items.filter((item) => item.skillId === knownId);

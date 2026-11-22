@@ -1,11 +1,5 @@
 import { type CourseLevel, type LanguageSkill, type StepKind } from "@zoonk/db";
-import {
-  CEFR_LEVELS,
-  type CefrLevel,
-  clampCefrScore,
-  formatCefrScore,
-  parseCefrScore,
-} from "@zoonk/utils/cefr";
+import { CEFR_LEVELS, type CefrLevel, clampCefrScore, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import {
   DROP_ACCURACY,
@@ -151,11 +145,19 @@ export function getLevelTrend({
   return score < startScore ? "down" : "same";
 }
 
-/** The level test stores this as the level the plan starts from, so what a learner is shown is where they are placed. */
-export function getOverallLevel(scores: readonly number[]): string | null {
-  if (scores.length === 0) {
-    return null;
-  }
+export const TAP_ASSESSED_SKILLS = ["reading", "listening"] as const;
 
-  return formatCefrScore(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+export function getMeasuredSkillScore(
+  details: Record<string, unknown>,
+  skill: (typeof TAP_ASSESSED_SKILLS)[number],
+): number | null {
+  return isJsonObject(details.skillLevels) ? parseCefrScore(details.skillLevels[skill]) : null;
+}
+
+export function getTestStartingLevel(details: Record<string, unknown>): number | null {
+  const scores = TAP_ASSESSED_SKILLS.flatMap(
+    (skill) => getMeasuredSkillScore(details, skill) ?? [],
+  );
+
+  return scores.length > 0 ? Math.min(...scores) : null;
 }

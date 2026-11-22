@@ -6,6 +6,7 @@ import {
   toCefrLevel,
 } from "@zoonk/utils/cefr";
 import { type JsonObject } from "@zoonk/utils/json";
+import { getTestStartingLevel } from "../levels/skill-level-rules";
 
 /** Why a learner studies a language, in the order the reason question lists them. */
 export const LANGUAGE_REASONS = [
@@ -135,7 +136,8 @@ export function toLanguageAimView({
   details: Record<string, unknown>;
   targetLanguage: string | null;
 }): LanguageAimView {
-  const start = getStartHours(details.level) ?? 0;
+  const assessed = getTestStartingLevel(details);
+  const start = assessed === null ? (getStartHours(details.level) ?? 0) : getCefrHours(assessed);
   const label = readLanguageAim(details);
   const score = parseCefrScore(label);
 
