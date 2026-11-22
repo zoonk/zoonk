@@ -17,6 +17,17 @@ function restsOnSundays(minutes: number) {
 }
 
 describe(getWeekDays, () => {
+  it("keeps a minutes-only day unfinished when its list remains open", () => {
+    const week = getWeekDays({
+      counts: [{ completed: 1, date: WEDNESDAY, total: 3 }],
+      days: [{ date: WEDNESDAY, seconds: 3600 }],
+      getPlanDay: restsOnSundays(15),
+      today: WEDNESDAY,
+    });
+
+    expect(week[2]).toMatchObject({ completed: 1, hitGoal: false, total: 3 });
+  });
+
   it.each([
     { finished: false, hitGoal: false, seconds: 0 },
     { finished: false, hitGoal: true, seconds: 1 },
@@ -48,6 +59,7 @@ describe(getWeekDays, () => {
 
     expect(week.slice(0, 3)).toStrictEqual([
       {
+        completed: 0,
         date: new Date("2026-09-28T00:00:00Z"),
         goalMinutes: 45,
         hitGoal: true,
@@ -55,17 +67,21 @@ describe(getWeekDays, () => {
         kind: "study",
         minutes: 45,
         studied: true,
+        total: 0,
       },
       {
+        completed: 0,
         date: new Date("2026-09-29T00:00:00Z"),
         goalMinutes: 45,
-        hitGoal: false,
+        hitGoal: true,
         isToday: false,
         kind: "study",
         minutes: 18,
         studied: true,
+        total: 0,
       },
       {
+        completed: 0,
         date: WEDNESDAY,
         goalMinutes: 45,
         hitGoal: false,
@@ -73,6 +89,7 @@ describe(getWeekDays, () => {
         kind: "study",
         minutes: 0,
         studied: false,
+        total: 0,
       },
     ]);
   });
@@ -88,7 +105,7 @@ describe(getWeekDays, () => {
       today: WEDNESDAY,
     });
 
-    expect(week[0]).toMatchObject({ goalMinutes: 21, hitGoal: false, minutes: 5, studied: true });
+    expect(week[0]).toMatchObject({ goalMinutes: 21, hitGoal: true, minutes: 5, studied: true });
     expect(week[1]).toMatchObject({ goalMinutes: 21, hitGoal: true, minutes: 17, studied: true });
 
     expect(week.at(-1)).toMatchObject({ goalMinutes: 0, hitGoal: true, studied: true });

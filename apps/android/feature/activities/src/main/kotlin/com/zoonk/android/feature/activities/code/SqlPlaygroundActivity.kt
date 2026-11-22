@@ -59,7 +59,10 @@ import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.interaction
 import com.zoonk.android.feature.activities.jsonSaver
+import com.zoonk.android.ui.code.CodeListing
+import com.zoonk.android.ui.components.arrowKeyScroll
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.components.focusRing
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.fractionDigitsFor
@@ -305,17 +308,20 @@ private fun SqlRowsTable(
     val missing = stringResource(R.string.activities_code_row_missing)
 
     val frame = if (framed) Modifier.clip(shape).background(colors.surface).border(1.dp, colors.outlineVariant, shape) else Modifier
+    val scroll = rememberScrollState()
+    var focused by remember { mutableStateOf(false) }
 
     BoxWithConstraints(
         modifier
             .fillMaxWidth()
             .then(frame)
+            .focusRing(focused, shape)
             .semantics { contentDescription = caption },
     ) {
         val natural = naturalWidths.fold(0.dp) { sum, width -> sum + width }
         val tableWidth = maxOf(natural, maxWidth)
         val widths = naturalWidths.map { it * (tableWidth / natural) }
-        Column(Modifier.fadingHorizontalScroll(rememberScrollState())) {
+        Column(Modifier.fadingHorizontalScroll(scroll).arrowKeyScroll(scroll) { focused = it }) {
             Row(Modifier.background(colors.surfaceContainer)) {
                 columns.forEachIndexed { index, name ->
                     Text(
@@ -462,7 +468,7 @@ private fun SqlReview(
                         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                 ) {
-                    CodeListing(it, CodeLanguage.Sql, label)
+                    CodeListing(it, CodeLanguage.Sql.fenceName, label)
                 }
             }
         }

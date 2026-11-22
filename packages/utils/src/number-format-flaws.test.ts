@@ -38,7 +38,7 @@ describe(findNumberFormatFlaws, () => {
       content: '{"initial":10000}',
       image: { alt: "Um gráfico de barras.", prompt: "Bars of 50000 and 80000" },
       math: { solution: "owned / 40000000", steps: [{ expression: "x * 10000", text: "{x}" }] },
-      text: "Rode `print(12345678)` e veja:\n```\n100000\n```",
+      text: "Rode `print(12345678)` e veja:\n```\n100000\n```\n~~~\n200000\n~~~",
     };
 
     expect(findNumberFormatFlaws({ language: "pt", value })).toStrictEqual([]);

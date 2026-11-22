@@ -6,6 +6,7 @@ import {
   getWrittenKinds,
 } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
+import { removeCodeFences } from "@zoonk/utils/code-fence";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { findOptionPositionReferences } from "../_utils/answer-options";
 import { type ConvertedScreen, toStepContent } from "../steps/written-screens";
@@ -98,8 +99,9 @@ function getTextProblems({
 
   const textProblems = texts.flatMap((screenText) => {
     const { prose, text } = screenText;
-    const phrases = findLessonPhrases({ language, text });
-    const positions = hasShuffledOptions(screen) ? findOptionPositionReferences(text) : [];
+    const words = removeCodeFences(text);
+    const phrases = findLessonPhrases({ language, text: words });
+    const positions = hasShuffledOptions(screen) ? findOptionPositionReferences(words) : [];
 
     return [
       ...findTextFlaws(screenText),
@@ -115,13 +117,13 @@ function getTextProblems({
         code: "filler" as const,
         problem: `Uses filler ("${phrase}"); cut it and say the idea directly.`,
       })),
-      ...(prose ? findLongSentences({ level, text: removeMarkdownTables(text) }) : []).map(
+      ...(prose ? findLongSentences({ level, text: removeMarkdownTables(words) }) : []).map(
         (sentence) => ({
           code: "readingLevel" as const,
           problem: `This sentence is too long for a ${level} learner; split it: "${sentence}"`,
         }),
       ),
-      ...findArithmeticErrors({ language, text }).map((error) => ({
+      ...findArithmeticErrors({ language, text: words }).map((error) => ({
         code: "arithmetic" as const,
         problem: `Wrong arithmetic: ${error}`,
       })),

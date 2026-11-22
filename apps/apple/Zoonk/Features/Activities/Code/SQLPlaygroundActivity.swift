@@ -219,7 +219,7 @@ private struct SQLPlaygroundCanvas: View {
   }
 
   private var snippets: some View {
-    ActivityHorizontalScroll {
+    HorizontalScroll {
       HStack(spacing: 6) {
         ForEach(fields.snippets, id: \.self) { snippet in
           Button {
@@ -309,10 +309,7 @@ private struct SQLPlaygroundCanvas: View {
         .typeStyle(.body.weight(.medium))
 
         GroupBox {
-          Text(CodeHighlight.text(of: verifiedSolution, language: .sql))
-            .typeStyle(.body.monospaced())
-            .textSelection(.enabled)
-            .frame(maxWidth: .infinity, alignment: .leading)
+          CodeListing(code: verifiedSolution, language: "sql")
         }
       }
     }
@@ -494,7 +491,7 @@ private struct SQLRowsTable: View {
   var isEmbedded = false
 
   var body: some View {
-    let table = ActivityHorizontalScroll {
+    let table = HorizontalScroll {
       grid
     }
     .accessibilityElement(children: .contain)

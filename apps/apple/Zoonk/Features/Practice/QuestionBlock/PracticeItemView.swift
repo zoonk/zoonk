@@ -207,7 +207,6 @@ struct TrueFalseItemView: View {
   }
 }
 
-/// A statement with a table doesn't swipe, so the table can scroll.
 struct TrueFalseStatementCard: View {
   let statement: String
   let result: PracticeItemResult?
@@ -227,7 +226,10 @@ struct TrueFalseStatementCard: View {
       .panel()
       .offset(x: offset)
       .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
-      .gesture(swipe, isEnabled: !isLocked && !statement.contains("|"))
+      .gesture(
+        swipe,
+        isEnabled: !isLocked && !RichTextBlock.parse(statement).contains(where: \.scrollsSideways)
+      )
       .accessibilityAddTraits(.isHeader)
   }
 

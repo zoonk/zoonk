@@ -18,6 +18,7 @@ const WRITTEN_LINE = String.raw`Pixel 9\, Android 16\; build not verified\, inst
 const HEADING = "## On a device (layout not measured)";
 
 const emulator: DeviceBridge = {
+  appearance: async () => "light",
   describe: async () => "Pixel 9, Android 16",
   installed: async () => ({ installedAt: new Date("2026-11-15T10:00:00.000Z"), version: "1.0" }),
   screenshot: async (_id, file) => writeFileSync(file, "the emulator's picture"),

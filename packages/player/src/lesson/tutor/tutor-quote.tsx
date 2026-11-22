@@ -1,6 +1,6 @@
 "use client";
 
-import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
+import { LessonRichLine } from "@zoonk/learn/rich-text/lesson";
 import { useExtracted } from "next-intl";
 import { getTutorQuoteText } from "../_utils/lesson-aside";
 import { useLessonPlayer } from "../lesson-player-context";
@@ -10,8 +10,12 @@ function isWritten(answer: LessonPlayerAnswer | undefined): boolean {
   return answer?.kind === "typedAnswer" || answer?.kind === "spokenAnswer";
 }
 
+function Strong({ children }: { children: React.ReactNode }) {
+  return <span className="text-foreground font-medium">{children}</span>;
+}
+
 function strong(chunks: React.ReactNode) {
-  return <span className="text-foreground font-medium">{chunks}</span>;
+  return <Strong>{chunks}</Strong>;
 }
 
 export function TutorQuote() {
@@ -27,8 +31,15 @@ export function TutorQuote() {
   const answer = state.answers[step.id];
   const result = state.results[step.id];
   const answerText = state.phase === "feedback" && step.kind !== "hook" ? result?.answerText : null;
-  const question = () => <LessonRichText text={quoted} />;
+  const question = () => <LessonRichLine text={quoted} />;
   const written = isWritten(answer);
+
+  // A pick is lesson text, which may be code, so it shows as the lesson draws it, on one line.
+  const picked = () => (
+    <Strong>
+      <LessonRichLine text={answerText ?? ""} />
+    </Strong>
+  );
 
   return (
     <p
@@ -50,7 +61,7 @@ export function TutorQuote() {
         t.rich("You picked <strong>{answer}</strong> on “<question></question>”", {
           answer: answerText,
           question,
-          strong,
+          strong: picked,
         })}
     </p>
   );

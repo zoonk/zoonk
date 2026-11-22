@@ -1,5 +1,6 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
+import { InlineCode } from "../code/code-listing";
 import { DisplayMath, InlineMath } from "./display-math";
 import { speakMath } from "./math-speech";
 import { MathMarkupView } from "./spoken-math";
@@ -48,11 +49,7 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
   }
 
   if (segment.kind === "code") {
-    return (
-      <code className="bg-muted text-foreground inline-block max-w-full rounded-sm px-1 py-0.5 font-mono text-[0.85em] leading-tight wrap-break-word">
-        {segment.text}
-      </code>
-    );
+    return <InlineCode>{segment.text}</InlineCode>;
   }
 
   if (segment.kind === "math" || segment.kind === "displayMath") {

@@ -66,6 +66,7 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf19Value as PatternTesterContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19Fields.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOf1Value as FormulaFieldsValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19Fields.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOfValue as RegexFieldsValue
@@ -180,7 +181,7 @@ private fun PatternTesterActivity(props: ActivityProps) {
                         .background(colors.surface)
                         .border(1.dp, colors.outlineVariant, shape)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
-                    style = codeTextStyle(),
+                    style = MaterialTheme.zoonkType.codeField,
                 )
             }
         }
@@ -365,7 +366,12 @@ private fun SampleRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(marked, Modifier.weight(1f).fadingHorizontalScroll(rememberScrollState()), softWrap = false, style = codeTextStyle())
+        Text(
+            marked,
+            Modifier.weight(1f).fadingHorizontalScroll(rememberScrollState()),
+            softWrap = false,
+            style = MaterialTheme.zoonkType.codeField,
+        )
         if (failing && status != null) {
             Text(
                 status,

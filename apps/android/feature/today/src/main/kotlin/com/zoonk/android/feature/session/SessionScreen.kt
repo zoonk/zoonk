@@ -197,7 +197,8 @@ private fun SavedDay(
         session != null -> {
             val opened = session.opened(route.blockId)
             val step = opened ?: session.blocks.firstOrNull { it.id == session.nextBlockId }
-            if (route.stopped || step == null) {
+            val summaryOfDoneDay = route.summaryRequested && opened == null && session.state == StudySession.State.DONE
+            if (route.stopped || summaryOfDoneDay || step == null) {
                 SessionSummaryContent(
                     app,
                     navigator,

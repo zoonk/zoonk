@@ -4,6 +4,7 @@ import SwiftUI
 /// `TutorAskButton`.
 struct TutorPanel: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @Environment(LearnerSummaryStore.self) private var summary
   @Environment(TutorStore.self) private var tutor
 
@@ -56,10 +57,15 @@ struct TutorPanel: View {
           .foregroundStyle(.mutedForeground)
 
         if let quote {
-          Text(quoteLine(quote))
+          let question = LessonRichText.typeset(quote)
+
+          quoteLine(question.quoted(spoken: false, legibility: legibilityWeight))
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
             .lineLimit(3)
+            .accessibilityLabel(
+              quoteLine(question.quoted(spoken: true, legibility: legibilityWeight))
+            )
             .padding(.leading, 10)
             .overlay(alignment: .leading) {
               Rectangle()
@@ -83,15 +89,15 @@ struct TutorPanel: View {
     }
   }
 
-  private func quoteLine(_ question: String) -> String {
+  private func quoteLine(_ question: Text) -> Text {
     if case .item(_, _, true, _) = scope {
-      return String(
-        localized: "About your answer to “\(question)”", table: "Tutor",
+      return Text(
+        "About your answer to “\(question)”", tableName: "Tutor",
         comment: "The checked practice question the panel is about")
     }
 
-    return String(
-      localized: "About “\(question)”", table: "Tutor",
+    return Text(
+      "About “\(question)”", tableName: "Tutor",
       comment: "The practice question the panel is about")
   }
 }

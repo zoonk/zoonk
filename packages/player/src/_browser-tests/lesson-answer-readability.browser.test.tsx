@@ -40,6 +40,14 @@ function wordBoxes(answer: Element) {
   });
 }
 
+const MISS = "Em apenas um dos átomos";
+
+/** Misses, so the right answer is the option that shows a tag. */
+async function checkAMiss() {
+  await page.getByRole("radio", { name: MISS }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+}
+
 function lessonWithAnswer(text: string, question = "Onde está o par de elétrons compartilhado?") {
   return buildLesson(
     [
@@ -48,12 +56,7 @@ function lessonWithAnswer(text: string, question = "Onde está o par de elétron
           basis: null,
           options: [
             { id: "shared", isCorrect: true, reason: "Os átomos compartilham o par.", text },
-            {
-              id: "single",
-              isCorrect: false,
-              reason: "O par é compartilhado.",
-              text: "Em apenas um dos átomos",
-            },
+            { id: "single", isCorrect: false, reason: "O par é compartilhado.", text: MISS },
           ],
           question,
         },
@@ -98,15 +101,14 @@ describe("checked answer readability", () => {
           renderLessonPlayer({ lesson: lessonWithAnswer(ANSWER) });
 
           const selected = page.getByRole("radio", { name: ANSWER });
-          await selected.click();
-          await page.getByRole("button", { name: /^Check/u }).click();
-          await expect.element(selected.getByText("Your answer")).toBeVisible();
+          await checkAMiss();
+          await expect.element(selected.getByText("Correct")).toBeVisible();
 
           document.documentElement.style.fontSize = enlargedFontSize;
           document.documentElement.style.fontFamily = enlargedFontFamily;
 
           const answer = selected.getByText(ANSWER, { exact: true }).element();
-          const tag = selected.getByText("Your answer").element().getBoundingClientRect();
+          const tag = selected.getByText("Correct").element().getBoundingClientRect();
           const range = document.createRange();
           range.selectNodeContents(answer);
 
@@ -189,11 +191,10 @@ describe("checked answer readability", () => {
 
           const selected = page.getByRole("radio", { name: text });
           const answer = selected.getByText(text, { exact: true });
-          await selected.click();
           const beforeLines = answer.element().getClientRects().length;
 
-          await page.getByRole("button", { name: /^Check/u }).click();
-          await expect.element(selected.getByText("Your answer")).toBeVisible();
+          await checkAMiss();
+          await expect.element(selected.getByText("Correct")).toBeVisible();
 
           expect(answer.element().getClientRects()).toHaveLength(beforeLines);
         } finally {
@@ -202,6 +203,36 @@ describe("checked answer readability", () => {
       });
     },
   );
+
+  it("ends every option at its last line of words, whatever their length", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      renderLessonPlayer({ lesson: lessonWithAnswer(ANSWER) });
+
+      const option = page.getByRole("radio", { name: ANSWER });
+      await option.click();
+      const words = option.getByText(ANSWER, { exact: true }).element();
+
+      const row = words.closest("[data-slot='answer-option'] > span:last-child");
+
+      if (!row) {
+        throw new Error("The answer's words must sit in their row.");
+      }
+
+      const lineHeight = Number(getComputedStyle(row).lineHeight.replace("px", ""));
+      const extraLines = [];
+
+      for (let length = 1; length <= ANSWER.length; length += 1) {
+        words.textContent = ANSWER.slice(0, length);
+        const lines = new Set([...words.getClientRects()].map(({ top }) => Math.round(top))).size;
+
+        if (Math.round(row.getBoundingClientRect().height / lineHeight) > lines) {
+          extraLines.push(words.textContent);
+        }
+      }
+
+      expect(extraLines).toStrictEqual([]);
+    });
+  });
 
   it.each([
     { answer: "Their water didn't come from the Broad Street pump", width: 420 },
@@ -217,9 +248,8 @@ describe("checked answer readability", () => {
         const words = option.getByText(answer, { exact: true }).element();
         const before = wordBoxes(words);
 
-        await option.click();
-        await page.getByRole("button", { name: /^Check/u }).click();
-        await expect.element(option.getByText("Your answer")).toBeVisible();
+        await checkAMiss();
+        await expect.element(option.getByText("Correct")).toBeVisible();
 
         expect(wordBoxes(words)).toStrictEqual(before);
       });
@@ -240,13 +270,12 @@ describe("checked answer readability", () => {
       }
 
       const selected = page.elementLocator(option);
-      await selected.click();
-      await page.getByRole("button", { name: /^Check/u }).click();
-      await expect.element(selected.getByText("Your answer")).toBeVisible();
+      await checkAMiss();
+      await expect.element(selected.getByText("Correct")).toBeVisible();
 
       const mark = option.firstElementChild?.getBoundingClientRect();
       const formula = drawing.closest("[data-slot='inline-math']")?.getBoundingClientRect();
-      const tag = selected.getByText("Your answer").element().getBoundingClientRect();
+      const tag = selected.getByText("Correct").element().getBoundingClientRect();
 
       if (!mark || !formula) {
         throw new Error("The answer must draw its mark and its formula.");

@@ -1,3 +1,4 @@
+import { type WeekDay } from "../../sessions/daily-goal";
 import { type PlanDayView, type PlanItemView, type PlanView } from "../plan-view-contract";
 import { type MockFunding, findMockFundingOn, getMockFundingStart } from "../planner/mock-funding";
 import {
@@ -10,11 +11,10 @@ import {
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
 import { LEARN_KINDS, isWritingItem } from "../planner/plan-item-rules";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
+import { projectItemOnDay } from "./item-day";
 import { type SkillAreas, getWritingTitle } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
-import { projectSavedAllocationOn } from "./saved-allocation";
 import { readSelectedItemFacts } from "./selected-item-contract";
-import { isWorkFinished } from "./work-progress";
 
 /**
  * A written lesson is one; lessons still to be written count the day's share of their size, rounded
@@ -87,36 +87,20 @@ function toPlanItemView({
   };
 }
 
-function getDayState({
-  date,
-  items,
-  minutes,
-  studied,
-  today,
-}: {
-  date: Date;
-  items: readonly PlanItemView[];
-  minutes: number;
-  studied: boolean;
-  today: Date;
-}): PlanDayView["state"] {
-  if (date.getTime() === today.getTime()) {
+function getDayState({ study, today }: { study: WeekDay; today: Date }): PlanDayView["state"] {
+  if (study.isToday) {
     return "today";
   }
 
-  if (items.length === 0 && minutes === 0) {
+  if (study.hitGoal) {
+    return "done";
+  }
+
+  if (study.kind !== "study" && study.total === 0) {
     return "rest";
   }
 
-  if (date > today) {
-    return "upcoming";
-  }
-
-  if (items.length === 0) {
-    return studied ? "done" : "rest";
-  }
-
-  return items.every((item) => isWorkFinished(item.status)) ? "done" : "missed";
+  return study.date > today ? "upcoming" : "missed";
 }
 
 type DaysInput = {
@@ -127,7 +111,8 @@ type DaysInput = {
   overflow?: PlanSettings["checkpointOverflow"];
   skillAreas: SkillAreas;
   startDate: Date;
-  studiedDates: ReadonlySet<string>;
+  studyDays: readonly WeekDay[];
+  timeZone: string;
   targetDate: Date | null;
   today: Date;
 };
@@ -142,7 +127,8 @@ function buildPlanDays({
   overflow = [],
   skillAreas,
   startDate,
-  studiedDates,
+  studyDays,
+  timeZone,
   targetDate,
   today,
 }: DaysInput & { from: Date }): PlanDayView[] {
@@ -151,7 +137,7 @@ function buildPlanDays({
     const day = toIsoDate(date);
 
     const dayItems = items.flatMap((item) => {
-      const onDay = projectSavedAllocationOn({ date, item });
+      const onDay = projectItemOnDay({ date, item, timeZone });
 
       return onDay
         ? [
@@ -168,19 +154,20 @@ function buildPlanDays({
     const dayMinutes =
       date < startDate ? 0 : getPlannedMinutes({ calendar, date, exam, overflow, targetDate });
 
+    const study = studyDays.find((entry) => entry.date.getTime() === date.getTime());
+
+    if (!study) {
+      throw new Error("Missing study week day");
+    }
+
     return {
       date: day,
       items: dayItems,
       minutes: dayMinutes,
       mockFunding:
         date < startDate ? null : findMockFundingOn({ date, funding: exam?.mockFunding ?? [] }),
-      state: getDayState({
-        date,
-        items: dayItems,
-        minutes: dayMinutes,
-        studied: studiedDates.has(day),
-        today,
-      }),
+      state: getDayState({ study, today }),
+      study: { ...study, date: day },
     };
   });
 }

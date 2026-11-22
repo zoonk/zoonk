@@ -2,8 +2,6 @@ package com.zoonk.android.ui.richtext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,21 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.CollectionInfo
 import androidx.compose.ui.semantics.CollectionItemInfo
 import androidx.compose.ui.semantics.collectionInfo
@@ -40,34 +28,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.components.FOCUS_RING
+import com.zoonk.android.ui.components.arrowKeyScroll
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.layoutStart
 import com.zoonk.android.ui.theme.withTabularFigures
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 private val CELL_PADDING = 8.dp
 private val EDGE_PADDING = 12.dp
-private val FOCUS_RING = 2.dp
-private val KEY_STEP = 48.dp
-
-/** Compose scrolls with touch and the mouse wheel but not arrow keys. */
-private fun arrowStep(
-    event: KeyEvent,
-    rtl: Boolean,
-): Int {
-    if (event.type != KeyEventType.KeyDown) return 0
-    val step =
-        when (event.key) {
-            Key.DirectionRight -> 1
-            Key.DirectionLeft -> -1
-            else -> 0
-        }
-    return if (rtl) -step else step
-}
 
 /**
  * A table of data in learner text with its header row (main's `RichTable`). Columns are as wide as
@@ -89,9 +60,6 @@ fun RichTable(
     val columns = align.size
     val scroll = rememberScrollState()
     var focused by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val stepPx = with(LocalDensity.current) { KEY_STEP.toPx() }
 
     BoxWithConstraints(
         modifier
@@ -105,16 +73,7 @@ fun RichTable(
     ) {
         val available = constraints.maxWidth
 
-        Box(
-            Modifier
-                .fadingHorizontalScroll(scroll)
-                .onFocusChanged { focused = it.isFocused }
-                .onKeyEvent { event ->
-                    val step = arrowStep(event, rtl)
-                    if (step != 0) scope.launch { scroll.scrollBy(step * stepPx) }
-                    step != 0
-                }.focusable(enabled = scroll.maxValue > 0),
-        ) {
+        Box(Modifier.fadingHorizontalScroll(scroll).arrowKeyScroll(scroll) { focused = it }) {
             TableGrid(
                 available = available,
                 columns = columns,

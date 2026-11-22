@@ -95,14 +95,16 @@ fun readMarkdownTable(
 
 /**
  * The lines that belong to a table, so a question can split its data from its words (`findMarkdownTableLines`).
- * Like the players, the search carries on after a table's last row, so a body row is never read as a new header.
+ * Like the players, the search carries on after a table's last row, so a body row is never read as a new header,
+ * and a line of code is never a table.
  */
 fun findMarkdownTableLines(lines: List<String>): Set<Int> {
     val found = mutableSetOf<Int>()
+    val code = findCodeFenceLines(lines)
     var index = 0
 
     while (index < lines.size) {
-        val read = readMarkdownTable(lines, index)
+        val read = if (index in code) null else readMarkdownTable(lines, index)
 
         if (read == null) {
             index++

@@ -57,7 +57,7 @@ export const studySessionSummaryResponseSchema = z
       .boolean()
       .meta({
         description:
-          'Every block is done or skipped. False right after "Stop for today": the rest of the session waits to be picked up',
+          'The session has finished at least once, or every block is done or skipped. Remains true while extra blocks wait. False after "Stop for today" if the session has never finished and blocks remain',
       }),
     fullMeal: z.boolean(),
     minutes: z.number().int().min(0),

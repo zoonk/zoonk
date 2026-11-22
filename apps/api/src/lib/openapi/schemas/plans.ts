@@ -26,6 +26,7 @@ import { planPhaseSchema } from "./plan-phases";
 import { planWeekShapeSchema } from "./plan-week-shape";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
+import { studyWeekDaySchema } from "./study-sessions";
 import { weeklyStudyTimeSchema } from "./weekly-study-time";
 
 const isoDateSchema = z.iso.date();
@@ -65,6 +66,7 @@ const planDaySchema = z
     minutes: z.number().nonnegative(),
     mockFunding: mockFundingSchema.nullable(),
     state: z.enum(["done", "missed", "rest", "today", "upcoming"]),
+    study: studyWeekDaySchema,
   })
   .meta({ id: "PlanDay" });
 

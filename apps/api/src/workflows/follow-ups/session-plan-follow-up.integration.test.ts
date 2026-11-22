@@ -1,6 +1,7 @@
 import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -44,6 +45,12 @@ async function endedSession() {
     itemId: item.id,
     skillId: item.skillId,
     studySessionId: session.id,
+    userId: user.id,
+  });
+
+  await learningEventFixture({
+    contentIds: { studySessionId: session.id },
+    seconds: 60,
     userId: user.id,
   });
 

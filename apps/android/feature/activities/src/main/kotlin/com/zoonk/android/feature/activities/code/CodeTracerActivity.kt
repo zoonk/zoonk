@@ -45,6 +45,8 @@ import com.zoonk.android.feature.activities.ActivitySelectGrid
 import com.zoonk.android.feature.activities.ActivityTile
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.assignmentPairs
+import com.zoonk.android.ui.code.CodeLineTone
+import com.zoonk.android.ui.code.CodeListing
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.GeistMono
@@ -260,7 +262,15 @@ private fun TracerPanel(
             StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_arrow_back, canGoBack, onBack)
             StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_arrow_forward, canGoForward, onForward)
         }
-        CodeListing(code, language, stringResource(R.string.activities_code_code), currentLine = currentLine)
+        val current = stringResource(R.string.activities_code_current_line)
+        CodeListing(
+            code,
+            language.fenceName,
+            stringResource(R.string.activities_code_code),
+            toneOf = { if (it == currentLine) CodeLineTone.Current else CodeLineTone.Plain },
+            stateOf = { line -> current.takeIf { line == currentLine } },
+            stopPerLine = true,
+        )
     }
 }
 

@@ -19,8 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -41,7 +43,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.code.CodeBlock
+import com.zoonk.android.ui.code.withBreakPoints
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -102,8 +105,7 @@ private val ITEM_GAP = 6.dp
 private val MARKER_WIDTH = 20.dp
 private val MARKER_GAP = 4.dp
 private val QUOTE_RULE = 3.dp
-private val CODE_PADDING = 12.dp
-private const val CODE_SIZE = 0.85f
+private val QUOTE_PADDING = 12.dp
 
 /** Where a formula was taken out of an answer's Markdown, so its LaTeX never reads as Markdown. */
 private const val FORMULA_OPEN = '\uE000'
@@ -389,17 +391,17 @@ private fun Block(
                     formulas,
                     links,
                     style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                    Modifier.padding(start = CODE_PADDING),
+                    Modifier.padding(start = QUOTE_PADDING),
                 )
             }
         }
 
         is FencedCodeBlock -> {
-            CodeBlock(node.literal)
+            CodeBlock(node.literal.trimEnd('\n'), readLanguage(node.info))
         }
 
         is IndentedCodeBlock -> {
-            CodeBlock(node.literal)
+            CodeBlock(node.literal.trimEnd('\n'), language = null)
         }
 
         is HtmlBlock -> {
@@ -428,20 +430,6 @@ private fun soleFormula(paragraph: Paragraph): Int? {
         ?.groupValues
         ?.get(1)
         ?.toInt()
-}
-
-@Composable
-private fun CodeBlock(code: String) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .fadingHorizontalScroll(rememberScrollState())
-            .padding(CODE_PADDING),
-    ) {
-        Text(code.trimEnd('\n'), style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono), softWrap = false)
-    }
 }
 
 @Composable
@@ -514,10 +502,9 @@ private fun inlineText(
     links: ((String) -> Unit)?,
 ): SpokenText {
     val words = rememberMathWords()
-    val codeBackground = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    return remember(block, formulas, links, words, codeBackground) {
-        InlineWriter(formulas, links, words, codeBackground).write(block)
+    return remember(block, formulas, links, words) {
+        InlineWriter(formulas, links, words).write(block)
     }
 }
 
@@ -525,7 +512,6 @@ private class InlineWriter(
     private val formulas: List<MarkdownFormula>,
     private val links: ((String) -> Unit)?,
     private val words: MathWords,
-    private val codeBackground: Color,
 ) {
     private val builder = AnnotatedString.Builder()
     private val spoken = StringBuilder()
@@ -557,10 +543,12 @@ private class InlineWriter(
                 append("\n")
             }
 
+            // The lessons' chip, which `RichTextLine` draws behind the code.
             is Code -> {
-                builder.withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em, background = codeBackground)) {
-                    append(node.literal)
-                }
+                val start = builder.length
+                builder.withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em)) { append(withBreakPoints(node.literal)) }
+                builder.addStringAnnotation(TextMarkKind.Code.tag, "", start, builder.length)
+                spoken.append(node.literal)
             }
 
             is Emphasis -> {
