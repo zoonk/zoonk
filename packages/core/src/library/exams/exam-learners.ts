@@ -21,6 +21,7 @@ import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prom
 import { courseFollowersFilter } from "../products/course-release";
 import { readsProductPage } from "../products/product-pages";
 import { linkGoalSources } from "../sources/link-goal-sources";
+import { followSourceRedirects } from "../sources/own-sources";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
 
@@ -235,9 +236,12 @@ export async function linkGoalToResearchSources({
     return;
   }
 
+  // A run keeps the ids it was given, and an upload merged since then lives on as its shared copy.
+  const current = await followSourceRedirects(sourceIds);
+
   await writeLearnerChange({ userId: goal.userId }, async (tx) => {
     const kept = await tx.learnerSource.createMany({
-      data: sourceIds.map((sourceId) => ({
+      data: current.map((sourceId) => ({
         origin: "research" as const,
         sourceId,
         userId: goal.userId,
@@ -248,7 +252,7 @@ export async function linkGoalToResearchSources({
     const linked = await linkGoalSources(tx, {
       goalId,
       origin: "research",
-      sourceIds,
+      sourceIds: current,
       userId: goal.userId,
     });
 
