@@ -81,6 +81,8 @@
   "essay_send_failed": "a0fcc32fba5168579880613c5990e0346b8adc903cdb2a9d993531acb7846707",
   "essay_short_exercise": "6301cf2f6db2a1b2a332397d0273b41b85e4b376aef9a17a43926b6d71ea965e",
   "essay_short_exercise_detail": "fae28cabf30ab119ab49143e42870a8a1b2aa3e3cd2612005df4e506468a3bb5",
+  "essay_short_text": "0e857b37d2475ca14fc6076620f753d83d66ccaf8e14811e6eff851f608b36c8",
+  "essay_short_title": "3c2e5f3b7a50671069baf21e95b80d0a62de7ae05e26ff3421c9f9c27621b0c8",
   "essay_skip_rewrite": "91e9eae7c03b093686f8acb5df48b7de2a230188d7b53d5ad8c1b118fa6cacab",
   "essay_skipped": "4694e0bf548aac5081f694327cea8fe640b74e89b263e03e54f5c39898a841d6",
   "essay_start_about_time": "8309655f980d37c934a6fe4298bab6014db9e70712a163092912a5a99beb6bb2",
@@ -264,6 +266,8 @@
     <string name="essay_limit_title_any">Faça caber no limite de linhas</string>
     <string name="essay_limit_text">Quem corrige para na linha %1$d, então o restante não é lido.</string>
     <string name="essay_limit_text_any">Quem corrige para no limite de linhas, então o restante não é lido.</string>
+    <string name="essay_short_title">Escreva uma resposta mais longa</string>
+    <string name="essay_short_text">Esta resposta é curta demais para ser corrigida. Escreva mais e envie de novo.</string>
     <string name="essay_zero_title">Responda ao que foi perguntado</string>
     <string name="essay_zero_text">Reescreva seguindo a regra acima.</string>
     <string name="essay_zero_blank_title">Escreva uma resposta</string>

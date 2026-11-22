@@ -81,6 +81,8 @@
   "essay_send_failed": "eab999a6d7f51d76ee55b50bff100c053362019d7ed6bed028b5fd5305422fe9",
   "essay_short_exercise": "d3a293e64adae57861caadb790fb4cc9e1dfd2e9e723bc341dcf51a364cf7b3a",
   "essay_short_exercise_detail": "93662255548447a1999650df0491e4443812f773d07245d1d3a3f545f4e84ada",
+  "essay_short_text": "7910b4d873682eb655657fb9d714678196aecf2a43b3e3ad1f1c4d096ada8a59",
+  "essay_short_title": "4350de2e1cefaebae58df240e4092aaa269babe40ef5d0eca5cc3150e45fb4cc",
   "essay_skip_rewrite": "539fbb845e730a567ade28dcaa5547e89893dfa7847abfc9fa782829f88e1c53",
   "essay_skipped": "5afc454df2dfef9f300908219c115ac9f9fa8c53e654bb75c9c31d0e9467ecf5",
   "essay_start_about_time": "d27e3975b1a67a316bc87e9ef817703f6da9f7578b2e9eeb7f6282915ba0120d",
@@ -248,6 +250,8 @@
     <string name="essay_limit_title_any">行数の上限に収める</string>
     <string name="essay_limit_text">採点者は%1$d行目で読むのをやめるため、その先は読まれません。</string>
     <string name="essay_limit_text_any">採点者は行数の上限で読むのをやめるため、その先は読まれません。</string>
+    <string name="essay_short_title">もっと長い回答を書く</string>
+    <string name="essay_short_text">この回答は短すぎて採点できません。書き足してから、もう一度送信してください。</string>
     <string name="essay_zero_title">質問に答える</string>
     <string name="essay_zero_text">上のルールに従って書き直す。</string>
     <string name="essay_zero_blank_title">回答を書く</string>

@@ -81,6 +81,8 @@
   "essay_send_failed": "0a398e9aaef27bcfcffcbc8deb71532e325af4b7c7b281ef081894c4fe75e584",
   "essay_short_exercise": "bcee57e87a75643679ce1a2d8007daf6ca2d71fcbe900fbb92e041668a7c37fb",
   "essay_short_exercise_detail": "6aac2472fc734984098d4fbd946a2475109fb7c9428cc9ee6ee1aef8e1a6d6ec",
+  "essay_short_text": "6544402ce591456df09e1bb389eceb89105d6490a5e724edd89d16d1527aa2f8",
+  "essay_short_title": "d629a14b346852929669a0b28693dede77a18722c52828915fe4ff161828a076",
   "essay_skip_rewrite": "87e827e59ec06c6b4e759ac2dc521a832e41c48471fa8fcb19db092fc55475ff",
   "essay_skipped": "907b87eb718067c9b7bd659be8b1c4e80ceaec44bb48814268a83fbf9e6ef75e",
   "essay_start_about_time": "80e844b90b352ada91c59c680f10c1849a202e8388b1d04696148b0eb10518fc",
@@ -248,6 +250,8 @@
     <string name="essay_limit_title_any">줄 수 제한에 맞추기</string>
     <string name="essay_limit_text">채점은 %1$d번째 줄까지만 진행돼요. 그 뒤는 읽지 않아요.</string>
     <string name="essay_limit_text_any">채점은 줄 수 제한까지만 진행돼요. 그 뒤는 읽지 않아요.</string>
+    <string name="essay_short_title">답안을 더 길게 쓰기</string>
+    <string name="essay_short_text">이 답안은 너무 짧아서 채점할 수 없어요. 내용을 더 쓰고 다시 제출해 주세요.</string>
     <string name="essay_zero_title">질문에 맞게 답하기</string>
     <string name="essay_zero_text">위 규칙에 따라 다시 써 보세요.</string>
     <string name="essay_zero_blank_title">답안 작성</string>

@@ -81,6 +81,8 @@
   "essay_send_failed": "bf3f50fa0501be4fcb4cf69ea0d811505c9b59180fe235a90e72d830ab2c78d0",
   "essay_short_exercise": "5518aee83c0de2b42155978d0ec8e7690180ca44fde3ab41b0e2dbe796c3e78d",
   "essay_short_exercise_detail": "2af0e6814386747c40130618a7989181c99f53d4b02c1e341eb078d7d1333586",
+  "essay_short_text": "393cb762c2da967d20d3a891100040ec3e5138a633ea78bd74bad0d53e58d20b",
+  "essay_short_title": "3165e3756371e1d1805b94702b2f5ddc91fa4120dee114de25e58cb55a36b45e",
   "essay_skip_rewrite": "4e09ae6f37e8f1969d54b8fffa04feb1f28e210e2f0d0765a05e1deff7ef575d",
   "essay_skipped": "ab861c93cd0f154d076d208338a2a412456533f900f1f1c788a8491b86093402",
   "essay_start_about_time": "ee54ad7a4b3d9c71b12638439b6e626698a7e81a51d0542ac72dbf956dfd4084",
@@ -256,6 +258,8 @@
     <string name="essay_limit_title_any">Halte das Zeilenlimit ein</string>
     <string name="essay_limit_text">Die Bewertung endet bei Zeile %1$d; der Rest wird nicht mehr gelesen.</string>
     <string name="essay_limit_text_any">Die Bewertung endet am Zeilenlimit; der Rest wird nicht mehr gelesen.</string>
+    <string name="essay_short_title">Schreib eine längere Antwort</string>
+    <string name="essay_short_text">Diese Antwort ist zu kurz, um sie zu bewerten. Schreib mehr dazu und schick sie noch einmal ab.</string>
     <string name="essay_zero_title">Beantworte die gestellte Frage</string>
     <string name="essay_zero_text">Schreib es nach der Regel oben um.</string>
     <string name="essay_zero_blank_title">Antwort schreiben</string>

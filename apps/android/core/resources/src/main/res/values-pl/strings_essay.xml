@@ -81,6 +81,8 @@
   "essay_send_failed": "afb0b1b0d6d9531ae8ab6c2b633edd7cc5366001524ac12d165ef6b69756b8c5",
   "essay_short_exercise": "f88ab268793034525413db797bc1e1afe90e32c1eb57fa66f8b344ccdb1f0c46",
   "essay_short_exercise_detail": "335e79135f0d5bdf3204b0ef8743143501520cd580257d5aba26eba4453df394",
+  "essay_short_text": "359f121673e87ba2e29e6639010574f4ffdb6c79e7a46b4b845c85f159ac1ffe",
+  "essay_short_title": "2f7b747b3143de2870d784100d262b39c54bfa278128357772e255dc2c2f1433",
   "essay_skip_rewrite": "66e5ffe397640df09d01f52cc1c61575e9e1ff0753f6e31a35e30f86935bc887",
   "essay_skipped": "26466a897c7ff67858c6d43f3b82ca42b7704b8d3f400d1882b24343c78c0dfe",
   "essay_start_about_time": "ab8d270fa81450c4c7389d5fa9801754f4e98161c95d2208875f8a81350c89e9",
@@ -272,6 +274,8 @@
     <string name="essay_limit_title_any">Zmieszcz się w limicie wierszy</string>
     <string name="essay_limit_text">Oceniający czytają tylko do wiersza %1$d, więc dalsza część nie jest czytana.</string>
     <string name="essay_limit_text_any">Oceniający czytają tylko do limitu wierszy, więc dalsza część nie jest czytana.</string>
+    <string name="essay_short_title">Napisz dłuższą odpowiedź</string>
+    <string name="essay_short_text">Ta odpowiedź jest za krótka, żeby ją ocenić. Dopisz więcej i wyślij ją ponownie.</string>
     <string name="essay_zero_title">Odpowiedz na zadane pytanie</string>
     <string name="essay_zero_text">Napisz to ponownie, stosując się do powyższej zasady.</string>
     <string name="essay_zero_blank_title">Napisz odpowiedź</string>

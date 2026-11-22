@@ -81,6 +81,8 @@
   "essay_send_failed": "25428ac012886ad2b188b5ed728f16ee255590e2702c6422b93e0f6e9decf85b",
   "essay_short_exercise": "29b698727cfb8e8e0a6a2e02218c2e2868db017cb6d286d2ac6be0a1f60f60f5",
   "essay_short_exercise_detail": "b0448852f1902f7cb5e2b4456d687eec485718111ff35f162c9e5fe49d7a8642",
+  "essay_short_text": "5ca8038e87ac38b47bfaee8aa3193fdaf6bc598ad85212ed0ec5eabf833f4e50",
+  "essay_short_title": "553b9e72721acc962e11114800a71c35bd53651edeaf15e3c2ee4daec7de69c1",
   "essay_skip_rewrite": "a0851dd84c9afc36db3324944b46c3007e7a354644e698a9b2f6acd56e7238b2",
   "essay_skipped": "f200a93fb0003a3bec0067f5defadfb1655f24491481a33049d4f35d3f3f3e1d",
   "essay_start_about_time": "ae75af6c8d7d09428c6f8d27333497f256b0f354e1e622c493336e2e1cc426ae",
@@ -259,6 +261,8 @@
     <string name="essay_limit_title_any">Respecte la limite de lignes</string>
     <string name="essay_limit_text">Les correcteurs s’arrêtent à la ligne %1$d et ne lisent pas la suite.</string>
     <string name="essay_limit_text_any">Les correcteurs s’arrêtent à la limite de lignes et ne lisent pas la suite.</string>
+    <string name="essay_short_title">Rédige une réponse plus longue</string>
+    <string name="essay_short_text">Cette réponse est trop courte pour être évaluée. Complète-la et envoie-la de nouveau.</string>
     <string name="essay_zero_title">Réponds à la question posée</string>
     <string name="essay_zero_text">Réécris ta réponse en suivant la règle ci-dessus.</string>
     <string name="essay_zero_blank_title">Rédiger une réponse</string>

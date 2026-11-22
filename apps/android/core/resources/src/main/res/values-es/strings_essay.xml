@@ -81,6 +81,8 @@
   "essay_send_failed": "f00eec47485e97c928f03257cff5a5ea2fb571ae082f53694088616b8f4c6928",
   "essay_short_exercise": "3e5c78f38d1506777557792b69a0855bd95c39966aa47d8086d493159fe82c63",
   "essay_short_exercise_detail": "ca452a1a99fb591def497366989e7eff85e4613301a9ece54fe89799474acc9f",
+  "essay_short_text": "d3009e29a2ec3e16fde239e91bfed1e19b8bedac03aaf03b91f47582ad878d42",
+  "essay_short_title": "d73ae8986067f5948d630493ff8da2fc9c6fed2d66fc31b7ff99407e5daa0f1a",
   "essay_skip_rewrite": "eda9f7786721ccef196335ad721514a5b554aa9f1ebcce1566d015974dfdce20",
   "essay_skipped": "8b48d707f62a022ce1595b8467193d822c0556ad2ccacc03f80e0328de30f30a",
   "essay_start_about_time": "5c99600ddb2cd40e6130a9bf2f084cb17bb8a7933e20912c48f67cb5793c4cb9",
@@ -264,6 +266,8 @@
     <string name="essay_limit_title_any">Ajusta tu respuesta al límite de líneas</string>
     <string name="essay_limit_text">Quienes califican se detienen en la línea %1$d, así que no leen el resto.</string>
     <string name="essay_limit_text_any">Quienes califican se detienen en el límite de líneas, así que no leen el resto.</string>
+    <string name="essay_short_title">Escribe una respuesta más larga</string>
+    <string name="essay_short_text">Esta respuesta es demasiado corta para calificarla. Agrega más y vuelve a enviarla.</string>
     <string name="essay_zero_title">Responder lo que pregunta</string>
     <string name="essay_zero_text">Vuelve a escribirla siguiendo la regla anterior.</string>
     <string name="essay_zero_blank_title">Escribir una respuesta</string>

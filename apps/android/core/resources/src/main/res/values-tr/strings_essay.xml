@@ -81,6 +81,8 @@
   "essay_send_failed": "620484cfceb1898f324c6765faf8d4332fd15f2d7221626e77235863d80b6fb6",
   "essay_short_exercise": "29e5157a52bd62f2879e664ea0d616eaf469823076699493c3c7fad34e41e5d9",
   "essay_short_exercise_detail": "3463c52d8c77781fdf786b6df0a02dd9b8c6754196f6f6d552f271e51eefe3bc",
+  "essay_short_text": "291deee197099c721350af8a263c39f589ce9d24540cd144503a2d71234893cb",
+  "essay_short_title": "f8198944218b8d1bbf1e1229d2972a2ada0130b78e3ad181bc26a323bcd271c9",
   "essay_skip_rewrite": "4dbeca0cff4ab5310d602e45ddc68a2303e94a0810e326b175e42efd7be31853",
   "essay_skipped": "973248f5cf59132b2a62c75112b4be7f5f43ab12e77a5f417e9259e1b98a7710",
   "essay_start_about_time": "3ce07ae74529de96b1bdab08c1eea1e77c2646067fcf2da5cb5074bf8ad78201",
@@ -256,6 +258,8 @@
     <string name="essay_limit_title_any">Satır sınırına sığdır</string>
     <string name="essay_limit_text">Değerlendirenler %1$d satırdan sonrasını okumaz.</string>
     <string name="essay_limit_text_any">Değerlendirenler satır sınırından sonrasını okumaz.</string>
+    <string name="essay_short_title">Daha uzun bir cevap yaz</string>
+    <string name="essay_short_text">Bu cevap değerlendirilemeyecek kadar kısa. Biraz daha ekleyip tekrar gönder.</string>
     <string name="essay_zero_title">Sorulan soruyu cevapla</string>
     <string name="essay_zero_text">Yukarıdaki kurala göre yeniden yaz.</string>
     <string name="essay_zero_blank_title">Cevap yaz</string>
