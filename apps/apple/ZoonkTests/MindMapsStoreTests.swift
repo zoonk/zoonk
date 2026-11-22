@@ -248,7 +248,7 @@ final class MindMapsStoreTests: XCTestCase {
   /// The page's stop gives each map its Create back once its day has come, and the page reads its
   /// offer again then, so its counts and Create all are today's; Create asks the server.
   func testAStopWhoseDayCameLetsAMapStartAgain() async {
-    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let opens = Date.now.addingTimeInterval(3600)
     let stop = MindMapAllowanceStop(
       availableAt: opens, period: "rolling30Days", reason: .limitReached, resource: .mindMap)
     XCTAssertFalse(stop.isOver(at: opens.addingTimeInterval(-60)))
