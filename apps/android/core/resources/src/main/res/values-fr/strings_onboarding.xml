@@ -157,6 +157,7 @@
   "onboarding_material_description": "1466b89d39430683c128c683af53dad4bc560f8fe775fb4d638b1052e19bd396",
   "onboarding_material_goal_exam": "13889a7336ad9a86b5ff8103dff00989b122a69e0578cf25aed5f933498a1d50",
   "onboarding_material_goal_understand": "4d26a538aa6cdedb23d5ffce04226b8060fa11558159ed0939b915c66c3668f2",
+  "onboarding_material_limit": "c9613481bf45d5fb2d7d2fd9fc573befbb375315eb10baa7b04e63c51eed1c93",
   "onboarding_material_sign_up": "b06a5a95fc36964f1c4dc784ab8104eca8701e0ea5e1521bb03b7b8f18e7305f",
   "onboarding_material_unreadable_one": "d7853ddd1828b43344bbdc3b94a975558f40605b8ed27019ef8518dcf5ba072c",
   "onboarding_material_unreadable_some": "70b1977a7803af59ce45a6936191ae0a321ffe694b356c8b449a037bad1aa4f4",
@@ -559,6 +560,8 @@
     <string name="onboarding_material_unreadable_some">Certains de tes fichiers ne sont plus lisibles. Supprime-les et ajoute-les à nouveau.</string>
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">illisible</string>
+    <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
+    <string name="onboarding_material_limit">%1$d fichiers maximum par objectif. Supprime-en un pour en ajouter un autre.</string>
     <string name="onboarding_intent_title">Que veux-tu faire ?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Se préparer à un examen</string>
