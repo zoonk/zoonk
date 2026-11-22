@@ -2414,7 +2414,63 @@
       }
     },
     "Can't be read" : {
-      "comment" : "Read by screen readers after the name of an attached file that can't be read anymore."
+      "comment" : "Read by screen readers after the name of an attached file that can't be read anymore.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht mehr lesbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no se puede leer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "illisible"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non più leggibile"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取れません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽을 수 없음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie da się już odczytać"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não pode mais ser lido"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artık okunamıyor"
+          }
+        }
+      }
     },
     "Cancel" : {
       "comment" : "Closes the box for pasted material\nStops changing the typed words\nStops fixing an understood fact",
@@ -8685,7 +8741,63 @@
       }
     },
     "It can't be read anymore, so your plan won't follow it." : {
-      "comment" : "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material."
+      "comment" : "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material kann nicht mehr gelesen werden, deshalb kann dein Plan es nicht berücksichtigen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no se puede leer, así que tu plan no lo tomará en cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce contenu n’est plus lisible, donc ton plan n’en tiendra pas compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è più possibile leggere il materiale, quindi il piano non ne terrà conto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取れなくなったため、学習計画に反映されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더 이상 읽을 수 없어 계획에 반영되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie da się ich już odczytać, więc plan nie będzie ich uwzględniać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá mais para ler esse material, então seu plano não vai levá-lo em conta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artık okunamıyor, bu yüzden planın bu materyali temel almayacak."
+          }
+        }
+      }
     },
     "Join waitlist" : {
       "comment" : "Joins the waitlist for lessons that teach playing an instrument",
@@ -14063,7 +14175,63 @@
       }
     },
     "Remove %@" : {
-      "comment" : "Removes a file, text or link from the goal's material; names it"
+      "comment" : "Removes a file, text or link from the goal's material; names it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 삭제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ öğesini kaldır"
+          }
+        }
+      }
     },
     "Remove date" : {
       "comment" : "Clears the goal's date",
@@ -14950,7 +15118,63 @@
       }
     },
     "Some of your material can't be read anymore, so your plan won't follow it." : {
-      "comment" : "Under the learner's material on the goal card, when some of it can't be read anymore."
+      "comment" : "Under the learner's material on the goal card, when some of it can't be read anymore.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige deiner Materialien können nicht mehr gelesen werden, deshalb kann dein Plan sie nicht berücksichtigen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte de tu material ya no se puede leer, así que tu plan no lo tomará en cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une partie de tes documents n’est plus lisible, donc ton plan n’en tiendra pas compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è più possibile leggere parte del tuo materiale, quindi il piano non ne terrà conto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料の一部を読み取れなくなったため、学習計画に反映されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자료 일부를 더 이상 읽을 수 없어 계획에 반영되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niektórych twoich materiałów nie da się już odczytać, więc plan nie będzie ich uwzględniać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte do seu material não dá mais para ler, então seu plano não vai levar isso em conta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Materyallerinin bir kısmı artık okunamıyor, bu yüzden planın bunları temel almayacak."
+          }
+        }
+      }
     },
     "Something else" : {
       "comment" : "Purpose choice",
@@ -19419,10 +19643,122 @@
       }
     },
     "We can't read “%@” anymore. Remove it and add it again." : {
-      "comment" : "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\"."
+      "comment" : "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“ kann nicht mehr gelesen werden. Entferne die Datei und füge sie noch einmal hinzu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no podemos leer “%@”. Quítalo y vuelve a agregarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’arrivons plus à lire « %@ ». Supprime ce fichier et ajoute-le à nouveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non riusciamo più a leggere “%@”. Rimuovilo e aggiungilo di nuovo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」を読み取れなくなりました。削除して、もう一度追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”을(를) 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy już odczytać „%@”. Usuń ten plik i dodaj go ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá mais para ler “%@”. Remova esse arquivo e adicione-o de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” dosyasını artık okuyamıyoruz. Kaldırıp yeniden ekle."
+          }
+        }
+      }
     },
     "We can't read some of your files anymore. Remove them and add them again." : {
-      "comment" : "Under the learner's attached material when several items sent with their goal can't be read anymore."
+      "comment" : "Under the learner's attached material when several items sent with their goal can't be read anymore.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige deiner Dateien können nicht mehr gelesen werden. Entferne sie und füge sie noch einmal hinzu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no podemos leer algunos de tus archivos. Quítalos y vuelve a agregarlos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certains de tes fichiers ne sont plus lisibles. Supprime-les et ajoute-les à nouveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non riusciamo più a leggere alcuni dei tuoi file. Rimuovili e aggiungili di nuovo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの一部を読み取れなくなりました。削除して、もう一度追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일부 파일을 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy już odczytać niektórych plików. Usuń je i dodaj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá mais para ler alguns dos seus arquivos. Remova-os e adicione-os de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosyalarının bir kısmını artık okuyamıyoruz. Kaldırıp yeniden ekle."
+          }
+        }
+      }
     },
     "We can't read this file. Try a PDF, a photo, Word, PowerPoint or text." : {
       "comment" : "A file of a kind that can't be read",
