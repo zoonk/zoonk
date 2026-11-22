@@ -11,17 +11,13 @@ import {
   planChangePathParamsSchema,
   planLinkPathParamsSchema,
 } from "../schemas/paths";
+import { ownLevelChangeSchema, planChangeResultSchema } from "../schemas/plan-change-results";
 import {
   planChangeInvalidResponse,
   planChangedWhileSavingResponse,
   planDateChangeInvalidResponse,
 } from "../schemas/plan-errors";
-import {
-  ownLevelChangeSchema,
-  planChangeResultSchema,
-  planLinkResponseSchema,
-  planResponseSchema,
-} from "../schemas/plans";
+import { planLinkResponseSchema, planResponseSchema } from "../schemas/plans";
 import {
   conflictResponse,
   guestRefusalResponse,
