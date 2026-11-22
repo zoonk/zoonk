@@ -43,6 +43,7 @@ import { levelTestBankCheckWorkflow } from "../language/level-test-bank-check-wo
 import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
 import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
+import { examNoticePlansWorkflow } from "../research/exam-notice-plans-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
@@ -94,6 +95,25 @@ function bankRow(checkedAt: Date | null, model = "test") {
 }
 
 describe(dailySweepsWorkflow, () => {
+  it("starts a notice repair for an exam learners are studying for", async () => {
+    const [blueprint, user] = await Promise.all([examBlueprintFixture(), userFixture()]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await planFixture({ goalId: goal.id });
+    await dailySweepsWorkflow(scheduledRun());
+
+    expect(start).toHaveBeenCalledWith(
+      examNoticePlansWorkflow,
+      [{ examBlueprintId: blueprint.id }],
+      { experimental_hook: { token: `exam-notice-plans:${blueprint.id}` } },
+    );
+  });
+
   it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {
     const now = Date.now();
 

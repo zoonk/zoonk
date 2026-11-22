@@ -14,30 +14,33 @@ private enum PracticeTaskKind {
 
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
-  @Environment(\.stacksContent) private var isStacked
-  @State private var barWidth: CGFloat = 0
   private let kind: PracticeTaskKind
   private let segments: [TaskSegment]?
   private let index: Int
+  private let fillsHeight: Bool
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
   /// The bar's note over its buttons, as the bottom bar's, so the buttons never move when it shows.
   private var note: BarNote?
 
+  /// `note` is the bar's one line, right over its buttons, as `bottomBar`'s. `fillsHeight`: one
+  /// column is at least the screen's height, so a word bank waits at its bottom, as in a lesson.
   init(
-    isResult: Bool = false, segments: [TaskSegment]? = nil, index: Int = 0,
+    isResult: Bool = false, segments: [TaskSegment]? = nil, index: Int = 0, note: BarNote? = nil,
+    fillsHeight: Bool = false,
     @ViewBuilder stimulus: @escaping () -> Stimulus,
     @ViewBuilder response: @escaping () -> Response,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
     self.init(
-      kind: isResult ? .result : .spread, segments: segments, index: index, stimulus: stimulus,
-      response: response, actions: actions)
+      kind: isResult ? .result : .spread, segments: segments, index: index, note: note,
+      fillsHeight: fillsHeight, stimulus: stimulus, response: response, actions: actions)
   }
 
   fileprivate init(
-    kind: PracticeTaskKind, segments: [TaskSegment]?, index: Int,
+    kind: PracticeTaskKind, segments: [TaskSegment]?, index: Int, note: BarNote? = nil,
+    fillsHeight: Bool = false,
     stimulus: @escaping () -> Stimulus,
     response: @escaping () -> Response,
     actions: @escaping () -> Actions
@@ -45,6 +48,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     self.kind = kind
     self.segments = segments
     self.index = index
+    self.note = note
+    self.fillsHeight = fillsHeight
     self.stimulus = stimulus
     self.response = response
     self.actions = actions
@@ -72,7 +77,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         .lonePage()
       } else {
         QuestionSpread(
-          readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread
+          readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread,
+          fillsHeight: fillsHeight
         ) {
           EmptyView()
         } stimulus: {
@@ -102,15 +108,43 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 
   @ViewBuilder private var actionsBar: some View {
     if !actionsHidden {
-      let isWide = barWidth >= WideBar.width && !isStacked
-
       VStack(spacing: 10) {
         actions()
       }
+      .practiceBar(note: note)
+    }
+  }
+}
+
+extension View {
+  /// A practice screen's bar: its buttons in the task's readable column with the bottom bar's
+  /// inset, so a run's actions sit where every screen's do, and `note` right over them, as
+  /// `bottomBar`'s.
+  func practiceBar(note: BarNote?) -> some View {
+    modifier(PracticeBar(note: note))
+  }
+
+  /// A practice bar's main action: as wide as a narrow bar, and at a wide bar's end at its own
+  /// width.
+  func practiceMainAction() -> some View {
+    modifier(PracticeMainAction())
+  }
+}
+
+private struct PracticeBar: ViewModifier {
+  @Environment(\.stacksContent) private var isStacked
+  @State private var width: CGFloat = 0
+
+  let note: BarNote?
+
+  func body(content: Content) -> some View {
+    let isWide = width >= WideBar.width && !isStacked
+
+    content
       // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
       .environment(\.practiceBarIsWide, isWide)
       .frame(maxWidth: .infinity)
-      .onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { width = $0 }
       .frame(maxWidth: PracticeLayout.readableWidth)
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
@@ -126,7 +160,20 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
             .barNoteBackdrop()
         }
       }
-    }
+      .announcesStatus(note?.politeLine)
+  }
+}
+
+private struct PracticeMainAction: ViewModifier {
+  @Environment(\.practiceBarIsWide) private var isWide
+  @Environment(\.practiceActionsSideBySide) private var sideBySide
+
+  func body(content: Content) -> some View {
+    content
+      .controlSize(.large)
+      .buttonSizing(isWide ? .automatic : .flexible)
+      .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
+      .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
   }
 }
 
@@ -152,6 +199,8 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   let readableWidth: CGFloat
   let spacing: CGFloat
   var isSpread = true
+  /// Only one column fills the height: on a spread, the turn's page leaves its bank under the turn.
+  var fillsHeight = false
   @ViewBuilder let header: () -> Header
   @ViewBuilder let stimulus: () -> Stimulus
   @ViewBuilder let response: () -> Response
@@ -165,7 +214,9 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: response)
         .safeAreaBar(edge: .bottom, content: actions)
     } single: {
-      QuestionColumn(readableWidth: readableWidth, spacing: spacing, header: header) {
+      QuestionColumn(
+        readableWidth: readableWidth, spacing: spacing, fillsHeight: fillsHeight, header: header
+      ) {
         stimulus()
         response()
       } actions: {
@@ -180,14 +231,17 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
 struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
+  var fillsHeight = false
   @ViewBuilder let header: () -> Header
   @ViewBuilder let content: () -> Content
   @ViewBuilder let actions: () -> Actions
 
   var body: some View {
-    ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
-      .pageHeader(header)
-      .safeAreaBar(edge: .bottom, content: actions)
+    ScrollingPage(
+      readableWidth: readableWidth, spacing: spacing, fillsHeight: fillsHeight, content: content
+    )
+    .pageHeader(header)
+    .safeAreaBar(edge: .bottom, content: actions)
   }
 }
 
@@ -207,10 +261,11 @@ extension View {
 private struct ScrollingPage<Content: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
+  var fillsHeight = false
   @ViewBuilder let content: () -> Content
 
   var body: some View {
-    ScrollView {
+    FillingScrollView(fillsHeight: fillsHeight) {
       VStack(alignment: .leading, spacing: spacing) {
         content()
       }
@@ -236,9 +291,6 @@ extension View {
 /// screen to screen. While busy it ignores `isDisabled`: the button that sent the request keeps its
 /// look and its focus.
 struct PracticeMainButton: View {
-  @Environment(\.practiceBarIsWide) private var isWide
-  @Environment(\.practiceActionsSideBySide) private var sideBySide
-
   let title: LocalizedStringResource
   let icon: ActionIcon
   var isBusy = false
@@ -250,12 +302,9 @@ struct PracticeMainButton: View {
       Text(title)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
-    .buttonSizing(isWide ? .automatic : .flexible)
-    .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
     .disabled(isDisabled && !isBusy)
     .keyboardShortcut(.defaultAction)
-    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
+    .practiceMainAction()
   }
 }
 

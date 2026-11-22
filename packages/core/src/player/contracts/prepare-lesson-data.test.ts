@@ -232,6 +232,33 @@ describe(serializeExerciseSteps, () => {
     expect(result[1]?.sentence?.translationDistractors).toStrictEqual(["tchau", "logo"]);
   });
 
+  it("marks a sentence whose translation is the sentence itself", () => {
+    const result = serialize({
+      steps: [
+        makeStep({
+          content: {},
+          id: "13",
+          kind: "listening",
+          sentence: makeSentence({
+            sentence: "How much is the rent?",
+            translation: "how much is the rent",
+          }),
+        }),
+        makeStep({
+          content: {},
+          id: "14",
+          kind: "listening",
+          sentence: makeSentence({
+            sentence: "Guten Morgen, Lara.",
+            translation: "Bom dia, Lara.",
+          }),
+        }),
+      ],
+    });
+
+    expect(result.map((step) => step.sentence?.readsItself)).toStrictEqual([true, false]);
+  });
+
   it("serializes other orders using the segmenter of each screen", () => {
     const [step] = serialize({
       steps: [

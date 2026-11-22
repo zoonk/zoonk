@@ -16484,7 +16484,7 @@
     },
     "/goals/{goalId}/plan/changes": {
       "post": {
-        "description": "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone, and the server prepares the lessons it brings in soon. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
+        "description": "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, optional exam strategy, or steering. It re-plans from today and can be undone, and the server prepares the lessons it brings in soon. A change that wouldn't do what it asks isn't saved and answers `unchanged` with the reason: exam strategy the plan already holds (`setExtras`), focusing on subjects that would move nothing, or more or less of some subjects (`focusAreas`, `reduceAreas`) that would do the opposite in the plan the learner sees.",
         "operationId": "createPlanChange",
         "security": [
           {
@@ -21376,7 +21376,7 @@
     },
     "/goal-understandings": {
       "post": {
-        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
+        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. The same words in the same language sent again before their draft is understood answer with that draft (202): its run still reading them at no cost, or, when that run ended without finishing, a new run counted like a retry, so a retry after a lost response or a second tab reads them once. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
         "operationId": "createGoalUnderstanding",
         "security": [
           {
@@ -21702,7 +21702,7 @@
     },
     "/goal-understandings/{understandingId}/generations": {
       "post": {
-        "description": "Starts reading a saved typed goal, or reads it again after its run failed or couldn't start. A run still reading it is followed instead (202 with its `generationId`), and a goal already understood needs none (200). Reading it again is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` (403 for a guest, 402 for a free learner, 429 for Plus).",
+        "description": "Starts reading a saved typed goal, or reads it again after its run failed or couldn't start. A run still reading it is followed instead (202 with its `generationId`), and a goal already understood needs none (200). Reading it again is one of the learner's small AI calls, counted once for retries of the same run sent together: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` (403 for a guest, 402 for a free learner, 429 for Plus).",
         "operationId": "createGoalUnderstandingGeneration",
         "security": [
           {
@@ -30447,6 +30447,31 @@
               "start"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setExtras"
+                ]
+              },
+              "skillIds": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "skillIds"
+            ],
+            "additionalProperties": false,
+            "description": "Sets the optional exam skills the learner chose. New skills must be offered by the current plan."
           }
         ],
         "type": "object"
@@ -37252,6 +37277,13 @@
             ],
             "additionalProperties": false
           },
+          "noticeRemoved": {
+            "description": "Areas and skills removed when the plan followed the official exam notice",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "outcomesAdded": {
             "description": "For moving the phase dates (fitPhaseDates): the goal's outcome skills (a career's job search) keeping the dates leaves out by the goal's date and moving them fits in, by name",
             "type": "array",
@@ -42153,7 +42185,7 @@
             ]
           },
           "reason": {
-            "description": "Why a change of focus changed nothing (`unchanged`): `alreadyIn` (the subjects it focuses on already have every lesson in the plan) or `cantMove` (they already start as early as what they build on allows, and more of them doesn't fit)",
+            "description": "Why the change changed nothing (`unchanged`): `alreadyIn` (the plan already holds what it asks: the exam strategy it adds, or every lesson of the subjects it focuses on) or `cantMove` (the subjects it focuses on already start as early as what they build on allows, and more of them doesn't fit)",
             "nullable": true,
             "type": "string",
             "enum": [
@@ -42168,7 +42200,7 @@
               "proposed",
               "unchanged"
             ],
-            "description": "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: a change of focus alone wouldn't do what it asks (focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved"
+            "description": "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: the change wouldn't do what it asks (the plan already holds the exam strategy it adds, focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved"
           }
         },
         "required": [
@@ -42262,7 +42294,7 @@
           },
           "kind": {
             "type": "string",
-            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
+            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
           },
           "lessonsSkipped": {
             "type": "integer",
@@ -70252,6 +70284,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70277,6 +70312,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70647,6 +70683,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70672,6 +70711,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71034,6 +71074,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71059,6 +71102,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71385,6 +71429,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71410,6 +71457,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71763,6 +71811,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71788,6 +71839,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -72167,6 +72219,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -72192,6 +72247,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -72518,6 +72574,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -72543,6 +72602,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -72869,6 +72929,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -72894,6 +72957,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -74659,6 +74723,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -74684,6 +74751,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75054,6 +75122,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75079,6 +75150,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75441,6 +75513,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75466,6 +75541,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75792,6 +75868,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75817,6 +75896,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -76170,6 +76250,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -76195,6 +76278,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -76574,6 +76658,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -76599,6 +76686,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -76925,6 +77013,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -76950,6 +77041,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -77276,6 +77368,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -77301,6 +77396,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -78723,6 +78819,14 @@
             "nullable": true,
             "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
             "type": "string"
+          },
+          "subjectExtra": {
+            "description": "The optional exam study a lesson belongs to, with or without an official guide respectively.",
+            "type": "string",
+            "enum": [
+              "notice",
+              "optional"
+            ]
           },
           "title": {
             "nullable": true,
@@ -85678,6 +85782,10 @@
             ],
             "additionalProperties": false
           },
+          "hasNotice": {
+            "description": "Whether the exam has a source guide or the learner supplied test material.",
+            "type": "boolean"
+          },
           "kind": {
             "type": "string",
             "enum": [
@@ -85784,6 +85892,12 @@
             },
             "description": "For an exam goal: the learner's other active or paused exam goals whose plans teach some of the same skills with the same lessons, in the order they were started. A lesson on a shared skill counts in each, so a topic is studied once for all of them; practice and mocks stay in each exam's style. Each subject's `sharedWith` names which. Empty for other goals, and when nothing is shared"
           },
+          "subjectCount": {
+            "description": "The number of subjects excluding optional exam study.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "subjects": {
             "type": "array",
             "items": {
@@ -85875,6 +85989,10 @@
               "share"
             ],
             "additionalProperties": false
+          },
+          "extra": {
+            "description": "Whether the subject is optional exam study outside the tested subjects.",
+            "type": "boolean"
           },
           "group": {
             "nullable": true,
@@ -86453,6 +86571,47 @@
           "examDocument": {
             "$ref": "#/components/schemas/ExamDocument"
           },
+          "extraOffer": {
+            "description": "The optional exam strategy lessons that all fit before the exam, when the notice selection fits and no fit offer takes priority.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "effect": {
+                "$ref": "#/components/schemas/PlanEffect"
+              },
+              "fits": {
+                "type": "boolean",
+                "description": "True when the plan with the change covers everything in depth by its date, as the change plans it"
+              },
+              "operations": {
+                "minItems": 1,
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PlanOperationOutput"
+                }
+              },
+              "canApply": {
+                "type": "boolean",
+                "description": "Whether the offer was calculated for the current study day."
+              },
+              "lessons": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991,
+                "description": "The number of optional lessons added by the change."
+              }
+            },
+            "required": [
+              "effect",
+              "fits",
+              "operations",
+              "canApply",
+              "lessons"
+            ],
+            "additionalProperties": false
+          },
           "feasibility": {
             "nullable": true,
             "type": "object",
@@ -86645,6 +86804,10 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "hasNotice": {
+            "description": "Whether the exam has a source guide or the learner supplied test material.",
+            "type": "boolean"
           },
           "languageAim": {
             "nullable": true,
@@ -95549,6 +95712,14 @@
                   "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
                   "type": "string"
                 },
+                "subjectExtra": {
+                  "description": "The optional exam study a lesson belongs to, with or without an official guide respectively.",
+                  "type": "string",
+                  "enum": [
+                    "notice",
+                    "optional"
+                  ]
+                },
                 "title": {
                   "nullable": true,
                   "type": "string"
@@ -99427,6 +99598,13 @@
               "displayName": {
                 "type": "string"
               },
+              "examDocument": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExamDocument"
+                  }
+                ]
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -100580,6 +100758,31 @@
               "start"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setExtras"
+                ]
+              },
+              "skillIds": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "skillIds"
+            ],
+            "additionalProperties": false,
+            "description": "Sets the optional exam skills the learner chose. New skills must be offered by the current plan."
           }
         ],
         "type": "object"

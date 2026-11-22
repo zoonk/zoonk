@@ -33,3 +33,9 @@ export function useTodayChoice(key: string) {
 
   return [chosen, setChosen] as const;
 }
+
+/** A learner who can't listen today reads a listening step's sentence, so its audio stays quiet. */
+export function useIsQuietListening(stepKind: string): boolean {
+  const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+  return cantListen && stepKind === "listening";
+}

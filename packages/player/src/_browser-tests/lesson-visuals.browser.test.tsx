@@ -7,14 +7,13 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
+import { inlineImage, teachingStep } from "../preview/preview-steps";
 import {
-  inlineImage,
   japaneseRegionsChart,
   lawTimeline,
   lettersChart,
-  teachingStep,
   visitorsChart,
-} from "../preview/preview-steps";
+} from "../preview/preview-visuals";
 
 const PHONE = { height: 812, width: 375 };
 

@@ -596,6 +596,9 @@ public struct LanguageExercise: Codable, Hashable, Sendable {
     public let otherSentenceOrders: [[String]]
     /// Other accepted tile orders of `translation`, already split into its tiles.
     public let otherTranslationOrders: [[String]]
+    /// Its translation is the sentence itself, as in a lesson in the learner's own language, so
+    /// showing it gives the answer away.
+    public let readsItself: Bool
   }
 
   public struct Word: Codable, Hashable, Sendable, Identifiable {

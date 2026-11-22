@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { CantListenSwitch } from "../../components/cant-listen-switch";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivitySoundNote } from "../_components/activity-sound-button";
 import { FRETBOARD_SPAN, GuitarFretboard } from "../_components/guitar-fretboard";
@@ -29,7 +30,7 @@ import {
   voicingMidis,
   voicingPitches,
 } from "./keyboard-fretboard-notes";
-import { CantListenSwitch, SoundAsText, useKeyboardListening } from "./sound-as-text";
+import { SoundAsText, useKeyboardListening } from "./sound-as-text";
 
 const OCTAVE = 12;
 const STRUM_GAP = 0.04;

@@ -126,7 +126,7 @@ class FitOfferCheckTest {
         held.complete(Unit)
         compose.waitForIdle()
 
-        assertTrue(SlotItem.FitLessons.key in viewModel.slotState.dismissed)
+        assertTrue(SlotItem.FitLessons(plan.fitOffer!!).key in viewModel.slotState.dismissed)
         assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
         assertEquals(emptyList<List<PlanOp>>(), api.changes)
     }
@@ -218,6 +218,7 @@ class FitOfferCheckTest {
                     val navigator = rememberAppNavigator()
                     Box(Modifier.width(cardWidth).testTag(CARD)) {
                         FitLessonsSuggestion(
+                            SlotItem.FitLessons(page.plan.fitOffer!!),
                             Slot(
                                 page,
                                 PlanEdits(pending = pending, change = viewModel::change, outcomes = viewModel.outcomes),

@@ -6276,42 +6276,42 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "All six requested abilities are present: recall from the learner’s own materials, weakness-first review, timed practice, interpreting question demands, pacing and checking answers. The weights are within the exam range, and no blueprint was supplied to justify unequal weights.",
+          "reasoning": "All six requested abilities are identifiable. In particular, pacing teaches how to allocate time, while the timed run tests that allocation in practice. With no exam blueprint, there is no basis for requiring different weights.",
           "score": 10,
           "label": "Coverage",
           "weight": 25
         },
         {
           "categoryId": "orderAndPrerequisites",
-          "reasoning": "The two stages progress from preparing content to practicing under test conditions. Recall leads directly to gap identification and prioritization, and pacing precedes the timed run. The weak link is that the corrective review does not build explicitly on the selected priority, despite that being the point of the preceding sequence.",
+          "reasoning": "The two stages have distinct titles and reachable milestones, and recall usefully precedes weak-area prioritization. The central ordering issue is that the timed rehearsal already calls for checking answers without listing or following the checking skill. Requiring scope organization before any recall is also unnecessarily restrictive.",
           "score": 8,
           "label": "Order & prerequisites",
           "weight": 20
         },
         {
           "categoryId": "granularity",
-          "reasoning": "Each skill targets a narrow action in two or three short lessons. The 22 lessons account for 66 minutes of the estimated 132 minutes, leaving a credible amount of time for recall, review and a short timed run.",
-          "score": 10,
+          "reasoning": "The actions are narrow enough for short lessons. The 26 three-minute lessons take 78 minutes, leaving another 78 minutes within the 2.6-hour estimate for retrieval, review and rehearsal. That is credible for this small goal.",
+          "score": 9,
           "label": "Size matched to demand",
           "weight": 15
         },
         {
           "categoryId": "noFiller",
-          "reasoning": "The supporting skills serve distinct purposes: identifying what was missed, deciding what to tackle first, correcting a misunderstanding and spacing subsequent review. There is no unrelated subject matter, orientation unit or exam-day logistics.",
-          "score": 10,
+          "reasoning": "Two standalone planning skills add avoidable overhead: selecting materials can be the first step in recall, and scheduling the next review can finish the weak-area prioritization exercise. By contrast, correcting a mistaken recollection has a distinct purpose from checking a completed answer against the question.",
+          "score": 7,
           "label": "No filler or overlap",
           "weight": 15
         },
         {
           "categoryId": "goalFit",
-          "reasoning": "The learner-facing text is in Korean, with reusable, verb-final action names. The single beginner course uses the learner’s own materials without assuming a subject, question format or exam-day procedure.",
+          "reasoning": "The Korean, beginner-level map stays within one general study and test-taking course. It uses the learner's available materials without guessing a discipline, question format or exam-day procedure. The skill names are reusable, verb-final can-do statements.",
           "score": 10,
           "label": "Goal & level fit",
           "weight": 15
         },
         {
           "categoryId": "aiEraSkills",
-          "reasoning": "The path practices judgment: learners compare recall against evidence, diagnose misunderstandings, allocate scarce time and verify answers against question requirements. Independent practice fits the exam goal; an AI-tool unit is not needed.",
+          "reasoning": "The learner compares recollection with a source, diagnoses mistakes, prioritizes weak areas and checks whether an answer meets the question's conditions. Those are useful judgments for an unaided exam; no AI-tool skill is needed.",
           "score": 10,
           "label": "Skills for a world with AI",
           "weight": 10
@@ -6329,9 +6329,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 4306,
-          "outputTokens": 689,
-          "reasoningTokens": 62
+          "inputTokens": 4355,
+          "outputTokens": 718,
+          "reasoningTokens": 67
         }
       },
       "steps": [
@@ -6341,14 +6341,14 @@
           "score": 10
         },
         {
-          "conclusion": "The first phase identifies gaps, ranks them and teaches correction, but `correct-errors` is independent of `prioritize-review`. A learner following the prerequisite graph could therefore practice correction without using the review priority they just learned to set.",
+          "conclusion": "The timed run asks the learner to measure time spent checking answers, but the skill that teaches that check comes afterward. Phase 1 also makes organizing the exam scope a prerequisite for recall, although the learner can start with a single page of notes.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the handoff explicit: have the learner select the highest-priority gap, revisit it in their own notes and test recall again. In the timed run, reserve a short final interval for checking answers so pacing and checking are practiced together.",
+          "conclusion": "Keep the timed run as the final rehearsal, after question reading, pacing and answer checking. Streamline preparation by starting recall with a set of notes and choosing the next review session when prioritizing weak material, rather than giving setup and scheduling separate skills.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -6367,42 +6367,42 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "All six pillars are present: recall from the learner's materials, prioritization and correction of weak content, timed practice, question interpretation, pacing, and answer checking. There is no named subject or blueprint that would justify additional content or differentiated weights.",
-          "score": 10,
+          "reasoning": "All six requested actions are present. In particular, checking answers means checking both omissions and alignment with the question, not merely looking over the work. Recall is taught, though its source could be identified more precisely as the learner’s notes. With no blueprint, there is no basis for requiring unequal exam weights.",
+          "score": 9,
           "label": "Coverage",
           "weight": 25
         },
         {
           "categoryId": "orderAndPrerequisites",
-          "reasoning": "Recall leads to identifying gaps and then prioritizing review, and question interpretation precedes answer checking. The main sequencing weakness is that the realistic timed exercise requires only question interpretation and occurs before the pacing and checking skills that would make it a demonstration of the second milestone.",
+          "reasoning": "Recall precedes weakness-based review, pacing precedes timed practice, and checking an answer against a prompt depends explicitly on understanding the prompt. The phase titles distinguish stages rather than repeating skill names. The main weakness is the second milestone’s vague description of time use.",
           "score": 8,
           "label": "Order & prerequisites",
           "weight": 20
         },
         {
           "categoryId": "granularity",
-          "reasoning": "The 24 three-minute lessons account for 72 minutes of the 2.4-hour estimate, leaving another 72 minutes for practice and review. The total is credible, though identifying gaps and deciding which gap to tackle are small enough to practice in one lesson-sized activity.",
-          "score": 9,
+          "reasoning": "The skills are concrete actions of two or three short lessons each. The 23 lessons account for 69 minutes of instruction, leaving another 69 minutes in the estimate for practice and review. That is credible for a small exam-preparation path.",
+          "score": 10,
           "label": "Size matched to demand",
           "weight": 15
         },
         {
           "categoryId": "noFiller",
-          "reasoning": "Organizing materials is a weak standalone skill: the learner can select a passage from their own notes as part of recall without a separate sorting exercise. The other additions have distinct purposes, notably correcting an error now versus testing retention after a delay.",
-          "score": 8,
+          "reasoning": "Error diagnosis adds something distinct from deciding what to review first, and the timed run applies rather than duplicates the pacing lesson. Materials organization and scheduling are relevant, though treating the inventory as a separate skill adds modest overhead.",
+          "score": 9,
           "label": "No filler or overlap",
           "weight": 15
         },
         {
           "categoryId": "goalFit",
-          "reasoning": "One beginner course in two phases fits an unspecified exam. The Korean skill names are reusable, verb-final can-do statements. Nothing assumes a discipline, question format, or exam-day procedure.",
+          "reasoning": "The Korean, beginner-level map stays within one study and test-taking course and two phases. It guesses neither a subject nor a question format, and it avoids exam-day logistics. The verb-final skill names describe actions the learner can take.",
           "score": 10,
           "label": "Goal & level fit",
           "weight": 15
         },
         {
           "categoryId": "aiEraSkills",
-          "reasoning": "Learners judge what they understand, decide what deserves review, interpret what a question asks, and check whether their answer meets it. Unaided recall and timed practice serve the exam goal; an AI-tool lesson is not needed.",
+          "reasoning": "The learner judges what is weakest, diagnoses errors, interprets requirements, monitors time, and verifies answers. Recall supports those judgments rather than dominating the path as rote memorization. An AI-tool skill is not needed for this exam goal.",
           "score": 10,
           "label": "Skills for a world with AI",
           "weight": 10
@@ -6420,9 +6420,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 4447,
-          "outputTokens": 707,
-          "reasoningTokens": 47
+          "inputTokens": 4286,
+          "outputTokens": 784,
+          "reasoningTokens": 81
         }
       },
       "steps": [
@@ -6432,14 +6432,14 @@
           "score": 10
         },
         {
-          "conclusion": "The timed run comes before pacing and answer checking. It can serve as a baseline, but the map gives learners no later run in which to apply both skills together. Sorting study materials also takes two lessons for a step that could be handled when learners select notes for their first recall attempt.",
+          "conclusion": "The recall exercise correctly asks the learner to retrieve information and compare it with the source, but says only “자료” (materials), rather than naming the learner’s own notes. The second milestone is also less precise than the skills beneath it: “시험 시간을 활용할 수 있어요” does not say how the learner will demonstrate effective pacing.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
-          "conclusion": "Make the timed run the final exercise, with pacing and answer checking as prerequisites. In the review phase, explicitly ask learners to take the weakest item from their priority list, correct it, and recall it again. That would connect deciding what to review with actually reviewing it.",
+          "conclusion": "Specify “내 필기를 덮고 배운 내용을 떠올린 뒤 필기와 비교해요” for recall. Make the second milestone observable by describing a timed run in which the learner tracks progress and checks answers against the question requirements. For a leaner path, the materials inventory could be the opening exercise of study planning rather than a stand-alone skill.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {

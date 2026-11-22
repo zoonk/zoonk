@@ -217,6 +217,8 @@ export type PlanView = {
   languageAim: LanguageAimView | null;
   notice: "reading" | "usual" | null;
   ownLevel: OwnLevel | null;
+  hasNotice?: boolean;
+  extraOffer?: (PlanOffer & { canApply: boolean; lessons: number }) | null;
   fitOffer: (PlanOffer & { canApply: boolean }) | null;
   fundedMocks: (PlanItemView & { id: string })[];
   phases: PlanPhaseView[];

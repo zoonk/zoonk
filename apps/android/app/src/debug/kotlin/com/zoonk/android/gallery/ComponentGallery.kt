@@ -49,7 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.ZoonkApplication
-import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.RecordButton
@@ -57,11 +56,9 @@ import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenText
-import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
-import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.missions.BrainPowerReward
 import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -147,7 +144,6 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
-import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -900,13 +896,6 @@ private fun Audio() {
             RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {})
             RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
         }
-        VoiceAnswerRecorder(
-            voiceAnswerModel("voice-answer") { recording ->
-                delay(800)
-                if (recording.durationMs < 2_000) GradeOutcome.NoSpeech else GradeOutcome.Failed
-            },
-            navigator,
-        )
         SpeechFailedNote(language = "it", limit = null, onRetry = {}, navigator = navigator, text = "Vorrei un caffè, per favore.")
         SpeechFailedNote(language = "it", limit = Limit.SignUpRequired, onRetry = {}, navigator = navigator)
         MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))

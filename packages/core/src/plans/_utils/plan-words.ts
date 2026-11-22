@@ -6,6 +6,7 @@ import { withTopicPart } from "./focus-topic-part";
 import { type PlanContext } from "./plan-context";
 import { toPlanEditInput } from "./plan-edit-input";
 import { loadPlanMemory } from "./plan-memory";
+import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
 import { toTopicSkills } from "./plan-topics";
 
 type PlanEdit = Awaited<ReturnType<typeof interpretPlanEdit>>;
@@ -14,13 +15,19 @@ async function toPlanOperations({
   context,
   edit,
   request,
+  examStrategy,
 }: {
   context: PlanContext;
   edit: PlanEdit;
+  examStrategy: PlanOperation | undefined;
   request: string;
 }): Promise<PlanOperation[]> {
   const operations = await Promise.all(
-    edit.data.operations.map(async (operation): Promise<PlanOperation> => {
+    edit.data.operations.map(async (operation): Promise<PlanOperation | undefined> => {
+      if (operation.kind === "addExamStrategy") {
+        return examStrategy;
+      }
+
       if (operation.kind === "focusAreas") {
         return withTopicPart({ context, operation, request });
       }
@@ -39,8 +46,8 @@ async function toPlanOperations({
     }),
   );
 
-  return operations.filter(
-    (operation) => operation.kind !== "addSkills" || operation.skills.length > 0,
+  return operations.filter((operation): operation is PlanOperation =>
+    Boolean(operation && (operation.kind !== "addSkills" || operation.skills.length > 0)),
   );
 }
 
@@ -56,14 +63,24 @@ export async function interpretPlanWords({
     need: `A change to the study plan: ${text}`,
   });
 
+  const summary = readFreshPlanSummary({
+    basis: getPlanSummaryBasis(context),
+    value: context.plan.summary,
+  });
+
+  const examStrategy = summary?.advice.extraOffer?.operations.find(
+    (operation) => operation.kind === "setExtras",
+  );
+
   const edit = await interpretPlanEdit({
     dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
+    examStrategyOffered: examStrategy !== undefined,
     ...toPlanEditInput(context),
     memory,
     request: text,
   });
 
-  const operations = await toPlanOperations({ context, edit, request: text });
+  const operations = await toPlanOperations({ context, edit, examStrategy, request: text });
 
   return {
     data: { ...edit.data, operations, understood: edit.data.understood && operations.length > 0 },

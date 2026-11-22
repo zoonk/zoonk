@@ -12,6 +12,7 @@ import { challengeChartCaseFixture } from "@zoonk/testing/fixtures/challenge-cha
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { chartEntries } from "./preview-charts";
 import { type PreviewEntry, type PreviewState, entry } from "./preview-entry";
+import { heardListeningStep, heardSpokenSentenceStep } from "./preview-heard";
 import { buildLesson } from "./preview-lesson";
 import {
   type ActivityContent,
@@ -23,7 +24,6 @@ import {
   languageStep,
   numberedCheckStep,
   pictureCheckStep,
-  spokenAnswerStep,
   teachingStep,
 } from "./preview-steps";
 
@@ -143,7 +143,13 @@ const screenEntries: PreviewEntry[] = [
     group: "Lesson screens",
     id: "spoken-answer",
     label: "Spoken answer",
-    screen: (id) => spokenAnswerStep({ id }),
+    screen: (id) => heardSpokenSentenceStep({ id }),
+  }),
+  entry({
+    group: "Lesson screens",
+    id: "listening",
+    label: "Listening",
+    screen: (id) => heardListeningStep({ id }),
   }),
   entry({
     group: "Lesson screens",

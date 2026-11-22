@@ -54,6 +54,7 @@ const insightChange = (status: "applied" | "proposed"): Today["insight"] => ({
 const planChange = (status: "applied" | "proposed", id = "change"): Today["planChange"] => ({
   behind: null,
   id,
+  kind: "edited",
   status,
 });
 
@@ -66,6 +67,7 @@ const fallingBehind: Today["planChange"] = {
     measure: "exam",
   },
   id: "behind",
+  kind: "missedDays",
   status: "applied",
 };
 
@@ -88,6 +90,17 @@ describe(pickTodayNotice, () => {
     expect(pick({ host: { sourceChange: true }, view: { planChange: fallingBehind } })).toBe(
       "planChange",
     );
+  });
+
+  it("shows an applied notice change before the source news", () => {
+    expect(
+      pick({
+        host: { sourceChange: true },
+        view: {
+          planChange: { behind: null, id: "notice", kind: "noticeChanged", status: "applied" },
+        },
+      }),
+    ).toBe("planChange");
   });
 
   it("puts the exam's own days first, and its final stretch after a changed notice", () => {

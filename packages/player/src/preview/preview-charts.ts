@@ -2,13 +2,8 @@ import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { DETECTOR_SCAN_PLOT, FILL_WEIGHT_PLOT } from "@zoonk/testing/fixtures/plot-visuals";
 import { type PreviewEntry, entry } from "./preview-entry";
-import {
-  explanationStep,
-  japaneseRegionsChart,
-  lawTimeline,
-  lettersChart,
-  visitorsChart,
-} from "./preview-steps";
+import { explanationStep } from "./preview-steps";
+import { japaneseRegionsChart, lawTimeline, lettersChart, visitorsChart } from "./preview-visuals";
 
 const distanceChart: ChartVisual = {
   ...lettersChart,

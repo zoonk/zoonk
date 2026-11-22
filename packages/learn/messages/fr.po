@@ -88,6 +88,16 @@ msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Terminé"
 
+#: src/_components/check-note.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "Nous n’avons pas pu vérifier ta réponse cette fois. Réessaie."
+
+#: src/_components/check-note.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "La vérification continue. Elle prend plus de temps que d’habitude."
+
 #: src/_components/checklist.tsx
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
@@ -368,6 +378,7 @@ msgid "Take a short break, then try again."
 msgstr "Fais une courte pause, puis réessaie."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "Il te faut un compte gratuit"
@@ -2403,6 +2414,7 @@ msgstr "Chapitre {number, number}"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -3394,8 +3406,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "L’envoi n’a pas fonctionné. Ton texte est toujours là. Réessaie dans un instant."
 
 #: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "Crée ton compte gratuit pour continuer."
@@ -6390,29 +6400,6 @@ msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "Tu as reçu un message vocal. Écoute-le et réponds."
 
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "Le micro n’est pas disponible ici. Tu peux passer cette partie."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "2IdQrb"
-msgid "Listening to what you said…"
-msgstr "Écoute de ta réponse…"
-
-#. "Stop" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "Vi6bgi"
-msgid "Recording… Press Stop when you're done."
-msgstr "Enregistrement… Appuie sur Arrêter quand tu as fini."
-
-#. "Record" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "_lLAdM"
-msgid "Press Record and say it out loud"
-msgstr "Appuie sur Enregistrer et dis la phrase à voix haute"
-
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
 msgid "Your plan starts from the level you gave, and your first days fine-tune it."
@@ -6439,19 +6426,14 @@ msgid "I didn't understand the audio"
 msgstr "Je n’ai pas compris l’audio"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "Nous n’avons pas pu vérifier ta réponse. Réessaie."
+msgctxt "TEizt2"
+msgid "The microphone isn't available here. You can skip this part."
+msgstr "Le micro n’est pas disponible ici. Tu peux passer cette partie."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Passer cette partie"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "Dis-le à voix haute"
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
@@ -6662,6 +6644,11 @@ msgid "Nothing said this time"
 msgstr "Aucun mot prononcé cette fois"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "y1aleL"
+msgid "The microphone isn't available here. You can skip this word."
+msgstr "Le micro n’est pas disponible ici. Tu peux passer ce mot."
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "Redis-le"
@@ -6700,32 +6687,6 @@ msgstr "Le mot à dire"
 msgctxt "O1LlS-"
 msgid "Say it like"
 msgstr "Prononce-le comme ceci"
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "l4x7Td"
-msgid "We couldn't hear the word. Try again a little closer."
-msgstr "Nous n’avons pas entendu le mot. Réessaie en te rapprochant un peu du micro."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "75OFKI"
-msgid "That didn't go through. Try again."
-msgstr "Ça n’a pas marché. Réessaie."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "Le micro n’est pas disponible ici. Tu peux passer ce mot."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "VcLERf"
-msgid "Listening to how it sounded…"
-msgstr "Écoute de ta prononciation…"
-
-#. "Record" is the label of the record button.
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "we8m4p"
-msgid "Press Record and say the word out loud"
-msgstr "Appuie sur Enregistrer et dis le mot à voix haute"
 
 #: src/language/today/language-today-section.tsx
 msgctxt "VR3SAU"
@@ -10451,11 +10412,6 @@ msgid "Adjust your plan"
 msgstr "Ajuster ton plan"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, one {Tu as le temps de faire # leçon de plus} other {Tu as le temps de faire # leçons de plus}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10465,6 +10421,17 @@ msgstr "Ton plan a été mis à jour."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "Ajouter au plan"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, one {Tu as le temps de faire # leçon de plus} other {Tu as le temps de faire # leçons de plus}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "Travailler aussi la stratégie d’examen ?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10811,6 +10778,7 @@ msgid "Needed to practice"
 msgstr "Nécessaire pour pratiquer"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "Facultatif"
@@ -10881,34 +10849,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, other {# prérequis}} · premières leçons seulement · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {Suivre l’avis d’examen, avec l’examen prévu vers le {date} ?} other {Suivre le guide officiel de l’examen, avec l’examen prévu vers le {date} ?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {Suivre l’avis d’examen, avec l’examen prévu le {date} ?} other {Suivre le guide officiel de l’examen, avec l’examen prévu le {date} ?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {Suivre l’avis d’examen ?} other {Suivre le guide officiel de l’examen ?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "Déplacer la date de ton examen vers le {date} ?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {Déplacer la date de ton examen au {date} ?} goal {Déplacer la date de fin de ton plan au {date} ?} other {Déplacer ta date au {date} ?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11019,6 +10963,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "Déplacer le défi de cette semaine au {date} ?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {Déplacer la date de ton examen au {date} ?} goal {Déplacer la date de fin de ton plan au {date} ?} other {Déplacer ta date au {date} ?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Étudier sans date de fin ?"
@@ -11077,6 +11026,11 @@ msgstr "Modifier tes prérequis ?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "Étudier jusqu’au niveau {level} ?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "Retirer la stratégie d’examen de ton plan ?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11250,6 +11204,16 @@ msgstr "Leçons ajoutées à ton plan."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "Les dates de tes phases ont changé."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "La stratégie d’examen a été ajoutée à ton plan."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "La stratégie d’examen n’est pas dans ton plan."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12812,6 +12776,18 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Enregistrer"
 
+#. “Stop” is the label of the button that ends the recording.
+#: src/speech/record-note.tsx
+msgctxt "CzQFwa"
+msgid "Listening… Tap Stop to check."
+msgstr "À l’écoute… Appuie sur Arrêter pour vérifier."
+
+#. “Record” is the label of the button that starts the recording.
+#: src/speech/record-note.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Appuie sur Enregistrer et dis-le à voix haute"
+
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"
 msgid "Getting the audio ready…"
@@ -12945,12 +12921,6 @@ msgid "From your material"
 msgstr "Dans tes documents"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "Aussi dans ton plan"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Sujets dans tes documents"
@@ -13079,6 +13049,12 @@ msgstr "Pas dans ton plan · le temps prévu ne suffit pas"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "Pas encore prêt"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {Absent de l’avis officiel} other {Absent du guide officiel}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13276,6 +13252,7 @@ msgid "Okay. Your time stays the same."
 msgstr "D’accord. Ton temps d’étude reste le même."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Modification du plan"
@@ -13321,6 +13298,7 @@ msgid "Move it"
 msgstr "Déplacer"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Compris"
@@ -13338,6 +13316,7 @@ msgid "Your study time stays the same."
 msgstr "Ton horaire d’étude reste le même."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13369,15 +13348,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "S’entraîner avec {name}"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "Garder mon choix"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "Hors de ton plan : {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "Suggestion suivante"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {Ton plan suit désormais l’avis officiel} other {Ton plan suit désormais le guide officiel}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "Garder mon choix"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"

@@ -2,7 +2,11 @@ package com.zoonk.android.feature.mistakes
 
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.SessionSource
+import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.api.ApiJson
@@ -11,12 +15,15 @@ import com.zoonk.api.models.MistakePracticeAnswerInput
 import com.zoonk.api.models.MistakePracticeCompletion
 import com.zoonk.api.models.MistakePracticeFeedback
 import com.zoonk.api.models.MistakePracticeFinishInput
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
+import java.io.File
 import java.util.UUID
 
 internal const val FIRST_MISTAKE = "7b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
@@ -125,7 +132,15 @@ internal fun practiceViewModel(
     api: FakeMistakesApi,
     clock: () -> Long = { 0L },
     saved: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
-) = MistakePracticeViewModel(PracticeKey(goalId = null, skillId = null), MistakesStore(api, cache) { "UTC" }, saved, clock)
+    choices: TodayChoices = noChoices(),
+    sessions: SessionSource = FakeSession(null),
+): MistakePracticeViewModel {
+    val store = MistakesStore(api, cache) { "UTC" }
+    return MistakePracticeViewModel(PracticeKey(goalId = null, skillId = null), store, choices, sessions, saved, clock)
+}
+
+/** A learner who hasn't chosen anything for the day; drafts that no account opened are never read from disk. */
+internal fun noChoices() = TodayChoices(DraftStore(File("unused"), CoroutineScope(SupervisorJob())))
 
 internal fun MistakePracticeViewModel.started() =
     runBlocking { practice.load() }.let {

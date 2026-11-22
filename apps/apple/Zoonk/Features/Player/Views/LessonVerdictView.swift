@@ -10,6 +10,8 @@ struct LessonVerdictView: View {
   var store: LessonPlayerStore? = nil
   let willReturn: Bool
   var hyperdriveStreak: Int?
+  /// The notebook's own lines about this answer, inside the card so they go wherever it goes.
+  var notes: AnyView?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -33,6 +35,8 @@ struct LessonVerdictView: View {
       } else {
         details
       }
+
+      notes
     }
     .feedbackPanel()
     .accessibilityElement(children: .contain)

@@ -259,14 +259,15 @@ private fun SetupActionBar(
 
 /**
  * A test's question: one column, or across an open book's fold a spread like practice's, with what to [read] on the
- * page before the fold and the [answer] on the page after it, its [actions] pinned at that page's bottom. The page
- * before the fold scrolls with the one column, so a reading place keeps as the book opens or closes.
+ * page before the fold and the [answer] on the page after it, its [actions] pinned at that page's bottom with their [note]
+ * over them. The page before the fold scrolls with the one column, so a reading place keeps as the book opens or closes.
  */
 @Composable
 internal fun ColumnScope.QuestionPages(
     questionId: String,
     read: @Composable ColumnScope.() -> Unit,
     answer: @Composable ColumnScope.() -> Unit,
+    note: (@Composable () -> Unit)? = null,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     SetupContent {
@@ -311,7 +312,7 @@ internal fun ColumnScope.QuestionPages(
                     if (fold == null) read()
                     answer()
                 }
-                PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
+                PageActions(note = note) { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
             }
 
             if (fold != null) {

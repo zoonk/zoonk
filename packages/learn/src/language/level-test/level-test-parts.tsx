@@ -108,53 +108,6 @@ export function ListeningMessage({
   );
 }
 
-export function SpeakingPrompt({
-  error,
-  micAvailable,
-  pending,
-  recording,
-  sentence,
-}: {
-  error: string | null;
-  micAvailable: boolean;
-  pending: boolean;
-  recording: boolean;
-  sentence: ReadyTest["next"] & { kind: "speaking" };
-}) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col items-center gap-5 text-center">
-      <div className="flex w-full flex-col gap-1">
-        <p className="text-2xl font-semibold tracking-tight text-balance">
-          {sentence.speaking.sentence}
-        </p>
-        <p className="text-muted-foreground">{sentence.speaking.translation}</p>
-      </div>
-
-      <p aria-live="polite" className="text-muted-foreground text-sm">
-        {!micAvailable && t("The microphone isn't available here. You can skip this part.")}
-        {micAvailable && pending && t("Listening to what you said…")}
-        {micAvailable &&
-          !pending &&
-          recording &&
-          t({
-            description: '"Stop" is the label of the record button.',
-            message: "Recording… Press Stop when you're done.",
-          })}
-        {micAvailable &&
-          !pending &&
-          !recording &&
-          (error ??
-            t({
-              description: '"Record" is the label of the record button.',
-              message: "Press Record and say it out loud",
-            }))}
-      </p>
-    </div>
-  );
-}
-
 export function LevelBars({ levels }: { levels: LevelView[] }) {
   const skillName = useSkillName();
 

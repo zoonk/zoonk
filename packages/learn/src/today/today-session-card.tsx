@@ -51,7 +51,8 @@ function SessionQueue({ next }: { next: DayStep | null }) {
   const listRef = useRef<HTMLOListElement>(null);
   const revealFrom = useRef<number | null>(null);
   const opens = next !== null;
-  const showSubject = new Set(blocks.map((block) => block.subject).filter(Boolean)).size > 1;
+  const subjects = new Set(blocks.map((block) => block.subject ?? block.subjectExtra));
+  const showSubject = [...subjects].filter(Boolean).length > 1;
   const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next?.position ?? null });
   const foldsDone = done.length > DONE_ROWS;
   const doneLabel = useDoneFoldLabel(done);

@@ -23,6 +23,7 @@ import com.zoonk.android.ui.components.SuggestionMenu
 import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.PlanTimeToCover
@@ -300,9 +301,12 @@ private fun FindAction(
 
 /** Main's `FitLessonsSuggestion`: the lessons the learner's own time fits that the plan doesn't hold. */
 @Composable
-internal fun FitLessonsSuggestion(slot: Slot) {
+internal fun FitLessonsSuggestion(
+    item: SlotItem.FitLessons,
+    slot: Slot,
+) {
     val page = slot.page
-    val offer = page.plan.fitOffer ?: return
+    val offer = item.offer
     val preview = slot.host.preview.of(offer.operations.map { it.op }, page.plan)
     val today = (preview as? PlanPreviewState.Ready)?.preview?.effect
     val target = page.plan.schedule.targetDate
@@ -324,7 +328,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
     val checkingWords = stringResource(R.string.plan_checking_changes)
     val room = remember(offer) { HeldRoom() }
 
-    PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
+    PlanChangeSuggestion(item, title, slot) {
         // The card asks: its check adds only while the card shows, so one paged away adds nothing.
         VisitOf(slot.edits.outcomes.suggestion)
         // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
@@ -338,7 +342,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                     busy = pending || checking,
                     leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
-                SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)
+                SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(item) }, secondary = true)
             }
         } else {
             PlanPreviewResult(
@@ -351,6 +355,55 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 repriced = true,
                 roomLines = FIT_ROOM_LINES,
                 heldRoom = room,
+            )
+        }
+    }
+}
+
+/**
+ * Optional exam strategy, offered only when all of it fits before the exam and nothing the exam tests moves out. It
+ * adds as the fit offer does: at once when its numbers are today's, after a check otherwise.
+ */
+@Composable
+internal fun ExtraOfferSuggestion(
+    item: SlotItem.ExtraOffer,
+    slot: Slot,
+) {
+    val page = slot.page
+    val offer = item.offer
+    val preview = slot.host.preview.of(offer.operations.map { it.op }, page.plan)
+    val lessons = offer.lessons.toInt()
+    val label = optionalStudyLabel(page.plan.hasNotice == true, page.plan.examDocument)
+    val line = factsLine(pluralStringResource(R.plurals.plan_far_lessons, lessons, lessons), label)
+    val pending = slot.edits.isPending(PlanPart.Suggestion)
+    val checking = preview is PlanPreviewState.Loading
+    val add = { slot.host.addExtraOffer(offer) }
+    val checkingWords = stringResource(R.string.plan_checking_changes)
+
+    PlanChangeSuggestion(item, stringResource(R.string.plan_extra_offer_title), slot) {
+        // The card asks: its check adds only while the card shows, so one paged away adds nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
+        if (preview == PlanPreviewState.Idle || checking) {
+            SuggestionDescription(line)
+            SuggestionActions {
+                SuggestionAction(
+                    onClick = add,
+                    modifier = if (checking) Modifier.semantics { stateDescription = checkingWords } else Modifier,
+                    busy = pending || checking,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+                ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
+                SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(item) }, secondary = true)
+            }
+        } else {
+            PlanPreviewResult(
+                state = preview,
+                onApply = add,
+                onRetry = add,
+                onDismiss = slot.host.clearPreview,
+                pending = pending,
+                dateKind = page.dateKind,
+                repriced = true,
+                roomLines = 1,
             )
         }
     }

@@ -176,7 +176,7 @@ function StepScreen({
   /** A change made on a screen without answering it, such as the aim, read back. */
   onViewChange: (view: OnboardingView) => void;
   pending: boolean;
-  plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
+  plan: { initialPlan: RevealedPlan | null; planActions: Omit<PlanActions, "readPlanAgain"> };
   profile: ProfileStepState;
   routes: OnboardingRoutes;
   schedule: { draft: ScheduleDraft | null; onChangeDate: (draft: ScheduleDraft) => void };

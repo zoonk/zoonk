@@ -126,7 +126,7 @@ export async function loadUnstartedDayView({
       blocks,
       oftenTestedSkillIds,
       preparing: day.preparing.has(block.position),
-      subject: subjects.get(block.position) ?? null,
+      ...subjects.get(block.position),
     }),
   );
 

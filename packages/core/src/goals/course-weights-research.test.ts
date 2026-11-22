@@ -257,10 +257,12 @@ describe(copyStoredCourseWeights, () => {
   });
 });
 
+const TARGET_DATE = new Date(Date.now() + 160 * 86_400_000).toISOString().slice(0, 10);
+
 describe("background plan inputs", () => {
   it.each<OnboardingAnswerInput>([
     { level: "basic", question: "level" },
-    { question: "targetDate", targetDate: "2027-04-29" },
+    { question: "targetDate", targetDate: TARGET_DATE },
     { dailyMinutes: 25, question: "schedule" },
   ])("keeps research landing while the learner answers $question", async (input) => {
     const goal = await enemGoal({ answered: [], institution: "UFMG", targetCourse: "Medicina" });
