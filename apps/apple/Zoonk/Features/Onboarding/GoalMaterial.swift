@@ -175,7 +175,6 @@ struct GoalMaterialSections: View {
         localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
   }
 
-  /// Names the one file a goal found gone; several are said together.
   /// Why the paperclip is off once the goal holds all the material it can use.
   private var fullLine: String? {
     material.hasRoom
@@ -189,6 +188,7 @@ struct GoalMaterialSections: View {
         ))
   }
 
+  /// Names the one file a goal found gone; several are said together.
   private var unavailableLine: LocalizedStringResource? {
     let unavailable = material.filter(\.isUnavailable)
 
@@ -241,10 +241,14 @@ private struct MaterialChip: View {
           .accessibilityLabel(Text("Remove \(title)", tableName: "Onboarding"))
       }
       .buttonStyle(.plain)
+      // Laid out as main's 28pt button, so the chip is main's height; its 44pt target reaches past
+      // the chip.
+      .padding(-8)
     }
     .typeStyle(.body)
     .foregroundStyle(isUnavailable ? .destructiveText : Color(.foreground))
     .padding(.leading, 12)
+    .padding([.vertical, .trailing], 4)
     .background(
       isUnavailable ? Color.destructiveSoft : Color(.muted), in: .rect(cornerRadius: Radius.md))
   }
