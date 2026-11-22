@@ -510,14 +510,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
       store.state?.run, .refused(.failed), "the retried start still shows the failed screen")
 
     // The refusal view is the only place that offers a start retry.
-    let secondTap: Task<Void, Never>?
+    var secondTap: Task<Void, Never>?
     if case .refused = store.state?.run {
       secondTap = Task { await store.load() }
-    } else {
-      secondTap = nil
+      deadline = Date.now.addingTimeInterval(1)
+      while await transport.count < 3, Date.now < deadline { await Task.yield() }
     }
-    deadline = Date.now.addingTimeInterval(1)
-    while await transport.count < 3, Date.now < deadline { await Task.yield() }
     let tappedTwice = await transport.count
     XCTAssertEqual(tappedTwice, 2, "a second tap cancelled the running start and sent another")
     await transport.release()

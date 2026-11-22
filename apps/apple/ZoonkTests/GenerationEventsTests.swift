@@ -148,7 +148,7 @@ final class GenerationEventsTests: XCTestCase {
       id: "run-1", token: "learner-token", stopCheck: .milliseconds(10))
 
     await fulfillment(of: [checkedAgain], timeout: 5)
-    let outcome = await outcome(of: events, within: .milliseconds(300))
+    let outcome = await outcome(of: events, within: .milliseconds(50))
 
     XCTAssertEqual(outcome, .open)
   }
