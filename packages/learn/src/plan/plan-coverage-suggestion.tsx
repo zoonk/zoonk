@@ -31,6 +31,8 @@ import {
 } from "./plan-suggestion-context";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
+const ITEM: SlotItem = { key: "coverage", kind: "coverage" };
+
 /** Moving the date is asked for (it plans the goal many times), so only its answer is waited on. */
 function useDateAsk(intent: Intent) {
   const t = useExtracted();
@@ -144,8 +146,7 @@ function SuggestedTimeCard({ suggested }: { suggested: SuggestedDailyTime }) {
   const timeOffer = suggestedTimeOffer(suggested);
   const shown = date.offer ?? timeOffer;
   const offer = date.retry || date.pending ? null : shown;
-  const item: SlotItem = { key: "coverage", kind: "coverage" };
-  const { apply, isPending } = useApplyPreview(item);
+  const { apply, isPending } = useApplyPreview(ITEM);
 
   const preview = currentPlanPreview({
     operations: offer?.operations ?? [],
@@ -171,7 +172,7 @@ function SuggestedTimeCard({ suggested }: { suggested: SuggestedDailyTime }) {
   };
 
   return (
-    <PlanChangeSuggestion item={item} title={shown.title}>
+    <PlanChangeSuggestion item={ITEM} title={shown.title}>
       {shown.description.map((line) => (
         <SuggestionDescription key={line}>{line}</SuggestionDescription>
       ))}
@@ -202,5 +203,15 @@ function SuggestedTimeCard({ suggested }: { suggested: SuggestedDailyTime }) {
 
 export function CoverageSuggestion() {
   const { plan } = usePlanScreen();
-  return plan.suggestedTime && <SuggestedTimeCard suggested={plan.suggestedTime} />;
+
+  if (plan.suggestedTime) {
+    return <SuggestedTimeCard suggested={plan.suggestedTime} />;
+  }
+
+  // Once the time is applied nothing is suggested, but the card still says so, with its Undo.
+  return (
+    <PlanChangeSuggestion item={ITEM} title="">
+      {null}
+    </PlanChangeSuggestion>
+  );
 }
