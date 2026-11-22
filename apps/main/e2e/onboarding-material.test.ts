@@ -55,16 +55,19 @@ test.describe("A goal sent with the learner's material", () => {
     await prisma.learnerSource.deleteMany({ where: { origin: "upload", userId: user.id } });
     await page.getByRole("button", { name: "Build my plan" }).click();
 
+    const attached = page.getByRole("list", { name: "Your material" });
     const removeNotes = page.getByRole("button", { name: "Remove Your text" });
 
-    await expect(removeNotes).toHaveAccessibleDescription(
-      "We can't read “Your text” anymore. Remove it and add it again.",
-    );
+    await expect(
+      page.getByText("We can't read “Your text” anymore. Remove it and add it again."),
+    ).toBeVisible();
 
+    await expect(attached).toContainText("Can't be read");
     await expect(goalBox).toHaveValue(words);
     await removeNotes.click();
     await addNotes();
-    await expect(removeNotes).toHaveAccessibleDescription("");
+    await expect(removeNotes).toBeVisible();
+    await expect(attached).not.toContainText("Can't be read");
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(DRAFT_URL);

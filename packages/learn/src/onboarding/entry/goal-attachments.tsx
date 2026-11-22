@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleAlertIcon, FileTextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { useAppLocale } from "../../_utils/locale";
@@ -30,11 +30,9 @@ import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 function AttachedChip({
   item,
   onRemove,
-  unreadableNoteId,
 }: {
   item: StartAttachment;
   onRemove: (id: string) => void;
-  unreadableNoteId: string;
 }) {
   const t = useExtracted();
   const title = item.title || t("Your text");
@@ -50,8 +48,16 @@ function AttachedChip({
     >
       <Icon aria-hidden="true" className="size-4 shrink-0" />
       <span className="truncate">{title}</span>
+      {unreadable && (
+        <span className="sr-only">
+          {`, ${t({
+            description:
+              "Read by screen readers after the name of an attached file that can't be read anymore.",
+            message: "Can't be read",
+          })}`}
+        </span>
+      )}
       <Button
-        aria-describedby={unreadable ? unreadableNoteId : undefined}
         aria-label={t("Remove {title}", { title })}
         className={cn(
           "size-7 rounded-full",
@@ -67,7 +73,7 @@ function AttachedChip({
   );
 }
 
-function UnreadableNote({ id, items }: { id: string; items: StartAttachment[] }) {
+function UnreadableNote({ items }: { items: StartAttachment[] }) {
   const t = useExtracted();
   const [only, ...others] = items;
 
@@ -76,12 +82,16 @@ function UnreadableNote({ id, items }: { id: string; items: StartAttachment[] })
   }
 
   return (
-    <ChangeSaveError id={id}>
+    <ChangeSaveError>
       {others.length > 0
-        ? t("We can't read some of your files anymore. Remove them and add them again.")
+        ? t({
+            description:
+              "Under the learner's attached material when several items sent with their goal can't be read anymore.",
+            message: "We can't read some of your files anymore. Remove them and add them again.",
+          })
         : t({
             description:
-              "Shown when the learner's material can't be read anymore. {title} is a file's name, a link or “Your text”.",
+              "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\".",
             message: "We can't read “{title}” anymore. Remove it and add it again.",
             values: { title: only.title || t("Your text") },
           })}
@@ -97,18 +107,17 @@ function AttachedChips({
   onRemove: (id: string) => void;
 }) {
   const t = useExtracted();
-  const noteId = useId();
   const unreadable = items.filter((item) => item.unreadable);
 
   return (
     <>
       <ul aria-label={t("Your material")} className="flex flex-wrap gap-2">
         {items.map((item) => (
-          <AttachedChip item={item} key={item.id} onRemove={onRemove} unreadableNoteId={noteId} />
+          <AttachedChip item={item} key={item.id} onRemove={onRemove} />
         ))}
       </ul>
 
-      <UnreadableNote id={noteId} items={unreadable} />
+      <UnreadableNote items={unreadable} />
     </>
   );
 }

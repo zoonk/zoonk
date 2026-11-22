@@ -8839,17 +8839,24 @@ msgctxt "G3iV_U"
 msgid "Musicianship for {instrument}"
 msgstr "Formation musicale pour {instrument}"
 
+#. Read by screen readers after the name of an attached file that can't be read anymore.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "yJQoIT"
+msgid "Can't be read"
+msgstr ""
+
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "Retirer {title}"
 
+#. Under the learner's attached material when several items sent with their goal can't be read anymore.
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "2FABsh"
 msgid "We can't read some of your files anymore. Remove them and add them again."
 msgstr ""
 
-#. Shown when the learner's material can't be read anymore. {title} is a file's name, a link or “Your text”.
+#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "-9IdF4"
 msgid "We can't read “{title}” anymore. Remove it and add it again."
