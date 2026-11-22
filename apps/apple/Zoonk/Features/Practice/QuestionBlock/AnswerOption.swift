@@ -12,6 +12,7 @@ enum AnswerOptionResult: Equatable {
 /// The first nine answer to their number key on a hardware keyboard, as on the web.
 struct AnswerOption: View {
   var marker: Int?
+  var shortcut: Int?
   var isPicked = false
   var result: AnswerOptionResult?
   /// The learner's pick was a guess, so it says "Your guess".
@@ -50,7 +51,7 @@ struct AnswerOption: View {
     }
     .buttonStyle(AnswerOptionStyle(isPicked: isPicked, result: result))
     .disabled(isLocked)
-    .modifier(NumberKeyShortcut(number: marker, isEnabled: !isLocked))
+    .modifier(NumberKeyShortcut(number: shortcut ?? marker, isEnabled: !isLocked))
     .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 

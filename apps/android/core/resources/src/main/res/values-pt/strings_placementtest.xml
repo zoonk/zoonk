@@ -4,7 +4,6 @@
   "placementtest_about": "1fce9c2df480fbf8f7d9a2e1d829bf622b6072babb23edaed9ff5b43e8eb548a",
   "placementtest_about_in_parts": "4b0ad412846ae607b1f521c0f33a28087c801ea07d8f56a5b1c47e8ee17a2dd9",
   "placementtest_check_my_level": "154f2c607b989f58367f27e1a419984589f3a8ba256eaf3f5054db443a6afa44",
-  "placementtest_choose_note": "08308e06c74b251fb403be5e9a01bc35012cea15ebaa0cb2b2980ccbeb9f46ea",
   "placementtest_choose_title": "5b89c0e4a82d4431b8961c7bdb2d5b9e46cb0e3f9e44996f7420a1bd35a399fa",
   "placementtest_continue_from_plan": "323d684eda562d6c304fec927a0768a0aa31b22dc0c374e9a2e206c4fe83d0e7",
   "placementtest_continue_title": "946978e9953b2e4e5765e8fe793f6a45ad5437e56b1fc7a1a4e5937057b067d8",
@@ -78,7 +77,6 @@
     <string name="placementtest_test_out">Pular %1$s com um teste</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Pule %1$s se você já souber esse conteúdo</string>
-    <string name="placementtest_choose_note">Você pode parar quando quiser. As aulas que você já conhece continuam puladas.</string>
     <string name="placementtest_start">Começar</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Parte %1$d</string>

@@ -4,7 +4,6 @@
   "placementtest_about": "809408a7cbe298b2c629478cac4564e5e56792cb8f123df8d792478348834ffb",
   "placementtest_about_in_parts": "4fae6d42ea4f39abe78bdfb1f024181d0a271dce6c1761a81da396a03b1c4fda",
   "placementtest_check_my_level": "3be02663810c0c1437db4bc21004cc4466ec5fbae13f8919a5a182e0238894a7",
-  "placementtest_choose_note": "ad636b8fbd62248fe3c3e0d82dfbf6fdf6b472904cdd943d4313116204a4a781",
   "placementtest_choose_title": "7a066188f1e076d4eed4e54b0a2aa00b367b2c4e0fe924bbe38e51ff3b9b1095",
   "placementtest_continue_from_plan": "2c48b61af75cbb9fa40421267b93871ff3c515b5709a81064ecec0bb9761e864",
   "placementtest_continue_title": "4adefd0405548fbab5b1352af4f034c54aff005b572732963b419d0b4140abc6",
@@ -78,7 +77,6 @@
     <string name="placementtest_test_out">Hacer una prueba de %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Saltar %1$s si ya lo conoces</string>
-    <string name="placementtest_choose_note">Puedes detenerte en cualquier momento. Las lecciones que ya conoces se darán por conocidas.</string>
     <string name="placementtest_start">Empezar</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Parte %1$d</string>

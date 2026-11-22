@@ -4,7 +4,6 @@
   "placementtest_about": "e2cf1ba4741ab77c1789031fcf82658ec47b79632c0d5a25a1bc1b0c5468feb7",
   "placementtest_about_in_parts": "2556889725085100223ebe3499f881de279bda966af03052ab4b8d8f2b0a2bea",
   "placementtest_check_my_level": "7baee0ad353eacdcbac0f18921981369ec09bb8d2952af1708cef56d38a8cc9e",
-  "placementtest_choose_note": "104e52341ab47f0a3aee0e435317324c1ca80c21e6779c711f5849e8c47e2419",
   "placementtest_choose_title": "8d10b3e9d7c9e0dbeac3078a4335269e845149c20aa12372aeb34c9b3023bbf6",
   "placementtest_continue_from_plan": "e450e089979d465fbc9b195008ee7d84582235b6e725e56a90b191914d49e3b8",
   "placementtest_continue_title": "159ef35fa6ad93189dc8bc92852098ac68795a5134de2264c545f26919e586f4",
@@ -77,7 +76,6 @@
     <string name="placementtest_test_out">%1$s düzeyini atlamak için teste gir</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Zaten biliyorsan %1$s düzeyini atla</string>
-    <string name="placementtest_choose_note">İstediğin zaman testi durdurabilirsin. Zaten bildiğin dersler atlanmış olarak kalır.</string>
     <string name="placementtest_start">Başla</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Bölüm %1$d</string>

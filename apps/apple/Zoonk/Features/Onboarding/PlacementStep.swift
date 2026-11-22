@@ -374,6 +374,7 @@ struct TestOutcome<Lead: View>: View {
   let title: Text
   var description: Text?
   var continueLabel: Text?
+  var undo: PlacementResultUndo?
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
@@ -385,7 +386,8 @@ struct TestOutcome<Lead: View>: View {
 
       lead()
     }
-    .bottomBar(note: failed && !isSaving ? BarNote(testSaveFailure) : nil) {
+    .bottomBar(note: undo?.failure ?? (failed && !isSaving ? BarNote(testSaveFailure) : nil)) {
+      undo?.button
       StepButtons(continueLabel: continueLabel, onContinue: onContinue)
     }
     .onboardingColumn()
@@ -396,11 +398,12 @@ struct TestOutcome<Lead: View>: View {
 extension TestOutcome where Lead == EmptyView {
   init(
     subject: String? = nil, title: Text, description: Text? = nil, continueLabel: Text? = nil,
+    undo: PlacementResultUndo? = nil,
     isSaving: Bool, failed: Bool, onContinue: @escaping () -> Void
   ) {
     self.init(
       subject: subject, title: title, description: description, continueLabel: continueLabel,
-      isSaving: isSaving, failed: failed, onContinue: onContinue, lead: { EmptyView() })
+      undo: undo, isSaving: isSaving, failed: failed, onContinue: onContinue, lead: { EmptyView() })
   }
 }
 
@@ -494,7 +497,34 @@ struct PlacementQuestionScreen<Media: View>: View {
       if failures > 0, !isSaving {
         SaveFailureNotice(failures: failures, onReport: onReport)
       }
+
+      if number > 1 {
+        if let stopHint {
+          Text(stopHint)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        BusyButton(isBusy: isSaving && submission == .stop) {
+          submission = .stop
+          onStop()
+        } label: {
+          Text(
+            "Stop and use my answers", tableName: "Onboarding",
+            comment: "Ends a test early; the answers given so far count at once")
+        }
+        .buttonStyle(.borderless)
+        .disabled(isSaving && submission != .stop)
+      }
     } actions: {
+      PracticeSecondaryButton(
+        title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+        isDisabled: isSaving
+      ) {
+        submission = .dontKnow
+        onAnswer(.dontKnow)
+      }
+
       PracticeMainButton(
         title: LocalizedStringResource(
           "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
@@ -506,32 +536,6 @@ struct PlacementQuestionScreen<Media: View>: View {
           onAnswer(answer)
         }
       }
-
-      PracticeSecondaryButton(
-        title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
-        isDisabled: isSaving
-      ) {
-        submission = .dontKnow
-        onAnswer(.dontKnow)
-      }
-
-      if let stopHint {
-        Text(stopHint)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .multilineTextAlignment(.center)
-          .frame(maxWidth: .infinity)
-      }
-
-      BusyButton(isBusy: isSaving && submission == .stop) {
-        submission = .stop
-        onStop()
-      } label: {
-        Text(
-          "Stop and use my answers", tableName: "Onboarding",
-          comment: "Ends a test early; the answers given so far count at once")
-      }
-      .disabled(isSaving && submission != .stop)
     }
   }
 

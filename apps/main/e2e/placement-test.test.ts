@@ -95,9 +95,7 @@ test.describe("Testing what you know from the plan", () => {
     await page.goto("/plan");
     await page.getByRole("link", { name: /Test what you know/u }).click();
 
-    await expect(
-      page.getByRole("heading", { name: "How much do you want to check?" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Skip what you already know" })).toBeVisible();
 
     await expect(page.getByRole("radio", { name: /Quick/u })).toBeChecked();
     await finishQuickTest(page);
@@ -160,9 +158,7 @@ test.describe("Testing what you know from the plan", () => {
 
     await page.goto("/level-test");
 
-    await expect(
-      page.getByRole("heading", { name: "How much do you want to check?" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Skip what you already know" })).toBeVisible();
 
     await expect(page.getByRole("radio", { name: /Quick/u })).toBeVisible();
     await expect(page.getByRole("radio", { name: /Test out of B2/u })).toBeHidden();

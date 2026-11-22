@@ -1254,6 +1254,9 @@
         }
       }
     },
+    "A test finds the lessons you can skip." : {
+
+    },
     "a day" : {
       "comment" : "Under the plan's time a day, as in \"15 min a day\"",
       "localizations" : {
@@ -17631,64 +17634,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Testi bitir ve cevaplarımı kullan"
-          }
-        }
-      }
-    },
-    "Stop any time. Lessons you already know stay skipped." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst jederzeit aufhören. Lektionen, die du schon kennst, werden weiterhin übersprungen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes detenerte en cualquier momento. Las lecciones que ya conoces se darán por conocidas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux t’arrêter à tout moment. Les leçons que tu connais déjà resteront sautées."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi fermarti quando vuoi. Le lezioni che conosci già restano saltate."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "いつでも中断できます。すでに知っているレッスンはスキップされたままです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "언제든 중단할 수 있어요. 이미 아는 레슨은 계속 건너뛴 상태로 유지돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przerwij w dowolnym momencie. Lekcje, które już znasz, pozostaną pominięte."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você pode parar quando quiser. As aulas que você já conhece continuam puladas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İstediğin zaman testi durdurabilirsin. Zaten bildiğin dersler atlanmış olarak kalır."
           }
         }
       }

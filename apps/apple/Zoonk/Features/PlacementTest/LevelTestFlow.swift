@@ -54,9 +54,7 @@ enum LanguageTestPhase: Equatable {
     } else if let next = testOut.next, next.question.format != .typed,
       next.question.format != .numeric
     {
-      var question = next.question
-      question.placement = true
-      self = .testOut(testOut, question)
+      self = .testOut(testOut, next.question)
     } else {
       self = .testOutResult(testOut)
     }

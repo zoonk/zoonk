@@ -10227,6 +10227,16 @@ msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "어디까지 확인할까요?"
 
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr ""
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr ""
+
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Ggk7AI"
@@ -10249,11 +10259,6 @@ msgstr "코스 전체"
 msgctxt "3NCmfj"
 msgid "Skip {level} if you already know it"
 msgstr "이미 아는 {level} 건너뛰기"
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "nbbjyZ"
-msgid "Stop any time. Lessons you already know stay skipped."
-msgstr "언제든 중단할 수 있어요. 이미 아는 레슨은 계속 건너뛴 상태로 유지돼요."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "OpomGa"

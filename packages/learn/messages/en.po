@@ -10227,6 +10227,16 @@ msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "How much do you want to check?"
 
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr "Skip what you already know"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr "A test finds the lessons you can skip."
+
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Ggk7AI"
@@ -10249,11 +10259,6 @@ msgstr "Whole course"
 msgctxt "3NCmfj"
 msgid "Skip {level} if you already know it"
 msgstr "Skip {level} if you already know it"
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "nbbjyZ"
-msgid "Stop any time. Lessons you already know stay skipped."
-msgstr "Stop any time. Lessons you already know stay skipped."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "OpomGa"

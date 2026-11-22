@@ -47,11 +47,9 @@ struct LanguageTestResultView: View {
         }
       }
 
-      if let undo, undo.restored == nil {
-        undo.row
-      }
     }
-    .bottomBar(note: failed && pressed == nil ? BarNote(saveFailure) : nil) {
+    .bottomBar(note: undo?.failure ?? (failed && pressed == nil ? BarNote(saveFailure) : nil)) {
+      undo?.button
       StepButtons(
         continueLabel: walks
           ? Text(
@@ -142,12 +140,8 @@ struct LevelTestOutResult: View {
               "Your lessons keep adjusting as you answer.", tableName: "Onboarding",
               comment: "Under a level test's result that skipped no level")),
       continueLabel: Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
-      isSaving: isSaving, failed: failed, onContinue: onDone
-    ) {
-      if let undo, undo.restored == nil {
-        undo.row
-      }
-    }
+      undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
+    )
     .announcesStatus(undo?.announcement)
   }
 }

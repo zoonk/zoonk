@@ -43,25 +43,16 @@ struct PlacementLengthChoice: View {
   }
 
   var body: some View {
-    let title = Text(
-      "How much do you want to check?", tableName: "Onboarding",
-      comment: "Title of the choice between the quick test and the whole-course test")
-
     ZoonkList {
-      StepHeader(title: title)
+      StepHeader(
+        title: Text("Skip what you already know", tableName: "Onboarding"),
+        description: Text("A test finds the lessons you can skip.", tableName: "Onboarding"))
 
-      ChoiceRows(choices: choices, picked: choice) { choice = $0 }
-        .locksWhileSaving()
-
-      Section {
-        Text(
-          "Stop any time. Lessons you already know stay skipped.", tableName: "Onboarding",
-          comment: "Under the test's length choice: leaving keeps what the answers so far skipped"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .listRowBackground(Color.clear)
-      }
+      ChoiceRows(
+        choices: choices, picked: choice,
+        header: Text("How much do you want to check?", tableName: "Onboarding")
+      ) { choice = $0 }
+      .locksWhileSaving()
 
       languageNotes
     }
@@ -146,7 +137,13 @@ struct PlacementBetweenParts: View {
             "Between the whole-course test's parts: how long the rest takes, such as \"15 min\""
         ))
 
-      undo?.row
+      if let restored = undo?.restored {
+        Section {
+          restored
+            .typeStyle(.note)
+            .listRowBackground(Color.clear)
+        }
+      }
 
       if onboarding {
         Section {
@@ -157,7 +154,8 @@ struct PlacementBetweenParts: View {
         }
       }
     }
-    .bottomBar(note: failed && pressed == nil ? BarNote(saveFailure) : nil) {
+    .bottomBar(note: undo?.failure ?? (failed && pressed == nil ? BarNote(saveFailure) : nil)) {
+      undo?.button
       StepButtons(
         continueLabel: onboarding
           ? nil
@@ -198,21 +196,23 @@ struct PlacementTestResultView: View {
             comment: "Under \"No lessons skipped\" after a test")),
       continueLabel: onboarding
         ? nil : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
-      isSaving: isSaving, failed: failed, onContinue: onDone
+      undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
     ) {
-      if let undo, undo.restored == nil {
-        undo.row
-      }
-
       if let nextTopic, undo?.restored == nil {
-        Section {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "Up next", tableName: "Onboarding", comment: "Over the topic the plan goes on with"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+
           Text(verbatim: nextTopic)
             .typeStyle(.rowTitle)
-        } header: {
-          SectionTitle(
-            Text(
-              "Up next", tableName: "Onboarding", comment: "Over the topic the plan goes on with"))
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .panel()
+        .listRowBackground(Color.clear)
       }
 
       if length == .quick, !onboarding {
@@ -262,26 +262,19 @@ struct PlacementResultUndo {
 
   var restored: Text? { announcement.map { Text(verbatim: $0) } }
 
-  var row: some View {
-    Section {
-      if let restored {
-        restored
-          .typeStyle(.note)
-          .listRowBackground(Color.clear)
-      } else {
-        BusyButton(isBusy: request.isRunning, icon: .undo) {
-          request.run(action)
-        } label: {
-          Text("Undo", tableName: "Onboarding")
-        }
-        .buttonStyle(.ghost)
-        .disabled(disabled)
-        .listRowBackground(Color.clear)
+  var failure: BarNote? {
+    request.outcome == false && !request.isRunning ? BarNote(saveFailure) : nil
+  }
 
-        if request.outcome == false {
-          FailureLine(message: saveFailure)
-        }
+  @ViewBuilder var button: some View {
+    if restored == nil {
+      BusyButton(isBusy: request.isRunning, icon: .undo) {
+        request.run(action)
+      } label: {
+        Text("Undo", tableName: "Onboarding")
       }
+      .buttonStyle(.outline)
+      .disabled(disabled && !request.isRunning)
     }
   }
 }

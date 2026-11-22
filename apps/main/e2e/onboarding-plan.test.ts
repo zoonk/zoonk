@@ -26,6 +26,8 @@ test.describe("Placement and the plan", () => {
 
     const question = page.getByRole("heading", { name: /^Solve x/u });
     await expect(question).toBeVisible();
+    const stop = page.getByRole("button", { name: "Stop and use my answers" });
+    await expect(stop).toBeHidden();
     const first = await question.textContent();
     await page.keyboard.press("1");
     await expect(page.getByRole("radio").first()).toBeChecked();
@@ -40,7 +42,6 @@ test.describe("Placement and the plan", () => {
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect(page.getByText("Question 3", { exact: true })).toBeVisible();
 
-    const stop = page.getByRole("button", { name: "Stop and use my answers" });
     await expect(stop).toBeEnabled();
     await stop.click();
 

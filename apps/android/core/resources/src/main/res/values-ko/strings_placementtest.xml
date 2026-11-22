@@ -4,7 +4,6 @@
   "placementtest_about": "a33def34a986cc523a5a18bd27a69e8075b3b3c92998075adaba2e1147a189c7",
   "placementtest_about_in_parts": "2cbeeb803ffbd7a39c858367d52b1e84db3cbebc6d0ee712601f95b7074a0a55",
   "placementtest_check_my_level": "37d48c394fe9eb1a6b61d6e3877458fcc8c1746886a9b3869de988a26c8de886",
-  "placementtest_choose_note": "f8953928af67bb4b1a785119984d7c5bb910a4f7432c30d725e159dd9b1912af",
   "placementtest_choose_title": "ecafbc4cdd851499a2d9aa124745a3a789813de40995262d0db93ee4812c9234",
   "placementtest_continue_from_plan": "9b367e2313e5cce5a3f9c613389ba3e96ef23ac7d2a8216c2b2d888728e82f0f",
   "placementtest_continue_title": "9a54694baeaae0b5e87aa8f1553c27c5a7f197bbef67a6a86bad696978f5bf20",
@@ -76,7 +75,6 @@
     <string name="placementtest_test_out">%1$s 건너뛰기 테스트</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">이미 아는 %1$s 건너뛰기</string>
-    <string name="placementtest_choose_note">언제든 중단할 수 있어요. 이미 아는 레슨은 계속 건너뛴 상태로 유지돼요.</string>
     <string name="placementtest_start">시작하기</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">%1$d파트</string>

@@ -4,7 +4,6 @@
   "placementtest_about": "a37e23d9ff2e9ec82305ea8ecb4ff5e02848f4800c089e0ddb3c9ab5313eb9d9",
   "placementtest_about_in_parts": "a13910dd9df73a197ebf8c7e40705f351cdfaa9fc8d860f4515207766bf31e27",
   "placementtest_check_my_level": "67379c9fb0ba941ab50a311379d3ff855b2a2ba70ee11e7354ca99061bad1aca",
-  "placementtest_choose_note": "2226a64f8cf1e3e5ea6d8e0546da2ff7dacafea247da976bf9592b3c99435538",
   "placementtest_choose_title": "dfc5d90420681cf89029ce3b040b3e2fa00b497e98cc34825fa749b3a1d3ab16",
   "placementtest_continue_from_plan": "6feed35c1256c91c07d44a636695049932b178f4f0ba0f9bddfa84c5d43a1e4a",
   "placementtest_continue_title": "c559691372367759a5ae2f4f12a8306413caa169c2f5753473b3c62b9879f409",
@@ -77,7 +76,6 @@
     <string name="placementtest_test_out">Mit Test %1$s überspringen</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">%1$s überspringen, wenn du es schon kennst</string>
-    <string name="placementtest_choose_note">Du kannst jederzeit aufhören. Lektionen, die du schon kennst, werden weiterhin übersprungen.</string>
     <string name="placementtest_start">Starten</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Teil %1$d</string>

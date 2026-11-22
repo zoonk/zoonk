@@ -4,7 +4,6 @@
   "placementtest_about": "2537a58356f43ff269ad32e19a45cb447e49c13bcf622b8b36f1b69960c7b35e",
   "placementtest_about_in_parts": "29ec1e13a1306c296c7c2c3f7141f3ee032a47ec284dc06e1e635b3ba916a46e",
   "placementtest_check_my_level": "0da1138fca03292ebf0e5bbbba551048cb315fb94373b5731dc9816c26445f0a",
-  "placementtest_choose_note": "09139743073cb32f3f7b59256996ff9a47f19b9071a36c8fe5fb35ba0a2af888",
   "placementtest_choose_title": "f84b053679d018ff922feae3df3815d32886305b014d05f6ce02fb961ec8c3ba",
   "placementtest_continue_from_plan": "2aa9f7d827d38352efe57f2569d61d83e05ed8f6fb33d19ad5152ebb13ce91f5",
   "placementtest_continue_title": "ede215a00acb1b5ad8c9fed1103da58e7ce94eb9e1875bb8be7bae8170019f53",
@@ -76,7 +75,6 @@
     <string name="placementtest_test_out">「%1$s」のレベル診断を受ける</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">すでに知っている%1$sをスキップする</string>
-    <string name="placementtest_choose_note">いつでも中断できます。すでに知っているレッスンはスキップされたままです。</string>
     <string name="placementtest_start">始める</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">第%1$d部</string>

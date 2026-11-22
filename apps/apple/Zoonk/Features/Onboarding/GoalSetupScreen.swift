@@ -191,6 +191,12 @@ private struct GoalSteps: View {
     revisiting ?? view.steps.first ?? .plan
   }
 
+  private var previousStepIndex: Int? {
+    history.lastIndex { previous in
+      previous != step && (previous != .followUps || !view.followUps.isEmpty)
+    }
+  }
+
   @ViewBuilder private var moreActions: some View {
     Group {
       Button {
@@ -255,7 +261,7 @@ private struct GoalSteps: View {
       moreActions
     }
     .toolbar {
-      if !history.isEmpty, step != .plan {
+      if previousStepIndex != nil, step != .plan {
         ToolbarItem(placement: .navigation) {
           Button(action: back) {
             Label {
@@ -298,7 +304,7 @@ private struct GoalSteps: View {
       }
 
       // As on main, Back takes the ✕'s place once there's a step to go back to; "Finish later" stays in the menu.
-      if history.isEmpty || step == .plan {
+      if previousStepIndex == nil || step == .plan {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
             router.dismissTask()
@@ -462,9 +468,11 @@ private struct GoalSteps: View {
   }
 
   private func back() {
-    guard let previous = history.popLast() else {
+    guard let index = previousStepIndex else {
       return
     }
+    let previous = history[index]
+    history.removeSubrange(index...)
 
     // What the time question kept for a date change is stale once the learner leaves it by Back.
     if step == .schedule {

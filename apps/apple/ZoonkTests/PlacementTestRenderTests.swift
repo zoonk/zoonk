@@ -1,3 +1,5 @@
+import HTTPTypes
+import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -6,6 +8,111 @@ import XCTest
 @MainActor
 final class PlacementTestRenderTests: XCTestCase {
   private let goalID = "00000000-0000-4000-8000-0000000000a1"
+
+  func testStopAppearsOnlyOnceAnAnswerIsSaved() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
+      options: ["1/2", "1/3"])
+
+    for number in 1...2 {
+      try await capture(
+        "placement-question-\(number)", title: "Question \(number)",
+        detail: number == 1 ? "Which fraction is smaller?" : "Stop and use my answers",
+        absent: number == 1 ? ["Stop and use my answers"] : []
+      ) {
+        PlacementQuestionScreen(
+          subject: "Fractions", number: number, progress: Double(number - 1) / 4,
+          question: question, labels: .trueFalse, isSaving: false, failures: 0,
+          onReport: {}, onAnswer: { _ in }, onStop: {})
+      }
+    }
+  }
+
+  func testBackFromLanguageResultReturnsToThePreviousQuestionWithoutWriting() async throws {
+    let server = LevelTestBackServer(goalID: goalID)
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(baseURL: URL(string: "https://api.zoonk.test")!, transport: server),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live())
+    let store = dependencies.onboardingStore
+    let onboarding = store.onboarding(goalID: goalID)
+    await onboarding.load()
+    XCTAssertEqual(try XCTUnwrap(onboarding.value).steps.first, .placement)
+    let result = try await store.languageTest(goalID: goalID)
+    XCTAssertEqual(result.result?.attemptId, result.attemptId)
+
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      GoalSetupScreen(goalId: goalID)
+        .appDependencies(dependencies)
+        .environment(AppRouter())
+        .zoonkStyles())
+
+    try await waitForTestCondition("The saved language result did not open: \(spoken(in: window))")
+    {
+      spoken(in: window).contains { $0.contains("Your English level") }
+    }
+    try await activate("Back", in: window)
+    try await waitForTestCondition(
+      "Back did not return to the previous question: \(spoken(in: window))"
+    ) {
+      spoken(in: window).contains { $0.contains("How much do you already know?") }
+    }
+    let writes = await server.writes
+    XCTAssertEqual(writes, [])
+  }
+
+  func testLengthChoiceAndResult() async throws {
+    try await capture(
+      "placement-length", title: "Skip what you already know",
+      detail: "How much do you want to check?"
+    ) {
+      PlacementLengthChoice(
+        wholeCourseMinutes: 25, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
+    }
+
+    let request = VisitRequest<Bool>()
+    let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
+    let undo = PlacementResultUndo(
+      goalId: goalID, changeId: goalID, lessons: 6, request: request, plans: store, disabled: false)
+    try await capture("placement-result", title: "6 lessons skipped", detail: "Fractions") {
+      PlacementTestResultView(
+        length: .quick, lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
+        undo: undo, onDone: {})
+    }
+  }
+
+  func testListeningQuestion() async throws {
+    let session = SessionStore.preview()
+    let cache = AppCache(session: session)
+    let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
+    try await capture(
+      "placement-listening", title: "Question 2", detail: "Play the message",
+      absent: ["Fine-tuning your plan"]
+    ) {
+      LevelTestQuestionScreen(
+        question: .init(
+          id: goalID, options: ["Monday", "Tuesday"], passage: "The train leaves on Monday.",
+          question: "When does the train leave?", skill: .listening, audio: nil, audioPending: false
+        ),
+        number: 2, progress: 0.25, targetLanguage: "en", isSaving: false, failures: 0,
+        onReport: {}, onAnswer: { _, _ in }, onStop: {}
+      )
+      .environment(VoiceServices(clients: clients, cache: cache))
+    }
+  }
+
+  func testOrderQuestionWithStepsSelected() async throws {
+    try await capture(
+      "placement-order", title: "Tap the steps in order.", detail: "Boil the water"
+    ) {
+      OrderItemView(
+        steps: ["Boil the water", "Add the pasta", "Drain the pasta"], result: nil,
+        isLocked: false, draft: .constant(.order([0, 1]))
+      )
+      .padding()
+    }
+  }
 
   func testResultsAfterUndo() async throws {
     let undo = try restored()
@@ -89,25 +196,62 @@ final class PlacementTestRenderTests: XCTestCase {
     @ViewBuilder content: () -> some View
   ) async throws {
     try await readsWhatVoiceOverReads()
-    let window = try show(
-      NavigationStack { content() }
-        .environment(AppRouter())
-        .zoonkStyles()
-        .preferredColorScheme(.light))
+    for scheme in [ColorScheme.light, .dark] {
+      let window = try show(
+        NavigationStack { content() }
+          .environment(AppRouter())
+          .zoonkStyles()
+          .preferredColorScheme(scheme))
 
-    try await waitForTestCondition("Missing \(title) or \(detail): \(spoken(in: window))") {
-      let words = spoken(in: window)
-      return words.contains { $0.contains(title) } && words.contains { $0.contains(detail) }
-    }
-    XCTAssertFalse(spoken(in: window).contains { word in absent.contains { word.contains($0) } })
+      try await waitForTestCondition("Missing \(title) or \(detail): \(spoken(in: window))") {
+        let words = spoken(in: window)
+        return words.contains { $0.contains(title) } && words.contains { $0.contains(detail) }
+      }
+      XCTAssertFalse(spoken(in: window).contains { word in absent.contains { word.contains($0) } })
 
-    let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
-      window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+      let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
+        window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+      }
+      let attachment = XCTAttachment(image: image)
+      attachment.name = "\(name)-\(scheme == .dark ? "dark" : "light")"
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      window.isHidden = true
     }
-    let attachment = XCTAttachment(image: image)
-    attachment.name = name
-    attachment.lifetime = .keepAlways
-    add(attachment)
-    window.isHidden = true
+  }
+}
+
+private actor LevelTestBackServer: ClientTransport {
+  let goalID: String
+  private(set) var writes: [String] = []
+
+  init(goalID: String) { self.goalID = goalID }
+
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    if request.method != .get {
+      writes.append(operationID)
+    }
+
+    let payload: String
+    switch operationID {
+    case "getOnboarding":
+      payload = #"""
+        {"profile":{"memoryEnabled":true,"questions":[]},"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":[],"examDays":null,"examSubjects":[],"firstLesson":null,"followUps":[],"generationId":null,"goal":{"contentCountry":null,"countryDependent":false,"createdAt":"2026-11-08T00:00:00.000Z","dailyMinutes":15,"details":{"answered":["level","followUps"]},"examBlueprintId":null,"examCountry":null,"examplesCountry":null,"id":"\#(goalID)","isActive":true,"kind":"language","language":"en","languageCountry":{"code":"US","name":"United States"},"languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Learn English","regionChoices":[],"status":"active","studyDays":[],"studyTime":null,"suggested":[],"targetDate":null,"targetLanguage":"en","targetRegion":null,"timezone":null,"title":"Learn English","displayName":"Learn English"},"goalIds":[],"languageAim":null,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":false},"planRevealed":false,"quickTestMinutes":4,"recommendedMinutes":15,"startsOnRecommended":false,"steps":["placement","plan"],"timeChoices":[],"warmUp":null}
+        """#
+    case "getGoalPlacement":
+      payload =
+        #"{"answered":0,"areas":[],"complete":false,"dayBudgetSpent":0,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],"next":null,"phases":[],"started":false,"status":"unavailable","trueFalseLabels":"trueFalse","focusTest":null}"#
+    case "getLanguageLevelTest":
+      payload = #"""
+        {"status":"ready","answered":4,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"en","total":4,"attemptId":"\#(goalID)","length":"quick","result":{"attemptId":"\#(goalID)","finishedAt":"2026-11-21T16:23:39.000Z","lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"A2","high":"B1"}}}}
+        """#
+    default: return (HTTPResponse(status: .notFound), nil)
+    }
+
+    var response = HTTPResponse(status: .ok)
+    response.headerFields[.contentType] = "application/json"
+    return (response, HTTPBody(payload))
   }
 }

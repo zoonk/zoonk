@@ -426,7 +426,7 @@ struct OrderItemView: View {
         let result = stepResult(index, placed: placed)
 
         AnswerOption(
-          marker: index + 1,
+          shortcut: index + 1,
           isPicked: place != nil,
           result: result,
           isLocked: isLocked,

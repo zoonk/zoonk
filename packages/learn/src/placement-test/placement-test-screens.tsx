@@ -62,6 +62,7 @@ export function PlacementLengthChoice({
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const [choice, setChoice] = useState<TestChoice>(initialChoice);
+  const lengthLabel = t("How much do you want to check?");
 
   const start = () => {
     if (choice === "testOut") {
@@ -96,59 +97,59 @@ export function PlacementLengthChoice({
       }
     >
       <OnboardingHeading>
-        <OnboardingTitle>{t("How much do you want to check?")}</OnboardingTitle>
+        <OnboardingTitle>{t("Skip what you already know")}</OnboardingTitle>
+        <OnboardingDescription>{t("A test finds the lessons you can skip.")}</OnboardingDescription>
       </OnboardingHeading>
 
-      <ChoiceList
-        choices={[
-          {
-            description: t("About {time}", { time: formatDuration(QUICK_TEST_MINUTES) }),
-            label: t({
-              description: "The short placement test: about four minutes of questions.",
-              message: "Quick",
-            }),
-            value: "quick",
-          },
-          ...(wholeCourseMinutes > 0
-            ? [
-                {
-                  description: t({
-                    description:
-                      "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
-                    message: "About {time}, in parts",
-                    values: { time: formatDuration(wholeCourseMinutes) },
-                  }),
-                  label: t({
-                    description:
-                      "The long placement test: it checks every topic still ahead in the course.",
-                    message: "Whole course",
-                  }),
-                  value: "wholeCourse" as const,
-                },
-              ]
-            : []),
-          ...(testOutLevel && onTestOut
-            ? [
-                {
-                  description: t("Skip {level} if you already know it", { level: testOutLevel }),
-                  label: t({
-                    description: "A short test of one language level, such as “Test out of B2”.",
-                    message: "Test out of {level}",
-                    values: { level: testOutLevel },
-                  }),
-                  value: "testOut" as const,
-                },
-              ]
-            : []),
-        ]}
-        label={t("How much do you want to check?")}
-        onChange={setChoice}
-        value={choice}
-      />
-
-      <p className="text-muted-foreground text-sm text-pretty">
-        {t("Stop any time. Lessons you already know stay skipped.")}
-      </p>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-sm font-medium">{lengthLabel}</h2>
+        <ChoiceList
+          choices={[
+            {
+              description: t("About {time}", { time: formatDuration(QUICK_TEST_MINUTES) }),
+              label: t({
+                description: "The short placement test: about four minutes of questions.",
+                message: "Quick",
+              }),
+              value: "quick",
+            },
+            ...(wholeCourseMinutes > 0
+              ? [
+                  {
+                    description: t({
+                      description:
+                        "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
+                      message: "About {time}, in parts",
+                      values: { time: formatDuration(wholeCourseMinutes) },
+                    }),
+                    label: t({
+                      description:
+                        "The long placement test: it checks every topic still ahead in the course.",
+                      message: "Whole course",
+                    }),
+                    value: "wholeCourse" as const,
+                  },
+                ]
+              : []),
+            ...(testOutLevel && onTestOut
+              ? [
+                  {
+                    description: t("Skip {level} if you already know it", { level: testOutLevel }),
+                    label: t({
+                      description: "A short test of one language level, such as “Test out of B2”.",
+                      message: "Test out of {level}",
+                      values: { level: testOutLevel },
+                    }),
+                    value: "testOut" as const,
+                  },
+                ]
+              : []),
+          ]}
+          label={lengthLabel}
+          onChange={setChoice}
+          value={choice}
+        />
+      </div>
       {children}
     </OnboardingColumn>
   );

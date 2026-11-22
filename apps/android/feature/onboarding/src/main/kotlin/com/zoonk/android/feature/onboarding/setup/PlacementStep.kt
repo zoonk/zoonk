@@ -192,6 +192,7 @@ internal fun ColumnScope.PlacementStep(
                         onReportSaveFailure = onReportSaveFailure,
                         onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
                         onStop = { vm.finish(fromScratch = false, fromQuestion = true) },
+                        canStop = shown.number > 1,
                     )
                 }
             }
@@ -341,6 +342,7 @@ internal fun ColumnScope.PlacementQuestion(
     saveFailures: Int,
     onAnswer: (Answer, Long) -> Unit,
     onStop: () -> Unit,
+    canStop: Boolean,
     onReportSaveFailure: () -> Unit = {},
     dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
     stopLabel: String = stringResource(R.string.onboarding_placement_stop),
@@ -387,26 +389,28 @@ internal fun ColumnScope.PlacementQuestion(
                     onSubmit = { send(it, PlacementSender.Confirm) },
                 )
             }
-            stopHint?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            TextButton(
-                onClick = {
-                    sender = PlacementSender.Stop
-                    onStop()
-                },
-                busy = pending && sender == PlacementSender.Stop,
-                enabled = !pending,
-                focusableWhenDisabled = pending,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stopLabel)
+            if (canStop) {
+                stopHint?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        sender = PlacementSender.Stop
+                        onStop()
+                    },
+                    busy = pending && sender == PlacementSender.Stop,
+                    enabled = !pending,
+                    focusableWhenDisabled = pending,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stopLabel)
+                }
             }
         },
     ) {

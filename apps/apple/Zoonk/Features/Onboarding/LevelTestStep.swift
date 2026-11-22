@@ -215,7 +215,6 @@ struct LevelTestQuestionScreen: View {
       itemId: question.id, format: .multipleChoice, question: question.question,
       options: question.options, select: selectsAll ? .all : .one)
     shown.context = isListening ? nil : question.passage
-    shown.placement = true
 
     return PlacementQuestionScreen(
       number: number, progress: progress, question: shown,
@@ -322,7 +321,7 @@ private struct ListeningMessage: View {
         ListeningFailedNote(limit: limit, play: play)
       }
     }
-    .padding()
+    .padding(.vertical)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background {
       if isWaiting {

@@ -125,6 +125,41 @@ function PlacementActions({
   );
 }
 
+function PlacementStop({
+  busy,
+  hint,
+  onStop,
+  pending,
+}: {
+  busy: boolean;
+  hint?: string;
+  onStop: () => void;
+  pending: boolean;
+}) {
+  const t = useExtracted();
+
+  return (
+    <>
+      {hint && (
+        <p className="text-muted-foreground text-sm" role="status">
+          {hint}
+        </p>
+      )}
+      <Button
+        busy={busy}
+        className="self-start"
+        disabled={pending}
+        focusableWhenDisabled
+        onClick={onStop}
+        type="button"
+        variant="link"
+      >
+        {t("Stop and use my answers")}
+      </Button>
+    </>
+  );
+}
+
 export function PlacementQuestionScreen({
   dontKnowLabel,
   failures,
@@ -269,26 +304,17 @@ export function PlacementQuestionScreen({
           />
         )}
 
-        {stopHint && (
-          <p className="text-muted-foreground text-sm" role="status">
-            {stopHint}
-          </p>
+        {(number === undefined ? progress > 0 : number > 1) && (
+          <PlacementStop
+            busy={pending && pressed === "stop"}
+            hint={stopHint}
+            onStop={() => {
+              setPressed("stop");
+              onStop();
+            }}
+            pending={pending}
+          />
         )}
-
-        <Button
-          busy={pending && pressed === "stop"}
-          className="self-start"
-          disabled={pending}
-          focusableWhenDisabled
-          onClick={() => {
-            setPressed("stop");
-            onStop();
-          }}
-          type="button"
-          variant="link"
-        >
-          {t("Stop and use my answers")}
-        </Button>
       </OnboardingColumn>
     </OnboardingTestQuestion>
   );

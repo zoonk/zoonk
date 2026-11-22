@@ -251,6 +251,7 @@ internal fun ColumnScope.PlacementTestFlow(
                         saveFailures = vm.saveFailures,
                         onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
                         onStop = { vm.stop(shown) },
+                        canStop = shown.answered > 0,
                     )
                 }
             }

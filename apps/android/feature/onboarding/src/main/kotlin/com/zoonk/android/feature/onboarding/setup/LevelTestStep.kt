@@ -174,7 +174,7 @@ internal fun ColumnScope.LevelTestSteps(
                 FinishFailed(vm.finishFailed)
                 key(shown.question.id) {
                     val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
-                    TestQuestion(shown.question, shown.confirmation, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
+                    TestQuestion(shown, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
                 }
             }
         }
@@ -309,14 +309,14 @@ private fun ColumnScope.LevelTestWaiting(
  */
 @Composable
 private fun ColumnScope.TestQuestion(
-    question: LevelTestQuestion,
-    confirmation: Boolean,
+    shown: LevelTestPhase.Question,
     targetLanguage: String,
     audioPending: Boolean,
     vm: LevelTestViewModel,
     navigator: AppNavigator,
     onReportSaveFailure: () -> Unit,
 ) {
+    val question = shown.question
     val listening = question.skill == LanguageLevelTestOneOf1NextOneOfQuestion.Skill.LISTENING
     val audio = LocalSetupSpeech.current?.let { rememberSpokenAudio(it, targetLanguage) }
     val noAudio = listening && (audioPending || audio?.state is SpeechState.Failed)
@@ -327,7 +327,7 @@ private fun ColumnScope.TestQuestion(
                 format = QuestionFormat.MultipleChoice,
                 question = question.question,
                 options = question.options,
-                select = Select.All.takeIf { confirmation },
+                select = Select.All.takeIf { shown.confirmation },
                 context = question.passage.takeUnless { listening },
             ),
         eyebrow = null,
@@ -337,6 +337,7 @@ private fun ColumnScope.TestQuestion(
         onReportSaveFailure = onReportSaveFailure,
         onAnswer = { answer, durationMs -> vm.answer(question.id, answer, durationMs, skipped = noAudio && answer == Answer.DontKnow) },
         onStop = vm::stop,
+        canStop = shown.number > 1,
         dontKnowLabel =
             stringResource(
                 when {

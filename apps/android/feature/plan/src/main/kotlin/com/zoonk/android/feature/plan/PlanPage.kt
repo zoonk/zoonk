@@ -497,9 +497,8 @@ internal fun PlanContent(
                             PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(margin))
                         }
                     } else {
-                        focusTest?.let { row -> item(key = "places", contentType = "places") { row() } }
                         item(key = "path", contentType = "path") {
-                            PathSection(page, links, alphabet = alphabet, course = page.libraryCourse)
+                            PathSection(page, links, alphabet = alphabet, course = page.libraryCourse, test = focusTest)
                         }
                     }
                     item(key = "more", contentType = "more") {

@@ -252,6 +252,7 @@ class PlacementTestScreenshots(
         saveFailures = 0,
         onAnswer = { _, _ -> },
         onStop = {},
+        canStop = true,
     )
 
     @Composable

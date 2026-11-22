@@ -210,6 +210,7 @@ private fun ColumnScope.TestQuestion(
                 onReportSaveFailure = onReportSaveFailure,
                 onAnswer = { answer, durationMs -> vm.answer(question, answer, durationMs) },
                 onStop = vm::stop,
+                canStop = sitting.answered > 0,
                 stopLabel = stringResource(R.string.focustest_stop),
                 stopHint = stringResource(R.string.focustest_many_unknown).takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN },
             )

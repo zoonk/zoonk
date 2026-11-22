@@ -166,11 +166,24 @@ class PlacementStepFlowTest {
     }
 
     @Test
+    fun stopOnlyAppearsAfterAnAnswerIsSaved() {
+        api.answered = { placementOf(next = orderQuestion(), answered = 1) }
+        show()
+        tap("Start")
+
+        rule.onNodeWithText("Stop and use my answers").assertDoesNotExist()
+        tap("I don't know yet")
+        rule.onNodeWithText("Stop and use my answers").assertIsDisplayed()
+    }
+
+    @Test
     fun aStopWhoseOnboardingSaveFailsUsesTheQuestionFailureCount() {
         api.setup = { setupView(steps = listOf("placement")) }
         api.reply = { _, _ -> throw ApiException(ApiError.Network) }
+        api.answered = { placementOf(next = orderQuestion(), answered = 1) }
         show(inSetup = true)
         tap("Start")
+        tap("I don't know yet")
         tap("Stop and use my answers")
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
@@ -218,11 +231,12 @@ class PlacementStepFlowTest {
     @Test
     fun stopStaysBusyUntilItsOnboardingAnswerSettles() {
         api.setup = { setupView(steps = listOf("placement")) }
+        api.answered = { placementOf(next = orderQuestion(), answered = 1) }
         val save = CompletableDeferred<Unit>()
         api.answerGate = save
         show(inSetup = true)
         tap("Start")
-        tap("The Supreme Court")
+        tap("I don't know yet")
         tap("Stop and use my answers")
 
         rule.onNodeWithText("Stop and use my answers").assertIsNotEnabled()

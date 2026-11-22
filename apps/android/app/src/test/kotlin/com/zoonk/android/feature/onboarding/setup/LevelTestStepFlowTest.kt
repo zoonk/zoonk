@@ -313,16 +313,16 @@ class LevelTestStepFlowTest {
 
     @Test
     fun stoppingThatFailedSaysSoOnTheQuestionThenShowsTheRanges() {
+        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1, attemptId = ATTEMPT) }
         show()
         tap("Start")
-        api.writeFailure = ApiException(ApiError.Network)
         tap("Every Saturday")
         tap("Confirm")
 
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        api.writeFailure = ApiException(ApiError.Network)
         tap("Stop and use my answers")
 
-        rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         api.writeFailure = null
         tap("Stop and use my answers")

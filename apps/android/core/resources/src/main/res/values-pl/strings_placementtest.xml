@@ -4,7 +4,6 @@
   "placementtest_about": "158cfe4af5d3a2b8987f13ebaef3052b83f0ae42acd194f5114c35a6437e8d4c",
   "placementtest_about_in_parts": "d4cde685f0e8e69249dd7c85ddd85a7c431e66f74b093f78f40f7b89ae9060e2",
   "placementtest_check_my_level": "0423783029aef4f84307a05b30d520c06ecd1e050e391e498e56519306b2b09b",
-  "placementtest_choose_note": "348388dd5a08acdd72a8740e74da834acbadb526bc8f68907393eefdc06d90f3",
   "placementtest_choose_title": "a57159d94b6f209c00f4b3d139f1e26691df67807beb9db2bb7fe8873468f27d",
   "placementtest_continue_from_plan": "8ab619f0ac35108da708aff7e893b76a2507b2021e8ca84be7fd0cedd448e62f",
   "placementtest_continue_title": "21eed9ba4e3907a13d0b57b512fc122283a125e981b4b395e3cbed1431b5417a",
@@ -79,7 +78,6 @@
     <string name="placementtest_test_out">Sprawdź, czy możesz pominąć %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Pomiń %1$s, jeśli już go znasz</string>
-    <string name="placementtest_choose_note">Przerwij w dowolnym momencie. Lekcje, które już znasz, pozostaną pominięte.</string>
     <string name="placementtest_start">Zacznij</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Część %1$d</string>

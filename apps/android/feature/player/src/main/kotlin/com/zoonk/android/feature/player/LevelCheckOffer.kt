@@ -1,16 +1,18 @@
 package com.zoonk.android.feature.player
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.SuggestionAction
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionCard
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionSaveError
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.LibraryLessonCompletionPlacementOffer
 
 /** A level test-out names its level; the quick test takes none. */
@@ -67,7 +69,9 @@ internal fun LevelCheckOffer(
                 onClick = { onOpen(offer.route()) },
                 enabled = !dismissing,
             )
-            SuggestionAction(stringResource(R.string.placementtest_not_now), onDismiss, busy = dismissing, secondary = true)
+            TextButton(onClick = onDismiss, busy = dismissing, size = ButtonSize.Small) {
+                Text(stringResource(R.string.placementtest_not_now))
+            }
         }
     })
 }

@@ -26,8 +26,10 @@ import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.lessonsSkippedLine
+import com.zoonk.android.feature.plan.restoredLessonsLine
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskOption
@@ -59,7 +61,7 @@ internal fun ColumnScope.LengthChoice(
     var selected by rememberSaveable {
         mutableStateOf(initial.takeIf { it != TestChoice.TestOut || testOutLevel != null } ?: TestChoice.Quick)
     }
-    val title = stringResource(R.string.placementtest_choose_title)
+    val lengthLabel = stringResource(R.string.placementtest_choose_title)
     val choices =
         listOfNotNull(
             Choice(
@@ -86,34 +88,41 @@ internal fun ColumnScope.LengthChoice(
     val choice = selected.takeIf { value -> choices.any { it.value == value } } ?: TestChoice.Quick
 
     SetupContent {
-        OnboardingHeading(title)
-        ChoiceList(choices, choice, title, onChange = { selected = it })
-        Note(stringResource(R.string.placementtest_choose_note))
+        OnboardingHeading(
+            stringResource(R.string.placementtest_start_title),
+            stringResource(R.string.placementtest_choose_description),
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(lengthLabel, style = MaterialTheme.typography.labelLarge)
+            ChoiceList(choices, choice, lengthLabel, onChange = { selected = it })
+        }
         notes()
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                busy = pressed == Pressed.Main,
-                onClick = {
-                    when (choice) {
-                        TestChoice.Quick -> onStart(PlacementLength.QUICK)
-                        TestChoice.WholeCourse -> onStart(PlacementLength.WHOLE_COURSE)
-                        TestChoice.TestOut -> onTestOut()
+            TaskActions { main ->
+                if (onSkip != null) {
+                    OutlinedButton(
+                        onClick = onSkip,
+                        busy = pressed == Pressed.Other,
+                        modifier = Modifier.taskOption(),
+                        enabled = pressed == null,
+                    ) {
+                        Text(stringResource(R.string.onboarding_skip))
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed == null,
-            ) {
-                Text(stringResource(R.string.placementtest_start))
-            }
-            if (onSkip != null) {
-                TextButton(
-                    onClick = onSkip,
-                    busy = pressed == Pressed.Other,
-                    modifier = Modifier.fillMaxWidth(),
+                }
+                Button(
+                    busy = pressed == Pressed.Main,
+                    onClick = {
+                        when (choice) {
+                            TestChoice.Quick -> onStart(PlacementLength.QUICK)
+                            TestChoice.WholeCourse -> onStart(PlacementLength.WHOLE_COURSE)
+                            TestChoice.TestOut -> onTestOut()
+                        }
+                    },
+                    modifier = main,
                     enabled = pressed == null,
                 ) {
-                    Text(stringResource(R.string.onboarding_skip))
+                    Text(stringResource(R.string.placementtest_start))
                 }
             }
         }
@@ -191,7 +200,7 @@ internal fun ColumnScope.PlacementResult(
         enabled = !saving,
         undo = undo,
     ) {
-        nextTopic?.let {
+        nextTopic?.takeIf { undo?.restoredLessons == null }?.let {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
@@ -203,7 +212,7 @@ internal fun ColumnScope.PlacementResult(
                 }
             }
         }
-        if (length == PlacementLength.QUICK) Note(stringResource(R.string.placementtest_whole_course_skips_more))
+        if (length == PlacementLength.QUICK && !inSetup) Note(stringResource(R.string.placementtest_whole_course_skips_more))
     }
 }
 
@@ -222,9 +231,12 @@ internal fun ColumnScope.TestOutcome(
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     SetupContent {
-        val restored = undo?.restoredLessons != null
-        OnboardingHeading(if (restored) lessonsSkippedLine(0) else title, lead.takeUnless { restored })
-        PlacementUndoStatus(undo)
+        val restored = undo?.restoredLessons
+        OnboardingHeading(
+            if (restored != null) lessonsSkippedLine(0) else title,
+            if (restored != null) restoredLessonsLine(restored) else lead,
+            announceDescription = restored != null,
+        )
         content()
         PlacementResultActions(action, onAction, busy, enabled, failed, undo, other)
     }

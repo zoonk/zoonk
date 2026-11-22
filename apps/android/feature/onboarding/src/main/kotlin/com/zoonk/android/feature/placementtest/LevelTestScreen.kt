@@ -297,6 +297,7 @@ private fun ColumnScope.TestOutFlow(
                         saveFailures = vm.saveFailures,
                         onAnswer = { answer, durationMs -> vm.answerTestOut(next.itemId.toString(), answer, durationMs) },
                         onStop = vm::stopTestOut,
+                        canStop = test.answered > 0,
                     )
                 }
             }

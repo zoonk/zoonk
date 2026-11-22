@@ -157,10 +157,7 @@ struct PlacementTestFlow: View {
   }
 
   private func question(_ asked: PlacementTestQuestion) -> some View {
-    var question = asked.question
-    question.placement = true
-
-    return PlacementQuestionScreen(
+    PlacementQuestionScreen(
       subject: subject, number: asked.answered + 1,
       position: asked.attempt.length == .wholeCourse
         ? Text(
@@ -168,7 +165,7 @@ struct PlacementTestFlow: View {
           comment: "Over a whole-course test's question: which of its parts this is")
         : nil,
       progress: asked.progress,
-      question: question, labels: asked.labels, isSaving: isAnswering,
+      question: asked.question, labels: asked.labels, isSaving: isAnswering,
       failures: questionFailures, onReport: { showsSaveReport = true },
       onAnswer: { submit($0, to: asked) }, onStop: { stop(asked.attempt) }
     )

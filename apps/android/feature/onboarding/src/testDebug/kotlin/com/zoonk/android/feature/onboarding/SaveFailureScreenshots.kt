@@ -94,6 +94,7 @@ class SaveFailureScreenshots {
                                     saveFailures = 2,
                                     onAnswer = { _, _ -> },
                                     onStop = {},
+                                    canStop = true,
                                 )
                             }
                         } else {

@@ -21,6 +21,8 @@
     <string name="placementtest_listening_range">Listening %1$s</string>
     <!-- A level range, such as "B1–B2": the lowest and the highest level a skill's answers place it between. -->
     <string name="placementtest_level_range" translatable="false">%1$s–%2$s</string>
+    <string name="placementtest_start_title">Skip what you already know</string>
+    <string name="placementtest_choose_description">A test finds the lessons you can skip.</string>
     <string name="placementtest_choose_title">How much do you want to check?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">Quick</string>
@@ -34,7 +36,6 @@
     <string name="placementtest_test_out">Test out of %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Skip %1$s if you already know it</string>
-    <string name="placementtest_choose_note">Stop any time. Lessons you already know stay skipped.</string>
     <string name="placementtest_start">Start</string>
     <!-- A whole-course test is split into parts; %1$d is the part's number. -->
     <string name="placementtest_part">Part %1$d</string>

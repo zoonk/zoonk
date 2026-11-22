@@ -51,6 +51,7 @@ import com.zoonk.android.ui.theme.ZoonkRadius
 internal fun OnboardingHeading(
     title: String,
     description: String? = null,
+    announceDescription: Boolean = false,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         // Each step swaps the whole screen: naming it as a pane makes TalkBack say which one arrived.
@@ -60,7 +61,12 @@ internal fun OnboardingHeading(
             style = MaterialTheme.typography.headlineMedium,
         )
         if (description != null) {
-            Text(text = description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = description,
+                modifier = if (announceDescription) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
