@@ -224,10 +224,7 @@ export type PlanScopeContext = {
     coverage: {
       /** Every topic is in the plan (each skill's core); false only when even the cores don't fit. */
       coreFits: boolean;
-      coveredShare: number;
       fits: boolean;
-      /** "exam": a share of the exam's questions and points; "goal": of the goal's skills. */
-      measure: "exam" | "goal";
     } | null;
     difficultyBias: string;
     lightWeeks: { endDate: string; startDate: string }[];

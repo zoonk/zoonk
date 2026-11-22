@@ -252,19 +252,12 @@ async function lookUpTimeToCover(goal: Goal): Promise<GoalTutorLookUpResult> {
     return { status: "notFound", what };
   }
 
-  const { fittingDate, most, recommendedMinutes, suggested, targetDate } = result.time;
+  const { fittingDate, suggested, targetDate } = result.time;
 
   return {
     fittingDate,
-    most,
-    recommendedMinutes,
     status: "found",
-    suggested: suggested && {
-      coveredShare: suggested.coveredShare,
-      everyTopic: suggested.everyTopic,
-      kind: suggested.kind,
-      minutes: suggested.minutes,
-    },
+    suggested: suggested && { kind: suggested.kind, minutes: suggested.minutes },
     targetDate,
     what,
   };

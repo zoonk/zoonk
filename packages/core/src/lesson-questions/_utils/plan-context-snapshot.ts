@@ -131,9 +131,7 @@ function toSetup(plan: PlanView): NonNullable<PlanScopeContext["setup"]> {
     })),
     coverage: plan.feasibility && {
       coreFits: plan.feasibility.coreFits,
-      coveredShare: plan.feasibility.coveredShare,
       fits: plan.feasibility.fits,
-      measure: plan.feasibility.measure,
     },
     difficultyBias: plan.steering.difficultyBias,
     lightWeeks: plan.schedule.lightWeeks.map((week) => ({
