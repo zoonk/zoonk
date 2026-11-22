@@ -159,6 +159,9 @@
   "onboarding_material_goal_exam": "3bcf5e5a787da48ec0acabdf50bad5fa12a286edf18cf321d621abe32941790d",
   "onboarding_material_goal_understand": "6b8d28f106bf0a445e2ecd47c67d0b5a275a8a9696fce1098c448f3f0d199f59",
   "onboarding_material_sign_up": "12584e9b86d44cdebc91b83ac12638b7b6cf8ea7b7eb00e6c3397a3fa98711d1",
+  "onboarding_material_unreadable_one": "e2782e1198b18d6852e16c7ee9649d7c50c422ff4deb819e5d43a37ee309c221",
+  "onboarding_material_unreadable_some": "60e9b9821a6d06f1a0affa10959be21ef590a4d61fdcbe9591326183230b0fc1",
+  "onboarding_material_unreadable_state": "e717c251dd337ea0cd6df6bd3da79175790aaf0a453b60640aa8a57c85adeb5a",
   "onboarding_more": "4bb750b35bf18a93ba2fc4a0d27d069a9f1a9c7429cac7d76956d40cf96b650a",
   "onboarding_musicianship_card": "05dee09afb2a1217b353db94e216e2b158259a009bbea3c1d80fa15d70f9e81b",
   "onboarding_musicianship_subject": "67479265cc978a81a306d2f5bc9761ceb4d018b08fd39aa48537d72173faf407",
@@ -290,6 +293,8 @@
   "onboarding_row_last_cutoff": "d7021d3aed7941ccecf4b493b61a67b7f4b259d855e7e84c85e7f2d9bd4a703b",
   "onboarding_row_level": "e83be55798b91c464377ffcd881744713b7e6deeef8460383d6740ea12f1c2c9",
   "onboarding_row_material": "38474ab3da55d97bc2131dd6f72fb62d8fa0fa60773ffb40d7373760efd59428",
+  "onboarding_row_material_all_missing_note": "8b612c418e05bb3f02088ebc20790eedbb6660d90767a00f572fc77e84903f68",
+  "onboarding_row_material_missing_note": "c42fd45fd75c1f33f3632bb18b4d8039b2d0c134f699413ba2955c0ac9703dd0",
   "onboarding_row_material_note": "32cea155ee07bd562f82a807e38ee196566f5837c9a6bb600e9db624a90080aa",
   "onboarding_row_minutes_a_day": "21ba9a25bf2b5ee64cb097c506d2aebadd35e03a9ed5d24155bb0e7eb0f43ec1",
   "onboarding_row_notice_says": "5262368e403b9a8f1d579c9a298602621971de5c3665031dfb5db4139d72145a",
@@ -478,6 +483,10 @@
     <string name="onboarding_row_minutes_a_day">%1$s al día</string>
     <string name="onboarding_row_material">Tu material</string>
     <string name="onboarding_row_material_note">Tu plan y tus lecciones se basan en este material</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
+    <string name="onboarding_row_material_missing_note">Parte de tu material ya no se puede leer, así que tu plan no lo tomará en cuenta.</string>
+    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">Ya no se puede leer, así que tu plan no lo tomará en cuenta.</string>
     <string name="onboarding_row_exam_date">Fecha del examen</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Fechas del examen</string>
@@ -542,6 +551,12 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">Ya leímos este documento. Sube uno diferente.</string>
     <string name="onboarding_attach_failed">No pudimos agregarlo. Inténtalo de nuevo en un momento.</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">Ya no podemos leer “%1$s”. Quítalo y vuelve a agregarlo.</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">Ya no podemos leer algunos de tus archivos. Quítalos y vuelve a agregarlos.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">Ya no se puede leer</string>
     <string name="onboarding_intent_title">¿Qué quieres hacer?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Prepararme para un examen</string>

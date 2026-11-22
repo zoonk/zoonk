@@ -159,6 +159,9 @@
   "onboarding_material_goal_exam": "501d3019f8b61ef1604af510e94a772bd37bd6d30e470c4b9cd3d4906e736923",
   "onboarding_material_goal_understand": "484d8aefa13e0d8a4c7d3932bd5996f1de4dbdc83f2f6c6a0183e3c9da8cb8dd",
   "onboarding_material_sign_up": "8bb9a86cbe25b60b4f01d95bc666dc7e289a614b30ecc947cabfa42ec4b5c1c3",
+  "onboarding_material_unreadable_one": "9dcb87dd867c4a825b3e81b5f932e39348bb53f6deaa011b1675f39c5e122b07",
+  "onboarding_material_unreadable_some": "1c7ed351f67139a8b4f886f23a88ec9d270d90d8cdaad51957bd865577b5666b",
+  "onboarding_material_unreadable_state": "04fe863940767c2909e816f99493611591f529fb0c19e8b303122a066d77e0a1",
   "onboarding_more": "c8068cab50b6dd3a5613fd95889ddea268cfe59e426c563dc7c0033a471548c6",
   "onboarding_musicianship_card": "e949ac86931736ea76b3eedb4aae7ee67083fc925f23fd96b7ce80b09f6831a2",
   "onboarding_musicianship_subject": "26b469bd3eb87c5255e9d2d86faabe364179939c6dbe694d317c0373f264a4d8",
@@ -290,6 +293,8 @@
   "onboarding_row_last_cutoff": "d3716a7354d6d1c1d74af996e53d4d682fd6e4654a8d694684f5eea111f1e0cb",
   "onboarding_row_level": "073f12fbb10541d214aacb3f9fbe901b53293ed2407358616477fcd5a2f43e75",
   "onboarding_row_material": "ff51052151f49962abebee7c9083bc20dcd9ceb6224cf88fc86ae05cd16ca2b2",
+  "onboarding_row_material_all_missing_note": "ade57de84e6cd36b61da12d69ace334422bde136580dd8784b5578023754e030",
+  "onboarding_row_material_missing_note": "94c5704b8f3435e6425ac990c79a913a7e8da6ca9cf632374c31d2df71b992cc",
   "onboarding_row_material_note": "6b97dcad282ca232d17ca84436c8ea28b348c2ac1c50cd43c824c9cd477465bd",
   "onboarding_row_minutes_a_day": "2355fcb7b285f271debd6edce0c0496b376f823b116d5d428851f69f7f1a3cd6",
   "onboarding_row_notice_says": "9efe86f70681ddddd189e621d097dc1735021da9cdc57fa6d6b9245f2d49948a",
@@ -477,6 +482,10 @@
     <string name="onboarding_row_minutes_a_day">%1$s pro Tag</string>
     <string name="onboarding_row_material">Dein Material</string>
     <string name="onboarding_row_material_note">Dein Plan und deine Lektionen richten sich nach diesem Material</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
+    <string name="onboarding_row_material_missing_note">Einige deiner Materialien können nicht mehr gelesen werden, deshalb kann dein Plan sie nicht berücksichtigen.</string>
+    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">Dein Material kann nicht mehr gelesen werden, deshalb kann dein Plan es nicht berücksichtigen.</string>
     <string name="onboarding_row_exam_date">Prüfungstermin</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Prüfungstermine</string>
@@ -540,6 +549,12 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">Wir haben dieses Dokument schon gelesen. Lad ein anderes hoch.</string>
     <string name="onboarding_attach_failed">Wir konnten das nicht hinzufügen. Versuch es gleich noch einmal.</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">„%1$s“ kann nicht mehr gelesen werden. Entferne die Datei und füge sie noch einmal hinzu.</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">Einige deiner Dateien können nicht mehr gelesen werden. Entferne sie und füge sie noch einmal hinzu.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">Nicht mehr lesbar</string>
     <string name="onboarding_intent_title">Was möchtest du tun?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Mich auf eine Prüfung vorbereiten</string>
