@@ -10127,9 +10127,9 @@ msgid "Some of your material can't be read anymore, so your plan won't follow it
 msgstr "Some of your material can't be read anymore, so your plan won't follow it."
 
 #: src/onboarding/understood/use-understood-rows.ts
-msgctxt "8Fx9VN"
-msgid "Your material can't be read anymore, so your plan won't follow it."
-msgstr "Your material can't be read anymore, so your plan won't follow it."
+msgctxt "YOP-LJ"
+msgid "It can't be read anymore, so your plan won't follow it."
+msgstr "It can't be read anymore, so your plan won't follow it."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts

@@ -310,7 +310,7 @@ function useMaterialNote() {
 
     return sources.length > 0
       ? t("Some of your material can't be read anymore, so your plan won't follow it.")
-      : t("Your material can't be read anymore, so your plan won't follow it.");
+      : t("It can't be read anymore, so your plan won't follow it.");
   };
 }
 
