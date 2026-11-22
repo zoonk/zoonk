@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
+import { loadPreparingMockPositions } from "../_utils/preparing-mock-blocks";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
 import { readMissionDocument } from "./catalog";
@@ -12,6 +13,7 @@ export async function getDayMissions({
   timeZone,
   client = prisma,
   readProgress,
+  preparing: knownPreparing,
   through,
 }: {
   session: StudySessionRow;
@@ -19,6 +21,7 @@ export async function getDayMissions({
   displayBlocks?: StudySessionBlock[];
   timeZone: string;
   client?: TransactionClient;
+  preparing?: ReadonlySet<number>;
   readProgress?: DayProgressReader;
   through?: Date;
 }): Promise<Mission[]> {
@@ -30,11 +33,17 @@ export async function getDayMissions({
 
   const blocks = displayBlocks ?? storedSession.blocks;
 
+  const preparing =
+    knownPreparing ??
+    (document.picks.some((pick) => pick.kind === "mock")
+      ? await loadPreparingMockPositions({ ...storedSession, blocks })
+      : new Set<number>());
+
   const missions = await loadMissionDayViews({
     client,
     picks: document.picks,
     readProgress,
-    session: { ...storedSession, blocks },
+    session: { ...storedSession, blocks: blocks.filter((block) => !preparing.has(block.position)) },
     through,
     timeZone,
   });

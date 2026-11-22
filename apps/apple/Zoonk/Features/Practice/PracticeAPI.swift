@@ -7,6 +7,7 @@ enum PracticeAPIError: Error, Equatable, Sendable {
   case invalid(code: String?)
   case limit(HelpLimit)
   case plusRequired
+  case preparing
 
   /// Main's `requestQuestionWriting`: Plus required only when the refusal says `PLUS_REQUIRED`;
   /// every other 402, 403 or 429 is the learner's help limit.
@@ -125,6 +126,7 @@ struct PracticeAPI: Sendable {
         path: .init(sessionId: sessionId, blockId: blockId), body: .json(.init(timeZone: timeZone)))
       {
       case .ok: return
+      case .accepted: throw PracticeAPIError.preparing
       case .unauthorized: throw APIError.unauthorized
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
@@ -459,8 +461,9 @@ struct PracticeAPI: Sendable {
     }
   }
 
+  /// Nil while a mock's questions are still being written: nothing started.
   func startChallenge(token: String, planItemId: String, afterWriting: Bool) async throws
-    -> Components.Schemas.ChallengeStart
+    -> Components.Schemas.ChallengeStart?
   {
     try await perform(token) { client in
       switch try await client.startChallenge(
@@ -468,6 +471,7 @@ struct PracticeAPI: Sendable {
         body: .json(.init(afterWriting: afterWriting ? true : nil, timeZone: timeZone)))
       {
       case .ok(let response): return try response.body.json
+      case .accepted: return nil
       case .code402: throw PracticeAPIError.plusRequired
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)

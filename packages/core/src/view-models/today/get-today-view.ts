@@ -68,7 +68,7 @@ type TodayProgress =
     };
 
 type TodayWeeklyChallenge = {
-  access: "open" | "plusRequired";
+  access: "open" | "plusRequired" | "preparing";
   date: Date | null;
   kind: "mixed" | "mock";
   /** An unsaved selected challenge stays visible without an intro action until Open persists it. */

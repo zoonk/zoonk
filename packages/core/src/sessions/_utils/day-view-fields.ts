@@ -2,7 +2,7 @@ import { type Goal, type StudyFreshStart } from "@zoonk/db";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
-import { getPlayOrder } from "../day-blocks";
+import { getNextBlock } from "../day-blocks";
 import { getExtraTime } from "../extra-time";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
@@ -25,6 +25,8 @@ export type DayViewFieldsInput = {
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
+  /** Positions of the day's mocks whose questions aren't ready yet. */
+  preparing?: ReadonlySet<number>;
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
@@ -40,6 +42,8 @@ export type DayViewFieldsInput = {
   week: SessionWeek;
 };
 
+const NO_POSITIONS: ReadonlySet<number> = new Set();
+
 /** Accepts planned and persisted days without creating a session row. */
 export function toDayViewFields({
   answers,
@@ -51,6 +55,7 @@ export function toDayViewFields({
   lessonRoom = false,
   missions,
   outlines = null,
+  preparing = NO_POSITIONS,
   session,
   sessionBar,
   timeZone = "UTC",
@@ -73,7 +78,13 @@ export function toDayViewFields({
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({ blocks: session.blocks, current }),
+    extraTime: getExtraTime({
+      blocks: session.blocks.map((block) => ({
+        preparing: preparing.has(block.position),
+        status: block.status,
+      })),
+      current,
+    }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),
@@ -93,7 +104,10 @@ export function toDayViewFields({
       planned: session.plannedMinutes,
       reserved: lessonRoom,
     }),
-    nextPosition: getPlayOrder(session.blocks)[0]?.position ?? null,
+    nextPosition:
+      getNextBlock(
+        session.blocks.map((block) => ({ ...block, preparing: preparing.has(block.position) })),
+      )?.position ?? null,
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     sessionBar,
     week: { days: week.days, nextStudyDate: week.nextStudyDate },

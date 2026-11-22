@@ -170,7 +170,7 @@ export const todayResponseSchema = z
     }),
     weeklyChallenge: z
       .object({
-        access: z.enum(["open", "plusRequired"]),
+        access: z.enum(["open", "plusRequired", "preparing"]),
         date: logicalDateSchema.nullable(),
         kind: z.enum(["mixed", "mock"]),
         planItemId: uuidSchema()

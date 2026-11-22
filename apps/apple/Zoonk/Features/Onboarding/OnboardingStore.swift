@@ -141,8 +141,11 @@ final class OnboardingStore {
     }
   }
 
-  func events(generationID: String) -> AsyncThrowingStream<GenerationEvent, Error> {
-    clients.generationEvents(id: generationID, token: session.authenticatedSession?.bearerToken)
+  func events(generationID: String, namespace: String? = nil) -> AsyncThrowingStream<
+    GenerationEvent, Error
+  > {
+    clients.generationEvents(
+      id: generationID, token: session.authenticatedSession?.bearerToken, namespace: namespace)
   }
 
   func found(deckID: String, generationID: String) {

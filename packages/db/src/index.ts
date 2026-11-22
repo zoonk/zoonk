@@ -1,6 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
-import { Prisma, PrismaClient } from "./generated/prisma/client";
+import { Prisma, PrismaClient, UsageKind as StoredUsageKind } from "./generated/prisma/client";
 import { getDatabaseUrl } from "./local-database";
 import { createDatabasePool } from "./pool";
 
@@ -141,7 +141,6 @@ export {
   StudyFreshStart,
   StudySessionStatus,
   SuggestedGoalStatus,
-  UsageKind,
 } from "./generated/prisma/client";
 
 export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";
@@ -158,6 +157,11 @@ export type {
 export type { LessonQuestionThreadGetPayload } from "./generated/prisma/models/LessonQuestionThread";
 export type { ProductWhereInput } from "./generated/prisma/models/Product";
 export type { StepWhereInput } from "./generated/prisma/models/Step";
+
+// Historical mock writing charges remain in the ledger and still count toward actual spend.
+const { mockQuestions: _retiredMockQuestions, ...USAGE_KINDS } = StoredUsageKind;
+export { USAGE_KINDS };
+export type UsageKind = (typeof USAGE_KINDS)[keyof typeof USAGE_KINDS];
 
 export { prisma };
 export const sql = Prisma.sql;

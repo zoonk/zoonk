@@ -2,27 +2,48 @@
 
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useEffectEvent, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
 import { FactSegments } from "../_components/task-meta";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
-import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
-import { type MockChooserStatus } from "./mock-chooser-parts";
+import { ChooserBar, ChooserHeader, ChooserLayout } from "./mock-chooser-page";
+import { type MockChooserStatus, getMockOptionKey, getPreparingKey } from "./mock-chooser-parts";
 import {
   useMockOptionDetail,
   useMockOptionName,
   useMockOptionSizeFacts,
 } from "./mock-option-labels";
-import { MockShortDialog } from "./mock-short-dialog";
+import { type MockWriting } from "./mock-preparing";
 
-export type { MockChooserStatus } from "./mock-chooser-parts";
+export { type MockChooserStatus, getMockOptionKey } from "./mock-chooser-parts";
+export { type MockWriting } from "./mock-preparing";
 
 type MockChooserHrefs = { mock: (id: string) => string };
 
-export function getMockOptionKey(option: MockOptionView): string {
-  return [option.kind, option.day ?? "", option.area ?? ""].join(":");
+const READ_AGAIN_MS = 15_000;
+
+function useReadAgainWhile({ readAgain, waiting }: { readAgain: () => void; waiting: boolean }) {
+  const read = useEffectEvent(() => {
+    if (document.visibilityState === "visible") {
+      readAgain();
+    }
+  });
+
+  useEffect(() => {
+    if (!waiting) {
+      return;
+    }
+
+    const timer = setInterval(read, READ_AGAIN_MS);
+    document.addEventListener("visibilitychange", read);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", read);
+    };
+  }, [waiting]);
 }
 
 function useMockChoices({
@@ -96,20 +117,22 @@ type MockChooserProps = {
   busy: boolean;
   hrefs: MockChooserHrefs;
   onStart: (option: MockOptionView) => void;
-  /** The learner agreed to the `short` status's numbers. */
-  onStartShort: (option: MockOptionView) => void;
-  onStayChoosing: () => void;
+  readAgain: () => void;
+  /** The run writing the mock the learner asked for, while it's being prepared. */
+  readWriting: () => Promise<MockWriting>;
+  goalId: string;
   status: MockChooserStatus;
   view: MockOptionsView;
 };
 
-function PracticeChooser({
+export function MockChooserScreen({
   bar,
   busy,
   hrefs,
   onStart,
-  onStartShort,
-  onStayChoosing,
+  readAgain,
+  goalId,
+  readWriting,
   status,
   view,
 }: MockChooserProps) {
@@ -120,12 +143,9 @@ function PracticeChooser({
   const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
   // A free learner sees the chooser as a subscriber does; Start is where the gate shows.
   const [gated, setGated] = useState(false);
-  const short = status.kind === "short" ? status : null;
-  const shown: MockChooserStatus = short ? { kind: "choosing" } : status;
+  const preparing = picked !== null && picked === getPreparingKey({ status, view }) ? picked : null;
 
-  const shortOption = short
-    ? view.options.find((candidate) => getMockOptionKey(candidate) === short.optionKey)
-    : undefined;
+  useReadAgainWhile({ readAgain, waiting: preparing !== null });
 
   const start = () => {
     if (!option) {
@@ -144,7 +164,16 @@ function PracticeChooser({
       aside={view.lastMock && <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />}
       bar={bar}
       bottomBar={
-        <ChooserBar busy={busy} disabled={!option} gated={gated} onStart={start} status={shown} />
+        <ChooserBar
+          busy={busy}
+          disabled={!option}
+          gated={gated}
+          onStart={start}
+          preparing={preparing}
+          status={status}
+          goalId={goalId}
+          writing={{ read: readWriting, written: readAgain }}
+        />
       }
     >
       <ChooserHeader
@@ -155,20 +184,6 @@ function PracticeChooser({
       <DetailContent>
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
       </DetailContent>
-
-      <MockShortDialog
-        onCancel={onStayChoosing}
-        onStart={() => shortOption && onStartShort(shortOption)}
-        status={short}
-      />
     </ChooserLayout>
   );
-}
-
-export function MockChooserScreen(props: MockChooserProps) {
-  if (props.status.kind === "writing") {
-    return <MockWriting bar={props.bar} run={props.status.run} />;
-  }
-
-  return <PracticeChooser {...props} />;
 }

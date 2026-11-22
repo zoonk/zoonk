@@ -32,6 +32,7 @@ export type WorkflowRunState = {
   firstLesson: GenerationFirstLesson | null;
   joined: string | null;
   lostConnections: number;
+  namespace: string | null;
   polled: string | null;
   ready: boolean;
   reconnectIn: number | null;
@@ -45,7 +46,7 @@ export type WorkflowRunState = {
 export type WorkflowRunAction =
   | { kind: GenerationKind; message: StepStreamMessage; type: "event" }
   | { offsetMs: number; type: "serverClock" }
-  | { runId: string | null; type: "polled" }
+  | { namespace?: string; runId: string | null; type: "polled" }
   | { runId: string; status: RunStatus; type: "runStatus" }
   | { type: "connectionLost" }
   | { type: "notStarted" }
@@ -61,6 +62,7 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   firstLesson: null,
   joined: null,
   lostConnections: 0,
+  namespace: null,
   polled: null,
   ready: false,
   reconnectIn: null,
@@ -219,6 +221,7 @@ export function workflowRunReducer(
     case "polled":
       return {
         ...state,
+        namespace: action.namespace ?? null,
         polled: action.runId && !state.replaced.includes(action.runId) ? action.runId : null,
       };
     case "runStatus":

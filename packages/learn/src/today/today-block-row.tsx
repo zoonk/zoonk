@@ -17,7 +17,7 @@ import { NEXT_TITLE_ID } from "./today-ids";
 import { getLessonAgainId, isFinished } from "./today-queue";
 import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
 import { useBlockSubject, useStepLabel } from "./use-row-label";
-import { useLessonGettingReady } from "./use-today-copy";
+import { useStepGettingReady } from "./use-today-copy";
 
 export function getRowClass({ isNext }: { isNext: boolean }): string {
   return cn(
@@ -105,7 +105,7 @@ function RowLines({
 }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
-  const isGettingReady = useLessonGettingReady();
+  const isGettingReady = useStepGettingReady();
   const stepLabel = useStepLabel({ includeSubject: false });
   const subject = useBlockSubject()(block);
   const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
@@ -145,7 +145,7 @@ function RowTarget({
     );
   }
 
-  if (isFinished(block) || block.waitReason || !opens) {
+  if (isFinished(block) || block.waitReason || block.preparing || !opens) {
     return name;
   }
 

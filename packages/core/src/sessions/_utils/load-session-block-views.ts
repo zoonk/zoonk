@@ -7,14 +7,16 @@ import { readBlockPayload } from "../block-payload";
 import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
 import { type LessonStatesReader, readLessonScreens } from "./lesson-screens";
+import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
-import { toStudyBlockView } from "./session-view";
+import { toStudyBlockViews } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 export async function loadSessionBlockViews({
   answers: knownAnswers,
   blueprint,
   plan,
+  preparing: knownPreparing,
   readLessonStates,
   session,
   timeZone,
@@ -22,6 +24,7 @@ export async function loadSessionBlockViews({
 }: {
   answers?: readonly SessionAnswer[];
   blueprint?: ExamBlueprint | null;
+  preparing?: ReadonlySet<number>;
   plan?: SavedPlan | null;
   readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
@@ -30,7 +33,7 @@ export async function loadSessionBlockViews({
 }) {
   const now = new Date();
 
-  const [answers, subjects, blockedChapters, oftenTestedSkillIds] = await Promise.all([
+  const [answers, subjects, blockedChapters, oftenTestedSkillIds, preparing] = await Promise.all([
     knownAnswers ?? loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
     loadBlockSubjects({ blocks: session.blocks, blueprint, goal: session.goal }),
     session.goalId
@@ -50,28 +53,26 @@ export async function loadSessionBlockViews({
         })
       : new Set<string>(),
     loadOftenTestedSkillIds(session.goal),
+    knownPreparing ?? loadPreparingMockPositions({ ...session, blueprint }),
   ]);
 
-  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
   const current = isCurrentSession({ now, session, timeZone });
 
   const { blocks } = await readLessonScreens(
     {
-      blocks: session.blocks.map((block) =>
-        toStudyBlockView({
-          answeredItemIds,
-          block,
-          blockedTestOutChapters: blockedChapters,
-          blocks: session.blocks,
-          oftenTestedSkillIds,
-          ...subjects.get(block.position),
-        }),
-      ),
+      blocks: toStudyBlockViews({
+        answers,
+        blockedTestOutChapters: blockedChapters,
+        blocks: session.blocks,
+        oftenTestedSkillIds,
+        preparing,
+        subjects,
+      }),
       current,
       status: session.status,
     },
     readLessonStates,
   );
 
-  return { answers, blocks, current, displayBlocks: session.blocks };
+  return { answers, blocks, current, displayBlocks: session.blocks, preparing };
 }

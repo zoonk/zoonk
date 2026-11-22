@@ -172,7 +172,6 @@ class GateScreenshots {
                 LimitSubject.Messages,
                 LimitSubject.Explanations,
                 LimitSubject.Help,
-                LimitSubject.MockExams,
                 LimitSubject.Uploads,
                 LimitSubject.Questions,
                 LimitSubject.Lessons,

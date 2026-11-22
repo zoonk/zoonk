@@ -1,4 +1,4 @@
-import { type TransactionClient, type UsageKind } from "@zoonk/db";
+import { type TransactionClient, USAGE_KINDS, type UsageKind } from "@zoonk/db";
 import { getCallExposureMicros } from "../../language/conversations/_utils/live-call-money";
 import { FREE_LESSON_LIMIT, USAGE_WINDOW_MS } from "../limits";
 import { countActiveGoals } from "./active-goals-left";
@@ -94,29 +94,30 @@ export async function loadUsageTotals({
 
   const dayOf = new Map(today.map((group) => [group.kind, group]));
 
-  const kinds = new Map(
-    [...Map.groupBy(allTime, (group) => group.kind)].map(
-      ([kind, groups]): [UsageKind, KindUsage] => {
-        const window = rolling.get(kind);
-        const day = dayOf.get(kind);
+  const groupsByKind = Map.groupBy(allTime, (group) => group.kind);
 
-        return [
-          kind,
-          {
-            day: day?._count.id ?? 0,
-            generatedTotal: groups
-              .filter((group) => group.generated)
-              .reduce((sum, group) => sum + group._count.id, 0),
-            lastUsedAt: getLatest(groups.map((group) => group._max.createdAt)),
-            rollingClaims: window?.claims ?? [],
-            secondsLast30Days: window?.seconds ?? 0,
-            secondsToday: day?._sum.seconds ?? 0,
-            total: groups.reduce((sum, group) => sum + group._count.id, 0),
-            usedLast30Days: window?.count ?? 0,
-          },
-        ];
-      },
-    ),
+  const kinds = new Map(
+    Object.values(USAGE_KINDS).map((kind): [UsageKind, KindUsage] => {
+      const groups = groupsByKind.get(kind) ?? [];
+      const window = rolling.get(kind);
+      const day = dayOf.get(kind);
+
+      return [
+        kind,
+        {
+          day: day?._count.id ?? 0,
+          generatedTotal: groups
+            .filter((group) => group.generated)
+            .reduce((sum, group) => sum + group._count.id, 0),
+          lastUsedAt: getLatest(groups.map((group) => group._max.createdAt)),
+          rollingClaims: window?.claims ?? [],
+          secondsLast30Days: window?.seconds ?? 0,
+          secondsToday: day?._sum.seconds ?? 0,
+          total: groups.reduce((sum, group) => sum + group._count.id, 0),
+          usedLast30Days: window?.count ?? 0,
+        },
+      ];
+    }),
   );
 
   return {

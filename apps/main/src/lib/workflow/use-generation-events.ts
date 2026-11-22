@@ -8,6 +8,7 @@ import { getWorkflowAuthHeaders } from "./auth-headers";
 
 export function useGenerationEvents({
   connection,
+  namespace,
   onComplete,
   onError,
   onMessage,
@@ -15,6 +16,7 @@ export function useGenerationEvents({
   runId,
 }: {
   connection: number;
+  namespace: string | null;
   onComplete: (runId: string) => void;
   onError: () => void;
   onMessage: (data: StepStreamMessage) => void;
@@ -33,15 +35,23 @@ export function useGenerationEvents({
       return;
     }
 
-    if (cursor.current.key !== runId) {
-      cursor.current = { index: 0, key: runId };
+    const key = JSON.stringify([runId, namespace]);
+
+    if (cursor.current.key !== key) {
+      cursor.current = { index: 0, key };
     }
 
     const controller = new AbortController();
 
     void (async () => {
       try {
-        const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}/events?startIndex=${cursor.current.index}`;
+        const query = new URLSearchParams({ startIndex: String(cursor.current.index) });
+
+        if (namespace) {
+          query.set("namespace", namespace);
+        }
+
+        const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}/events?${query}`;
         const headers = await getWorkflowAuthHeaders();
 
         const response = await fetch(url, { headers, signal: controller.signal });
@@ -94,5 +104,5 @@ export function useGenerationEvents({
 
     return () => controller.abort();
     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Reconnecting reopens the same run at its cursor.
-  }, [connection, runId]);
+  }, [connection, namespace, runId]);
 }

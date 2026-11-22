@@ -5,6 +5,8 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
+import { startMockSupply } from "../goals/mock-questions-workflow";
+import { listDueMockGoalsStep } from "../goals/steps/mock-question-steps";
 import { listNoticeRepairBlueprintsStep } from "../goals/steps/notice-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
 import {
@@ -224,6 +226,7 @@ async function sweep(): Promise<SweepCounts> {
     tagOwedSkillLevels(),
     startOwedMindMapRedraws(),
     startExamNoticeRepairs(),
+    listDueMockGoalsStep().then((goals) => Promise.all(goals.map((goal) => startMockSupply(goal)))),
   ]);
 
   return {

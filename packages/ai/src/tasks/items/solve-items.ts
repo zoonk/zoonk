@@ -6,7 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import { type GeneratedItem, type OptionSelect } from "./item-schemas";
+import { type GeneratedItem, OPTION_LETTERS, type OptionSelect } from "./item-schemas";
 import promptTemplate from "./solve-items.prompt.md";
 
 /**
@@ -22,7 +22,6 @@ const defaultModel = "openai/gpt-6.1-terra";
 const defaultReasoning: Reasoning = "low";
 const fallbackModels = [{ model: "anthropic/claude-sonnet-5.5", reasoning: "high" }] as const;
 
-const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 const VERDICTS = ["none", "true", "false", "undecidable"] as const;
 
 type OptionLetter = (typeof OPTION_LETTERS)[number];
@@ -36,6 +35,7 @@ export type ItemSolution =
   | { format: "trueFalse"; isTrue: boolean | null; work: string };
 
 export type SolveItemsParams = {
+  mockOnly?: boolean;
   items: readonly SolvableItem[];
   select?: OptionSelect;
   /** What every item is about: a passage, a case, a chart's data, a recording's script or a law's articles. */
@@ -169,7 +169,7 @@ export async function solveItems(params: SolveItemsParams) {
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
+    libraryInput: !params.mockOnly,
     systemPrompt,
     task: "solve-items",
   });

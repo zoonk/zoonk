@@ -26,6 +26,7 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { daysAgo, dueSkillFixture } from "./_test-utils/session-goal";
 import { loadDayLessonIds } from "./_test-utils/todays-lessons";
+import { addExtraStudyBlock } from "./add-extra-study-block";
 import { openStudyDay } from "./open-study-day";
 import { startStudyBlock } from "./start-study-block";
 
@@ -246,7 +247,7 @@ describe("an exam day that waited on lessons", () => {
     },
   );
 
-  it("offers the plan's next lessons once the learner finishes a day the outline left short", async () => {
+  it("adds the plan's next lessons once the learner finishes a day the outline left short", async () => {
     const { course, goal, library } = await setupExamDay({ outlineStatus: "running" });
     const opened = await openToday(goal.id);
 
@@ -260,8 +261,16 @@ describe("an exam day that waited on lessons", () => {
 
     const { day } = await readDay(goal.id);
 
-    expect(day.extraTime).toMatchObject({ available: true });
-    expect(day.extraTime.lessons.length).toBeGreaterThan(0);
+    // Its own lessons wait to be asked for, so they aren't listed as up next beside that ask.
+    expect(day).toMatchObject({
+      extraTime: { available: true, lessons: [] },
+      lessonsToPrepare: true,
+    });
+
+    await expect(addExtraStudyBlock({ input: {}, sessionId: opened.id })).resolves.toMatchObject({
+      block: { kind: "learn" },
+      status: "ready",
+    });
   });
 
   it.each(["before", "after"])(

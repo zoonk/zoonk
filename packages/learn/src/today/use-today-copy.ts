@@ -82,25 +82,21 @@ export function isStopBeingWritten({
   );
 }
 
-export function useLessonGettingReady() {
+export function useStepGettingReady() {
   const { today, writingStalled } = useTodayScreen();
 
-  return (block: StopLesson): boolean =>
-    !writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus });
+  return (block: StopLesson & { preparing: boolean }): boolean =>
+    block.preparing ||
+    (!writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus }));
 }
 
 type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
 
+/** Core lists them only once the day has nothing of its own left to open. */
 export function useUpNextLessons(): UpNextLesson[] {
-  const state = useDayState();
   const pastDate = useTodayPastDate();
-  const hasNext = useHasNextBlock();
   const { today } = useTodayScreen();
   const { extraTime } = today.session;
 
-  if (pastDate || hasNext || (state !== "done" && state !== "rest") || !extraTime.available) {
-    return [];
-  }
-
-  return extraTime.lessons;
+  return pastDate || !extraTime.available ? [] : extraTime.lessons;
 }

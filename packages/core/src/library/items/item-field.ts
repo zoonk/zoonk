@@ -46,6 +46,8 @@ type ItemAudience = {
   examBlueprintId?: string | null;
   field?: string | null;
   inSets?: boolean;
+  includeMockReserve?: boolean;
+  userId?: string | null;
   keepIds?: readonly string[];
 };
 
@@ -58,11 +60,35 @@ export function getAskedItemFilter({
   field = null,
   inSets = false,
   keepIds = [],
+  userId,
+  includeMockReserve,
 }: ItemAudience) {
   const kept = keepIds.length > 0 ? [{ id: { in: [...keepIds] } }] : [];
 
+  const reserve = includeMockReserve
+    ? []
+    : [
+        {
+          OR: [
+            { mockOnly: false },
+            { mockOnly: null },
+            ...(userId
+              ? [
+                  {
+                    AND: [
+                      { mockUses: { some: { mockExam: { status: "finished" as const }, userId } } },
+                      { attempts: { some: { mockExam: { status: "finished" as const }, userId } } },
+                    ],
+                  },
+                ]
+              : []),
+          ],
+        },
+      ];
+
   return {
     AND: [
+      ...reserve,
       { OR: [{ field: null }, ...(field ? [{ field }] : []), ...kept] },
       {
         OR: [{ examBlueprintId: null }, ...(examBlueprintId ? [{ examBlueprintId }] : []), ...kept],

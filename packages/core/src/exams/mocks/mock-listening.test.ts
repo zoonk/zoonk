@@ -11,16 +11,19 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { listListeningParts } from "../listening/listening-parts";
+import { pickListeningSets } from "../listening/pick-listening-sets";
+import { mockPaperKey } from "./_utils/mock-supply-request";
+import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
 import { mockConditionsSchema } from "./mock-contract";
+import { listDueMockGoals, listMockPrepWrites } from "./prepare-mock-questions";
 import { recordMockPlay } from "./record-mock-play";
-import { requestMockQuestions } from "./request-mock-questions";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
 
 const FULL = { area: null, day: null, kind: "full" } as const;
-const READING_QUESTIONS = 5;
+const READING_QUESTIONS = 40;
 
 async function listeningSetup({
   readingQuestions = READING_QUESTIONS,
@@ -38,6 +41,7 @@ async function listeningSetup({
         content: { ...listeningContent(), task: part.task },
         examBlueprintId: blueprint.id,
         mediaAssetId: media?.id ?? null,
+        mockOnly: true,
       });
 
       const questions = await Promise.all(
@@ -45,6 +49,7 @@ async function listeningSetup({
           itemFixture({
             content: choiceItemContent(`Part ${index + 1}, question ${position + 1}?`),
             examBlueprintId: blueprint.id,
+            mockOnly: true,
             setId: set.id,
             setPosition: position,
             skillId: listeningSkills[index % listeningSkills.length]?.id ?? "",
@@ -62,6 +67,7 @@ async function listeningSetup({
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: reading.id,
       }),
     ),
@@ -72,7 +78,7 @@ async function listeningSetup({
 
   mockSession(user.id);
 
-  return { goal, reading, recordings };
+  return { blueprint, goal, parts, plan, reading, recordings };
 }
 
 describe("a mock's listening section", () => {
@@ -88,10 +94,7 @@ describe("a mock's listening section", () => {
 
     expect(full?.leftOut.map((part) => part.part)).not.toContain("listening");
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL },
-    });
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
     if (started.status !== "started") {
       throw new Error(`Expected a started mock, got ${started.status}`);
@@ -116,7 +119,58 @@ describe("a mock's listening section", () => {
     );
   });
 
-  it("writes a part's missing recording when the mock starts, and leaves the section out, saying so, when it couldn't", async () => {
+  it("fills a fair-use paper from heard recordings without preparing new ones", async () => {
+    const { goal, recordings } = await listeningSetup();
+    const start = () => startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
+    const first = await start();
+
+    if (first.status !== "started") {
+      throw new Error(`Expected a started mock, got ${first.status}`);
+    }
+
+    await expect(finishMock({ blockId: first.id, input: {} })).resolves.toMatchObject({
+      status: "finished",
+    });
+
+    const original = await prisma.mockExam.findUniqueOrThrow({ where: { id: first.id } });
+
+    await prisma.mockExam.createMany({
+      data: Array.from({ length: 9 }, () => ({
+        conditions: original.conditions as object,
+        examBlueprintId: original.examBlueprintId,
+        goalId: goal.id,
+        sectionStartedAt: original.startedAt,
+        status: "finished",
+        userId: goal.userId,
+      })),
+    });
+
+    await prisma.goal.update({
+      data: { requestedMock: { papers: [], shape: FULL } },
+      where: { id: goal.id },
+    });
+
+    const writing = await listMockPrepWrites({ goalId: goal.id });
+    expect(writing).toMatchObject({ papers: [], urgentShort: false });
+
+    const repeated = await start();
+
+    if (repeated.status !== "started") {
+      throw new Error(`Expected a started fair-use mock, got ${repeated.status}`);
+    }
+
+    const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id: repeated.id } });
+    const { reused, sections } = mockConditionsSchema.parse(sitting.conditions);
+    const audio = sections.find((section) => section.kind === "listening");
+
+    expect(audio?.itemIds).toStrictEqual(
+      recordings.flatMap((recording) => recording.questions.map((question) => question.id)),
+    );
+
+    expect(reused).toBe(READING_QUESTIONS + 4);
+  });
+
+  it("requests the missing recording and keeps the full mock preparing", async () => {
     const { goal } = await listeningSetup({ voiced: [true, false] });
 
     const options = await getMockOptions({ goalId: goal.id });
@@ -129,29 +183,105 @@ describe("a mock's listening section", () => {
     expect(full?.leftOut).not.toContainEqual({ name: "Listening", part: "listening" });
 
     await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: FULL } }),
-    ).resolves.toMatchObject({ listening: true, status: "start" });
-
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL },
+      listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) }),
+    ).resolves.toMatchObject({
+      papers: [{ recordings: { parts: [{ sectionName: "Listening" }] } }],
     });
 
-    if (started.status !== "started") {
-      throw new Error(`Expected a started mock, got ${started.status}`);
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
+
+    expect(started.status).toBe("preparing");
+
+    await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
+      urgentShort: true,
+    });
+
+    await expect(listDueMockGoals()).resolves.toContainEqual({
+      examBlueprintId: goal.examBlueprintId,
+      goalId: goal.id,
+      later: true,
+    });
+
+    await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+  });
+
+  it("reserves a voiced part for the first scheduled paper even when another part is missing", async () => {
+    const { goal, parts, plan } = await listeningSetup({ voiced: [true, false] });
+    const dates = ["2026-11-22", "2026-11-29"];
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          mockFunding: dates.map((date) => ({
+            contributions: [],
+            date,
+            day: null,
+            fullLength: true,
+            minutes: 90,
+          })),
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    await Promise.all(
+      dates.map((date, index) =>
+        planItemFixture({
+          kind: "mock",
+          planId: plan.id,
+          position: index + 1,
+          scheduledFor: new Date(date),
+        }),
+      ),
+    );
+
+    await prisma.goal.update({
+      data: { requestedMock: { papers: [], shape: FULL } },
+      where: { id: goal.id },
+    });
+
+    const priority = await listMockPrepWrites({ goalId: goal.id, priority: mockPaperKey(FULL) });
+
+    expect(
+      priority.papers
+        .filter((paper) => !paper.later)
+        .flatMap((paper) => paper.recordings?.parts ?? [])
+        .map((part) => part.task),
+    ).toStrictEqual(parts.map((part) => part.task));
+
+    const request = await listMockPrepWrites({ goalId: goal.id });
+
+    expect(
+      request.papers
+        .filter((paper) => !paper.alternative)
+        .flatMap((paper) => paper.recordings?.parts ?? [])
+        .map((part) => part.task),
+    ).toStrictEqual([
+      parts[1]?.task,
+      parts[0]?.task,
+      parts[1]?.task,
+      parts[0]?.task,
+      parts[1]?.task,
+    ]);
+  });
+
+  it("a repeated task needs a different recording even within the same paper", async () => {
+    const { blueprint, goal, parts, recordings } = await listeningSetup({ readingQuestions: 0 });
+    const [part] = parts;
+
+    if (!part) {
+      throw new Error("Expected a listening part.");
     }
 
-    const stored = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
-    const { sections } = mockConditionsSchema.parse(stored.conditions);
-
-    expect(sections.map((section) => section.name)).toStrictEqual(["Reading"]);
-
-    const mock = await getMock(started.id);
-
-    expect(mock.status === "ready" && mock.mock.leftOut).toContainEqual({
-      name: "Listening",
-      part: "listening",
+    const picks = await pickListeningSets({
+      examBlueprintId: blueprint.id,
+      mockOnly: true,
+      parts: [part, part],
+      scriptLanguage: "en",
+      userId: goal.userId,
     });
+
+    expect(picks.map(({ setId }) => setId)).toStrictEqual([recordings[0]?.set.id, null]);
   });
 
   it("asks for a full mock's missing recording even when the bank holds its written questions", async () => {
@@ -159,18 +289,18 @@ describe("a mock's listening section", () => {
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: FULL } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
+    ).resolves.toStrictEqual({ status: "preparing" });
   });
 
   it("has written questions written only for the other sections' skills: listening is asked on recordings", async () => {
-    const { goal, reading } = await listeningSetup();
+    const { goal, reading } = await listeningSetup({ readingQuestions: 1 });
 
-    const request = await requestMockQuestions({ goalId: goal.id, input: { shape: FULL } });
+    const request = await listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) });
 
-    expect(request).toMatchObject({ listening: false, status: "start" });
+    expect(request.papers.every((paper) => !paper.recordings)).toBe(true);
 
     expect(
-      request.status === "start" && request.writes.flatMap((write) => write.skillIds),
+      request.papers.flatMap((paper) => paper.writes).flatMap((write) => write.skillIds),
     ).toStrictEqual([reading.id]);
   });
 
@@ -182,10 +312,7 @@ describe("a mock's listening section", () => {
       throw new Error("Expected two recordings");
     }
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL },
-    });
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
     if (started.status !== "started") {
       throw new Error(`Expected a started mock, got ${started.status}`);

@@ -104,7 +104,12 @@ async function setup() {
     ),
     ...skills.flatMap((skill) =>
       Array.from({ length: ITEMS_PER_AREA }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          mockOnly: true,
+          skillId: skill.id,
+        }),
       ),
     ),
     prisma.subscription.create({

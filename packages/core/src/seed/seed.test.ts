@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { SEED_PERSONA_NAMES } from "@zoonk/db/seed/personas";
+import { after } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { session as sessionBoundary } from "../_test-utils/test-boundaries";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
@@ -46,11 +47,25 @@ describe("a persona's copy", () => {
   });
 
   it("reads Ana's exam facts and existing seven-day schedule through onboarding", async () => {
+    vi.mocked(after).mockImplementation(() => {
+      throw new Error("No request scope during seed");
+    });
+
     const copy = await seedPersonaCopy({
       copyKey: "exam-facts",
       email: "seed-exam-facts@zoonk.test",
       persona: "exam",
     });
+
+    await expect(
+      prisma.followUp.findFirst({ where: { kind: "prepareMockSupply", userId: copy.userId } }),
+    ).resolves.toMatchObject({ key: copy.goalId });
+
+    const historicalAnswers = await prisma.mockExamAnswer.count({
+      where: { mockExam: { goalId: copy.goalId, status: "finished" } },
+    });
+
+    expect(historicalAnswers).toBeGreaterThan(0);
 
     sessionBoundary.getSession.mockResolvedValue({ user: { id: copy.userId } });
     const result = await getOnboarding({ goalId: copy.goalId });

@@ -199,7 +199,7 @@ internal fun DayTime(
         } ?: return
 
     val funding = model.today.mockFunding
-    if (funding == null || model.state == StudySession.State.DONE) {
+    if (funding == null || model.state == StudySession.State.DONE || model.state == StudySession.State.REST) {
         Readout(text, modifier, style)
         return
     }

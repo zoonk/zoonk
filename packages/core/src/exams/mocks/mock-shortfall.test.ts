@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { examStructure } from "../../library/exams/_test-utils/exam-formats";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockFormat, getMockFormatMix } from "./mock-format-mix";
 import { type MockCandidate, type MockPlan } from "./mock-plan";
@@ -23,6 +24,32 @@ function numbers(sections: string[]): MockFormat {
 }
 
 describe(getMockQuestionsShortfall, () => {
+  it("supplies an empty reserve for a paper asking for accepted words and numbers", () => {
+    const structure = examStructure(["shortAnswer", "numeric"]);
+
+    const writes = getMockQuestionsShortfall({
+      candidates: [],
+      mix: getMockFormatMix(structure),
+      option: { questions: 6 },
+      plan: {
+        day: null,
+        formatsWanted: { "numeric:number:": 3, typed: 3 },
+        fullLength: true,
+        minutes: 6,
+        reused: 0,
+        sections: [],
+        written: [],
+      },
+      skills: [{ area: null, id: "measurement" }],
+      structure,
+    });
+
+    expect(writes.map((write) => [write.format.key, write.questionsPerSkill])).toStrictEqual([
+      ["typed", 3],
+      ["numeric:number:", 3],
+    ]);
+  });
+
   it("writes a format only for the skills of the subjects that ask it", () => {
     const citation = { passage: "", sourceId: "notice" };
     const subjects = ["Physics", "Mathematics"];
@@ -67,7 +94,8 @@ describe(getMockQuestionsShortfall, () => {
     });
 
     expect(writes.map(({ format, skillIds }) => ({ key: format.key, skillIds }))).toStrictEqual([
-      { key: "choice:4", skillIds: ["Physics", "Mathematics"] },
+      { key: "choice:4", skillIds: ["Physics"] },
+      { key: "choice:4", skillIds: ["Mathematics"] },
       { key: "numeric:number:", skillIds: ["Mathematics"] },
     ]);
   });
@@ -126,7 +154,8 @@ describe(getMockQuestionsShortfall, () => {
     });
 
     expect(writes.map(({ format, skillIds }) => ({ key: format.key, skillIds }))).toStrictEqual([
-      { key: "choice:4", skillIds: ["History", "Mathematics"] },
+      { key: "choice:4", skillIds: ["History"] },
+      { key: "choice:4", skillIds: ["Mathematics"] },
       { key: "numeric:number:", skillIds: ["Mathematics"] },
     ]);
   });
@@ -229,11 +258,11 @@ describe(getMockQuestionsShortfall, () => {
         structure: null,
       }),
     ).toStrictEqual([
-      { format: getMockFormatMix(null)[0], questionsPerSkill: 4, skillIds: ["skill"], target: 8 },
+      { format: getMockFormatMix(null)[0], questionsPerSkill: 4, skillIds: ["skill"] },
     ]);
   });
 
-  it("writes numbers for the skills of the parts that ask them, and untied numbers only where some exist", () => {
+  it("writes numbers for the skills of the parts that ask them, and tries unknown skills when no numeric reserve exists", () => {
     const plan: MockPlan = {
       day: null,
       formatsWanted: { "numeric:fraction:": 4 },
@@ -288,6 +317,6 @@ describe(getMockQuestionsShortfall, () => {
       }).flatMap((write) => write.skillIds);
 
     expect(shortfall(numbers(["Quantitative Reasoning"]))).toStrictEqual(["ratios"]);
-    expect(shortfall(numbers([]))).toStrictEqual([]);
+    expect(shortfall(numbers([]))).toStrictEqual(["words", "ratios"]);
   });
 });

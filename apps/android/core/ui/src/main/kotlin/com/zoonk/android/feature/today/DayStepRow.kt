@@ -132,7 +132,7 @@ private fun StepLines(
     val extra = step.subjectExtra
     val line =
         when {
-            !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
+            step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
             step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
@@ -205,3 +205,8 @@ fun DayMinutes(minutes: Double) {
  */
 fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
     kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
+
+fun DayStep.isGettingReady(
+    lessonStatus: Map<String, LessonGenerationStatus>,
+    writingStalled: Boolean,
+): Boolean = preparing || (!writingStalled && isBeingWritten(lessonStatus))
