@@ -51,6 +51,7 @@
   "player_challenge_said": "1add01dfc3bccd1938f37331007c89e636bbd5c4784690152cff59ce24a68156",
   "player_challenge_scenario_complete": "be3b339d720266fa20fdb093075c8018616b79a62b8454c78bca188a7a1f2753",
   "player_challenge_skills": "1a5ec76e8abbf141416a7b3746c6edd7f03887832cddb48877466f949afba3d6",
+  "player_challenge_starting_figures": "217f24fc02d4795cf4a4c4dd3d39606e845afb7d3522c6b4b619fb736e7ea46b",
   "player_challenge_team": "27f9089fe7cf68e2e99514aeb331791b02f2b83bc28894120845d48e2cc6e079",
   "player_challenge_wait_stopped": "fab13bc1b3d67abcf00f5af795e2e2bb09279897af1a741828f038df2f152d2b",
   "player_challenge_what_happened": "6191605b83a9fe33fa5b1bf34de5030f3de37ad6fd131a0e0dbd051233c14412",
@@ -367,6 +368,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">もしも · %1$s</string>
     <string name="player_challenge_mission">ミッション</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">開始時の数値</string>
     <string name="player_challenge_team">チーム</string>
     <string name="player_challenge_meters">現在の状況</string>
     <!-- How a meter moved after the learner's decision. -->

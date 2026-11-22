@@ -4,6 +4,10 @@ import SwiftUI
 struct ChallengeStepView: View {
   static let decisionVisualId = "challenge-decision-visual"
 
+  private struct StartingFiguresID: Hashable {
+    let node: String
+  }
+
   let step: LessonStep
   let content: ChallengeContent
   let state: LessonPlayerState
@@ -29,6 +33,9 @@ struct ChallengeStepView: View {
       played(decisions, upcoming: upcoming(progress))
     case (.deciding(let node, let confirmed, _, let pending), .turn):
       LessonQuestionText(text: named(node.prompt))
+      if !content.panels.isEmpty {
+        startingFigures.id(StartingFiguresID(node: node.id))
+      }
       LessonOptionList(
         options: node.choices.map { LessonOption(id: $0.id, text: named($0.text)) },
         selectedId: pending,
@@ -77,9 +84,7 @@ struct ChallengeStepView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .panel()
 
-      ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
-        self.panel(panel)
-      }
+      openingPanels
 
       SectionLabel(
         Text("Your team", tableName: "Player", comment: "Above the people in a challenge"))
@@ -102,6 +107,29 @@ struct ChallengeStepView: View {
           }
         }
         .accessibilityElement(children: .combine)
+      }
+    }
+  }
+
+  private var openingPanels: some View {
+    ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
+      self.panel(panel)
+    }
+  }
+
+  private var startingFigures: some View {
+    DisclosureGroup {
+      VStack(alignment: .leading, spacing: 16) {
+        openingPanels
+      }
+      .padding(.top, 8)
+    } label: {
+      Label {
+        Text(
+          "Starting figures", tableName: "Player",
+          comment: "Opens the figures shown at the start of a challenge.")
+      } icon: {
+        Image(systemName: "doc.text")
       }
     }
   }

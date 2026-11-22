@@ -3418,6 +3418,12 @@ msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "아직 정답은 아니에요. 다시 살펴보고 직접 고친 뒤 확인해 보세요."
 
+#. Opens the figures shown at the start of a challenge.
+#: src/lesson/steps/challenge/challenge-conversation.tsx
+msgctxt "sMBshP"
+msgid "Starting figures"
+msgstr "시작 수치"
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"

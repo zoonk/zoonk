@@ -51,6 +51,7 @@
   "player_challenge_said": "cb9be45036d3d5db0c5b4a042b3637f2b2eef4a893d96c696b6e2ce4b9ef5392",
   "player_challenge_scenario_complete": "fedb7d2d81894dfa0911aebf9468edad03498f28995de904e33f9def7f9ebcdb",
   "player_challenge_skills": "1ca43b2015763ac33099f0b5619ae0b603288dea2b926e3761aa27d645b020af",
+  "player_challenge_starting_figures": "eb5867e6b3aebf740b82121d39795b2feb010716ddb6d3d24b175872cb0c1fa1",
   "player_challenge_team": "902258f8e89e4e760f1d02533ac7018e73140938af4504d30fb97b5feb07fc89",
   "player_challenge_wait_stopped": "6248016546e8745ae29918f6f2de8777fda32d1106c97cd7e2ed4837649f05ed",
   "player_challenge_what_happened": "1186241f292a549f7d64d152e697871a301ce6c97a918dd1a527180c6918e21e",
@@ -370,6 +371,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">Ya şöyle olsaydı · %1$s</string>
     <string name="player_challenge_mission">Görevin</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">Başlangıç değerleri</string>
     <string name="player_challenge_team">Ekibin</string>
     <string name="player_challenge_meters">Durumun gidişatı</string>
     <!-- How a meter moved after the learner's decision. -->

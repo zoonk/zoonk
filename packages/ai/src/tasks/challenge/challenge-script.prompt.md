@@ -25,7 +25,7 @@ The chat reads like colleagues messaging each other at work in `LANGUAGE`:
 
 # Before the pick: `messages` and `prompt`
 
-`messages`: what colleagues say before the learner decides, 1 to 4 short messages (`from` is a team id, `text` one or two sentences). They put the `situation` on the table: what happened, what's new, what each of them needs. The learner has the opening panels in front of them, so the first decision's messages add to the panels instead of reading them out. Colleagues talk from their own goals: they push, disagree and want things.
+`messages`: what colleagues say before the learner decides, 1 to 4 short messages (`from` is a team id, `text` one or two sentences). They put the `situation` on the table: what happened, what's new, what each of them needs. When the case has opening panels, the learner can reopen them under "Starting figures" next to the choices at every decision. When a decision needs a figure from the start, make clear which one matters without reading out the panel. Colleagues talk from their own goals: they push, disagree and want things.
 
 When the decision shows a chart, the app draws it under the messages, above the question. The messages add to it instead of reading it out: what the data is, where it comes from, what someone wants from it. Reading it is the learner's work, so before the pick nobody says a value, a count or a trend the learner is meant to find on it. Name a point by its `label` and a series by its `name`, never by where it sits ("the middle dot", "the top line"). A decision without a chart never points at one ("those dots", "on the plot"): say what someone found in words.
 

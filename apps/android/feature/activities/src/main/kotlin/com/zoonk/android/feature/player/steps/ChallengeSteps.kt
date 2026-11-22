@@ -25,7 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
@@ -69,8 +71,12 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LessonVisual
+import com.zoonk.android.ui.components.MarkIcon
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -288,6 +294,9 @@ private fun ChallengeConversation(
                             )
                         }
                         if (part.showsTurn) {
+                            if (content.panels.isNotEmpty()) {
+                                ChallengeStartingFigures(content, names, progress.walk.node.id)
+                            }
                             ChoiceOptions(
                                 options =
                                     progress.walk.node.choices
@@ -310,6 +319,26 @@ private fun ChallengeConversation(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ChallengeStartingFigures(
+    content: ChallengeStepContent,
+    names: ChallengeNames,
+    decisionId: String,
+) {
+    var expanded by remember(decisionId) { mutableStateOf(false) }
+    DisclosureRow(
+        title = stringResource(R.string.player_challenge_starting_figures),
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        leading = { MarkIcon(R.drawable.ic_description) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            content.panels.forEach { ChallengePanelView(it, names) }
         }
     }
 }
