@@ -6,6 +6,11 @@ export type SpeechClipExpected = { flaggedWords: string[] };
 
 export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
   {
+    expected: { flaggedWords: ["Sim."] },
+    id: "pt-cem-sim",
+    userInput: { language: "pt", spokenText: "Cem.", targetText: "Sim." },
+  },
+  {
     expected: { flaggedWords: [] },
     id: "en-rent-correct",
     userInput: {
