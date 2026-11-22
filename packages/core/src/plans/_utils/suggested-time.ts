@@ -18,23 +18,19 @@ export function getSuggestedTime({
   everything: number | null;
   most: MostCoverage | null;
 }): Omit<PlanSuggestedTime, "split"> {
-  if (everything !== null && everything <= LONGEST_SUGGESTED_MINUTES) {
-    return {
-      coveredShare: 1,
-      everyTopic: true,
-      kind: "everything",
-      minutes: everything,
-      reachedShare: 1,
-    };
-  }
+  const fitting =
+    everything !== null && everything <= LONGEST_SUGGESTED_MINUTES ? everything : null;
 
-  const minutes = Math.min(most?.minutes ?? LONGEST_SUGGESTED_MINUTES, LONGEST_SUGGESTED_MINUTES);
+  const minutes =
+    fitting ?? Math.min(most?.minutes ?? LONGEST_SUGGESTED_MINUTES, LONGEST_SUGGESTED_MINUTES);
+
   const coverage = coverageAt(minutes);
+  const fits = fitting !== null;
 
   return {
-    ...toShownCoverage({ ...coverage, fits: false }),
+    ...toShownCoverage({ ...coverage, coveredShare: fits ? 1 : coverage.coveredShare, fits }),
     everyTopic: coverage.coreFits,
-    kind: "focus",
+    kind: fits ? "everything" : "focus",
     minutes,
   };
 }

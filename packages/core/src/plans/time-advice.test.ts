@@ -358,6 +358,63 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
+  it("measures the same reach for the suggestion and its advice after skipping a subject", async () => {
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({
+        skills: [
+          { area: "Math", lessons: 6, weight: 1 },
+          { area: "Biology", lessons: 6, weight: 1 },
+        ],
+      }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 5,
+      examBlueprintId: null,
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-09T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: new Date("2020-09-28T00:00:00Z"),
+      currentInstant: NOW,
+      timeZone: "UTC",
+    });
+
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await expect(
+      change(goal.id, [{ areas: ["Biology"], kind: "skipAreas" }]),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const { recommendedMinutes, suggested } = await readPlanTime(goal.id);
+
+    expect(suggested).toMatchObject({
+      coveredShare: 1,
+      everyTopic: true,
+      kind: "everything",
+      minutes: recommendedMinutes,
+    });
+
+    const result = await getPlanTimeAdvice({
+      goalId: goal.id,
+      input: { dailyMinutes: suggested?.minutes },
+    });
+
+    expect(result).toMatchObject({
+      advice: { coveredShare: 1, reachedShare: 0.5, ready: true },
+      status: "ready",
+    });
+
+    expect(suggested?.reachedShare).toBe(result.status === "ready" && result.advice.reachedShare);
+  });
+
   it.each([
     { name: "the main goal", place: 0 },
     { name: "a goal typed after the main one", place: 1 },

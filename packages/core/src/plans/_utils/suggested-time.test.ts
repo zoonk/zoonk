@@ -4,15 +4,23 @@ import { getSuggestedTime } from "./suggested-time";
 const AT_FOUR_HOURS = { coreFits: false, coveredShare: 0.3214, reachedShare: 0.607 };
 
 describe(getSuggestedTime, () => {
-  it("suggests the time that covers everything, up to four hours a day", () => {
+  it.each([
+    { measured: 1, shown: 1 },
+    { measured: 0.794, shown: 0.79 },
+    { measured: 0.996, shown: 0.99 },
+  ])("suggests a time that covers everything with reach $shown", ({ measured, shown }) => {
     expect(
-      getSuggestedTime({ coverageAt: () => AT_FOUR_HOURS, everything: 240, most: null }),
+      getSuggestedTime({
+        coverageAt: () => ({ coreFits: true, coveredShare: 1, reachedShare: measured }),
+        everything: 240,
+        most: null,
+      }),
     ).toStrictEqual({
       coveredShare: 1,
       everyTopic: true,
       kind: "everything",
       minutes: 240,
-      reachedShare: 1,
+      reachedShare: shown,
     });
   });
 

@@ -66,11 +66,13 @@ describe(getTimeLine, () => {
     expect(coversAt(1)).toStrictEqual({ kind: "everything", whole: true });
     expect(coversAt(0.79)).toStrictEqual({ kind: "everything", whole: false });
     expect(coversAt(null)).toStrictEqual({ kind: "everything", whole: true });
+  });
 
+  it("uses the suggestion's reach when the picked time covers everything kept", () => {
     const keptOnly = foundTime({
       suggested: {
         coveredShare: 1,
-        everyTopic: false,
+        everyTopic: true,
         kind: "everything",
         minutes: 35,
         reachedShare: 0.79,
@@ -78,10 +80,14 @@ describe(getTimeLine, () => {
       },
     });
 
-    expect(getTimeLine({ ...LINE, found: keptOnly })).toStrictEqual({
-      kind: "everything",
-      whole: false,
-    });
+    expect(
+      getTimeLine({
+        ...LINE,
+        advice: adviceAt({ coveredShare: 1, reachedShare: 1 }),
+        found: keptOnly,
+        minutes: 35,
+      }),
+    ).toStrictEqual({ kind: "everything", whole: false });
   });
 
   it("says the time is being worked out, or that it couldn't be", () => {
