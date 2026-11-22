@@ -53,6 +53,7 @@ function promptContent({
       keySource: "practiceKey",
       lines,
       minimumWords: 5,
+      part: "Written test",
       partMinimum: { max: 100, minimum: { unit: "points", value: 50 } },
       points,
       taskKey: key,
@@ -247,6 +248,7 @@ export async function addGradedAnswer({
         writing: writtenAnswerSchema.shape.writing.parse(
           isJsonObject(item.content) ? item.content.writing : undefined,
         ),
+        writingTask: { distinctLines: true, lines: 30, number: 1, points: 30, total: 2 },
       },
       durationMs: 600_000,
       hour: 12,

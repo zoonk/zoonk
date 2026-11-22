@@ -140,6 +140,11 @@ test.describe("Mocks whenever the learner wants", () => {
             progress: null,
           },
           itemId: essay.id,
+          mockPrompt: {
+            area: "Mathematics",
+            context: WRITTEN_ESSAY.context,
+            question: WRITTEN_ESSAY.question,
+          },
           text: essayText,
           writing: writtenAnswerSchema.shape.writing.parse(
             isJsonObject(essay.content) ? essay.content.writing : undefined,
@@ -156,6 +161,7 @@ test.describe("Mocks whenever the learner wants", () => {
       },
     });
 
+    await prisma.item.delete({ where: { id: essay.id } });
     await page.reload();
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1/u })).toBeVisible();
     await continueToStep(page, "Thesis");

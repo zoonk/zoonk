@@ -1,7 +1,6 @@
 import "server-only";
 import { type Goal, type Item, prisma } from "@zoonk/db";
 import { type EssayContent, readEssayContent } from "../../essays/_utils/essay-content";
-import { getWritingAttemptId } from "../../essays/_utils/writing-attempt-id";
 import { writingPromptSchema, writtenAnswerSchema } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
 import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
@@ -61,18 +60,11 @@ export async function loadMockEssayViews({
     return { numericBlankItems: new Set(), views: [] };
   }
 
-  const admissionId = mock.conditions.writingAdmissionId;
-
-  const attempts = admissionId
-    ? await prisma.attempt.findMany({
-        select: { answer: true },
-        where: {
-          id: { in: itemIds.map((itemId) => getWritingAttemptId({ admissionId, itemId })) },
-          mockExamId: mock.id,
-          userId: mock.userId,
-        },
-      })
-    : [];
+  const attempts = await prisma.$queryRaw<{ answer: unknown }[]>`
+    SELECT answer FROM attempts
+    WHERE mock_exam_id = ${mock.id}::uuid AND user_id = ${mock.userId}::uuid
+      AND answer ->> 'itemId' = ANY(${itemIds}::text[])
+  `;
 
   const graded = new Map(
     attempts.flatMap(({ answer }) => {

@@ -98,6 +98,7 @@ export function writtenEssayContent(skillId: string) {
       keySource: "practiceKey",
       lines: 30,
       minimumWords: 5,
+      part: "Prova discursiva",
       points: null,
       taskKey: "essay",
       title: "Controle externo",

@@ -65,7 +65,7 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
           },
           itemId: item.id,
           text,
-          writing: writtenAnswerSchema.shape.writing.parse(writing),
+          writing: writtenAnswerSchema.shape.writing.parse({ ...writing, part: "Written test" }),
         },
         answeredAt,
         durationMs: 300,
@@ -84,6 +84,8 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
     mockSession(intruder.id);
     await expect(requestAttempt(attempt.id)).resolves.toMatchObject({ status: 404 });
 
+    await prisma.item.delete({ where: { id: item.id } });
+
     mockSession(owner.id);
     await expect(requestAttempt("bad-id")).resolves.toMatchObject({ status: 400 });
 
@@ -100,6 +102,7 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
       writing: { taskKey: "part-a" },
     });
 
+    expect(body).not.toHaveProperty("writing.part");
     expect(body).not.toHaveProperty("writing.aspects");
     expect(body).not.toHaveProperty("writing.assessedSkillIds");
     expect(body).not.toHaveProperty("grade.total");
