@@ -3,7 +3,11 @@ export const MIN_DAILY_MINUTES = 5;
 /** A sustainable short habit until the learner chooses their daily time. */
 export const DEFAULT_DAILY_MINUTES = 15;
 
-export const MAX_DAILY_MINUTES = 1440;
+export const MAX_SUGGESTED_DAILY_MINUTES = 240;
+
+export const MAX_PICKABLE_DAILY_MINUTES = 480;
+
+export const MINUTES_PER_DAY = 1440;
 
 const SHORT_STEP = 5;
 const QUARTER_HOUR = 15;
@@ -20,5 +24,9 @@ function everyStep({ from, step, to }: { from: number; step: number; to: number 
 export const DAILY_TIME_CHOICES = [
   ...everyStep({ from: MIN_DAILY_MINUTES, step: SHORT_STEP, to: QUARTER_HOUR - SHORT_STEP }),
   ...everyStep({ from: QUARTER_HOUR, step: QUARTER_HOUR, to: QUARTER_HOURS_UNTIL }),
-  ...everyStep({ from: QUARTER_HOURS_UNTIL + HALF_HOUR, step: HALF_HOUR, to: MAX_DAILY_MINUTES }),
+  ...everyStep({
+    from: QUARTER_HOURS_UNTIL + HALF_HOUR,
+    step: HALF_HOUR,
+    to: MAX_PICKABLE_DAILY_MINUTES,
+  }),
 ];

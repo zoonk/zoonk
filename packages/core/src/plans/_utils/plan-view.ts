@@ -245,7 +245,7 @@ export async function buildPlanView({
   });
 
   const fitOffer = status?.kind === "pastDate" ? null : (summary?.advice.fitOffer ?? null);
-  const feasibility = readSavedFeasibility({ skippedAreas: state.settings.skippedAreas, summary });
+  const feasibility = readSavedFeasibility(summary);
 
   return {
     access,

@@ -1,4 +1,4 @@
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { type StudyScheduleAt, withDailyMinutes } from "./daily-time-plans";
 import { addDays, daysBetween } from "./plan-calendar";
@@ -56,7 +56,7 @@ function getLongestLesson({
 /**
  * The fewest daily minutes that could still cover the whole goal by its date: what `built` (the plan
  * at the fewest minutes searched, whose kept and frozen work every other time keeps too) leaves
- * uncovered has to fit in the lesson room the extra time adds. Above `MAX_DAILY_MINUTES` when not
+ * uncovered has to fit in the lesson room the extra time adds. Above `MINUTES_PER_DAY` when not
  * even a whole day can.
  */
 export function getFittingFloor({
@@ -100,8 +100,8 @@ export function getFittingFloor({
   const holds = (minutes: number) =>
     getLessonRoom({ input, minutes, studyScheduleAt, targetDate }) >= needed;
 
-  if (!holds(MAX_DAILY_MINUTES)) {
-    return MAX_DAILY_MINUTES + 1;
+  if (!holds(MINUTES_PER_DAY)) {
+    return MINUTES_PER_DAY + 1;
   }
 
   const search = (low: number, high: number): number => {
@@ -113,5 +113,5 @@ export function getFittingFloor({
     return holds(middle) ? search(low, middle) : search(middle + 1, high);
   };
 
-  return search(1, MAX_DAILY_MINUTES);
+  return search(1, MINUTES_PER_DAY);
 }

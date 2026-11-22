@@ -212,7 +212,6 @@ describe("learner plan numbers", () => {
         deepensMostAsked: false,
         fits: false,
         measure: "exam",
-        reachedShare: 0.999,
         timeCovers: false,
       }).coveredShare,
     );

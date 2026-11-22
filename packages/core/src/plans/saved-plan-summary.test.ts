@@ -22,7 +22,6 @@ const summary: PlanSummary = {
       deepensMostAsked: false,
       fits: true,
       measure: "goal",
-      reachedShare: null,
       timeCovers: true,
     },
     fitOffer: null,

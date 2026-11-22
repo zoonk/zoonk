@@ -1,4 +1,4 @@
-import { planChangeInputSchema } from "@zoonk/core/plans/contract";
+import { savedPlanOfferOperationsSchema } from "@zoonk/core/plans/contract";
 import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
 import { z } from "zod";
 
@@ -10,7 +10,7 @@ const planOfferSchema = z.object({
       description:
         "True when the plan with the change covers everything in depth by its date, as the change plans it",
     }),
-  operations: planChangeInputSchema.shape.operations,
+  operations: savedPlanOfferOperationsSchema,
 });
 
 export const planFitOfferSchema = planOfferSchema

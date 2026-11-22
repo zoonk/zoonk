@@ -1,7 +1,7 @@
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
-import { getSkillValue, measureDepth, measureReach } from "./coverage-measures";
+import { getSkillValue, measureDepth } from "./coverage-measures";
 import { readTopicMembership } from "./feasibility-topics";
 import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
@@ -34,10 +34,6 @@ function getExamWorth({
   return worth.some(([, value]) => value > 0) ? new Map(worth) : null;
 }
 
-function worthIn(worth: ReadonlyMap<string, number> | null, skill: ScopedSkill): number {
-  return worth ? (worth.get(skill.skillId) ?? 0) : skill.weight;
-}
-
 function listScope({
   examSubjects,
   input,
@@ -51,30 +47,27 @@ function listScope({
 
   const pastBasics = getHarderStartSkillIds(input);
 
-  const whole = input.graph.skills
+  const skills = input.graph.skills
     .map((skill) => ({
       area: getSkillArea({ graph: input.graph, skill }),
       skillId: skill.skillId,
       weight: skill.weight ?? 1,
     }))
-    .filter((skill) => choices.get(skill.skillId) !== "skip" && !pastBasics.has(skill.skillId));
+    .filter(
+      (skill) =>
+        !skippedAreas.has(skill.area) &&
+        choices.get(skill.skillId) !== "skip" &&
+        !pastBasics.has(skill.skillId),
+    );
 
-  const skills = whole.filter((skill) => !skippedAreas.has(skill.area));
   const examWorth = examSubjects ? getExamWorth({ examSubjects, skills }) : null;
-
-  const wholeWorth =
-    examSubjects && examWorth ? getExamWorth({ examSubjects, skills: whole }) : null;
 
   return {
     measure: examWorth ? ("exam" as const) : ("goal" as const),
     skills: skills.map((skill) => ({
       skillId: skill.skillId,
-      wholeWorth: worthIn(wholeWorth, skill),
-      worth: worthIn(examWorth, skill),
+      worth: examWorth ? (examWorth.get(skill.skillId) ?? 0) : skill.weight,
     })),
-    takenOutWorth: whole
-      .filter((skill) => skippedAreas.has(skill.area))
-      .reduce((sum, skill) => sum + worthIn(wholeWorth, skill), 0),
   };
 }
 
@@ -253,7 +246,7 @@ export function getCoverage({
     skills: input.graph.skills,
   });
 
-  const measured = scope.skills.map(({ skillId, wholeWorth, worth }) => {
+  const skills = scope.skills.map(({ skillId, worth }) => {
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
     const requiredRaw = lessonMinutes + (required?.standIn ?? 0);
@@ -263,34 +256,19 @@ export function getCoverage({
       Math.min(required?.standIn ?? 0, standIns.get(skillId) ?? 0);
 
     if (settled.has(skillId)) {
-      return {
-        coveredRaw: requiredRaw,
-        reached: true,
-        requiredRaw,
-        skillId,
-        state: "settled" as const,
-        wholeWorth,
-        worth,
-      };
+      return { coveredRaw: requiredRaw, requiredRaw, skillId, state: "settled" as const, worth };
     }
 
-    const skill = {
+    return {
       coveredRaw: Math.min(requiredRaw, coveredRaw),
       requiredRaw,
       skillId,
       state: requiredRaw > PLAN_EPSILON ? ("measured" as const) : ("unknown" as const),
       worth,
     };
-
-    return { ...skill, reached: isInPlan(skillId) || getSkillValue(skill) > 0, wholeWorth };
   });
 
-  const skills = measured.map(({ reached: _reached, wholeWorth: _wholeWorth, ...skill }) => skill);
-
-  const { coreFits, reachedShare } = measureReach({
-    skills: measured,
-    takenOutWorth: scope.takenOutWorth,
-  });
+  const coreFits = skills.every((skill) => isInPlan(skill.skillId) || getSkillValue(skill) > 0);
 
   return {
     basis: "selected",
@@ -298,7 +276,6 @@ export function getCoverage({
     ...measureDepth({ coreFits, skills }),
     deadline,
     measure: scope.measure,
-    reachedShare,
     shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
     skills,
     targetDate,

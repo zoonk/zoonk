@@ -8,7 +8,7 @@ import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languag
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
 import { type GoalCountryFields, countryCodeSchema } from "./country-contract";
 import {
@@ -44,7 +44,7 @@ export const regionChoiceSchema = z
 export const dailyMinutesSchema = z
   .int()
   .min(MIN_DAILY_MINUTES)
-  .max(MAX_DAILY_MINUTES)
+  .max(MAX_PICKABLE_DAILY_MINUTES)
   .meta({ description: "Minutes a day for this goal" });
 
 const studyDaysSchema = z

@@ -5,14 +5,7 @@ import { type SelectedCoverage } from "./selected-summary-contract";
 
 export type ShownFeasibility = Pick<
   PlanFeasibility,
-  | "coreFits"
-  | "coveredShare"
-  | "deadline"
-  | "deepensMostAsked"
-  | "fits"
-  | "measure"
-  | "reachedShare"
-  | "timeCovers"
+  "coreFits" | "coveredShare" | "deadline" | "deepensMostAsked" | "fits" | "measure" | "timeCovers"
 >;
 
 const LARGEST_SHORT_SHARE = 0.99;
@@ -21,24 +14,6 @@ const LARGEST_SHORT_SHARE = 0.99;
 export function toShownShare({ coveredShare, fits }: { coveredShare: number; fits: boolean }) {
   const rounded = Math.round(coveredShare * 100) / 100;
   return fits ? rounded : Math.min(rounded, LARGEST_SHORT_SHARE);
-}
-
-export function toShownCoverage({
-  coveredShare,
-  fits,
-  reachedShare,
-}: {
-  coveredShare: number;
-  fits: boolean;
-  reachedShare: number | null;
-}) {
-  return {
-    coveredShare: toShownShare({ coveredShare, fits }),
-    reachedShare:
-      reachedShare === null
-        ? null
-        : toShownShare({ coveredShare: reachedShare, fits: reachedShare === 1 }),
-  };
 }
 
 export function readShownFeasibility({
@@ -59,7 +34,6 @@ export function readShownFeasibility({
     deepensMostAsked: feasibility.deepensMostAsked,
     fits: coverage.fits,
     measure: coverage.measure,
-    reachedShare: coverage.reachedShare,
     timeCovers: coverage.fits || feasibility.timeCovers,
   };
 }
@@ -67,11 +41,9 @@ export function readShownFeasibility({
 export function toFeasibilityView(
   feasibility: ShownFeasibility,
 ): NonNullable<PlanView["feasibility"]> {
-  const { coreFits, coveredShare, fits, reachedShare } = feasibility;
-
   return {
-    coreFits,
-    ...toShownCoverage({ coveredShare, fits, reachedShare }),
+    coreFits: feasibility.coreFits,
+    coveredShare: toShownShare(feasibility),
     deadline: feasibility.deadline ? toIsoDate(feasibility.deadline) : null,
     deepensMostAsked: feasibility.deepensMostAsked,
     fits: feasibility.fits,

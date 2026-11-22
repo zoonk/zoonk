@@ -32,7 +32,6 @@ async function postedPlan({
         deepensMostAsked: false,
         fits: true,
         measure: "goal",
-        reachedShare: null,
         timeCovers: true,
       },
       fitOffer: null,
@@ -57,7 +56,6 @@ async function postedPlan({
         deadline: "2026-10-14",
         fits: !short,
         measure: "goal",
-        reachedShare: 1,
         shortLessons: short
           ? lessonIds.map((lessonId) => ({
               countedRaw: 5,

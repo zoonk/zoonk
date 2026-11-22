@@ -84,12 +84,9 @@ async function readTruth(goalId: string) {
   const [plan, syllabus] = await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })]);
   const feasibility = plan.status === "ready" ? plan.plan.feasibility : null;
 
-  if (!feasibility || feasibility.reachedShare === null) {
+  if (!feasibility?.deadline) {
     throw new Error("Expected coverage for a dated plan");
   }
-
-  expect(feasibility.reachedShare === 1).toBe(feasibility.coreFits);
-  expect(feasibility.reachedShare).toBeGreaterThanOrEqual(feasibility.coveredShare);
 
   const topics =
     syllabus.status === "ready"
@@ -151,7 +148,7 @@ describe("a plan's headline and its topics tell one truth", () => {
 
     expect(short.outForTime.length).toBeGreaterThan(0);
     expect(short.coreFits).toBe(false);
-    expect(suggested).toMatchObject({ everyTopic: true, reachedShare: 1 });
+    expect(suggested).toMatchObject({ everyTopic: true });
 
     await change(goal.id, [{ kind: "setDailyMinutes", minutes: suggested?.minutes ?? 0 }]);
 

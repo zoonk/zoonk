@@ -1,30 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { getSuggestedTime } from "./suggested-time";
 
-const AT_FOUR_HOURS = { coreFits: false, coveredShare: 0.3214, reachedShare: 0.607 };
+const AT_FOUR_HOURS = { coreFits: false, coveredShare: 0.3214 };
 
 describe(getSuggestedTime, () => {
-  it.each([
-    { measured: 1, shown: 1 },
-    { measured: 0.794, shown: 0.79 },
-    { measured: 0.996, shown: 0.99 },
-  ])("suggests a time that covers everything with reach $shown", ({ measured, shown }) => {
+  it.each([150, 240])("suggests %i minutes when that fits everything", (minutes) => {
     expect(
-      getSuggestedTime({
-        coverageAt: () => ({ coreFits: true, coveredShare: 1, reachedShare: measured }),
-        everything: 240,
-        most: null,
-      }),
-    ).toStrictEqual({
-      coveredShare: 1,
-      everyTopic: true,
-      kind: "everything",
-      minutes: 240,
-      reachedShare: shown,
-    });
+      getSuggestedTime({ coverageAt: () => AT_FOUR_HOURS, everything: minutes, most: null }),
+    ).toStrictEqual({ coveredShare: 1, everyTopic: true, kind: "everything", minutes });
   });
 
-  it.each([805, null])(
+  it.each([600, null])(
     "suggests four hours, with what they cover, when everything takes %o minutes",
     (everything) => {
       const asked: number[] = [];
@@ -43,7 +29,6 @@ describe(getSuggestedTime, () => {
         everyTopic: false,
         kind: "focus",
         minutes: 240,
-        reachedShare: 0.61,
       });
 
       expect(asked).toStrictEqual([240]);
@@ -52,7 +37,7 @@ describe(getSuggestedTime, () => {
 
   it("suggests the least time that covers as much as any does when part never fits", () => {
     const suggested = getSuggestedTime({
-      coverageAt: () => ({ coreFits: true, coveredShare: 0.99, reachedShare: 1 }),
+      coverageAt: () => ({ coreFits: true, coveredShare: 0.99 }),
       everything: null,
       most: { coveredShare: 0.99, minutes: 180 },
     });
@@ -62,7 +47,6 @@ describe(getSuggestedTime, () => {
       everyTopic: true,
       kind: "focus",
       minutes: 180,
-      reachedShare: 1,
     });
   });
 
@@ -71,7 +55,7 @@ describe(getSuggestedTime, () => {
     (coveredShare) => {
       expect(
         getSuggestedTime({
-          coverageAt: () => ({ coreFits: true, coveredShare, reachedShare: 1 }),
+          coverageAt: () => ({ coreFits: true, coveredShare }),
           everything: 300,
           most: null,
         }),

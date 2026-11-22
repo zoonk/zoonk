@@ -18,7 +18,6 @@ const coverage: SelectedCoverage = {
   deadline: "2026-11-01",
   fits: false,
   measure: "goal",
-  reachedShare: 1,
   shortLessons: [
     { countedRaw: 0, lessonId: "after", requiredRaw: 10, skillIds: ["s2"] },
     { countedRaw: 4, lessonId: "shared", requiredRaw: 10, skillIds: ["s1", "s2"] },
@@ -39,7 +38,6 @@ const summary: PlanSummary = {
       deepensMostAsked: false,
       fits: true,
       measure: "goal",
-      reachedShare: null,
       timeCovers: true,
     },
     fitOffer: null,
@@ -74,29 +72,6 @@ const summary: PlanSummary = {
 describe(readPlanSummary, () => {
   it("describes the plan version it was posted with, whatever happened since", () => {
     expect(readPlanSummary({ plan, value: summary })).toStrictEqual(summary);
-  });
-
-  it("reads a summary saved before plans measured what they reach, with all it had", () => {
-    const { reachedShare: _feasibilityReach, ...feasibility } = summary.advice.feasibility;
-    const { reachedShare: _coverageReach, ...savedCoverage } = coverage;
-
-    const savedBefore = {
-      ...summary,
-      advice: { ...summary.advice, feasibility },
-      selected: { ...summary.selected, coverage: savedCoverage },
-    };
-
-    const read = readPlanSummary({ plan, value: savedBefore });
-
-    expect(read).toStrictEqual({
-      ...summary,
-      selected: { ...summary.selected, coverage: { ...coverage, reachedShare: null } },
-    });
-
-    expect(readSavedFeasibility({ skippedAreas: [], summary: read })).toMatchObject({
-      coveredShare: 0.5,
-      reachedShare: null,
-    });
   });
 
   it.each([{ id: "plan-b" }, { userId: "learner-b" }, { version: 8 }])(
@@ -201,13 +176,10 @@ describe(reduceCompletedSummary, () => {
     expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(true);
   });
 
-  it("keeps the reach it was built with, whatever is done", () => {
+  it("keeps missing topics out of its saved feasibility after crediting completed lessons", () => {
     const missingTopic = {
       ...summary,
-      selected: {
-        ...summary.selected,
-        coverage: { ...coverage, coreFits: false, reachedShare: 0.5 },
-      },
+      selected: { ...summary.selected, coverage: { ...coverage, coreFits: false } },
     };
 
     const reduction = reduceCompletedSummary({
@@ -217,21 +189,9 @@ describe(reduceCompletedSummary, () => {
 
     const reduced = reduction.kind === "reduced" ? reduction.summary : null;
 
-    expect(reduced?.selected.coverage).toMatchObject({
-      coreFits: false,
-      fits: false,
-      reachedShare: 0.5,
-    });
+    expect(reduced?.selected.coverage).toMatchObject({ coreFits: false, fits: false });
 
-    expect(readSavedFeasibility({ skippedAreas: [], summary: reduced })).toMatchObject({
-      coveredShare: 0.99,
-      reachedShare: 0.99,
-    });
-
-    expect(readSavedFeasibility({ skippedAreas: ["Taken out"], summary: reduced })).toMatchObject({
-      coveredShare: 0.99,
-      reachedShare: 0.5,
-    });
+    expect(readSavedFeasibility(reduced)).toMatchObject({ coveredShare: 0.99 });
   });
 
   it("leaves the summary as it is for work it already counted whole", () => {

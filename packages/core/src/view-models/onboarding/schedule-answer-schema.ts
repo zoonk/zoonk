@@ -1,6 +1,6 @@
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 
 export const timeZoneSchema = z
@@ -11,7 +11,7 @@ export const timeZoneSchema = z
 
 export const scheduleAnswerSchema = z
   .object({
-    dailyMinutes: z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES),
+    dailyMinutes: z.int().min(MIN_DAILY_MINUTES).max(MAX_PICKABLE_DAILY_MINUTES),
     fullCourse: z
       .boolean()
       .optional()
@@ -34,7 +34,7 @@ export const scheduleAnswerSchema = z
     weekendMinutes: z
       .int()
       .min(MIN_DAILY_MINUTES)
-      .max(MAX_DAILY_MINUTES)
+      .max(MAX_PICKABLE_DAILY_MINUTES)
       .optional()
       .meta({
         description:

@@ -47,7 +47,6 @@ const coverageSchema = z.object({
   deadline: z.iso.date(),
   fits: z.boolean(),
   measure: z.enum(["exam", "goal"]),
-  reachedShare: z.number().min(0).max(1).nullable().default(null),
   shortLessons: z.array(shortLessonSchema),
   skills: z.array(
     z.object({

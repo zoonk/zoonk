@@ -17323,7 +17323,7 @@
     },
     "/goals/{goalId}/plan/time-to-cover": {
       "post": {
-        "description": "Finds the daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything; null when not even a whole day does, or when the date has passed. Also the time to suggest (`suggested`): that time when it's at most 4 hours a day, else 4 hours with what it covers first, since more is more than most people keep up; the time everything takes stays in `recommendedMinutes`, and either can be applied. For a goal that isn't an exam, also the earliest date the learner's own time covers everything by. Planning at each time takes seconds for a big exam, so ask once for the week the learner sees (onboarding's time question starts on its `suggested` time) or when they ask, never on every view. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "description": "Finds the suggested daily study time (at most 4 hours) for the goal's date and the study week requested. Also returns the fitting time in `recommendedMinutes` when one exists, which can exceed the 8-hour limit for a learner's schedule, and the earliest later fitting date at the saved time for eligible non-exam goals. A goal with a passed date has no suggested time. This calculation can take seconds for a large exam. It makes no changes, and `ready` is false while the plan is being built.",
         "operationId": "findPlanTimeToCover",
         "security": [
           {
@@ -17333,7 +17333,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Find the daily time that covers a goal",
+        "summary": "Find the suggested daily study time",
         "tags": [
           "Plans"
         ],
@@ -17363,7 +17363,7 @@
         },
         "responses": {
           "200": {
-            "description": "The daily time that covers everything",
+            "description": "The suggested daily study time and fit estimates",
             "content": {
               "application/json": {
                 "schema": {
@@ -27040,7 +27040,7 @@
             "description": "Minutes a day; 15 until the schedule screen asks",
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440
+            "maximum": 480
           },
           "language": {
             "description": "The language the learner studies in. When omitted, the course’s language is used",
@@ -29769,7 +29769,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440,
+            "maximum": 480,
             "description": "The day's time, shared by the new goals"
           },
           "goals": {
@@ -29834,7 +29834,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440,
+            "maximum": 480,
             "description": "Minutes a day for this goal"
           },
           "details": {
@@ -29921,7 +29921,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440,
+            "maximum": 480,
             "description": "Minutes a day for this goal"
           },
           "details": {
@@ -29989,7 +29989,7 @@
             "description": "Minutes on Saturday and Sunday when they differ from the daily time; only study days take them",
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440
+            "maximum": 480
           }
         },
         "additionalProperties": false,
@@ -30030,7 +30030,7 @@
               "minutes": {
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 1440
+                "maximum": 480
               }
             },
             "required": [
@@ -30051,7 +30051,7 @@
               "minutes": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 1440,
+                "maximum": 480,
                 "description": "0 makes a rest day"
               },
               "weekdays": {
@@ -30686,7 +30686,7 @@
             "description": "The time a day the learner chose, which answers setup's time question. Without it the plan starts on 15 minutes a day and setup asks",
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440
+            "maximum": 480
           },
           "studyDays": {
             "minItems": 1,
@@ -31906,7 +31906,7 @@
               "dailyMinutes": {
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 1440
+                "maximum": 480
               },
               "fullCourse": {
                 "description": "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
@@ -31936,7 +31936,7 @@
                 "description": "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 1440
+                "maximum": 480
               }
             },
             "required": [
@@ -42423,6 +42423,530 @@
           "todaySession"
         ],
         "additionalProperties": false
+      },
+      "PlanOperationOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setDailyMinutes"
+                ]
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 1440
+              }
+            },
+            "required": [
+              "kind",
+              "minutes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setWeekdayMinutes"
+                ]
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1440,
+                "description": "0 makes a rest day"
+              },
+              "weekdays": {
+                "minItems": 1,
+                "maxItems": 7,
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 6
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "minutes",
+              "weekdays"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "addLightWeek"
+                ]
+              },
+              "startDate": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                "description": "First day of a week at half the time"
+              }
+            },
+            "required": [
+              "kind",
+              "startDate"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                "description": "The day the week's checkpoint or mock is planned"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "moveWeeklyEvent"
+                ]
+              },
+              "to": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                "description": "A later day to take it, within a week"
+              }
+            },
+            "required": [
+              "from",
+              "kind",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setTargetDate"
+                ]
+              },
+              "targetDate": {
+                "nullable": true,
+                "description": "The new date, or null for none: after the learner's today (an earlier one is refused with 422 PLAN_CHANGE_INVALID `pastDate`) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            "required": [
+              "kind",
+              "targetDate"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "areas": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Area names exactly as the plan lists them"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "focusAreas"
+                ]
+              },
+              "parts": {
+                "description": "Some of `areas` narrowed to the part the learner named (biology and chemistry of a sciences area that also holds physics): only those skills get the focus. Omitted, each area keeps the part it had; an area without a part is focused whole",
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PlanFocusPartOutput"
+                }
+              }
+            },
+            "required": [
+              "areas",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "areas": {
+                "minItems": 1,
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Area names exactly as the plan lists them"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "skipAreas"
+                ]
+              }
+            },
+            "required": [
+              "areas",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "areas": {
+                "minItems": 1,
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Area names exactly as the plan lists them"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "restoreAreas"
+                ]
+              }
+            },
+            "required": [
+              "areas",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Brings these areas back to their usual place: skipped ones back in the plan, and ones given less time (`reduceAreas`) their usual time"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "areas": {
+                "minItems": 1,
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Area names exactly as the plan lists them"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "reduceAreas"
+                ]
+              }
+            },
+            "required": [
+              "areas",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Less time for these areas, which stay in the plan (the learner wants less of them): they count half, so their depth and their share of the days go to the other areas first. A focus on one, or `restoreAreas`, gives it its usual time again"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "activities": {
+                "minItems": 1,
+                "maxItems": 4,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "vocabulary",
+                    "listening",
+                    "writing",
+                    "speaking"
+                  ]
+                },
+                "description": "Language practice to leave out of lessons, such as writing"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "skipActivities"
+                ]
+              }
+            },
+            "required": [
+              "activities",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "activities": {
+                "minItems": 1,
+                "maxItems": 4,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "vocabulary",
+                    "listening",
+                    "writing",
+                    "speaking"
+                  ]
+                }
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "restoreActivities"
+                ]
+              }
+            },
+            "required": [
+              "activities",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bias": {
+                "type": "string",
+                "enum": [
+                  "moreExplanation",
+                  "balanced",
+                  "morePractice"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setPracticeBias"
+                ]
+              }
+            },
+            "required": [
+              "bias",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bias": {
+                "type": "string",
+                "enum": [
+                  "easier",
+                  "standard",
+                  "harder"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setDifficultyBias"
+                ]
+              }
+            },
+            "required": [
+              "bias",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cadence": {
+                "type": "string",
+                "enum": [
+                  "weekly",
+                  "biweekly",
+                  "finalWeeks"
+                ],
+                "description": "When an exam's written tests (an essay, a discursive test) are practiced: weekly (the default, spaced practice), biweekly (every other week and the final stretch) or finalWeeks (only the final weeks before the exam, which needs a date). The total practice stays the same"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setWrittenCadence"
+                ]
+              }
+            },
+            "required": [
+              "cadence",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "fullCourse": {
+                "type": "boolean",
+                "description": "true: study everything, even after the exam. Until the exam the plan stays the one its date shapes (what the exam asks most first, mocks, the final stretch); what doesn't fit before it goes on after the exam at the learner's time. false: the plan ends at the exam and leaves out what doesn't fit. Exams only: other goals study everything by having no date (`setTargetDate` with null)"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setFullCourse"
+                ]
+              }
+            },
+            "required": [
+              "fullCourse",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "choices": {
+                "minItems": 1,
+                "maxItems": 200,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "choice": {
+                      "type": "string",
+                      "enum": [
+                        "deep",
+                        "essential",
+                        "quick",
+                        "skip"
+                      ],
+                      "description": "deep: every lesson of it, core and depth, with the time what the plan keeps leaves. essential: its core, the first third of its lessons, before what builds on it (the default). quick: one short lesson that sums it up with a worked example. skip: none of it; what builds on it no longer waits for it, and its own topics leave the plan unless another skill teaches them. No choice ever pushes out a topic its core keeps"
+                    },
+                    "skillId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "One of the plan's `bases`"
+                    }
+                  },
+                  "required": [
+                    "choice",
+                    "skillId"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setBaseChoices"
+                ]
+              }
+            },
+            "required": [
+              "choices",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "How to study some of the plan's bases (`bases`: the skills its topics or final work build on, worth less to the goal than what builds on them). Bases not named keep their choice"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "fitLessons"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Brings in the lessons the learner's own time fits by the plan's date, at the time, date and pace their plan has: the plan is planned again from today as a change of theirs plans it, so topics its date left out, or more depth, come in where they fit. The plan offers it as `fitOffer` (GET /v1/goals/{goalId}/plan) when it adds lessons"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "aim": {
+                "type": "string",
+                "enum": [
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setAim"
+                ]
+              }
+            },
+            "required": [
+              "aim",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "areas": {
+                "minItems": 1,
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Area names exactly as the plan lists them"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setAreaStart"
+                ]
+              },
+              "start": {
+                "type": "string",
+                "enum": [
+                  "pastBasics",
+                  "basics"
+                ],
+                "description": "pastBasics: these areas start past their foundations, at their higher bands (the learner said their lessons are too basic). basics: they start from their foundations again"
+              }
+            },
+            "required": [
+              "areas",
+              "kind",
+              "start"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
       },
       "Generation": {
         "type": "object",
@@ -85381,13 +85905,6 @@
                 ],
                 "description": "exam: a share of the exam's questions and points; goal: of the goal's skills by weight"
               },
-              "reachedShare": {
-                "nullable": true,
-                "description": "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured when the plan is laid out, in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a deadline, and for a plan laid out before it was measured.",
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              },
               "timeCovers": {
                 "type": "boolean",
                 "description": "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): `fitOffer` keeps their daily time. False without a deadline"
@@ -85400,7 +85917,6 @@
               "deepensMostAsked",
               "fits",
               "measure",
-              "reachedShare",
               "timeCovers"
             ],
             "additionalProperties": false
@@ -87086,14 +87602,6 @@
               }
             ]
           },
-          "reachedShare": {
-            "default": null,
-            "description": "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a date, while not ready, or from a server that doesn't measure it.",
-            "nullable": true,
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
           "readingNotice": {
             "default": false,
             "description": "True while the plan waits for the exam's official documents to be read, which can change the time it needs: ready stays false until the reading lands or the plan's wait for it ends",
@@ -87122,7 +87630,6 @@
           "fullCourseEndDate",
           "measure",
           "numbers",
-          "reachedShare",
           "readingNotice",
           "ready",
           "targetDate",
@@ -87179,14 +87686,14 @@
           },
           "recommendedMinutes": {
             "nullable": true,
-            "description": "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. More than 4 hours a day is more than most people keep up: suggested is then the recommendation",
+            "description": "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. For goals typed together with studyDays, the least shared day that gives this goal those minutes, or null if that day exceeds 8 hours. See suggested for the recommended daily time",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
           "suggested": {
             "default": null,
-            "description": "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. It can be shorter than recommendedMinutes (or most), which is what everything takes. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+            "description": "The fitting time when available, or the time that fits the most material, capped at 4 hours. Defaults to 4 hours when neither time is available. Null without a date, while the plan is being built, or when the date has passed. With studyDays, the day the goals typed together share",
             "nullable": true,
             "type": "object",
             "properties": {
@@ -87206,20 +87713,12 @@
                   "everything",
                   "focus"
                 ],
-                "description": "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, which doesn't cover everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything"
+                "description": "everything: the minutes fit the selected curriculum by the goal's date; focus: the suggested time prioritizes the most important material"
               },
               "minutes": {
                 "type": "integer",
                 "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "reachedShare": {
-                "default": null,
-                "description": "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null from a server that doesn't measure it.",
-                "nullable": true,
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
+                "maximum": 240
               },
               "split": {
                 "default": null,
@@ -87259,7 +87758,6 @@
               "everyTopic",
               "kind",
               "minutes",
-              "reachedShare",
               "split"
             ],
             "additionalProperties": false
@@ -98829,530 +99327,6 @@
           }
         ]
       },
-      "PlanOperationOutput": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setDailyMinutes"
-                ]
-              },
-              "minutes": {
-                "type": "integer",
-                "minimum": 5,
-                "maximum": 1440
-              }
-            },
-            "required": [
-              "kind",
-              "minutes"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setWeekdayMinutes"
-                ]
-              },
-              "minutes": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 1440,
-                "description": "0 makes a rest day"
-              },
-              "weekdays": {
-                "minItems": 1,
-                "maxItems": 7,
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 6
-                }
-              }
-            },
-            "required": [
-              "kind",
-              "minutes",
-              "weekdays"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "addLightWeek"
-                ]
-              },
-              "startDate": {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                "description": "First day of a week at half the time"
-              }
-            },
-            "required": [
-              "kind",
-              "startDate"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "from": {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                "description": "The day the week's checkpoint or mock is planned"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "moveWeeklyEvent"
-                ]
-              },
-              "to": {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                "description": "A later day to take it, within a week"
-              }
-            },
-            "required": [
-              "from",
-              "kind",
-              "to"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setTargetDate"
-                ]
-              },
-              "targetDate": {
-                "nullable": true,
-                "description": "The new date, or null for none: after the learner's today (an earlier one is refused with 422 PLAN_CHANGE_INVALID `pastDate`) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              }
-            },
-            "required": [
-              "kind",
-              "targetDate"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "areas": {
-                "maxItems": 20,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "description": "Area names exactly as the plan lists them"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "focusAreas"
-                ]
-              },
-              "parts": {
-                "description": "Some of `areas` narrowed to the part the learner named (biology and chemistry of a sciences area that also holds physics): only those skills get the focus. Omitted, each area keeps the part it had; an area without a part is focused whole",
-                "maxItems": 20,
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PlanFocusPartOutput"
-                }
-              }
-            },
-            "required": [
-              "areas",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "areas": {
-                "minItems": 1,
-                "maxItems": 20,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "description": "Area names exactly as the plan lists them"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "skipAreas"
-                ]
-              }
-            },
-            "required": [
-              "areas",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "areas": {
-                "minItems": 1,
-                "maxItems": 20,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "description": "Area names exactly as the plan lists them"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "restoreAreas"
-                ]
-              }
-            },
-            "required": [
-              "areas",
-              "kind"
-            ],
-            "additionalProperties": false,
-            "description": "Brings these areas back to their usual place: skipped ones back in the plan, and ones given less time (`reduceAreas`) their usual time"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "areas": {
-                "minItems": 1,
-                "maxItems": 20,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "description": "Area names exactly as the plan lists them"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "reduceAreas"
-                ]
-              }
-            },
-            "required": [
-              "areas",
-              "kind"
-            ],
-            "additionalProperties": false,
-            "description": "Less time for these areas, which stay in the plan (the learner wants less of them): they count half, so their depth and their share of the days go to the other areas first. A focus on one, or `restoreAreas`, gives it its usual time again"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "activities": {
-                "minItems": 1,
-                "maxItems": 4,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "vocabulary",
-                    "listening",
-                    "writing",
-                    "speaking"
-                  ]
-                },
-                "description": "Language practice to leave out of lessons, such as writing"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "skipActivities"
-                ]
-              }
-            },
-            "required": [
-              "activities",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "activities": {
-                "minItems": 1,
-                "maxItems": 4,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "vocabulary",
-                    "listening",
-                    "writing",
-                    "speaking"
-                  ]
-                }
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "restoreActivities"
-                ]
-              }
-            },
-            "required": [
-              "activities",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "bias": {
-                "type": "string",
-                "enum": [
-                  "moreExplanation",
-                  "balanced",
-                  "morePractice"
-                ]
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setPracticeBias"
-                ]
-              }
-            },
-            "required": [
-              "bias",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "bias": {
-                "type": "string",
-                "enum": [
-                  "easier",
-                  "standard",
-                  "harder"
-                ]
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setDifficultyBias"
-                ]
-              }
-            },
-            "required": [
-              "bias",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "cadence": {
-                "type": "string",
-                "enum": [
-                  "weekly",
-                  "biweekly",
-                  "finalWeeks"
-                ],
-                "description": "When an exam's written tests (an essay, a discursive test) are practiced: weekly (the default, spaced practice), biweekly (every other week and the final stretch) or finalWeeks (only the final weeks before the exam, which needs a date). The total practice stays the same"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setWrittenCadence"
-                ]
-              }
-            },
-            "required": [
-              "cadence",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "fullCourse": {
-                "type": "boolean",
-                "description": "true: study everything, even after the exam. Until the exam the plan stays the one its date shapes (what the exam asks most first, mocks, the final stretch); what doesn't fit before it goes on after the exam at the learner's time. false: the plan ends at the exam and leaves out what doesn't fit. Exams only: other goals study everything by having no date (`setTargetDate` with null)"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setFullCourse"
-                ]
-              }
-            },
-            "required": [
-              "fullCourse",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "choices": {
-                "minItems": 1,
-                "maxItems": 200,
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "choice": {
-                      "type": "string",
-                      "enum": [
-                        "deep",
-                        "essential",
-                        "quick",
-                        "skip"
-                      ],
-                      "description": "deep: every lesson of it, core and depth, with the time what the plan keeps leaves. essential: its core, the first third of its lessons, before what builds on it (the default). quick: one short lesson that sums it up with a worked example. skip: none of it; what builds on it no longer waits for it, and its own topics leave the plan unless another skill teaches them. No choice ever pushes out a topic its core keeps"
-                    },
-                    "skillId": {
-                      "type": "string",
-                      "minLength": 1,
-                      "description": "One of the plan's `bases`"
-                    }
-                  },
-                  "required": [
-                    "choice",
-                    "skillId"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setBaseChoices"
-                ]
-              }
-            },
-            "required": [
-              "choices",
-              "kind"
-            ],
-            "additionalProperties": false,
-            "description": "How to study some of the plan's bases (`bases`: the skills its topics or final work build on, worth less to the goal than what builds on them). Bases not named keep their choice"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "fitLessons"
-                ]
-              }
-            },
-            "required": [
-              "kind"
-            ],
-            "additionalProperties": false,
-            "description": "Brings in the lessons the learner's own time fits by the plan's date, at the time, date and pace their plan has: the plan is planned again from today as a change of theirs plans it, so topics its date left out, or more depth, come in where they fit. The plan offers it as `fitOffer` (GET /v1/goals/{goalId}/plan) when it adds lessons"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "aim": {
-                "type": "string",
-                "enum": [
-                  "A2",
-                  "B1",
-                  "B2",
-                  "C1"
-                ]
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setAim"
-                ]
-              }
-            },
-            "required": [
-              "aim",
-              "kind"
-            ],
-            "additionalProperties": false,
-            "description": "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "areas": {
-                "minItems": 1,
-                "maxItems": 20,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "description": "Area names exactly as the plan lists them"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "setAreaStart"
-                ]
-              },
-              "start": {
-                "type": "string",
-                "enum": [
-                  "pastBasics",
-                  "basics"
-                ],
-                "description": "pastBasics: these areas start past their foundations, at their higher bands (the learner said their lessons are too basic). basics: they start from their foundations again"
-              }
-            },
-            "required": [
-              "areas",
-              "kind",
-              "start"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "type": "object"
-      },
       "PlanFocusPartOutput": {
         "type": "object",
         "properties": {
@@ -99395,7 +99369,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440,
+            "maximum": 480,
             "description": "Minutes a day for this goal"
           },
           "details": {
@@ -99477,7 +99451,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440,
+            "maximum": 480,
             "description": "The day's time, shared by the new goals"
           },
           "goals": {

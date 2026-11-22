@@ -7,7 +7,7 @@ import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboardi
 import { getCourseFinish } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
-import { toShownCoverage } from "./_utils/plan-feasibility-view";
+import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { readPlanReadiness } from "./_utils/plan-readiness";
 import { loadPlanAtToken } from "./_utils/plan-token";
@@ -74,7 +74,7 @@ function toGoalWeek<Week extends PlanTimeToCoverInput>({
 }
 
 function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null }) {
-  return minutes === null ? null : getBudgetForGoal({ ...day, minutes });
+  return minutes === null || day.count === 1 ? minutes : getBudgetForGoal({ ...day, minutes });
 }
 
 function toMostDay({ day, most }: { day: SharedDay; most: MostCoverage | null }) {
@@ -193,7 +193,6 @@ export async function getPlanTimeAdvice({
         fullCourseEndDate: null,
         measure: "goal",
         numbers: null,
-        reachedShare: null,
         readingNotice: asked.readingNotice,
         ready: false,
         targetDate: null,
@@ -229,15 +228,12 @@ export async function getPlanTimeAdvice({
   ]);
 
   const { feasibility } = computed;
-  const { coveredShare, fits, reachedShare } = feasibility;
   const end = computed.built.estimate.endDate;
   const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 
   return {
     advice: {
-      ...(reachedShare === null
-        ? { coveredShare: null, reachedShare: null }
-        : toShownCoverage({ coveredShare, fits, reachedShare })),
+      coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
       endDate: getCourseFinish(computed),
       focusSubjects:
         feasibility.deadline !== null && !feasibility.fits ? readFocusSubjects(context.goal) : [],

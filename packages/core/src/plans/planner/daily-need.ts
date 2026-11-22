@@ -1,5 +1,5 @@
 import { type DailyNeed, type SelectedSummary } from "../_utils/selected-summary-contract";
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { withDailyMinutes } from "./daily-time-plans";
 import { findDayMock, getSpendable } from "./mock-day";
@@ -67,7 +67,7 @@ export function estimateDailyNeed({
   }
 
   const capacityAt = (dailyMinutes: number) => getCapacityAt({ dailyMinutes, fixed });
-  const most = capacityAt(MAX_DAILY_MINUTES);
+  const most = capacityAt(MINUTES_PER_DAY);
 
   if (most.lessons <= PLAN_EPSILON) {
     return { basis: "estimated", minutes: null, reason: "noStudyDays" };
@@ -89,7 +89,7 @@ export function estimateDailyNeed({
       : search(middle + 1, high);
   };
 
-  return { basis: "estimated", minutes: search(1, MAX_DAILY_MINUTES) };
+  return { basis: "estimated", minutes: search(1, MINUTES_PER_DAY) };
 }
 
 function toFixedShape({

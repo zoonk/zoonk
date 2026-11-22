@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { planChangeInputSchema } from "../plan-contract";
+import { savedPlanOfferOperationsSchema } from "../plan-contract";
 import { measureDepth } from "../planner/coverage-measures";
 import { toIsoDate } from "../planner/plan-calendar";
 import { planEffectSchema } from "./plan-change-payload";
@@ -34,14 +34,13 @@ export const planSummarySchema = z
         deepensMostAsked: z.boolean(),
         fits: z.boolean(),
         measure: z.enum(["exam", "goal"]),
-        reachedShare: z.number().nullable().default(null),
         timeCovers: z.boolean(),
       }),
       fitOffer: z
         .object({
           effect: planEffectSchema,
           fits: z.boolean(),
-          operations: planChangeInputSchema.shape.operations,
+          operations: savedPlanOfferOperationsSchema,
         })
         .nullable(),
       fullCourseEndDate: z.iso.date().nullable(),

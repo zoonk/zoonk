@@ -4,7 +4,7 @@ import { examChoicePickSchema } from "../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activities";
 import { LANGUAGE_AIMS } from "../language/aims/language-aims";
 import { answerTimeZoneSchema } from "../learner/contract";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "./daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MINUTES_PER_DAY, MIN_DAILY_MINUTES } from "./daily-minutes";
 import {
   AREA_STARTS,
   BASE_CHOICES,
@@ -25,8 +25,6 @@ const areasSchema = z
   .array(z.string().trim().min(1))
   .max(MAX_AREAS)
   .meta({ description: "Area names exactly as the plan lists them" });
-
-const dailyMinutesSchema = z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES);
 
 const focusPartInputSchema = z
   .object({
@@ -51,14 +49,18 @@ const activitiesSchema = z
   .min(1)
   .max(LANGUAGE_ACTIVITY_TYPES.length);
 
-/** Weekdays count from Sunday (0) to Saturday (6). */
-const planOperationSchema = z
-  .discriminatedUnion("kind", [
-    z.object({ kind: z.literal("setDailyMinutes"), minutes: dailyMinutesSchema }).strict(),
+function scheduleOperationSchemas(maxDailyMinutes: number) {
+  return [
+    z
+      .object({
+        kind: z.literal("setDailyMinutes"),
+        minutes: z.int().min(MIN_DAILY_MINUTES).max(maxDailyMinutes),
+      })
+      .strict(),
     z
       .object({
         kind: z.literal("setWeekdayMinutes"),
-        minutes: z.int().min(0).max(MAX_DAILY_MINUTES).meta({ description: "0 makes a rest day" }),
+        minutes: z.int().min(0).max(maxDailyMinutes).meta({ description: "0 makes a rest day" }),
         weekdays: z
           .array(
             z
@@ -70,6 +72,12 @@ const planOperationSchema = z
           .max(DAYS_PER_WEEK),
       })
       .strict(),
+  ] as const;
+}
+
+function makePlanOperationSchema(maxDailyMinutes: number) {
+  return z.discriminatedUnion("kind", [
+    ...scheduleOperationSchemas(maxDailyMinutes),
     z
       .object({
         kind: z.literal("addLightWeek"),
@@ -215,8 +223,21 @@ const planOperationSchema = z
           }),
       })
       .strict(),
-  ])
-  .meta({ id: "PlanOperation" });
+  ]);
+}
+
+const planOperationSchema = makePlanOperationSchema(MAX_PICKABLE_DAILY_MINUTES).meta({
+  id: "PlanOperation",
+});
+
+const savedPlanOperationSchema = makePlanOperationSchema(MINUTES_PER_DAY).meta({
+  id: "PlanOperationOutput",
+});
+
+export const savedPlanOfferOperationsSchema = z
+  .array(savedPlanOperationSchema)
+  .min(1)
+  .max(MAX_OPERATIONS);
 
 export type LearnerPlanOperation = z.infer<typeof planOperationSchema>;
 
@@ -256,7 +277,7 @@ const setExamChoiceOperationSchema = examChoicePickSchema.extend({
 });
 
 export const anyPlanOperationSchema = z.union([
-  planOperationSchema,
+  savedPlanOperationSchema,
   addSkillsOperationSchema,
   setToolsOperationSchema,
   followNoticeOperationSchema,

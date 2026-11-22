@@ -1,13 +1,8 @@
+import { MAX_SUGGESTED_DAILY_MINUTES } from "../daily-minutes";
 import { type MostCoverage } from "../planner/most-coverage";
 import { type TimeCoverage } from "../planner/plan-feasibility";
 import { type PlanSuggestedTime } from "../time-advice-contract";
-import { toShownCoverage } from "./plan-feasibility-view";
-
-/**
- * Few people keep up more focused study than this a day, so a goal that needs more is suggested
- * this much, with what it covers first; the time everything takes is still shown and can be picked.
- */
-const LONGEST_SUGGESTED_MINUTES = 240;
+import { toShownShare } from "./plan-feasibility-view";
 
 export function getSuggestedTime({
   coverageAt,
@@ -18,19 +13,21 @@ export function getSuggestedTime({
   everything: number | null;
   most: MostCoverage | null;
 }): Omit<PlanSuggestedTime, "split"> {
-  const fitting =
-    everything !== null && everything <= LONGEST_SUGGESTED_MINUTES ? everything : null;
+  if (everything !== null && everything <= MAX_SUGGESTED_DAILY_MINUTES) {
+    return { coveredShare: 1, everyTopic: true, kind: "everything", minutes: everything };
+  }
 
-  const minutes =
-    fitting ?? Math.min(most?.minutes ?? LONGEST_SUGGESTED_MINUTES, LONGEST_SUGGESTED_MINUTES);
+  const minutes = Math.min(
+    most?.minutes ?? MAX_SUGGESTED_DAILY_MINUTES,
+    MAX_SUGGESTED_DAILY_MINUTES,
+  );
 
-  const coverage = coverageAt(minutes);
-  const fits = fitting !== null;
+  const { coreFits, coveredShare } = coverageAt(minutes);
 
   return {
-    ...toShownCoverage({ ...coverage, coveredShare: fits ? 1 : coverage.coveredShare, fits }),
-    everyTopic: coverage.coreFits,
-    kind: fits ? "everything" : "focus",
+    coveredShare: toShownShare({ coveredShare, fits: false }),
+    everyTopic: coreFits,
+    kind: "focus",
     minutes,
   };
 }

@@ -1,6 +1,6 @@
 import { once } from "@zoonk/utils/once";
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { getSkillValue } from "./coverage-measures";
 import {
@@ -17,7 +17,7 @@ import { fromIsoDate } from "./plan-calendar";
 import { type ExamSubjectShare } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
 
-export type TimeCoverage = { coreFits: boolean; coveredShare: number; reachedShare: number };
+export type TimeCoverage = { coreFits: boolean; coveredShare: number };
 
 export type PlanFeasibility = {
   alternative: { dailyMinutes: number; endDate: Date | null } | null;
@@ -32,7 +32,6 @@ export type PlanFeasibility = {
   fullCourseEndDate: Date | null;
   measure: "exam" | "goal";
   most: MostCoverage | null;
-  reachedShare: number | null;
   recommendedMinutes: number | null;
   skillFits: ReadonlyMap<string, number>;
   /**
@@ -80,7 +79,7 @@ function getAlternative({ built, input }: { built: BuiltPlan; input: BuildPlanIn
   const current = input.goal.dailyMinutes;
 
   const next = Math.min(
-    MAX_DAILY_MINUTES,
+    MINUTES_PER_DAY,
     current < ALTERNATIVE_MINUTES ? ALTERNATIVE_MINUTES : current + ALTERNATIVE_STEP,
   );
 
@@ -129,11 +128,7 @@ export function getPlanFeasibility({
     const everyTopic =
       selected?.coreFits ?? hasEveryTopic({ built: plannedAt()(dailyMinutes), input });
 
-    return {
-      coreFits: everyTopic,
-      coveredShare: selected?.coveredShare ?? Number(everyTopic),
-      reachedShare: selected?.reachedShare ?? Number(everyTopic),
-    };
+    return { coreFits: everyTopic, coveredShare: selected?.coveredShare ?? Number(everyTopic) };
   };
 
   const timeCovers = once(
@@ -192,7 +187,6 @@ export function getPlanFeasibility({
     get most() {
       return most();
     },
-    reachedShare: coverage?.reachedShare ?? null,
     get recommendedMinutes() {
       return recommendedMinutes();
     },

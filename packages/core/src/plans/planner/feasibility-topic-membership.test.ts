@@ -18,13 +18,7 @@ function skill({
   return { area, lessons, name: area, phase: 0, skillId: area, topics: [topic], weight: 1 };
 }
 
-function examInput({
-  skills,
-  skippedAreas = [],
-}: {
-  skills: PlanGraphSkill[];
-  skippedAreas?: string[];
-}): BuildPlanInput {
+function examInput(skills: PlanGraphSkill[]): BuildPlanInput {
   return {
     goal: { dailyMinutes: 5, kind: "exam", targetDate: addDays(TODAY, 3) },
     graph: { phases: [{ milestone: null, name: "Basics" }], skills },
@@ -35,46 +29,23 @@ function examInput({
     paceFactor: 1,
     prerequisites: new Map(),
     readiness: new Map(),
-    settings: parsePlanSettings({ skippedAreas, startDate: toIsoDate(TODAY) }),
+    settings: parsePlanSettings({ startDate: toIsoDate(TODAY) }),
     today: TODAY,
   };
 }
 
-function selectedCoverage(input: BuildPlanInput) {
-  const subjects = input.graph.skills.map(({ area }) => area ?? "");
-  const share = 1 / subjects.length;
-
-  return getSelectedCoverage({
-    built: buildPlan(input),
-    examSubjects: subjects.map((area) => ({ areas: [area], share })),
-    input,
-  });
-}
-
-describe("what a plan reaches of the exam", () => {
+describe("topics in a dated exam plan", () => {
   it("counts one subject's lessons only for that subject's topic, whatever the other topics are called", () => {
-    const input = examInput({
-      skills: ["Physics", "Economics", "Chemistry", "Biology"].map((area) =>
+    const input = examInput(
+      ["Physics", "Economics", "Chemistry", "Biology"].map((area) =>
         skill({ area, topic: "Equilibrium" }),
       ),
-    });
+    );
 
     const built = buildPlan(input);
-    const coverage = selectedCoverage(input);
+    const coverage = getSelectedCoverage({ built, examSubjects: null, input });
 
     expect(built.waitingSkillIds.length).toBeGreaterThan(0);
     expect(coverage).toMatchObject({ coreFits: false });
-    expect(coverage?.reachedShare).toBeLessThan(1);
-  });
-
-  it("counts a subject the learner took out as not reached", () => {
-    const input = examInput({
-      skills: ["A", "B"].map((area) => skill({ area, lessons: 60, topic: `Topic of ${area}` })),
-      skippedAreas: ["B"],
-    });
-
-    const coverage = selectedCoverage(input);
-
-    expect(coverage).toMatchObject({ coreFits: true, fits: false, reachedShare: 0.5 });
   });
 });

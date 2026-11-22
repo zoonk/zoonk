@@ -1,5 +1,5 @@
 import { toShownShare } from "../_utils/plan-feasibility-view";
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY } from "../daily-minutes";
 import { narrowFit } from "./daily-time-plans";
 import { PLAN_EPSILON } from "./plan-precision";
 
@@ -12,15 +12,15 @@ export type MostCoverage = { coveredShare: number; minutes: number };
 export function findMostCoverage(
   coverageAt: (dailyMinutes: number) => { coveredShare: number },
 ): MostCoverage | null {
-  const wholeDay = coverageAt(MAX_DAILY_MINUTES).coveredShare;
+  const wholeDay = coverageAt(MINUTES_PER_DAY).coveredShare;
   const reaches = (minutes: number) => coverageAt(minutes).coveredShare >= wholeDay - PLAN_EPSILON;
 
-  if (!reaches(MAX_DAILY_MINUTES / 2)) {
+  if (!reaches(MINUTES_PER_DAY / 2)) {
     return null;
   }
 
   return {
     coveredShare: toShownShare({ coveredShare: wholeDay, fits: false }),
-    minutes: narrowFit({ fits: reaches, fitting: MAX_DAILY_MINUTES, short: 0 }),
+    minutes: narrowFit({ fits: reaches, fitting: MINUTES_PER_DAY, short: 0 }),
   };
 }

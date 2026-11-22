@@ -358,7 +358,7 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  it("measures the same reach for the suggestion and its advice after skipping a subject", async () => {
+  it("fits the selected curriculum at the suggested time after skipping a subject", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
       planLibraryFixture({
@@ -407,12 +407,7 @@ describe(getPlanTimeAdvice, () => {
       input: { dailyMinutes: suggested?.minutes },
     });
 
-    expect(result).toMatchObject({
-      advice: { coveredShare: 1, reachedShare: 0.5, ready: true },
-      status: "ready",
-    });
-
-    expect(suggested?.reachedShare).toBe(result.status === "ready" && result.advice.reachedShare);
+    expect(result).toMatchObject({ advice: { coveredShare: 1, ready: true }, status: "ready" });
   });
 
   it.each([
@@ -447,7 +442,6 @@ describe(getPlanTimeAdvice, () => {
         everyTopic: true,
         kind: "everything",
         minutes: day,
-        reachedShare: 1,
         split,
       });
 
@@ -750,7 +744,6 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({
       coveredShare: picked.coveredShare,
-      reachedShare: picked.reachedShare,
     });
   });
 
@@ -925,7 +918,6 @@ describe(getPlanTimeAdvice, () => {
       fullCourseEndDate: null,
       measure: "goal",
       numbers: null,
-      reachedShare: null,
       readingNotice: false,
       ready: false,
       recommendedMinutes: null,

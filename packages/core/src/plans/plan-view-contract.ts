@@ -205,7 +205,6 @@ export type PlanView = {
     deepensMostAsked: boolean;
     fits: boolean;
     measure: "exam" | "goal";
-    reachedShare: number | null;
     timeCovers: boolean;
   } | null;
   end: PlanEndView | null;

@@ -37,28 +37,3 @@ export function measureDepth({
     fits: coreFits && total > 0 && whole,
   };
 }
-
-/**
- * `coreFits` is about the plan the learner chose; `reachedShare` about the whole exam or goal, where
- * a subject they took out isn't reached.
- */
-export function measureReach({
-  skills,
-  takenOutWorth,
-}: {
-  skills: readonly { reached: boolean; wholeWorth: number }[];
-  takenOutWorth: number;
-}) {
-  const kept = skills.reduce((sum, skill) => sum + skill.wholeWorth, 0);
-  const reached = skills.reduce((sum, skill) => sum + (skill.reached ? skill.wholeWorth : 0), 0);
-  const total = kept + takenOutWorth;
-  const coreFits = skills.every((skill) => skill.reached);
-
-  return {
-    coreFits,
-    reachedShare:
-      coreFits && takenOutWorth <= 0
-        ? 1
-        : Math.min(LARGEST_PARTIAL_SHARE, total > 0 ? reached / total : 0),
-  };
-}

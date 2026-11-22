@@ -37,14 +37,8 @@ describe(getPlanFeasibility, () => {
 
     const feasibility = getPlanFeasibility({ input });
     expect(feasibility.coreFits).toBe(false);
-    expect(feasibility.reachedShare).toBeCloseTo(999 / (999 + weight));
-    expect(feasibility.reachedShare).toBeLessThan(1);
-    expect(feasibility.reachedShare).toBeGreaterThanOrEqual(feasibility.coveredShare);
 
-    expect(toFeasibilityView(feasibility)).toMatchObject({
-      coveredShare: 0.99,
-      reachedShare: 0.99,
-    });
+    expect(toFeasibilityView(feasibility)).toMatchObject({ coveredShare: 0.99 });
   });
 
   it("counts a skill out for time as out though the learner practiced it", () => {

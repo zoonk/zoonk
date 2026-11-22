@@ -4,7 +4,7 @@ import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
 import { challengeTeamSchema } from "../../library/challenges/challenge-team";
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY } from "../daily-minutes";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "../plan-tools-contract";
 import { PACE_FAMILIES } from "./plan-pace";
 
@@ -146,7 +146,7 @@ const planSettingsSchema = z.object({
   team: challengeTeamSchema.nullable().default(null),
   tools: z.array(toolChoiceSchema).default([]),
   weekdayMinutes: z
-    .array(z.int().min(0).max(MAX_DAILY_MINUTES))
+    .array(z.int().min(0).max(MINUTES_PER_DAY))
     .length(DAYS_PER_WEEK)
     .nullable()
     .default(null),
