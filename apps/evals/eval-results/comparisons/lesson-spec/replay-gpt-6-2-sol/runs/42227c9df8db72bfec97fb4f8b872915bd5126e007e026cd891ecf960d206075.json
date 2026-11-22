@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-pt-mapa-imperio-romano",
+  "challenger": {
+    "costUsd": 0.040445800000000004,
+    "durationMs": 55378.69449999998,
+    "hash": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+    "userPromptHash": "10c05efaa3246b157e8d2080966df561b0955ea90f5c9d8bec5dd4c3390f001b"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.049776600000000004,
+    "durationMs": 128086.574958,
+    "hash": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+    "userPromptHash": "10c05efaa3246b157e8d2080966df561b0955ea90f5c9d8bec5dd4c3390f001b"
+  },
+  "run": 1
+}

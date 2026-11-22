@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useSentenceSpace } from "../_utils/locale";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type HelpLimit, HelpLimitNotice } from "./help-limit-notice";
@@ -67,12 +68,17 @@ export function TestOutStartStatus({
   );
 }
 
-/** Always a chapter's test, so it says so wherever it shows. */
+/**
+ * Always a chapter's test, so it says so wherever it shows. Where nothing on screen names the
+ * chapter the next lesson starts, `nextChapter` says it's that one.
+ */
 export function TestOutStartLink({
   compact = false,
+  nextChapter = false,
   onStart,
 }: {
   compact?: boolean;
+  nextChapter?: boolean;
   onStart: () => Promise<TestOutStart>;
 }) {
   const t = useExtracted();
@@ -83,9 +89,13 @@ export function TestOutStartLink({
     <div className={cn("flex flex-col items-start", compact ? "relative gap-px" : "gap-2")}>
       <form
         action={start}
-        className={cn("text-muted-foreground", compact ? "text-xs leading-4" : "text-sm")}
+        className={cn(
+          "text-muted-foreground",
+          compact ? "text-xs leading-4" : "text-sm",
+          SENTENCE_WITH_ACTION_CLASS,
+        )}
       >
-        {t("Already know this chapter?")}
+        {nextChapter ? t("Already know the next chapter?") : t("Already know this chapter?")}
         {space}
         <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
           {t("Take the test")}

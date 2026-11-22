@@ -1,12 +1,11 @@
-import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
 import { AUTH_BASE_PATH } from "../../apps/api/src/lib/auth-base-path.ts";
 import { getPortlessEnvironment, getServiceUrl } from "./config.mts";
-import { applyCommandExit, getPnpmCommand, runForegroundCommand } from "./process.mts";
+import { applyCommandExit, runForegroundCommand } from "./process.mts";
+import { startProxy } from "./proxy.mts";
 
 const currentDirectory = process.cwd();
 const lanMode = process.argv.includes("--lan");
-const pnpmCommand = getPnpmCommand(process.env);
 
 function getApiUrl(): string {
   if (process.env.PORTLESS === "0") {
@@ -18,11 +17,7 @@ function getApiUrl(): string {
     ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode }),
   };
 
-  execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", "start"], {
-    cwd: currentDirectory,
-    env: environment,
-    stdio: "inherit",
-  });
+  startProxy({ currentDirectory, environment });
 
   return getServiceUrl({ currentDirectory, environment, serviceName: "api" });
 }

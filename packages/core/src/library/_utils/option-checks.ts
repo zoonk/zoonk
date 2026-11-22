@@ -1,4 +1,6 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
+import { readWholeCodeFence } from "@zoonk/utils/code-fence";
+import { parseInlineMarkupRanges } from "@zoonk/utils/inline-markup";
 import { parseLocalizedNumber } from "@zoonk/utils/localized-number";
 import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
@@ -7,8 +9,25 @@ const MARKS = /[*_`~"'“”‘’«»()[\]{}.,;:!?¿¡]/gu;
 
 const NUMBER_WITH_UNIT = /^(?<before>\D*?)\s*(?<number>[+\-−]?\d[\d.,\s]*?)\s*(?<after>\D*)$/u;
 
+/**
+ * Words compare without case, accents or punctuation, but code compares character for character:
+ * `print("oi")` and `print(oi)`, or a line with and without its `;`, are different answers.
+ */
 function toWords(text: string): string {
-  return normalizeString(text.replaceAll(MARKS, " "));
+  const block = readWholeCodeFence(text);
+
+  if (block) {
+    return `\`${block.code}\``;
+  }
+
+  return parseInlineMarkupRanges(text)
+    .map((range) =>
+      range.kind === "code"
+        ? `\`${range.text}\``
+        : normalizeString(range.text.replaceAll(MARKS, " ")),
+    )
+    .filter(Boolean)
+    .join(" ");
 }
 
 function toNumberKey({ language, text }: { language: string; text: string }): string | null {
@@ -23,6 +42,10 @@ function toNumberKey({ language, text }: { language: string; text: string }): st
     : null;
 }
 
+function hasCode(text: string): boolean {
+  return text.includes("`") || readWholeCodeFence(text) !== null;
+}
+
 function isSameAnswer({
   first,
   language,
@@ -32,7 +55,8 @@ function isSameAnswer({
   language: string;
   second: string;
 }): boolean {
-  const firstNumber = toNumberKey({ language, text: first });
+  const isCode = hasCode(first) || hasCode(second);
+  const firstNumber = isCode ? null : toNumberKey({ language, text: first });
 
   return (
     toWords(first) === toWords(second) ||

@@ -1,0 +1,197 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01248519,
+  "failures": [],
+  "packetId": "1445a7cba928bbcbdecda908dc6302f29134fde9d72a5a2b56ac8947c86e05ba",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so neither serves its reader better on realism.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so the decision design is identical.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so the team is identical.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so the debrief notes are identical.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so the numbers and facts are identical and correct.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so depth and language are identical.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so ease of following is identical.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the reader better."
+        },
+        "pairId": "24836b30-3d64-4ef4-a8a4-ef5db7b5c506"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A pediatric ward with a colleague pushing for the 14h dose and a clear weight-based check feels closer to real work than B's simpler clerical flow.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices lead to different endings and the per-day versus per-dose trap is a real decision point, while B's strong choices converge on the same nodes.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "A",
+            "reason": "A's nurse pushes back on the time cost and the doctor's availability creates a real trade-off, so the colleagues act like colleagues.",
+            "criterion": "team"
+          },
+          {
+            "preference": "A",
+            "reason": "A's notes name the specific calculation step and offer example wording, which teaches more than B's shorter notes.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs calculate correctly with consistent units, so neither is more accurate.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A covers the daily versus per-dose distinction and the volume with a record requirement, which is more useful for an intermediate learner than B's thinner treatment.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use common nursing terms and explain them in the chat, so neither is clearly easier to follow.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "A teaches a real dosing trap with correct numbers and realistic pressure, while B is accurate but thinner."
+        },
+        "pairId": "54dffc28-2c5a-4599-a376-c155ad1aa577"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A pediatric ward with fever pressure and a rushed resident feels more like a real shift than B's checklist flow.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A has many branches with different endings and a weak path that yields a real wrong dose, while B's choices converge quickly.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "A",
+            "reason": "The pharmacist and resident push back with distinct voices and the AI gives a useful check, so the team feels like colleagues.",
+            "criterion": "team"
+          },
+          {
+            "preference": "B",
+            "reason": "A's note on a 7.4% drop in efficacy presents an unsourced number as fact, while B's notes are accurate and specific to the decision.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "A's 7.4% efficacy claim is unsourced and its ceiling is asserted without support, while B's 180 mg, 10 mg/mL and 18 mL figures are correct and consistent.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A covers pediatric dosing with the bottle concentration and the exact 2.16 mL volume, which gives more depth than B.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "B",
+            "reason": "A shows raw LaTeX markup in learner text and uses terms like nivel serico without explanation, while B's Portuguese is plain and direct.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The 7.4% figure is 20 mg divided by 270 mg, a shortfall in the dose. It is not a measured drop in treatment efficacy, and no source is given. A learner may carry a false efficacy number into practice.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may believe that a small dose shortfall has a known, quantified effect on treatment efficacy, which is false and unsourced.",
+            "location": {
+              "detail": "Feedback note on the option that rounds the dose down to one ampoule.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Learner-facing text contains raw LaTeX markup with dollar signs and text commands, which will display as code rather than as a readable calculation.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner has to read through markup to follow the calculation, which slows the reading and may cause confusion.",
+            "location": {
+              "detail": "Pharmacist and AI replies in the first verification and volume nodes.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The ceiling is called the standard pediatric limit, but no value, guideline or source is named, so the learner cannot check it.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may treat an unsourced limit as an official guideline and apply it without checking the hospital protocol.",
+            "location": {
+              "detail": "AI reply in the first calculation node.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The two strong first options and the calculation branch lead to the same next node with the same effects, so the opening decision changes little.",
+            "criterion": "decisions",
+            "learnerCost": "The learner can click through the first steps without weighing the choice, which reduces the practice value.",
+            "location": {
+              "detail": "Opening node, where the two strong options lead to the same check and the same effects.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A contains a major misleading efficacy number in a debrief note, which outweighs its stronger realism and team design."
+        },
+        "pairId": "f75c9bcb-2827-4415-b1c6-3974f812c030"
+      }
+    ]
+  }
+}

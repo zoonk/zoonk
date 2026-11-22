@@ -93,6 +93,14 @@ export const lessonQualityCheckTask: Task<
   generate: reviewLesson,
   id: "lesson-quality-check",
   name: "Lesson quality check",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code blocks publication or starts a fix",
+    reason:
+      "A missed error reaches every learner; the reviewer comes from another family than the writer",
+    waits: "With the lesson's wait; rechecks run in the background",
+  },
   score: scoreLessonQualityCheck,
   testCases: [...TEST_CASES, ...REAL_REVIEW_CASES],
 };

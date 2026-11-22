@@ -1,0 +1,514 @@
+{
+  "title": "O desconto mantém a margem da loja?",
+  "setting": "Manhã de ofertas na Loja Brisa",
+  "mission": "Você prepara os preços de uma loja de utilidades. Recomende **um desconto que preserve a margem mínima de 30%** e envie o preço para aprovação de {{manager}}.",
+  "deadline": "Etiquetas aprovadas hoje até as 16h",
+  "panels": [
+    {
+      "title": "Oferta de uma cafeteira",
+      "metrics": [
+        {
+          "label": "Preço atual",
+          "value": "R$ 240,00",
+          "note": "Antes era R$ 200,00; houve aumento de 20%."
+        },
+        {
+          "label": "Desconto proposto",
+          "value": "20%",
+          "note": "Aplicado sobre o preço atual."
+        },
+        {
+          "label": "Custo por unidade",
+          "value": "R$ 144,00",
+          "note": "Use este valor como custo total neste caso."
+        },
+        {
+          "label": "Margem mínima",
+          "value": "30%",
+          "note": "Parcela do preço de venda que sobra após o custo."
+        }
+      ],
+      "note": "A campanha ainda não foi publicada. {{manager}} aprova os preços antes da impressão."
+    }
+  ],
+  "team": [
+    {
+      "id": "pricing",
+      "role": "Analista comercial",
+      "expertise": "Confere as contas e ajuda a explicar preços e margens.",
+      "ai": false
+    },
+    {
+      "id": "manager",
+      "role": "Gerente de loja",
+      "expertise": "Aprova as ofertas e precisa liberar as etiquetas no prazo.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de IA",
+      "expertise": "Calcula cenários quando recebe os valores e a base de cada porcentagem.",
+      "ai": true
+    }
+  ],
+  "meters": [
+    {
+      "id": "accuracy",
+      "label": "Segurança da proposta",
+      "start": 40,
+      "goodWhen": "high"
+    },
+    {
+      "id": "time",
+      "label": "Folga até a impressão",
+      "start": 70,
+      "goodWhen": "high"
+    }
+  ],
+  "skills": [
+    {
+      "id": "successive",
+      "name": "Aumentos e descontos sucessivos",
+      "practice": "Parta de R$ 100,00, aplique um aumento de 10% e depois um desconto de 10%; anote a base usada em cada etapa."
+    },
+    {
+      "id": "margin",
+      "name": "Calcular e explicar a margem",
+      "practice": "Para uma venda de R$ 100,00 com custo de R$ 70,00, calcule a margem e explique em uma frase por que a divisão usa o preço de venda."
+    }
+  ],
+  "startNodeId": "start",
+  "nodes": [
+    {
+      "id": "start",
+      "messages": [
+        {
+          "from": "manager",
+          "text": "Quero anunciar 20% de desconto. Como aumentamos 20% antes, imagino que a cafeteira volte aos R$ 200,00. Dá para preparar?"
+        },
+        {
+          "from": "pricing",
+          "text": "Trata-se de variações percentuais compostas: o fator multiplicativo resultante é (1 + i₁)(1 − i₂) = 1,2 × 0,8 = 0,96, logo não há reversibilidade simétrica entre acréscimo e decréscimo."
+        }
+      ],
+      "prompt": "Como você prepara o preço da oferta?",
+      "choices": [
+        {
+          "id": "cancel",
+          "text": "Registrar R$ 200,00, considerando que o aumento e o desconto se anulam.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "manager",
+              "text": "Deixo R$ 200,00 no rascunho, então. Preciso também da margem antes de aprovar."
+            },
+            {
+              "from": "pricing",
+              "text": "Esse preço ainda precisa de conferência: as duas porcentagens usam valores diferentes."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": -15
+            },
+            {
+              "meter": "time",
+              "change": 5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "Antes de compensar duas porcentagens, confira sobre qual valor cada uma é aplicada.",
+              "example": "Calcule 20% de R$ 240,00 e subtraia esse desconto do preço atual."
+            }
+          ],
+          "next": "recheck"
+        },
+        {
+          "id": "ask-ai",
+          "text": "Pedir à IA o preço após as duas etapas, mostrando a base de cada conta.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Aplicando os fatores sucessivos sobre a base de incidência: PV₁ = 200 × 1,2 = 240; PV₂ = PV₁ × (1 − 0,2) = 192."
+            },
+            {
+              "from": "pricing",
+              "text": "Conferi: R$ 240,00 menos R$ 48,00 dá R$ 192,00. O desconto em reais é maior que o aumento anterior."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": 20
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você pediu as bases e as etapas da conta, tornando a resposta da IA fácil de conferir.",
+              "example": null
+            }
+          ],
+          "next": "margin"
+        }
+      ]
+    },
+    {
+      "id": "margin",
+      "messages": [
+        {
+          "from": "manager",
+          "text": "Então a oferta fica em R$ 192,00. Com custo de R$ 144,00, sobram R$ 48,00 por unidade. Isso atende aos 30%?"
+        },
+        {
+          "from": "pricing",
+          "text": "A margem de contribuição percentual é MC% = (PV − CV) / PV, distinta do markup, que adota o custo como base de incidência."
+        }
+      ],
+      "prompt": "Que análise você envia a {{manager}}?",
+      "choices": [
+        {
+          "id": "divide-cost",
+          "text": "Informar margem de 33,33%, dividindo os R$ 48,00 pelo custo de R$ 144,00.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "Essa conta mede a sobra em relação ao custo, não a margem sobre a venda. Para a margem, R$ 48,00 divididos por R$ 192,00 dão 25%."
+            },
+            {
+              "from": "manager",
+              "text": "Vou devolver a proposta para revisão. Não libero a etiqueta com uma margem calculada sobre a base errada."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": -20
+            },
+            {
+              "meter": "time",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Use o preço de venda como base para comparar a margem com a meta da loja.",
+              "example": "\"Sobram R$ 48,00 em uma venda de R$ 192,00: a margem é de 25%.\""
+            }
+          ],
+          "next": "review"
+        },
+        {
+          "id": "divide-sale",
+          "text": "Informar margem de 25%, dividindo os R$ 48,00 pelo preço de R$ 192,00.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "pricing",
+              "text": "Isso mesmo: de cada R$ 100,00 vendidos, sobram R$ 25,00 após o custo considerado aqui."
+            },
+            {
+              "from": "manager",
+              "text": "Fica abaixo dos 30%. Vamos precisar de outro desconto ou deixar essa cafeteira fora da campanha."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": 20
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você usou a base correta e ligou o resultado à decisão: a oferta não atende à margem mínima.",
+              "example": null
+            }
+          ],
+          "next": "offer"
+        }
+      ]
+    },
+    {
+      "id": "recheck",
+      "messages": [
+        {
+          "from": "manager",
+          "text": "O rascunho está em R$ 200,00, mas {{pricing}} levantou uma dúvida. Preciso fechar isso antes da impressão."
+        },
+        {
+          "from": "pricing",
+          "text": "Também precisamos da margem: a sobra após o custo, dividida pelo preço de venda. Posso conferir a conta depois que você definir a base."
+        }
+      ],
+      "prompt": "Você mantém o rascunho ou refaz a análise?",
+      "choices": [
+        {
+          "id": "recalculate",
+          "text": "Pedir à IA o desconto sobre R$ 240,00 e a margem sobre o preço resultante.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "O desconto é de R$ 48,00, então o preço fica em R$ 192,00. Tirando o custo de R$ 144,00, sobram R$ 48,00. Essa sobra dividida por R$ 192,00 dá margem de 25%."
+            },
+            {
+              "from": "pricing",
+              "text": "Conferi as duas bases. Precisamos substituir os R$ 200,00 do rascunho e buscar uma oferta que atenda aos 30%."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": 25
+            },
+            {
+              "meter": "time",
+              "change": -15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você retomou a base do desconto antes de levar o rascunho para aprovação.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você orientou a IA a calcular a margem sobre a venda e teve a conta conferida por {{pricing}}.",
+              "example": null
+            }
+          ],
+          "next": "offer"
+        },
+        {
+          "id": "send-draft",
+          "text": "Enviar os R$ 200,00 para aprovação e deixar a conferência com o gerente.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "manager",
+              "text": "Não vou liberar ainda. R$ 200,00 não corresponde a 20% de desconto sobre R$ 240,00."
+            },
+            {
+              "from": "pricing",
+              "text": "E, mesmo vendendo por R$ 200,00, sobrariam R$ 56,00: margem de 28%, abaixo da meta. Vamos devolver para revisão."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": -15
+            },
+            {
+              "meter": "time",
+              "change": -25
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "A aprovação do gerente não substitui a conferência do preço que você prepara.",
+              "example": "Registre o valor do desconto em reais antes de enviar a proposta."
+            },
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Inclua a margem na proposta para que a aprovação compare o preço com a meta da loja.",
+              "example": "\"A R$ 200,00, sobram R$ 56,00; a margem seria de 28%.\""
+            }
+          ],
+          "next": "review"
+        }
+      ]
+    },
+    {
+      "id": "offer",
+      "messages": [
+        {
+          "from": "manager",
+          "text": "Já sabemos que 20% de desconto leva a R$ 192,00 e margem de 25%. Quero manter uma oferta, mas não vou abrir exceção aos 30%."
+        },
+        {
+          "from": "pricing",
+          "text": "Conferi uma alternativa: desconto de 10% sobre R$ 240,00 dá R$ 216,00. Sobram R$ 72,00 após o custo, uma margem de aproximadamente 33,33%."
+        },
+        {
+          "from": "manager",
+          "text": "Podemos trocar o desconto a tempo. Também dá para tirar a cafeteira da campanha, mas perdemos essa chamada na vitrine."
+        }
+      ],
+      "prompt": "Qual proposta você leva para aprovação?",
+      "choices": [
+        {
+          "id": "hold",
+          "text": "Retirar a cafeteira da campanha e manter o preço atual de R$ 240,00.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "manager",
+              "text": "Aprovado. A margem fica em 40%, mas teremos de usar outro produto para chamar atenção na vitrine."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": 10
+            },
+            {
+              "meter": "time",
+              "change": -10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você preservou a margem mínima ao manter um preço já conferido.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Antes de retirar uma oferta, compare uma alternativa que atenda tanto à margem quanto ao objetivo da campanha.",
+              "example": "\"Com 10% de desconto, ainda temos margem de 33,33% e mantemos uma oferta na vitrine.\""
+            }
+          ],
+          "next": "held"
+        },
+        {
+          "id": "smaller-discount",
+          "text": "Propor 10% de desconto, com preço de R$ 216,00 e margem de 33,33%.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "manager",
+              "text": "Aprovado. A oferta atende aos 30%. Vou liberar a etiqueta com preço de R$ 216,00 e desconto de 10%."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": 20
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": {
+            "label": "30 minutos depois",
+            "panel": {
+              "title": "Etiqueta aprovada",
+              "metrics": [
+                {
+                  "label": "Preço da oferta",
+                  "value": "R$ 216,00",
+                  "note": "10% de desconto sobre R$ 240,00."
+                },
+                {
+                  "label": "Sobra após o custo",
+                  "value": "R$ 72,00",
+                  "note": "R$ 216,00 menos R$ 144,00."
+                },
+                {
+                  "label": "Margem",
+                  "value": "33,33%",
+                  "note": "Valor aproximado; acima da meta de 30%."
+                }
+              ],
+              "note": "Oferta liberada por {{manager}} para impressão."
+            }
+          },
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você transformou o cálculo em uma proposta comercial: manteve uma oferta sem ficar abaixo da margem mínima.",
+              "example": null
+            }
+          ],
+          "next": "approved"
+        },
+        {
+          "id": "keep-discount",
+          "text": "Reenviar os 20% de desconto, pedindo prioridade para a chamada da vitrine.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "manager",
+              "text": "Entendo o apelo da chamada, mas os 25% de margem continuam abaixo da regra. Vou devolver a proposta, sem liberar a impressão."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "accuracy",
+              "change": -10
+            },
+            {
+              "meter": "time",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "Use a margem calculada como limite da proposta, especialmente quando a pessoa responsável já descartou uma exceção.",
+              "example": "\"Para manter a oferta dentro da regra, proponho reduzir o desconto para 10%.\""
+            }
+          ],
+          "next": "review"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "approved",
+      "outcome": "A oferta foi aprovada por R$ 216,00, com desconto de 10% e margem de aproximadamente 33,33%. A etiqueta seguiu para impressão dentro da regra da loja."
+    },
+    {
+      "id": "review",
+      "outcome": "A proposta voltou para revisão antes da impressão. A conferência de {{manager}} e {{pricing}} impediu a publicação de uma oferta que não atendia às regras, mas o retrabalho consumiu tempo."
+    },
+    {
+      "id": "held",
+      "outcome": "A cafeteira ficou fora da campanha, mantendo o preço de R$ 240,00 e a margem de 40%. A loja preservou a margem, mas precisou procurar outra chamada para a vitrine."
+    }
+  ],
+  "summary": [
+    "Variações percentuais sucessivas compõem-se multiplicativamente sobre bases de incidência distintas.",
+    "A margem sobre a venda é a sobra após o custo dividida pelo preço de venda, não pelo custo.",
+    "Uma proposta de desconto deve mostrar o preço final e a margem para apoiar a aprovação."
+  ]
+}

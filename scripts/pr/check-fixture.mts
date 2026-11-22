@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterAll, onTestFinished } from "vitest";
@@ -46,20 +46,34 @@ export function sha256(text: string): string {
   return createHash("sha256").update(text).digest("hex");
 }
 
-/**
- * A repository where `apps/main` changed after `older` and only docs changed after `current`,
- * with captures written into it: each picture's bytes are its own name. `changedAt` is when its
- * code last changed (`packages/`, at `current`), from the fixture's own dates.
- */
-export function checkFixture() {
-  const repository = mkdtempSync(join(tmpdir(), "pr-media-check-"));
-  removeAfterUse(repository);
+function commitHistory() {
+  const repository = mkdtempSync(join(tmpdir(), "pr-media-history-"));
   git(repository, "init", "-q");
   git(repository, "config", "user.email", "agent@example.com");
   git(repository, "config", "user.name", "Agent");
   const older = commitFile(repository, "apps/main/page.txt", "one", FIRST_COMMIT);
   const current = commitFile(repository, "packages/ui/row.txt", "two", FIRST_COMMIT + MINUTE);
   commitFile(repository, "docs/notes.md", "unrelated", FIRST_COMMIT + 2 * MINUTE);
+  return { current, older, repository };
+}
+
+/**
+ * Committed once per test file, while it loads, and copied for each fixture: a busy runner can
+ * take seconds over a dozen git processes, which a test's own time limit shouldn't pay for.
+ */
+const history = commitHistory();
+removeAfterUse(history.repository);
+
+/**
+ * A repository where `apps/main` changed after `older` and only docs changed after `current`,
+ * with captures written into it: each picture's bytes are its own name. `changedAt` is when its
+ * code last changed (`packages/`, at `current`), from the fixture's own dates.
+ */
+export function checkFixture() {
+  const { current, older } = history;
+  const repository = mkdtempSync(join(tmpdir(), "pr-media-check-"));
+  removeAfterUse(repository);
+  cpSync(history.repository, repository, { recursive: true });
   const changedAt = new Date(FIRST_COMMIT + MINUTE);
 
   function shot(overrides: Partial<CaptureItem> & { file: string }): CaptureItem {

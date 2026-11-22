@@ -21,9 +21,11 @@ import com.zoonk.android.feature.onboarding.setup.StepLoading
 import com.zoonk.android.feature.onboarding.setup.showAlphabetNote
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.PlacementLength
+import kotlinx.coroutines.Deferred
 import java.util.UUID
 
 internal class SetupTestChoice(
@@ -73,7 +75,7 @@ internal fun ColumnScope.PlacementSetup(
     onProgress: (Float?) -> Unit,
     onProgressLabel: (String?) -> Unit,
     onReportSaveFailure: () -> Unit,
-    onQuickDone: suspend () -> WriteOutcome<*>,
+    onQuickDone: () -> Deferred<WriteOutcome<*>>?,
 ) {
     val id = goalId.toString()
     val plan by plans.plan[goalId].collectShown()
@@ -100,7 +102,7 @@ internal fun ColumnScope.PlacementSetup(
             onRetryRun,
             store,
             onProgress,
-            onQuickDone,
+            { onQuickDone()?.await() ?: WriteOutcome.Obsolete },
             onReportSaveFailure,
             onProgressLabel,
             lengthChoice = SetupTestChoice(minutes, walk.pressed, walk.failed) { walk.start(PlacementLength.WHOLE_COURSE) },
@@ -110,6 +112,7 @@ internal fun ColumnScope.PlacementSetup(
 
     val assessment = viewModel(key = "setup-level-assessment:$id") { LevelTestPlanViewModel(id, store, createSavedStateHandle()) }
     VisitOf(assessment.visit)
+    ActOn(assessment.skipped) { assessment.completeSkip(onQuickDone()) }
     val opened by store.levelTest(id, null).collectShown()
     val attempt = assessment.attemptId ?: opened.value?.openAttemptId
     if (attempt == null) {
@@ -123,7 +126,7 @@ internal fun ColumnScope.PlacementSetup(
             pressed = assessment.pressed,
             failed = assessment.failed,
             onStart = assessment::start,
-            onSkip = { assessment.skip(onQuickDone) },
+            onSkip = assessment::skip,
             notes = { LevelTestLanguageNotes(language, showAlphabetNote = opened.value?.showAlphabetNote == true) },
         )
         return

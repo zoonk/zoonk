@@ -253,118 +253,6 @@
       "categoryScores": [
         {
           "categoryId": "precision",
-          "reasoning": "The standalone initial amanhã/tomorrow alternatives move a word across the conditional-clause boundary and change its scope. This triggers the explicit maximum score of 5 for any incorrect kept order. Misplaced commas additionally make some Portuguese alternatives unacceptable as written.",
-          "score": 4,
-          "label": "Only correct orders",
-          "weight": 70
-        },
-        {
-          "categoryId": "recall",
-          "reasoning": "The result includes the common main-clause-first alternative for both sentences in both languages. It also includes the natural Portuguese word order with amanhã before chover inside the conditional clause, although its punctuation is defective as assessed under precision. No clear omission of a common meaning-preserving order is evident.",
-          "score": 10,
-          "label": "Common orders found",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "6 of 8 parts passed. \"amanhã, Se chover eu fico em casa\" is kept but wrong. \"tomorrow, If it rains I'll stay home\" is kept but wrong.",
-          "score": 7.75,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1360,
-          "outputTokens": 721,
-          "reasoningTokens": 290
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The kept orders \"amanhã, Se chover eu fico em casa\" and \"tomorrow, If it rains I'll stay home\" move the time expression out of the conditional clause. They no longer preserve the original attachment of tomorrow to raining, violating the explicit requirement that words stay in their own clauses. The app would therefore accept meaning-changing answers.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Punctuation and capitalization were not adjusted after reordering. Reversed clauses retain sentence-internal capitals and dangling final commas. In \"Se amanhã, chover eu fico em casa\" and its reversed counterpart, the comma incorrectly interrupts the conditional clause rather than marking its boundary.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Generate alternatives by moving complete clauses, preserving each time expression's attachment, and then restoring punctuation and capitalization. For example: \"Eu fico em casa se chover amanhã\" and \"Se amanhã chover, eu fico em casa\".",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "US English speaker learning Brazilian Portuguese. The \"se\" and \"quando\" clauses can come before or after the main clause in both languages, but the words of one clause never move into the other, which would change what depends on what.",
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "Se eu fico em casa, chover amanhã",
-                  "Amanhã, se chover, eu fico em casa"
-                ],
-                "valid": [
-                  "Eu fico em casa se chover amanhã"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "If I'll stay home, it rains tomorrow",
-                  "Tomorrow, if it rains, I'll stay home"
-                ],
-                "valid": [
-                  "I'll stay home if it rains tomorrow"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "Quando tomo um banho, chego em casa"
-                ],
-                "valid": [
-                  "Tomo um banho quando chego em casa"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "When I take a shower, I get home"
-                ],
-                "valid": [
-                  "I take a shower when I get home"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "en-pt-clause-order-1",
-        "userInput": {
-          "learnerLanguage": "en",
-          "sentences": [
-            {
-              "sentence": "Se chover amanhã, eu fico em casa",
-              "translation": "If it rains tomorrow, I'll stay home"
-            },
-            {
-              "sentence": "Quando chego em casa, tomo um banho",
-              "translation": "When I get home, I take a shower"
-            }
-          ],
-          "targetLanguage": "pt"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "precision",
           "reasoning": "The Japanese alternatives preserve the topic marker は, object marker を, and sentence-final verb, keeping the same doer, object, and habitual meaning. Object-fronted versions are more context-dependent but acceptable Japanese word orders. The English alternative correctly moves only “every morning” to the front.",
           "score": 10,
           "label": "Only correct orders",
@@ -447,6 +335,116 @@
             }
           ],
           "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "precision",
+          "reasoning": "The word sequences preserve the condition and time clauses. In particular, “se amanhã chover” keeps amanhã with chover, and the rubric permits the sentence-initial amanhã and tomorrow variants. No wrong word order triggers the cap; the weakness is how the punctuation presents those orders to the learner.",
+          "score": 8,
+          "label": "Only correct orders",
+          "weight": 70
+        },
+        {
+          "categoryId": "recall",
+          "reasoning": "Both languages include the common reversal for each clause pair. Portuguese also includes amanhã before chover in both clause positions. No common meaning-preserving order is clearly missing.",
+          "score": 10,
+          "label": "Common orders found",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1399,
+          "outputTokens": 704,
+          "reasoningTokens": 362
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The punctuation and capitalization make valid word orders hard to read. In “Se amanhã, chover eu fico em casa”, the comma splits the condition instead of marking its end. The clause-final variants also retain a capitalized conjunction mid-sentence and a dangling comma at the end.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the listed orders, but adjust the text to show the new clause boundaries: “Se amanhã chover, eu fico em casa” and “I take a shower when I get home.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese. The \"se\" and \"quando\" clauses can come before or after the main clause in both languages, but the words of one clause never move into the other, which would change what depends on what. Whether \"amanhã\" and \"tomorrow\" may open the whole sentence (\"Tomorrow, if it rains, I'll stay home\") is debatable, so keeping or dropping those orders is fine.",
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Se eu fico em casa, chover amanhã"
+                ],
+                "valid": [
+                  "Eu fico em casa se chover amanhã"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "If I'll stay home, it rains tomorrow"
+                ],
+                "valid": [
+                  "I'll stay home if it rains tomorrow"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Quando tomo um banho, chego em casa"
+                ],
+                "valid": [
+                  "Tomo um banho quando chego em casa"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "When I take a shower, I get home"
+                ],
+                "valid": [
+                  "I take a shower when I get home"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "en-pt-clause-order-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "sentences": [
+            {
+              "sentence": "Se chover amanhã, eu fico em casa",
+              "translation": "If it rains tomorrow, I'll stay home"
+            },
+            {
+              "sentence": "Quando chego em casa, tomo um banho",
+              "translation": "When I get home, I take a shower"
+            }
+          ],
+          "targetLanguage": "pt"
         }
       }
     }

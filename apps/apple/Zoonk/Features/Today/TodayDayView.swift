@@ -212,7 +212,9 @@ struct TodayDayView: View {
   }
 
   private var actionBar: TodayActionBar {
-    TodayActionBar(action: sessionAction, offers: TodaySessionAction.offers(view))
+    TodayActionBar(
+      action: sessionAction,
+      offers: TodaySessionAction.offers(view, writingStalled: writingStalled))
   }
 
   @ViewBuilder
@@ -237,8 +239,9 @@ struct TodayDayView: View {
 
   private var sessionAction: TodaySessionAction {
     TodaySessionAction(
-      view: view, busy: busy, failed: failed, open: open, prepare: prepareLessons,
-      keepLearning: keepLearning, keepStudying: keepStudying, archive: archive)
+      view: view, busy: busy, failed: failed, writingStalled: writingStalled, open: open,
+      prepare: prepareLessons, keepLearning: keepLearning, keepStudying: keepStudying,
+      archive: archive)
   }
 
   private func keepStudying() {
@@ -487,8 +490,8 @@ struct TodayDayView: View {
 
   /// The API names no run for a day's outlines (one can wait for its course before any run starts),
   /// so Today reads the day again as main's `usePoll` does: through the learner's 15-minute ask for
-  /// lessons plus one read, again from each read that changes the day, then it says it's taking
-  /// longer. Not while a task covers Today.
+  /// lessons plus one read, again from each read that changes the day, then it offers to get them.
+  /// Not while a task covers Today.
   private func rereadWhileOutlining() async {
     writingStalled = false
 

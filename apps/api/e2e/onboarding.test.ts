@@ -9,6 +9,7 @@ import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { goalCreateResponseSchema } from "../src/lib/openapi/schemas/goals";
 import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
 test.describe("Onboarding API", () => {
@@ -135,6 +136,61 @@ test.describe("Onboarding API", () => {
 
     expect(invalid.status()).toBe(400);
     await apiContext.dispose();
+  });
+
+  test("a card sent again, after a lost response or from two windows at once, returns the goal it started", async () => {
+    const { guestApi, userId } = await createGuest(baseURL);
+    const goal = `i want to learn juggling ${randomUUID()}`;
+
+    await goalUnderstandingFixture({
+      goal,
+      result: {
+        followUps: [],
+        goals: [{ countryDependent: false, kind: "learn", subject: "Juggling", title: "Juggle" }],
+        route: "goals",
+      },
+      userId,
+    });
+
+    const draft = await readBody({
+      response: await guestApi.post("/v1/goal-understandings", {
+        data: { goal, language: "en", timeZone: "UTC" },
+      }),
+      schema: onboardingDraftViewSchema,
+      status: 201,
+    });
+
+    if (draft.understanding?.status !== "goals") {
+      throw new Error("The card has no goals");
+    }
+
+    const card = {
+      dailyMinutes: draft.understanding.schedule.dailyMinutes,
+      goals: draft.understanding.goals.map((item) => item.draft),
+      timeZone: "UTC",
+    };
+
+    const confirm = async () =>
+      readBody({
+        response: await guestApi.post("/v1/goals", { data: card }),
+        schema: goalCreateResponseSchema,
+        status: 201,
+      });
+
+    const first = await confirm();
+    const goalId = first.goals[0]?.id;
+    const replays = [await confirm(), ...(await Promise.all([confirm(), confirm()]))];
+
+    expect(goalId).toBeDefined();
+    expect(first.generations.map((item) => item.goalId)).toStrictEqual([goalId]);
+
+    replays.forEach((replay) => {
+      expect(replay.goals.map((item) => item.id)).toStrictEqual([goalId]);
+      expect(replay.generations).toStrictEqual(first.generations);
+    });
+
+    await expect(prisma.goal.count({ where: { userId } })).resolves.toBe(1);
+    await guestApi.dispose();
   });
 
   test("ends onboarding when the learner presses the plan reveal's action, for their goal only", async () => {

@@ -412,7 +412,7 @@
     },
     "/me/profile-questions/answers": {
       "post": {
-        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Typed memory facts start sensitive until a follow-up checks them.",
+        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Facts with typed text or custom tool names start sensitive until a follow-up checks them.",
         "operationId": "answerCurrentUserProfileQuestion",
         "security": [
           {
@@ -1804,7 +1804,7 @@
             }
           },
           "409": {
-            "description": "It isn't a weekly challenge, it started, or its day is past",
+            "description": "It isn't a weekly challenge, it started, or its day is past. PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -2315,7 +2315,7 @@
             }
           },
           "409": {
-            "description": "It already started, or isn't a weekly challenge",
+            "description": "It already started, or isn't a weekly challenge. PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -3514,7 +3514,7 @@
     },
     "/goals/{goalId}/lesson-preparations": {
       "post": {
-        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "description": "Gets a goal's next lessons written: today's next lessons and the next study day's first ones, as many as the learner's plan writes ahead, outlining a topic first when it has no lessons yet. Placement's completion, onboarding's schedule answer, plan changes and lesson starts and finishes prepare them on the server, so call it only from the learner's tap on Today's Get lessons, offered while the day's `state` is `prepare` (with or without blocks; the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only their next lesson is written, counted as a lesson start.",
         "operationId": "createGoalLessonPreparation",
         "security": [
           {
@@ -3889,7 +3889,7 @@
     },
     "/study-sessions/{sessionId}/preparations": {
       "post": {
-        "description": "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
+        "description": "Prepares content around one of the learner's study sessions: the learner’s lookahead window of lessons is prepared around this session and the next study day. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the next pending lesson today is written, counted as a lesson start.",
         "operationId": "createStudySessionPreparation",
         "security": [
           {
@@ -5102,6 +5102,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -16036,7 +16046,7 @@
         }
       },
       "post": {
-        "description": "Creates one goal, or several that share the day's minutes (the first is the main goal and gets twice each other's share), each with an empty plan the planner fills. Each goal counts against the learner's plan (free accounts follow up to 3 active goals at once; guests start one); goals the plan allows are created even when a later one isn't, and 429 means none was (403 `SIGN_UP_REQUIRED` for a guest once the day's AI budget all guests share is spent). `pauseGoalId` makes room by pausing one of the learner's active goals in the same write, so a refused start pauses nothing. The first new goal becomes the one the tabs show. Research starts for exam and learn goals.",
+        "description": "Creates one goal, or several that share the day's minutes (the first is the main goal and gets twice each other's share), each with an empty plan the planner fills. Each goal counts against the learner's plan (free accounts follow up to 3 active goals at once; guests start one); goals the plan allows are created even when a later one isn't, and 429 means none was (403 `SIGN_UP_REQUIRED` for a guest once the day's AI budget all guests share is spent). `pauseGoalId` makes room by pausing one of the learner's active goals in the same write, so a refused start pauses nothing. The first new goal becomes the one the tabs show. Research starts for exam and learn goals. A goal from the learner's onboarding card (`details.onboardingId`) holds its place on that card (its index among the goals sent, or `details.onboardingPlace` for one started later from the card): sending the same card again, after a lost response or from another window, returns the goal already started there with its run, charges nothing and creates nothing, until the learner archives that goal.",
         "operationId": "createGoals",
         "security": [
           {
@@ -16289,6 +16299,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -17053,6 +17073,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
             "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date.",
             "content": {
@@ -17290,6 +17320,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -17396,6 +17436,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -18089,6 +18139,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -21294,6 +21354,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -25829,7 +25899,7 @@
     },
     "/study-sessions/{sessionId}/stops": {
       "post": {
-        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
+        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` stays true after the first finish; otherwise it is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
         "operationId": "createStudySessionStop",
         "security": [
           {
@@ -26016,7 +26086,7 @@
     },
     "/study-sessions/{sessionId}/summary/visit": {
       "post": {
-        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped or its work is finished. Retrying the first visit with its original ID returns the same result.",
+        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped, finished at least once (even with extras remaining), or every block is done or skipped. Retrying the first visit with its original ID returns the same result.",
         "operationId": "createStudySessionSummaryVisit",
         "security": [
           {
@@ -26096,7 +26166,7 @@
             }
           },
           "409": {
-            "description": "The session has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
+            "description": "The session has never finished, has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
             "content": {
               "application/json": {
                 "schema": {
@@ -26732,20 +26802,13 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct tool names or general tool option ids",
+                    "maxItems": 100,
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "enum": [
-                        "excel",
-                        "googleSheets",
-                        "word",
-                        "powerPoint",
-                        "canva",
-                        "figma",
-                        "notion",
-                        "vsCode"
-                      ]
+                      "minLength": 1,
+                      "maxLength": 120
                     }
                   }
                 },
@@ -26777,7 +26840,7 @@
                   },
                   "studies": {
                     "default": [],
-                    "description": "Up to three distinct fields",
+                    "description": "Distinct fields",
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -26848,7 +26911,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -26901,7 +26964,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -26956,7 +27019,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -27009,7 +27072,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -27060,7 +27123,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32686,20 +32749,13 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct tool names or general tool option ids",
+                    "maxItems": 100,
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "enum": [
-                        "excel",
-                        "googleSheets",
-                        "word",
-                        "powerPoint",
-                        "canva",
-                        "figma",
-                        "notion",
-                        "vsCode"
-                      ]
+                      "minLength": 1,
+                      "maxLength": 120
                     }
                   }
                 },
@@ -32732,7 +32788,7 @@
                   },
                   "studies": {
                     "default": [],
-                    "description": "Up to three distinct fields",
+                    "description": "Distinct fields",
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -32804,7 +32860,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32858,7 +32914,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32914,7 +32970,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32968,7 +33024,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -33020,7 +33076,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -34794,13 +34850,13 @@
         "enum": [
           "addressForm",
           "work",
-          "tools",
           "studies",
           "watch",
           "listen",
           "play",
           "read",
           "activities",
+          "tools",
           "conditions",
           "learningSupport"
         ],
@@ -34832,7 +34888,7 @@
             "items": {
               "$ref": "#/components/schemas/ProfileQuestionView"
             },
-            "description": "All ten optional profile questions in screen order"
+            "description": "All eleven optional profile questions in screen order"
           }
         },
         "required": [
@@ -34859,11 +34915,11 @@
                 },
                 "id": {
                   "type": "string",
-                  "description": "Stable option id, accepted by the answer input"
+                  "description": "Option id accepted by the answer input. Tools use the general id for matching labels, or the tool's name"
                 },
                 "label": {
                   "type": "string",
-                  "description": "Option label in the request locale"
+                  "description": "Option label in the request locale or the name of a personalized tool"
                 }
               },
               "required": [
@@ -34873,7 +34929,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "Selectable options in order, with locale extras first"
+            "description": "Selectable options in order. Tools use the learner's suggestions when available and include previously saved tools"
           },
           "saved": {
             "type": "object",
@@ -45910,13 +45966,19 @@
                 },
                 "sentence": {
                   "type": "string"
+                },
+                "translation": {
+                  "default": "",
+                  "description": "The sentence, answered, in the learner's language, shown under it so they know what it says. Empty when they learn the language they read the app in, and for drills written before it.",
+                  "type": "string"
                 }
               },
               "required": [
                 "answer",
                 "feedback",
                 "options",
-                "sentence"
+                "sentence",
+                "translation"
               ],
               "additionalProperties": false
             }
@@ -78634,10 +78696,12 @@
               "completed",
               "total"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "Completed day blocks and total day blocks not skipped, excluding extra work."
           },
           "sessionCompleted": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether nothing is left to play: the session is completed and no block is next. A finished day with extra work next stays false; dayProgress says the day is complete."
           },
           "testOutOffer": {
             "nullable": true,
@@ -79143,7 +79207,7 @@
               "open",
               "complete"
             ],
-            "description": "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the session is complete."
+            "description": "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the day first finished."
           },
           "lessonsComing": {
             "type": "boolean",
@@ -79151,7 +79215,7 @@
           },
           "percent": {
             "nullable": true,
-            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
+            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the day first finishes and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
             "type": "integer",
             "minimum": 0,
             "maximum": 100
@@ -79178,18 +79242,18 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Personal estimated minutes of completed blocks. Study statistics report elapsed time separately."
+            "description": "Personal estimated minutes of completed day blocks, excluding extra work. Study statistics report elapsed time separately."
           },
           "left": {
             "type": "number",
             "minimum": 0,
-            "description": "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Clients display this value without rebuilding it from blocks."
+            "description": "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Excludes extra work."
           },
           "planned": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "The day's total commitment, persisted at Start, including reserved lessons and accepted extra time."
+            "description": "The day's total commitment, persisted at Start, including reserved lessons and excluding extra work."
           }
         },
         "required": [
@@ -87863,7 +87927,7 @@
           "mockAndReview",
           "lightReview"
         ],
-        "description": "What a day of a plan for a test days away is for: the exam map and gaps, practice, a class test's short mock, or a public exam's light review"
+        "description": "What a day of a plan for a test days away is for: the exam map and gaps, practice, a public exam's mock then practice, the mock alone (`mockAndReview`: a class test's short mock, or a public exam's mock when it is the whole practice phase), or a public exam's light review"
       },
       "PlanPlacementTest": {
         "oneOf": [
@@ -88230,6 +88294,9 @@
               "today",
               "upcoming"
             ]
+          },
+          "study": {
+            "$ref": "#/components/schemas/StudyWeekDay"
           }
         },
         "required": [
@@ -88237,7 +88304,8 @@
           "items",
           "minutes",
           "mockFunding",
-          "state"
+          "state",
+          "study"
         ],
         "additionalProperties": false
       },
@@ -88360,6 +88428,76 @@
           "mockDate",
           "mockMinutes",
           "setAsideMinutes"
+        ],
+        "additionalProperties": false
+      },
+      "StudyWeekDay": {
+        "type": "object",
+        "properties": {
+          "completed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Completed day blocks, excluding extra work."
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Learner-local calendar date"
+          },
+          "goalMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
+            "example": 15
+          },
+          "hitGoal": {
+            "type": "boolean",
+            "description": "The session first finished, or the day has no day blocks and the learner studied."
+          },
+          "isToday": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "afterEnd",
+              "beforeStart",
+              "deadline",
+              "exam",
+              "rest",
+              "study"
+            ],
+            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). An `afterEnd` day is after the goal's date; a plan whose date came with lessons left continues once the learner moves its date"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
+          },
+          "studied": {
+            "type": "boolean",
+            "description": "Any study of this goal counts, partial days included"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Day blocks not skipped, excluding extra work; zero without a session."
+          }
+        },
+        "required": [
+          "completed",
+          "date",
+          "goalMinutes",
+          "hitGoal",
+          "isToday",
+          "kind",
+          "minutes",
+          "studied",
+          "total"
         ],
         "additionalProperties": false
       },
@@ -89924,61 +90062,6 @@
           "week",
           "weekEnd",
           "weekStart"
-        ],
-        "additionalProperties": false
-      },
-      "StudyWeekDay": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-            "description": "Learner-local calendar date"
-          },
-          "goalMinutes": {
-            "type": "number",
-            "minimum": 0,
-            "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-            "example": 15
-          },
-          "hitGoal": {
-            "type": "boolean"
-          },
-          "isToday": {
-            "type": "boolean"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "afterEnd",
-              "beforeStart",
-              "deadline",
-              "exam",
-              "rest",
-              "study"
-            ],
-            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). An `afterEnd` day is after the goal's date; a plan whose date came with lessons left continues once the learner moves its date"
-          },
-          "minutes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-          },
-          "studied": {
-            "type": "boolean",
-            "description": "Any study of this goal counts, partial days included"
-          }
-        },
-        "required": [
-          "date",
-          "goalMinutes",
-          "hitGoal",
-          "isToday",
-          "kind",
-          "minutes",
-          "studied"
         ],
         "additionalProperties": false
       },
@@ -91974,6 +92057,15 @@
             "description": "The running section, never with answers",
             "type": "object",
             "properties": {
+              "changedItemIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "description": "In a forward-only section's review: the questions whose answer the review already changed. Each may change again without using another of `changesLeft`; empty otherwise"
+              },
               "changesLeft": {
                 "nullable": true,
                 "description": "In a forward-only section with a review at its end (`navigation.answerChanges`): the answers the review may still change; null without a limit",
@@ -92055,6 +92147,12 @@
                 },
                 "description": "A listening section's recordings with the plays already counted (POST /v1/mocks/{blockId}/plays as each play starts), so another tab or device has the same plays left; empty for other sections"
               },
+              "questionTotal": {
+                "description": "The number of numbered questions in the running section",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
               "questions": {
                 "type": "array",
                 "items": {
@@ -92104,7 +92202,8 @@
                     "number": {
                       "type": "integer",
                       "minimum": 1,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "The item's position in this section"
                     },
                     "options": {
                       "nullable": true,
@@ -92202,6 +92301,7 @@
               }
             },
             "required": [
+              "changedItemIds",
               "changesLeft",
               "deadline",
               "drafts",
@@ -92497,20 +92597,28 @@
                 },
                 "number": {
                   "type": "integer",
-                  "minimum": -9007199254740991,
-                  "maximum": 9007199254740991
+                  "minimum": 1,
+                  "maximum": 9007199254740991,
+                  "description": "The question's position in its section"
                 },
                 "outcome": {
                   "type": "string",
                   "enum": [
                     "blank",
                     "partial",
+                    "right",
                     "wrong"
                   ],
-                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit"
+                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit. `right`: answered correctly and marked as unsure"
                 },
                 "question": {
                   "type": "string"
+                },
+                "section": {
+                  "description": "The zero-based section index",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
                 },
                 "set": {
                   "nullable": true,
@@ -92519,6 +92627,16 @@
                       "$ref": "#/components/schemas/ItemSet"
                     }
                   ]
+                },
+                "total": {
+                  "description": "The number of numbered questions in this section",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "unsure": {
+                  "type": "boolean",
+                  "description": "Whether the learner marked the question as unsure"
                 }
               },
               "required": [
@@ -92533,7 +92651,8 @@
                 "number",
                 "outcome",
                 "question",
-                "set"
+                "set",
+                "unsure"
               ],
               "additionalProperties": false
             }
@@ -92850,6 +92969,10 @@
           "text": {
             "nullable": true,
             "type": "string"
+          },
+          "unsure": {
+            "type": "boolean",
+            "description": "Whether the learner marked the essay as unsure"
           }
         },
         "required": [
@@ -92859,7 +92982,8 @@
           "itemId",
           "question",
           "status",
-          "text"
+          "text",
+          "unsure"
         ],
         "additionalProperties": false
       },
@@ -94967,13 +95091,13 @@
           "schedule",
           "addressForm",
           "work",
-          "tools",
           "studies",
           "watch",
           "listen",
           "play",
           "read",
           "activities",
+          "tools",
           "conditions",
           "learningSupport",
           "buddy",
@@ -95102,7 +95226,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and no preparation is in progress, `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -95192,13 +95316,33 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "lessonPlaceholder": {
+            "description": "The first topic in plan order whose outline still owes lessons the day reserves time for. The title is the plan item's title and minutes is its allocation on this day. Null when the day holds no time for an unwritten topic.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "minutes",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "lessonsComing": {
             "type": "boolean",
             "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while no preparation is in progress. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -95250,11 +95394,11 @@
               "total"
             ],
             "additionalProperties": false,
-            "description": "One step per block still in the day, filled as blocks are done"
+            "description": "Completed day blocks and total day blocks not skipped, excluding extra work"
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -95400,7 +95544,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and no preparation is in progress, `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -95485,13 +95629,33 @@
             ],
             "additionalProperties": false
           },
+          "lessonPlaceholder": {
+            "description": "The first topic in plan order whose outline still owes lessons the day reserves time for. The title is the plan item's title and minutes is its allocation on this day. Null when the day holds no time for an unwritten topic.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "minutes",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "lessonsComing": {
             "type": "boolean",
             "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while no preparation is in progress. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -95530,11 +95694,11 @@
               "total"
             ],
             "additionalProperties": false,
-            "description": "One step per block still in the day, filled as blocks are done"
+            "description": "Completed day blocks and total day blocks not skipped, excluding extra work"
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -99312,7 +99476,7 @@
           },
           "finished": {
             "type": "boolean",
-            "description": "Every block is done or skipped. False right after \"Stop for today\": the rest of the session waits to be picked up"
+            "description": "The session has finished at least once, or every block is done or skipped. Remains true while extra blocks wait. False after \"Stop for today\" if the session has never finished and blocks remain"
           },
           "fullMeal": {
             "type": "boolean"

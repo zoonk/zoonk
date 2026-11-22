@@ -108,6 +108,9 @@
   --text-reading: 0.9375rem;
   --text-reading--line-height: 1.375rem;
   --text-base--line-height: 1.4375rem;
+  /* A program or a table set into text: 4px under the text around it (14px under a lesson's 18px, 16px under its 20px), never under 14px. */
+  --text-block: max(0.875rem, calc(1em - 0.25rem));
+  --text-block--line-height: calc(1em + 0.625rem);
   /* The web draws options at `rounded-xl`; the native apps still generate their option radius from this. */
   --radius-option: calc(var(--radius) + 2px);
   --radius-2xl: calc(var(--radius) + 8px);
@@ -156,11 +159,14 @@
   --color-subject-tint: var(--subject-tint);
   --color-viz-accent: var(--viz-accent);
   --color-viz-accent-soft: var(--viz-accent-soft);
+  --color-viz-accent-text: var(--viz-accent-text);
   --color-viz-highlight: var(--viz-highlight);
   --color-viz-highlight-soft: var(--viz-highlight-soft);
+  --color-viz-highlight-text: var(--viz-highlight-text);
   --color-viz-grid: var(--viz-grid);
   --color-viz-secondary: var(--viz-secondary);
   --color-viz-secondary-soft: var(--viz-secondary-soft);
+  --color-viz-secondary-text: var(--viz-secondary-text);
   --color-viz-series-4: var(--viz-series-4);
   --color-viz-series-5: var(--viz-series-5);
   --color-viz-series-6: var(--viz-series-6);
@@ -339,6 +345,10 @@
   --viz-highlight-soft: var(--color-amber-100);
   --viz-secondary: oklch(0.56 0.19 325);
   --viz-secondary-soft: var(--color-fuchsia-100);
+  /* Words in a chart's hue, such as a program's keywords, strings and built-ins: AA on every surface. */
+  --viz-accent-text: oklch(0.46 0.085 185);
+  --viz-highlight-text: oklch(0.47 0.11 62);
+  --viz-secondary-text: oklch(0.5 0.19 325);
   /*
    * A chart's fourth to sixth series. Blue, violet and pink-red mean something else, so these also
    * step in lightness: each stays apart from the other five for color-blind readers.
@@ -401,6 +411,9 @@
     --viz-accent: var(--color-teal-800);
     --viz-highlight: var(--color-amber-800);
     --viz-secondary: var(--color-fuchsia-800);
+    --viz-accent-text: var(--color-teal-900);
+    --viz-highlight-text: var(--color-amber-900);
+    --viz-secondary-text: var(--color-fuchsia-900);
     --viz-series-4: oklch(0.58 0.1 145);
     --viz-series-5: oklch(0.17 0.03 260);
     --viz-series-6: oklch(0.32 0.1 40);
@@ -451,6 +464,9 @@
     --viz-highlight-soft: var(--color-amber-950);
     --viz-secondary: oklch(0.8 0.13 325);
     --viz-secondary-soft: var(--color-fuchsia-950);
+    --viz-accent-text: var(--viz-accent);
+    --viz-highlight-text: var(--viz-highlight);
+    --viz-secondary-text: var(--viz-secondary);
     --viz-series-4: oklch(0.66 0.16 145);
     --viz-series-5: oklch(0.58 0.03 260);
     --viz-series-6: oklch(0.52 0.14 40);
@@ -506,6 +522,10 @@
       --viz-accent: var(--color-teal-200);
       --viz-highlight: var(--color-amber-200);
       --viz-secondary: var(--color-fuchsia-200);
+      /* AAA on the gray `muted` leaves room for color only from yellow to cyan: each takes its hue's most. */
+      --viz-accent-text: oklch(0.96 0.055 185);
+      --viz-highlight-text: oklch(0.965 0.085 102);
+      --viz-secondary-text: oklch(0.97 0.025 325);
       --viz-series-4: oklch(0.76 0.16 145);
       --viz-series-5: oklch(0.68 0.03 260);
       --viz-series-6: oklch(0.6 0.14 40);
@@ -670,13 +690,23 @@
     scrollbar-gutter: stable;
   }
 
+  /*
+   * What focus, a link's anchor or a form's missing field scrolls to stops above the pinned bottom
+   * bar (its 44px action and the room over and under it), never behind it.
+   */
+  :root:has([data-slot="bottom-bar"]) {
+    scroll-padding-bottom: calc(2.75rem + 3 * var(--spacing-frame) + var(--page-safe-bottom));
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
 
+  /* Every line of text avoids leaving a word alone on its last line; titles' type roles balance theirs instead. */
   body {
     @apply bg-background text-foreground;
     letter-spacing: -0.006em;
+    text-wrap-style: pretty;
   }
 
   /* Preflight sets bold text to `bolder`, which is 700; the heaviest weight here is 600. */
@@ -971,7 +1001,6 @@
   font-size: 1.0625rem;
   line-height: 1.625rem;
   letter-spacing: -0.01em;
-  text-wrap: pretty;
   color: var(--muted-foreground);
 
   @media (width >= 40rem) {

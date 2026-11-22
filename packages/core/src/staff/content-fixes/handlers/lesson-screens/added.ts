@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
+import { isNotebookQuestionStep } from "../../../../library/lessons/_utils/lesson-screen-skill";
 import { toScreenQuestion } from "../../../../library/lessons/_utils/screen-question-item";
 import { toMathCheckContent } from "../../../../library/steps/_utils/math-check-content";
 import { type Screen, type ScreenList, type StoredScreens } from "./schema";
@@ -29,16 +30,16 @@ function prepareNumeric({
   if (entry.numeric) {
     const result = toMathCheckContent({ input: entry.numeric, language: lesson.language });
 
-    if (!result.ok || entry.kind !== "check" || !entry.skillId || entry.content) {
+    if (!result.ok || entry.kind !== "check" || entry.content) {
       problems.push(
-        `${path}.numeric: supply a check with a linked skill and valid numeric question. ${result.ok ? "Its content is derived from numeric." : result.problems.join(" ")}`,
+        `${path}.numeric: supply a check with a valid numeric question. ${result.ok ? "Its content is derived from numeric." : result.problems.join(" ")}`,
       );
-    } else {
+    } else if (screen.skillId) {
       const question = toScreenQuestion(result.item);
 
       if (question) {
         screen.itemId = allocatedScreen?.itemId ?? randomUUID();
-        newItems.push({ id: screen.itemId, question, skillId: entry.skillId });
+        newItems.push({ id: screen.itemId, question, skillId: screen.skillId });
         screen.content = z.record(z.string(), z.json()).parse(result.content);
       }
     }
@@ -49,6 +50,10 @@ export function prepareAdded(input: Added) {
 
   if (entry.skillId && !lesson.skillIds.includes(entry.skillId)) {
     problems.push(`${path}.skillId: choose a skill linked to this lesson.`);
+  }
+
+  if (!screen.skillId && isNotebookQuestionStep(screen)) {
+    problems.push(`${path}.skillId: a question trains a skill. Link one to this lesson first.`);
   }
 
   screen.wordId = vocabulary.wordRefs.get(entry.word ?? "") ?? null;

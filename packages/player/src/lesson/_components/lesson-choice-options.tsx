@@ -1,10 +1,10 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
 } from "../../components/player-choice-scene";
-import { LessonRichText } from "./lesson-rich-text";
 
 type ChoiceOption = { id: string; isCorrect: boolean; text: string };
 

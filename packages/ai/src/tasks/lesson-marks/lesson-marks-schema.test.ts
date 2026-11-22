@@ -95,6 +95,32 @@ describe(normalizeLessonMarks, () => {
     });
   });
 
+  it("frames a numbered item with its number when the quote leaves the number out", () => {
+    const steps: MarksScreen = {
+      ...explanation,
+      text: "Para fechar o caixa:\n\n1. Conte o dinheiro.\n2. Some R$ 2.000 do caixa e o forno.\n3. Anote o total.",
+    };
+
+    const marks = normalizeLessonMarks({
+      ideas,
+      output: {
+        ideas: [],
+        screens: [
+          {
+            example: "Some R$ 2.000 do caixa e o forno.",
+            icon: null,
+            idea: 0,
+            screen: 1,
+            underline: null,
+          },
+        ],
+      },
+      screens: [steps],
+    });
+
+    expect(marks.screens[0]?.example).toBe("2. Some R$ 2.000 do caixa e o forno.");
+  });
+
   it("drops what the screens don't have: a changed word, half a sentence, the whole text, an idea past the map", () => {
     const marks = normalizeLessonMarks({
       ideas,

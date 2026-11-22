@@ -1,8 +1,10 @@
 "use client";
 
+import { type GoalView } from "@zoonk/core/goals/contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useExtracted } from "next-intl";
 import { type OnboardingActions } from "../../onboarding/onboarding-actions";
+import { PlanReceipt } from "../../onboarding/plan-receipt";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { PlacementDone } from "../../onboarding/steps/placement-screens";
 import { PlacementWaiting } from "../../onboarding/steps/placement-waiting";
@@ -18,6 +20,7 @@ export type { LanguagePlanTestActions } from "./use-language-plan-test";
 
 /** Onboarding's own way past the test, before one opens, and the learner's own language. */
 type OnboardingLevelTest = {
+  goal: GoalView;
   language: string;
   /** Goes on without a test; false when it didn't. */
   skip: () => Promise<boolean>;
@@ -164,6 +167,11 @@ export function LanguagePlanTestFlow({
           onWalkTopics={test.onWalkTopics}
           onboarding={Boolean(onboarding)}
           pressed={pressed}
+          rail={
+            onboarding && (
+              <PlanReceipt goal={onboarding.goal} testRanges={phase.result?.ranges ?? null} />
+            )
+          }
           result={phase.result}
           targetLanguage={targetLanguage}
           testOutLevel={onboarding ? null : phase.nextTestOutLevel}

@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,24 +26,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LessonSummaryIdeas
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.formatClock
-import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.delay
@@ -96,20 +91,7 @@ fun DrillIdeas(
             }
         }
 
-        Column {
-            lesson.ideas.forEachIndexed { index, idea ->
-                if (index > 0) HorizontalDivider()
-                Row(Modifier.padding(vertical = 11.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        text = (index + 1).toString(),
-                        modifier = Modifier.alignByBaseline().widthIn(min = 16.dp).clearAndSetSemantics {},
-                        color = MaterialTheme.zoonk.faint,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono),
-                    )
-                    Text(text = idea, modifier = Modifier.alignByBaseline(), style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-        }
+        LessonSummaryIdeas(lesson.ideas)
 
         if (onOpenLesson != null) LessonLink(lesson, onOpenLesson)
     }
@@ -172,15 +154,9 @@ fun DrillAnswerNotes(
     if (trap != null) {
         val label = stringResource(R.string.questions_drill_trap)
         NoteRow(R.drawable.ic_warning) {
-            Text(
-                text =
-                    buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append(label) }
-                        append(" ")
-                        append(trap)
-                    },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
+            RichInlineText(
+                text = "**$label** $trap",
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
             )
         }
     }

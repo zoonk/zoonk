@@ -5,11 +5,8 @@ import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-li
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
-import {
-  ActivityCodeEditor,
-  ActivitySnippetBar,
-  useInsertSnippet,
-} from "../_components/activity-code";
+import { ActivityCodeEditor } from "../_components/activity-code";
+import { ActivitySnippetBar, useInsertSnippet } from "../_components/activity-snippet-bar";
 import { type QueryResult, type QueryRun, runQuery } from "../_sandbox/run-query";
 import { SandboxRunBar } from "../_sandbox/sandbox-run-bar";
 import { useEditorRun } from "../_sandbox/use-editor-run";

@@ -13,6 +13,7 @@ import {
 } from "@zoonk/learn/list";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { TaskAside, TaskAsideContent } from "@zoonk/learn/task-layout";
 import { LessonVisual } from "@zoonk/learn/visual";
@@ -22,7 +23,6 @@ import { useExtracted } from "next-intl";
 import { PlayerContentFrame } from "../components/step-layouts";
 import { TutorConversationLink, TutorDock } from "../questions/tutor-dock";
 import { LessonMap } from "./_components/lesson-map";
-import { LessonRichText } from "./_components/lesson-rich-text";
 import {
   type RecapStep,
   getLessonOutline,

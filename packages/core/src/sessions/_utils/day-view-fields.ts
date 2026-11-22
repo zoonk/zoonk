@@ -2,6 +2,7 @@ import { type Goal, type StudyFreshStart } from "@zoonk/db";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
+import { getPlayOrder } from "../day-blocks";
 import { getExtraTime } from "../extra-time";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
@@ -20,12 +21,14 @@ export type DayViewFieldsInput = {
   dayEndsAt?: number;
   dayMinutes: number;
   examAccess: ExamPrepAccess;
+  lessonPlaceholder?: StudySessionView["lessonPlaceholder"];
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
+    endedAt?: Date | null;
     freshStart: StudyFreshStart | null;
     fullMealAt: Date | null;
     goal: Goal | null;
@@ -37,17 +40,6 @@ export type DayViewFieldsInput = {
   week: SessionWeek;
 };
 
-function getNextPosition(
-  blocks: readonly Pick<DayBlockInput, "status" | "position">[],
-): number | null {
-  return (
-    (
-      blocks.find((block) => block.status === "active") ??
-      blocks.find((block) => block.status === "pending")
-    )?.position ?? null
-  );
-}
-
 /** Accepts planned and persisted days without creating a session row. */
 export function toDayViewFields({
   answers,
@@ -55,6 +47,7 @@ export function toDayViewFields({
   dayEndsAt,
   dayMinutes,
   examAccess,
+  lessonPlaceholder = null,
   lessonRoom = false,
   missions,
   outlines = null,
@@ -89,16 +82,18 @@ export function toDayViewFields({
     },
     goalId: session.goalId,
     hyperdrive: { level: getHyperdriveLevel(streak), streak },
+    lessonPlaceholder,
     lessonsComing: lessons.lessonsComing,
     lessonsToPrepare: lessons.lessonsToPrepare,
     localDate: session.localDate,
     minutes: getSessionMinutes({
       blocks: session.blocks,
       dailyGoal: dayMinutes,
+      endedAt: session.endedAt,
       planned: session.plannedMinutes,
       reserved: lessonRoom,
     }),
-    nextPosition: getNextPosition(session.blocks),
+    nextPosition: getPlayOrder(session.blocks)[0]?.position ?? null,
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     sessionBar,
     week: { days: week.days, nextStudyDate: week.nextStudyDate },

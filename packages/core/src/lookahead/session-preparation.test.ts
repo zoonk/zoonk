@@ -11,6 +11,7 @@ import {
   heldBackDraftFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -102,7 +103,7 @@ async function prepareSixLessonDay(userId: string) {
 }
 
 describe(getSessionPreparationAccess, () => {
-  it("prepares the owner's sessions, ended ones included, and skips guests and other learners", async () => {
+  it("authorizes the owner's sessions, including ended sessions and guest sessions", async () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = await goalFixture({ timezone: "America/Sao_Paulo", userId: owner.id });
 
@@ -141,13 +142,13 @@ describe(getSessionPreparationAccess, () => {
 
     await expect(getSessionPreparationAccess({ sessionId: running.id })).resolves.toStrictEqual({
       goalId: goal.id,
-      lessonId: null,
       status: "guest",
+      timeZone: "America/Sao_Paulo",
       userId: owner.id,
     });
   });
 
-  it("names only the lesson a guest reaches next, the first learn block not started yet", async () => {
+  it("picks only the guest’s next pending lesson, keeping their starts for today", async () => {
     const guest = await userFixture();
 
     const [goal] = await Promise.all([
@@ -156,7 +157,7 @@ describe(getSessionPreparationAccess, () => {
     ]);
 
     const [session, done, current, next, later] = await Promise.all([
-      studySessionFixture({ goalId: goal.id, localDate: today(), userId: guest.id }),
+      studySessionFixture({ goalId: goal.id, localDate: addDays(today(), -1), userId: guest.id }),
       libraryLessonFixture({ contentStatus: "completed" }),
       libraryLessonFixture({ contentStatus: "completed" }),
       libraryLessonFixture(),
@@ -181,14 +182,35 @@ describe(getSessionPreparationAccess, () => {
       studySessionBlockFixture({ lessonId: later.id, position: 4, sessionId: session.id }),
     ]);
 
-    mockGuestSession(guest.id);
+    const [plan, tomorrow, laterTomorrow] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      libraryLessonFixture(),
+      libraryLessonFixture(),
+    ]);
 
-    await expect(getSessionPreparationAccess({ sessionId: session.id })).resolves.toStrictEqual({
-      goalId: goal.id,
-      lessonId: next.id,
-      status: "guest",
-      userId: guest.id,
-    });
+    await Promise.all([
+      planItemFixture({
+        lessonId: tomorrow.id,
+        planId: plan.id,
+        position: 0,
+        scheduledFor: addDays(today(), 1),
+      }),
+      planItemFixture({
+        lessonId: laterTomorrow.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: addDays(today(), 1),
+      }),
+    ]);
+
+    await expect(
+      listSessionPreparation({
+        goalId: goal.id,
+        guestSessionId: session.id,
+        timeZone: TIME_ZONE,
+        userId: guest.id,
+      }),
+    ).resolves.toMatchObject({ laterLessonIds: [], lessonIds: [next.id] });
   });
 });
 
@@ -410,7 +432,7 @@ describe(listSessionPreparation, () => {
     mockGuestSession(user.id);
 
     await expect(getGoalPreparationAccess({ goalId: goal.id })).resolves.toMatchObject({
-      lessonId: first.id,
+      goalId: goal.id,
       status: "guest",
     });
   });
@@ -610,21 +632,24 @@ describe(listSessionPreparation, () => {
   });
 
   it("says whether the learner has a personal layer to write over the planned lessons", async () => {
-    const [nurse, analyst, plain] = await Promise.all([
+    const [nurse, analyst, cook, plain] = await Promise.all([
+      userFixture(),
       userFixture(),
       userFixture(),
       userFixture(),
     ]);
 
-    const [nurseGoal, analystGoal, plainGoal] = await Promise.all([
+    const [nurseGoal, analystGoal, cookGoal, plainGoal] = await Promise.all([
       goalFixture({ details: { purpose: "work", role: "ICU nurse" }, userId: nurse.id }),
       goalFixture({ userId: analyst.id }),
+      goalFixture({ userId: cook.id }),
       goalFixture({ userId: plain.id }),
     ]);
 
-    await Promise.all(
-      [nurseGoal, analystGoal, plainGoal].map((goal) => planTomorrowLesson(goal.id)),
-    );
+    await Promise.all([
+      ...[nurseGoal, analystGoal, cookGoal, plainGoal].map((goal) => planTomorrowLesson(goal.id)),
+      memoryFactFixture({ category: "routine", statement: "Cooks dinner", userId: cook.id }),
+    ]);
 
     await prisma.plan.update({
       data: { settings: { tools: [{ choice: "none", name: "Excel" }] } },
@@ -634,6 +659,7 @@ describe(listSessionPreparation, () => {
     const learners = [
       { goalId: nurseGoal.id, userId: nurse.id },
       { goalId: analystGoal.id, userId: analyst.id },
+      { goalId: cookGoal.id, userId: cook.id },
       { goalId: plainGoal.id, userId: plain.id },
     ];
 
@@ -644,7 +670,7 @@ describe(listSessionPreparation, () => {
       }),
     );
 
-    expect(personalized).toStrictEqual([true, true, false]);
+    expect(personalized).toStrictEqual([true, true, true, false]);
   });
 
   it("marks an exam goal's lessons for the reasoning check, as lessons written on demand get", async () => {
@@ -696,7 +722,7 @@ describe(listSessionPreparation, () => {
     });
   });
 
-  it("lets only the goal's owner prepare it with no session open, and a guest only its first lesson", async () => {
+  it("lets owners and guests prepare their own goals with no session open", async () => {
     const [owner, other, guest] = await Promise.all([userFixture(), userFixture(), userFixture()]);
 
     const [goal, guestGoal] = await Promise.all([
@@ -704,13 +730,7 @@ describe(listSessionPreparation, () => {
       goalFixture({ userId: guest.id }),
     ]);
 
-    const [guestPlan, firstLesson] = await Promise.all([
-      planFixture({ goalId: guestGoal.id }),
-      libraryLessonFixture(),
-      prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } }),
-    ]);
-
-    await planItemFixture({ lessonId: firstLesson.id, planId: guestPlan.id, position: 0 });
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
 
     mockSession(owner.id);
 
@@ -731,10 +751,33 @@ describe(listSessionPreparation, () => {
 
     await expect(getGoalPreparationAccess({ goalId: guestGoal.id })).resolves.toStrictEqual({
       goalId: guestGoal.id,
-      lessonId: firstLesson.id,
       status: "guest",
+      timeZone: "UTC",
       userId: guest.id,
     });
+  });
+
+  it("asks again for a guest's first lesson whose writing failed, before any session", async () => {
+    const guest = await userFixture();
+
+    const [goal, failed] = await Promise.all([
+      goalFixture({ userId: guest.id }),
+      libraryLessonFixture({ contentStatus: "failed" }),
+      prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } }),
+    ]);
+
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planItemFixture({
+      lessonId: failed.id,
+      planId: plan.id,
+      position: 0,
+      scheduledFor: null,
+    });
+
+    await expect(
+      listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: guest.id }),
+    ).resolves.toMatchObject({ lessonIds: [failed.id] });
   });
 
   it("prepares nothing for a paused goal", async () => {
@@ -744,11 +787,13 @@ describe(listSessionPreparation, () => {
     await expect(
       listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id }),
     ).resolves.toStrictEqual({
+      dates: null,
       forExam: false,
       laterLessonIds: [],
       lessonIds: [],
       personalized: false,
       plannedLessonIds: [],
+      standInSkillIds: [],
     });
   });
 });

@@ -46,9 +46,7 @@ export function OfferCard({
           <h3 className="text-sm font-medium text-balance" id={titleId}>
             {title}
           </h3>
-          {description && (
-            <p className="text-muted-foreground text-compact text-pretty">{description}</p>
-          )}
+          {description && <p className="text-muted-foreground text-compact">{description}</p>}
           {note}
         </div>
       </div>

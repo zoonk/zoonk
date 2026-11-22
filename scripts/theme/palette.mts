@@ -44,8 +44,11 @@ export const PALETTE_TOKENS = [
   "belt-gray",
   "belt-black",
   "viz-accent",
+  "viz-accent-text",
   "viz-secondary",
+  "viz-secondary-text",
   "viz-highlight",
+  "viz-highlight-text",
   "viz-series-4",
   "viz-series-5",
   "viz-series-6",
@@ -236,6 +239,11 @@ function parseColor(value: string, lookup: Lookup): Rgba {
   }
 
   return color;
+}
+
+/** A role as main draws it, see-through when main's is. */
+export function seeThroughColor({ name, ...lookup }: Lookup & { name: string }): Rgba {
+  return parseColor(lookUp(name, lookup), lookup);
 }
 
 /** See-through colors are laid on the mode's background, so every role is opaque. */

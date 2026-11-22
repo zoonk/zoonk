@@ -8,7 +8,9 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { sessionGoalFixture } from "./_test-utils/session-goal";
 import { claimStudySessionSummaryVisit } from "./claim-study-session-summary-visit";
+import { getStudySessionSummary } from "./get-study-session-summary";
 
 const FIRST_DAY = new Date("2026-11-19T00:00:00Z");
 const NEXT_DAY = new Date("2026-11-20T00:00:00Z");
@@ -60,6 +62,59 @@ describe(claimStudySessionSummaryVisit, () => {
 
     const next = await finishedSession({ localDate: NEXT_DAY, userId: user.id });
     await expect(claim(next.id)).resolves.toStrictEqual({ first: true, status: "ready" });
+  });
+
+  it("keeps the finished summary available while extra work waits and claims the day once", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ userId: user.id });
+
+    const snapshot = {
+      brainPower: 100,
+      energy: 40,
+      preparation: null,
+      progress: 0,
+      skillStates: {},
+    };
+
+    const session = await finishedSession({
+      endSnapshot: snapshot,
+      endedAt: new Date(),
+      goalId: goal.id,
+      startSnapshot: snapshot,
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const before = await getStudySessionSummary({ input: {}, sessionId: session.id });
+    const extra = await studySessionBlockFixture({ sessionId: session.id });
+    await prisma.studySession.update({ data: { status: "active" }, where: { id: session.id } });
+
+    const after = await getStudySessionSummary({ input: {}, sessionId: session.id });
+    expect(after).toMatchObject({ status: "ready", summary: { finished: true, status: "active" } });
+
+    expect(after.status === "ready" && after.summary.energy).toStrictEqual(
+      before.status === "ready" && before.summary.energy,
+    );
+
+    const visitId = randomUUID();
+
+    await expect(claim(session.id, visitId)).resolves.toStrictEqual({
+      first: true,
+      status: "ready",
+    });
+
+    await expect(claim(session.id, visitId)).resolves.toStrictEqual({
+      first: true,
+      status: "ready",
+    });
+
+    await expect(claim(session.id)).resolves.toStrictEqual({ first: false, status: "ready" });
+    await expect(prisma.studySummaryVisit.count({ where: { userId: user.id } })).resolves.toBe(1);
+
+    await expect(
+      prisma.studySessionBlock.findUnique({ where: { id: extra.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
   });
 
   it("allows a real stop with remaining work and does not replay the visit after more work", async () => {

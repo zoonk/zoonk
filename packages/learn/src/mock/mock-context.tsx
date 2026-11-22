@@ -21,7 +21,7 @@ export type MockPlayOutcome = { played: number; status: "counted" | "usedUp" };
 /** Each resolves to null when it didn't go through. */
 export type MockActions = {
   adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
-  answer: (input: MockAnswerInput) => Promise<boolean>;
+  answer: (input: MockAnswerInput) => Promise<boolean | null>;
   endBreak: () => Promise<MockView | null>;
   finish: () => Promise<MockView | null>;
   gradeEssays: () => Promise<MockEssayGrading | null>;
@@ -76,7 +76,7 @@ export type MockRunner = {
   submitSection: () => Promise<void>;
   timeOutQuestion: () => void;
   timeUp: boolean;
-  toggleFlag: () => void;
+  toggleUnsure: () => void;
   view: MockView;
   write: (answer: MockAnswer | null) => void;
 };

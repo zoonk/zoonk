@@ -17,7 +17,7 @@ export const studySummaryVisitPaths = {
   "/study-sessions/{sessionId}/summary/visit": {
     post: {
       description:
-        "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped or its work is finished. Retrying the first visit with its original ID returns the same result.",
+        "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped, finished at least once (even with extras remaining), or every block is done or skipped. Retrying the first visit with its original ID returns the same result.",
       operationId: "createStudySessionSummaryVisit",
       requestBody: {
         content: { "application/json": { schema: studySessionSummaryVisitInputSchema } },
@@ -31,7 +31,7 @@ export const studySummaryVisitPaths = {
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,
-          description: `The session has not been stopped and has no finished queue (${studySessionErrorCodes.summaryNotReady})`,
+          description: `The session has never finished, has not been stopped and has no finished queue (${studySessionErrorCodes.summaryNotReady})`,
         },
       },
       security: AUTHENTICATED_SECURITY,

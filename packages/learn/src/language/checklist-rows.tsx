@@ -46,13 +46,11 @@ export function ChecklistRow({
         </span>
       </LineMarker>
       <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="font-medium text-pretty">
+        <span className="font-medium">
           <span lang={lang}>{children}</span>
           <span className="sr-only">{done ? t(", done") : t(", not yet")}</span>
         </span>
-        {description && (
-          <span className="text-muted-foreground text-xs text-pretty">{description}</span>
-        )}
+        {description && <span className="text-muted-foreground text-xs">{description}</span>}
       </span>
     </li>
   );

@@ -11,7 +11,6 @@
   "today_building_plan_goal": "dc537ba7f66a78281d93d491e7b299e71b052b4a5ba5970dbfa771f3982cc5f6",
   "today_choose_focus": "346f626b63346f88a076784268640e03602e382c89e03c0b8d9024ee4bb319dc",
   "today_coming_not_written": "7385ea98b5b1ebc5386c2cda84c5e2148b8c368c79a88a0c5fff0221384cff70",
-  "today_coming_stalled": "52fb5f13e375b9db02daf66a63ccdfc89a859bc99c2da185ee7536c7ac4ae65b",
   "today_coming_title": "d08551f3e4e150b1c9850a92071412b09ba238e3c2e54eb0a9e55042f6b6119e",
   "today_coming_writing": "c1a38e3d11328673cbdb39832e4c6ca0d068610508275ae7de9dd4651f7317ca",
   "today_completed_lessons_line": "9d375dd15df2835f996af97ae3850359acf3b3cde5662097fb10c2f5d1670571",
@@ -29,7 +28,6 @@
   "today_exam_speaking_detail": "92c8911bb9bbd80478f50af1be515bdbbd73eb46826c5397632ed02dffc8370d",
   "today_finished_goal": "44b37ccd0984c6b38671bff3300c85010c2933320686fa7003748fd07e525d12",
   "today_get_lessons": "3dcc7b804b8c0e679547ef1a1fea583b499cdb633f988eee333cb978f19ac3b1",
-  "today_get_them_now": "78c07edb6e828ba6458034b7a09cfc93ce90ae68366687354a39832cc8df2afd",
   "today_insight_add_it": "e3e84900bd9af746c7fa6dcaa1f509f5f2b586c90330c8753e9b254ea7d7aeaf",
   "today_insight_got_it": "d4ee0c5c3ae78f299fec30b41a90f4890a489cddd7c597c420c2b600f9468ca1",
   "today_insight_keep_it": "ca47e2723eb741023afb449ea3da78e28ee6c8dda33f84d6e59600eecbeb8d18",
@@ -111,6 +109,7 @@
   "today_step_counts_toward_mission": "69c98e985bf8dc91eab8fa8edf72903bd1ac0472c71b2a16365bfcb5b567e619",
   "today_step_done": "90d9d386e7e18b5c6778264cc6c389e26dfd3249b760eccb1e1fdedbc6e983e3",
   "today_step_every_topic": "da3e6173ae801da1955dae47f97b6517d95205f573094fbf0f2fafe7c89a7b66",
+  "today_step_extra": "2d0007030951976bd029bb5833f68abb52e86f480cafd081567bbb13ab6aebe8",
   "today_step_next": "565ec18b1fea89f3c8e3846f16c35926b4d93874d974a9a584b4a2a312b41228",
   "today_step_often_tested": "a97731e5a441a4c9c97afed54e0ac2aa46da575ca4ac9a39d41e2bc8e6be7764",
   "today_step_open_failed": "5049e930375960e8f1fbf788b5c4565e4ff97ce8c9bb55fa9055c8690dbf7375",
@@ -131,8 +130,6 @@
   "today_unfinished_setup": "95d15b88902da2c27407db296529be0b4bb215fe7665a6fd792825e618c7e772",
   "today_up_next": "5014edaffd17bfd3af73bf0d5cc0c63fdda334adec39d85fb8f238c9691694a7",
   "today_waiting": "d0ebcd7767046656d5111582a195a741496a3e187f0ecc55c104215b90c9869b",
-  "today_waiting_stalled": "c0579bdb3f88b73b28837812c31b24e5e88aac8d3a8f6aecd6affb027cada94f",
-  "today_waiting_stalled_detail": "45e544fabccf238fbfc200e037f2d21d29bbc98b59b5eb92cbc118264e3c16b1",
   "today_week_after_date": "374a6fab7fbe715fda8555023ce0e182f9d9a89b5c543c91af66208cf8cdccfb",
   "today_week_after_exam": "94629fb359b4b25bab67d3a466e9d57a92449984c5fd80ee06cc7b7a0ec922be",
   "today_week_before_plan": "35e55d803be76737c2c6e0074c567e771d95bfeb5ecaec9e1bd28f9d6014b79e",
@@ -195,6 +192,8 @@
     <string name="today_step_done">完了</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">次のステップ</string>
+    <!-- Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress. -->
+    <string name="today_step_extra">追加分</string>
     <string name="today_step_skipped">スキップ</string>
     <string name="today_step_counts_toward_mission">ミッションにカウントされます</string>
     <string name="today_step_often_tested">よく出題される</string>
@@ -207,8 +206,6 @@
     <string name="today_rest_next_lessons">学習したいときは、下にある次のレッスンに進めます。</string>
     <string name="today_rest_enjoy">お休みを楽しんでください！</string>
     <string name="today_waiting">今日のレッスンを準備しています…</string>
-    <string name="today_waiting_stalled">今日のレッスンの作成に、いつもより時間がかかっています。</string>
-    <string name="today_waiting_stalled_detail">数分後にまた見に来てください。</string>
     <string name="today_nothing_new">予定のところまで学習が終わりました。</string>
     <string name="today_up_next">学習計画の次の予定</string>
     <string name="today_start_session">始める</string>
@@ -344,8 +341,6 @@
     <string name="today_coming_title">次のレッスン</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">作成しています…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">いつもより時間がかかっています</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">まだ準備ができていません</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -365,7 +360,6 @@
     <string name="today_week_day_planned">%1$sの学習を予定</string>
     <string name="today_plan_finished">学習計画を完了しました。</string>
     <string name="today_week_after_exam">試験後</string>
-    <string name="today_get_them_now">今すぐ準備する</string>
     <string name="today_resume">再開する</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

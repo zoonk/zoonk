@@ -144,10 +144,10 @@ test.describe("Testing what you know from the plan", () => {
     await page.screenshot({ path: testInfo.outputPath("placement-plan-wait.png") });
   });
 
-  test("B2 stays in the plan when the level has no eligible lessons", async ({
+  test("offers no B2 test-out while B2 has no lessons it could skip", async ({
     noProgressUser,
     userWithoutProgress: page,
-  }, testInfo) => {
+  }) => {
     const { goal } = await languageGoalFixture({ userId: noProgressUser.id });
 
     await prisma.goal.update({
@@ -159,13 +159,13 @@ test.describe("Testing what you know from the plan", () => {
     });
 
     await page.goto("/level-test");
-    await page.getByRole("radio", { name: /Test out of B2/u }).click();
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
-    await expect(page.getByRole("heading", { name: "B2 stays in your plan" })).toBeVisible();
-    await expect(page.getByText("There aren't enough questions for B2 yet.")).toBeVisible();
-    await expect(page.getByRole("button", { exact: true, name: "Done" })).toBeEnabled();
-    await page.screenshot({ path: testInfo.outputPath("placement-unavailable-b2.png") });
+    await expect(
+      page.getByRole("heading", { name: "How much do you want to check?" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("radio", { name: /Quick/u })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /Test out of B2/u })).toBeHidden();
   });
 
   test("a whole-course test picks up where the learner left and stops between parts", async ({

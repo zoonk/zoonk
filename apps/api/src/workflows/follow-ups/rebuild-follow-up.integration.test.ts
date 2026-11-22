@@ -14,6 +14,7 @@ import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { chapterSkillFixture, courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -143,7 +144,7 @@ async function savedGoal() {
     repaired: [],
   }));
 
-  return { course, goal, lesson, planGraph, user };
+  return { course, goal, lesson, planGraph, skill, user };
 }
 
 async function editPurpose(goalId: string) {
@@ -358,8 +359,24 @@ describe("a learner's owed rebuild", () => {
     "resumes two retries on a healthy revealed graph without replacing it",
     { timeout: 60_000 },
     async () => {
-      const { goal, user } = await savedGoal();
-      await prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } });
+      const { goal, skill, user } = await savedGoal();
+
+      await Promise.all([
+        prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } }),
+        itemFixture({ skillId: skill.id }),
+        ...["applying for a permit", "filing a report", "starting a class"].map((activity) =>
+          itemFixture({
+            content: {
+              question: `Put the steps for ${activity} in order.`,
+              reason: "Each step depends on the previous one.",
+              steps: ["Make a plan", "Gather the materials", "Start the work", "Check the result"],
+            },
+            format: "order",
+            skillId: skill.id,
+          }),
+        ),
+      ]);
+
       const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
       expect(before.placementPreparedAt).toBeNull();
       const first = await retry(goal.id);

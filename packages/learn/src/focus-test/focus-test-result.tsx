@@ -179,7 +179,7 @@ function FocusTestResult({
       {focus && <FocusSubjects rows={focus.rows} />}
 
       {focus && lessonsSkipped > 0 && (
-        <p className="text-muted-foreground text-sm text-pretty">
+        <p className="text-muted-foreground text-sm">
           {t(
             "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}",
             { count: lessonsSkipped },

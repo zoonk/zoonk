@@ -11,13 +11,24 @@ msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Opzioni di risposta"
 
+#. Tags the learner's pick when it counts as neither right nor wrong.
+#: src/_components/answer-option.tsx
+msgctxt "ihtBFm"
+msgid "Your guess"
+msgstr "La tua ipotesi"
+
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Corretta"
 
-#: src/_components/answer-option.tsx
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "La tua risposta e quella corretta"
+
+#: src/_components/answer-pair.tsx
 #: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
@@ -26,17 +37,6 @@ msgstr "Corretta"
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "La tua risposta"
-
-#. Tags the learner's pick when it counts as neither right nor wrong.
-#: src/_components/answer-option.tsx
-msgctxt "ihtBFm"
-msgid "Your guess"
-msgstr "La tua ipotesi"
-
-#: src/_components/answer-pair.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "La tua risposta e quella corretta"
 
 #: src/_components/brain-power-amount.tsx
 #: src/_components/moment-readouts.tsx
@@ -54,7 +54,6 @@ msgstr "PM"
 #: src/_components/lesson-list.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -604,13 +603,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Stiamo impiegando più tempo del solito. Si aprirà automaticamente, non serve toccare di nuovo."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Scorri a sinistra"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Scorri a destra"
@@ -804,6 +801,11 @@ msgstr "Opzioni della schermata"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "Il test non si è aperto. Riprova."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "Conosci già il prossimo capitolo?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
@@ -1015,6 +1017,63 @@ msgstr "Giusto, attenzione all’ortografia"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Non controllata questa volta"
+
+#: src/_components/week-row.tsx
+#: src/generation/generation-wait.tsx
+msgctxt "B7ijKz"
+msgid "done"
+msgstr "completato"
+
+#: src/_components/week-row.tsx
+msgctxt "F8phHs"
+msgid "studied"
+msgstr "hai studiato"
+
+#: src/_components/week-row.tsx
+msgctxt "uMBOLl"
+msgid "exam day"
+msgstr "giorno dell’esame"
+
+#: src/_components/week-row.tsx
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "data di fine"
+
+#: src/_components/week-row.tsx
+msgctxt "KQR6jo"
+msgid "before your plan"
+msgstr "prima dell’inizio del tuo piano"
+
+#: src/_components/week-row.tsx
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "dopo il tuo esame"
+
+#: src/_components/week-row.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "dopo la data di fine"
+
+#: src/_components/week-row.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "giorno di riposo"
+
+#: src/_components/week-row.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "oggi"
+
+#: src/_components/week-row.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "in programma"
+
+#: src/_components/week-row.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "non hai studiato"
 
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
@@ -1332,7 +1391,6 @@ msgstr "Ciao! Sono {name}, il tuo socio di studio con l’IA. Dimmi cosa vuoi im
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Domande precedenti"
@@ -2597,6 +2655,48 @@ msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "Rivincita la prossima volta che studi"
 
+#. Name of a block of program code in a lesson or a question, read by screen readers.
+#: src/code/code-listing.tsx
+msgctxt "h2vipu"
+msgid "Code"
+msgstr "Codice"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, one {# tabulazione} other {# tabulazioni}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, one {# spazio} other {# spazi}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "Riga {number}: vuota"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "Riga {number}, con rientro di {indent}: {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "Riga {number}: {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "Con rientro di {indent}: {code}"
+
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-sections.tsx
@@ -3631,19 +3731,19 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "Hai risposto a {answered, number} su {questions, number}"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "5wOk8O"
-msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr "Nelle tue simulazioni: {sureRight, plural, =0 {# risposte corrette su {sureAnswered}} one {# risposta corretta su {sureAnswered}} other {# risposte corrette su {sureAnswered}}} tra quelle non contrassegnate, {unsureRight, plural, =0 {# risposte corrette su {unsureAnswered}} one {# risposta corretta su {unsureAnswered}} other {# risposte corrette su {unsureAnswered}}} tra quelle contrassegnate."
+msgctxt "FvTaDr"
+msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
+msgstr "Nei tuoi esami simulati: {sureRight, plural, =0 {# risposte corrette su {sureAnswered}} one {# risposte corrette su {sureAnswered}} other {# risposte corrette su {sureAnswered}}} quando hai risposto con sicurezza, {unsureRight, plural, =0 {# risposte corrette su {unsureAnswered}} one {# risposte corrette su {unsureAnswered}} other {# risposte corrette su {unsureAnswered}}} quando eri in dubbio."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "d5aD04"
-msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr "Con le risposte contrassegnate perdi più punti di quanti ne guadagni: lasciale in bianco."
+msgctxt "kJlaFe"
+msgid "When you're not sure, leave it blank: those answers cost more than they earn."
+msgstr "Se hai un dubbio, lascia la risposta in bianco: quelle risposte fanno perdere più punti di quanti ne facciano guadagnare."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "8ghbty"
-msgid "Your flagged answers still earn points: keep answering them."
-msgstr "Le risposte contrassegnate ti fanno comunque guadagnare punti: continua a rispondere."
+msgctxt "FxZzRf"
+msgid "When you're not sure, still answer: those answers earn points."
+msgstr "Se hai un dubbio, rispondi comunque: quelle risposte fanno guadagnare punti."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -4235,13 +4335,6 @@ msgstr "Connessione persa"
 msgctxt "NhDwgx"
 msgid "in progress"
 msgstr "in corso"
-
-#: src/generation/generation-wait.tsx
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "B7ijKz"
-msgid "done"
-msgstr "completato"
 
 #: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
@@ -4852,7 +4945,6 @@ msgid "Progress"
 msgstr "Progressi"
 
 #: src/journey/journey-hero.tsx
-#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -5265,31 +5357,6 @@ msgstr "Fine del piano"
 msgctxt "pwcc1H"
 msgid "exam"
 msgstr "esame"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "non hai studiato"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "giorno di riposo"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "oggi"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-segment-popover.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "in programma"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -6367,6 +6434,18 @@ msgstr "Stiamo registrando… Premi Interrompi quando hai finito."
 msgctxt "_lLAdM"
 msgid "Press Record and say it out loud"
 msgstr "Premi Registra e dillo ad alta voce"
+
+#. A CEFR level range the test found for reading, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "hSzKEx"
+msgid "Reading {range}"
+msgstr "Lettura {range}"
+
+#. A CEFR level range the test found for listening, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "fFePx9"
+msgid "Listening {range}"
+msgstr "Ascolto {range}"
 
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
@@ -7818,10 +7897,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# risposte date} one {# risposta data} other {# risposte date}}"
 
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Vai alle domande successive"
+msgctxt "q_puC8"
+msgid "{unsure, plural, one {# not sure} other {# not sure}}"
+msgstr "{unsure, plural, other {# in dubbio}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -7983,23 +8063,23 @@ msgctxt "P-hmyB"
 msgid "An answer wasn't saved."
 msgstr "Una risposta non è stata salvata."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, one {# domanda è in bianco} other {# domande sono in bianco}} e {flagged, plural, one {# è contrassegnata} other {# sono contrassegnate}}."
+msgctxt "INKJBm"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
+msgstr "{blank, plural, one {# domanda è lasciata in bianco} other {# domande sono lasciate in bianco}} e hai {unsure, plural, one {# risposta in dubbio} other {# risposte in dubbio}}."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, one {# domanda è senza risposta.} other {# domande sono senza risposta.}}"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, one {# domanda è contrassegnata.} other {# domande sono contrassegnate.}}"
+msgctxt "MVVQnK"
+msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
+msgstr "{count, plural, one {Hai # risposta in dubbio.} other {Hai # risposte in dubbio.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8027,6 +8107,27 @@ msgstr "Dopo la consegna non potrai più modificare le risposte."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Continua a rispondere"
+
+#. A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.
+#: src/mock/mock-labels.tsx
+msgctxt "BsQPJC"
+msgid "Not sure"
+msgstr "In dubbio"
+
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Sezione {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Domanda {number} di {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Domanda {number} di {total}"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8215,18 +8316,7 @@ msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Parte scritta"
 
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Domanda {number} di {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Domanda {number} di {total}"
-
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "Parzialmente corrette"
@@ -8243,7 +8333,6 @@ msgid "Wrong"
 msgstr "Errate"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Senza risposta"
@@ -8341,24 +8430,24 @@ msgid "You missed {count, plural, one {# easy question} other {# easy questions}
 msgstr "Hai sbagliato {count, plural, one {# domanda facile} other {# domande facili}}. Inizia il ripasso da qui."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "Gac05z"
-msgid "Flagged answers"
-msgstr "Risposte contrassegnate"
+msgctxt "v-WZ1x"
+msgid "Answers you weren't sure of"
+msgstr "Risposte in dubbio"
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "EnpXr5"
-msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "Non contrassegnate: {sureRight, plural, =0 {# corrette su {sureAnswered}} one {# corretta su {sureAnswered}} other {# corrette su {sureAnswered}}}. Contrassegnate: {unsureRight, plural, =0 {# corrette su {unsureAnswered}} one {# corretta su {unsureAnswered}} other {# corrette su {unsureAnswered}}}."
+msgctxt "eQCLMt"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr "Sicuro: {sureRight, plural, =0 {hai totalizzato # risposte corrette su {sureAnswered}} one {# risposta corretta su {sureAnswered}} other {# risposte corrette su {sureAnswered}}}. In dubbio: {unsureRight, plural, =0 {hai totalizzato # risposte corrette su {unsureAnswered}} one {# risposta corretta su {unsureAnswered}} other {# risposte corrette su {unsureAnswered}}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "1yogM5"
-msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr "Lasciando in bianco le risposte contrassegnate avresti guadagnato {points, plural, one {# punto} other {# punti}} in più."
+msgctxt "BxnoFo"
+msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
+msgstr "Lasciando in bianco le risposte in dubbio avresti guadagnato {points, plural, one {# punto} other {# punti}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "ZkBfTU"
-msgid "Your flagged answers still earned points, so keep answering them."
-msgstr "Anche le risposte contrassegnate ti hanno dato punti, quindi continua a rispondere."
+msgctxt "riHnND"
+msgid "The answers you weren't sure of still earned points, so keep answering them."
+msgstr "Le risposte in dubbio ti hanno comunque fatto guadagnare punti, quindi continua a rispondere."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8586,11 +8675,29 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Dopo questa simulazione"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Domanda {number}"
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "In bianco"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "Parzialmente corretta"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "Corretta"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "Errata"
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
@@ -8608,14 +8715,14 @@ msgid "{number} of {total}"
 msgstr "{number} su {total}"
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "bSCV9J"
-msgid "Flag"
-msgstr "Contrassegna"
+msgctxt "d9n-z1"
+msgid "Check it again before you hand in. Your result shows how these answers went."
+msgstr "Ricontrolla la risposta prima di consegnare. Il risultato mostra come sono andate queste risposte."
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "sflabU"
-msgid "Remove flag"
-msgstr "Rimuovi il contrassegno"
+msgctxt "vmWccn"
+msgid "Your result shows how these answers went."
+msgstr "Il risultato mostra come sono andate queste risposte."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8655,11 +8762,6 @@ msgstr "Abbiamo salvato le tue risposte."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Consegnata"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Sezione {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8755,11 +8857,16 @@ msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Da migliorare: {worst}."
 
-#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "ETtb7q"
-msgid "{question}, flagged"
-msgstr "{question}, contrassegnata"
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Domanda {number}"
+
+#. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#: src/mock/use-question-cell-label.ts
+msgctxt "n8sv3N"
+msgid "{question}, not sure"
+msgstr "{question}, in dubbio"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9260,6 +9367,19 @@ msgid "Getting started"
 msgstr "Primi passi"
 
 #: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "Test di livello"
+
+#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "TdP-3q"
+msgid "What you know"
+msgstr "Cosa sai"
+
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-properties.tsx
 msgctxt "bpAaId"
@@ -9277,13 +9397,6 @@ msgstr "Non impostata"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Obiettivo"
-
-#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "TdP-3q"
-msgid "What you know"
-msgstr "Cosa sai"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/schedule-step.tsx
@@ -10598,18 +10711,6 @@ msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Trova una data"
 
-#. A CEFR level range the test found for reading, such as “B1–B2”.
-#: src/plan/plan-placement-test.tsx
-msgctxt "hSzKEx"
-msgid "Reading {range}"
-msgstr "Lettura {range}"
-
-#. A CEFR level range the test found for listening, such as “B1–B2”.
-#: src/plan/plan-placement-test.tsx
-msgctxt "fFePx9"
-msgid "Listening {range}"
-msgstr "Ascolto {range}"
-
 #: src/plan/plan-placement-test.tsx
 msgctxt "Ye4GUJ"
 msgid "Find your level and skip what you know"
@@ -10619,11 +10720,6 @@ msgstr "Trova il tuo livello e salta ciò che sai già"
 msgctxt "42QSqg"
 msgid "Skip lessons you already know"
 msgstr "Salta le lezioni che conosci già"
-
-#: src/plan/plan-placement-test.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "Test di livello"
 
 #: src/plan/plan-placement-test.tsx
 msgctxt "QZI9sA"
@@ -11774,6 +11870,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Es. fare il pane, auto, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Aggiungi"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11803,6 +11905,12 @@ msgstr "{field}: corso o materia (facoltativo)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Es. giornalismo"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Rimuovi {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11872,9 +11980,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "Ci serve per scegliere esempi che ti interessano."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Passati o attuali, conclusi o meno. Scegline fino a 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "Passati o presenti, conclusi o no."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11890,11 +11998,6 @@ msgstr "Facoltativo. Usiamo le tue scelte per adattare i contenuti alle tue esig
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Scegli tutto ciò che ti aiuta."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Scegli fino a 3 opzioni."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
@@ -12711,34 +12814,17 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nuova lezione"
 
-#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
-#: src/session/use-block-copy.ts
-msgctxt "60PbK5"
-msgid "Bonus practice: {topic}"
-msgstr "Esercizi extra: {topic}"
-
 #. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "YGPuF7"
 msgid "Practice: {topic}"
 msgstr "Esercizi: {topic}"
 
-#. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
-#: src/session/use-block-copy.ts
-msgctxt "7zIxxl"
-msgid "Bonus practice: {areas}"
-msgstr "Esercizi extra: {areas}"
-
 #. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "I85zr9"
 msgid "Practice: {areas}"
 msgstr "Esercizi: {areas}"
-
-#: src/session/use-block-copy.ts
-msgctxt "JfeRyY"
-msgid "Bonus practice"
-msgstr "Esercizi extra"
 
 #: src/session/use-block-copy.ts
 msgctxt "MbAJ4_"
@@ -13205,6 +13291,7 @@ msgstr "Esercitati per {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "Prepara le lezioni"
@@ -13231,18 +13318,18 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Stiamo preparando…"
 
+#. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
+#: src/today/today-block-row.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr "Extra"
+
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
 msgid "What changed"
 msgstr "Cos’è cambiato"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "Preparale ora"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Le tue prossime lezioni"
@@ -13253,12 +13340,6 @@ msgstr "Le tue prossime lezioni"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Non ancora pronte"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "Ci stiamo mettendo più tempo del solito"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13299,16 +13380,6 @@ msgstr "Se vuoi studiare, trovi le prossime lezioni qui sotto."
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "Goditi il tuo giorno di riposo!"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "Ci stiamo mettendo più del solito a preparare le lezioni di oggi."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "Torna tra qualche minuto."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"
@@ -13606,36 +13677,6 @@ msgstr "sfida settimanale"
 msgctxt "J3eMtx"
 msgid "every topic"
 msgstr "tutti gli argomenti"
-
-#: src/today/today-week-day.tsx
-msgctxt "F8phHs"
-msgid "studied"
-msgstr "hai studiato"
-
-#: src/today/today-week-day.tsx
-msgctxt "uMBOLl"
-msgid "exam day"
-msgstr "giorno dell’esame"
-
-#: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "data di fine"
-
-#: src/today/today-week-day.tsx
-msgctxt "KQR6jo"
-msgid "before your plan"
-msgstr "prima dell’inizio del tuo piano"
-
-#: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "dopo il tuo esame"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "dopo la data di fine"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

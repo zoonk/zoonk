@@ -2,17 +2,24 @@
 
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { toLanguageAimView } from "@zoonk/core/language/aims";
+import {
+  type LevelTestRanges,
+  levelTestResultSchema,
+} from "@zoonk/core/language/level-test/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
+import { isJsonObject } from "@zoonk/utils/json";
 import { useExtracted } from "next-intl";
 import { useDaysLeftText } from "../_components/days-left";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
-import { useLanguageNameInSentence } from "../_utils/use-language-name";
+import { useLevelRangeFacts } from "../language/level-test/level-test-parts";
 import { readSetupLevel } from "./_utils/setup-level";
 import { OnboardingRailSection } from "./onboarding-rail";
 import { useOwnLevelLabels } from "./steps/level-choices";
 import { useDetailRows, useLanguageRows } from "./understood/use-understood-rows";
+
+const levelTestRangesSchema = levelTestResultSchema.pick({ ranges: true });
 
 type ReceiptFact = { count?: string; id: string; label: string; note?: string; value: string };
 
@@ -33,6 +40,43 @@ function useLevelText() {
 
     return level.kind === "own" ? ownLevels[level.level] : level.text;
   };
+}
+
+function readSavedTestRanges(details: GoalView["details"]): LevelTestRanges | undefined {
+  const test = details.levelTest;
+
+  return isJsonObject(test)
+    ? levelTestRangesSchema.safeParse(test.lastResult).data?.ranges
+    : undefined;
+}
+
+function useLevelFact(goal: GoalView, testRanges?: LevelTestRanges | null): ReceiptFact | null {
+  const t = useExtracted();
+  const levelText = useLevelText();
+  const levelRangeFacts = useLevelRangeFacts();
+
+  if (goal.kind === "language") {
+    const shown = testRanges === undefined ? readSavedTestRanges(goal.details) : testRanges;
+    const ranges = levelRangeFacts(shown ?? {});
+
+    return ranges.length > 0
+      ? { id: "level", label: t("Level test"), value: ranges.join(" · ") }
+      : null;
+  }
+
+  const level = levelText(goal.details);
+
+  return level === null
+    ? null
+    : {
+        id: "level",
+        label: t({
+          description:
+            'Row with what the learner said they already know about their goal\'s subject, such as "I know a few things".',
+          message: "What you know",
+        }),
+        value: level,
+      };
 }
 
 function useDateFact() {
@@ -65,15 +109,13 @@ function useDateFact() {
   };
 }
 
-function useReceiptFacts(goal: GoalView): ReceiptFact[] {
+function useReceiptFacts(goal: GoalView, testRanges?: LevelTestRanges | null): ReceiptFact[] {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const languageRows = useLanguageRows();
   const detailRows = useDetailRows();
   const dateFact = useDateFact();
-  const levelText = useLevelText();
-  const languageName = useLanguageNameInSentence();
-  const level = levelText(goal.details);
+  const level = useLevelFact(goal, testRanges);
 
   const facts: (ReceiptFact | null | false)[] = [
     { id: "title", label: t("Goal"), value: goal.displayName },
@@ -86,17 +128,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage ?? null })
         : null,
     ),
-    level !== null && {
-      id: "level",
-      label: goal.targetLanguage
-        ? t("{language} level", { language: languageName(goal.targetLanguage) })
-        : t({
-            description:
-              'Row with what the learner said they already know about their goal\'s subject, such as "I know a few things".',
-            message: "What you know",
-          }),
-      value: level,
-    },
+    level,
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
       label: t("Time a day"),
@@ -107,9 +139,15 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   return facts.filter((fact): fact is ReceiptFact => Boolean(fact));
 }
 
-export function PlanReceipt({ goal }: { goal: GoalView }) {
+export function PlanReceipt({
+  goal,
+  testRanges,
+}: {
+  goal: GoalView;
+  testRanges?: LevelTestRanges | null;
+}) {
   const t = useExtracted();
-  const facts = useReceiptFacts(goal);
+  const facts = useReceiptFacts(goal, testRanges);
 
   return (
     <OnboardingRailSection id="onboarding-plan-so-far" title={t("Your plan so far")}>
@@ -119,11 +157,11 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
             className="col-span-2 grid grid-cols-subgrid items-baseline gap-3 py-2.5 text-sm"
             key={fact.id}
           >
-            <dt className="text-muted-foreground text-compact text-pretty">{fact.label}</dt>
+            <dt className="text-muted-foreground text-compact">{fact.label}</dt>
             <dd className="flex min-w-0 flex-col gap-0.5">
               <span
                 className={cn(
-                  "text-pretty wrap-break-word",
+                  "wrap-break-word",
                   (fact.id === "time" || (fact.id === "date" && fact.count)) &&
                     "font-mono tabular-nums",
                 )}

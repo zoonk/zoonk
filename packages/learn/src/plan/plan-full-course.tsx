@@ -96,7 +96,7 @@ export function FullCourseSwitch() {
       </div>
 
       {finish && (
-        <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
+        <p className="text-muted-foreground text-sm" id={descriptionId}>
           {finish}
         </p>
       )}

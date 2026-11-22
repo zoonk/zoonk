@@ -80,9 +80,18 @@ struct PlanFact: Identifiable, Equatable {
     let answered: [String]
     let level: String?
     let levelNote: String?
+    let levelTest: LevelTestDetails?
+
+    struct LevelTestDetails: Decodable {
+      let lastResult: Result?
+
+      struct Result: Decodable {
+        let ranges: [String: LevelRange]
+      }
+    }
 
     private enum CodingKeys: String, CodingKey {
-      case answered, level, levelNote
+      case answered, level, levelNote, levelTest
     }
 
     init(from decoder: Decoder) throws {
@@ -90,6 +99,7 @@ struct PlanFact: Identifiable, Equatable {
       answered = (try? container.decodeIfPresent([String].self, forKey: .answered)) ?? []
       level = try? container.decodeIfPresent(String.self, forKey: .level)
       levelNote = try? container.decodeIfPresent(String.self, forKey: .levelNote)
+      levelTest = try? container.decodeIfPresent(LevelTestDetails.self, forKey: .levelTest)
     }
   }
 
@@ -126,11 +136,21 @@ struct PlanFact: Identifiable, Equatable {
         : nil)
   }
 
-  /// Main's `readSetupLevel`: a level test's result, then the level the learner picked, then the
-  /// level their words gave.
   private static func level(_ details: Details?, of goal: Components.Schemas.Goal) -> PlanFact? {
     guard let details else {
       return nil
+    }
+
+    if goal.kind == .language {
+      let ranges = PlacementTestResult.skillRanges(in: details.levelTest?.lastResult?.ranges ?? [:])
+      guard !ranges.isEmpty else {
+        return nil
+      }
+
+      return PlanFact(
+        id: "level", label: PlacementTestCopy.languageName,
+        value: ranges.map { PlacementTestCopy.skillRange($0.skill, $0.range) }
+          .joined(separator: " · "))
     }
 
     let own = details.level.flatMap(OwnLevel.init(rawValue:))
@@ -153,14 +173,11 @@ struct PlanFact: Identifiable, Equatable {
     return value.map {
       PlanFact(
         id: "level",
-        label: goal.targetLanguage.map {
-          LocalizedStringResource("\(Locale.current.languageName($0)) level", table: "Plan")
-        }
-          ?? LocalizedStringResource(
-            "What you know", table: "Onboarding",
-            comment:
-              "Row with what the learner said they already know about their goal's subject, such as \"I know a few things\"."
-          ),
+        label: LocalizedStringResource(
+          "What you know", table: "Onboarding",
+          comment:
+            "Row with what the learner said they already know about their goal's subject, such as \"I know a few things\"."
+        ),
         value: $0)
     }
   }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,6 +14,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.code.CodeBlock
+import com.zoonk.android.ui.code.CodeSnippet
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.richtext.RichSegment
 import com.zoonk.android.ui.richtext.RichTable
@@ -22,7 +25,10 @@ import com.zoonk.android.ui.richtext.SegmentKind
 import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.richtext.TableAlign
 import com.zoonk.android.ui.richtext.parseRichInline
+import com.zoonk.android.ui.richtext.parseRichLine
+import com.zoonk.android.ui.richtext.readCodeFence
 import com.zoonk.android.ui.richtext.readMarkdownTable
+import com.zoonk.android.ui.richtext.readWholeCodeFence
 import com.zoonk.android.ui.richtext.richText
 import com.zoonk.android.ui.richtext.typesetMoney
 
@@ -36,12 +42,17 @@ internal sealed interface ItemBlock {
         val header: List<List<RichSegment>>,
         val rows: List<List<List<RichSegment>>>,
     ) : ItemBlock
+
+    data class Code(
+        val code: String,
+        val language: String?,
+    ) : ItemBlock
 }
 
 /**
  * A question's context, a set's passage or an explanation (main's `ItemText`): paragraphs, data
- * tables and lesson inline text (code, bold, italics and `$…$` math, found by the lessons' rule, so
- * "$5" stays money), as item writers are told. Anything else stays text.
+ * tables, fenced code blocks and lesson inline text (code, bold, italics and `$…$` math, found by
+ * the lessons' rule, so "$5" stays money), as item writers are told. Anything else stays text.
  */
 @Composable
 fun ItemText(
@@ -65,6 +76,10 @@ fun ItemText(
                             rows = block.rows.map { row -> row.map { typesetMoney(it, locale) } },
                         )
                     }
+
+                    is ItemBlock.Code -> {
+                        block
+                    }
                 }
             }
         }
@@ -79,18 +94,31 @@ fun ItemText(
                 is ItemBlock.Table -> {
                     RichTable(block.align, block.header.map { richText(it) }, block.rows.map { row -> row.map { richText(it) } })
                 }
+
+                is ItemBlock.Code -> {
+                    CodeBlock(block.code, block.language)
+                }
             }
         }
     }
 }
 
-/** One line of an option, a step or an entry, with its emphasis and math (main's `ItemLine`). */
+/**
+ * One line of an option, a step or an entry, with its emphasis and math (main's `ItemLine`). A line
+ * that is one code block, such as an option that is a program, shows it as code.
+ */
 @Composable
 fun ItemLine(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
 ) {
+    val code = remember(text) { readWholeCodeFence(text) }
+    if (code != null) {
+        CodeSnippet(code.code, code.language, modifier)
+        return
+    }
+
     RichTextLine(itemLine(text), modifier, style)
 }
 
@@ -102,19 +130,28 @@ fun itemLine(text: String): SpokenText = richText(remember(text) { parseItemLine
 @Composable
 fun spokenItemLine(text: String): String = itemLine(text).let { it.spoken ?: it.text.text }
 
-/** The question itself, with its math, as a TalkBack heading; quiet once it's graded. */
+/**
+ * The question itself, with its math, as a TalkBack heading; quiet once it's graded. A [translation]
+ * reads under it in the learner's language.
+ */
 @Composable
 fun QuestionTitle(
     text: String,
     modifier: Modifier = Modifier,
     graded: Boolean = false,
+    translation: String = "",
 ) {
     val style = MaterialTheme.typography.titleLarge
-    RichText(
-        text = text,
-        modifier = modifier.semantics { heading() },
-        style = if (graded) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style,
-    )
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        RichText(
+            text = text,
+            modifier = Modifier.semantics { heading() },
+            style = if (graded) style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant) else style,
+        )
+        if (translation.isNotBlank()) {
+            Text(translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+        }
+    }
 }
 
 internal fun parseItemText(text: String): List<ItemBlock> {
@@ -125,6 +162,13 @@ internal fun parseItemText(text: String): List<ItemBlock> {
     while (index < lines.size) {
         if (lines[index].isBlank()) {
             index++
+            continue
+        }
+
+        val fence = readCodeFence(lines, index)
+        if (fence != null) {
+            blocks += ItemBlock.Code(fence.code, fence.language)
+            index = fence.end
             continue
         }
 
@@ -141,7 +185,11 @@ internal fun parseItemText(text: String): List<ItemBlock> {
         }
 
         var end = index + 1
-        while (end < lines.size && lines[end].isNotBlank() && readMarkdownTable(lines, end) == null) end++
+        while (end < lines.size && lines[end].isNotBlank() && readMarkdownTable(lines, end) == null &&
+            readCodeFence(lines, end) == null
+        ) {
+            end++
+        }
         blocks += ItemBlock.Paragraph(parseInline(lines.subList(index, end).joinToString("\n") { it.trim() }))
         index = end
     }
@@ -149,7 +197,8 @@ internal fun parseItemText(text: String): List<ItemBlock> {
     return blocks
 }
 
-internal fun parseItemLine(text: String): List<RichSegment> = parseInline(text.trim().replace(LINE_BREAKS, " "))
+/** A code block in the line reads as one run of inline code. */
+internal fun parseItemLine(text: String): List<RichSegment> = parseRichLine(text) { parseInline(it.trim().replace(LINE_BREAKS, " ")) }
 
 private fun parseInline(text: String): List<RichSegment> =
     parseRichInline(text).map { if (it.kind in PROSE) it.copy(text = keepAmountsTogether(it.text)) else it }

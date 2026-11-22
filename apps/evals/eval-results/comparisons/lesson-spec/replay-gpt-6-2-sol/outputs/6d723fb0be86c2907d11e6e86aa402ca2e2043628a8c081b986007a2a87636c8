@@ -1,0 +1,152 @@
+{
+  "lessons": [
+    {
+      "canDo": "Explain how arm lengths change the force a lever needs",
+      "description": "Explain how a lever’s arm lengths reduce the push needed to lift a load, and what you trade for that smaller push.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": "Side view of a straight board beneath a crate at its left end, resting on a triangular support near the crate, with a downward push arrow just to the right of the support.",
+          "visualKind": "picture",
+          "brief": "Andre pushes down on a board resting on a support, but the crate at the other end barely moves. How could changing where he pushes make the crate easier to lift?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a horizontal board with a crate at its left end, a triangular support labeled 'fulcrum,' and a downward arrow labeled 'push' at its right end; distances from the support are marked 0.30 m toward the crate and 0.60 m toward the push.",
+          "visualKind": "picture",
+          "brief": "A lever turns around a fixed support called the fulcrum: pushing down on one side of this board raises the other side.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Two horizontal lever drawings labeled 1 and 2, each with an identical crate on the left, a triangular fulcrum, and a downward push arrow on the right; drawing 1 marks crate-to-fulcrum distance 0.30 m and fulcrum-to-push distance 0.60 m, while drawing 2 marks 0.60 m and 1.20 m respectively.",
+          "visualKind": "picture",
+          "brief": "Two very light bars lift identical crates; the second has twice the distance on each side of its support. What push will the second need: half as much, the same, or twice as much? Correct: the same; tempting: half as much because the bar is longer.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a horizontal board with a crate at its left end, a triangular support labeled 'fulcrum,' and a downward arrow labeled 'push' at its right end; distances from the support are marked 0.30 m toward the crate and 0.60 m toward the push.",
+          "visualKind": "picture",
+          "brief": "The effort arm is the distance from the fulcrum to where you push: here, it is 0.60 m.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a horizontal board with a crate at its left end, a triangular support labeled 'fulcrum,' and a downward arrow labeled 'push' at its right end; distances from the support are marked 0.30 m toward the crate and 0.60 m toward the push.",
+          "visualKind": "picture",
+          "brief": "The load arm is the distance from the fulcrum to where the weight acts: here, it is 0.30 m.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Horizontal ideal lever with a crate on the left, a triangular fulcrum, and a downward push arrow on the right; label the load arm 0.30 m and the effort arm 0.90 m, with the effort side drawn three times as long.",
+          "visualKind": "picture",
+          "brief": "With a weightless bar, no friction, and downward forces, an effort arm three times the load arm needs one-third the load’s weight to balance it. Show arms of 0.90 m and 0.30 m.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Two horizontal lever drawings labeled 1 and 2, each with an identical crate on the left, a triangular fulcrum, and a downward push arrow on the right; drawing 1 marks crate-to-fulcrum distance 0.30 m and fulcrum-to-push distance 0.60 m, while drawing 2 marks 0.60 m and 1.20 m respectively.",
+          "visualKind": "picture",
+          "brief": "The ratio of the arms—not the bar’s total length—decides the push: doubling both arms leaves that ratio unchanged. Resolve the guess: both bars have an effort arm twice their load arm, so both need half the crate’s weight.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Two horizontal ideal levers labeled A and B, with identical crates on the left, triangular fulcrums, and downward push arrows on the right; A has load arm 0.20 m and effort arm 0.80 m, while B has load arm 0.40 m and effort arm 1.20 m.",
+          "visualKind": "picture",
+          "brief": "Which ideal lever needs less push for identical loads: A with load/effort arms of 0.20/0.80 m, or B with 0.40/1.20 m? Correct: A, with a four-to-one advantage; tempting: B because its effort arm is longer.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "Horizontal ideal lever with a downward load arrow labeled 120 N on the left, a triangular fulcrum, and a downward arrow labeled 'push = ?' on the right; label the load arm 0.20 m and effort arm 0.80 m.",
+          "visualKind": "picture",
+          "brief": "Find the balancing push for a 120 N load with a 0.20 m load arm and 0.80 m effort arm; explain that newtons (N) measure force. Reveal one move at a time: arm ratio = 0.80 ÷ 0.20 = 4; push = 120 ÷ 4 = 30 N.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Horizontal ideal lever with a downward load arrow labeled 180 N on the left, a triangular fulcrum, and a downward arrow labeled 'push = ?' on the right; label the load arm 0.30 m and effort arm 0.90 m.",
+          "visualKind": "picture",
+          "brief": "Ask for the balancing push with a 180 N load, a 0.30 m load arm, and a 0.90 m effort arm. Correct: 60 N; include 540 N as the tempting answer from multiplying by three instead of dividing.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Horizontal ideal lever with a downward load arrow labeled 120 N on the left, a triangular fulcrum, and a downward arrow labeled 30 N on the right; label the load arm 0.20 m and effort arm 0.80 m.",
+          "visualKind": "picture",
+          "brief": "A balancing push holds a stationary lever still; a slightly larger push starts raising the load. In the worked example, 30 N balances the load, while just over 30 N starts the lift.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "One slightly tilted lever with its short left arm beneath a crate and its long right arm extending from a triangular fulcrum; curved arrows centered on the fulcrum show a short upward path at the crate and a longer downward path at the handle, labeled 'shorter travel' and 'farther travel.'",
+          "visualKind": "picture",
+          "brief": "The smaller push has a trade-off: the longer effort arm moves farther than the load arm during the same turn. Show a long handle sweeping downward while the crate rises a shorter distance.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Two horizontal ideal lever setups labeled A and B, each with a downward load arrow labeled 240 N, a triangular fulcrum, and a downward push arrow on the right; A marks load arm 0.20 m and effort arm 0.80 m, while B marks load arm 0.40 m and effort arm 0.80 m.",
+          "visualKind": "picture",
+          "brief": "Keisha can push with at most 80 N to raise a 240 N load: setup A has load/effort arms of 0.20/0.80 m; B has 0.40/0.80 m. Ask her to choose a setup and explain its movement trade-off: A balances at 60 N, leaving force to start lifting, but its handle travels farther than the load; B needs 120 N.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Use the ratio of a lever’s effort arm to its load arm to explain and calculate the force needed in an ideal lever.",
+          "example": "An effort arm of 0.80 m and load arm of 0.20 m let a 30 N push balance a 120 N load.",
+          "hard": true,
+          "name": "Relate lever arm lengths to required force",
+          "topic": "Levers",
+          "useCase": "Choose where to push or place a support when using a pry bar to lift a heavy object."
+        }
+      ],
+      "title": "How a lever multiplies force"
+    }
+  ]
+}

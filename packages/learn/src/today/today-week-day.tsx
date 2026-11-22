@@ -17,6 +17,7 @@ import {
   WeekDayRing,
   getDayShare,
   isMissed,
+  useWeekDayStatus,
 } from "../_components/week-row";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
@@ -54,45 +55,8 @@ function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }
 }
 
 function useDayStatus() {
-  const t = useExtracted();
-  const localDate = useWeekDate();
   const { today } = useTodayScreen();
-
-  return (day: WeekDay): string => {
-    if (day.hitGoal) {
-      return t("done");
-    }
-
-    if (day.studied) {
-      return t("studied");
-    }
-
-    if (day.kind === "exam") {
-      return t("exam day");
-    }
-
-    if (day.kind === "deadline") {
-      return t("end date");
-    }
-
-    if (day.kind === "beforeStart") {
-      return t("before your plan");
-    }
-
-    if (day.kind === "afterEnd") {
-      return today.goal.kind === "exam" ? t("after your exam") : t("after your end date");
-    }
-
-    if (day.kind === "rest") {
-      return t("rest day");
-    }
-
-    if (day.isToday) {
-      return t("today");
-    }
-
-    return day.date > localDate ? t("planned") : t("not studied");
-  };
+  return useWeekDayStatus({ examGoal: today.goal.kind === "exam", localDate: useWeekDate() });
 }
 
 function ChallengeDay({ challenge, day }: { challenge: Challenge; day: WeekDay }) {

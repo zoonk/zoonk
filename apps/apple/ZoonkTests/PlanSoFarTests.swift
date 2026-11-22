@@ -17,13 +17,27 @@ final class PlanSoFarTests: XCTestCase {
     XCTAssertEqual(facts.first { $0.id == "date" }?.value, "To be confirmed")
   }
 
-  func testALanguageGoalNamesTheLanguageItsLevelIsIn() throws {
+  func testALanguageGoalWithoutATestResultShowsNoLevel() throws {
     let facts = PlanFact.all(
-      of: try goal(kind: "language", targetLanguage: "es"), today: "2026-11-18",
-      locale: Locale(identifier: "en_US"))
+      of: try goal(kind: "language", targetLanguage: "es"), today: "2026-11-18")
+
+    XCTAssertNil(facts.first { $0.id == "level" })
+  }
+
+  func testALanguageGoalShowsOnlyTheRangesTheTestFound() throws {
+    let facts = PlanFact.all(
+      of: try goal(
+        kind: "language", targetLanguage: "es",
+        details: [
+          "level": "B1+",
+          "levelTest": [
+            "lastResult": ["ranges": ["reading": ["low": "B1", "high": "B2"]]]
+          ],
+        ]),
+      today: "2026-11-18")
     let level = try XCTUnwrap(facts.first { $0.id == "level" })
 
-    XCTAssertEqual(String(localized: level.label), "Spanish level")
+    XCTAssertEqual(level.value, "Reading B1–B2")
   }
 
   func testAnotherGoalsLevelIsCalledWhatYouKnow() throws {
@@ -33,13 +47,14 @@ final class PlanSoFarTests: XCTestCase {
     XCTAssertEqual(String(localized: level.label), "What you know")
   }
 
-  private func goal(kind: String, targetLanguage: String? = nil) throws
-    -> Components.Schemas.Goal
-  {
+  private func goal(
+    kind: String, targetLanguage: String? = nil,
+    details: [String: Any] = ["answered": ["targetDate", "level"], "level": "basic"]
+  ) throws -> Components.Schemas.Goal {
     let json: [String: Any] = [
       "contentCountry": NSNull(), "countryDependent": false,
       "createdAt": 0, "dailyMinutes": 15,
-      "details": ["answered": ["targetDate", "level"], "level": "basic"],
+      "details": details,
       "examBlueprintId": NSNull(), "examCountry": NSNull(), "examplesCountry": NSNull(),
       "id": "00000000-0000-4000-8000-000000000001", "isActive": true, "kind": kind,
       "language": "en", "languageCountry": ["code": "US", "name": "United States"],

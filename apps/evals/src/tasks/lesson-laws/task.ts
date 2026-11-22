@@ -13,6 +13,13 @@ export const lessonLawsTask: Task<LessonLawsParams, { laws: LessonLaw[] }, Lesso
   generate: generateLessonLaws,
   id: "lesson-laws",
   name: "Lesson laws",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code fetches the law articles it names",
+    reason: "Code checks the answer; the cheapest that filed every article under the right law",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreLessonLaws,
   testCases: TEST_CASES,
 };

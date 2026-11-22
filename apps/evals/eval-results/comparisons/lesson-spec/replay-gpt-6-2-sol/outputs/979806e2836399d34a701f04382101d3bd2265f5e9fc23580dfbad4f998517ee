@@ -1,0 +1,142 @@
+{
+  "lessons": [
+    {
+      "canDo": "Plan your federal tax filing and payment around their deadlines",
+      "description": "Learn the deadlines for 2025 federal income tax returns and how to get more filing time without delaying payment.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "On April 12, Dev discovers that a document needed for his federal tax return is missing. How can he get more time without making his tax payment late?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Your 2025 federal income tax return is due April 15, 2026: the filing deadline falls after the year the return covers. Use the IRS deadline in S1:1.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Naomi gets six extra months to submit her 2025 return; when is her remaining 2025 tax payment due: April 15, 2026, or October 15, 2026? Reveal April 15 as correct; October 15 is the tempting assumption that both deadlines move together.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "An extension gives more time to file, not more time to pay: someone filing in October must still pay their remaining 2025 tax by April 15, 2026. Paying after that deadline can mean interest and penalties, even with an extension.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "File Form 4868 by April 15, 2026, to request the automatic filing extension for your 2025 return. For example, someone missing a tax document submits this form by the original deadline rather than waiting for the document.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "timeline",
+          "brief": "The automatic extension adds six months to the filing deadline: a properly extended 2025 return is due October 15, 2026. Show April 15, 2026, labeled 'Original filing deadline,' and October 15, 2026, labeled 'Extended filing deadline.'",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Caleb's 2025 return will be ready April 20, 2026; assuming the ordinary deadline applies, can he file on time without an extension? Correct: 'No'; tempting: 'Yes,' because it is still April.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Owing no additional tax does not automatically extend a required return's filing deadline. Someone whose tax was fully covered by paycheck withholding still requests an extension by April 15 to file that required return in September.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Work through Iris's plan when a missing document delays her 2025 return and she estimates $1,100 in remaining tax. Reveal separately: estimate the unpaid tax; file Form 4868 by April 15, 2026; pay the estimated $1,100 by April 15, 2026; complete and file the return by October 15, 2026.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Trevor cannot finish his 2025 return by April 15, 2026, and estimates $750 in remaining tax; have the learner choose his plan with less guidance. Correct: request the extension and pay $750 by April 15, then file by October 15; tempting: request by April 15 but postpone both filing and payment until October.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "On April 10, 2026, Maya must file a 2025 return, expects no additional tax after withholding, and will receive a missing document in June; ask her to set a filing plan and decide whether an April payment is needed. Expected: file Form 4868 by April 15, file the completed return once ready and no later than October 15, and make no additional payment if the zero-balance estimate is accurate.",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Identify the ordinary federal income tax filing deadline for the tax year covered by a return.",
+          "example": "A 2025 federal income tax return is due April 15, 2026.",
+          "hard": false,
+          "name": "Identify the federal tax filing deadline",
+          "topic": "Federal tax deadlines",
+          "useCase": "Decide whether your return will be ready in time or whether you need a filing extension."
+        },
+        {
+          "description": "Request an automatic filing extension by the original deadline while keeping any tax payment due on its original schedule.",
+          "example": "File Form 4868 and pay remaining 2025 tax by April 15, 2026, then file the return by October 15, 2026.",
+          "hard": true,
+          "name": "Use a federal filing extension",
+          "topic": "Federal tax filing extensions",
+          "useCase": "Handle missing tax documents without confusing extra filing time with extra time to pay."
+        }
+      ],
+      "title": "Federal tax deadlines and extensions"
+    }
+  ]
+}

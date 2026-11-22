@@ -25,6 +25,17 @@ function listMovedWeeklyItemIds({
   );
 }
 
+/** The last day an automatic run keeps saved work on; one that keeps the rest keeps all of it. */
+export function getLastKeptDay({
+  input,
+  keepsRest,
+}: {
+  input: BuildPlanInput;
+  keepsRest: boolean;
+}): Date | null {
+  return keepsRest ? null : getEndOfWeek(input.today);
+}
+
 export function listThisWeekItems({
   input,
   keepsRest,
@@ -37,13 +48,13 @@ export function listThisWeekItems({
   }
 
   const moved = listMovedWeeklyItemIds({ items: input.items, moves: input.settings.movedEvents });
-  const end = getEndOfWeek(input.today);
+  const end = getLastKeptDay({ input, keepsRest });
 
   return input.items.filter(
     (item) =>
       item.status === "todo" &&
       !moved.has(item.id) &&
-      (keepsRest || (item.scheduledFor !== null && item.scheduledFor <= end)),
+      (end === null || (item.scheduledFor !== null && item.scheduledFor <= end)),
   );
 }
 

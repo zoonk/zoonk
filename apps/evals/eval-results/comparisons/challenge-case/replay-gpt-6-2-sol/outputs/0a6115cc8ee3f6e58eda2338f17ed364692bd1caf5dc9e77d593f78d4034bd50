@@ -1,0 +1,426 @@
+{
+  "deadline": "O cliente espera a confirmação até as 16h.",
+  "endings": [
+    {
+      "id": "confirmed",
+      "outcome": "O cliente confirmou a reserva por R$ 180,00, com a sequência da promoção respeitada. A venda deixa R$ 45,00 de lucro e margem de 25%, atendendo ao mínimo autorizado."
+    },
+    {
+      "id": "not-confirmed",
+      "outcome": "A reserva não virou venda: o preço enviado ficou acima do limite de R$ 180,00. A proposta buscava uma margem maior, mas não atendia ao orçamento informado pelo cliente."
+    }
+  ],
+  "meters": [
+    {
+      "id": "fit",
+      "label": "Adequação da oferta",
+      "start": 25,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Disponibilidade do balcão",
+      "start": 75,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Prepare a oferta de um conjunto de panelas reservado por um cliente. Você precisa **fechar um preço que respeite a promoção e a margem mínima**, antes de liberar a etiqueta.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "net-shortcut",
+          "next": "recover",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "O saldo dos percentuais adiantou a etiqueta, mas tratou aumento e desconto como partes do mesmo preço. A promoção aplica o desconto sobre o valor já reajustado.",
+              "example": "Calcule o preço após o aumento e use esse resultado como base do desconto."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "Já deixei a etiqueta provisória em R$ 190,00, usando o desconto líquido de 5%. Foi rápido, mas passou do limite do cliente."
+            },
+            {
+              "from": "supervisor",
+              "text": "Cada porcentagem indica uma parte de um valor. Aqui o aumento usa o preço anterior, mas o desconto usa o reajustado; não dá para compensar os percentuais."
+            }
+          ],
+          "text": "Vou compensar o aumento com o desconto e adiantar a etiqueta pelo saldo dos percentuais.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "use-ceiling",
+          "next": "recover",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "A proposta respeitou o orçamento, mas esse limite não comprova o resultado da promoção. Ficou faltando aplicar o aumento e depois o desconto sobre o preço atualizado.",
+              "example": "Confira a sequência da promoção antes de tratar o limite do cliente como preço da etiqueta."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "Deixei a proposta em R$ 180,00, dentro do que o cliente aceita. Ainda não enviei, e consegui seguir com o atendimento."
+            },
+            {
+              "from": "supervisor",
+              "text": "A proposta fica pendente de conferência. Cada porcentagem é uma parte de um valor; precisamos conferir qual preço entra no aumento e qual entra no desconto, além do lucro mínimo."
+            }
+          ],
+          "text": "Vou preparar a proposta pelo limite do cliente e deixar a conferência para a liberação.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": 30
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "ask-ai",
+          "next": "release",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você pediu o preço usado em cada etapa, não apenas o resultado final. Isso mostrou que o desconto incide sobre R$ 240,00 e confirmou a oferta de R$ 180,00.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Com o aumento de 20%, R$ 200,00 passam a R$ 240,00. O desconto de 25% sobre R$ 240,00 é R$ 60,00: R$ 240,00 − R$ 60,00 = R$ 180,00."
+            },
+            {
+              "from": "ai",
+              "text": "Cada porcentagem representa uma parte de um valor: aqui, o desconto usa o preço já aumentado. A conferência ocupa um pouco do atendimento, mas deixa o preço da promoção verificado."
+            }
+          ],
+          "text": "Vou pedir para {{ai}} calcular o aumento e depois o desconto, mostrando o preço de cada etapa.",
+          "timeJump": null
+        }
+      ],
+      "id": "prepare",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "O cliente está esperando minha resposta até as 16h. Posso adiantar a etiqueta compensando o aumento com o desconto? O balcão está cheio."
+        },
+        {
+          "from": "supervisor",
+          "text": "Estou atendendo aqui também. Me diga qual proposta você quer levar para a liberação."
+        }
+      ],
+      "prompt": "Como você prepara a proposta para liberar a etiqueta?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": 35
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "authorize-offer",
+          "next": "confirmed",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você comparou o lucro com o preço de venda e confirmou a margem de 25%. Assim, liberou uma oferta que atende ao mínimo sem ultrapassar o limite do cliente.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "supervisor",
+              "text": "Registrei a conta: R$ 180,00 − R$ 135,00 = R$ 45,00 de lucro. R$ 45,00 ÷ R$ 180,00 = 25% de margem."
+            },
+            {
+              "from": "sales",
+              "text": "A conferência tomou um pouco do balcão, mas posso enviar R$ 180,00. Já atende ao mínimo; aumentar o preço só tiraria a oferta do orçamento do cliente."
+            }
+          ],
+          "text": "Vou conferir a margem sobre a venda e liberar R$ 180,00 se atender ao mínimo.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": -20
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "protect-buffer",
+          "next": "not-confirmed",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "improve",
+              "text": "A proposta ganhou folga, mas ficou acima do limite do cliente e mudou a promoção. Faltou verificar se R$ 180,00 já atendia à margem mínima antes de abrir mão da reserva.",
+              "example": "Compare o lucro em R$ 180,00 com esse preço de venda e confira o mínimo de 25%."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "supervisor",
+              "text": "Com desconto de 20% sobre R$ 240,00, a proposta fica em R$ 192,00 e teria margem de 29,69%. Dá mais folga, mas muda o desconto da promoção."
+            },
+            {
+              "from": "sales",
+              "text": "Enviei R$ 192,00 e o cliente não aceitou. Encerramos a negociação e liberamos o balcão, mas buscar uma margem maior nos custou a reserva."
+            }
+          ],
+          "text": "Vou reduzir o desconto para 20% e manter esse preço, mesmo sem fechar a reserva.",
+          "timeJump": null
+        }
+      ],
+      "id": "release",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "A promoção deu R$ 180,00, bem no limite do cliente. Posso mandar esse preço?"
+        },
+        {
+          "from": "supervisor",
+          "text": "A margem é a parte do preço de venda que sobra depois de pagar o custo. Nosso mínimo é 25%, e trabalhar no limite me deixa desconfortável."
+        },
+        {
+          "from": "supervisor",
+          "text": "Prefiro dar um desconto menor e deixar mais folga, mesmo que essa reserva não feche."
+        }
+      ],
+      "prompt": "Qual preço você libera para o cliente?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "keep-higher",
+          "next": "not-confirmed",
+          "notes": [
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você conferiu que a contraproposta teria margem acima do mínimo. Essa verificação esclareceu o resultado desse preço, embora não bastasse para liberar a oferta.",
+              "example": null
+            },
+            {
+              "skill": "successive",
+              "kind": "improve",
+              "text": "Ficou faltando conferir o aumento seguido do desconto. A margem de R$ 190,00 não comprova que esse preço corresponde à promoção, nem o coloca dentro do orçamento.",
+              "example": "Refaça o aumento sobre o preço anterior e o desconto sobre o preço reajustado."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "supervisor",
+              "text": "A venda por R$ 190,00 teria margem de 28,95%, acima do mínimo. Isso confere a margem desse preço, mas não confirma a sequência da promoção."
+            },
+            {
+              "from": "sales",
+              "text": "Enviei a contraproposta e o cliente recusou. Poupamos o trabalho de refazer a etiqueta, mas a folga na margem não resolveu o preço acima do limite."
+            }
+          ],
+          "text": "Vou conferir a margem de R$ 190,00 e enviar esse preço como contraproposta ao cliente.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "fit",
+              "change": 45
+            },
+            {
+              "meter": "capacity",
+              "change": -25
+            }
+          ],
+          "id": "rebuild",
+          "next": "confirmed",
+          "notes": [
+            {
+              "skill": "successive",
+              "kind": "good",
+              "text": "Você retomou as etapas e conferiu o preço usado em cada uma. Isso substituiu a proposta provisória pelo resultado da promoção: R$ 180,00.",
+              "example": null
+            },
+            {
+              "skill": "margin",
+              "kind": "good",
+              "text": "Você pediu a conferência da margem e revisou o lucro dividido pelo preço de venda. Os 25% confirmaram que a oferta no limite do cliente também atende ao mínimo da loja.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "O aumento de 20% leva R$ 200,00 a R$ 240,00. O desconto de 25% usa R$ 240,00 e vale R$ 60,00: R$ 240,00 − R$ 60,00 = R$ 180,00."
+            },
+            {
+              "from": "ai",
+              "text": "O lucro é R$ 180,00 − R$ 135,00 = R$ 45,00. A margem usa a venda como base: R$ 45,00 ÷ R$ 180,00 = 25%."
+            },
+            {
+              "from": "sales",
+              "text": "Substituí a proposta provisória e enviei R$ 180,00. A revisão ocupou mais o balcão, mas agora o preço respeita a promoção, o limite do cliente e o mínimo da loja."
+            }
+          ],
+          "text": "Vou pedir para {{ai}} conferir a sequência e a margem, revisar as contas e liberar a oferta.",
+          "timeJump": null
+        }
+      ],
+      "id": "recover",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "Preciso enviar o preço final. Que tal R$ 190,00? Dá mais folga no valor e a gente encerra essa negociação sem refazer a etiqueta."
+        },
+        {
+          "from": "supervisor",
+          "text": "A proposta ainda está provisória. Falta conferir a sequência da promoção e a margem, que é a parte do preço de venda que sobra depois de pagar o custo."
+        }
+      ],
+      "prompt": "Como você fecha a conferência e responde ao cliente?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Ficha de preço do conjunto",
+      "metrics": [
+        {
+          "label": "Preço anterior",
+          "value": "R$ 200,00",
+          "note": null
+        },
+        {
+          "label": "Reajuste",
+          "value": "20%",
+          "note": "Sobre o preço anterior."
+        },
+        {
+          "label": "Desconto da promoção",
+          "value": "25%",
+          "note": "Sobre o preço reajustado."
+        },
+        {
+          "label": "Custo total",
+          "value": "R$ 135,00",
+          "note": "Inclui as despesas desta venda."
+        }
+      ],
+      "note": null
+    },
+    {
+      "title": "Condições da reserva",
+      "metrics": [
+        {
+          "label": "Limite do cliente",
+          "value": "R$ 180,00",
+          "note": "Acima desse preço, o cliente não compra."
+        },
+        {
+          "label": "Margem mínima autorizada",
+          "value": "25%",
+          "note": "Sobre o preço de venda."
+        }
+      ],
+      "note": "A reserva aguarda a confirmação do preço."
+    }
+  ],
+  "setting": "Balcão da Loja Brisa, à tarde",
+  "skills": [
+    {
+      "id": "successive",
+      "name": "Aumentos e descontos sucessivos",
+      "practice": "Pegue um preço, aplique um aumento e depois um desconto, anotando o preço que serve de base em cada etapa."
+    },
+    {
+      "id": "margin",
+      "name": "Margem sobre o preço de venda",
+      "practice": "Escolha um preço e um custo, calcule o lucro e explique em uma frase por que a margem usa o preço de venda como base."
+    }
+  ],
+  "startNodeId": "prepare",
+  "summary": [
+    "Em aumentos e descontos sucessivos, cada porcentagem é aplicada ao valor resultante da etapa anterior.",
+    "A margem sobre a venda é o lucro dividido pelo preço de venda, expresso em porcentagem."
+  ],
+  "team": [
+    {
+      "id": "supervisor",
+      "role": "Supervisora de vendas",
+      "expertise": "Confere preços e margens; quer evitar ofertas que precisem de correção.",
+      "ai": false
+    },
+    {
+      "id": "sales",
+      "role": "Vendedor",
+      "expertise": "Cuida da reserva e conhece o limite do cliente; quer confirmar a venda logo.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de IA",
+      "expertise": "Calcula etapas e confere bases percentuais quando você informa os dados.",
+      "ai": true
+    }
+  ],
+  "title": "Qual preço fecha a reserva sem perder a margem?"
+}

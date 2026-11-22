@@ -1,6 +1,7 @@
 import { generateText, streamText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
+import { streamOnceAfterOverload } from "../_test-utils/stream-after-overload";
 import {
   type GenerateLessonQuestionAnswerParams,
   generateLessonQuestionAnswer,
@@ -143,6 +144,19 @@ describe(generateLessonQuestionAnswer, () => {
     expect(second.promptVersion).toBe(first.promptVersion);
     const calls = vi.mocked(streamText).mock.calls;
     expect(calls[0]?.[0].instructions).not.toBe(calls[1]?.[0].instructions);
+  });
+
+  it("answers when the provider's stream fails after it started", async () => {
+    await streamOnceAfterOverload("Because.");
+
+    const { generation } = streamLessonQuestionAnswer({
+      contextSnapshot: lessonSnapshot("step"),
+      priorTurns: [],
+      question: "Why?",
+    });
+
+    await generation.consumeStream();
+    await expect(generation.text).resolves.toBe("Because.");
   });
 
   it("sends each scope only its own rules after the shared ones", async () => {

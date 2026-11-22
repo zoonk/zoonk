@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-plot-reading-field-research",
+        "claimId": "0a8b259c594da2e6",
+        "criterion": "realism",
+        "observationId": "e24dbd10416884a59544386a2de8963c5a7a11a862567830267e394f374160ba.first.9dbde607-7a44-4579-b76a-0aaebb317618.3",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00365715,
+    "id": "600aeadb02ea598e941d5181ed5c22cbae075c5c5212f0961644a2fb0611e7a6",
+    "packet": [
+      {
+        "A": {
+          "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
+          "format": "text"
+        },
+        "B": {
+          "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
+          "format": "text"
+        },
+        "claim": "The product manager's first message uses the term 'statistical power' without explaining it.",
+        "claimId": "07a97b8e09ebc5f1",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
+          "format": "text"
+        },
+        "claim": "The choice asks the learner to circle a dot and refer to it in an attached crop, an annotation/display task that does not fit the text-only metrics format required for this case.",
+        "claimId": "0a8b259c594da2e6",
+        "criterion": "realism",
+        "expectations": {
+          "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
+          "format": "json"
+        },
+        "location": {
+          "detail": "\"Circle the right dot and refer to it as the right-hand reading in the attached crop.\"",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "07a97b8e09ebc5f1",
+          "finding": "doesn't hold",
+          "reason": "The product manager's first message in output A reads 'B got 10 more purchases with the same number of visitors. The change is cheap to release. Can we call it a winner today?' It never uses the term 'statistical power,' and the same message appears unchanged in output B, so the claim is false for the named output."
+        },
+        {
+          "claimId": "0a8b259c594da2e6",
+          "finding": "holds",
+          "reason": "The quoted choice in output B asks the learner to 'Circle the right dot and refer to it as the right-hand reading in the attached crop.' That is an annotation and display task that a text-only metrics panel cannot show, and the case's expectations forbid notes that tell someone how to draw or display something. The claim is true of output B, and output A does not contain this choice."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

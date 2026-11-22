@@ -8,6 +8,8 @@ import {
 } from "@zoonk/ai/tasks/language/language-lesson";
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
+import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
+import { toReviewProblems } from "../quality/lesson-review-problems";
 import { listLanguageReviewScreens } from "./_utils/language-review-screens";
 import {
   type LanguageLessonDraft,
@@ -45,10 +47,12 @@ function listScreens({
 }
 
 /** Internal workflow bridge: the errors in a written lesson, before anyone sees it. */
-export async function reviewLanguageLessonDraft(context: ReviewContext): Promise<LessonProblem[]> {
+export async function reviewLanguageLessonDraft(
+  context: ReviewContext & { lessonId?: string },
+): Promise<LessonProblem[]> {
   const { draft } = context;
 
-  const { data } = await checkLanguageLesson({
+  const { data, provenance } = await checkLanguageLesson({
     ...draft.inputs.writerInput,
     analytics: context.analytics,
     screens: listScreens(draft),
@@ -56,11 +60,19 @@ export async function reviewLanguageLessonDraft(context: ReviewContext): Promise
     writerModel: draft.provenance.model,
   });
 
-  return data.issues.map((issue) => ({
-    problem: `${issue.problem} Fix: ${issue.fix}`,
-    screen: issue.screen,
-    source: "review" as const,
-  }));
+  const problems = toReviewProblems(data.issues);
+
+  if (context.lessonId) {
+    await recordLessonQualityDecision({
+      blocking: problems,
+      lessonId: context.lessonId,
+      phase: "firstReview",
+      reviewerRunId: provenance.runId,
+      writerRunId: draft.provenance.runId,
+    });
+  }
+
+  return problems;
 }
 
 /**

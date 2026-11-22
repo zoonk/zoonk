@@ -66,8 +66,12 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
 
   /// Reading's and listening's ranges, in that order, for the skills the test assessed.
   var skillRanges: [SkillRange] {
+    Self.skillRanges(in: ranges ?? [:])
+  }
+
+  static func skillRanges(in ranges: [String: LevelRange]) -> [SkillRange] {
     [LevelTest.Skill.reading, .listening].compactMap { skill in
-      ranges?[skill.rawValue].map { SkillRange(skill: skill, range: $0) }
+      ranges[skill.rawValue].map { SkillRange(skill: skill, range: $0) }
     }
   }
 }

@@ -1,0 +1,459 @@
+{
+  "deadline": "Packing handoff with {{packing}} today at 2:00 p.m.",
+  "endings": [
+    {
+      "id": "full-handoff",
+      "outcome": "The crew gets a checked sheet for 112 kits and puts 6 in the spot for orders without a pickup time. The original export and your change note stay with the cleaned copy."
+    },
+    {
+      "id": "timed-only",
+      "outcome": "The crew starts with 106 kits that have pickup times. The 6 confirmed orders without times still need a separate handoff."
+    },
+    {
+      "id": "draft-used",
+      "outcome": "The crew reserves space for 120 kits using the draft tally. Without a verified order list, they still have to match kits to orders during packing."
+    },
+    {
+      "id": "labels-pulled",
+      "outcome": "The crew has the right count of 112 kits but starts printing from a sheet with pickup times that weren’t booked. The order desk catches them at handoff, and the crew pulls 6 time labels."
+    }
+  ],
+  "meters": [
+    {
+      "id": "reliability",
+      "label": "Reliability of the packing handoff",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "desk",
+      "label": "Order desk capacity for walk-ins",
+      "start": 75,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Send the packing crew **a reliable Saturday kit count and order list**. Keep a short record of what you changed in the order export.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 24
+            },
+            {
+              "meter": "desk",
+              "change": -12
+            }
+          ],
+          "id": "compare-fields",
+          "next": "clean-list",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "You checked repeated IDs, day labels, and blank times separately. The register check showed which rows were extra copies and which blanks belonged to real orders.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "I grouped the rows by order ID: 8 “Saturday” rows are extra copies that match the rows to keep in every field. The draft counted rows, not orders: 100 say “Saturday” and 20 say “Sat.”"
+            },
+            {
+              "from": "orders",
+              "text": "I stepped away from the counter to check the register: “Sat” means Saturday, and 6 different “Sat” orders are confirmed for Saturday but have no pickup time. Every other distinct order has a time."
+            }
+          ],
+          "text": "Have {{ai}} group rows by order ID and flag day labels and blank times. Ask {{orders}} to check the flags.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "desk",
+              "change": 5
+            },
+            {
+              "meter": "reliability",
+              "change": -2
+            }
+          ],
+          "id": "rough-layout",
+          "next": "commit-space",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "You used the draft for a sketch while the order desk stayed with walk-ins.",
+              "example": null
+            },
+            {
+              "skill": "spot",
+              "kind": "improve",
+              "text": "The sketch still relies on a row count. Keep it marked as an estimate until you’ve checked the order IDs, pickup days, and blank times.",
+              "example": "“Use this to sketch the layout. I’ll send the checked count and order list for staging.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "packing",
+              "text": "I can sketch the layout without pulling anyone off the counter. I’ve got a number for the sketch, but I don’t know how many different orders it represents."
+            }
+          ],
+          "text": "Give {{packing}} the draft tally for a rough staging layout and leave {{orders}} at the counter with walk-ins.",
+          "timeJump": null
+        }
+      ],
+      "id": "inspect",
+      "messages": [
+        {
+          "from": "packing",
+          "text": "The draft tally matches the export, so I could use it to sketch the staging layout now. Can I run with it?"
+        },
+        {
+          "from": "orders",
+          "text": "I’ve got walk-ins waiting. If you need me to look up orders, send me the ones you want checked."
+        }
+      ],
+      "prompt": "What do you do with the draft tally?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -14
+            },
+            {
+              "meter": "desk",
+              "change": 3
+            }
+          ],
+          "id": "reserve-draft",
+          "next": "draft-used",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "improve",
+              "text": "The reservation gave the crew space but not a list of orders to stage. Use the register to check which IDs belong on the Saturday list before committing those spaces.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "packing",
+              "text": "I’ve reserved space for 120 kits from the draft tally. I don’t have a verified list to tell the crew which orders go there."
+            },
+            {
+              "from": "orders",
+              "text": "I can stay with walk-ins. Cleaning the export would mean fixing what’s off in the list, like extra copies, without changing what customers booked."
+            }
+          ],
+          "text": "Reserve space from the draft tally now and let the crew match the kits to orders during packing.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 25
+            },
+            {
+              "meter": "desk",
+              "change": -17
+            }
+          ],
+          "id": "get-register-check",
+          "next": "clean-list",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "You asked the person who knows the register to check the fields that affect staging. That separated extra copies from confirmed Saturday orders that simply didn’t have a pickup time.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "orders",
+              "text": "I stepped off the counter to check: 100 export rows say “Saturday,” and 20 say “Sat,” which the register confirms means Saturday. In the “Saturday” group, 8 extra copies match the rows to keep in every field."
+            },
+            {
+              "from": "orders",
+              "text": "The register confirms 6 different “Sat” orders for Saturday with no pickup time. Every other distinct order has a time."
+            },
+            {
+              "from": "packing",
+              "text": "I kept the spaces open during the check. The sketch gave me a layout, but it couldn’t tell me which rows were real orders."
+            }
+          ],
+          "text": "Keep the spaces open and ask {{orders}} to check the export against the register by ID, day, and time.",
+          "timeJump": null
+        }
+      ],
+      "id": "commit-space",
+      "messages": [
+        {
+          "from": "packing",
+          "text": "The layout’s sketched. If I reserve those spaces now, the crew can get moving."
+        },
+        {
+          "from": "orders",
+          "text": "I’m still tied up with walk-ins. If you need a register check, I’ll have to step away from the counter."
+        }
+      ],
+      "prompt": "What do you tell the crew about reserving space?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 7
+            },
+            {
+              "meter": "desk",
+              "change": 4
+            }
+          ],
+          "id": "timed-first",
+          "next": "timed-only",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You gave the crew a list they could use on the timed rack and flagged the confirmed orders that weren’t on it.",
+              "example": null
+            },
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "The first batch still leaves out confirmed kits the crew could stage now. Keep those orders on the list and mark them for the separate spot without assigning a time.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "packing",
+              "text": "I can start with 106 kits in pickup order. The other 6 are booked for Saturday, but I’ll need a separate handoff to stage them."
+            },
+            {
+              "from": "orders",
+              "text": "I can stay at the counter for now. Cleaning the list means fixing what needs fixing for the job: a blank time keeps a kit off the timed rack, not out of the Saturday count."
+            }
+          ],
+          "text": "Send the register’s timed list as the opening batch and flag orders without times for a separate handoff.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 19
+            },
+            {
+              "meter": "desk",
+              "change": -10
+            }
+          ],
+          "id": "keep-confirmed",
+          "next": "verify-sheet",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You kept every confirmed order, removed only matching extra copies, and recorded the edits without touching the original or guessing a time.",
+              "example": "“Removed extra copies, changed ‘Sat’ to ‘Saturday,’ and marked missing times ‘Time not set’; left the export untouched.”"
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "orders",
+              "text": "The cleaned copy calls for 112 kits. Walk-ins had to wait while we made the edits and logged them, but the export’s untouched."
+            },
+            {
+              "from": "packing",
+              "text": "That cleanup fixes the list without changing what customers booked. I can stage the 6 marked “Time not set” in the separate spot."
+            }
+          ],
+          "text": "In a copy, remove extra rows, use “Saturday” throughout, mark blanks “Time not set,” and log the edits.",
+          "timeJump": null
+        }
+      ],
+      "id": "clean-list",
+      "messages": [
+        {
+          "from": "orders",
+          "text": "We’ve got 8 extra copies and 6 confirmed Saturday orders without a pickup time. Leave the original export as it is."
+        },
+        {
+          "from": "packing",
+          "text": "I could start with the register’s timed list. It’s already in pickup order, so the crew could load that rack right away."
+        }
+      ],
+      "prompt": "What list do you give the crew for staging?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -13
+            }
+          ],
+          "id": "count-and-sample",
+          "next": "labels-pulled",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "improve",
+              "text": "The total and timed samples didn’t show what happened to the missing times. Match those orders by ID across the formatted sheet and your cleaned copy, then check any surprises in the register.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "packing",
+              "text": "The total matched and the timed orders we checked looked right, so I started printing."
+            },
+            {
+              "from": "orders",
+              "text": "At handoff I spotted pickup times that were never booked. The crew had to pull 6 time labels even though the kit count was right."
+            }
+          ],
+          "text": "Match the total, check a few timed orders against the register, and send the sheet for labels.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 14
+            }
+          ],
+          "id": "trace-edited-rows",
+          "next": "full-handoff",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "You matched edited rows by order ID and checked the differences against the register. That caught the time the formatter added without changing the total.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "packing",
+              "text": "I held the label run while you checked. The sheet put 9:00 a.m. on all 6 orders with blank times in the register, even though the total still matched."
+            },
+            {
+              "from": "packing",
+              "text": "The corrected sheet still calls for 112 kits. I can use “Time not set” to route those kits to the separate spot."
+            }
+          ],
+          "text": "Match edited rows to the cleaned copy by ID, check differences in the register, and fix the sheet.",
+          "timeJump": null
+        }
+      ],
+      "id": "verify-sheet",
+      "messages": [
+        {
+          "from": "ai",
+          "text": "The printable packing sheet is ready. Its total still says 112 kits."
+        },
+        {
+          "from": "packing",
+          "text": "I can start printing as soon as you give me the go-ahead. The total matches, so how about a quick look at a few timed orders?"
+        }
+      ],
+      "prompt": "What do you check before releasing the sheet for labels?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Saturday packing prep",
+      "metrics": [
+        {
+          "label": "Export size",
+          "value": "120 rows",
+          "note": "From the order export."
+        },
+        {
+          "label": "AI draft tally",
+          "value": "120 kits",
+          "note": "From the draft packing summary."
+        },
+        {
+          "label": "Kits per confirmed order ID",
+          "value": "1 kit",
+          "note": "From the packing guide."
+        },
+        {
+          "label": "Packing handoff",
+          "value": "2:00 p.m.",
+          "note": "From the Friday packing calendar."
+        }
+      ],
+      "note": "The staging map includes a separate spot for orders without a pickup time."
+    }
+  ],
+  "setting": "Friday at Juniper Turn Market",
+  "skills": [
+    {
+      "id": "spot",
+      "name": "Find problems in a data set",
+      "practice": "In a short order list, mark a repeated ID, a blank cell, and two labels that might mean the same thing."
+    },
+    {
+      "id": "clean",
+      "name": "Clean data safely",
+      "practice": "Make a cleaned copy of a short order list and write one sentence explaining what you changed and what you left alone."
+    },
+    {
+      "id": "verify",
+      "name": "Check what AI produced",
+      "practice": "Compare an AI-made packing list with its source and flag one detail the AI added without evidence."
+    }
+  ],
+  "startNodeId": "inspect",
+  "summary": [
+    "Check repeated IDs against the rest of the row before treating them as extra copies.",
+    "Keep a row with a blank field if the job doesn’t need that field.",
+    "A matching total can hide changes to individual fields, so compare the AI output with the source."
+  ],
+  "team": [
+    {
+      "id": "orders",
+      "role": "Order desk lead",
+      "expertise": "She knows how the order register records pickup days and times, and wants the original export kept intact.",
+      "ai": false
+    },
+    {
+      "id": "packing",
+      "role": "Packing supervisor",
+      "expertise": "He needs to assign staging space at handoff and has a separate spot for kits without a pickup time.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI worksheet helper",
+      "expertise": "Compares order rows, checks counts, and formats packing sheets when asked; you decide what the crew can use.",
+      "ai": true
+    }
+  ],
+  "title": "How many Saturday meal kits should the crew stage?"
+}

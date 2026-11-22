@@ -1,0 +1,379 @@
+{
+  "attempt": "first",
+  "costUsd": 0.30837000000000003,
+  "failures": [],
+  "packetId": "96c82ded0171c5aaa7b27687e86fbfe51ff7af73722b8d9f8e91dcfef196a8cd",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both lessons accurately distinguish UX goals from design solutions, have defensible answer keys, and place the AI mistake in step 2 of the error-spotting activity with consistent reasoning.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with a relatable scene where shoppers quit at checkout and everyone nods at a whiteboard fix, while B opens with a bare one-sentence premise without explaining the problem. A also uses a fresh parking app scenario in screen 3 instead of repeating the online store.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "A ties the term UX goal directly to people's experience and clearly explains how step 2's mistake makes steps 3 and 4 go off track, whereas B never mentions experience on screen 2 and omits how the later steps inherit the AI's mistake.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "A",
+            "reason": "A's first check tests transfer to a new app domain with sharper misconception feedback, and its error-spotting prompt asks the learner to diagnose where the AI goes wrong without giving away the mistake type as B's prompt does.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "A follows the beginner level and plan cleanly and states both general takeaways in its summary, whereas B's second summary item restates only the progress bar example instead of the general rule.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 2 introduces the abbreviation 'UX goal' without spelling out what 'UX' stands for (user experience), even though the sentence mentions people's experience.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner who has never heard of UX may wonder what the letters stand for before moving on.",
+            "location": {
+              "detail": "A sentence that names that change in people's experience, not the design, is called a **UX goal**.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 5 sets basis to null even though screen 2's single rule sentence clearly decides which option is a UX goal rather than a fix.",
+            "criterion": "checks",
+            "learnerCost": "If a learner misses the banking app question, the app cannot highlight the rule sentence from screen 2 to help them see why.",
+            "location": {
+              "detail": "screen 5 (basis field is null while screen 2 states the deciding rule for UX goals vs designs/fixes).",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 1 gives a bare one-sentence premise without showing what is going wrong at checkout, so there is no concrete problem scene to hook the learner.",
+            "criterion": "teacher",
+            "learnerCost": "Without seeing shoppers struggle at checkout, the learner has less context for why the team is even proposing a progress bar.",
+            "location": {
+              "detail": "Mei’s team writes _Add a progress bar to checkout_ as its goal. What does that line tell you about what the team wants to change?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 introduces the term 'UX goal' without spelling out 'UX' or even mentioning 'experience' on that screen, and 'This' refers loosely to the entire preceding sentence.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner has no hint of what 'UX' means and has to infer what 'This' refers back to.",
+            "location": {
+              "detail": "A goal names what should change for people, not what you plan to build, like a progress bar. This is called a **UX goal**.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 4's prompt tells the learner the exact mistake to look for instead of letting them diagnose what went wrong, and the explanation does not explain how steps 3 and 4 go wrong by building on step 2.",
+            "criterion": "checks",
+            "learnerCost": "The learner can spot step 2 by matching the hint in the prompt rather than diagnosing the reasoning error, and misses why the later steps fail too.",
+            "location": {
+              "detail": "Find the step where the AI assistant mistakes a design choice for a UX goal.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 5 sets basis to null even though screen 2 states the lesson's only rule, which directly decides the two design-choice distractors.",
+            "criterion": "checks",
+            "learnerCost": "If a learner picks one of the design fixes in the banking app check, the app cannot point them back to the rule on screen 2.",
+            "location": {
+              "detail": "screen 5 (basis field is null).",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The second summary item restates only the specific progress bar example rather than the general idea that a design or build choice is not a UX goal, and its label 'What you build' is vague on its own.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Reading the summary card before or after the lesson, the learner gets an example instead of a clear general takeaway to reuse.",
+            "location": {
+              "detail": "Adding a progress bar tells the team what to build, not what should change for shoppers.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both lessons are accurate and beginner-friendly, but A serves the learner better with a concrete opening scene, clearer introduction of UX goals, a fresh scenario in the first check, a less-hinted error-spotting activity that explains how the error cascades, and a summary that states both general rules."
+        },
+        "pairId": "120d12dc-7e7a-4ce4-b055-669da45d3fe5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 1 gives a bare one-sentence premise without showing what is going wrong at checkout, so there is no concrete problem scene to hook the learner.",
+            "criterion": "teacher",
+            "learnerCost": "Without seeing shoppers struggle at checkout, the learner has less context for why the team is even proposing a progress bar.",
+            "location": {
+              "detail": "Mei’s team writes _Add a progress bar to checkout_ as its goal. What does that line tell you about what the team wants to change?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 introduces the term 'UX goal' without spelling out 'UX' or even mentioning 'experience' on that screen, and 'This' refers loosely to the entire preceding sentence.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner has no hint of what 'UX' means and has to infer what 'This' refers back to.",
+            "location": {
+              "detail": "A goal names what should change for people, not what you plan to build, like a progress bar. This is called a **UX goal**.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 4's prompt tells the learner the exact mistake to look for instead of letting them diagnose what went wrong, and the explanation does not explain how steps 3 and 4 go wrong by building on step 2.",
+            "criterion": "checks",
+            "learnerCost": "The learner can spot step 2 by matching the hint in the prompt rather than diagnosing the reasoning error, and misses why the later steps fail too.",
+            "location": {
+              "detail": "Find the step where the AI assistant mistakes a design choice for a UX goal.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 5 sets basis to null even though screen 2 states the lesson's only rule, which directly decides the two design-choice distractors.",
+            "criterion": "checks",
+            "learnerCost": "If a learner picks one of the design fixes in the banking app check, the app cannot point them back to the rule on screen 2.",
+            "location": {
+              "detail": "screen 5 (basis field is null).",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The second summary item restates only the specific progress bar example rather than the general idea that a design or build choice is not a UX goal, and its label 'What you build' is vague on its own.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Reading the summary card before or after the lesson, the learner gets an example instead of a clear general takeaway to reuse.",
+            "location": {
+              "detail": "Adding a progress bar tells the team what to build, not what should change for shoppers.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 1 gives a bare one-sentence premise without showing what is going wrong at checkout, so there is no concrete problem scene to hook the learner.",
+            "criterion": "teacher",
+            "learnerCost": "Without seeing shoppers struggle at checkout, the learner has less context for why the team is even proposing a progress bar.",
+            "location": {
+              "detail": "Mei’s team writes _Add a progress bar to checkout_ as its goal. What does that line tell you about what the team wants to change?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 introduces the term 'UX goal' without spelling out 'UX' or even mentioning 'experience' on that screen, and 'This' refers loosely to the entire preceding sentence.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner has no hint of what 'UX' means and has to infer what 'This' refers back to.",
+            "location": {
+              "detail": "A goal names what should change for people, not what you plan to build, like a progress bar. This is called a **UX goal**.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 4's prompt tells the learner the exact mistake to look for instead of letting them diagnose what went wrong, and the explanation does not explain how steps 3 and 4 go wrong by building on step 2.",
+            "criterion": "checks",
+            "learnerCost": "The learner can spot step 2 by matching the hint in the prompt rather than diagnosing the reasoning error, and misses why the later steps fail too.",
+            "location": {
+              "detail": "Find the step where the AI assistant mistakes a design choice for a UX goal.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 5 sets basis to null even though screen 2 states the lesson's only rule, which directly decides the two design-choice distractors.",
+            "criterion": "checks",
+            "learnerCost": "If a learner picks one of the design fixes in the banking app check, the app cannot point them back to the rule on screen 2.",
+            "location": {
+              "detail": "screen 5 (basis field is null).",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The second summary item restates only the specific progress bar example rather than the general idea that a design or build choice is not a UX goal, and its label 'What you build' is vague on its own.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Reading the summary card before or after the lesson, the learner gets an example instead of a clear general takeaway to reuse.",
+            "location": {
+              "detail": "Adding a progress bar tells the team what to build, not what should change for shoppers.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "c4ad24ac-db93-4c47-9c4e-a9c5656e2ed3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is mathematically accurate throughout, while B's screen 6 makes the garbled mathematical statement that 'the operation is closed under addition across the sign change' (sets, not operations, are closed under addition).",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A explains both rules in warm, concrete everyday speech tied to the thermometer, while B's screens 2 and 6 read like a dense physics and math textbook that would make a beginner stop reading.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "A teaches one clear idea per screen in words a 12-year-old can follow, whereas B packs unexplained technical terms and formal symbols (scalar quantity, interval scale, Δ, T₀, |T₀|, boundary condition) into screens 2 and 6.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "A",
+            "reason": "Although the check questions and options match, A's basis quotes on screens 5 and 8 match screen 2 verbatim, whereas B's basis quotes on screens 5 and 8 refer to sentences that do not exist on B's screen 2.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "A respects the beginner level and plan briefs on every screen, while B breaks the written beginner expectation by introducing unexplained formulas and advanced jargon on screens 2 and 6 before building intuition.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 6 states that 'the operation is closed under addition across the sign change', which is mathematically garbled because closure under addition is a property of a set of numbers, not of an operation itself.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner is exposed to incorrect mathematical phrasing that confuses what closure means.",
+            "location": {
+              "detail": "the operation is closed under addition across the sign change",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screens 2 and 6 replace concrete thermometer explanations with dry textbook definitions and formal formulas, breaking the engaging teacher voice.",
+            "criterion": "teacher",
+            "learnerCost": "A beginner expecting everyday math will immediately feel like they are reading a technical textbook and lose interest.",
+            "location": {
+              "detail": "screens 2 and 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 uses multiple unexplained technical terms and symbols ('scalar quantity', 'interval scale', 'standard atmospheric pressure', 'increment Δ', 'T₀') and packs several ideas onto one screen, breaking the beginner expectation.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner adult or 12-year-old cannot follow the explanation and cannot tell how it connects to Maya's thermometer.",
+            "location": {
+              "detail": "Temperature is a scalar quantity expressed on the Celsius scale, an interval scale whose zero point is defined by the freezing point of water at standard atmospheric pressure. An increment Δ applied to an initial value T₀ yields T₀ + Δ irrespective of the sign of T₀.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 6 uses unexplained advanced terminology and notation ('origin of the scale', 'boundary condition', 'closed under addition', 'Decompose Δ into |T₀| and Δ − |T₀|') instead of explaining how to count to zero and past it.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner cannot understand the symbolic decomposition and misses the simple mental step of counting up to zero first.",
+            "location": {
+              "detail": "The origin of the scale is not a boundary condition, since the operation is closed under addition across the sign change. Decompose Δ into |T₀| and Δ − |T₀| and sum the components sequentially.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 2 and 6 introduce formal algebraic formulas and university-level vocabulary before any intuition, directly violating the beginner expectation ('everyday words a 12-year-old follows, every term explained before it's used, one idea per screen') and ignoring the briefs for those screens.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The lesson is pitched far above its stated beginner level, making the core explanations unusable for its intended audience.",
+            "location": {
+              "detail": "screens 2 and 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 5 and 8 both set basis to quotes from screen 2 ('A rise always moves **up** the thermometer.' and 'From −3 °C, going up 3 degrees takes you to zero.') that do not exist anywhere on B's screen 2.",
+            "criterion": "checks",
+            "learnerCost": "After a wrong answer, the app cannot highlight the cited sentence on screen 2 because those words are not there.",
+            "location": {
+              "detail": "screens 5 and 8 (basis quotes pointing to screen 2).",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A teaches temperature rises across zero clearly, accurately, and at the right beginner level, whereas B has major problems on screens 2 and 6 that bury simple ideas under unexplained academic jargon and formulas and break the basis quotes on screens 5 and 8."
+        },
+        "pairId": "ca971295-fbd6-4a6c-bd50-d6850adddb9b"
+      }
+    ]
+  }
+}

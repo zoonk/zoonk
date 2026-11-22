@@ -13,6 +13,7 @@ import {
   toReviewedLesson,
 } from "./lesson-code-checks";
 import { checkLessonPrograms } from "./lesson-program-checks";
+import { toReviewProblems } from "./lesson-review-problems";
 
 export type LessonWritingContext = Pick<
   WriteLessonDraftParams,
@@ -48,6 +49,7 @@ const ADVISORY_CODES = new Set<LessonCheckProblem["code"]>([
 ]);
 
 export type LessonGateProblem = {
+  code?: LessonCheckProblem["code"];
   problem: string;
   screen: number | null;
   source: "code" | "review";
@@ -56,6 +58,7 @@ export type LessonGateProblem = {
 type LessonGateResult = {
   blocking: LessonGateProblem[];
   minor: LessonGateProblem[];
+  reviewerRunId: string | null;
   screens: ConvertedScreen[];
 };
 
@@ -73,8 +76,8 @@ async function reviewLesson({
   screens: readonly ConvertedScreen[];
   serviceTier?: ServiceTier;
   writerModel: string;
-}): Promise<LessonGateProblem[]> {
-  const { data } = await checkLessonQuality({
+}) {
+  const { data, provenance } = await checkLessonQuality({
     ...context,
     analytics,
     lesson: toReviewedLesson({ lesson, screens }),
@@ -82,11 +85,7 @@ async function reviewLesson({
     writerModel,
   });
 
-  return data.issues.map((issue) => ({
-    problem: `${issue.problem} Fix: ${issue.fix}`,
-    screen: issue.screen,
-    source: "review",
-  }));
+  return { problems: toReviewProblems(data.issues), runId: provenance.runId };
 }
 
 export async function runLessonQualityGate({
@@ -118,7 +117,7 @@ export async function runLessonQualityGate({
     spec: context.spec,
   });
 
-  const [programProblems, reviewProblems] = await Promise.all([
+  const [programProblems, reviewer] = await Promise.all([
     checkLessonPrograms(checked.screens),
     review
       ? reviewLesson({
@@ -129,20 +128,26 @@ export async function runLessonQualityGate({
           serviceTier,
           writerModel,
         })
-      : [],
+      : null,
   ]);
 
   const codeProblems = [...checked.problems, ...programProblems].map((problem) => ({
     isMinor: ADVISORY_CODES.has(problem.code),
-    problem: { problem: problem.problem, screen: problem.screen, source: "code" as const },
+    problem: {
+      code: problem.code,
+      problem: problem.problem,
+      screen: problem.screen,
+      source: "code" as const,
+    },
   }));
 
   return {
     blocking: [
       ...codeProblems.filter((entry) => !entry.isMinor).map((entry) => entry.problem),
-      ...reviewProblems,
+      ...(reviewer?.problems ?? []),
     ],
     minor: codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
+    reviewerRunId: reviewer?.runId ?? null,
     screens: checked.screens,
   };
 }

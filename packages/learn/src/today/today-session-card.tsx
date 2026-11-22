@@ -74,7 +74,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
     }
   }, [moreOpen]);
 
-  const lessonsAhead = opens && (lessonsComing || lessonsToPrepare);
+  const lessonsAhead = lessonsComing || lessonsToPrepare;
   const folded = getFoldedRows({ after, lessonsAhead });
   const moreLabel = useMoreLabel(folded);
 

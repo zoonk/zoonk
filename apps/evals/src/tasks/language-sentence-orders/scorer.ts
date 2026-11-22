@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
@@ -69,7 +70,7 @@ function checkSide({
   sameLanguage: boolean;
   sentence: Sentence;
   side: Side;
-}): Omit<CodeCheckResult, "judgedOutput"> {
+}): Omit<CodeCheckResult, "judgedOutput"> & { criteria: string[] } {
   const toKey = (order: string) =>
     toOrderKey(keepOne({ order, sameLanguage, sentence, side }) ?? "");
 
@@ -80,6 +81,10 @@ function checkSide({
   const missed = expected.valid.filter((order) => !keptKeys.has(toKey(order)));
 
   return {
+    criteria: [
+      ...(errors.length > 0 ? ["precision"] : []),
+      ...(missed.length > 0 ? ["recall"] : []),
+    ],
     passed: (errors.length === 0 ? 1 : 0) + expected.valid.length - missed.length,
     problems: [
       ...errors.map((order) => `"${order}" is kept but wrong.`),
@@ -132,7 +137,26 @@ function checkOrders({
   }));
 
   return {
+    criteria: checks.flatMap((check) => check.criteria),
     judgedOutput: JSON.stringify({ sentences: judged }),
+    ...answerKeyEvidence((label) => ({
+      sentences: judged.flatMap((sentence, index) =>
+        sides.flatMap(({ side }) =>
+          sentence[side].length > 0
+            ? [
+                label(
+                  {
+                    acceptedOrders: sentence[side],
+                    sentence: side === "otherOrders" ? sentence.sentence : sentence.translation,
+                    translation: side === "otherOrders" ? sentence.translation : sentence.sentence,
+                  },
+                  `sentences[${index}].${side}`,
+                ),
+              ]
+            : [],
+        ),
+      ),
+    })),
     passed: checks.reduce((sum, check) => sum + check.passed, 0),
     problems: checks.flatMap((check) => check.problems),
     total: checks.reduce((sum, check) => sum + check.total, 0),

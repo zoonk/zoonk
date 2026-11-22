@@ -20,7 +20,7 @@ export async function readSyllabusInput(userId: string, goalId: string) {
     readSavedPlan(userId, goalId),
   ]);
 
-  if (!goal) {
+  if (!goal || !savedPlan) {
     return null;
   }
 

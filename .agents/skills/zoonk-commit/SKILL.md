@@ -58,7 +58,7 @@ Describe the concrete problem and resulting behavior for a reviewer who has not 
 
 For each piece the PR adds or redraws (a component, a part of a screen, a rule), name where the product already does the same thing, or write "none found" with what you searched ([find the piece](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one)). Reviewers compare the two.
 
-List under **Exceptions** every departure from a rule about looks (the screen, the rule, what shipped instead and why) and every exception an agent asked for with the answer it got, so the user can accept or overrule each one ([when a rule looks wrong](../../guides/exceptions.md)).
+List under **Judgment calls** every call you made instead of asking (what you chose, in a line, and why) and every departure from a rule (the screen or code, the rule, what shipped instead and why), so the user can keep or overrule each one ([make the call](../../../AGENTS.md#scope-and-completion), [when a rule looks wrong](../../guides/exceptions.md)).
 
 End with a short **Verification** section that tells the reviewer what was proven and what wasn't, in plain language rather than command lists or logs:
 

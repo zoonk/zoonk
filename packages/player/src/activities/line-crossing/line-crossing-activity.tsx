@@ -1,9 +1,9 @@
 "use client";
 
 import { useAppLocale, useSentenceSpace } from "@zoonk/learn/locale";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { toSentence } from "@zoonk/utils/locale";
 import { useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas } from "../_components/activity-canvas";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";

@@ -228,10 +228,6 @@ export async function buildPlanView({
     skills: state.graph.skills,
   });
 
-  const studiedDates = new Set(
-    studyWeek.days.filter((day) => day.studied).map((day) => toIsoDate(day.date)),
-  );
-
   const calendar = getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings: state.settings });
   const fullCourse = goal.kind === "exam" && state.settings.fullCourse;
 
@@ -306,7 +302,7 @@ export async function buildPlanView({
     status,
     steering: buildSteeringView({ items, settings: state.settings }),
     tools: toPlanToolViews({ settings: state.settings, tools }),
-    ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
+    ...buildPlanTimingView({ access, calendar, context, skillAreas, studyDays: studyWeek.days }),
     weekTime: studyWeek.time,
     writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
   };

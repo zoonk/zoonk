@@ -1,9 +1,15 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import {
+  arePhaseChallengesRequired,
+  withoutLockedPhaseChallenges,
+} from "../../checkpoints/_utils/phase-challenge-access";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
+import { readBlockPayload } from "../block-payload";
+import { isDayBlock } from "../day-blocks";
 import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
@@ -14,7 +20,7 @@ import { refitSessionLessons } from "./refit-session-lessons";
 import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { trackSessionCompleted } from "./session-events";
-import { recordSessionEnd } from "./session-ledger";
+import { recordSessionEnd, sumSessionSeconds } from "./session-ledger";
 import { type SessionState, readFullMealReward } from "./session-snapshot";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
@@ -46,16 +52,32 @@ async function completeIfFinished({
   timeZone,
   userId,
 }: SessionDay & { answers: readonly SessionAnswer[] }): Promise<boolean> {
-  const finished = session.blocks.every(
+  const required =
+    !session.goal || (await arePhaseChallengesRequired({ goalKind: session.goal.kind, userId }));
+
+  const eligible = (blocks: typeof session.blocks) =>
+    withoutLockedPhaseChallenges({ blocks, phaseChallengesRequired: required });
+
+  const dayBlocks = eligible(session.blocks).filter((block) => isDayBlock(block));
+
+  const finished = dayBlocks.every(
     (block) => block.status === "completed" || block.status === "skipped",
   );
 
-  if (!finished) {
+  if (
+    !finished ||
+    (!session.endedAt &&
+      dayBlocks.length === 0 &&
+      (await sumSessionSeconds(prisma, { sessionId: session.id, userId })) === 0)
+  ) {
     return false;
   }
 
   // A retry or an owed settlement can complete a session later; it still ended with its last block.
-  const finishes = session.blocks.flatMap((block) => block.completedAt?.getTime() ?? []);
+  const finishes = session.blocks
+    .filter((block) => isDayBlock(block))
+    .flatMap((block) => block.completedAt?.getTime() ?? []);
+
   const endedAt = finishes.length > 0 ? new Date(Math.max(...finishes)) : new Date();
 
   const [end, memoryFollowUps] = await Promise.all([
@@ -78,11 +100,16 @@ async function completeIfFinished({
     `;
 
       // Reload after the queue lock to include work committed while completion waited.
-      const openBlocks = await tx.studySessionBlock.count({
-        where: { sessionId: session.id, status: { in: ["active", "pending"] } },
+      const locked = await tx.studySession.findUniqueOrThrow({
+        include: STUDY_SESSION_INCLUDE,
+        where: { id: session.id },
       });
 
-      if (openBlocks > 0) {
+      if (
+        eligible(locked.blocks).some(
+          (block) => isDayBlock(block) && (block.status === "active" || block.status === "pending"),
+        )
+      ) {
         throw new SessionCompletionUnchangedError("open");
       }
 
@@ -92,30 +119,60 @@ async function completeIfFinished({
         return null;
       }
 
-      const refilled = await tx.studySessionBlock.count({
-        where: { sessionId: session.id, status: { in: ["active", "pending"] } },
+      const current = await tx.studySession.findUniqueOrThrow({
+        include: STUDY_SESSION_INCLUDE,
+        where: { id: session.id },
       });
 
-      if (refilled > 0) {
+      const visible = eligible(current.blocks);
+
+      if (
+        visible.some(
+          (block) => isDayBlock(block) && (block.status === "active" || block.status === "pending"),
+        )
+      ) {
         return null;
       }
 
-      const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
+      const status = visible.some(
+        (block) => block.status === "active" || block.status === "pending",
+      )
+        ? "active"
+        : "completed";
 
-      if (current.status === "completed") {
-        throw new SessionCompletionUnchangedError("alreadyCompleted");
+      if (current.endedAt) {
+        if (current.status === status) {
+          throw new SessionCompletionUnchangedError(
+            status === "completed" ? "alreadyCompleted" : "open",
+          );
+        }
+
+        await tx.studySession.update({ data: { status }, where: { id: session.id } });
+        return { session: current, status };
       }
 
-      // A block finished while completion waited ends the session later than the blocks read above.
-      const { _max: latest } = await tx.studySessionBlock.aggregate({
-        _max: { completedAt: true },
-        where: { sessionId: session.id },
-      });
+      const lockedFinishes = visible
+        .filter((block) => isDayBlock(block))
+        .flatMap((block) => block.completedAt?.getTime() ?? []);
 
-      const lastFinish = latest.completedAt ?? endedAt;
+      const lastFinish =
+        lockedFinishes.length > 0 ? new Date(Math.max(...lockedFinishes)) : endedAt;
+
+      const visibleIds = new Set(visible.map((block) => block.id));
+
+      await Promise.all(
+        current.blocks
+          .filter((block) => !visibleIds.has(block.id) && isDayBlock(block))
+          .map((block) =>
+            tx.studySessionBlock.update({
+              data: { payload: { ...readBlockPayload(block), extra: true } },
+              where: { id: block.id },
+            }),
+          ),
+      );
 
       await tx.studySession.update({
-        data: { endedAt: lastFinish, status: "completed" },
+        data: { endedAt: lastFinish, status },
         where: { id: session.id },
       });
 
@@ -145,7 +202,7 @@ async function completeIfFinished({
         timeZone,
       });
 
-      return { session: current, status: "completed" as const };
+      return { session: current, status };
     }),
   );
 
@@ -174,7 +231,7 @@ async function completeIfFinished({
     await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
   }
 
-  return true;
+  return completed.status === "completed";
 }
 
 type SettledSessionDay = {

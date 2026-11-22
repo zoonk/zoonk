@@ -1,13 +1,13 @@
 "use client";
 
 import { type LessonMap as LessonMapData } from "@zoonk/core/library/lessons/map";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { type IdeaSlot, getIdeaSlots, getSlotRows } from "../_utils/idea-slots";
 import { LessonIconImage } from "./lesson-icon";
-import { LessonRichText } from "./lesson-rich-text";
 
 type MapIdea = LessonMapData["ideas"][number];
 
@@ -31,7 +31,7 @@ function IdeaContent({ idea, number }: { idea: MapIdea; number: number }) {
       </span>
       <span
         className={cn(
-          "mt-1.5 block text-sm leading-snug text-pretty",
+          "mt-1.5 block text-sm leading-snug",
           idea.label ? "text-muted-foreground" : "text-foreground",
         )}
       >

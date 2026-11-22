@@ -32,10 +32,16 @@ export function getShortExamPhaseDays(studyDays: number): [ShortExamPhaseKind, n
   return lengths.filter(([, days]) => days > 0);
 }
 
+/**
+ * A public exam's practice phase opens with a mock that replaces its day, so a one-day phase is
+ * only that mock and reads like a class test's mock day (`mockAndReview` is "Short mock").
+ */
 export function getShortExamFocus({
+  days,
   kind,
   shortMockMinutes,
 }: {
+  days: number;
   kind: ShortExamPhaseKind;
   shortMockMinutes: number | null;
 }): ShortExamFocus {
@@ -43,8 +49,12 @@ export function getShortExamFocus({
     return "mapAndGaps";
   }
 
+  if (kind === "practice" && shortMockMinutes) {
+    return "practice";
+  }
+
   if (kind === "practice") {
-    return shortMockMinutes ? "practice" : "mockAndPractice";
+    return days > 1 ? "mockAndPractice" : "mockAndReview";
   }
 
   return shortMockMinutes ? "mockAndReview" : "lightReview";

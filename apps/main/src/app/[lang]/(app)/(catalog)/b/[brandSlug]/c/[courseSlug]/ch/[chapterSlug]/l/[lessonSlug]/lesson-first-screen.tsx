@@ -81,7 +81,7 @@ export async function LessonFirstScreen({
   if (screen?.kind === "text") {
     return (
       <FirstScreenSection>
-        <RichTextBlocks className={cn(LESSON_BODY_CLASS, "mb-6 text-pretty")} text={screen.text} />
+        <RichTextBlocks className={cn(LESSON_BODY_CLASS, "mb-6")} text={screen.text} />
 
         <StartBlock className="mt-0 sm:mt-0" note={note}>
           <StartLink href={startHref}>{t("Start the lesson")}</StartLink>

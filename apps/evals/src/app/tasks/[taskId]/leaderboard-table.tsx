@@ -8,8 +8,7 @@ import {
   getDefaultSortDirection,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard-sort";
-import { SCROLL_LABELS } from "@/lib/scroll-labels";
-import { CELL_CLASS } from "@/lib/table-classes";
+import { CELL_CLASS, PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { type CategoryScoreSummary } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
@@ -195,7 +194,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-sm">{description}</p>
+      <p className={`text-muted-foreground text-sm ${PROSE_MEASURE_CLASS}`}>{description}</p>
 
       {/* On the table's start edge, which stays put when "More columns" widens the table. */}
       <div className="flex items-center gap-2">
@@ -215,7 +214,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
       </div>
 
       {/* Each column keeps its content's width and a wide table scrolls, so "More columns" moves no column. */}
-      <Table scrollLabels={SCROLL_LABELS}>
+      <Table scrollLabel="Table">
         <TableHeader>
           <TableRow>
             {shownColumns.map((column) => (
@@ -243,7 +242,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
                   {column.cell(entry, index)}
                 </TableCell>
               ))}
-              <TableCell className={CELL_CLASS}>
+              <TableCell className="overflow-clip align-middle">
                 <RowChevron />
               </TableCell>
             </TableRow>

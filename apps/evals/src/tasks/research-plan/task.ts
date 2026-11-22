@@ -17,6 +17,13 @@ export const researchPlanTask: Task<
   generate: generateExamResearchPlan,
   id: "research-plan",
   name: "Exam research plan",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code: search queries for the research workflow",
+    reason: "Search hints only; the cheaper model scored nearly the same",
+    waits: "A learner waits on a new exam goal; refreshes in the background",
+  },
   score: scoreResearchPlan,
   testCases: TEST_CASES,
 };

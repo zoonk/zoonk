@@ -37,6 +37,18 @@ describe(parseItemText, () => {
     ]);
   });
 
+  it("keeps a program's indentation in a fenced block, and reads text after it", () => {
+    const code = 'for i in range(3):\n    if i > 0:\n        print(i)\nprint("done")';
+
+    expect(
+      parseItemText(`What does this print?\n\`\`\`python\n${code}\n\`\`\`\nPick one.`),
+    ).toStrictEqual([
+      { kind: "paragraph", lines: [text("What does this print?")] },
+      { code, kind: "code", language: "python" },
+      { kind: "paragraph", lines: [text("Pick one.")] },
+    ]);
+  });
+
   it("starts a table right under a paragraph line and stops it at a line without pipes", () => {
     const blocks = parseItemText(
       "Os dados:\nAno | Total\n:-- | --\n2024 | 10\nEntão o total subiu.\nMesmo assim, caiu.",
@@ -111,6 +123,14 @@ describe(parseItemLine, () => {
       { kind: "text", text: "Quanto custa o " },
       { kind: "italic", text: "pacote" },
       { kind: "text", text: ` de 96,00${NO_BREAK_SPACE}€ ou 40${NO_BREAK_SPACE}%?` },
+    ]);
+  });
+
+  it("reads an answer's code block as one run of inline code", () => {
+    expect(parseItemLine("Troque por\n```java\nint total = 0;\ntotal++;\n```")).toStrictEqual([
+      { kind: "text", text: "Troque por" },
+      { kind: "text", text: " " },
+      { kind: "code", text: "int total = 0; total++;" },
     ]);
   });
 });

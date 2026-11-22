@@ -541,11 +541,13 @@ private fun StatementAnswers(
 internal fun ColumnScope.PlacementDone(
     pending: Boolean,
     failed: Boolean,
+    action: String = stringResource(R.string.onboarding_placement_see_plan),
     onContinue: () -> Unit,
 ) {
     PlacementOutcome(
         title = stringResource(R.string.focustest_answers_saved_title),
         description = null,
+        action = action,
         pending = pending,
         failed = failed,
         onContinue = onContinue,

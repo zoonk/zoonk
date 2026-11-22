@@ -68,6 +68,14 @@ export const transcribeSpeechTask: Task<SpeechClipInput, SpeechTranscript, Speec
   id: "transcribe-speech",
   name: "Transcribe speech",
   output: "transcription",
+  priorities: {
+    distribution: "private",
+    first: "quality",
+    reads: "Code compares the heard words with the expected answer",
+    reason:
+      "A wrong transcript marks the learner wrong; the cheaper model can't read the browser's audio formats",
+    waits: "A learner waits in the request",
+  },
   score: scoreSpeechTranscript,
   testCases: TEST_CASES,
 };

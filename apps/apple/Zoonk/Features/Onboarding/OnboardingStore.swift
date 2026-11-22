@@ -575,10 +575,7 @@ final class OnboardingStore {
         goalID: goalID, attemptID: attemptID, token: identity.bearerToken)
     }
 
-    if attemptID == nil {
-      onboarding(goalID: goalID).invalidate()
-    }
-
+    onboarding(goalID: goalID).invalidate()
     return result
   }
 

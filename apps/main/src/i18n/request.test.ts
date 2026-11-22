@@ -48,7 +48,7 @@ function catalogMessages(locale: string) {
       id: "npC_pq",
       locale,
     }),
-    mainNumber: catalogMessage({ catalog: "../../messages", id: "RdGReZ", locale }),
+    mainNumber: catalogMessage({ catalog: "../../messages", id: "cpAOYg", locale }),
     mainPlural: catalogMessage({ catalog: "../../messages", id: "n7xPkB", locale }),
   };
 }
@@ -72,7 +72,7 @@ describe("catalog formatting", () => {
     const settings = await config();
     const t = createTranslator({ ...settings, timeZone: "UTC" });
 
-    expect(t("mainNumber", { number: value })).toBe(`Semana ${formatted}`);
+    expect(t("mainNumber", { name: "A", number: value })).toBe(`Simulacro ${formatted} · A`);
 
     expect(t("mainPlural", { count: value })).toBe(`${formatted} lecciones`);
 
@@ -106,7 +106,7 @@ describe("catalog formatting", () => {
     const t = createTranslator(await config("en"));
     const formatted = new Intl.NumberFormat("en").format(value);
 
-    expect(t("mainNumber", { number: value })).toBe(`Week ${formatted}`);
+    expect(t("mainNumber", { name: "A", number: value })).toBe(`Mock exam ${formatted} · A`);
 
     expect(t("mainPlural", { count: value })).toBe(`${formatted} lessons`);
 

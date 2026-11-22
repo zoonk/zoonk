@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-glicolise-from-slides",
+        "claimId": "cdafef1bf82e27a4",
+        "criterion": "fitAndApplication",
+        "observationId": "2f87628605f8d71d8784e2672de8e2e18ff11b354f4e189199dc5760ca719f0c.first.2f99d97d-8ecf-470e-9b26-81c20e27bcbd.3",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00206565,
+    "id": "4a13d6f08d3ce1fbf02fea811d3775ddce8c2efb32a1e90f4afe4fdd7f05274e",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "855fb665b4328bd5",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
+          "format": "text"
+        },
+        "claim": "O output não nomeia as fases como fase de investimento e fase de rendimento, embora esses termos façam parte do conteúdo pedido para a prova.",
+        "claimId": "cdafef1bf82e27a4",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
+          "format": "text"
+        },
+        "input": {
+          "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screens 2–3 e resumo",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "855fb665b4328bd5",
+          "finding": "doesn't hold",
+          "reason": "The term 'additive inverse' appears nowhere in output A, so screen 5 (a mathCheck on subtracting a negative start) cannot introduce it. The claim names a problem that isn't in the output."
+        },
+        {
+          "claimId": "cdafef1bf82e27a4",
+          "finding": "doesn't hold",
+          "reason": "Output B does name the phases: the summary card labels read 'Investimento de 2 ATP' and 'Rendimento: 4 ATP e NADH', and screen 2 explains the investment step. It doesn't use the exact phrases 'fase de investimento' and 'fase de rendimento' (screen 3 says 'Depois, vem o retorno'), but the claim that it doesn't name the phases is overstated."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

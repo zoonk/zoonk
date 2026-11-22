@@ -1,0 +1,256 @@
+{
+  "lessons": [
+    {
+      "canDo": "Identificar os requisitos para adquirir estabilidade no serviço público",
+      "description": "Os requisitos de ingresso, tempo de exercício e avaliação necessários para adquirir estabilidade.",
+      "estimatedMinutes": 3,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Wagner ouve que o novo chefe quer dispensá-lo para colocar outra pessoa em seu lugar, mas o setor de pessoal informa que ele é estável. Quando um servidor ganha essa proteção?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Estabilidade é a proteção contra a perda do cargo por simples vontade da chefia: Wagner não pode ser dispensado apenas para abrir uma vaga ao indicado do novo chefe. Apresentar essa proteção sem tratá-la como garantia absoluta de permanência.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Lorena entrou por concurso em cargo efetivo e acaba de completar três anos de exercício: o que esse aniversário significa para sua estabilidade? Opções: “O tempo sozinho já garante”; “Também exige avaliação por comissão” (correta); “Exige uma nova nomeação”; a tentação é considerar o tempo suficiente.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A estabilidade do art. 41 da Constituição se destina a quem foi nomeado por concurso para cargo efetivo: é o caso de Lorena. Como contraponto, ocupar somente um cargo em comissão não dá direito a essa estabilidade.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O prazo é de três anos de efetivo exercício, isto é, de exercício funcional contado para essa finalidade, conforme o art. 41 da Constituição. Se Lorena foi nomeada antes de começar a trabalhar, não se conta simplesmente desde a nomeação.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A avaliação especial de desempenho verifica a aptidão para adquirir estabilidade e deve ser feita por comissão instituída para isso, conforme o art. 41, § 4º. No caso de Lorena, completar o prazo não dispensa essa condição constitucional.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Resolver se uma servidora concursada, nomeada para cargo efetivo, com três anos de efetivo exercício e aprovação na avaliação especial por comissão reúne os requisitos. Revelar os passos: conferir ingresso em cargo efetivo por concurso; conferir os três anos; conferir a avaliação especial; concluir que reúne os requisitos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um servidor concursado em cargo efetivo recebeu avaliação especial favorável, mas tem apenas dois anos de efetivo exercício: já adquiriu estabilidade? Resposta: ainda não, pois falta completar três anos; incluir a alternativa tentadora “Sim, a avaliação favorável basta”.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "table",
+          "brief": "Você confere dois pedidos no setor de pessoal: A — cargo efetivo por concurso, três anos de efetivo exercício, avaliação especial favorável por comissão; B — somente cargo em comissão, seis anos de exercício, avaliações favoráveis. Pedir qual pedido reúne os requisitos e qual informação impede o outro: A reúne; B não tem o vínculo exigido, apesar do tempo maior.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Verificar o ingresso por concurso em cargo efetivo, os três anos de efetivo exercício e a avaliação especial por comissão.",
+          "example": "Uma servidora concursada em cargo efetivo, com três anos de efetivo exercício e avaliação especial favorável por comissão, reúne os requisitos.",
+          "hard": true,
+          "name": "Identificar quando o servidor adquire estabilidade",
+          "topic": "Aquisição da estabilidade",
+          "useCase": "Conferir se um servidor já preenche as condições constitucionais de estabilidade."
+        }
+      ],
+      "title": "Aquisição da estabilidade do servidor público"
+    },
+    {
+      "canDo": "Reconhecer hipóteses e garantias da perda do cargo do servidor estável",
+      "description": "As hipóteses constitucionais de perda do cargo e as garantias que impedem a dispensa arbitrária do servidor estável.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Raimundo, servidor estável, recebe um aviso de que poderá perder o cargo porque o órgão ultrapassou o limite de gastos com pessoal, embora não tenha cometido falta. Como alguém estável pode perder o cargo?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma sentença judicial que determina a perda do cargo pode atingir o servidor estável quando já não cabe recurso: ela transitou em julgado. No art. 41, § 1º, I, da Constituição, uma sentença ainda recorrível não satisfaz essa hipótese.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um servidor estável comete uma falta grave, mas não existe decisão judicial sobre o caso: por qual caminho a Administração pode chegar à perda do cargo? Opções: “Por processo interno com defesa” (correta); “Somente após decisão judicial definitiva” (tentadora); “Por ordem direta da chefia”.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O processo administrativo com ampla defesa é uma via própria para a perda do cargo, sem exigir sentença judicial, conforme o art. 41, § 1º, II. No caso da falta grave, o servidor precisa poder conhecer e contestar a acusação, não apenas receber uma ordem de saída.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A avaliação periódica de desempenho pode levar à perda do cargo se seguir lei complementar e assegurar ampla defesa, conforme o art. 41, § 1º, III. Ela acompanha quem já é estável: uma nota baixa isolada dada pela chefia não basta.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Analisar a proposta de desligar uma servidora estável após uma avaliação periódica negativa, realizada conforme lei complementar, mas sem oportunidade de defesa. Mostrar os passos: identificar a via usada; conferir a lei complementar; perceber a falta de ampla defesa; concluir que o desligamento proposto não atende à Constituição.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um órgão permite ampla defesa, mas pretende desligar um servidor estável por avaliação periódica disciplinada apenas por portaria, sem a lei complementar exigida: o procedimento basta? Resposta: não; incluir como alternativa tentadora “Sim, porque houve defesa”.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O excesso de despesa com pessoal também pode levar à perda do cargo estável, mesmo sem falta funcional, nas condições constitucionais para adequação aos limites legais. No caso de Raimundo, isso não autoriza escolher imediatamente um servidor estável para cortar.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Antes de atingir servidores estáveis por excesso de despesa, deve haver redução de pelo menos 20% das despesas com cargos em comissão e funções de confiança. Por exemplo, se essas despesas eram R$ 100.000,00, cortá-las em apenas R$ 10.000,00 não cumpre essa medida.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Se a redução não bastar, a Constituição prevê a exoneração de servidores não estáveis antes de alcançar os estáveis. Assim, o órgão de Raimundo não pode simplesmente pular essa etapa para preservar todos os não estáveis.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um órgão reduziu em 25% as despesas com cargos em comissão e funções de confiança, mas quer atingir os estáveis sem adotar a exoneração dos não estáveis: pode pular essa medida? Resposta: não; incluir a alternativa tentadora “Sim, porque o corte passou de 20%”.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Se as medidas anteriores forem insuficientes, a perda do cargo estável por excesso de despesa exige ato motivado que especifique a atividade funcional, o órgão ou a unidade atingida. No caso de Raimundo, uma ordem genérica de corte não substitui essa justificativa.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "table",
+          "brief": "Você revisa duas propostas: A — falta grave, processo administrativo com ampla defesa, sem ação judicial; B — excesso de despesa, corte de 20% nas despesas com cargos em comissão e funções de confiança, mas sem adotar a exoneração dos não estáveis. Pedir qual não depende de sentença judicial e o que impede a outra: A pode seguir pela via administrativa; B ainda não cumpriu as medidas prévias.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Distinguir as vias constitucionais de perda do cargo estável e verificar suas condições essenciais.",
+          "example": "Um processo administrativo com ampla defesa pode levar à perda do cargo estável sem sentença judicial.",
+          "hard": true,
+          "name": "Reconhecer hipóteses de perda do cargo estável",
+          "topic": "Perda do cargo estável",
+          "useCase": "Avaliar se uma proposta de desligamento respeita as garantias constitucionais do servidor estável."
+        }
+      ],
+      "title": "Perda do cargo do servidor estável"
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { announceTestedOutItems } from "./announce-tested-out-items";
-import { afterPlanInputWrite } from "./plan-conflict";
+import { unlessPlanConflict } from "./plan-conflict";
 
 /** Read the saved transition so a retry can announce it after the item write already committed. */
 export async function announceSharedTestOuts({
@@ -32,7 +32,7 @@ export async function announceSharedTestOuts({
 
   await Promise.all(
     plans.map((plan) =>
-      afterPlanInputWrite(() =>
+      unlessPlanConflict(() =>
         announceTestedOutItems({
           followToday: false,
           goalId: plan.goalId,

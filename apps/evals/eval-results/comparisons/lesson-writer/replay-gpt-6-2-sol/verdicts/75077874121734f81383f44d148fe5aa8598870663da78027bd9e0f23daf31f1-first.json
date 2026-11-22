@@ -1,0 +1,224 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00368794,
+  "failures": [],
+  "packetId": "75077874121734f81383f44d148fe5aa8598870663da78027bd9e0f23daf31f1",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A e B ensinam a mesma explicação e fazem os mesmos checks; a fórmula de B é apresentada como um modelo simplificado, sem uma diferença factual clara que justifique preferir um dos dois nesta categoria.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém a explicação em palavras simples, como pede um overview. B introduz uma fórmula e um cálculo avançados que desviam do nível e do estilo da lição.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "A explica a ideia em linguagem acessível. A equação, as constantes e a derivação de B são difíceis de acompanhar para o público de um overview.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os checks, as respostas e as justificativas são idênticos nos dois outputs.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "B inclui uma fórmula, contrariando diretamente a exigência de overview sem fórmulas, equações ou notação; A respeita essa exigência.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A tela inclui uma fórmula com símbolos e uma derivação para chegar ao raio de Bohr, embora a expectativa exija um overview sem fórmulas, equações ou notação.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Isso quebra o nível pedido e pode fazer o aprendiz parar ou acreditar que precisa dominar cálculo para entender a ideia.",
+            "location": {
+              "detail": "Num modelo simplificado do átomo de hidrogênio, o estado de menor energia minimiza $E = \\\\frac{\\\\hbar^2}{2 m r^2} - \\\\frac{e^2}{4 \\\\pi \\\\varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \\\\approx 0{,}53$ Å.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A explicação usa uma fórmula com constantes e fala em derivar em r sem explicar esses símbolos ou a operação.",
+            "criterion": "clarity",
+            "learnerCost": "Um iniciante que leia a tela uma vez provavelmente não conseguirá acompanhar a explicação.",
+            "location": {
+              "detail": "Num modelo simplificado do átomo de hidrogênio, o estado de menor energia minimiza $E = \\\\frac{\\\\hbar^2}{2 m r^2} - \\\\frac{e^2}{4 \\\\pi \\\\varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \\\\approx 0{,}53$ Å.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A ensina o ponto central em linguagem simples e respeita o nível de overview; a tela com fórmula de B cria uma barreira desnecessária para esse leitor."
+        },
+        "pairId": "2b178641-c422-409a-a57b-f9820a80bf36"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs apresentam a mesma regra de três anos mais aprovação na avaliação especial e as mesmas condições para perda do cargo.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "As telas e a linguagem são idênticas nos dois outputs.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs têm a mesma clareza e a mesma lacuna ao usar o termo técnico sem explicá-lo por completo.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os checks, as opções e as justificativas são idênticos.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs seguem o mesmo formato e usam o mesmo cenário brasileiro; nenhum deles afirma que as três hipóteses listadas são as únicas em todos os casos.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A expressão técnica «processo administrativo» aparece sem uma explicação cotidiana do que é esse processo; explicar ampla defesa não explica também o procedimento administrativo.",
+            "criterion": "clarity",
+            "learnerCost": "Um iniciante pode não entender o que a prefeitura precisa fazer antes de decidir sobre a perda do cargo.",
+            "location": {
+              "detail": "Mesmo estável, Ana pode perder o cargo por falta grave após processo administrativo com ampla defesa: ela pode dar sua versão e apresentar provas.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A expressão técnica «processo administrativo» aparece sem uma explicação cotidiana do que é esse processo; explicar ampla defesa não explica também o procedimento administrativo.",
+            "criterion": "clarity",
+            "learnerCost": "Um iniciante pode não entender o que a prefeitura precisa fazer antes de decidir sobre a perda do cargo.",
+            "location": {
+              "detail": "Mesmo estável, Ana pode perder o cargo por falta grave após processo administrativo com ampla defesa: ela pode dar sua versão e apresentar provas.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os outputs são idênticos: ambos ensinam a regra corretamente, mas deixam «processo administrativo» sem uma explicação cotidiana suficiente."
+        },
+        "pairId": "2c0b0b0b-c3d6-4b79-bf5d-02377e8fa235"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "B diz que o servidor «sempre» pode se explicar antes de perder o cargo e chama as hipóteses listadas de «Três jeitos» de perder o cargo, sugerindo que são exaustivas. Isso deixa de fora a possibilidade constitucional de redução de cargos quando os limites de gasto com pessoal são excedidos.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B usa cenários e opções mais concretos, com justificativas que apontam as confusões tentadoras; A é mais enxuto, mas ensina de forma menos conversada.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "As listas e as justificativas curtas de B tornam as condições e os caminhos mais fáceis de acompanhar, embora ambos deixem «processo administrativo» sem explicação cotidiana suficiente.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "B",
+            "reason": "B inclui opções que testam confusões plausíveis — como achar que passar no concurso já basta ou que provas dispensam o processo — e explica por que estão erradas. A oferece menos opções de resposta.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "O rótulo «Três jeitos de perder o cargo» em B sugere que os três caminhos listados são todos os possíveis, contrariando a expectativa de não apresentar a lista como exaustiva.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O resumo apresenta os três caminhos listados como se fossem todos os jeitos de perder o cargo, mas há também a possibilidade constitucional de redução de cargos quando os limites de gasto com pessoal são excedidos.",
+            "criterion": "accuracy",
+            "learnerCost": "O aprendiz pode sair com uma regra incompleta e tratar a lista como exaustiva.",
+            "location": {
+              "detail": "Três jeitos de perder o cargo",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A afirmação de que o servidor «sempre» pode se explicar antes de perder o cargo é ampla demais: a Constituição também admite redução de cargos em caso de excesso de gastos com pessoal, sem essa defesa individual como condição geral.",
+            "criterion": "accuracy",
+            "learnerCost": "O aprendiz pode acreditar que a defesa individual antecede toda e qualquer forma de perda do cargo.",
+            "location": {
+              "detail": "Antes de perder o cargo, o servidor estável sempre pode se explicar e apresentar provas, o que se chama ampla defesa.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "O rótulo «Três jeitos de perder o cargo» sugere que os três caminhos descritos são exaustivos, embora exista também a possibilidade constitucional de redução de cargos quando os limites de gasto com pessoal são excedidos.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "O resumo pode deixar o aprendiz com uma visão incompleta das formas de perda do cargo.",
+            "location": {
+              "detail": "Três jeitos de perder o cargo",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A expressão técnica «processo administrativo» aparece sem uma explicação cotidiana do procedimento em si; a explicação de ampla defesa não basta para definir o termo.",
+            "criterion": "clarity",
+            "learnerCost": "Um iniciante pode não entender o que a prefeitura precisa fazer antes de decidir sobre a perda do cargo.",
+            "location": {
+              "detail": "um processo administrativo, se cometer uma falta",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A expressão técnica «processo administrativo» aparece sem uma explicação cotidiana do procedimento em si; a explicação de ampla defesa não basta para definir o termo.",
+            "criterion": "clarity",
+            "learnerCost": "Um iniciante pode não entender o que a prefeitura precisa fazer antes de decidir sobre a perda do cargo.",
+            "location": {
+              "detail": "um processo administrativo, se cometer uma falta",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "B é mais claro e tem checks mais bem desenvolvidos, mas as afirmações de que há «três jeitos» e de que a defesa ocorre «sempre» ensinam uma regra excessivamente ampla e omitem uma hipótese constitucional importante. A também deixa «processo administrativo» sem explicar, mas evita essas afirmações."
+        },
+        "pairId": "a84478dd-c25e-4964-a1e9-15dcc0794451"
+      }
+    ]
+  }
+}

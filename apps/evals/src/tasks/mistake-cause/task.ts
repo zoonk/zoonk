@@ -20,6 +20,13 @@ export const mistakeCauseTask: Task<MistakeCauseParams, MistakeCauseSchema, Mist
     generate: classifyMistakeCause,
     id: "mistake-cause",
     name: "Mistake cause",
+    priorities: {
+      distribution: "private",
+      first: "cost",
+      reads: "Code picks the kind of drill",
+      reason: "Code checks the label; background, private",
+      waits: "Nobody: background work",
+    },
     score: scoreMistakeCause,
     testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
   };

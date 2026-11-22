@@ -76,6 +76,13 @@ export const findExamDateTask: Task<FindExamDateParams, ExamDateFinding, FindExa
   id: "find-exam-date",
   latencyBudget: { p50: 20, p95: 30 },
   name: "Find exam date",
+  priorities: {
+    distribution: "private",
+    first: "latency",
+    reads: "A learner sees the exam date in onboarding",
+    reason: "It sits in onboarding with a timeout; the cheapest model within the wait",
+    waits: "A learner waits in onboarding, with a timeout",
+  },
   score: scoreExamDate,
   testCases: TEST_CASES,
 };

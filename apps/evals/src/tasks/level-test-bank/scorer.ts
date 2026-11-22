@@ -52,24 +52,40 @@ function getGroupProblems({
   ];
 }
 
-export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
-  const bank = JSON.parse(output) as LevelTestBankQuestions;
-
+function checkBankStructure(bank: LevelTestBankQuestions) {
   const parts = LEVEL_TEST_LEVELS.flatMap((level) =>
     LEVEL_TEST_SKILLS.map((skill) => getGroupProblems({ bank, level, skill })),
   );
 
   return {
-    judgedOutput: output,
     passed: parts.filter((problems) => problems.length === 0).length,
     problems: parts.flat(),
     total: parts.length,
+  };
+}
+
+export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
+  const bank = JSON.parse(output) as LevelTestBankQuestions;
+
+  const questions = bank.questions.map((question, index) => ({
+    ...question,
+    itemLocator: `questions[${index}]`,
+  }));
+
+  return {
+    ...checkBankStructure(bank),
+    blockingProblems: questions.length === 0 ? ["No placement question passed its check."] : [],
+    judgedOutput: JSON.stringify({ ...bank, questions }),
+    keyFlawLocators: questions.map((question) => question.itemLocator),
   };
 };
 
 export const scoreLevelTestBank: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkLevelTestBank({ output: value, testCase }),
+    check: (value) => ({
+      ...checkBankStructure(JSON.parse(value) as LevelTestBankQuestions),
+      judgedOutput: value,
+    }),
     output,
     scoreCategories: LEVEL_TEST_BANK_SCORE_CATEGORIES,
     testCase,

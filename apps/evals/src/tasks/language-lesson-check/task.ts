@@ -33,6 +33,13 @@ export const languageLessonCheckTask: Task<
   generate: reviewLesson,
   id: "language-lesson-check",
   name: "Language lesson check",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code holds back a language lesson draft or sends it to a fix",
+    reason: "A missed slip reaches every learner of the lesson",
+    waits: "Before anyone sees the lesson, with the lesson's wait",
+  },
   score: scoreLessonQualityCheck,
   testCases: TEST_CASES,
 };

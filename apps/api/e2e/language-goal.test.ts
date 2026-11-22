@@ -479,7 +479,7 @@ test.describe("Language goal API", () => {
     await apiContext.dispose();
   });
 
-  test("keeps a level test-out unavailable until both skills have qualifying topic questions", async () => {
+  test("opens an empty test-out for a level without topics and rejects stale attempt IDs", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "language-test-out",
@@ -489,7 +489,7 @@ test.describe("Language goal API", () => {
     const path = `/v1/goals/${goal.id}/language-level-test/test-outs`;
     const attemptId = randomUUID();
 
-    const [unavailable, missing, staleAnswer, staleFinish] = await Promise.all([
+    const [opened, missing, staleAnswer, staleFinish] = await Promise.all([
       apiContext.post(path, { data: { level: "C2" } }),
       apiContext.get(path, { params: { attemptId } }),
       apiContext.post(`${path}/answers`, {
@@ -498,9 +498,21 @@ test.describe("Language goal API", () => {
       apiContext.post(`${path}/completions`, { data: { attemptId } }),
     ]);
 
-    expect(
-      [unavailable, missing, staleAnswer, staleFinish].map((response) => response.status()),
-    ).toStrictEqual([422, 404, 404, 404]);
+    expect(opened.status()).toBe(200);
+
+    expect(await opened.json()).toMatchObject({
+      answered: 0,
+      attemptId: expect.any(String),
+      level: "C2",
+      next: null,
+      preparing: false,
+      result: null,
+      total: 0,
+    });
+
+    expect([missing, staleAnswer, staleFinish].map((response) => response.status())).toStrictEqual([
+      404, 404, 404,
+    ]);
 
     await apiContext.dispose();
   });

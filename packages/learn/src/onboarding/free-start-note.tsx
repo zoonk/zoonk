@@ -7,7 +7,7 @@ export function FreeStartNote({ className }: { className?: string }) {
   const t = useExtracted();
 
   return (
-    <p className={cn("text-muted-foreground text-xs text-pretty", className)}>
+    <p className={cn("text-muted-foreground text-xs", className)}>
       {t("Start free, no account needed.")}
     </p>
   );

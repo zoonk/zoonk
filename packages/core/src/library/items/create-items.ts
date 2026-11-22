@@ -6,13 +6,10 @@ import { type ImageAnalytics } from "../media/_utils/draw-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
 import { type SourceVersion, reconcileItemReviewFlags } from "../sources/content-review-flags";
 import { type KeyCheckedItem, type KeyedFormat } from "./check-item-keys";
-import { checkItem } from "./item-checks";
+import { type CheckedItem, toCheckedItem } from "./item-checks";
 import { type ItemAnswerFormat, toStoredItem } from "./item-content";
-import { repairItem } from "./item-repairs";
 
 export type RejectedItem = { index: number; problems: string[] };
-
-type CheckedItem<Written extends GeneratedItem = GeneratedItem> = { index: number; item: Written };
 
 /** A format whose key a blind solve can check takes only the items `checkItemKeys` kept. */
 type ItemsToStore =
@@ -88,37 +85,6 @@ async function storeBatch({
 
     return created;
   });
-}
-
-export function toCheckedItem<Written extends GeneratedItem>({
-  answerFormat,
-  format,
-  index,
-  item: written,
-  language,
-  optionCount,
-  optionLanguage,
-}: {
-  answerFormat: ItemAnswerFormat;
-  format: ItemFormat;
-  index: number;
-  item: Written;
-  language: string;
-  optionCount: number | null;
-  optionLanguage?: string | null;
-}): CheckedItem<Written> & { problems: string[] } {
-  const item = repairItem({ item: written, language: optionLanguage ?? language, optionCount });
-
-  const problems = checkItem({
-    ...answerFormat,
-    expectedFormat: format,
-    item,
-    language,
-    optionCount,
-    optionLanguage,
-  });
-
-  return { index, item, problems };
 }
 
 async function drawPictures({

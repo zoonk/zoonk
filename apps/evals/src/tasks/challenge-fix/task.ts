@@ -1,9 +1,12 @@
-import { type Task } from "@/lib/types";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
+import { type Task, type TaskCodeChecks } from "@/lib/types";
 import { type ChallengeEdit, fixChallengeCase } from "@zoonk/ai/tasks/challenge/fix";
 import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
 import { type ChallengeFinding } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { applyChallengeEdits } from "@zoonk/core/library/challenges/edits";
+import { challengeAnswerKeys } from "../challenge-case/answer-keys";
+import { PLAIN_LANGUAGE_CRITERION } from "../plain-language-criterion";
 import cases from "./cases.json";
 
 type FixInput = { findings: ChallengeFinding[]; written: WrittenChallengeCase };
@@ -20,23 +23,46 @@ function describeLabels(labels: Label[]): string {
     .join("\n");
 }
 
+function checkFix({ edits, written }: { edits: ChallengeEdit[]; written: WrittenChallengeCase }) {
+  const fixed = applyChallengeEdits({ edits, written });
+
+  if (!fixed) {
+    return { fixed: null, problems: ["An edit's text doesn't occur exactly once in the case"] };
+  }
+
+  const checked = checkWrittenChallenge({
+    variant: written.deadline === null ? "whatIf" : "work",
+    written: fixed,
+  });
+
+  return { fixed: checked.content ? fixed : null, problems: checked.problems };
+}
+
+const checkOutput: TaskCodeChecks = ({ output, testCase }) => {
+  const { written } = testCase.userInput as FixInput;
+  const { edits } = JSON.parse(output) as { edits: ChallengeEdit[] };
+  const { fixed, problems } = checkFix({ edits, written });
+
+  return {
+    blockingProblems: problems,
+    ...(fixed ? challengeAnswerKeys(fixed) : {}),
+    judgedOutput: output,
+    passed: Number(Boolean(fixed)),
+    problems,
+    total: 1,
+  };
+};
+
 export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
+  codeChecks: checkOutput,
+  criteria: [PLAIN_LANGUAGE_CRITERION],
   description:
     "Fix what a reviewer found in a held challenge with find/replace edits: the 15 drafts the trade-off lane fixed, with hand labels for each finding",
   generate: async ({ findings, written, ...options }) => {
     const result = await fixChallengeCase({ ...options, findings, written });
-    const fixed = applyChallengeEdits({ edits: result.data.edits, written });
+    const checked = checkFix({ edits: result.data.edits, written });
 
-    if (!fixed) {
-      throw new Error("An edit's text doesn't occur exactly once in the case");
-    }
-
-    const checked = checkWrittenChallenge({
-      variant: written.deadline === null ? "whatIf" : "work",
-      written: fixed,
-    });
-
-    if (!checked.content) {
+    if (!checked.fixed) {
       throw new Error(checked.problems.join(" "));
     }
 
@@ -44,6 +70,19 @@ export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
   },
   id: "challenge-fix",
   name: "Challenge fix",
+  priorities: {
+    comparison: {
+      criteria: { plainLanguage: "counts" },
+      preference: "canBlock",
+      trade: COMPARISON_TRADES.core,
+    },
+    distribution: "shared",
+    first: "quality",
+    reads: "Code applies the edits to the case a learner plays",
+    reason: "A fix that misses or adds an error reaches every learner of the case",
+    waits: "Set by the lesson's wait",
+  },
+  requiresAnswerKeyCheck: true,
   testCases: cases.map((saved) => ({
     expectations: `${describeLabels(saved.labels)}
 Every other word of the case stays as it was: ids, structure, meters, correct numbers, tone and language. Any new error an edit introduces on any route fails the case.`,

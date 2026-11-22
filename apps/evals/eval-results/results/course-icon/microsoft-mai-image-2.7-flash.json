@@ -2,29 +2,6 @@
   "modelId": "microsoft/mai-image-2.7-flash",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A shield bearing an antibody directly signals immunology and the body's defenses, exactly as the brief suggests. It is not a generic medical cross or pill.",
-          "score": 9,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is a single centered shield with a clean silhouette in smooth matte 3D with soft lighting. It uses three colors (blue, pale blue, teal) on a plain white background, like an app icon. The shadow is very subtle, almost absent.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The antibody Y shape is a molecular symbol rather than text, though it slightly resembles a letter.",
-          "score": 9,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -35,23 +12,7 @@
           "reasoningTokens": 151
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The antibody is built from four separate parallel bars, so at a glance it could read as a stylized letter 'Y' rather than a molecule. The ground shadow is very faint, which makes the shield look slightly floating.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Give the antibody slightly rounded, joined arms or small binding-site tips so it reads unmistakably as a molecule rather than a glyph. Strengthen the soft contact shadow a little to anchor the object.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-immunology-1",
@@ -61,32 +22,10 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A shield bearing an antibody clearly says immune defense, which fits immunology and is far from a generic medical cross.",
-          "score": 9,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is one centered object with a clean silhouette in smooth matte 3D and soft lighting. It uses three colors (blue, pale blue and teal) on a plain white background. The shadow is very faint.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters or numbers. The antibody's Y form could briefly be mistaken for a letter, but it is clearly drawn as an antibody with light chains.",
-          "score": 9,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -97,23 +36,7 @@
           "reasoningTokens": 191
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The antibody glyph is very stylized and could be glimpsed as a letter 'Y' at small icon sizes, and the ground shadow is so faint the object nearly floats.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Make the antibody more distinctly molecular, for example with slightly rounded hinge joints or tiny binding tips, so it cannot read as a letter. Strengthen the soft contact shadow a little to anchor the shield.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-immunology-2",
@@ -123,32 +46,10 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A shield holding an antibody is exactly the suggested motif. It clearly stands for immunology and the body's defenses, not a generic medical symbol.",
-          "score": 9,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "One centered object with a clean silhouette in smooth matte 3D with soft lighting. It uses three colors (blue, pale blue, teal) on a plain white background, like an app icon. The shadow is very faint.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The antibody shape is a standard biological symbol, not text.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -159,23 +60,7 @@
           "reasoningTokens": 163
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The shadow under the shield is very faint, so the icon feels slightly less grounded than the brief's subtle shadow implies. The antibody's two parallel arms meet closely in the middle, and at small sizes the shape could read a little like a letter Y.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Add a slightly stronger soft contact shadow. Widen the gap between the antibody's heavy and light chains, or add a small antigen-binding tip, so the shape reads unmistakably as an antibody at small app-icon sizes.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-immunology-3",
@@ -185,32 +70,10 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A coin clearly signals money and economics at a glance, but it is a fairly generic money icon. It doesn't capture the broader economics ideas in the description, such as scarcity, prices, interest or inflation.",
-          "score": 7,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is one centered coin with a clean silhouette in smooth matte 3D, with soft lighting and a subtle shadow. It uses two colors (green and gold) on a plain white background and reads like an app icon.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The only mark is an embossed dollar-sign glyph, which is a symbol rather than text but sits near the boundary.",
-          "score": 8,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -221,23 +84,7 @@
           "reasoningTokens": 260
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The coin alone reads more as 'money' or 'personal finance' than as economics. It doesn't hint at prices, inflation or choices. The dollar glyph is a typographic symbol and leans toward the 'no text' boundary, and it fits a Portuguese-language course less well than a neutral currency mark would.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Replace the dollar glyph with a neutral emblem or a small rising-arrow or balance motif molded into the coin face. This would signal markets and prices rather than one currency, and it would remove any symbol that could be read as text.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "pt-economia-1",
@@ -247,32 +94,10 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A coin clearly signals money, which fits economics. It is a fairly generic finance symbol, though, and does not capture choices, prices or markets.",
-          "score": 7,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is a single centered coin with a clean silhouette in smooth matte 3D. It has soft lighting, a subtle shadow, a two-color green and gold palette and a plain white background, so it reads exactly like an app icon.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The '$' currency symbol is glyph-like, which is a slight concern under a strict no-text rule.",
-          "score": 8,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -283,23 +108,7 @@
           "reasoningTokens": 225
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The embossed '$' is a currency glyph rather than a pure shape. It is not a letter or number, but it edges toward the no-text rule. A plain coin also reads more as 'money/finance' than broader economics (choices, prices, interest, inflation).",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Add an economics cue such as a small rising arrow integrated into the coin, or a balance of goods and coins. This would convey prices and markets rather than just money, and it would avoid relying on a typographic symbol.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "pt-economia-2",
@@ -309,32 +118,10 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A coin clearly signals money and fits the rubric's examples. However, it is a fairly generic money or finance icon and does not distinctly convey economics concepts like prices, inflation or markets.",
-          "score": 7,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is a single centered coin with a clean silhouette in smooth matte 3D, with soft lighting and a subtle shadow. It uses two main colors (green and gold) on a plain white background, much like an app icon.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, words or numbers. The '$' is a currency symbol rather than text, though it sits close to a glyph.",
-          "score": 8,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -345,23 +132,7 @@
           "reasoningTokens": 238
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "A plain coin with a dollar sign reads more as personal finance or money than as economics (scarcity, prices, inflation). The '$' glyph is close to a text-like symbol. For a Portuguese-language course, the US dollar sign is a slightly odd cultural choice.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Add an economics cue, such as a small rising arrow integrated into the coin or a coin balanced against goods, to signal prices and inflation. Alternatively, replace the '$' with an abstract emblem so the icon is fully symbol-free and culture-neutral.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "pt-economia-3",
@@ -371,32 +142,10 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A bar chart with a rising trend arrow reads clearly as data and charting at a glance. The upward arrow leans a little toward 'growth', but it still fits the course well.",
-          "score": 9,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It is a single centered object with a clean silhouette, smooth matte 3D, soft lighting, a subtle shadow and a plain white background, much like an app icon. It loses points for using about five colors and for being large and tilted.",
-          "score": 8,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "I checked the whole image and found no letters, numbers or captions.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -407,23 +156,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The palette runs to about five hues (dark blue frame, off-white panel, teal, bright blue, orange), slightly over the 2–4 color limit. The chart is also tilted at an angle and fills much of the canvas, leaving less breathing room than an app icon usually has.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Cut the palette to three colors, for example by making the bars one blue family with orange as the accent. Show the object more frontally and shrink it slightly so there is more margin. Adding a small magnifying-glass cue would tie the icon to analysis rather than growth.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-1",
@@ -433,32 +166,10 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A bar chart clearly stands for data analysis at a glance. The upward trend arrow leans slightly toward business growth rather than analysis.",
-          "score": 9,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It is a single centered object in smooth matte 3D with soft lighting and a subtle shadow on plain white, like an app icon. It uses slightly more than 4 colors and fills the frame tightly.",
-          "score": 8,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -469,23 +180,7 @@
           "reasoningTokens": 167
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The palette stretches past the 2–4 color limit: teal, light blue, orange, navy and a cream panel. The object also fills most of the canvas, leaving little empty space around it.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Cut the bars to two hues plus one accent and shrink the object for more margin. Swapping the growth arrow for a magnifying glass over the bars would point more to 'analysis' than to 'growth'.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-2",
@@ -495,32 +190,10 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A bar chart tile reads instantly as data and charting, which fits the course well. The upward trend arrow leans slightly toward 'growth' rather than analysis.",
-          "score": 9,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is one centered object with a clean silhouette, smooth matte 3D, soft lighting, a subtle shadow and a plain white background, so it reads like an app icon. It uses about five colors and fills the frame tightly.",
-          "score": 8,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -531,23 +204,7 @@
           "reasoningTokens": 229
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The palette runs slightly over the limit: navy frame, bright blue bar, teal bar, orange bar and an off-white face make about five colors, not 2 to 4. The tilted tile fills most of the canvas and leaves only tight margins, so it feels less isolated than an app icon should. The rising arrow reads a little like 'growth/profit' rather than analysis.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Recolor the bars into two shades of the frame blue with orange as the single accent to reach 3 to 4 colors. Scale the object down for more white space. Consider swapping the growth arrow for a small magnifying-glass cue so the icon reads as 'analysis' rather than 'growth'.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-3",
@@ -557,7 +214,8 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     }
   ],
   "taskId": "course-icon"

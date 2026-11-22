@@ -127,6 +127,36 @@ async function claimLanguageLesson(attrs: {
 }
 
 describe(writeLanguageLessonDraft, () => {
+  it("records a shared draft's first passing code check before publication", async () => {
+    await aiOrganizationFixture();
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    const writerRunId = crypto.randomUUID();
+    const draft = uniqueDraft(crypto.randomUUID());
+
+    mockDraft(draft, writerRunId);
+
+    await expect(
+      writeLanguageLessonDraft({ lessonId: lesson.id, workflowRunId }),
+    ).resolves.toMatchObject({ status: "drafted" });
+
+    const decisions = () =>
+      prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id } });
+
+    await expect(decisions()).resolves.toMatchObject([
+      { blocking: [], outcome: "passed", phase: "codeCheck", writerRunId },
+    ]);
+
+    mockDraft({ ...draft, sentences: [] }, writerRunId);
+
+    await expect(
+      writeLanguageLessonDraft({ lessonId: lesson.id, workflowRunId }),
+    ).resolves.toStrictEqual({ status: "heldBack" });
+
+    await expect(decisions()).resolves.toMatchObject([
+      { blocking: [], outcome: "passed", phase: "codeCheck", writerRunId },
+    ]);
+  });
+
   it("writes nothing for a run that doesn't hold the claim", async () => {
     const lesson = await libraryLessonFixture({ language: "pt", targetLanguage: "en" });
 

@@ -183,13 +183,8 @@
   "plan_date_estimate_spoken": "1e6bcb046568cebda44059bdf8a3d89885e46de5af6ef5caaa5f13e1209b4aab",
   "plan_date_range": "f52ed071a893aee457b60640ef30c3e6a36a7ec1700ccbeb49f142d39825d03a",
   "plan_date_to_be_confirmed": "e34074249c1c5eb3b243b50fbe03160c6d9dc8ef88f9649aebca10d6bfd7d6b2",
-  "plan_day_done": "85ac91792d796471f7b9e25b7cf1016c278eb4bc562d4de239048e117823d179",
   "plan_day_is_here": "4d972bc94a223299c95d8a2d0c14defb146da0af765b1ea80879f907ebf57859",
-  "plan_day_missed": "9b24d54f47aa4e6d70fee025fde83fb71392b3133640115beb12c3141aec3821",
-  "plan_day_planned": "e285dcfa51587a13d095fcc3c6c6447aa40cea588ad06fb233bbe55d908aa352",
   "plan_day_range": "3404aebce18946ae342512e58e2050599c85c08337cbc47a51ab474693294a17",
-  "plan_day_rest": "29968c510a0259a8c79d492ec9b39de3c86329bcc3de2a82ce05186ff9c457d5",
-  "plan_day_today": "2d05110858db0f3959e93fb8fc04179ed262498b0c62777dfa00b8986c3c3c53",
   "plan_days_left": "a9f0adb639e8ced5d8e800b8b6cc2ff3929fd33a7449567862d01c02df5632f8",
   "plan_days_left_estimate": "4ca5ab5197a6edcbca04c3d4287c7e98ccf5d44b7ebcafc802dda1662186b617",
   "plan_days_left_estimate_spoken": "8c043c0e7a1480e0ab2f94e258959013f86a18237d4181249f267e237b8e0e42",
@@ -516,7 +511,6 @@
   "plan_use_this_date": "0006c1abb6ba2d88e682ee7aca46d8a10df793b8e24559fa732ca0bfa614ea5d",
   "plan_use_time": "266531c5b02f07913a23dfd902c9a7ea66ba57fec125c1a750dca66f94cb2caf",
   "plan_wednesdays": "a194a71e5da74fed6ea21d2d1bb0a5905b6895325996babd9d7d4ca20ab3720f",
-  "plan_week_day": "fdbe4da136c3a07ef596c86d08d454b1f621c8814113587979b178f8f78c076b",
   "plan_week_time": "51d54990937ae88c6bf417ff3a2ba4cc610be9c0d2449520e8b10c45d1ebda7a",
   "plan_weekly_challenges": "b2c56bf735614e52c318a76b7a8f4ebbc9862cf5011c5212388bd07e1a2d875c",
   "plan_what_you_practice": "dd760574b53bfd83fd1f66e150f9b89ad01c739f31b9a0a0aca89c73c90e09f5",
@@ -794,12 +788,6 @@
     </plurals>
     <string name="plan_this_week">Questa settimana</string>
     <string name="plan_week_time">%1$s su %2$s</string>
-    <string name="plan_week_day">%1$s: %2$s</string>
-    <string name="plan_day_done">completato</string>
-    <string name="plan_day_missed">non hai studiato</string>
-    <string name="plan_day_rest">giorno di riposo</string>
-    <string name="plan_day_today">oggi</string>
-    <string name="plan_day_planned">in programma</string>
     <string name="plan_preparation">Preparazione</string>
     <string name="plan_progress">Progressi</string>
     <string name="plan_your_preparation">La tua preparazione</string>

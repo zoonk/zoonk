@@ -1,0 +1,154 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00821309,
+  "failures": [],
+  "packetId": "f8523edc445e4a23af2537a608308bbb50bd8db7792bad4de5f08f5fd186cfbe",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach the same single idea, percent change from the starting value, with identical screens apart from one check.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "Both plans share the same screens, but A's check gives 13.04% as the correct answer for a rise from $40 to $46, which is wrong; B's check gives 15%, the correct answer, and names 13.04% as the trap.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same text-only screens and no visuals or activities, so neither serves the reader better on this criterion.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are US English, beginner-level, and stay inside the lesson's scope with the same everyday cases.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key for the fee check is wrong. A rise from $40 to $46 is a 15% increase (6 ÷ 40 × 100), not 13.04%. The 13.04% figure comes from dividing by the new fee, which is the trap the plan describes, and the plan calls 15% the tempting answer, which is actually correct.",
+            "criterion": "screenPlan",
+            "learnerCost": "A learner who follows this check is taught that the correct method gives the wrong answer and that the right method is a mistake, which undoes the lesson's central skill.",
+            "location": {
+              "detail": "The check brief for the monthly service fee.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's check teaches the correct percent change and names the old-versus-new-value trap correctly, while A's check gives a wrong answer key that would mislead the learner."
+        },
+        "pairId": "75fd648a-0601-42d1-afc3-19c079760154"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach one idea: reading slope steepness from contour spacing.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give a hook, a worked example, checks and an application in a sensible order, with similar tempting wrong answers.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both show a picture on most question and explanation screens, and both repeat a similar map across several screens.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are beginner-level US English with plain words and no formulas, and both stay within the lesson.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The trail A example says the walker gains 20 feet in a short distance, but the map shows Trail A climbing from the 600-foot loop to the 660-foot loop, a 60-foot gain. The 20 feet is the interval between two neighboring loops.",
+            "criterion": "screenPlan",
+            "learnerCost": "A learner may think the trail gains only 20 feet and misjudge how much climbing there is.",
+            "location": {
+              "detail": "The brief of the close-lines explanation screen.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are close in teaching quality, with similar checks and visuals, and neither gives a clearly better experience."
+        },
+        "pairId": "85758498-0a56-409a-a345-462273836bff"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and teach the same single idea.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in their screen plans.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in their visuals and activities.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in level, scope and language.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The trail A example says the walker gains 20 feet in a short distance, but the map shows Trail A climbing from the 600-foot loop to the 660-foot loop, a 60-foot gain. The 20 feet is the interval between two neighboring loops.",
+            "criterion": "screenPlan",
+            "learnerCost": "A learner may think the trail gains only 20 feet and misjudge how much climbing there is.",
+            "location": {
+              "detail": "The brief of the close-lines explanation screen.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The trail A example says the walker gains 20 feet in a short distance, but the map shows Trail A climbing from the 600-foot loop to the 660-foot loop, a 60-foot gain. The 20 feet is the interval between two neighboring loops.",
+            "criterion": "screenPlan",
+            "learnerCost": "A learner may think the trail gains only 20 feet and misjudge how much climbing there is.",
+            "location": {
+              "detail": "The brief of the close-lines explanation screen.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are identical, so neither serves the reader better."
+        },
+        "pairId": "b5db1dcb-de70-4973-8f08-0f49bf5fd9fa"
+      }
+    ]
+  }
+}

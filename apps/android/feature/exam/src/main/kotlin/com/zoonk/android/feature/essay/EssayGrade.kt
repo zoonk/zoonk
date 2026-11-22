@@ -67,6 +67,7 @@ internal fun EssayGradeCard(
     grade: EssayGrade,
     rubric: EssayRubric,
     onComments: (() -> Unit)? = null,
+    note: (@Composable () -> Unit)? = null,
 ) {
     val locale = currentLocale()
 
@@ -76,6 +77,7 @@ internal fun EssayGradeCard(
             ScoreRange(stringResource(R.string.essay_range, formatNumber(grade.range.low, locale), formatNumber(grade.range.high, locale)))
         }
         StepDetail(stringResource(R.string.essay_scale, formatNumber(grade.total.maxScore, locale)))
+        note?.invoke()
     }
     CriteriaRows(grade, rubric)
     if (onComments != null) {

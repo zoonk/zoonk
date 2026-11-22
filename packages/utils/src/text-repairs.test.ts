@@ -1,3 +1,4 @@
+import { assert, constantFrom, pre, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import { findUnrenderedMarkdown } from "./text-flaws";
 import { repairMarkdown, toPlainLine } from "./text-repairs";
@@ -169,6 +170,68 @@ describe(repairMarkdown, () => {
     );
   });
 
+  it("repairs marks around a code block and keeps every character of the code", () => {
+    const code = ["```python", "# soma", "def f(*args, **kwargs):", "    return [a](b)", "```"];
+
+    expect(repairMarkdown({ layout: "blocks", text: ["## Veja **isto", ...code].join("\n") })).toBe(
+      ["Veja isto", ...code].join("\n"),
+    );
+  });
+
+  it("keeps inline code as written while repairing the words around it", () => {
+    expect(repairMarkdown({ layout: "inline", text: "O que `<div>` contém em <b>HTML</b>?" })).toBe(
+      "O que `<div>` contém em HTML?",
+    );
+
+    expect(repairMarkdown({ layout: "blocks", text: "## O que `<div>` e `[a](b)` contêm?" })).toBe(
+      "O que `<div>` e `[a](b)` contêm?",
+    );
+  });
+
+  it("takes out emphasis around inline code, which players show as raw marks", () => {
+    const stray = [
+      ["**Use `x` here**", "Use `x` here"],
+      ["*see `a_b` now*", "see `a_b` now"],
+      ["- **call `f()`** first", "- call `f()` first"],
+    ] as const;
+
+    for (const layout of ["blocks", "inline"] as const) {
+      for (const [text, repaired] of stray) {
+        expect(findUnrenderedMarkdown({ layout, text })).toStrictEqual([
+          expect.stringContaining("emphasis marks"),
+        ]);
+
+        expect(repairMarkdown({ layout, text })).toBe(repaired);
+      }
+    }
+  });
+
+  it("leaves no emphasis mark the check would still flag", () => {
+    const pieces = constantFrom("a", " ", "**", "*", "_", "`", "$", "\n", "```", "- ");
+
+    assert(
+      property(
+        string({ maxLength: 16, unit: pieces }),
+        constantFrom("blocks", "inline"),
+        (text, layout) => {
+          pre(layout === "blocks" || !text.includes("```"));
+
+          expect(
+            findUnrenderedMarkdown({ layout, text: repairMarkdown({ layout, text }) }),
+          ).not.toContainEqual(expect.stringContaining("emphasis marks"));
+        },
+      ),
+    );
+  });
+
+  it("keeps a tilde block's code as written", () => {
+    const code = ["~~~html", "<div># título</div>", "~~~"];
+
+    expect(repairMarkdown({ layout: "blocks", text: ["## Veja", ...code].join("\n") })).toBe(
+      ["Veja", ...code].join("\n"),
+    );
+  });
+
   it("leaves what code can't repair for a writer", () => {
     const table = "| Sensor | mm |\n|---|---:|\n| A | 49,8 |";
     const rows = "| A | 49,8 |\n| B | 50,1 |";
@@ -177,6 +240,9 @@ describe(repairMarkdown, () => {
     expect(repairMarkdown({ layout: "inline", text: table })).toBe(table);
     expect(repairMarkdown({ layout: "blocks", text: rows })).toBe(rows);
     expect(repairMarkdown({ layout: "blocks", text: fence })).toBe(fence);
+
+    const fenceInLine = `Rode **isto:\n${fence}\nagora`;
+    expect(repairMarkdown({ layout: "inline", text: fenceInLine })).toBe(fenceInLine);
   });
 });
 

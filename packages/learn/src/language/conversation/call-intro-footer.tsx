@@ -124,7 +124,7 @@ export function CallIntroFooter({
         {microphone.problem && <MicrophoneOff name={name} problem={microphone.problem} />}
 
         {microphone.prompting && (
-          <p className="text-muted-foreground text-sm text-pretty">
+          <p className="text-muted-foreground text-sm">
             {t("Allow the microphone to talk with {name}.", { name })}
           </p>
         )}
@@ -186,7 +186,7 @@ function MicrophoneOff({ name, problem }: { name: string; problem: MicrophonePro
 
   return (
     <CallReason className="pb-1" title={words.title}>
-      <p className="text-muted-foreground text-sm text-pretty">{words.text}</p>
+      <p className="text-muted-foreground text-sm">{words.text}</p>
     </CallReason>
   );
 }
@@ -218,7 +218,7 @@ function CallIntroActions({
   return (
     <>
       {start === "failed" && (
-        <p className="text-destructive-text text-sm text-pretty" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("The call didn't start. Try again in a moment.")}
         </p>
       )}

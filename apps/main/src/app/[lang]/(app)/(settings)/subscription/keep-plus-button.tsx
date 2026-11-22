@@ -30,9 +30,7 @@ export function KeepPlusButton() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm text-pretty">
-        {t("Keep Plus, and it renews as before.")}
-      </p>
+      <p className="text-muted-foreground text-sm">{t("Keep Plus, and it renews as before.")}</p>
 
       <form action={() => keep()} className="contents">
         <Button

@@ -46,6 +46,16 @@ internal object RichTextSamples {
 
     val code = "Count the rows with `COUNT(*)`; `user_id` and 2 * 3 * 4 stay as written, «quoted words» lean."
 
+    val longInlineCode = "In `Promise.resolve('receipt').then(console.log); console.log('done');`, the value already exists."
+
+    val codeBlock =
+        "Look at this program:\n```python\nfor i in range(3):\n\tif i > 0:  # skips 0\n" +
+            "        print(f\"item {i}\", sorted(values, key=lambda v: v.weight))\n\nprint(\"done\")\n```\nWhat does it print?"
+
+    val codeOption =
+        "```java\nclass Exporter extends Service {\n  Compressor c = new Compressor();\n" +
+            "  void export() { c.compress(); }\n}\n```"
+
     val tutorAnswer =
         "## Why 75%?\n\nA discount takes **25%** off, so you pay the rest:\n\n" +
             "$$0.75 \\times 80 = 60$$\n\n1. Start from 100%.\n2. Take away the discount.\n   - 100% − 25% = 75%\n\n" +
@@ -71,6 +81,9 @@ internal fun RichTextGallery(modifier: Modifier = Modifier) {
             HorizontalDivider()
             RichText(RichTextSamples.marked, mark = RichTextSamples.mark)
             RichText(RichTextSamples.code)
+            RichText(RichTextSamples.longInlineCode)
+            RichText(RichTextSamples.codeBlock)
+            RichInlineText(RichTextSamples.codeOption)
             HorizontalDivider()
             MarkdownText(RichTextSamples.tutorAnswer, onOpenLink = {})
         }

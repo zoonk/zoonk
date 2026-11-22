@@ -1,6 +1,6 @@
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { useActivityDraggable } from "../_components/activity-drag-drop";
 import { handDragId } from "./categorize-drag-ids";
 
