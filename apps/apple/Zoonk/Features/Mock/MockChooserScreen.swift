@@ -88,6 +88,7 @@ private struct MockChooser: View {
   let onStarted: (String) -> Void
 
   private var isOpen: Bool { view.access == .open }
+  private var isWaitingForChoice: Bool { pickedOption.flatMap(pendingChoice) != nil }
   private var severalDays: Bool { view.options.filter { $0.kind == .full }.count > 1 }
   /// Nothing is picked when the page opens, so one tap on Start never begins a five-hour exam.
   private var pickedOption: MockOption? {
@@ -250,6 +251,14 @@ private struct MockChooser: View {
       LimitWayOn(limit: limit)
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
+    } else if isWaitingForChoice {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text("Choose on Today", tableName: "Mock")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     } else if isPreparing {
       Button {
         router.showRoot(of: .today)
@@ -288,13 +297,7 @@ private struct MockChooser: View {
       return BarNote(limit.sentence(), tone: .status)
     }
 
-    if let pickedOption, let groups = pendingChoice(pickedOption) {
-      return BarNote(
-        WritingLabels.choiceLine(groups), tone: .status,
-        action: .init(
-          label: Text("Choose on Today", tableName: "Mock"),
-          perform: { router.showRoot(of: .today) }))
-    }
+    if isWaitingForChoice { return nil }
 
     if isPreparing {
       return BarNote {

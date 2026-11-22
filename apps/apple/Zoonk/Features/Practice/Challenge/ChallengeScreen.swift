@@ -230,20 +230,15 @@ struct ChallengeScreen: View {
     return Text(titleString(challenge))
   }
 
-  /// The choice a start needs, or the run writing the paper, over the bar as on the chooser.
+  /// The choice a start needs, or the run writing the paper, over the bar.
   private func startNote(_ challenge: Components.Schemas.Challenge) -> BarNote? {
+    guard !isLocked(challenge) else { return nil }
+
     if let pendingExamChoice {
-      return BarNote(
-        WritingLabels.choiceLine(pendingExamChoice), tone: .status,
-        action: .init(
-          label: Text("Choose on Today", tableName: "Mock"),
-          perform: {
-            dismiss()
-            hooks.navigate(.today)
-          }))
+      return BarNote(WritingLabels.choiceLine(pendingExamChoice), tone: .status)
     }
 
-    guard !isLocked(challenge), isPreparing(challenge) else { return nil }
+    guard isPreparing(challenge) else { return nil }
 
     return BarNote {
       MockPreparingNote(
@@ -269,6 +264,13 @@ struct ChallengeScreen: View {
         icon: .forward
       ) {
         hooks.navigate(.subscription)
+      }
+    } else if pendingExamChoice != nil {
+      PracticeMainButton(
+        title: LocalizedStringResource("Choose on Today", table: "Mock"), icon: .forward
+      ) {
+        dismiss()
+        hooks.navigate(.today)
       }
     } else if challenge.status == .done || challenge.status == .tried,
       let blockId = challenge.blockId
@@ -330,7 +332,7 @@ struct ChallengeScreen: View {
                 : LocalizedStringResource(
                   "Start", table: "Practice", comment: "Starts a challenge."),
               icon: .play, isBusy: isStarting || isWriting,
-              isDisabled: isMoving || pendingExamChoice != nil
+              isDisabled: isMoving
             ) { run { await start(afterWriting: false) } }
           }
         }
