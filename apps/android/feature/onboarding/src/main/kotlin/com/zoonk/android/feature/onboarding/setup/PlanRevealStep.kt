@@ -33,8 +33,6 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.android.feature.plan.coveredText
-import com.zoonk.android.feature.plan.planCoverage
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
@@ -321,7 +319,6 @@ private fun ColumnScope.RevealBody(
     val choices: @Composable () -> Unit = {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
             RevealReadouts(plan, goal, today)
-            RevealCoverageLine(plan)
             PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
             NoticeDayLine(plan, enabled = !starting, onUse = onUseNoticeDay)
             if (plan.notice == Plan.Notice.USUAL) {
@@ -378,21 +375,6 @@ private fun RevealPlanPane(choices: @Composable () -> Unit) {
         SectionHeader(stringResource(R.string.plan_your_plan))
         choices()
     }
-}
-
-/**
- * Main's `RevealCoverage`: what the learner's time covers when it doesn't cover the whole goal; "Adjust plan" below
- * opens the editor to change it. A plan that keeps going after the exam covers the rest then.
- */
-@Composable
-private fun RevealCoverageLine(plan: Plan) {
-    val coverage = planCoverage(plan)
-    if (coverage == null || plan.schedule.fullCourse) return
-    Text(
-        coveredText(plan, coverage) ?: return,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
 }
 
 /** Main's `RevealNoticeDay`: the exam's day research found after the plan was built, with the way to use it. */

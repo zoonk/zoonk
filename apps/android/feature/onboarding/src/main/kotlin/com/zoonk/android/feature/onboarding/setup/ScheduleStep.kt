@@ -41,10 +41,9 @@ import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
-import com.zoonk.android.feature.plan.TimeLine
-import com.zoonk.android.feature.plan.everythingTakesNote
+import com.zoonk.android.feature.plan.coversEverything
 import com.zoonk.android.feature.plan.lineAdvice
-import com.zoonk.android.feature.plan.markedTimes
+import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
@@ -268,7 +267,6 @@ private fun ColumnScope.ScheduleTime(
     }
     val pick = { next: Int -> choose(next, shownFound) }
     val stale = hasDays && !startsOnRecommended && waitsForSuggestion(findFailed, first, found, picked)
-    val marked = markedTimes(found)
 
     com.zoonk.android.data
         .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
@@ -285,7 +283,7 @@ private fun ColumnScope.ScheduleTime(
                     OnboardingAnswerInputOneOf9(
                         dailyMinutes = time.toLong(),
                         question = OnboardingAnswerInputOneOf9.Question.SCHEDULE,
-                        fullCourse = if (exam) keepsFullCourse(fullCourse, line) else null,
+                        fullCourse = if (exam) keepsFullCourse(fullCourse, found, minutes) else null,
                         studyDays = days.takeIf { it.size < EVERY_DAY.size }?.map(Int::toLong),
                         timeZone = TimeZone.getDefault().id,
                         weekendMinutes = weekend?.toLong(),
@@ -303,8 +301,7 @@ private fun ColumnScope.ScheduleTime(
                 minutes = minutes,
                 label = label,
                 onChange = pick,
-                suggested = marked.suggested,
-                full = marked.full,
+                suggested = suggestedMinutes(found),
                 stale = stale,
             )
         }
@@ -329,8 +326,8 @@ private fun ColumnScope.ScheduleTime(
 
         // It shows only under a time that doesn't cover everything, so it comes after every other input: showing it
         // moves only the answer under it.
-        val short = shown.line is TimeLine.Share
-        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
+        val short = shown.found != null && !coversEverything(shown.found, minutes)
+        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.found, minutes))) {
             val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
             FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
@@ -350,8 +347,7 @@ private fun ColumnScope.ScheduleTime(
                     }
                 },
             minutes = minutes,
-            takes = everythingTakesNote(shown.found),
-            offer = timeOffer(shown.found, shown.line, minutes),
+            offer = timeOffer(shown.line, minutes),
             onRetry = if (findFailed) covering.restart else timeAdvice.restart,
             onUseOffer = { choose(it, found) },
             split =

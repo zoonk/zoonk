@@ -198,16 +198,11 @@ class OnboardingScreenshots {
             FakeOnboardingApi().apply {
                 setup = { setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08") }
                 cover = { coverOf(recommended = 150) }
-                advice = {
-                    val enough = (it.dailyMinutes ?: 0) >= 150
-                    adviceOf(if (enough) 1.0 else 0.3, reachedShare = if (enough) 1.0 else 0.82)
-                }
             }
         val none =
             FakeOnboardingApi().apply {
                 setup = { setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08") }
-                cover = { coverOf(recommended = 805, focus = 240, reachedShare = 0.8) }
-                advice = { adviceOf(0.6) }
+                cover = { coverOf(recommended = 805, focus = 240) }
             }
         var api by mutableStateOf(covers)
         compose.setContent { ZoonkTheme { Surface { key(api) { Setup(api) } } } }
@@ -542,30 +537,7 @@ class OnboardingScreenshots {
                             setup = {
                                 setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
                             }
-                            cover = { coverOf(recommended = 805, focus = 240, reachedShare = 0.8) }
-                            advice = { adviceOf(0.6) }
-                        },
-                    )
-                },
-                "setup-schedule-every-topic" to {
-                    Setup(
-                        FakeOnboardingApi().apply {
-                            setup = {
-                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
-                            }
                             cover = { coverOf(recommended = 805, focus = 240) }
-                            advice = { adviceOf(0.6) }
-                        },
-                    )
-                },
-                "setup-schedule-no-reach" to {
-                    Setup(
-                        FakeOnboardingApi().apply {
-                            setup = {
-                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
-                            }
-                            cover = { coverOf(recommended = 805, focus = 240, reachedShare = null) }
-                            advice = { adviceOf(0.6, reachedShare = null) }
                         },
                     )
                 },

@@ -80,7 +80,6 @@ sealed interface TimeToCoverAnswer {
     ) : TimeToCoverAnswer
 
     data class Focus(
-        val reachedShare: Double?,
         val minutes: Int,
     ) : TimeToCoverAnswer
 
@@ -91,6 +90,6 @@ fun PlanTimeToCover.answer(): TimeToCoverAnswer =
     suggested?.let {
         when (it.kind) {
             PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeToCoverAnswer.Covers(it.minutes.toInt())
-            PlanTimeToCoverSuggested.Kind.FOCUS -> TimeToCoverAnswer.Focus(it.reachedShare, it.minutes.toInt())
+            PlanTimeToCoverSuggested.Kind.FOCUS -> TimeToCoverAnswer.Focus(it.minutes.toInt())
         }
     } ?: TimeToCoverAnswer.None

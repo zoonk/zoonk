@@ -212,7 +212,7 @@ internal fun coveragePlan(
         """
         "areas":$areas,
         "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
-         "measure":"$kind","reachedShare":${if (coreFits) 1.0 else 0.85},"timeCovers":$timeCovers},
+         "measure":"$kind","timeCovers":$timeCovers},
         "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":$fullCourse,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
          "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]}
         """.trimIndent(),
@@ -230,14 +230,13 @@ internal fun timeToCover(
     focus: Long? = null,
     fittingDate: String? = null,
     ready: Boolean = true,
-    reachedShare: Double = 1.0,
 ): PlanTimeToCover =
     PlanTimeToCover(
         fittingDate = fittingDate?.let(kotlinx.datetime.LocalDate::parse),
         most = null,
         ready = ready,
         recommendedMinutes = recommended,
-        suggested = suggestionFor(recommended, focus, reachedShare).takeIf { ready },
+        suggested = suggestionFor(recommended, focus).takeIf { ready },
         targetDate = kotlinx.datetime.LocalDate.parse("2027-01-31"),
         targetDateNamedMonth = false,
     )

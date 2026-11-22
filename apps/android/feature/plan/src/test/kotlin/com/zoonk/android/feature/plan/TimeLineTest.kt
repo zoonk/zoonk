@@ -1,48 +1,44 @@
 package com.zoonk.android.feature.plan
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class TimeLineTest {
-    private fun lineAt(advice: LineAdvice) =
-        timeLine(
-            advice = advice,
-            askFailed = false,
-            dated = true,
-            findFailed = false,
-            found = timeToCover(focus = 240),
-            hasDays = true,
-            minutes = 60,
-        )
+    private fun lineAt(
+        minutes: Int,
+        recommended: Long? = 45,
+        focus: Long? = null,
+    ) = timeLine(
+        advice = null,
+        askFailed = false,
+        dated = true,
+        findFailed = false,
+        found = timeToCover(recommended = recommended, focus = focus),
+        hasDays = true,
+        minutes = minutes,
+    )
 
     @Test
-    fun aDatedPlanThatDoesNotSayWhatItsTimeReachesShowsNoShareInsteadOfNone() {
-        val line = lineAt(LineAdvice(coveredShare = 0.4, reachedShare = null, endDate = null))
+    fun aDatedGoalsLineIsTheSuggestionWhateverTimeIsPicked() {
+        val suggested = TimeLine.Suggest(minutes = 45, focus = false)
 
-        assertEquals(TimeLine.Share(null), line)
+        assertEquals(suggested, lineAt(minutes = 20))
+        assertEquals(suggested, lineAt(minutes = 45))
+        assertEquals(suggested, lineAt(minutes = 300))
     }
 
     @Test
-    fun aTimeThatCoversEverythingKeptSaysTheWholeGoalOnlyWhenNoSubjectWasTakenOut() {
-        assertEquals(TimeLine.Everything(whole = true), lineAt(LineAdvice(coveredShare = 1.0, reachedShare = 1.0, endDate = null)))
-        assertEquals(TimeLine.Everything(whole = false), lineAt(LineAdvice(coveredShare = 1.0, reachedShare = 0.79, endDate = null)))
-        assertEquals(TimeLine.Everything(whole = true), lineAt(LineAdvice(coveredShare = 1.0, reachedShare = null, endDate = null)))
+    fun aSuggestionCappedAtFourHoursSaysThePlanStartsWithWhatMattersMost() {
+        assertEquals(TimeLine.Suggest(minutes = 240, focus = true), lineAt(minutes = 60, recommended = 805, focus = 240))
+        assertEquals(TimeLine.Suggest(minutes = 240, focus = true), lineAt(minutes = 60, recommended = null, focus = 240))
     }
 
     @Test
-    fun theSuggestedTimeThatCoversEverythingKeptSaysTheWholeGoalOnlyWhenNoSubjectWasTakenOut() {
-        fun suggestedLine(reachedShare: Double) =
-            timeLine(
-                advice = null,
-                askFailed = false,
-                dated = true,
-                findFailed = false,
-                found = timeToCover(recommended = 45, reachedShare = reachedShare),
-                hasDays = true,
-                minutes = 45,
-            )
-
-        assertEquals(TimeLine.Everything(whole = true), suggestedLine(1.0))
-        assertEquals(TimeLine.Everything(whole = false), suggestedLine(0.79))
+    fun theSuggestionIsOfferedOnlyUnderAShorterTime() {
+        assertEquals(45, timeOffer(lineAt(minutes = 20), minutes = 20))
+        assertNull(timeOffer(lineAt(minutes = 45), minutes = 45))
+        assertNull(timeOffer(lineAt(minutes = 120), minutes = 120))
+        assertEquals(240, timeOffer(lineAt(minutes = 60, recommended = 805, focus = 240), minutes = 60))
     }
 }

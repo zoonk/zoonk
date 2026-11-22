@@ -189,9 +189,11 @@ class PlanScreenshots {
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun sheetContents() {
         val page = page()
+        val timeLeft = page.copy(plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"))
         val sheets: Map<String, @Composable ColumnScope.(PlanLinks) -> Unit> =
             mapOf(
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
+                "plan-sheet-pace-time-left" to { links -> PaceDetails(timeLeft, timeLeft.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
                     { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
                 "plan-sheet-preparation-review" to
@@ -229,6 +231,7 @@ class PlanScreenshots {
         val sheetTitles: Map<String, @Composable () -> String> =
             mapOf(
                 "plan-sheet-pace" to { stringResource(R.string.plan_your_pace) },
+                "plan-sheet-pace-time-left" to { stringResource(R.string.plan_your_pace) },
                 "plan-sheet-progress" to { stringResource(R.string.plan_your_progress) },
                 "plan-sheet-preparation-review" to { stringResource(R.string.plan_your_preparation) },
                 "plan-sheet-preparation-reviewed" to { stringResource(R.string.plan_your_preparation) },
@@ -424,6 +427,7 @@ class PlanScreenshots {
         val laterFitPlan = fitPlan.copy(fitOffer = fitPlan.fitOffer?.copy(canApply = false))
         val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
         val pastDate = pastDatePlan()
+        val timeLeft = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null")
         val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
         val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
@@ -525,6 +529,7 @@ class PlanScreenshots {
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
                         SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons, change) }
                     }),
+                "plan-slot-time-left" to Shot(timeLeft),
                 "plan-slot-past-date" to Shot(pastDate),
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
                 "plan-slot-past-date-preview" to Shot(pastDate, host = SlotHost(preview = ready(moved, pastDate))),
@@ -712,62 +717,60 @@ class PlanScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheSuggestion() = captureEditorTime("plan-editor-time-suggested", minutes = 240, share = 0.32, reached = 0.71)
+    fun editorTimeUnderTheFocusSuggestion() = captureEditorTime("plan-editor-time-focus-short", minutes = 90)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
-    fun editorTimeOnTheSuggestionDark() =
-        captureEditorTime("plan-editor-time-suggested-dark", minutes = 240, share = 0.32, reached = 0.71, dark = true)
+    fun editorTimeUnderTheFocusSuggestionDark() = captureEditorTime("plan-editor-time-focus-short-dark", minutes = 90, dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheSuggestionReachingEveryTopic() =
-        captureEditorTime("plan-editor-time-suggested-every-topic", minutes = 240, share = 0.32, reached = 1.0)
+    fun editorTimeOnTheFocusSuggestion() = captureEditorTime("plan-editor-time-focus-suggested", minutes = 240)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeWhenNoTimeCoversEverything() =
-        captureEditorTime("plan-editor-time-none", minutes = 240, share = 0.32, reached = 0.71, recommended = null)
+    fun editorTimeWhenNoTimeCoversEverything() = captureEditorTime("plan-editor-time-none", minutes = 240, recommended = null)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheFullTime() = captureEditorTime("plan-editor-time-full", minutes = 805, share = 1.0, reached = 1.0)
+    fun editorTimeAboveTheFocusSuggestion() = captureEditorTime("plan-editor-time-focus-longer", minutes = 480)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeShort() = captureEditorTime("plan-editor-time-short", minutes = 90, share = 0.14, reached = 0.35)
+    fun editorTimeUnderASuggestionThatCoversEverything() =
+        captureEditorTime("plan-editor-time-covers-short", minutes = 90, recommended = 150)
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xhdpi")
+    fun editorTimeAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureEditorTime("plan-editor-time-focus-short-font200", minutes = 90)
+    }
 
     /**
-     * An exam whose whole syllabus takes 13 h 25 min a day, at [minutes] a day, with the time question's answer in;
-     * [reached] is the share whose topics get their first lessons, at [minutes] and at the suggested 4 h alike;
-     * [recommended] null when no time covers everything.
+     * An exam at [minutes] a day with the time question's answer in: a suggestion of 4 h a day while covering everything
+     * takes [recommended] minutes (13 h 25 min by default, null when no time does), or that time when it's 4 h or less.
      */
     private fun captureEditorTime(
         name: String,
         minutes: Int,
-        share: Double,
-        reached: Double,
         dark: Boolean = false,
         recommended: Long? = 805,
     ) {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
-        val fits = share >= 1
+        val fits = recommended != null && minutes >= recommended
         val plan =
             plan(
                 """
-                "feasibility":{"coreFits":${reached == 1.0},"coveredShare":$share,"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
-                 "measure":"exam","reachedShare":$reached,"timeCovers":$fits},
+                "feasibility":{"coreFits":$fits,"coveredShare":${if (fits) 1.0 else 0.32},"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
+                 "measure":"exam","timeCovers":$fits},
                 "schedule":{"dailyMinutes":$minutes,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-11-07",
                  "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":$minutes,
                  "weekend":null,"weekendDays":[]},"weekdayMinutes":[0,$minutes,$minutes,$minutes,$minutes,$minutes,0]}
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val found =
-            TimeToCoverState.Answered(
-                planAdviceRevision(plan),
-                timeToCover(recommended = recommended, focus = 240, reachedShare = reached),
-            )
+        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = recommended, focus = 240))
         compose.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
@@ -807,7 +810,7 @@ class PlanScreenshots {
                 plan(
                     """
                     "feasibility":{"coreFits":true,"coveredShare":0.78,"deadline":"2027-11-07","deepensMostAsked":false,"fits":false,
-                     "measure":"exam","reachedShare":1.0,"timeCovers":false},
+                     "measure":"exam","timeCovers":false},
                     $EDITOR_CHOICES
                     """.trimIndent(),
                 ),

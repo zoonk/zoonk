@@ -25,7 +25,6 @@
   "citation_slide": "34a9af9bacc07051aea670bdfe7e1b1313156c91c8b11fd06e0a4aeb7316eb6e",
   "citation_sources_chip": "95652b5fb20619960b564c752130694a057b21f42498a03fcebdc0a046075787",
   "close_sheet": "20b525d1bcddb994166b795a27a404eb5240692aad9afb7a223c592baeb18ddb",
-  "daily_time_covers_everything": "f6d1fbbbd80ec213361873786c554f61ee3ef1ca7b0a769d254952d64978d176",
   "daily_time_suggested": "c58f2409afad4dcaf2ce2f7fd34b525cde6c2b0abf2b1f70517a5a14e2498b4c",
   "diff_line_spoken": "b0fa1b59cb061d7ccf4c51bc7b0b742f6895b527242bafeb42b7ee061f61f6ff",
   "disclosure_collapsed": "2c949888045de91fdf88192313ad12ce396489bf2ee588cdb2be6dd96137ca37",
@@ -168,8 +167,6 @@
     <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
     <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Fermer le panneau</string>
     <string name="daily_time_suggested">%1$s (suggéré)</string>
-    <!-- A daily study time in a list of times: the one that covers the learner's whole goal by its date. {time} is like "10 h". -->
-    <string name="daily_time_covers_everything">%1$s (couvre tout)</string>
     <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
     <string name="citation_sources_chip">Sources · Vérifiées en %1$s</string>
     <string name="citation_checked_by">%1$s · Vérifié en %2$s</string>

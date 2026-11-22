@@ -77,7 +77,6 @@ private fun DailyMinutes(
     val weekdayDays = shape.weekdayDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekdayDays) ?: shape.weekdays.toInt()
     val search = edits.timeToCover.forPlan(page.plan)
-    val marked = markedTimes((search as? TimeToCoverState.Answered)?.time)
     val focus = remember { CoverageFocus() }
     val dated = page.plan.schedule.targetDate != null
 
@@ -104,8 +103,7 @@ private fun DailyMinutes(
             onChange = ::setMinutes,
             modifier = Modifier.focusRequester(focus.pickedTime),
             enabled = !pending,
-            suggested = marked.suggested,
-            full = marked.full,
+            suggested = suggestedMinutes((search as? TimeToCoverState.Answered)?.time),
         )
         DailyCoverage(page, edits, focus, minutes = shape.weekdays.toInt(), onUseTime = ::setMinutes)
         FullCourseSwitch(page, edits, focus.studyEverything)

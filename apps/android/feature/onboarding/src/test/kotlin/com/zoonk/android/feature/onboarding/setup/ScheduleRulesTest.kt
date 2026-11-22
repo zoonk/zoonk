@@ -97,14 +97,14 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun onlyATimeTheSuggestionDoesntExplainIsAskedAbout() {
+    fun aDatedGoalAsksAboutTheTimePickedOnlyForWhenStudyingEverythingFinishes() {
         assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 35))
-        assertTrue(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 30))
+        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 30))
         assertTrue(asksAboutTime(dated = true, found = found(), fullCourse = true, minutes = 35))
         assertTrue(asksAboutTime(dated = false, found = null, fullCourse = false, minutes = 35))
-        assertFalse(asksAboutTime(dated = true, found = null, fullCourse = false, minutes = 35))
-        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = null))
-        assertFalse(asksAboutTime(dated = true, found = pastDate, fullCourse = false, minutes = 30))
+        assertFalse(asksAboutTime(dated = true, found = null, fullCourse = true, minutes = 35))
+        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = true, minutes = null))
+        assertFalse(asksAboutTime(dated = true, found = pastDate, fullCourse = true, minutes = 30))
     }
 
     @Test
@@ -121,15 +121,15 @@ class ScheduleRulesTest {
         assertTrue(waitsToSave(TimeLine.Asking, picked = null))
         assertTrue(waitsToSave(TimeLine.Working, picked = null))
         assertFalse(waitsToSave(TimeLine.Asking, picked = 30))
-        assertFalse(waitsToSave(TimeLine.Share(0.4), picked = null))
+        assertFalse(waitsToSave(TimeLine.Suggest(35, focus = false), picked = null))
         assertFalse(waitsToSave(TimeLine.AskFailed, picked = null))
     }
 
     @Test
     fun theLastAnswerStaysInPlaceMarkedAsUpdatingWhileTheNewOneIsWorkedOut() {
-        val last = TimeAnswerState(found(), TimeLine.Share(0.4))
-        val asking = TimeAnswerState(null, TimeLine.Asking)
-        val answered = TimeAnswerState(found(recommended = 50), TimeLine.Everything(whole = true))
+        val last = TimeAnswerState(found(), TimeLine.Suggest(35, focus = false))
+        val asking = TimeAnswerState(null, TimeLine.Working)
+        val answered = TimeAnswerState(found(recommended = 50), TimeLine.Suggest(50, focus = false))
 
         assertEquals(last.copy(updating = true), shownAnswer(last, asking))
         assertEquals(answered, shownAnswer(last, answered))
@@ -138,9 +138,11 @@ class ScheduleRulesTest {
 
     @Test
     fun anExamKeepsStudyingEverythingUntilTheTimePickedCoversItAll() {
-        assertTrue(keepsFullCourse(true, TimeLine.Asking))
-        assertFalse(keepsFullCourse(true, TimeLine.Everything(whole = true)))
-        assertFalse(keepsFullCourse(false, TimeLine.Share(0.4)))
+        assertTrue(keepsFullCourse(true, found = null, minutes = 60))
+        assertTrue(keepsFullCourse(true, found(recommended = 805, focus = 240), minutes = 480))
+        assertTrue(keepsFullCourse(true, found(), minutes = 30))
+        assertFalse(keepsFullCourse(true, found(), minutes = 35))
+        assertFalse(keepsFullCourse(false, found(), minutes = 30))
     }
 
     private val building = GenerationRun(GenerationRun.Status.Following)
