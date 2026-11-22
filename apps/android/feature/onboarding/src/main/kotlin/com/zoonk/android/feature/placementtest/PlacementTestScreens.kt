@@ -217,7 +217,8 @@ internal fun ColumnScope.PlacementResult(
                 }
             }
         }
-        if (length == PlacementLength.QUICK && !inSetup && undo?.restoredLessons == null) Note(stringResource(R.string.placementtest_whole_course_skips_more))
+        val undone = undo?.restoredLessons != null
+        if (length == PlacementLength.QUICK && !inSetup && !undone) Note(stringResource(R.string.placementtest_whole_course_skips_more))
     }
 }
 

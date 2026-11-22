@@ -106,7 +106,7 @@ class LevelTestStepFlowTest {
     fun openingItOnlyReads() {
         show()
 
-        rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
+        rule.onNodeWithText("Skip what you already know").assertIsDisplayed()
         rule.onNodeWithText("New to its alphabet?", substring = true).assertDoesNotExist()
         assertEquals(1, api.levelTestReads)
         assertEquals(emptyList<Any>(), api.levelTestLengths)
@@ -203,7 +203,7 @@ class LevelTestStepFlowTest {
         tap("Start")
 
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
+        rule.onNodeWithText("Skip what you already know").assertIsDisplayed()
     }
 
     @Test
