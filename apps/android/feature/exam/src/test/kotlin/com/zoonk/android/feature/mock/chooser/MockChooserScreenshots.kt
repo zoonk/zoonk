@@ -6,11 +6,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
@@ -116,9 +117,10 @@ class MockChooserScreenshots {
             } else {
                 FakeMockApi(mockOptions(OPTIONS))
             }
+        // A tap leaves its ripple drawn in Robolectric's later frames, which a device never shows; the semantics action picks without one.
         capture(name, dark = dark, mocks = mocks) {
-            compose.onNodeWithText(day).performClick()
-            compose.onNodeWithText(start).performClick()
+            compose.onNodeWithText(day).performSemanticsAction(SemanticsActions.OnClick)
+            compose.onNodeWithText(start).performSemanticsAction(SemanticsActions.OnClick)
         }
     }
 
@@ -129,7 +131,7 @@ class MockChooserScreenshots {
             "chooser-phone-ready",
             options = """$OPTIONS,"requested":{"shape":{"area":null,"day":1,"kind":"full"},"status":"ready"}""",
         ) {
-            compose.onNodeWithText("Day 1").performClick()
+            compose.onNodeWithText("Day 1").performSemanticsAction(SemanticsActions.OnClick)
         }
 
     @Test
@@ -155,7 +157,10 @@ class MockChooserScreenshots {
     /** A mock of questions only: its usual time shows under the limit. */
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
-    fun expandedQuestionsOnly() = capture("chooser-expanded-day-2") { compose.onNodeWithText("Day 2").performClick() }
+    fun expandedQuestionsOnly() =
+        capture("chooser-expanded-day-2") {
+            compose.onNodeWithText("Day 2").performSemanticsAction(SemanticsActions.OnClick)
+        }
 
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
