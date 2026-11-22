@@ -433,9 +433,6 @@ private struct LineCrossingLabels: View {
           .foregroundStyle(item.color)
           .chartsLabelHalo()
           .clipped()
-          #if DEBUG
-            .modifier(LineCrossingNameFrameReporter(id: item.id))
-          #endif
       }
     }
     .allowsHitTesting(false)
@@ -481,33 +478,3 @@ private struct LineCrossingNamesLayout: Layout {
     }
   }
 }
-
-#if DEBUG
-  /// A class, so the environment compares it by identity rather than redrawing for a new closure.
-  @MainActor final class LineCrossingNameFrames {
-    let report: (String, CGRect) -> Void
-
-    init(_ report: @escaping (String, CGRect) -> Void) { self.report = report }
-  }
-
-  extension EnvironmentValues {
-    @Entry var lineCrossingNameFrame: LineCrossingNameFrames?
-  }
-
-  private struct LineCrossingNameFrameReporter: ViewModifier {
-    let id: String
-    @Environment(\.lineCrossingNameFrame) private var report
-
-    func body(content: Content) -> some View {
-      if let report {
-        content.onGeometryChange(for: CGRect.self) {
-          $0.frame(in: .global)
-        } action: {
-          report.report(id, $0)
-        }
-      } else {
-        content
-      }
-    }
-  }
-#endif

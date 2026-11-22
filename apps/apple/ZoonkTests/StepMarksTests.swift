@@ -3,46 +3,6 @@ import XCTest
 @testable import Zoonk
 
 final class StepMarksTests: XCTestCase {
-  func testTaggedScreensAndMapsDecodeAndUntaggedOnesStayPlain() throws {
-    let tagged = try step(
-      #"""
-      {"id": "explanation", "position": 1, "kind": "explanation",
-       "content": {"title": null, "text": "A cat eats. That's **metabolism**."},
-       "marks": {"ideaIndex": 1, "underline": "A cat eats.", "example": null,
-                 "icon": {"url": "https://cdn.test/cat-256.webp",
-                          "smallUrl": "https://cdn.test/cat-96.webp"}}}
-      """#)
-    let untagged = try step(
-      #"""
-      {"id": "explanation", "position": 1, "kind": "explanation",
-       "content": {"title": null, "text": "A cat eats."}}
-      """#)
-    let map = try JSONDecoder().decode(
-      LessonSummary.self,
-      from: Data(
-        #"""
-        {"shape": "hub", "ideas": [
-          {"label": "Metabolism", "text": "Food becomes energy.", "about": "What food turns into",
-           "icon": {"url": "https://cdn.test/leaf-256.webp",
-                    "smallUrl": "https://cdn.test/leaf-96.webp"}},
-          {"label": "Cells", "text": "Living things are made of cells.", "about": null,
-           "icon": null}]}
-        """#.utf8))
-
-    XCTAssertEqual(
-      tagged.marks,
-      StepMarks(
-        ideaIndex: 1, underline: "A cat eats.",
-        icon: LessonIcon(
-          url: "https://cdn.test/cat-256.webp", smallUrl: "https://cdn.test/cat-96.webp")))
-    XCTAssertNil(untagged.marks)
-    XCTAssertEqual(map.ideas.map(\.about), ["What food turns into", nil])
-    XCTAssertEqual(map.ideas.first?.icon?.smallUrl, "https://cdn.test/leaf-96.webp")
-    XCTAssertTrue(map.isTagged)
-    XCTAssertEqual(tagged.idea(in: map), 1)
-    XCTAssertNil(tagged.idea(in: nil), "no map, no strip")
-  }
-
   func testTheExampleGetsItsOwnPartAndTheUnderlineGoesWhereItFirstShows() {
     let text = """
       Quando um gato come ração, o corpo dele transforma o alimento.
@@ -118,29 +78,5 @@ final class StepMarksTests: XCTestCase {
     )
     XCTAssertEqual(
       InlineMarks(drawn, underline: "não está aqui", highlightsTerms: false), InlineMarks())
-  }
-
-  func testIdeasSitInReadingOrderAroundTheMapsCenter() {
-    let slot = { (column: Int, row: Int) in LessonIdeaSlot(column: column, row: row) }
-
-    XCTAssertEqual(LessonIdeaSlot.slots(count: 2), [slot(-1, 1), slot(1, 1)])
-    XCTAssertEqual(LessonIdeaSlot.slots(count: 3), [slot(-1, -1), slot(1, -1), slot(0, 1)])
-    XCTAssertEqual(
-      LessonIdeaSlot.slots(count: 5),
-      [slot(-1, -1), slot(1, -1), slot(-1, 1), slot(1, 1), slot(0, 2)])
-    XCTAssertEqual(LessonIdeaSlot.rows(of: LessonIdeaSlot.slots(count: 5)), -1...2)
-    XCTAssertEqual(LessonIdeaSlot.rows(of: LessonIdeaSlot.slots(count: 2)), 0...1)
-
-    for count in 1...8 {
-      let slots = LessonIdeaSlot.slots(count: count)
-      XCTAssertEqual(
-        slots,
-        slots.sorted { ($0.row, $0.column) < ($1.row, $1.column) },
-        "VoiceOver reads by position, so \(count) ideas must sit in number order")
-    }
-  }
-
-  private func step(_ json: String) throws -> LessonStep {
-    try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
   }
 }

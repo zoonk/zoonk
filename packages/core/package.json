@@ -789,6 +789,8 @@
     "officeparser": "8.9.0",
     "opencc-js": "1.4.2",
     "parse5": "8.1.1",
+    "pinyin-pro": "3.29.5",
+    "piper-phonemize": "1.6.1",
     "posthog-js": "catalog:",
     "posthog-node": "6.0.5",
     "pyodide": "314.0.8",

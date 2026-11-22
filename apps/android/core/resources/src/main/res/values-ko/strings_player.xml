@@ -51,6 +51,7 @@
   "player_challenge_said": "09fd64e0495a6d6bb5751680ad41ea73857b7e2a4f25df65a86e3c2687bb043e",
   "player_challenge_scenario_complete": "2bcd39c40ba8ae4c73dbf586871c66f56378f970be14249829d2bd80e2c99a4e",
   "player_challenge_skills": "b86437403b95d71750328f900695b8a2ccb87127f5c1472821dc7f60a5b0e1dd",
+  "player_challenge_starting_figures": "04128b10785b7d69fa893a52e4368565ad63690e8827cf57f16456c627fb9971",
   "player_challenge_team": "66045e2ccc4109010d055e25a7f79a9608ef36a8b0dada29a3c2e62f1fcd1d9f",
   "player_challenge_wait_stopped": "2160339d867ed7e469339b1d8b7f7e187d3124d6dedaf667bf16c8daed1ac87f",
   "player_challenge_what_happened": "5bcfcf5ec9c2e38938ca7860756ea33d3283f8f886daebc95d629ffb8b89502d",
@@ -367,6 +368,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">만약에 · %1$s</string>
     <string name="player_challenge_mission">내 미션</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">시작 수치</string>
     <string name="player_challenge_team">내 팀</string>
     <string name="player_challenge_meters">현재 상황</string>
     <!-- How a meter moved after the learner's decision. -->

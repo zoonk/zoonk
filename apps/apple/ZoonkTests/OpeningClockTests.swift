@@ -7,7 +7,7 @@ import XCTest
 @MainActor
 final class OpeningClockTests: XCTestCase {
   func testAClosedGateThatDrawsNothingGivesItsActionBackAtTheInstant() async throws {
-    let opening = Date.now.addingTimeInterval(1)
+    let opening = Date.now.addingTimeInterval(0.3)
     let actionBack = expectation(description: "The action came back")
     var cameBackAt: Date?
 

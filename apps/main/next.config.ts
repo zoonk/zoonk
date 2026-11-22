@@ -5,6 +5,7 @@ import { tailwindRules } from "@zoonk/ui/turbopack";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { spokenGradingFiles } from "../../scripts/deploy/spoken-grading-files.mts";
 
 const CACHE_IMAGE_DAYS = 30;
 
@@ -79,7 +80,9 @@ const nextConfig: NextConfig = {
       "./src/lib/certificates/fonts/Geist-*.ttf",
       "./src/lib/certificates/fonts/NotoSans-400.ttf",
     ],
+    "/*/start{,/**}": spokenGradingFiles,
     "/\\[lang\\]/c/\\[code\\]/image/\\[variant\\]": ["./src/lib/certificates/fonts/**/*"],
+    "/api/pronunciation-reviews/*/answers": spokenGradingFiles,
   },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   partialPrefetching: true,

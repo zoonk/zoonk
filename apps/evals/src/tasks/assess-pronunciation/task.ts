@@ -73,6 +73,7 @@ async function assessClip(run: PronunciationClipRun) {
     mediaType: "audio/mpeg",
     model,
     reasoning,
+    romanization: input.romanization,
   });
 }
 

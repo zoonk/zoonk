@@ -18,6 +18,7 @@ export async function gradeSpokenRecording({
   step: {
     id: string;
     learnerLanguage: string;
+    romanization?: string | null;
     storedContent: unknown;
     targetLanguage: string;
     targetText: string;
@@ -28,6 +29,7 @@ export async function gradeSpokenRecording({
     audio,
     expected: step.targetText,
     language: step.targetLanguage,
+    romanization: step.romanization,
     userId,
   });
 

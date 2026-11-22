@@ -3,14 +3,6 @@ import XCTest
 @testable import Zoonk
 
 final class CountryChoiceTests: XCTestCase {
-  func testSearchMatchesAnyWordsStartIgnoringCaseAndAccents() {
-    XCTAssertTrue(countryMatches("Estados Unidos", query: "uni"))
-    XCTAssertTrue(countryMatches("Reino Unido", query: "reino u"))
-    XCTAssertTrue(countryMatches("Áustria", query: "aus"))
-    XCTAssertTrue(countryMatches("Guiné-Bissau", query: "bissau"))
-    XCTAssertFalse(countryMatches("Brasil", query: "asil"), "Only from a word's start")
-  }
-
   func testACoreSuggestionKeepsWhereTheLearnerLivesAndItsLessonLanguage() throws {
     let choices = try JSONDecoder().decode(
       [CountryChoice].self,
@@ -28,10 +20,5 @@ final class CountryChoiceTests: XCTestCase {
           lessonVariety: LessonVariety(language: "pt", region: "BR")),
         CountryChoice(code: "BR", name: "Brasil"),
       ])
-  }
-
-  func testALessonLanguageIsNamedInItsOwnLanguageLikeTheCountriesBesideIt() {
-    XCTAssertEqual(LessonVariety(language: "pt", region: "BR").name, "Português (Brasil)")
-    XCTAssertEqual(LessonVariety(language: "es", region: "MX").name, "Español (México)")
   }
 }

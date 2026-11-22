@@ -116,8 +116,10 @@ enum LineCrossingLabelLayout {
       requiredLines.allSatisfy { !touches(padded(box), $0) }
     }
 
+    let otherLines = lines.filter { $0 != label.segment }
+    let otherGuides = guides.filter { $0 != label.segment }
     func belongsToLine(_ box: CGRect) -> Bool {
-      belongsWith(box, named: label.segment, lines: lines)
+      belongsWith(box, named: label.segment, comparedTo: otherLines)
     }
 
     func avoidsMarks(_ box: CGRect) -> Bool {
@@ -149,7 +151,7 @@ enum LineCrossingLabelLayout {
     }
 
     func fits(_ box: CGRect) -> Bool {
-      named(box) && belongsWith(box, named: label.segment, lines: guides)
+      named(box) && belongsWith(box, named: label.segment, comparedTo: otherGuides)
     }
 
     let coarse = boxes(spacing: step)
@@ -241,18 +243,20 @@ enum LineCrossingLabelLayout {
     return side(center, of: line) * side(closestPoint(center, on: named), of: line) >= 0
   }
 
-  private static func separatesName(_ box: CGRect, named: Segment, by line: Segment) -> Bool {
-    let center = CGPoint(x: box.midX, y: box.midY)
-    let connector = Segment(from: center, to: closestPoint(center, on: named))
-    return side(connector.from, of: line) * side(connector.to, of: line) < 0
+  private static func crosses(_ connector: Segment, _ line: Segment) -> Bool {
+    side(connector.from, of: line) * side(connector.to, of: line) < 0
       && side(line.from, of: connector) * side(line.to, of: connector) < 0
   }
 
-  private static func belongsWith(_ box: CGRect, named: Segment, lines: [Segment]) -> Bool {
+  private static func belongsWith(_ box: CGRect, named: Segment, comparedTo lines: [Segment])
+    -> Bool
+  {
+    guard !lines.isEmpty else { return true }
+    let center = CGPoint(x: box.midX, y: box.midY)
+    let connector = Segment(from: center, to: closestPoint(center, on: named))
+    guard !lines.contains(where: { crosses(connector, $0) }) else { return false }
     let own = gapSquared(box, named)
-    return lines.allSatisfy {
-      $0 == named || (own < gapSquared(box, $0) && !separatesName(box, named: named, by: $0))
-    }
+    return lines.allSatisfy { own < gapSquared(box, $0) }
   }
 
   private static func gapSquared(_ box: CGRect, _ line: Segment) -> CGFloat {

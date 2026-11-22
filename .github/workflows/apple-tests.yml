@@ -1,7 +1,6 @@
 name: Apple Unit Tests
 
-# Started by hand on any branch: `gh workflow run apple-tests.yml --ref <branch>`. Pull requests
-# skip Apple's unit tests (apple.yml runs them after merge), so this runs them before.
+# Runs the full iPhone suite on demand. Apple PRs run the Mac-compatible units automatically.
 on:
   workflow_dispatch:
 

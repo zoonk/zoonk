@@ -51,6 +51,7 @@
   "player_challenge_said": "d19d32fd552700d61cab7243e2751012e82c38f1ddaa734983423fe02602eb77",
   "player_challenge_scenario_complete": "187060011c5305b75bc2cb6e3044a1f184ad372f3e9573185690524e4d9e788e",
   "player_challenge_skills": "e17ee95cf38f6aa3928aa8bea3d0373965ffc9d9236dc97fbd2f9b5a2215b2e0",
+  "player_challenge_starting_figures": "7a2588d19a0a95d1343b5770593b514f5854aedeb84e483c69f2601457092106",
   "player_challenge_team": "debc114cb9e26be9d9f68ed10babb78ebd240a55b78b8a77b105608dee2b88e7",
   "player_challenge_wait_stopped": "8913085cda11685afeab50d0af14811aab6d1a20dcf1381484cef25b94840d5e",
   "player_challenge_what_happened": "76be6f4e6f1d28639ba52bc090b73de6c2bd2528c9849e5072617cf755f2dfa8",
@@ -373,6 +374,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">Et si · %1$s</string>
     <string name="player_challenge_mission">Ta mission</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">Chiffres de départ</string>
     <string name="player_challenge_team">Ton équipe</string>
     <string name="player_challenge_meters">Comment la situation évolue</string>
     <!-- How a meter moved after the learner's decision. -->
