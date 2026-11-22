@@ -14,6 +14,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
+import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
+import { answerPlacementQuestion } from "../../learner/placement/answer-placement-question";
+import { finishGoalPlacement } from "../../learner/placement/finish-goal-placement";
+import { startPlacementSitting } from "../../learner/placement/start-placement-sitting";
+import { decidePlanChange } from "../../plans/decide-plan-change";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import {
   DAY_MS,
@@ -21,6 +27,7 @@ import {
   SESSION_TODAY,
   checkpointItemFixture,
   daysAgo,
+  dueSkillFixture,
   sessionGoalFixture,
 } from "../../sessions/_test-utils/session-goal";
 import { getTodayView } from "./get-today-view";
@@ -66,6 +73,93 @@ describe(getTodayView, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("keeps a due review shown before Start through placement and Undo", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      challengesDone: true,
+      itemsPerSkill: 0,
+      phases: [1],
+      userId: user.id,
+    });
+
+    const [skill] = skills;
+
+    if (!skill) {
+      throw new Error("Expected a topic");
+    }
+
+    const [memory, bank] = await Promise.all([
+      dueSkillFixture({ skillId: skill.id, userId: user.id }),
+      placementItemBank([skill.id]),
+    ]);
+
+    const answers = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));
+    mockSession(user.id);
+
+    const shown = {
+      status: "ready",
+      today: {
+        session: { blocks: expect.arrayContaining([expect.objectContaining({ kind: "review" })]) },
+      },
+    };
+
+    await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject(shown);
+
+    const started = await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
+
+    if (started.status !== "ready" || !started.placement.attempt || !started.placement.next) {
+      throw new Error("Expected a Quick question");
+    }
+
+    const { id: attemptId } = started.placement.attempt;
+
+    const send = async (itemId: string): Promise<void> => {
+      const answer = answers.get(itemId);
+
+      if (!answer) {
+        throw new Error("Expected a question from the test bank");
+      }
+
+      const next = await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer, attemptId, durationMs: 1000, itemId },
+      });
+
+      expect(next).toMatchObject({ isCorrect: true, status: "ready" });
+
+      if (next.status === "ready" && next.placement.next) {
+        await send(next.placement.next.itemId);
+      }
+    };
+
+    await send(started.placement.next.itemId);
+    const finished = await finishGoalPlacement({ goalId: goal.id, input: { attemptId } });
+    expect(finished).toMatchObject({ completion: { lessonsSkipped: 1 }, status: "ready" });
+
+    if (finished.status !== "ready" || !finished.completion.changeId) {
+      throw new Error("Expected a skip that can be undone");
+    }
+
+    await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject(shown);
+
+    await expect(
+      decidePlanChange({
+        changeId: finished.completion.changeId,
+        goalId: goal.id,
+        input: { status: "undone" },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject(shown);
+
+    await expect(
+      prisma.learnerSkill.findUnique({ where: { id: memory.id } }),
+    ).resolves.toMatchObject({ due: memory.due, lastReviewedAt: memory.lastReviewedAt });
+
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
   it("refuses a visitor without a session", async () => {
