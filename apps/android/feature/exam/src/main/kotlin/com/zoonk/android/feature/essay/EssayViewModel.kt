@@ -132,8 +132,6 @@ class EssayViewModel(
     private var writingMs = 0L
     private var writingSince: TimeMark? = null
 
-    /** An answer whose grading never answered; the server may have graded it. */
-    private var unanswered: String? = null
     private val sending = mutableMapOf<Pair<UUID, String>, Deferred<MutationResult<WritingResultOutput>>>()
 
     init {
@@ -218,12 +216,10 @@ class EssayViewModel(
                 mutableUi.update { it.copy(send = WritingSend.Idle) }
                 return@launch
             }
-            val earlier = unanswered
             val request = sending.getOrPut(admissionId to text) { submission(admissionId, text, writingDuration()) }
             when (val result = withTimeoutOrNull(GRADING_TIMEOUT) { request.await() }) {
                 is MutationResult.Done -> {
-                    unanswered = null
-                    val recorded = if (earlier != null && earlier != text) recordedText(result.value) else null
+                    val recorded = recordedText(result.value)
                     if (recorded != null && recorded != text) {
                         replayed(admissionId, recorded, text, result.value)
                     } else {
@@ -236,7 +232,6 @@ class EssayViewModel(
                 }
 
                 is MutationResult.Failed, null -> {
-                    unanswered = text
                     mutableUi.update { it.copy(send = WritingSend.Failed) }
                 }
             }
@@ -444,9 +439,8 @@ class EssayViewModel(
         return read.drafts.firstOrNull { it.text == answer.text }?.attemptId
     }
 
-    /** The text the server recorded with [grade], from the essay read after it. */
-    private suspend fun recordedText(grade: WritingResultOutput): String? {
-        essay.refresh()
+    /** The text the server recorded with [grade], from the essay read by the store after submission. */
+    private fun recordedText(grade: WritingResultOutput): String? {
         val read = (essay.state.value as? LoadState.Loaded)?.value ?: return null
         return read.drafts.firstOrNull { it.grade == grade }?.text
     }

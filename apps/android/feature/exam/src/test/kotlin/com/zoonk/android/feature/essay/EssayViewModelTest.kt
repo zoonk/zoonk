@@ -450,6 +450,51 @@ class EssayViewModelTest {
         }
 
     @Test
+    fun aGradeReplayedAfterReopeningKeepsTheChangedTextForARewrite() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi()
+            api.grade = { throw ApiException(ApiError.Network) }
+            val device = Device(this, api)
+            val first = with(device) { open() }
+            val changed = "$ANSWER_TEXT Changed after the failure."
+
+            first.write(ANSWER_TEXT)
+            first.send()
+            advanceUntilIdle()
+            assertEquals(WritingSend.Failed, first.ui.value.send)
+
+            // The server graded the first text before the response was lost, so it no longer takes draft saves.
+            repeat(3) { api.saveAnswers += DraftSave.Closed }
+            first.write(changed)
+            first.onStop()
+            advanceUntilIdle()
+            assertEquals(changed, device.keptOnDisk()?.text)
+
+            val reopened = with(device) { open() }
+            reopened.startWriting()
+            assertEquals(changed, reopened.ui.value.text)
+
+            val grade = result(LEVELS_RESULT)
+            api.grade = {
+                api.read = essay(graded = listOf(LEVELS_RESULT))
+                grade
+            }
+            reopened.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf(ADMISSION to ANSWER_TEXT, ADMISSION to changed), api.submitted.map { it.admissionId to it.text })
+            assertEquals(WritingMode.Result, reopened.ui.value.mode)
+            assertEquals(GradedAnswer(grade, ANSWER_TEXT, null), reopened.ui.value.latest)
+            assertEquals(changed, reopened.ui.value.unsent)
+            assertEquals(changed, device.keptOnDisk()?.text)
+
+            api.defaultStart = WritingStartAnswer.Ready(UUID.randomUUID())
+            reopened.rewrite()
+            advanceUntilIdle()
+            assertEquals(changed, reopened.ui.value.text)
+        }
+
+    @Test
     fun anotherAdmissionDoesNotGetTheEditsKeptForAReplayedGrade() =
         runTest(dispatcher) {
             val api = FakeEssayApi(essay(graded = listOf(LEVELS_RESULT)).copy(admissionId = UUID.randomUUID()))
