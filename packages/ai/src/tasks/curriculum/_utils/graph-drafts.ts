@@ -3,11 +3,13 @@ import { type ExamOutline } from "../exam-outline";
 import { type LibrarySkill, applyLibraryReuse } from "./library-skills";
 import { type RawSkillGraph, type SkillGraph, normalizeSkillGraph } from "./normalize-skill-graph";
 import { type SkillGraphProblem, findSkillGraphProblems } from "./skill-graph-checks";
+import { writesExamExtras } from "./skill-graph-extras";
 import { getSectionCall, joinSections } from "./skill-graph-sections";
 
 type DraftParams = {
   examBlueprint?: ExamOutline;
   goalKind: "learn" | "exam" | "language";
+  hasMaterial?: boolean;
   lessonBudget?: number | null;
 };
 
@@ -23,8 +25,10 @@ const REPAIRED_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
 export function normalizeDraft({ params, raw }: { params: DraftParams; raw: RawSkillGraph }) {
   const repaired = findSkillGraphProblems({ exam: false, phases: raw.phases, skills: raw.skills });
 
+  const skills = writesExamExtras(params) ? raw.skills : raw.skills.filter((skill) => !skill.extra);
+
   return {
-    data: normalizeSkillGraph(raw, params.examBlueprint, params.lessonBudget),
+    data: normalizeSkillGraph({ ...raw, skills }, params.examBlueprint, params.lessonBudget),
     repaired: repaired.filter((problem) => REPAIRED_CODES.has(problem.code)),
   };
 }

@@ -29,7 +29,7 @@ function useDifficultySentence() {
   };
 }
 
-export function useFollowsGuideSentence() {
+function useFollowsGuideSentence() {
   const t = useExtracted();
 
   return (document: ExamDocument): string =>
@@ -246,6 +246,12 @@ function useSettingStatement() {
 
     if (operation.kind === "fitPhaseDates") {
       return t("Your phase dates moved.");
+    }
+
+    if (operation.kind === "setExtras") {
+      return operation.skillIds.length > 0
+        ? t("Exam strategy added to your plan.")
+        : t("Exam strategy isn't in your plan.");
     }
 
     return operation.kind === "setExamChoice"

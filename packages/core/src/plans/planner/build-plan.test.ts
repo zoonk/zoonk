@@ -81,6 +81,103 @@ function summarize(plan: Pick<ReturnType<typeof buildPlan>, "items">) {
 }
 
 describe(buildPlan, () => {
+  it("adds the whole exam extra in spare time without moving the notice lessons", () => {
+    const graph = {
+      phases: [{ milestone: null, name: "Exam" }],
+      skills: [skill("notice", { area: "Math", lessons: 1, topics: ["Fractions"] })],
+    };
+
+    const input = planInput({
+      bringBackSetAside: true,
+      goal: { dailyMinutes: 30, kind: "exam", targetDate: addDays(TODAY, 6) },
+      graph,
+      lessons: [lesson("fractions", ["notice"]), lesson("clock", ["strategy"])],
+    });
+
+    const notice = buildPlan(input);
+
+    const withExtra = (lessons: number) =>
+      buildPlan({
+        ...input,
+        graph: {
+          ...graph,
+          skills: [...graph.skills, skill("strategy", { area: "Strategy", extra: true, lessons })],
+        },
+      });
+
+    const roomy = withExtra(5);
+
+    expect(roomy.items.find((item) => item.skillId === "notice")).toStrictEqual(
+      notice.items.find((item) => item.skillId === "notice"),
+    );
+
+    expect(
+      roomy.items.filter((item) => item.skillId === "strategy").map((item) => item.key),
+    ).toStrictEqual(["lesson:clock", "skill:strategy"]);
+
+    expect(withExtra(100).items).toStrictEqual(notice.items);
+  });
+
+  it("keeps an active extra lesson when its remaining group no longer fits", () => {
+    const input = planInput({
+      extras: { activeItemIds: new Set(["active"]), bringBack: false, previousSkillIds: new Set() },
+      goal: { dailyMinutes: 5, kind: "exam", targetDate: addDays(TODAY, 1) },
+      graph: {
+        phases: [{ milestone: null, name: "Exam" }],
+        skills: [
+          skill("notice", { area: "Math", lessons: 1, topics: ["Fractions"] }),
+          skill("strategy", { area: "Strategy", extra: true, lessons: 2 }),
+        ],
+      },
+      items: [
+        existing({ id: "active", lessonId: "clock", scheduledFor: TODAY, skillId: "strategy" }),
+        existing({ id: "later", lessonId: "blanks", scheduledFor: TODAY, skillId: "strategy" }),
+      ],
+      lessons: [
+        lesson("fractions", ["notice"], 1),
+        lesson("clock", ["strategy"], 3),
+        lesson("blanks", ["strategy"], 3),
+      ],
+    });
+
+    const plan = buildPlan(input);
+
+    expect(
+      plan.items.filter((item) => item.skillId === "strategy").map((item) => item.id),
+    ).toStrictEqual(["active"]);
+
+    expect(plan.items.some((item) => item.skillId === "notice")).toBe(true);
+  });
+
+  it("keeps official writing in the phase totals when adding optional study", () => {
+    const input = planInput({
+      bringBackSetAside: true,
+      goal: { dailyMinutes: 60, kind: "exam", targetDate: addDays(TODAY, 14) },
+      graph: {
+        phases: [{ milestone: null, name: "Exam" }],
+        skills: [
+          skill("notice", { area: "Math", lessons: 1, topics: ["Fractions"] }),
+          skill("strategy", { area: "Strategy", extra: true, lessons: 1 }),
+        ],
+      },
+      lessons: [lesson("fractions", ["notice"]), lesson("clock", ["strategy"])],
+      writing: {
+        practice: [{ minutes: 10, taskKey: "essay", title: "Essay", unit: "answer" }],
+        skillIds: new Set(),
+        tests: [],
+      },
+    });
+
+    const plan = buildPlan(input);
+
+    expect(plan.items.some((item) => item.skillId === "strategy")).toBe(true);
+    expect(plan.writingSchedule?.length).toBeGreaterThan(0);
+
+    expect(plan.phases.reduce((sum, phase) => sum + phase.minutes, 0)).toBe(
+      plan.estimate.totalMinutes,
+    );
+  });
+
   it("lays lessons, placeholders and phase checkpoints on days at the learner's time", () => {
     const plan = buildPlan(planInput());
 

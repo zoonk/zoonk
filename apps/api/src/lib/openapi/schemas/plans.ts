@@ -21,7 +21,7 @@ import { planBasesSchema } from "./plan-bases";
 import { planFeasibilitySchema } from "./plan-feasibility";
 import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
-import { planFitOfferSchema } from "./plan-offers";
+import { planExtraOfferSchema, planFitOfferSchema } from "./plan-offers";
 import { planPhaseSchema } from "./plan-phases";
 import { planWeekShapeSchema } from "./plan-week-shape";
 import { planStatusSchema } from "./preparation";
@@ -134,6 +134,7 @@ export const planResponseSchema = z
           "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the one the learner takes (null until picked), which POST /v1/goals/{goalId}/plan/exam-choices changes; the plan studies only the picked options. Empty without choices",
       }),
     examDocument: examDocumentSchema,
+    extraOffer: planExtraOfferSchema,
     feasibility: planFeasibilitySchema.nullable(),
     fitOffer: planFitOfferSchema,
     focusTest: focusTestSummarySchema
@@ -148,6 +149,10 @@ export const planResponseSchema = z
         "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
       ),
     goalId: uuidSchema(),
+    hasNotice: z
+      .boolean()
+      .optional()
+      .describe("Whether the exam has a source guide or the learner supplied test material."),
     languageAim: languageAimViewSchema.nullable(),
     notice: z
       .enum(["reading", "usual"])
@@ -163,7 +168,6 @@ export const planResponseSchema = z
     phases: z.array(planPhaseSchema),
     planId: uuidSchema(),
     ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
-
     schedule: z.object({
       dailyMinutes: z.int(),
       dailyTimes: dailyTimesSchema,
@@ -266,13 +270,13 @@ export const planChangeResultSchema = z
       .optional()
       .meta({
         description:
-          "Why a change of focus changed nothing (`unchanged`): `alreadyIn` (the subjects it focuses on already have every lesson in the plan) or `cantMove` (they already start as early as what they build on allows, and more of them doesn't fit)",
+          "Why the change changed nothing (`unchanged`): `alreadyIn` (the plan already holds what it asks: the exam strategy it adds, or every lesson of the subjects it focuses on) or `cantMove` (the subjects it focuses on already start as early as what they build on allows, and more of them doesn't fit)",
       }),
     status: z
       .enum(["applied", "proposed", "unchanged"])
       .meta({
         description:
-          "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: a change of focus alone wouldn't do what it asks (focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved",
+          "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: the change wouldn't do what it asks (the plan already holds the exam strategy it adds, focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved",
       }),
   })
   .meta({ id: "PlanChangeResult" });

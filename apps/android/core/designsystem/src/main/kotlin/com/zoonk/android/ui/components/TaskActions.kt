@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.scaffold.BAR_GAP
@@ -63,7 +64,7 @@ fun TaskActions(
     content: @Composable FlowRowScope.(main: Modifier) -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val roomy = maxWidth >= ROOMY_BAR_WIDTH
+        val roomy = isRoomyBar(maxWidth)
         val singleAction = maxWidth < MAIN_ACTION_WIDTH * 2 * LocalDensity.current.fontScale
 
         CompositionLocalProvider(LocalRoomyBar provides roomy, LocalStackedBar provides singleAction) {
@@ -140,9 +141,11 @@ fun Modifier.taskColumn(): Modifier = widthIn(max = TASK_COLUMN_WIDTH).fillMaxWi
 /** [taskColumn] in a task's bottom bar, which keeps the column's sides itself: as wide as what the column holds. */
 fun Modifier.taskBarColumn(): Modifier = widthIn(max = TASK_COLUMN_WIDTH - TASK_MARGIN * 2).fillMaxWidth()
 
-private val TASK_COLUMN_WIDTH = 640.dp
+internal val TASK_COLUMN_WIDTH = 640.dp
 internal val TASK_MARGIN = 16.dp
 private val MAIN_ACTION_WIDTH = 160.dp
 
-/** Wider than any phone's or book page's bar (about 400dp), narrower than a tablet's page in a spread. */
+/** Whether a bar [width] wide has room for its main action at its end at its own width: wider than any phone's or book page's bar (about 400dp), narrower than a tablet's page in a spread. */
+internal fun isRoomyBar(width: Dp): Boolean = width >= ROOMY_BAR_WIDTH
+
 private val ROOMY_BAR_WIDTH = 480.dp

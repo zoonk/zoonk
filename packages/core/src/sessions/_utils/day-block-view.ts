@@ -121,6 +121,7 @@ export function toDayBlockView({
   preparing = false,
   subject = null,
   writingTasks,
+  subjectExtra,
 }: {
   answeredAttemptIds?: ReadonlySet<string>;
   answeredItemIds: ReadonlySet<string>;
@@ -133,6 +134,7 @@ export function toDayBlockView({
   preparing?: boolean;
   subject?: string | null;
   writingTasks?: ReturnType<typeof indexWritingTasks>;
+  subjectExtra?: DayBlockView["subjectExtra"];
 }): DayBlockView {
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
@@ -180,6 +182,7 @@ export function toDayBlockView({
     screen: getBlockScreen(block),
     status: block.status,
     subject,
+    subjectExtra,
     title: payload.title ?? payload.capsules[0]?.title ?? null,
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),

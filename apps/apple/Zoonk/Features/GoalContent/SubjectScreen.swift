@@ -227,15 +227,16 @@ private struct SubjectContent: View {
   }
 
   private var origin: String? {
+    if subject.isExtra {
+      return syllabus.extraLabel
+    }
+
     if let group = subject.group {
       return group
     }
 
-    if subject.source == "notice" {
-      return syllabus.fromMaterial ? String(localized: "From your material", table: "Plan") : nil
-    }
-
-    return syllabus.kind == "notice" ? String(localized: "Also in your plan", table: "Plan") : nil
+    return subject.source == "notice" && syllabus.fromMaterial
+      ? String(localized: "From your material", table: "Plan") : nil
   }
 
   private var examShare: String? {

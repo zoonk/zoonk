@@ -3,7 +3,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// A bottom bar's note sits over its buttons, never on them.
+/// A bottom bar's note sits over its buttons, never on them, lined up with them.
 @MainActor
 final class BarNoteTests: XCTestCase {
   func testTheNoteEndsAboveTheButton() async throws {
@@ -35,6 +35,17 @@ final class BarNoteTests: XCTestCase {
         note.accessibilityFrame.maxY, button.accessibilityFrame.minY,
         "At \(width) pt the note \(note.accessibilityFrame) covers the button \(button.accessibilityFrame)"
       )
+
+      // Main's note starts where the buttons do on a phone, and ends over the main action wide.
+      if width < WideBar.width {
+        XCTAssertEqual(
+          note.accessibilityFrame.minX, button.accessibilityFrame.minX, accuracy: 1,
+          "At \(width) pt the note doesn't start at the bar's start")
+      } else {
+        XCTAssertEqual(
+          note.accessibilityFrame.maxX, button.accessibilityFrame.maxX, accuracy: 1,
+          "At \(width) pt the note doesn't end over the main action")
+      }
     }
   }
 }

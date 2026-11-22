@@ -5,6 +5,7 @@ struct LanguageStepView: View {
   let wordHints: WordHints?
   let context: LessonStepContext
   let part: LessonStepPart
+  @Binding var cantListen: Bool
 
   var body: some View {
     switch (exercise.kind, part) {
@@ -23,7 +24,9 @@ struct LanguageStepView: View {
     case (.fillBlank, .turn):
       FillBlankView(exercise: exercise, context: context)
     case (.reading, _), (.listening, _):
-      ArrangeWordsView(exercise: exercise, context: context, part: part)
+      ArrangeWordsView(exercise: exercise, context: context, part: part, cantListen: $cantListen) {
+        EmptyView()
+      }
     case (.matchColumns, .screen):
       LessonQuestionText(
         text: exercise.content.question
@@ -41,28 +44,22 @@ struct LanguageStepView: View {
 /// Main's prompt audio: a recording the screen is about (a word, a letter, a sentence to hear).
 struct LessonAudioButton: View {
   enum Style {
-    /// Listening's, where hearing the sentence is the task.
-    case prominent
     case bar
     /// Right after the word or letter; the bar's button on the same screen takes P.
     case inline
   }
 
   @Environment(\.lessonAudio) private var audio
-  @Environment(LessonPromptAudio.self) private var prompt: LessonPromptAudio?
+  @Environment(LessonPromptAudio.self) private var prompt
 
   let url: URL?
-  var style = Style.prominent
+  let style: Style
 
   var body: some View {
     if let url {
-      let isPlaying = prompt?.playing == url
+      let isPlaying = prompt.playing == url
       let button = Button {
-        if let prompt {
-          prompt.toggle(url, audio: audio)
-        } else {
-          Task { await audio.play(url) }
-        }
+        prompt.toggle(url, audio: audio)
       } label: {
         Label {
           if isPlaying {
@@ -79,8 +76,8 @@ struct LessonAudioButton: View {
           // Pause is narrower than the speaker, so keeping the speaker's room leaves the word and
           // the bar where they are while it plays.
           ZStack {
-            Image(systemName: icon).hidden()
-            Image(systemName: isPlaying ? "pause.fill" : icon)
+            Image(systemName: "speaker.wave.2").hidden()
+            Image(systemName: isPlaying ? "pause.fill" : "speaker.wave.2")
           }
         }
         .labelStyle(.iconOnly)
@@ -88,7 +85,7 @@ struct LessonAudioButton: View {
       }
 
       switch style {
-      case .prominent, .bar:
+      case .bar:
         button
           .buttonStyle(.outline.icon)
           .controlSize(.large)
@@ -100,10 +97,6 @@ struct LessonAudioButton: View {
     }
   }
 
-  private var icon: String {
-    style == .prominent ? "speaker.wave.2.fill" : "speaker.wave.2"
-  }
-
   /// A button's hit region is its label's shape, so the sizes go on the label.
   private struct Fit: ViewModifier {
     let style: Style
@@ -111,8 +104,6 @@ struct LessonAudioButton: View {
 
     func body(content: Content) -> some View {
       switch style {
-      case .prominent:
-        content
       case .bar:
         content.frame(minHeight: 32)
       case .inline:
@@ -127,6 +118,11 @@ struct LessonAudioButton: View {
 }
 
 extension LanguageExercise {
+  /// A learner who can't listen today reads a listening sentence, so it stays quiet.
+  func promptAudio(cantListen: Bool) -> URL? {
+    cantListen && kind == .listening ? nil : promptAudio
+  }
+
   /// Main's `getPlayerStepAudioUrl`.
   var promptAudio: URL? {
     let url: String? =
@@ -141,19 +137,8 @@ extension LanguageExercise {
   }
 }
 
-extension LessonStep {
-  /// Main's `getPromptAudioUrl`.
-  var promptAudio: URL? {
-    guard case .language(let exercise, _) = content else {
-      return nil
-    }
-
-    return exercise.promptAudio
-  }
-}
-
-/// Per lesson, above the layout, so folding or unfolding the screen neither stops nor replays its
-/// prompt.
+/// Per lesson or practice question, above the layout, so folding or unfolding the screen neither
+/// stops nor replays its prompt.
 @MainActor
 @Observable
 final class LessonPromptAudio {
@@ -568,7 +553,7 @@ private struct FillBlankView: View {
   }
 }
 
-private struct ArrangeWordsView: View {
+struct ArrangeWordsView<WayOut: View>: View {
   private enum WordFocus: Hashable {
     case placed(Int)
     case tile(Int)
@@ -580,6 +565,8 @@ private struct ArrangeWordsView: View {
   let exercise: LanguageExercise
   let context: LessonStepContext
   let part: LessonStepPart
+  @Binding var cantListen: Bool
+  @ViewBuilder let wayOut: () -> WayOut
 
   private var isListening: Bool { exercise.kind == .listening }
 
@@ -616,21 +603,32 @@ private struct ArrangeWordsView: View {
 
   @ViewBuilder
   private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
-    if isListening, let audio = exercise.promptAudio {
-      Text(
-        "What do you hear?", tableName: "Player",
-        comment: "The question over a sentence to listen to and arrange"
-      )
-      .typeStyle(.question)
-      .accessibilityAddTraits(.isHeader)
-      LessonAudioButton(url: audio)
-    } else if isListening {
-      // Without its sound the screen still works, as on main: it shows the sentence to translate.
-      Chip(
-        Text(
-          "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
-        ))
-      LessonQuestionText(text: sentence.sentence)
+    if isListening {
+      ClosingColumn(spacing: 12) {
+        if exercise.promptAudio(cantListen: cantListen) != nil || sentence.readsItself {
+          Text(
+            "What do you hear?", tableName: "Player",
+            comment: "The question over a sentence to listen to and arrange"
+          )
+          .typeStyle(.question)
+          .accessibilityAddTraits(.isHeader)
+        } else {
+          VStack(alignment: .leading, spacing: 8) {
+            Chip(
+              Text(
+                "Translate", tableName: "Player",
+                comment: "Label above a word or sentence to translate"
+              ))
+            LessonQuestionText(text: sentence.sentence)
+          }
+        }
+        FlowLayout {
+          if !context.isLocked, exercise.promptAudio != nil {
+            CantListenButton(cantListen: cantListen) { cantListen.toggle() }
+          }
+          wayOut()
+        }
+      }
     } else {
       Chip(
         Text(

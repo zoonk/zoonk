@@ -2,11 +2,11 @@ import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { type StudyScheduleAt, withDailyMinutes } from "./daily-time-plans";
 import { addDays, daysBetween } from "./plan-calendar";
+import { getCoverageDeadline } from "./plan-coverage";
 import { PLAN_EPSILON } from "./plan-precision";
 import { createDays, getPlanStart } from "./plan-run-days";
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 import { type ExamSubjectShare, getWholeShortfall } from "./selected-coverage";
-import { getCoverageDeadline } from "./selected-plan-summary";
 import { type SkillRequirement, listSettled, readLeastRequirement } from "./selected-requirement";
 import { getMinimumWritingCost } from "./writing-allocation";
 

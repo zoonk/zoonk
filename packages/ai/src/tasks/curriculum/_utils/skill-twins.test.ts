@@ -72,6 +72,28 @@ describe(mergeSkillTwins, () => {
     expect(mergeSkillTwins({ graph, twins: new Map() })).toBe(graph);
   });
 
+  it("keeps optional strategy when twins collapse the phase it used", () => {
+    const extra = skill({
+      area: "Estratégia de prova",
+      key: "tempo",
+      name: "Distribuir o tempo",
+      phase: 2,
+    });
+
+    const merged = mergeSkillTwins({
+      graph: {
+        ...graph,
+        extraSkills: [extra],
+        skills: graph.skills.filter((item) => item.topics.length > 0),
+      },
+      twins: new Map([["ler", "graficos"]]),
+    });
+
+    expect(merged.phases).toHaveLength(1);
+    expect(merged.skills.map((item) => item.key)).toStrictEqual(["graficos"]);
+    expect(merged.extraSkills).toStrictEqual([{ ...extra, phase: 1 }]);
+  });
+
   it("merges a twin into the earlier skill, which takes its edges, topics and outcome", () => {
     const merged = mergeSkillTwins({ graph, twins: new Map([["ler", "graficos"]]) });
 

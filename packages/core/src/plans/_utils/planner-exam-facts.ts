@@ -22,6 +22,7 @@ type ExamFacts = {
   areaShares: Map<string, number> | null;
   examSubjects: ExamSubjectShare[] | null;
   fullMockMinutes: number;
+  materialExam: boolean;
   mockClocks: MockClock[];
   mockMinutes: number;
   shortMockMinutes: number | null;
@@ -73,6 +74,7 @@ async function loadNoticeFacts({
     areaShares: parsed ? getAreaShares({ graph, structure: parsed }) : null,
     examSubjects: parsed ? getExamSubjectShares({ graph, structure: parsed }) : null,
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure }),
+    materialExam: ownerId !== null,
     mockClocks: listMockClocks(structure),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
@@ -102,6 +104,7 @@ export function loadExamFacts({
     areaShares: null,
     examSubjects: null,
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure: null }),
+    materialExam: false,
     mockClocks: listMockClocks(null),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure: null }),
     shortMockMinutes: null,

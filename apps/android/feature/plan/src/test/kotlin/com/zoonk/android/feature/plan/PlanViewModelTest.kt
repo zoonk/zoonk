@@ -294,6 +294,74 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun theStrategyOfferAddsItsOwnChangeAndAnswersInItsCard() =
+        runTest {
+            val plan = shown(EXTRA_PLAN)
+
+            viewModel.addExtraOffer(plan, plan.extraOffer!!)
+
+            assertEquals(listOf(listOf(PlanOp.Extras(listOf("strategy-time")))), api.changes)
+            assertEquals(SlotItem.ExtraOffer(plan.extraOffer!!), viewModel.slotState.result?.item)
+        }
+
+    @Test
+    fun anOfferThePlanRefusesReadsThePlanAgainInsteadOfSayingItFailed() =
+        runTest {
+            val plan = shown(EXTRA_PLAN)
+            api.changeFailure = ApiException(ApiError.Unavailable, "PLAN_CHANGE_INVALID", 422)
+
+            viewModel.addExtraOffer(plan, plan.extraOffer!!)
+
+            assertEquals(2, api.plans)
+            assertNull(viewModel.outcomes.saveFailed.value)
+            assertNull(viewModel.slotState.result)
+        }
+
+    @Test
+    fun anOfferThePlanAlreadyHoldsReadsThePlanAgainWithoutSayingAnything() =
+        runTest {
+            val plan = shown(EXTRA_PLAN)
+            api.changeAnswer =
+                PlanChangeResult(
+                    change = null,
+                    reason = PlanChangeResult.Reason.ALREADY_IN,
+                    status = PlanChangeResult.Status.UNCHANGED,
+                )
+
+            viewModel.addExtraOffer(plan, plan.extraOffer!!)
+
+            assertEquals(2, api.plans)
+            assertNull(viewModel.outcomes.saveFailed.value)
+            assertNull(viewModel.slotState.result)
+        }
+
+    @Test
+    fun anOfferWhoseCheckThePlanRefusesReadsThePlanAgainInsteadOfFailingTheCheck() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            api.previewFailure = ApiException(ApiError.Unavailable, "PLAN_CHANGE_INVALID", 422)
+
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+
+            assertEquals(2, api.plans)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertTrue(api.changes.isEmpty())
+        }
+
+    @Test
+    fun aLaterDaysOfferThePlanAlreadyHoldsReadsThePlanAgainInsteadOfSayingItStaysAsItIs() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = true, unchanged = true)
+
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+
+            assertEquals(2, api.plans)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertTrue(api.changes.isEmpty())
+        }
+
+    @Test
     fun aFitCheckForAChangedPlanAddsNothing() =
         runTest {
             val plan = shown(FIT_PLAN)
@@ -1664,5 +1732,13 @@ class PlanViewModelTest {
                     """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
             )
         val FIT_OPERATIONS = FIT_PLAN.fitOffer!!.operations.map { it.op }
+
+        /** Today's exam strategy offer, which adds at once. */
+        val EXTRA_PLAN =
+            plan(
+                """"extraOffer":{"canApply":true,"fits":true,"lessons":15,""" +
+                    """"operations":[{"kind":"setExtras","skillIds":["strategy-time"]}],""" +
+                    """"effect":{"lessonsAdded":15,"lessonsRemoved":0,"topicsAdded":[]}},"hasNotice":true""",
+            )
     }
 }

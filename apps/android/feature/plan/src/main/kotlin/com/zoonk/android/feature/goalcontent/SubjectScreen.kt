@@ -46,6 +46,7 @@ import com.zoonk.android.feature.plan.FarTopicSheet
 import com.zoonk.android.feature.plan.FarTopicViewModel
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -338,10 +339,10 @@ private fun subjectLead(
 ): List<String> {
     val kind =
         when {
+            subject.isExtra -> optionalStudyLabel(syllabus.hasNotice == true, syllabus.examDocument)
             subject.group != null -> subject.group
             subject.source == SyllabusSubject.Source.NOTICE && syllabus.fromMaterial -> stringResource(R.string.goalcontent_from_material)
-            subject.source == SyllabusSubject.Source.NOTICE || syllabus.kind != Syllabus.Kind.NOTICE -> null
-            else -> stringResource(R.string.goalcontent_also_in_plan)
+            else -> null
         }
     val questions = subject.questions
     val share = subject.share

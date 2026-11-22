@@ -58,18 +58,20 @@ function linkRequirement({
   );
 
   return new Map(
-    chosen.graph.skills.map((skill) => [
-      skill.skillId,
-      {
-        lessons: new Map(
-          (linked.get(skill.skillId) ?? []).map(({ lesson }) => [
-            lesson.lessonId,
-            lesson.minutes * input.paceFactor,
-          ]),
-        ),
-        standIn: (standIns.get(skill.skillId) ?? 0) * DEFAULT_LESSON_MINUTES * input.paceFactor,
-      },
-    ]),
+    chosen.graph.skills
+      .filter((skill) => !skill.extra)
+      .map((skill) => [
+        skill.skillId,
+        {
+          lessons: new Map(
+            (linked.get(skill.skillId) ?? []).map(({ lesson }) => [
+              lesson.lessonId,
+              lesson.minutes * input.paceFactor,
+            ]),
+          ),
+          standIn: (standIns.get(skill.skillId) ?? 0) * DEFAULT_LESSON_MINUTES * input.paceFactor,
+        },
+      ]),
   );
 }
 

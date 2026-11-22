@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+const PHONE_CONTENT_WIDTH = 318;
+
 export function useMeasuredWidth<TElement extends HTMLElement>(
-  fallback: number,
+  fallback = PHONE_CONTENT_WIDTH,
   { measureBeforePaint = false }: { measureBeforePaint?: boolean } = {},
 ) {
   const ref = useRef<TElement>(null);

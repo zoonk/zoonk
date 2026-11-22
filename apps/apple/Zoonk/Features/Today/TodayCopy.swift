@@ -133,19 +133,20 @@ extension StudyBlock: NamedBlock {
   }
 }
 
-extension StudyBlock {
-  private func shortList(_ names: [String], named: Int) -> String {
-    guard names.count > named else {
-      return names.formatted(.list(type: .and))
-    }
-
-    let shown = names.prefix(named).joined(separator: ", ")
-
-    return String(
-      localized: "\(shown) and \(names.count - named) more", table: "Today",
-      comment: "A short list of topics and how many more")
+/// Main's `useShortList`: every name up to `named`, else the first `named` and how many more.
+func shortList(_ names: [String], named: Int) -> String {
+  guard names.count > named else {
+    return names.formatted(.list(type: .and))
   }
 
+  let shown = names.prefix(named).joined(separator: ", ")
+
+  return String(
+    localized: "\(shown) and \(names.count - named) more", table: "Today",
+    comment: "A short list of topics and how many more")
+}
+
+extension StudyBlock {
   /// A writing block's line under its name: when the day's grading is used up, that its draft is
   /// kept, or what a drill is for, since its name is the same after every lesson.
   private var writingLine: String? {
@@ -217,7 +218,7 @@ extension StudyBlock {
   }
 
   /// The row's one short line on Today's list: the subject, or what a challenge or review is.
-  var label: String? {
+  func label(document: ExamDocument) -> String? {
     // A refused start is the one thing to know before tapping it, even while lessons come first.
     if case .tomorrow = writingAvailability {
       return writingLine
@@ -247,7 +248,12 @@ extension StudyBlock {
           comment: "A practice block's questions")
     }
 
-    return kind == .produce ? writingLine ?? subject : subject
+    if kind == .produce, let writingLine {
+      return writingLine
+    }
+
+    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) }
+      ?? subject
   }
 }
 

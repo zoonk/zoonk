@@ -13,7 +13,8 @@ final class BlockTitleTests: XCTestCase {
 
     XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
     XCTAssertEqual(
-      block.label, "1 more topic", "the title names the first topic; the line counts the rest")
+      block.label(document: .notice), "1 more topic",
+      "the title names the first topic; the line counts the rest")
   }
 
   func testAnExtraPracticeKeepsItsTitleAndOnlyTheTagMarksIt() throws {
@@ -26,14 +27,14 @@ final class BlockTitleTests: XCTestCase {
     let block: StudyBlock = try decode(practice(topics: #"["Reading slope as a rate"]"#))
 
     XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
-    XCTAssertEqual(block.label, "Quantum physics from scratch")
+    XCTAssertEqual(block.label(document: .notice), "Quantum physics from scratch")
   }
 
   func testAPracticeWithoutTopicsIsNamedAfterItsSubjects() throws {
     let block: StudyBlock = try decode(practice(topics: "[]"))
 
     XCTAssertEqual(block.displayTitle, "Practice: Quantum physics from scratch")
-    XCTAssertEqual(block.label, "Quantum physics from scratch")
+    XCTAssertEqual(block.label(document: .notice), "Quantum physics from scratch")
   }
 
   func testThePracticePageNamesTheBlockAsTodaysRowDoes() throws {

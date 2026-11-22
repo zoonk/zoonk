@@ -1,3 +1,4 @@
+import { followsNotice, matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { type ExamPicks, toChosenStructure } from "../../exams/choices/exam-choices";
 import { getPaperKind, isWrittenSubject } from "../../exams/mocks/written-subject";
@@ -5,7 +6,6 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { isQualifyingSubject, listPlanShares } from "../../library/exams/subject-shares";
 import { getSkillArea, getWrittenTestAreas } from "../../plans/planner/graph-areas";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { followsNotice, matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { type UncheckedPart } from "./focus-test-contract";
 
 /** A subject of the exam's notice with the plan areas that study it; a plan without one lists its own areas. */

@@ -90,6 +90,16 @@ export type PlayableLanguageStep = PlayableStepBase & {
 
 export type PlayableLibraryStep = PlayableLanguageStep | PlayableTeachingStep;
 
+/**
+ * A listening sentence that is its own answer, as in a lesson in the learner's own language: read
+ * instead of heard, it gives the answer away, so a learner who can't listen leaves it out.
+ */
+export function isDictation(step: PlayableLibraryStep): boolean {
+  return (
+    step.kind === "listening" && "exercise" in step && step.exercise.sentence?.readsItself === true
+  );
+}
+
 export type PlayableLibraryLesson = {
   canDo: string | null;
   chapter: { id: string; title: string } | null;

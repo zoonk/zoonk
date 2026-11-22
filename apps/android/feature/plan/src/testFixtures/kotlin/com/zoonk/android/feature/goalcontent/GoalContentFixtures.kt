@@ -128,8 +128,21 @@ private val studySkills =
      "sharedWith":[],"shortName":"Study skills","source":"plan","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}
     """.trimIndent()
 
-/** ENEM as a notice exam: two days of subjects, one taken out, a written test and an extra area. */
-fun examSyllabus(): Syllabus =
+/** Optional study the learner added beyond the notice: lessons only, no readiness. */
+private val examStrategy =
+    """
+    {"areas":["Exam strategy"],"chapters":[${chapter(1, "How the exam is built", total = 5)},${chapter(2, "Time on exam day", total = 5)}],
+     "displayWeight":null,"extra":true,"group":null,"imageUrl":null,"key":"exam-strategy","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":15,
+     "mastery":null,"matrix":[],"name":"Exam strategy","nextDate":"2027-02-22","notPlannedReason":null,"preparation":null,"questions":null,
+     "share":null,"sharedWith":[],"shortName":"Exam strategy","source":"plan","topicFrequencySource":null,"topics":[],"topicsKnown":null,
+     "topicsStudied":null}
+    """.trimIndent()
+
+/**
+ * ENEM as a notice exam: two days of subjects, one taken out, a written test and an area outside the notice, with
+ * the exam strategy the learner added when [strategy].
+ */
+fun examSyllabus(strategy: Boolean = false): Syllabus =
     ApiJson.decodeFromString(
         """
         {"courseWeights":{"course":"Medicine","edition":null,"institution":"USP","source":{"title":null,"url":"https://www.fuvest.br/pesos"},
@@ -137,7 +150,8 @@ fun examSyllabus(): Syllabus =
          "examDocument":"notice","fromMaterial":false,"goal":{"id":"$GOAL","kind":"exam","title":"Pass ENEM","displayName":"Pass ENEM"},
          "kind":"notice","knownTopicsReturn":"practice","lessons":{"done":8,"known":4,"total":45},"noticeUrl":null,"passMarks":null,
          "questionsSource":{"edition":"2024 edition","title":null,"url":"https://www.gov.br/inep"},
-         "sharedExams":[],"subjects":[$spanishSubject,$essaySubject,$natureSubject,$studySkills],"topicCount":8,"topicsMapped":true,
+         "sharedExams":[],"hasNotice":true,
+         "subjects":[$spanishSubject,$essaySubject,$natureSubject,$studySkills${if (strategy) ",$examStrategy" else ""}],"topicCount":8,"topicsMapped":true,
          "writtenPractice":{"cadence":"weekly","finalWeeksFrom":"2027-10-01","parts":["Essay"],"subjects":[$writtenEssay]}}
         """.trimIndent(),
     )

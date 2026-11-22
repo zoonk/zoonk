@@ -3,40 +3,26 @@ import { type PlanChangeStatus } from "@zoonk/db";
 import { once } from "@zoonk/utils/once";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
-import { getKnownSubjects } from "../../learner/placement/placement-contract";
-import { chooseBases } from "../planner/base-choices";
-import { type BossMinutes } from "../planner/boss-minutes";
 import { type BuiltPlan, type PlanningMode, buildPlan } from "../planner/build-plan";
 import { getChosenStandInLessons } from "../planner/chosen-bases";
 import { withPlannedLessons } from "../planner/core-first";
-import { readCourseWeights } from "../planner/course-weights";
 import { type StudyScheduleAt } from "../planner/daily-time-plans";
-import { weighGraphForExam } from "../planner/exam-weights";
-import { getShownPhaseEnds } from "../planner/kept-phase-ends";
-import { sizeLanguageGraph } from "../planner/language-size";
+import { withoutExamExtras } from "../planner/exam-extras";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
 import { type Pace } from "../planner/plan-pace";
-import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
-import { getBossKey } from "../planner/plan-units";
 import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
 import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/selected-item-facts";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
-import { getSettledSkillIds, getStartedSkillIds } from "../planner/settled-skills";
-import { loadRunBossFacts } from "./boss-plan-facts";
-import { type PlanCarrySnapshot, isTodayShown, loadPlanCarryOver } from "./carried-lessons";
-import { choosePlanSettings } from "./choose-plan-pace";
-import { chooseExamOptionSkills } from "./exam-option-skills";
-import { listFinishedDays } from "./finished-days";
-import { keepPastBasicsBands } from "./level-bands";
+import { type PlanCarrySnapshot } from "./carried-lessons";
+import { withPlacedExtras } from "./extra-plan-graph";
 import { layOutUnmetPhaseDates } from "./phase-end-layout";
 import { type PlanChangeKind, type StoredPlanChangePayload } from "./plan-change-payload";
-import { type PlanContext, getStateTargetDate } from "./plan-context";
+import { type PlanContext } from "./plan-context";
 import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "./plan-inputs-key";
-import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
-import { loadQuickBaseLessons } from "./quick-bases";
+import { readReplanInputs } from "./replan-input";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
 
@@ -48,6 +34,7 @@ export type ComputedPlan = {
   feasibility: PlanFeasibility;
   inputsKey: string;
   itemFacts: ReadonlyMap<string, SelectedItemFacts>;
+  materialExam?: boolean;
   keptPhaseEnds: ReadonlyMap<number, Date> | undefined;
   mode: PlanningMode;
   pace: Pace;
@@ -76,18 +63,9 @@ export type PlanChangeRecord = {
 
 export type PlanTagRevalidation = "now" | "skip";
 
-function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
-  return new Map(
-    items.flatMap((item) =>
-      item.kind === "boss" && typeof item.minutes === "number"
-        ? [[getBossKey(item.phase), item.minutes] as const]
-        : [],
-    ),
-  );
-}
-
 export type ComputePlanRequest = {
   carrySnapshot?: PlanCarrySnapshot;
+  bringBackExtras?: boolean;
   bringBackSetAside?: boolean;
   context: PlanContext;
   keepPhaseDates?: boolean;
@@ -104,46 +82,6 @@ export type ComputePlanRequest = {
   studyScheduleAt?: StudyScheduleAt;
 };
 
-function shapePlannerInputs<
-  Loaded extends Pick<
-    Awaited<ReturnType<typeof loadPlannerInputs>>,
-    "bands" | "lessons" | "missedSkillIds"
-  >,
->({
-  context,
-  loaded,
-  resolved,
-  state,
-}: {
-  context: PlanContext;
-  loaded: Loaded;
-  resolved: PlanState["graph"];
-  state: PlanState;
-}) {
-  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
-    bands: loaded.bands,
-    goal: context.goal,
-    graph: resolved,
-    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
-    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
-    state,
-  });
-
-  return {
-    fullGraph,
-    graph,
-    inputs: {
-      ...loaded,
-      lessons: keepPastBasicsBands({
-        graph,
-        keepSkillIds: loaded.missedSkillIds,
-        lessons: loaded.lessons,
-        pastBasicsAreas: state.settings.pastBasicsAreas,
-      }),
-    },
-  };
-}
-
 /** Plans a goal from a state without saving anything. */
 export function computePlan(
   input: ComputePlanRequest & { skipUnchangedInputs: true },
@@ -153,93 +91,19 @@ export async function computePlan({
   skipUnchangedInputs,
   ...request
 }: ComputePlanRequest & { skipUnchangedInputs?: boolean }): Promise<ComputedPlan | null> {
+  const { context, mode, state = context.state, studyScheduleAt } = request;
+
   const {
-    carrySnapshot,
-    context,
-    mode,
-    keepPhaseDates = mode === "automatic",
-    now = new Date(),
-    movedEnds,
-    pace: paceSource = "saved",
-    releasedPhases,
-    setAsideLeftWork = false,
-    state = context.state,
-    todayShown: shownToday,
-    ...options
-  } = request;
-
-  const resolved = await resolveMergedSkills(
-    await chooseExamOptionSkills({ goal: context.goal, graph: state.graph, picks: state.settings }),
-  );
-
-  const targetDate = getStateTargetDate(state);
-
-  const [
-    { areaShares, examSubjects, topicLevels, writtenSkillIds, ...loaded },
-    carryOver,
-    todayShown,
-    quick,
-  ] = await Promise.all([
-    loadPlannerInputs({
-      difficultyBias: state.settings.difficultyBias,
-      examPicks: state.settings,
-      goal: context.goal,
-      graph: resolved,
-      targetDate,
-      userId: context.goal.userId,
-    }),
-    loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }),
-    shownToday ??
-      (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
-    loadQuickBaseLessons(state.settings),
-  ]);
-
-  const { fullGraph, graph, inputs } = shapePlannerInputs({ context, loaded, resolved, state });
-
-  const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
-  const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
-
-  const { advise, input } = chooseBases({
-    ...inputs,
-    bossFacts: await bossFacts,
-    bossMinutes: listSavedBossMinutes(context.items),
-    bringBackSetAside: options.bringBackSetAside ?? false,
-    carryOver: carryOver && {
-      ...carryOver,
-      todayExceptAreas: options.todayExceptAreas ?? carryOver.todayExceptAreas ?? null,
-    },
-    examWindows: toExamWindows(context.phases),
-    finishedOn: listFinishedDays({ items: context.items, timeZone: context.timeZone }),
-    goal: { dailyMinutes: state.goal.dailyMinutes, kind: context.goal.kind, targetDate },
-    goalId: context.goal.id,
-    graph: weighGraphForExam({
-      areaShares,
-      courseWeights: readCourseWeights(context.goal.details),
-      graph,
-      topicLevels,
-    }),
-    items: context.items,
-    knownAreas: new Set([...getKnownSubjects(context.goal), ...state.settings.pastBasicsAreas]),
-    mode,
-    movesPhaseEnds: !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined,
-    noticeAreas: areaShares ? new Set(areaShares.keys()) : null,
-    openedKeys: options.openedKeys,
-    paceFactor: settings.pace.factor,
-    phaseEnds: keepPhaseDates
-      ? getShownPhaseEnds({
-          items: context.items,
-          moved: movedEnds,
-          phases: context.phases,
-          released: releasedPhases,
-        })
-      : undefined,
-    quickLessons: quick,
-    setAsideLeftWork,
+    advise,
+    examSubjects,
+    extraSkills,
+    fullGraph,
+    graph,
+    input,
+    materialExam,
     settings,
-    today: context.today,
-    todayShown,
-    topicLevels,
-  });
+    writtenSkillIds,
+  } = await readReplanInputs({ ...request, state });
 
   const savedKey =
     writtenSkillIds && !state.settings.writtenSkillIds ? null : context.plan.inputsKey;
@@ -248,7 +112,12 @@ export async function computePlan({
     return null;
   }
 
-  const builtInput = { ...input, ...readLanding({ input, savedKey: context.plan.inputsKey }) };
+  const builtInput = {
+    ...input,
+    ...readLanding({ input, savedKey: context.plan.inputsKey }),
+    ...(materialExam && { graph: withoutExamExtras(input).graph }),
+  };
+
   const built = buildPlan(builtInput);
 
   const laidOut = await layOutUnmetPhaseDates({
@@ -271,7 +140,7 @@ export async function computePlan({
       input,
       planned: built,
       plannedInput: builtInput,
-      studyScheduleAt: options.studyScheduleAt,
+      studyScheduleAt,
     }),
   );
 
@@ -279,7 +148,10 @@ export async function computePlan({
 
   const standInLessons = getChosenStandInLessons(builtInput);
 
-  const saved = withPlannedLessons({ graph: fullGraph, skillLessons: built.skillLessons });
+  const saved = withPlannedLessons({
+    graph: withPlacedExtras({ built, extraSkills, graph: fullGraph }),
+    skillLessons: built.skillLessons,
+  });
 
   const savedSettings = withBuiltSettings({ built, settings, writtenSkillIds });
 
@@ -299,6 +171,7 @@ export async function computePlan({
     }),
     itemFacts: listSelectedItemFacts({ built, input: builtInput }),
     keptPhaseEnds: input.phaseEnds,
+    materialExam,
     mode,
     pace: settings.pace,
     get selected() {

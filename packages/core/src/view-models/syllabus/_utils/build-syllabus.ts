@@ -17,7 +17,7 @@ import {
   getItemAreas,
   withoutKey,
 } from "./syllabus-chapters";
-import { type SyllabusInput, type SyllabusItem } from "./syllabus-input";
+import { type SyllabusInput, type SyllabusItem, hasSyllabusNotice } from "./syllabus-input";
 import {
   draftSubjects,
   findWrittenPart,
@@ -54,7 +54,7 @@ function sumPlannedLessons({
   subjects: readonly SyllabusSubject[];
 }): SyllabusView["lessons"] {
   const planned = new Set(
-    subjects.flatMap((subject) => (subject.notPlannedReason ? [] : subject.areas)),
+    subjects.flatMap((subject) => (subject.notPlannedReason || subject.extra ? [] : subject.areas)),
   );
 
   const { lessonsDone, lessonsKnown, lessonsTotal } = getSubjectProgress(
@@ -125,10 +125,25 @@ export function buildSyllabus(
 
   const items = withinLessonScope({ deadline, items: input.items });
 
-  const areas = listAreas(skills);
-  const { drafts, kind } = draftSubjects({ areas, notice });
+  const ordinary = skills.filter((skill) => !skill.extra);
+  const extraIds = new Set(skills.filter((skill) => skill.extra).map((skill) => skill.skillId));
+
+  const heldExtras = new Set(
+    items.flatMap((item) =>
+      (item.status === "todo" || item.status === "done") &&
+      item.skillId &&
+      extraIds.has(item.skillId)
+        ? [item.skillId]
+        : [],
+    ),
+  );
+
+  const extraAreas = listAreas(skills.filter((skill) => heldExtras.has(skill.skillId)));
+  const { drafts: subjectsInScope, kind } = draftSubjects({ areas: listAreas(ordinary), notice });
+  const { drafts: extraDrafts } = draftSubjects({ areas: extraAreas, notice: null });
+  const drafts = [...subjectsInScope, ...extraDrafts];
   const displayWeights = getDisplayWeights(drafts);
-  const mapped = kind === "notice" && skills.some((skill) => skill.topics.length > 0);
+  const mapped = kind === "notice" && ordinary.some((skill) => skill.topics.length > 0);
   const itemArea = getItemAreas({ items, skills });
   const skillNames = new Map(skills.map((skill) => [skill.skillId, skill.name]));
   const next = findUpNextItem({ items, todayBlocks });
@@ -137,7 +152,12 @@ export function buildSyllabus(
   const lessonsOf = countItemLessons;
 
   const subjects = drafts.map((draft, index): SyllabusSubject => {
-    const own = items.filter((item) => draft.areas.includes(itemArea(item) ?? ""));
+    const extra = index >= subjectsInScope.length;
+
+    const own = items.filter(
+      (item) =>
+        extra === extraIds.has(item.skillId ?? "") && draft.areas.includes(itemArea(item) ?? ""),
+    );
 
     const chapters = buildChapters({
       chapterTitles,
@@ -152,11 +172,15 @@ export function buildSyllabus(
     const skipped =
       draft.areas.length > 0 && draft.areas.every((area) => skippedAreas.includes(area));
 
-    const ownSkills = skills.filter((skill) => draft.areas.includes(skill.area));
+    const ownSkills = (extra ? skills.filter((skill) => skill.extra) : ordinary).filter((skill) =>
+      draft.areas.includes(skill.area),
+    );
 
     // A plan built from an older notice may teach the subject without mapping its current topic names.
     const subjectMapped =
-      mapped && (ownSkills.length === 0 || namesAnyTopic({ skills, topics: draft.topics }));
+      !extra &&
+      mapped &&
+      (ownSkills.length === 0 || namesAnyTopic({ skills: ordinary, topics: draft.topics }));
 
     const built = draft.topics.map((topic) => ({
       ...buildTopic({
@@ -183,13 +207,19 @@ export function buildSyllabus(
       skipped,
     });
 
-    const measured = measureSubject({ areas: draft.areas, notPlannedReason, sections });
-    const writtenPart = findWrittenPart(draft, input.writtenPractice);
+    const measured = measureSubject({
+      areas: draft.areas,
+      notPlannedReason,
+      sections: extra ? null : sections,
+    });
+
+    const writtenPart = extra ? undefined : findWrittenPart(draft, input.writtenPractice);
 
     return {
       areas: draft.areas,
       chapters: chapters.map((chapter) => withoutKey(chapter)),
       displayWeight: displayWeights[index] ?? null,
+      ...(extra && { extra: true }),
       group: draft.group,
       imageUrl: draft.areas.map((area) => areaCourses.get(area)?.imageUrl).find(Boolean) ?? null,
       key: keys[index] ?? draft.name,
@@ -201,7 +231,7 @@ export function buildSyllabus(
       notPlannedReason,
       questions: draft.questions,
       share: draft.share,
-      sharedWith: getSharedWith({ areas: draft.areas, shared }),
+      sharedWith: extra ? [] : getSharedWith({ areas: draft.areas, shared }),
       shortName: getShortName({ areaCourses, draft }),
       source: draft.source,
       topicFrequencySource: draft.frequencySource ?? null,
@@ -219,11 +249,19 @@ export function buildSyllabus(
   return {
     courseWeights: fromNotice?.courseWeights ?? null,
     fromMaterial: fromNotice?.fromMaterial ?? false,
+    hasNotice: hasSyllabusNotice(notice),
     kind,
-    lessons: sumPlannedLessons({ itemArea, items, subjects }),
+    lessons: sumPlannedLessons({
+      itemArea,
+      items: items.filter((item) => !extraIds.has(item.skillId ?? "")),
+      subjects,
+    }),
     noticeUrl: fromNotice?.url ?? null,
     passMarks: fromNotice?.passMarks ?? null,
     questionsSource: fromNotice?.questionsSource ?? null,
+    subjectCount: subjectsInScope.filter(
+      (subject) => kind !== "notice" || subject.source === "notice",
+    ).length,
     subjects,
     topicCount: subjects.reduce((sum, subject) => sum + subject.topics.length, 0),
     topicsMapped: mapped,

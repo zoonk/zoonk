@@ -105,7 +105,13 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
-  const examFactsRead = Promise.resolve(loadExamFacts({ goal, graph, picks: examPicks }));
+  const examFactsRead = Promise.resolve(
+    loadExamFacts({
+      goal,
+      graph: { ...graph, skills: graph.skills.filter((skill) => !skill.extra) },
+      picks: examPicks,
+    }),
+  );
 
   const [lessons, prerequisites, readiness, exam, evidence, bands, startLessonId] =
     await Promise.all([

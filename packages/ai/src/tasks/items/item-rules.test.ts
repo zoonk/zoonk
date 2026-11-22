@@ -12,7 +12,11 @@ vi.mock("./item-rules/language-goals.prompt.md", () => ({
   default: "# Language goals\n\nPractice it.\n",
 }));
 
-vi.mock("./item-rules/pictures.prompt.md", () => ({ default: "- Charts.\n- Pictures.\n" }));
+vi.mock("./item-rules/pictures.prompt.md", () => ({
+  default: "- Charts.\n{{PLOT}}\n- Pictures.\n",
+}));
+
+vi.mock("./item-rules/plot.prompt.md", () => ({ default: "- Plots.\n" }));
 vi.mock("./item-rules/numeric-pictures.prompt.md", () => ({ default: "- No numeric pictures.\n" }));
 
 vi.mock("./item-rules/multiple-choice.prompt.md", () => ({
@@ -44,7 +48,7 @@ describe(withItemRules, () => {
       [
         "# Role",
         "# Good\n\n- Concrete. Set in `FIELD`.\n- Fit `LEVEL`.\n- In `LANGUAGE`.\n",
-        "# Text\n\n- Tables.\n- Charts.\n- Pictures.\n- No em dashes.\n",
+        "# Text\n\n- Tables.\n- Charts.\n- Plots.\n- Pictures.\n- No em dashes.\n",
         "# Formats\n\n## multipleChoice\n\n- Options, one correct.\n",
         "# Final check\n\nIn `LANGUAGE`.\n",
       ].join("\n"),

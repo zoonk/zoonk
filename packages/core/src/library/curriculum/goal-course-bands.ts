@@ -98,8 +98,10 @@ function mergePrivateBands(need: GoalCourseNeed): GoalCourseNeed {
 export function orderGoalCourses(
   graph: GoalSkillGraph,
 ): { key: string; title: string; countrySpecific: boolean }[] {
+  const skills = [...graph.skills, ...(graph.extraSkills ?? [])];
+
   const courses = graph.courses.flatMap((course) => {
-    const position = graph.skills.findIndex((skill) => skill.course === course.key);
+    const position = skills.findIndex((skill) => skill.course === course.key);
 
     return position === -1 ? [] : [{ course, position }];
   });

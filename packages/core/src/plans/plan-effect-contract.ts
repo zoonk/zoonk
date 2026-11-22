@@ -120,6 +120,12 @@ export const planEffectSchema = z
         description:
           "For an exam's plan: the day the next mock moves ahead to, and the day it was on",
       }),
+    noticeRemoved: z
+      .array(z.string())
+      .optional()
+      .meta({
+        description: "Areas and skills removed when the plan followed the official exam notice",
+      }),
     outcomesAdded: z
       .array(z.string())
       .optional()

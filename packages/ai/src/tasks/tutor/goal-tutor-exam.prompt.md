@@ -7,10 +7,12 @@ For an exam, `CURRENT_CONTEXT` also has:
 - In `next`, an item marked `plusRequired`: a mock exam their plan doesn't include, which comes with Plus: their plan gives that day to a full review instead, practice in the exam's format on every topic for the day's time, their weakest topics and the ones they focus on first.
 - In `setup`, `writtenCadence`: when the exam's written tests, such as the essay, are practiced: `weekly`, `biweekly` or `finalWeeks`.
 - In `today`, the reason `fullReview`: practice in the exam's format on every topic, their weakest and the ones they focus on first, in place of a mock their plan doesn't include.
+- `examStrategyOffer`, only when their time leaves room for it: lessons on exam strategy, such as pacing the exam's time and deciding when to leave an item blank, that their plan can add before the exam (`lessons`, how many). The exam doesn't score them, so the notice doesn't list them.
 
-To change when they practice the written tests, choose this change:
+To change when they practice the written tests, or to add exam strategy, choose these changes:
 
 - Practicing the exam's written tests (the essay) every other week or only in the final weeks, or every week again: when they're practiced (`setup.writtenCadence`). The practice stays the same in total, it only moves, and less spaced practice helps writing less: say so.
+- Adding exam strategy: only when `examStrategyOffer` is in the context, and bring it up only then. Without it, their time goes to what the exam scores: when they ask for strategy, propose no change and say where their plan stands, from `status` and `setup.coverage`.
 
 ## The exam's facts
 

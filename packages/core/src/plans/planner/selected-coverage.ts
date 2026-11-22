@@ -52,6 +52,7 @@ function listScope({
   });
 
   const skills = input.graph.skills
+    .filter((skill) => !skill.extra)
     .map((skill) => ({
       area: getSkillArea({ graph: input.graph, skill }),
       skillId: skill.skillId,
@@ -294,6 +295,8 @@ export function getCoverage({
 
   const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
   const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
+  const requiredSkills = input.graph.skills.filter((skill) => !skill.extra);
+  const requiredIds = new Set(requiredSkills.map((skill) => skill.skillId));
 
   const coreFits =
     (!written || written.coveredRaw >= written.requiredRaw - PLAN_EPSILON) &&
@@ -304,10 +307,12 @@ export function getCoverage({
           (item) =>
             item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
         ),
-        skillMinutes: built.skillMinutes.filter(({ skillId }) => !written?.skillIds.has(skillId)),
+        skillMinutes: built.skillMinutes.filter(
+          ({ skillId }) => requiredIds.has(skillId) && !written?.skillIds.has(skillId),
+        ),
       },
       known: input.knownSkillIds ?? new Set(),
-      skills: input.graph.skills,
+      skills: requiredSkills,
     });
 
   const whole = skills.every(

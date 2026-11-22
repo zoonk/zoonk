@@ -1,6 +1,7 @@
+import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { type PlanView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
-import { type WritingWork } from "../planner/writing-schedule";
+import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
 import { type PlanReadContext } from "./plan-read-projection";
 import { readPlanSummary } from "./plan-summary";
 
@@ -17,6 +18,18 @@ function getShownEnd(context: PlanReadContext): string | null {
 
   const afterExam = context.phases.find((phase) => phase.kind === "afterExam")?.endDate;
   return [...dates, ...(afterExam ? [afterExam] : [])].toSorted().at(-1) ?? null;
+}
+
+export async function loadPlanWritingWork({ goal, state, today }: PlanReadContext) {
+  const schedule = state.settings.writingSchedule;
+
+  return schedule?.length
+    ? listRemainingWriting({
+        attempts: await readScheduledAnswers(goal.userId, goal.id),
+        schedule,
+        today: toIsoDate(today),
+      })
+    : [];
 }
 
 export function buildEstimateView({

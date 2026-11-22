@@ -9,7 +9,6 @@ import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
 import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
-import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
@@ -17,12 +16,12 @@ import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { readSyllabusInput } from "../../view-models/syllabus/_utils/read-syllabus-input";
+import { hasSyllabusNotice } from "../../view-models/syllabus/_utils/syllabus-input";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
-import { listRemainingWriting } from "../planner/writing-schedule";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
@@ -32,7 +31,7 @@ import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
 import { getPlanEnd } from "./plan-end";
-import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
+import { MINUTES_PER_HOUR, buildEstimateView, loadPlanWritingWork } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
@@ -136,18 +135,6 @@ function readPlanFocusTest({ goal, timeZone, today }: PlanContext) {
   return readFocusTestSummary({ goal, localDate: today, timeZone });
 }
 
-async function loadPlanWritingWork({ goal, state, today }: PlanReadContext) {
-  const schedule = state.settings.writingSchedule;
-
-  return schedule?.length
-    ? listRemainingWriting({
-        attempts: await readScheduledAnswers(goal.userId, goal.id),
-        schedule,
-        today: toIsoDate(today),
-      })
-    : [];
-}
-
 function readPhaseChallengeAccess(goal: PlanContext["goal"]) {
   return arePhaseChallengesRequired({
     goalKind: goal.kind,
@@ -161,6 +148,17 @@ function isPlanReady(context: PlanContext): boolean {
     context.phases.length > 0 &&
     (context.goal.planRevealedAt !== null || !context.plan.buildFailedAt)
   );
+}
+
+function readExtraOffer({
+  fresh,
+  pastDate,
+}: {
+  fresh: ReturnType<typeof readFreshPlanSummary>;
+  pastDate: boolean;
+}): PlanView["extraOffer"] {
+  const offer = pastDate ? null : fresh?.advice.extraOffer;
+  return offer ? { ...offer, canApply: true } : null;
 }
 
 export async function buildPlanView({
@@ -256,7 +254,8 @@ export async function buildPlanView({
     value: context.plan.summary,
   });
 
-  const fitOffer = status?.kind === "pastDate" ? null : (summary?.advice.fitOffer ?? null);
+  const pastDate = status?.kind === "pastDate";
+  const fitOffer = pastDate ? null : (summary?.advice.fitOffer ?? null);
 
   return {
     access,
@@ -278,6 +277,7 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
+    extraOffer: readExtraOffer({ fresh, pastDate }),
     feasibility: readSavedFeasibility(summary),
     fitOffer: fitOffer && {
       ...foldChangeAreas({ change: fitOffer, partAreas }),
@@ -285,6 +285,7 @@ export async function buildPlanView({
     },
     focusTest: readPlanFocusTest(context),
     goalId: goal.id,
+    hasNotice: hasSyllabusNotice(syllabus?.notice),
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })

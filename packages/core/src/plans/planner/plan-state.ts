@@ -46,6 +46,7 @@ const graphPhaseSchema = z.object({
 const graphSkillSchema = z.object({
   area: z.string().nullable().default(null),
   courseIds: z.array(z.string()).optional(),
+  extra: z.boolean().optional(),
   lessons: z.int().min(1),
   name: z.string(),
   outcome: z.boolean().optional(),
@@ -71,6 +72,7 @@ export const planGraphSchema = z.object({
     })
     .optional(),
   editionCandidate: z.boolean().optional(),
+  extraSkills: z.array(graphSkillSchema).optional(),
   optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),
@@ -131,6 +133,7 @@ const planSettingsSchema = z.object({
   difficultyBias: z.enum(DIFFICULTY_BIASES).default("standard"),
   examChoices: z.array(examChoicePickSchema).default([]),
   examSubjects: z.array(z.string()).default([]),
+  extras: z.array(z.string()).optional(),
   focusAreas: z.array(z.string()).default([]),
   focusParts: z.array(focusPartSchema).default([]),
   fullCourse: z.boolean().default(false),

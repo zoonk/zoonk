@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "02a7fcb516826a15c0ecb14a4c1a0060e9e9b08baa9859cf61923180a08bf6b3",
   "onboarding_language_test_preparing_title": "03915811376bf0683656feb4eb3369455dfb584d48f6bd87f12d4e9d5af5ed56",
   "onboarding_language_test_reading": "db1071b1596bf52dddaf9fad28ef2bd643fb9e46a69396a5cbd071ef35cd23e6",
-  "onboarding_language_test_say_it": "0c63d787399647b026d87a7e3677b43e9d2abf225571d4891e55af18912334b9",
   "onboarding_language_test_skip": "43812aa0e8847d57e19c223f13cb9bbca3f46e69327d069bed60bebd6fd0b8a0",
   "onboarding_language_test_skip_note": "48935a50376b6c3a68a58f817aa89daf56296bf7b364de79927f451a73fdf0ef",
   "onboarding_language_test_skip_part": "08b493d2d5333cce2d1c657cb7d0a3ee6a2c19e770c08e0875d3a4a3a7c01024",
@@ -614,7 +613,6 @@
     <string name="onboarding_language_test_play_again">Réécouter le message</string>
     <string name="onboarding_language_test_message_loading">Préparation du message. La première fois, cela peut prendre quelques secondes.</string>
     <string name="onboarding_language_test_message">Tu as reçu un message vocal. Écoute-le et réponds.</string>
-    <string name="onboarding_language_test_say_it">Dis-le à voix haute</string>
     <string name="onboarding_language_test_skip_part">Passer cette partie</string>
     <string name="onboarding_language_test_done_title">Ton niveau en %1$s</string>
     <string name="onboarding_language_test_done_description">Évalué à partir du test. Cette évaluation s’affine chaque semaine.</string>

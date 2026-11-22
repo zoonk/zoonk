@@ -71,15 +71,19 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.audio.VoiceAnswerButton
-import com.zoonk.android.feature.audio.VoiceAnswerLine
+import com.zoonk.android.feature.audio.VoiceAnswerLimit
 import com.zoonk.android.feature.audio.VoiceAnswerModel
+import com.zoonk.android.feature.audio.checkNote
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.SpokenMode
 import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
-import com.zoonk.android.feature.player.engine.listeningInstead
+import com.zoonk.android.feature.player.engine.shownStep
+import com.zoonk.android.feature.player.engine.spokenMode
 import com.zoonk.android.feature.player.language.LanguageStepView
 import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.model.CheckOption
@@ -95,8 +99,11 @@ import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LessonSummaryIdeas
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -115,12 +122,8 @@ import com.zoonk.android.ui.richtext.typesetMath
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 private const val MAX_TYPED_ANSWER_LENGTH = 1000
-
-private val SLOW_CHECK = 15.seconds
 
 /** A whole number in the learner's digits. */
 @Composable
@@ -671,27 +674,24 @@ internal fun SpokenAnswerView(
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
     val voice = spokenVoice(step, actions)
-    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || voice.blocked
+    val types = state.spokenMode(step, actions.cantTalk, actions.cantListen, voice.blocked) == SpokenMode.Type
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
         voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening = content.listeningInstead(if (locked) answer is LessonAnswer.Listening else actions.cantTalk)
+    val listening = state.shownStep(step, actions.cantTalk, actions.cantListen).content as? StepContent.Language
 
     if (listening != null) {
-        LanguageStepView(listening, answer, state.results[step.id], locked, language, actions, part)
-        if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
+        val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
+        val canTalkNow: (@Composable () -> Unit)? =
+            if (locked) null else ({ StepWayOut(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) } })
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part, canTalkNow)
         return
     }
 
     QuestionScene {
-        if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                QuestionText(spoken.prompt)
-                TargetText(spoken)
-            }
-        }
+        if (part.showsScreen) TargetText(spoken)
 
         if (part.showsTurn) {
             when {
@@ -713,22 +713,31 @@ internal fun SpokenAnswerView(
                 }
 
                 !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerLine(voice, navigator)
+                    VoiceAnswerLimit(voice, navigator)
                 }
             }
 
             if (!locked) {
                 if (types) {
-                    GhostAction(
+                    StepWayOut(
                         R.drawable.ic_mic,
                         stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                     ) { switchTo(false) }
                 } else {
-                    val icon = if (content.listening != null) R.drawable.ic_headphones else R.drawable.ic_keyboard
-                    GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                    StepWayOut(R.drawable.ic_mic_off, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
                 }
             }
         }
+    }
+}
+
+/** A spoken screen heard instead turns to typing once the learner can't listen either, so the words placed so far go. */
+private class ListeningTurnsToTyping(
+    private val actions: StepActions,
+) : StepActions by actions {
+    override fun setCantListen(chosen: Boolean) {
+        actions.select(null)
+        actions.setCantListen(chosen)
     }
 }
 
@@ -762,12 +771,32 @@ fun offersDontKnow(
     return state.phase == LessonPhase.Playing && !screen.canExplainFirst && !isNumberAnswer(typed.acceptedAnswers)
 }
 
-/** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
+/**
+ * The lesson bar's note while the learner answers: on a spoken screen, the line over [SpokenRecordAction]; on any other, a check
+ * that failed or is taking long. Null once the answer is checked.
+ */
+@Composable
+fun lessonBarNote(
+    step: LessonStep?,
+    state: LessonPlayerState,
+    actions: StepActions,
+): (@Composable () -> Unit)? {
+    val answering = state.phase == LessonPhase.Playing || state.phase == LessonPhase.Checking
+    if (step == null || !answering) return null
+    if (recordsInBar(step, state, actions)) return recordNote(spokenVoice(step, actions))
+    // A check that names its own problem (no words heard, a limit) says it where the learner answers.
+    return checkNote(checking = state.phase == LessonPhase.Checking, failed = state.checkFailed && state.checkIssue == null)
+}
+
+/** Whether [SpokenRecordAction] takes the bar's main action on this screen now: while it's answered out loud. */
 @Composable
 fun recordsInBar(
     step: LessonStep?,
+    state: LessonPlayerState,
     actions: StepActions,
-): Boolean = step?.content is StepContent.SpokenAnswer && !actions.cantTalk && !spokenVoice(step, actions).blocked
+): Boolean =
+    step?.content is StepContent.SpokenAnswer &&
+        state.spokenMode(step, actions.cantTalk, actions.cantListen, spokenVoice(step, actions).blocked) == SpokenMode.Speak
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {
@@ -776,6 +805,7 @@ private fun TargetText(spoken: SpokenAnswerStepContent) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = spoken.targetText,
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.headlineSmall.copy(localeList = LocaleList(spoken.language)),
         )
         listOfNotNull(spoken.romanization, translation).forEach {
@@ -833,30 +863,12 @@ private fun AnswerHint(
     state: LessonPlayerState,
     isNumber: Boolean,
 ) {
-    var slow by remember { mutableStateOf(false) }
-    val checking = state.phase == LessonPhase.Checking
     val hasKeyboard = LocalConfiguration.current.keyboard != Configuration.KEYBOARD_NOKEYS
-
-    LaunchedEffect(checking) {
-        slow = false
-        if (checking) {
-            delay(SLOW_CHECK)
-            slow = true
-        }
-    }
-
-    val (text, isError) =
-        when {
-            state.checkFailed -> stringResource(R.string.player_check_failed) to true
-            checking && slow -> stringResource(R.string.player_still_checking) to false
-            !isNumber && state.phase == LessonPhase.Playing && hasKeyboard -> stringResource(R.string.player_enter_hint) to false
-            else -> return
-        }
+    if (isNumber || state.phase != LessonPhase.Playing || !hasKeyboard) return
 
     Text(
-        text = text,
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        text = stringResource(R.string.player_enter_hint),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
     )
 }
@@ -896,6 +908,16 @@ internal fun GhostAction(
         leading?.let { Box(Modifier.padding(end = 8.dp)) { it() } }
         Text(label)
     }
+}
+
+/** A screen's way around what it asks ("I can't talk now", "I can't listen now"), as main's `StepWayOut`, under what it's about. */
+@Composable
+internal fun StepWayOut(
+    icon: Int,
+    label: String,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(onClick = onClick, size = ButtonSize.Large, leadingIcon = { ButtonIcon(icon) }) { Text(label) }
 }
 
 data class ChoiceOption(

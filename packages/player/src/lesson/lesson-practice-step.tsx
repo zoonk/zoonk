@@ -26,6 +26,7 @@ import {
   type PlayableLibraryStep,
 } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
+import { useIsQuietListening } from "./use-today-choice";
 
 type Props = Parameters<LessonPracticeRenderer>[0];
 
@@ -197,7 +198,10 @@ export function LessonPracticeStep(props: Props) {
     submitSpokenAnswer: onRecord ?? idle,
   };
 
-  const audioUrl = "exercise" in step ? (step.exercise.sentence?.audioUrl ?? null) : null;
+  const isQuiet = useIsQuietListening(step.kind);
+
+  const audioUrl =
+    "exercise" in step && !isQuiet ? (step.exercise.sentence?.audioUrl ?? null) : null;
 
   function select(next: LessonPlayerAnswer | null) {
     if (!next || next.kind !== "hook") {

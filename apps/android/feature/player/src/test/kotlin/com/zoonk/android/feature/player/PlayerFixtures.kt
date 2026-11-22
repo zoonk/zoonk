@@ -227,6 +227,66 @@ fun challengeContent(): ChallengeStepContent = ApiJson.decodeFromString(Challeng
 
 fun challengeStep(id: String) = LessonStep(id, null, StepContent.Challenge(challengeContent()))
 
+private const val DETECTOR_SCAN =
+    """
+    {"kind":"plot","title":"Detector scan","xLabel":"Detector position","xUnit":"mm","yLabel":"Count rate","yUnit":"counts/s",
+     "series":[{"name":"Scan","mark":"points","points":[{"x":0.5,"y":810,"label":"A"},{"x":1.5,"y":880,"label":"B"},
+       {"x":3,"y":952,"label":"C"},{"x":4.5,"y":890,"label":"D"},{"x":5.5,"y":820,"label":"E"}]}],
+     "references":[],"source":null}
+    """
+
+private const val FINE_SCAN =
+    """
+    {"kind":"plot","title":"Finer scan, B to D","xLabel":"Detector position","xUnit":"mm","yLabel":"Count rate","yUnit":"counts/s",
+     "series":[{"name":"Fine scan","mark":"lineWithPoints","points":[{"x":1.5,"y":880,"label":null},{"x":2,"y":930,"label":null},
+       {"x":2.25,"y":968,"label":null},{"x":2.5,"y":992,"label":null},{"x":2.75,"y":975,"label":null},{"x":3,"y":952,"label":null},
+       {"x":3.25,"y":925,"label":null},{"x":3.5,"y":905,"label":null},{"x":4,"y":893,"label":null},{"x":4.5,"y":890,"label":null}]}],
+     "references":[{"label":"Needed tonight","y":960}],"source":null}
+    """
+
+private val CHART_CHALLENGE =
+    """
+    {"variant":"work","setting":"Beamline 4, 6 pm","title":"Where should the detector sit tonight?",
+     "mission":"Pick **one spot** for the detector so tonight's run gets the strongest signal.",
+     "team":[{"id":"lead","ai":false,"expertise":"Runs the beamline schedule","role":"Lab lead"},
+       {"id":"postdoc","ai":false,"expertise":"Set up the detector","role":"Postdoc"},
+       {"id":"ai","ai":true,"expertise":"Runs scans when asked","role":"AI assistant"}],
+     "meters":[{"id":"beam","goodWhen":"high","label":"Beam time left","start":90},{"id":"signal","goodWhen":"high","label":"Signal quality","start":50}],
+     "panels":[],
+     "skills":[{"id":"reading","name":"Reading a scan","practice":"Before trusting the highest point, ask what happens between the points."}],
+     "startNodeId":"start",
+     "nodes":[
+       {"id":"start","prompt":"Where do you put the detector for the night?",
+        "messages":[{"from":"lead","text":"Scan's done. We get one night of beam, so the detector stays in one spot."},
+          {"from":"postdoc","text":"C has the highest count. I'd park it there and go home."}],
+        "visual":$DETECTOR_SCAN,
+        "choices":[
+          {"id":"park-c","text":"Park it at C, where the count peaks","next":"fine","quality":"weak","effects":[{"meter":"signal","change":-20}],
+           "notes":[{"kind":"improve","skill":"reading","text":"Five points 1 mm apart can't show where the real peak is."}],
+           "replies":[{"from":"lead","text":"Before we lock it at C, let the AI scan finer between B and D."}]},
+          {"id":"fine-scan","text":"Scan again in finer steps from B to D","next":"fine","quality":"strong",
+           "effects":[{"meter":"beam","change":-10},{"meter":"signal","change":20}],
+           "notes":[{"kind":"good","skill":"reading","text":"You checked between the points before trusting the highest one."}],
+           "replies":[{"from":"ai","text":"Done. Here's the finer scan between B and D."}]},
+          {"id":"park-a","text":"Park it at A, where the noise is lowest","next":"fine","quality":"weak","effects":[{"meter":"signal","change":-30}],
+           "notes":[{"kind":"improve","skill":"reading","text":"A has the lowest count on the chart, so it gives the weakest signal."}],
+           "replies":[{"from":"lead","text":"A is our weakest spot. Let the AI scan finer between B and D first."}]}]},
+       {"id":"fine","prompt":"Where does the detector go?",
+        "messages":[{"from":"lead","text":"We need at least 960 counts a second for a clean run."}],
+        "visual":$FINE_SCAN,
+        "choices":[
+          {"id":"park-peak","text":"Park it at the new peak, at 2.5 mm","next":"clean-run","quality":"strong","effects":[{"meter":"signal","change":20}],
+           "notes":[{"kind":"good","skill":"reading","text":"You read the peak off the finer scan, not the coarse one."}],
+           "replies":[{"from":"lead","text":"2.5 mm it is. Good catch."}]},
+          {"id":"park-c-anyway","text":"Stay with C at 3 mm","next":"missed-peak","quality":"fair","effects":[{"meter":"signal","change":-10}],
+           "notes":[{"kind":"improve","skill":"reading","text":"The finer scan peaks at 2.5 mm, and C falls under the count you needed."}],"replies":[]}]}],
+     "endings":[{"id":"clean-run","outcome":"The run hit 990 counts a second all night: a clean data set."},
+       {"id":"missed-peak","outcome":"The detector sat off the peak. The night's data came out too thin to publish."}]}
+    """
+
+fun chartChallengeStep(id: String) =
+    LessonStep(id, null, StepContent.Challenge(ApiJson.decodeFromString(ChallengeStepContent.serializer(), CHART_CHALLENGE)))
+
 /** A check whose options are pictures: their names show only once it's checked. */
 fun pictureCheckStep(id: String): LessonStep {
     val check = checkStep(id)

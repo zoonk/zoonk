@@ -632,11 +632,12 @@ describe("a class test days away", () => {
       throw new Error(`Expected the day's session, got ${session.status}`);
     }
 
-    const today = items.filter(
-      (item) =>
-        item.kind === "lesson" &&
-        item.status === "todo" &&
-        item.scheduledFor?.toISOString().slice(0, 10) === isoDay(0),
+    const lessons = items.filter(
+      (item) => item.kind === "lesson" && item.status === "todo" && item.lessonId !== null,
+    );
+
+    const today = lessons.filter(
+      (item) => item.scheduledFor?.toISOString().slice(0, 10) === isoDay(0),
     );
 
     const produce = session.session.blocks.find((block) => block.kind === "produce");
@@ -647,9 +648,13 @@ describe("a class test days away", () => {
 
     expect(learn.length).toBeGreaterThan(0);
 
-    expect(learn.map((block) => block.planItemId)).toStrictEqual(
+    const learned = learn.map((block) => block.planItemId);
+
+    expect(learned.slice(0, today.length)).toStrictEqual(
       today.slice(0, learn.length).map((item) => item.id),
     );
+
+    expect(learned).toStrictEqual(lessons.slice(0, learn.length).map((item) => item.id));
 
     expect(
       session.session.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),

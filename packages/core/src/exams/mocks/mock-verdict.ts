@@ -1,5 +1,5 @@
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { Z_90 } from "../scoring/irt";
 import { type MockResult, type MockVerdict } from "./mock-contract";
 

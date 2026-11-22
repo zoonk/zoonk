@@ -19,6 +19,7 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 - “Sure” and “unsure” are the learner's confidence in an answer.
 - In a mock exam, “Not sure” is the button a learner presses on an answer they doubt, and the mark it leaves on the answer sheet and in the review: use the button's word for that mark and for “answers you weren't sure of”.
 - “q” abbreviates “questions” only in English: write the word.
+- The English calls an exam's public notice “the official guide”: a message's `notice` form (`{document, select, notice {…} other {…}}`) and a string whose comment says the document is the exam's public notice name it with your glossary's word for “notice”; “official guide” is the other form's.
 - English grammar topics keep the English names their learners use, such as “phrasal verbs”, “present perfect” and “past continuous”.
 
 ## Plan language

@@ -39,6 +39,8 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.playable
@@ -111,6 +113,25 @@ class LanguageStepsScreenshots {
             "match-columns" to listOf(matchColumns("s")),
         )
 
+    private val spokenWithListening =
+        LessonStep(
+            "s",
+            null,
+            StepContent.SpokenAnswer(
+                SpokenAnswerStepContent(
+                    language = "es",
+                    prompt = "Say that you see a cat",
+                    targetText = "Yo veo un gato.",
+                    translation = "I see a cat.",
+                ),
+                listening = (listening("s", audioUrl = "https://blob.test/s.mp3").content as StepContent.Language).exercise,
+            ),
+        )
+
+    /** The day's choices each state starts with, by name. */
+    private val cantTalkStates = setOf("spoken-heard-instead", "spoken-cant-talk-or-listen")
+    private val cantListenStates = setOf("listening-cant-listen", "spoken-cant-talk-or-listen")
+
     private val otherOrderReading =
         step(
             "s",
@@ -118,7 +139,7 @@ class LanguageStepsScreenshots {
             "reading",
             sentence =
                 """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-3","ordersPending":false,"otherSentenceOrders":[["Quando","pioveva","è","arrivato","l'autobus"]],
-                   "otherTranslationOrders":[],"romanization":null,"sentence":"Quando pioveva l'autobus è arrivato",
+                   "otherTranslationOrders":[],"readsItself":false,"romanization":null,"sentence":"Quando pioveva l'autobus è arrivato",
                    "translation":"Quando chovia o ônibus chegou","translationDistractors":[]}""",
             wordBank = bank("arrivato", "Quando", "l'autobus", "pioveva", "è"),
             promptWords = promptWords("Quando" to null, "chovia" to null, "o" to null, "ônibus" to null, "chegou" to null),
@@ -154,6 +175,15 @@ class LanguageStepsScreenshots {
     private val states: List<Triple<String, List<LessonStep>, Array<LessonAction>>> =
         screens.map { (name, steps) -> Triple(name, steps, emptyArray<LessonAction>()) } +
             listOf(
+                Triple("listening-cant-listen", listOf(listening("s", audioUrl = "https://blob.test/s.mp3")), emptyArray()),
+                Triple(
+                    "listening-right",
+                    listOf(listening("s", audioUrl = "https://blob.test/s.mp3")),
+                    checked(LessonAnswer.Listening(listOf("I", "see", "a", "cat.")), true, "Veo means I see."),
+                ),
+                Triple("spoken", listOf(spokenWithListening), emptyArray()),
+                Triple("spoken-heard-instead", listOf(spokenWithListening), emptyArray()),
+                Triple("spoken-cant-talk-or-listen", listOf(spokenWithListening), emptyArray()),
                 Triple(
                     "translation-picked",
                     listOf(translation("s")),
@@ -207,7 +237,7 @@ class LanguageStepsScreenshots {
             }
 
         compose.setContent {
-            val (_, steps, actions) = states[index]
+            val (shown, steps, actions) = states[index]
             val lesson = playable(steps).copy(targetLanguage = "es")
             val viewModel =
                 viewModel(key = "screen-$index") {
@@ -221,7 +251,10 @@ class LanguageStepsScreenshots {
                         TodayChoices(drafts),
                         drafts,
                         saved = SavedStateHandle(),
-                    )
+                    ).apply {
+                        setCantTalk(shown in cantTalkStates)
+                        setCantListen(shown in cantListenStates)
+                    }
                 }
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalLessonSpeech provides previewSpeech()) {

@@ -3,20 +3,15 @@
 {
   "pronunciation_continue": "1d4bc5aa06214fdc0e27bc57a021bb5b8aed1197de0be82d4e7af1a6a63311fe",
   "pronunciation_done": "e07026a59d4033cdbb71cac7bb450e8b00add9fc10847cf925f95fc83f3312fe",
-  "pronunciation_failed": "181850714e77bde6b8f0ba08739c1114f0e8ec5846f17c5d99b5a247ff4c3f6e",
-  "pronunciation_grading": "ad7a44fc06389a83bb73c2848eaff97b5d20a0e30e024c15b7936ab5380da7ea",
   "pronunciation_heard": "8be4101531f5ad3d41c55f49c5a533f8b9ce189efad384829cd39f04e0adb6c4",
   "pronunciation_listen": "cefed615e5ab62605620d1c986a01e0e590622a274d37a47978da5eb452edee8",
   "pronunciation_listen_slowly": "e25158e8d11666ef56743ba33e2636b088bfcd67074d319ac435c88369d83427",
   "pronunciation_microphone_off": "07a9cf63b755bc71d6ca5f8a2df2b4dc00724fc9a6befbe4dfc36292617e2a4a",
-  "pronunciation_no_speech": "1d7a70024c589837ecb6a35f1ceb34267bd98cb7cfc08010968efe5cd1d88488",
   "pronunciation_no_words": "37cbd957b05441e46cde63f13ce5efb7b7728b8bdc91a6c22fa63dc9c92b148e",
   "pronunciation_nothing_said": "6656cc3b5b7ef3b99e49819f736cce229c4d35a5b7031d0d06019859e8c110c2",
   "pronunciation_options": "980992239d93945cd4495f66dd0d88e27575e231ca6c2fbed72ef37760f1e223",
   "pronunciation_position": "b13b6ab8bc6d9128aa46195578195b4e30fc7e335cd079b542987da78742320a",
   "pronunciation_practice_done": "540608430463115c532f22c633111e20c4976e81bc43333410843938b51e6aca",
-  "pronunciation_press_record": "04aeb8b473383d4c2422ffb4d71ae01f5474230d55ee226e9dd71bdbd139ad02",
-  "pronunciation_recording": "9ffba2f7977a0f9bf3fc5fe9bcdc1147d7e3fedafa9fbf29b6cb3faee4b6fae1",
   "pronunciation_save_failed": "3035e4493d803e2299d9b569b87a44c489d82584f93890578c37e9411ccfcba6",
   "pronunciation_save_retry": "1783d9a6fbea3104897944b5d47cfdc386a86e7e8f4d0803bedd0637d671cb46",
   "pronunciation_say_it_like": "1b1acd05b8d9793edec5bd70074e378a89cfc09a1e811b9b82b1d8205af176fd",
@@ -37,11 +32,6 @@
     <string name="pronunciation_say_it_like">Pronúnciala así: %1$s</string>
     <string name="pronunciation_options">Opciones de pantalla</string>
     <string name="pronunciation_skip">Saltar</string>
-    <string name="pronunciation_press_record">Presiona Grabar y di la palabra en voz alta</string>
-    <string name="pronunciation_recording">Grabando… Presiona Detener cuando termines.</string>
-    <string name="pronunciation_grading">Escuchando cómo sonó…</string>
-    <string name="pronunciation_no_speech">No pudimos oír la palabra. Acércate un poco e inténtalo de nuevo.</string>
-    <string name="pronunciation_failed">Algo falló. Inténtalo de nuevo.</string>
     <string name="pronunciation_microphone_off">Activa el micrófono para Zoonk en Configuración para pronunciar la palabra. Puedes saltarla por ahora.</string>
     <string name="pronunciation_sounded_right">Sonó bien</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->

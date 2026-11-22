@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { loadExamNoticeFacts } from "../../exams/_utils/exam-notice-facts";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type PlanOperation } from "../plan-contract";
 import { addDays, fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type PlanEffect } from "../planner/plan-effect";

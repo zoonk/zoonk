@@ -1,3 +1,4 @@
+import { challengeVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { z } from "zod";
 import { getChallengeGraphIssues } from "../../challenges/challenge-graph";
 import {
@@ -78,6 +79,7 @@ const nodeSchema = z
     id: idSchema,
     messages: z.array(messageSchema),
     prompt: promptSchema,
+    visual: challengeVisualSchema.optional(),
   })
   .strict();
 

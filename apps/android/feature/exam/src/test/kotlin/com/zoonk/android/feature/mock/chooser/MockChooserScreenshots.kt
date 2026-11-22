@@ -13,6 +13,7 @@ import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
@@ -144,6 +145,15 @@ class MockChooserScreenshots {
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun phoneWithoutPlus() = capture("chooser-phone-free", options = """$OPTIONS,"access":"plusRequired"""")
 
+    /** A free learner's Start shows the gate in the bar's note, over Subscribe. */
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phoneGate() = capture("chooser-phone-gate", options = """$OPTIONS,"access":"plusRequired"""") { startLocked() }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedGate() = capture("chooser-expanded-gate", options = """$OPTIONS,"access":"plusRequired"""") { startLocked() }
+
     @Test
     @Config(qualifiers = "w700dp-h1400dp-xhdpi")
     fun medium() = capture("chooser-medium")
@@ -222,6 +232,11 @@ class MockChooserScreenshots {
     }
 
     private fun pickWrittenTest() = compose.onNodeWithText("Written test").performSemanticsAction(SemanticsActions.OnClick)
+
+    private fun startLocked() {
+        compose.onNodeWithText("Day 1").performClick()
+        compose.onNodeWithText("Start").performClick()
+    }
 
     private val starts = FakeMockStartApi()
 

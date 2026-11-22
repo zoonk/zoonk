@@ -1,8 +1,8 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { getWrittenTasks } from "../../../exams/_utils/written-tasks";
 import { type ExamPicks, toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamPicks } from "../../../exams/choices/load-exam-choices";
-import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getPassMarks } from "../../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import {
@@ -15,7 +15,6 @@ import { getTopicHeadings } from "../../../library/exams/topic-groups";
 import { readCourseWeights } from "../../../plans/planner/course-weights";
 import { type SyllabusView } from "../syllabus-contract";
 import { type NoticeSubject, type SyllabusInput } from "./syllabus-input";
-import { subjectNamesSection } from "./syllabus-subjects";
 
 function toCourseWeights(details: Goal["details"] | undefined): SyllabusView["courseWeights"] {
   const weights = readCourseWeights(details);
@@ -29,22 +28,6 @@ function toCourseWeights(details: Goal["details"] | undefined): SyllabusView["co
         subjects: weights.subjects,
       }
     : null;
-}
-
-function getWrittenTasks({
-  structure,
-  subject,
-}: {
-  structure: ExamStructure;
-  subject: ExamStructure["subjects"][number];
-}): string[] {
-  return (structure.mock?.sections ?? [])
-    .filter(
-      (section) =>
-        section.kind === "written" &&
-        subjectNamesSection({ group: subject.group ?? null, name: subject.name }, section.name),
-    )
-    .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
 }
 
 /** Restricts the notice to the learner's picks; GET callers should share the already-read blueprint and picks. */

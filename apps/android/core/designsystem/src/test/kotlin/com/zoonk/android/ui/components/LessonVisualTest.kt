@@ -1,5 +1,8 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import com.zoonk.android.ui.components.LessonVisual.Plot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -26,6 +29,107 @@ class LessonVisualTest {
             assertEquals(ticks, niceTicks(niceDomain(values, includeZero)))
         }
     }
+
+    @Test
+    fun aChartNamesItsUnitOnceBesideTheValueLabelAndKeepsACurrencyOrPercentOnEachNumber() {
+        assertEquals(ChartUnit(null, "Distance (km)"), placeChartUnit("km", "Distance"))
+        assertEquals(
+            ChartUnit(null, "Sorting time (hours per 1,000 letters)"),
+            placeChartUnit("hours per 1,000 letters", "Sorting time"),
+        )
+        assertEquals(ChartUnit("BRL", "Price"), placeChartUnit("R$", "Price"))
+        assertEquals(ChartUnit("BRL", "Pay (per hour)"), placeChartUnit("R$ per hour", "Pay"))
+        assertEquals(ChartUnit("USD", "Cost (per response)"), placeChartUnit("USD per response", "Cost"))
+        assertEquals(ChartUnit("%", "Fill rate"), placeChartUnit("%", "Fill rate"))
+        assertEquals(ChartUnit(null, "Letters"), placeChartUnit(null, "Letters"))
+    }
+
+    @Test
+    fun aPlotSpacesXByValueAndFitsYToItsPointsAndReferenceLines() {
+        val plot =
+            Plot(
+                title = "Plot",
+                xLabel = "x",
+                yLabel = "y",
+                series =
+                    listOf(
+                        Plot.Series("A", Plot.Mark.Points, listOf(Plot.Point(10.0, 27.0), Plot.Point(11.0, 25.0), Plot.Point(20.0, 30.0))),
+                    ),
+                references = listOf(Plot.Reference("Limit", 40.0)),
+            )
+
+        val (x, y) = plotAxes(plot)
+
+        assertEquals(10.0..20.0, x.domain)
+        assertEquals(listOf(10.0, 12.0, 14.0, 16.0, 18.0, 20.0), x.ticks)
+        assertEquals(25.0..40.0, y.domain)
+        assertEquals(listOf(25.0, 30.0, 35.0, 40.0), y.ticks)
+    }
+
+    @Test
+    fun aPlotKeepsFractionalTicksOnlyWhenItsDataHasFractions() {
+        val plot =
+            Plot(
+                title = "Plot",
+                xLabel = "x",
+                yLabel = "y",
+                series = listOf(Plot.Series("A", Plot.Mark.Points, listOf(Plot.Point(1.0, 0.5), Plot.Point(10.0, 1.5)))),
+            )
+
+        val (x, y) = plotAxes(plot)
+
+        assertEquals(listOf(2.0, 4.0, 6.0, 8.0, 10.0), x.ticks)
+        assertEquals(listOf(0.5, 0.75, 1.0, 1.25, 1.5), y.ticks)
+    }
+
+    @Test
+    fun pointNamesSitBesideTheirDotsWhenThereIsRoom() {
+        val labels = pointLabels(listOf(Offset(50f, 50f) to "Brazil", Offset(150f, 80f) to "Japan"), scene(), ::nameWidth)
+
+        assertEquals(emptyList<KeyEntry>(), labels.key)
+        assertEquals(listOf(LabelAnchor.Start, LabelAnchor.Start), labels.labels.map { it.anchor })
+        assertEquals(listOf("Brazil", "Japan"), labels.labels.map { it.text })
+    }
+
+    @Test
+    fun aNameStaysOnItsDotsSideOfAReferenceLine() {
+        val line = 74f
+        val scene = LabelScene(Rect(0f, 0f, 300f, 160f), emptyList(), listOf(Offset(0f, line) to Offset(300f, line)))
+        val label = pointLabels(listOf(Offset(150f, 80f) to "C"), scene, ::nameWidth).labels.single()
+
+        assertTrue("$label", label.y - 7f >= line)
+    }
+
+    @Test
+    fun crowdedNamesMoveToANumberedKeyAndNoneIsDropped() {
+        val crowded = (0 until 10).map { Offset(150f + it * 0.5f, 80f) to "Country ${it + 1}" }
+
+        val labels = pointLabels(crowded, scene(), ::nameWidth)
+
+        assertEquals(crowded.map { it.second }, labels.key.map { it.label })
+        assertEquals((1..10).map(Int::toString), labels.labels.map { it.text })
+    }
+
+    @Test
+    fun aBareLineMarksOnlyItsEndAndOnlyBesideOtherSeries() {
+        assertEquals(listOf(false, false, true), (0..2).map { drawsDot(Plot.Mark.Line, it, 3, 2) })
+        assertEquals(listOf(false, false, false), (0..2).map { drawsDot(Plot.Mark.Line, it, 3, 1) })
+        assertTrue((0..2).all { drawsDot(Plot.Mark.LineWithPoints, it, 3, 1) && drawsDot(Plot.Mark.Points, it, 3, 1) })
+    }
+
+    @Test
+    fun anAxisLabelOnTheYAxisStartsClearOfItsNumbers() {
+        val gap = 6f
+        val start = axisLabelStart(center = 120f, labelWidth = 20f, left = 120f, width = 900f, inset = gap / 2)
+
+        assertTrue(start - (120f - gap) >= gap)
+        assertEquals(500f, axisLabelStart(center = 510f, labelWidth = 20f, left = 120f, width = 900f, inset = 3f))
+        assertEquals(877f, axisLabelStart(center = 900f, labelWidth = 20f, left = 120f, width = 900f, inset = 3f))
+    }
+
+    private fun scene() = LabelScene(Rect(0f, 0f, 300f, 160f), emptyList(), emptyList())
+
+    private fun nameWidth(name: String) = name.length * 7f
 
     @Test
     fun aDomainNearTheLargestNumberStaysDrawable() {

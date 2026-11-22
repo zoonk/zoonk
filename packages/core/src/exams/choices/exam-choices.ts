@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { getWritingScope } from "../essays/_utils/writing-scope";
 import { findChosenOptions, listChoiceGroups } from "./choice-groups";
 import { examChoicePickSchema } from "./exam-choice-contract";

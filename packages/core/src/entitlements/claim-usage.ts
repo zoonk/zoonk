@@ -76,7 +76,7 @@ export async function claimAssistInWrite({
 }: {
   transaction: TransactionClient;
   viewer: EntitlementViewer;
-}): Promise<boolean> {
+}): Promise<UsageDecision> {
   await lockUsageForViewer({ transaction, userId: viewer.userId });
 
   const { decision } = await claimUsageInTransaction({
@@ -88,5 +88,5 @@ export async function claimAssistInWrite({
     viewer,
   });
 
-  return decision.status === "allowed";
+  return decision;
 }

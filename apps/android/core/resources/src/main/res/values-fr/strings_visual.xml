@@ -4,6 +4,10 @@
   "visual_chart_point": "f1b660c14b2dc025e3148e1143e918d6341c4a9d387b6122af59af53a9f9635c",
   "visual_chart_series_value": "25bd5dc0cc0cb2fa8d63b026a17eb5a9b11a75cd20f321338d296dc3116bdc5a",
   "visual_chart_summary": "4f28612dfe0a45899b7cb2fc9b162e876430404b1a891e39bc775c897332a89c",
+  "visual_plot_horizontal_axis": "11ff2df551b89c1ee05f76795a95b259da3bbe96158eec20dbe52a0c98644a40",
+  "visual_plot_point": "73df14fc8bb17c0bf99b56c91cf68fe7da2ac96687ee63d86cf4153f7944f39e",
+  "visual_plot_references": "b3a76c22bc75bece545522282fb3a319c3e7c42a3c3d8b81eee801cb78eed017",
+  "visual_plot_vertical_axis": "494d6cdde85edf89ab1d01078bfbc56673d5e72c9aa02b08c538c58f24cbd0da",
   "visual_source": "21654380608d1a71c08d100680f5c0bdf02083a127ea3a7bf5db2f4dad0c7c25"
 }
 -->
@@ -15,4 +19,12 @@
     <string name="visual_chart_point">%1$s : %2$s</string>
     <!-- One series' value in a category of a chart read aloud: the series' name (%1$s) and its value (%2$s). -->
     <string name="visual_chart_series_value">%1$s %2$s</string>
+    <!-- A plot read aloud: the horizontal axis's name (%1$s) and the lowest (%2$s) and highest (%3$s) values it shows. -->
+    <string name="visual_plot_horizontal_axis">Axe horizontal : %1$s, de %2$s à %3$s</string>
+    <!-- A plot read aloud: the vertical axis's name (%1$s) and the lowest (%2$s) and highest (%3$s) values it shows. -->
+    <string name="visual_plot_vertical_axis">Axe vertical : %1$s, de %2$s à %3$s</string>
+    <!-- One point of a plot read aloud: the horizontal axis's name (%1$s) and the point's value on it (%2$s), then the vertical axis's name (%3$s) and its value there (%4$s). -->
+    <string name="visual_plot_point">%1$s %2$s, %3$s %4$s</string>
+    <!-- A plot's dashed reference lines read aloud, such as a target or a limit: each line's name with its value (%1$s). -->
+    <string name="visual_plot_references">Lignes de référence : %1$s</string>
 </resources>

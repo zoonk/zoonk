@@ -100,7 +100,7 @@ class MistakeReplayWorkTest {
             )
         run(replay(FIRST_MISTAKE, "spokenAnswer", spoken))
 
-        rule.onNodeWithText("Press Record and say it out loud").assertExists()
+        rule.onNodeWithText("Tap Record and say it out loud").assertExists()
         rule.onNodeWithText("Record").assertExists()
         rule.onNodeWithText("Check").assertDoesNotExist()
     }

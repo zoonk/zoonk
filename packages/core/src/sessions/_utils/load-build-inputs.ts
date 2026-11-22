@@ -22,7 +22,7 @@ import {
   getDayUnwrittenTime,
   getPlanTestSkillIds,
 } from "./day-plan-facts";
-import { findPlannedReview } from "./day-review";
+import { findPlannedReview, listReviewExtraItems } from "./day-review";
 import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
 import { loadDayWriting } from "./day-writing";
@@ -139,13 +139,19 @@ export async function loadSessionBuildInput(
   const skillIds = plan.skills.map((skill) => skill.id);
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
+  const reviewDay = findPlannedReview({ items: plan.items, today: localDate });
+
+  const reviewExtras =
+    reviewDay && goal.kind === "exam" ? listReviewExtraItems({ ...plan, today: localDate }) : [];
+
+  const allowsReviewLessons = reviewExtras.length > 0;
 
   const { heldSkillIds, learnItems, fillItems, reservedItems } = pickDayLessons({
     awaitingOutlines,
     goal,
     heldDay: context.selection !== undefined,
     localDate,
-    plan,
+    plan: allowsReviewLessons ? { ...plan, items: reviewExtras } : plan,
   });
 
   const testSkillIds = getPlanTestSkillIds(plan);
@@ -217,7 +223,6 @@ export async function loadSessionBuildInput(
 
   // A Plus-only mock day gives free learners a full review of every test topic instead.
   const fullReview = weekly.plusRequired;
-  const reviewDay = findPlannedReview({ items: plan.items, today: localDate });
   const isReviewDay = fullReview || reviewDay !== null;
 
   const practiceQuery: DayPracticeQuery = {
@@ -242,6 +247,7 @@ export async function loadSessionBuildInput(
   };
 
   const base: Omit<SessionBuildInput, keyof DayWork> = {
+    allowsReviewLessons,
     checkpoints,
     dailyMinutes: dayMinutes,
     fillLessons: fillLessons.map((lesson) => writing.reserveDrill(lesson)),

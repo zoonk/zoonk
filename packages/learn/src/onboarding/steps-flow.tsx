@@ -69,7 +69,7 @@ type StepsFlowProps = {
   isGuest: boolean;
   navigation: OnboardingNavigation;
   onboarding: OnboardingView;
-  planActions: PlanActions;
+  planActions: Omit<PlanActions, "readPlanAgain">;
   routes: OnboardingRoutes;
 };
 

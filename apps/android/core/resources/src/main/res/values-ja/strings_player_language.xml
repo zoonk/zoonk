@@ -15,14 +15,12 @@
   "player_language_move_later": "478939e9424653fa135ecf7f0fdf43e360a3edafaa1295144f1d460e0e6eed82",
   "player_language_not_a_pair": "277ccfef30dd77de0836255c3d91aefa01eadeb76bc2fa15516f1c7c49d6d697",
   "player_language_pick_words": "e3f016c63f67dd907141e09e0b5b4f5fc9f081f58d1b5cf5c52d6a4883ae958d",
-  "player_language_play": "f050fb99920f7782ddf8774a204485a67fbb0e18a634a67b417bd9ad35243a9a",
   "player_language_play_pronunciation": "abff9aaea7929f84830216c4265bb3a498a30b1a3e3b885103da4c472331fa00",
   "player_language_position": "1bd6f54ab6d0cdc1a75df3f0af59babc955cf6be8eb323bf25c38688c132b4d2",
   "player_language_pronunciation_tip": "c984919ac2648e7ae4ff16c0baf210285fa6e0db6f6e97798e5641073ad2028d",
   "player_language_remove": "e8acaa5d0b8cf3247ba6d9008fa65e0968867ff83d29bda46fc47b550b8a32b7",
   "player_language_selected": "364d89f15b8c6cfab07122a891b65e3b5b12f84b42511fa180336e7c2a5d9c86",
   "player_language_show_translation": "7a8235298a2724ab73132769d092e4fb65e0d77c03ffec9462b4d9e511cb884f",
-  "player_language_stop": "6652de62dcd7d813962f1be22b81d9d3a29013aace3d2a05e074a17527d4c731",
   "player_language_translate": "45f858723b695f4bb25b862bd35e723fd2ae511231355594367f650a07cef812",
   "player_language_usage": "bedaddf0b6561946b11938cc7ae4367bbe03835bca1251628accb0196a0fc2ab",
   "player_language_vocabulary": "8f07ac1c4ead35a8b88c3f03a9976fcb1d87c5b02e099d7343d31413d55009fd",
@@ -37,9 +35,6 @@
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">同じ意味のものはどれですか？</string>
     <string name="player_language_what_do_you_hear">何と聞こえますか？</string>
-    <string name="player_language_play">再生する</string>
-    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">停止</string>
     <string name="player_language_play_pronunciation">発音を再生する</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">語彙：%1$s</string>

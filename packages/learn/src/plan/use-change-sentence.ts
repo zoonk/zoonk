@@ -1,7 +1,7 @@
 "use client";
 
 import { FOCUS_TEST_SOURCE } from "@zoonk/core/learner/placement/focus-test-contract";
-import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
+import { PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { OWN_LEVEL_SOURCE } from "@zoonk/core/plans/own-level-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
@@ -10,63 +10,24 @@ import { useSentenceSpace } from "../_utils/locale";
 import { type GoalDateKind, getGoalDateKind } from "./goal-date-kind";
 import { usePlanScreen } from "./plan-context";
 import { useOperationQuestion } from "./use-operation-question";
-import { useFollowsGuideSentence, useOperationStatement } from "./use-operation-statement";
+import { useOperationStatement } from "./use-operation-statement";
 import { usePhaseDatesQuestion } from "./use-phase-dates-sentence";
 import { useShortList } from "./use-short-list";
 import { type PlanChangeContent, useSystemChangeSentence } from "./use-system-change-sentence";
 
-function useGuideQuestion() {
+/** A notice that gives only a likely date asks about that date; every other date reads as any date. */
+function useEstimatedDateQuestion() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const followsGuide = useFollowsGuideSentence();
 
-  return ({
-    examDocument: document,
+  return function estimatedDateQuestion({
     operations,
-  }: Pick<PlanChangeView, "examDocument" | "operations">): string => {
-    const follows = operations.some((operation) => operation.kind === "followNotice");
+  }: Pick<PlanChangeView, "operations">): string | null {
     const day = operations.find((operation) => operation.kind === "setNoticeDate");
-    const date = day?.kind === "setNoticeDate" ? formatDate(day.targetDate, "sentence") : null;
-    const estimated = day?.kind === "setNoticeDate" && day.estimated;
 
-    if (follows && date) {
-      return estimated
-        ? t({
-            description:
-              'In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5".',
-            message:
-              "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}",
-            values: { date, document },
-          })
-        : t({
-            description:
-              'In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5".',
-            message:
-              "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}",
-            values: { date, document },
-          });
-    }
-
-    if (follows) {
-      return t({
-        description:
-          'In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide.',
-        message:
-          "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}",
-        values: { document },
-      });
-    }
-
-    if (date) {
-      return estimated
-        ? t("Move your exam date to around {date}?", { date })
-        : t(
-            "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}",
-            { date, dateKind: "exam" },
-          );
-    }
-
-    return followsGuide(document);
+    return day?.kind === "setNoticeDate" && day.estimated
+      ? t("Move your exam date to around {date}?", { date: formatDate(day.targetDate, "sentence") })
+      : null;
   };
 }
 
@@ -101,7 +62,7 @@ export function useChangeWords({ dateKind = "unknown" }: { dateKind?: GoalDateKi
   const shortList = useShortList();
   const question = useOperationQuestion();
   const statement = useOperationStatement();
-  const guideQuestion = useGuideQuestion();
+  const estimatedDateQuestion = useEstimatedDateQuestion();
   const systemSentence = useSystemChangeSentence();
   const phaseDatesQuestion = usePhaseDatesQuestion();
   const space = useSentenceSpace();
@@ -114,8 +75,10 @@ export function useChangeWords({ dateKind = "unknown" }: { dateKind?: GoalDateKi
   const asked = (change: PlanChangeContent): ChangeWords => {
     const [first, ...others] = change.operations;
 
-    if (change.source === NOTICE_SOURCE) {
-      return { title: guideQuestion(change), why: change.reason };
+    const estimated = estimatedDateQuestion(change);
+
+    if (estimated) {
+      return { title: estimated, why: change.reason };
     }
 
     if (change.source === PHASE_DATES_SOURCE) {

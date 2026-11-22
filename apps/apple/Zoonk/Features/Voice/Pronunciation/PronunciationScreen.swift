@@ -83,6 +83,7 @@ private struct PronunciationRoundView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var round: PronunciationRound?
   @State private var recorder = VoiceRecorder()
+  @State private var isSlow = false
   @State private var showsSaveReport = false
 
   let reviews: Components.Schemas.PronunciationReviews
@@ -138,7 +139,10 @@ private struct PronunciationRoundView: View {
       }
     case .word(_, let state):
       if let word = round.current {
-        QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 24) {
+        QuestionSpread(
+          readableWidth: PracticeLayout.readableWidth, spacing: 24, note: note(state)?.note,
+          usesPracticeBar: true
+        ) {
           EmptyView()
         } stimulus: {
           RoundMeter(round: round)
@@ -155,9 +159,6 @@ private struct PronunciationRoundView: View {
 
             wordActions(round, state: state)
           }
-          .frame(maxWidth: PracticeLayout.readableWidth)
-          .scenePadding()
-          .frame(maxWidth: .infinity)
         }
         .taskOptions(
           isShown: showsOptions(state),
@@ -173,6 +174,7 @@ private struct PronunciationRoundView: View {
           return grade.isCorrect ? .success : .error
         }
         .announcesStatus(announcement(state))
+        .slowCheck(round.isPending, isSlow: $isSlow)
       }
     }
   }
@@ -201,79 +203,53 @@ private struct PronunciationRoundView: View {
     case .graded(let grade):
       GradeNote(grade: grade)
     case .ready(let notice):
-      if recorder.isDenied {
-        MicrophoneOffView(description: Text(microphoneOff)) {}
-      } else if case .limit(let limit) = notice {
+      if case .limit(let limit) = notice, !recorder.isRecording {
         LimitNotice(limit: limit)
-      } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
-        SaveFailureNotice(
-          failures: round?.answerFailures ?? 0,
-          firstMessage: LocalizedStringResource(
-            "That didn't go through. Try again.", table: "Voice",
-            comment: "Grading a word failed"),
-          onReport: { showsSaveReport = true }
-        )
-        .typeStyle(.note)
-      } else {
-        Text(statusLine(notice))
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
       }
     }
   }
 
-  private var microphoneOff: String {
-    String(
-      localized:
-        "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.",
-      table: "Voice", comment: "How to say a word when the microphone is off")
+  /// The bar's line over Record, in the words every screen that records uses.
+  private func note(_ state: PronunciationRound.WordState) -> RecordNote? {
+    guard case .ready(let notice) = state else {
+      return nil
+    }
+
+    if recorder.isDenied {
+      return .microphoneOff(
+        String(
+          localized:
+            "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.",
+          table: "Voice", comment: "How to say a word when the microphone is off"))
+    }
+
+    if recorder.isRecording {
+      return .recording
+    }
+
+    if round?.isPending == true {
+      return isSlow ? .slow : nil
+    }
+
+    switch notice {
+    case .noSpeech: return .noSpeech
+    case .failed: return .failed
+    case .limit: return nil
+    case nil: return .ready
+    }
   }
 
-  /// Silent while recording, so VoiceOver isn't in the take, and for the prompt a word opens with.
+  /// The verdict and a limit; the bar reads its own line.
   private func announcement(_ state: PronunciationRound.WordState) -> String? {
     switch state {
     case .graded(let grade):
       return grade.verdict
     case .ready(let notice):
-      if recorder.isDenied {
-        return microphoneOff
-      }
-
-      if recorder.isRecording {
+      guard !recorder.isRecording, case .limit(let limit) = notice else {
         return nil
       }
 
-      if case .limit(let limit) = notice {
-        return limit.words().said
-      }
-
-      // A failure is a `FailureLine`, which reads itself out.
-      return round?.isPending == true || notice == .noSpeech ? statusLine(notice) : nil
-    }
-  }
-
-  private func statusLine(_ notice: PronunciationRound.Notice?) -> String {
-    if round?.isPending == true {
-      return String(
-        localized: "Listening to how it sounded…", table: "Voice",
-        comment: "Shown while a word said out loud is graded")
-    }
-
-    if recorder.isRecording {
-      return String(
-        localized: "Recording… Press Stop when you're done.", table: "Voice",
-        comment: "Shown while the learner records a word")
-    }
-
-    switch notice {
-    case .noSpeech:
-      return String(
-        localized: "We couldn't hear the word. Try again a little closer.", table: "Voice",
-        comment: "A recording had no word in it")
-    case .failed, .limit, nil:
-      return String(
-        localized: "Press Record and say the word out loud", table: "Voice",
-        comment: "Asks the learner to say the word")
+      return limit.words().said
     }
   }
 
@@ -323,7 +299,7 @@ private struct PronunciationRoundView: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
       } else {
-        RecordButton(recorder: recorder, isDisabled: round.isPending) {
+        RecordButton(recorder: recorder, isChecking: round.isPending) {
           Task {
             voice.player.stop(owner: reviews.goalId)
             await recorder.start { recording in
@@ -331,7 +307,7 @@ private struct PronunciationRoundView: View {
             }
           }
         }
-        .controlSize(.large)
+        .practiceMainAction()
       }
     }
   }

@@ -5,9 +5,9 @@ import { useRouter } from "@/i18n/navigation";
 import { useWriteNow } from "@/lib/essays/use-write-now";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
-import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { buildSubjectMindMapsHref } from "@zoonk/learn/mind-maps/urls";
-import { SubjectScreen } from "@zoonk/learn/subject";
+import { SubjectScreen, type SubjectSyllabus } from "@zoonk/learn/subject";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { AskTutorEntry } from "@zoonk/player/tutor";
 import { useMemo } from "react";
@@ -28,10 +28,7 @@ export function SubjectScreenClient({
   goalId: string;
   hasMindMaps: boolean;
   subject: SyllabusSubject;
-  syllabus: Pick<
-    SyllabusView,
-    "fromMaterial" | "kind" | "questionsSource" | "sharedExams" | "writtenPractice"
-  >;
+  syllabus: SubjectSyllabus;
   tutor: TutorViewer;
 }) {
   const router = useRouter();
@@ -45,7 +42,8 @@ export function SubjectScreenClient({
   );
 
   const change = async (operations: LearnerPlanOperation[]) => {
-    const changed = (await changePlanAction(goalId, operations)) !== null;
+    const outcome = await changePlanAction(goalId, operations);
+    const changed = outcome !== null && outcome.status !== "refused";
 
     if (changed) {
       router.refresh();

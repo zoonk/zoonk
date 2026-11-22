@@ -1,6 +1,5 @@
-import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type PointShape, type SeriesMark } from "./_utils/series-marks";
+import { type PointShape, type SeriesMark, getSeriesMark } from "./_utils/series-marks";
 
 const OPEN_STROKE = 1.5;
 const OPEN_FILL = 0.2;
@@ -89,9 +88,26 @@ export function SeriesPoint({ mark, x, y }: { mark: SeriesMark; x: number; y: nu
   );
 }
 
+type SwatchDraw = "bar" | "line" | "point";
+
 /** A legend's sample of its series, drawn as the plot draws it. */
-export function SeriesSwatch({ chart, mark }: { chart: ChartVisual["chart"]; mark: SeriesMark }) {
-  if (chart === "line") {
+function SeriesSwatch({ draw, mark }: { draw: SwatchDraw; mark: SeriesMark }) {
+  if (draw === "line") {
+    return (
+      <svg className="h-2.5 w-4 shrink-0 overflow-visible" viewBox="-8 -5 16 10">
+        <SeriesLine
+          mark={mark}
+          points={[
+            { x: -8, y: 0 },
+            { x: 8, y: 0 },
+          ]}
+        />
+        <SeriesPoint mark={mark} x={0} y={0} />
+      </svg>
+    );
+  }
+
+  if (draw === "point") {
     return (
       <svg className="size-2.5 shrink-0 overflow-visible" viewBox="-5 -5 10 10">
         <SeriesPoint mark={mark} x={0} y={0} />
@@ -107,5 +123,23 @@ export function SeriesSwatch({ chart, mark }: { chart: ChartVisual["chart"]; mar
         mark.open ? "border-[1.5px] border-current bg-current/20" : "bg-current",
       )}
     />
+  );
+}
+
+/** Names each series beside its sample; a lone series needs no legend. */
+export function SeriesLegend({ series }: { series: { draw: SwatchDraw; name: string }[] }) {
+  if (series.length < 2) {
+    return null;
+  }
+
+  return (
+    <ul aria-hidden="true" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+      {series.map((item, index) => (
+        <li className="flex items-center gap-1.5" key={item.name}>
+          <SeriesSwatch draw={item.draw} mark={getSeriesMark(index)} />
+          {item.name}
+        </li>
+      ))}
+    </ul>
   );
 }

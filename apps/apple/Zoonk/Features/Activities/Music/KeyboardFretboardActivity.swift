@@ -413,34 +413,13 @@ private struct SoundAsText: View {
     }
 
     if isAnswering, cantListen || !isSoundUnavailable {
-      Button {
+      CantListenButton(cantListen: cantListen) {
         cantListen.toggle()
 
         if cantListen {
           announcePolitely(Self.spoken(notes))
         }
-      } label: {
-        if cantListen {
-          Label {
-            Text(
-              "I can listen now", tableName: "ActivitiesMusic",
-              comment: "Brings back the sound to find by ear")
-          } icon: {
-            Image(systemName: "ear")
-          }
-        } else {
-          Label {
-            Text(
-              "I can't listen now", tableName: "ActivitiesMusic",
-              comment:
-                "Shows a by-ear sound's notes as text instead of playing it, for the rest of the day"
-            )
-          } icon: {
-            Image(systemName: "speaker.slash")
-          }
-        }
       }
-      .buttonStyle(.borderless)
     }
   }
 }

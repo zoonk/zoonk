@@ -53,7 +53,7 @@ export function getWritingSkillIds({
   const matches = graph.skills.filter((skill) => {
     const area = getSkillArea({ graph, skill });
 
-    return writtenAreas.has(normalizeString(area)) || outcomes.has(area);
+    return !skill.extra && (writtenAreas.has(normalizeString(area)) || outcomes.has(area));
   });
 
   const inSection = bySection
