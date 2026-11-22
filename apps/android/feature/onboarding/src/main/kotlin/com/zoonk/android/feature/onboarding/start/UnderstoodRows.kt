@@ -361,6 +361,7 @@ class UnderstoodRows(
                         text(
                             when {
                                 draft.details.text("examDay") == "booked" -> R.string.onboarding_row_date_booked
+                                draft.details.text("examName").isNullOrEmpty() -> R.string.onboarding_row_date_unknown
                                 isGuide(draft) -> R.string.onboarding_row_date_not_out_guide
                                 else -> R.string.onboarding_row_date_not_out_notice
                             },

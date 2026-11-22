@@ -282,6 +282,7 @@
   "onboarding_row_date_not_out_guide": "58f22333a4d37d1bf73ba372b30e744a7493ff4f1d564eeeabce4a110e4777e7",
   "onboarding_row_date_not_out_notice": "548ef09ea9b363a0b4d8689833f61463c3e9aaaeabf82e9f9c6c194497508f95",
   "onboarding_row_date_to_be_confirmed": "ad61889bdcfb5ba37e0708b9396e314c41552c0de48eab16244f774d0df73b65",
+  "onboarding_row_date_unknown": "4ed14caef5f734e8f36dfe4a354f39d89c79d94f2b669bdb58d2598151ee283f",
   "onboarding_row_dates_estimated": "2f99389f5a3f659310cdc8614227223b83b1d6856054a9fdbd4c4710d4f221bb",
   "onboarding_row_days_left": "5ec5176f9cbb150405c9ed04ad05b49fc92657cef7b0034b877f05442923dfb4",
   "onboarding_row_deadline": "68564956126bb15841aa4fd7db23a9fb7729093a3460dcc1d2bd7929f4e07453",
@@ -500,6 +501,8 @@
     <string name="onboarding_row_year_to_be_confirmed">%1$s, por confirmar</string>
     <!-- %1$s is a month and year, like "November 2027". -->
     <string name="onboarding_row_date_to_be_confirmed">%1$s, por confirmar</string>
+    <!-- Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date. -->
+    <string name="onboarding_row_date_unknown">¿Sabes la fecha? Agrégala aquí.</string>
     <string name="onboarding_row_date_not_out_notice">La fecha oficial se publica en la convocatoria del examen. ¿Ya la sabes? Indícala aquí.</string>
     <string name="onboarding_row_date_not_out_guide">La fecha oficial se publica en el calendario oficial del examen. ¿Ya la sabes? Indícala aquí.</string>
     <string name="onboarding_row_date_booked">Eliges la fecha de esta prueba cuando la reservas. ¿Ya la reservaste? Ingresa la fecha aquí.</string>

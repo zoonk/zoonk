@@ -282,6 +282,7 @@
   "onboarding_row_date_not_out_guide": "a4cad4a25a8c8353e5496ae515fe4e0f576a70114664f1b444630c8e3a20fb94",
   "onboarding_row_date_not_out_notice": "b223e0ac5d436cd4a9b48cf50809770f2dabeb8e6532dbe6b38c000f51b517e4",
   "onboarding_row_date_to_be_confirmed": "8c9edf31f3dccfbaea688ddd8dcb68ab798074a0b21495fdcd90a50d4537f710",
+  "onboarding_row_date_unknown": "1ec96f0aa70a4824e60d1281681b404c999402fb49cc93e5015846c2fafdb4c0",
   "onboarding_row_dates_estimated": "24740656e693ebcc6ec99fcab33c6aaf99ac25142643dc49ee1b5cabb1b7e0e6",
   "onboarding_row_days_left": "999ee620ff84d73562cae4b5e9d4e2729495a9753c531a44b9c1793d6748a25c",
   "onboarding_row_deadline": "f213d80642e82f580d73586be0fc864f86e4a555ba5546a24f4eeb71d4b709b9",
@@ -496,6 +497,8 @@
     <string name="onboarding_row_year_to_be_confirmed">%1$s년, 추후 확정</string>
     <!-- %1$s is a month and year, like "November 2027". -->
     <string name="onboarding_row_date_to_be_confirmed">%1$s년, 추후 확정</string>
+    <!-- Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date. -->
+    <string name="onboarding_row_date_unknown">날짜를 알고 있나요? 여기서 설정해 주세요.</string>
     <string name="onboarding_row_date_not_out_notice">공식 시험일은 시험 공고에 나와요. 이미 날짜를 알고 있나요? 여기에 입력하세요.</string>
     <string name="onboarding_row_date_not_out_guide">시험일은 공식 시험 일정표에 나와요. 이미 날짜를 알고 있나요? 여기에 입력하세요.</string>
     <string name="onboarding_row_date_booked">예약할 때 시험 날짜를 정해요. 이미 예약했나요? 여기서 날짜를 설정해 주세요.</string>

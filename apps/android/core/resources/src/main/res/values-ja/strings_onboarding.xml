@@ -282,6 +282,7 @@
   "onboarding_row_date_not_out_guide": "31040e3a7871030b6f1b3f30503efe6adc8a25accdde334247e79cffd45a6b05",
   "onboarding_row_date_not_out_notice": "c2e1e539c64ae14142049fea37e7d407bc4b18073b826dc451b01deb47f45699",
   "onboarding_row_date_to_be_confirmed": "1c1296e0ef51bb6f9fb177405d4bd6fa646a91a7372b66027064d9472c48a9ca",
+  "onboarding_row_date_unknown": "c11ded114a055e90c4d03cd67494ef153001231ec548faba953553d4cc348047",
   "onboarding_row_dates_estimated": "689085676612859807a3bef44f9687c4ae70d1744c9bcd14af7c25c9e7abba63",
   "onboarding_row_days_left": "b87aeb029fe360291ec22aa389c28a2ce3bde7e96aecb511080b1ecca6e35de3",
   "onboarding_row_deadline": "f6e0e8bd8907dbb3ffed227142d5363474f65c305f813627ef7c637552808f78",
@@ -496,6 +497,8 @@
     <string name="onboarding_row_year_to_be_confirmed">%1$s年（未確定）</string>
     <!-- %1$s is a month and year, like "November 2027". -->
     <string name="onboarding_row_date_to_be_confirmed">%1$s年（未確定）</string>
+    <!-- Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date. -->
+    <string name="onboarding_row_date_unknown">日付がわかりますか？ここで設定できます。</string>
     <string name="onboarding_row_date_not_out_notice">正式な日程は試験要項で発表されます。すでにわかっている場合は、ここで設定できます。</string>
     <string name="onboarding_row_date_not_out_guide">正式な日程は試験の公式日程表で発表されます。すでにわかっている場合は、ここで設定できます。</string>
     <string name="onboarding_row_date_booked">この試験は予約時に受験日を選びます。もう予約しましたか？ここで設定できます。</string>
