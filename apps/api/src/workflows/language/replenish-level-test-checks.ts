@@ -4,6 +4,7 @@ import {
   readLevelTestCheckShortage,
   writeLevelTestChecks,
 } from "@zoonk/core/language/level-test/replenish-checks";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { getWorkflowMetadata } from "workflow";
 import { acquireRunToken } from "../_shared/run-token";
 import { voiceLevelTestPassageStep } from "./steps/level-test-bank-steps";
@@ -61,6 +62,10 @@ export async function replenishLevelTestChecks(
   const { goalId, pair, userId } = input;
   const { workflowRunId } = getWorkflowMetadata();
   const passages = await prepareChecks({ ...input, runId: workflowRunId });
+
+  if (!isTTSSupportedLanguage(pair.targetLanguage)) {
+    return;
+  }
 
   await Promise.allSettled(
     passages.map((text) =>
