@@ -25,11 +25,8 @@ import {
   goalSchema,
   goalUpdateResponseSchema,
 } from "../src/lib/openapi/schemas/goals";
-import {
-  planChangeResultSchema,
-  planLinkResponseSchema,
-  planResponseSchema,
-} from "../src/lib/openapi/schemas/plans";
+import { planChangeResultSchema } from "../src/lib/openapi/schemas/plan-change-results";
+import { planLinkResponseSchema, planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 

@@ -5,7 +5,8 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { isJsonObject } from "@zoonk/utils/json";
-import { planChangeResultSchema, planResponseSchema } from "../src/lib/openapi/schemas/plans";
+import { planChangeResultSchema } from "../src/lib/openapi/schemas/plan-change-results";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 

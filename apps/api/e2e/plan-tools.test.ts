@@ -11,7 +11,8 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
-import { planChangeResultSchema, planResponseSchema } from "../src/lib/openapi/schemas/plans";
+import { planChangeResultSchema } from "../src/lib/openapi/schemas/plan-change-results";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
