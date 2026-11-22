@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { type MockCandidate, getMockClock, getPlannedItemIds, planMock } from "./mock-plan";
+import {
+  type MockCandidate,
+  getMockClock,
+  getPlannedItemIds,
+  outlineMock,
+  planMock,
+} from "./mock-plan";
 
 const ENEM: ExamStructure = {
   formats: [],
@@ -38,21 +44,27 @@ function thinBank(count: number): MockCandidate[] {
 }
 
 describe("a scheduled mock's clock", () => {
-  it("is its exam day's real time limit, however few questions the bank has", () => {
+  it("keeps the announced time while measuring only questions available in the bank", () => {
     const clock = getMockClock({ day: 2, fullLength: false, structure: ENEM });
 
     const plan = planMock({
       adaptive: false,
       candidates: thinBank(8),
-      clock,
       fullLength: false,
       mockNumber: 1,
+      scheduledOutline: outlineMock({
+        clock,
+        day: 2,
+        fullLength: false,
+        listening: new Set(["Listening"]),
+        structure: ENEM,
+      }),
       structure: ENEM,
     });
 
     expect(clock).toBe(150);
-    expect(plan.minutes).toBe(150);
-    expect(plan.sections.map((section) => section.minutes)).toStrictEqual([150]);
+    expect(plan.minutes).toBe(27);
+    expect(plan.sections.map((section) => section.minutes)).toStrictEqual([27]);
 
     expect(getPlannedItemIds(plan)).toHaveLength(8);
     expect(plan.sections.map((section) => section.questions)).toStrictEqual([8]);
@@ -103,27 +115,33 @@ function bank(area: string, count: number): MockCandidate[] {
 describe("a scheduled mock's listening", () => {
   const recordings = new Map([["Listening", bank("Listening", 5)]]);
 
-  it("runs its section's share of the real exam day, whatever recordings the bank has", () => {
+  it("measures a partial listening bank at the exam pace", () => {
     const clock = getMockClock({ day: 1, fullLength: true, structure: LISTENING_EXAM });
 
     const plan = planMock({
       adaptive: false,
       candidates: bank("Reading", 40),
-      clock,
       fullLength: true,
       listening: recordings,
       mockNumber: 0,
+      scheduledOutline: outlineMock({
+        clock,
+        day: 1,
+        fullLength: true,
+        listening: new Set(["Listening"]),
+        structure: LISTENING_EXAM,
+      }),
       structure: LISTENING_EXAM,
     });
 
     expect(clock).toBe(90);
-    expect(plan.minutes).toBe(90);
+    expect(plan.minutes).toBe(64);
 
     expect(
       plan.sections.map((section) => [section.name, section.minutes, section.questions]),
     ).toStrictEqual([
       ["Reading", 60, 40],
-      ["Listening", 30, 5],
+      ["Listening", 4, 5],
     ]);
   });
 
@@ -165,20 +183,26 @@ const TWO_SECTIONS: ExamStructure = {
 };
 
 describe("a scheduled mock's sections", () => {
-  it("hold its whole clock when the bank fills only one of them", () => {
+  it("measure just the available questions when a section is short", () => {
     const clock = getMockClock({ day: 1, fullLength: false, structure: TWO_SECTIONS });
 
     const plan = planMock({
       adaptive: false,
       candidates: bank("Mathematics", 6),
-      clock,
       fullLength: false,
       mockNumber: 0,
+      scheduledOutline: outlineMock({
+        clock,
+        day: 1,
+        fullLength: false,
+        listening: new Set(["Listening"]),
+        structure: TWO_SECTIONS,
+      }),
       structure: TWO_SECTIONS,
     });
 
     expect(plan.sections.map((section) => section.questions)).toStrictEqual([6]);
-    expect(sumSections(plan)).toBe(clock);
+    expect(sumSections(plan)).toBe(9);
   });
 
   it("hold the time of a written test it has no essay for", () => {
@@ -187,9 +211,15 @@ describe("a scheduled mock's sections", () => {
     const plan = planMock({
       adaptive: false,
       candidates: [...bank("Mathematics", 40), ...bank("Sciences", 40)],
-      clock,
       fullLength: true,
       mockNumber: 0,
+      scheduledOutline: outlineMock({
+        clock,
+        day: 1,
+        fullLength: true,
+        listening: new Set(["Listening"]),
+        structure: TWO_SECTIONS,
+      }),
       structure: TWO_SECTIONS,
     });
 
@@ -197,20 +227,26 @@ describe("a scheduled mock's sections", () => {
     expect(sumSections(plan)).toBe(clock);
   });
 
-  it("hold the listening's time when the bank has no recording for it", () => {
+  it("exclude listening from the available bank when recordings are missing", () => {
     const clock = getMockClock({ day: 1, fullLength: true, structure: LISTENING_EXAM });
 
     const plan = planMock({
       adaptive: false,
       candidates: bank("Reading", 40),
-      clock,
       fullLength: true,
       mockNumber: 0,
+      scheduledOutline: outlineMock({
+        clock,
+        day: 1,
+        fullLength: true,
+        listening: new Set(["Listening"]),
+        structure: LISTENING_EXAM,
+      }),
       structure: LISTENING_EXAM,
     });
 
     expect(plan.sections.map((section) => section.name)).toStrictEqual(["Reading"]);
-    expect(sumSections(plan)).toBe(90);
+    expect(sumSections(plan)).toBe(60);
   });
 
   it("leaves an anytime mock's sections sized by what they ask", () => {

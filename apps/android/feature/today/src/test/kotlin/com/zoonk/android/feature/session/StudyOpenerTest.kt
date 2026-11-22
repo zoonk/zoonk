@@ -23,6 +23,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -162,6 +163,32 @@ class StudyOpenerTest {
             assertEquals(JsonNull, shown.getValue("lessonId"))
             assertEquals(JsonNull, shown.getValue("checkpoint"))
             assertEquals(JsonNull, shown.getValue("areaId"))
+            assertEquals(null, shown.getValue("flags").jsonObject["mockPreparationReview"])
+        }
+
+    @Test
+    fun theReviewOfferedWhileTheMockIsPreparedSaysSoInItsRef() =
+        runTest {
+            val api = FakeStudyApi()
+            val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
+            api.dayOpening = opening("session", "blockId" to blockId(0).toString(), "sessionId" to opened.toString())
+            val review =
+                step(0, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, saved = false, lessonId = null)
+                    .copy(mockPreparationReview = true)
+
+            opener(api).open(day(listOf(review), saved = false), review, next = false, goalId = GOAL)
+
+            val flags =
+                ApiRequestJson
+                    .encodeToJsonElement(OpenStudyDayRequest.serializer(), api.opened.single())
+                    .jsonObject
+                    .getValue("target")
+                    .jsonObject
+                    .getValue("ref")
+                    .jsonObject
+                    .getValue("flags")
+                    .jsonObject
+            assertEquals(JsonPrimitive(true), flags.getValue("mockPreparationReview"))
         }
 
     @Test

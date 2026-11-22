@@ -3,10 +3,10 @@ import { type ExamStructure, type SectionNavigation } from "../../library/exams/
 import { listSectionParts } from "./exam-parts";
 import { fitToClock } from "./mock-clock-fit";
 import {
-  DEFAULT_SECTION_QUESTIONS,
   getDaySections,
   getObjectiveSections,
   sectionMinutes,
+  sectionQuotas,
   toSectionRules,
 } from "./mock-day-sections";
 import { addFormatsWanted, getFormatQuotas, getSectionMix } from "./mock-format-mix";
@@ -29,6 +29,7 @@ const DEFAULT_MINUTES_PER_QUESTION = 3;
 
 export type MockCandidate = {
   answered: boolean;
+  lastMockUse?: number;
   area: string | null;
   difficulty: number | null;
   format?: string | null;
@@ -83,7 +84,7 @@ export function getPace(structure: ExamStructure | null): number {
 export function planMock({
   adaptive,
   candidates,
-  clock,
+  scheduledOutline,
   essays = [],
   fullLength,
   listening = new Map(),
@@ -95,7 +96,7 @@ export function planMock({
 }: {
   adaptive: boolean;
   candidates: readonly MockCandidate[];
-  clock?: number;
+  scheduledOutline?: MockPlan;
   essays?: readonly MockEssayCandidate[];
   fullLength: boolean;
   listening?: ReadonlyMap<string, readonly MockCandidate[]>;
@@ -125,24 +126,20 @@ export function planMock({
 
   const byArea = areaSections !== null;
 
+  const quotasBySection = sectionQuotas(sections, share);
+
   const planned = sections.reduce<{
     formatsWanted: Record<string, number>;
     plans: MockSectionPlan[];
     used: Set<string>;
   }>(
     (state, section, index) => {
-      const wanted = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
+      const wanted = quotasBySection[index] ?? 0;
       const recordings = section.kind === "listening" ? listening.get(section.name ?? "") : null;
 
       if (recordings) {
         const plan = planListeningSection({ pace, pool: recordings, section, wanted });
-
-        const timed =
-          clock === undefined
-            ? plan
-            : { ...plan, minutes: sectionMinutes({ pace, picked: wanted, section }) };
-
-        return { ...state, plans: [...state.plans, timed] };
+        return { ...state, plans: [...state.plans, plan] };
       }
 
       if (section.kind === "speaking") {
@@ -178,11 +175,7 @@ export function planMock({
         ...toSectionRules(section),
         essays: [],
         itemIds: picked,
-        minutes: sectionMinutes({
-          pace,
-          picked: clock === undefined ? questions : wanted,
-          section,
-        }),
+        minutes: sectionMinutes({ pace, picked: questions, section }),
         name: getSectionName({ allSections, byArea, section }),
         questions,
         routing,
@@ -206,7 +199,14 @@ export function planMock({
   const written = withWrittenParts({ day, essays, fullLength, sections: planned.plans, structure });
 
   const asked = written.sections.filter((plan) => asksAnything(plan));
-  const plans = clock === undefined ? asked : fitToClock({ clock, sections: asked });
+  const count = asked.reduce((sum, section) => sum + section.questions, 0);
+
+  const clock =
+    scheduledOutline && count === countPlannedQuestions(scheduledOutline)
+      ? scheduledOutline.minutes
+      : undefined;
+
+  const plans = fitToClock({ clock, sections: asked });
 
   return {
     day,
@@ -247,12 +247,14 @@ export function outlineMock({
     structure,
   });
 
-  const asked = daySections.map((section): MockSectionPlan => {
+  const quotasBySection = sectionQuotas(daySections, share);
+
+  const asked = daySections.map((section, index): MockSectionPlan => {
     if (section.kind === "speaking") {
       return planSpeakingSection(section);
     }
 
-    const questions = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
+    const questions = quotasBySection[index] ?? 0;
 
     return {
       ...toSectionRules(section),
@@ -266,13 +268,9 @@ export function outlineMock({
     };
   });
 
-  const { sections, written } = withWrittenParts({
-    day,
-    essays,
-    fullLength,
-    sections: asked,
-    structure,
-  });
+  const result = withWrittenParts({ day, essays, fullLength, sections: asked, structure });
+
+  const sections = fitToClock({ clock, sections: result.sections });
 
   return {
     day,
@@ -280,7 +278,7 @@ export function outlineMock({
     minutes: clock ?? sections.reduce((sum, section) => sum + section.minutes, 0),
     reused: 0,
     sections,
-    written,
+    written: result.written,
   };
 }
 

@@ -16,6 +16,7 @@ import {
   checkpointMoveResponseSchema,
   checkpointResponseSchema,
 } from "../schemas/checkpoints";
+import { preparingMockResponseSchema } from "../schemas/mocks";
 import {
   challengeMovePathParamsSchema,
   challengePathParamsSchema,
@@ -154,6 +155,10 @@ export const checkpointPaths = {
         "200": {
           content: { "application/json": { schema: challengeStartResponseSchema } },
           description: "Where it's played",
+        },
+        "202": {
+          content: { "application/json": { schema: preparingMockResponseSchema } },
+          description: "The mock needs questions",
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,

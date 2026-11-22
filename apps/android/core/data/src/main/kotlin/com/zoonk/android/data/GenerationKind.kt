@@ -338,6 +338,22 @@ enum class GenerationKind(
                 "writeChallengeQuestions" to StepPlace.Phase("questions"),
             ),
     ),
+    MockPaper(
+        label = R.string.mock_preparing_title,
+        phases =
+            listOf(
+                GenerationPhase("texts", 40, R.string.mock_writing_texts, optional = true),
+                GenerationPhase("questions", 200, R.string.mock_writing_questions),
+                GenerationPhase("listening", 120, R.string.mock_writing_listening, optional = true),
+            ),
+        steps =
+            mapOf(
+                "mockPaperReady" to StepPlace.Done,
+                "recordMockListening" to StepPlace.Phase("listening"),
+                "writeMockQuestions" to StepPlace.Phase("questions"),
+                "writeMockTexts" to StepPlace.Phase("texts"),
+            ),
+    ),
     TestOutQuestions(
         label = R.string.testout_writing,
         phases =
@@ -413,25 +429,6 @@ enum class GenerationKind(
                 "joinSetupLessons" to StepPlace.Join,
                 "setupLessonsReady" to StepPlace.Done,
                 "writeSetupLessons" to StepPlace.Phase("write"),
-            ),
-    ),
-    MockQuestions(
-        label = R.string.mock_chooser_writing,
-        phases =
-            listOf(
-                GenerationPhase(
-                    "questions",
-                    100,
-                    R.string.mock_chooser_writing_questions,
-                    listOf(R.string.mock_chooser_writing_questions_line),
-                    questionLines(count = 12),
-                ),
-            ),
-        steps =
-            mapOf(
-                "joinMockQuestions" to StepPlace.Join,
-                "mockQuestionsReady" to StepPlace.Done,
-                "writeMockQuestions" to StepPlace.Phase("questions"),
             ),
     ),
     ;

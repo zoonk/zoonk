@@ -31,7 +31,7 @@ async function startAnytime(goalId: string) {
   }
 
   const shape = { area: option.area, day: option.day, kind: option.kind };
-  const started = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape } });
+  const started = await startAnytimeMock({ goalId, input: { shape } });
 
   if (started.status !== "started") {
     throw new Error(`Expected a started mock, got ${started.status}`);
@@ -149,7 +149,8 @@ describe("a mock whose time ran out while the learner was away", () => {
   });
 
   it("leaves a mock taken any time out of the exam's entry, so a new one starts afresh", async () => {
-    const { goal } = await scheduledMockSetup();
+    const { goal, mockItem } = await scheduledMockSetup();
+    await prisma.planItem.update({ data: { status: "done" }, where: { id: mockItem.id } });
     const first = await startAnytime(goal.id);
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
@@ -158,10 +159,7 @@ describe("a mock whose time ran out while the learner was away", () => {
       view: { running: null },
     });
 
-    const again = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: first.shape },
-    });
+    const again = await startAnytimeMock({ goalId: goal.id, input: { shape: first.shape } });
 
     expect(again).toMatchObject({ status: "started" });
     expect(again.status === "started" && again.id).not.toBe(first.id);

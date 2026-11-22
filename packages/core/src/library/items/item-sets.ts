@@ -34,7 +34,7 @@ export async function listItemSetsForSkills({
         select: { id: true, skillId: true },
         where: {
           AND: [
-            getItemAudienceFilter({ examBlueprintId, inSets: true }),
+            getItemAudienceFilter({ examBlueprintId, inSets: true, userId }),
             ...(userId ? [] : [getPublicItemFilter()]),
           ],
         },

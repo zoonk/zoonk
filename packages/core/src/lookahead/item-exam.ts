@@ -1,5 +1,7 @@
 import "server-only";
-import { type ExamBlueprint, type Goal } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { toListeningExam } from "../exams/listening/listening-exam";
+import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import { type MockQuickChoice } from "../exams/mocks/mock-format-mix";
 import { toExamIdentity } from "../library/curriculum/shared-graph-prompt";
 import {
@@ -11,6 +13,29 @@ import { describeFormat } from "../library/exams/format-style";
 import { type NoticeFormats } from "../library/exams/notice-formats";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { readGoalExamFormats } from "../library/exams/short-answers";
+import { parsePlanGraph } from "../plans/planner/plan-state";
+
+export async function readItemExamPlan(goalId: string) {
+  const goal = await prisma.goal.findUnique({
+    select: {
+      examBlueprint: true,
+      kind: true,
+      plan: { select: { graph: true } },
+      targetLanguage: true,
+    },
+    where: { id: goalId },
+  });
+
+  if (goal?.kind !== "exam" || !goal.examBlueprint) {
+    return null;
+  }
+
+  const graph = parsePlanGraph(goal.plan?.graph);
+  const firstPhase = Math.min(...graph.skills.map((skill) => skill.phase));
+  const listening = getListeningSkillIds({ exam: toListeningExam(goal), graph });
+
+  return { blueprint: goal.examBlueprint, firstPhase, graph, listening };
+}
 
 export type PlacementItemExam = {
   /** Null until the exam blueprint is linked. */

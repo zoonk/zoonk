@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { loadMistakeReplays } from "./mistake-replay";
 
 export type PracticeMistake = {
@@ -45,7 +46,7 @@ export async function loadPracticeMistakes({
 }): Promise<PracticeMistake[]> {
   const mistakes = await prisma.mistake.findMany({
     orderBy: { createdAt: "asc" },
-    where: { skillId: { in: [...skillIds] }, status: "open", userId },
+    where: { ...visibleMistakeWhere, skillId: { in: [...skillIds] }, status: "open", userId },
   });
 
   return filterMistakesWithPracticeMaterial({ mistakes });

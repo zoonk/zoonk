@@ -1,8 +1,8 @@
 import { prisma } from "@zoonk/db";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -60,6 +60,46 @@ describe(listCurrentUserMistakes, () => {
     expect(result.status === "ready" && result.mistakes[1]?.skill).toStrictEqual({
       id: skill.id,
       name: "Percentages",
+    });
+  });
+
+  it("publishes mistakes from mock grading after the sitting finishes", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+
+    const [sitting, item] = await Promise.all([
+      prisma.mockExam.create({
+        data: { conditions: {}, sectionStartedAt: new Date(), userId: user.id },
+      }),
+      itemFixture({ mockOnly: true, skillId: skill.id }),
+    ]);
+
+    const attempt = await attemptFixture({
+      itemId: item.id,
+      mockExamId: sitting.id,
+      userId: user.id,
+    });
+
+    const mistake = await mistakeFixture({
+      attemptId: attempt.id,
+      itemId: item.id,
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await expect(listCurrentUserMistakes(query())).resolves.toMatchObject({
+      counts: { open: 0 },
+      mistakes: [],
+    });
+
+    await prisma.mockExam.update({
+      data: { finishedAt: new Date(), status: "finished" },
+      where: { id: sitting.id },
+    });
+
+    await expect(listCurrentUserMistakes(query())).resolves.toMatchObject({
+      counts: { open: 1 },
+      mistakes: [{ id: mistake.id }],
     });
   });
 

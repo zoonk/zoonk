@@ -271,6 +271,10 @@ function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
     return today.goal.kind === "exam" ? "examOver" : "seePlan";
   }
 
+  if (keepLearning) {
+    return "keepLearning";
+  }
+
   // A started day asks from its list's row for the lessons to come.
   if (state === "prepare") {
     return today.session.blocks.length === 0 ? "prepare" : null;
@@ -279,10 +283,6 @@ function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
   // A done day keeps its "done" while an extra is next, and Continue plays it.
   if (hasNext) {
     return "continue";
-  }
-
-  if (keepLearning) {
-    return "keepLearning";
   }
 
   if (state === "done") {

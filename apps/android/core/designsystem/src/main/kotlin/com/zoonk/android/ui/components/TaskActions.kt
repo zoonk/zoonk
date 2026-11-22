@@ -15,7 +15,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.IntrinsicMeasureScope
+import androidx.compose.ui.layout.LayoutModifier
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -71,11 +78,32 @@ fun TaskActions(
                 if (back != null) {
                     if (roomy) Box(Modifier.weight(1f)) { back() } else back()
                 }
-                content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
+                content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f).wrapsWhole())
             }
         }
     }
 }
+
+/**
+ * A flow row fits a weighted item on a line by its least width, a button's longest word, so the main action would break
+ * its words beside another button. Its one-line width counts as its least instead, so it moves to a line of its own.
+ */
+private fun Modifier.wrapsWhole(): Modifier =
+    this then
+        object : LayoutModifier {
+            override fun MeasureScope.measure(
+                measurable: Measurable,
+                constraints: Constraints,
+            ): MeasureResult {
+                val placeable = measurable.measure(constraints)
+                return layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+            }
+
+            override fun IntrinsicMeasureScope.minIntrinsicWidth(
+                measurable: IntrinsicMeasurable,
+                height: Int,
+            ): Int = measurable.maxIntrinsicWidth(height)
+        }
 
 /** Whether the [TaskActions] around this has room for its buttons side by side; null outside one. */
 private val LocalRoomyBar = compositionLocalOf<Boolean?> { null }

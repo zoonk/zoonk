@@ -178,11 +178,7 @@ struct TodayView: Decodable, Equatable, Sendable {
 
   /// Mirrors main's `useUpNextLessons`. Once extras are on the list, Continue plays them first.
   var upNextLessons: [StudyDay.ExtraTime.Lesson] {
-    let state = session.state
-
-    guard !isPastDate, state == .done || state == .rest, session.nextBlock == nil,
-      session.extraTime.available
-    else {
+    guard !isPastDate, session.extraTime.available else {
       return []
     }
 

@@ -67,7 +67,7 @@ export const weeklyChallengeResponseSchema = z
   .object({
     challenge: z
       .object({
-        access: z.enum(["open", "plusRequired"]),
+        access: z.enum(["open", "plusRequired", "preparing"]),
         brainPower: z.number().int(),
         checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
         conditions: mockConditionsSchema.nullable(),

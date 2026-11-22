@@ -30,12 +30,15 @@ describe(getAllowance, () => {
 
     await Promise.all([
       usageRecordsFixture({ count: 3, createdAt: NOW, userId: user.id }),
+      usageRecordsFixture({ count: 1, createdAt: NOW, kind: "mockQuestions", userId: user.id }),
       usageRecordsFixture({ count: 30, createdAt: EARLIER_THIS_MONTH, userId: user.id }),
       goalFixture({ userId: user.id }),
     ]);
 
     mockSession(user.id);
     const allowance = await getAllowance();
+
+    expect(allowance?.items.map((item) => item.kind)).not.toContain("mockQuestions");
 
     expect(allowance).toMatchObject({
       activeGoals: { limit: 3, used: 1 },

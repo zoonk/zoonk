@@ -17,7 +17,7 @@
   "challenge_day_time": "e0bc016ffede23f635df2b5059451aef30e1326aaefcdd0fe7fc016317ab6049",
   "challenge_mock_gate": "64fce087d9f08535166cfe49d960ff32ef37c4a66b8573cf6ab40cf3131f2a34",
   "challenge_mock_start": "c78f195f77b570ca2a8a7881735c952877e7ecda1a1d2cfe904e4d22b2960910",
-  "challenge_move": "92f47f12b7c2e797f90c45e460296154d04eab86f92998fe2d225e334f4d2948",
+  "challenge_move": "5449dc6f543b96febd547142948033d896dd0089fd3813ab572c2e90278b98cc",
   "challenge_move_before_monday": "456b2f448a725db28a6b14186951917ba8ca261c5c1793238520bfcf5da691f6",
   "challenge_move_collision": "6079fabf523b2c1cde54c89f6025b9ceb72aa29ce313a716eac5e9e19854e503",
   "challenge_move_no_room": "6613182144ab45349a470f3f0ef460664031864b98d6539365a109c8895cac91",
@@ -148,7 +148,7 @@
     <string name="challenge_not_ready">Ce défi n’est pas encore prêt.</string>
     <string name="challenge_next_session">À ta prochaine séance</string>
     <string name="challenge_back_to_today">Aujourd’hui</string>
-    <string name="challenge_move">Déplacer à lundi</string>
+    <string name="challenge_move">Reporter à lundi</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">Déplacé au %1$s</string>
     <string name="challenge_moved_detail">Ton plan a décalé des leçons suivantes pour lui faire de la place.</string>

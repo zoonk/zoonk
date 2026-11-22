@@ -43,7 +43,11 @@ internal fun TodayDayProgress(
 
     DayProgress(parts, held = held, contentDescription = stepsDone(day.sessionBar), modifier = modifier) { index ->
         val part = parts.getOrNull(index)
-        if (part != null) StepSegment(part) else HeldSegment(model, day.heldMinutes)
+        if (part != null) {
+            StepSegment(part, gettingReady = part.step.isGettingReady(model.today.lessonStatus, model.writingStalled))
+        } else {
+            HeldSegment(model, day.heldMinutes)
+        }
     }
 }
 
@@ -51,10 +55,15 @@ private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
 
 @Composable
-private fun StepSegment(part: DayPart) {
+private fun StepSegment(
+    part: DayPart,
+    gettingReady: Boolean,
+) {
     val step = part.step
 
-    Segment(title = blockTitle(step), facts = segmentFacts(part), note = kindNote(step.learnKind), kind = step.learnKind)
+    val facts = segmentFacts(part, gettingReady)
+
+    Segment(title = blockTitle(step), status = facts.status, facts = facts.data, note = kindNote(step.learnKind), kind = step.learnKind)
 }
 
 /** The day's time kept for lessons that aren't on its list yet. */
@@ -75,13 +84,14 @@ private fun HeldSegment(
 @Composable
 private fun Segment(
     title: String,
-    facts: String,
+    facts: String?,
     note: String?,
     kind: LearnKind,
+    status: String? = null,
 ) {
-    val label = stringResource(R.string.today_segment_label, title, facts)
+    val label = stringResource(R.string.today_segment_label, title, listOf(status, facts).factsLine())
 
-    TodayPopover(title = title, facts = facts, note = note, kind = kind) { open ->
+    TodayPopover(title = title, status = status, facts = facts, note = note, kind = kind) { open ->
         Box(
             Modifier
                 .fillMaxWidth()
@@ -93,32 +103,48 @@ private fun Segment(
     }
 }
 
+/** A state is words, set in the text face; a time or a count is data, set in mono. */
+private data class SegmentFacts(
+    val status: String? = null,
+    val data: String? = null,
+)
+
 @Composable
-private fun segmentFacts(part: DayPart): String {
+private fun segmentFacts(
+    part: DayPart,
+    gettingReady: Boolean,
+): SegmentFacts {
     val step = part.step
     val locale = currentLocale()
     val time = formatMinutes(step.estimatedMinutes.toInt(), locale)
 
+    if (gettingReady && part.state != DayPart.State.Done) {
+        return SegmentFacts(stringResource(R.string.today_step_being_written), time)
+    }
+
     return when (part.state) {
         DayPart.State.Done -> {
-            stringResource(R.string.today_step_done)
+            SegmentFacts(status = stringResource(R.string.today_step_done))
         }
 
         DayPart.State.Ahead -> {
-            listOf(stringResource(R.string.today_week_planned).replaceFirstChar { it.titlecase(locale) }, time).factsLine()
+            SegmentFacts(stringResource(R.string.today_week_planned).replaceFirstChar { it.titlecase(locale) }, time)
         }
 
         DayPart.State.Current -> {
             if (step.status == StudyBlock.Status.ACTIVE && step.answered > 0) {
                 val questions = step.questions.toInt()
-                pluralStringResource(
-                    R.plurals.today_segment_questions,
-                    questions,
-                    formatNumber(step.answered.toDouble(), locale),
-                    questions,
+                SegmentFacts(
+                    data =
+                        pluralStringResource(
+                            R.plurals.today_segment_questions,
+                            questions,
+                            formatNumber(step.answered.toDouble(), locale),
+                            questions,
+                        ),
                 )
             } else {
-                listOf(stringResource(R.string.today_segment_up_next), time).factsLine()
+                SegmentFacts(stringResource(R.string.today_segment_up_next), time)
             }
         }
     }

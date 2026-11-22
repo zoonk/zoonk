@@ -34,6 +34,7 @@ export async function startChallengeAction(
   | "blockFinished"
   | "notToday"
   | "plusRequired"
+  | "preparing"
   | "questionsNeeded"
   | null
 > {
@@ -50,6 +51,7 @@ export async function startChallengeAction(
     result.status === "blockFinished" ||
     result.status === "notToday" ||
     result.status === "plusRequired" ||
+    result.status === "preparing" ||
     result.status === "questionsNeeded"
   ) {
     return result.status;

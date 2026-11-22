@@ -10,7 +10,7 @@ import { checkItem, findOwnEmDashes, toCheckedItem } from "@zoonk/core/library/i
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
 import { type GenerateItemsExpected } from "./test-cases";
 
-type GenerateItemsCase = {
+export type GenerateItemsCase = {
   examFormat?: {
     entry?: NumericEntry | null;
     optionCount?: number | null;

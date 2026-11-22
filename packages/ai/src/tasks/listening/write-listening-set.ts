@@ -124,7 +124,7 @@ function buildSystemPrompt(formats: readonly ListeningQuestionFormat[]): string 
  * Shared Library content: the input never holds a learner's words. The set comes back with any
  * flaws still there, so the caller stores only clean sets.
  */
-export async function writeListeningSet(params: WriteListeningSetParams) {
+export async function writeListeningSet(params: WriteListeningSetParams, redraft = true) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const formats = getFormats(params.formats);
 
@@ -167,10 +167,9 @@ export async function writeListeningSet(params: WriteListeningSetParams) {
     };
   };
 
-  const { problems, provenance, set, usage } = await draftAgainWhenFlawed({
-    countProblems: (output) => output.problems.length,
-    draft,
-  });
+  const { problems, provenance, set, usage } = redraft
+    ? await draftAgainWhenFlawed({ countProblems: (output) => output.problems.length, draft })
+    : await draft();
 
   return { data: { problems, set }, provenance, systemPrompt, usage, userPrompt };
 }

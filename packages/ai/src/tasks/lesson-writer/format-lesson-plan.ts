@@ -5,6 +5,7 @@ import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
+import { formatUsedSituations } from "../items/used-situations";
 import {
   type LessonScreen,
   type LessonSpec,
@@ -31,6 +32,7 @@ export type LessonWritingContext = {
   setup?: boolean;
   /** Otherwise the lesson asks only what learners pick (`getWrittenKinds`). */
   shortAnswers?: boolean;
+  usedSituations?: readonly string[];
 };
 
 /** `screen` is a 0-based index, or null for the whole lesson. */
@@ -163,7 +165,7 @@ LESSON_TITLE: ${spec.title}
 LESSON_DESCRIPTION: ${spec.description}
 CAN_DO: ${spec.canDo}
 ${formatLessonExams(context.exams)}
-CHAPTER_LESSONS: ${formatChapterLessons(context.chapterLessons)}
+CHAPTER_LESSONS: ${formatChapterLessons(context.chapterLessons)}${formatUsedSituations({ indent: "", situations: context.usedSituations })}
 
 SKILLS:
 ${spec.skills.map((skill, index) => formatSkill(skill, index)).join("\n")}

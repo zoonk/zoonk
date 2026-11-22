@@ -80,12 +80,12 @@ extension APIClientFactory {
   /// naming the run already doing the same work.
   private static let readySteps: Set<String> = [
     "callReady", "challengeQuestionsReady", "explanationReady", "goalReady", "lessonReady",
-    "levelTestBankReady", "mockQuestionsReady", "setupLessonsReady", "testOutQuestionsReady",
+    "levelTestBankReady", "mockPaperReady", "setupLessonsReady", "testOutQuestionsReady",
     "understandingReady",
   ]
 
   private static let joinSteps: Set<String> = [
-    "joinChallengeQuestions", "joinLevelTestBank", "joinMockQuestions", "joinRunningCall",
+    "joinChallengeQuestions", "joinLevelTestBank", "joinRunningCall",
     "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
     "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]
@@ -123,6 +123,7 @@ extension APIClientFactory {
   func generationEvents(
     id: String,
     token: String?,
+    namespace: String? = nil,
     stopCheck: Duration = .seconds(120),
     backoff: Duration = .seconds(1)
   ) -> AsyncThrowingStream<GenerationEvent, Error> {
@@ -130,7 +131,8 @@ extension APIClientFactory {
       let task = Task {
         do {
           try await follow(
-            id, token: token, stopCheck: stopCheck, backoff: backoff, continuation)
+            id, token: token, namespace: namespace, stopCheck: stopCheck, backoff: backoff,
+            continuation)
           continuation.finish()
         } catch {
           continuation.finish(throwing: error)
@@ -167,6 +169,7 @@ extension APIClientFactory {
   private func follow(
     _ id: String,
     token: String?,
+    namespace: String?,
     stopCheck: Duration,
     backoff: Duration,
     _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
@@ -185,7 +188,8 @@ extension APIClientFactory {
       let end: StreamEnd
 
       do {
-        end = try await read(run, token: token, received: &received, goal: &goal, continuation)
+        end = try await read(
+          run, token: token, namespace: namespace, received: &received, goal: &goal, continuation)
       } catch {
         let error = apiError(from: error)
 
@@ -232,12 +236,13 @@ extension APIClientFactory {
   private func read(
     _ run: String,
     token: String?,
+    namespace: String?,
     received: inout Int,
     goal: inout GoalProgress,
     _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
   ) async throws -> StreamEnd {
     let (events, clockOffset) = try await openGenerationEvents(
-      id: run, token: token, startIndex: received)
+      id: run, token: token, namespace: namespace, startIndex: received)
 
     for try await var event in events {
       received += 1
@@ -310,6 +315,7 @@ extension APIClientFactory {
   private func openGenerationEvents(
     id: String,
     token: String?,
+    namespace: String?,
     startIndex: Int
   ) async throws -> (some AsyncSequence<GenerationEvent, any Error>, TimeInterval?) {
     let clockOffset = Mutex<TimeInterval?>(nil)
@@ -317,7 +323,7 @@ extension APIClientFactory {
       token: token, serverClock: { offset in clockOffset.withLock { $0 = offset } }
     ).streamGenerationEvents(
       path: .init(generationId: id),
-      query: .init(startIndex: startIndex))
+      query: .init(namespace: namespace, startIndex: startIndex))
 
     switch output {
     case .ok(let response):
