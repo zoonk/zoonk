@@ -190,8 +190,9 @@ fun WorkedSteps(
     }
 }
 
+/** Whether a checked answer fixed mistakes in the notebook or saved one to it. */
 @Composable
-private fun MistakeNote(feedback: AnswerFeedback) {
+fun MistakeNote(feedback: AnswerFeedback) {
     val text =
         when {
             feedback.fixedCount == 1 -> stringResource(R.string.questions_mistake_fixed)
