@@ -10133,11 +10133,11 @@ msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "Seu plano e suas aulas seguem este material"
 
-#. Under the learner's material on the goal card, when some of it can't be read anymore.
+#. Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists.
 #: src/onboarding/understood/use-understood-rows.ts
-msgctxt "quZfVt"
-msgid "Some of your material can't be read anymore, so your plan won't follow it."
-msgstr "Parte do seu material não dá mais para ler, então seu plano não vai levar isso em conta."
+msgctxt "83Uigi"
+msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
+msgstr ""
 
 #. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
 #: src/onboarding/understood/use-understood-rows.ts

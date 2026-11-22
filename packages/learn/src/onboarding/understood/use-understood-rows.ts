@@ -311,8 +311,9 @@ function useMaterialNote() {
     return sources.length > 0
       ? t({
           description:
-            "Under the learner's material on the goal card, when some of it can't be read anymore.",
-          message: "Some of your material can't be read anymore, so your plan won't follow it.",
+            "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists.",
+          message:
+            "Your plan and lessons follow only this material. The rest can't be read anymore.",
         })
       : t({
           description:
