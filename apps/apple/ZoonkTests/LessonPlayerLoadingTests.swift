@@ -1734,32 +1734,3 @@ private actor OpeningStartTransport: ClientTransport {
     )
   }
 }
-
-extension LessonPlayerLoadingTests {
-  func testCallsExplanationPictures() async throws {
-    guard ProcessInfo.processInfo.environment["ZOONK_CALLS_CAPTURE"] != nil else {
-      throw XCTSkip("On-demand review pictures")
-    }
-    let base = try markedLesson()
-    for language in [false, true] {
-      let lesson = PlayableLesson(
-        id: base.id, title: base.title, language: base.language,
-        targetLanguage: language ? "es" : nil, chapterTitle: base.chapterTitle, steps: base.steps,
-        summary: base.summary, tutorSuggestions: base.tutorSuggestions)
-      let store = openingPlayer(lesson, transport: OpeningStartTransport(holds: false))
-      await store.load()
-      let state = try XCTUnwrap(store.state)
-      let window = try show(
-        LessonStageView(store: store, state: state).environment(
-          \.lessonTutor, LessonTutor(panel: { _, _ in AnyView(Text(verbatim: "Tutor")) })
-        ).appDependencies(.hosted()).environment(AppRouter()).zoonkStyles())
-      for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
-        window.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        window.rootViewController?.traitOverrides.horizontalSizeClass =
-          width > 700 ? .regular : .compact
-        try await Task.sleep(for: .milliseconds(600))
-        try captureCallsRoundTwo("explanation-\(language ? "language" : "knowledge")-\(size)")
-      }
-    }
-  }
-}

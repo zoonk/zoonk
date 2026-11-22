@@ -9,9 +9,13 @@ extension XCTestCase {
     let scene = try XCTUnwrap(
       UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)
     let window = UIWindow(windowScene: scene)
-    window.rootViewController = UIHostingController(rootView: view.background(HostedLayoutProbe()))
+    window.rootViewController = UIHostingController(
+      rootView: view.background(HostedLayoutProbe()))
     window.makeKeyAndVisible()
-    addTeardownBlock { window.isHidden = true }
+    addTeardownBlock {
+      window.rootViewController?.dismiss(animated: false)
+      window.isHidden = true
+    }
     return window
   }
 
@@ -44,16 +48,6 @@ extension XCTestCase {
   @MainActor
   func spoken(in element: Any) -> [String] {
     accessibilityElements(in: element).compactMap(\.accessibilityLabel).filter { !$0.isEmpty }
-  }
-
-  @MainActor
-  func spokenValues(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityValue).filter { !$0.isEmpty }
-  }
-
-  @MainActor
-  func spokenHints(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityHint).filter { !$0.isEmpty }
   }
 
   /// Taps what VoiceOver reads as `label`, as a double tap with VoiceOver does.
@@ -112,6 +106,16 @@ extension XCTestCase {
       found += view.subviews.flatMap { accessibilityElements(in: $0) }
     }
 
+    if let window = object as? UIWindow {
+      var presented = window.rootViewController?.presentedViewController
+      while let controller = presented {
+        if let presentedView = controller.view, presentedView.window !== window {
+          found += accessibilityElements(in: presentedView)
+        }
+        presented = controller.presentedViewController
+      }
+    }
+
     if let elements = object.accessibilityElements {
       found += elements.flatMap { accessibilityElements(in: $0) }
     }
@@ -121,43 +125,18 @@ extension XCTestCase {
 
   @MainActor
   func requestViews<Kind: UIView>(_ kind: Kind.Type, in root: UIView) -> [Kind] {
-    ((root as? Kind).map { [$0] } ?? []) + root.subviews.flatMap { requestViews(kind, in: $0) }
-  }
-
-  /// The first drawn row from the top of the window, in points: where a centered screen starts
-  /// (its icon, or its title when it has none), for screens whose parts a test can't measure from
-  /// inside. Grey ink counts, so a muted icon is found as well as black words.
-  @MainActor
-  func inkTop(_ window: UIWindow) -> CGFloat? {
-    let format = UIGraphicsImageRendererFormat()
-    format.scale = 1
-    format.preferredRange = .standard
-
-    let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { context in
-      UIColor.white.setFill()
-      context.fill(window.bounds)
-      window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
-    }
-
-    guard let cgImage = image.cgImage, let data = cgImage.dataProvider?.data,
-      let bytes = CFDataGetBytePtr(data)
-    else {
-      return nil
-    }
-
-    let pixelBytes = cgImage.bitsPerPixel / 8
-
-    for y in 0..<Int(Double(cgImage.height) * 0.7) {
-      for x in 0..<cgImage.width {
-        let pixel = y * cgImage.bytesPerRow + x * pixelBytes
-
-        if Int(bytes[pixel]) + Int(bytes[pixel + 1]) + Int(bytes[pixel + 2]) < 600 {
-          return CGFloat(y)
+    var result =
+      ((root as? Kind).map { [$0] } ?? []) + root.subviews.flatMap { requestViews(kind, in: $0) }
+    if let window = root as? UIWindow {
+      var presented = window.rootViewController?.presentedViewController
+      while let controller = presented {
+        if let presentedView = controller.view, presentedView.window !== window {
+          result += requestViews(kind, in: presentedView)
         }
+        presented = controller.presentedViewController
       }
     }
-
-    return nil
+    return result
   }
 }
 
@@ -185,7 +164,17 @@ extension XCTestCase {
 
   @MainActor
   private func views(in view: UIView) -> [UIView] {
-    [view] + view.subviews.flatMap { views(in: $0) }
+    var result = [view] + view.subviews.flatMap { views(in: $0) }
+    if let window = view as? UIWindow {
+      var presented = window.rootViewController?.presentedViewController
+      while let controller = presented {
+        if let presentedView = controller.view, presentedView.window !== window {
+          result += views(in: presentedView)
+        }
+        presented = controller.presentedViewController
+      }
+    }
+    return result
   }
 
 }

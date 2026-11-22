@@ -83,6 +83,10 @@ jobs:
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         run: make -C apps/apple build
 
+      - name: Trim Swift packages before caching
+        if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
+        run: sh apps/apple/scripts/prune-swift-packages.sh "${{ runner.temp }}/apple-source-packages"
+
       - name: Save Swift packages
         if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
@@ -92,6 +96,10 @@ jobs:
 
       - name: Check String Catalogs
         run: make -C apps/apple strings-check
+
+      - name: Trim build logs before caching
+        if: github.ref == 'refs/heads/main' && steps.last.outputs.build-hit != 'true'
+        run: rm -rf apps/apple/DerivedData/Make/Logs
 
       - name: Save this build
         if: github.ref == 'refs/heads/main' && steps.last.outputs.build-hit != 'true'
@@ -104,18 +112,17 @@ jobs:
     needs: changes
     if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
-    timeout-minutes: 35
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # The simulator build compiles differently from the build job's device build, so it keeps its
-      # own saved build.
+      # Unit tests run on Mac Catalyst (Debug-only) so CI avoids booting an iOS Simulator.
       - name: Restore the last build
         id: last
         uses: ./.github/actions/apple-last-build
         with:
-          build: simulator
+          build: catalyst
 
       - name: Run unit tests
         env:
@@ -126,11 +133,7 @@ jobs:
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        # The newest runtime the image installs, which can trail Xcode's SDK while a new image rolls out
-        # (xcodebuild's default OS is the SDK's).
-        run: |
-          udid=$(xcrun simctl list devices available --json | jq -r '[.devices | to_entries | sort_by(.key) | .[].value[] | select(.name == "iPhone 17")] | last | .udid')
-          make -C apps/apple test TEST_DESTINATION="platform=iOS Simulator,id=$udid"
+        run: make -C apps/apple test
 
       - name: Report unit test results
         if: always()
@@ -139,6 +142,21 @@ jobs:
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
           xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-unit-tests.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Trim Swift packages before caching
+        if: steps.last.outputs.packages-hit != 'true'
+        run: sh apps/apple/scripts/prune-swift-packages.sh "${{ runner.temp }}/apple-source-packages"
+
+      - name: Save Swift packages
+        if: steps.last.outputs.packages-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/apple-source-packages
+          key: ${{ steps.last.outputs.packages-key }}
+
+      - name: Trim build logs before caching
+        if: steps.last.outputs.build-hit != 'true'
+        run: rm -rf apps/apple/DerivedData/Make/Logs
 
       - name: Save this build
         if: steps.last.outputs.build-hit != 'true'

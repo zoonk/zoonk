@@ -272,12 +272,26 @@ final class LineCrossingPlacementParityTests: XCTestCase {
   }
 
   private func distance(_ box: CGRect, to line: LineCrossingLabelLayout.Segment) -> Double {
-    (0...2000).map { sample in
-      let t = Double(sample) / 2000
-      let x = line.from.x + (line.to.x - line.from.x) * t
-      let y = line.from.y + (line.to.y - line.from.y) * t
-      return hypot(max(box.minX - x, 0, x - box.maxX), max(box.minY - y, 0, y - box.maxY))
-    }.min()!
+    if LineCrossingLabelLayout.touches(box, line) { return 0 }
+    let dx = line.to.x - line.from.x
+    let dy = line.to.y - line.from.y
+    let lengthSquared = dx * dx + dy * dy
+    func pointToSegment(_ x: CGFloat, _ y: CGFloat) -> Double {
+      let along =
+        lengthSquared == 0
+        ? 0
+        : min(1, max(0, ((x - line.from.x) * dx + (y - line.from.y) * dy) / lengthSquared))
+      return hypot(x - (line.from.x + along * dx), y - (line.from.y + along * dy))
+    }
+    func pointToBox(_ point: CGPoint) -> Double {
+      hypot(
+        max(box.minX - point.x, 0, point.x - box.maxX),
+        max(box.minY - point.y, 0, point.y - box.maxY))
+    }
+    return min(
+      pointToSegment(box.minX, box.minY), pointToSegment(box.minX, box.maxY),
+      pointToSegment(box.maxX, box.minY), pointToSegment(box.maxX, box.maxY),
+      pointToBox(line.from), pointToBox(line.to))
   }
 
   private func nameFrames(

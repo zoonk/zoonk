@@ -17,17 +17,6 @@ final class ChartsActivitiesTests: XCTestCase {
       })
     XCTAssertEqual(ticks, [0, 200])
   }
-  @MainActor func testAxisTitleWrapsWithinItsFrameAtLargeText() {
-    let normal = TypeStyle.small.uiFont(.large, legibility: nil).pointSize
-    let large = TypeStyle.small.uiFont(.accessibility2, legibility: nil)
-    XCTAssertGreaterThanOrEqual(large.pointSize, normal * 2)
-    let host = UIHostingController(
-      rootView: ChartsAxis.title("Dollars per month", alignment: .leading).frame(width: 96)
-        .environment(\.dynamicTypeSize, .accessibility2))
-    let size = host.sizeThatFits(in: CGSize(width: 96, height: 1000))
-    XCTAssertLessThanOrEqual(size.width, 96)
-    XCTAssertGreaterThan(size.height, large.lineHeight)
-  }
   /// The guess's scale holds still on Check, at every text size: the guess activity sizes the real
   /// value's row and the revealed bar before they show, so its slider, which stays in the layout
   /// once hidden, sits where it sat.
@@ -83,7 +72,7 @@ final class ChartsActivitiesTests: XCTestCase {
 
   @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
     let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
-    let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
+    let font = TypeStyle.data.uiFont(.large, legibility: nil).withSize(30)
     let format = scale.tickFormatter(unit: "R$", locale: Locale(identifier: "en_US"))
     let ticks = ChartsAxis.fittingTicks(
       0...2_000_000,

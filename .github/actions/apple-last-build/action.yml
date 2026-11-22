@@ -5,7 +5,7 @@ description: >-
 
 inputs:
   build:
-    description: The build to restore, `device` for `make build` or `simulator` for `make test`.
+    description: The build to restore, `device` for `make build` or `catalyst` for `make test`.
     required: true
 
 outputs:
@@ -25,7 +25,18 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Check preinstalled Node.js
+      id: node
+      shell: bash
+      run: |
+        if command -v node >/dev/null 2>&1 && node -e 'const [M, m] = process.versions.node.split(".").map(Number); process.exit(M > 24 || (M === 24 && m >= 2) ? 0 : 1)'; then
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "ready=false" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Setup Node.js
+      if: steps.node.outputs.ready != 'true'
       uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version-file: package.json
@@ -45,7 +56,7 @@ runs:
       with:
         path: ${{ runner.temp }}/apple-source-packages
         # Frozen resolution needs a cache containing this lockfile's revisions.
-        key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-v2-${{ hashFiles('apps/apple/**/Package.resolved') }}
 
     # Each commit on main saves its build, and the newest one is restored. A new Xcode, new package
     # versions or a change to how CI builds start from an empty build instead, which also keeps

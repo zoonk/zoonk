@@ -6,6 +6,7 @@ struct GoalStartScreen: View {
   var goal: String?
   /// A goal typed before and not confirmed yet, opened where it was left.
   var draftID: String?
+  var materialDraft = MaterialDraft()
 
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
@@ -14,7 +15,7 @@ struct GoalStartScreen: View {
   var body: some View {
     GoalStartFlow(
       sentGoal: onboarding.sentGoal, prefill: goal, draftID: draftID, needsAccount: needsAccount,
-      limit: settings.allowance.value?.goalStartLimit
+      limit: settings.allowance.value?.goalStartLimit, materialDraft: materialDraft
     )
     .loads(settings.allowance, refreshable: false)
   }
@@ -120,13 +121,14 @@ private struct GoalStartFlow: View {
 
   init(
     sentGoal: SentGoal?, prefill: String?, draftID: String?, needsAccount: Bool,
-    limit: GoalLimitReason?
+    limit: GoalLimitReason?, materialDraft: MaterialDraft = MaterialDraft()
   ) {
     self.limit = limit
     _needsAccount = State(initialValue: needsAccount)
     _words = State(initialValue: sentGoal?.words ?? prefill ?? "")
     _material = State(initialValue: sentGoal?.material ?? [])
     _intent = State(initialValue: sentGoal?.intent)
+    _materialDraft = State(initialValue: materialDraft)
 
     switch sentGoal?.start {
     case .goal(let goal):

@@ -31,6 +31,9 @@ final class TutorAskButtonTests: XCTestCase {
       }
       .sheet(item: router.sheet(presentedBy: 0)) { sheet in
         AppSheetView(sheet: sheet)
+          .appDependencies(dependencies)
+          .environment(router)
+          .zoonkStyles()
       }
       .appDependencies(dependencies)
       .environment(router)

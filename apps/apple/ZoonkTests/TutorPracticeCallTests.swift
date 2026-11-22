@@ -29,6 +29,9 @@ final class TutorPracticeCallTests: XCTestCase {
     let router = AppRouter()
     let session = SessionStore.preview(account: Self.account)
     let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+    let learnerSummary = LearnerSummaryStore(
+      api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: session))
+    let voice = VoiceServices(clients: clients, cache: AppCache(session: session))
     try await readsWhatVoiceOverReads()
 
     let window = try show(
@@ -41,15 +44,18 @@ final class TutorPracticeCallTests: XCTestCase {
       }
       .sheet(item: router.sheet(presentedBy: 0)) { sheet in
         AppSheetView(sheet: sheet)
+          .environment(\.tutorPlaces, .routed(by: router))
+          .environment(router)
+          .environment(session)
+          .environment(learnerSummary)
+          .environment(voice)
+          .zoonkStyles()
       }
       .environment(\.tutorPlaces, .routed(by: router))
       .environment(router)
       .environment(session)
-      .environment(
-        LearnerSummaryStore(
-          api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: session))
-      )
-      .environment(VoiceServices(clients: clients, cache: AppCache(session: session)))
+      .environment(learnerSummary)
+      .environment(voice)
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
     try await waitForLayout(in: window)

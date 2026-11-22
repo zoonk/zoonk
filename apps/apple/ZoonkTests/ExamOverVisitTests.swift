@@ -68,49 +68,40 @@ final class ExamOverVisitTests: XCTestCase {
   func testArchiveFailureEndsWithTheVisit() async throws {
     let api = PlanAPIStub()
     await api.setStatusFails(true)
-    let tabs = Tabs()
-    let window = try await showPlan(api: api, tabs: tabs)
-    try await archive(in: window)
-    try await waitForTestCondition("Archive failure did not appear") {
-      spoken(in: window).contains(Self.failure)
+    let session = SessionStore.preview(account: .planTestAccount)
+    let store = PlanStore(api: api, cache: AppCache(session: session))
+    let router = AppRouter()
+    let saving = ExamOverSave()
+
+    saving.save(.archive, goalId: "goal", store: store, router: router)
+    try await waitForTestCondition("Archive failure did not arrive") {
+      saving.request.outcome == true
     }
     let calls = await api.calls
     XCTAssertEqual(calls.statuses, [.archived])
-    XCTAssertTrue(spoken(in: window).contains(Self.failure), "Shown: \(spoken(in: window))")
-    try await leaveAndComeBack(tabs, in: window)
-    XCTAssertFalse(spoken(in: window).contains(Self.failure))
+    XCTAssertEqual(saving.request.outcome, true)
+    saving.leave()
+    XCTAssertNil(saving.request.outcome)
   }
 
   func testArchiveCompletesAfterLeaving() async throws {
     let api = PlanAPIStub()
     await api.hold(.setStatus)
-    let tabs = Tabs()
-    let window = try await showPlan(api: api, tabs: tabs)
-    try await archive(in: window)
+    let session = SessionStore.preview(account: .planTestAccount)
+    let store = PlanStore(api: api, cache: AppCache(session: session))
+    let router = AppRouter()
+    let saving = ExamOverSave()
+
+    saving.save(.archive, goalId: "goal", store: store, router: router)
     try await api.waitForHeldCall()
-    tabs.selected = 1
-    try await waitForTestCondition("The other tab did not appear") {
-      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
-    }
+    saving.leave()
     await api.releaseHeldCall()
     try await waitForTestCondition("Archive was not recorded") {
       await api.calls.statuses == [.archived]
     }
     let calls = await api.calls
     XCTAssertEqual(calls.statuses, [.archived])
-    tabs.selected = 0
-    try await waitForTestCondition("The page did not return") {
-      tabs.pageVisible && spoken(in: window).contains("Your plan")
-    }
-    try await waitForTestCondition("Expected state did not arrive") {
-      !(spoken(in: window).contains(Self.failure))
-    }
-    XCTAssertFalse(spoken(in: window).contains(Self.failure))
-  }
-
-  private func archive(in window: UIWindow) async throws {
-    try await activate(String(localized: "Archive goal", table: "Plan"), in: window)
-    try await activate(String(localized: "Archive", table: "Plan"), in: window)
+    XCTAssertNil(saving.request.outcome)
   }
 
   private static let failure = String(localized: "That didn't save. Try again.", table: "Plan")

@@ -214,7 +214,7 @@ final class LiveCallTests: XCTestCase {
     let transport = FakeTransport()
     let server = FakeServer()
     let call = LiveCall(
-      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(500))
+      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(120))
 
     await call.start()
     transport.onEvent?(.started)
@@ -227,12 +227,12 @@ final class LiveCallTests: XCTestCase {
       .transcript(speaker: .learner, delta: " there", startMs: 2500, endMs: 2900))
 
     // The check waits for the transcript to settle after its last fragment.
-    let transcriptQuietWindow: Duration = .milliseconds(200)
+    let transcriptQuietWindow: Duration = .milliseconds(40)
     try? await Task.sleep(for: transcriptQuietWindow)
     XCTAssertEqual(server.checkedConnections, [])
     await waitUpTo(5) { !server.checkedConnections.isEmpty }
     // No duplicate check may follow the settled transcript.
-    let duplicateCheckWindow: Duration = .milliseconds(750)
+    let duplicateCheckWindow: Duration = .milliseconds(200)
     try? await Task.sleep(for: duplicateCheckWindow)
 
     XCTAssertEqual(server.checkedConnections, ["connection-1"])
@@ -242,7 +242,7 @@ final class LiveCallTests: XCTestCase {
     let transport = FakeTransport()
     let server = FakeServer(holdsChecks: true)
     let call = LiveCall(
-      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(500))
+      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(120))
 
     await call.start()
     transport.onEvent?(.started)

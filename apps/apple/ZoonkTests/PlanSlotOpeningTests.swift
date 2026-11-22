@@ -599,14 +599,12 @@ final class PlanSlotOpeningTests: XCTestCase {
     }
     plans = PlanStore(api: api, cache: dependencies.cache)
     let window = try show(
-      NavigationStack {
-        PlanScreen()
-      }
-      .environment(plans)
-      .environment(certificates ?? dependencies.certificatesStore)
-      .appDependencies(dependencies)
-      .environment(router)
-      .zoonkStyles())
+      PlanScreen()
+        .environment(plans)
+        .environment(certificates ?? dependencies.certificatesStore)
+        .appDependencies(dependencies)
+        .environment(router)
+        .zoonkStyles())
     window.frame = width.frame
     try await waitForLayout(in: window)
     return window

@@ -7,12 +7,20 @@ import SwiftUI
 struct ZoonkApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
   /// The stores live as long as the app, whatever happens to its windows.
-  @State private var dependencies: AppDependencies
+  @State private var dependencies: AppDependencies?
   #if DEBUG
     private let uiTestFixtureFailure: String?
   #endif
 
   init() {
+    #if DEBUG
+      if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+        uiTestFixtureFailure = nil
+        _dependencies = State(initialValue: nil)
+        return
+      }
+    #endif
+
     ErrorReporting.start()
 
     // On its light capsule the system draws the current page white and the others gray, so the
@@ -34,20 +42,24 @@ struct ZoonkApp: App {
 
   var body: some Scene {
     WindowGroup {
-      AppWindow(today: dependencies.todayStore)
-        #if DEBUG
-          .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
-        #endif
-        .loads(dependencies.learnerSummaryStore.summary, refreshable: false)
-        .usageAnalytics()
-        .task(id: dependencies.learnerSummaryStore.summary.value?.nextChangeAt) {
-          await dependencies.learnerSummaryStore.refreshAtNextChange()
-        }
-        .onChange(of: dependencies.sessionStore.authenticatedSession) {
-          dependencies.cache.followSession()
-        }
-        .appDependencies(dependencies)
-        .zoonkStyles()
+      if let dependencies {
+        AppWindow(today: dependencies.todayStore)
+          #if DEBUG
+            .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
+          #endif
+          .loads(dependencies.learnerSummaryStore.summary, refreshable: false)
+          .usageAnalytics()
+          .task(id: dependencies.learnerSummaryStore.summary.value?.nextChangeAt) {
+            await dependencies.learnerSummaryStore.refreshAtNextChange()
+          }
+          .onChange(of: dependencies.sessionStore.authenticatedSession) {
+            dependencies.cache.followSession()
+          }
+          .appDependencies(dependencies)
+          .zoonkStyles()
+      } else {
+        Color.clear
+      }
     }
   }
 }

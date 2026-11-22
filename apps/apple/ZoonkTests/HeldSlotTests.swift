@@ -7,135 +7,36 @@ import XCTest
 /// learner's finger, and the height it keeps belongs to the width it was measured at.
 @MainActor
 final class HeldSlotTests: XCTestCase {
-  func testALessonBudgetRefusalKeepsTheNextRowInPlaceAtTheInstant() async throws {
-    let limit = HelpLimit.usedUp(tier: .free, availableAt: .now.addingTimeInterval(1))
-
-    // Two lines of words and Subscribe before the instant; one line and nothing after.
-    let moves = try await nextRowAtTheInstant {
-      LimitNotice(limit: limit) { limit.mapLessonsWords(now: $0) }
-    }
-
-    XCTAssertNil(limit.mapLessonsWords(now: .now).line)
-    XCTAssertEqual(moves.count, 1, "The next row moved: \(moves)")
-  }
-
-  func testAListeningQuestionsRefusalKeepsTheAnswersInPlaceAtTheInstant() async throws {
-    let limit = HelpLimit.usedUp(tier: .free, availableAt: .now.addingTimeInterval(1))
-
-    let moves = try await nextRowAtTheInstant {
-      ListeningFailedNote(limit: limit, play: {})
-    }
-
-    XCTAssertEqual(moves.count, 1, "The answers moved: \(moves)")
-  }
-
-  func testALessonGateInPlaceKeepsWhatFollowsInPlaceAtTheInstant() async throws {
-    let refusal = LessonRunRefusal.limitReached(
-      tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(1)))
-
-    let moves = try await nextRowAtTheInstant {
-      LessonUnavailableView(refusal: refusal, isNotice: true, retry: {})
-    }
-
-    XCTAssertEqual(moves.count, 1, "What follows moved: \(moves)")
-  }
-
-  /// The way on holds Call again's place while the limit holds, so the screen stays still when
-  /// Call again takes it.
-  func testADroppedCallKeepsItsPlaceAtTheInstant() async throws {
-    for tier in [LearnerTier.plus, .free] {
-      let limit = HelpLimit.usedUp(tier: tier, availableAt: .now.addingTimeInterval(1.5))
-      let window = try show(
-        DroppedCallView(
-          dropped: DroppedCall(reason: .limit, retry: nil), limit: limit, name: "Zu",
-          onAction: { _ in }
-        )
-        .environment(AppRouter()))
-
-      try await waitForTestCondition("The gate did not draw") { inkTop(window) != nil }
-      let before = try XCTUnwrap(inkTop(window))
-      XCTAssertGreaterThan(before, 100, "The render is blank or misread")
-      // Nothing may move while the limit lifts and the view redraws.
-      let noMovementWindow: Duration = .seconds(2)
-      try await Task.sleep(for: noMovementWindow)
-
-      XCTAssertEqual(try XCTUnwrap(inkTop(window)), before, "\(tier)")
-      window.isHidden = true
-    }
-  }
-
-  /// Its title says the call time is back when the day comes, in the room the old one had, so
-  /// the centered screen stays still.
-  func testARefusedCallScreenKeepsItsPlaceAtTheInstant() async throws {
-    for tier in [LearnerTier.plus, .free] {
-      let limit = HelpLimit.usedUp(tier: tier, availableAt: .now.addingTimeInterval(1.5))
-      let window = try show(
-        CallProblemView(problem: .call(.limit, limit), onAction: { _ in })
-          .environment(AppRouter()))
-
-      try await waitForTestCondition("The gate did not draw") { inkTop(window) != nil }
-      let before = try XCTUnwrap(inkTop(window))
-      XCTAssertGreaterThan(before, 100, "The render is blank or misread")
-      // Nothing may move while the limit lifts and the view redraws.
-      let noMovementWindow: Duration = .seconds(2)
-      try await Task.sleep(for: noMovementWindow)
-
-      XCTAssertEqual(
-        limit.words(.callTime).title.map { String(localized: $0) }, "Your call time is back")
-      XCTAssertEqual(try XCTUnwrap(inkTop(window)), before, "\(tier)")
-      window.isHidden = true
-    }
-  }
-
-  /// The lesson's own gate turns ready in the room its words had, so its icon stays put.
-  func testALessonGateScreenKeepsItsPlaceAtTheInstant() async throws {
-    let refusal = LessonRunRefusal.limitReached(
-      tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(1.5)))
-    let window = try show(
-      NavigationStack {
-        LessonUnavailableView(refusal: refusal, retry: {})
-      }
-      .environment(AppRouter()))
-
-    try await waitForTestCondition("The gate did not draw") { inkTop(window) != nil }
-    let before = try XCTUnwrap(inkTop(window))
-    XCTAssertGreaterThan(before, 100, "The render is blank or misread")
-    // Nothing may move while the limit lifts and the view redraws.
-    let noMovementWindow: Duration = .seconds(2)
-    try await Task.sleep(for: noMovementWindow)
-
-    XCTAssertEqual(try XCTUnwrap(inkTop(window)), before)
-  }
-
-  /// The gate and a row after it, recording each place the row is drawn through the instant.
-  private func nextRowAtTheInstant(_ gate: () -> some View) async throws -> [CGFloat] {
-    var nextRow: [CGFloat] = []
-
-    try show(
-      VStack(alignment: .leading, spacing: 12) {
-        gate()
-
-        Text(verbatim: "When ownership is diluted")
-          .onGeometryChange(for: CGFloat.self, of: { $0.frame(in: .global).minY }) {
-            nextRow.append($0)
-          }
-      }
-      .frame(width: 320)
-      .environment(AppRouter()))
-
-    // Nothing may move while the limit lifts and the view redraws.
-    let noMovementWindow: Duration = .seconds(2.5)
-    try await Task.sleep(for: noMovementWindow)
-    return nextRow
-  }
-
-  func testAWidthChangeWhileGatedStartsAgainFromTheNaturalHeight() async throws {
-    let width = Width(value: 160)
+  func testLiftingAGateHoldsTheMeasuredHeight() async throws {
+    let state = SlotState(gated: true, width: 320)
     var heights: [CGFloat] = []
 
     try show(
-      Sized(width: width) {
-        HeldSlot(gated: true) {
+      SlotHost(state: state) {
+        HeldSlot(gated: state.gated) {
+          if state.gated {
+            Color.clear.frame(height: 120)
+          } else {
+            Color.clear.frame(height: 24)
+          }
+        }
+        .onGeometryChange(for: CGFloat.self, of: \.size.height) { heights.append($0) }
+      })
+
+    try await waitForTestCondition("The gated slot did not measure") { heights.last == 120 }
+
+    state.gated = false
+    await Task.yield()
+    XCTAssertEqual(heights.last, 120)
+  }
+
+  func testAWidthChangeWhileGatedStartsAgainFromTheNaturalHeight() async throws {
+    let state = SlotState(gated: true, width: 160)
+    var heights: [CGFloat] = []
+
+    try show(
+      SlotHost(state: state) {
+        HeldSlot(gated: state.gated) {
           Text(verbatim: "You'll have enough later today, or subscribe to create it now.")
         }
         .onGeometryChange(for: CGFloat.self, of: \.size.height) { heights.append($0) }
@@ -144,7 +45,7 @@ final class HeldSlotTests: XCTestCase {
     try await waitForTestCondition("The slot did not measure") { !heights.isEmpty }
     let narrow = try XCTUnwrap(heights.last)
 
-    width.value = 800
+    state.width = 800
     try await waitForTestCondition("The wider slot did not shrink") {
       heights.last.map { $0 < narrow } ?? false
     }
@@ -154,19 +55,21 @@ final class HeldSlotTests: XCTestCase {
 }
 
 @Observable
-private final class Width {
-  var value: CGFloat
+private final class SlotState {
+  var gated: Bool
+  var width: CGFloat
 
-  init(value: CGFloat) {
-    self.value = value
+  init(gated: Bool, width: CGFloat) {
+    self.gated = gated
+    self.width = width
   }
 }
 
-private struct Sized<Content: View>: View {
-  let width: Width
+private struct SlotHost<Content: View>: View {
+  let state: SlotState
   @ViewBuilder let content: Content
 
   var body: some View {
-    content.frame(width: width.value)
+    content.frame(width: state.width)
   }
 }

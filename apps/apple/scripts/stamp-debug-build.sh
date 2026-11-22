@@ -28,6 +28,14 @@ if [ -n "$root" ]; then
   fi
 fi
 
-printf '{"commit":"%s","dirty":%s,"changesDigest":"%s","builtAt":"%s"}\n' \
-  "$commit" "$dirty" "$digest" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  >"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/build-stamp.json"
+output="$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/build-stamp.json"
+prefix=$(printf '{"commit":"%s","dirty":%s,"changesDigest":"%s",' "$commit" "$dirty" "$digest")
+
+# Leave an identical stamp untouched so incremental builds don't re-sign and relink Zoonk.app.
+if [ -f "$output" ]; then
+  case "$(cat "$output")" in
+    "$prefix"*) exit 0 ;;
+  esac
+fi
+
+printf '%s"builtAt":"%s"}\n' "$prefix" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"$output"

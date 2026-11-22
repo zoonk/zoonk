@@ -17,15 +17,13 @@ final class GoalStartVisitTests: XCTestCase {
     await dependencies.learnerSummaryStore.summary.load()
     try await readsWhatVoiceOverReads()
     let window = try show(
-      GoalStartScreen(goal: "Pass the ENEM")
+      GoalStartScreen(goal: "Pass the ENEM", materialDraft: MaterialDraft(pasting: .link))
         .appDependencies(dependencies)
         .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
     try await waitForLayout(in: window)
 
-    try await activate(String(localized: "Add your material", table: "Onboarding"), in: window)
-    try await pick(String(localized: "Paste a link", table: "Onboarding"), in: window)
     var link: UITextField?
     try await waitForTestCondition("The link field did not appear") {
       link = requestViews(UITextField.self, in: window).first
@@ -56,39 +54,6 @@ final class GoalStartVisitTests: XCTestCase {
     localized: "We couldn't add that. Try again in a moment.", table: "Onboarding")
   private static let entry = String(localized: "Build my plan", table: "Onboarding")
   private static let draft = String(localized: "Understanding your goal", table: "Onboarding")
-
-  /// Picks `label` from the open menu as a tap on its row does: the menu closes, then the item's
-  /// action runs. SwiftUI fills a menu's items only once it's open, and its rows ignore a selection
-  /// that isn't a touch, so the test runs the item's action itself.
-  private func pick(_ label: String, in window: UIWindow) async throws {
-    var item: (menu: UIContextMenuInteraction?, action: UIAction)?
-    try await waitForTestCondition("No open menu offers \(label)") {
-      item =
-        requestViews(UIButton.self, in: window).lazy.compactMap { button in
-          button.menu.flatMap { self.action(label, in: $0) }.map {
-            (button.contextMenuInteraction, $0)
-          }
-        }.first
-      return item != nil
-    }
-    item?.menu?.dismissMenu()
-    try await waitForTestCondition("The menu did not close") { !shows(label, in: window) }
-    item?.action.performWithSender(nil, target: nil)
-  }
-
-  private func action(_ title: String, in menu: UIMenu) -> UIAction? {
-    for child in menu.children {
-      if let action = child as? UIAction, action.title == title {
-        return action
-      }
-
-      if let found = (child as? UIMenu).flatMap({ action(title, in: $0) }) {
-        return found
-      }
-    }
-
-    return nil
-  }
 
   private func shows(_ line: String, in window: UIWindow) -> Bool {
     spoken(in: window).contains { $0.contains(line) }
