@@ -8917,6 +8917,65 @@
         }
       }
     },
+    "Know the date? Set it here." : {
+      "comment" : "Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kennst du das Datum? Trag es hier ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Sabes la fecha? Agrégala aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu connais la date ? Indique-la ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sai la data? Impostala qui."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付がわかりますか？ここで設定できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜를 알고 있나요? 여기서 설정해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znasz datę? Ustaw ją tutaj."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sabe a data? Defina aqui."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihi biliyor musun? Buradan ayarla."
+          }
+        }
+      }
+    },
     "Language" : {
       "comment" : "Row with the language a goal learns",
       "localizations" : {
