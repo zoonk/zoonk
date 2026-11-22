@@ -7500,6 +7500,7 @@ msgid "Practice mistakes"
 msgstr "틀린 문제 연습"
 
 #: src/mistakes/mistake-practice-run.tsx
+#: src/session/question-block/block-aside.tsx
 msgctxt "SMv32M"
 msgid "Help with this question"
 msgstr "이 문제 도움말"
