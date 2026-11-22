@@ -64,6 +64,7 @@ import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeOfDayDialog
 import com.zoonk.android.ui.components.iconButtonEdge
@@ -180,16 +181,13 @@ internal fun ColumnScope.UnderstoodScreen(
         GoalLimitWall(plusLimit, onSubscribe, onOpenPlan)
     } else {
         GoalFooter(shownError, onCreateAccount, onOpenPlan, onSubscribe) {
-            Button(
-                busy = isCreating,
-                onClick = onConfirm,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !rewriting,
-            ) {
-                Text(stringResource(R.string.onboarding_looks_right))
-            }
-            TextButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.onboarding_fix_something))
+            TaskActions { main ->
+                OutlinedButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting) {
+                    Text(stringResource(R.string.onboarding_fix_something))
+                }
+                Button(busy = isCreating, onClick = onConfirm, modifier = main, enabled = !rewriting) {
+                    Text(stringResource(R.string.onboarding_looks_right))
+                }
             }
         }
     }

@@ -187,21 +187,10 @@ private struct CallTranscript: View {
         let text = turn.text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if turn.speaker == .learner {
-          // Main's `LearnerBubble`: its tail corner points at the learner's side.
-          ShareRow(share: 0.8, edge: .trailing) {
-            Text(text)
-              .padding(.horizontal, 12)
-              .padding(.vertical, 8)
-              .background(
-                Color.muted,
-                in: UnevenRoundedRectangle(
-                  topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
-                  bottomTrailingRadius: 4, topTrailingRadius: Radius.option, style: .continuous)
-              )
-              .accessibilityLabel(
-                Text(
-                  "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
-          }
+          LearnerBubble(words: text)
+            .accessibilityLabel(
+              Text(
+                "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
         } else {
           Text(text)
             .frame(maxWidth: .infinity, alignment: .leading)

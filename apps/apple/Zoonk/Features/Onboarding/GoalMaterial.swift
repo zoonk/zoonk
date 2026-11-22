@@ -66,17 +66,39 @@ struct GoalMaterialSections: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   var body: some View {
-    Section {
-      ForEach(material) { source in
-        Label {
-          Text(title(of: source))
-            .lineLimit(1)
-        } icon: {
-          Image(systemName: "doc.text")
-        }
-      }
-      .onDelete { material.remove(atOffsets: $0) }
+    if !material.isEmpty {
+      Section {
+        FlowLayout {
+          ForEach(material) { source in
+            let title = title(of: source)
 
+            HStack(spacing: 6) {
+              Image(systemName: "doc.text")
+                .accessibilityHidden(true)
+
+              Text(title)
+                .lineLimit(1)
+
+              Button {
+                material.removeAll { $0.id == source.id }
+              } label: {
+                Image(systemName: "xmark")
+                  .frame(minWidth: 44, minHeight: 44)
+                  .contentShape(.rect)
+                  .accessibilityLabel(Text("Remove \(title)", tableName: "Onboarding"))
+              }
+              .buttonStyle(.plain)
+            }
+            .typeStyle(.body)
+            .padding(.leading, 12)
+            .background(.muted, in: .rect(cornerRadius: Radius.md))
+          }
+        }
+        .listRowSeparator(.hidden)
+      }
+    }
+
+    Section {
       if learner.canAttachMaterial {
         MaterialAttachProgress(draft: $draft) { source in
           material.attach(source)
@@ -103,13 +125,6 @@ struct GoalMaterialSections: View {
               comment: "Opens sign-up to add material")
           }
         }
-      }
-    } header: {
-      if !material.isEmpty {
-        SectionTitle(
-          Text(
-            "Your material", tableName: "Onboarding",
-            comment: "Header over the material attached to a goal"))
       }
     }
 

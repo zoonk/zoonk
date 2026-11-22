@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.onboarding
 
 import android.view.KeyEvent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
@@ -88,9 +87,10 @@ fun <T> ChoiceList(
                 headline = { Text(choice.label) },
                 busy = busyValue != null && choice.value == busyValue,
                 meta = choice.meta?.let { { Text(it) } },
+                highlighted = selected,
+                highlightColor = MaterialTheme.zoonk.selectedTint,
                 modifier =
                     Modifier
-                        .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
                         .onPreviewKeyEvent { event ->
                             val number = event.nativeKeyEvent.keyCode - KeyEvent.KEYCODE_1
                             val numbered = choices.getOrNull(number)
@@ -138,10 +138,9 @@ fun <T> CheckList(
             val dim = { color: Color -> if (open) Color.Unspecified else color.copy(alpha = color.alpha * DISABLED_ALPHA) }
             ListRow(
                 headline = { Text(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
-                modifier =
-                    Modifier
-                        .background(if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent)
-                        .toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
+                highlighted = checked,
+                highlightColor = MaterialTheme.zoonk.selectedTint,
+                modifier = Modifier.toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
                 supporting = listRowDescription(choice.description, dim(MaterialTheme.colorScheme.onSurfaceVariant)),
                 trailing = { Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk(), enabled = open) },
             )

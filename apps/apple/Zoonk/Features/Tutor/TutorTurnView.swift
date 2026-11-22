@@ -71,22 +71,9 @@ struct TutorTurnView: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      // Main's `LearnerBubble`: `muted`, its corner nearest the learner's side tucked in.
-      Text(turn.question)
-        .typeStyle(.button.weight(.regular))
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-          .muted,
-          in: UnevenRoundedRectangle(
-            cornerRadii: .init(
-              topLeading: Radius.option, bottomLeading: Radius.option, bottomTrailing: 4,
-              topTrailing: Radius.option), style: .continuous)
-        )
-        .textSelection(.enabled)
+      LearnerBubble(words: turn.question)
     }
     .frame(maxWidth: .infinity, alignment: .trailing)
-    .padding(.leading, 40)
     .accessibilityElement(children: .combine)
     .accessibilityLabel(
       Text(
