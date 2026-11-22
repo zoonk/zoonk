@@ -52,6 +52,7 @@ class UnderstoodLimitTest {
                             activeGoalsLeft = null,
                             timeZone = "UTC",
                             material = emptyList(),
+                            materialMissing = false,
                             hasAccount = true,
                             isCreating = false,
                             error = GoalError.Limit(GoalLimitReason.MonthlyGoals(limit)),

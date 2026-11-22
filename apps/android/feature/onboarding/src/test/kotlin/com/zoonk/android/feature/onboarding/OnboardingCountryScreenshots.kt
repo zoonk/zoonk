@@ -141,6 +141,7 @@ class OnboardingCountryScreenshots {
                                     activeGoalsLeft = null,
                                     timeZone = "America/Sao_Paulo",
                                     material = emptyList(),
+                                    materialMissing = false,
                                     hasAccount = true,
                                     isCreating = false,
                                     error = null,
