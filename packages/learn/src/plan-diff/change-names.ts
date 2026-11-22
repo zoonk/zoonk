@@ -80,3 +80,20 @@ export function useNames() {
         });
   };
 }
+
+/** A change that moves lessons both ways leads with what it does overall. */
+export function getLessonLead({
+  added,
+  removed,
+}: {
+  added: number;
+  removed: number;
+}): { count: number; kind: "fewer" | "more" } | null {
+  if (added === removed) {
+    return null;
+  }
+
+  return added > removed
+    ? { count: added - removed, kind: "more" }
+    : { count: removed - added, kind: "fewer" };
+}
