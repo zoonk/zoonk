@@ -25,7 +25,7 @@ export type MockQuickChoice = { kind: "multipleChoice" | "trueFalse"; options: n
 type MockFormatWriter =
   | { choice: MockQuickChoice | null; kind: "quick" }
   | { answerFormat: ExamAnswerFormat; kind: "item" }
-  | { kind: "bankOnly" };
+  | { kind: "shortAnswer" };
 
 /** `style` describes the exam's formats behind the key, so new questions take their shape. */
 export type MockFormat = {
@@ -87,7 +87,7 @@ function toWriter(format: ExamFormat): Pick<StatedFormat, "key" | "writer"> | nu
   }
 
   if (format.kind === "shortAnswer") {
-    return { key: TYPED_KEY, writer: { kind: "bankOnly" } };
+    return { key: TYPED_KEY, writer: { kind: "shortAnswer" } };
   }
 
   if (format.kind === "multipleChoice" || format.kind === "trueFalse") {

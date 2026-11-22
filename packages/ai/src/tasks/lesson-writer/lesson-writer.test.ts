@@ -39,6 +39,9 @@ vi.mock("./lesson-writer.prompt.md", () => ({
     "{{#shortAnswers}}",
     "Write typed answers.",
     "{{/shortAnswers}}",
+    "{{#usedSituations}}",
+    "Avoid the mock's cases.",
+    "{{/usedSituations}}",
     "Check it.",
   ].join("\n"),
 }));
@@ -123,18 +126,33 @@ describe(writeLessonDraft, () => {
     const findError = spec([screen("hook"), screen("activity", "findError")]);
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, beginner, beginnerExam, spotAi, material, sources, exam, setup, written] =
-      await Promise.all([
-        writeLessonDraft(params),
-        writeLessonDraft({ ...params, level: "beginner" }),
-        writeLessonDraft({ ...params, exams, level: "beginner" }),
-        writeLessonDraft({ ...params, spec: findError }),
-        writeLessonDraft({ ...params, exams: [], material: "<page>Slides</page>" }),
-        writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
-        writeLessonDraft({ ...params, exams }),
-        writeLessonDraft({ ...params, setup: true }),
-        writeLessonDraft({ ...params, shortAnswers: true }),
-      ]);
+    const usedSituations = ["Ana splits a bill.", "A shop raises prices twice."];
+
+    const [
+      regular,
+      beginner,
+      beginnerExam,
+      spotAi,
+      material,
+      sources,
+      exam,
+      setup,
+      written,
+      noneUsed,
+      used,
+    ] = await Promise.all([
+      writeLessonDraft(params),
+      writeLessonDraft({ ...params, level: "beginner" }),
+      writeLessonDraft({ ...params, exams, level: "beginner" }),
+      writeLessonDraft({ ...params, spec: findError }),
+      writeLessonDraft({ ...params, exams: [], material: "<page>Slides</page>" }),
+      writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
+      writeLessonDraft({ ...params, exams }),
+      writeLessonDraft({ ...params, setup: true }),
+      writeLessonDraft({ ...params, shortAnswers: true }),
+      writeLessonDraft({ ...params, usedSituations: [] }),
+      writeLessonDraft({ ...params, usedSituations }),
+    ]);
 
     expect(regular.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it under 250 characters.\nCheck it.",
@@ -171,6 +189,21 @@ describe(writeLessonDraft, () => {
     expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Write the lesson.\nKeep it under 250 characters.\nWrite typed answers.\nCheck it.",
     );
+
+    expect(used.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
+      "Write the lesson.\nKeep it under 250 characters.\nAvoid the mock's cases.\nCheck it.",
+    );
+
+    expect([noneUsed.systemPrompt, noneUsed.userPrompt]).toStrictEqual([
+      regular.systemPrompt,
+      regular.userPrompt,
+    ]);
+
+    expect(used.userPrompt).toContain(
+      "\nCHAPTER_LESSONS: none\nUSED_SITUATIONS:\n  - Ana splits a bill.\n  - A shop raises prices twice.\n\nSKILLS:",
+    );
+
+    expect(regular.userPrompt).not.toContain("USED_SITUATIONS");
 
     // The schema travels in the system prompt, since no provider but OpenAI takes it as a grammar.
     expect(regular.systemPrompt).toContain('"const":"hookGuess"');

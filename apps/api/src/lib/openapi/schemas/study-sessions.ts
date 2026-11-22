@@ -84,7 +84,7 @@ export const extraTimeSchema = z
       .array(z.object({ minutes: z.number().int().min(0), title: z.string() }))
       .meta({
         description:
-          "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available",
+          "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done), when it isn't available, and on a day with lessons of its own still to come (`lessonsComing`, `lessonsToPrepare`, `emptyDay`) or with nothing new",
       }),
     minutes: z.number().int().min(0),
     reason: z
@@ -92,7 +92,7 @@ export const extraTimeSchema = z
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished",
+          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished (a scheduled mock still being prepared doesn't count)",
       }),
   })
   .meta({ id: "StudyExtraTime" });

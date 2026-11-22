@@ -17,7 +17,7 @@
   "challenge_day_time": "4b8d59960e55229572e921e3e01f9fd8d624921951a4132c6d39efa2b7456b32",
   "challenge_mock_gate": "6897f5cd483805d1adc6d0bc316111cd1db2b866524e3df16647364db83cec18",
   "challenge_mock_start": "f690149cd68e693e26df4f8c8c63aaefba3d446273c59aa19bea9a9e9e9d5e6b",
-  "challenge_move": "f9753511fa55d6493d63f1cc7dcde51cdf33b530394d32b4e395c50730f22d4e",
+  "challenge_move": "293963cc5a4ed39fb56418caf883879b599810d6eb128cc64e05c783b4411ee6",
   "challenge_move_before_monday": "b750345d280281b4f4ee569d70ca12b45ebd52a58016c72201155491f6da981b",
   "challenge_move_collision": "7f0b2c93f6e401cdd10535a9d6a00ed016fe83b179600370ceb1844cab0b3b37",
   "challenge_move_no_room": "fe5e9c861335e9252b74bb192a976d6ae09ce3f5b2aa10b7c8b3fcea0ce95f3b",
@@ -148,7 +148,7 @@
     <string name="challenge_not_ready">Este desafio ainda não está pronto.</string>
     <string name="challenge_next_session">Na sua próxima sessão</string>
     <string name="challenge_back_to_today">Hoje</string>
-    <string name="challenge_move">Mudar para segunda-feira</string>
+    <string name="challenge_move">Passar para segunda-feira</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">Movido para %1$s</string>
     <string name="challenge_moved_detail">Seu plano adiou aulas para abrir espaço para este desafio.</string>

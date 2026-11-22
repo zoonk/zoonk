@@ -142,7 +142,12 @@ async function writtenExamSetup({
     ),
     ...skills.flatMap((skill) =>
       Array.from({ length: 4 }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          mockOnly: true,
+          skillId: skill.id,
+        }),
       ),
     ),
     prisma.subscription.create({
@@ -166,7 +171,7 @@ async function readMock(id: string): Promise<MockView> {
 }
 
 async function startFull(goalId: string) {
-  const started = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape: FULL } });
+  const started = await startAnytimeMock({ goalId, input: { shape: FULL } });
 
   if (started.status !== "started") {
     throw new Error(`Expected a started mock, got ${started.status}`);

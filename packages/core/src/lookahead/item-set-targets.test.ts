@@ -110,6 +110,34 @@ describe(pickItemSetTargets, () => {
     expect(targets[0]?.usedTitles).toStrictEqual(["Domingos na biblioteca"]);
   });
 
+  it("a practice set does not fill that subject's mock reserve", async () => {
+    const { blueprint, goal, skills } = await examGoal();
+
+    const set = await itemSetFixture({
+      content: textSetContent("A practice passage"),
+      examBlueprintId: blueprint.id,
+    });
+
+    await itemFixture({
+      content: choiceItemContent(),
+      examBlueprintId: blueprint.id,
+      setId: set.id,
+      setPosition: 0,
+      skillId: skills[3]?.id ?? "",
+    });
+
+    const skillIds = skills.slice(0, 4).map((skill) => skill.id);
+    const [target] = await pickItemSetTargets({ goalId: goal.id, mockSkillIds: skillIds });
+
+    expect(target?.skills.map((skill) => skill.id)).toStrictEqual([
+      skills[0]?.id,
+      skills[3]?.id,
+      skills[1]?.id,
+    ]);
+
+    expect(target?.usedTitles).toContain("A practice passage");
+  });
+
   it("shows the writer the exam's quoted past questions, the area's own first", async () => {
     const { blueprint, goal, skills } = await examGoal();
     const quoted = (statement: string) => ({ ...trueFalseContent(statement), quoted: true });

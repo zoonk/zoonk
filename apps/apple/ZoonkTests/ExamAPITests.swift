@@ -9,32 +9,18 @@ final class ExamAPITests: XCTestCase {
   private let goalId = "c3b30782-4de7-8386-83fa-934eee74e049"
   private let itemId = "01a12229-b961-72ae-a802-006ceef4fd0d"
 
-  func testStartingAMockSendsItsShapesNullsWithTheBodysOwnLength() async throws {
-    let transport = RecordingTransport(answer: #"{"id": null, "status": "needsQuestions"}"#)
+  func testStartingAMockSendsOnlyItsShapeWithItsNullsAndTheBodysOwnLength() async throws {
+    let transport = RecordingTransport(answer: #"{"id": null, "status": "preparing"}"#)
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
 
     let outcome = try await api.startMock(
-      token: "token", goalId: goalId, shape: MockShape(kind: .half),
-      acceptFewer: false)
+      token: "token", goalId: goalId, shape: MockShape(kind: .half))
 
-    XCTAssertEqual(outcome, .needsQuestions)
+    XCTAssertEqual(outcome, .preparing)
     let sent = try XCTUnwrap(transport.sent.value.first)
     XCTAssertEqual(sent.contentLength, sent.body.count, "A server would wait for missing bytes")
-    let shape = try XCTUnwrap(sent.json["shape"] as? NSDictionary)
-    XCTAssertEqual(shape, ["area": NSNull(), "day": NSNull(), "kind": "half"])
-  }
-
-  func testTheStartAfterWritingNeverAcceptsFewerQuestionsOnItsOwn() async throws {
-    let transport = RecordingTransport(answer: #"{"id": "\#(blockId)", "status": "started"}"#)
-    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
-
-    _ = try await api.startMock(
-      token: "token", goalId: goalId, shape: MockShape(kind: .full), acceptFewer: false,
-      afterWriting: true)
-
-    let sent = try XCTUnwrap(transport.sent.value.first)
-    XCTAssertEqual(sent.json["afterWriting"] as? Bool, true)
-    XCTAssertEqual(sent.json["acceptFewer"] as? Bool, false)
+    XCTAssertEqual(
+      sent.json, ["shape": ["area": NSNull(), "day": NSNull(), "kind": "half"]] as NSDictionary)
   }
 
   func testABlankDraftSavesAnExplicitNullAnswer() async throws {

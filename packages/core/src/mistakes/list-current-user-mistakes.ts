@@ -11,6 +11,7 @@ import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
 import { getScopeSkillIds } from "./_utils/mistake-scope";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakeAvailability, type MistakeListInput } from "./contract";
 import { getPracticeTimeZone, loadMistakePracticeAvailability } from "./mistake-availability";
 import { type MistakeLesson, findMistakeLessons } from "./mistake-lessons";
@@ -48,10 +49,9 @@ export type CurrentUserMistakes =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-async function countMistakes(where: {
-  skillId?: { in: string[] };
-  userId: string;
-}): Promise<MistakeCounts> {
+async function countMistakes(
+  where: typeof visibleMistakeWhere & { skillId?: { in: string[] }; userId: string },
+): Promise<MistakeCounts> {
   const groups = await prisma.mistake.groupBy({
     _count: { id: true },
     by: ["cause", "status"],
@@ -103,7 +103,11 @@ export async function listCurrentUserMistakes(
     goal?.examBlueprintId ? readSavedPlan(userId, goal.id) : null,
   ]);
 
-  const scope = { userId, ...(skillIds ? { skillId: { in: skillIds } } : {}) };
+  const scope = {
+    ...visibleMistakeWhere,
+    userId,
+    ...(skillIds ? { skillId: { in: skillIds } } : {}),
+  };
 
   const timeZone = await getPracticeTimeZone({ goal, timeZone: input.timeZone, userId });
 

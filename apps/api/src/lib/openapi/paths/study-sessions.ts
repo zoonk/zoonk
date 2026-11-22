@@ -10,6 +10,7 @@ import {
   studyBlockOpeningSchema,
 } from "@zoonk/core/sessions/open-block-contract";
 import { studySessionErrorCodes } from "../../study-session-errors";
+import { preparingMockResponseSchema } from "../schemas/mocks";
 import { openStudyDayBodySchema, openedStudyDayResponseSchema } from "../schemas/open-study-day";
 import {
   goalPathParamsSchema,
@@ -206,10 +207,14 @@ export const studySessionPaths = {
       requestParams: { path: studyBlockPathParamsSchema },
       responses: {
         "200": jsonResponse(startedStudyBlockResponseSchema, "The started block"),
+        "202": jsonResponse(
+          preparingMockResponseSchema,
+          "The scheduled mock needs questions before it can start",
+        ),
         ...readErrors,
         "409": {
           ...conflictResponse,
-          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), a phase challenge waits for earlier work in the same session (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or it's a challenge whose questions aren't written yet (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`).`,
+          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), a phase challenge waits for earlier work in the same session (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or a non-mock challenge needs questions (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`).`,
         },
       },
       security: AUTHENTICATED_SECURITY,

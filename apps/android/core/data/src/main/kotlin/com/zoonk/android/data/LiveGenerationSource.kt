@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 class LiveGenerationSource(
     private val api: ApiClients,
     private val session: AuthenticatedSession?,
+    private val namespace: String? = null,
 ) : GenerationSource {
-    override fun events(id: String): Flow<GenerationEvent> = api.generationEvents(id, session)
+    override fun events(id: String): Flow<GenerationEvent> = api.generationEvents(id, session, namespace)
 
     override suspend fun status(id: String): Generation.Status = perform { api.clients(session).workflows.getGeneration(id) }.status
 }

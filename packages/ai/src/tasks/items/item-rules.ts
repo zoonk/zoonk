@@ -19,6 +19,7 @@ export type ItemRulesScope = {
   formats: readonly ItemFormat[];
   field: boolean;
   languageGoal: boolean;
+  mock?: boolean;
   numericEntry?: boolean;
   /** By default when their formats can. A set's questions share the set's stimulus instead. */
   pictures?: boolean;
@@ -74,6 +75,7 @@ function buildItemRules({
   field,
   formats,
   languageGoal,
+  mock = false,
   numericEntry = false,
   pictures,
   severalPicks = false,
@@ -91,7 +93,14 @@ function buildItemRules({
 
   return selectPromptVariants({
     template: rules,
-    variants: { numericEntry, onePick: !severalPicks, severalPicks, usedSituations },
+    variants: {
+      mock,
+      numericEntry,
+      onePick: !severalPicks,
+      practice: !mock,
+      severalPicks,
+      usedSituations,
+    },
   });
 }
 

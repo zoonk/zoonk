@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "a91b54d21ba197b9196c17f5a47afaf5fa34b1c79e7125fb806c5889707ff083",
   "limit_mind_maps_guest": "f835ec2ba0afac6bbe4059140b70c4df55538260cefa200b1c7df988297e9ad3",
   "limit_mind_maps_used": "ac3bb9cb210bc8d804666e34999a9634c4f6f9b670be64074ef065fd6242a861",
-  "limit_mock_exams_used": "4191956c0ff5aac056c1cb08febc1b16cb6fcc071d185f718ba4153f1dc052aa",
   "limit_more_later_today": "1f09cbf403117af566a32bc6b3989a24e192168105ed8415a28d6d22c17b7c45",
   "limit_more_later_today_or_subscribe": "4a549600eddee49a48fd01ad21cafa66b5551b440df384ed2112762220b8fb69",
   "limit_more_on": "de48fcf6398102ba8ab99196e0b2671799abdbe6dfbe2bf44299da42a3c9409e",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">Deine Gesprächszeit ist aufgebraucht</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Deine Gesprächszeit ist wieder verfügbar</string>
-    <string name="limit_mock_exams_used">Du hast dein Limit für Probeprüfungen erreicht</string>
     <string name="limit_lessons_guest">Für weitere Lektionen brauchst du ein Konto</string>
     <string name="limit_lessons_free">Deine kostenlosen Lektionen sind aufgebraucht</string>
     <string name="limit_lessons_day">Heute keine neuen Lektionen mehr</string>

@@ -6,9 +6,9 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { thirdsMath, thirdsQuestion } from "../../library/items/_test-utils/math-problems";
+import { mockPaperKey } from "./_utils/mock-supply-request";
 import { getMock } from "./get-mock";
 import { listMockPrepWrites } from "./prepare-mock-questions";
-import { requestMockQuestions } from "./request-mock-questions";
 import { startAnytimeMock } from "./start-anytime-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
@@ -110,7 +110,13 @@ async function formatsSetup(bank: Bank) {
     ),
     ...skills.flatMap((skill) =>
       contents.map(({ content, format }) =>
-        itemFixture({ content, examBlueprintId: blueprint.id, format, skillId: skill.id }),
+        itemFixture({
+          content,
+          examBlueprintId: blueprint.id,
+          format,
+          mockOnly: true,
+          skillId: skill.id,
+        }),
       ),
     ),
     prisma.subscription.create({
@@ -152,42 +158,38 @@ describe("a mock in the exam's own mix of formats", () => {
   });
 
   it("has the formats the bank is short of written first, numbers only for skills that take them", async () => {
-    const { goal, skills } = await formatsSetup({ numbers: 0, onePicks: 9, severalPicks: 0 });
+    const { goal, skills } = await formatsSetup({ numbers: 0, onePicks: 2, severalPicks: 0 });
     const [kinematics, probability] = skills;
 
     await itemFixture({
       content: NUMBER,
       examBlueprintId: goal.examBlueprintId,
       format: "numeric",
+      mockOnly: true,
       skillId: kinematics?.id ?? "",
     });
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: FULL } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
+    ).resolves.toStrictEqual({ status: "preparing" });
 
-    const request = await requestMockQuestions({ goalId: goal.id, input: { shape: FULL } });
-    const writes = request.status === "start" ? request.writes : [];
+    const request = await listMockPrepWrites({ goalId: goal.id });
+    const writes = request.papers.flatMap((paper) => paper.writes);
 
     expect(
-      writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
+      writes.map(({ format, questionsPerSkill, skillIds }) => ({
         key: format.key,
         questionsPerSkill,
         skillIds,
-        target,
       })),
     ).toStrictEqual([
-      {
-        key: "picks:all",
-        questionsPerSkill: 2,
-        skillIds: [kinematics?.id, probability?.id],
-        target: 2,
-      },
-      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id] },
+      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id] },
     ]);
   });
 
-  it("prepares the exam's first learner's full mock in every format, and leaves later ones' to their mocks", async () => {
+  it("prepares a paid learner's full mock and skips a free learner", async () => {
     const { goal, skills } = await formatsSetup({ numbers: 0, onePicks: 1, severalPicks: 0 });
     const [kinematics, probability] = skills;
 
@@ -195,32 +197,25 @@ describe("a mock in the exam's own mix of formats", () => {
       content: NUMBER,
       examBlueprintId: goal.examBlueprintId,
       format: "numeric",
+      mockOnly: true,
       skillId: kinematics?.id ?? "",
     });
 
-    const first = await listMockPrepWrites({ goalId: goal.id });
+    const first = await listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) });
 
     expect(
-      first.writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
-        key: format.key,
-        questionsPerSkill,
-        skillIds,
-        target,
-      })),
+      first.papers
+        .flatMap((paper) => paper.writes)
+        .map(({ format, questionsPerSkill, skillIds }) => ({
+          key: format.key,
+          questionsPerSkill,
+          skillIds,
+        })),
     ).toStrictEqual([
-      {
-        key: "choice",
-        questionsPerSkill: 1,
-        skillIds: [kinematics?.id, probability?.id],
-        target: 2,
-      },
-      {
-        key: "picks:all",
-        questionsPerSkill: 2,
-        skillIds: [kinematics?.id, probability?.id],
-        target: 2,
-      },
-      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
+      { key: "choice", questionsPerSkill: 1, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id] },
+      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id] },
     ]);
 
     const laterLearner = await userFixture();
@@ -233,8 +228,8 @@ describe("a mock in the exam's own mix of formats", () => {
     });
 
     await expect(listMockPrepWrites({ goalId: later.id })).resolves.toStrictEqual({
-      quickFormat: "multipleChoice",
-      writes: [],
+      papers: [],
+      urgentShort: false,
     });
   });
 
@@ -321,7 +316,12 @@ describe("a mock in the exam's own mix of formats", () => {
       ),
     );
 
-    const { writes } = await listMockPrepWrites({ goalId: goal.id });
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    });
+
+    const { papers } = await listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) });
+    const writes = papers.flatMap((paper) => paper.writes);
 
     expect(
       writes

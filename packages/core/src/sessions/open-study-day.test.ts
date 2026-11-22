@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -39,7 +40,34 @@ describe("the learner opens a study day", () => {
   it("never selects an unannounced next mock", async () => {
     const mockIdentity = { day: 1, fullLength: false };
     const user = await userFixture();
-    const { goal, items } = await sessionGoalFixture({ userId: user.id });
+
+    const blueprint = await examBlueprintFixture({
+      structure: {
+        formats: [],
+        mock: {
+          adaptive: false,
+          citations: [],
+          order: null,
+          scoring: { description: "", method: "raw" },
+          sections: [{ day: 1, kind: "objective", minutes: 16, name: "Math", questions: 8 }],
+          timeLimitMinutes: 16,
+          totalQuestions: 8,
+        },
+        rules: [],
+        subjects: [],
+      },
+    });
+
+    const { goal, items, skills } = await sessionGoalFixture({
+      goal: { examBlueprintId: blueprint.id, kind: "exam" },
+      userId: user.id,
+    });
+
+    await prisma.item.updateMany({
+      data: { examBlueprintId: blueprint.id, mockOnly: true },
+      where: { id: { in: items.map((item) => item.id) } },
+    });
+
     const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
     const mock = await studySessionBlockFixture({
@@ -55,7 +83,7 @@ describe("the learner opens a study day", () => {
           rematch: false,
           timeLimitMinutes: 165,
         },
-        itemIds: items.map((item) => item.id),
+        skillIds: skills.map((skill) => skill.id),
       },
       sessionId: session.id,
     });

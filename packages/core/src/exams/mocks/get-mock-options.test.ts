@@ -3,6 +3,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { canReuseMockItems } from "./_utils/create-anytime-mock";
 import { getMockOptions } from "./get-mock-options";
 import { type MockResult } from "./mock-contract";
 
@@ -51,6 +52,25 @@ const RESULT: MockResult = {
 };
 
 describe(getMockOptions, () => {
+  it("uses the chooser request instant for the rolling ten-sitting window", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "exam", userId: user.id });
+    const now = new Date("2025-01-10T00:00:00Z");
+
+    await prisma.mockExam.createMany({
+      data: Array.from({ length: 10 }, () => ({
+        conditions: { purpose: "practice" },
+        goalId: goal.id,
+        sectionStartedAt: now,
+        startedAt: now,
+        status: "finished" as const,
+        userId: user.id,
+      })),
+    });
+
+    await expect(canReuseMockItems(prisma, user.id, now)).resolves.toBe(true);
+  });
+
   it("keeps the latest mock's number when another mock completes between options reads", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });

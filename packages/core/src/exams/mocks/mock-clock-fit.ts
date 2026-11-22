@@ -1,23 +1,17 @@
+import { apportion, roundToTotal } from "@zoonk/utils/apportion";
 import { type MockSectionPlan } from "./mock-plan";
 
 export function fitToClock({
   clock,
   sections,
 }: {
-  clock: number;
+  clock?: number;
   sections: readonly MockSectionPlan[];
 }): MockSectionPlan[] {
-  const total = sections.reduce((sum, section) => sum + section.minutes, 0);
+  const weights = sections.map((section) => section.minutes);
 
-  if (total <= 0) {
-    return [...sections];
-  }
+  const minutes =
+    clock === undefined ? roundToTotal(weights) : apportion({ total: clock, weights });
 
-  const scaled = sections.map((section) => Math.round((section.minutes * clock) / total));
-  const rest = clock - scaled.slice(0, -1).reduce((sum, minutes) => sum + minutes, 0);
-
-  return sections.map((section, index) => ({
-    ...section,
-    minutes: index === sections.length - 1 ? rest : (scaled[index] ?? section.minutes),
-  }));
+  return sections.map((section, index) => ({ ...section, minutes: minutes[index] ?? 0 }));
 }

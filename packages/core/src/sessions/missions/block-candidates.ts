@@ -54,13 +54,19 @@ function toCheckpointKind(block: MissionFactBlock): MissionKind | null {
 export function blockCandidates({
   blocks,
   plannedMinutes,
+  preparing,
   tier,
 }: {
   blocks: readonly MissionFactBlock[];
   plannedMinutes: number;
+  preparing?: ReadonlySet<number>;
   tier: EntitlementTier;
 }): MissionPick[] {
-  const planned = blocks.filter((block) => !block.payload.extra && !block.payload.reinforcement);
+  const planned = blocks.filter(
+    (block, position) =>
+      !preparing?.has(position) && !block.payload.extra && !block.payload.reinforcement,
+  );
+
   const reviews = planned.filter((block) => block.kind === "review");
   const review = reviews[0];
   const lessons = planned.filter((block) => block.kind === "learn");

@@ -73,7 +73,9 @@ export function ChallengeScreen({
   const start = rereading ? { ...ownStart, busy: true } : ownStart;
 
   return (
-    <ChallengeProvider value={{ challenge, hrefs, move, start, writing }}>
+    <ChallengeProvider
+      value={{ challenge, hrefs, mockWriting: actions.mockWriting, move, start, writing }}
+    >
       {moved && <ChallengeMovedScreen changeId={moved.changeId} effect={moved.effect} />}
       {!moved && writing?.kind === "writing" && <ChallengeWritingScreen run={writing.run} />}
       {!moved && writing?.kind !== "writing" && <ChallengeIntroScreen />}

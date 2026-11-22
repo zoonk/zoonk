@@ -45,6 +45,7 @@ export type WriteItemSetParams = {
   skills: ItemSetSkill[];
   format: ItemSetFormat;
   questionCount: number;
+  mockOnly?: boolean;
   language: string;
   /** The country the skills are set in; null is the language's own. */
   country: string | null;
@@ -176,7 +177,7 @@ export async function writeItemSet(params: WriteItemSetParams) {
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
+    libraryInput: !params.mockOnly,
     systemPrompt,
     task: "write-item-set",
   });

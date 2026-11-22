@@ -58,7 +58,10 @@ fun pickedBorder(): BorderStroke = BorderStroke(1.dp, pickedBorderColor())
 @Composable
 fun pickedBorderColor(): Color = if (LocalMoreContrast.current) MaterialTheme.colorScheme.outline else Color.Transparent
 
-/** A right pick says "Your answer", or "Your guess" when [guessed], so it isn't called correct twice under its verdict. */
+/**
+ * The right option says "Correct" when the learner missed it. A pick needs no word of its own: its color and the
+ * verdict say it, and only a guess ([guessed]), which counts as neither, says so.
+ */
 @Composable
 fun AnswerTag(
     picked: Boolean,
@@ -69,8 +72,8 @@ fun AnswerTag(
     val text =
         when {
             result == AnswerResult.Guess || (picked && guessed) -> stringResource(R.string.answer_tag_your_guess)
-            picked -> stringResource(R.string.answer_tag_your_answer)
-            else -> stringResource(R.string.answer_tag_correct)
+            result == AnswerResult.Right && !picked -> stringResource(R.string.answer_tag_correct)
+            else -> return
         }
 
     val color =
@@ -83,14 +86,11 @@ fun AnswerTag(
     Text(text = text, modifier = modifier, color = color, style = MaterialTheme.zoonkType.tag)
 }
 
-/** Before Check, a pick says it's the learner's in the words its verdict keeps. Unspoken: the option is selected. */
+/** Before Check, a guess says so in the words its verdict keeps. Unspoken: the option is selected. */
 @Composable
-fun PickedTag(
-    guessed: Boolean,
-    modifier: Modifier = Modifier,
-) {
+fun GuessTag(modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(if (guessed) R.string.answer_tag_your_guess else R.string.answer_tag_your_answer),
+        text = stringResource(R.string.answer_tag_your_guess),
         modifier = modifier.clearAndSetSemantics {},
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.zoonkType.tag,

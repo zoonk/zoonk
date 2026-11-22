@@ -1,82 +1,82 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { loadListeningExam } from "../../listening/listening-exam";
+import { type ListeningPart } from "../../listening/listening-parts";
 import { pickListeningSets } from "../../listening/pick-listening-sets";
 import { type MockFormat, getItemFormatKey } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
 
-export type MockListening = { recordings: Map<string, MockCandidate[]>; unvoiced: Set<string> };
+export type MockListening = {
+  missingParts: ListeningPart[];
+  recordings: Map<string, MockCandidate[]>;
+  unvoiced: Set<string>;
+};
 
 export async function loadListeningCandidates({
+  client = prisma,
+  exclude,
   goalId,
   mix,
+  now,
+  reuse,
   userId,
 }: {
+  client?: TransactionClient;
+  exclude?: readonly string[];
   goalId: string;
+  now?: Date;
   mix: readonly MockFormat[];
+  reuse?: boolean;
   userId: string;
 }): Promise<MockListening> {
-  const exam = await loadListeningExam(goalId);
+  const exam = await loadListeningExam(goalId, client);
 
   if (!exam) {
-    return { recordings: new Map(), unvoiced: new Set() };
+    return { missingParts: [], recordings: new Map(), unvoiced: new Set() };
   }
 
   const picks = await pickListeningSets({
+    client,
     examBlueprintId: exam.blueprintId,
+    exclude,
+    mockOnly: true,
+    now,
     parts: exam.parts,
+    reuse,
     scriptLanguage: exam.scriptLanguage,
     userId,
   });
 
   const bySection = Map.groupBy(picks, (pick) => pick.part.sectionName);
 
-  const ready = [...bySection].filter(([, sectionPicks]) =>
-    sectionPicks.every((pick) => pick.setId !== null),
-  );
-
   const unvoiced = new Set(
-    [...bySection.keys()].filter((name) => !ready.some(([readyName]) => readyName === name)),
+    picks.filter((pick) => pick.needsSet).map((pick) => pick.part.sectionName),
   );
 
-  const setIds = ready.flatMap(([, sectionPicks]) =>
-    sectionPicks.flatMap((pick) => pick.setId ?? []),
-  );
+  const setIds = picks.flatMap((pick) => pick.setId ?? []);
 
-  const [items, answers] = await Promise.all([
-    prisma.item.findMany({
-      orderBy: { setPosition: "asc" },
-      select: {
-        content: true,
-        difficulty: true,
-        format: true,
-        id: true,
-        setId: true,
-        setPosition: true,
-        skillId: true,
-      },
-      where: { retiredAt: null, setId: { in: setIds } },
-    }),
-    prisma.attempt.groupBy({ by: ["itemId"], where: { item: { setId: { in: setIds } }, userId } }),
-  ]);
+  const items = await client.item.findMany({
+    orderBy: { setPosition: "asc" },
+    select: { content: true, difficulty: true, format: true, id: true, setId: true, skillId: true },
+    where: { setId: { in: setIds } },
+  });
 
-  const answered = new Set(answers.map((answer) => answer.itemId));
   const bySet = Map.groupBy(items, (item) => item.setId ?? "");
 
   const recordings = new Map(
-    ready.map(([sectionName, sectionPicks]) => [
+    [...bySection].map(([sectionName, sectionPicks]) => [
       sectionName,
       sectionPicks.flatMap((pick) => {
         const members = bySet.get(pick.setId ?? "") ?? [];
-        const heard = members.some((member) => answered.has(member.id));
 
         return members.map((member, position) => ({
-          answered: heard,
+          answered: pick.lastMockUse !== undefined,
           area: sectionName,
           difficulty: member.difficulty,
           format: getItemFormatKey({ item: member, mix }),
           itemFormat: member.format,
           itemId: member.id,
+          lastMockUse: pick.lastMockUse,
           set: { id: pick.setId ?? "", position, size: members.length },
           skillId: member.skillId,
         }));
@@ -84,5 +84,9 @@ export async function loadListeningCandidates({
     ]),
   );
 
-  return { recordings, unvoiced };
+  return {
+    missingParts: picks.filter((pick) => pick.needsSet).map((pick) => pick.part),
+    recordings,
+    unvoiced,
+  };
 }

@@ -7,6 +7,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
+import com.zoonk.api.PreparingAnswer
 import com.zoonk.api.models.Challenge
 import com.zoonk.api.models.ChallengeGeneration
 import com.zoonk.api.models.ChallengeMove
@@ -23,11 +24,12 @@ interface ChallengeApi {
         timeZone: String,
     ): Challenge
 
+    /** Null while a mock's questions are still prepared: nothing started. */
     suspend fun start(
         session: AuthenticatedSession,
         planItemId: UUID,
         input: StudyBlockStart,
-    ): ChallengeStart
+    ): ChallengeStart?
 
     suspend fun writeQuestions(
         session: AuthenticatedSession,
@@ -61,7 +63,11 @@ class LiveChallengeApi(
         session: AuthenticatedSession,
         planItemId: UUID,
         input: StudyBlockStart,
-    ) = perform { api.streamingClients(session).studySessions.startChallenge(planItemId, input) }
+    ) = try {
+        perform { api.streamingClients(session).studySessions.startChallenge(planItemId, input) }
+    } catch (_: PreparingAnswer) {
+        null
+    }
 
     override suspend fun writeQuestions(
         session: AuthenticatedSession,
@@ -96,7 +102,7 @@ class ChallengeStore(
     suspend fun start(
         planItemId: UUID,
         afterWriting: Boolean,
-    ): MutationResult<ChallengeStart> =
+    ): MutationResult<ChallengeStart?> =
         cache.mutate(invalidating = OPENED) { session -> api.start(session, planItemId, StudyBlockStart(afterWriting, timeZone())) }
 
     suspend fun writeQuestions(planItemId: UUID): MutationResult<ChallengeGeneration> =

@@ -9,7 +9,7 @@ import { useUpNextLessons } from "./use-today-copy";
 
 const UP_NEXT_TITLE_ID = "today-up-next-title";
 
-/** Being done for the day, or resting, never hides what comes next. */
+/** Being done for the day, resting, or waiting on a mock never hides what comes next. */
 export function TodayUpNext({ className }: { className?: string }) {
   const t = useExtracted();
   const lessons = useUpNextLessons();

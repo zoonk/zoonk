@@ -331,7 +331,7 @@ describe("mock funding through exported calendar and challenge moves", () => {
     });
   });
 
-  it("keeps a thin-bank scheduled mock's announced clock on its actual day and when started", async () => {
+  it("keeps a thin-bank scheduled mock's announced clock while preparing and after the reserve fills", async () => {
     const { goal, library, plan } = await setup();
 
     await Promise.all(
@@ -372,7 +372,7 @@ describe("mock funding through exported calendar and challenge moves", () => {
     expect
       .soft(actual)
       .toMatchObject({
-        challenge: { fullLength: false, minutes: 165, questions: 6 },
+        challenge: { fullLength: false, minutes: 165, questions: 30 },
         status: "ready",
       });
 
@@ -398,9 +398,26 @@ describe("mock funding through exported calendar and challenge moves", () => {
     }
 
     await expect(getMock(block.id)).resolves.toMatchObject({
-      mock: { fullLength: false, minutes: 165, questions: 6 },
+      mock: { fullLength: false, minutes: 165, questions: 30 },
       status: "ready",
     });
+
+    await expect(
+      startMock({ blockId: block.id, input: { timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "preparing" });
+
+    await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
+
+    await Promise.all(
+      Array.from({ length: 30 }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: goal.examBlueprintId,
+          mockOnly: true,
+          skillId: library.skills[0]?.id ?? "",
+        }),
+      ),
+    );
 
     await expect(
       startMock({ blockId: block.id, input: { timeZone: "UTC" } }),

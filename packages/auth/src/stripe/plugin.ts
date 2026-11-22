@@ -12,7 +12,7 @@ import { getCheckoutSessionParams } from "./checkout-session-params";
 import { stripeClient } from "./client";
 import { endWebPlusBesideStorePlus } from "./settle-web-plus";
 import { isPendingCancel, saveSubscription } from "./stop-web-plus";
-import { reportSubscriptionChange } from "./subscription-events";
+import { handlePlusGrant, reportSubscriptionChange } from "./subscription-events";
 import type Stripe from "stripe";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
@@ -55,9 +55,10 @@ function isGranting(subscription: Stripe.Subscription): boolean {
  * stay.
  */
 function issueOnGrant({ grantedAt, userId }: { grantedAt: Date; userId: string }) {
-  return prisma.$transaction((tx) =>
-    issueEarnedCertificates(tx, { now: new Date(), plus: { grantedAt }, userId }),
-  );
+  return prisma.$transaction(async (tx) => {
+    await issueEarnedCertificates(tx, { now: new Date(), plus: { grantedAt }, userId });
+    await handlePlusGrant(tx, userId);
+  });
 }
 
 async function findGrantedLearner(event: Stripe.Event): Promise<string | null> {

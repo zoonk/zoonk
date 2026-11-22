@@ -15,8 +15,8 @@ async function writeSSE(
 }
 
 /** Hold it with `await using`: that releases the stream's writer lock when the step ends. */
-export function createStepStream<T extends string>(): StepStream<T> {
-  const writer = getWritable<string>().getWriter();
+export function createStepStream<T extends string>(namespace?: string): StepStream<T> {
+  const writer = getWritable<string>({ namespace }).getWriter();
 
   return {
     async [Symbol.asyncDispose]() {
@@ -41,11 +41,11 @@ export function createStepStream<T extends string>(): StepStream<T> {
  */
 export async function progressStep<T extends string>(
   message: StepStreamMessage<T>,
-  { last = false }: { last?: boolean } = {},
+  { last = false, namespace }: { last?: boolean; namespace?: string } = {},
 ): Promise<void> {
   "use step";
 
-  await using stream = createStepStream<T>();
+  await using stream = createStepStream<T>(namespace);
   await stream.status(message);
 
   if (last) {
