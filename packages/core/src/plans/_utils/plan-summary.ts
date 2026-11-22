@@ -48,6 +48,7 @@ export const planSummarySchema = z
         .object({ kind: z.enum(["everything", "focus"]), minutes: z.int().positive() })
         .nullable()
         .default(null),
+      suggestionPending: z.boolean().optional(),
     }),
     basis: planSummaryBasisSchema,
     schemaVersion: z.literal(PLAN_SUMMARY_SCHEMA_VERSION),

@@ -1,5 +1,6 @@
 import "server-only";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { refreshPlanSuggestion } from "../plans/refresh-plan-suggestion";
 import { isCurrentSession } from "./_utils/current-session";
 import { followSavedDay } from "./_utils/refresh-study-day-selection";
 import { findStudySessionFor } from "./_utils/study-session-access";
@@ -22,9 +23,9 @@ export async function refreshOwedStudyDay({
 
   const zone = getAnswerTimeZone({ goal: owned.session.goal, timeZone });
 
-  if (!isCurrentSession({ now: new Date(), session: owned.session, timeZone: zone })) {
-    return;
+  if (isCurrentSession({ now: new Date(), session: owned.session, timeZone: zone })) {
+    await followSavedDay({ session: owned.session, timeZone: zone });
   }
 
-  await followSavedDay({ session: owned.session, timeZone: zone });
+  await refreshPlanSuggestion({ goalId: owned.session.goal.id, userId });
 }

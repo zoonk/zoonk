@@ -55,9 +55,11 @@ export type PreparedSelectedPlanSave =
 
 /** Prepare before row locks; the write and notice must share the same selected plan. */
 export async function prepareSelectedPlanSave({
+  deferSuggestion = false,
   selection,
   shown,
 }: {
+  deferSuggestion?: boolean;
   selection: SelectedDayPlan;
   shown: boolean;
 }): Promise<PreparedSelectedPlanSave> {
@@ -93,6 +95,7 @@ export async function prepareSelectedPlanSave({
             ...context,
             plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
           },
+          deferSuggestion,
         })
       : null;
 
@@ -123,6 +126,7 @@ export async function prepareSelectedPlanSave({
         ...context,
         plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
       },
+      deferSuggestion,
     }),
   };
 }

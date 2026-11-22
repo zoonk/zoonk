@@ -46,28 +46,26 @@ export function getSuggestedTime({
   };
 }
 
-/**
- * The time the plan suggests while the learner's own time is below it. Finding it plans the goal
- * at each daily time, so only a plan that falls short of its date below four hours a day looks:
- * at four hours or more, or once the learner's time covers everything, nothing is suggested.
- */
-export function getPlanSuggestion({
+export function maySuggestPlanTime({
   dailyMinutes,
-  feasibility,
   pastDate,
   shown,
 }: {
   dailyMinutes: number;
-  feasibility: Pick<PlanFeasibility, "most" | "recommendedMinutes">;
   pastDate: boolean;
   shown: Pick<ShownFeasibility, "deadline" | "fits" | "timeCovers">;
-}): SuggestedDailyTime | null {
+}): boolean {
   const short = shown.deadline !== null && !shown.fits && !shown.timeCovers;
+  return !pastDate && short && dailyMinutes < MAX_SUGGESTED_DAILY_MINUTES;
+}
 
-  if (pastDate || !short || dailyMinutes >= MAX_SUGGESTED_DAILY_MINUTES) {
-    return null;
-  }
-
+export function findPlanSuggestion({
+  dailyMinutes,
+  feasibility,
+}: {
+  dailyMinutes: number;
+  feasibility: Pick<PlanFeasibility, "most" | "recommendedMinutes">;
+}): SuggestedDailyTime | null {
   const suggested = getSuggestedMinutes({
     everything: feasibility.recommendedMinutes,
     most: feasibility.most,
