@@ -499,11 +499,11 @@ describe("reusing an exam's graph for a learner who started its course", () => {
       graph: parsePlanGraph(graph),
     });
 
-    const beyond = findBeyondNoticeSkillIds(planned);
+    const beyond = findBeyondNoticeSkillIds({ graph: planned });
 
     expect(beyond.has(written.id)).toBe(true);
     expect(beyond.has(older.id)).toBe(false);
-    expect(beyond).toStrictEqual(findBeyondNoticeSkillIds(estimated));
+    expect(beyond).toStrictEqual(findBeyondNoticeSkillIds({ graph: estimated }));
   });
 
   it("writes its own graph for a private, unrelated or followed-up course start", async () => {

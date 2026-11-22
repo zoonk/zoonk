@@ -98,7 +98,7 @@ private struct RevealSubjects: View {
           }
 
           if group.extra {
-            SectionLabel(Text("Also in your plan", tableName: "Plan"))
+            SectionLabel(Text(syllabus.extraLabel))
           } else if let name = group.name {
             SectionLabel(Text(name))
           }

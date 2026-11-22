@@ -1,9 +1,9 @@
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import {
   getPartQuestions,
   getPlannedSubjectQuestions,
 } from "../../library/exams/subject-questions";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { namesMatch } from "../_utils/name-match";
 import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
 import { type MockOptionView, type MockShape } from "./mock-contract";

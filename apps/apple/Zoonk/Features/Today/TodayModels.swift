@@ -26,6 +26,8 @@ struct TodayView: Decodable, Equatable, Sendable {
 
     let dateEstimated: Bool
     let daysLeft: Int?
+    /// Nil from a server that doesn't send it yet.
+    let examDocument: ExamDocument?
     let id: String
     let kind: Kind
     let targetDate: String?

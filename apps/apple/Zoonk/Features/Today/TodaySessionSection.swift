@@ -526,7 +526,9 @@ struct BlockRow: View {
       return String(localized: "Getting ready…", table: "Today")
     }
 
-    return lineOverride ?? (showsDetail ? block.detail : block.label)
+    return lineOverride
+      ?? (showsDetail
+        ? block.detail : block.label(document: view?.goal.examDocument ?? .notice))
   }
 
   private var status: Text {

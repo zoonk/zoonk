@@ -3,6 +3,22 @@
 import { useExtracted } from "next-intl";
 import { type DayStep } from "../session/session-types";
 import { practisesTopics } from "../session/use-block-copy";
+import { useExtraLabel } from "../syllabus/use-extra-label";
+import { useTodayScreen } from "./today-context";
+
+/** The subject a lesson belongs to, or that the exam doesn't test it. */
+export function useBlockSubject() {
+  const extraLabel = useExtraLabel();
+  const { today } = useTodayScreen();
+
+  return (block: DayStep): string | null =>
+    block.subjectExtra
+      ? extraLabel({
+          document: today.goal.examDocument,
+          hasNotice: block.subjectExtra === "notice",
+        })
+      : block.subject;
+}
 
 /**
  * A row's one line under its title: what a lesson belongs to, what practice is on, or how long a

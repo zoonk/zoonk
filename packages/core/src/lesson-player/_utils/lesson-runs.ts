@@ -111,6 +111,41 @@ export function findOpenLessonRun({ lessonId, userId }: { lessonId: string; user
   });
 }
 
+function resumableSince(now: Date): Date {
+  return new Date(now.getTime() - RUN_RESUME_WINDOW_MS);
+}
+
+export async function listResumableLessonIds({
+  goalId,
+  lessonIds,
+  now,
+  userId,
+}: {
+  goalId: string;
+  lessonIds: readonly string[];
+  now: Date;
+  userId: string;
+}): Promise<string[]> {
+  const runs = await prisma.learningEvent.findMany({
+    orderBy: { startedAt: "desc" },
+    select: { contentIds: true },
+    take: lessonIds.length,
+    where: {
+      AND: [
+        NOT_A_CAPSULE,
+        { OR: lessonIds.map((id) => ({ contentIds: { equals: id, path: ["lessonId"] } })) },
+      ],
+      endedAt: null,
+      goalId,
+      kind: { in: [...LESSON_RUN_KINDS] },
+      startedAt: { gte: resumableSince(now) },
+      userId,
+    },
+  });
+
+  return runs.flatMap((run) => getRunLessonId(run) ?? []);
+}
+
 export function findResumableRun(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },
@@ -121,7 +156,7 @@ export function findResumableRun(
       contentIds: { equals: lessonId, path: ["lessonId"] },
       endedAt: null,
       kind: { in: [...LESSON_RUN_KINDS] },
-      startedAt: { gte: new Date(now.getTime() - RUN_RESUME_WINDOW_MS) },
+      startedAt: { gte: resumableSince(now) },
       userId,
     },
   });

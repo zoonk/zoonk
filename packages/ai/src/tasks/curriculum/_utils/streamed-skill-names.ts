@@ -24,7 +24,10 @@ function readCompleteSkillNames({ done, output }: { done: boolean; output: unkno
 
   const complete = done ? skills : skills.slice(0, -1);
 
-  return complete.map((skill) => readSkillName(skill)).filter(Boolean);
+  return complete
+    .filter((skill) => !(isJsonObject(skill) && skill.extra === true))
+    .map((skill) => readSkillName(skill))
+    .filter(Boolean);
 }
 
 /**

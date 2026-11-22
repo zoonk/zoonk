@@ -2403,6 +2403,7 @@ msgstr "Rozdział {number, number}"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -10451,11 +10452,6 @@ msgid "Adjust your plan"
 msgstr "Dostosuj plan"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, one {Masz czas na jeszcze # lekcję} few {Masz czas na jeszcze # lekcje} other {Masz czas na jeszcze # lekcji}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10465,6 +10461,17 @@ msgstr "Zaktualizowano twój plan."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "Dodaj do planu"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, one {Masz czas na jeszcze # lekcję} few {Masz czas na jeszcze # lekcje} other {Masz czas na jeszcze # lekcji}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "Dodać też naukę strategii egzaminacyjnych?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10811,6 +10818,7 @@ msgid "Needed to practice"
 msgstr "Potrzebne do ćwiczeń"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "Opcjonalne"
@@ -10881,34 +10889,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, one {# podstawa} many {# podstaw} other {# podstawy}} · tylko pierwsze lekcje · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {Dostosować plan do oficjalnego ogłoszenia o egzaminie i przyjąć termin na około {date}?} other {Dostosować plan do oficjalnego informatora egzaminacyjnego i przyjąć termin na około {date}?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {Dostosować plan do oficjalnego ogłoszenia o egzaminie i przyjąć termin na {date}?} other {Dostosować plan do oficjalnego informatora egzaminacyjnego i przyjąć termin na {date}?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {Dostosować plan do oficjalnego ogłoszenia o egzaminie?} other {Dostosować plan do oficjalnego informatora egzaminacyjnego?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "Przesunąć termin egzaminu na około {date}?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {Przesunąć termin egzaminu na {date}?} goal {Przesunąć termin zakończenia na {date}?} other {Przesunąć termin na {date}?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11019,6 +11003,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "Przenieść wyzwanie z tego tygodnia na {date}?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {Przesunąć termin egzaminu na {date}?} goal {Przesunąć termin zakończenia na {date}?} other {Przesunąć termin na {date}?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Uczyć się bez terminu zakończenia?"
@@ -11077,6 +11066,11 @@ msgstr "Zmienić zakres podstaw?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "Uczyć się do poziomu: {level}?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "Usunąć naukę strategii egzaminacyjnych z planu?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11250,6 +11244,16 @@ msgstr "Dodano lekcje do twojego planu."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "Przesunięto terminy etapów."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "Nauka strategii egzaminacyjnych dodana do planu."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "Nauki strategii egzaminacyjnych nie ma w planie."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12945,12 +12949,6 @@ msgid "From your material"
 msgstr "Z twoich materiałów"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "Także w twoim planie"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Tematy z twoich materiałów"
@@ -13079,6 +13077,12 @@ msgstr "Poza twoim planem · nie wystarczy na to czasu"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "Jeszcze niegotowe"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {Poza oficjalnym ogłoszeniem} other {Poza oficjalnym informatorem}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13276,6 +13280,7 @@ msgid "Okay. Your time stays the same."
 msgstr "Okej. Twój czas nauki się nie zmienia."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Zmiana planu"
@@ -13321,6 +13326,7 @@ msgid "Move it"
 msgstr "Przesuń"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Rozumiem"
@@ -13338,6 +13344,7 @@ msgid "Your study time stays the same."
 msgstr "Twoja godzina nauki pozostaje bez zmian."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13369,15 +13376,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "Ćwicz z: {name}"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "Zachowaj mój wybór"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "Poza planem: {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "Pokaż kolejną propozycję"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {Plan jest teraz zgodny z oficjalnym ogłoszeniem} other {Plan jest teraz zgodny z oficjalnym informatorem}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "Zachowaj mój wybór"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"

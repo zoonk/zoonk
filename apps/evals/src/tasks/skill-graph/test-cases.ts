@@ -489,7 +489,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       - MUST be in Brazilian Portuguese
       - Exam goal with a blueprint: all four areas (Linguagens, Humanas, Natureza, Matemática) and the essay must be covered, including the five essay competencies (C1 to C5)
       - Exam weights must follow the blueprint's frequency: statistics and chart reading, percentages and proportions, ecology, Brazilian history and citizenship, and text interpretation should weigh more than rarely tested topics
-      - Exam strategy the exam scores belongs here, such as keeping answers consistent under item response theory (easy questions first) and managing time
+      - Only extraSkills holds exam strategy such as managing time. The five scored essay competencies belong to the required skills.
       - The exam day's procedures (the ID and pen to bring, gate times, electronics) aren't skills: the app's exam-day checklist covers them. A skill about following the exam's procedures or what to bring is a mistake
       - Topics outside the ENEM syllabus don't belong
       - The graph maps the whole exam; prioritization is the planner's job, but weights must make it possible
@@ -524,7 +524,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Public-service exam: every block of the blueprint is covered (Portuguese, administrative, constitutional, criminal and procedural law, special legislation, statistics, logic, informática, accounting, the essay) with weights that follow the blueprint's frequency, and the physical tests at least as preparation
-      - Exam strategy the exam scores belongs here: with a wrong item cancelling a right one, deciding when to leave an item blank
+      - Only extraSkills holds when to leave an item blank, where a wrong item cancels a right one
       - Starting point: the exam's candidates are adults with a university degree in any field. Portuguese starts at the depth the exam asks (comprehension, cohesion, syntax, punctuation, agreement, regency and crase, rewriting) in the intermediate band or above. Elementary content, such as naming nouns, articles and numerals, reading notices, invitations or recipes, or drilling basic arithmetic, doesn't belong
       - Law, accounting and informática may start in the beginner band, since they're new to most candidates
 
@@ -545,7 +545,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       - Foundations first: the first phase holds what the rest builds on and what most of the exam shares, such as reading and grammar for Língua Portuguesa and the Constitution's basics, before the role's most specialized subjects (speech recognition, parliamentary procedure details)
       - The exam is answered on paper (certo/errado items, plus the discursive test): every skill is what its items ask about a topic, at the exam's depth. The speech subject's skills explain how automatic speech recognition, end-to-end models, multimodal audio LLMs and speaker diarization work and fail, and how transcripts are post-processed, never job tasks with tools (reviewing recordings in an audio editor, choosing which range to replay, running pyannote or Whisper, writing Python)
       - Only the discursive test's skills are outcome skills (every candidate sits it and it's scored apart); no other skill is
-      - Exam strategy the exam scores belongs here: with a wrong item cancelling a right one, deciding when to leave an item blank; and the discursive test (a technical piece) is prepared
+      - Only extraSkills holds when to leave an item blank, where a wrong item cancels a right one. The discursive test (a technical piece) stays in the required skills.
       - Starting point: the role requires a university degree in any field, so candidates come from law and from other fields alike. Every subject gets the foundations it needs at the depth the exam asks, law's included, since placement skips what each learner already knows; no school basics
       - Weights follow the notice: the P1 and P2 tests have 90 items each, so the role's four subjects together weigh as much as the five basic ones
 
@@ -589,7 +589,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       - MUST be in Brazilian Portuguese
       - Every one of the notice's 14 subjects is an area, named exactly as the notice names it, and every topic id is taught by some skill
       - No area for a subject this notice doesn't list, even one earlier CGU editions tested (Língua Portuguesa, Língua Inglesa, Tecnologia da Informação, Direito Administrativo): those lessons take the learner's time from what this exam asks
-      - Beyond the subjects, only what this exam scores: the discursive test (two questions, graded on content and on written Portuguese), whose skills practice that writing and are its outcome skills, and exam strategy for certo/errado items where a wrong item cancels a right one
+      - Beyond the subjects, only what this exam scores: the discursive test (two questions, graded on content and on written Portuguese), whose skills practice that writing and are its outcome skills, while exam strategy for certo/errado items where a wrong item cancels a right one belongs only in extraSkills
       - A base a topic needs goes in the subject that needs it, never in an area of its own
       - Depth matches this exam's items: its specialized subjects (the P3 group: government auditing, public finance and accounting, policy evaluation methods, audits of procurement and transfers, applied integrity and accountability) get the concepts, distinctions and worked cases a learner new to them needs for close certo/errado items. A broad item squeezed into a handful of lessons (a family of evaluation methods, the disciplinary process, public accounting's recognition rules) is too thin
       - No overlap: a topic a basic or complementary subject teaches and a specialized subject applies (access to information and data protection, integrity and accountability) is taught once, and the applied skill builds on it and teaches only the application
@@ -741,8 +741,8 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       - Small public-service exam: 35 four-option questions for a mid-level municipal role, 10 on Língua Portuguesa and 5 on each of the other five subjects. Every subject is an area named as the notice names it, and every one of its 76 topics is taught by some skill: a subject with five questions still keeps every topic of its syllabus
       - Each topic is taught once, deep enough for a learner new to it to answer this exam's questions on it. A broad line gets the concepts, distinctions and worked cases those questions turn on: verb conjugation, voices and tense correlation; verbal and nominal agreement; the whole of Lei 14.133 (procurement principles and phases, modalities, direct contracting, contracts and sanctions). A narrow line (national symbols, forms) stays small. Five questions per subject sample a broad syllabus rather than make it easy, so a subject's few questions never cut what a topic needs
       - No overlap: a topic line may take several skills only when each teaches different ideas of it and a later one builds on an earlier one instead of teaching it again; the failure is sibling skills that each re-teach one idea, such as a rule-of-three skill that teaches proportion again from scratch instead of building on the proportions skill. Content the notice lists in two subjects (Lei 14.133 in Legislação and in Conhecimentos Específicos, the Constitution's articles on public administration) is taught once, and the other subject's skill builds on it instead of teaching it again, listing as prerequisites every skill that teaches what it applies (all of the law's skills, not only its first)
-      - Nothing the notice doesn't test beyond the prerequisites its topics can't be learned without: no interest (juros) under Porcentagem, no reading tables and charts under Raciocínio Lógico, no public budget (PPA, LDO, LOA, the budget cycle) under public administration, and no area beyond the six subjects except exam strategy
-      - Exam strategy, if present, teaches only what changes this exam's score: a wrong answer costs nothing, so no skill on when to leave a question blank
+      - Nothing the notice doesn't test beyond the prerequisites its topics can't be learned without: no interest (juros) under Porcentagem, no reading tables and charts under Raciocínio Lógico, no public budget (PPA, LDO, LOA, the budget cycle) under public administration, and no required area beyond the six subjects
+      - Exam strategy belongs only in extraSkills and teaches only what changes this exam's score: a wrong answer costs nothing, so no skill on when to leave a question blank
       - Weights follow the notice: Língua Portuguesa, with twice the questions of any other subject, weighs the most
 
       ${SHARED_EXPECTATIONS}
@@ -902,7 +902,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)
-      - The test is in three days (LESSON_BUDGET 25, the most those days hold): the skills' lessons are sized by the listed topics, not padded up to 25 and never above it; every listed topic gets a skill of its own with at least one lesson, none outside them, and no area for a discursive test or exam strategy
+      - The test is in three days (LESSON_BUDGET 25, the most those days hold): the skills' lessons are sized by the listed topics, not padded up to 25 and never above it; every listed topic gets a skill of its own with at least one lesson, none outside them, with no area for a discursive test and no extraSkills
       - Exam weights come from the listed material's emphasis, since there is no official blueprint
       - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here
 
@@ -949,7 +949,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       - MUST be in Brazilian Portuguese
       - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's \`topics\` listing its topic id; every topic id appears in a skill
       - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all
-      - Only what the notes teach (cell theory, prokaryotes and eukaryotes, plasma membrane and transport, organelles, nucleus, viruses) and the prerequisites a first-year high-school student lacks, a lesson each; nothing beyond the notes (no cell division, DNA replication or genetics), and no area for a discursive test or exam strategy beyond the notes' own announcement
+      - Only what the notes teach (cell theory, prokaryotes and eukaryotes, plasma membrane and transport, organelles, nucleus, viruses) and the prerequisites a first-year high-school student lacks, a lesson each; nothing beyond the notes (no cell division, DNA replication or genetics), with no area for a discursive test and no extraSkills beyond the notes' own announcement
       - Exam weights follow the notes' emphasis (organelles "cai muito")
 
       ${SHARED_EXPECTATIONS}

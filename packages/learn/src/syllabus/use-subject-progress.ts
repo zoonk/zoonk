@@ -64,6 +64,16 @@ export function useSubjectProgress() {
 
     const known = knownLine(subject);
 
+    const lessons = t(
+      "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}",
+      { done: subject.lessonsDone, total: subject.lessonsTotal },
+    );
+
+    // The exam doesn't test it, so its row counts lessons where the others show preparation.
+    if (subject.extra) {
+      return { bar: null, known, label: lessons };
+    }
+
     if (total > 0 && subject.topicsStudied !== null) {
       return {
         bar: getSubjectBar(subject),
@@ -83,13 +93,6 @@ export function useSubjectProgress() {
       };
     }
 
-    return {
-      bar: getSubjectBar(subject),
-      known,
-      label: t(
-        "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}",
-        { done: subject.lessonsDone, total: subject.lessonsTotal },
-      ),
-    };
+    return { bar: getSubjectBar(subject), known, label: lessons };
   };
 }

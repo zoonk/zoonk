@@ -3,7 +3,7 @@
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, Undo2Icon } from "lucide-react";
@@ -26,10 +26,10 @@ import { useUndoChange } from "./use-undo-change";
 
 export type SlotItem =
   | { choice: ExamChoiceView; key: string; kind: "choice" }
-  | {
-      key: string;
-      kind: "courseComplete" | "coverage" | "doesNotFit" | "finished" | "fitLessons" | "paused";
-    }
+  | { key: string; kind: "courseComplete" | "coverage" | "doesNotFit" | "finished" | "paused" }
+  /** The offer as shown, so its answer still shows once the plan no longer offers it. */
+  | { key: string; kind: "fitLessons"; offer: NonNullable<PlanView["fitOffer"]> }
+  | { key: string; kind: "extraLessons"; offer: NonNullable<PlanView["extraOffer"]> }
   | { key: string; kind: "pastDate"; lessons: number };
 
 export type SlotResult = { change: PlanChangeView | null; item: SlotItem; text: string };

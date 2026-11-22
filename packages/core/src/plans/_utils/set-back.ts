@@ -26,7 +26,10 @@ export async function findSetBackChange({
   operations: readonly PlanOperation[];
   state: PlanState;
 }): Promise<PlanChange | null> {
-  if (operations.every((operation) => operation.kind === "setBaseChoices")) {
+  if (
+    operations.every((operation) => operation.kind === "setBaseChoices") ||
+    operations.some((operation) => operation.kind === "setExtras")
+  ) {
     return null;
   }
 

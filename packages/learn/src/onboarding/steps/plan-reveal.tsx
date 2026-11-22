@@ -49,7 +49,7 @@ export function PlanReveal({
   isGuest: boolean;
   lessonHref: (lessonId: string) => string;
   library: LibraryCourseLink | null;
-  planActions: PlanActions;
+  planActions: Omit<PlanActions, "readPlanAgain">;
   planLinkHref: (planId: string) => string;
   run: GenerationRun | null;
   signUpHref: string;
@@ -133,6 +133,7 @@ export function PlanReveal({
     decide: (input) => refreshAfter(planActions.decide(input)),
     findTimeToCover: planActions.findTimeToCover,
     preview: planActions.preview,
+    readPlanAgain: () => void safeAsync(refresh),
   };
 
   return (

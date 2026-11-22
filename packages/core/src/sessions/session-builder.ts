@@ -15,6 +15,7 @@ import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-block
 import {
   getLessonMinutes,
   getNewLessons,
+  getPracticeMinutes,
   isSessionReviewDay,
   takeLessons,
   toLessonBlock,
@@ -62,6 +63,8 @@ export type PlannedCheckpoint = BlockCheckpoint & {
 export type PracticeItem = { itemId: string; setId?: string; skillId: string };
 
 export type SessionBuildInput = {
+  /** On a shortened review day the lesson inputs contain only the optional study allocated to that day. */
+  allowsReviewLessons?: boolean;
   /** Today's due capsules, most urgent first, with their questions picked. */
   capsules: BlockCapsule[];
   /** Earlier phases first; a day may carry more than one challenge. */
@@ -85,7 +88,7 @@ export type SessionBuildInput = {
   practiceShare: number;
   /** Replaces an unavailable mock with practice across every goal skill; null on other days. */
   fullReviewSkillIds?: readonly string[] | null;
-  /** A scheduled review day permits no new lessons. */
+  /** The scheduled practice that uses the rest of a review day. */
   reviewPlanItemId: string | null;
   /** A selected review is identified before Open assigns its persisted row ID. */
   reviewPlanItemKey?: string | null;
@@ -171,28 +174,6 @@ function fillReview({
     });
 
   return blocks.map((block) => (review && block.kind === "review" ? review : block));
-}
-
-/** Preserve the opened day's practice share; unused question capacity returns time to lessons. */
-function getPracticeMinutes({
-  budget,
-  input,
-  remaining,
-}: {
-  budget: number;
-  input: SessionBuildInput;
-  remaining: number;
-}): number {
-  const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
-  const practice = input.practice;
-  const opened = input.openedPractice;
-
-  // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
-  const target = opened
-    ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
-    : remaining * share;
-
-  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION);
 }
 
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {
@@ -309,8 +290,9 @@ export function buildSessionBlocks(day: SessionBuildInput): {
   });
 
   const lessonRoom = remaining - getLessonMinutes(reinforcement);
-  const learnBudget = lessonRoom - getPracticeMinutes({ budget, input, remaining });
   const writingMinutes = getWritingMinutes({ input, room: lessonRoom });
+
+  const learnBudget = lessonRoom - getPracticeMinutes({ budget, input, remaining, writingMinutes });
 
   const stretch = listDayStretch({
     budget: learnBudget + leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0),

@@ -199,7 +199,7 @@ type JourneyClientProps = Omit<
   JourneyScreenProps,
   "actions" | "end" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
 > & {
-  actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
+  actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover" | "readPlanAgain">;
   certificates: FieldMapView["certificates"];
   completedLessons: boolean;
   goalId: string;
@@ -297,6 +297,7 @@ export function JourneyClient({
             return chosen;
           },
           findTimeToCover: () => findGoalTimeToCover({ goalId }),
+          readPlanAgain: () => router.refresh(),
         }}
         end={{
           certificates: certificates && {

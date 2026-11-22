@@ -2403,6 +2403,7 @@ msgstr "챕터 {number, number}"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -10451,11 +10452,6 @@ msgid "Adjust your plan"
 msgstr "계획 조정하기"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, other {레슨 #개를 더 할 시간이 있어요}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10465,6 +10461,17 @@ msgstr "계획을 수정했어요."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "계획에 추가"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, other {레슨 #개를 더 할 시간이 있어요}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "시험 전략도 공부할까요?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10811,6 +10818,7 @@ msgid "Needed to practice"
 msgstr "실습에 필요"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "선택 사항"
@@ -10881,34 +10889,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, other {사전 지식 #가지}} · 첫 레슨만 · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꾸고, 시험일은 {date}쯤으로 할까요?} other {공식 시험 안내에 맞춰 계획을 바꾸고, 시험일은 {date}쯤으로 할까요?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꾸고, 시험일은 {date}로 할까요?} other {공식 시험 안내에 맞춰 계획을 바꾸고, 시험일은 {date}로 할까요?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꿀까요?} other {공식 시험 안내에 맞춰 계획을 바꿀까요?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "시험일을 {date}쯤으로 바꿀까요?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {시험 날짜를 {date}로 바꿀까요?} goal {종료일을 {date}로 바꿀까요?} other {날짜를 {date}로 바꿀까요?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11019,6 +11003,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "이번 주 챌린지를 {date}로 옮길까요?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {시험 날짜를 {date}로 바꿀까요?} goal {종료일을 {date}로 바꿀까요?} other {날짜를 {date}로 바꿀까요?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "종료일 없이 공부할까요?"
@@ -11077,6 +11066,11 @@ msgstr "사전 지식 설정을 바꿀까요?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "{level}까지 공부할까요?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "계획에서 시험 전략을 뺄까요?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11250,6 +11244,16 @@ msgstr "계획에 레슨이 추가돼요."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "단계별 일정이 바뀌어요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "시험 전략이 계획에 추가됐어요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "시험 전략은 계획에 없어요."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12945,12 +12949,6 @@ msgid "From your material"
 msgstr "내 자료에서 가져옴"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "내 계획에도 포함"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "내 자료에 있는 주제"
@@ -13079,6 +13077,12 @@ msgstr "계획에 없어요 · 학습 시간이 부족해요"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "아직 준비되지 않음"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {공식 공고에 없는 내용} other {공식 안내서에 없는 내용}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13276,6 +13280,7 @@ msgid "Okay. Your time stays the same."
 msgstr "알겠어요. 학습 시간은 그대로예요."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "계획 변경"
@@ -13321,6 +13326,7 @@ msgid "Move it"
 msgstr "옮기기"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "알겠어요"
@@ -13338,6 +13344,7 @@ msgid "Your study time stays the same."
 msgstr "학습 시간대는 그대로예요."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13369,15 +13376,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "{name}하고 연습하기"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "내 계획 유지하기"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "계획에서 제외: {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "다음 제안"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {계획이 이제 공식 공고를 따르고 있어요} other {계획이 이제 공식 안내서를 따르고 있어요}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "내 계획 유지하기"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"

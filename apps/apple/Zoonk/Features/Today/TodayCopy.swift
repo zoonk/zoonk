@@ -128,19 +128,20 @@ extension StudyBlock: NamedBlock {
   }
 }
 
-extension StudyBlock {
-  private func shortList(_ names: [String], named: Int) -> String {
-    guard names.count > named else {
-      return names.formatted(.list(type: .and))
-    }
-
-    let shown = names.prefix(named).joined(separator: ", ")
-
-    return String(
-      localized: "\(shown) and \(names.count - named) more", table: "Today",
-      comment: "A short list of topics and how many more")
+/// Main's `useShortList`: every name up to `named`, else the first `named` and how many more.
+func shortList(_ names: [String], named: Int) -> String {
+  guard names.count > named else {
+    return names.formatted(.list(type: .and))
   }
 
+  let shown = names.prefix(named).joined(separator: ", ")
+
+  return String(
+    localized: "\(shown) and \(names.count - named) more", table: "Today",
+    comment: "A short list of topics and how many more")
+}
+
+extension StudyBlock {
   /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
     if hasCapsules && weakest {
@@ -189,7 +190,7 @@ extension StudyBlock {
   }
 
   /// The row's one short line on Today's list: the subject, or what a challenge or review is.
-  var label: String? {
+  func label(document: ExamDocument) -> String? {
     if waitReason != nil {
       return String(
         localized: "After today's lessons", table: "Today",
@@ -214,7 +215,8 @@ extension StudyBlock {
           comment: "A practice block's questions")
     }
 
-    return subject
+    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) }
+      ?? subject
   }
 }
 

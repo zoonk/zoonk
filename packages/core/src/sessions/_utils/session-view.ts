@@ -7,6 +7,7 @@ import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
+import { type BlockSubject } from "./block-subjects";
 import { toDayBlockView } from "./day-block-view";
 import { inDayOrder } from "./day-order";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
@@ -34,7 +35,7 @@ export function toStudyBlockViews({
   blockedTestOutChapters?: ReadonlySet<string>;
   oftenTestedSkillIds?: ReadonlySet<string>;
   preparing: ReadonlySet<number>;
-  subjects?: ReadonlyMap<number, string>;
+  subjects?: ReadonlyMap<number, BlockSubject>;
 }): StudyBlockView[] {
   const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
 
@@ -47,7 +48,7 @@ export function toStudyBlockViews({
         blocks,
         oftenTestedSkillIds,
         preparing: preparing.has(block.position),
-        subject: subjects?.get(block.position),
+        ...subjects?.get(block.position),
       }),
     ),
   );

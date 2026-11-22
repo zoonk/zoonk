@@ -35,19 +35,25 @@ export function checkDayOneOpensWithGaps(context: RuleContext): RuleViolation[] 
   const gaps = new Set(learner?.gapAreas);
   const knownAreas = new Set(learner?.knownAreas);
 
-  if (event.kind !== "planCreated" || (gaps.size === 0 && knownAreas.size === 0)) {
+  if (event.kind !== "planCreated") {
     return [];
   }
 
   const areaOf = getAreaOf(after.graph);
   const day = getPlanStart({ plan: after, today });
 
-  const dayOne = after.items
-    .filter((item) => isTodoLesson(item) && isDueOn({ day, item }))
-    .map((item) => areaOf(item.skillId) ?? "");
+  const extraIds = new Set(
+    after.graph.skills.filter((skill) => skill.extra).map((skill) => skill.skillId),
+  );
+
+  const lessons = after.items.filter((item) => isTodoLesson(item) && isDueOn({ day, item }));
+  const isExtra = (item: RuleItem) => extraIds.has(item.skillId ?? "");
+  const dayOne = lessons.filter((item) => !isExtra(item)).map((item) => areaOf(item.skillId) ?? "");
+  const firstExtra = lessons.findIndex((item) => isExtra(item));
+  const lastOrdinary = lessons.findLastIndex((item) => !isExtra(item));
 
   const gapsPlanned = after.items.some(
-    (item) => isTodoLesson(item) && gaps.has(areaOf(item.skillId) ?? ""),
+    (item) => isTodoLesson(item) && !isExtra(item) && gaps.has(areaOf(item.skillId) ?? ""),
   );
 
   const noticeAreas = new Set(
@@ -67,6 +73,7 @@ export function checkDayOneOpensWithGaps(context: RuleContext): RuleViolation[] 
       dayOne.length > 0 &&
       !gaps.has(dayOne[0] ?? "") && { first: dayOne[0], gaps: [...gaps] },
     firstKnown !== -1 && firstKnown < lastUnknown && { knownBefore: dayOne[firstKnown] },
+    firstExtra !== -1 && firstExtra < lastOrdinary && { extraBeforeNotice: true },
   ]
     .filter((problem) => problem !== false)
     .map((details) => ({

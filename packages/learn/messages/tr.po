@@ -2403,6 +2403,7 @@ msgstr "{number, number}. ünite"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -10451,11 +10452,6 @@ msgid "Adjust your plan"
 msgstr "Planını ayarla"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, other {# ders daha için zamanın var}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10465,6 +10461,17 @@ msgstr "Planın güncellendi."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "Plana ekle"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, other {# ders daha için zamanın var}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "Sınav stratejisini de çalışmak ister misin?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10811,6 +10818,7 @@ msgid "Needed to practice"
 msgstr "Pratik yapmak için gerekli"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "İsteğe bağlı"
@@ -10881,34 +10889,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, other {# ön bilgi}} · sadece ilk dersler · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {Planını resmî sınav ilanına göre düzenleyip sınav tarihini {date} civarına alalım mı?} other {Planını resmî sınav kılavuzuna göre düzenleyip sınav tarihini {date} civarına alalım mı?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {Planını resmî sınav ilanına göre düzenleyip sınav tarihini {date} olarak ayarlayalım mı?} other {Planını resmî sınav kılavuzuna göre düzenleyip sınav tarihini {date} olarak ayarlayalım mı?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {Resmî sınav ilanına göre ilerleyelim mi?} other {Resmî sınav kılavuzuna göre ilerleyelim mi?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "Sınav tarihini {date} civarına alalım mı?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {Sınav tarihini {date} olarak değiştirelim mi?} goal {Bitiş tarihini {date} olarak değiştirelim mi?} other {Tarihini {date} olarak değiştirelim mi?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11019,6 +11003,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "Bu haftaki meydan okumayı {date} tarihine alalım mı?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {Sınav tarihini {date} olarak değiştirelim mi?} goal {Bitiş tarihini {date} olarak değiştirelim mi?} other {Tarihini {date} olarak değiştirelim mi?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Bitiş tarihi olmadan çalışalım mı?"
@@ -11077,6 +11066,11 @@ msgstr "Ön bilgi tercihlerini değiştirelim mi?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "{level} düzeyine kadar çalışalım mı?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "Sınav stratejisini planından çıkaralım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11250,6 +11244,16 @@ msgstr "Planına dersler eklendi."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "Planındaki aşamaların tarihleri değişti."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "Sınav stratejisi planına eklendi."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "Sınav stratejisi planında yok."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12945,12 +12949,6 @@ msgid "From your material"
 msgstr "Materyalinden"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "Planında da var"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Materyalindeki konular"
@@ -13079,6 +13077,12 @@ msgstr "Planında yok · çalışma süren yetmiyor"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "Henüz hazır değil"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {Resmi ilanda yok} other {Resmi kılavuzda yok}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13276,6 +13280,7 @@ msgid "Okay. Your time stays the same."
 msgstr "Tamam. Çalışma süren aynı kalıyor."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Plan değişikliği"
@@ -13321,6 +13326,7 @@ msgid "Move it"
 msgstr "Değiştir"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Tamam"
@@ -13338,6 +13344,7 @@ msgid "Your study time stays the same."
 msgstr "Çalışma saatin aynı kalıyor."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13369,15 +13376,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "{name} ile pratik yap"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "Benimkini koru"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "Planından çıkarılanlar: {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "Sonraki öneriye geç"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {Planın artık resmi ilana göre ilerliyor} other {Planın artık resmi kılavuza göre ilerliyor}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "Benimkini koru"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"

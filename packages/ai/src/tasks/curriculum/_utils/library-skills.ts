@@ -150,7 +150,7 @@ export function applyLibraryReuse({
   const byId = new Map(library.map((skill) => [skill.id, skill]));
 
   const reused = skills.map((skill) => {
-    const found = findReused({ byRef, reuse: skill.reuse });
+    const found = findReused({ byRef, reuse: skill.extra ? null : skill.reuse });
     return found ? toReusedSkill({ library: found, skill }) : skill;
   });
 

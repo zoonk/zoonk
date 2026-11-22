@@ -185,6 +185,9 @@ struct PlanEffect: Decodable, Equatable, Sendable {
   let lessonsLeftOut: [String]?
   let lessonsRemoved: Int
   let nextMock: Move<String>?
+  /// For `noticeChanged`: the subjects and topics that left when the plan followed the official
+  /// guide, in the old plan's order.
+  var noticeRemoved: [String]?
   /// For moving the phase dates: outcome skills that moving them fits in, by name.
   var outcomesAdded: [String]?
   let phaseEnds: [NamedMove]?

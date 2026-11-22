@@ -75,6 +75,7 @@ export function toDayBlockView({
   oftenTestedSkillIds = NO_SKILLS,
   preparing = false,
   subject = null,
+  subjectExtra,
 }: {
   answeredItemIds: ReadonlySet<string>;
   block: DayBlockInput;
@@ -84,6 +85,7 @@ export function toDayBlockView({
   oftenTestedSkillIds?: ReadonlySet<string>;
   preparing?: boolean;
   subject?: string | null;
+  subjectExtra?: DayBlockView["subjectExtra"];
 }): DayBlockView {
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
@@ -131,6 +133,7 @@ export function toDayBlockView({
     screen: getBlockScreen(block),
     status: block.status,
     subject,
+    subjectExtra,
     title: payload.title ?? payload.capsules[0]?.title ?? null,
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),

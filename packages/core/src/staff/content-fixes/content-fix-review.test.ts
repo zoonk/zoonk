@@ -105,7 +105,12 @@ describe("content fix regressions", () => {
 
   it("updates and reverts an exam graph without pinning its timestamp", async () => {
     const course = await courseFixture({ isPublished: true });
-    const skill = await skillFixture();
+
+    const [skill, strategy] = await Promise.all([
+      skillFixture(),
+      skillFixture({ name: "Plan time during an exam" }),
+    ]);
+
     const blueprint = await examBlueprintFixture({ language: "en" });
 
     const graph = {
@@ -137,13 +142,26 @@ describe("content fix regressions", () => {
       },
     });
 
-    const fixed = { ...graph, skills: graph.skills.map((entry) => ({ ...entry, lessons: 2 })) };
+    const extraSkills = graph.skills.map((entry) => ({
+      ...entry,
+      area: "Exam strategy",
+      name: strategy.name,
+      skillId: strategy.id,
+    }));
+
+    const fixed = {
+      ...graph,
+      extraSkills,
+      skills: graph.skills.map((entry) => ({ ...entry, lessons: 2 })),
+    };
 
     const { decided, fix } = await apply([
       { id: row.id, model: "ExamSkillGraph", setGraph: { graph: fixed } },
     ]);
 
     const stored = await prisma.examSkillGraph.findUniqueOrThrow({ where: { id: row.id } });
+
+    expect(stored.graph).toMatchObject({ extraSkills });
 
     await signInProposer();
     const inverse = await revertFix({ fixId: fix.id, reason: "Restore graph." });

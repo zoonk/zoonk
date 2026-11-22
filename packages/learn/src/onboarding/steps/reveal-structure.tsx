@@ -210,7 +210,11 @@ function RevealSubjects({ syllabus }: { syllabus: SyllabusView }) {
       <div className={LIST_GROUP_CLASS}>
         {groups.map((group, index) => (
           <div key={group.extra ? "extra" : (group.name ?? "all")}>
-            <SubjectGroupHeading group={group} id={`${titleId}-group-${index}`} />
+            <SubjectGroupHeading
+              group={group}
+              id={`${titleId}-group-${index}`}
+              syllabus={syllabus}
+            />
 
             <ul
               aria-labelledby={group.extra || group.name ? `${titleId}-group-${index}` : titleId}

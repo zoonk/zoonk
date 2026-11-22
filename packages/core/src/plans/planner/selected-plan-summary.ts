@@ -1,50 +1,15 @@
 import { createHash } from "node:crypto";
-import { type SelectedCoverage, type SelectedSummary } from "../_utils/selected-summary-contract";
+import { type SelectedSummary } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
 import { estimateDailyNeed, estimateFinish, readFixedDays } from "./daily-need";
 import { mayMovePhaseDates } from "./phase-dates-move";
 import { getBaseChoices, getDefaultBaseChoice } from "./plan-bases";
 import { daysBetween, toIsoDate } from "./plan-calendar";
+import { getCoverageDeadline, getSelectedCoverage } from "./plan-coverage";
 import { PHASE_WORK_KINDS } from "./plan-item-rules";
-import { type ExamSubjectShare, getCoverage } from "./selected-coverage";
+import { type ExamSubjectShare } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
-
-export function getCoverageDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput }) {
-  const { targetDate } = input.goal;
-
-  if (!targetDate) {
-    return null;
-  }
-
-  const finalStretch = built.phases.find((phase) => phase.kind === "finalStretch");
-  return finalStretch?.startDate ?? toIsoDate(targetDate);
-}
-
-export function getSelectedCoverage({
-  built,
-  examSubjects,
-  input,
-}: {
-  built: BuiltPlan;
-  examSubjects: readonly ExamSubjectShare[] | null;
-  input: BuildPlanInput;
-}): SelectedCoverage | null {
-  const deadline = getCoverageDeadline({ built, input });
-  const { targetDate } = input.goal;
-
-  return deadline && targetDate
-    ? getCoverage({
-        built,
-        deadline,
-        examSubjects,
-        input,
-        requirement: readRequirement({ built, input }),
-        settled: listSettled(input),
-        targetDate: toIsoDate(targetDate),
-      })
-    : null;
-}
 
 function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
   const bases = input.bases ?? [];

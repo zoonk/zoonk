@@ -28,9 +28,25 @@ import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
 import { SubjectWrittenPractice } from "./subject-written-practice";
 import { TopicFrequencySource } from "./syllabus-notes";
+import { useExtraLabel } from "./use-extra-label";
 import { getSubjectBar, getSubjectShare, useKnownLine } from "./use-subject-progress";
 
 const TOPICS_TITLE_ID = "subject-topics-title";
+
+export type SubjectSyllabus = Pick<
+  SyllabusView,
+  | "examDocument"
+  | "fromMaterial"
+  | "hasNotice"
+  | "questionsSource"
+  | "sharedExams"
+  | "writtenPractice"
+>;
+
+type OriginSyllabus = Pick<
+  SubjectSyllabus,
+  "examDocument" | "fromMaterial" | "hasNotice" | "sharedExams"
+>;
 
 type SubjectHrefs = {
   adjust: string;
@@ -40,29 +56,28 @@ type SubjectHrefs = {
 };
 
 /**
- * Where a subject comes from, when its name doesn't say: the exam area it belongs to, the
- * learner's own material, or the plan's lessons beyond the exam's guide.
+ * Where a subject comes from, when its name doesn't say: study the exam doesn't test, the exam
+ * area it belongs to, or the learner's own material.
  */
 function useOriginFact({
-  fromMaterial,
-  kind,
   subject,
+  syllabus,
 }: {
-  fromMaterial: boolean;
-  kind: SyllabusView["kind"];
   subject: SyllabusSubject;
+  syllabus: OriginSyllabus;
 }): string | null {
   const t = useExtracted();
+  const extraLabel = useExtraLabel();
+
+  if (subject.extra) {
+    return extraLabel({ document: syllabus.examDocument, hasNotice: Boolean(syllabus.hasNotice) });
+  }
 
   if (subject.group) {
     return subject.group;
   }
 
-  if (subject.source === "notice") {
-    return fromMaterial ? t("From your material") : null;
-  }
-
-  return kind === "notice" ? t("Also in your plan") : null;
+  return subject.source === "notice" && syllabus.fromMaterial ? t("From your material") : null;
 }
 
 /** A subject's weight when the exam gives no question count, which Details shows otherwise. */
@@ -80,21 +95,17 @@ function useShareFact(subject: SyllabusSubject): string | null {
 }
 
 function SubjectFacts({
-  fromMaterial,
-  kind,
-  sharedExams,
   subject,
+  syllabus,
 }: {
-  fromMaterial: boolean;
-  kind: SyllabusView["kind"];
-  sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
+  syllabus: OriginSyllabus;
 }) {
   const doneShare = useDoneShare();
-  const origin = useOriginFact({ fromMaterial, kind, subject });
+  const origin = useOriginFact({ subject, syllabus });
   const share = useShareFact(subject);
   const known = useKnownLine()(subject);
-  const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
+  const alsoIn = useAlsoIn({ sharedExams: syllabus.sharedExams, sharedWith: subject.sharedWith });
   const inLessons = !subject.notPlannedReason && subject.preparation === null;
 
   // Topics and chapters count themselves over their lists, and Details names the questions.
@@ -142,26 +153,17 @@ function SubjectBottomBar({
 }
 
 function SubjectHeader({
-  fromMaterial,
-  kind,
-  sharedExams,
   subject,
+  syllabus,
 }: {
-  fromMaterial: boolean;
-  kind: SyllabusView["kind"];
-  sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
+  syllabus: OriginSyllabus;
 }) {
   return (
     <DetailHero>
       <DetailHeroText>
         <DetailTitle>{subject.shortName ?? subject.name}</DetailTitle>
-        <SubjectFacts
-          fromMaterial={fromMaterial}
-          kind={kind}
-          sharedExams={sharedExams}
-          subject={subject}
-        />
+        <SubjectFacts subject={subject} syllabus={syllabus} />
       </DetailHeroText>
     </DetailHero>
   );
@@ -216,10 +218,7 @@ export function SubjectScreen({
   ask?: React.ReactNode;
   hrefs: SubjectHrefs;
   subject: SyllabusSubject;
-  syllabus: Pick<
-    SyllabusView,
-    "fromMaterial" | "kind" | "questionsSource" | "sharedExams" | "writtenPractice"
-  >;
+  syllabus: SubjectSyllabus;
 }) {
   const t = useExtracted();
 
@@ -240,12 +239,7 @@ export function SubjectScreen({
       data-slot="subject"
     >
       <DetailAside>
-        <SubjectHeader
-          fromMaterial={syllabus.fromMaterial}
-          kind={syllabus.kind}
-          sharedExams={syllabus.sharedExams}
-          subject={subject}
-        />
+        <SubjectHeader subject={subject} syllabus={syllabus} />
         <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />
         <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
         <SubjectWrittenPractice
