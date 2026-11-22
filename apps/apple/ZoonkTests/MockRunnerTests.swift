@@ -655,7 +655,7 @@ private struct HeldAccountAPI: AccountAPIClient {
 /// Serves one mock and stores its answers, as the API does, so opening it again shows them.
 private actor MockTransport: ClientTransport {
   private let itemIds: [String]
-  private let drafts: [MockDraft]
+  private var storedDrafts: [MockDraft]
   private let review: (allowed: Int, changed: [String])?
   private let status: String
   private let format: String
@@ -669,7 +669,7 @@ private actor MockTransport: ClientTransport {
     status: String = "running", format: String = "multipleChoice"
   ) {
     self.itemIds = itemIds
-    self.drafts = drafts
+    self.storedDrafts = drafts
     self.review = review
     self.status = status
     self.format = format
@@ -706,21 +706,21 @@ private actor MockTransport: ClientTransport {
 
     if let body {
       let data = try await Data(collecting: body, upTo: 1 << 20)
-      saved.append(try JSONDecoder().decode(MockDraft.self, from: data))
+      let draft = try JSONDecoder().decode(MockDraft.self, from: data)
+      saved.append(draft)
+
+      var stored = draft
+      stored.edit = nil
+      stored.revision = UUID().uuidString.lowercased()
+      storedDrafts.removeAll { $0.itemId == stored.itemId }
+      storedDrafts.append(stored)
     }
 
     return (HTTPResponse(status: .noContent), nil)
   }
 
   private func mockJSON() -> String {
-    var current = drafts
-
-    for draft in saved {
-      current.removeAll { $0.itemId == draft.itemId }
-      current.append(draft)
-    }
-
-    let draftsJSON = String(decoding: try! JSONEncoder().encode(current), as: UTF8.self)
+    let draftsJSON = String(decoding: try! JSONEncoder().encode(storedDrafts), as: UTF8.self)
     let changedJSON = String(
       decoding: try! JSONEncoder().encode(review?.changed ?? []), as: UTF8.self)
     let changesLeft = review.map { String($0.allowed - $0.changed.count) } ?? "null"
