@@ -231,6 +231,32 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
+  test("refuses to create any goals when an explicit allocation exhausts the shared day", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "shared-day-overflow",
+    });
+
+    const response = await apiContext.post("/v1/goals", {
+      data: {
+        dailyMinutes: 480,
+        goals: [
+          { dailyMinutes: 480, kind: "learn", language: "en", prompt: "Drawing", title: "Drawing" },
+          { kind: "learn", language: "en", prompt: "Geometry", title: "Geometry" },
+        ],
+      },
+    });
+
+    expect(response.status()).toBe(422);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "DAY_TOO_SHORT", details: { goals: 2, minutes: 485 } },
+    });
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await apiContext.dispose();
+  });
+
   test("creates goals that share the day's time and lists them with the main goal first", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,

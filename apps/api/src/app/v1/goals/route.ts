@@ -1,7 +1,7 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalWork } from "@/lib/goal-content";
-import { goalRefusedError, planErrorCodes } from "@/lib/plan-errors";
+import { dayTooShort, goalRefusedError, planErrorCodes } from "@/lib/plan-errors";
 import { readBody } from "@/lib/request-input";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
 import { type GoalRefusal } from "@zoonk/core/goals/create";
@@ -41,6 +41,10 @@ async function createGoal(request: NextRequest) {
       message: "The exam or course isn't available",
       status: httpStatus.unprocessableEntity,
     });
+  }
+
+  if (result.status === "dayTooShort") {
+    return dayTooShort(result);
   }
 
   if (result.status === "refused") {
