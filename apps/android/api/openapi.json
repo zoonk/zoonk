@@ -86062,7 +86062,7 @@
           },
           "writtenPractice": {
             "nullable": true,
-            "description": "When the exam's written tests are practiced, which the learner chooses on a written test's page (a subject whose `areas` include one of `parts`) and in the plan. Null for goals without written tests",
+            "description": "When the exam's written tests are practiced and the details of each written section. Null for goals without written tests",
             "allOf": [
               {
                 "$ref": "#/components/schemas/WrittenPractice"
@@ -86296,6 +86296,10 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
+          },
+          "writtenPart": {
+            "description": "Written section name in writtenPractice",
+            "type": "string"
           }
         },
         "required": [

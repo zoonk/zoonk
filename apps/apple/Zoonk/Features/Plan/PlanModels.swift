@@ -219,9 +219,9 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let parts: [String]
     let subjects: [Subject]?
 
-    /// The written part a subject belongs to, by its area or notice group.
     func subject(for subject: SyllabusSubject) -> Subject? {
-      subjects?.first { written in subject.areas.contains(written.points.name) }
+      subjects?.first { $0.points.name == subject.writtenPart }
+        ?? subjects?.first { written in subject.areas.contains(written.points.name) }
         ?? subjects?.first { $0.points.name == subject.group }
     }
   }
@@ -806,6 +806,7 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let topics: [Topic]
   let topicsKnown: Int?
   let topicsStudied: Int?
+  let writtenPart: String?
 
   var id: String { key }
 

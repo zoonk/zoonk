@@ -39,10 +39,7 @@ export function findWrittenSubject({
   practice: WrittenPractice | null;
   subject: SyllabusSubject;
 }): WrittenSubject | null {
-  return (
-    practice?.subjects?.find(({ points }) => subject.areas.some((area) => area === points.name)) ??
-    null
-  );
+  return practice?.subjects?.find(({ points }) => subject.writtenPart === points.name) ?? null;
 }
 
 /** One small bar per answer, oldest first, the latest in full color. */

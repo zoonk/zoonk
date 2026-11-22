@@ -30,6 +30,22 @@ export function listAreas(skills: readonly SyllabusSkill[]): string[] {
   return [...new Set(skills.map((skill) => skill.area).filter((area) => area.length > 0))];
 }
 
+export function subjectNamesSection(
+  { group, name }: Pick<NoticeSubject, "group" | "name">,
+  section: string,
+): boolean {
+  return namesMatch(section, name) || (group !== null && namesMatch(section, group));
+}
+
+export function findWrittenPart(draft: SubjectDraft, practice: SyllabusInput["writtenPractice"]) {
+  const parts = practice?.subjects?.map(({ points }) => points.name) ?? [];
+
+  const named =
+    draft.source === "notice" ? parts.find((part) => subjectNamesSection(draft, part)) : undefined;
+
+  return named ?? parts.find((part) => draft.areas.includes(part));
+}
+
 function toModule(area: string): SubjectDraft {
   return {
     areas: [area],

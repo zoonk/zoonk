@@ -48,11 +48,12 @@ import com.zoonk.api.models.WrittenPracticeSubjectsInnerAnswersInner
 import kotlinx.datetime.toJavaLocalDate
 import java.util.UUID
 
-/** The written part a subject's page is about: the subject whose areas name it. */
 internal fun writtenSubject(
     practice: WrittenPractice?,
     subject: SyllabusSubject,
-): WrittenPracticeSubjectsInner? = practice?.subjects?.firstOrNull { written -> subject.areas.any { it == written.points.name } }
+): WrittenPracticeSubjectsInner? =
+    practice?.subjects?.firstOrNull { it.points.name == subject.writtenPart }
+        ?: practice?.subjects?.firstOrNull { it.points.name in subject.areas }
 
 /** A written part's page: where the learner stands in points, how the answers move, and each answer. */
 internal fun LazyListScope.subjectWritten(

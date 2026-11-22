@@ -1,6 +1,5 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { namesMatch } from "../../../exams/_utils/name-match";
 import { type ExamPicks, toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamPicks } from "../../../exams/choices/load-exam-choices";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
@@ -16,6 +15,7 @@ import { getTopicHeadings } from "../../../library/exams/topic-groups";
 import { readCourseWeights } from "../../../plans/planner/course-weights";
 import { type SyllabusView } from "../syllabus-contract";
 import { type NoticeSubject, type SyllabusInput } from "./syllabus-input";
+import { subjectNamesSection } from "./syllabus-subjects";
 
 function toCourseWeights(details: Goal["details"] | undefined): SyllabusView["courseWeights"] {
   const weights = readCourseWeights(details);
@@ -38,12 +38,11 @@ function getWrittenTasks({
   structure: ExamStructure;
   subject: ExamStructure["subjects"][number];
 }): string[] {
-  const names = [subject.name, subject.group].filter((name) => name !== undefined && name !== null);
-
   return (structure.mock?.sections ?? [])
     .filter(
       (section) =>
-        section.kind === "written" && names.some((name) => namesMatch(section.name, name)),
+        section.kind === "written" &&
+        subjectNamesSection({ group: subject.group ?? null, name: subject.name }, section.name),
     )
     .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
 }
