@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -85,15 +86,21 @@ fun PlacementTestScreen(
     }
 }
 
-/** Whether a language plan's test is past its level check, walking the course's topics; null until the plan is read. */
+/**
+ * Whether a language plan's test is past its level check, walking the course's topics; null until the plan is read.
+ * The walk's last answer closes its attempt, and the walk stays so its result shows.
+ */
 @Composable
 private fun topicWalk(
     plans: PlanStore,
     goalId: UUID,
 ): Boolean? {
     val read by plans.plan[goalId].collectShown()
+    val walked = remember(goalId) { mutableStateOf(false) }
     val plan = read.value?.plan ?: return null
-    return (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null
+    val walking = (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null
+    if (walking && !walked.value) SideEffect { walked.value = true }
+    return walking || walked.value
 }
 
 /**
