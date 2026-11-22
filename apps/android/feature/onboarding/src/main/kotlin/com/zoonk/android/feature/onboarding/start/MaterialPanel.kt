@@ -22,6 +22,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -42,6 +43,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -302,33 +304,66 @@ private fun PanelCard(content: @Composable () -> Unit) {
     }
 }
 
-/** Removing material takes its own button, never a tap on its name. */
+/** Removing material takes its own button, never a tap on its name; material that can't be read anymore ([unreadable]) is marked. */
 @Composable
 internal fun AttachedChips(
     items: List<AttachedSource>,
+    unreadable: Set<String>,
     onRemove: (String) -> Unit,
 ) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items.forEach { item ->
-            val title = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
-            Surface(shape = RoundedCornerShape(ZoonkRadius.xxl), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painterResource(R.drawable.ic_description), contentDescription = null, modifier = Modifier.size(18.dp))
-                    Text(
-                        title,
-                        modifier = Modifier.padding(start = 6.dp).widthIn(max = 240.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    IconButton(onClick = { onRemove(item.id) }) {
-                        Icon(
-                            painterResource(R.drawable.ic_close),
-                            contentDescription = stringResource(R.string.onboarding_remove_material, title),
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                }
+    val marked = items.filter { it.id in unreadable }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items.forEach { item -> AttachedChip(item, item in marked, onRemove) }
+        }
+        if (marked.isNotEmpty()) {
+            Text(
+                marked.singleOrNull()?.let { stringResource(R.string.onboarding_material_unreadable_one, materialTitle(it)) }
+                    ?: stringResource(R.string.onboarding_material_unreadable_some),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun materialTitle(item: AttachedSource) = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
+
+@Composable
+private fun AttachedChip(
+    item: AttachedSource,
+    unreadable: Boolean,
+    onRemove: (String) -> Unit,
+) {
+    val title = materialTitle(item)
+    val state = stringResource(R.string.onboarding_material_unreadable_state)
+    Surface(shape = RoundedCornerShape(ZoonkRadius.xxl), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+        Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = if (unreadable) MaterialTheme.colorScheme.error else LocalContentColor.current,
+            )
+            Text(
+                title,
+                modifier =
+                    Modifier
+                        .padding(start = 6.dp)
+                        .widthIn(max = 240.dp)
+                        .semantics { if (unreadable) stateDescription = state },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            IconButton(onClick = { onRemove(item.id) }) {
+                Icon(
+                    painterResource(R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.onboarding_remove_material, title),
+                    modifier = Modifier.size(18.dp),
+                )
             }
         }
     }

@@ -123,7 +123,7 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
             }
         }
 
-        Refusal.SlowDown, Refusal.Unsupported, Refusal.AlreadyRead, is Refusal.DayTooShort -> {
+        Refusal.SlowDown, Refusal.Unsupported, Refusal.AlreadyRead, is Refusal.DayTooShort, is Refusal.MaterialUnavailable -> {
             GoalLimitReason.SlowDown
         }
     }
@@ -149,7 +149,7 @@ fun WriteOutcome<*>.startError(): GoalError =
                     GoalError.OneMoment
                 }
 
-                Refusal.Unsupported, Refusal.AlreadyRead, is Refusal.DayTooShort -> {
+                Refusal.Unsupported, Refusal.AlreadyRead, is Refusal.DayTooShort, is Refusal.MaterialUnavailable -> {
                     GoalError.CouldNotRead
                 }
             }

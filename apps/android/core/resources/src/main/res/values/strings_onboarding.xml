@@ -104,6 +104,10 @@
     <string name="onboarding_row_minutes_a_day">%1$s a day</string>
     <string name="onboarding_row_material">Your material</string>
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
+    <!-- In place of the note above when some material the goal was sent with can't be read anymore. -->
+    <string name="onboarding_row_material_missing_note">Some of your material can\'t be read anymore, so your plan won\'t follow it.</string>
+    <!-- In place of the note above when none of the material the goal was sent with can be read anymore. -->
+    <string name="onboarding_row_material_all_missing_note">Your material can\'t be read anymore, so your plan won\'t follow it.</string>
     <string name="onboarding_row_exam_date">Exam date</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Exam dates</string>
@@ -169,6 +173,12 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">We already read this document. Upload a different one.</string>
     <string name="onboarding_attach_failed">We couldn\'t add that. Try again in a moment.</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">We can\'t read “%1$s” anymore. Remove it and add it again.</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">We can\'t read some of your files anymore. Remove them and add them again.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">Can\'t be read</string>
     <string name="onboarding_intent_title">What do you want to do?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Prepare for an exam</string>

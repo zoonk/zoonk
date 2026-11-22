@@ -75,6 +75,9 @@ import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.putJsonArray
 import okhttp3.OkHttpClient
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -180,6 +183,89 @@ class OnboardingScreenshots {
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
         compose.waitForIdle()
         write("start-material-full-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** The card says when some of the goal's material can't be read anymore, with what's left of it or with none. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialMissing() = captureMaterialMissing(listOf("Mitosis slides.pptx"), "understood-material-missing-phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialAllMissing() = captureMaterialMissing(emptyList(), "understood-material-missing-all-phone-screen")
+
+    /** Material that can't be read anymore sends the learner back to their start, with what to add again marked. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialUnreadable() = captureUnreadable(1, "start-material-unreadable-phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialSeveralUnreadable() = captureUnreadable(2, "start-material-unreadable-several-phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialUnreadableDarkMoreContrast() =
+        captureUnreadable(1, "start-material-unreadable-phone-screen-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialUnreadableAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureUnreadable(1, "start-material-unreadable-phone-font200")
+    }
+
+    private fun captureMaterialMissing(
+        titles: List<String>,
+        name: String,
+    ) {
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test on Friday").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        materialMissing = true,
+                        sources = titles.map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) },
+                    )
+            }
+        compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    private fun captureUnreadable(
+        unreadable: Int,
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val sources =
+            listOf("Cell cycle notes.pdf", "Mitosis slides.pptx", "Chapter 12: Meiosis")
+                .map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) }
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test on Friday").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        sources = sources,
+                    )
+            }
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } }
+        }
+        compose.waitForIdle()
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+        api.refusal =
+            ApiException(
+                ApiError.Unavailable,
+                "MATERIAL_UNAVAILABLE",
+                status = 422,
+                details = buildJsonObject { putJsonArray("sourceIds") { sources.take(unreadable).forEach { add(it.id.toString()) } } },
+            )
+        compose.onNodeWithText("Build my plan").performClick()
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     @Test
