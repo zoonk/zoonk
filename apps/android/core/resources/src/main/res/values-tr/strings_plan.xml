@@ -264,7 +264,6 @@
   "plan_far_writing": "f1c8814363d4c80bf9929e732215dfe0d5e0895c79c49a16f073092de1b28b09",
   "plan_find_building": "8b65c6815d3bf4d8a71990d118db52a019fc3a5ec7645ce1d186edf1023d43f3",
   "plan_find_date": "47b918b2c6b24b975ba59513afd647969a4b9cd686845ba07f26d782ca244115",
-  "plan_find_fitting_date": "e21e1ab8a087b8b7329d4c16dd4663358992d06c0f81b70cd8af25c6ddc983c3",
   "plan_find_no_date": "fec68c0a38e3e023986b312bbd4eeb56cb971ffc1b5ce29ef7e73ed2ad11b3cd",
   "plan_finish": "5e2e44df651670953cf390ad3846c4c35305da4050537791e532f12c2481c5cd",
   "plan_finish_after_exam": "82d1a83213b7c6eaa84b847648053904ea25891d3c5c2603deceb9c04b7aac55",
@@ -1094,8 +1093,6 @@
     <string name="plan_time_covers_everything_by_month">Ayırdığın süreyle her şeyi %1$s itibarıyla bitirebilirsin</string>
     <string name="plan_try_again">Tekrar dene</string>
     <string name="plan_find_building">Planını hâlâ hazırlıyoruz. Birazdan tekrar dene.</string>
-    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
-    <string name="plan_find_fitting_date">Günde %1$s ayırarak planındaki tüm konuları %2$s tarihine kadar çalışabilirsin.</string>
     <string name="plan_find_no_date">Tüm konuları bitirebileceğin bir tarih bulamadık.</string>
     <string name="plan_move_date">Her şeye yetişmek için tarihini değiştir</string>
     <!-- %1$s is a date, such as "November 8". -->

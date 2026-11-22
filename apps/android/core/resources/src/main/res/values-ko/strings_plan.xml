@@ -264,7 +264,6 @@
   "plan_far_writing": "d4513ff3fdd07d65496b4d7a60f9e771a04c1a350af4ca67d00dcb1e415839fa",
   "plan_find_building": "14b577b0965045c75a4c7b70931bbfdac032fb4ca34c22eca923890c6e0ed3f8",
   "plan_find_date": "18ba631da435f3eafe1d0f8dc58e359c6a21a40222397b00f8c6afa9d6ba7ba5",
-  "plan_find_fitting_date": "146eaf09ec7669d9313cc1bbe8b2711d9197e6d964a2a42f3dcfc5ccb38f91f5",
   "plan_find_no_date": "c05ed34fed97b4fc9149d840995afa91b36149b3e541e32249c037d64f6c622e",
   "plan_finish": "839bfb62faea97f573b731af3d945fae176731803e4def6a4d57c2f1e2e54def",
   "plan_finish_after_exam": "d6cf0b7713b73a211debe9b421ad1df5f97b7d3c0d5dec4103009ae8de7b2f75",
@@ -1043,8 +1042,6 @@
     <string name="plan_time_covers_everything_by_month">설정한 학습 시간으로 %1$s까지 모두 공부할 수 있어요</string>
     <string name="plan_try_again">다시 시도</string>
     <string name="plan_find_building">아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요.</string>
-    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
-    <string name="plan_find_fitting_date">하루 %1$s씩 공부하면 %2$s까지 계획의 모든 내용을 마칠 수 있어요.</string>
     <string name="plan_find_no_date">모든 내용을 마칠 수 있는 날짜를 찾지 못했어요.</string>
     <string name="plan_move_date">전체 내용을 공부할 수 있게 날짜 변경하기</string>
     <!-- %1$s is a date, such as "November 8". -->

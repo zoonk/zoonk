@@ -264,7 +264,6 @@
   "plan_far_writing": "85426f233259684a7e71a5b0ea2997b7d26026cbed177ff401696501e7894a62",
   "plan_find_building": "5d5471d4e2df03933cba6ccb1ff04739242b373cf1692d40bc1d35183b28dc89",
   "plan_find_date": "4c2fa3d85a65a1207c0f1887b03147aaea2928fb29d1a36eb246b60b5030d037",
-  "plan_find_fitting_date": "a0c7073126cdee861c21e176222925fa332ce33198c23c7dbde1bafb6d07fde6",
   "plan_find_no_date": "729e0c17d2cf78ed5086b5212b9ccb6289b2dc1706253c39fa950339e088da67",
   "plan_finish": "95121897111ce8c09c0931c1b810c29938b99852d92d14a8062c50d72917a218",
   "plan_finish_after_exam": "1a48744a6a091a5f1c83a05b93779a9e8417c10fbb2dec0495e385411c6ba172",
@@ -1145,8 +1144,6 @@
     <string name="plan_time_covers_everything_by_month">Con tu tiempo de estudio, cubres todo para %1$s</string>
     <string name="plan_try_again">Intentar de nuevo</string>
     <string name="plan_find_building">Aún estamos preparando tu plan. Inténtalo de nuevo en un momento.</string>
-    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
-    <string name="plan_find_fitting_date">Con %1$s al día, tu plan cubre todo para el %2$s.</string>
     <string name="plan_find_no_date">No pudimos encontrar una fecha que permita cubrir todo.</string>
     <string name="plan_move_date">Cambiar tu fecha para cubrir todo</string>
     <!-- %1$s is a date, such as "November 8". -->

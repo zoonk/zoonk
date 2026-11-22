@@ -29,7 +29,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFeasibility
 import kotlinx.datetime.toJavaLocalDate
@@ -56,18 +55,6 @@ internal fun goalDate(
     today: LocalDate,
     style: DateStyle = DateStyle.Long,
 ): String = formatDate(date, currentLocale(), if (namedMonth) DateStyle.Month else style, today)
-
-@Composable
-internal fun fittingDateText(
-    dailyMinutes: Int,
-    fittingDate: LocalDate,
-    today: LocalDate,
-): String =
-    stringResource(
-        R.string.plan_find_fitting_date,
-        formatMinutes(dailyMinutes, currentLocale()),
-        formatDate(fittingDate, currentLocale(), DateStyle.Long, today),
-    )
 
 /**
  * Main's `DailyCoverage`, under the time a day: the time question's whole answer for the plan's own
@@ -102,47 +89,26 @@ internal fun DailyCoverage(
             hasDays = true,
             minutes = minutes,
         )
-    val fittingDate = found?.fittingDate?.takeIf { !page.isExam && !feasibility.fits }
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     Box {
         Column(Modifier.hiddenIf(pending), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (plan.fitOffer?.fits == true) {
-                Text(
-                    text =
-                        stringResource(
-                            if (date.namedMonth) R.string.plan_time_covers_everything_by_month else R.string.plan_time_covers_everything_by,
-                            goalDateText(date, page.today),
-                        ),
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = muted,
-                )
-            } else {
-                TimeAnswer(
-                    date = date,
-                    exam = page.isExam,
-                    line = line,
-                    minutes = minutes,
-                    // Asked as the editor opens, so a search not answered yet is being found.
-                    finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
-                    offer = timeOffer(line, minutes),
-                    onRetry = { edits.findTimeToCover(plan, null) },
-                    onUseOffer = {
-                        onUseTime(it)
-                        // The button goes once its time is the plan's, so the keyboard waits on the picker.
-                        focus.pickedTime.requestFocus()
-                    },
-                    today = page.today,
-                )
-            }
-            fittingDate?.let {
-                Text(
-                    fittingDateText(plan.schedule.dailyMinutes.toInt(), it.toJavaLocalDate(), page.today),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = muted,
-                )
-            }
+            TimeAnswer(
+                date = date,
+                exam = page.isExam,
+                line = line,
+                minutes = minutes,
+                // Asked as the editor opens, so a search not answered yet is being found.
+                finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
+                offer = timeOffer(line, minutes),
+                onRetry = { edits.findTimeToCover(plan, null) },
+                onUseOffer = {
+                    onUseTime(it)
+                    // The button goes once its time is the plan's, so the keyboard waits on the picker.
+                    focus.pickedTime.requestFocus()
+                },
+                today = page.today,
+            )
             val canMove = canMoveDate(page)
             val canFocus = canChooseFocus(plan)
             if (canMove || canFocus) {

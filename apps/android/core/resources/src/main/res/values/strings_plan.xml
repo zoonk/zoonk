@@ -592,8 +592,6 @@
     <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
     <string name="plan_try_again">Try again</string>
     <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
-    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
-    <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
     <string name="plan_find_no_date">We couldn\'t find a date that covers everything.</string>
     <string name="plan_move_date">Move your date to cover everything</string>
     <!-- %1$s is a date, such as "November 8". -->
