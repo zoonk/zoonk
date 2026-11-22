@@ -5,8 +5,6 @@
   "today_adjust_your_plan": "efe71285b1c033c4a2606d44c4fb284cccefd2904c2d1a38353a70b4fdc4cba1",
   "today_already_know_chapter": "82ec9bcd044d8a833c6428c35922d45e3d2fa61c80329464e5229fc1e348514e",
   "today_behind_kept": "3cb6fb9cdd063cd88882ebef61e8adcc097bf0f16f8a98b4d9ba2bbb6d9c71f6",
-  "today_behind_lessons_exam": "63f621022eca3d0980f82bc00e380fda3b04e4f6461f0730fd19b45f1a4fcb0c",
-  "today_behind_lessons_goal": "947371193215b2f1e075b9a3430660fc1c55ca85511cd1b86e97a49f6122d2fb",
   "today_building_plan_detail": "58529fc7ae0190a46ac3d62c3b8dbb5c09f85cd2833c0ddb83a8aa6d40c58201",
   "today_building_plan_goal": "9430e4a9f9fd21013b7160da654e0553c491d019912b703f037dde45058ab9eb",
   "today_choose_focus": "c34c6c17b4dc5cce7991c5e6ae54e03e0d9cdce5246802ecb799660bcfedaa74",
@@ -51,7 +49,6 @@
   "today_more_lessons": "4946043ab171bf580faab7e6cff085babb241227414716c9a197f54dde7f31d7",
   "today_more_time_a_day": "a9ece1eed991ffa75d1a8db1a534fa41c6f1982c17cd39d5e4f2e175e2f2f374",
   "today_next_suggestion": "5479b1bcebf5f4029b6a6a306ef5b46b384c7c3ea5a4d0df0bec17670230f67b",
-  "today_not_enough_time": "785472b2d43d20f3f526ed74e21c7d402230c8ec6dcb4ef6dd3d6468e71d57b1",
   "today_not_now": "68563ba35df9dfb3f209aa543c8258b4bf0954b461bd7bdd3629b813a2d61b01",
   "today_noted": "125143307dae1ca903c1ac83bccd168778f42f3581900b1e7afb6659636761e7",
   "today_nothing_new": "e911afaf8064ac77a6cec58bb986b3d290a3ac0a8908e60d88262c86b7398e8d",
@@ -158,7 +155,6 @@
 <resources>
     <string name="today_title">Oggi</string>
     <string name="today_welcome_back_line">Che bello rivederti. Oggi c’è poco da studiare, così è facile ricominciare.</string>
-    <string name="today_not_enough_time">Non resta abbastanza tempo per tutte le tue lezioni.</string>
     <string name="today_adjust_your_plan">Adatta il tuo piano</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s tra %2$d giorno</item>
@@ -321,8 +317,6 @@
     <string name="today_plan_keep_mine">Mantieni il mio piano</string>
     <string name="today_next_suggestion">Vedi il prossimo suggerimento</string>
     <string name="today_notice_falling_behind">Modifica al piano</string>
-    <string name="today_behind_lessons_exam">Alcune lezioni non rientrano più nel tempo che resta prima dell’esame.</string>
-    <string name="today_behind_lessons_goal">Alcune lezioni non rientrano più nel tempo che resta prima della data.</string>
     <string name="today_more_time_a_day">Aggiungi tempo</string>
     <string name="today_choose_focus">Scegli su cosa concentrarti</string>
     <string name="today_study_everything">Rimuovi la data di fine</string>

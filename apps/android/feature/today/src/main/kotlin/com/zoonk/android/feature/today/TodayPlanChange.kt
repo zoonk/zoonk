@@ -202,10 +202,7 @@ private fun FallingBehindNotice(
 ) {
     val viewModel = state.viewModel
     val today = state.read.today
-    val sentence =
-        stringResource(
-            if (behind.measure == PlanChangeBehind.Measure.EXAM) R.string.today_behind_lessons_exam else R.string.today_behind_lessons_goal,
-        )
+    val sentence = stringResource(R.string.today_behind_fit_days_left)
     val kept =
         viewModel.planChangeAnswer?.takeIf {
             it.visit == state.read.noticeVisit() && it.change.id == change.id &&

@@ -327,7 +327,6 @@
   "plan_no_deadline_note": "a4c07fbf02c760e9e28c8cc77c892aa10e8e8ea94918731d74fc6785be07d6ff",
   "plan_no_goal_description": "6a9d227c639a8f9eefa25066e39163f0c121bd389d7ade58fd761fbe173f13c5",
   "plan_no_lessons_studied_yet": "241bddc9961ba93a7b34eea8e601a982a28d658c595fedcd19fdda3219044f8d",
-  "plan_no_longer_fits": "930fa8547704760d557721f6ecaaba38356d434c8ea111ab128706f7b213eb2f",
   "plan_not_in_your_plan": "929f5270df12ab90f2d9a1c85709227d55e93ecf698847e26ebb8eda3f7e53d4",
   "plan_not_now": "84e64a8b8509f1e06626138f66c2a1a354a243d6edf360dc5ccb2a5463a1909f",
   "plan_not_yet": "ff5d5c1da4878899e7fbc38e98f94e062f3fcc1336b355fa2eaaae9c425afb62",
@@ -347,8 +346,6 @@
   "plan_pace_lessons_behind": "414253a7dcc12388daf42aabf99f680dfb2ccf32d6c5f36f6ad42d1f2f4d0752",
   "plan_pace_lessons_first_today": "95aeb68237cd383c4db2f194c04893c86fa823437320c85e173237cfa2bb29a2",
   "plan_pace_more_minutes_a_day": "f8bd693da9629c6378520b055ec9270e210c24ba978724d35cca4a01a3537098",
-  "plan_pace_no_longer_fits": "4168fb29d211f1128052ffea8a9a7ee17909424ebc4fe9959d8e5ff17a34858a",
-  "plan_pace_not_enough_time": "94311246bbedaf9409eecf6f7b3e98b0de5b796b9c21ad6e1d73136c3c4e219a",
   "plan_pace_up_to_date": "952278122417a6e4ef06af8ba9f79c0428fbe55fb12e15471be6d071432ab30f",
   "plan_pace_value_paused": "627ff191eccc495fa93e6931403ded1813133712c3b4fc920ca612d98bfa0876",
   "plan_pace_win_challenge": "51cb87cc895b1422cff572fcfa51dc5ddf4c6e24111025b7a6e47ab793376ef9",
@@ -730,8 +727,6 @@
     </plurals>
     <string name="plan_pace_finished">完了</string>
     <string name="plan_pace_up_to_date">順調</string>
-    <!-- More lessons in the plan than days left before its date. -->
-    <string name="plan_pace_not_enough_time">時間が足りない</string>
     <string name="plan_pace_date_passed">期日を過ぎた</string>
     <!-- "They" are the lessons from earlier days the learner is behind on. -->
     <string name="plan_pace_lessons_first_today">「今日」では、遅れているレッスンが先に表示されます。</string>
@@ -740,7 +735,6 @@
     <string name="plan_add_time_or_later_date">毎日の学習時間を増やすか、日付を後ろにずらしてください。</string>
     <string name="plan_pace_win_challenge">すべてのレッスンが終わりました。チャレンジに勝って学習計画を完了しましょう。</string>
     <string name="plan_pace_win_challenges">すべてのレッスンが終わりました。チャレンジに勝って学習計画を完了しましょう。</string>
-    <string name="plan_pace_no_longer_fits">残りの日数よりレッスン数が多くなっています。毎日の学習時間を増やすか、日付を後ろにずらしてください。</string>
     <plurals name="plan_pace_days">
         <item quantity="other">%d日</item>
     </plurals>
@@ -1134,7 +1128,6 @@
     <string name="plan_suggestion_next">次へ</string>
     <string name="plan_suggestion_position">%1$s / %2$s</string>
     <string name="plan_goal_paused">目標「%1$s」は一時停止中です</string>
-    <string name="plan_no_longer_fits">残りの日数よりレッスン数が多い</string>
     <string name="plan_adjust">調整する</string>
     <string name="plan_go_to_today">今日</string>
     <string name="plan_suggestion">学習計画の提案</string>

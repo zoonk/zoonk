@@ -327,7 +327,6 @@
   "plan_no_deadline_note": "8759ec062355f45690d995f6a0437e2fb5f592e6eb1540feffd7403492518e4c",
   "plan_no_goal_description": "ce4e0b0aa7dc0b8e2db0c72e19f52c0cfca73770c251b59d7cd4d9b00b10954c",
   "plan_no_lessons_studied_yet": "391f36cc4e6350b70d20a983b5170a2c304faf0fe0941cc51aa212855a25c3bb",
-  "plan_no_longer_fits": "583adff66ba644a46d5596d4674a0a91eae2270d2776aaca78fa3cfc8340a11a",
   "plan_not_in_your_plan": "3308e59fa71ed111c178bee05d5e34fea6095de3ee71a290632f1c8e6210e6e6",
   "plan_not_now": "ab9b45f1c97318ce5053a4fb46d3745aa7912ca3cfedf2fe69339c1befc7ac43",
   "plan_not_yet": "39234a1ce9464579d7e0321c151147fc99268627164b10f5288fe336f8faac68",
@@ -347,8 +346,6 @@
   "plan_pace_lessons_behind": "5894ab606515681b97dac4ae1aac052dd69521e5945ddb7de28e63140c5a5454",
   "plan_pace_lessons_first_today": "3d1cbe78bbd9dc6ef0de05e3c05c4d5f9d78042e35f9bcdedc87265f24e17a82",
   "plan_pace_more_minutes_a_day": "9bdcced7edc15aef8fa962fafb9d946d58f17075ee97d83fc502ebc643d065e5",
-  "plan_pace_no_longer_fits": "079f89d0a026795d5cc61926885bffd575ab4a5aa352b1f175b0de2f3b03e8d2",
-  "plan_pace_not_enough_time": "75edcc92744bc1ec64cc53d0d4f9b873d76fed967773ce75761f06e29e5fb9d0",
   "plan_pace_up_to_date": "ceafb6782b8873ca17209c6c97e7f3e724e9e349e9f9332945f449333782df8d",
   "plan_pace_value_paused": "2d9b0885471ed0bfce490856172bacb121a5a8cf083a7ce8976d4d7d0abfea8b",
   "plan_pace_win_challenge": "514f6b4662ef5ea7e8ead946de7d235520d9962e6ffa83d8908e2dd1681baf03",
@@ -748,8 +745,6 @@
     </plurals>
     <string name="plan_pace_finished">Tamamlandı</string>
     <string name="plan_pace_up_to_date">Yolunda</string>
-    <!-- More lessons in the plan than days left before its date. -->
-    <string name="plan_pace_not_enough_time">Zaman yetersiz</string>
     <string name="plan_pace_date_passed">Hedef tarih geçti</string>
     <!-- "They" are the lessons from earlier days the learner is behind on. -->
     <string name="plan_pace_lessons_first_today">Bu dersler Bugün sayfasında en başta yer alır.</string>
@@ -758,7 +753,6 @@
     <string name="plan_add_time_or_later_date">Her gün daha uzun çalış ya da daha ileri bir tarih seç.</string>
     <string name="plan_pace_win_challenge">Tüm dersler bitti. Planını tamamlamak için meydan okumayı kazan.</string>
     <string name="plan_pace_win_challenges">Tüm dersler bitti. Planını tamamlamak için meydan okumaları kazan.</string>
-    <string name="plan_pace_no_longer_fits">Kalan gün sayısından fazla dersin var. Her gün daha uzun çalış ya da daha ileri bir tarih seç.</string>
     <plurals name="plan_pace_days">
         <item quantity="one">%d gün</item>
         <item quantity="other">%d gün</item>
@@ -1185,7 +1179,6 @@
     <string name="plan_suggestion_next">Sonrakine geç</string>
     <string name="plan_suggestion_position">%1$s / %2$s</string>
     <string name="plan_goal_paused">%1$s hedefin duraklatıldı</string>
-    <string name="plan_no_longer_fits">Kalan gün sayısından fazla ders var</string>
     <string name="plan_adjust">Ayarla</string>
     <string name="plan_go_to_today">Bugün</string>
     <string name="plan_suggestion">Plan önerisi</string>

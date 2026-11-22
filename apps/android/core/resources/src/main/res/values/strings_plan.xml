@@ -219,8 +219,8 @@
     </plurals>
     <string name="plan_pace_finished">Finished</string>
     <string name="plan_pace_up_to_date">Up to date</string>
-    <!-- More lessons in the plan than days left before its date. -->
-    <string name="plan_pace_not_enough_time">Not enough time</string>
+    <!-- The plan's status when it has more lessons than days left before its date: the learner can adjust it. -->
+    <string name="plan_pace_needs_adjusting">Needs adjusting</string>
     <string name="plan_pace_date_passed">Date passed</string>
     <!-- "They" are the lessons from earlier days the learner is behind on. -->
     <string name="plan_pace_lessons_first_today">They come first on Today.</string>
@@ -229,7 +229,8 @@
     <string name="plan_add_time_or_later_date">Study longer each day or pick a later date.</string>
     <string name="plan_pace_win_challenge">Every lesson is done. Win the challenge to finish your plan.</string>
     <string name="plan_pace_win_challenges">Every lesson is done. Win the challenges to finish your plan.</string>
-    <string name="plan_pace_no_longer_fits">You have more lessons than days left. Study longer each day or pick a later date.</string>
+    <!-- When the plan has more lessons than days left before its date. Calm and forward-looking, never "not enough time". -->
+    <string name="plan_pace_fit_time_left">Let\'s fit your plan to the time left. Study longer each day or pick a later date.</string>
     <plurals name="plan_pace_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
@@ -664,7 +665,8 @@
     <string name="plan_suggestion_next">Next</string>
     <string name="plan_suggestion_position">%1$s of %2$s</string>
     <string name="plan_goal_paused">Your %1$s goal is paused</string>
-    <string name="plan_no_longer_fits">More lessons than days left</string>
+    <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
+    <string name="plan_fit_time_left">Let\'s fit your plan to the time left</string>
     <string name="plan_adjust">Adjust</string>
     <string name="plan_go_to_today">Today</string>
     <string name="plan_suggestion">Plan suggestion</string>

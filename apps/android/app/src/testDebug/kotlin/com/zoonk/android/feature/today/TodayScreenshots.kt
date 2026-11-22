@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -542,6 +543,27 @@ class TodayScreenshots {
                             ),
                     ),
                 "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing", "state" to "waiting")),
+                "time-left" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "progress" to
+                                    buildJsonObject {
+                                        put("measure", "preparation")
+                                        put(
+                                            "status",
+                                            buildJsonObject {
+                                                put("kind", "needsAdjusting")
+                                                put("options", buildJsonArray { add(JsonPrimitive("addTime")) })
+                                            },
+                                        )
+                                        put("value", 0.42)
+                                        put("weekGain", 0.03)
+                                    },
+                            ),
+                    ),
             )
         }
 

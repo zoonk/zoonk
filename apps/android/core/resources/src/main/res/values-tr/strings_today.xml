@@ -5,8 +5,6 @@
   "today_adjust_your_plan": "8a6b992de436036fc19ec91a785f56af5137b64a428372b8de48f2e29dd7a070",
   "today_already_know_chapter": "089829427d3604f0b73e4161674f5440b2be2629f30c37dab6aa3bfb5bed6e20",
   "today_behind_kept": "9d49be3330e01372b1b4758ac6c489a379da6e58601159107043a34520958f93",
-  "today_behind_lessons_exam": "7c769d9f898a655fb3ea1b2c24087870e02518888bd87ca2890030b67876e925",
-  "today_behind_lessons_goal": "54ec2a38dbab1e46f691017d56b54eab26346fce3c1139b5f305441b777745d2",
   "today_building_plan_detail": "6e6b5dd647843e95ddcaf5c2f3727266eb5d3bbf3d2d8a52e3cb26ae820a08c5",
   "today_building_plan_goal": "2d40df567720f45a951a4b06e1292cfc3190ee3cc05ad2c9f7a19a5e212a728f",
   "today_choose_focus": "e149028297c8a18a4ae7355e053c19cf0282209f704cd1072c12b4cc9a12db70",
@@ -51,7 +49,6 @@
   "today_more_lessons": "c181cd128cfefd4ddc5f720dc02625d2ba7742cc897f8c2713e615a82f0c910e",
   "today_more_time_a_day": "ea486e0b25beddb5edb349aeeacf5544398e102da6c8c241a64bbb53a2391e90",
   "today_next_suggestion": "b02b9c24edb21d86ea9c7179d42030839c030c6ff7fdb1b5f642395d401167a6",
-  "today_not_enough_time": "078392e8e49d2ed6880ee6ab401afabe88d448a9ef439877b26065da83556f68",
   "today_not_now": "7e7c3677391e7dc46ea35f27d6f43f18a3358f89cb7e4ae0ae1ddcdbcd0460f2",
   "today_noted": "d0f09a2c379e55683c9bd7625e77434b96a2b93cd7ea43bc039abd828bb4dd89",
   "today_nothing_new": "dfb653710a863e9518e49a90d78c1fcd4096675b442b98b5b34a7dbc15f7a4b2",
@@ -158,7 +155,6 @@
 <resources>
     <string name="today_title">Bugün</string>
     <string name="today_welcome_back_line">Tekrar hoş geldin. Bugünkü çalışma kısa, bu yüzden yeniden başlamak kolay.</string>
-    <string name="today_not_enough_time">Tüm derslerini bitirmek için yeterli zaman kalmadı.</string>
     <string name="today_adjust_your_plan">Planını ayarla</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s için %2$d gün kaldı</item>
@@ -313,8 +309,6 @@
     <string name="today_plan_keep_mine">Kendi planımı koru</string>
     <string name="today_next_suggestion">Sonraki öneriye geç</string>
     <string name="today_notice_falling_behind">Plan değişikliği</string>
-    <string name="today_behind_lessons_exam">Sınavına kadar bazı derslere artık zaman yetmiyor.</string>
-    <string name="today_behind_lessons_goal">Hedef tarihine kadar bazı derslere artık zaman yetmiyor.</string>
     <string name="today_more_time_a_day">Süre ekle</string>
     <string name="today_choose_focus">Neye odaklanacağını seç</string>
     <string name="today_study_everything">Bitiş tarihini kaldır</string>

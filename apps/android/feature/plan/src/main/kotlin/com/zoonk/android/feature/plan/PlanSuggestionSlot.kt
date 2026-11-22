@@ -560,7 +560,7 @@ private fun NotEnoughTimeSuggestion(
     layout: SuggestionLayout,
     onAdjust: (PlanSection?) -> Unit,
 ) {
-    val title = stringResource(R.string.plan_no_longer_fits)
+    val title = stringResource(R.string.plan_fit_time_left)
 
     Suggestion(
         label = title,

@@ -327,7 +327,6 @@
   "plan_no_deadline_note": "0ddf291db0edb4f757dd60bcd1cd0428689d8c7f1dc9ba1bcbd7ededd7230840",
   "plan_no_goal_description": "275598c8f2ffd26aaaf6c0da6336c2b222cf3e6659bbe07a189555395df45750",
   "plan_no_lessons_studied_yet": "c597f000a0c37038c51970286f4c829d6494ad0bc794a3a05da48d13d049ef06",
-  "plan_no_longer_fits": "9904a41dcd4bd97e3f7e748b6f9898cd6517e1ae4b4003bc719aada910297105",
   "plan_not_in_your_plan": "20a7b6d4e1a63617536491b04cf18be32473e118703ae77c0d7ee51667211cff",
   "plan_not_now": "b36d5de4c61fcc76752cd6d144b952874e968b71e52e6760fc2c7fb3aa6c21b6",
   "plan_not_yet": "3f0ef141931fec72d2100faead4f88e470d379014ef9781061de8355659ada0b",
@@ -347,8 +346,6 @@
   "plan_pace_lessons_behind": "905183c3864a37552a4efe723d59393e307280b60b439e759cbd5f7640d5f3cc",
   "plan_pace_lessons_first_today": "b357a10ff59c1b2ef5c1df46fcb0dfd87ea275253a0408f60328e6451527b762",
   "plan_pace_more_minutes_a_day": "34d2df80bcb51f9bf0fa3fb82d08f96c975fd1b1ed460abe51fb8cf525a64b4e",
-  "plan_pace_no_longer_fits": "2ef6ec2d880e62a83a6a82cbf0303b8011d4806ef9ca5b9e1bd7d50af4dfb6ff",
-  "plan_pace_not_enough_time": "91f7198b5d2eff9f4076ba0cc334dbf7b99e32c00510e552ffe51050fd65e64f",
   "plan_pace_up_to_date": "af7fb386dd1b8e3e5f3d0520a56484c7c04d0cfab46fc230d2db8c3215671f0b",
   "plan_pace_value_paused": "daee3760e37b95476a41424a69dbea28fea7beda139485cf5426a6f90b916599",
   "plan_pace_win_challenge": "d0ea619eb0c4367bb39b9dbfd5b66119b74feb92dd27fad15093d4b7dc7beb89",
@@ -748,8 +745,6 @@
     </plurals>
     <string name="plan_pace_finished">Abgeschlossen</string>
     <string name="plan_pace_up_to_date">Im Zeitplan</string>
-    <!-- More lessons in the plan than days left before its date. -->
-    <string name="plan_pace_not_enough_time">Nicht genug Zeit</string>
     <string name="plan_pace_date_passed">Nach dem Zieldatum</string>
     <!-- "They" are the lessons from earlier days the learner is behind on. -->
     <string name="plan_pace_lessons_first_today">Unter „Heute“ kommen sie zuerst dran.</string>
@@ -758,7 +753,6 @@
     <string name="plan_add_time_or_later_date">Lerne täglich länger oder wähle ein späteres Datum.</string>
     <string name="plan_pace_win_challenge">Alle Lektionen sind abgeschlossen. Besteh die Herausforderung, um deinen Plan abzuschließen.</string>
     <string name="plan_pace_win_challenges">Alle Lektionen sind abgeschlossen. Besteh die Herausforderungen, um deinen Plan abzuschließen.</string>
-    <string name="plan_pace_no_longer_fits">Du hast mehr Lektionen als verbleibende Tage. Lerne täglich länger oder wähle ein späteres Datum.</string>
     <plurals name="plan_pace_days">
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>
@@ -1185,7 +1179,6 @@
     <string name="plan_suggestion_next">Weiter</string>
     <string name="plan_suggestion_position">%1$s von %2$s</string>
     <string name="plan_goal_paused">Dein Ziel „%1$s“ ist pausiert</string>
-    <string name="plan_no_longer_fits">Mehr Lektionen als Tage übrig</string>
     <string name="plan_adjust">Anpassen</string>
     <string name="plan_go_to_today">Heute</string>
     <string name="plan_suggestion">Planvorschlag</string>

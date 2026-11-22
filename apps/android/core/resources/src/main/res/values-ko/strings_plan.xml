@@ -327,7 +327,6 @@
   "plan_no_deadline_note": "a0b9359c6594862ba4f628e306e719517acdf1ea5f1c760fd3090692236253b1",
   "plan_no_goal_description": "a03213fffbcb57ba977c3c255d2e8343616e70ef7a0b90cdca7d43173a1f5a36",
   "plan_no_lessons_studied_yet": "c52eefcb33545749dbc7f50d4cfaef75abf7dfc17e49ea40139593c9dba02dc0",
-  "plan_no_longer_fits": "1174f5949053319414ef89e3bd9f49a372fd2e3978be012bc5ac9616c0a42584",
   "plan_not_in_your_plan": "cacdd5e1b933aca5d4f4261af56e3256d18607c796998fd969c9d7fa2b0983a6",
   "plan_not_now": "d2624ddbaeef64c7a86519efccfb1c5bfffee80404b8e4d755f98043c658d567",
   "plan_not_yet": "71781eea6a24e381084c877203cf17b94682374cf8367dbc7c478a5f29f83945",
@@ -347,8 +346,6 @@
   "plan_pace_lessons_behind": "074b44cb50b9421aa952d202e1c7bf436214329176a72ccdf34dd23c1d108526",
   "plan_pace_lessons_first_today": "f81c6b27da9ae595e0e9d81e8b53ff68ba3e006276d2805045c2908424b82b3f",
   "plan_pace_more_minutes_a_day": "e393cbe5f6946f05f03ed9d9764d8ab7b7aa73aa02c54a17c71a8a96e58a9328",
-  "plan_pace_no_longer_fits": "03b79659272d856c481377be5945e306326fde8a9bf1d66111bc0d4a44f4770c",
-  "plan_pace_not_enough_time": "06fbc2375275f2164d54451a959c7841cb727ea782bd474d2d00415b6b8e0dc6",
   "plan_pace_up_to_date": "470907088eb4ce6f14e4891f190777d5c45e57601647a89668b549209abc8c10",
   "plan_pace_value_paused": "346ae9f09e1a2d281c176b3af92999d9242f6ad7987ca33ab8b56c79bceaea08",
   "plan_pace_win_challenge": "a6004c1dbde9155efbebedc169fff513fba6fec89f61dfb197b1d15645cd13e7",
@@ -730,8 +727,6 @@
     </plurals>
     <string name="plan_pace_finished">완료</string>
     <string name="plan_pace_up_to_date">계획대로</string>
-    <!-- More lessons in the plan than days left before its date. -->
-    <string name="plan_pace_not_enough_time">시간 부족</string>
     <string name="plan_pace_date_passed">날짜 지남</string>
     <!-- "They" are the lessons from earlier days the learner is behind on. -->
     <string name="plan_pace_lessons_first_today">‘오늘’에 먼저 나와요.</string>
@@ -740,7 +735,6 @@
     <string name="plan_add_time_or_later_date">매일 더 오래 공부하거나 날짜를 늦춰 보세요.</string>
     <string name="plan_pace_win_challenge">모든 레슨을 마쳤어요. 챌린지에서 이겨 계획을 마무리하세요.</string>
     <string name="plan_pace_win_challenges">모든 레슨을 마쳤어요. 챌린지에서 모두 이겨 계획을 마무리하세요.</string>
-    <string name="plan_pace_no_longer_fits">남은 날짜보다 레슨이 더 많아요. 매일 더 오래 공부하거나 날짜를 늦춰 보세요.</string>
     <plurals name="plan_pace_days">
         <item quantity="other">%d일</item>
     </plurals>
@@ -1134,7 +1128,6 @@
     <string name="plan_suggestion_next">다음</string>
     <string name="plan_suggestion_position">%1$s / %2$s</string>
     <string name="plan_goal_paused">%1$s 목표가 일시 중지됐어요</string>
-    <string name="plan_no_longer_fits">남은 날보다 레슨이 많아요</string>
     <string name="plan_adjust">조정하기</string>
     <string name="plan_go_to_today">오늘</string>
     <string name="plan_suggestion">계획 제안</string>

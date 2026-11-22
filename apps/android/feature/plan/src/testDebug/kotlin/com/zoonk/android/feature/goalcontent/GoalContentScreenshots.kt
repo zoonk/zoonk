@@ -230,6 +230,11 @@ class GoalContentScreenshots {
                 },
                 "subject-exam" to { Subject("natural-sciences") },
                 "subject-skipped" to { Subject("spanish") },
+                "subject-left-out-for-time" to {
+                    val syllabus = examSyllabus()
+                    val subject = syllabus.subjects.first().copy(notPlannedReason = "time")
+                    SubjectPage(syllabus, subject, SubjectWrites(), NO_ACTIONS, TODAY, {}, {})
+                },
                 "subject-written" to { Subject("essay") },
                 "subject-module" to { Subject("basics") },
                 "chapter" to { Chapter() },

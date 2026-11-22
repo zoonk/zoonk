@@ -20,7 +20,7 @@
     <string name="focustest_how_stop_title">Stop anytime</string>
     <string name="focustest_how_stop">Each answer is saved.</string>
     <string name="focustest_how_subjects_title">Focusing never removes a subject</string>
-    <string name="focustest_how_subjects">The ones you need most get more time when your time can\'t cover everything.</string>
+    <string name="focustest_how_subjects">The ones you need most get more time.</string>
     <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
     <string name="focustest_how_sessions_title">A few more in your first week</string>
     <string name="focustest_how_sessions">Your study sessions ask a few more of these questions. You can pause that.</string>
@@ -95,8 +95,8 @@
     <string name="focustest_take_test">Take the Focus test</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">The Focus test shows what to study most.</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">Your time can\'t cover everything before your exam. In about %1$s, the Focus test shows what to study most.</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">A %1$s test shows what you already know, so more of your time goes to what you need most. It never removes a subject.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Noted. You can take the test from your plan.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->

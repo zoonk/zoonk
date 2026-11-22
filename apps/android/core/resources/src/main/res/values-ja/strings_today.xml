@@ -5,8 +5,6 @@
   "today_adjust_your_plan": "07dbd3872c290beb0bbf86d4b9d165a16650bf53f77352a1b9e9e5dd604f9d69",
   "today_already_know_chapter": "af955ac1705aa070ffe85fa1be9000f669c9eab81fbefdb4609af848655dce0f",
   "today_behind_kept": "9a5dd9d5fb72f559db7fcd7f296ad3278ab566167acefc0e806ba6b152f8e571",
-  "today_behind_lessons_exam": "9f268189aeacf7c20e87b7c6bbe625d6a1fa0008d3edc69f1e4223d4bec25f16",
-  "today_behind_lessons_goal": "a11af42998276b422e4b55d161e15bca1a4e5cac6bdf7969708f5fa5ba821a91",
   "today_building_plan_detail": "39f89b463dbf90d27666d416a28b4c39ca0f24e2f6f03945748140e09d4e9afc",
   "today_building_plan_goal": "dc537ba7f66a78281d93d491e7b299e71b052b4a5ba5970dbfa771f3982cc5f6",
   "today_choose_focus": "346f626b63346f88a076784268640e03602e382c89e03c0b8d9024ee4bb319dc",
@@ -51,7 +49,6 @@
   "today_more_lessons": "80faea37fea809a32f33f5f2b4f5ed8dad5297bb1138b79f45fecf3f09ffac09",
   "today_more_time_a_day": "ab86bdb17ca72519b33d1084d1602f72f4b49bb1680c04413e5a4a1b88c4c08e",
   "today_next_suggestion": "fe5612b8233fda5b7c829ecc806188845a3cf00a581cc07e7a37605a7ec0bfa9",
-  "today_not_enough_time": "cf04e3f36d0ec44d94e0251b097d386b182837bc2ff5639c0fa533fcb371abdd",
   "today_not_now": "9512b620d3a0c2a61e204e0ff98ac76544a89c42518897f22b9ca6c73b0ba38b",
   "today_noted": "3f841ee338d5fb3ef3c1f1d38f4f30710c4aca42440911d518be5adde9203ca5",
   "today_nothing_new": "6cbd9f0a663f99aedf51b7bcf294de3878f2449e0f005301777627c29bc976c8",
@@ -158,7 +155,6 @@
 <resources>
     <string name="today_title">今日</string>
     <string name="today_welcome_back_line">おかえりなさい。今日の学習は短めなので、気軽に再開できます。</string>
-    <string name="today_not_enough_time">すべてのレッスンを終えるには、残りの時間が足りません。</string>
     <string name="today_adjust_your_plan">学習計画の調整</string>
     <plurals name="today_exam_in_days">
         <item quantity="other">%1$sまであと%2$d日</item>
@@ -305,8 +301,6 @@
     <string name="today_plan_keep_mine">今の計画を続ける</string>
     <string name="today_next_suggestion">次の提案</string>
     <string name="today_notice_falling_behind">学習計画の変更</string>
-    <string name="today_behind_lessons_exam">試験までに一部のレッスンを終えられなくなりました。</string>
-    <string name="today_behind_lessons_goal">期日までに一部のレッスンを終えられなくなりました。</string>
     <string name="today_more_time_a_day">学習時間を増やす</string>
     <string name="today_choose_focus">重点的に学ぶ科目を選ぶ</string>
     <string name="today_study_everything">終了日をなくす</string>
