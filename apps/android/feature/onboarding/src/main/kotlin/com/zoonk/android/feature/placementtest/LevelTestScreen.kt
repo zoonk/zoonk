@@ -3,6 +3,7 @@ package com.zoonk.android.feature.placementtest
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -26,6 +27,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.LevelRow
 import com.zoonk.android.feature.onboarding.setup.LevelRows
 import com.zoonk.android.feature.onboarding.setup.LevelTestSteps
+import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
@@ -75,8 +77,10 @@ fun LevelTestScreen(
     val goal = summary.value?.goals?.firstOrNull { goal -> route.goalId?.let { goal.id.toString() == it } ?: goal.isActive }
     val language = goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE && goal.targetLanguage != null
     val elsewhere = AppRoute.Plan().takeIf { goal != null && !language }
-    TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator, deciding = false) { _, setProgress ->
-        goal?.takeIf { language }?.let { LevelTestPlanFlow(it, route.testOut, app, navigator, setProgress) }
+    CompositionLocalProvider(LocalSetupSpeech provides app.speech) {
+        TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator, deciding = false) { _, setProgress ->
+            goal?.takeIf { language }?.let { LevelTestPlanFlow(it, route.testOut, app, navigator, setProgress) }
+        }
     }
 }
 
