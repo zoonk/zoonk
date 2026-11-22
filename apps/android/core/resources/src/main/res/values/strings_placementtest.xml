@@ -23,6 +23,7 @@
     <string name="placementtest_level_range" translatable="false">%1$s–%2$s</string>
     <string name="placementtest_start_title">Skip what you already know</string>
     <string name="placementtest_choose_description">A test finds the lessons you can skip.</string>
+    <string name="placementtest_quick_only_description">A quick test finds the lessons you can skip. It takes about %1$s.</string>
     <string name="placementtest_choose_title">How much do you want to check?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">Quick</string>
@@ -73,5 +74,4 @@
     <string name="placementtest_offer_quick">A quick check can skip lessons you already know.</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">A short test can skip %1$s if you already know it.</string>
-    <string name="placementtest_check_my_level">Check my level</string>
 </resources>

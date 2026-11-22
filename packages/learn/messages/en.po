@@ -10168,16 +10168,6 @@ msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "How much do you want to check?"
 
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "Skip what you already know"
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "ym8dgr"
-msgid "A test finds the lessons you can skip."
-msgstr "A test finds the lessons you can skip."
-
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Ggk7AI"
@@ -10200,6 +10190,22 @@ msgstr "Whole course"
 msgctxt "3NCmfj"
 msgid "Skip {level} if you already know it"
 msgstr "Skip {level} if you already know it"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr "Skip what you already know"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr "A test finds the lessons you can skip."
+
+#. {time} is a duration with its unit, such as “4 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "x3lPpe"
+msgid "A quick test finds the lessons you can skip. It takes about {time}."
+msgstr "A quick test finds the lessons you can skip. It takes about {time}."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "OpomGa"
@@ -10668,6 +10674,7 @@ msgid "Skip lessons you already know"
 msgstr "Skip lessons you already know"
 
 #: src/plan/plan-placement-test.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "QZI9sA"
 msgid "Test what you know"
 msgstr "Test what you know"
@@ -12375,11 +12382,6 @@ msgstr "A short test can skip {level} if you already know it."
 msgctxt "bj7N9e"
 msgid "A quick check can skip lessons you already know."
 msgstr "A quick check can skip lessons you already know."
-
-#: src/session/level-check-offer.tsx
-msgctxt "lPAYdL"
-msgid "Check my level"
-msgstr "Check my level"
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"

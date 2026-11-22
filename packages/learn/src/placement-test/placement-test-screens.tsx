@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Eyebrow } from "../_components/eyebrow";
 import { Surface } from "../_components/surface";
 import { useFormatDuration } from "../_utils/time-format";
-import { ChoiceList } from "../onboarding/choice-list";
+import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import {
   OnboardingActions,
   OnboardingColumn,
@@ -69,6 +69,48 @@ export function PlacementLengthChoice({
   const [choice, setChoice] = useState<TestChoice>(initialChoice);
   const lengthLabel = t("How much do you want to check?");
 
+  const choices: Choice<TestChoice>[] = [
+    {
+      description: t("About {time}", { time: formatDuration(QUICK_TEST_MINUTES) }),
+      label: t({
+        description: "The short placement test: about four minutes of questions.",
+        message: "Quick",
+      }),
+      value: "quick",
+    },
+    ...(wholeCourseMinutes > 0
+      ? [
+          {
+            description: t({
+              description:
+                "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
+              message: "About {time}, in parts",
+              values: { time: formatDuration(wholeCourseMinutes) },
+            }),
+            label: t({
+              description:
+                "The long placement test: it checks every topic still ahead in the course.",
+              message: "Whole course",
+            }),
+            value: "wholeCourse" as const,
+          },
+        ]
+      : []),
+    ...(testOutLevel && onTestOut
+      ? [
+          {
+            description: t("Skip {level} if you already know it", { level: testOutLevel }),
+            label: t({
+              description: "A short test of one language level, such as “Test out of B2”.",
+              message: "Test out of {level}",
+              values: { level: testOutLevel },
+            }),
+            value: "testOut" as const,
+          },
+        ]
+      : []),
+  ];
+
   const start = () => {
     if (choice === "testOut") {
       onTestOut?.();
@@ -103,58 +145,23 @@ export function PlacementLengthChoice({
     >
       <OnboardingHeading>
         <OnboardingTitle>{t("Skip what you already know")}</OnboardingTitle>
-        <OnboardingDescription>{t("A test finds the lessons you can skip.")}</OnboardingDescription>
+        <OnboardingDescription>
+          {choices.length > 1
+            ? t("A test finds the lessons you can skip.")
+            : t({
+                description: "{time} is a duration with its unit, such as “4 min”.",
+                message: "A quick test finds the lessons you can skip. It takes about {time}.",
+                values: { time: formatDuration(QUICK_TEST_MINUTES) },
+              })}
+        </OnboardingDescription>
       </OnboardingHeading>
 
-      <div className="flex flex-col gap-2">
-        <h2 className="text-sm font-medium">{lengthLabel}</h2>
-        <ChoiceList
-          choices={[
-            {
-              description: t("About {time}", { time: formatDuration(QUICK_TEST_MINUTES) }),
-              label: t({
-                description: "The short placement test: about four minutes of questions.",
-                message: "Quick",
-              }),
-              value: "quick",
-            },
-            ...(wholeCourseMinutes > 0
-              ? [
-                  {
-                    description: t({
-                      description:
-                        "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
-                      message: "About {time}, in parts",
-                      values: { time: formatDuration(wholeCourseMinutes) },
-                    }),
-                    label: t({
-                      description:
-                        "The long placement test: it checks every topic still ahead in the course.",
-                      message: "Whole course",
-                    }),
-                    value: "wholeCourse" as const,
-                  },
-                ]
-              : []),
-            ...(testOutLevel && onTestOut
-              ? [
-                  {
-                    description: t("Skip {level} if you already know it", { level: testOutLevel }),
-                    label: t({
-                      description: "A short test of one language level, such as “Test out of B2”.",
-                      message: "Test out of {level}",
-                      values: { level: testOutLevel },
-                    }),
-                    value: "testOut" as const,
-                  },
-                ]
-              : []),
-          ]}
-          label={lengthLabel}
-          onChange={setChoice}
-          value={choice}
-        />
-      </div>
+      {choices.length > 1 && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-sm font-medium">{lengthLabel}</h2>
+          <ChoiceList choices={choices} label={lengthLabel} onChange={setChoice} value={choice} />
+        </div>
+      )}
       {children}
     </OnboardingColumn>
   );
@@ -287,7 +294,7 @@ export function PlacementResult({
         </Surface>
       )}
 
-      {length === "quick" && !onboarding && (
+      {length === "quick" && !onboarding && !undone && (
         <p className="text-muted-foreground text-sm text-pretty">
           {t("The whole-course test can skip more.")}
         </p>

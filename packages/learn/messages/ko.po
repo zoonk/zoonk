@@ -10168,16 +10168,6 @@ msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "어디까지 확인할까요?"
 
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "이미 아는 내용 건너뛰기"
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "ym8dgr"
-msgid "A test finds the lessons you can skip."
-msgstr "테스트로 건너뛸 수 있는 레슨을 찾아요."
-
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Ggk7AI"
@@ -10200,6 +10190,22 @@ msgstr "코스 전체"
 msgctxt "3NCmfj"
 msgid "Skip {level} if you already know it"
 msgstr "이미 아는 {level} 건너뛰기"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr "이미 아는 내용 건너뛰기"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr "테스트로 건너뛸 수 있는 레슨을 찾아요."
+
+#. {time} is a duration with its unit, such as “4 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "x3lPpe"
+msgid "A quick test finds the lessons you can skip. It takes about {time}."
+msgstr "짧은 테스트로 건너뛸 수 있는 레슨을 찾아요. 약 {time} 걸려요."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "OpomGa"
@@ -10668,6 +10674,7 @@ msgid "Skip lessons you already know"
 msgstr "이미 아는 레슨 건너뛰기"
 
 #: src/plan/plan-placement-test.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "QZI9sA"
 msgid "Test what you know"
 msgstr "아는 내용 확인하기"
@@ -12375,11 +12382,6 @@ msgstr "이미 아는 {level}은 짧은 테스트로 건너뛸 수 있어요."
 msgctxt "bj7N9e"
 msgid "A quick check can skip lessons you already know."
 msgstr "간단한 테스트로 이미 아는 레슨을 건너뛸 수 있어요."
-
-#: src/session/level-check-offer.tsx
-msgctxt "lPAYdL"
-msgid "Check my level"
-msgstr "내 레벨 확인하기"
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"

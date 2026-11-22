@@ -40,9 +40,7 @@ struct LevelCheckOfferCard: View {
           if let level = offer.level {
             Text(verbatim: PlacementTestCopy.testOut(level))
           } else {
-            Text(
-              "Check my level", tableName: "Onboarding",
-              comment: "Opens the quick test from a lesson end's offer")
+            Text(PlacementTestCopy.learnName)
           }
         }
         .buttonStyle(.outline)

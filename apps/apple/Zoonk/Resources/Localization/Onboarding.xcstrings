@@ -1372,6 +1372,65 @@
         }
       }
     },
+    "A quick test finds the lessons you can skip. It takes about %@." : {
+      "comment" : "The length choice when only the quick test is offered; the time is such as \"4 min\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzer Test findet heraus, welche Lektionen du überspringen kannst. Er dauert etwa %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una prueba rápida identifica las lecciones que puedes saltarte. Dura aproximadamente %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test rapide trouve les leçons que tu peux sauter. Il dure environ %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test veloce individua le lezioni che puoi saltare. Dura circa %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クイックテストで、スキップできるレッスンがわかります。所要時間は約%@です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짧은 테스트로 건너뛸 수 있는 레슨을 찾아요. 약 %@ 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybki test wskaże lekcje, które możesz pominąć. Zajmie około %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um teste rápido identifica as aulas que você pode pular. Leva cerca de %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa bir test, atlayabileceğin dersleri bulur. Yaklaşık %@ sürer."
+          }
+        }
+      }
+    },
     "A short test can skip %@ if you already know it." : {
       "comment" : "A lesson end's offer to test out of a language level, such as B2",
       "localizations" : {
@@ -3486,65 +3545,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınav tarihini değiştir"
-          }
-        }
-      }
-    },
-    "Check my level" : {
-      "comment" : "Opens the quick test from a lesson end's offer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mein Level prüfen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comprobar mi nivel"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérifier mon niveau"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Controlla il mio livello"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベルを診断する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 레벨 확인하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprawdź swój poziom"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conferir meu nível"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seviyemi kontrol et"
           }
         }
       }

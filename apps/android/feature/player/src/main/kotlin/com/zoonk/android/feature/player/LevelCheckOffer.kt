@@ -64,7 +64,7 @@ internal fun LevelCheckOffer(
                 ) {
                     stringResource(R.string.placementtest_test_out, level)
                 } else {
-                    stringResource(R.string.placementtest_check_my_level)
+                    stringResource(R.string.placementtest_title)
                 },
                 onClick = { onOpen(offer.route()) },
                 enabled = !dismissing,

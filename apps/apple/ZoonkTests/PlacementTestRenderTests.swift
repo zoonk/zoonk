@@ -77,6 +77,15 @@ final class PlacementTestRenderTests: XCTestCase {
         wholeCourseMinutes: 25, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
     }
 
+    try await capture(
+      "placement-length-quick-only", title: "Skip what you already know",
+      detail: "A quick test finds the lessons you can skip.",
+      absent: ["How much do you want to check?"]
+    ) {
+      PlacementLengthChoice(
+        wholeCourseMinutes: 0, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
+    }
+
     let request = VisitRequest<Bool>()
     let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
     let undo = PlacementResultUndo(

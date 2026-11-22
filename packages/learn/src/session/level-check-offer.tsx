@@ -78,7 +78,7 @@ export function LevelCheckOfferCard({
           className={cn(buttonVariants({ variant: "outline" }), TASK_WRAPPING_ACTION_CLASS)}
           href={href}
         >
-          {level ? t("Test out of {level}", { level }) : t("Check my level")}
+          {level ? t("Test out of {level}", { level }) : t("Test what you know")}
         </Link>
         <Button busy={isPending} onClick={dismiss} variant="ghost">
           {t("Not now")}

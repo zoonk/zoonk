@@ -46,13 +46,20 @@ struct PlacementLengthChoice: View {
     ZoonkList {
       StepHeader(
         title: Text("Skip what you already know", tableName: "Onboarding"),
-        description: Text("A test finds the lessons you can skip.", tableName: "Onboarding"))
+        description: choices.count > 1
+          ? Text("A test finds the lessons you can skip.", tableName: "Onboarding")
+          : Text(
+            "A quick test finds the lessons you can skip. It takes about \(studyDuration(minutes: quickTestMinutes)).",
+            tableName: "Onboarding",
+            comment: "The length choice when only the quick test is offered; the time is such as \"4 min\""))
 
-      ChoiceRows(
-        choices: choices, picked: choice,
-        header: Text("How much do you want to check?", tableName: "Onboarding")
-      ) { choice = $0 }
-      .locksWhileSaving()
+      if choices.count > 1 {
+        ChoiceRows(
+          choices: choices, picked: choice,
+          header: Text("How much do you want to check?", tableName: "Onboarding")
+        ) { choice = $0 }
+        .locksWhileSaving()
+      }
 
       languageNotes
     }
@@ -219,7 +226,7 @@ struct PlacementTestResultView: View {
         .listRowBackground(Color.clear)
       }
 
-      if length == .quick, !onboarding {
+      if length == .quick, !onboarding, undo?.restored == nil {
         Section {
           Text(
             "The whole-course test can skip more.", tableName: "Onboarding",

@@ -10168,16 +10168,6 @@ msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "¿Qué tanto quieres comprobar?"
 
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "Sáltate lo que ya sabes"
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "ym8dgr"
-msgid "A test finds the lessons you can skip."
-msgstr "Una prueba identifica las lecciones que puedes saltarte."
-
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Ggk7AI"
@@ -10200,6 +10190,22 @@ msgstr "Curso completo"
 msgctxt "3NCmfj"
 msgid "Skip {level} if you already know it"
 msgstr "Saltar {level} si ya lo conoces"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr "Sáltate lo que ya sabes"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr "Una prueba identifica las lecciones que puedes saltarte."
+
+#. {time} is a duration with its unit, such as “4 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "x3lPpe"
+msgid "A quick test finds the lessons you can skip. It takes about {time}."
+msgstr "Una prueba rápida identifica las lecciones que puedes saltarte. Dura aproximadamente {time}."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "OpomGa"
@@ -10668,6 +10674,7 @@ msgid "Skip lessons you already know"
 msgstr "Saltar las lecciones que ya conoces"
 
 #: src/plan/plan-placement-test.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "QZI9sA"
 msgid "Test what you know"
 msgstr "Comprobar lo que sabes"
@@ -12375,11 +12382,6 @@ msgstr "Una prueba corta puede saltar {level} si ya lo sabes."
 msgctxt "bj7N9e"
 msgid "A quick check can skip lessons you already know."
 msgstr "Una prueba rápida puede saltar las lecciones que ya conoces."
-
-#: src/session/level-check-offer.tsx
-msgctxt "lPAYdL"
-msgid "Check my level"
-msgstr "Comprobar mi nivel"
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"

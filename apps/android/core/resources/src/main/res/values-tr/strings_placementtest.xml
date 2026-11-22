@@ -3,7 +3,6 @@
 {
   "placementtest_about": "e2cf1ba4741ab77c1789031fcf82658ec47b79632c0d5a25a1bc1b0c5468feb7",
   "placementtest_about_in_parts": "2556889725085100223ebe3499f881de279bda966af03052ab4b8d8f2b0a2bea",
-  "placementtest_check_my_level": "7baee0ad353eacdcbac0f18921981369ec09bb8d2952af1708cef56d38a8cc9e",
   "placementtest_choose_description": "46cd6ced1ce5b6af4d22fdd651eb7991b7649b158890ef0cde259a059f0b41eb",
   "placementtest_choose_title": "8d10b3e9d7c9e0dbeac3078a4335269e845149c20aa12372aeb34c9b3023bbf6",
   "placementtest_continue_from_plan": "e450e089979d465fbc9b195008ee7d84582235b6e725e56a90b191914d49e3b8",
@@ -30,6 +29,7 @@
   "placementtest_part": "52ec35a307454df7bcaa0aefa719cafe58d636585b0f404848bdf0cf64a49b29",
   "placementtest_plan_stays": "06ffaffa1fe251545b939357a4a2127af706225ac97f589a6ba3766e8b987749",
   "placementtest_quick": "d8306f757056a3514d6db1ed0aeb4abdf834fd11045b1aff7613a5f855f37e0b",
+  "placementtest_quick_only_description": "2ccfa625d1707c2cea7b0004b738416e19636ff4aaa1370d8d8b6ecfb6de238b",
   "placementtest_reading_range": "720e57a1e6b0e80b117eeb4c8801ac7c7807f1e1ed6630690b08c5a2e6e36557",
   "placementtest_retake_tomorrow": "b79e7a9f3dd22ae19f1849323f1f979195cc0f233554b217b36979b791f6241f",
   "placementtest_skip_lessons": "448d8a99437d53a9172ced117943dcff38dff80bc2e004ac1d267ef9acf948cf",
@@ -68,6 +68,7 @@
     <string name="placementtest_listening_range">Dinleme %1$s</string>
     <string name="placementtest_start_title">Zaten bildiklerini atla</string>
     <string name="placementtest_choose_description">Seviye tespit testi, atlayabileceğin dersleri bulur.</string>
+    <string name="placementtest_quick_only_description">Kısa bir test, atlayabileceğin dersleri bulur. Yaklaşık %1$s sürer.</string>
     <string name="placementtest_choose_title">Ne kadarını kontrol etmek istiyorsun?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">Kısa</string>
@@ -118,5 +119,4 @@
     <string name="placementtest_offer_quick">Kısa bir testle zaten bildiğin dersleri atlayabilirsin.</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">Zaten biliyorsan kısa bir testle %1$s düzeyini atlayabilirsin.</string>
-    <string name="placementtest_check_my_level">Seviyemi kontrol et</string>
 </resources>

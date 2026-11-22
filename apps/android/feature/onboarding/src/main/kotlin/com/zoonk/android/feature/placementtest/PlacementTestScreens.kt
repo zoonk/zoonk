@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -90,11 +90,17 @@ internal fun ColumnScope.LengthChoice(
     SetupContent {
         OnboardingHeading(
             stringResource(R.string.placementtest_start_title),
-            stringResource(R.string.placementtest_choose_description),
+            if (choices.size > 1) {
+                stringResource(R.string.placementtest_choose_description)
+            } else {
+                stringResource(R.string.placementtest_quick_only_description, formatMinutes(QUICK_TEST_MINUTES, locale))
+            },
         )
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(lengthLabel, style = MaterialTheme.typography.labelLarge)
-            ChoiceList(choices, choice, lengthLabel, onChange = { selected = it })
+        if (choices.size > 1) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(lengthLabel, style = MaterialTheme.typography.labelLarge)
+                ChoiceList(choices, choice, lengthLabel, onChange = { selected = it })
+            }
         }
         notes()
         OnboardingActions {
@@ -204,18 +210,14 @@ internal fun ColumnScope.PlacementResult(
         undo = undo,
     ) {
         nextTopic?.takeIf { undo?.restoredLessons == null }?.let {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ) {
+            OutlinedCard(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Eyebrow(stringResource(R.string.placementtest_up_next))
                     Text(it, style = MaterialTheme.typography.titleMedium)
                 }
             }
         }
-        if (length == PlacementLength.QUICK && !inSetup) Note(stringResource(R.string.placementtest_whole_course_skips_more))
+        if (length == PlacementLength.QUICK && !inSetup && undo?.restoredLessons == null) Note(stringResource(R.string.placementtest_whole_course_skips_more))
     }
 }
 

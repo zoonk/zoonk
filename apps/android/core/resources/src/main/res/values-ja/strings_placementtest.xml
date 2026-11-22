@@ -3,7 +3,6 @@
 {
   "placementtest_about": "2537a58356f43ff269ad32e19a45cb447e49c13bcf622b8b36f1b69960c7b35e",
   "placementtest_about_in_parts": "29ec1e13a1306c296c7c2c3f7141f3ee032a47ec284dc06e1e635b3ba916a46e",
-  "placementtest_check_my_level": "0da1138fca03292ebf0e5bbbba551048cb315fb94373b5731dc9816c26445f0a",
   "placementtest_choose_description": "326ac519773dedfcd53eb085a49c18a1d5f7e125d83f1fabfd6024b1ded9124e",
   "placementtest_choose_title": "f84b053679d018ff922feae3df3815d32886305b014d05f6ce02fb961ec8c3ba",
   "placementtest_continue_from_plan": "2aa9f7d827d38352efe57f2569d61d83e05ed8f6fb33d19ad5152ebb13ce91f5",
@@ -30,6 +29,7 @@
   "placementtest_part": "934e21a88bd33bbd2b8bd2120de7f50fdbb077de0d993975a604459c2eb76d80",
   "placementtest_plan_stays": "899a9544875a2fceaff76c79ad74bec1d1976502c35dfdae45e57519025a2adc",
   "placementtest_quick": "9d02a4bbbee01de286b94eb6056e0a501e6042eba42201041e6c6e5e3bb9d1f9",
+  "placementtest_quick_only_description": "ef402d1c566c67905cef313c909e1118c5fc16b9d1382392164e99d240b87681",
   "placementtest_reading_range": "46926aa07af8f417594bb0c32737e9fb24e9e9f93c208077e6b8b3bdca3ae489",
   "placementtest_retake_tomorrow": "e9243b5a572d038d48d3358c3e80d20cee8aec8a06d4827337f4913c2b493ec5",
   "placementtest_skip_lessons": "7aaaf98dedbe1d43576a8bbef7f1223212b11f00fcd6038001d5d0d5e3559da0",
@@ -67,6 +67,7 @@
     <string name="placementtest_listening_range">リスニング %1$s</string>
     <string name="placementtest_start_title">すでに知っている内容をスキップする</string>
     <string name="placementtest_choose_description">テストで、スキップできるレッスンがわかります。</string>
+    <string name="placementtest_quick_only_description">クイックテストで、スキップできるレッスンがわかります。所要時間は約%1$sです。</string>
     <string name="placementtest_choose_title">どこまで診断しますか？</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">クイック</string>
@@ -116,5 +117,4 @@
     <string name="placementtest_offer_quick">すでに知っているレッスンを、簡単なテストでスキップできます。</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">すでに知っていれば、短いテストで%1$sをスキップできます。</string>
-    <string name="placementtest_check_my_level">レベルを診断する</string>
 </resources>

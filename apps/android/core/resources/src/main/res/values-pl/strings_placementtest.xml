@@ -3,7 +3,6 @@
 {
   "placementtest_about": "158cfe4af5d3a2b8987f13ebaef3052b83f0ae42acd194f5114c35a6437e8d4c",
   "placementtest_about_in_parts": "d4cde685f0e8e69249dd7c85ddd85a7c431e66f74b093f78f40f7b89ae9060e2",
-  "placementtest_check_my_level": "0423783029aef4f84307a05b30d520c06ecd1e050e391e498e56519306b2b09b",
   "placementtest_choose_description": "15a2ae85d029921024638f9a2f4f05ece53f6b17f3f09707fc95c1200b22066c",
   "placementtest_choose_title": "a57159d94b6f209c00f4b3d139f1e26691df67807beb9db2bb7fe8873468f27d",
   "placementtest_continue_from_plan": "8ab619f0ac35108da708aff7e893b76a2507b2021e8ca84be7fd0cedd448e62f",
@@ -30,6 +29,7 @@
   "placementtest_part": "a015041bf0cefb5ec39c0c10853f4daa580c53696d9d6345f45126705821f96e",
   "placementtest_plan_stays": "37f7fc246ea539dd871b1feb812985ee428d9c1c04f5dcb448be83d6308e79c1",
   "placementtest_quick": "ed4e745fe5eb3d9e2bcc34124ae22ba83fb67f5fc93e72a19003ef3e780876c2",
+  "placementtest_quick_only_description": "4bd734da80f66dbb2dfdef8e43091a52f2ae71acfd1c7f1a547276f24d3181d0",
   "placementtest_reading_range": "132b0e7371c3f918f4d517c14f96052983f899eb1b16d62469f3ba1a51c1c289",
   "placementtest_retake_tomorrow": "4dbab84de6cbcaef22a50ae7d877de28ccfd1dc0f65b69f3fba482dc1283c2e3",
   "placementtest_skip_lessons": "636090c9f42d14cedb928b16a85e157f334023e673d9ba35a2ca4e041affd0fc",
@@ -70,6 +70,7 @@
     <string name="placementtest_listening_range">Słuchanie %1$s</string>
     <string name="placementtest_start_title">Pomiń to, co już znasz</string>
     <string name="placementtest_choose_description">Test wskaże lekcje, które możesz pominąć.</string>
+    <string name="placementtest_quick_only_description">Szybki test wskaże lekcje, które możesz pominąć. Zajmie około %1$s.</string>
     <string name="placementtest_choose_title">Jak dużą część chcesz sprawdzić?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">Szybki</string>
@@ -122,5 +123,4 @@
     <string name="placementtest_offer_quick">Szybki test pozwoli pominąć lekcje, które już znasz.</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">Krótki test pozwoli pominąć %1$s, jeśli już go znasz.</string>
-    <string name="placementtest_check_my_level">Sprawdź swój poziom</string>
 </resources>
