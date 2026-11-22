@@ -59,7 +59,7 @@ function restorePlacement(details: unknown, receipt: string, lessonsSkipped: num
       : undefined;
 
   const updatedResult =
-    result?.attemptId && attemptId === receiptId
+    result && result.attemptId === receiptId
       ? { ...result, lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped) }
       : result;
 

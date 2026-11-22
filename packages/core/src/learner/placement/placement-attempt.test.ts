@@ -245,185 +245,201 @@ describe("learn placement attempts", () => {
     expect(taps.map(({ item }) => item.id)).toContain(selected[0]);
   });
 
-  it("skips the lesson on the plan while retaining the shown session's active and pending blocks", async () => {
-    const user = await userFixture();
+  it.each([{ movedOn: false }, { movedOn: true }])(
+    "records the skip and keeps the shown session and Undo after finish (learner retook: $movedOn)",
+    async ({ movedOn }) => {
+      const user = await userFixture();
 
-    const { goal, items, planItems, skills } = await learnerGoalFixture({
-      challengesDone: true,
-      itemsPerSkill: 1,
-      phases: [1],
-      userId: user.id,
-    });
-
-    const item = planItems[0]!;
-    const skillId = skills[0]!.id;
-
-    const session = await studySessionFixture({
-      goalId: goal.id,
-      status: "active",
-      userId: user.id,
-    });
-
-    const saveTap = (suffix: string) =>
-      itemFixture({
-        content: {
-          question: "Order the steps",
-          reason: "Sequence",
-          steps: ["A", "B", "C", suffix],
-        },
-        format: "order",
-        skillId,
+      const { goal, items, planItems, skills } = await learnerGoalFixture({
+        challengesDone: true,
+        itemsPerSkill: 1,
+        phases: [1],
+        userId: user.id,
       });
 
-    const [active, pending, ...taps] = await Promise.all([
-      studySessionBlockFixture({
-        lessonId: item.lessonId,
-        position: 0,
-        sessionId: session.id,
+      const item = planItems[0]!;
+      const skillId = skills[0]!.id;
+
+      const session = await studySessionFixture({
+        goalId: goal.id,
         status: "active",
-      }),
-      studySessionBlockFixture({
-        lessonId: item.lessonId,
-        position: 1,
-        sessionId: session.id,
-        status: "pending",
-      }),
-      saveTap("D"),
-      saveTap("E"),
-      saveTap("F"),
-    ]);
+        userId: user.id,
+      });
 
-    mockSession(user.id);
+      const saveTap = (suffix: string) =>
+        itemFixture({
+          content: {
+            question: "Order the steps",
+            reason: "Sequence",
+            steps: ["A", "B", "C", suffix],
+          },
+          format: "order",
+          skillId,
+        });
 
-    const started = await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
+      const [active, pending, ...taps] = await Promise.all([
+        studySessionBlockFixture({
+          lessonId: item.lessonId,
+          position: 0,
+          sessionId: session.id,
+          status: "active",
+        }),
+        studySessionBlockFixture({
+          lessonId: item.lessonId,
+          position: 1,
+          sessionId: session.id,
+          status: "pending",
+        }),
+        saveTap("D"),
+        saveTap("E"),
+        saveTap("F"),
+      ]);
 
-    if (started.status !== "ready" || !started.placement.attempt) {
-      throw new Error("Expected a saved attempt");
-    }
+      mockSession(user.id);
 
-    const attemptId = started.placement.attempt.id;
+      const started = await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
 
-    const tapAnswers = new Map(
-      taps.map((tap) => {
-        const parsed = parseOrderItem(tap);
+      if (started.status !== "ready" || !started.placement.attempt) {
+        throw new Error("Expected a saved attempt");
+      }
 
-        if (!parsed) {
-          throw new Error("Expected a saved ordering item");
+      const attemptId = started.placement.attempt.id;
+
+      const tapAnswers = new Map(
+        taps.map((tap) => {
+          const parsed = parseOrderItem(tap);
+
+          if (!parsed) {
+            throw new Error("Expected a saved ordering item");
+          }
+
+          return [
+            tap.id,
+            gradeOrder({ answer: { dontKnow: true }, item: parsed }).correctAnswer,
+          ] as const;
+        }),
+      );
+
+      const sent = await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 100, itemId: items[0]!.id },
+      });
+
+      const answerTaps = async (result: typeof sent, remaining: number): Promise<typeof sent> => {
+        if (remaining === 0) {
+          return result;
         }
 
-        return [
-          tap.id,
-          gradeOrder({ answer: { dontKnow: true }, item: parsed }).correctAnswer,
-        ] as const;
-      }),
-    );
+        if (result.status !== "ready" || !result.placement.next) {
+          throw new Error("Expected another tap");
+        }
 
-    const sent = await answerPlacementQuestion({
-      goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 100, itemId: items[0]!.id },
-    });
+        const itemId = result.placement.next.itemId;
+        const answer = tapAnswers.get(itemId);
 
-    const answerTaps = async (result: typeof sent, remaining: number): Promise<typeof sent> => {
-      if (remaining === 0) {
-        return result;
-      }
+        if (!answer) {
+          throw new Error("Expected a tap from the saved bank");
+        }
 
-      if (result.status !== "ready" || !result.placement.next) {
-        throw new Error("Expected another tap");
-      }
+        return answerTaps(
+          await answerPlacementQuestion({
+            goalId: goal.id,
+            input: { answer, attemptId, durationMs: 100, itemId },
+          }),
+          remaining - 1,
+        );
+      };
 
-      const itemId = result.placement.next.itemId;
-      const answer = tapAnswers.get(itemId);
+      await answerTaps(sent, taps.length);
 
-      if (!answer) {
-        throw new Error("Expected a tap from the saved bank");
-      }
+      await expect(prisma.planItem.findUnique({ where: { id: item.id } })).resolves.toMatchObject({
+        status: "todo",
+      });
 
-      return answerTaps(
-        await answerPlacementQuestion({
-          goalId: goal.id,
-          input: { answer, attemptId, durationMs: 100, itemId },
-        }),
-        remaining - 1,
+      const finish = () => finishGoalPlacement({ goalId: goal.id, input: { attemptId } });
+      const [finished, retried] = await Promise.all([finish(), finish()]);
+
+      const receipt = `${attemptId}:1`;
+      const notice = { goalId: goal.id, itemIds: [item.id], receipt, timeZone: "UTC" };
+
+      const owed = await listOwed(user.id);
+
+      expect(owed.filter(({ kind }) => kind === "recordTestOutChange")).toStrictEqual([
+        { input: notice, key: receipt, kind: "recordTestOutChange" },
+      ]);
+
+      expect(finished).toMatchObject({
+        completion: {
+          changeId: null,
+          lessonsSkipped: 1,
+          result: { lessonsSkipped: 1 },
+          testedOutPlanItemIds: [item.id],
+        },
+        status: "ready",
+      });
+
+      expect(retried).toMatchObject({ completion: { changeId: null, lessonsSkipped: 1 } });
+
+      const nextAttempt = movedOn
+        ? await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } })
+        : null;
+
+      const nextAttemptId =
+        nextAttempt?.status === "ready" ? nextAttempt.placement.attempt?.id : null;
+
+      expect(Boolean(nextAttemptId && nextAttemptId !== attemptId)).toBe(movedOn);
+
+      const work = { ...notice, userId: user.id };
+      await recordTestOutChange(work);
+      await recordTestOutChange(work);
+
+      const change = await prisma.planChange.findFirstOrThrow({
+        where: { kind: "testedOut", planId: item.planId },
+      });
+
+      const changeId = change.id;
+
+      await expect(
+        prisma.planChange.count({ where: { kind: "testedOut", planId: item.planId } }),
+      ).resolves.toBe(1);
+
+      await expect(finish()).resolves.toMatchObject(
+        movedOn ? { status: "staleAttempt" } : { completion: { changeId } },
       );
-    };
 
-    await answerTaps(sent, taps.length);
+      await expect(loadTodayPlanChange({ goal, now: new Date() })).resolves.toMatchObject({
+        canUndo: true,
+        id: changeId,
+      });
 
-    await expect(prisma.planItem.findUnique({ where: { id: item.id } })).resolves.toMatchObject({
-      status: "todo",
-    });
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+        plan: {
+          changes: expect.arrayContaining([
+            expect.objectContaining({ canUndo: true, id: changeId }),
+          ]),
+        },
+        status: "ready",
+      });
 
-    const finish = () => finishGoalPlacement({ goalId: goal.id, input: { attemptId } });
-    const [finished, retried] = await Promise.all([finish(), finish()]);
+      await expect(
+        decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
+      ).resolves.toMatchObject({ status: "updated" });
 
-    const receipt = `${attemptId}:1`;
-    const notice = { goalId: goal.id, itemIds: [item.id], receipt, timeZone: "UTC" };
+      await expect(prisma.planItem.findUnique({ where: { id: item.id } })).resolves.toMatchObject({
+        status: "todo",
+      });
 
-    const owed = await listOwed(user.id);
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+        plan: { placementTest: { result: { lessonsSkipped: 0 } } },
+        status: "ready",
+      });
 
-    expect(owed.filter(({ kind }) => kind === "recordTestOutChange")).toStrictEqual([
-      { input: notice, key: receipt, kind: "recordTestOutChange" },
-    ]);
-
-    expect(finished).toMatchObject({
-      completion: {
-        changeId: null,
-        lessonsSkipped: 1,
-        result: { lessonsSkipped: 1 },
-        testedOutPlanItemIds: [item.id],
-      },
-      status: "ready",
-    });
-
-    expect(retried).toMatchObject({ completion: { changeId: null, lessonsSkipped: 1 } });
-
-    const work = { ...notice, userId: user.id };
-    await recordTestOutChange(work);
-    await recordTestOutChange(work);
-
-    const change = await prisma.planChange.findFirstOrThrow({
-      where: { kind: "testedOut", planId: item.planId },
-    });
-
-    const changeId = change.id;
-
-    await expect(
-      prisma.planChange.count({ where: { kind: "testedOut", planId: item.planId } }),
-    ).resolves.toBe(1);
-
-    await expect(finish()).resolves.toMatchObject({ completion: { changeId } });
-
-    await expect(loadTodayPlanChange({ goal, now: new Date() })).resolves.toMatchObject({
-      canUndo: true,
-      id: changeId,
-    });
-
-    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
-      plan: {
-        changes: expect.arrayContaining([expect.objectContaining({ canUndo: true, id: changeId })]),
-      },
-      status: "ready",
-    });
-
-    await expect(
-      decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
-    ).resolves.toMatchObject({ status: "updated" });
-
-    await expect(prisma.planItem.findUnique({ where: { id: item.id } })).resolves.toMatchObject({
-      status: "todo",
-    });
-
-    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
-      plan: { placementTest: { result: { lessonsSkipped: 0 } } },
-      status: "ready",
-    });
-
-    await expect(
-      prisma.studySessionBlock.findMany({
-        orderBy: { position: "asc" },
-        where: { sessionId: session.id },
-      }),
-    ).resolves.toStrictEqual([active, pending]);
-  });
+      await expect(
+        prisma.studySessionBlock.findMany({
+          orderBy: { position: "asc" },
+          where: { sessionId: session.id },
+        }),
+      ).resolves.toStrictEqual([active, pending]);
+    },
+  );
 });
