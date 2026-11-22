@@ -10225,7 +10225,7 @@ msgstr "Noch etwa {time}. Deine Antworten sind gespeichert."
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
-msgstr ""
+msgstr "Du hast diese heute wieder in den Test aufgenommen. Beantworte sie morgen noch einmal, um sie zu überspringen."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
@@ -10240,7 +10240,7 @@ msgstr "Überspringen, was du schon weißt"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"
 msgid "A test finds the lessons you can skip."
-msgstr ""
+msgstr "Ein Test findet heraus, welche Lektionen du überspringen kannst."
 
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx

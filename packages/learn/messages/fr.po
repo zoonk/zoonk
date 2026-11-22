@@ -10225,7 +10225,7 @@ msgstr "Il te reste environ {time}. Tes réponses sont enregistrées."
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
-msgstr ""
+msgstr "Tu as annulé ces sauts aujourd’hui. Réponds à nouveau demain pour les sauter."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
@@ -10240,7 +10240,7 @@ msgstr "Saute ce que tu connais déjà"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"
 msgid "A test finds the lessons you can skip."
-msgstr ""
+msgstr "Un test trouve les leçons que tu peux sauter."
 
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx

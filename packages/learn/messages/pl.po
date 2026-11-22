@@ -10225,7 +10225,7 @@ msgstr "Do końca zostało około {time}. Twoje odpowiedzi są zapisane."
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
-msgstr ""
+msgstr "Dziś cofnięto te odpowiedzi. Odpowiedz na nie ponownie jutro, żeby pominąć te lekcje."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
@@ -10240,7 +10240,7 @@ msgstr "Pomiń to, co już znasz"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"
 msgid "A test finds the lessons you can skip."
-msgstr ""
+msgstr "Test wskaże lekcje, które możesz pominąć."
 
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx

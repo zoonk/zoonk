@@ -10225,7 +10225,7 @@ msgstr "残り約{time}です。答えは保存されています。"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
-msgstr ""
+msgstr "今日スキップを取り消したレッスンは、明日もう一度答えるとスキップできます。"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
@@ -10240,7 +10240,7 @@ msgstr "すでに知っている内容をスキップする"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"
 msgid "A test finds the lessons you can skip."
-msgstr ""
+msgstr "テストで、スキップできるレッスンがわかります。"
 
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
