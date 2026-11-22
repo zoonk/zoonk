@@ -22,7 +22,7 @@ env:
 jobs:
   release:
     if: "!github.event.release.prerelease"
-    runs-on: celesto-large
+    runs-on: celesto-micro
     timeout-minutes: 95
     env:
       DEPLOY_TARGET: production

@@ -28,7 +28,7 @@ env:
 jobs:
   suites:
     name: vitest (${{ matrix.part }})
-    runs-on: celesto-large
+    runs-on: celesto-micro
     timeout-minutes: 15
     # Runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy; more
     # at once only slowed every test down. The API's workflow runs mostly wait on durable retries and
