@@ -1,4 +1,6 @@
-import Foundation
+import HTTPTypes
+import OpenAPIRuntime
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -55,5 +57,42 @@ final class SubscriptionPageTests: XCTestCase {
 
   private func makeSubscription(provider: String) -> AccountSubscription {
     AccountSubscription(plan: "plus", provider: provider, status: "active")
+  }
+}
+
+extension SubscriptionPageTests {
+  @MainActor
+  func testTwoSubscriptionsEachShowTheirOwnManagementAction() async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport())
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      PlusStatusView(
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
+      )
+      .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 1032, height: 1376)
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("The website payment action did not appear") {
+      spoken(in: window).joined(separator: " ")
+        .contains("Update your payment on the website, where you subscribed.")
+    }
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains("Through the App Store"))
+    XCTAssertTrue(words.contains("Manage in App Store"))
+    XCTAssertTrue(words.contains("Through the website"))
+    XCTAssertTrue(words.contains("Update your payment on the website, where you subscribed."))
+    XCTAssertFalse(words.contains("Cancel Plus"))
+  }
+}
+
+private struct UnpaidWebsiteTransport: ClientTransport {
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
+    -> (HTTPResponse, HTTPBody?)
+  {
+    guard operationID == "getStripeSubscriptionCancellation" else { throw APIError.network }
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(Data(#"{"state":"unpaid","periodEnd":"2026-12-18T12:00:00.000Z"}"#.utf8))
+    )
   }
 }

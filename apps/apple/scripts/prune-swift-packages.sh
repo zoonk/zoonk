@@ -1,13 +1,11 @@
 #!/bin/sh
-# Trims cloned Swift packages before CI caches them: git mirrors in `repositories/` aren't read
-# under `-onlyUsePackageVersionsFromResolvedFile -skipPackageUpdates`, and `sentry-cocoa` ships six
-# extra xcframework variants that Zoonk doesn't link. Keeping `artifacts/sentry-cocoa/Sentry` intact
-# preserves its `_CodeSignature` while cutting the cached directory from ~3.9 GB to ~590 MB.
+# Trims unused binary artifacts from cloned Swift packages before CI caches them: `sentry-cocoa`
+# downloads seven xcframework variants (~3.3 GB), but Zoonk links only `Sentry`. Keeping
+# `artifacts/sentry-cocoa/Sentry` (with `_CodeSignature`) and `repositories/` (which backs
+# `checkouts/*/.git/objects/info/alternates`) keeps every checkout valid while cutting ~2.8 GB.
 set -eu
 
 packages_dir="${1:?Swift packages directory required}"
-
-rm -rf "$packages_dir/repositories"
 
 if [ -d "$packages_dir/artifacts/sentry-cocoa" ]; then
   for entry in "$packages_dir/artifacts/sentry-cocoa"/*; do

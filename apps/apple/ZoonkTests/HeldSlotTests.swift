@@ -9,25 +9,28 @@ import XCTest
 final class HeldSlotTests: XCTestCase {
   func testLiftingAGateHoldsTheMeasuredHeight() async throws {
     let state = SlotState(gated: true, width: 320)
-    var heights: [CGFloat] = []
+    var innerHeights: [CGFloat] = []
+    var outerHeights: [CGFloat] = []
 
     try show(
-      SlotHost(state: state) {
-        HeldSlot(gated: state.gated) {
-          if state.gated {
-            Color.clear.frame(height: 120)
-          } else {
-            Color.clear.frame(height: 24)
-          }
+      SlotHost(state: state) { gated in
+        HeldSlot(gated: gated) {
+          Color.clear
+            .frame(height: gated ? 120 : 24)
+            .onGeometryChange(for: CGFloat.self, of: \.size.height) { innerHeights.append($0) }
         }
-        .onGeometryChange(for: CGFloat.self, of: \.size.height) { heights.append($0) }
+        .onGeometryChange(for: CGFloat.self, of: \.size.height) { outerHeights.append($0) }
       })
 
-    try await waitForTestCondition("The gated slot did not measure") { heights.last == 120 }
+    try await waitForTestCondition("The gated slot did not measure") {
+      innerHeights.last == 120 && outerHeights.last == 120
+    }
 
     state.gated = false
-    await Task.yield()
-    XCTAssertEqual(heights.last, 120)
+    try await waitForTestCondition("The lifted content did not shrink") {
+      innerHeights.last == 24
+    }
+    XCTAssertEqual(outerHeights.last, 120)
   }
 
   func testAWidthChangeWhileGatedStartsAgainFromTheNaturalHeight() async throws {
@@ -35,8 +38,8 @@ final class HeldSlotTests: XCTestCase {
     var heights: [CGFloat] = []
 
     try show(
-      SlotHost(state: state) {
-        HeldSlot(gated: state.gated) {
+      SlotHost(state: state) { gated in
+        HeldSlot(gated: gated) {
           Text(verbatim: "You'll have enough later today, or subscribe to create it now.")
         }
         .onGeometryChange(for: CGFloat.self, of: \.size.height) { heights.append($0) }
@@ -67,9 +70,9 @@ private final class SlotState {
 
 private struct SlotHost<Content: View>: View {
   let state: SlotState
-  @ViewBuilder let content: Content
+  @ViewBuilder let content: (Bool) -> Content
 
   var body: some View {
-    content.frame(width: state.width)
+    content(state.gated).frame(width: state.width)
   }
 }
