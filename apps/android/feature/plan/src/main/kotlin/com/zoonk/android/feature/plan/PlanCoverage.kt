@@ -76,7 +76,7 @@ internal fun DailyCoverage(
         FinishLine(page, pending)
         return
     }
-    val date = GoalDate(target, plan.schedule.targetDateNamedMonth)
+    val date = GoalDate(target, plan.schedule.targetDateNamedMonth, plan.schedule.targetDateEstimated)
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
     val line =

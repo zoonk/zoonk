@@ -25,10 +25,14 @@ import com.zoonk.android.ui.format.spaceAfterSentence
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
-/** A goal's date as the plan answered it: a named month reads as the month, not its first day. */
+/**
+ * A goal's date as the plan answered it: a named month reads as the month, not its first day, and an
+ * [estimated] one (an exam's likely day) is marked "~".
+ */
 data class GoalDate(
     val date: kotlinx.datetime.LocalDate,
     val namedMonth: Boolean,
+    val estimated: Boolean = false,
 )
 
 /** Two goals typed together share the day: this one's time, the [others]' count and their time together. */
@@ -109,7 +113,10 @@ private fun splitWords(split: DaySplit): String {
 internal fun goalDateText(
     date: GoalDate,
     today: LocalDate,
-): String = formatDate(date.date.toJavaLocalDate(), currentLocale(), if (date.namedMonth) DateStyle.Month else DateStyle.Long, today)
+): String {
+    val formatted = formatDate(date.date.toJavaLocalDate(), currentLocale(), if (date.namedMonth) DateStyle.Month else DateStyle.Long, today)
+    return if (date.estimated) stringResource(R.string.plan_date_estimate, formatted) else formatted
+}
 
 /** The time we suggest: by the date when it covers everything, or that the plan starts with what matters most. */
 @Composable

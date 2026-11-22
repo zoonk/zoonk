@@ -46,7 +46,7 @@ private fun suggestedTimeOffer(
     val target = schedule.targetDate
     val line =
         if (suggested.kind == PlanSuggestedTime.Kind.EVERYTHING && target != null) {
-            enoughBy(page, GoalDate(target, schedule.targetDateNamedMonth), schedule.targetDateEstimated)
+            enoughBy(page, GoalDate(target, schedule.targetDateNamedMonth, schedule.targetDateEstimated))
         } else {
             startsWithMost(page.isExam)
         }
@@ -58,15 +58,13 @@ private fun suggestedTimeOffer(
     )
 }
 
-/** The suggested time is enough to cover everything by the goal's date, marked "~" when that date is estimated. */
+/** The suggested time is enough to cover everything by the goal's date. */
 @Composable
 private fun enoughBy(
     page: PlanPageState,
     date: GoalDate,
-    estimated: Boolean,
 ): String {
-    val formatted = goalDateText(date, page.today)
-    val shown = if (estimated) stringResource(R.string.plan_date_estimate, formatted) else formatted
+    val shown = goalDateText(date, page.today)
     val words =
         when {
             page.isExam && date.namedMonth -> R.string.plan_time_enough_exam_month
