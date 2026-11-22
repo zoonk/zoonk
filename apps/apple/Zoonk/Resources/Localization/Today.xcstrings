@@ -6555,10 +6555,122 @@
       }
     },
     "Let's fit your plan to the days left." : {
-      "comment" : "Under \"You missed a few days\": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes."
+      "comment" : "Under \"You missed a few days\": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass deinen Plan an die verbleibenden Tage an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustemos tu plan a los días que quedan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptons ton plan au nombre de jours qu’il te reste."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adattiamo il tuo piano ai giorni rimasti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残り日数に合わせて学習計画を調整しましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "남은 날에 맞게 계획을 조정해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostosujmy plan do pozostałych dni."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vamos ajustar seu plano aos dias que faltam."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planını kalan günlere göre ayarlayalım."
+          }
+        }
+      }
     },
     "Let's fit your plan to the time left." : {
-      "comment" : "Above Today, when the plan has more lessons than days left. Followed by a link that opens the plan to change it."
+      "comment" : "Above Today, when the plan has more lessons than days left. Followed by a link that opens the plan to change it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass deinen Plan an die verbleibende Zeit an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustemos tu plan al tiempo que queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptons ton plan au temps qu’il te reste."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adattiamo il tuo piano al tempo che resta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残り時間に合わせて学習計画を調整しましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "남은 시간에 맞게 계획을 조정해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostosujmy plan do pozostałego czasu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vamos ajustar seu plano ao tempo que falta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planını kalan süreye göre ayarlayalım."
+          }
+        }
+      }
     },
     "Missions done" : {
       "comment" : "Today's missions are done",
@@ -7271,6 +7383,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün çalışma planlanmadı."
+          }
+        }
+      }
+    },
+    "Not enough time left for all your lessons." : {
+      "comment" : "Under Today's title when the plan has more lessons than its days can hold",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht genug Zeit für alle deine Lektionen übrig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No queda tiempo suficiente para todas tus lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il ne reste pas assez de temps pour toutes tes leçons."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non c’è abbastanza tempo per tutte le lezioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのレッスンを終えるには時間が足りません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 레슨을 하기엔 시간이 부족해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za mało czasu, by zmieścić wszystkie lekcje."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há tempo suficiente para todas as suas aulas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm derslerin için yeterli zaman kalmadı."
           }
         }
       }
@@ -9880,6 +10051,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlandı"
+          }
+        }
+      }
+    },
+    "Some lessons no longer fit before your date." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige Lektionen passen nicht mehr vor deinem Datum."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunas lecciones ya no caben antes de tu fecha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certaines leçons ne peuvent plus être faites avant ta date."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcune lezioni non rientrano più entro la data che hai scelto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期日までに終えられないレッスンがあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정해 둔 날짜까지 끝내기 어려운 레슨이 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niektóre lekcje nie zmieszczą się już przed wybraną datą."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas aulas já não cabem até a data escolhida."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bazı dersler artık hedef tarihinden önceye sığmıyor."
+          }
+        }
+      }
+    },
+    "Some lessons no longer fit before your exam." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige Lektionen passen nicht mehr vor deiner Prüfung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunas lecciones ya no caben antes de tu examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certaines leçons ne peuvent plus être faites avant ton examen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcune lezioni non rientrano più prima dell’esame."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験までに終えられないレッスンがあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험 전까지 끝내기 어려운 레슨이 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niektóre lekcje nie zmieszczą się już przed egzaminem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas aulas já não cabem até a sua prova."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bazı dersler artık sınavından önceye sığmıyor."
           }
         }
       }
