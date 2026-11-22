@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { writingAttemptSchema } from "@zoonk/core/exams/essays/contract";
+import { writtenAnswerSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { prisma } from "@zoonk/db";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -23,26 +24,22 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
       skillFixture(),
     ]);
 
-    const item = await itemFixture({
-      content: {
-        writing: {
-          aspects: [{ criterionId: "claim", description: "Private answer key", points: null }],
-          assessedSkillIds: [skill.id],
-          charactersPerLine: 55,
-          criteria: [{ id: "claim", name: "Claim", points: null }],
-          grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
-          keySource: "practiceKey",
-          lines: 30,
-          minimumWords: 1,
-          points: null,
-          taskKey: "part-a",
-          title: "The response",
-          unit: "answer",
-        },
-      },
-      format: "essay",
-      skillId: skill.id,
-    });
+    const writing = {
+      aspects: [{ criterionId: "claim", description: "Private answer key", points: null }],
+      assessedSkillIds: [skill.id],
+      charactersPerLine: 55,
+      criteria: [{ id: "claim", name: "Claim", points: null }],
+      grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+      keySource: "practiceKey",
+      lines: 30,
+      minimumWords: 1,
+      points: null,
+      taskKey: "part-a",
+      title: "The response",
+      unit: "answer",
+    };
+
+    const item = await itemFixture({ content: { writing }, format: "essay", skillId: skill.id });
 
     const answeredAt = new Date("2026-11-20T18:00:00Z");
     const text = "  This is the response.\n";
@@ -57,6 +54,7 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
             timed: false,
             version: "firstDraft",
           },
+          examBlueprintId: item.examBlueprintId,
           grade: {
             criteria: [],
             errors: [],
@@ -65,7 +63,9 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
             nextStep: null,
             progress: null,
           },
+          itemId: item.id,
           text,
+          writing: writtenAnswerSchema.shape.writing.parse(writing),
         },
         answeredAt,
         durationMs: 300,
