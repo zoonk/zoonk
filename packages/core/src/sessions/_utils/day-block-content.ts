@@ -1,5 +1,7 @@
 import { type StudySessionBlock } from "@zoonk/db";
-import { getBlockItemIds, readBlockPayload } from "../block-payload";
+import { type PlanState } from "../../plans/planner/plan-state";
+import { planWritingScope } from "../../plans/planner/plan-writing-scope";
+import { getBlockItemIds, hasWritingProgress, readBlockPayload } from "../block-payload";
 import { type PlannedBlock } from "../session-builder";
 
 function getContent({
@@ -74,4 +76,37 @@ export function hasSameBlocks({
       );
     })
   );
+}
+
+export function getKeptBlocks(
+  blocks: readonly StudySessionBlock[],
+  plan: Pick<PlanState, "graph" | "settings"> | undefined,
+): StudySessionBlock[] {
+  const keptSkills = plan?.settings.skippedAreas.length
+    ? planWritingScope({
+        graph: plan.graph,
+        skippedAreas: plan.settings.skippedAreas,
+        structure: null,
+      }).keptSkills
+    : null;
+
+  const openedLessons = new Set(
+    blocks.flatMap(({ lessonId, status }) =>
+      lessonId && (status === "active" || status === "completed") ? [lessonId] : [],
+    ),
+  );
+
+  return blocks.filter((block) => {
+    const payload = readBlockPayload(block);
+    const { extra, skillIds, writingLessonId } = payload;
+
+    return (
+      block.status !== "pending" ||
+      extra ||
+      hasWritingProgress(payload) ||
+      (writingLessonId !== undefined &&
+        openedLessons.has(writingLessonId) &&
+        (!keptSkills || skillIds.some((id) => keptSkills.has(id))))
+    );
+  });
 }

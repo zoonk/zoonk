@@ -9,15 +9,19 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { createWritingBlock } from "../exams/essays/create-writing-block";
 import { toProduceBlock } from "../exams/essays/produce-block";
 import { CGU } from "../exams/mocks/_test-utils/cgu-written";
+import { getMockOptions } from "../exams/mocks/get-mock-options";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
 import { listWritingPreparation } from "../lookahead/writing-preparation";
+import { loadDayPlan } from "../sessions/_utils/day-plan";
 import {
   captureDaySession,
   lockDaySession,
   restoreDaySession,
 } from "../sessions/_utils/day-session-snapshot";
+import { loadDayWriting } from "../sessions/_utils/day-writing";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { followPlanChangeToday } from "../sessions/_utils/refresh-day-session";
 import { addWritingDrill } from "../sessions/_utils/writing-drills";
@@ -25,6 +29,7 @@ import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 import { buildSessionBlocks } from "../sessions/session-builder";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
@@ -40,11 +45,15 @@ async function setup({
   structure,
   targetDate = TARGET,
   writtenArea = "Writing",
+  secondWritingArea,
+  skippedAreas = [],
 }: {
   dailyMinutes: number;
   structure: ExamStructure;
   targetDate?: Date | null;
   writtenArea?: string;
+  secondWritingArea?: string;
+  skippedAreas?: string[];
 }) {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-09-30T12:00:00Z"));
@@ -56,6 +65,7 @@ async function setup({
       skills: [
         { area: "Control", lessons: 60 },
         { area: writtenArea, lessons: 30 },
+        ...(secondWritingArea ? [{ area: secondWritingArea, lessons: 30 }] : []),
       ],
     }),
   ]);
@@ -65,7 +75,7 @@ async function setup({
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
     kind: "exam",
-    settings: { startDate: toIsoDate(START) },
+    settings: { skippedAreas, startDate: toIsoDate(START) },
     targetDate,
     timezone: "UTC",
     userId: user.id,
@@ -201,6 +211,167 @@ async function recordWritingBlock({
 
 describe("written exam allocation", () => {
   afterEach(() => vi.useRealTimers());
+
+  it("removes writing from the plan, an already built day, and new days, then restores it", async () => {
+    const { blueprint, goal, saved, writingSkill } = await setup({
+      dailyMinutes: 240,
+      structure: CGU,
+    });
+
+    const context = {
+      blueprint,
+      goal,
+      localDate: START,
+      now: new Date(),
+      timeZone: "UTC",
+      userId: goal.userId,
+    };
+
+    const plan = await loadDayPlan(context);
+
+    const before = await loadDayWriting({ context, includesMockExams: true, plan });
+    expect(before.produces.length).toBeGreaterThan(0);
+
+    const day = await studySessionFixture({
+      goalId: goal.id,
+      localDate: START,
+      status: "planned",
+      userId: goal.userId,
+    });
+
+    await studySessionBlockFixture({
+      ...toProduceBlock(before.produces[0]!),
+      sessionId: day.id,
+      status: "pending",
+    });
+
+    const writtenLesson = saved.items.find(
+      (item) => item.skillId === writingSkill && item.lessonId,
+    );
+
+    const lessonId = writtenLesson?.lessonId;
+
+    if (!lessonId || !writingSkill) {
+      throw new Error("Expected a scheduled writing lesson");
+    }
+
+    await studySessionBlockFixture({ lessonId, sessionId: day.id, status: "completed" });
+
+    const drill = toProduceBlock({
+      ...before.produces[0]!,
+      minutes: 8,
+      skillId: writingSkill,
+      unit: "drill",
+    });
+
+    await studySessionBlockFixture({
+      ...drill,
+      payload: { ...drill.payload, writingLessonId: lessonId },
+      sessionId: day.id,
+      status: "pending",
+    });
+
+    const change = (kind: "skipAreas" | "restoreAreas") =>
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: ["Writing"], kind }], timeZone: "UTC" },
+      });
+
+    await expect(change("skipAreas")).resolves.toMatchObject({ status: "applied" });
+    const skipped = await loadDayPlan(context);
+    const settings = parsePlanSettings(skipped.settings);
+    const writing = await loadDayWriting({ context, includesMockExams: true, plan: skipped });
+
+    const stale = await loadDayWriting({
+      context,
+      includesMockExams: true,
+      plan: {
+        ...skipped,
+        settings: {
+          ...settings,
+          writingSchedule: parsePlanSettings(saved.settings).writingSchedule,
+        },
+      },
+    });
+
+    expect.soft(settings.writingSchedule ?? []).toStrictEqual([]);
+    expect.soft(writing.produces).toStrictEqual([]);
+    expect.soft(stale.produces).toStrictEqual([]);
+
+    const lesson = {
+      canDo: null,
+      chapterId: null,
+      lessonId: randomUUID(),
+      minutes: 15,
+      planItemId: null,
+      planSkillId: writingSkill ?? null,
+      skillIds: [],
+      title: "Writing lesson",
+    };
+
+    expect(before.reserveDrill(lesson).drill?.unit).toBe("drill");
+    expect(stale.reserveDrill(lesson)).toStrictEqual(lesson);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { writtenPractice: null },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.studySessionBlock.count({
+        where: { kind: "produce", sessionId: day.id, status: "pending" },
+      }),
+    ).resolves.toBe(0);
+
+    await expect(
+      listWritingPreparation({ goalId: goal.id, timeZone: "UTC", userId: goal.userId }),
+    ).resolves.toStrictEqual([]);
+
+    await expect(createWritingBlock({ goalId: goal.id, taskKey: "short" })).resolves.toMatchObject({
+      status: "notFound",
+    });
+
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: { options: expect.arrayContaining([expect.objectContaining({ kind: "written" })]) },
+    });
+
+    await expect(change("restoreAreas")).resolves.toMatchObject({ status: "applied" });
+    const restored = await loadDayPlan(context);
+    expect(parsePlanSettings(restored.settings).writingSchedule?.length).toBeGreaterThan(0);
+  });
+
+  it.each([2, null])(
+    "schedules only the kept task when one of two written areas is skipped (second paper day %s)",
+    async (day) => {
+      const structure = structuredClone(CGU);
+      const original = structure.mock!.sections.find(({ kind }) => kind === "written")!;
+      const [short, long] = original.tasks!;
+      original.tasks = [short!];
+      structure.mock!.sections.push({ ...original, day, name: "Written cases", tasks: [long!] });
+      structure.subjects.push({ ...structure.subjects[1]!, group: "Written cases", name: "Cases" });
+
+      const { goal, saved } = await setup({
+        dailyMinutes: 240,
+        secondWritingArea: "Cases",
+        skippedAreas: ["Writing"],
+        structure,
+      });
+
+      const schedule = parsePlanSettings(saved.settings).writingSchedule ?? [];
+      const keys = new Set(schedule.flatMap(({ tasks }) => tasks.map(({ taskKey }) => taskKey)));
+      expect([...keys]).toStrictEqual(["long"]);
+      expect(schedule.some(({ test }) => test)).toBe(day !== null);
+      const view = await getGoalPlan(goal.id);
+
+      if (view.status !== "ready") {
+        throw new Error(`Expected a ready plan, got ${view.status}`);
+      }
+
+      expect(view.plan.writtenPractice?.subjects?.map(({ points }) => points.name)).toStrictEqual([
+        "Written cases",
+      ]);
+    },
+  );
 
   it("restores only the unmatched writing occurrences when undo keeps a new answer", async () => {
     const { goal } = await setup({ dailyMinutes: 120, structure: CGU });

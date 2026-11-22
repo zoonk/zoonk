@@ -2,14 +2,17 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { readExamPicks } from "../exams/choices/exam-choices";
+import { listPracticeWritingTasks } from "../exams/essays/_utils/practice-writing-tasks";
 import { type WritingRequest } from "../exams/essays/writing-supply";
 import { readMockStructure } from "../exams/mocks/_utils/read-mock-structure";
 import { listWrittenRequests } from "../exams/mocks/written-parts";
 import { loadScheduledAnswers } from "../learner/facts/scheduled-answers";
 import { type WritingSupplyInput } from "../library/items/writing-prompt-pool";
 import { toIsoDate } from "../plans/planner/plan-calendar";
-import { parsePlanSettings } from "../plans/planner/plan-state";
-import { resolveWritingDay } from "../plans/planner/writing-schedule";
+import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
+import { planWritingScope } from "../plans/planner/plan-writing-scope";
+import { keepWritingSchedule, resolveWritingDay } from "../plans/planner/writing-schedule";
+import { listWrittenPapers } from "../plans/planner/written-test-planning";
 import { getGoalDayMinutes } from "../sessions/_utils/day-minutes";
 import { readBlockPayload } from "../sessions/block-payload";
 
@@ -27,7 +30,7 @@ export async function listWritingPreparation({
       dailyMinutes: true,
       examBlueprint: true,
       kind: true,
-      plan: { select: { settings: true } },
+      plan: { select: { graph: true, settings: true } },
       targetDate: true,
     },
     where: { id: goalId, kind: "exam", userId },
@@ -52,7 +55,29 @@ export async function listWritingPreparation({
     where: { goalId, localDate: today, userId },
   });
 
-  const schedule = settings.writingSchedule;
+  const { keptSkills, keepsTask } = planWritingScope({
+    graph: parsePlanGraph(goal.plan.graph),
+    skippedAreas: settings.skippedAreas,
+    structure,
+  });
+
+  const taskKeys = new Set(
+    structure
+      ? listPracticeWritingTasks({ classTest: Boolean(blueprint.ownerId), structure })
+          .filter((task) => keepsTask(task))
+          .map(({ key }) => key)
+      : [],
+  );
+
+  const saved = settings.writingSchedule;
+
+  const schedule =
+    saved && settings.skippedAreas.length > 0 ? keepWritingSchedule(saved, taskKeys) : saved;
+
+  const eligiblePapers =
+    structure && settings.skippedAreas.length > 0
+      ? new Set(listWrittenPapers({ keepsTask, picks: settings, structure }).map(({ day }) => day))
+      : null;
 
   const allocation =
     !session &&
@@ -65,6 +90,14 @@ export async function listWritingPreparation({
         })
       : undefined;
 
+  const keepsPendingWriting = (
+    writing: Pick<WritingRequest, "taskKey" | "unit">,
+    skillIds: string[],
+  ) =>
+    settings.skippedAreas.length === 0 ||
+    (taskKeys.has(writing.taskKey) &&
+      (writing.unit !== "drill" || skillIds.some((id) => keptSkills.has(id))));
+
   const requests = session
     ? session.blocks.flatMap<WritingRequest>((block) => {
         const { checkpoint, extra, skillIds, writing } = readBlockPayload(block);
@@ -74,10 +107,18 @@ export async function listWritingPreparation({
           checkpoint?.mock &&
           (checkpoint.written || checkpoint.mockIdentity?.fullLength)
         ) {
-          return listWrittenRequests({ day: checkpoint.mockIdentity?.day ?? null, structure });
+          const day = checkpoint.mockIdentity?.day ?? null;
+
+          return checkpoint.written && eligiblePapers && !eligiblePapers.has(day)
+            ? []
+            : listWrittenRequests({ day, structure });
         }
 
         if (block.kind !== "produce" || extra || !writing || writing.admissionId) {
+          return [];
+        }
+
+        if (!keepsPendingWriting(writing, skillIds)) {
           return [];
         }
 

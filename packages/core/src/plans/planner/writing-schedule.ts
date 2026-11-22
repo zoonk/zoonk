@@ -162,3 +162,42 @@ export function listRemainingWriting(input: WritingScheduleInput): WritingWork[]
     ),
   ];
 }
+
+/** A timed paper shares a clock. Keep a complete eligible paper and reflow any removed reservation. */
+export function keepWritingSchedule(
+  schedule: NonNullable<PlanSettings["writingSchedule"]>,
+  keys: ReadonlySet<string>,
+) {
+  let continuation = 0;
+
+  return schedule.flatMap((entry) => {
+    if (entry.tasks.length === 0 && !entry.test) {
+      const minutes = Math.min(continuation, entry.minutes);
+      continuation -= minutes;
+      return minutes > 0 ? [{ ...entry, minutes }] : [];
+    }
+
+    const tasks = entry.tasks.filter(({ taskKey }) => keys.has(taskKey));
+    const total = tasks.reduce((sum, task) => sum + task.minutes, 0);
+    continuation = entry.test ? 0 : Math.max(0, total - entry.minutes);
+
+    if (tasks.length === 0 || (entry.test && tasks.length !== entry.tasks.length)) {
+      return [];
+    }
+
+    return [
+      { ...entry, minutes: entry.test ? entry.minutes : Math.min(total, entry.minutes), tasks },
+    ];
+  });
+}
+
+export function getWritingTarget({
+  budget,
+  practice,
+}: {
+  budget: number;
+  practice: readonly { minutes: number }[];
+}): number {
+  const durations = practice.map(({ minutes }) => minutes);
+  return Math.max(Math.min(...durations), budget - Math.max(...durations) / 2);
+}

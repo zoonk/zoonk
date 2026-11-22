@@ -5,7 +5,8 @@ import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { daysBetween, fromIsoDate } from "../../../plans/planner/plan-calendar";
-import { parsePlanSettings } from "../../../plans/planner/plan-state";
+import { type PlanGraph, parsePlanSettings } from "../../../plans/planner/plan-state";
+import { planWritingScope } from "../../../plans/planner/plan-writing-scope";
 import { getDaysBetweenEssays, isWrittenDay } from "../../../plans/planner/written-cadence";
 import { type ExamPicks, readExamPicks } from "../../choices/exam-choices";
 import { type PlannedProduce } from "../produce-block";
@@ -41,19 +42,24 @@ export function getEstimatedMinutes({
 
 export async function loadWritingPace({
   examBlueprintId,
+  keepsTask,
   picks,
   privateExam,
   structure,
   userId,
 }: {
   examBlueprintId: string;
+  keepsTask?: (task: Task) => boolean;
   picks: ExamPicks;
   privateExam: boolean;
   structure: ExamStructure;
   userId: string;
 }) {
   const tasks = listPracticeWritingTasks({ classTest: privateExam, structure });
-  const available = tasks.filter((task) => getWritingScope({ picks, structure, task }).available);
+
+  const available = tasks.filter(
+    (task) => (keepsTask?.(task) ?? true) && getWritingScope({ picks, structure, task }).available,
+  );
 
   if (available.length === 0) {
     return [];
@@ -105,7 +111,9 @@ export async function loadWritingPace({
 export async function loadSessionProduce({
   blueprint: knownBlueprint,
   goal,
+  keepsTask,
   onDemand = false,
+  planGraph,
   planSettings,
   taskKey,
   today,
@@ -114,8 +122,10 @@ export async function loadSessionProduce({
   blueprint?: ExamBlueprint | null;
   goal: Pick<Goal, "examBlueprintId" | "kind" | "targetDate">;
   onDemand?: boolean;
+  planGraph?: PlanGraph;
   planSettings: unknown;
   taskKey?: string;
+  keepsTask?: (task: Task) => boolean;
   today: Date;
   userId: string;
 }): Promise<PlannedProduce | null> {
@@ -133,16 +143,20 @@ export async function loadSessionProduce({
   }
 
   const { structure } = readBlueprintContent(blueprint);
+  const settings = parsePlanSettings(planSettings);
+
+  const scope =
+    planGraph &&
+    planWritingScope({ graph: planGraph, skippedAreas: settings.skippedAreas, structure });
 
   const ordered = await loadWritingPace({
     examBlueprintId: blueprint.id,
+    keepsTask: keepsTask ?? scope?.keepsTask,
     picks: readExamPicks(planSettings),
     privateExam: Boolean(blueprint.ownerId),
     structure,
     userId,
   });
-
-  const settings = parsePlanSettings(planSettings);
 
   const schedule = {
     cadence: settings.writtenCadence,

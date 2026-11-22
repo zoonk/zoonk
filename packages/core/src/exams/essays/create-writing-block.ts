@@ -1,13 +1,14 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { appendExtraBlocks, withSessionAppendLock } from "../../sessions/_utils/extra-blocks";
 import { findStudySessionFor } from "../../sessions/_utils/study-session-access";
 import { openStudyDay } from "../../sessions/open-study-day";
-import { loadExamPicks } from "../choices/load-exam-choices";
 import { unfinishedExtraWritingWhere } from "./_utils/extra-writing-blocks";
 import { loadSessionProduce } from "./_utils/load-produce";
 import { toProduceBlock } from "./produce-block";
@@ -29,10 +30,16 @@ export async function createWritingBlock({
   const timeZone = getAnswerTimeZone({ goal });
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 
+  const plan = await prisma.plan.findUnique({
+    select: { graph: true, settings: true },
+    where: { goalId },
+  });
+
   const produce = await loadSessionProduce({
     goal,
     onDemand: true,
-    planSettings: await loadExamPicks(goalId),
+    planGraph: parsePlanGraph(plan?.graph),
+    planSettings: plan?.settings,
     taskKey,
     today,
     userId,

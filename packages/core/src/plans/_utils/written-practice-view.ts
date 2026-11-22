@@ -17,6 +17,7 @@ import { readBlockPayload } from "../../sessions/block-payload";
 import { getWrittenTestAreas } from "../planner/graph-areas";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
+import { keptWritingArea, planWritingScope } from "../planner/plan-writing-scope";
 import { isShortExam } from "../planner/short-exam-plan";
 import { getEffectiveCadence, getFinalWeeksStart } from "../planner/written-cadence";
 import { type WrittenPractice } from "../written-practice-contract";
@@ -37,7 +38,10 @@ export function getWrittenPracticeView({
   noticeParts?: readonly string[];
   settings: PlanSettings;
 }): WrittenPractice | null {
-  const parts = [...new Set([...getWrittenTestAreas(graph), ...noticeParts])];
+  const parts = [...new Set([...getWrittenTestAreas(graph), ...noticeParts])].filter(
+    keptWritingArea(settings.skippedAreas),
+  );
+
   const { targetDate } = goal;
   const planStart = getPlanStart({ createdAt: goal.createdAt, settings });
 
@@ -166,7 +170,18 @@ export async function loadWrittenPracticeView({
     ? toChosenStructure({ includePendingWriting: true, picks: settings, structure })
     : null;
 
-  const tasks = listWrittenTasks({ structure: chosen });
+  const { keepsTask } = planWritingScope({
+    graph,
+    skippedAreas: settings.skippedAreas,
+    structure: chosen,
+  });
+
+  const noticeTasks = listWrittenTasks({ structure: chosen });
+  const tasks = noticeTasks.filter((task) => keepsTask(task));
+
+  if (noticeTasks.length > 0 && tasks.length === 0) {
+    return null;
+  }
 
   const base = getWrittenPracticeView({
     goal,
@@ -192,7 +207,7 @@ export async function loadWrittenPracticeView({
     writable.length > 0 ? loadWriteActions({ goal, tasks: writable }) : null,
   ]);
 
-  const points = projectWrittenParts({ samples, structure: chosen });
+  const points = projectWrittenParts({ samples, structure: chosen, tasks });
   const byPart = Map.groupBy(samples, (sample) => sample.prompt.part);
 
   return {

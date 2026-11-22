@@ -9,7 +9,7 @@ import { toIsoDate } from "./plan-calendar";
 import { type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import { type DroppedUnit, type PlanDay } from "./schedule-units";
-import { getPlacementCarry } from "./writing-schedule";
+import { getPlacementCarry, getWritingTarget, keepWritingSchedule } from "./writing-schedule";
 import { isWrittenDay } from "./written-cadence";
 import { scheduleWrittenPapers } from "./written-test-planning";
 
@@ -47,17 +47,6 @@ function getWritingRoom({ shape }: PlanDay): number {
   }
 
   return Math.max(0, Math.floor(getSpendable(shape) - (shape.reserved ?? 0)));
-}
-
-function getWritingTarget({
-  budget,
-  practice,
-}: {
-  budget: number;
-  practice: readonly Answer[];
-}): number {
-  const durations = practice.map(({ minutes }) => minutes);
-  return Math.max(Math.min(...durations), budget - Math.max(...durations) / 2);
 }
 
 export function getMinimumWritingCost({
@@ -177,9 +166,14 @@ function listWritingSchedule({
 
   const today = toIsoDate(input.today);
 
-  const kept = (input.settings.writingSchedule ?? []).filter(
+  const retained = (input.settings.writingSchedule ?? []).filter(
     ({ date }) => date < toIsoDate(start) || (input.todayShown && date === today),
   );
+
+  const kept =
+    input.settings.skippedAreas.length > 0
+      ? keepWritingSchedule(retained, new Set(writing.practice.map(({ taskKey }) => taskKey)))
+      : retained;
 
   const keptByDate = new Map(kept.map((entry) => [entry.date, entry]));
 

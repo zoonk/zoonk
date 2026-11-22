@@ -6,7 +6,8 @@ import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getPlanCalendar, toIsoDate } from "../../plans/planner/plan-calendar";
 import { getScheduledWrittenTest } from "../../plans/planner/plan-days";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { resolveWritingDay } from "../../plans/planner/writing-schedule";
+import { planWritingScope } from "../../plans/planner/plan-writing-scope";
+import { keepWritingSchedule, resolveWritingDay } from "../../plans/planner/writing-schedule";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 import { type loadDayPlan } from "./day-plan";
 import { type SessionDayContext } from "./session-placement";
@@ -14,10 +15,12 @@ import { pickWritingDrill, reserveWritingDrill } from "./writing-drills";
 
 async function loadLegacyProduces({
   context,
+  keepsTask,
   onDemand,
   planSettings,
 }: {
   context: SessionDayContext;
+  keepsTask: ReturnType<typeof planWritingScope>["keepsTask"];
   onDemand: boolean;
   planSettings: unknown;
 }) {
@@ -26,6 +29,7 @@ async function loadLegacyProduces({
   const produce = await loadSessionProduce({
     blueprint,
     goal,
+    keepsTask,
     onDemand,
     planSettings,
     today: localDate,
@@ -53,7 +57,25 @@ export async function loadDayWriting({
   const { blueprint, goal, localDate, readWritingAnswers = loadScheduledAnswers, userId } = context;
   const settings = parsePlanSettings(plan.settings);
   const date = toIsoDate(localDate);
-  const schedule = settings.writingSchedule;
+
+  const { keepsTask, keptSkills } = planWritingScope({
+    graph: plan.graph,
+    skippedAreas: settings.skippedAreas,
+    structure: plan.structure,
+  });
+
+  const tasks = plan.structure
+    ? listPracticeWritingTasks({
+        classTest: Boolean(blueprint?.ownerId),
+        structure: plan.structure,
+      }).filter((task) => keepsTask(task))
+    : [];
+
+  const taskKeys = new Set(tasks.map(({ key }) => key));
+  const saved = settings.writingSchedule;
+
+  const schedule =
+    saved && settings.skippedAreas.length > 0 ? keepWritingSchedule(saved, taskKeys) : saved;
 
   const allocated =
     schedule?.length && plan.dayMinutes > 0
@@ -73,6 +95,7 @@ export async function loadDayWriting({
             kind === "mock" && scheduledFor ? [toIsoDate(scheduledFor)] : [],
           ),
         ),
+        keepsTask,
         picks: settings,
         planStart: plan.planStart,
         structure: blueprint ? readBlueprintContent(blueprint).structure : null,
@@ -80,22 +103,15 @@ export async function loadDayWriting({
         today: localDate,
       });
 
-  const tasks = plan.structure
-    ? listPracticeWritingTasks({
-        classTest: Boolean(blueprint?.ownerId),
-        structure: plan.structure,
-      }).map((task) => ({
-        skillIds: getWritingSkillIds({
-          graph: plan.graph,
-          section: task.section,
-          structure: plan.structure,
-        }),
-        taskKey: task.key,
-        title: task.description,
-      }))
-    : [];
-
-  const taskKeys = new Set(tasks.map(({ taskKey }) => taskKey));
+  const drills = tasks.map((task) => ({
+    skillIds: getWritingSkillIds({
+      graph: plan.graph,
+      section: task.section,
+      structure: plan.structure,
+    }).intersection(keptSkills),
+    taskKey: task.key,
+    title: task.description,
+  }));
 
   const writtenTest: PlannedCheckpoint | null =
     scheduledWriting && includesMockExams
@@ -121,11 +137,12 @@ export async function loadDayWriting({
       ? (allocated?.tasks.filter(({ taskKey }) => taskKeys.has(taskKey)) ?? [])
       : await loadLegacyProduces({
           context,
+          keepsTask,
           onDemand: Boolean(scheduledWriting) && !includesMockExams,
           planSettings: plan.settings,
         }),
     reserveDrill: (lesson: PlannedLesson) =>
-      reserveWritingDrill(lesson, pickWritingDrill({ lesson, tasks })),
+      reserveWritingDrill(lesson, pickWritingDrill({ lesson, tasks: drills })),
     writtenTest,
   };
 }

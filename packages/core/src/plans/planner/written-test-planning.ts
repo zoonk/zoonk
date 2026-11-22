@@ -12,9 +12,11 @@ import {
 } from "./plan-calendar";
 
 export function listWrittenPapers({
+  keepsTask = () => true,
   picks,
   structure,
 }: {
+  keepsTask?: (task: ReturnType<typeof listWrittenTasks>[number]) => boolean;
   picks: ExamPicks;
   structure: ExamStructure;
 }) {
@@ -28,7 +30,10 @@ export function listWrittenPapers({
       tasks.length > 0 &&
       minutes > 0 &&
       tasks.every(
-        (task) => task.minutes !== null && getWritingScope({ picks, structure, task }).available,
+        (task) =>
+          keepsTask(task) &&
+          task.minutes !== null &&
+          getWritingScope({ picks, structure, task }).available,
       );
 
     return official
@@ -66,6 +71,7 @@ export function scheduleWrittenPapers<Paper extends { minutes: number }>({
 export function getScheduledWrittenTest({
   calendar,
   excludes,
+  keepsTask,
   picks,
   planStart,
   structure,
@@ -74,6 +80,7 @@ export function getScheduledWrittenTest({
 }: {
   calendar: StudyCalendar;
   excludes: ReadonlySet<string>;
+  keepsTask?: (task: ReturnType<typeof listWrittenTasks>[number]) => boolean;
   picks: ExamPicks;
   planStart: Date;
   structure: ExamStructure | null;
@@ -84,7 +91,7 @@ export function getScheduledWrittenTest({
     return null;
   }
 
-  const papers = listWrittenPapers({ picks, structure });
+  const papers = listWrittenPapers({ keepsTask, picks, structure });
 
   if (papers.length === 0) {
     return null;

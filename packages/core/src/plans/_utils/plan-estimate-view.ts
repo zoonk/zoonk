@@ -23,13 +23,21 @@ function getShownEnd(context: PlanReadContext): string | null {
 export async function loadPlanWritingWork({ goal, state, today }: PlanReadContext) {
   const schedule = state.settings.writingSchedule;
 
-  return schedule?.length
-    ? listRemainingWriting({
-        attempts: await readScheduledAnswers(goal.userId, goal.id),
-        schedule,
-        today: toIsoDate(today),
-      })
-    : [];
+  if (!schedule?.length) {
+    return [];
+  }
+
+  const attempts = await readScheduledAnswers(goal.userId, goal.id);
+  const keys = new Set(schedule.flatMap(({ tasks }) => tasks.map(({ taskKey }) => taskKey)));
+
+  return listRemainingWriting({
+    attempts:
+      state.settings.skippedAreas.length > 0
+        ? attempts.filter(({ taskKey }) => keys.has(taskKey))
+        : attempts,
+    schedule,
+    today: toIsoDate(today),
+  });
 }
 
 export function buildEstimateView({

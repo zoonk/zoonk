@@ -89,6 +89,7 @@ export async function loadPlannerInputs({
   examPicks,
   goal,
   graph,
+  skippedAreas,
   targetDate,
   userId,
 }: {
@@ -99,6 +100,7 @@ export async function loadPlannerInputs({
     "details" | "examBlueprintId" | "id" | "kind" | "planRevealedAt" | "primaryCourseId"
   >;
   graph: PlanGraph;
+  skippedAreas: readonly string[];
   targetDate: Date | null;
   userId: string;
 }) {
@@ -140,7 +142,9 @@ export async function loadPlannerInputs({
     writingNotice && goal.examBlueprintId
       ? await loadPlanWriting({
           examBlueprintId: goal.examBlueprintId,
+          graph,
           skillIds: new Set(writtenSkillIds),
+          skippedAreas,
           userId,
           ...writingNotice,
         })

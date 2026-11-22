@@ -62,12 +62,12 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Writ
 export function projectWrittenParts({
   samples,
   structure,
+  tasks = listWrittenTasks({ structure }),
 }: {
   samples: readonly WrittenSample[];
   structure: ExamStructure | null;
+  tasks?: ReturnType<typeof listWrittenTasks>;
 }) {
-  const tasks = listWrittenTasks({ structure });
-
   const numeric = new Set(
     tasks.filter((task) => isNumericWritingRubric(task)).map(({ key }) => key),
   );

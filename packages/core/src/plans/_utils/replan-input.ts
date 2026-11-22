@@ -106,6 +106,7 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
       examPicks: state.settings,
       goal: context.goal,
       graph: resolved,
+      skippedAreas: state.settings.skippedAreas,
       targetDate,
       userId: context.goal.userId,
     }),

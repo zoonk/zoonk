@@ -4,11 +4,11 @@ import { loadScheduledAnswersForRefresh } from "../../learner/facts/scheduled-an
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { getBlockItemIds, hasWritingProgress, readBlockPayload } from "../block-payload";
+import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { hasSameBlocks, hasSameContent } from "./day-block-content";
+import { getKeptBlocks, hasSameBlocks, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
@@ -23,26 +23,6 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
-
-function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
-  const openedLessons = new Set(
-    blocks.flatMap(({ lessonId, status }) =>
-      lessonId && (status === "active" || status === "completed") ? [lessonId] : [],
-    ),
-  );
-
-  return blocks.filter((block) => {
-    const payload = readBlockPayload(block);
-    const { extra, writingLessonId } = payload;
-
-    return (
-      block.status !== "pending" ||
-      extra ||
-      hasWritingProgress(payload) ||
-      (writingLessonId !== undefined && openedLessons.has(writingLessonId))
-    );
-  });
-}
 
 /** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
 function getOpenedPractice({
@@ -174,9 +154,6 @@ async function replaceNotStartedBlocks({
   selection?: SelectedDayPlan;
 }): Promise<DaySessionRefresh> {
   const { session } = day;
-  const kept = getKeptBlocks(session.blocks);
-  const keptIds = new Set(kept.map((block) => block.id));
-  const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
 
   const context = {
     goal: day.goal,
@@ -188,6 +165,10 @@ async function replaceNotStartedBlocks({
 
   // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
+
+  const kept = getKeptBlocks(session.blocks, selection?.state);
+  const keptIds = new Set(kept.map((block) => block.id));
+  const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
 
   const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 
