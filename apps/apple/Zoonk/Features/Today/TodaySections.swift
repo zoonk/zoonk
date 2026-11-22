@@ -543,13 +543,11 @@ struct TodayPlanChangeSection: View {
   }
 }
 
-/// Today's missions: the header, and the missions behind a press on its title (B1-002). Beside the
-/// week in the iPad's grid, the missions show without the press, filling the room the week leaves.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(\.isGridBlock) private var isGridBlock
-  @Environment(\.stacksContent) private var isStacked
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.isPaneSplit) private var isPaneSplit
 
   @State private var showsMissions = false
 
@@ -562,7 +560,7 @@ struct TodayMissionsSection: View {
 
   var body: some View {
     let earned = view.session.fullMeal.earned
-    let listed = isGridBlock && !isStacked
+    let listed = horizontalSizeClass == .regular || isPaneSplit
 
     PageSection(isPanel: true) {
       MissionsSummary(

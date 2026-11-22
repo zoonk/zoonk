@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.feature.missions.MissionsCard
 import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.DayStep
@@ -16,6 +17,7 @@ import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.api.models.TodayGoal
 
 /** What the aside needs beyond the day: values the screen reads, and where its rows lead. */
@@ -41,6 +43,8 @@ internal fun TodayAside(
     beside: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+
     Column(modifier, verticalArrangement = Arrangement.spacedBy(32.dp)) {
         if (!beside) aside.notice(SuggestionLayout.Line)
         MissionsCard(
@@ -53,7 +57,7 @@ internal fun TodayAside(
             onLevel = { aside.navigate(AppRoute.StatsLevel) },
             opening = { mission -> model.missionTap(mission)?.equals(aside.pending()) == true },
             openFailed = { mission -> model.missionTap(mission)?.equals(aside.failed()) == true },
-            foldRows = true,
+            foldRows = !wide,
             collapseWhenDone = true,
         )
         TodayWeek(model.day, model.today.weeklyChallenge, aside.navigate, exam = model.today.goal.kind == TodayGoal.Kind.EXAM)

@@ -27,6 +27,7 @@ Decide whether `LEARNER_ANSWER` is right, then, one key point at a time and apar
 - A key point is not met when the answer leaves it out, only repeats words from the question, stays too vague to show the idea, or states something that contradicts it.
 - An answer that contradicts a key point never meets it, even if it also mentions the right words ("it speeds up, no wait, it slows down" is not a clear answer).
 - Judge meaning, not grammar or style. Ignore spelling slips that don't change which word was meant.
+- Punctuation and capital letters never decide anything. Learners type fast and skip them, so read the answer as if it had the punctuation it needs: words that ask the question with a question mark ask it without one. A key point about punctuation or capitals ("Ends with a question mark") is met whatever the answer's punctuation, and neither the verdict nor the feedback mentions them.
 - Use `ACCEPTED_ANSWERS` and `SAMPLE_ANSWER` only as references for what a full answer looks like. A different correct answer is still correct.
 - Grade each key point on its own. Missing one point doesn't make the others wrong.
 
