@@ -887,6 +887,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
 
   /// Answer help's monthly cap gives the day an explanation comes back, as every monthly cap does.
   func testAnExplanationRefusedForTheMonthSaysWhenItComesBack() async throws {
+    // The API reads a refusal as received now, so its day sits where the real clock never gets.
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
         baseURL: URL(string: "https://api.zoonk.test")!,
@@ -894,7 +895,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
           body: #"""
             {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
              "details": {"limit": {"period": "rolling30Days", "tier": "free",
-             "resource": "explanation", "availableAt": "2026-12-20T12:00:00.000Z"}}}}
+             "resource": "explanation", "availableAt": "2099-12-20T12:00:00.000Z"}}}}
             """#,
           status: .init(code: 402))))
 
@@ -904,7 +905,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
       return XCTFail("Expected a refusal, got \(outcome)")
     }
 
-    let availableAt = Date(timeIntervalSince1970: 1_797_768_000)
+    let availableAt = Date(timeIntervalSince1970: 4_101_451_200)
     XCTAssertEqual(refusal.limit, .usedUp(tier: .free, availableAt: availableAt))
     XCTAssertEqual(
       refusal.limit?.words(.explanations, now: availableAt.addingTimeInterval(-30 * 86_400)).said,
