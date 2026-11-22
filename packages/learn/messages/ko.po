@@ -8874,6 +8874,12 @@ msgctxt "2d2ZJ4"
 msgid "Your material"
 msgstr "내 자료"
 
+#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "EAbhzH"
+msgid "{count, number} files is the most for one goal. Remove one to add another."
+msgstr "목표 하나에는 파일을 최대 {count, number}개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요."
+
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "B7hTRC"

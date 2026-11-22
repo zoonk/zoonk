@@ -118,6 +118,17 @@ function AttachedChips({
       </ul>
 
       <UnreadableNote items={unreadable} />
+
+      {items.length >= MAX_GOAL_SOURCES && (
+        <p className="text-muted-foreground text-sm">
+          {t({
+            description:
+              "Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.",
+            message: "{count, number} files is the most for one goal. Remove one to add another.",
+            values: { count: MAX_GOAL_SOURCES },
+          })}
+        </p>
+      )}
     </>
   );
 }
