@@ -423,6 +423,31 @@ describe(createOnboardingGoals, () => {
     });
   });
 
+  it("links the material a client sends with an explanation", async () => {
+    const user = await userFixture();
+    const notes = await uploadFixture(user.id);
+    mockSession(user.id);
+
+    const created = await createOnboardingGoals({
+      dailyMinutes: 5,
+      goals: [
+        {
+          details: { question: "How does mitosis work?" },
+          kind: "explain",
+          language: "en",
+          prompt: "How does mitosis work?",
+          title: "How does mitosis work?",
+        },
+      ],
+      sourceIds: [notes],
+      timeZone: "UTC",
+    });
+
+    const goalId = created.status === "created" ? created.goals[0]?.id : undefined;
+
+    await expect(findLinkedGoalIds([notes])).resolves.toStrictEqual([[goalId]]);
+  });
+
   it("refuses a date no card gave", async () => {
     const user = await userFixture();
     mockSession(user.id);

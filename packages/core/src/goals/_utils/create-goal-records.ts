@@ -293,15 +293,10 @@ export async function createGoal(
         return unchanged(decision);
       }
 
-      if (isExplanation) {
-        await insertGoalWithPlan(transaction, { ...record, card });
-        return decision;
-      }
-
       await insertGoalWithPlan(transaction, {
         ...record,
         card,
-        draft: material ? withCardMaterialIntent({ draft, material }) : draft,
+        draft: material && !isExplanation ? withCardMaterialIntent({ draft, material }) : draft,
       });
 
       await linkMaterial(transaction, {
