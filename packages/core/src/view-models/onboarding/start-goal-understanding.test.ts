@@ -415,7 +415,7 @@ describe(startGoalUnderstanding, () => {
     await expect(countAssists(learner.id)).resolves.toBe(0);
   });
 
-  it("marks material it can't read: an upload with no text is left out of what's read", async () => {
+  it("lists a photo with no text among the material, which the goal is created with", async () => {
     const user = await userFixture();
     mockSession(user.id);
 
@@ -430,7 +430,9 @@ describe(startGoalUnderstanding, () => {
       sourceIds: [photo.id, notes.id],
     });
 
-    expect(result).toMatchObject({ draft: { materialMissing: true, sources: [{ id: notes.id }] } });
+    expect(result).toMatchObject({
+      draft: { materialMissing: false, sources: [{ id: photo.id }, { id: notes.id }] },
+    });
   });
 
   it("reads words sent with material in a run, even when the same words alone were read today", async () => {

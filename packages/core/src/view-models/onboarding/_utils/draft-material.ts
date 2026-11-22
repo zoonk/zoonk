@@ -20,7 +20,7 @@ function findDraftUploads(draft: DraftMaterialKey) {
   return findOwnSources({ origin: "upload", sourceIds: draft.sourceIds, userId: draft.userId });
 }
 
-/** The draft's uploads with text to read, which the words are read with; `materialMissing` when one has none or is gone. */
+/** The draft's uploads the goal is created with; `materialMissing` when one is gone. */
 export async function readDraftSources(
   draft: DraftMaterialKey,
 ): Promise<{ materialMissing: boolean; sources: DraftSource[] }> {
@@ -30,15 +30,15 @@ export async function readDraftSources(
 
   const uploads = await findDraftUploads(draft);
 
-  const readable = await prisma.source.findMany({
+  const found = await prisma.source.findMany({
     select: { id: true, title: true },
-    where: { extractedText: { not: null }, id: { in: uploads.resolved } },
+    where: { id: { in: uploads.resolved } },
   });
 
-  const sources = inOrder({ ids: uploads.resolved, sources: readable });
-  const materialMissing = uploads.unresolved.length > 0 || sources.length < uploads.resolved.length;
-
-  return { materialMissing, sources };
+  return {
+    materialMissing: uploads.unresolved.length > 0,
+    sources: inOrder({ ids: uploads.resolved, sources: found }),
+  };
 }
 
 /** Internal: the run reading the draft holds its learner's authorization. */

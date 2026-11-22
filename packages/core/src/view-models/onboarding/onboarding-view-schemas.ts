@@ -144,7 +144,7 @@ export const onboardingDraftViewSchema = z
       .boolean()
       .meta({
         description:
-          "Material sent with the words can't be read: an id no longer names one of the learner's uploads, or an upload holds no text. `sources` leaves it out, and the words are read without it",
+          "Material sent with the words is gone: an id no longer names one of the learner's uploads. `sources` leaves it out, and the goal is read and created without it",
       }),
     prompt: z.string().meta({ description: "What the learner typed" }),
     sources: z
