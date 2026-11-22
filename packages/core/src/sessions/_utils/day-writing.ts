@@ -1,16 +1,19 @@
+import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
+import { loadScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { getWritingSkillIds } from "../../learner/writing-skills";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getPlanCalendar, toIsoDate } from "../../plans/planner/plan-calendar";
 import { getScheduledWrittenTest } from "../../plans/planner/plan-days";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { resolveWritingDay } from "../../plans/planner/writing-schedule";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 import { type loadDayPlan } from "./day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { pickWritingDrill, reserveWritingDrill } from "./writing-drills";
 
-export function getDayWriting({
-  context: { blueprint, goal, localDate },
+export async function loadDayWriting({
+  context: { blueprint, goal, localDate, readWritingAnswers = loadScheduledAnswers, userId },
   includesMockExams,
   plan,
 }: {
@@ -21,7 +24,15 @@ export function getDayWriting({
   const settings = parsePlanSettings(plan.settings);
   const date = toIsoDate(localDate);
   const schedule = settings.writingSchedule;
-  const allocated = schedule?.find((entry) => entry.date === date);
+
+  const allocated =
+    schedule?.length && plan.dayMinutes > 0
+      ? resolveWritingDay({
+          attempts: await readWritingAnswers(userId, goal.id),
+          schedule,
+          today: date,
+        })
+      : undefined;
 
   const scheduledWriting = schedule
     ? allocated?.test && { ...allocated.test, minutes: allocated.minutes }
@@ -75,14 +86,23 @@ export function getDayWriting({
         }
       : null;
 
+  const legacyProduce = schedule
+    ? null
+    : await loadSessionProduce({
+        blueprint,
+        goal,
+        onDemand: Boolean(scheduledWriting) && !includesMockExams,
+        planSettings: plan.settings,
+        today: localDate,
+        userId,
+      });
+
   return {
-    continuingWritingMinutes: allocated?.tasks.length === 0 ? allocated.minutes : 0,
     produces: schedule
       ? (allocated?.tasks.filter(({ taskKey }) => taskKeys.has(taskKey)) ?? [])
-      : undefined,
+      : [legacyProduce].filter((produce) => produce !== null),
     reserveDrill: (lesson: PlannedLesson) =>
       reserveWritingDrill(lesson, pickWritingDrill({ lesson, tasks })),
-    scheduledWriting,
     writtenTest,
   };
 }

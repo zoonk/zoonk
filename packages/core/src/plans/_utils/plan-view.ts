@@ -9,6 +9,7 @@ import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
 import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
+import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
@@ -21,6 +22,7 @@ import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
+import { listRemainingWriting } from "../planner/writing-schedule";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
@@ -134,6 +136,18 @@ function readPlanFocusTest({ goal, timeZone, today }: PlanContext) {
   return readFocusTestSummary({ goal, localDate: today, timeZone });
 }
 
+async function loadPlanWritingWork({ goal, state, today }: PlanReadContext) {
+  const schedule = state.settings.writingSchedule;
+
+  return schedule?.length
+    ? listRemainingWriting({
+        attempts: await readScheduledAnswers(goal.userId, goal.id),
+        schedule,
+        today: toIsoDate(today),
+      })
+    : [];
+}
+
 function readPhaseChallengeAccess(goal: PlanContext["goal"]) {
   return arePhaseChallengesRequired({
     goalKind: goal.kind,
@@ -191,6 +205,7 @@ export async function buildPlanView({
     taughtSkillIds,
     challengeResults,
     syllabus,
+    writing,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
@@ -217,6 +232,7 @@ export async function buildPlanView({
       ),
     ),
     readSyllabusInput(goal.userId, goal.id),
+    loadPlanWritingWork(context),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -259,7 +275,7 @@ export async function buildPlanView({
       timeZone: context.timeZone,
       today: context.today,
     }),
-    estimate: buildEstimateView({ context }),
+    estimate: buildEstimateView({ context, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
     feasibility: readSavedFeasibility(summary),
@@ -274,7 +290,7 @@ export async function buildPlanView({
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })
         : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
-    numbers: summary ? buildSavedPlanNumbersView(context) : null,
+    numbers: summary ? buildSavedPlanNumbersView(context, writing) : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
       access,

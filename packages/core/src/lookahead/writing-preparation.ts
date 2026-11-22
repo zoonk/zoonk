@@ -5,9 +5,12 @@ import { readExamPicks } from "../exams/choices/exam-choices";
 import { type WritingRequest } from "../exams/essays/writing-supply";
 import { readMockStructure } from "../exams/mocks/_utils/read-mock-structure";
 import { listWrittenRequests } from "../exams/mocks/written-parts";
+import { loadScheduledAnswers } from "../learner/facts/scheduled-answers";
 import { type WritingSupplyInput } from "../library/items/writing-prompt-pool";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../plans/planner/plan-state";
+import { resolveWritingDay } from "../plans/planner/writing-schedule";
+import { getGoalDayMinutes } from "../sessions/_utils/day-minutes";
 import { readBlockPayload } from "../sessions/block-payload";
 
 export async function listWritingPreparation({
@@ -20,7 +23,13 @@ export async function listWritingPreparation({
   userId: string;
 }): Promise<WritingSupplyInput[]> {
   const goal = await prisma.goal.findFirst({
-    select: { examBlueprint: true, plan: { select: { settings: true } } },
+    select: {
+      dailyMinutes: true,
+      examBlueprint: true,
+      kind: true,
+      plan: { select: { settings: true } },
+      targetDate: true,
+    },
     where: { id: goalId, kind: "exam", userId },
   });
 
@@ -42,6 +51,19 @@ export async function listWritingPreparation({
     select: { blocks: { select: { kind: true, payload: true }, where: { status: "pending" } } },
     where: { goalId, localDate: today, userId },
   });
+
+  const schedule = settings.writingSchedule;
+
+  const allocation =
+    !session &&
+    schedule?.length &&
+    getGoalDayMinutes({ date: today, goal, planSettings: settings }) > 0
+      ? resolveWritingDay({
+          attempts: await loadScheduledAnswers(userId, goalId),
+          schedule,
+          today: toIsoDate(today),
+        })
+      : undefined;
 
   const requests = session
     ? session.blocks.flatMap<WritingRequest>((block) => {
@@ -68,10 +90,7 @@ export async function listWritingPreparation({
           },
         ];
       })
-    : requestsForAllocation(
-        settings.writingSchedule?.find(({ date }) => date === toIsoDate(today)),
-        structure,
-      );
+    : requestsForAllocation(allocation, structure);
 
   return requests.map((request) => ({ ...request, goalId, userId, wait: "later" }));
 }

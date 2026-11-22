@@ -82,7 +82,6 @@ export type SessionBuildInput = {
   netScored: boolean;
   practice: PracticeItem[];
   produces: readonly PlannedProduce[];
-  continuingWritingMinutes?: number;
   practiceShare: number;
   /** Replaces an unavailable mock with practice across every goal skill; null on other days. */
   fullReviewSkillIds?: readonly string[] | null;
@@ -234,7 +233,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     return buildMockDay(input.checkpoints);
   }
 
-  return buildMixedDay(input, dayBudget - (input.continuingWritingMinutes ?? 0));
+  return buildMixedDay(input, dayBudget);
 }
 
 function buildMixedDay(input: SessionBuildInput, dayBudget: number) {

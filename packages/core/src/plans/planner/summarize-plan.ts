@@ -115,7 +115,7 @@ function summarizeAfterExam(span: AfterExamSpan | null): PlanPhase | null {
 
 type WritingDay = NonNullable<PlanSettings["writingSchedule"]>[number];
 
-function sumWriting(schedule: readonly WritingDay[]): number {
+export function sumWriting(schedule: readonly WritingDay[]): number {
   return schedule.reduce((sum, { minutes }) => sum + minutes, 0);
 }
 

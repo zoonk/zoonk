@@ -1,17 +1,26 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { CGU } from "../exams/mocks/_test-utils/cgu-written";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
+import { listWritingPreparation } from "../lookahead/writing-preparation";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { buildSessionBlocks } from "../sessions/session-builder";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "./planner/plan-state";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
 const START = new Date("2026-09-30");
 const DAYS = 35;
@@ -100,6 +109,17 @@ async function measurePlan({ goal, writingSkill }: Awaited<ReturnType<typeof set
     });
 
     const { blocks } = buildSessionBlocks(input);
+    const placement = blocks.find(({ payload }) => payload.writingPlacement && payload.writing);
+
+    if (placement?.payload.writing) {
+      // oxlint-disable-next-line no-await-in-loop -- Later days must see the placement as completed.
+      await recordWritingBlock({
+        goal,
+        localDate,
+        status: "completed",
+        taskKey: placement.payload.writing.taskKey,
+      });
+    }
 
     for (const { lessonId } of blocks) {
       if (lessonId) {
@@ -128,6 +148,46 @@ async function measurePlan({ goal, writingSkill }: Awaited<ReturnType<typeof set
     },
     { everythingElse: 0, writing: 0, writtenLessons: 0 },
   );
+}
+
+function advanceTo(offset: number) {
+  vi.setSystemTime(addDays(new Date("2026-09-30T12:00:00Z"), offset));
+}
+
+async function recordWritingBlock({
+  goal,
+  localDate = START,
+  status,
+  taskKey = "short",
+}: {
+  goal: { id: string; userId: string };
+  localDate?: Date;
+  status: "active" | "completed";
+  taskKey?: string;
+}) {
+  const session = await studySessionFixture({
+    goalId: goal.id,
+    localDate,
+    plannedMinutes: 70,
+    startedAt: new Date(),
+    status,
+    userId: goal.userId,
+  });
+
+  const block = await studySessionBlockFixture({
+    estimatedMinutes: 70,
+    kind: "produce",
+    payload: {
+      extra: false,
+      writing: { admissionId: randomUUID(), draft: null, taskKey, unit: "answer" },
+      writingPlacement: true,
+    },
+    sessionId: session.id,
+    startedAt: new Date(),
+    status,
+  });
+
+  return { block, session };
 }
 
 describe("written exam allocation", () => {
@@ -198,7 +258,7 @@ describe("written exam allocation", () => {
     ]);
   });
 
-  it("starts an oversize whole answer on a 15-minute day even for a small written share", async () => {
+  it("offers the whole answer on the next study day when its start day was missed", async () => {
     const structure = structuredClone(CGU);
 
     for (const part of structure.mock?.scoring.finalShares ?? []) {
@@ -233,6 +293,148 @@ describe("written exam allocation", () => {
     );
 
     expect(blocks).toMatchObject([{ estimatedMinutes: 70, kind: "produce" }]);
+
+    const nextDay = addDays(START, 1);
+
+    const continuation = buildSessionBlocks(
+      await loadSessionBuildInput({
+        blueprint: fixture.blueprint,
+        goal: fixture.goal,
+        localDate: nextDay,
+        now: nextDay,
+        timeZone: "UTC",
+        userId: fixture.goal.userId,
+      }),
+    );
+
+    expect(continuation.blocks).toMatchObject([{ estimatedMinutes: 70, kind: "produce" }]);
+
+    advanceTo(1);
+    const { goal } = fixture;
+    const request = { goalId: goal.id, timeZone: "UTC" };
+
+    const writingDay = {
+      status: "ready",
+      today: {
+        session: {
+          blocks: [{ estimatedMinutes: 70, kind: "produce" }],
+          extraTime: { available: false },
+          minutes: { dailyGoal: 15, left: 70, planned: 70 },
+          missions: expect.arrayContaining([expect.objectContaining({ kind: "essay" })]),
+        },
+      },
+    };
+
+    await expect(getTodayView(request)).resolves.toMatchObject(writingDay);
+
+    await expect(
+      listWritingPreparation({ ...request, userId: goal.userId }),
+    ).resolves.toMatchObject([{ taskKey: "short", unit: "answer" }]);
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: START,
+      userId: goal.userId,
+    });
+
+    await studySessionBlockFixture({
+      kind: "produce",
+      payload: blocks[0]?.payload,
+      sessionId: session.id,
+      status: "skipped",
+    });
+
+    // The learner has skipped the original block and missed all of its reserved dates.
+    advanceTo(5);
+    await expect(getTodayView(request)).resolves.toMatchObject(writingDay);
+  });
+
+  it("carries an admitted answer through a plan rebuild and releases the day when the answer finishes", async () => {
+    const { goal } = await setup({ dailyMinutes: 15, structure: CGU });
+    const request = { goalId: goal.id, timeZone: "UTC" };
+    const { block, session } = await recordWritingBlock({ goal, status: "active" });
+
+    advanceTo(1);
+
+    const carried = {
+      status: "ready",
+      today: {
+        session: {
+          blocks: [{ id: block.id, kind: "produce", status: "active" }],
+          extraTime: { available: false },
+          id: session.id,
+          minutes: { left: 70 },
+        },
+      },
+    };
+
+    await expect(getTodayView(request)).resolves.toMatchObject(carried);
+
+    await expect(
+      refreshGoalPlan({ goalId: goal.id, mode: "forced", settleMissedDays: false }),
+    ).resolves.toMatchObject({ status: "refreshed" });
+
+    await expect(getTodayView(request)).resolves.toMatchObject(carried);
+    const before = await getGoalPlan(goal.id);
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { id: block.id },
+    });
+
+    vi.setSystemTime(new Date("2026-10-01T14:00:00Z"));
+
+    const after = await getGoalPlan(goal.id);
+
+    if (before.status !== "ready" || after.status !== "ready") {
+      throw new Error("Expected the learner's plan estimates");
+    }
+
+    // Each estimate is rounded independently to one decimal place.
+    const change = before.plan.estimate.remainingHours - after.plan.estimate.remainingHours;
+    expect(Math.round(change * 10)).toBeOneOf([11, 12]);
+    expect(before.plan.estimate.totalHours).toBe(after.plan.estimate.totalHours);
+
+    expect(
+      (before.plan.numbers?.scheduledMinutes ?? 0) - (after.plan.numbers?.scheduledMinutes ?? 0),
+    ).toBe(70);
+
+    const today = await getTodayView(request);
+
+    if (today.status !== "ready") {
+      throw new Error("Expected the learner's next study day");
+    }
+
+    expect(today).toMatchObject({
+      status: "ready",
+      today: { session: { localDate: addDays(START, 1) } },
+    });
+
+    expect(today.today.session.blocks.length).toBeGreaterThan(0);
+
+    expect(today.today.session.blocks.map(({ writingUnit }) => writingUnit)).not.toContain(
+      "answer",
+    );
+
+    expect(today.today.session.minutes.left).toBeGreaterThan(0);
+  });
+
+  it("fills the first continuation day normally when the answer finished on its start day", async () => {
+    const { goal } = await setup({ dailyMinutes: 15, structure: CGU });
+    await recordWritingBlock({ goal, status: "completed" });
+
+    advanceTo(1);
+    const day = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    if (day.status !== "ready") {
+      throw new Error("Expected the learner's continuation day");
+    }
+
+    const { session } = day.today;
+    expect(session.localDate).toStrictEqual(addDays(START, 1));
+    expect(session.blocks.some(({ kind }) => kind === "learn" || kind === "practice")).toBe(true);
+    expect(session.blocks.map(({ writingUnit }) => writingUnit)).not.toContain("answer");
+    expect(session.minutes.left).toBeGreaterThan(0);
   });
 
   it.each([

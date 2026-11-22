@@ -4,6 +4,7 @@ import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
+import { type readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
@@ -28,6 +29,7 @@ export type SessionDayContext = {
   readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   /** A GET passes `readActiveSubscription`; without it, the subscription is read fresh. */
   readSubscription?: typeof findActiveSubscription;
+  readWritingAnswers?: typeof readScheduledAnswers;
   timeZone: string;
   userId: string;
 };

@@ -1,7 +1,6 @@
 import "server-only";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
-import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { getMockPaperSkillIds } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
@@ -26,7 +25,7 @@ import {
 import { findPlannedReview } from "./day-review";
 import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
-import { getDayWriting } from "./day-writing";
+import { loadDayWriting } from "./day-writing";
 import { getExamPrepAccess } from "./exam-access";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
@@ -153,8 +152,6 @@ export async function loadSessionBuildInput(
 
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal });
 
-  const writing = getDayWriting({ context, includesMockExams: access.includesMockExams, plan });
-
   const review = toReviewInput({ context, field, netScored, plan });
 
   const dayLessons = loadDayPlanLessons({
@@ -171,7 +168,7 @@ export async function loadSessionBuildInput(
     { capsules: dueCapsules, claims },
     boss,
     weekly,
-    produces,
+    writing,
   ] = await Promise.all([
     dayLessons,
     loadAlphabetIntro({ goal, userId }),
@@ -206,16 +203,7 @@ export async function loadSessionBuildInput(
       today: localDate,
       userId,
     }),
-    // Written exam tasks must remain practiced even when their topics' lessons do not fit before the test.
-    writing.produces ??
-      loadSessionProduce({
-        blueprint: context.blueprint,
-        goal,
-        onDemand: Boolean(writing.scheduledWriting) && !access.includesMockExams,
-        planSettings: plan.settings,
-        today: localDate,
-        userId,
-      }).then((produce) => (produce ? [produce] : [])),
+    loadDayWriting({ context, includesMockExams: access.includesMockExams, plan }),
   ]);
 
   const lessons = [
@@ -255,7 +243,6 @@ export async function loadSessionBuildInput(
 
   const base: Omit<SessionBuildInput, keyof DayWork> = {
     checkpoints,
-    continuingWritingMinutes: writing.continuingWritingMinutes,
     dailyMinutes: dayMinutes,
     fillLessons: fillLessons.map((lesson) => writing.reserveDrill(lesson)),
     freshStart: getDayFreshStart({ plan, today: localDate }),
@@ -274,7 +261,7 @@ export async function loadSessionBuildInput(
     netScored,
     planItems: plan.items,
     practiceShare: getDayPracticeShare({ goal, items: plan.items, today: localDate }),
-    produces,
+    produces: writing.produces,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
     topics: getPlanTopics({ goal, graph: plan.graph }),
