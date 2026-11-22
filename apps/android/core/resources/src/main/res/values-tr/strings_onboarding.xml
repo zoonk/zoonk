@@ -159,6 +159,9 @@
   "onboarding_material_goal_exam": "0bea8d99330a2088da1f0f92729292e71c57b01a64737b0d6513ba53dafaab63",
   "onboarding_material_goal_understand": "b887a98ac58e16bc3870eb86d8a4e30fa2085a0c9fa85904bdbd3ef2c6d75684",
   "onboarding_material_sign_up": "904e5cdcd5f9ee5f48e4c8476ab7416c6d565cd6243292a185e68dec61433772",
+  "onboarding_material_unreadable_one": "d8117037b2e5cbd1628fb937506cc1063ab5a54fae9b40593a03430714d5238e",
+  "onboarding_material_unreadable_some": "13150cb651480b4f80893b72003208856c4d58b77cdcbd23a58122fbe90d4dbd",
+  "onboarding_material_unreadable_state": "34d97b3f403af350ae5f9c1cb2f04e2224f0a4ba2e2da13e401dc6f5290c4734",
   "onboarding_more": "c1b6709c69e45bf7a32e1ffa1e484b1e889766d873f42059ca1a83e6c033b5e5",
   "onboarding_musicianship_card": "08a011eca940e1d5b5ac2df3812c741810b1f652685badc48c027a9ce493990a",
   "onboarding_musicianship_subject": "e8d9e0067be725df54f0ce978ff9992bc63f102b8b5ce6610cd85515d10d303e",
@@ -290,6 +293,8 @@
   "onboarding_row_last_cutoff": "a06407f833e34c317632076b7e9969a90ec0194f6815c1c98b9bab0a92ebb2db",
   "onboarding_row_level": "6ae6c24be1eb08fe2c72b015d6aead347bc96ead90945707dd9a373140dbdc68",
   "onboarding_row_material": "5115e0ca3274d96cdc10937e4c24a50fedcd7abd7ea743c9902044484a491a17",
+  "onboarding_row_material_all_missing_note": "92ef8314ba3f68ef78a20a055c05ebc621216d85aa21895ec30cccd40e9c423f",
+  "onboarding_row_material_missing_note": "c5e0bd0099e6cdf797a8980928b8ce6a95c10e56dbd47a7fe2b46e414398b62f",
   "onboarding_row_material_note": "876b8fa4f94d9f7b7aaffd003f882c9f056186b45d22d8c328972bd21f905ac5",
   "onboarding_row_minutes_a_day": "8e0b47a6718989766fba7ed290a75afebe7e287e470d7b9f7f51b81bcf71a35a",
   "onboarding_row_notice_says": "c99adbdc9f43f0963bb95f18151aa83ef25745f037972cb040d9db7994fb4cee",
@@ -477,6 +482,10 @@
     <string name="onboarding_row_minutes_a_day">Günde %1$s</string>
     <string name="onboarding_row_material">Materyalin</string>
     <string name="onboarding_row_material_note">Planın ve derslerin bu materyale göre hazırlanır</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
+    <string name="onboarding_row_material_missing_note">Materyallerinin bir kısmı artık okunamıyor, bu yüzden planın bunları temel almayacak.</string>
+    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">Artık okunamıyor, bu yüzden planın bu materyali temel almayacak.</string>
     <string name="onboarding_row_exam_date">Sınav tarihi</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Sınav tarihleri</string>
@@ -540,6 +549,12 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">Bu belgeyi daha önce okuduk. Başka bir belge yükle.</string>
     <string name="onboarding_attach_failed">Bunu ekleyemedik. Birazdan tekrar dene.</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">“%1$s” dosyasını artık okuyamıyoruz. Kaldırıp yeniden ekle.</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">Dosyalarının bir kısmını artık okuyamıyoruz. Kaldırıp yeniden ekle.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">Artık okunamıyor</string>
     <string name="onboarding_intent_title">Ne yapmak istiyorsun?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Sınava hazırlan</string>

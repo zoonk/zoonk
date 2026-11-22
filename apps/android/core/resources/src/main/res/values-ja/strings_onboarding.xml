@@ -159,6 +159,9 @@
   "onboarding_material_goal_exam": "9c58321f44fb9140c98aa1663a3b3e5f50ec1862adace34efd83dead0c6e0e84",
   "onboarding_material_goal_understand": "7d51644357f858fd423a8cfcadb3c082edae0b006fe61477b9a20e4fa88626d7",
   "onboarding_material_sign_up": "424cef4594e325bf3a401f4de56c3fe72ebc06c4676c89cfec827e3fbeeb8823",
+  "onboarding_material_unreadable_one": "f6a5517fd476ea6a2bae0ce51dca8503bcfb846d28f5b56e015a473e6a564c1a",
+  "onboarding_material_unreadable_some": "c3e72582a19c6475f3ff3ebf1ef6fd828f56d62b17cec2cbe3f976837f2dc052",
+  "onboarding_material_unreadable_state": "5f973922c7f08714012547dd38aef3b230fa3a8e8b0e1c737c8229a9b8c67288",
   "onboarding_more": "c0e7ca3ca815c19f7715cbfee7f09e4818a8ecfa6baefb9070b9d148a1e38bcc",
   "onboarding_musicianship_card": "9c553b08e152e22563099866bd188f24b159efd530c6c59266deefa2368468f1",
   "onboarding_musicianship_subject": "d7f825f4a3a6415cf91d132ddc096d0885eba003012028dc6cc8c2e634e24ff6",
@@ -290,6 +293,8 @@
   "onboarding_row_last_cutoff": "236c9ce71d2e14a9a01b17ed2a6a994517387d5f1a5d89d4f51936fe76e4b644",
   "onboarding_row_level": "4e9dfe12385a8026960d647f89fcc275d9d0bf334aeef0a06a3df7296de3890c",
   "onboarding_row_material": "48661f6d7db2428168981919916489e70e02fa581b88de513d645f7ae5b7e97d",
+  "onboarding_row_material_all_missing_note": "9357ba6367f643d58ef097f0d262e97628ee9e84cf318011cefdd1f036e112cb",
+  "onboarding_row_material_missing_note": "c20e4e098fb856fe85c79bd906bef638d75d21a9b66beb6d54a1a374016570ef",
   "onboarding_row_material_note": "87cc1d5fd05caf17de60c87328258fd3a3fae49350dbd27b08e2f8ca7de6aa51",
   "onboarding_row_minutes_a_day": "68e274bd787730fcbd6674cc3cb1088b5a0e28be292310484f82767f1326533e",
   "onboarding_row_notice_says": "bba5c3f06965991519b880478fa3053ffae5dc91666005245e70cac597755545",
@@ -476,6 +481,10 @@
     <string name="onboarding_row_minutes_a_day">1日%1$s</string>
     <string name="onboarding_row_material">資料</string>
     <string name="onboarding_row_material_note">この資料に沿って学習計画とレッスンを作成します</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
+    <string name="onboarding_row_material_missing_note">資料の一部を読み取れなくなったため、学習計画に反映されません。</string>
+    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">読み取れなくなったため、学習計画に反映されません。</string>
     <string name="onboarding_row_exam_date">試験日</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">試験日程</string>
@@ -538,6 +547,12 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">この資料はすでに読み込み済みです。別の資料をアップロードしてください。</string>
     <string name="onboarding_attach_failed">追加できませんでした。少し待ってからもう一度お試しください。</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">「%1$s」を読み取れなくなりました。削除して、もう一度追加してください。</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">ファイルの一部を読み取れなくなりました。削除して、もう一度追加してください。</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">読み取れません</string>
     <string name="onboarding_intent_title">何をしたいですか？</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">試験に備える</string>

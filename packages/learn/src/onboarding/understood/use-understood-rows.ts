@@ -309,8 +309,16 @@ function useMaterialNote() {
     }
 
     return sources.length > 0
-      ? t("Some of your material can't be read anymore, so your plan won't follow it.")
-      : t("It can't be read anymore, so your plan won't follow it.");
+      ? t({
+          description:
+            "Under the learner's material on the goal card, when some of it can't be read anymore.",
+          message: "Some of your material can't be read anymore, so your plan won't follow it.",
+        })
+      : t({
+          description:
+            'Under the learner\'s material on the goal card, when none of it can be read anymore. "It" is that material.',
+          message: "It can't be read anymore, so your plan won't follow it.",
+        });
   };
 }
 
