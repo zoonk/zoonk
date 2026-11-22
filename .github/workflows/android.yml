@@ -32,7 +32,7 @@ jobs:
     # Release lint and the R8 build take over 5 minutes each here, so they run only when started by
     # hand; agents run them locally instead.
     if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     timeout-minutes: 10
     concurrency:
       group: ${{ github.workflow }}-compile-release-${{ github.event.pull_request.number || github.run_id }}
@@ -48,6 +48,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 25
+
+      # GitHub's image includes the Android SDK; Celesto's doesn't.
+      - &android-sdk
+        name: Set up the Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
 
       - &gradle
         name: Set up Gradle
@@ -84,7 +89,7 @@ jobs:
     name: tests
     needs: changes
     if: needs.changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     # A shard takes up to 10 minutes when the Gradle cache is cold.
     timeout-minutes: 15
     concurrency:
@@ -97,6 +102,7 @@ jobs:
     steps:
       - *checkout
       - *java
+      - *android-sdk
       - *gradle
       - name: Read the Robolectric version
         id: robolectric
@@ -120,7 +126,7 @@ jobs:
     name: ${{ matrix.job }}
     needs: compile-release
     if: ${{ !cancelled() && needs.compile-release.result != 'skipped' }}
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     timeout-minutes: 10
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.job }}-${{ github.event.pull_request.number || github.run_id }}
@@ -138,6 +144,7 @@ jobs:
     steps:
       - *checkout
       - *java
+      - *android-sdk
       - *gradle
 
       - name: Restore compiled task outputs
@@ -161,7 +168,7 @@ jobs:
     name: style
     needs: changes
     if: needs.changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     timeout-minutes: 10
     concurrency:
       group: ${{ github.workflow }}-style-${{ github.event.pull_request.number || github.run_id }}
@@ -169,6 +176,7 @@ jobs:
     steps:
       - *checkout
       - *java
+      - *android-sdk
       - *gradle
       - name: Check formatting and lint detectors
         run: make -C apps/android lint LINT_TASKS="spotlessCheck :lint-checks:test"

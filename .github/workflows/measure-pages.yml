@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   measure:
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     timeout-minutes: 60
     env:
       APP: ${{ inputs.app }}

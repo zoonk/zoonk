@@ -28,7 +28,7 @@ env:
 
 jobs:
   e2e-api:
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     timeout-minutes: 15
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci

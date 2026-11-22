@@ -29,7 +29,7 @@ env:
 jobs:
   suites:
     name: e2e (${{ matrix.suite }})
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -103,6 +103,10 @@ jobs:
           node-version-file: false
           cache: true
           save-cache: ${{ github.ref == 'refs/heads/main' }}
+
+      # The tests run in Google Chrome, which Celesto's image doesn't include.
+      - name: Install Google Chrome
+        run: pnpm exec playwright install --with-deps chrome
 
       # Over TCP: while the image sets up its database, Postgres only listens on its socket.
       - name: Wait for Postgres

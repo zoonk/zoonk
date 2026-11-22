@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   checks-needed:
-    runs-on: ubuntu-latest
+    runs-on: celesto-large
     outputs:
       required: ${{ steps.check.outputs.required }}
     steps:
