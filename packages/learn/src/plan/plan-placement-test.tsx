@@ -13,6 +13,7 @@ import { useFormatMomentDate } from "../_utils/iso-date";
 import { useTestTime } from "../focus-test/use-focus-test-texts";
 import { formatLevelRange } from "../language/level-test/level-test-parts";
 import { usePlanScreen } from "./plan-context";
+import { useSkippedLessonsSentences } from "./use-skipped-lessons-sentences";
 
 type PlacementTestRow = NonNullable<PlanView["placementTest"]>;
 type LanguageRow = Extract<PlacementTestRow, { kind: "language" }>;
@@ -47,6 +48,7 @@ function useRowFacts() {
   const time = useTestTime();
   const formatDate = useFormatMomentDate();
   const languageFacts = useLanguageResultFacts();
+  const { skipped } = useSkippedLessonsSentences();
 
   return (test: PlacementTestRow): string[] => {
     if (test.state === "continue") {
@@ -67,15 +69,7 @@ function useRowFacts() {
       return [...languageFacts(test.result), date];
     }
 
-    return [
-      t({
-        description: "A fact on the Plan's test row: how many lessons the last test skipped.",
-        message:
-          "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}",
-        values: { count: test.result.lessonsSkipped },
-      }),
-      date,
-    ];
+    return [skipped(test.result.lessonsSkipped), date];
   };
 }
 

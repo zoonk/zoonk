@@ -13,18 +13,23 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.setup.LevelTestLanguageNotes
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
+import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.Select
+import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
@@ -142,7 +147,7 @@ class PlacementTestScreenshots(
 
     @Test
     fun betweenParts() =
-        shoot("between-parts") {
+        shoot("between-parts", captureUndo = true) {
             BetweenParts(
                 lessonsSkipped = 6,
                 minutesLeft = 25,
@@ -171,7 +176,7 @@ class PlacementTestScreenshots(
 
     @Test
     fun resultQuick() =
-        shoot("result-quick") {
+        shoot("result-quick", captureUndo = true) {
             PlacementResult(PlacementLength.QUICK, lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = undo())
         }
 
@@ -183,7 +188,7 @@ class PlacementTestScreenshots(
 
     @Test
     fun levelResult() =
-        shoot("level-result") {
+        shoot("level-result", captureUndo = true) {
             LevelResult(
                 result = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), LEVEL_RESULT),
                 walks = false,
@@ -200,8 +205,29 @@ class PlacementTestScreenshots(
 
     @Test
     fun testOutResult() =
-        shoot("test-out-result") {
+        shoot("test-out-result", captureUndo = true) {
             TestOutResult(ApiJson.decodeFromString(LanguageLevelTestOut.serializer(), TEST_OUT), onDone = {}, undo = undo())
+        }
+
+    @Test
+    fun existingPlanWait() =
+        shoot("plan-wait") {
+            PlacementWaiting(
+                run = GenerationRun(),
+                onRetry = null,
+                hold = rememberReadyHold(ready = false),
+                pending = false,
+                failed = false,
+                onSkip = {},
+                existingPlan = true,
+            )
+        }
+
+    @Test
+    fun testOutWithoutQuestions() =
+        shoot("unavailable-b2") {
+            val test = ApiJson.decodeFromString(LanguageLevelTestOut.serializer(), TEST_OUT)
+            TestOutResult(test.copy(answered = 0, total = 0, result = null), onDone = {})
         }
 
     @Test
@@ -240,6 +266,7 @@ class PlacementTestScreenshots(
 
     private fun shoot(
         name: String,
+        captureUndo: Boolean = false,
         content: @Composable ColumnScope.() -> Unit,
     ) {
         compose.setContent {
@@ -249,6 +276,15 @@ class PlacementTestScreenshots(
                 }
             }
         }
+        capture(name)
+        if (captureUndo) {
+            compose.onNodeWithText("Undo").performClick()
+            compose.onNodeWithText("No lessons skipped").assertExists()
+            capture("$name-undo")
+        }
+    }
+
+    private fun capture(name: String) {
         compose.waitForIdle()
         val bitmap =
             compose

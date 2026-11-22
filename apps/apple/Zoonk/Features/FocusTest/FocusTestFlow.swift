@@ -50,7 +50,13 @@ struct FocusTestFlow: View {
   /// `startsTest`'s start ran; one that failed offers the test with its Start to try again.
   @State private var triedStart = false
   /// The goal's run while its questions are written, as the wait shows it.
-  @State private var run = GenerationWait(kind: .placement).started
+  @State private var run: GenerationWait?
+  @State private var waitStartedAt = Date.now
+
+  private var waitRun: GenerationWait {
+    let kind: GenerationWait.Kind = host == .onboarding ? .placement : .placementQuestions
+    return run ?? GenerationWait(kind: kind, since: waitStartedAt).started
+  }
 
   var body: some View {
     Group {
@@ -183,7 +189,7 @@ struct FocusTestFlow: View {
       }
 
     return PlacementWaitScreen(
-      onboarding: onboarding, goalID: goalID, run: run, failure: failure, holding: holding,
+      onboarding: onboarding, goalID: goalID, run: waitRun, failure: failure, holding: holding,
       isActing: false,
       skip: .init(
         label: answered
@@ -355,7 +361,12 @@ struct FocusTestFlow: View {
     }
 
     let followed = await PlacementWaitScreen.follow(
-      generationID: onboarding?.generationId, store: store, apply: { run.apply($0) },
+      generationID: onboarding?.generationId, store: store,
+      apply: { event in
+        var updated = waitRun
+        updated.apply(event)
+        run = updated
+      },
       isWaiting: {
         guard phase.isWaiting else {
           return false

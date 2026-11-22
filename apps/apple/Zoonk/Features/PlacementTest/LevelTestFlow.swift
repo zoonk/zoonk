@@ -166,7 +166,7 @@ struct LevelTestFlow: View {
       }
     case .testOutPreparing(let view):
       PlacementWaitScreen(
-        onboarding: nil, goalID: goalID, run: GenerationWait(kind: .placement).started,
+        onboarding: nil, goalID: goalID, run: GenerationWait(kind: .placementQuestions).started,
         failure: nil, holding: nil, isActing: false,
         skip: .init(
           label: Text(PlacementTestCopy.notNow), note: nil, isBusy: pressed != nil,

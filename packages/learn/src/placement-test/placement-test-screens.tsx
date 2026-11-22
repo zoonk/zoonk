@@ -154,18 +154,6 @@ export function PlacementLengthChoice({
   );
 }
 
-function useSkippedTitle() {
-  const t = useExtracted();
-
-  return (count: number) =>
-    t({
-      description: "The title after a placement test: how many lessons it took out of the plan.",
-      message:
-        "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}",
-      values: { count },
-    });
-}
-
 /** A whole-course test between two parts: what the last one skipped, and the rest to do. */
 export function PlacementBetweenParts({
   failed,
@@ -188,7 +176,6 @@ export function PlacementBetweenParts({
   undo: ResultUndo;
 }) {
   const t = useExtracted();
-  const skippedTitle = useSkippedTitle();
   const sentences = useSkippedLessonsSentences();
   const left = useMinutesLeft();
   const { button, pending, undone } = useResultUndo(undo);
@@ -220,7 +207,9 @@ export function PlacementBetweenParts({
     >
       <OnboardingHeading>
         <OnboardingTitle>
-          {lessonsSkipped === null ? t("Continue your test") : skippedTitle(lessonsSkipped)}
+          {lessonsSkipped === null
+            ? t("Continue your test")
+            : sentences.skipped(undone ? 0 : lessonsSkipped)}
         </OnboardingTitle>
         <OnboardingDescription>{left(minutesLeft)}</OnboardingDescription>
       </OnboardingHeading>
@@ -254,7 +243,6 @@ export function PlacementResult({
   undo: ResultUndo;
 }) {
   const t = useExtracted();
-  const skippedTitle = useSkippedTitle();
   const sentences = useSkippedLessonsSentences();
   const { button, pending, undone } = useResultUndo(undo);
 
@@ -273,7 +261,7 @@ export function PlacementResult({
       }
       onContinue={onDone}
       other={button(pressed !== null)}
-      title={skippedTitle(lessonsSkipped)}
+      title={sentences.skipped(undone ? 0 : lessonsSkipped)}
     >
       {nextTopic && !undone && (
         <Surface className="flex flex-col gap-1 p-4">

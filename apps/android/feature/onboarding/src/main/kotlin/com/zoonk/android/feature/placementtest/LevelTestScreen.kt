@@ -262,6 +262,7 @@ private fun ColumnScope.TestOutFlow(
 
         preparing || !hold.over -> {
             PlacementWaiting(
+                existingPlan = true,
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else null,
                 hold = hold,

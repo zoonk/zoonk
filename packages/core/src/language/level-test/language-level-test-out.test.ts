@@ -10,8 +10,10 @@ import { finishLanguageLevelTestOut } from "./finish-language-level-test-out";
 import {
   type LanguageLevelTestOutResult,
   answerLanguageLevelTestOut,
+  getLanguageLevelTestOut,
   startLanguageLevelTestOut,
 } from "./language-level-test-out";
+import { readLevelTestSummary } from "./read-level-test-summary";
 import { startLanguageLevelTest } from "./start-language-level-test";
 
 async function writeTapQuestions({ setId, skillId }: { setId?: string; skillId: string }) {
@@ -69,6 +71,60 @@ async function takeTest({
 }
 
 describe("a language level test-out", () => {
+  it("keeps B2 in the plan when a B1 learner's B2 lessons are still stand-ins", async () => {
+    const { goal, items, plan, skills, user } = await languageGoalFixture();
+    const days = [new Date("2026-11-18"), new Date("2026-11-19")];
+    const [studied, ahead] = [items.slice(0, 2), items.slice(2)];
+
+    const [current] = await Promise.all([
+      prisma.goal.update({ data: { details: { level: "B1" } }, where: { id: goal.id } }),
+      ...studied.map(({ id }, index) =>
+        prisma.planItem.update({
+          data: { completedAt: days[index], status: "done" },
+          where: { id },
+        }),
+      ),
+      prisma.skill.updateMany({
+        data: { cefrLevel: "B2" },
+        where: { id: { in: skills.slice(2).map(({ id }) => id) } },
+      }),
+      prisma.planItem.updateMany({
+        data: { chapterId: null, lessonId: null, lessons: 1 },
+        where: { id: { in: ahead.map(({ id }) => id) } },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    expect(readLevelTestSummary(current).nextTestOutLevel).toBe("B2");
+    const started = await startLanguageLevelTestOut({ goalId: goal.id, level: "B2" });
+
+    expect(started).toMatchObject({
+      status: "ready",
+      test: { answered: 0, level: "B2", next: null, preparing: false, result: null, total: 0 },
+    });
+
+    if (started.status !== "ready") {
+      throw new Error(`Start returned ${started.status}`);
+    }
+
+    await expect(
+      startLanguageLevelTestOut({ goalId: goal.id, level: "B2" }),
+    ).resolves.toStrictEqual(started);
+
+    await expect(
+      getLanguageLevelTestOut({ attemptId: started.test.attemptId, goalId: goal.id }),
+    ).resolves.toStrictEqual(started);
+
+    await expect(
+      prisma.planItem.count({ where: { planId: plan.id, status: "testedOut" } }),
+    ).resolves.toBe(0);
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "preparePlacementItems", userId: user.id } }),
+    ).resolves.toBe(0);
+  });
+
   it("confirms one topic in each assessed skill and only skips lessons that teach them", async () => {
     const { goal, items, skills, user } = await languageGoalFixture();
     const [reading, listening, untested] = skills;

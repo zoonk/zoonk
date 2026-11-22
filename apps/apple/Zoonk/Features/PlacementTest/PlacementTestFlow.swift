@@ -30,9 +30,9 @@ struct PlacementTestFlow: View {
   @State private var shownAt = ContinuousClock.now
   @State private var showsSaveReport = false
   @State private var waitRound = 0
+  @State private var waitStartedAt = Date.now
   /// The saves and answers: a test left during one does nothing when it answers.
   @State private var tasks = ScreenTasks()
-  @State private var run = GenerationWait(kind: .placement).started
 
   var body: some View {
     Group {
@@ -178,8 +178,12 @@ struct PlacementTestFlow: View {
   }
 
   private func waiting(holding: WaitHolding?) -> some View {
-    PlacementWaitScreen(
-      onboarding: nil, goalID: goalID, run: run, failure: nil, holding: holding,
+    let kind: GenerationWait.Kind = onOnboardingDone == nil ? .placementQuestions : .placement
+    return PlacementWaitScreen(
+      onboarding: nil, goalID: goalID,
+      run: GenerationWait(kind: kind, since: waitStartedAt).started,
+      failure: nil,
+      holding: holding,
       isActing: false,
       skip: .init(
         label: Text(PlacementTestCopy.notNow), note: nil, isBusy: pressed != nil, failed: failed
@@ -314,7 +318,7 @@ struct PlacementTestFlow: View {
     }
 
     _ = await PlacementWaitScreen.follow(
-      generationID: nil, store: store, apply: { run.apply($0) },
+      generationID: nil, store: store, apply: { _ in },
       isWaiting: {
         guard phase.isWaiting else {
           return false

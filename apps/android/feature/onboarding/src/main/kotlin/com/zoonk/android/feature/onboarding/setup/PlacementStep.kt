@@ -264,6 +264,7 @@ internal fun ColumnScope.PlacementWaiting(
     onSkip: () -> Unit,
     skipLabel: String = stringResource(R.string.onboarding_language_test_skip),
     skipNote: String? = null,
+    existingPlan: Boolean = false,
 ) {
     var patient by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -277,9 +278,10 @@ internal fun ColumnScope.PlacementWaiting(
             com.zoonk.android.feature.warmup
                 .placementWaitTitle(hold.holding, shown.status == GenerationRun.Status.Failed),
         )
+    val kind = if (existingPlan) GenerationKind.PlacementQuestions else GenerationKind.Placement
     SetupWait(
         shown,
-        GenerationKind.Placement,
+        kind,
         AnalyticsEvent.WarmUpSurface.PlacementWait,
         title,
         hold,
@@ -311,7 +313,7 @@ internal fun ColumnScope.PlacementWaiting(
                 null
             },
     ) { share ->
-        GenerationWait(GenerationKind.Placement, shown, onRetry, share = share) {
+        GenerationWait(kind, shown, onRetry, share = share) {
             OnboardingHeading(
                 title,
                 when {

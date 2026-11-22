@@ -107,15 +107,7 @@ enum class GenerationKind(
     ),
     Placement(
         label = R.string.generation_placement,
-        phases =
-            GOAL_PHASES +
-                GenerationPhase(
-                    "questions",
-                    40,
-                    R.string.generation_placement_questions,
-                    listOf(R.string.generation_placement_questions_line),
-                    questionLines(count = 6),
-                ),
+        phases = GOAL_PHASES + placementQuestionsPhase(),
         steps =
             GOAL_STEPS +
                 mapOf(
@@ -126,6 +118,11 @@ enum class GenerationKind(
                     "preparePlacement" to StepPlace.Phase("questions"),
                     "saveSkills" to StepPlace.Phase("questions"),
                 ),
+    ),
+    PlacementQuestions(
+        label = R.string.generation_placement,
+        phases = listOf(placementQuestionsPhase()),
+        steps = mapOf("preparePlacement" to StepPlace.Phase("questions")),
     ),
     FirstLesson(
         label = R.string.generation_first_lesson,
@@ -442,6 +439,15 @@ enum class GenerationKind(
 
     internal fun stepsOf(phase: String): List<String> = steps.filterValues { it == StepPlace.Phase(phase) }.keys.toList()
 }
+
+private fun placementQuestionsPhase() =
+    GenerationPhase(
+        "questions",
+        40,
+        R.string.generation_placement_questions,
+        listOf(R.string.generation_placement_questions_line),
+        questionLines(count = 6),
+    )
 
 /** The phases every goal's run starts with; `notice` only runs for a plan built from the learner's own material. */
 val GOAL_PHASES: List<GenerationPhase>

@@ -45,9 +45,7 @@ export function LevelResult({
   const t = useExtracted();
   const languageName = useLanguageNameInSentence();
   const walks = length === "wholeCourse" && result?.wholeCourseReady === true;
-  const skipped = result?.levelsSkipped ?? [];
-  const lessons = result?.lessonsSkipped ?? 0;
-  const sentences = useSkippedLessonsSentences();
+  const { skipped } = useSkippedLessonsSentences();
 
   const { button, pending, undone } = useResultUndo({ changeId: result?.changeId, onUndo });
 
@@ -59,21 +57,7 @@ export function LevelResult({
       continueLabel={walks ? t("Keep going") : doneLabel}
       disabled={pending || pressed === "other"}
       failed={failed}
-      lead={
-        <OnboardingDescription role="status">
-          {undone && sentences.back(lessons)}
-          {!undone &&
-            (skipped.length > 0
-              ? t({
-                  description:
-                    "{levels} is a list of language levels, such as “A1 and A2”. The plan no longer has their lessons.",
-                  message:
-                    "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}",
-                  values: { count: lessons, levels: skipped.join(", ") },
-                })
-              : t("Your lessons keep adjusting as you answer."))}
-        </OnboardingDescription>
-      }
+      lead={<LevelResultLead result={result} undone={undone} />}
       onContinue={walks ? onWalkTopics : onDone}
       other={
         <>
@@ -89,10 +73,35 @@ export function LevelResult({
           )}
         </>
       }
-      title={t("Your {language} level", { language: languageName(targetLanguage) })}
+      title={
+        undone ? skipped(0) : t("Your {language} level", { language: languageName(targetLanguage) })
+      }
     >
       {result && <LevelRanges ranges={result.ranges} />}
     </TestOutcome>
+  );
+}
+
+function LevelResultLead({ result, undone }: { result: LevelTestResult | null; undone: boolean }) {
+  const t = useExtracted();
+  const { back } = useSkippedLessonsSentences();
+  const skipped = result?.levelsSkipped ?? [];
+  const lessons = result?.lessonsSkipped ?? 0;
+
+  return (
+    <OnboardingDescription role="status">
+      {undone && back(lessons)}
+      {!undone &&
+        (skipped.length > 0
+          ? t({
+              description:
+                "{levels} is a list of language levels, such as “A1 and A2”. The plan no longer has their lessons.",
+              message:
+                "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}",
+              values: { count: lessons, levels: skipped.join(", ") },
+            })
+          : t("Your lessons keep adjusting as you answer."))}
+    </OnboardingDescription>
   );
 }
 
@@ -134,10 +143,7 @@ export function TestOutResult({
       other={button(pressed !== null)}
       title={
         lessons > 0
-          ? t(
-              "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}",
-              { count: lessons },
-            )
+          ? sentences.skipped(undone ? 0 : lessons)
           : t("{level} stays in your plan", { level: view.level })
       }
     />
