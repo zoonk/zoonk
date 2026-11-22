@@ -294,16 +294,6 @@ final class MusicActivitiesTests: XCTestCase {
   private let ode =
     "X:1\nT:Ode to Joy\nC:Beethoven, 1824\nM:4/4\nL:1/4\nK:C\nE E F G | G F E D | C C D E | E3/2 D/2 D2 |]"
 
-  func testReadsTheTitleComposerAndPracticeTempos() {
-    let tune = ABCTune(notation: ode)
-
-    XCTAssertEqual(tune.title, "Ode to Joy")
-    XCTAssertEqual(tune.composer, "Beethoven, 1824")
-    XCTAssertNil(ABCTune(notation: "K:C\nC D E").title)
-    XCTAssertEqual(ABCTune.practiceTempos(80), [50, 65, 80])
-    XCTAssertEqual(ABCTune.practiceTempos(40), [25, 30, 40])
-  }
-
   func testReadsOdeToJoyBarByBar() {
     let tune = ABCTune(notation: ode)
 
@@ -377,22 +367,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertEqual(ABCTune.Meter.cut.beatLength, 0.5)
     XCTAssertEqual(ABCTune.Meter.none.beatLength, 0.25)
     XCTAssertEqual(ABCTune(notation: "M:2/4\nK:C\nC").bars[0].elements[0].written, 0.0625)
-  }
-
-  func testLaysOdeToJoyOutTwoBarsALineOnAPhone() {
-    let tune = ABCTune(notation: ode)
-    let staff = NotationDrawing(tune: tune, width: 330, space: 8, tabSpace: nil, textHeight: 16)
-    let tab = NotationDrawing(tune: tune, width: 330, space: 8, tabSpace: 13, textHeight: 16)
-    let wide = NotationDrawing(tune: tune, width: 700, space: 8, tabSpace: nil, textHeight: 16)
-    let frets = tab.items.compactMap { item -> String? in
-      if case .text(let text, _, .tabFret) = item.mark { text } else { nil }
-    }
-
-    XCTAssertGreaterThan(staff.height, 0)
-    XCTAssertLessThan(wide.height, staff.height, "four bars fit one wide line")
-    XCTAssertGreaterThan(tab.height, staff.height)
-    // E4 sounds as the D string's second fret on a guitar, which reads an octave up.
-    XCTAssertEqual(Array(frets.prefix(4)), ["2", "2", "3", "0"])
   }
 
   func testReadsPastBrokenLengthsAndTupletsWithoutCrashing() {

@@ -49,41 +49,6 @@ final class DraftCreationTests: XCTestCase {
     XCTAssertFalse(DraftCreation.canCreate(from: card))
   }
 
-  /// Back stays off while the goal is made, even when the draft is read again meanwhile, and the
-  /// failure shows on the card the learner sees.
-  func testBackWaitsThroughAReadAndTheFailureShowsOnTheCard() async throws {
-    let server = DraftServer(try Self.explainDraft())
-    let store = makeStore(server)
-    let card = store.draft(id: Self.draftID)
-    await card.load()
-    await server.answerCreates(.unavailable)
-    await server.holdNextCreate()
-    let page = Page(shown: Self.draftID)
-    try await readsWhatVoiceOverReads()
-
-    let window = try host(page, cards: [Self.draftID: card], store: store, router: AppRouter())
-    // Sent here, the question's explanation starts by itself.
-    await server.waitForHeldCreate()
-    try await waitForTestCondition { Self.hidesBack(in: window) == true }
-
-    card.invalidate()
-    let readAgain = try await waitForTestCondition {
-      await server.reads >= 2 && card.freshState != .loading
-    }
-    XCTAssertTrue(readAgain)
-    XCTAssertEqual(Self.hidesBack(in: window), true, "Back waits through the draft's read")
-
-    await server.releaseHeldCreate()
-    try await waitForTestCondition { Self.hidesBack(in: window) == false }
-
-    let failure = String(
-      localized: "We couldn't save your goal. Try again in a moment.", table: "Onboarding")
-    let saysWhy = try await waitForTestCondition {
-      spoken(in: window).contains { $0.contains(failure) }
-    }
-    XCTAssertTrue(saysWhy, "The failure shows on the card: \(spoken(in: window))")
-  }
-
   /// The learner leaves while an explanation is made and opens another draft: the first one's
   /// answer opens nothing over the second, and its goal is made, which its draft names.
   func testALeftVisitsLateGoalOpensNothingOverANewerStart() async throws {

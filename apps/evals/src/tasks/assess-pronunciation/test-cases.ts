@@ -4,6 +4,7 @@ import { TEST_CASES as SPEECH_TEST_CASES } from "../transcribe-speech/test-cases
 export type PronunciationClipInput = {
   language: string;
   learnerLanguage: string;
+  romanization?: string;
   spokenText: string;
   targetText: string;
 };
@@ -17,6 +18,68 @@ function getLearnerLanguage(language: string): string {
 }
 
 export const PRONUNCIATION_CLIP_CASES: PronunciationTestCase[] = [
+  {
+    expected: { flaggedWords: ["我姓单"], stressWords: [] },
+    id: "zh-surname-ordinary-reading",
+    userInput: {
+      language: "zh",
+      learnerLanguage: "en",
+      romanization: "Wǒ xìng Shàn",
+      spokenText: "我姓丹",
+      targetText: "我姓单",
+    },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
+    id: "zh-surname-correct",
+    userInput: {
+      language: "zh",
+      learnerLanguage: "en",
+      romanization: "Wǒ xìng Shàn",
+      spokenText: "我姓善",
+      targetText: "我姓单",
+    },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
+    id: "nl-homophone",
+    userInput: {
+      language: "nl",
+      learnerLanguage: "en",
+      spokenText: "Leiden.",
+      targetText: "Lijden.",
+    },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
+    id: "fr-silent-plural",
+    userInput: {
+      language: "fr",
+      learnerLanguage: "en",
+      spokenText: "Il parle.",
+      targetText: "Ils parlent.",
+    },
+  },
+  {
+    expected: { flaggedWords: ["他叫王明"], stressWords: [] },
+    id: "zh-name-tone",
+    userInput: {
+      language: "zh",
+      learnerLanguage: "en",
+      spokenText: "他叫汪明",
+      targetText: "他叫王明",
+    },
+  },
+  {
+    expected: { flaggedWords: ["他叫王明"], stressWords: [] },
+    id: "zh-name-final",
+    userInput: {
+      language: "zh",
+      learnerLanguage: "en",
+      spokenText: "他叫王民",
+      targetText: "他叫王明",
+    },
+  },
   {
     expected: { flaggedWords: [], stressWords: [] },
     id: "en-dessert-desert",

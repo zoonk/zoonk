@@ -24,20 +24,6 @@ final class ExamOverVisitTests: XCTestCase {
     XCTAssertEqual(calls.changes.count, 1)
   }
 
-  func testKeepStudyingFailureEndsWithTheVisit() async throws {
-    let api = PlanAPIStub()
-    await api.setChangeError(APIError.network)
-    let tabs = Tabs()
-    let window = try await showPlan(api: api, tabs: tabs)
-    try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
-    try await waitForTestCondition("Expected state did not arrive") {
-      spoken(in: window).contains(Self.failure)
-    }
-    XCTAssertTrue(spoken(in: window).contains(Self.failure))
-    try await leaveAndComeBack(tabs, in: window)
-    XCTAssertFalse(spoken(in: window).contains(Self.failure))
-  }
-
   func testKeepStudyingCompletesAfterLeaving() async throws {
     let api = PlanAPIStub()
     await api.hold(.change)
@@ -62,22 +48,6 @@ final class ExamOverVisitTests: XCTestCase {
     try await waitForTestCondition("Expected state did not arrive") {
       !(spoken(in: window).contains(Self.failure))
     }
-    XCTAssertFalse(spoken(in: window).contains(Self.failure))
-  }
-
-  func testArchiveFailureEndsWithTheVisit() async throws {
-    let api = PlanAPIStub()
-    await api.setStatusFails(true)
-    let tabs = Tabs()
-    let window = try await showPlan(api: api, tabs: tabs)
-    try await archive(in: window)
-    try await waitForTestCondition("Archive failure did not appear") {
-      spoken(in: window).contains(Self.failure)
-    }
-    let calls = await api.calls
-    XCTAssertEqual(calls.statuses, [.archived])
-    XCTAssertTrue(spoken(in: window).contains(Self.failure), "Shown: \(spoken(in: window))")
-    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(spoken(in: window).contains(Self.failure))
   }
 

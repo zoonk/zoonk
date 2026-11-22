@@ -114,6 +114,7 @@ export function SessionBlockClient({
         skipTestQuestions: goal.kind === "exam" ? skipTestQuestions : undefined,
         stop: navigation.stop,
       }}
+      blocks={session.blocks}
       buddy={tutor.buddy}
       renderCeremony={(moments, onClose) => (
         <SessionCeremony buddy={tutor.buddy} moments={moments} onClose={onClose} />
@@ -122,7 +123,6 @@ export function SessionBlockClient({
       exitHref={EXIT_HREF}
       key={`${detail.block.id}:${firstUnanswered ?? "answered"}`}
       lessonHref={lessonHref}
-      session={{ blocks: session.blocks, id: session.id, minutes: session.minutes }}
       tutor={questionTutor}
     />
   );

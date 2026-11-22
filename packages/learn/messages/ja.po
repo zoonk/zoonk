@@ -7642,6 +7642,7 @@ msgid "Practice mistakes"
 msgstr "間違えたところの練習"
 
 #: src/mistakes/mistake-practice-run.tsx
+#: src/session/question-block/block-aside.tsx
 msgctxt "SMv32M"
 msgid "Help with this question"
 msgstr "この問題について相談する"

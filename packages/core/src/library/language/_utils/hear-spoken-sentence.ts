@@ -15,6 +15,7 @@ import {
   needsWordByWordCheck,
 } from "../spoken-answer-match";
 import { readPlayedMs } from "./played-length";
+import { needsSurnameCheck, transcriptReading } from "./transcript-reading";
 
 export type SpokenAudio = { bytes: Uint8Array; mediaType: string };
 
@@ -40,19 +41,49 @@ type HearInput = {
   expected: string;
   language: string;
   learnerLanguage?: string;
+  romanization?: string | null;
   userId: string;
 };
 
-async function transcribeAndCompare({ audio, expected, language, userId }: HearInput) {
+async function transcribeAndCompare({
+  audio,
+  expected,
+  language,
+  romanization,
+  userId,
+  verifyExactReading,
+}: HearInput & { verifyExactReading?: boolean }) {
   const { data: transcript } = await transcribeSpeech({
     analytics: { contentScope: "shared", distinctId: userId },
     audio: audio.bytes,
     language,
   });
 
+  const input = { expected, heard: transcript.text, language };
+  const match = matchSpokenAnswer(input);
+  const heard = { match, transcript: transcript.text };
+
+  if (!match.normalizedHeard || match.isCorrect) {
+    return { heard, listen: match.isCorrect && Boolean(verifyExactReading) };
+  }
+
+  const reading = await transcriptReading({ ...input, romanization });
+
+  if (reading !== "equivalent") {
+    return { heard, listen: reading === "listen" };
+  }
+
   return {
-    match: matchSpokenAnswer({ expected, heard: transcript.text, language }),
-    transcript: transcript.text,
+    heard: {
+      match: {
+        ...match,
+        isCorrect: true,
+        score: 1,
+        words: match.words.map(({ text }) => ({ heard: null, status: "correct" as const, text })),
+      },
+      transcript: transcript.text,
+    },
+    listen: false,
   };
 }
 
@@ -64,6 +95,7 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
     language: input.language,
     learnerLanguage: input.learnerLanguage,
     mediaType: input.audio.mediaType,
+    romanization: input.romanization,
   });
 
   const correct = data.words.filter((word) => word.status === "correct").length;
@@ -79,30 +111,42 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
   };
 }
 
-/**
- * Each check backs up the other, on another provider. It also covers a language the transcriber
- * refuses, such as Irish or Malagasy, which the word-by-word check hears. A spelled-out word or a
- * number the transcript wrote differently goes to the word-by-word check too, since only it hears
- * what was said.
- */
+/** The providers back each other up, including for languages the transcriber refuses. */
 export async function hearSpokenSentence({
   check = "fast",
   ...input
 }: HearInput & { check?: SentenceCheck }): Promise<HeardSentence> {
-  const [first, backup] =
-    check === "fast"
-      ? [transcribeAndCompare, assessWordByWord]
-      : [assessWordByWord, transcribeAndCompare];
+  // A transcript can spell a surname correctly even when the speaker used its ordinary reading.
+  const verifyExactReading = await needsSurnameCheck(input);
 
-  const { data: heard, error } = await safeAsync(() => first(input));
+  if (check === "thorough" || verifyExactReading) {
+    const { data, error } = await safeAsync(() => assessWordByWord(input));
 
-  if (error) {
-    logError(`The ${check} speech check failed; trying the other one`, error);
-    return backup(input);
+    if (!error) {
+      return data;
+    }
+
+    logError("The thorough speech check failed; trying transcription", error);
+    const { heard, listen } = await transcribeAndCompare({ ...input, verifyExactReading });
+
+    if (listen) {
+      throw error;
+    }
+
+    return heard;
   }
 
+  const { data, error } = await safeAsync(() => transcribeAndCompare(input));
+
+  if (error) {
+    logError("The fast speech check failed; trying the word-by-word check", error);
+    return assessWordByWord(input);
+  }
+
+  const { heard, listen } = data;
+
   if (
-    check === "fast" &&
+    listen ||
     needsWordByWordCheck({
       expected: input.expected,
       heard: heard.transcript,

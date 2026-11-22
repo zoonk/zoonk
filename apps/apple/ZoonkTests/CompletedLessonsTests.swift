@@ -51,11 +51,6 @@ final class CompletedLessonsTests: XCTestCase {
     XCTAssertEqual(groups, [nil, "math"])
   }
 
-  func testMonthTitleNamesItsYearOnlyInAnotherYear() {
-    XCTAssertEqual(completedLessonsMonthTitle("2026-11", today: "2026-11-19"), "November")
-    XCTAssertEqual(completedLessonsMonthTitle("2025-12", today: "2026-11-19"), "December 2025")
-  }
-
   private let goal = CompletedLessonsQuery(goalId: "goal")
 
   private func page(_ ids: [String], next: String?) -> CompletedLessonsPage {

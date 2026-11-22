@@ -1196,6 +1196,12 @@ importers:
       parse5:
         specifier: 8.1.1
         version: 8.1.1
+      pinyin-pro:
+        specifier: 3.29.5
+        version: 3.29.5
+      piper-phonemize:
+        specifier: 1.6.1
+        version: 1.6.1
       posthog-js:
         specifier: 'catalog:'
         version: 1.449.2(@types/react@19.3.0)(react@19.3.1)
@@ -7920,6 +7926,12 @@ packages:
   picomatch@4.0.7:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
+
+  pinyin-pro@3.29.5:
+    resolution: {integrity: sha512-Fk5YoRmtdHqJWqAuzYVG/NzvzeCbaG+ZEwbY6Nbps3QAIrvQQEtcm49frcyCM8i2b5najnzPDtYqrHRYTTiuwQ==}
+
+  piper-phonemize@1.6.1:
+    resolution: {integrity: sha512-jn9r/YOlCZZwN5NXZkMLaL+/wUdqWgbP8tv7drSAEOlu+X1PhllFsWKN0pIrFoODRDdxDqdFCcG5RxFsJP7Oew==}
 
   pkg-types@2.4.0:
     resolution: {integrity: sha512-07Fys7iVx0X6TcviMOgogM1Lk33ZyqOezMnU79S+kffWqwolG/5W9V8EgQSeYCIfFTYVgssRbnH630Oa2+soBA==}
@@ -15272,6 +15284,10 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
+
+  pinyin-pro@3.29.5: {}
+
+  piper-phonemize@1.6.1: {}
 
   pkg-types@2.4.0:
     dependencies:

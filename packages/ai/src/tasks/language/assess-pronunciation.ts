@@ -48,6 +48,7 @@ export type AssessPronunciationParams = {
   expectedText: string;
   language: string;
   learnerLanguage?: string;
+  romanization?: string | null;
   model?: string;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
@@ -58,18 +59,22 @@ function buildUserPrompt({
   expectedText,
   language,
   learnerLanguage,
+  romanization,
 }: {
   expectedWords: readonly string[];
   expectedText: string;
   language: string;
   learnerLanguage?: string;
+  romanization?: string | null;
 }): string {
   const learnerLine = learnerLanguage
     ? `LEARNER_LANGUAGE: ${getPromptLanguageName({ language: learnerLanguage })}\n`
     : "";
 
+  const reading = romanization ? `\nEXPECTED_PRONUNCIATION: ${romanization}` : "";
+
   return `LANGUAGE: ${getPromptLanguageName({ language })}
-${learnerLine}EXPECTED_SENTENCE: ${expectedText}
+${learnerLine}EXPECTED_SENTENCE: ${expectedText}${reading}
 WORDS:
 ${expectedWords.map((word, index) => `${index + 1}. ${word}`).join("\n")}`;
 }
@@ -86,10 +91,19 @@ export async function assessPronunciation({
   learnerLanguage,
   mediaType,
   model = defaultModel,
+  romanization,
   reasoning,
 }: AssessPronunciationParams) {
   const expectedWords = splitExpectedWords(expectedText);
-  const userPrompt = buildUserPrompt({ expectedText, expectedWords, language, learnerLanguage });
+
+  const userPrompt = buildUserPrompt({
+    expectedText,
+    expectedWords,
+    language,
+    learnerLanguage,
+    romanization,
+  });
+
   const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
   const { provenance, result } = await runTaskGeneration({

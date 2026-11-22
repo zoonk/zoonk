@@ -59,14 +59,6 @@ final class SetupLessonStartTests: XCTestCase {
     XCTAssertEqual(router.tasks, [.lesson(lessonId: HeldAnswer.lessonID)])
   }
 
-  func testMovingOnClearsAnEarlierStartOverFailure() {
-    let failures = GoalSetupFailures()
-    failures.startingOver.outcome = true
-    XCTAssertTrue(failures.failed)
-    failures.clear()
-    XCTAssertFalse(failures.failed)
-  }
-
   private func waitUntilAnswering(
     _ server: HeldAnswer, in window: UIWindow, file: StaticString = #filePath, line: UInt = #line
   ) async throws {

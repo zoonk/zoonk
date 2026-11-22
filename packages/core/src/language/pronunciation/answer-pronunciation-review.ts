@@ -80,6 +80,7 @@ export async function answerPronunciationReview({
     expected: review.word.word,
     language: review.language,
     learnerLanguage: review.userLanguage,
+    romanization: review.word.romanization,
     userId,
   });
 

@@ -7,6 +7,7 @@ import { AUTH_LOGIN_EXPIRED_ERROR } from "@zoonk/utils/origin";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
+import { spokenGradingFiles } from "../../scripts/deploy/spoken-grading-files.mts";
 import { E2E_MAIN_APP_URL } from "./e2e/main-app-url";
 import { AUTH_BASE_PATH } from "./src/lib/auth-base-path";
 
@@ -106,6 +107,8 @@ const nextConfig: NextConfig = {
       "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
       "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
     ],
+    "/v1/**/spoken-answers": spokenGradingFiles,
+    "/v1/pronunciation-reviews/*/answers": spokenGradingFiles,
   },
   partialPrefetching: true,
   reactCompiler: true,

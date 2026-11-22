@@ -8,7 +8,7 @@ The iPad app also remains available in Apple's Designed for iPad compatibility m
 
 - macOS with Xcode 27 or newer
 - Xcode command-line tools selected with `xcode-select`
-- An installed iOS simulator for running UI tests
+- An installed iOS simulator for the full iPhone unit suite and UI tests
 
 ## Commands
 
@@ -22,18 +22,19 @@ Build and run the Debug app from the repository root:
 
 Run commands from this directory:
 
-| Command              | Purpose                                               |
-| -------------------- | ----------------------------------------------------- |
-| `make build`         | Build the iPhone and iPad app in Debug configuration. |
-| `make build-ios`     | Build the iPhone and iPad app in Debug configuration. |
-| `make test`          | Run the unit tests on a free iPhone simulator.        |
-| `make ui-test`       | Run the UI tests on a free iPhone simulator.          |
-| `make format`        | Format Swift source files in place.                   |
-| `make format-check`  | Check Swift formatting without changing files.        |
-| `make strings-check` | Check that built strings are in their catalogs.       |
-| `make check`         | Check formatting and strings, and run the unit tests. |
+| Command              | Purpose                                                |
+| -------------------- | ------------------------------------------------------ |
+| `make build`         | Build the iPhone and iPad app in Debug configuration.  |
+| `make build-ios`     | Build the iPhone and iPad app in Debug configuration.  |
+| `make test`          | Run the unit tests on a free iPhone simulator.         |
+| `make test-mac`      | Run the Mac-compatible unit tests without a simulator. |
+| `make ui-test`       | Run the UI tests on a free iPhone simulator.           |
+| `make format`        | Format Swift source files in place.                    |
+| `make format-check`  | Check Swift formatting without changing files.         |
+| `make strings-check` | Check that built strings are in their catalogs.        |
+| `make check`         | Check formatting and strings, and run the Mac units.   |
 
-From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`. Before committing, run `pnpm apple:check` from the repository root: it also validates the translations.
+From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`. The local command `pnpm apple:check` also validates translations.
 
 To check a Release build, run `make build CONFIGURATION=Release`.
 
@@ -112,4 +113,4 @@ Release builds send usage analytics to the "Zoonk" project in PostHog, the one t
 
 ## Continuous Integration
 
-GitHub Actions checks Swift formatting, builds the iPhone and iPad app and checks that every string it compiled is in its String Catalog. UI tests remain local because clean hosted macOS runners currently spend several minutes preparing the simulator before executing the tests.
+For changes to the Apple app, GitHub Actions runs the Mac-compatible unit tests, checks Swift formatting, builds the iPhone and iPad app and checks its String Catalogs. The full iPhone unit suite runs after merge. To run it on a branch before merge, use `gh workflow run apple-tests.yml --ref <branch>`. Run UI tests locally with `make ui-test`.

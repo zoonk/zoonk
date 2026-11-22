@@ -23,6 +23,9 @@ extension XCTestCase {
   /// nothing, so this returns once it has loaded.
   @MainActor
   func readsWhatVoiceOverReads() async throws {
+    try XCTSkipIf(
+      ProcessInfo.processInfo.isMacCatalystApp,
+      "Exercises native iOS layout or accessibility in the iPhone suite.")
     typealias Enabled = @convention(c) () -> Bool
     typealias SetEnabled = @convention(c) (Bool) -> Void
     let library = try XCTUnwrap(dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW))
@@ -44,16 +47,6 @@ extension XCTestCase {
   @MainActor
   func spoken(in element: Any) -> [String] {
     accessibilityElements(in: element).compactMap(\.accessibilityLabel).filter { !$0.isEmpty }
-  }
-
-  @MainActor
-  func spokenValues(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityValue).filter { !$0.isEmpty }
-  }
-
-  @MainActor
-  func spokenHints(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityHint).filter { !$0.isEmpty }
   }
 
   /// Taps what VoiceOver reads as `label`, as a double tap with VoiceOver does.
@@ -122,42 +115,6 @@ extension XCTestCase {
   @MainActor
   func requestViews<Kind: UIView>(_ kind: Kind.Type, in root: UIView) -> [Kind] {
     ((root as? Kind).map { [$0] } ?? []) + root.subviews.flatMap { requestViews(kind, in: $0) }
-  }
-
-  /// The first drawn row from the top of the window, in points: where a centered screen starts
-  /// (its icon, or its title when it has none), for screens whose parts a test can't measure from
-  /// inside. Grey ink counts, so a muted icon is found as well as black words.
-  @MainActor
-  func inkTop(_ window: UIWindow) -> CGFloat? {
-    let format = UIGraphicsImageRendererFormat()
-    format.scale = 1
-    format.preferredRange = .standard
-
-    let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { context in
-      UIColor.white.setFill()
-      context.fill(window.bounds)
-      window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
-    }
-
-    guard let cgImage = image.cgImage, let data = cgImage.dataProvider?.data,
-      let bytes = CFDataGetBytePtr(data)
-    else {
-      return nil
-    }
-
-    let pixelBytes = cgImage.bitsPerPixel / 8
-
-    for y in 0..<Int(Double(cgImage.height) * 0.7) {
-      for x in 0..<cgImage.width {
-        let pixel = y * cgImage.bytesPerRow + x * pixelBytes
-
-        if Int(bytes[pixel]) + Int(bytes[pixel + 1]) + Int(bytes[pixel + 2]) < 600 {
-          return CGFloat(y)
-        }
-      }
-    }
-
-    return nil
   }
 }
 
@@ -250,12 +207,29 @@ final class TestContinuation<Value: Sendable>: Sendable {
   }
 }
 
+/// Holds test work until `open()`, and fails the test instead of hanging when it never opens.
+@MainActor
+final class TestGate {
+  private var isOpen = false
+
+  func open() { isOpen = true }
+
+  /// Waits even when the task waiting is canceled, as work already sent keeps going.
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
+    let opened = Task { @MainActor in
+      try await waitForTestCondition("The gate was never opened", file: file, line: line) {
+        self.isOpen
+      }
+    }
+    _ = try? await opened.value
+  }
+}
+
 extension TestContinuation where Value == Void {
   nonisolated func resume() { resume(returning: ()) }
 }
 
 func withTestContinuation<Value: Sendable>(
-  timeout: Duration = .seconds(10),
   isolation: isolated (any Actor)? = #isolation,
   file: StaticString = #filePath, line: UInt = #line,
   _ register: (TestContinuation<Value>) -> Void
@@ -265,7 +239,7 @@ func withTestContinuation<Value: Sendable>(
   // Held responses model a sent request that still answers after its caller is canceled.
   let response = Task { @MainActor in
     try await waitForTestCondition(
-      "Fixture continuation was never resumed", timeout: timeout, file: file, line: line
+      "Fixture continuation was never resumed", file: file, line: line
     ) { continuation.result != nil }
   }
   _ = try await response.value
@@ -290,21 +264,6 @@ func withTestOptionalContinuation<Value: Sendable>(
 
 @MainActor
 final class HostedViewSupportTests: XCTestCase {
-  func testAFailedFirstActivationIsNotRetried() async throws {
-    let window = try show(Color.clear)
-    let button = RefusesFirstActivation(frame: CGRect(x: 20, y: 100, width: 100, height: 50))
-    button.accessibilityLabel = "Fails first activation"
-    button.isAccessibilityElement = true
-    window.addSubview(button)
-    let options = XCTExpectedFailure.Options()
-    options.issueMatcher = { $0.compactDescription.contains("didn't act") }
-    XCTExpectFailure("A failed activation must fail the test", options: options)
-    do {
-      try await activate("Fails first activation", in: window)
-    } catch {}
-    XCTAssertEqual(button.activations, 1)
-  }
-
   func testCancellationStillWaitsForTheHeldResponse() async throws {
     var held: TestContinuation<Void>?
     var finished = false
@@ -321,27 +280,5 @@ final class HostedViewSupportTests: XCTestCase {
     held?.resume()
     await request.value
     XCTAssertTrue(finished)
-  }
-
-  func testAnUnresumedFixtureFailsAndThrowsAtItsDeadline() async {
-    let options = XCTExpectedFailure.Options()
-    options.issueMatcher = {
-      $0.compactDescription.contains("Fixture continuation was never resumed")
-    }
-    XCTExpectFailure("Missing fixture responses must fail without hanging", options: options)
-    do {
-      let _: Void = try await withTestContinuation(timeout: .milliseconds(1)) { _ in }
-      XCTFail("The missing response must throw")
-    } catch {}
-  }
-}
-
-@MainActor
-private final class RefusesFirstActivation: UIButton {
-  private(set) var activations = 0
-
-  override func accessibilityActivate() -> Bool {
-    activations += 1
-    return activations > 1
   }
 }

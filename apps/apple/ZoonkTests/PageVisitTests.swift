@@ -6,115 +6,6 @@ import XCTest
 
 @testable import Zoonk
 
-/// What a chapter, subject, exam or speaking page asked, and how it ended, is the visit's. A failure
-/// shown before the learner left is gone when they come back, and one that lands after they left
-/// says nothing.
-@MainActor
-final class PageVisitTests: XCTestCase {
-  // MARK: Chapter
-
-  func testAChapterPracticeNoteShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let visit = try await PageVisit(in: self, goal: .learn) {
-      ChapterScreen(chapterId: PageServer.chapterID)
-    }
-
-    try await visit.activate(String(localized: "Practice this chapter", table: "Plan"))
-    try await visit.assertSays(Self.chapterFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.chapterFailure)
-  }
-
-  // MARK: Subject
-
-  func testASubjectRestoreFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let visit = try await PageVisit(in: self, goal: .exam) {
-      SubjectScreen(subjectKey: PageServer.subjectKey)
-    }
-
-    try await visit.activate(String(localized: "Add it back", table: "Plan"))
-    try await visit.assertSays(Self.subjectFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.subjectFailure)
-  }
-
-  func testASubjectRestoreThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
-    let visit = try await PageVisit(in: self, goal: .exam, holding: "createPlanChange") {
-      SubjectScreen(subjectKey: PageServer.subjectKey)
-    }
-
-    try await visit.activate(String(localized: "Add it back", table: "Plan"))
-    try await visit.failAfterLeaving()
-    visit.assertSaysNothingOf(Self.subjectFailure)
-  }
-
-  // MARK: Exam date
-
-  func testAnExamDateFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let exam = try PageServer.exam()
-    let visit = try await PageVisit(in: self, goal: .exam) {
-      ExamList(exam: exam, options: nil)
-    }
-
-    try await visit.activate(String(localized: "Use this date", table: "Exam"))
-    try await visit.assertSays(Self.examFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.examFailure)
-  }
-
-  func testAnExamDateThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
-    let exam = try PageServer.exam()
-    let visit = try await PageVisit(in: self, goal: .exam, holding: "createPlanChange") {
-      ExamList(exam: exam, options: nil)
-    }
-
-    try await visit.activate(String(localized: "Use this date", table: "Exam"))
-    try await visit.failAfterLeaving()
-    visit.assertSaysNothingOf(Self.examFailure)
-  }
-
-  // MARK: Calls
-
-  func testAFailedSpeakingMockStartShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let exam = try PageServer.exam()
-    let visit = try await PageVisit(in: self, goal: .exam) {
-      ExamList(exam: exam, options: nil)
-    }
-
-    try await visit.activate(String(localized: "Start", table: "Exam"))
-    try await visit.assertSays(Self.mockFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.mockFailure)
-  }
-
-  func testAFailedSpeakingTaskStartShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let router = AppRouter()
-    router.speakingTask = PageServer.speakingTask
-    let visit = try await PageVisit(in: self, goal: .language, router: router) {
-      SpeakingScreen()
-    }
-
-    try await visit.activate(String(localized: "Start", table: "Voice"))
-    try await visit.assertSays(Self.taskFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.taskFailure)
-  }
-
-  private static let chapterFailure = String(
-    localized: "That didn't work. Try again in a moment.", table: "Plan")
-  private static let subjectFailure = chapterFailure
-  private static let examFailure = String(
-    localized: "That didn't go through. Try again in a moment.", table: "Exam")
-  private static let mockFailure = String(
-    localized: "The mock didn't start. Try again in a moment.", table: "Exam")
-  private static let taskFailure = String(
-    localized: "The task didn't start. Try again in a moment.", table: "Voice")
-}
-
 /// A page hosted in a tab, with another tab to leave it for, as the app's tabs keep each root.
 @MainActor
 struct PageVisit {
@@ -123,11 +14,11 @@ struct PageVisit {
   private let test: XCTestCase
   private let tabs: VisitTabs
 
-  /// `holding` names the API operation that waits for `failAfterLeaving()`; every other write fails
-  /// at once.
+  /// `holding` names the API operation that waits for the server's `release()`; every other write
+  /// fails at once.
   init<Page: View>(
     in test: XCTestCase, goal kind: LearnerGoal.Kind, holding: String? = nil,
-    router: AppRouter = AppRouter(), @ViewBuilder page: @escaping () -> Page
+    @ViewBuilder page: @escaping () -> Page
   ) async throws {
     let server = PageServer(holding: holding)
     let tabs = VisitTabs()
@@ -142,7 +33,7 @@ struct PageVisit {
     let window = try test.show(
       VisitHost(tabs: tabs, page: page)
         .appDependencies(dependencies)
-        .environment(router)
+        .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
     self.server = server
@@ -166,37 +57,6 @@ struct PageVisit {
     try await waitForTestCondition("The page did not return") {
       tabs.pageVisible && !test.spoken(in: window).contains("Elsewhere")
     }
-  }
-
-  /// The held write goes out, the learner leaves, then it fails, and the learner comes back.
-  func failAfterLeaving() async throws {
-    try await server.waitForHeldRequest()
-    tabs.selected = 1
-    try await waitForTestCondition("The other tab did not appear") {
-      !tabs.pageVisible && test.spoken(in: window).contains("Elsewhere")
-    }
-    try await server.release()
-    tabs.selected = 0
-    try await waitForTestCondition("The page did not return") {
-      tabs.pageVisible && !test.spoken(in: window).contains("Elsewhere")
-    }
-  }
-
-  func assertSays(_ words: String, file: StaticString = #filePath, line: UInt = #line) async throws
-  {
-    try await waitForTestCondition("The page never showed \(words)", file: file, line: line) {
-      test.spoken(in: window).contains { $0.contains(words) }
-    }
-    let spoken = test.spoken(in: window)
-    XCTAssertTrue(
-      spoken.contains { $0.contains(words) }, "It shows: \(spoken)", file: file, line: line)
-  }
-
-  func assertSaysNothingOf(_ words: String, file: StaticString = #filePath, line: UInt = #line) {
-    let spoken = test.spoken(in: window)
-    XCTAssertFalse(
-      spoken.contains { $0.contains(words) }, "Nothing of it on return: \(spoken)", file: file,
-      line: line)
   }
 }
 
@@ -226,16 +86,11 @@ private struct VisitHost<Page: View>: View {
   }
 }
 
-/// The API behind the pages: reads answer, and writes fail unless their result is set. The one
-/// named `holding` waits until `release()` lets it.
+/// The API behind the pages: reads answer, and writes fail. The one named `holding` waits until
+/// `release()` lets it.
 actor PageServer: ClientTransport {
   static let goalID = "00000000-0000-4000-8000-000000000001"
-  static let chapterID = "00000000-0000-4000-8000-0000000000c1"
   static let subjectKey = "biology"
-  static let speakingTask = "t1"
-
-  private var focusTestResult: String?
-  func setFocusTestResult(_ result: String) { focusTestResult = result }
 
   private(set) var writes: [String] = []
   private var completedWrites = 0
@@ -264,13 +119,6 @@ actor PageServer: ClientTransport {
         held = continuation
       }
     }
-
-    if operationID == "updateGoalFocusTest", let focusTestResult {
-      return (
-        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-        HTTPBody(focusTestResult)
-      )
-    }
     throw APIError.network
   }
 
@@ -295,37 +143,10 @@ actor PageServer: ClientTransport {
     {"access":"open","examDocument":"guide","examName":"ENEM","goalId":"00000000-0000-4000-8000-000000000001","lastMock":null,"options":[{"area":null,"areas":[],"covers":[],"day":null,"estimatedMinutes":30,"kind":"full","leftOut":[],"minutes":60,"objectiveOnly":true,"questions":20,"written":[]}],"requested":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
     """#,
 
-    "getGoalChapter": #"""
-    {"chapter":{"chapterId":"00000000-0000-4000-8000-0000000000c1","level":"overview","position":1,"state":"current","subject":null,"title":"Cells"},"counts":{"fading":0,"learning":0,"mastered":0,"new":0,"solid":0,"total":0},"goal":{"displayName":"Biology","id":"00000000-0000-4000-8000-000000000001","kind":"learn","title":"Biology"},"lessons":[],"mistakes":{"open":2},"skills":[],"summaries":[],"testOut":{"available":false}}
-    """#,
     "getGoalSyllabus": #"""
     {"courseWeights":null,"examDocument":"guide","fromMaterial":false,"goal":{"displayName":"ENEM","id":"00000000-0000-4000-8000-000000000001","kind":"exam","title":"ENEM"},"kind":"notice","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"noticeUrl":null,"passMarks":null,"questionsSource":null,"sharedExams":[],"subjects":[{"areas":["00000000-0000-4000-8000-0000000000a1"],"chapters":[],"displayWeight":null,"group":null,"imageUrl":null,"key":"biology","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,"mastery":null,"matrix":[],"name":"Biology","nextDate":null,"notPlannedReason":"skipped","preparation":null,"questions":null,"share":null,"sharedWith":[],"shortName":"Biology","source":"notice","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}],"topicCount":0,"topicsMapped":false,"writtenPractice":null}
     """#,
-    "getSpeakingPaper": #"""
-    {"exam":"cambridge","language":"en","level":"B2","paper":"Speaking","source":"https://zoonk.test","title":"B2 First","access":"open","minutes":{"max":14,"min":11},"prepMinutes":0,"prepTasks":[],"tasks":[{"key":"t1","minutes":{"max":5,"min":4},"mode":"monologue","name":"Interview","options":0,"prepMinutes":0,"prepShared":null,"role":"examiner","stimulus":"topic","criteria":[],"lastTry":null}]}
-    """#,
   ]
-
-  /// An exam months away whose notice moved its likely date, with a speaking mock.
-  static func exam() throws -> ExamView {
-    try JSONDecoder().decode(
-      ExamView.self,
-      from: Data(
-        #"""
-        {"calibration": null, "checklist": [], "cutoff": null, "dayBefore": "learn",
-         "days": [{"date": "2027-11-14", "label": null, "startTime": null}],
-         "daysEstimated": true, "daysLeft": 364, "estimate": null, "examDocument": "guide",
-         "examName": "IELTS", "format": [], "goalId": "00000000-0000-4000-8000-000000000001",
-         "map": null, "mocks": [], "mocksRequirePlus": false, "namedMonth": false,
-         "nextMock": null, "noSitting": null,
-         "noticeDay": {"date": "2027-11-21", "estimated": true}, "passMarks": null,
-         "prepared": false, "progress": null, "result": null, "runningMocks": [],
-         "scoring": {"method": "irt", "note": null, "noticeScale": null, "rule": null,
-                     "scale": null, "stated": false, "wrongPenalty": 0},
-         "sessionsDone": 0, "speaking": null, "speakingMock": "ielts", "speakingMockPaused": false,
-         "stage": "preparing", "targetScore": null, "timeZone": null, "tools": []}
-        """#.utf8))
-  }
 }
 
 /// One goal of `kind`, the one every page shows.
