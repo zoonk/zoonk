@@ -8,7 +8,11 @@ import {
   recordAnswerOnce,
 } from "../../../learner/_utils/answer-once";
 import { creditWrittenSkills } from "../../../learner/written-evidence";
-import { type WritingConditions, type WritingResult } from "../writing-contract";
+import {
+  type WritingConditions,
+  type WritingResult,
+  writtenAnswerSchema,
+} from "../writing-contract";
 import { countWritingLines } from "../writing-lines";
 import { getWritingArithmetic } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
@@ -212,7 +216,14 @@ export function recordEssayGrade(
 
   return recordAnswerOnce({
     answer: {
-      answer: { conditions: writtenConditions, grade, text },
+      answer: {
+        conditions: writtenConditions,
+        examBlueprintId: item.examBlueprintId,
+        grade,
+        itemId: item.id,
+        text,
+        writing: writtenAnswerSchema.shape.writing.parse(basis),
+      },
       attemptId,
       graded: { durationMs, isCorrect: share !== null && share >= GOOD_SHARE, score: share },
       itemId: item.id,

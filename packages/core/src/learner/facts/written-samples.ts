@@ -3,14 +3,10 @@ import { type TransactionClient, prisma, sql } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { z } from "zod";
 import { getLearnerModelCacheTag } from "../../cache/tags";
-import {
-  writingRangeSchema,
-  writtenAnswerSchema,
-  writtenItemSchema,
-} from "../../exams/essays/writing-contract";
+import { writingRangeSchema, writtenAnswerSchema } from "../../exams/essays/writing-contract";
 import { isNumericWritingRubric } from "../../exams/essays/writing-rubric-policy";
 
-const samplePrompt = writtenItemSchema.pick({
+const samplePrompt = writtenAnswerSchema.shape.writing.pick({
   assessedSkillIds: true,
   criteria: true,
   grading: true,
@@ -80,12 +76,12 @@ export async function loadWrittenSamples({
       (mock.goal_id = ${scope.goalId}::uuid AND mock.status = 'finished' AND mock.user_id = a.user_id)
       OR (a.mock_exam_id IS NULL AND session.goal_id = ${scope.goalId}::uuid AND session.user_id = a.user_id)
     )`
-      : sql`AND i.exam_blueprint_id IS NOT DISTINCT FROM ${scope.examBlueprintId}::uuid
+      : sql`AND a.answer ->> 'examBlueprintId' IS NOT DISTINCT FROM ${scope.examBlueprintId}::uuid::text
       AND a.answer #>> '{conditions,version}' = 'firstDraft'
-      ${scope.wholeAnswers ? sql`AND i.content #>> '{writing,unit}' = 'answer'` : sql``}`;
+      ${scope.wholeAnswers ? sql`AND a.answer #>> '{writing,unit}' = 'answer'` : sql``}`;
 
   const attempts = await tx.$queryRaw<SampleRow[]>(sql`
-    SELECT a.id, a.item_id AS "itemId", a.answered_at AS "answeredAt", a.local_date AS "localDate",
+    SELECT a.id, a.answer ->> 'itemId' AS "itemId", a.answered_at AS "answeredAt", a.local_date AS "localDate",
            a.duration_ms AS "durationMs", a.mock_exam_id AS "mockExamId",
            a.study_session_id AS "studySessionId", a.answer -> 'conditions' AS conditions,
            jsonb_build_object(
@@ -100,12 +96,10 @@ export async function loadWrittenSamples({
              'rows', a.answer #> '{grade,rows}',
              'total', a.answer #> '{grade,total}'
            ) AS grade,
-           (i.content -> 'writing') - ARRAY[
-             'aspects', 'charactersPerLine', 'chosenSubjects', 'keySource',
-             'minimumWords', 'partMinimum', 'subject'
+           (a.answer -> 'writing') - ARRAY[
+             'charactersPerLine', 'keySource', 'minimumWords', 'partMinimum'
            ] AS prompt
     FROM attempts a
-    JOIN items i ON i.id = a.item_id
     ${
       "goalId" in scope
         ? sql`
@@ -114,10 +108,10 @@ export async function loadWrittenSamples({
     `
         : sql``
     }
-    WHERE a.user_id = ${userId}::uuid AND i.format = 'essay'
+    WHERE a.user_id = ${userId}::uuid AND a.answer ->> 'itemId' IS NOT NULL
       AND jsonb_typeof(a.answer #> '{grade,criteria}') = 'array'
       AND jsonb_typeof(a.answer #> '{grade,errors}') = 'array'
-      AND jsonb_typeof(i.content -> 'writing') = 'object'
+      AND jsonb_typeof(a.answer -> 'writing') = 'object'
       ${filter}
     ORDER BY a.answered_at DESC, a.id DESC
   `);

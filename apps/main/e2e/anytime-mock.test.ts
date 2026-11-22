@@ -1,6 +1,8 @@
 import { type Page } from "@playwright/test";
+import { writtenAnswerSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { isJsonObject } from "@zoonk/utils/json";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
 import {
   answerMockQuestions,
@@ -115,6 +117,7 @@ test.describe("Mocks whenever the learner wants", () => {
             timed: true,
             version: "firstDraft",
           },
+          examBlueprintId: essay.examBlueprintId,
           grade: {
             criteria: [
               {
@@ -136,7 +139,11 @@ test.describe("Mocks whenever the learner wants", () => {
             },
             progress: null,
           },
+          itemId: essay.id,
           text: essayText,
+          writing: writtenAnswerSchema.shape.writing.parse(
+            isJsonObject(essay.content) ? essay.content.writing : undefined,
+          ),
         },
         durationMs: 60_000,
         hour: 12,

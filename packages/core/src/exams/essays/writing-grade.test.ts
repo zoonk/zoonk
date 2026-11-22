@@ -549,16 +549,18 @@ describe("writing grades", () => {
 
     const saved = writtenAnswerSchema.parse({
       conditions,
+      examBlueprintId: null,
       grade: { ...grade, nextStep },
+      itemId: randomUUID(),
       text: original,
+      writing: basis,
     });
 
     expect(saved.grade.nextStep).toStrictEqual({ ...nextStep, kind: "criterion" });
 
     const overLimit = writtenAnswerSchema.parse({
-      conditions,
+      ...saved,
       grade: { ...grade, ignoredFrom: eligible.length, nextStep: null },
-      text: original,
     });
 
     expect(overLimit.grade.nextStep).toMatchObject({ kind: "limit", title: null });

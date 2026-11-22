@@ -8,9 +8,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { loadWrittenSamples } from "../../learner/facts/written-samples";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
+import { readEssayContent } from "../essays/_utils/essay-content";
+import { getWritingAttempt } from "../essays/get-writing-attempt";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
 import { CGU, CGU_WRITTEN_GRADING } from "./_test-utils/cgu-written";
@@ -523,6 +526,73 @@ describe("written mock sittings", () => {
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
     ).resolves.toStrictEqual({ status: "needsQuestions" });
+
+    const attempt = await prisma.attempt.findFirstOrThrow({
+      where: { itemId: short.id, mockExamId: id, userId: user.id },
+    });
+
+    async function readHistory() {
+      const [syllabus, detail, projection, samples] = await Promise.all([
+        getSyllabusView({ goalId: goal.id }),
+        getWritingAttempt(attempt.id),
+        loadWrittenProjection({
+          goalId: goal.id,
+          objective: null,
+          structure: CGU,
+          userId: user.id,
+        }),
+        loadWrittenSamples({
+          scope: { examBlueprintId: goal.examBlueprintId, firstDraft: true, wholeAnswers: true },
+          userId: user.id,
+        }),
+      ]);
+
+      return {
+        detail,
+        history:
+          syllabus.status === "ready" &&
+          syllabus.syllabus.writtenPractice?.subjects?.map(({ answers, trend }) => ({
+            answers,
+            trend,
+          })),
+        projection,
+        samples,
+      };
+    }
+
+    const before = await readHistory();
+
+    expect(before).toMatchObject({
+      detail: { status: "ready" },
+      samples: [{ id: attempt.id, itemId: short.id }],
+    });
+
+    const gradedContent = readEssayContent(short);
+
+    if (!gradedContent) {
+      throw new Error("Expected the graded essay prompt.");
+    }
+
+    await prisma.item.update({
+      data: {
+        content: {
+          ...gradedContent,
+          writing: { ...gradedContent.writing, title: "Updated prompt", unit: "drill" },
+        },
+        examBlueprintId: null,
+      },
+      where: { id: short.id },
+    });
+
+    const afterEdit = await readHistory();
+
+    await prisma.item.delete({ where: { id: short.id } });
+
+    await expect(prisma.attempt.findUnique({ where: { id: attempt.id } })).resolves.toMatchObject({
+      itemId: null,
+    });
+
+    expect([afterEdit, await readHistory()]).toStrictEqual([before, before]);
   });
 
   it("starts a full mock with both assigned essays, and retries a failed answer without regrading the saved answer", async () => {

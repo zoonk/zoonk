@@ -15,11 +15,7 @@ export async function getWritingAttempt(attemptId: string) {
 
   const attempt = isUuid(attemptId)
     ? await prisma.attempt.findFirst({
-        select: {
-          answer: true,
-          answeredAt: true,
-          item: { select: { content: true, examBlueprintId: true } },
-        },
+        select: { answer: true, answeredAt: true },
         where: { id: attemptId, userId: session.user.id },
       })
     : null;
@@ -29,27 +25,21 @@ export async function getWritingAttempt(attemptId: string) {
   }
 
   const answer = writtenAnswerSchema.safeParse(attempt.answer).data;
-  const content = attempt.item?.content;
 
-  const writing =
-    content && typeof content === "object" && "writing" in content ? content.writing : null;
-
-  const result =
-    answer &&
-    writingAttemptSchema.safeParse({
-      attemptId,
-      grade: answer.grade,
-      submittedAt: attempt.answeredAt.toISOString(),
-      text: answer.text,
-      writing,
-    }).data;
-
-  if (!result) {
+  if (!answer) {
     return { status: "notFound" } as const;
   }
 
+  const result = writingAttemptSchema.parse({
+    attemptId,
+    grade: answer.grade,
+    submittedAt: attempt.answeredAt.toISOString(),
+    text: answer.text,
+    writing: answer.writing,
+  });
+
   const writingTask = await loadWritingTask({
-    blueprintId: attempt.item?.examBlueprintId,
+    blueprintId: answer.examBlueprintId,
     taskKey: result.writing.taskKey,
   });
 

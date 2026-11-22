@@ -222,8 +222,11 @@ export const writingResultSchema = z
 
 export const writtenAnswerSchema = z.object({
   conditions: writingConditionsSchema,
+  examBlueprintId: uuidSchema().nullable(),
   grade: writingResultSchema.transform(withSavedNextStep),
+  itemId: uuidSchema(),
   text: z.string(),
+  writing: writtenItemSchema.omit({ aspects: true, chosenSubjects: true, subject: true }),
 });
 
 export type WritingDraft = z.infer<typeof writingDraftSchema>;

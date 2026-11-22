@@ -16,6 +16,7 @@ import {
   GUEST_DAILY_SPEND_BUDGET_MICROS,
 } from "../../entitlements/limits";
 import { findCarriedOverSession } from "../../sessions/_utils/current-session";
+import { readEssayContent } from "./_utils/essay-content";
 import { claimEssayGrades } from "./_utils/essay-grade-claims";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { getEssay } from "./get-essay";
@@ -23,6 +24,7 @@ import { toProduceBlock } from "./produce-block";
 import { saveWritingDraft } from "./save-writing-draft";
 import { startWriting } from "./start-writing";
 import { admitWriting } from "./writing-admission";
+import { writtenAnswerSchema } from "./writing-contract";
 import { findWritingPrompts } from "./writing-supply";
 
 const TASK = {
@@ -237,6 +239,7 @@ describe("writing receipts and drafts", () => {
         data: {
           answer: {
             conditions: { admissionId, estimatedLines: 3, origin: "block", timed: false, version },
+            examBlueprintId: item.examBlueprintId,
             grade: {
               criteria: [],
               errors: [],
@@ -245,7 +248,9 @@ describe("writing receipts and drafts", () => {
               nextStep: null,
               progress: null,
             },
+            itemId: item.id,
             text: "My first attempt",
+            writing: writtenAnswerSchema.shape.writing.parse(readEssayContent(item)?.writing),
           },
           durationMs: 5000,
           hour: 12,

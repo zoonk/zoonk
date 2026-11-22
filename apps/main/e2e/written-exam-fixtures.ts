@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { writtenAnswerSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -239,8 +240,13 @@ export async function addGradedAnswer({
           timed: false,
           version: "firstDraft",
         },
+        examBlueprintId: item.examBlueprintId,
         grade: POINTS_GRADE,
+        itemId,
         text: GRADED_TEXT,
+        writing: writtenAnswerSchema.shape.writing.parse(
+          isJsonObject(item.content) ? item.content.writing : undefined,
+        ),
       },
       durationMs: 600_000,
       hour: 12,

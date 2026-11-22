@@ -21,6 +21,7 @@ import { getTodayView } from "../../view-models/today/get-today-view";
 import { CGU } from "../mocks/_test-utils/cgu-written";
 import { pickWrittenTestDays } from "../mocks/written-test-schedule";
 import { writingPromptRunFixture } from "./_test-utils/writing-prompt-run";
+import { readEssayContent } from "./_utils/essay-content";
 import { loadSessionProduce } from "./_utils/load-produce";
 import { createWritingBlock } from "./create-writing-block";
 import { getEssay } from "./get-essay";
@@ -28,6 +29,7 @@ import { getWritingAttempt } from "./get-writing-attempt";
 import { saveWritingDraft } from "./save-writing-draft";
 import { startWriting } from "./start-writing";
 import { submitEssay } from "./submit-essay";
+import { writtenAnswerSchema } from "./writing-contract";
 
 // Stub the two model boundaries and run the planner, prompt bank, admissions and recorder on PostgreSQL.
 vi.mock("@zoonk/ai/tasks/grading/grade-essay", () => ({ gradeWritingEvidence: vi.fn() }));
@@ -781,6 +783,8 @@ describe("CGU written exam preparation", () => {
 
     await write();
 
+    const item = await prisma.item.findUniqueOrThrow({ where: { id: itemId } });
+
     await attemptFixture({
       answer: {
         conditions: {
@@ -790,6 +794,7 @@ describe("CGU written exam preparation", () => {
           timed: false,
           version: "firstDraft",
         },
+        examBlueprintId: item.examBlueprintId,
         grade: {
           criteria: [],
           errors: [],
@@ -798,7 +803,9 @@ describe("CGU written exam preparation", () => {
           nextStep: null,
           progress: null,
         },
+        itemId,
         text: TEXT,
+        writing: writtenAnswerSchema.shape.writing.parse(readEssayContent(item)?.writing),
       },
       answeredAt: new Date(today.getTime() - DAY_MS),
       itemId,
