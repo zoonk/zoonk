@@ -42,6 +42,39 @@ final class PlanSlotCheckTests: XCTestCase {
     XCTAssertFalse(context.slotCheck(.fitLessons).failed)
   }
 
+  func testMoveYourDatePreviewsTheDayItsOwnTimeCoversEverythingBy() async throws {
+    let api = PlanAPIStub()
+    await api.setFittingDate("2027-06-01")
+    await api.setPreview(
+      PlanChangePreview(
+        effect: try fitOffer().effect, feasibility: nil, finishDate: nil, ready: true,
+        unchanged: false))
+    let context = try context(kind: .learn)
+    try await readsWhatVoiceOverReads()
+    let session = SessionStore.preview(account: .planTestAccount)
+    let window = try show(
+      List {
+        PlanCoverageSlot(
+          context: context, suggested: .init(kind: .everything, minutes: 60, split: nil),
+          actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+      }
+      .environment(PlanStore(api: api, cache: AppCache(session: session)))
+      .environment(session)
+      .environment(AppRouter())
+      .zoonkStyles())
+    window.frame = frame(.narrow)
+    try await waitForLayout(in: window)
+
+    try await activate(String(localized: "Other options", table: "Plan"), in: window)
+    try await pick(
+      String(localized: "Move your date to cover everything", table: "Plan"), in: window)
+    try await waitForTestCondition("The card did not ask to move the date") {
+      context.slotCheck(.coverage).asked != nil
+    }
+
+    XCTAssertEqual(context.slotCheck(.coverage).asked?.edits, [.targetDate("2027-06-01")])
+  }
+
   // MARK: Each card
 
   private func addsAcross(from: Width, to: Width) async throws {
@@ -171,10 +204,10 @@ final class PlanSlotCheckTests: XCTestCase {
   /// The Plan's checks are the screen's, so each card drawn from a context shares them.
   private let checks = PlanSlotChecks()
 
-  private func context() throws -> PlanContext {
+  private func context(kind: LearnerGoal.Kind = .exam) throws -> PlanContext {
     PlanContext(
       goal: LearnerGoal(
-        dailyMinutes: 30, id: "goal", kind: .exam, language: "en", status: .active,
+        dailyMinutes: 30, id: "goal", kind: kind, language: "en", status: .active,
         targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
       plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in }, slotChecks: checks)
   }
