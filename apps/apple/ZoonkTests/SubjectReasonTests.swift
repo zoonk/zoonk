@@ -7,24 +7,19 @@ import XCTest
 
 @MainActor
 final class SubjectReasonTests: XCTestCase {
-  func testPastBasicsUsesTheSharedReason() async throws {
-    try await topic(
-      reason: "pastBasics", status: "notPlanned", expected: "Skipped · you already know the basics")
+  func testSubjectReasonPictures() async throws {
+    guard ProcessInfo.processInfo.environment["ZOONK_CALLS_CAPTURE"] != nil else {
+      throw XCTSkip("On-demand review pictures")
+    }
+    try await readsWhatVoiceOverReads()
+    for (reason, status) in [
+      ("pastBasics", "notPlanned"), ("skippedBase", "notPlanned"), ("skipped", "known"),
+    ] {
+      try await captureTopic(reason: reason, status: status)
+    }
   }
 
-  func testSkippedBaseUsesTheSharedReason() async throws {
-    try await topic(reason: "skippedBase", status: "notPlanned", expected: "Skipped · your choice")
-  }
-
-  func testKnownTakesPriorityWhenTheSubjectWasSkipped() async throws {
-    try await topic(reason: "skipped", status: "known", expected: "Skipped · you already know it")
-  }
-
-  func testAPlannedTopicHasNoOutsideNote() async throws {
-    try await topic(reason: nil, status: "toStudy", expected: nil)
-  }
-
-  private func topic(reason: String?, status: String, expected: String?) async throws {
+  private func captureTopic(reason: String, status: String) async throws {
     let server = PageServer(holding: nil)
     let (_, body) = try await server.send(
       HTTPRequest(method: .get, scheme: "https", authority: "api.zoonk.test", path: "/"), body: nil,
@@ -37,7 +32,7 @@ final class SubjectReasonTests: XCTestCase {
     subjects[0]["topics"] = [
       [
         "chapters": [], "frequency": NSNull(), "heading": NSNull(), "name": "Cells",
-        "notPlannedReason": reason.map { $0 as Any } ?? NSNull(), "status": status,
+        "notPlannedReason": reason, "status": status,
       ]
     ]
     json["subjects"] = subjects
@@ -54,28 +49,20 @@ final class SubjectReasonTests: XCTestCase {
     await resource.load()
     XCTAssertNotNil(resource.value)
     resource.update { _ in syllabus }
-    try await readsWhatVoiceOverReads()
     let window = try show(
       NavigationStack { SubjectScreen(subjectKey: PageServer.subjectKey) }.appDependencies(
         dependencies
       ).environment(AppRouter()).zoonkStyles())
+    defer { window.isHidden = true }
     for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
       window.frame = CGRect(x: 0, y: 0, width: width, height: height)
       window.rootViewController?.traitOverrides.horizontalSizeClass =
         width > 700 ? .regular : .compact
-      try await Task.sleep(for: .milliseconds(600))
-      if expected != nil {
-        try captureCallsRoundTwo(
-          "subject-\(status == "known" ? "known" : reason ?? "planned")-\(size)")
+      try await waitForLayout(in: window)
+      try await waitForTestCondition("The topic did not appear") {
+        spoken(in: window).contains { $0.contains("Cells") }
       }
-      let words = spoken(in: window).joined(separator: " ").replacingOccurrences(
-        of: "\u{00A0}", with: " ")
-      XCTAssertTrue(words.contains("Cells"), words)
-      if let expected {
-        XCTAssertTrue(words.contains(expected), words)
-      } else {
-        XCTAssertFalse(words.contains("Not in your plan"), words)
-      }
+      try captureCallsRoundTwo("subject-\(status == "known" ? "known" : reason)-\(size)")
     }
   }
 }

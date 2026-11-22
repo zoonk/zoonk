@@ -991,8 +991,8 @@ final class MindMapsStoreTests: XCTestCase {
   /// day, whichever tab is shown, as main's `useReadWhenOfferOpens` does.
   func testAnEmptyStoppedListReadsAgainAtItsStop() async throws {
     let stop = MindMapAllowanceStop(
-      availableAt: .now.addingTimeInterval(1), period: "rolling30Days", reason: .limitReached,
-      resource: .mindMap)
+      availableAt: .now.addingTimeInterval(0.5), period: "rolling30Days",
+      reason: .limitReached, resource: .mindMap)
     let api = MindMapsAPIStub(server: .available, statuses: [])
     await api.answerLists(chapters: [], saved: [])
     await api.stopNewMaps(stop)

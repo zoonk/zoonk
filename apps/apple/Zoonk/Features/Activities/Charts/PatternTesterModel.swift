@@ -161,7 +161,11 @@ enum PatternRegex {
 /// the server, so it fails there too. Closing the preview, or dropping it, releases the page.
 @MainActor
 final class PatternRegexPreview {
-  private let page = CodeSandboxPage(html: CodeWorkerSources.regexPage(timeLimit: 1))
+  private let page: CodeSandboxPage
+
+  init(timeLimit: TimeInterval = 1) {
+    page = CodeSandboxPage(html: CodeWorkerSources.regexPage(timeLimit: timeLimit))
+  }
 
   /// Every sample tested; nil when the pattern is unsafe, doesn't compile or runs out of time.
   func test(_ pattern: String, regex: PatternTesterFields.Regex) async -> PatternRegex.Results? {

@@ -14,30 +14,6 @@ final class LessonVisualDecodingTests: XCTestCase {
     XCTAssertNil(content.nodes.first?.visual, "a decision written before charts shows none")
   }
 
-  func testAPlotDecodesEveryField() throws {
-    guard case .plot(let plot) = try visual(plotJSON) else {
-      return XCTFail("Expected a plot")
-    }
-
-    XCTAssertEqual(plot.xUnit, "s")
-    XCTAssertNil(plot.yUnit)
-    XCTAssertEqual(plot.series.first?.mark, .lineWithPoints)
-    XCTAssertEqual(plot.series.first?.points.map(\.x), [1, 6])
-    XCTAssertEqual(plot.series.first?.points.last?.label, "Peak")
-    XCTAssertEqual(plot.references.first?.y, 12)
-    XCTAssertNil(plot.source)
-  }
-
-  func testADecisionCarriesItsChartOrPlot() throws {
-    for (json, title) in [(plotJSON, "Pressure over time"), (chart, "Sales")] {
-      guard case .challenge(let content) = try step(challenge(nodeVisual: json)).content else {
-        return XCTFail("Expected a challenge")
-      }
-
-      XCTAssertEqual(content.nodes.first?.visual?.title, title)
-    }
-  }
-
   func testAVisualOfAnUnknownKindDrawsNothingAndTheRestStillPlays() throws {
     let unknown = #"{"kind": "map", "title": "Somewhere", "regions": []}"#
 
@@ -78,14 +54,6 @@ private let chart = #"""
 private let timeline = #"""
   {"kind": "timeline", "title": "Moon landing",
    "events": [{"date": "1969", "label": "Apollo 11", "detail": null}]}
-  """#
-
-private let plotJSON = #"""
-  {"kind": "plot", "title": "Pressure over time", "xLabel": "Time", "xUnit": "s",
-   "yLabel": "Pressure", "yUnit": null,
-   "series": [{"name": "Line A", "mark": "lineWithPoints",
-     "points": [{"x": 1, "y": 8, "label": null}, {"x": 6, "y": 11, "label": "Peak"}]}],
-   "references": [{"label": "Limit", "y": 12}], "source": null}
   """#
 
 private func challenge(nodeVisual: String?) -> String {

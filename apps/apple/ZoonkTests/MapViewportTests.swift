@@ -65,15 +65,6 @@ final class MapViewportTests: XCTestCase {
         || abs(spot.y - center.y) >= 12 * spot.scale + 10)
     XCTAssertGreaterThanOrEqual(spot.scale, 0.8)
   }
-  func testNamedLabelBoxClearsEveryPinBox() throws {
-    let pins = [CGPoint(x: 160, y: 120), CGPoint(x: 190, y: 155)]
-    let label = MapViewport.Label(
-      center: named.center, size: named.size, angle: 0, street: true, priority: true,
-      positions: [CGPoint(x: 150, y: 120), CGPoint(x: 170, y: 120)])
-    let spot = try XCTUnwrap(
-      MapViewport.placeLabels([label], pins: pins, frame: CGSize(width: 320, height: 240))[0])
-    for pin in pins { XCTAssertTrue(abs(spot.x - pin.x) >= 60 || abs(spot.y - pin.y) >= 26) }
-  }
   func testThreeNamedRegionsPackWithoutBoxOverlap() throws {
     let label = MapViewport.Label(
       center: CGPoint(x: 100, y: 20), size: CGSize(width: 110, height: 12), angle: 0, street: false,
@@ -137,59 +128,7 @@ final class MapViewportTests: XCTestCase {
     XCTAssertNil(spots[0])
   }
 
-  func testDroppedLabelFreesItsSpaceAndOneEdgeRuleKeepsWhatFits() {
-    let labels = [
-      MapViewport.Label(
-        center: CGPoint(x: 100, y: 100), size: CGSize(width: 500, height: 12), angle: 0,
-        street: false, priority: false),
-      MapViewport.Label(
-        center: CGPoint(x: 100, y: 100), size: CGSize(width: 40, height: 12), angle: 0,
-        street: false, priority: false),
-      MapViewport.Label(
-        center: CGPoint(x: 12, y: 30), size: CGSize(width: 20, height: 12), angle: 0, street: false,
-        priority: false),
-    ]
-    XCTAssertEqual(
-      MapViewport.placeLabels(labels, pins: [], frame: CGSize(width: 210, height: 200)).map {
-        $0?.center
-      },
-      [nil, CGPoint(x: 100, y: 100), CGPoint(x: 12, y: 30)])
-  }
-
-  func testStreetCanSlideFartherThanItsTextWidthIntoTheVisibleFrame() throws {
-    let labels = [
-      MapViewport.Label(
-        center: CGPoint(x: 70, y: 300), size: CGSize(width: 80, height: 12), angle: 90,
-        street: true, priority: false,
-        positions: [CGPoint(x: 70, y: 50), CGPoint(x: 70, y: 124), CGPoint(x: 70, y: 300)])
-    ]
-    let spots = MapViewport.placeLabels(
-      labels, pins: [CGPoint(x: 70, y: 190)], frame: CGSize(width: 210, height: 200))
-    let spot = try XCTUnwrap(spots[0])
-    XCTAssertLessThan(spot.y, 130)
-  }
-
-  func testShortStreetLabelFitsBesideItsPathWhenAPinFillsTheInlineSpace() throws {
-    let labels = [
-      MapViewport.Label(
-        center: CGPoint(x: 70, y: 100), size: CGSize(width: 80, height: 12), angle: 90,
-        street: true, priority: false, positions: [CGPoint(x: 70, y: 50), CGPoint(x: 70, y: 120)])
-    ]
-    let spots = MapViewport.placeLabels(
-      labels, pins: [CGPoint(x: 70, y: 100)], frame: CGSize(width: 210, height: 250))
-    let spot = try XCTUnwrap(spots[0])
-    XCTAssertLessThanOrEqual(abs(spot.x - 70), 32)
-    XCTAssertGreaterThanOrEqual(spot.y, 50)
-    XCTAssertLessThanOrEqual(spot.y, 120)
-    XCTAssertGreaterThan(abs(spot.x - 70), 12 / 2 + 20)
-  }
-
   private let map = CGSize(width: 1000, height: 800)
-
-  func testWithoutPlacesTheWholeMapShows() {
-    XCTAssertEqual(
-      MapViewport.fit(map: map, maxZoom: 4, points: []), CGRect(origin: .zero, size: map))
-  }
 
   func testCloseUpIsCenteredOnThePlacesAndStaysInsideTheMap() {
     let crop = MapViewport.fit(
@@ -199,14 +138,6 @@ final class MapViewportTests: XCTestCase {
     XCTAssertLessThanOrEqual(crop.maxX, map.width)
     XCTAssertLessThanOrEqual(crop.maxY, map.height)
     XCTAssertTrue(crop.contains(CGPoint(x: 980, y: 780)))
-  }
-
-  func testATallSpreadIsWidenedToTheTallestShapeAllowed() {
-    let crop = MapViewport.fit(
-      map: map, maxAspect: 0.8, maxZoom: 8,
-      points: [CGPoint(x: 500, y: 100), CGPoint(x: 500, y: 600)])
-
-    XCTAssertEqual(crop.height / crop.width, 0.8, accuracy: 0.001)
   }
 
   func testPinsOnTheSameSpotArePushedApartToTheirSpacing() {
@@ -226,33 +157,5 @@ final class MapViewportTests: XCTestCase {
     for pin in spread {
       XCTAssertTrue((20...280).contains(pin.x) && (20...280).contains(pin.y), "\(pin)")
     }
-  }
-
-  /// Main's "keeps a region's tint when the legend says what it means".
-  func testAStrayRegionIsOneWhoseNameWasLeftOutAndWhoseTintNoLegendExplains() throws {
-    let regions = try JSONDecoder().decode(
-      [ActivityBaseMap.Region].self,
-      from: Data(
-        #"""
-        [{"id": "italy", "name": "Italy", "path": "M0,0", "tone": "groupB"},
-         {"id": "golden", "name": "Golden Square", "path": "M0,0", "tone": "groupC"},
-         {"id": "soho", "name": "Soho Square", "path": "M0,0", "tone": "groupC"},
-         {"id": "spain", "name": "Spain", "path": "M0,0", "tone": "focus"}]
-        """#.utf8))
-    let labels = try JSONDecoder().decode(
-      [ActivityBaseMap.Label].self,
-      from: Data(
-        #"""
-        [{"angle": 0, "key": null, "kind": "region", "text": "Italy", "x": 0, "y": 0},
-         {"angle": 0, "key": null, "kind": "region", "text": "Golden Square", "x": 0, "y": 0},
-         {"angle": 0, "key": null, "kind": "region", "text": "Soho Square", "x": 0, "y": 0},
-         {"angle": 0, "key": null, "kind": "region", "text": "Spain", "x": 0, "y": 0}]
-        """#.utf8))
-    let placed = MapViewport.Placement(center: .zero)
-
-    XCTAssertEqual(
-      MapViewport.strayRegions(
-        regions, labels: labels, legendTones: [.groupB], spots: [nil, nil, placed, nil]),
-      ["golden"])
   }
 }

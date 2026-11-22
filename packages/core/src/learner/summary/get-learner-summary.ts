@@ -246,6 +246,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
 
   const now = await getRequestInstant();
   const recentSessions = getRecentSessionRange(now);
+
   const olderWriting = {
     ...CONTINUING_ANSWER_SESSION_WHERE,
     localDate: { lt: recentSessions.gte },
