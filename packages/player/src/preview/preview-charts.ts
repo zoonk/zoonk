@@ -1,13 +1,24 @@
+import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { DETECTOR_SCAN_PLOT, FILL_WEIGHT_PLOT } from "@zoonk/testing/fixtures/plot-visuals";
 import { type PreviewEntry, entry } from "./preview-entry";
 import {
-  distanceChart,
   explanationStep,
   japaneseRegionsChart,
   lawTimeline,
+  lettersChart,
   visitorsChart,
 } from "./preview-steps";
+
+const distanceChart: ChartVisual = {
+  ...lettersChart,
+  categories: ["Monday", "Tuesday", "Wednesday"],
+  categoryLabel: "Day",
+  series: lettersChart.series.map((series) => ({ ...series, name: "Distance" })),
+  title: "Distance traveled",
+  unit: "km",
+  valueLabel: "Distance",
+};
 
 export const chartEntries: PreviewEntry[] = [
   entry({

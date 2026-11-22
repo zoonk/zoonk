@@ -256,16 +256,6 @@ export const lettersChart: ChartVisual = {
   valueLabel: "Ofícios",
 };
 
-export const distanceChart: ChartVisual = {
-  ...lettersChart,
-  categories: ["Monday", "Tuesday", "Wednesday"],
-  categoryLabel: "Day",
-  series: [{ name: "Distance", values: [35, 36, 40] }],
-  title: "Distance traveled",
-  unit: "km",
-  valueLabel: "Distance",
-};
-
 export const visitorsChart: ChartVisual = {
   ...lettersChart,
   axisStart: 10_000,
