@@ -32,6 +32,7 @@ const checkpointSchema = z.object({
   /** Weekly Big Challenges of exam goals are mock exams: they feed the estimated score. */
   mock: z.boolean(),
   mockIdentity: mockIdentitySchema.optional(),
+  mockQuestions: z.number().int().nonnegative().optional(),
   passMark: z.number().int(),
   phase: z.number().int().nullable(),
   /** A boss lost on an earlier day, back after reinforcement lessons. */
@@ -77,6 +78,7 @@ const blockPayloadSchema = z.object({
     .object({ completed: z.array(z.enum(MISSION_KINDS)), fullMealPaid: z.boolean() })
     .nullable()
     .default(null),
+  mockPreparationReview: z.literal(true).optional(),
   /** Wrong answers cancel right ones and blanks are allowed; swipe capsules score net separately. */
   netScored: z.boolean().default(false),
   /** Unsettled placement questions lead the first week's sessions. */

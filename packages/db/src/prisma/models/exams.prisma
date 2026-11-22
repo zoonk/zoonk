@@ -28,6 +28,7 @@ model MockExam {
   listeningPlays   Json                   @default("{}") @map("listening_plays")
   createdAt        DateTime               @default(now()) @map("created_at")
   updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
+  itemUses         MockItemUse[]
   answers          MockExamAnswer[]
   attempts         Attempt[]
   questionThreads  LessonQuestionThread[]
@@ -98,4 +99,21 @@ model EssayGradeClaim {
 
   @@index([userId, localDate])
   @@map("essay_grade_claims")
+}
+
+model MockItemUse {
+  id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId     String?   @map("item_id") @db.Uuid
+  item       Item?     @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  mockExamId String    @map("mock_exam_id") @db.Uuid
+  mockExam   MockExam  @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+  section    Int       @db.SmallInt
+  spentAt    DateTime? @map("spent_at")
+
+  @@unique([userId, itemId])
+  @@index([mockExamId, section])
+  @@index([itemId])
+  @@map("mock_item_uses")
 }

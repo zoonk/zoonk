@@ -112,7 +112,7 @@ function getSessionBudget(input: SessionBuildInput): number {
   return Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
 }
 
-function buildReviewBlock({
+export function buildReviewBlock({
   capsules,
   input: { placementItemIds, placementRecheckItemIds, weakestReview = false },
 }: {

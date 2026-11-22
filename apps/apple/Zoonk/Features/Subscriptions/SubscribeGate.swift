@@ -5,8 +5,13 @@ struct GateWords: View {
   var title: Text?
   var line: Text?
 
+  /// A wide bottom bar's note ends with its buttons.
+  @Environment(\.multilineTextAlignment) private var textAlignment
+
+  private var alignment: HorizontalAlignment { textAlignment == .trailing ? .trailing : .leading }
+
   var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
+    VStack(alignment: alignment, spacing: 2) {
       if let title {
         title
           .typeStyle(.rowTitle)
@@ -20,7 +25,7 @@ struct GateWords: View {
       }
     }
     .fixedSize(horizontal: false, vertical: true)
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, alignment: Alignment(horizontal: alignment, vertical: .center))
   }
 }
 
@@ -193,7 +198,6 @@ extension HelpLimit {
     case uploads
     case questions
     case callTime
-    case mockExams
   }
 
   /// Main's limit words: what ran out as the title, when more comes back as the line. A monthly
@@ -278,8 +282,6 @@ extension HelpLimit {
       LocalizedStringResource("You've used your questions", table: "Subscriptions")
     case .callTime:
       LocalizedStringResource("You've used your call time", table: "Subscriptions")
-    case .mockExams:
-      LocalizedStringResource("You've used your mock exams", table: "Subscriptions")
     case nil:
       LocalizedStringResource("You've reached your limit", table: "Subscriptions")
     }
@@ -312,7 +314,7 @@ extension HelpLimit {
     case .callTime:
       LocalizedStringResource(
         "No more calls today", table: "Subscriptions", comment: "The plan's call time is used")
-    case .quickExplanations, .goals, .uploads, .questions, .mockExams, nil:
+    case .quickExplanations, .goals, .uploads, .questions, nil:
       LocalizedStringResource(
         "You've reached today's limit", table: "Subscriptions",
         comment: "The learner used today's AI checks, clips and similar")

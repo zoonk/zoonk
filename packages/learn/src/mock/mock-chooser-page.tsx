@@ -2,24 +2,17 @@
 
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import {
-  GenerationTimelineDescription,
-  GenerationTimelineTitle,
-} from "@zoonk/ui/components/generation-timeline";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
-import { EnterButton } from "../_components/enter-button";
-import { HelpLimitNotice } from "../_components/help-limit-notice";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { Page } from "../_components/page";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
-import { type GenerationRun } from "../generation/generation-run";
-import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
 import { type MockChooserStatus } from "./mock-chooser-parts";
+import { MockPreparingNote, type MockWritingWait } from "./mock-preparing";
 
 export function ChooserLayout({
   aside,
@@ -51,15 +44,6 @@ export function ChooserLayout({
   );
 }
 
-function useFailureText() {
-  const t = useExtracted();
-
-  return (reason: Extract<MockChooserStatus, { kind: "failed" }>["reason"]): string =>
-    reason === "notEnoughQuestions"
-      ? t("Not enough questions for this one yet. Pick another.")
-      : t("We couldn't start the mock exam. Try again.");
-}
-
 export function ChooserHeader({ detail, title }: { detail: string; title: string }) {
   return (
     <DetailHero>
@@ -72,10 +56,15 @@ export function ChooserHeader({ detail, title }: { detail: string; title: string
 }
 
 /** Why Start didn't start, read out as it shows: over the bar, where the learner pressed. */
-function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
+function useChooserNote({
+  busy,
+  gated,
+  goalId,
+  preparing,
+  status,
+  writing,
+}: ChooserBarProps): ReactNode {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const failureText = useFailureText();
 
   if (gated) {
     return (
@@ -85,27 +74,26 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
     );
   }
 
-  if (busy) {
-    return null;
-  }
-
-  if (status.kind === "refused") {
+  if (preparing) {
     return (
-      <div role="alert">
-        <HelpLimitNotice
-          kind="mockExams"
-          limit={status.limit}
-          linkComponent={LearnLink}
-          routes={routes}
-        />
-      </div>
+      <MockPreparingNote
+        key={preparing}
+        goalId={goalId}
+        surface="mockChooser"
+        title={t({
+          description:
+            "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.",
+          message: "Getting this mock exam ready",
+        })}
+        wait={writing}
+      />
     );
   }
 
-  if (status.kind === "failed") {
+  if (!busy && status.kind === "failed") {
     return (
       <p className="text-destructive-text text-sm" role="alert">
-        {failureText(status.reason)}
+        {t("We couldn't start the mock exam. Try again.")}
       </p>
     );
   }
@@ -113,57 +101,69 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
   return null;
 }
 
-type ChooserBarProps = { busy: boolean; gated: boolean; status: MockChooserStatus };
+type ChooserBarProps = {
+  busy: boolean;
+  gated: boolean;
+  goalId: string;
+  /** The picked option's key while it's being prepared. */
+  preparing: string | null;
+  status: MockChooserStatus;
+  writing: MockWritingWait;
+};
 
-/** Start on every screen size, after the list: the choice comes before the action. */
-export function ChooserBar({
+function ChooserMainAction({
   busy,
   disabled,
-  gated,
   onStart,
-  status,
-}: ChooserBarProps & { disabled: boolean; onStart: () => void }) {
+  preparing,
+}: Pick<ChooserBarProps, "busy" | "preparing"> & { disabled: boolean; onStart: () => void }) {
   const t = useExtracted();
+  const routes = useLearnRoutes();
   const mounted = useIsMounted();
-  const note = useChooserNote({ busy, gated, status });
+
+  if (preparing) {
+    return (
+      <EnterLink className={DETAIL_PRIMARY_CLASS} href={routes.today} size="lg">
+        {t("Keep studying")}
+      </EnterLink>
+    );
+  }
 
   return (
-    <BottomBar note={note}>
-      {gated ? (
-        <SubscribeMainAction />
-      ) : (
-        <BottomBarActions>
-          <EnterButton
-            busy={busy}
-            className={DETAIL_PRIMARY_CLASS}
-            disabled={disabled || !mounted}
-            onClick={onStart}
-            size="lg"
-          >
-            {t("Start")}
-          </EnterButton>
-        </BottomBarActions>
-      )}
-    </BottomBar>
+    <EnterButton
+      busy={busy}
+      className={DETAIL_PRIMARY_CLASS}
+      disabled={disabled || !mounted}
+      onClick={onStart}
+      size="lg"
+    >
+      {t("Start")}
+    </EnterButton>
   );
 }
 
-export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }) {
-  const t = useExtracted();
+/** Start on every screen size, after the list: the choice comes before the action. */
+export function ChooserBar({
+  disabled,
+  onStart,
+  ...props
+}: ChooserBarProps & { disabled: boolean; onStart: () => void }) {
+  const note = useChooserNote(props);
 
   return (
-    <ChooserLayout bar={bar}>
-      <GenerationWait kind="mockQuestions" run={run}>
-        {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
-        <GenerationTimelineTitle render={<h1 />}>
-          {t("Getting your mock exam ready…")}
-        </GenerationTimelineTitle>
-        <GenerationTimelineDescription>
-          {t(
-            "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
-          )}
-        </GenerationTimelineDescription>
-      </GenerationWait>
-    </ChooserLayout>
+    <BottomBar note={note}>
+      {props.gated ? (
+        <SubscribeMainAction />
+      ) : (
+        <BottomBarActions>
+          <ChooserMainAction
+            busy={props.busy}
+            disabled={disabled}
+            onStart={onStart}
+            preparing={props.preparing}
+          />
+        </BottomBarActions>
+      )}
+    </BottomBar>
   );
 }

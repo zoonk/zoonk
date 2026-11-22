@@ -989,7 +989,7 @@ private func blockJSON(
   "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
   "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
   "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"opensInPlayer":false,"oftenTested":false,
-  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"questions":3,
+  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"preparing":false,"questions":3,
   "refresh":false,"reinforcement":false,"screen":"session","status":"\(status)",
   "subject":null,"title":"Block",
   "waitReason":null,"weakest":false\(id.map { ",\"id\":\"\($0)\"" } ?? "")}

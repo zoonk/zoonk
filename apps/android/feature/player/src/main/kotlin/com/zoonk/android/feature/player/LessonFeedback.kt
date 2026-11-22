@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -109,13 +110,14 @@ private fun canExplain(
     result: StepResult,
 ): Boolean = step.kind == StepKind.TypedAnswer && result.checked && !result.isCorrect && !result.answerText.isNullOrBlank()
 
-/** What a checked answer got, under the question (main's `LessonStepResultView`). */
+/** What a checked answer got, under the question (main's `LessonStepResultView`), with a host's own [notes] in its card. */
 @Composable
 fun LessonStepResultView(
     step: LessonStep,
     result: StepResult,
     next: ResultNext,
     hyperdriveStreak: Int?,
+    notes: @Composable ColumnScope.() -> Unit = {},
     explainAnswer: @Composable () -> Unit = {},
 ) {
     val verdict = verdictOf(step.kind, result)
@@ -137,6 +139,7 @@ fun LessonStepResultView(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
+            notes()
             return@FeedbackPanel
         }
 
@@ -166,6 +169,7 @@ fun LessonStepResultView(
 
         if (canExplain(step, result)) explainAnswer()
 
+        notes()
         ResultNote(next)
     }
 }

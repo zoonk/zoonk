@@ -100,29 +100,54 @@ private struct BottomBar<Actions: View>: View {
       width = $0
     }
     .barColumn(column, listMargins: listMargins, isTask: isTask)
+    .scenePadding(.vertical)
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
-    // Main's bar: the page's background from its hairline to the screen's edge. The system's edge
-    // effect alone leaves a list's section header sharp under the buttons, drawn above it.
-    .background {
-      Color(.background)
-        .overlay(alignment: .top) { Divider() }
-        .ignoresSafeArea(edges: .bottom)
-    }
+    .barBackdrop(hairline: note == nil)
     .floatingAbove {
       if let note {
         note
-          .typeStyle(.body)
-          .frame(maxWidth: .infinity)
-          .padding(.horizontal, 16)
-          .padding(.vertical, 8)
-          .background(.background)
+          .barNoteLines(isWide: isWide)
+          .barColumn(column, listMargins: listMargins, isTask: isTask)
+          .barNoteBackdrop()
       }
     }
   }
 }
 
 extension View {
+  /// Main's bar note: it starts where the buttons do on a phone and ends with them on a wide bar.
+  func barNoteLines(isWide: Bool) -> some View {
+    typeStyle(.body)
+      .multilineTextAlignment(isWide ? .trailing : .leading)
+      .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .leading)
+  }
+
+  /// A bar note's own room and backing, under the hairline that moves above it: one distance from
+  /// the note to the buttons on every bar.
+  func barNoteBackdrop() -> some View {
+    padding(.top, 12)
+      .padding(.bottom, 4)
+      .background {
+        Color(.background)
+          .overlay(alignment: .top) { Divider() }
+      }
+  }
+}
+
+extension View {
+  /// Main's bar: the page's background from its hairline to the screen's edge. The system's edge
+  /// effect alone leaves a list's section header sharp under the buttons, drawn above it.
+  func barBackdrop(hairline: Bool = true) -> some View {
+    background {
+      Color(.background)
+        .overlay(alignment: .top) {
+          if hairline { Divider() }
+        }
+        .ignoresSafeArea(edges: .bottom)
+    }
+  }
+
   /// `content` over the screen, its bottom on this view's top edge, so this view never moves when
   /// it shows.
   func floatingAbove<Above: View>(@ViewBuilder _ content: () -> Above) -> some View {
@@ -172,20 +197,38 @@ struct BarNote: View {
     let perform: () -> Void
   }
 
+  private let heading: AttributedString?
   private let message: AttributedString
+  /// A note drawn by its own view, which reads out its own changes.
+  private var content: AnyView?
   let tone: Tone
   let action: Action?
 
   init(_ message: LocalizedStringResource, tone: Tone = .failure, action: Action? = nil) {
-    self.init(AttributedString(localized: message), tone: tone, action: action)
+    self.init(nil, AttributedString(localized: message), tone: tone, action: action)
   }
 
   /// For words already localized, such as a server's message.
   init(_ message: String, tone: Tone = .failure, action: Action? = nil) {
-    self.init(AttributedString(message), tone: tone, action: action)
+    self.init(nil, AttributedString(message), tone: tone, action: action)
   }
 
-  private init(_ message: AttributedString, tone: Tone, action: Action?) {
+  init(heading: LocalizedStringResource, _ message: LocalizedStringResource) {
+    self.init(
+      AttributedString(localized: heading), AttributedString(localized: message), tone: .status,
+      action: nil)
+  }
+
+  /// A note that changes on its own, such as a wait following its run.
+  init(@ViewBuilder content: () -> some View) {
+    self.init(nil, AttributedString(), tone: .status, action: nil)
+    self.content = AnyView(content())
+  }
+
+  private init(
+    _ heading: AttributedString?, _ message: AttributedString, tone: Tone, action: Action?
+  ) {
+    self.heading = heading
     self.message = message
     self.tone = tone
     self.action = action
@@ -193,10 +236,21 @@ struct BarNote: View {
 
   /// What the bar reads politely as this note shows or changes; a failure reads itself at once.
   var politeLine: String? {
-    tone == .failure ? nil : String(message.characters)
+    guard tone != .failure, content == nil else { return nil }
+    return [heading, message].compactMap { $0.map { String($0.characters) } }.joinedSentences()
   }
 
   var body: some View {
+    if let content {
+      content
+    } else if let heading {
+      GateWords(title: Text(heading), line: Text(message))
+    } else {
+      line
+    }
+  }
+
+  private var line: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       switch tone {
       case .failure:
@@ -218,13 +272,12 @@ struct BarNote: View {
         .disabled(!action.isEnabled)
       }
     }
-    .multilineTextAlignment(action == nil ? .center : .leading)
   }
 }
 
 extension View {
   /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
-  /// so its buttons end where the rows do; without one it keeps main's 680pt task column.
+  /// so both its note and actions end where the rows do.
   @ViewBuilder
   fileprivate func barColumn(
     _ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?, isTask: Bool
@@ -235,21 +288,21 @@ extension View {
       if let listMargins {
         padding(.leading, column.leading + listMargins.leading)
           .padding(.trailing, column.trailing + listMargins.trailing)
-          .scenePadding(.vertical)
       } else {
         padding(.leading, column.leading)
           .padding(.trailing, column.trailing)
-          .scenePadding()
+          .scenePadding(.horizontal)
       }
     } else if isTask {
-      taskColumn()
+      frame(maxWidth: 680)
+        .frame(maxWidth: .infinity)
+        .scenePadding(.horizontal)
     } else {
       // A page without a list, such as an empty state, keeps the page's column, where its list
       // would end.
       padding(.leading, listMargins?.leading ?? 16)
         .padding(.trailing, listMargins?.trailing ?? 16)
         .pageColumnFrame()
-        .scenePadding(.vertical)
     }
   }
 

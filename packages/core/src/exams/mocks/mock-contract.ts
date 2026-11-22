@@ -245,27 +245,7 @@ const anytimeMockChoiceSchema = z.object({
 
 export type AnytimeMockChoice = z.infer<typeof anytimeMockChoiceSchema>;
 
-export const mockQuestionsInputSchema = anytimeMockChoiceSchema
-  .strict()
-  .meta({ id: "MockQuestionsInput" });
-
 export const anytimeMockInputSchema = anytimeMockChoiceSchema
-  .extend({
-    acceptFewer: z
-      .boolean()
-      .optional()
-      .meta({
-        description:
-          "Start with the questions there are when the bank holds fewer than the option asks; send it only after the learner agreed to the `short` answer's numbers",
-      }),
-    afterWriting: z
-      .boolean()
-      .optional()
-      .meta({
-        description:
-          "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
-      }),
-  })
   .strict()
   .meta({ id: "AnytimeMockInput" });
 
@@ -289,6 +269,7 @@ export type MockOptionsView = {
   sizeSource: MockSizeSource;
   goalId: string;
   lastMock: ExamMockSummary | null;
+  requested: { shape: MockShape; status: "preparing" | "ready" } | null;
   options: MockOptionView[];
   running: { id: string; purpose: MockPurpose; shape: MockShape | null } | null;
 };

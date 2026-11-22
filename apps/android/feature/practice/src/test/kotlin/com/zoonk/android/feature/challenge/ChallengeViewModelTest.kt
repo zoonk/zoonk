@@ -10,6 +10,8 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.exam.FakeMockApi
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Challenge
@@ -52,7 +54,7 @@ class ChallengeViewModelTest {
     private val starts = mutableListOf<StudyBlockStart>()
     private var reads = 0
     private var missing = false
-    private var start: (StudyBlockStart) -> ChallengeStart = { ChallengeStart(blockId, ChallengeStart.Kind.CHECKPOINT, sessionId) }
+    private var start: (StudyBlockStart) -> ChallengeStart? = { ChallengeStart(blockId, ChallengeStart.Kind.CHECKPOINT, sessionId) }
     private var write: () -> ChallengeGeneration = { ChallengeGeneration("gen-1", ChallengeGeneration.Status.GENERATING) }
     private var move: () -> ChallengeMove = { ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null, null) }
 
@@ -108,7 +110,16 @@ class ChallengeViewModelTest {
                 override suspend fun status(id: String) = Generation.Status.COMPLETED
             }
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return ChallengeViewModel(challenge.planItemId, "session", ChallengeStore(api, cache) { "UTC" }, source, saved)
+        return ChallengeViewModel(
+            challenge.planItemId,
+            "session",
+            ChallengeStore(api, cache) {
+                "UTC"
+            },
+            source,
+            saved,
+            MockStore(FakeMockApi(null), cache),
+        )
     }
 
     @Test
@@ -128,6 +139,23 @@ class ChallengeViewModelTest {
 
             assertEquals(listOf(false, true), starts.map { it.afterWriting })
             assertEquals(AppRoute.Mock(blockId.toString(), sessionId.toString()), viewModel.ui.value.opening)
+        }
+
+    @Test
+    fun aMockStillPreparedOpensNothingAndReadsTheIntroAgain() =
+        runTest(dispatcher) {
+            start = { null }
+            val viewModel = viewModel()
+            viewModel.challenge.load()
+            val before = reads
+
+            viewModel.start()
+            advanceUntilIdle()
+
+            assertNull(viewModel.ui.value.opening)
+            assertEquals(null, viewModel.ui.value.problem)
+            assertEquals(false, viewModel.ui.value.starting)
+            assertEquals(before + 1, reads)
         }
 
     @Test

@@ -1,8 +1,9 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
+import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
@@ -102,7 +103,10 @@ async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: Mo
     const block = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
     const payload = readBlockPayload(block);
 
-    if (asked.length === payload.itemIds.length) {
+    if (
+      asked.length === payload.itemIds.length &&
+      asked.every((id, index) => id === payload.itemIds[index])
+    ) {
       return unchanged(null);
     }
 
@@ -226,6 +230,26 @@ export async function completeMock({
       data: { finishedAt: new Date(), result: { ...result, reached }, status: "finished" },
       where: { id: mock.id, status: "active" },
     });
+
+    if (count && mock.goalId && mock.conditions.purpose !== "placement") {
+      const now = new Date();
+
+      await tx.mockItemUse.updateMany({
+        data: { spentAt: now },
+        where: { OR: [{ spentAt: null }, { spentAt: { gt: now } }], mockExamId: mock.id },
+      });
+
+      await oweFollowUps({
+        db: tx,
+        followUps: [
+          {
+            input: { examBlueprintId: mock.examBlueprintId, goalId: mock.goalId, later: true },
+            kind: "prepareMockSupply",
+          },
+        ],
+        userId: mock.userId,
+      });
+    }
 
     return count > 0 ? count : unchanged(count);
   });

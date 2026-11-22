@@ -122,6 +122,10 @@ final class TodayStore {
     view.isBeingWritten(block) && !(block.lessonId.map(isStalled) ?? false)
   }
 
+  func isGettingReady(_ block: StudyBlock, in view: TodayView?) -> Bool {
+    block.preparing || view.map { isBeingWritten(block, in: $0) } == true
+  }
+
   func writingLessonIDs(in view: TodayView) -> [String] {
     view.writingLessonIDs.filter { !isStalled($0) }
   }

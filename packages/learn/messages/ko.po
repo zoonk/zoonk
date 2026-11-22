@@ -288,7 +288,6 @@ msgstr "계속하기"
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
 #: src/mock/mock-chooser-page.tsx
-#: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/steps/plan-wait.tsx
@@ -403,16 +402,6 @@ msgstr "오늘 설명 한도를 다 썼어요"
 msgctxt "uycXLZ"
 msgid "You've used your explanations"
 msgstr "설명 요청 한도를 다 썼어요"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "uFNRuq"
-msgid "No more mock exams today"
-msgstr "오늘은 모의고사를 더 볼 수 없어요"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "oTW-15"
-msgid "You've used your mock exams"
-msgstr "모의고사 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "TPgNQb"
@@ -2175,6 +2164,14 @@ msgid "Move to Monday"
 msgstr "월요일로 옮기기"
 
 #: src/challenge/challenge-footer.tsx
+#: src/mock/mock-chooser-page.tsx
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "계속 공부하기"
+
+#: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/mock/mock-chooser-page.tsx
 msgctxt "JUvBan"
@@ -2192,6 +2189,12 @@ msgstr "오늘 레슨을 마친 뒤"
 msgctxt "X_k-eo"
 msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
 msgstr "{lessons, plural, =0 {내일 재대결해요.} other {내일 짧은 레슨 #개를 마친 뒤 재대결해요.}}"
+
+#: src/challenge/challenge-footer.tsx
+#: src/generation/use-generation-copy.ts
+msgctxt "k2oGSw"
+msgid "Getting your mock exam ready"
+msgstr "모의고사를 준비하고 있어요"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -4731,19 +4734,20 @@ msgid "Writing questions on what you studied"
 msgstr "공부한 내용으로 문제를 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "HxlS5i"
-msgid "Writing your mock exam"
-msgstr "모의고사를 만들고 있어요"
+msgctxt "UEvuXg"
+msgid "Recording the listening"
+msgstr "듣기를 녹음하고 있어요"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "M1AYoH"
-msgid "Writing questions like the exam's"
-msgstr "실제 시험과 비슷한 문제를 만들고 있어요"
+msgctxt "EIEV6g"
+msgid "Writing the questions"
+msgstr "문제를 만들고 있어요"
 
+#. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
 #: src/generation/use-generation-copy.ts
-msgctxt "bLGs-q"
-msgid "Picking what to ask in each subject…"
-msgstr "과목마다 무엇을 물어볼지 고르고 있어요…"
+msgctxt "kO-7vs"
+msgid "Writing the texts"
+msgstr "지문을 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -7964,25 +7968,16 @@ msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "최근 모의고사"
 
+#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.
 #: src/mock/mock-chooser-page.tsx
-msgctxt "St9t1x"
-msgid "Not enough questions for this one yet. Pick another."
-msgstr "이 모의고사는 아직 문제가 부족해요. 다른 모의고사를 골라 주세요."
+msgctxt "qsDQE3"
+msgid "Getting this mock exam ready"
+msgstr "선택한 모의고사를 준비하고 있어요"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
 msgid "We couldn't start the mock exam. Try again."
 msgstr "모의고사를 시작하지 못했어요. 다시 시도해 보세요."
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "qFtRJW"
-msgid "Getting your mock exam ready…"
-msgstr "모의고사를 준비하고 있어요…"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "4FZiEz"
-msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
-msgstr "실제 시험과 비슷한 문제를 만들고 있어요. 준비가 끝나면 여기서 바로 시작돼요."
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -8303,6 +8298,17 @@ msgstr "보통 {time}"
 msgctxt "-IhwDy"
 msgid "Leave blank"
 msgstr "답하지 않기"
+
+#. Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.
+#: src/mock/mock-preparing.tsx
+msgctxt "UaRfLh"
+msgid "Come back to this page to start it."
+msgstr "이 페이지로 돌아와 시작해 보세요."
+
+#: src/mock/mock-preparing.tsx
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "약 {time} 남음"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -8762,38 +8768,6 @@ msgstr "답변은 저장되어 있어요."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "제출 완료"
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "HwbZRQ"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
-msgstr "오늘은 {count, number}문제(전체 {total, number}문제 중 일부)를 풀어요. 약 {time} 걸려요. 전체 모의고사는 내일 볼 수 있어요."
-
-#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
-#: src/mock/mock-short-dialog.tsx
-msgctxt "3-UMw5"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
-msgstr "오늘은 {count, number}문제(전체 {total, number}문제)만 나오고, 약 {time} 걸려요. 전체 모의고사는 오늘 중에 볼 수 있어요."
-
-#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
-#: src/mock/mock-short-dialog.tsx
-msgctxt "mZQ7Qe"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
-msgstr "오늘은 {count, number}문제(전체 {total, number}문제)만 나오고, 약 {time} 걸려요. 전체 모의고사는 {date}에 볼 수 있어요."
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "Rr2HWA"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}."
-msgstr "오늘은 {count, number}문제(전체 {total, number}문제 중 일부)를 풀어요. 약 {time} 걸려요."
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "hLpiWW"
-msgid "Start a shorter mock exam?"
-msgstr "짧은 모의고사를 시작할까요?"
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "ggPo6m"
-msgid "Pick another"
-msgstr "다른 모의고사 고르기"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -10427,12 +10401,6 @@ msgstr "{group}: 어떤 항목을 선택할까요?"
 msgctxt "gDpw0U"
 msgid "{group}: which one will you take?"
 msgstr "{group}: 어떤 과목으로 시험을 볼 건가요?"
-
-#: src/plan/exam-over-actions.tsx
-#: src/plan/study-everything.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "계속 공부하기"
 
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"

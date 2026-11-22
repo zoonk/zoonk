@@ -4,6 +4,7 @@ import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readPracticeMistakes } from "../learner/facts/practice-mistakes";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakeAvailability } from "./contract";
 import {
   type PracticeMistake,
@@ -27,7 +28,11 @@ export async function getPracticeTimeZone({
 
 /** Practice and fixing require recall on a later local day than the last miss, never repeating a just-shown answer. */
 export function readyMistakeWhere({ localDate, timeZone }: LocalDay) {
-  return { missedAt: { lt: getStartOfLocalDay({ localDate, timeZone }) }, status: "open" } as const;
+  return {
+    ...visibleMistakeWhere,
+    missedAt: { lt: getStartOfLocalDay({ localDate, timeZone }) },
+    status: "open",
+  } as const;
 }
 
 /** For open mistakes already read; queries filter with `readyMistakeWhere`. */
@@ -67,7 +72,7 @@ async function loadPracticeEligibleMistakes({
       stepId: true,
       userId: true,
     },
-    where: { skillId, status: "open", userId },
+    where: { ...visibleMistakeWhere, skillId, status: "open", userId },
   });
 
   return filterMistakesWithPracticeMaterial({ mistakes });

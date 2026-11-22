@@ -62,6 +62,8 @@ export type LessonPracticeRenderer = (props: {
   answer: PracticeAnswer | null;
   disabled: boolean;
   lesson: NonNullable<Step["lesson"]>;
+  /** What the notebook adds to the feedback, such as "Mistake fixed", drawn with the step's own. */
+  notes: React.ReactNode;
   onAnswer: (answer: PracticeAnswer | null) => void;
   onDontKnow: () => void;
   onCheck: (answer: PracticeAnswer) => void;
@@ -186,6 +188,17 @@ function ReplayQuestion({
     answer: getPracticeAnswer(run.state),
     disabled: phase.kind === "checking",
     lesson: step.lesson,
+    notes: graded && (
+      <>
+        <DrillAnswerNotes
+          drill={step.entry.drill}
+          notSure={"dontKnow" in graded.answer}
+          timedOut={graded.sender === "timer"}
+          trap={graded.feedback.trap}
+        />
+        <FixedMistakesNote count={graded.feedback.fixedMistakeIds.length} />
+      </>
+    ),
     onAnswer: run.select,
     onCheck: run.check,
     onContinue: run.next,
@@ -248,18 +261,6 @@ export function PracticeStepView({
           run={run}
           trueFalseLabels={trueFalseLabels}
         />
-      )}
-
-      {graded && step.lesson && (
-        <>
-          <DrillAnswerNotes
-            drill={drill}
-            notSure={"dontKnow" in graded.answer}
-            timedOut={graded.sender === "timer"}
-            trap={graded.feedback.trap}
-          />
-          <FixedMistakesNote count={graded.feedback.fixedMistakeIds.length} />
-        </>
       )}
 
       {graded && question && (

@@ -12,6 +12,7 @@ import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { getOfferQuestions, readBossOffer } from "./_utils/challenge-offer";
 import { findNextWeeklyItem } from "./_utils/load-weekly-challenge";
 import { loadMockCard } from "./_utils/mock-card";
+import { getChallengeAccess } from "./challenge-contract";
 import {
   EXAM_DAY_CHECKLIST,
   type ExamDayChecklistItem,
@@ -19,7 +20,7 @@ import {
 } from "./weekly-challenge-rules";
 
 type WeeklyChallenge = {
-  access: "open" | "plusRequired";
+  access: "open" | "plusRequired" | "preparing";
   brainPower: number;
   checklist: ExamDayChecklistItem[];
   conditions: MockConditions | null;
@@ -97,7 +98,10 @@ export async function getWeeklyChallenge({
 
   return {
     challenge: {
-      access: isMock && !access.includesMockExams ? "plusRequired" : "open",
+      access: getChallengeAccess({
+        plusRequired: isMock && !access.includesMockExams,
+        preparing: card?.preparing,
+      }),
       brainPower: BRAIN_POWER_BONUS.weeklyChallenge,
       checklist: isMock ? [...EXAM_DAY_CHECKLIST] : [],
       conditions,

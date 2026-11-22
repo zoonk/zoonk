@@ -1,3 +1,4 @@
+import { type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 export type SubscriptionChange = {
@@ -9,6 +10,7 @@ type SubscriptionChangeSink = (event: SubscriptionChange) => Promise<void>;
 
 declare global {
   /** Next.js bundles instrumentation and routes separately, so a module variable set in `register()` isn't the one routes read. */
+  var zoonkPlusGrantSink: ((tx: TransactionClient, userId: string) => Promise<void>) | undefined;
   var zoonkSubscriptionChangeSink: SubscriptionChangeSink | undefined;
 }
 
@@ -26,4 +28,12 @@ export async function reportSubscriptionChange(event: SubscriptionChange): Promi
   }
 
   await safeAsync(() => sink(event));
+}
+
+export function registerPlusGrantSink(sink: NonNullable<typeof globalThis.zoonkPlusGrantSink>) {
+  globalThis.zoonkPlusGrantSink = sink;
+}
+
+export async function handlePlusGrant(tx: TransactionClient, userId: string) {
+  await globalThis.zoonkPlusGrantSink?.(tx, userId);
 }

@@ -2054,8 +2054,12 @@ describe(goalContentWorkflow, () => {
       }),
     );
 
+    const plan = await loadPlacementPlan(goal.id);
+
     await expect(
-      prisma.item.count({ where: { examBlueprintId: blueprint.id } }),
+      prisma.item.count({
+        where: { examBlueprintId: null, skillId: { in: plan.skills.map((skill) => skill.id) } },
+      }),
     ).resolves.toBeGreaterThan(0);
 
     const events = getStreamedEvents().map(

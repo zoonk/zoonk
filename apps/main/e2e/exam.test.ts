@@ -1,5 +1,6 @@
 import { type Browser, type Request, type Route } from "@playwright/test";
-import { addGradedEssay, addTodayMock, createEnemEssayDay, playMock } from "./exam-fixtures";
+import { addGradedEssay, createEnemEssayDay } from "./exam-essay-fixtures";
+import { addTodayMock, playMock } from "./exam-fixtures";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { nextStep, stepDots } from "./result-steps";
@@ -62,6 +63,8 @@ test.describe("Exam goal", () => {
   test("a mock in real conditions, its start and hand-in waits bounded, and its result", async ({
     browser,
   }) => {
+    test.slow();
+
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const mock = await addTodayMock({ goalId: user.goalId, userId: user.id });
 

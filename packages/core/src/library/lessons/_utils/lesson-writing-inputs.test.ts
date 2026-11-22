@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -52,12 +52,23 @@ describe(loadLessonWritingInputs, () => {
       lessonSkillFixture({ lessonId: lesson.id, skillId: matching.id }),
     ]);
 
+    const reserveExam = await examBlueprintFixture();
+
+    await itemFixture({
+      content: choiceItemContent("Which ice melts first?"),
+      examBlueprintId: reserveExam.id,
+      mockOnly: true,
+      skillId: matching.id,
+    });
+
     const state = await loadLessonWritingInputs({ lessonId: lesson.id, workflowRunId });
     expect(state.status).toBe("ready");
 
     if (state.status !== "ready") {
       return;
     }
+
+    expect(toWritingContext(state.inputs).usedSituations).toContain("Which ice melts first?");
 
     const written = writtenTemperatureLesson();
 

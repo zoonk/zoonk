@@ -36,7 +36,7 @@
   "today_insight_no_thanks": "65c9efecb90aba026da47d7947ca0814b5844c25c441e1560aa22376b0aed5e5",
   "today_insight_time_moved": "3826212463d3796749199b325baeee1c92927370106bb00d53bcd409b39cf196",
   "today_insight_time_stays": "2163d829af8f43ce3f30235b087b3085bdce53c7e96cca463ba3572305c5dd9c",
-  "today_keep_learning": "b6b2a087dd3331e2950552eddcea7473c269e724bfab345f4e654cb7b3fafbcf",
+  "today_keep_learning": "2d639f2ed2e6045d2398884e9374caaeca793a0c3b8b0d31ab86d55a6fc7d7bd",
   "today_keep_learning_failed": "b490d3e3466255a5a099902a1b6b67667535d2cbea4a7030d7b7012f9c993599",
   "today_keep_my_time": "cf4d6131b5f808e50fc0c32f232db27c462909143682ddb01d83c4af221c696a",
   "today_keep_studying_after_exam": "709ffa9714aa9cbe38cecad102df182522b9cd9ad94930fd4cf2d5f15c169382",
@@ -222,7 +222,7 @@
     <string name="today_up_next">A seguir no seu plano</string>
     <string name="today_start_session">Começar</string>
     <string name="today_continue_session">Continuar</string>
-    <string name="today_keep_learning">Continuar estudando</string>
+    <string name="today_keep_learning">Continuar aprendendo</string>
     <string name="today_practice_minutes">Praticar %1$s min</string>
     <string name="today_lessons_not_written">As aulas de hoje ainda não estão prontas.</string>
     <string name="today_get_lessons">Preparar aulas</string>

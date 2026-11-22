@@ -67,7 +67,6 @@ filter:
     - createMistakePracticeAnswer
     - createMistakePracticeCompletion
     - createMockQuestion
-    - createMockQuestionsGeneration
     - createPlacementAnswer
     - createPlacementSitting
     - createPlanBasesAdvice
@@ -168,6 +167,7 @@ filter:
     - getMistakePattern
     - getMock
     - getMockQuestionThread
+    - getMockWriting
     - getOnboarding
     - getPlanRevealToday
     - getOnboardingResume
@@ -233,7 +233,6 @@ filter:
     - startLanguageConversation
     - startLanguageLevelTest
     - startLanguageLevelTestOut
-    - startMock
     - startMockSpeaking
     - streamGenerationEvents
     - submitChapterTestOut

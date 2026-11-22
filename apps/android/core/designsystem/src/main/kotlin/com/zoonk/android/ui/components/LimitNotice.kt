@@ -282,16 +282,6 @@ private fun reachedTitle(
             }
         }
 
-        LimitSubject.MockExams -> {
-            if (guest) {
-                R.string.limit_help_guest
-            } else if (used) {
-                R.string.limit_mock_exams_used
-            } else {
-                R.string.limit_help_day
-            }
-        }
-
         LimitSubject.Uploads -> {
             if (guest) {
                 R.string.limit_help_guest

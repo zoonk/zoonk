@@ -13,6 +13,8 @@ struct GenerationWait: Equatable, Sendable {
     case levelTestBank
     case lesson
     case challenge
+    /// The run writing the paper of a mock the learner waits to start.
+    case mockPaper
   }
 
   enum PhaseState: Equatable, Sendable {
@@ -397,6 +399,11 @@ struct GenerationWait: Equatable, Sendable {
         "recheckChallenge": .phase("fix"), "redraftChallenge": .phase("fix"),
         "lessonReady": .done,
       ]
+    case .mockPaper:
+      [
+        "writeMockTexts": .phase("texts"), "writeMockQuestions": .phase("questions"),
+        "recordMockListening": .phase("listening"), "mockPaperReady": .done,
+      ]
     }
   }
 
@@ -451,6 +458,26 @@ struct GenerationWait: Equatable, Sendable {
 
   private static func phases(for kind: Kind) -> [Phase] {
     switch kind {
+    case .mockPaper:
+      // Main's `mockPaper` kind, where its durations come from.
+      [
+        Phase(
+          id: "texts",
+          label: LocalizedStringResource(
+            "Writing the texts", table: "Mock",
+            comment:
+              "A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about."
+          ),
+          isOptional: true, seconds: 40),
+        Phase(
+          id: "questions",
+          label: LocalizedStringResource("Writing the questions", table: "Mock"),
+          isOptional: false, seconds: 200),
+        Phase(
+          id: "listening",
+          label: LocalizedStringResource("Recording the listening", table: "Mock"),
+          isOptional: true, seconds: 120),
+      ]
     case .understanding:
       [
         Phase(
@@ -792,6 +819,7 @@ struct FollowedRun {
 struct GenerationFollower<Content: View>: View {
   let generationID: String?
   let kind: GenerationWait.Kind
+  var namespace: String?
   /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
   var readGenerationID: (() async -> String?)?
   /// A POST the learner's tap makes; nil when there's nothing left to write. Without it, a stopped
@@ -867,7 +895,7 @@ struct GenerationFollower<Content: View>: View {
     wait = current
 
     do {
-      for try await event in onboarding.events(generationID: id) {
+      for try await event in onboarding.events(generationID: id, namespace: namespace) {
         if let deckID = event.warmUpID {
           warmUpID = deckID
           onboarding.found(deckID: deckID, generationID: id)
@@ -924,8 +952,11 @@ struct GenerationFollower<Content: View>: View {
       return
     }
 
-    // A run saves its id within a few seconds; with none after about 45 seconds, it didn't start.
-    for _ in 0..<22 {
+    // Mock papers can be owed while another paper is writing; the lookup ends that wait.
+    var attempts = 0
+    while !Task.isCancelled && (kind == .mockPaper || attempts < 22) {
+      attempts += 1
+
       if let id = await readGenerationID() {
         followedID = id
         return
@@ -938,7 +969,7 @@ struct GenerationFollower<Content: View>: View {
       }
     }
 
-    if restart != nil {
+    if !Task.isCancelled, restart != nil {
       failure = .notStarted
     }
   }
@@ -1187,7 +1218,7 @@ extension GenerationTimeline where Header == EmptyView {
 
 /// Main's `useAnimatedProgress`: between reports the bar drifts toward the end of the running
 /// phases, never full before the work is, and never back unless the run started over.
-private struct GenerationWaitBar: View {
+struct GenerationWaitBar: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   let wait: GenerationWait
@@ -1248,6 +1279,8 @@ extension GenerationWait.Kind {
       LocalizedStringResource(
         "Writing your challenge", table: "Player",
         comment: "VoiceOver: the bar of a challenge's wait")
+    case .mockPaper:
+      LocalizedStringResource("Getting your mock exam ready", table: "Mock")
     }
   }
 }

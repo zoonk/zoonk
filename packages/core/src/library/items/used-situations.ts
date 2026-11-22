@@ -1,9 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { getItemAudienceFilter } from "./item-field";
+import { getItemAudienceFilter, getPublicItemFilter } from "./item-field";
 
 const MAX_SITUATION_LENGTH = 200;
+
+export function toSituationOpening(text: string) {
+  return text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH);
+}
 
 function getOpening(content: unknown, fields: readonly string[]): string | null {
   const values = isJsonObject(content) ? content : {};
@@ -12,7 +16,7 @@ function getOpening(content: unknown, fields: readonly string[]): string | null 
     .map((field) => values[field])
     .find((value): value is string => typeof value === "string" && value.trim().length > 0);
 
-  return text ? text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH) : null;
+  return text ? toSituationOpening(text) : null;
 }
 
 function getTranscript(content: unknown): { text: string } {
@@ -37,7 +41,7 @@ function getSetSituation(content: unknown): string | null {
 }
 
 /** A set's questions share its stimulus, which is their case. */
-function getItemSituation(item: { content: unknown; set: { content: unknown } | null }) {
+export function getItemSituation(item: { content: unknown; set: { content: unknown } | null }) {
   return item.set
     ? getSetSituation(item.set.content)
     : getOpening(item.content, ["context", "question", "statement"]);
@@ -50,22 +54,32 @@ function getItemSituation(item: { content: unknown; set: { content: unknown } | 
 export async function loadUsedSituations({
   examBlueprintId = null,
   field = null,
+  includeMockReserve = false,
+  publicOnly = false,
   skillIds,
 }: {
   examBlueprintId?: string | null;
   field?: string | null;
+  includeMockReserve?: boolean;
+  publicOnly?: boolean;
   skillIds: readonly string[];
 }): Promise<Map<string, string[]>> {
   if (skillIds.length === 0) {
     return new Map();
   }
 
+  const audience = getItemAudienceFilter({ examBlueprintId, field, inSets: true });
+  const reserve = { ...getPublicItemFilter(), mockOnly: true, retiredAt: null };
+
   const items = await prisma.item.findMany({
     orderBy: [{ createdAt: "desc" }, { id: "asc" }],
     select: { content: true, set: { select: { content: true } }, skillId: true },
     where: {
+      AND: [
+        ...(publicOnly ? getPublicItemFilter().AND : []),
+        includeMockReserve ? { OR: [audience, reserve] } : audience,
+      ],
       skillId: { in: [...skillIds] },
-      ...getItemAudienceFilter({ examBlueprintId, field, inSets: true }),
     },
   });
 

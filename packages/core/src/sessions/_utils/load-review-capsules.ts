@@ -287,7 +287,7 @@ export async function loadReviewCapsules({
       where: {
         format: { in: [...SESSION_ITEM_FORMATS] },
         skillId: { in: dueSkillIds.filter((skillId) => !listeningSkillIds.has(skillId)) },
-        ...getItemAudienceFilter({ examBlueprintId, field }),
+        ...getItemAudienceFilter({ examBlueprintId, field, userId }),
       },
     }),
     dueListeningIds.length > 0

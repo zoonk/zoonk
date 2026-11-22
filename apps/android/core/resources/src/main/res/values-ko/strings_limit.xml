@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "1bd4cf9bc9354df189e0ab31bdbebe14ea17dcbce35e38bdf739635a037005eb",
   "limit_mind_maps_guest": "b3c9fb09bf305db5a5e4913ec936e5d2ccb62bc5be12e7120b3f82f9347ddd74",
   "limit_mind_maps_used": "dfb603beb15cec951f034d3016c0bf49d4474849cf859e3a65bdcdfe04c9f10e",
-  "limit_mock_exams_used": "03c304efbe3602d05d87461364721f0b3c97e197bfebf951301ca1ee1ffb5ba5",
   "limit_more_later_today": "88caebcd22518b365c7133dbb4d8e9d6e57da11ec119e6b1649959ee794f0cc4",
   "limit_more_later_today_or_subscribe": "628b4ed0f4eeb8bcef96cea2d132f73c11c7a6f5ab09269fd41efc4d5861c8fa",
   "limit_more_on": "bdf5f3b334e2f27ebaa2986f84b827b7a700111cff0ce9e267897d0fbcfadd8e",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">대화 시간을 다 썼어요</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">다시 대화할 수 있어요</string>
-    <string name="limit_mock_exams_used">모의고사 이용 한도를 다 썼어요</string>
     <string name="limit_lessons_guest">레슨을 더 보려면 계정이 필요해요</string>
     <string name="limit_lessons_free">무료 레슨을 모두 이용했어요</string>
     <string name="limit_lessons_day">오늘은 새 레슨을 더 볼 수 없어요</string>

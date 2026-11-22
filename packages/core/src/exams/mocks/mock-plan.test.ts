@@ -3,6 +3,7 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import {
   type MockCandidate,
   countPlannedQuestions,
+  getMockClock,
   getPlannedItemIds,
   getWeeklyMockMinutes,
   outlineMock,
@@ -807,4 +808,29 @@ describe("a mock of an exam with a written test", () => {
       { asked: false, name: "Redação" },
     ]);
   });
+
+  it.each([
+    { fullLength: false, minutes: 150, quotas: [20, 20, 45] },
+    { fullLength: true, minutes: 300, quotas: [40, 40, 90] },
+  ])(
+    "keeps the CGU paper's notice count and clock at $minutes minutes",
+    ({ fullLength, minutes, quotas }) => {
+      const exam = structure({
+        sections: [40, 40, 90].map((questions, index) => ({
+          day: null,
+          kind: "objective",
+          minutes: null,
+          name: `Paper ${index}`,
+          questions,
+        })),
+        timeLimitMinutes: 300,
+        totalQuestions: 170,
+      });
+
+      const plan = outlineMock({ fullLength, structure: exam });
+      expect.soft(plan.sections.map((section) => section.questions)).toStrictEqual(quotas);
+      expect.soft(plan.sections.reduce((total, part) => total + part.minutes, 0)).toBe(minutes);
+      expect(getMockClock({ day: null, fullLength, structure: exam })).toBe(minutes);
+    },
+  );
 });

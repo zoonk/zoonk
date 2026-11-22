@@ -82,7 +82,7 @@ export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemp
 const MINUTE_MS = 60_000;
 const PART_MINUTES = 10;
 
-export const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
+const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
 export const TOPICS_PER_PART = PART_MINUTES;
 
 export function getWholeCourseMinutes({
