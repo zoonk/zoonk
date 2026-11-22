@@ -107,6 +107,11 @@ export function getPlacementEstimate({
     : getWholeCourseMinutes({ questions: topics * QUESTIONS_PER_TOPIC });
 }
 
+/** A topic is still ahead while one of its lessons is to do, or before it has any. */
+export function isTopicAhead(lessons: readonly { status: string }[] | undefined): boolean {
+  return lessons?.some((lesson) => lesson.status === "todo") ?? true;
+}
+
 export function getTopicsAhead(plan: GoalPlan) {
   const itemsBySkill = Map.groupBy(
     plan.items.flatMap((item) =>
@@ -115,9 +120,5 @@ export function getTopicsAhead(plan: GoalPlan) {
     (item) => item.skillId,
   );
 
-  return plan.skills.filter(
-    (skill) =>
-      !skill.removed &&
-      (itemsBySkill.get(skill.id)?.some((item) => item.status === "todo") ?? true),
-  );
+  return plan.skills.filter((skill) => !skill.removed && isTopicAhead(itemsBySkill.get(skill.id)));
 }

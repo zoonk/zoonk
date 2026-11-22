@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -26,6 +27,51 @@ import { getGoalPlacement } from "./get-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
 
 describe("learn placement attempts", () => {
+  it("counts a topic with a lesson still to do as ahead on the plan, as the test does", async () => {
+    const user = await userFixture();
+
+    const { goal, planItems } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [4],
+      userId: user.id,
+    });
+
+    const [first] = planItems;
+
+    if (!first) {
+      throw new Error("Expected a lesson");
+    }
+
+    await Promise.all([
+      prisma.planItem.update({ data: { status: "done" }, where: { id: first.id } }),
+      planItemFixture({
+        chapterId: first.chapterId,
+        lessonId: first.lessonId,
+        phase: first.phase,
+        planId: first.planId,
+        position: planItems.length,
+        skillId: first.skillId,
+        titleSnapshot: first.titleSnapshot,
+      }),
+    ]);
+
+    mockSession(user.id);
+    const plan = await getGoalPlan(goal.id);
+
+    const started = await startPlacementSitting({
+      goalId: goal.id,
+      input: { length: "wholeCourse" },
+    });
+
+    if (plan.status !== "ready" || started.status !== "ready") {
+      throw new Error("Expected the plan and a started test");
+    }
+
+    expect(plan.plan.placementTest?.estimatedMinutes).toBe(
+      started.placement.attempt?.estimatedMinutes,
+    );
+  });
+
   it("uses the same per-question estimate on the plan and at a whole-course part break", async () => {
     const user = await userFixture();
 

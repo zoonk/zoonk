@@ -6,6 +6,7 @@ import { loadPlacementState } from "../../learner/placement/_utils/load-placemen
 import {
   type PlacementAttempt,
   getPlacementEstimate,
+  isTopicAhead,
   placementAttemptView,
   readPendingTopicWalkAssessmentId,
   readPlacementAttempt,
@@ -47,13 +48,11 @@ export async function readPlanPlacementTest(
 
   const attemptView = await readAttemptView(context, attempt);
 
-  const settled = new Set(
-    context.items.flatMap((item) =>
-      item.status === "done" || item.status === "testedOut" ? (item.skillId ?? []) : [],
-    ),
-  );
+  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
 
-  const ahead = context.state.graph.skills.filter((skill) => !settled.has(skill.skillId));
+  const ahead = context.state.graph.skills.filter((skill) =>
+    isTopicAhead(lessonsBySkill.get(skill.skillId)),
+  );
 
   const estimatedMinutes =
     attemptView?.estimatedMinutes ??
