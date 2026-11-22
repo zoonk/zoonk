@@ -906,6 +906,16 @@ enum PlanDate {
     format(isoDate, month ? .sentenceMonth : .sentence, today: isoDate, year: .always)
   }
 
+  /// Main's `useGoalDateValues`: a goal's date in a sentence, marked "~" when it's estimated.
+  static func goalText(_ isoDate: String, month: Bool, estimated: Bool) -> String {
+    let date = longText(isoDate, month: month)
+
+    return estimated
+      ? String(
+        localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'")
+      : date
+  }
+
   /// A time of day in the device's own clock, 12- or 24-hour: "7:30 AM", "19:05".
   static func timeOfDay(minutes: Int, locale: Locale = .current) -> String {
     let time = calendar.date(

@@ -8,6 +8,8 @@ struct TimeAnswer: View {
   struct GoalDate: Equatable {
     let isoDate: String
     let namedMonth: Bool
+    /// An exam's likely day, until its notice confirms it.
+    var estimated = false
   }
 
   let date: GoalDate?
@@ -93,7 +95,9 @@ struct TimeAnswer: View {
   }
 
   private var statusWords: String? {
-    let shown = date.map { PlanDate.longText($0.isoDate, month: $0.namedMonth) }
+    let shown = date.map {
+      PlanDate.goalText($0.isoDate, month: $0.namedMonth, estimated: $0.estimated)
+    }
     let month = date?.namedMonth == true
 
     switch line {

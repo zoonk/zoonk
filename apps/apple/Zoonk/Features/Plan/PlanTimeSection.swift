@@ -64,7 +64,8 @@ struct PlanTimeSection: View {
     {
       TimeAnswer(
         date: TimeAnswer.GoalDate(
-          isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
+          isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth,
+          estimated: plan.schedule.targetDateEstimated),
         exam: goal.kind == .exam,
         line: ScheduleTime.line(
           advice: nil, askFailed: false, dated: true, findFailed: Self.failed(time),

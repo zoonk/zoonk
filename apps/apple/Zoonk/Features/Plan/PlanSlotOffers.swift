@@ -382,7 +382,8 @@ struct PlanCoverageSlot: View {
         : String(localized: "Your plan starts with what matters most for your goal.", table: "Plan")
     }
 
-    let date = PlanDate.longText(targetDate, month: schedule.targetDateNamedMonth)
+    let date = PlanDate.goalText(
+      targetDate, month: schedule.targetDateNamedMonth, estimated: schedule.targetDateEstimated)
 
     return exam
       ? String(
