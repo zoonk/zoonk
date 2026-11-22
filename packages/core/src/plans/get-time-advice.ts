@@ -14,7 +14,7 @@ import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { getSuggestedTime } from "./_utils/suggested-time";
-import { MIN_DAILY_MINUTES } from "./daily-minutes";
+import { MIN_DAILY_MINUTES, getCandidateDailyMinutesLimit } from "./daily-minutes";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
@@ -100,6 +100,7 @@ function withStudyWeek({
 
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
+    maxDailyMinutes: getCandidateDailyMinutesLimit(dailyMinutes),
     operations: [
       ...schedule,
       ...(fullCourse ? [{ fullCourse, kind: "setFullCourse" } as const] : []),

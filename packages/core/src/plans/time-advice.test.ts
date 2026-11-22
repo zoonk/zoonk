@@ -13,6 +13,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
+import { MAX_PICKABLE_DAILY_MINUTES } from "./daily-minutes";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait } from "./notice-wait";
@@ -736,7 +737,7 @@ describe(getPlanTimeAdvice, () => {
   );
 
   it.each(WEEKEND_SCHEDULES)(
-    "offers only an achievable recommendation for $name",
+    "matches saved coverage at the fitting time or the picker limit for $name",
     async ({ lighter, studyDays, weekendMinutes }) => {
       const { goal, library } = await setup(12, 60);
       await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -751,27 +752,25 @@ describe(getPlanTimeAdvice, () => {
       const input = { studyDays, weekendMinutes };
       const advice = await readAdvice(goal.id, studyDays, input);
 
-      const recommended = advice.recommendedMinutes ?? goal.dailyMinutes;
-      const promisedCoverage = advice.recommendedMinutes === null ? advice.coveredShare : 1;
+      const minutes = Math.min(
+        advice.recommendedMinutes ?? goal.dailyMinutes,
+        MAX_PICKABLE_DAILY_MINUTES,
+      );
 
-      const picked = await readCoverage(goal.id, studyDays, {
-        ...input,
-        dailyMinutes: recommended,
-      });
+      const picked = await readCoverage(goal.id, studyDays, { ...input, dailyMinutes: minutes });
+
+      expect((advice.recommendedMinutes ?? 0) > MAX_PICKABLE_DAILY_MINUTES).toBe(lighter);
 
       const result = await updateGoal({
         goalId: goal.id,
-        input: { ...input, dailyMinutes: recommended, timeZone: "UTC" },
+        input: { ...input, dailyMinutes: minutes, timeZone: "UTC" },
       });
 
       expect(result.status).toBe("updated");
 
-      const feasibility = await readFeasibility(goal.id);
-      expect(feasibility?.coveredShare).toBe(picked.coveredShare);
-
-      expect(feasibility).toMatchObject({
-        coveredShare: promisedCoverage,
-        fits: promisedCoverage === 1,
+      await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+        coveredShare: picked.coveredShare,
+        fits: advice.recommendedMinutes === minutes,
       });
     },
   );

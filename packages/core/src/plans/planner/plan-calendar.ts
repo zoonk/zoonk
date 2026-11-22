@@ -124,10 +124,12 @@ export function getStudyMinutes({
 export function scaleWeekdayMinutes({
   dailyMinutes,
   from,
+  maxMinutes = MINUTES_PER_DAY,
   weekdayMinutes,
 }: {
   dailyMinutes: number;
   from: number;
+  maxMinutes?: number;
   weekdayMinutes: readonly number[] | null;
 }): number[] | null {
   if (!weekdayMinutes) {
@@ -138,11 +140,11 @@ export function scaleWeekdayMinutes({
 
   return weekdayMinutes.map((minutes, weekday) => {
     if (minutes === 0 || (weekend !== null && isWeekend(weekday))) {
-      return minutes;
+      return Math.min(maxMinutes, minutes);
     }
 
     const scaled = Math.round((minutes * dailyMinutes) / Math.max(from, 1));
-    return Math.min(MINUTES_PER_DAY, Math.max(1, scaled));
+    return Math.min(maxMinutes, Math.max(1, scaled));
   });
 }
 

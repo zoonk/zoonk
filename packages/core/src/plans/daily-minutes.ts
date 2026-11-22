@@ -9,6 +9,10 @@ export const MAX_PICKABLE_DAILY_MINUTES = 480;
 
 export const MINUTES_PER_DAY = 1440;
 
+export function getCandidateDailyMinutesLimit(minutes: number): number {
+  return minutes <= MAX_PICKABLE_DAILY_MINUTES ? MAX_PICKABLE_DAILY_MINUTES : MINUTES_PER_DAY;
+}
+
 const SHORT_STEP = 5;
 const QUARTER_HOUR = 15;
 const HALF_HOUR = 30;

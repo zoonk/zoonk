@@ -1,4 +1,5 @@
 import { type GoalKind } from "@zoonk/db";
+import { MAX_PICKABLE_DAILY_MINUTES } from "../daily-minutes";
 import { type AddedSkill, type PlanOperation } from "../plan-contract";
 import { type UnfundedMove } from "../plan-error-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
@@ -200,12 +201,14 @@ function setExamChoice({
 
 function applyOperation({
   goalKind,
+  maxDailyMinutes,
   noticeGraph,
   operation,
   state,
   today,
 }: {
   goalKind: GoalKind;
+  maxDailyMinutes: number;
   noticeGraph: PlanGraph | null;
   operation: PlanOperation;
   state: PlanState;
@@ -220,23 +223,31 @@ function applyOperation({
   }
 
   switch (operation.kind) {
-    case "setDailyMinutes":
+    case "setDailyMinutes": {
+      const dailyMinutes = Math.min(maxDailyMinutes, operation.minutes);
+
       return {
         state: {
           ...state,
-          goal: { ...state.goal, dailyMinutes: operation.minutes },
+          goal: { ...state.goal, dailyMinutes },
           settings: {
             ...state.settings,
             weekdayMinutes: scaleWeekdayMinutes({
-              dailyMinutes: operation.minutes,
+              dailyMinutes,
               from: state.goal.dailyMinutes,
+              maxMinutes: maxDailyMinutes,
               weekdayMinutes: state.settings.weekdayMinutes,
             }),
           },
         },
       };
+    }
     case "setWeekdayMinutes":
-      return setWeekdayMinutes({ minutes: operation.minutes, state, weekdays: operation.weekdays });
+      return setWeekdayMinutes({
+        ...operation,
+        minutes: Math.min(maxDailyMinutes, operation.minutes),
+        state,
+      });
     case "addLightWeek":
       return operation.startDate < today
         ? { error: "pastDate" }
@@ -306,24 +317,24 @@ function applyOperation({
 /** The first operation that can't apply stops the change, so none of it applies. */
 export function applyPlanOperations({
   goalKind,
+  maxDailyMinutes = MAX_PICKABLE_DAILY_MINUTES,
   noticeGraph = null,
   operations,
   state,
   today,
 }: {
   goalKind: GoalKind;
+  maxDailyMinutes?: number;
   noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
   state: PlanState;
   today: Date;
 }): OperationResult {
-  const day = toIsoDate(today);
+  const options = { goalKind, maxDailyMinutes, noticeGraph, today: toIsoDate(today) };
 
   return operations.reduce<OperationResult>(
     (result, operation) =>
-      "error" in result
-        ? result
-        : applyOperation({ goalKind, noticeGraph, operation, state: result.state, today: day }),
+      "error" in result ? result : applyOperation({ ...options, operation, state: result.state }),
     { state },
   );
 }
