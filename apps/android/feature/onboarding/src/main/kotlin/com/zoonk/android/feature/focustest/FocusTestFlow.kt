@@ -107,6 +107,7 @@ internal fun ColumnScope.FocusTestFlow(
                     else -> stringResource(R.string.focustest_not_now)
                 }
             PlacementWaiting(
+                existingPlan = !onboarding,
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else onRetryRun,
                 hold = hold,

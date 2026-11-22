@@ -132,9 +132,10 @@ internal fun ColumnScope.BetweenParts(
     undo: PlacementUndoViewModel? = null,
     inSetup: Boolean = false,
 ) {
+    val shownLessons = if (undo?.restoredLessons != null) 0 else lessonsSkipped
     SetupContent {
         OnboardingHeading(
-            lessonsSkipped?.let { lessonsSkippedLine(it) } ?: stringResource(R.string.placementtest_continue_title),
+            shownLessons?.let { lessonsSkippedLine(it) } ?: stringResource(R.string.placementtest_continue_title),
             stringResource(R.string.placementtest_left_saved, formatMinutes(minutesLeft, currentLocale())),
         )
         PlacementUndoStatus(undo)
@@ -221,7 +222,8 @@ internal fun ColumnScope.TestOutcome(
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     SetupContent {
-        OnboardingHeading(title, lead)
+        val restored = undo?.restoredLessons != null
+        OnboardingHeading(if (restored) lessonsSkippedLine(0) else title, lead.takeUnless { restored })
         PlacementUndoStatus(undo)
         content()
         PlacementResultActions(action, onAction, busy, enabled, failed, undo, other)

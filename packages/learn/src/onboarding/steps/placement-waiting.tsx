@@ -4,6 +4,7 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { type PollStatus } from "../../_utils/use-poll";
+import { type GenerationKind } from "../../generation/generation-kinds";
 import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
 import {
   GenerationFailureNotice,
@@ -32,6 +33,8 @@ import { useOnboardingRail } from "../onboarding-rail";
 import { WaitBackToQuiz, WaitBar, WaitHeading } from "./wait-parts";
 import { WAITING_RUN, getWaitRun } from "./wait-run";
 
+type PlacementWaitKind = Extract<GenerationKind, "placement" | "placementQuestions">;
+
 const PATIENCE_MS = 20_000;
 
 const FAILED_RUN: GenerationRun = { failure: "generation", status: "failed", steps: {} };
@@ -49,10 +52,12 @@ function usePatience(): boolean {
 
 function PlacementProgress({
   holding,
+  kind,
   run,
   since,
 }: {
   holding: boolean;
+  kind: PlacementWaitKind;
   run: GenerationRun;
   since: number;
 }) {
@@ -71,7 +76,7 @@ function PlacementProgress({
   return (
     <GenerationWait
       doneLabel={holding ? t("Your test is ready") : undefined}
-      kind="placement"
+      kind={kind}
       run={holding ? toHeldRun(run) : run}
       since={since}
     >
@@ -85,20 +90,18 @@ function PlacementProgress({
 
 function PlacementStatus({
   holding,
+  kind,
   run,
   since,
 }: {
   holding: boolean;
+  kind: PlacementWaitKind;
   run: GenerationRun;
   since: number;
 }) {
   const t = useExtracted();
 
-  const value = useGenerationProgress({
-    kind: "placement",
-    run: holding ? toHeldRun(run) : run,
-    since,
-  });
+  const value = useGenerationProgress({ kind, run: holding ? toHeldRun(run) : run, since });
 
   if (!holding && run.status === "failed") {
     return <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />;
@@ -159,6 +162,7 @@ function PlacementBar({
 function PlacementWaitPage({
   canSkip,
   holding,
+  kind,
   onSkip,
   run,
   skip,
@@ -167,6 +171,7 @@ function PlacementWaitPage({
 }: {
   canSkip: boolean;
   holding: boolean;
+  kind: PlacementWaitKind;
   onSkip: () => void;
   run: GenerationRun;
   skip?: SkipCopy;
@@ -175,7 +180,7 @@ function PlacementWaitPage({
 }) {
   const since = useMountTime().getTime();
   const flowRail = useOnboardingRail();
-  const progress = <PlacementProgress holding={holding} run={run} since={since} />;
+  const progress = <PlacementProgress holding={holding} kind={kind} run={run} since={since} />;
 
   return (
     <WaitBackToQuiz>
@@ -199,7 +204,7 @@ function PlacementWaitPage({
       >
         <WaitContent
           progress={progress}
-          status={<PlacementStatus holding={holding} run={run} since={since} />}
+          status={<PlacementStatus holding={holding} kind={kind} run={run} since={since} />}
         />
       </OnboardingColumn>
     </WaitBackToQuiz>
@@ -208,6 +213,7 @@ function PlacementWaitPage({
 
 export function PlacementWaiting({
   buildFailed,
+  existingPlan = false,
   onQuestions,
   onSkip,
   poll,
@@ -219,6 +225,7 @@ export function PlacementWaiting({
   skipping,
 }: {
   buildFailed: boolean;
+  existingPlan?: boolean;
   /** Shows the questions once the wait moves on. */
   onQuestions: () => void;
   onSkip: () => void;
@@ -252,6 +259,7 @@ export function PlacementWaiting({
       <PlacementWaitPage
         canSkip={!holding && (patient || shown.status === "failed")}
         holding={holding}
+        kind={existingPlan ? "placementQuestions" : "placement"}
         onSkip={onSkip}
         run={shown}
         skip={skip}

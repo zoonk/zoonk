@@ -57,6 +57,7 @@ export function PlacementTestFlow({
       return (
         <PlacementWaiting
           buildFailed={false}
+          existingPlan={!onOnboardingDone}
           onQuestions={test.continueWait}
           onSkip={test.onLeave}
           poll={test.poll}

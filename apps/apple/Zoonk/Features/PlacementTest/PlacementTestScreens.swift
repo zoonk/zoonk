@@ -131,9 +131,11 @@ struct PlacementBetweenParts: View {
   var onFinishForToday: (() -> Void)?
 
   var body: some View {
+    let shownLessons = undo?.restored == nil ? lessonsSkipped : 0
+
     ZoonkList {
       StepHeader(
-        title: lessonsSkipped.map { Text(PlacementTestCopy.lessonsSkipped($0)) }
+        title: shownLessons.map { Text(PlacementTestCopy.lessonsSkipped($0)) }
           ?? Text(
             "Continue your test", tableName: "Onboarding",
             comment: "Title of a whole-course test the learner came back to between its parts"),
@@ -187,7 +189,7 @@ struct PlacementTestResultView: View {
 
   var body: some View {
     TestOutcome(
-      title: Text(PlacementTestCopy.lessonsSkipped(lessonsSkipped)),
+      title: Text(PlacementTestCopy.lessonsSkipped(undo?.restored == nil ? lessonsSkipped : 0)),
       description: undo?.restored
         ?? (lessonsSkipped > 0
           ? Text(PlacementTestCopy.knownLessons(lessonsSkipped))

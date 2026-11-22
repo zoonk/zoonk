@@ -104,6 +104,7 @@ export function FocusTestFlow({
       return (
         <PlacementWaiting
           buildFailed={test.buildFailed}
+          existingPlan={host === "plan"}
           onQuestions={test.continueWait}
           onSkip={phase.answered ? () => test.onLeave(true) : skip}
           poll={test.poll}

@@ -23,8 +23,10 @@ struct LanguageTestResultView: View {
 
     ZoonkList {
       StepHeader(
-        title: Text(
-          "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
+        title: undo?.restored == nil
+          ? Text(
+            "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding")
+          : Text(PlacementTestCopy.lessonsSkipped(0)),
         description: undo?.restored ?? Text(lead))
 
       if let result, !result.skillRanges.isEmpty {
@@ -123,7 +125,7 @@ struct LevelTestOutResult: View {
 
     TestOutcome(
       title: lessons > 0
-        ? Text(PlacementTestCopy.lessonsSkipped(lessons))
+        ? Text(PlacementTestCopy.lessonsSkipped(undo?.restored == nil ? lessons : 0))
         : Text(
           "\(view.level) stays in your plan", tableName: "Onboarding",
           comment:

@@ -209,6 +209,7 @@ internal fun ColumnScope.PlacementTestFlow(
 
         PlacementTestPhase.Waiting -> {
             PlacementWaiting(
+                existingPlan = onboarding == null,
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else null,
                 hold = hold,

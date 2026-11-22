@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
@@ -88,7 +89,7 @@ test.describe("Testing what you know from the plan", () => {
   test("a quick test skips lessons and Undo on the result restores them", async ({
     noProgressUser,
     userWithoutProgress: page,
-  }) => {
+  }, testInfo) => {
     const goal = await createLearnGoal(noProgressUser.id);
 
     await page.goto("/plan");
@@ -103,13 +104,68 @@ test.describe("Testing what you know from the plan", () => {
     expect(await skippedLessons(goal.id)).toBeGreaterThan(0);
 
     await page.getByRole("button", { exact: true, name: "Undo" }).click();
+    await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
     await expect(page.getByText(/^The lessons? (?:is|are) back in your plan\.$/u)).toBeVisible();
     await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeHidden();
+    await expect(page.getByRole("button", { exact: true, name: "Done" })).toBeEnabled();
+    await page.screenshot({ path: testInfo.outputPath("placement-undo.png") });
 
     await page.getByRole("button", { exact: true, name: "Done" }).click();
 
     await expect(page.getByRole("link", { name: /Test what you know/u })).toBeVisible();
     expect(await skippedLessons(goal.id)).toBe(0);
+  });
+
+  test("a test from Plan only shows question writing while it waits", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }, testInfo) => {
+    const goal = await createLearnGoal(noProgressUser.id);
+
+    const topics = await prisma.planItem.findMany({
+      select: { skillId: true },
+      where: { plan: { goalId: goal.id }, skillId: { not: null } },
+    });
+
+    await prisma.item.deleteMany({
+      where: { skillId: { in: topics.flatMap(({ skillId }) => skillId ?? []) } },
+    });
+
+    await page.goto("/placement-test");
+    await page.getByRole("radio", { name: /Whole course/u }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    await expect(
+      page.getByText("Writing your questions", { exact: true }).filter({ visible: true }),
+    ).toBeVisible();
+
+    await expect(page.getByText("Reading your goal", { exact: true })).toBeHidden();
+    await expect(page.getByText("Choosing what to learn", { exact: true })).toBeHidden();
+    await page.screenshot({ path: testInfo.outputPath("placement-plan-wait.png") });
+  });
+
+  test("B2 stays in the plan when the level has no eligible lessons", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }, testInfo) => {
+    const { goal } = await languageGoalFixture({ userId: noProgressUser.id });
+
+    await prisma.goal.update({
+      data: {
+        details: { answered: [...ANSWERED, "placement"], level: "B1" },
+        planRevealedAt: new Date(),
+      },
+      where: { id: goal.id },
+    });
+
+    await page.goto("/level-test");
+    await page.getByRole("radio", { name: /Test out of B2/u }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    await expect(page.getByRole("heading", { name: "B2 stays in your plan" })).toBeVisible();
+    await expect(page.getByText("There aren't enough questions for B2 yet.")).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Done" })).toBeEnabled();
+    await page.screenshot({ path: testInfo.outputPath("placement-unavailable-b2.png") });
   });
 
   test("a whole-course test picks up where the learner left and stops between parts", async ({

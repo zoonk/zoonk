@@ -102,14 +102,22 @@ export async function startLanguageLevelTestOut({
       userId,
     });
 
-    if (skillIds.length === 0) {
-      return unchanged(null);
+    if (
+      skillIds.length === 0 &&
+      testOut?.level === level &&
+      testOut.questions.length === 0 &&
+      !testOut.preparingUntil &&
+      !testOut.result
+    ) {
+      return unchanged(testOut.id);
     }
 
-    const { questions } = await readTestOutBank({ skillIds, tx, userId });
+    const { questions } =
+      skillIds.length > 0 ? await readTestOutBank({ skillIds, tx, userId }) : { questions: [] };
+
     const progress: LevelTestOutProgress = { id: randomUUID(), level, questions };
 
-    if (questions.length === 0) {
+    if (skillIds.length > 0 && questions.length === 0) {
       progress.preparingUntil = new Date(Date.now() + PREPARATION_WINDOW_MS).toISOString();
 
       await oweFollowUps({

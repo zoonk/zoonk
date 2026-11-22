@@ -142,6 +142,7 @@ export function LanguagePlanTestFlow({
       return (
         <PlacementWaiting
           buildFailed={false}
+          existingPlan
           onQuestions={test.continueTestOut}
           onSkip={test.onLeave}
           poll={test.testOutPoll}
