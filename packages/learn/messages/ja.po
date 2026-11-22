@@ -6431,15 +6431,6 @@ msgctxt "Jrp0gH"
 msgid "There aren't enough questions for {level} yet."
 msgstr "{level}の問題はまだ十分にありません。"
 
-#. The title after a placement test: how many lessons it took out of the plan.
-#. A fact on the Plan's test row: how many lessons the last test skipped.
-#: src/language/level-test/level-test-results.tsx
-#: src/placement-test/placement-test-screens.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "psTUYu"
-msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
-msgstr "{count, plural, =0 {スキップしたレッスンはありません} other {#レッスンをスキップ}}"
-
 #: src/language/level-test/level-test-results.tsx
 msgctxt "8CPaDq"
 msgid "{level} stays in your plan"
@@ -11458,6 +11449,12 @@ msgstr "{count, plural, other {レッスンが学習計画に戻ります。}}"
 msgctxt "Ng8L3W"
 msgid "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}"
 msgstr "{count, plural, =1 {もう知っています。練習でも引き続き復習できます。} other {どれもすでに知っている内容です。練習でも引き続き復習できます。}}"
+
+#. The title after a placement test: how many lessons it took out of the plan.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "psTUYu"
+msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
+msgstr "{count, plural, =0 {スキップしたレッスンはありません} other {#レッスンをスキップ}}"
 
 #: src/plan/use-study-days-text.ts
 msgctxt "1ooK0d"
