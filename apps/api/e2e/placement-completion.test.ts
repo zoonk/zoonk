@@ -120,7 +120,7 @@ test("language placement keeps the level result and hides an unavailable test-ou
   try {
     const { goal, items, skills } = await languageGoalFixture({ userId: user.id });
     const attemptId = randomUUID();
-    const pair = { language: `x${randomUUID().slice(0, 8)}`, targetLanguage: "en" };
+    const pair = { language: `pt-x-${randomUUID().slice(0, 5)}`, targetLanguage: "en" };
     const ahead = items.slice(2);
 
     await Promise.all([
