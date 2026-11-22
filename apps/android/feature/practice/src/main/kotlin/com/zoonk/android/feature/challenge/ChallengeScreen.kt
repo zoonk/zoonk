@@ -346,6 +346,7 @@ private fun IntroScreen(
             onClose = actions::close,
             lonePage = true,
             bottomBar = { TaskActionBar { ChallengeFooter(challenge, ui, actions) } },
+            note = if (isPreparing(challenge, ui)) ({ PreparingNote(challenge.goalId, actions) }) else null,
             aside = beside?.let { TaskAside(title = it.title) { it.content(false) } },
         ) { padding ->
             CenteredColumn(Modifier.padding(padding)) {
@@ -736,8 +737,8 @@ private fun ChallengeFooter(
                     StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.challenge_opens_after_lessons))
                 }
 
-                challenge.access == Challenge.Access.PREPARING -> {
-                    PreparingActions(challenge.goalId, ui, movable, actions)
+                isPreparing(challenge, ui) -> {
+                    PreparingActions(ui, movable, actions)
                 }
 
                 challenge.status == Challenge.Status.READY -> {
@@ -855,11 +856,19 @@ private fun StartActions(
     }
 }
 
-@Composable
-private fun PreparingActions(
-    goalId: UUID,
+/** A mock whose paper is still being written: its note shows in the bar's note slot, over these actions, as on the chooser. */
+private fun isPreparing(
+    challenge: Challenge,
     ui: ChallengeUi,
-    movable: Boolean,
+): Boolean =
+    (challenge.status == Challenge.Status.READY || challenge.status == Challenge.Status.STARTED) &&
+        challenge.waitReason == null &&
+        challenge.access == Challenge.Access.PREPARING &&
+        ui.problem != StartProblem.PlusRequired
+
+@Composable
+private fun PreparingNote(
+    goalId: UUID,
     actions: ChallengeActions,
 ) {
     MockPreparingNote(
@@ -869,6 +878,14 @@ private fun PreparingActions(
         createWait = { scope -> actions.viewModel.paperWait(scope, goalId) },
         onWritten = { actions.viewModel.challenge.refresh() },
     )
+}
+
+@Composable
+private fun PreparingActions(
+    ui: ChallengeUi,
+    movable: Boolean,
+    actions: ChallengeActions,
+) {
     MoveFailed(ui)
     TaskActions { width ->
         if (movable) {
