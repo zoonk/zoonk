@@ -62,6 +62,7 @@ export async function loadMockEssayViews({
   }
 
   const admissionId = mock.conditions.writingAdmissionId;
+
   const attempts = admissionId
     ? await prisma.attempt.findMany({
         select: { answer: true },

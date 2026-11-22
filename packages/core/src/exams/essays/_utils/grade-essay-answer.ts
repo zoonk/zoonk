@@ -185,6 +185,7 @@ async function loadPromptTask(item: Item, taskKey: string) {
     : null;
 
   const tasks = listBlueprintWritingTasks(blueprint);
+
   return {
     part: tasks.find(({ key }) => key === taskKey)?.section ?? null,
     writingTask: indexWritingTasks(tasks).get(taskKey),

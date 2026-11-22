@@ -28,10 +28,12 @@ async function listUngradedEssays({
     attemptId: getWritingAttemptId({ admissionId, itemId }),
     itemId,
   }));
+
   const graded = await prisma.attempt.findMany({
     select: { id: true },
     where: { id: { in: asked.map(({ attemptId }) => attemptId) }, mockExamId: mock.id },
   });
+
   const saved = new Set(graded.map(({ id }) => id));
   const ungraded = asked.filter(({ attemptId }) => !saved.has(attemptId));
   const items = await loadMockEssayItems(ungraded.map(({ itemId }) => itemId));

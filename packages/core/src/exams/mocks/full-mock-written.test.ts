@@ -11,9 +11,12 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { loadWrittenSamples } from "../../learner/facts/written-samples";
 import { loadWritingEvidence } from "../../learner/written-evidence";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { readEssayContent } from "../essays/_utils/essay-content";
+import { passedWritingEvaluations } from "../essays/_utils/writing-rubric-evaluations";
+import { getWritingRubricFingerprint } from "../essays/_utils/writing-task-basis";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
@@ -33,6 +36,7 @@ import { submitMockSection } from "./submit-mock-section";
 
 // Stub the model provider to keep mock grading off the network.
 vi.mock("@zoonk/ai/tasks/grading/grade-essay", () => ({ gradeWritingEvidence: vi.fn() }));
+vi.mock("../essays/_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
 
 const FULL = { area: null, day: null, kind: "full" } as const;
 const WRITTEN = { area: null, day: null, kind: "written" } as const;
@@ -93,8 +97,13 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
     },
   });
 
-  const prompt = (taskKey: string) =>
-    itemFixture({
+  const tasks = new Map(listWrittenTasks({ structure }).map((task) => [task.key, task]));
+
+  function prompt(taskKey: string) {
+    const grading = tasks.get(taskKey)?.grading ?? CGU_WRITTEN_GRADING;
+    const points = grading.criteria[0]?.points ?? 1;
+
+    return itemFixture({
       content: {
         context: null,
         keyPoints: ["Apply the rule"],
@@ -102,14 +111,14 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
         rubric: [{ criterion: "Application", description: "Apply the rule.", points: null }],
         sampleOutline: "Rule then facts",
         writing: {
-          aspects: [{ criterionId: "case", description: "Applies the rule", points: 1 }],
+          aspects: [{ criterionId: "case", description: "Applies the rule", points }],
           assessedSkillIds: [writing.id],
           charactersPerLine: 55,
           criteria: [
-            { id: "case", name: taskKey === "short" ? "Presentation" : "Application", points: 1 },
+            { id: "case", name: taskKey === "short" ? "Presentation" : "Application", points },
             ...(taskKey === "short" ? [{ id: "rule", name: "Application", points: null }] : []),
           ],
-          grading: CGU_WRITTEN_GRADING,
+          grading,
           keySource: "practiceKey",
           lines: taskKey === "short" ? 30 : 60,
           minimumWords: 1,
@@ -124,6 +133,7 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
       format: "essay",
       skillId: writing.id,
     });
+  }
 
   const [short, long, objective] = await Promise.all([
     prompt("short"),
@@ -192,6 +202,10 @@ describe("written mock sittings", () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.mocked(gradeWritingEvidence).mockReset();
+
+    for (const fingerprint of Object.keys(passedWritingEvaluations)) {
+      Reflect.deleteProperty(passedWritingEvaluations, fingerprint);
+    }
   });
 
   it("keeps a newer device's written answer when an offline edit arrives later", async () => {
@@ -561,14 +575,14 @@ describe("written mock sittings", () => {
       return {
         detail,
         evidence,
-        mock: { essays: finished.essays, written: finished.result?.points?.written },
-        mockHistory: history.mocks,
         history:
           syllabus.status === "ready" &&
           syllabus.syllabus.writtenPractice?.subjects?.map(({ answers, trend }) => ({
             answers,
             trend,
           })),
+        mock: { essays: finished.essays, written: finished.result?.points?.written },
+        mockHistory: history.mocks,
         projection,
         samples,
       };
@@ -625,6 +639,7 @@ describe("written mock sittings", () => {
     }
 
     task.key = "corrected";
+
     await prisma.examBlueprint.update({
       data: { structure: corrected },
       where: { id: blueprint.id },
@@ -637,6 +652,7 @@ describe("written mock sittings", () => {
     expect(afterCorrection.mockHistory).toStrictEqual(before.mockHistory);
     expect(afterCorrection.evidence).toStrictEqual(before.evidence);
     section.name = "Replacement written part";
+
     await prisma.examBlueprint.update({
       data: { structure: corrected },
       where: { id: blueprint.id },
@@ -684,6 +700,126 @@ describe("written mock sittings", () => {
 
     await expect(view(id)).resolves.toMatchObject({
       essays: [{ status: "graded" }, { status: "graded" }],
+    });
+  });
+
+  it("retains saved scores while measuring only tasks in the current projection", async () => {
+    const numeric = structuredClone(CGU);
+    const section = numeric.mock?.sections.find(({ kind }) => kind === "written");
+
+    if (!section?.tasks) {
+      throw new Error("Expected the written tasks");
+    }
+
+    const provenance = { model: "fixture/model", promptVersion: "fixture-revision" };
+
+    for (const task of section.tasks) {
+      const points = task.points ?? null;
+
+      const grading = {
+        ...CGU_WRITTEN_GRADING,
+        criteria: CGU_WRITTEN_GRADING.criteria.map((criterion) => ({ ...criterion, points })),
+      };
+
+      task.grading = grading;
+      const fingerprint = getWritingRubricFingerprint({ grading, points });
+
+      Reflect.set(passedWritingEvaluations, fingerprint, {
+        arithmetic: { rounding: null, zeroRules: [] },
+        corpus: "fixture",
+        kind: "points",
+        model: provenance.model,
+        promptRevision: provenance.promptVersion,
+      });
+    }
+
+    const { blueprint, goal, short, user } = await setup({ structure: numeric });
+    const text = "The rule applies to this case.";
+
+    vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({
+      data: {
+        ...EVIDENCE,
+        aspects: [{ aspectIndex: 0, criterionId: "case", earned: true, quote: text }],
+      },
+      provenance,
+    });
+
+    const id = await start(goal.id, WRITTEN);
+    await expect(save({ id, itemId: short.id, text })).resolves.toMatchObject({ status: "saved" });
+    await submitMockSection({ blockId: id, input: UTC, section: 0 });
+
+    await expect(gradeMockEssays({ blockId: id, input: UTC })).resolves.toMatchObject({
+      status: "graded",
+    });
+
+    async function readScores(structure: ExamStructure) {
+      const [mock, projection, syllabus] = await Promise.all([
+        view(id),
+        loadWrittenProjection({ goalId: goal.id, objective: null, structure, userId: user.id }),
+        getSyllabusView({ goalId: goal.id }),
+      ]);
+
+      return {
+        history:
+          syllabus.status === "ready" && syllabus.syllabus.writtenPractice?.subjects?.[0]?.answers,
+        projection: projection?.parts[0]?.tasks,
+        written: mock.result?.points?.written,
+      };
+    }
+
+    const before = await readScores(numeric);
+    const range = { high: 30, low: 30 };
+
+    expect(before).toMatchObject({
+      history: [{ range }],
+      projection: [
+        { key: "short", range },
+        { key: "long", range: null },
+      ],
+      written: [
+        {
+          range,
+          tasks: [
+            { key: "short", range },
+            { key: "long", range: { high: 0, low: 0 } },
+          ],
+        },
+      ],
+    });
+
+    const content = readEssayContent(short);
+
+    if (!content) {
+      throw new Error("Expected the graded essay prompt");
+    }
+
+    await prisma.item.update({
+      data: { content: { ...content, writing: { ...content.writing, points: 12 } } },
+      where: { id: short.id },
+    });
+
+    await expect(readScores(numeric)).resolves.toStrictEqual(before);
+
+    await prisma.item.delete({ where: { id: short.id } });
+    await expect(readScores(numeric)).resolves.toStrictEqual(before);
+
+    const structure = structuredClone(numeric);
+    const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
+
+    if (!task) {
+      throw new Error("Expected the original task");
+    }
+
+    task.key = "corrected";
+    await prisma.examBlueprint.update({ data: { structure }, where: { id: blueprint.id } });
+
+    await expect(readScores(structure)).resolves.toMatchObject({
+      history: before.history,
+      projection: [
+        { key: "corrected", range: null },
+        { key: "long", range: null },
+      ],
+      written: before.written,
     });
   });
 

@@ -676,8 +676,10 @@ describe("CGU written exam preparation", () => {
         getTodayView({ goalId: goal.id, timeZone: "UTC" }),
         getStudySessionSummary({ input: { timeZone: "UTC" }, sessionId }),
       ]);
+
       const saved =
         session.status === "ready" && session.session.blocks.find(({ id }) => id === block.id);
+
       const day =
         today.status === "ready" &&
         today.today.session?.blocks.find(
@@ -700,11 +702,13 @@ describe("CGU written exam preparation", () => {
     }
 
     const before = await readCompletion();
+
     const completed = {
       answered: 1,
       status: "completed",
       writingTask: { lines: 30, number: 1, total: 2 },
     };
+
     expect(before).toMatchObject({ day: completed, saved: completed, summary: { questions: 1 } });
 
     const item = await prisma.item.findUniqueOrThrow({ where: { id: itemId } });
@@ -718,7 +722,8 @@ describe("CGU written exam preparation", () => {
       data: { content: { ...content, question: "Revised question" } },
       where: { id: itemId },
     });
-    expect(await readCompletion()).toStrictEqual(before);
+
+    await expect(readCompletion()).resolves.toStrictEqual(before);
 
     await prisma.item.delete({ where: { id: itemId } });
     expect.soft(await readCompletion()).toStrictEqual(before);
@@ -732,7 +737,7 @@ describe("CGU written exam preparation", () => {
 
     task.key = "corrected";
     await prisma.examBlueprint.update({ data: { structure }, where: { id: blueprint.id } });
-    expect(await readCompletion()).toStrictEqual(before);
+    await expect(readCompletion()).resolves.toStrictEqual(before);
   });
 
   it("drops an unissued task from the day and Continue after the notice is read again", async () => {
