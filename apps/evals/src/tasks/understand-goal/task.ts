@@ -5,7 +5,7 @@ import {
   goalRouteClassifier,
   understandGoal,
 } from "@zoonk/ai/tasks/goals/understand-goal";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { PERSONA_TEST_CASES } from "./persona-cases";
 import { type UnderstandGoalExpected, scoreUnderstandGoal } from "./scorer";
 import { TEST_CASES } from "./test-cases";
@@ -24,7 +24,7 @@ export const understandGoalTask: Task<
   generate: (params) =>
     understandGoal({
       ...params,
-      dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
+      dailyMinutesLimits: { max: MAX_PICKABLE_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     }),
   id: "understand-goal",
   name: "Understand goal",
