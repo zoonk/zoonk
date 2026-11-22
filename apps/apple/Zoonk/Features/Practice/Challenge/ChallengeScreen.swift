@@ -86,7 +86,7 @@ struct ChallengeScreen: View {
     // played, as on main.
     let won = isCheckpoint(challenge) && challenge.status == .done
 
-    return PracticeTaskLayout {
+    return PracticeTaskLayout(note: preparingNote(challenge)) {
       if isTrickster(challenge) {
         TricksterCharacter(beaten: won, reacts: !won)
           .frame(width: 112, height: 112)
@@ -229,6 +229,26 @@ struct ChallengeScreen: View {
     return Text(titleString(challenge))
   }
 
+  /// A mock whose paper is still being written: the run writing it, over the bar's buttons as on
+  /// the chooser.
+  private func preparingNote(_ challenge: Components.Schemas.Challenge) -> BarNote? {
+    guard !isLocked(challenge), isPreparing(challenge) else { return nil }
+
+    return BarNote {
+      MockPreparingNote(
+        title: MockPreparing.title, goalID: challenge.goalId, surface: "scheduledMock",
+        read: { [exam, itemId] in
+          await exam.mockWriting(goalId: challenge.goalId, planItemId: itemId)
+        },
+        written: {
+          startFoundPreparing = false
+          await read()
+          return true
+        }
+      )
+    }
+  }
+
   @ViewBuilder
   private func actions(_ challenge: Components.Schemas.Challenge) -> some View {
     if isLocked(challenge) {
@@ -258,18 +278,6 @@ struct ChallengeScreen: View {
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if isPreparing(challenge) {
-      MockPreparingNote(
-        title: MockPreparing.title, goalID: challenge.goalId, surface: "scheduledMock",
-        read: { [exam, itemId] in
-          await exam.mockWriting(goalId: challenge.goalId, planItemId: itemId)
-        },
-        written: {
-          startFoundPreparing = false
-          await read()
-          return true
-        }
-      )
-
       PracticeActionRow {
         if challenge.canMove, moved == nil {
           PracticeSecondaryButton(

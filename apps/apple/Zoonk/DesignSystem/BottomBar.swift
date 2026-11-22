@@ -106,20 +106,32 @@ private struct BottomBar<Actions: View>: View {
     .barBackdrop(hairline: note == nil)
     .floatingAbove {
       if let note {
-        // Main's note starts where the buttons do on a phone and ends with them on a wide bar.
         note
-          .typeStyle(.body)
-          .multilineTextAlignment(isWide ? .trailing : .leading)
-          .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .leading)
+          .barNoteLines(isWide: isWide)
           .barColumn(column, listMargins: listMargins, isTask: isTask)
-          .padding(.top, 12)
-          .padding(.bottom, 4)
-          .background {
-            Color(.background)
-              .overlay(alignment: .top) { Divider() }
-          }
+          .barNoteBackdrop()
       }
     }
+  }
+}
+
+extension View {
+  /// Main's bar note: it starts where the buttons do on a phone and ends with them on a wide bar.
+  func barNoteLines(isWide: Bool) -> some View {
+    typeStyle(.body)
+      .multilineTextAlignment(isWide ? .trailing : .leading)
+      .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .leading)
+  }
+
+  /// A bar note's own room and backing, under the hairline that moves above it: one distance from
+  /// the note to the buttons on every bar.
+  func barNoteBackdrop() -> some View {
+    padding(.top, 12)
+      .padding(.bottom, 4)
+      .background {
+        Color(.background)
+          .overlay(alignment: .top) { Divider() }
+      }
   }
 }
 
