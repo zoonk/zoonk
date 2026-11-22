@@ -207,6 +207,21 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(start.materialIntent, .exam)
   }
 
+  /// A start refused for material that's gone names it by id, so the box marks just that.
+  func testAStartRefusedForGoneMaterialNamesTheGoneSources() async throws {
+    let server = DraftServer(Self.draft(prompt: "test on Friday", goalsLeft: 2))
+    await server.refuseStarts(unavailable: [Self.sourceID])
+    let store = makeStore(transport: server)
+    let sent = SentMaterial(sourceIDs: [Self.sourceID, Self.otherSourceID], intent: .exam)
+
+    do {
+      _ = try await store.understand(goal: "test on Friday", material: sent)
+      XCTFail("The start is refused")
+    } catch {
+      XCTAssertEqual(error as? OnboardingError, .materialUnavailable(sourceIDs: [Self.sourceID]))
+    }
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -221,12 +236,14 @@ final class OnboardingStoreTests: XCTestCase {
 
   private static let sourceID = "00000000-0000-4000-8000-0000000000c1"
 
+  private static let otherSourceID = "00000000-0000-4000-8000-0000000000c2"
+
   private static func draft(prompt: String, goalsLeft: Int, goalID: String? = nil)
     -> OnboardingDraft
   {
     OnboardingDraft(
       activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID,
-      materialIntent: nil, prompt: prompt, sources: [], status: .failed,
+      materialIntent: nil, materialMissing: false, prompt: prompt, sources: [], status: .failed,
       timeZone: "America/Sao_Paulo", understanding: nil)
   }
 
@@ -295,6 +312,7 @@ actor DraftServer: ClientTransport {
   private var createAnswer = CreateAnswer.created
   private var holdsCreate = false
   private var heldCreate: TestContinuation<Void>?
+  private var unavailableSources: [String]?
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -350,6 +368,18 @@ actor DraftServer: ClientTransport {
           Components.Schemas.GoalUnderstandingInput.self,
           from: try await Data(collecting: body, upTo: .max)))
 
+      if let unavailableSources {
+        let details = try String(decoding: JSONEncoder().encode(unavailableSources), as: UTF8.self)
+
+        return (
+          HTTPResponse(
+            status: .unprocessableContent, headerFields: [.contentType: "application/json"]),
+          HTTPBody(
+            #"{"error":{"code":"MATERIAL_UNAVAILABLE","details":{"sourceIds":\#(details)},"message":"Gone"}}"#
+          )
+        )
+      }
+
       return (
         HTTPResponse(
           status: .created,
@@ -396,6 +426,10 @@ actor DraftServer: ClientTransport {
     editAnswered = true
     heldEdit?.resume()
     heldEdit = nil
+  }
+
+  func refuseStarts(unavailable sourceIDs: [String]) {
+    unavailableSources = sourceIDs
   }
 
   func answerCreates(_ answer: CreateAnswer) {

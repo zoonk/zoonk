@@ -75,14 +75,15 @@ struct GoalMaterialSections: View {
   var body: some View {
     Section {
       ForEach(material) { source in
-        Label {
-          Text(title(of: source))
-            .lineLimit(1)
-        } icon: {
-          Image(systemName: "doc.text")
+        MaterialRow(title: title(of: source), isUnavailable: source.isUnavailable) {
+          material.removeAll { $0.id == source.id }
         }
       }
       .onDelete { material.remove(atOffsets: $0) }
+
+      if let unavailableLine {
+        FailureLine(message: unavailableLine)
+      }
 
       if learner.canAttachMaterial {
         MaterialAttachProgress(draft: $draft) { source in
@@ -165,6 +166,69 @@ struct GoalMaterialSections: View {
       ?? String(
         localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
   }
+
+  /// Names the one file a goal found gone; several are said together.
+  private var unavailableLine: LocalizedStringResource? {
+    let unavailable = material.filter(\.isUnavailable)
+
+    guard let first = unavailable.first else {
+      return nil
+    }
+
+    return unavailable.count == 1
+      ? LocalizedStringResource(
+        "We can't read “\(title(of: first))” anymore. Remove it and add it again.",
+        table: "Onboarding",
+        comment: "A file the learner attached to a goal is gone; the file's name")
+      : LocalizedStringResource(
+        "We can't read some of your files anymore. Remove them and add them again.",
+        table: "Onboarding", comment: "Several files the learner attached to a goal are gone")
+  }
+}
+
+/// One attached source, removed with its ✕ as main's chip is, or by swiping.
+private struct MaterialRow: View {
+  let title: String
+  let isUnavailable: Bool
+  let remove: () -> Void
+
+  var body: some View {
+    HStack(spacing: 8) {
+      Label {
+        Text(title)
+          .lineLimit(1)
+      } icon: {
+        if isUnavailable {
+          Image(systemName: "exclamationmark.circle")
+            .foregroundStyle(.destructive)
+        } else {
+          Image(systemName: "doc.text")
+        }
+      }
+      .accessibilityValue(
+        Text(
+          "Can't be read", tableName: "Onboarding",
+          comment: "Read by VoiceOver after the name of an attached file a goal found gone"),
+        isEnabled: isUnavailable)
+
+      Spacer(minLength: 0)
+
+      Button(action: remove) {
+        Label {
+          Text(
+            "Remove \(title)", tableName: "Onboarding",
+            comment: "Removes a file, text or link from the goal's material; names it")
+        } icon: {
+          Image(systemName: "xmark")
+        }
+        .labelStyle(.iconOnly)
+        .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+        .contentShape(.rect)
+      }
+      .buttonStyle(.borderless)
+      .foregroundStyle(.mutedForeground)
+    }
+  }
 }
 
 extension LearnerSummaryStore {
@@ -181,6 +245,15 @@ extension AttachedSource {
 
 extension [AttachedSource] {
   var hasRoom: Bool { count < AttachedSource.maxPerGoal }
+
+  /// Marks the sources a goal found gone, by id, for the learner to remove.
+  func marking(unavailable ids: [String]) -> [AttachedSource] {
+    map { source in
+      var source = source
+      source.isUnavailable = ids.contains(source.id)
+      return source
+    }
+  }
 
   /// The same source added again replaces itself at the end.
   fileprivate mutating func attach(_ source: AttachedSource) {

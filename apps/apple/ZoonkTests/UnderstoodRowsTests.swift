@@ -90,11 +90,12 @@ final class UnderstoodRowsTests: XCTestCase {
   }
 
   func testTheMaterialRowNamesEachSourceAndPastedTextAsYourText() throws {
-    let row = try XCTUnwrap(UnderstoodRows.materialRow(titles: ["Cell cycle.pdf", ""]))
+    let row = try XCTUnwrap(
+      UnderstoodRows.materialRow(titles: ["Cell cycle.pdf", ""], missing: false))
 
     XCTAssertEqual(row.value, "Cell cycle.pdf, Your text")
     XCTAssertNil(row.field, "The material is changed from the goal's words, not on the card")
-    XCTAssertNil(UnderstoodRows.materialRow(titles: []))
+    XCTAssertNil(UnderstoodRows.materialRow(titles: [], missing: false))
   }
 
   private func examDay(_ date: String) -> [String: Any] {

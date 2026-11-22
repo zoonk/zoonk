@@ -343,6 +343,14 @@ private struct GoalStartFlow: View {
         if !Task.isCancelled {
           path = []
         }
+      } catch OnboardingError.materialUnavailable(let ids) {
+        guard !Task.isCancelled else {
+          return
+        }
+
+        // Back at the box with the words, the choice and the material still there to send.
+        material = material.marking(unavailable: ids)
+        path = []
       } catch {
         guard !Task.isCancelled else {
           return
