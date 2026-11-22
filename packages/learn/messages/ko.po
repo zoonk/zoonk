@@ -10137,7 +10137,7 @@ msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "83Uigi"
 msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
-msgstr ""
+msgstr "계획과 레슨은 이 자료만 바탕으로 진행돼요. 나머지는 더 이상 읽을 수 없어요."
 
 #. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
 #: src/onboarding/understood/use-understood-rows.ts

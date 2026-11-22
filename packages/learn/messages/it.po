@@ -10137,7 +10137,7 @@ msgstr "Il tuo piano e le lezioni si basano su questo materiale"
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "83Uigi"
 msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
-msgstr ""
+msgstr "Il tuo piano e le tue lezioni si basano solo su questo materiale. Il resto non si riesce più a leggere."
 
 #. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
 #: src/onboarding/understood/use-understood-rows.ts
