@@ -25,17 +25,20 @@ import com.zoonk.android.feature.language.parseCefrScore
 import com.zoonk.android.feature.onboarding.start.UnderstoodRows
 import com.zoonk.android.feature.onboarding.start.facts
 import com.zoonk.android.feature.onboarding.start.text
+import com.zoonk.android.feature.plan.levelRangeFacts
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Goal
+import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import java.time.LocalDate
@@ -72,7 +75,6 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
             stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_to_be_confirmed else R.string.plan_end_none_set),
             chip = true,
         ).takeIf { details.answered("targetDate") }
-    val level = setupLevel(details)
     val resources = LocalResources.current
     val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
     val facts = goal.facts()
@@ -82,12 +84,7 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
             PlanFact(row.label, row.value, note = row.note, chip = row.id in CHIP_ROWS)
         } +
         listOfNotNull(
-            level?.let {
-                val label =
-                    goal.targetLanguage?.let { language -> stringResource(R.string.language_level, languageName(language, locale)) }
-                        ?: stringResource(R.string.onboarding_row_level)
-                PlanFact(label, it)
-            },
+            levelFact(goal),
             if (details.answered("schedule")) {
                 PlanFact(
                     stringResource(R.string.onboarding_time_a_day),
@@ -99,7 +96,23 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
         )
 }
 
-/** A level test's result, then the level the learner picked, then the level their words gave. */
+@Composable
+private fun levelFact(goal: Goal): PlanFact? {
+    if (goal.kind != Goal.Kind.LANGUAGE) {
+        return setupLevel(goal.details)?.let { PlanFact(stringResource(R.string.onboarding_row_level), it) }
+    }
+
+    val test = goal.details["levelTest"] as? JsonObject
+    val result =
+        (test?.get("lastResult") as? JsonObject)?.let {
+            runCatching { ApiJson.decodeFromJsonElement(LanguageLevelTestOneOfResult.serializer(), it) }.getOrNull()
+        }
+    val ranges = result?.let { levelRangeFacts(it.ranges) }.orEmpty()
+    return ranges.takeIf { it.isNotEmpty() }?.let {
+        PlanFact(stringResource(R.string.placementtest_level_title), it.joinToString(" · "))
+    }
+}
+
 @Composable
 private fun setupLevel(details: Map<String, JsonElement>): String? {
     val level = details.text("level")

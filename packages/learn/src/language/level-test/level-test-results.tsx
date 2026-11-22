@@ -5,6 +5,7 @@ import {
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import {
   OnboardingDescription,
@@ -26,6 +27,7 @@ export function LevelResult({
   onWalkTopics,
   onboarding = false,
   pressed,
+  rail,
   result,
   targetLanguage,
   testOutLevel,
@@ -38,6 +40,7 @@ export function LevelResult({
   onboarding?: boolean;
   onWalkTopics: () => void;
   pressed: PlacementPressed;
+  rail?: ReactNode;
   result: LevelTestResult | null;
   targetLanguage: string;
   testOutLevel: string | null;
@@ -73,6 +76,7 @@ export function LevelResult({
           )}
         </>
       }
+      rail={rail}
       title={
         undone ? skipped(0) : t("Your {language} level", { language: languageName(targetLanguage) })
       }

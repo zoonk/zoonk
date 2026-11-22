@@ -11,43 +11,17 @@ import {
 import { FactSegments } from "../_components/task-meta";
 import { useFormatMomentDate } from "../_utils/iso-date";
 import { useTestTime } from "../focus-test/use-focus-test-texts";
-import { formatLevelRange } from "../language/level-test/level-test-parts";
+import { useLevelRangeFacts } from "../language/level-test/level-test-parts";
 import { usePlanScreen } from "./plan-context";
 import { useSkippedLessonsSentences } from "./use-skipped-lessons-sentences";
 
 type PlacementTestRow = NonNullable<PlanView["placementTest"]>;
-type LanguageRow = Extract<PlacementTestRow, { kind: "language" }>;
-
-function useLanguageResultFacts() {
-  const t = useExtracted();
-
-  return (result: NonNullable<LanguageRow["result"]>): string[] => {
-    const { listening: listeningRange, reading: readingRange } = result.ranges;
-    const reading = readingRange && formatLevelRange(readingRange);
-    const listening = listeningRange && formatLevelRange(listeningRange);
-
-    return [
-      reading &&
-        t({
-          description: "A CEFR level range the test found for reading, such as “B1–B2”.",
-          message: "Reading {range}",
-          values: { range: reading },
-        }),
-      listening &&
-        t({
-          description: "A CEFR level range the test found for listening, such as “B1–B2”.",
-          message: "Listening {range}",
-          values: { range: listening },
-        }),
-    ].filter((fact) => typeof fact === "string");
-  };
-}
 
 function useRowFacts() {
   const t = useExtracted();
   const time = useTestTime();
   const formatDate = useFormatMomentDate();
-  const languageFacts = useLanguageResultFacts();
+  const languageFacts = useLevelRangeFacts();
   const { skipped } = useSkippedLessonsSentences();
 
   return (test: PlacementTestRow): string[] => {
@@ -66,7 +40,7 @@ function useRowFacts() {
     const date = formatDate(test.result.finishedAt);
 
     if (test.kind === "language") {
-      return [...languageFacts(test.result), date];
+      return [...languageFacts(test.result.ranges), date];
     }
 
     return [skipped(test.result.lessonsSkipped), date];

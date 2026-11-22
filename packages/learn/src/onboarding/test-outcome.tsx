@@ -21,6 +21,7 @@ export function TestOutcome({
   lead,
   onContinue,
   other,
+  rail,
   subject,
   title,
 }: {
@@ -35,6 +36,7 @@ export function TestOutcome({
   onContinue: () => void;
   /** A second action, beside the main one. */
   other?: ReactNode;
+  rail?: ReactNode;
   subject?: string;
   title: string;
 }) {
@@ -42,6 +44,7 @@ export function TestOutcome({
 
   return (
     <OnboardingColumn
+      rail={rail}
       bar={
         <OnboardingActions failed={failed}>
           {other}

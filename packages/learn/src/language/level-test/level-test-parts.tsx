@@ -187,8 +187,33 @@ function LevelRow({
 }
 
 /** "B1–B2": the levels a skill's answers place it between, never one level it can't promise. */
-export function formatLevelRange(range: { high: string; low: string }): string {
+function formatLevelRange(range: { high: string; low: string }): string {
   return range.low === range.high ? range.low : `${range.low}–${range.high}`;
+}
+
+export function useLevelRangeFacts() {
+  const t = useExtracted();
+
+  return (ranges: LevelTestRanges): string[] => {
+    const { listening: listeningRange, reading: readingRange } = ranges;
+    const reading = readingRange && formatLevelRange(readingRange);
+    const listening = listeningRange && formatLevelRange(listeningRange);
+
+    return [
+      reading &&
+        t({
+          description: "A CEFR level range the test found for reading, such as “B1–B2”.",
+          message: "Reading {range}",
+          values: { range: reading },
+        }),
+      listening &&
+        t({
+          description: "A CEFR level range the test found for listening, such as “B1–B2”.",
+          message: "Listening {range}",
+          values: { range: listening },
+        }),
+    ].filter((fact) => typeof fact === "string");
+  };
 }
 
 const RANGE_SKILLS = ["reading", "listening"] as const;

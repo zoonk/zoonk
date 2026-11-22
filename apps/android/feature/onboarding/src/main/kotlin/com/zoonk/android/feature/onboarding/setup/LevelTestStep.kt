@@ -47,6 +47,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
@@ -76,9 +77,11 @@ import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
 import com.zoonk.api.models.LanguageLevelTestResult
+import com.zoonk.api.models.LanguageLevelTestResultResult
 import com.zoonk.api.models.TrueFalseLabels
 import java.util.UUID
 import androidx.compose.ui.text.intl.LocaleList as TextLocales
@@ -177,14 +180,51 @@ internal fun ColumnScope.LevelTestSteps(
         }
 
         LevelTestPhase.Done -> {
-            val result = vm.result
-            if (result != null) {
-                plan.finished(this, result)
-            } else {
-                PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = vm::finish)
+            val result = vm.result ?: test.value?.takeIf { plan.onboarding }?.savedResult(plan.attemptId)
+            LaunchedEffect(Unit) {
+                if (plan.onboarding && result == null && !vm.finishFailed) vm.finish()
+            }
+            when {
+                result != null -> {
+                    plan.finished(this, result)
+                }
+
+                plan.onboarding && !vm.finishFailed -> {
+                    StepLoading()
+                }
+
+                else -> {
+                    PlacementDone(
+                        pending = vm.isSaving,
+                        failed = vm.finishFailed,
+                        action =
+                            stringResource(
+                                if (plan.onboarding) R.string.onboarding_continue else R.string.onboarding_placement_see_plan,
+                            ),
+                        onContinue = vm::finish,
+                    )
+                }
             }
         }
     }
+}
+
+private fun LanguageLevelTest.savedResult(attemptId: UUID): LanguageLevelTestResult? {
+    val test = (this as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value ?: return null
+    val saved = test.result?.takeIf { it.attemptId == attemptId } ?: return null
+    return LanguageLevelTestResult(
+        levels = test.levels,
+        result =
+            LanguageLevelTestResultResult(
+                attemptId = saved.attemptId,
+                changeId = saved.changeId,
+                finishedAt = saved.finishedAt,
+                lessonsSkipped = saved.lessonsSkipped,
+                levelsSkipped = saved.levelsSkipped.map { LanguageLevelTestResultResult.LevelsSkipped.valueOf(it.name) },
+                ranges = saved.ranges,
+                wholeCourseReady = saved.wholeCourseReady,
+            ),
+    )
 }
 
 @Composable

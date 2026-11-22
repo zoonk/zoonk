@@ -70,12 +70,16 @@ import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.jsonObject
 import okhttp3.OkHttpClient
+import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -191,23 +195,43 @@ class OnboardingScreenshots {
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun levelTestResultDark() = captureLevelTestResult("phone-dark", dark = true)
 
-    /** Onboarding's Quick test, from its Start to the end of its questions: its ranges and what it skipped. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun levelTestResultTablet() = captureLevelTestResult("tablet", saved = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun levelTestResultTabletDark() = captureLevelTestResult("tablet-dark", dark = true, saved = true)
+
     private fun captureLevelTestResult(
         name: String,
         dark: Boolean = false,
+        saved: Boolean = false,
     ) {
+        val result = ApiJson.parseToJsonElement(LEVEL_RESULT).jsonObject.getValue("result")
         val api =
             FakeOnboardingApi().apply {
-                levelTest = levelTestOf(next = DONE_NEXT, answered = 10, total = 10)
-                startedLevelTest = { levelTestOf(next = DONE_NEXT, answered = 10, total = 10, attemptId = ATTEMPT) }
+                val completed = levelTestOf(next = DONE_NEXT, answered = 10, total = 10, attemptId = ATTEMPT)
+                val ready = (completed as LanguageLevelTest.LanguageLevelTestOneOf1Value).value
+                levelTest =
+                    if (saved) {
+                        LanguageLevelTest.LanguageLevelTestOneOf1Value(
+                            ready.copy(result = ApiJson.decodeFromJsonElement(LanguageLevelTestOneOfResult.serializer(), result)),
+                        )
+                    } else {
+                        completed
+                    }
                 levelTestResult = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), LEVEL_RESULT)
             }
-        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { LevelTest(api) } } }
-        compose.onNodeWithText("Start").performClick()
-        compose.waitUntil(WAIT_MS) { compose.onAllNodesWithText("See plan").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("See plan").performClick()
-        compose.waitUntil(WAIT_MS) { compose.onAllNodesWithText("Your Italian level").fetchSemanticsNodes().isNotEmpty() }
+        val levelDetails = if (saved) ""","level":"B1+","levelTest":{"lastResult":$result}""" else ""
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { LevelTest(api, levelDetails = levelDetails) } } }
+        compose.waitUntil(WAIT_MS) {
+            compose.onAllNodesWithText("Your Italian level").fetchSemanticsNodes().isNotEmpty() ||
+                compose.onAllNodesWithText("See plan").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithText("Your Italian level").assertExists()
+        assertEquals(if (saved) 0 else 1, api.finishedLevelTests)
+        if (saved) compose.onNodeWithText("Reading B1–B2 · Listening A2–B1", substring = true).assertExists()
         write("level-test-result-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
@@ -574,6 +598,7 @@ class OnboardingScreenshots {
             api: FakeOnboardingApi,
             targetLanguage: String = "it",
             native: String = "en",
+            levelDetails: String = "",
         ) {
             val context = LocalContext.current
             val resources = LocalResources.current
@@ -585,7 +610,7 @@ class OnboardingScreenshots {
                         setupView(
                             listOf("placement", "plan"),
                             kind = "language",
-                            details = """{"answered":["level","schedule"],"nativeLanguage":"$native"}""",
+                            details = """{"answered":["level","schedule"],"nativeLanguage":"$native"$levelDetails}""",
                             targetLanguage = targetLanguage,
                         )
                     }

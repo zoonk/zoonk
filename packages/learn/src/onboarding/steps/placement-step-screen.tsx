@@ -103,6 +103,7 @@ function CoursePlacementStep({ actions, onDone, onFinishFailed, run, subject, vi
         actions={level}
         onDone={() => onDone()}
         onboarding={{
+          goal,
           language: getNativeLanguage(view),
           skip: async () => {
             await levelTest.finish();
