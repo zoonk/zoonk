@@ -178,6 +178,9 @@ private struct GoalStartFlow: View {
               attach: {
                 GoalMaterialButton(material: $material, draft: $materialDraft)
               },
+              attached: {
+                GoalMaterialChips(material: $material)
+              },
               attachment: {
                 GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
               })

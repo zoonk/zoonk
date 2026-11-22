@@ -41,6 +41,11 @@ struct GoalStartEntry: View {
             GoalMaterialButton(material: $goal.material, draft: materialDraft)
           }
         },
+        attached: {
+          if part != .box {
+            GoalMaterialChips(material: $goal.material)
+          }
+        },
         attachment: {
           if part != .box, let materialDraft {
             GoalMaterialSections(
@@ -143,7 +148,7 @@ enum GoalEntrySubmission {
   }
 }
 
-struct GoalEntrySections<Attach: View, Attachment: View>: View {
+struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
   @Binding var words: String
   var isSection = false
   var showsExamples = true
@@ -154,7 +159,9 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   let onSubmit: (String) -> Void
   /// Main's paperclip, at the box's leading edge across from "Build my plan".
   @ViewBuilder var attach: () -> Attach
-  /// What the paperclip added, after the box.
+  /// What the paperclip added, under the box in its section, so they sit as close as main's.
+  @ViewBuilder var attached: () -> Attached
+  /// What goes with the added material, after the box's section.
   @ViewBuilder var attachment: () -> Attachment
 
   @FocusState private var isFocused: Bool
@@ -216,6 +223,8 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
       .keepsOffFold()
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
+
+      attached()
     } header: {
       if isSection {
         SectionTitle(
