@@ -71,7 +71,7 @@
   "goalcontent_subject_count": "b7068b733119eb7baef29e60be0c6798f2553c701890abcba6f15779071bdabd",
   "goalcontent_subject_missing": "c754733055be579e21727d3318ae8009e93fb91bf3f94f907f0aab623b239896",
   "goalcontent_subject_skipped": "3c7f82504b7a6fe2ffc2b4fa1d2285da7e716d39cf7c0a6b7d47cb5f1f2def9d",
-  "goalcontent_subject_time": "354b48f2ae3df3205ece365cb29a70882887f906b56feb2998985396ebeb3ec7",
+  "goalcontent_subject_time": "5b863a0778aa8f88d26408b581c99d4a75a59b9f3698ee918c1487be7ab211e1",
   "goalcontent_subjects": "9387e6e35a57bfde615cbb5e2d1e4f0f4e23ebb44348c999310e93ad6d354931",
   "goalcontent_to_review": "66842a155cc165e17c7eb6d6df4e5c25dad4963fdbcc1adee36c34d6c4a6206b",
   "goalcontent_topic_count": "daee3b00ec2a2388f8f43af26f9b810e9e6fbf0b79183a59ec18ca96b884d6a3",
@@ -215,7 +215,8 @@
         <item quantity="other">%d leçons passées</item>
     </plurals>
     <string name="goalcontent_subject_skipped">Tu as retiré ce sujet de ton plan.</string>
-    <string name="goalcontent_subject_time">Cette matière n’est pas dans ton plan : pas assez de temps.</string>
+    <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
+    <string name="goalcontent_subject_time">Cette matière n’est pas dans ton plan. Les autres passent d’abord.</string>
     <string name="goalcontent_subject_missing">Cette matière n’est pas encore dans ton plan.</string>
     <string name="goalcontent_adjust_plan">Ajuster le plan</string>
     <string name="goalcontent_add_back">La rajouter</string>

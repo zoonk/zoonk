@@ -4,6 +4,7 @@
   "today_add_to_today": "cf9aaa52af17e96e19f1414baa8c5ab873b63f8c4e4c79ea030790ac6ba6a6de",
   "today_adjust_your_plan": "8a6b992de436036fc19ec91a785f56af5137b64a428372b8de48f2e29dd7a070",
   "today_already_know_chapter": "089829427d3604f0b73e4161674f5440b2be2629f30c37dab6aa3bfb5bed6e20",
+  "today_behind_fit_days_left": "ed8c4a8d906e15a6c1af952758389693c9b4bfe7c9f0fd0caac40b40f641db18",
   "today_behind_kept": "9d49be3330e01372b1b4758ac6c489a379da6e58601159107043a34520958f93",
   "today_building_plan_detail": "6e6b5dd647843e95ddcaf5c2f3727266eb5d3bbf3d2d8a52e3cb26ae820a08c5",
   "today_building_plan_goal": "2d40df567720f45a951a4b06e1292cfc3190ee3cc05ad2c9f7a19a5e212a728f",
@@ -25,6 +26,7 @@
   "today_exam_speaking": "2ca91b3e54745f3a937bdf0a39a3f497443480278d87a2937a88deda7e4880a6",
   "today_exam_speaking_detail": "cc8c483157a40a87f5eabf4b1af4882622947f3360fd7b484cb084f3d07cc630",
   "today_finished_goal": "e6f730d2cb179059c05a34be8d856a7c0e0ffcc18606be18dffaec4724efa385",
+  "today_fit_time_left": "81e338c4d0ad4095f2bc412242ec803a36a26764dd262ecf12152d62967ffd14",
   "today_get_lessons": "00e44abf3860f90de2b44777bb56997cf57ee1219a5d7ef9f4dd5ab47cac1b6c",
   "today_insight_add_it": "fc853e962d49a193f58c0d074435eef0cf1bfc85d9b04441725f44da68d46944",
   "today_insight_got_it": "90d705281063652f16ab6225bf7868a29244e18fedb33c4f0dd91cbc99bd816f",
@@ -155,6 +157,8 @@
 <resources>
     <string name="today_title">Bugün</string>
     <string name="today_welcome_back_line">Tekrar hoş geldin. Bugünkü çalışma kısa, bu yüzden yeniden başlamak kolay.</string>
+    <!-- Under Today's heading when the plan has more lessons than days left; "Adjust your plan" follows it as a link. -->
+    <string name="today_fit_time_left">Planını kalan zamana göre ayarlayalım.</string>
     <string name="today_adjust_your_plan">Planını ayarla</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s için %2$d gün kaldı</item>
@@ -309,6 +313,8 @@
     <string name="today_plan_keep_mine">Kendi planımı koru</string>
     <string name="today_next_suggestion">Sonraki öneriye geç</string>
     <string name="today_notice_falling_behind">Plan değişikliği</string>
+    <!-- A plan change after missed days, when some lessons would no longer happen before the goal's date; the card's choices follow. -->
+    <string name="today_behind_fit_days_left">Planını kalan günlere göre ayarlayalım.</string>
     <string name="today_more_time_a_day">Süre ekle</string>
     <string name="today_choose_focus">Neye odaklanacağını seç</string>
     <string name="today_study_everything">Bitiş tarihini kaldır</string>

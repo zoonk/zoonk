@@ -4,6 +4,7 @@
   "today_add_to_today": "9534c74430271e6a9ebb9344ff3ffddc510c1a61d80e4f3b1a0f691443dfef3f",
   "today_adjust_your_plan": "8e3a5c0dfd3221cac8857c4c5b4bbf695818a2231cc6ad69cdcb48fd248e491d",
   "today_already_know_chapter": "37acd26458816f28210df3f3c804a2d17446a44968896e34e29fbc34b1db0abb",
+  "today_behind_fit_days_left": "6896dc2580dbba0eeb93439e72a548db6d09025244260c9d694515ff8a73a610",
   "today_behind_kept": "a9fcd3ea3974406c39559e4814bc3307f64d6fc1eda6300002929b89f1d346a3",
   "today_building_plan_detail": "ffad46f8ff6ba7fd77a4b1c3f243eaded2a992f6465acfd3e23150364db9040d",
   "today_building_plan_goal": "fe5bae3ef0de0849a08cf89c683c2eda6a63645dd66587702b79786d4f7828c8",
@@ -25,6 +26,7 @@
   "today_exam_speaking": "94e3d09125aed30b75a553f6c907d6d653d4471efed7ff2b584f566f569a2778",
   "today_exam_speaking_detail": "79a11efe07541868d93489fddaf96b48ba55a86526d91c74f036b3fc306eae3e",
   "today_finished_goal": "08dc5d52ba7f1b4258cec9d2b09c99380b0104d1c4ecc10aedb926f66b135635",
+  "today_fit_time_left": "3caeca2db28e52aace7c83d39cc5afa86b70569d028cde72a6638357871bff66",
   "today_get_lessons": "e867f93c1bb7bd6376a91879bbc994b470d7de375822579f3ffd9337adb266a4",
   "today_insight_add_it": "6be05d85be8c03bb2b446390bfb6aeecb33baf57742c2d2617fe3fe3282981db",
   "today_insight_got_it": "f8bf593c11969c3510797129939c0351e1f5ca82177afde2466923b5c4989d0a",
@@ -155,6 +157,8 @@
 <resources>
     <string name="today_title">Dziś</string>
     <string name="today_welcome_back_line">Witaj ponownie. Dziś nauka potrwa krótko, więc łatwo będzie do niej wrócić.</string>
+    <!-- Under Today's heading when the plan has more lessons than days left; "Adjust your plan" follows it as a link. -->
+    <string name="today_fit_time_left">Dostosujmy plan do pozostałego czasu.</string>
     <string name="today_adjust_your_plan">Dostosuj plan</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s za %2$d dzień</item>
@@ -325,6 +329,8 @@
     <string name="today_plan_keep_mine">Zachowaj mój plan</string>
     <string name="today_next_suggestion">Pokaż kolejną propozycję</string>
     <string name="today_notice_falling_behind">Zmiana planu</string>
+    <!-- A plan change after missed days, when some lessons would no longer happen before the goal's date; the card's choices follow. -->
+    <string name="today_behind_fit_days_left">Dostosujmy plan do liczby pozostałych dni.</string>
     <string name="today_more_time_a_day">Zwiększ czas nauki</string>
     <string name="today_choose_focus">Wybierz, na czym się skupić</string>
     <string name="today_study_everything">Usuń datę zakończenia</string>

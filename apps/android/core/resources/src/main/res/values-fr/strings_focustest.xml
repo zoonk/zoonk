@@ -20,7 +20,7 @@
   "focustest_how_sessions_title": "2b2897f486bbebcd64392a4dafa3e5ff7db5963ca076b3c1b493cbd782720bdf",
   "focustest_how_stop": "53f4e25943027008056cdba89c6490e700e2728b4acf8846f7ee9ca89ee2899c",
   "focustest_how_stop_title": "f0564ace54dd0bba9176746c5a2f7b413112588eb5cd52bbccf604b6e46c7a4d",
-  "focustest_how_subjects": "6b760024cda44d2007d5e3832c230f28ef75823608b1b0e6e0e40bd7f5781edc",
+  "focustest_how_subjects": "54096c296af5f09db44b4ce17ba311b22708231f0a2786735cec18b45c351ed4",
   "focustest_how_subjects_title": "f4d7d29eb6a1397ce7ceb2bf6d207588e69803bdeee760ef55c6bd9bd78c0021",
   "focustest_how_weight": "2a0fc76ac6ea7e576f91f12743a8afe32ecef6f69dc357e4ac2c76f180efe83c",
   "focustest_how_weight_title": "c066a0f0c023e80b3fccda3309b8fc12f4ec46f3d0e10f7df18e4e18cb8b1b78",
@@ -60,7 +60,7 @@
   "focustest_stop": "d341e8605ef943d02bf690c585d1d6c55a361742350423e15549f92c5aa89d37",
   "focustest_subject_right": "836d4a7bb768ec5d074fa272c779e1be8a3e28a6f731093eddacdf33c672511d",
   "focustest_subjects": "b2c25ce454efe0fa29d3b0c6c91b6d9a0886078f032da2effa48884d94378744",
-  "focustest_suggestion_body": "2605eeb9c008ec33188dae85261b8936307e6e77d9c924f0a9504e446aae119a",
+  "focustest_suggestion_body": "eb8b8b4b36020b43941e7dae60763cfba72310df7423a4bc04c8647b6164a6e5",
   "focustest_suggestion_dismissed": "0a12e09df9bac437591d29e0c52d4e18c8834a7242ce302a58ccbd439230aa80",
   "focustest_suggestion_line": "626a1142a5092fe31bd1916b4a85f7e3a6a61a1888680c05e9713c2c1d85634a",
   "focustest_take_test": "cc38c6dacaed5e3bf05b6cf70fe9751b272563d2b37bcb44522aa1af7cbe0cd2",
@@ -91,7 +91,7 @@
     <string name="focustest_how_stop_title">Arrête quand tu veux</string>
     <string name="focustest_how_stop">Chaque réponse est enregistrée.</string>
     <string name="focustest_how_subjects_title">Définir des priorités ne supprime aucune matière</string>
-    <string name="focustest_how_subjects">Si tu manques de temps pour tout étudier, ton plan en réserve plus aux matières dont tu as le plus besoin.</string>
+    <string name="focustest_how_subjects">Les matières dont tu as le plus besoin ont plus de temps.</string>
     <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
     <string name="focustest_how_sessions_title">Quelques questions de plus pendant ta première semaine</string>
     <string name="focustest_how_sessions">Tes séances te proposent quelques autres questions du test. Tu peux les mettre en pause.</string>
@@ -170,8 +170,8 @@
     <string name="focustest_take_test">Passer le Test de priorités</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Le Test de priorités t’indique quoi étudier en priorité.</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">Tu n’as pas le temps de tout étudier avant ton examen. En %1$s environ, le Test de priorités t’indique quoi étudier en priorité.</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">Un test de %1$s montre ce que tu sais déjà, pour consacrer plus de temps à ce dont tu as le plus besoin. Il ne supprime jamais de matière.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">C’est noté. Tu peux faire le test depuis ton plan.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->

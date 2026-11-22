@@ -272,6 +272,7 @@
   "plan_finish_around": "f1ff9c434b02fc41c939055c1f39a87147d2e5c2450803423fc83368c1c970da",
   "plan_finish_working": "2aea2791b22b43249568ecf02de45ddb7b8e487998bae2fb86b35f6a536328f4",
   "plan_finished_title": "b8b302b08b796c27cba3f6a468d3a1443c3c860423e6383cccb7552521b148e6",
+  "plan_fit_time_left": "19bb6b9493b847595ac0a081273782413f8550e6ddabb546cbab5b0583de1fae",
   "plan_focus_already_in": "1a792b824003db1268c5dd95d8e6645af2d7eb3521ccef9635819db2efc302a6",
   "plan_focus_cant_move": "7c1167876834b70fc7c43b3226c4368d95b43ba023804b26c05958143090636f",
   "plan_focus_includes": "6aa8972ef920ccbf73e7aab2940bef14f949f9d8899c5a09b41cb24082a0ada2",
@@ -339,9 +340,11 @@
   "plan_pace_days_ahead": "8f69f64c0871613c1448b78d9fa148b985ea8a75404d9010cbbc674662e497c0",
   "plan_pace_days_behind": "67420d509e79a8e317dfc554705638237ce76517af7fc27f31f0b1b2dc120f54",
   "plan_pace_finished": "6ed3b4c400f671b13878f8813871df49e0ba1f46df24d6884baed12cf85abcd2",
+  "plan_pace_fit_time_left": "dd975fb625a9c6b91beb1e81ea47a24cec77218212ea2f5a24b0ba1f188969dc",
   "plan_pace_lessons_behind": "9835bca789311501e56e0702aa52391edc672ad22dcfb494f70b42736161a988",
   "plan_pace_lessons_first_today": "6864f0ec6f6a57ddcb2626754b6f49768d25e27330d556fbc8de95021b965bf6",
   "plan_pace_more_minutes_a_day": "6a096bd6b76beaec4d67a05ad8d663258436b94663f511b87fa9145522e4e4cc",
+  "plan_pace_needs_adjusting": "29eb354746e7512220f57a756f412e4e1557a706dc5bd67f3652972ebce8754a",
   "plan_pace_up_to_date": "4e88615f2be38f7500c7a07953f0c127a5104fbbfed14b43ed0eb4e960259ba7",
   "plan_pace_value_paused": "bee8e865993ba9216955c38d002a4aa30bfa319a9720164ba603cbf8e08a5d6e",
   "plan_pace_win_challenge": "e16c90a37ddd34fb69a4a4c9f9a37b68fbd930c787433368adc9b2cf1de08d3c",
@@ -407,6 +410,8 @@
   "plan_skipped": "fe316707a8b15656b19010f645712b759c973e945514545987131b2e3bfbd23e",
   "plan_skipped_known": "bdf451625b160b4e5318c35346248570a5f6d288c3094669d7b05c974dc44818",
   "plan_sources": "aac1e74ae9bdccaf156d8a2908f47a762545cf7b7cd836defb2d2ec2f2cc5eb4",
+  "plan_starts_with_most_exam": "704e9de0b8950a5c73d3c4db5f6f507d231f60ee94c08fb0b61892a11552df72",
+  "plan_starts_with_most_goal": "bd90822f36020f647ae809c522acd9888c577a0de3fb4cadba427047b5a38fa8",
   "plan_stays_as_it_is": "732371f9627cfacd889cbb88810c9e700910f2796f7fc0188983edf6413203f5",
   "plan_still_first_challenge": "b333032b1e820f1a5b23206bcfe8c100c10d7fe3a828c0a6d00a8d2552952844",
   "plan_still_first_mock": "206432c56a767b8a125257ec4ac0dab2be42702176f817a9ce5303a5f6f6aaec",
@@ -429,6 +434,10 @@
   "plan_time_a_day": "72a2a6d39eecfe2750f941b9c72b73450b0cce7c10fb804b7d7f46e15c9af078",
   "plan_time_covers_everything_by": "4a77feb0d927745651f8d118ce7a7a11f3b0e86f58dad4a7481e689057cfe528",
   "plan_time_covers_everything_by_month": "65b099345fffbe648801d28a1b3e6310e19d6a3f68df7ffe5bff966c001bc693",
+  "plan_time_enough_exam": "dc9d2e5854abd1367fc8196c9ac50c7f1063880835b31b139c092c58ebe5fb91",
+  "plan_time_enough_exam_month": "baf537aba019f38f6589bb322b1b78bb59dc260070cf594db78253d9ee3a62d4",
+  "plan_time_enough_goal": "9092e9c1afa48c9d325960c019905ee3183e46cf954ff27dd8cf11aa30bd7871",
+  "plan_time_enough_goal_month": "20f6256fd51ac361a46b80556d0a3d01437b92b600e366d9f9521d3fbb9a30cf",
   "plan_time_find_failed": "4ed66b145ba041015bff41615446919c9129ddab40cfdb4b55b1082fa2a017d2",
   "plan_time_finish_failed": "b03b670e77706934260626525dc50342b880785bc263dffa5c44becf4182442f",
   "plan_time_finish_unknown": "016abab300ec672a6b76ea05c4a0452a749f1483ab9524754b134102af40523c",
@@ -437,6 +446,12 @@
   "plan_time_past_date_month": "3f26500d75fb68243a5565fe2baeaccc347634765f4a8048e7573368668bb3ed",
   "plan_time_split_many": "0482aff7a7debf35c7b887e0166097f287d4b4b0983f1e709270addb7f3cf80c",
   "plan_time_split_one": "c11b84586064bec5f9638faf6ec9b767a304e1d5bce9ddaeaaaca3f37d14defa",
+  "plan_time_suggest_exam": "36d2c099a74ccaddd9b646f3da7d4fe22b46b7da2fbd4033c42fd55a74c575b3",
+  "plan_time_suggest_exam_month": "08dd4421adc15c3df416e7a475ce6033980dbd7ff9859460b85d411611f13ea0",
+  "plan_time_suggest_focus_exam": "27f8b1e42cf2cad82afaadb32fe53325bf8382ea030ad6f5ee718d3c1659abe5",
+  "plan_time_suggest_focus_goal": "b509d4c4fb01c5713883fa05a61a2931ec22b0865b5aca0aae3638082cb22bc2",
+  "plan_time_suggest_goal": "17faef064347e2df379804d40d9d1c460f6e680bb064c1b327048d96dbaf014e",
+  "plan_time_suggest_goal_month": "77cdb94095e427d9ea955662be683ce0e26a7c14b073228b72cbeb9d6fae75b8",
   "plan_time_suggest_title": "800f51b5024bc080bbdc46d627b8a71f649833fa080a3a80da283199d5a21a70",
   "plan_time_weekends": "b6cafa7809212c1cddc29fb3691e4357f3231bcd6d26799f53d5befccfec6075",
   "plan_time_working": "092d9999981e6b0f366d44a2bee1d2f8a6a946f5f7f10e70665d0acdd43fac4a",
@@ -480,6 +495,7 @@
   "plan_up_next_suffix": "c9ff1b7dac18408c2d193e2e29a3909678bec54dd3bae854d6367c6313b28736",
   "plan_updated": "f2d2a8f78e3dec4a48437e31ae7470fc6a87d4379fdd25519d98d054f1294282",
   "plan_updated_sentence": "8a7d4b8a09f09750a56dfe36fc216a3360908f3aa1331c6aa66c934d5dbda158",
+  "plan_use_suggested_time": "932eabdcc1d206044b8381b1796ebbe0f6e307500aaf1c5a6f8bd0b4373290ee",
   "plan_use_this_date": "f93eb533b4e60161ec1065d7921d0473012591130b89189f8115a6df9c7cf0ce",
   "plan_wednesdays": "1ed89107720510cad1f16711c7271eb8b083824c6ce3d6a01cc53a730ae7213b",
   "plan_week_day": "23a45fa721a9dadae32cb60baecf274ae6e6ff0e24a9e55c1829f65746964023",
@@ -731,6 +747,8 @@
     </plurals>
     <string name="plan_pace_finished">Completado</string>
     <string name="plan_pace_up_to_date">Al día</string>
+    <!-- The plan's status when it has more lessons than days left before its date: the learner can adjust it. -->
+    <string name="plan_pace_needs_adjusting">Necesita ajustes</string>
     <string name="plan_pace_date_passed">Fecha pasada</string>
     <!-- "They" are the lessons from earlier days the learner is behind on. -->
     <string name="plan_pace_lessons_first_today">Aparecen primero en Hoy.</string>
@@ -739,6 +757,8 @@
     <string name="plan_add_time_or_later_date">Estudia más tiempo cada día o elige una fecha posterior.</string>
     <string name="plan_pace_win_challenge">Ya terminaste todas las lecciones. Gana el desafío para completar tu plan.</string>
     <string name="plan_pace_win_challenges">Ya terminaste todas las lecciones. Gana los desafíos para completar tu plan.</string>
+    <!-- When the plan has more lessons than days left before its date. Calm and forward-looking, never "not enough time". -->
+    <string name="plan_pace_fit_time_left">Ajustemos tu plan al tiempo que queda. Estudia más cada día o elige una fecha posterior.</string>
     <plurals name="plan_pace_days">
         <item quantity="one">%d día</item>
         <item quantity="many">%d días</item>
@@ -1089,6 +1109,20 @@
     <string name="plan_cadence_final_weeks_effect">Práctica menos espaciada, concentrada en las últimas semanas antes del examen.</string>
     <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
     <string name="plan_time_suggest_title">Te sugerimos %1$s al día</string>
+    <!-- Under the time a day, for an exam with a date: the time we suggest covers everything by then. %1$s is a daily study time, such as "2 h 30 min"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_suggest_exam">Sugerimos estudiar %1$s al día para que tengas todo listo para tu examen antes de %2$s.</string>
+    <!-- Under the time a day, for an exam with a date: the time we suggest covers everything by then. %1$s is a daily study time, such as "2 h 30 min"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_suggest_exam_month">Sugerimos estudiar %1$s al día para que tengas todo listo para tu examen antes de %2$s.</string>
+    <!-- Under the time a day, for a goal with a date: the time we suggest covers everything by then. %1$s is a daily study time, such as "2 h 30 min"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_suggest_goal">Sugerimos estudiar %1$s al día para alcanzar tu objetivo antes de %2$s.</string>
+    <!-- Under the time a day, for a goal with a date: the time we suggest covers everything by then. %1$s is a daily study time, such as "2 h 30 min"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_suggest_goal_month">Sugerimos estudiar %1$s al día para alcanzar tu objetivo antes de %2$s.</string>
+    <!-- Under the time a day, when covering the whole exam by its date would take more than most people keep up: we suggest at most 4 hours, and the plan puts what the exam needs most first. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest_focus_exam">Sugerimos estudiar %1$s al día. Tu plan empieza por lo más importante para tu examen.</string>
+    <!-- Under the time a day, when covering the whole goal by its date would take more than most people keep up: we suggest at most 4 hours, and the plan puts what the goal needs most first. %1$s is a daily study time, such as "4 h". -->
+    <string name="plan_time_suggest_focus_goal">Sugerimos estudiar %1$s al día. Tu plan empieza por lo más importante para tu objetivo.</string>
+    <!-- A button under the time a day that picks the suggested time. %1$s is a daily study time, such as "45 min". -->
+    <string name="plan_use_suggested_time">Usar %1$s</string>
     <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
     <string name="plan_time_split_one">Dedicas %1$s al día a este objetivo y %2$s a tu otro objetivo.</string>
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
@@ -1148,6 +1182,8 @@
     <string name="plan_suggestion_next">Siguiente</string>
     <string name="plan_suggestion_position">%1$s de %2$s</string>
     <string name="plan_goal_paused">Tu objetivo de %1$s está en pausa</string>
+    <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
+    <string name="plan_fit_time_left">Ajustemos tu plan al tiempo que queda</string>
     <string name="plan_adjust">Ajustar</string>
     <string name="plan_go_to_today">Hoy</string>
     <string name="plan_suggestion">Sugerencia para el plan</string>
@@ -1155,6 +1191,18 @@
     <string name="plan_updated_sentence">Tu plan se actualizó.</string>
     <string name="plan_see_changes">Ver qué cambia</string>
     <string name="plan_study_everything_after_exam">Seguir estudiando después del examen</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole exam by its date. %1$s is a day, such as "May 5", or "~May 5" when the date is estimated. -->
+    <string name="plan_time_enough_exam">Con eso tienes tiempo suficiente para prepararte para tu examen antes de %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole exam by its date. %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_enough_exam_month">Con eso tienes tiempo suficiente para prepararte para tu examen antes de %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole goal by its date. %1$s is a day, such as "May 5", or "~May 5" when the date is estimated. -->
+    <string name="plan_time_enough_goal">Con eso tienes tiempo suficiente para alcanzar tu objetivo antes de %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole goal by its date. %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_enough_goal_month">Con eso tienes tiempo suficiente para alcanzar tu objetivo antes de %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 4 h a day", when covering the whole exam by its date takes longer than the time we suggest: the plan puts what the exam needs most first. -->
+    <string name="plan_starts_with_most_exam">Tu plan empieza por lo más importante para tu examen.</string>
+    <!-- On the plan's time card, under "We suggest 4 h a day", when covering the whole goal by its date takes longer than the time we suggest: the plan puts what the goal needs most first. -->
+    <string name="plan_starts_with_most_goal">Tu plan empieza por lo más importante para tu objetivo.</string>
     <plurals name="plan_more_lessons_fit">
         <item quantity="one">Tienes tiempo para %1$d lección más</item>
         <item quantity="many">Tienes tiempo para %1$d lecciones más</item>

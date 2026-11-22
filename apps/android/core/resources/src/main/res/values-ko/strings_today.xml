@@ -4,6 +4,7 @@
   "today_add_to_today": "2923e7d0503f01b22042bf049b31e494f72880f508f6afba45db6c4712b47179",
   "today_adjust_your_plan": "7388d7896f0ba317f52a4b11d4b9dee426c95c572e1798bb78b044f7bf51ad05",
   "today_already_know_chapter": "cc05bee1a285892704444dbe77e9ed54cd4ee6081600beaed4151745e14b35fe",
+  "today_behind_fit_days_left": "ac826b553758b83be3ae631a9643f751886f61c8bf77e5d9895143f4f071e16b",
   "today_behind_kept": "fc648c82a3489e8ea594bb41571004e5ed14432809b0e49ffadf79d74549dbb0",
   "today_building_plan_detail": "f226fb285b1f3bc736a8b4ca8108f40e1d670249206d8f34cb14ebcf2b3a0bd1",
   "today_building_plan_goal": "c044a03cfae6d4772777b0c19cb83fee4b1911eb2f03f0e9bd3db732f283ec96",
@@ -25,6 +26,7 @@
   "today_exam_speaking": "e6683bb109dbdbf167df9881367616dd6b96d19736f38e67c1a6ddd76e966627",
   "today_exam_speaking_detail": "87f6613f817687107c2bf2dfc4c3b7891fe67099a5d9f17260b0ffd9cf83e685",
   "today_finished_goal": "928616fa2be16f63ca901b38b08809ed7214ea8ebfdcedede92de05bd4aa62ec",
+  "today_fit_time_left": "a369b11bdcbbfd373853c22a792c9a55f288ddee0728beaf368f69e084591016",
   "today_get_lessons": "2144bbd64c222e5fd77f534fa358287149c43a6b66d91a07410b3fa3b750f6f5",
   "today_insight_add_it": "bc6e1116efc5ca6a685706319ea0a72ccec151008cc306f4b7d62f9e668c7376",
   "today_insight_got_it": "c69bf8fd67f9360d254f49cfe81213b50c97b67f8f4a338b20e7992b47f9ce8a",
@@ -155,6 +157,8 @@
 <resources>
     <string name="today_title">오늘</string>
     <string name="today_welcome_back_line">다시 만나서 반가워요. 오늘은 짧게 공부하면 되니 부담 없이 다시 시작할 수 있어요.</string>
+    <!-- Under Today's heading when the plan has more lessons than days left; "Adjust your plan" follows it as a link. -->
+    <string name="today_fit_time_left">남은 시간에 맞게 계획을 조정해 봐요.</string>
     <string name="today_adjust_your_plan">계획 조정하기</string>
     <plurals name="today_exam_in_days">
         <item quantity="other">%1$s까지 %2$d일</item>
@@ -301,6 +305,8 @@
     <string name="today_plan_keep_mine">내 계획 유지하기</string>
     <string name="today_next_suggestion">다음 제안</string>
     <string name="today_notice_falling_behind">계획 변경</string>
+    <!-- A plan change after missed days, when some lessons would no longer happen before the goal's date; the card's choices follow. -->
+    <string name="today_behind_fit_days_left">남은 날짜에 맞게 계획을 조정해 봐요.</string>
     <string name="today_more_time_a_day">학습 시간 늘리기</string>
     <string name="today_choose_focus">집중할 과목 선택하기</string>
     <string name="today_study_everything">종료일 없애기</string>

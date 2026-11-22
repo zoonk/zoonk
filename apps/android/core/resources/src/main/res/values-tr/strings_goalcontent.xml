@@ -71,7 +71,7 @@
   "goalcontent_subject_count": "240c585c5f049fcb075f02dfe2355fe75d8983215fdd7a8a4c6789c431047103",
   "goalcontent_subject_missing": "d6e9e46409cc37e5c8edb8b49336d3be41be7056b34e4c58268eb449cac77f21",
   "goalcontent_subject_skipped": "6a0a79650c550a312d99f69590ee5205ccc6a32bce19973b0b3a176f0fde841c",
-  "goalcontent_subject_time": "1ec4cc4e1b99f00f33bef8434352bb58de79d11a12eeb75c6f6a2a269e1225c5",
+  "goalcontent_subject_time": "3e3f99757b2bf2ee618c17b6a59291cdaf0d5a1b3d2a92b4d46fc32db2fa8fe1",
   "goalcontent_subjects": "a3fade2e499bdb9dced80de11c7d81bf4136dfa987d1442796dbb9426bfe81b2",
   "goalcontent_to_review": "46685571d62ca93f7c0059bca795672761e089c99d124ef28cfc2a27368d58ed",
   "goalcontent_topic_count": "b6fb659c24ecf82b635f725b954f903c26d5f304d52546da78f34a5bc58b6fe4",
@@ -200,7 +200,8 @@
         <item quantity="other">%d ders atlandı</item>
     </plurals>
     <string name="goalcontent_subject_skipped">Bu branşı planından çıkardın.</string>
-    <string name="goalcontent_subject_time">Bu branş planında yok: yeterli zaman yok.</string>
+    <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
+    <string name="goalcontent_subject_time">Bu konu planında yok. Önce diğer konular geliyor.</string>
     <string name="goalcontent_subject_missing">Bu branş henüz planında yok.</string>
     <string name="goalcontent_adjust_plan">Planı ayarla</string>
     <string name="goalcontent_add_back">Geri ekle</string>

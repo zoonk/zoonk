@@ -71,7 +71,7 @@
   "goalcontent_subject_count": "a455a75aef6cc629b91a950f73e6e8108c0a7d1a62487ad0048cda6284b6f5f0",
   "goalcontent_subject_missing": "80cfe19e58fdd29658320e57fb55b3dbfa034d8af1949b46c8ddac4ed59b8f23",
   "goalcontent_subject_skipped": "dc1073f8b376d167469ee392e992cb76d83063474a8c4af1329485012b7b0fa8",
-  "goalcontent_subject_time": "e1f82987d119d629c9057bc5ab96cadd5932a86fc6ce46e2bf6d56fe36c96e1e",
+  "goalcontent_subject_time": "e826ea8737b44a6ec459edc5bd79fedfa39e4e58ada87fa3c65699204ce27b76",
   "goalcontent_subjects": "f944b6ee2f18f877097bc0fa4fe9924e2cdae00ac1b43aa3bc829e857c8c2dc9",
   "goalcontent_to_review": "c04480e32791a0d0165eec9f7e52aa4776ab599d68135bfe313cf70a70895d4c",
   "goalcontent_topic_count": "c9a4e00051563881849f2779505b8c94fd779e8770c7db1cf2d062cbf107058b",
@@ -185,7 +185,8 @@
         <item quantity="other">%dレッスンをスキップ</item>
     </plurals>
     <string name="goalcontent_subject_skipped">この科目を学習計画から外しました。</string>
-    <string name="goalcontent_subject_time">時間が足りないため、この科目は学習計画に入っていません。</string>
+    <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
+    <string name="goalcontent_subject_time">この科目は学習計画に含まれていません。他の科目が優先されています。</string>
     <string name="goalcontent_subject_missing">この科目はまだ学習計画に入っていません。</string>
     <string name="goalcontent_adjust_plan">学習計画を調整する</string>
     <string name="goalcontent_add_back">学習計画に戻す</string>

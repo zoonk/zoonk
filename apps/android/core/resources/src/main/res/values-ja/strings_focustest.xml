@@ -20,7 +20,7 @@
   "focustest_how_sessions_title": "6a6cdc33ec37645c6cdf4dbb1ed23203f47daed0253e7cac8fbc25b57c971b60",
   "focustest_how_stop": "6c112f313e3c8040064ebbbb354c37fea96fe8ff8175b2490d9cd5fc5286962e",
   "focustest_how_stop_title": "413b98718f4afff25b6357345f23692f10fdd702d6cfe8163d04b474cd62b51a",
-  "focustest_how_subjects": "e471486963235083d313f9a7ee172a9f699db484801859f55746351061826f71",
+  "focustest_how_subjects": "5187c9a49d886ac2d295cdbabb9af58352ebf6b11938ada0ade850def3c54341",
   "focustest_how_subjects_title": "0c4378c700ce5927591613b9384c2a6f23df7cc011591b922baa29e9c0d91a88",
   "focustest_how_weight": "8228b1beb3d22cc647f64829012a9c50ed1e332206cdce4165c573b68415293a",
   "focustest_how_weight_title": "c7dd2b6f9bdd304c008f8c2fc8f4885470486578295eda0b845b21456a3703f5",
@@ -60,7 +60,7 @@
   "focustest_stop": "9d52a90f3845052736b5a9689e19ba88d07b4cb9df0d1835f7144bb9791fb203",
   "focustest_subject_right": "193baa5d3f097549be5f3f107c220d80beb34e17a8d92baad990d9b2dad5a198",
   "focustest_subjects": "619e5d1ec9e793e72f4ffaac23063ae386c68418cbd96d02420740ff8b44145e",
-  "focustest_suggestion_body": "7cac238be2c633ff8fb2ff7c786f036992eafa16357f606b625ca1ae38eddcde",
+  "focustest_suggestion_body": "155d5eb222c628b1ebcdff4679a7af2da701d599cc7b703c0d97967303996592",
   "focustest_suggestion_dismissed": "96a78b6c56613c2893aed99666ff7e4a75f720c94462568781cea867cdcfda96",
   "focustest_suggestion_line": "2587e1497523100687c1e95f8b274a069b2046701ba0927398532f1ba27adf1a",
   "focustest_take_test": "7482ed96225451fcb20235826af639281e5795364d3fbdb143050bce65e1067b",
@@ -91,7 +91,7 @@
     <string name="focustest_how_stop_title">いつでも中断できます</string>
     <string name="focustest_how_stop">回答は1問ごとに保存されます。</string>
     <string name="focustest_how_subjects_title">重点を置いても、それを理由に科目を学習計画から外すことはありません</string>
-    <string name="focustest_how_subjects">試験までにすべてを学ぶ時間が足りないときは、特に学習が必要な科目に多くの時間を使います。</string>
+    <string name="focustest_how_subjects">最も必要な科目に、より多くの時間を使います。</string>
     <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
     <string name="focustest_how_sessions_title">最初の1週間は追加で数問</string>
     <string name="focustest_how_sessions">学習中にも、重点診断の問題が追加で数問出ます。出題は一時停止できます。</string>
@@ -162,8 +162,8 @@
     <string name="focustest_take_test">重点診断を受ける</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">重点診断で、重点的に学ぶ科目がわかります。</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">試験までにすべてを学ぶには、時間が足りません。約%1$sの重点診断で、重点的に学ぶ科目がわかります。</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">%1$sの重点診断テストで、すでに知っていることがわかるため、必要な内容により多くの時間を使えます。科目が削除されることはありません。</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">わかりました。テストは学習計画から受けられます。</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->

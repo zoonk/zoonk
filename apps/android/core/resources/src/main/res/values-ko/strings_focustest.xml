@@ -20,7 +20,7 @@
   "focustest_how_sessions_title": "26f1ca26ce7fed6f0ce0f325da9bead11357be02ae4d33202609c87650a2c412",
   "focustest_how_stop": "1085fc5e59669e8df239a3f7af2542433359231fbee75674d68df8fe1ee32b21",
   "focustest_how_stop_title": "2d35de3d29415a31fbb61a4b61133973162bf4fd5670a9edcfacf4971bce2250",
-  "focustest_how_subjects": "c7b5791468b9177542ebaf2dc185ea997b7913b61ee5ca101f0bbd9ddb193af5",
+  "focustest_how_subjects": "7400bae406f26b4c63ca6b763d4578fd9c8c8a910f3a637a22c989523a2764fc",
   "focustest_how_subjects_title": "e6b848299d89caa0e65b48f244fd34ef3950ceb355ad7be0722ae6f2fb9df140",
   "focustest_how_weight": "d8e1fe475ff31d48077c50c3bdbc8dd586f1902b849af5d8aa6c09051c86cc64",
   "focustest_how_weight_title": "f90f466e422cef4c5ee17cb9e9f56a08b85ab3f57a39eebead373cfe83db81c0",
@@ -60,7 +60,7 @@
   "focustest_stop": "6d6f087ae7a44e3df57e22cbd81e797a43399f486bb273aa17e5ca9f61511f86",
   "focustest_subject_right": "4bf88e4eb4cddb00b92491876576ad456ef3aca2c4ea7416e4f933b789bc85a2",
   "focustest_subjects": "070e03166d4f13df9930e82793b5616a350832412240de0b2d5f0332a008c9f2",
-  "focustest_suggestion_body": "fd0c568be7930090aaf4106294ca1961d9148cf3ce138484c5edb865a0603f92",
+  "focustest_suggestion_body": "2b67c4358554aba1c0fa66d4424d2c146d8c0fc787dba8b0b6e0ec84ff9f53e4",
   "focustest_suggestion_dismissed": "63beaeab7e497fefd7e68e3399dfcf6d565d0ff09ad0704594cad515bb60c1a4",
   "focustest_suggestion_line": "262380fcfe4ff72c6df2e980f96c122a294b7fe71b5455e3588a07ab282ec332",
   "focustest_take_test": "c43ec0cd1bdfe9c74b5b3e7e6c1c0dd205296d4b1c700bccedd2ae9d5a793ea3",
@@ -91,7 +91,7 @@
     <string name="focustest_how_stop_title">언제든 멈출 수 있어요</string>
     <string name="focustest_how_stop">답할 때마다 바로 저장돼요.</string>
     <string name="focustest_how_subjects_title">집중을 이유로 과목을 제외하지 않아요</string>
-    <string name="focustest_how_subjects">시험 전까지 모든 내용을 공부할 시간이 부족하면 가장 필요한 과목에 시간을 더 써요.</string>
+    <string name="focustest_how_subjects">가장 필요한 과목에 더 많은 시간을 배정해요.</string>
     <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
     <string name="focustest_how_sessions_title">첫 주에는 몇 문제 더 풀어요</string>
     <string name="focustest_how_sessions">학습 중에 이런 문제가 몇 개 더 나와요. 원하면 잠시 나오지 않게 할 수 있어요.</string>
@@ -162,8 +162,8 @@
     <string name="focustest_take_test">집중 진단 받기</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요.</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">시험 전까지 모든 내용을 공부할 시간이 부족해요. 집중 진단으로 약 %1$s 만에 공부가 가장 필요한 과목을 알 수 있어요.</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">%1$s 동안 집중 진단을 하면 이미 아는 내용을 확인할 수 있어, 가장 필요한 부분에 더 많은 시간을 쓸 수 있어요. 과목이 빠지는 일은 없어요.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">알겠어요. 계획에서 테스트를 볼 수 있어요.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->
