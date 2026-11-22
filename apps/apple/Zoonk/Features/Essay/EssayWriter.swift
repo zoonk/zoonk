@@ -336,7 +336,8 @@ final class EssayWriter {
 
       // A grade whose answer was lost comes back for the text sent then: what's typed since waits
       // for the rewrite, never dropped.
-      if let earlier, earlier != text, !read || latest?.text != text {
+      let recorded = read ? latest?.text : earlier
+      if let recorded, recorded != text {
         editsAfterGrading = text
         KeptWriting.keep(
           .init(admissionId: admissionId, base: revision, text: text, afterGrading: true),
@@ -369,7 +370,7 @@ final class EssayWriter {
     essay.invalidate()
     await essay.refresh()
 
-    guard let drafts = essay.value?.drafts, !drafts.isEmpty else { return false }
+    guard let drafts = essay.freshValue?.drafts, !drafts.isEmpty else { return false }
     answers = drafts
     return true
   }

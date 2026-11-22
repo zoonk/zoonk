@@ -634,6 +634,34 @@ final class WritingDraftTests: XCTestCase {
     XCTAssertNil(writer.editsAfterGrading)
   }
 
+  func testAReplayedGradeAfterReopeningKeepsTheEditsForARewrite() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), losesFirstGrade: true)
+    let first = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    first.write("A")
+    await first.send()
+    XCTAssertEqual(first.status, .failed)
+    first.write("A, improved")
+    await first.flush()
+    XCTAssertEqual(KeptWriting.read(blockId)?.text, "A, improved")
+
+    // The reopened screen starts from the cached draft and the edits kept on this device.
+    let reopened = makeWriter(server, draftRevision: 2, draftText: "A")
+    XCTAssertEqual(reopened.text, "A, improved")
+    await reopened.send()
+
+    let submitted = await server.submitted
+    XCTAssertEqual(submitted.map(\.admissionId), [Self.admission, Self.admission])
+    XCTAssertEqual(submitted.map(\.text), ["A", "A, improved"])
+    XCTAssertEqual(reopened.mode, .result)
+    XCTAssertEqual(reopened.latest?.text, "A")
+    XCTAssertEqual(reopened.editsAfterGrading, "A, improved")
+    XCTAssertEqual(KeptWriting.read(blockId)?.text, "A, improved")
+
+    await reopened.rewrite()
+    XCTAssertEqual(reopened.text, "A, improved")
+  }
+
   func testAnAnswerChangedSinceTheGradedVersionOutlivesTheAppBeingKilled() async {
     let server = WritingServer(draft: .init(revision: 1, text: "Started."), losesFirstGrade: true)
     let first = makeWriter(server, draftRevision: 1, draftText: "Started.")
@@ -818,6 +846,14 @@ private actor WritingServer: ClientTransport {
       saves.append(save)
 
       if holdsSaves { await hold() }
+
+      if graded != nil {
+        return (
+          HTTPResponse(status: .conflict, headerFields: [.contentType: "application/json"]),
+          HTTPBody(
+            #"{"error":{"code":"CONFLICT","message":"This answer has already been submitted"}}"#)
+        )
+      }
 
       if failsSaves > 0 {
         failsSaves -= 1
