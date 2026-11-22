@@ -24,6 +24,7 @@ export type PlacementCompletion = {
   complete: boolean;
   /** An exam goal's test after this finish, with its result; null for other goals. */
   focusTest: FocusTestView | null;
+  heldUntilTomorrow?: true;
   knownSkillIds: string[];
   lessonsSkipped: number;
   partLessonsSkipped?: number;

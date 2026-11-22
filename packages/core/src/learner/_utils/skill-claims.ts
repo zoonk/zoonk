@@ -32,6 +32,10 @@ function canConfirm(answer: OwnAnswer) {
 
 /** Reads first unaided answers in chronological order. */
 export function isSkillConfirmed({ answers }: { answers: readonly SkillEvidence[] }): boolean {
+  return readSkillConfirmation(answers) === "confirmed";
+}
+
+function readSkillConfirmation(answers: readonly SkillEvidence[], today?: Date) {
   const seen = new Set<string>();
 
   const independent = answers.filter((answer) => {
@@ -58,13 +62,21 @@ export function isSkillConfirmed({ answers }: { answers: readonly SkillEvidence[
   const quick = fresh.filter((answer) => isQuickChoice(answer));
   const lowGuess = fresh.filter((answer) => canConfirm(answer));
 
-  return (
-    quick.length > 0 &&
-    lowGuess.length >= LOW_GUESS_ANSWERS_TO_SKIP &&
-    (reset === -1 ||
-      (blockedOn !== undefined &&
-        [...quick, ...lowGuess].some((answer) => answer.localDate && answer.localDate > blockedOn)))
-  );
+  if (quick.length === 0 || lowGuess.length < LOW_GUESS_ANSWERS_TO_SKIP) {
+    return "incomplete";
+  }
+
+  if (
+    reset === -1 ||
+    (blockedOn &&
+      [...quick, ...lowGuess].some((answer) => answer.localDate && answer.localDate > blockedOn))
+  ) {
+    return "confirmed";
+  }
+
+  return blocker && "undoneOn" in blocker && blocker.undoneOn.getTime() === today?.getTime()
+    ? "heldUntilTomorrow"
+    : "incomplete";
 }
 
 type ClaimState = {
@@ -203,12 +215,18 @@ export function listSkippedRechecks({
   );
 }
 
-export function listConfirmedSkills(events: readonly ClaimEvent[]): Set<string> {
-  return new Set(
-    [...readClaimStates(events)].flatMap(([skillId, state]) =>
-      isSkillConfirmed({ answers: state.answers }) ? [skillId] : [],
+export function readSkillConfirmations(events: readonly ClaimEvent[], today?: Date) {
+  const confirmations = [...readClaimStates(events)].map(([skillId, state]) => ({
+    skillId,
+    status: readSkillConfirmation(state.answers, today),
+  }));
+
+  return {
+    confirmed: new Set(
+      confirmations.filter(({ status }) => status === "confirmed").map(({ skillId }) => skillId),
     ),
-  );
+    heldUntilTomorrow: confirmations.some(({ status }) => status === "heldUntilTomorrow"),
+  };
 }
 
 export function listTakenToKnow(events: readonly ClaimEvent[]): Set<string> {

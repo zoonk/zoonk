@@ -247,6 +247,7 @@ export const placementCompletionResponseSchema = z
         description:
           "An exam goal's Focus test after this finish, with its result (`checkpoint`); null for other goals",
       }),
+    heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
     knownSkillIds: z.array(skillIdSchema),
     lessonsSkipped: z.number().int().nonnegative(),
     partLessonsSkipped: z.number().int().nonnegative().optional(),

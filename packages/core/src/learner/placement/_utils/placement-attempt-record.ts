@@ -16,6 +16,7 @@ export type PlacementLength = z.infer<typeof placementLengthSchema>;
 export type PlacementResult = z.infer<typeof placementResultSchema>;
 
 const partReceiptSchema = z.object({
+  heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
   knownSkillIds: z.array(uuidSchema()),
   lessonsSkipped: z.number().int().nonnegative(),
   part: z.number().int().positive(),
