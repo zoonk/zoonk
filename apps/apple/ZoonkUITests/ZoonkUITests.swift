@@ -131,12 +131,16 @@ final class ZoonkUITests: XCTestCase {
   @MainActor
   func testFreeAccountOpensNativeSubscriptionStore() throws {
     continueAfterFailure = false
-    storeKitSession = try makeStoreKitSession()
 
     let app = makeApp(for: .freeSubscription)
     addTeardownBlock {
       app.terminate()
     }
+    // On a simulator that hasn't run the app yet, StoreKit ignores a test session made before the
+    // first launch and reports the products unavailable in the storefront.
+    launch(app)
+    app.terminate()
+    storeKitSession = try makeStoreKitSession()
     launch(app)
     openAccount(in: app)
 
