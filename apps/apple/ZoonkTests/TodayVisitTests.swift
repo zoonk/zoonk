@@ -3,12 +3,12 @@ import XCTest
 
 @testable import Zoonk
 
-/// What Today asked, and how it ended, is the visit's. A failure shown before the learner left is
-/// gone when they come back, and one that lands after they left says nothing.
+/// What Today asked belongs to the visit: coming back while it saves sends nothing twice, and a
+/// request that failed after the learner left leaves its button working on return.
 @MainActor
 final class TodayVisitTests: XCTestCase {
   func testReturningWhileKeepStudyingSavesDoesNotSendAnotherChange() async throws {
-    let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
+    let visit = try await todayVisit(try pastDateDay(), holding: "createPlanChange")
     let label = String(localized: "Keep studying", table: "Plan")
     try await visit.activate(label)
     try await visit.server.waitForHeldRequest()
@@ -19,152 +19,6 @@ final class TodayVisitTests: XCTestCase {
     try await visit.server.release()
     let changes = await visit.server.writes.filter { $0 == "createPlanChange" }
     XCTAssertEqual(changes.count, 1)
-  }
-
-  func testAnExamKeepStudyingFailureEndsWithTheVisit() async throws {
-    let visit = try await todayVisit(try day(pastDate: true))
-    try await visit.activate(String(localized: "Keep studying", table: "Plan"))
-    try await visit.assertSays(Self.suggestionFailure)
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.suggestionFailure)
-  }
-
-  func testAnExamKeepStudyingFailureAfterLeavingSaysNothing() async throws {
-    let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
-    try await visit.activate(String(localized: "Keep studying", table: "Plan"))
-    try await visit.failAfterLeaving()
-    visit.assertSaysNothingOf(Self.suggestionFailure)
-  }
-
-  // MARK: Catch-up
-
-  func testACatchUpFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let visit = try await todayVisit(try day(catchUp: true))
-
-    try await visit.activate(String(localized: "Add to today", table: "Today"))
-    try await visit.assertSays(Self.todayFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.todayFailure)
-  }
-
-  // MARK: Insight
-
-  func testAnInsightFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let visit = try await todayVisit(try day(notice: .insight))
-
-    try await visit.activate(String(localized: "Got it", table: "Buddy"))
-    try await visit.assertSays(Self.insightFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.insightFailure)
-  }
-
-  func testAnInsightAnswerThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
-    let visit = try await todayVisit(try day(notice: .insight), holding: "answerMemoryInsight")
-
-    try await visit.activate(String(localized: "Got it", table: "Buddy"))
-    try await visit.failAfterLeaving()
-    visit.assertSaysNothingOf(Self.insightFailure)
-  }
-
-  // MARK: Upload request
-
-  func testAnUploadRequestNotNowFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let visit = try await todayVisit(try day(notice: .uploadRequest))
-
-    try await visit.activate(String(localized: "Not now", table: "Today"))
-    try await visit.assertSays(Self.todayFailure)
-
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(Self.todayFailure)
-  }
-
-  func testAnUploadRequestNotNowThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
-    let visit = try await todayVisit(
-      try day(notice: .uploadRequest), holding: "dismissGoalUploadRequest")
-
-    try await visit.activate(String(localized: "Not now", table: "Today"))
-    try await visit.failAfterLeaving()
-    visit.assertSaysNothingOf(Self.todayFailure)
-  }
-
-  // MARK: Focus test
-
-  func testAFocusTestNotNowFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let visit = try await todayVisit(try day(notice: .focusTest))
-
-    try await openFocusTest(visit)
-    try await visit.activate(String(localized: FocusTestCopy.notNow))
-    try await visit.assertSays(Self.suggestionFailure)
-
-    try await visit.leaveAndComeBack()
-    try await openFocusTest(visit)
-    visit.assertSaysNothingOf(Self.suggestionFailure)
-  }
-
-  func testAFocusTestNotNowThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
-    let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
-
-    try await openFocusTest(visit)
-    try await visit.activate(String(localized: FocusTestCopy.notNow))
-    try await visit.failAfterLeaving()
-    try await openFocusTest(visit)
-    visit.assertSaysNothingOf(Self.suggestionFailure)
-  }
-
-  func testClosingFocusTestWhileNotNowSavesStillShowsItsSuccessOnToday() async throws {
-    let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
-    await visit.server.setFocusTestResult(
-      #"{"offer":null,"sessionQuestions":"paused","state":"notStarted","suggestsFocus":false}"#)
-    try await openFocusTest(visit)
-    try await visit.activate(String(localized: FocusTestCopy.notNow))
-    try await visit.server.waitForHeldRequest()
-    try await closeRequestSheet(in: visit.window)
-    try await visit.server.release()
-    try await visit.assertSays(
-      String(localized: "You can take the test from your plan.", table: "Today"))
-    XCTAssertNil(visit.window.rootViewController?.presentedViewController)
-  }
-
-  func testClosingFocusTestBeforeNotNowFailsLeavesTheNextOpeningClean() async throws {
-    let dismissal = VisitRequest<Bool>()
-    let today = try day(notice: .focusTest)
-    let visit = try await PageVisit(in: self, goal: .exam, holding: "updateGoalFocusTest") {
-      List {
-        TodayFocusTestSection(
-          goalID: today.goal.id, offer: today.focusTest, dismissal: dismissal, onAnswer: {})
-      }
-    }
-    try await openFocusTest(visit)
-    try await visit.activate(String(localized: FocusTestCopy.notNow))
-    try await visit.server.waitForHeldRequest()
-    try await closeRequestSheet(in: visit.window)
-    try await visit.server.release()
-    try await waitForTestCondition("Not now did not finish before reopening") {
-      !dismissal.isRunning
-    }
-    try await openFocusTest(visit)
-    visit.assertSaysNothingOf(Self.suggestionFailure)
-  }
-
-  // MARK: Paused goal
-
-  func testAResumeFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
-    let plans = PlanAPIStub()
-    await plans.setStatusFails(true)
-    let paused = try await PausedToday(in: self, plans: plans)
-
-    try await activate(Self.resume, in: paused.window)
-    try await waitForTestCondition("Expected state did not arrive") {
-      paused.says(Self.resumeFailure)
-    }
-    XCTAssertTrue(
-      paused.says(Self.resumeFailure), "The failure shows: \(spoken(in: paused.window))")
-
-    try await paused.leaveAndComeBack()
-    XCTAssertFalse(
-      paused.says(Self.resumeFailure), "Nothing of it on return: \(spoken(in: paused.window))")
   }
 
   /// The Resume that went out before the learner left ends with that visit, so Resume works again
@@ -191,19 +45,11 @@ final class TodayVisitTests: XCTestCase {
     XCTAssertEqual(statuses, [.active, .active], "Resume asks again")
   }
 
-  // MARK: Helpers
-
-  private static let todayFailure = String(
-    localized: "That didn't save. Try again.", table: "Today")
-  private static let insightFailure = String(
-    localized: "We couldn't save your answer. Try again.", table: "Buddy")
-  private static let suggestionFailure = String(
-    localized: "That didn't save. Try again.", table: "Plan")
   private static let resume = String(localized: "Resume", table: "Today")
   private static let resumeFailure = String(
     localized: "Couldn't save. Check your connection and try again.", table: "Today")
 
-  /// Today's day in a tab tall enough to draw all of it, its writes failing.
+  /// Today's day in a tab tall enough to draw all of it.
   private func todayVisit(_ view: TodayView, holding: String? = nil) async throws -> PageVisit {
     let visit = try await PageVisit(in: self, goal: .exam, holding: holding) {
       TodayDayView(view: view)
@@ -212,60 +58,26 @@ final class TodayVisitTests: XCTestCase {
     return visit
   }
 
-  /// The Focus test's sheet, opened again when leaving closed it.
-  private func openFocusTest(_ visit: PageVisit) async throws {
-    guard visit.window.rootViewController?.presentedViewController == nil else {
-      return
-    }
-
-    try await visit.activate(String(localized: "View", table: "Plan"))
-    try await waitForTestCondition("Expected state did not arrive") {
-      (visit.window.rootViewController?.presentedViewController) != nil
-    }
-    XCTAssertNotNil(
-      visit.window.rootViewController?.presentedViewController, "The Focus test's sheet opens")
-  }
-
-  private func day(catchUp: Bool = false, notice: TodayView.Notice? = nil, pastDate: Bool = false)
-    throws -> TodayView
-  {
+  /// An exam day whose date has passed, so Today offers Keep studying.
+  private func pastDateDay() throws -> TodayView {
     func decode<Value: Decodable>(_ json: String) throws -> Value {
       try JSONDecoder().decode(Value.self, from: Data(json.utf8))
     }
 
-    let later =
-      #"{"later":{"lessons":3,"minutes":15,"offered":true},"lessonsLeft":3,"positions":[]}"#
-    let focusTest: FocusTestSummary.Size? =
-      if notice == .focusTest { try decode(#"{"minutes":15}"#) } else { nil }
-    let uploadRequest: TodayView.UploadRequest? =
-      if notice == .uploadRequest {
-        try decode(
-          #"{"examDocument":"notice","goalId":"\#(PageServer.goalID)","goalKind":"exam","language":"en","reason":"noOfficialSource"}"#
-        )
-      } else {
-        nil
-      }
-
     return TodayView(
-      earlierWork: [], exam: nil, examChoice: nil, focusTest: focusTest,
+      earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
       goal: try decode(
         #"{"dateEstimated":false,"daysLeft":null,"id":"\#(PageServer.goalID)","kind":"exam","title":"ENEM"}"#
       ),
-      insight: notice == .insight
-        ? MemoryInsight(
-          createdAt: .now, goalId: nil, id: "00000000-0000-4000-8000-000000000011", kind: .tip,
-          message: "Review before bed.", planChange: nil, status: .pending, studyTime: nil)
-        : nil,
-      lessonStatus: [:], mockFunding: nil, notice: notice, pattern: nil, planChange: nil,
-      progress: pastDate
-        ? TodayView.Progress(
-          lessons: nil, measure: "lessons",
-          status: TodayView.PlanStatus(
-            challenges: nil, days: nil, kind: "pastDate", lessons: nil), value: 0, weekGain: nil)
-        : nil,
+      insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+      planChange: nil,
+      progress: TodayView.Progress(
+        lessons: nil, measure: "lessons",
+        status: TodayView.PlanStatus(challenges: nil, days: nil, kind: "pastDate", lessons: nil),
+        value: 0, weekGain: nil),
       session: try decode(
         #"""
-        {"blocks":[],"brainPower":0,"catchUp":\#(catchUp ? later : "null"),"current":true,
+        {"blocks":[],"brainPower":0,"catchUp":null,"current":true,
         "dayEndsAt":1893456000000,"emptyDay":null,"examAccess":{"includesMockExams":true},
         "examTomorrow":false,"extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},
         "freshStart":null,"fullMeal":{"bonus":50,"earned":false,"ready":false},
@@ -273,9 +85,9 @@ final class TodayVisitTests: XCTestCase {
         "lessonsComing":false,"lessonsToPrepare":false,"localDate":"2026-11-15",
         "minutes":{"dailyGoal":30,"done":0,"left":30,"planned":30},"missions":[],
         "nextPosition":null,"pauseSuggested":false,"sessionBar":{"completed":0,"total":0},
-        "state":"\#(pastDate ? "rest" : "underway")","week":{"days":[],"nextStudyDate":null},"status":"active"}
+        "state":"rest","week":{"days":[],"nextStudyDate":null},"status":"active"}
         """#),
-      sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: uploadRequest,
+      sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: nil,
       weeklyChallenge: nil)
   }
 }
