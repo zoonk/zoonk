@@ -13,8 +13,8 @@ import { findFittingDate } from "./fitting-date";
 import { getFittingFloor } from "./fitting-floor";
 import { type MostCoverage, findMostCoverage } from "./most-coverage";
 import { fromIsoDate } from "./plan-calendar";
+import { getSelectedCoverage } from "./plan-coverage";
 import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
-import { getSelectedCoverage } from "./selected-plan-summary";
 
 export type TimeCoverage = { coreFits: boolean; coveredShare: number };
 
@@ -94,11 +94,11 @@ export function getPlanFeasibility({
   studyScheduleAt?: StudyScheduleAt;
 }): PlanFeasibility {
   const known = input.knownSkillIds ?? new Set<string>();
+  const skills = input.graph.skills.filter((skill) => !skill.extra);
   const coverage = getSelectedCoverage({ built: planned, examSubjects, input });
   const deadline = coverage ? fromIsoDate(coverage.deadline) : null;
 
-  const coreFits =
-    coverage?.coreFits ?? hasEveryTopic({ built: planned, known, skills: input.graph.skills });
+  const coreFits = coverage?.coreFits ?? hasEveryTopic({ built: planned, known, skills });
 
   const fits = coverage?.fits ?? coreFits;
   const coveredShare = coverage?.coveredShare ?? 1;
@@ -117,8 +117,7 @@ export function getPlanFeasibility({
 
     return {
       coreFits:
-        selected?.coreFits ??
-        hasEveryTopic({ built: plannedAt()(dailyMinutes), known, skills: input.graph.skills }),
+        selected?.coreFits ?? hasEveryTopic({ built: plannedAt()(dailyMinutes), known, skills }),
       coveredShare: selected?.coveredShare ?? 1,
     };
   };

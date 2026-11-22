@@ -250,6 +250,7 @@ describe("background goal plan marks", () => {
     }
 
     const session = await studySessionFixture({
+      endedAt: new Date(),
       goalId: goal.id,
       localDate: context.today,
       plannedMinutes: 0,

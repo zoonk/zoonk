@@ -34,6 +34,10 @@ describe("lesson feedback", () => {
       .element(page.getByText("The cloud shows chances, not a path.", { exact: false }))
       .toBeVisible();
 
+    const rightPick = page.getByRole("radio", { name: RIGHT_OPTION });
+    await expect.element(rightPick).toHaveAttribute("data-result", "right");
+    expect(rightPick.element().querySelector("[data-slot='answer-option-tag']")).toBeNull();
+
     await expect.element(page.getByText("You chose:")).not.toBeInTheDocument();
     await expect.element(page.getByText("Right answer:")).not.toBeInTheDocument();
 
@@ -42,9 +46,9 @@ describe("lesson feedback", () => {
 
     await expectCount(page.getByRole("radio"), 2);
 
-    await expect
-      .element(page.getByRole("radio", { name: WRONG_OPTION }))
-      .toMatchTextContent(/Your answer/u);
+    const wrongPick = page.getByRole("radio", { name: WRONG_OPTION });
+    await expect.element(wrongPick).toHaveAttribute("data-result", "wrong");
+    expect(wrongPick.element().querySelector("[data-slot='answer-option-tag']")).toBeNull();
 
     await expect
       .element(page.getByRole("radio", { name: RIGHT_OPTION }))
@@ -207,7 +211,7 @@ describe("lesson feedback", () => {
     await expect.element(previous).toHaveAttribute("aria-disabled", "true");
 
     const wrong = page.getByRole("radio", { name: WRONG_OPTION });
-    await expect.element(wrong).toMatchTextContent(/Your answer/u);
+    await expect.element(wrong).toHaveAttribute("data-result", "wrong");
     await expect.element(wrong).toBeDisabled();
 
     await expect
@@ -244,7 +248,7 @@ describe("lesson feedback", () => {
     await previous.click();
 
     await expect.element(verdict("Not quite")).toBeVisible();
-    await expect.element(wrong).toMatchTextContent(/Your answer/u);
+    await expect.element(wrong).toHaveAttribute("data-result", "wrong");
     await expect.element(wrong).toBeDisabled();
 
     await next();
@@ -252,7 +256,7 @@ describe("lesson feedback", () => {
     await next();
 
     await expect.element(wrong).toBeEnabled();
-    await expect.element(wrong).not.toMatchTextContent(/Your answer/u);
+    await expect.element(wrong).not.toHaveAttribute("data-result");
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeVisible();
   });
 

@@ -82,9 +82,9 @@ import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonElement
 import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
-import com.zoonk.api.models.LessonVisual as ApiLessonVisual
 
 /** A language goal with a target language takes its level test instead, which its caller picks before this. */
 @Composable
@@ -363,7 +363,7 @@ internal fun ColumnScope.PlacementQuestion(
         }
     }
     val confirm = { answer?.let { send(it, PlacementSender.Confirm) } }
-    val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
+    val visual = remember(item.visual) { item.visual?.recode<JsonElement, LessonVisual>() }
 
     QuestionPages(
         questionId = item.itemId,

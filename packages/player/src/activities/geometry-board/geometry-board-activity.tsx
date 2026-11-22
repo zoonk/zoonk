@@ -28,7 +28,6 @@ import { useDescribeBoard } from "./use-describe-board";
 type GeometryBoardProps = ActivityRendererProps<"geometryBoard">;
 type Vector = { x: number; y: number };
 
-const FALLBACK_WIDTH = 318;
 const MAX_HEIGHT = 340;
 const PADDING = 20;
 const FIRST_LETTER = 65;
@@ -42,7 +41,7 @@ export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoard
   const { check, fields } = content;
   const start = fields.points;
   const [points, setPoints] = useState<BoardPoint[]>(start);
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>();
   const isChecked = phase === "checked";
   const hideTotal = hidesAskedTotal({ check, phase });
   const step = gridStep(start);

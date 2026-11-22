@@ -74,6 +74,7 @@ public struct ChallengeContent: Codable, Hashable, Sendable {
     public let id: String
     public let prompt: String
     public let messages: [Message]
+    public let visual: LessonVisual?
     public let choices: [Choice]
   }
 

@@ -119,11 +119,15 @@ struct StudyDay: Decodable, Equatable, Sendable {
       })
     else { return self }
     var day = self
-    day.blocks = moment.blocks
+    // The completion lists blocks by position; Today keeps the server's play order.
+    let fresh = moment.blocks
+    day.blocks =
+      blocks.compactMap { old in fresh.first { $0.id == old.id } }
+      + fresh.filter { new in !blocks.contains { $0.id == new.id } }
     day.minutes = moment.minutes
     day.nextBlockId = moment.next?.block.id
     day.nextPosition = moment.next?.block.position
-    if moment.sessionCompleted { day.state = .done }
+    if moment.dayProgress.lead == .complete { day.state = .done }
 
     return day
   }
@@ -149,11 +153,14 @@ struct StudyDay: Decodable, Equatable, Sendable {
     count - upcomingRows > 1 ? upcomingRows : count
   }
 
-  func foldedMinutes(showing blocks: [StudyBlock]) -> Double {
-    max(
-      0,
-      minutes.left - Double(blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes })
-    )
+  /// The day's time left past the `shown` rows, plus the extras among the rows it hides: core's
+  /// time left counts only day blocks.
+  func foldedMinutes(showing shown: [StudyBlock]) -> Double {
+    let shownDay = shown.filter { !$0.isFinished && !$0.extra }
+    let hiddenExtras = blocks.filter { $0.extra && !$0.isFinished && !shown.contains($0) }
+
+    return max(0, minutes.left - Double(shownDay.reduce(0) { $0 + $1.estimatedMinutes }))
+      + Double(hiddenExtras.reduce(0) { $0 + $1.estimatedMinutes })
   }
 
   var isStarted: Bool {
@@ -162,17 +169,17 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var showsDayProgress: Bool { !blocks.isEmpty && daySegments.count >= 2 }
 
-  /// Core's `getSessionBar`: a skipped block is neither done nor counted.
+  /// Core's `getSessionBar`: day blocks only, and a skipped one is neither done nor counted.
   var sessionBar: SessionBar {
-    SessionBar(
-      completed: blocks.filter { $0.status == .completed }.count,
-      total: blocks.filter { $0.status != .skipped }.count)
+    let counted = blocks.filter(\.countsTowardDay)
+    return SessionBar(
+      completed: counted.filter { $0.status == .completed }.count, total: counted.count)
   }
 
   /// Mirrors main's `DayProgress`: each block core counts, then one part for the time the day holds
   /// for lessons not written yet.
   var daySegments: [DaySegment] {
-    var segments = blocks.filter { $0.status != .skipped }.map {
+    var segments = blocks.filter(\.countsTowardDay).map {
       $0.daySegment(nextPosition: nextPosition)
     }
 
@@ -227,11 +234,7 @@ enum ComingLessons {
         localized: "Not ready yet", table: "Today",
         comment: "The day's next lessons, which nobody has asked for yet")
     case .beingWritten:
-      String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+      String(localized: "Getting ready…", table: "Today")
     }
   }
 }
@@ -277,6 +280,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case unknown
   }
 
+  /// Whether the exam that leaves the optional study out has an official guide.
+  enum SubjectExtra: String, Decodable, Hashable, Sendable {
+    case notice
+    case optional
+  }
+
   struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
@@ -314,17 +323,22 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let kind: Kind
   let lessonId: String?
   let mistakesOnly: Bool
+  let mockPreparationReview: Bool?
   let opensInPlayer: Bool
   let oftenTested: Bool
   let planItemId: String?
   let planItemKey: String?
   let position: Int
+  let preparing: Bool
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
   let screen: Screen
   var status: Status
   let subject: String?
+  /// Set on a lesson of the exam's optional study, such as its strategy, which the row names
+  /// instead of a subject.
+  let subjectExtra: SubjectExtra?
   let title: String?
   let topics: [String]
   let waitReason: WaitReason?
@@ -332,6 +346,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
 
   var isFinished: Bool {
     status == .completed || status == .skipped
+  }
+
+  /// Core's `isDayBlock`, not skipped: what the day's count, meter and time left are made of. Extra
+  /// work never lowers them.
+  var countsTowardDay: Bool {
+    !extra && status != .skipped
   }
 
   /// The lesson a finished row opens again, outside the session. A skipped lesson comes back in
@@ -374,29 +394,21 @@ struct StudyBlock: Decodable, Hashable, Sendable {
 }
 
 struct StudyWeek: Decodable, Equatable, Sendable {
+  /// Core's `StudyWeekDay`, which Today's week and the Plan's draw with `WeekDayRing`.
   struct Day: Decodable, Equatable, Sendable {
+    /// Day blocks done and not skipped; extra work isn't counted.
+    let completed: Int
     let date: String
     /// What the learner's plans give the day; 0 on a day without study.
     let goalMinutes: Double
+    /// The day's list was finished once, or a day without one was studied.
     let hitGoal: Bool
     let isToday: Bool
     let kind: String
+    /// Time studied, extras included.
     let minutes: Int
     let studied: Bool
-
-    /// Main's `getDayShare`: how much of the day's goal was studied. A day the plan gave no time
-    /// that the learner studied anyway fills whole.
-    var share: Double {
-      if hitGoal {
-        return 1
-      }
-
-      if goalMinutes == 0 {
-        return studied ? 1 : 0
-      }
-
-      return min(1, Double(minutes) / goalMinutes)
-    }
+    let total: Int
   }
 
   let days: [Day]
@@ -409,6 +421,7 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     let extra: Bool
     let fullReview: Bool
     let mistakesOnly: Bool
+    let mockPreparationReview: Bool?
     let refresh: Bool
     let reinforcement: Bool
     let weakest: Bool
@@ -456,7 +469,8 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     }
     flags = Flags(
       extra: block.extra, fullReview: block.fullReview, mistakesOnly: block.mistakesOnly,
-      refresh: block.refresh, reinforcement: block.reinforcement, weakest: block.weakest)
+      mockPreparationReview: block.mockPreparationReview, refresh: block.refresh,
+      reinforcement: block.reinforcement, weakest: block.weakest)
     kind = block.kind
     lessonId = block.lessonId
     planItemKey = block.planItemKey

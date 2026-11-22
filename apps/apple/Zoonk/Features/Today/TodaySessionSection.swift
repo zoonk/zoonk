@@ -27,13 +27,18 @@ struct TodaySessionSection: View {
   private var session: StudyDay { view.session }
 
   var body: some View {
+    let status = TodayDayStatus(view: view, writingStalled: writingStalled)
+
     Section {
       queue
 
-      if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
+      if let status {
         status
       }
     }
+    // Main's status line closes the day's list with a hairline, and opens a day with no list.
+    .listSectionSeparator(
+      status == nil ? .hidden : .visible, edges: session.blocks.isEmpty ? .all : .bottom)
   }
 
   @ViewBuilder
@@ -87,7 +92,8 @@ struct TodaySessionSection: View {
 
     ForEach(Array(upcoming.prefix(shownUpcoming)), id: \.position) { block in
       if next == nil {
-        BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+        BlockRow(
+          block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
       } else {
         blockButton(block, isNext: false)
       }
@@ -116,14 +122,15 @@ struct TodaySessionSection: View {
   }
 
   /// A block still to do opens from its row, in whatever order the learner likes; one waiting for
-  /// earlier work doesn't.
+  /// earlier work or mock supply stays closed.
   @ViewBuilder
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position), failed: failed == .block(block.position))
+      tagsExtra: true, isBusy: busy == .block(block.position),
+      failed: failed == .block(block.position))
 
-    if block.waitReason == nil {
+    if block.waitReason == nil && !block.preparing {
       Button {
         open(block, false)
       } label: {
@@ -139,7 +146,8 @@ struct TodaySessionSection: View {
 
   @ViewBuilder
   private func doneRow(_ block: StudyBlock) -> some View {
-    let row = BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+    let row = BlockRow(
+      block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
 
     if let lessonId = block.lessonToReopen {
       Button {
@@ -172,7 +180,7 @@ struct TodaySessionAction: View {
   let writingStalled: Bool
   let open: (StudyBlock, Bool) -> Void
   let prepare: () -> Void
-  /// Adds the plan's next lessons once the day is done or resting.
+  /// Adds the plan's next lessons once the day has nothing of its own left to start.
   let keepLearning: () -> Void
   /// After an exam's date: studies the lessons left after the exam.
   let keepStudying: () -> Void
@@ -255,7 +263,16 @@ struct TodaySessionAction: View {
       ) {
         open(next, true)
       }
+    // A finished day stays done while its extras play.
     case .done:
+      if let next = session.nextBlock {
+        return TodayMainAction(
+          kind: .continueSession, isBusy: busy == .main, failed: failed == .main
+        ) {
+          open(next, true)
+        }
+      }
+
       guard let sessionID = session.id else {
         return nil
       }
@@ -340,7 +357,7 @@ struct TodayMainAction: View {
     case .continueSession:
       Text("Continue", tableName: "Today", comment: "Continues today's session")
     case .keepLearning:
-      Text("Keep learning", tableName: "Today", comment: "Adds the plan's next lessons")
+      Text("Keep learning", tableName: "Today")
     case .practice(let minutes):
       Text(
         "Practice \(minutes) min", tableName: "Today",
@@ -370,7 +387,7 @@ struct TodayDayLead: View {
 
   var body: some View {
     if session.showsDayProgress {
-      DayProgressRow(session: session, writingStalled: writingStalled)
+      DayProgressRow(view: view, writingStalled: writingStalled)
     }
   }
 }
@@ -402,6 +419,8 @@ struct BlockRow: View {
   let view: TodayView?
   let isNext: Bool
   let countsTowardMission: Bool
+  /// Today's list tags work past the day's own, which never counts toward it.
+  var tagsExtra = false
   var isBusy = false
   var failed = false
   var showsDetail = false
@@ -453,8 +472,14 @@ struct BlockRow: View {
 
   @ViewBuilder
   private var trailing: some View {
-    if !block.isFinished {
+    if tagsExtra && block.extra && block.isFinished {
+      extraTag
+    } else if !block.isFinished {
       HStack(spacing: 6) {
+        if tagsExtra && block.extra {
+          extraTag
+        }
+
         if countsTowardMission {
           Image(systemName: "checklist")
             .foregroundStyle(.brain)
@@ -473,6 +498,15 @@ struct BlockRow: View {
     }
   }
 
+  private var extraTag: some View {
+    Text(
+      "Extra", tableName: "Today",
+      comment:
+        "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress."
+    )
+    .chip()
+  }
+
   @ViewBuilder
   private var mark: some View {
     switch block.status {
@@ -488,15 +522,13 @@ struct BlockRow: View {
 
   /// A row is its title and at most one short line.
   private var line: String? {
-    if let view, today.isBeingWritten(block, in: view) {
-      return String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+    if today.isGettingReady(block, in: view) {
+      return String(localized: "Getting ready…", table: "Today")
     }
 
-    return lineOverride ?? (showsDetail ? block.detail : block.label)
+    return lineOverride
+      ?? (showsDetail
+        ? block.detail : block.label(document: view?.goal.examDocument ?? .notice))
   }
 
   private var status: Text {
@@ -649,6 +681,7 @@ struct TodayDayStatus: View {
   }
 
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let view: TodayView
   private let sentence: String
@@ -698,7 +731,9 @@ struct TodayDayStatus: View {
         : String(
           localized: "You're done for today.", table: "Today", comment: "Day done")
       clause = nil
-      link = keepLearning ? session.id.map { .summary(sessionID: $0) } : nil
+      // The summary has its link here while the main action is another.
+      link =
+        keepLearning || session.nextBlock != nil ? session.id.map { .summary(sessionID: $0) } : nil
     case .waiting where listHolds, .prepare where listHolds:
       return nil
     case .waiting:
@@ -743,15 +778,23 @@ struct TodayDayStatus: View {
     [sentence, clause].compactMap(\.self).joinedSentences()
   }
 
+  /// Main's `TodayStatusLine`: the sentence in medium, its clause muted after it on the same line.
+  private var words: AttributedString {
+    var lead = AttributedString(sentence)
+    lead.inlinePresentationIntent = .stronglyEmphasized
+
+    guard let clause else { return lead }
+
+    var rest = AttributedString(
+      String([sentence, clause].joinedSentences().dropFirst(sentence.count)))
+    rest.foregroundColor = .mutedForeground
+    return lead + rest
+  }
+
   var body: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text(sentence)
-
-        if let clause {
-          Text(clause)
-            .foregroundStyle(.mutedForeground)
-        }
+        Text(words, strong: .medium, legibility: legibilityWeight)
 
         switch link {
         case .summary(let sessionID):
@@ -772,7 +815,7 @@ struct TodayDayStatus: View {
       Image(systemName: systemImage)
         .foregroundStyle(.mutedForeground)
     }
-    .typeStyle(.note)
+    .typeStyle(.body)
   }
 
 }

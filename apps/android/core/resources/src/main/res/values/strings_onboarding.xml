@@ -253,7 +253,6 @@
     <string name="onboarding_language_test_play_again">Play the message again</string>
     <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
     <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
-    <string name="onboarding_language_test_say_it">Say it out loud</string>
     <string name="onboarding_language_test_skip_part">Skip this part</string>
     <string name="onboarding_language_test_done_title">Your %1$s level</string>
     <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>

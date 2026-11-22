@@ -50,6 +50,9 @@ extension TypeStyle {
   /// A lesson's running text.
   static let lessonText = TypeStyle(
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
+  /// Main's `LessonContext`: the table, code or words a check asks about, over its question.
+  static let lessonContext = TypeStyle(
+    size: 16, relativeTo: .callout, weight: .regular, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
   static let lead = TypeStyle(size: 17, relativeTo: .body, weight: .regular, tracking: -0.01)
   /// Running text read for itself: a question's context.
@@ -80,6 +83,10 @@ extension TypeStyle {
   static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.
   static let data = meta.monospaced()
+  /// Main's code: a program's lines, read at a table's size on rows a step apart.
+  static let code = TypeStyle(
+    size: 14, relativeTo: .subheadline, weight: .regular, tracking: 0, face: .mono,
+    lineHeight: 24.0 / 14)
   /// Uppercase, inside a panel or over a search group only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .medium, tracking: 0.04, isUppercase: true)
@@ -115,8 +122,12 @@ extension TypeStyle {
 
   /// Geist Mono, whose figures are all one width.
   func monospaced() -> TypeStyle {
+    withFace(.mono)
+  }
+
+  func withFace(_ face: Face) -> TypeStyle {
     var style = self
-    style.face = .mono
+    style.face = face
     return style
   }
 
@@ -163,7 +174,25 @@ extension TypeStyle {
     ).size().width
   }
 
-  fileprivate func pointSize(_ dynamicTypeSize: DynamicTypeSize) -> Double {
+  /// From one baseline to the next, as `typeStyle(_:)` sets the role's lines.
+  func rowHeight(_ dynamicTypeSize: DynamicTypeSize) -> Double {
+    (lineHeight ?? face.ownLineHeight) * pointSize(dynamicTypeSize)
+  }
+
+  /// What `typeStyle(_:)` adds between rows: a view that stands for whole rows, such as a line of
+  /// code, takes half of it above and half below.
+  func rowGap(_ dynamicTypeSize: DynamicTypeSize) -> Double {
+    rowHeight(dynamicTypeSize) - face.ownLineHeight * pointSize(dynamicTypeSize)
+  }
+
+  /// Main's inline code: Geist Mono at 0.85 of the role's size, for a run inside its text.
+  func inlineCodeFont(legibility: LegibilityWeight?) -> Font {
+    styled(
+      .custom("Geist Mono", size: size * 0.85, relativeTo: relativeTo),
+      weight: legibility == .bold ? weight.withBoldText : weight)
+  }
+
+  func pointSize(_ dynamicTypeSize: DynamicTypeSize) -> Double {
     UIFontMetrics(forTextStyle: relativeTo.uiTextStyle).scaledValue(
       for: size,
       compatibleWith: UITraitCollection(
@@ -198,6 +227,12 @@ extension View {
   /// Sets the weight of this view's text in the role it inherits, so Bold Text still adds to it.
   func typeWeight(_ weight: Font.Weight) -> some View {
     modifier(TypeWeightModifier(weight: weight))
+  }
+
+  /// Sets the face of this view's text in the role it inherits, such as a state's words among
+  /// data; nil keeps the role's.
+  func typeFace(_ face: TypeStyle.Face?) -> some View {
+    modifier(TypeFaceModifier(face: face))
   }
 }
 
@@ -239,7 +274,8 @@ extension Text {
 }
 
 extension EnvironmentValues {
-  @Entry fileprivate var typeStyle = TypeStyle.body
+  /// The role `typeStyle(_:)` set, for a piece that sizes itself from the text around it.
+  @Entry var typeStyle = TypeStyle.body
 }
 
 private struct TypeStyleModifier: ViewModifier {
@@ -282,6 +318,21 @@ extension TypeStyle.Face {
 
   private static func lineHeight(of postScriptName: String) -> Double {
     (UIFont(name: postScriptName, size: 100)?.lineHeight ?? 121) / 100
+  }
+}
+
+private struct TypeFaceModifier: ViewModifier {
+  let face: TypeStyle.Face?
+
+  @Environment(\.typeStyle) private var style
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if let face {
+      content.typeStyle(style.withFace(face))
+    } else {
+      content
+    }
   }
 }
 

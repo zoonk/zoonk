@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -17,15 +19,18 @@ import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.MistakePracticeFeedback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -104,11 +109,14 @@ class MistakePracticeScreenshots {
         play: () -> Unit = {},
         fold: Boolean = false,
         entry: JsonObject? = null,
+        feedback: () -> MistakePracticeFeedback = {
+            practiceFeedback(isCorrect = true, fixed = true, fixedMistakeIds = listOf(FIRST_MISTAKE))
+        },
     ) {
         val api =
             FakeMistakesApi(
                 practice(entry ?: practiceEntry(FIRST_MISTAKE, *questions, drill = drill)),
-                answer = { practiceFeedback(isCorrect = true, fixed = true, fixedMistakeIds = listOf(FIRST_MISTAKE)) },
+                answer = { feedback() },
                 finish = { completion(correct = 1, total = 2) },
             )
         val cache =
@@ -252,6 +260,197 @@ class MistakePracticeScreenshots {
                     ),
                 ),
         )
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonListening() = show("original-lesson-listening", entry = listeningReplay())
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonCantListen() =
+        show("original-lesson-cant-listen", entry = listeningReplay(), play = { rule.onNodeWithText("I can't listen now").performClick() })
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-xhdpi")
+    fun originalLessonListeningExpanded() = show("original-lesson-listening-expanded", entry = listeningReplay())
+
+    private fun listeningReplay(): JsonObject {
+        val entry = fixture("mistake-practice-lesson-entry")
+        val lesson = entry.getValue("lesson").jsonObject
+        val step = lesson.getValue("step").jsonObject
+        val bank =
+            listOf("Quanto", "é", "o", "aluguel?", "custa", "renda").joinToString(",") {
+                """{"audioUrl":null,"romanization":null,"translation":null,"word":"$it"}"""
+            }
+        val listening =
+            Json.parseToJsonElement(
+                """
+                {"id":${step.getValue("id")},"kind":"listening","position":2,"skillId":${step.getValue("skillId")},"wordHints":null,
+                 "exercise":{"content":{},"fillBlankOptions":[],"id":"00000000-0000-4000-8000-000000000001","kind":"listening",
+                  "matchColumnsRightItems":[],"position":0,"readingPromptWords":[],"sentenceWordOptions":[],"translationOptions":[],
+                  "vocabularyOptions":[],"word":null,"wordBankOptions":[$bank],
+                  "sentence":{"audioUrl":"https://blob.test/s.mp3","distractors":[],"explanation":null,"id":"s-1","ordersPending":false,
+                   "otherSentenceOrders":[],"otherTranslationOrders":[],"readsItself":false,"romanization":null,"sentence":"How much is the rent?",
+                   "translation":"Quanto é o aluguel?","translationDistractors":[]}}}
+                """.trimIndent(),
+            )
+        return JsonObject(
+            entry +
+                (
+                    "lesson" to
+                        JsonObject(
+                            lesson + mapOf("step" to listening, "language" to JsonPrimitive("pt"), "targetLanguage" to JsonPrimitive("en")),
+                        )
+                ),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun wordBankReplayWrong() =
+        show(
+            "word-bank-replay-wrong",
+            entry = readingReplay(),
+            play = ::buildAndCheck,
+            feedback = { readingFeedback(isCorrect = false, trap = "Spanish puts the subject first.") },
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun wordBankReplayFixed() =
+        show("word-bank-replay-fixed", entry = readingReplay(), play = ::buildAndCheck, feedback = { readingFeedback(isCorrect = true) })
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun wordBankReplay() = show("word-bank-replay", entry = readingReplay())
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun wordBankReplayWrongDarkLarge() {
+        RuntimeEnvironment.setFontScale(2f)
+        show(
+            "word-bank-replay-wrong-dark-font200",
+            dark = true,
+            entry = readingReplay(),
+            play = ::buildAndCheck,
+            feedback = { readingFeedback(isCorrect = false, trap = "Spanish puts the subject first.") },
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun wordBankReplayWrongFold() =
+        show(
+            "word-bank-replay-wrong-fold",
+            entry = readingReplay(),
+            play = ::buildAndCheck,
+            fold = true,
+            feedback = { readingFeedback(isCorrect = false, trap = "Spanish puts the subject first.") },
+        )
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-xhdpi")
+    fun wordBankReplayWrongExpanded() =
+        show(
+            "word-bank-replay-wrong-expanded",
+            entry = readingReplay(),
+            play = ::buildAndCheck,
+            feedback = { readingFeedback(isCorrect = false, trap = "Spanish puts the subject first.") },
+        )
+
+    private fun readingReplay(): JsonObject {
+        val entry = fixture("mistake-practice-lesson-entry")
+        val lesson = entry.getValue("lesson").jsonObject
+        val step = lesson.getValue("step").jsonObject
+        val word = { text: String ->
+            JsonObject(mapOf("audioUrl" to JsonNull, "romanization" to JsonNull, "translation" to JsonNull, "word" to JsonPrimitive(text)))
+        }
+        val prompt = { text: String, translation: String ->
+            JsonObject(mapOf("translation" to JsonPrimitive(translation), "word" to JsonPrimitive(text)))
+        }
+        val sentence =
+            JsonObject(
+                mapOf(
+                    "audioUrl" to JsonNull,
+                    "distractors" to JsonArray(emptyList()),
+                    "explanation" to JsonNull,
+                    "id" to JsonPrimitive("s-1"),
+                    "ordersPending" to JsonPrimitive(false),
+                    "otherSentenceOrders" to JsonArray(emptyList()),
+                    "otherTranslationOrders" to JsonArray(emptyList()),
+                    "readsItself" to JsonPrimitive(false),
+                    "romanization" to JsonNull,
+                    "sentence" to JsonPrimitive("Yo veo un gato."),
+                    "translation" to JsonPrimitive("I see a cat."),
+                    "translationDistractors" to JsonArray(emptyList()),
+                ),
+            )
+        val exercise =
+            JsonObject(
+                mapOf(
+                    "content" to JsonObject(emptyMap()),
+                    "fillBlankOptions" to JsonArray(emptyList()),
+                    "id" to JsonPrimitive("00000000-0000-4000-8000-000000000001"),
+                    "kind" to JsonPrimitive("reading"),
+                    "matchColumnsRightItems" to JsonArray(emptyList()),
+                    "position" to JsonPrimitive(0),
+                    "readingPromptWords" to
+                        JsonArray(listOf(prompt("I", "Yo"), prompt("see", "veo"), prompt("a", "un"), prompt("cat.", "gato"))),
+                    "sentence" to sentence,
+                    "sentenceWordOptions" to JsonArray(emptyList()),
+                    "translationOptions" to JsonArray(emptyList()),
+                    "vocabularyOptions" to JsonArray(emptyList()),
+                    "word" to JsonNull,
+                    "wordBankOptions" to JsonArray(listOf("un", "Yo", "gato.", "veo").map(word)),
+                ),
+            )
+        val reading =
+            JsonObject(
+                mapOf(
+                    "id" to step.getValue("id"),
+                    "position" to step.getValue("position"),
+                    "skillId" to step.getValue("skillId"),
+                    "kind" to JsonPrimitive("reading"),
+                    "exercise" to exercise,
+                    "wordHints" to JsonNull,
+                ),
+            )
+        val languageLesson = lesson + mapOf("step" to reading, "language" to JsonPrimitive("en"), "targetLanguage" to JsonPrimitive("es"))
+        return JsonObject(entry + mapOf("lesson" to JsonObject(languageLesson), "drill" to drill("readCarefully")))
+    }
+
+    private fun readingFeedback(
+        isCorrect: Boolean,
+        trap: String? = null,
+    ): MistakePracticeFeedback =
+        decodeFixture(
+            "mistake-practice-feedback",
+            "isCorrect" to isCorrect,
+            "fixed" to isCorrect,
+            "fixedMistakeIds" to JsonArray(if (isCorrect) listOf(JsonPrimitive(FIRST_MISTAKE)) else emptyList()),
+            "mistakeStatus" to if (isCorrect) "fixed" else "open",
+            "trap" to trap,
+            "lessonResult" to
+                JsonObject(
+                    mapOf(
+                        "checked" to JsonPrimitive(true),
+                        "correctAnswer" to JsonPrimitive("Yo veo un gato."),
+                        "corrections" to JsonArray(emptyList()),
+                        "expected" to JsonNull,
+                        "feedback" to JsonPrimitive(if (isCorrect) "That's the order." else "The subject comes first."),
+                        "isCorrect" to JsonPrimitive(isCorrect),
+                        "keyPoints" to JsonNull,
+                        "savedMistake" to JsonPrimitive(false),
+                        "score" to JsonPrimitive(if (isCorrect) 1 else 0),
+                        "spelling" to JsonNull,
+                    ),
+                ),
+        )
+
+    private fun buildAndCheck() {
+        listOf("veo", "Yo", "un", "gato.").forEach { rule.onAllNodesWithText(it).onLast().performClick() }
+        rule.onNodeWithText("Check").performClick()
+    }
 
     private fun replay(
         kind: String,

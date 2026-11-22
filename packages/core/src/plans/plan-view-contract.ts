@@ -8,6 +8,7 @@ import { type FocusTestSummary } from "../learner/placement/focus-test-contract"
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
+import { type WeekDay } from "../sessions/daily-goal";
 import { type NotPlannedReason } from "../view-models/syllabus/syllabus-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
@@ -137,6 +138,7 @@ export type PlanPhaseView = {
 };
 
 export type PlanDayView = {
+  study: Omit<WeekDay, "date"> & { date: string };
   date: string;
   items: PlanItemView[];
   minutes: number;
@@ -215,6 +217,8 @@ export type PlanView = {
   languageAim: LanguageAimView | null;
   notice: "reading" | "usual" | null;
   ownLevel: OwnLevel | null;
+  hasNotice?: boolean;
+  extraOffer?: (PlanOffer & { canApply: boolean; lessons: number }) | null;
   fitOffer: (PlanOffer & { canApply: boolean }) | null;
   fundedMocks: (PlanItemView & { id: string })[];
   phases: PlanPhaseView[];

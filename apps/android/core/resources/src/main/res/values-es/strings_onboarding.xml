@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "fca2a4d50689720b31d64069d60e13969aaec258c461523fe7c01765ef664f10",
   "onboarding_language_test_preparing_title": "d73502168f871e9b7cc601c48d0952a37dd494c36d317734722ba0266c494c8f",
   "onboarding_language_test_reading": "781c74433391cf62b52e71799b280255dd6cb12a448ba8519866d64dcb989377",
-  "onboarding_language_test_say_it": "e3444a941e776c9c22ce14db685dd52cdc66eba048c102c77b957b9785584867",
   "onboarding_language_test_skip": "f0f6fe4cded396daa7d75a74fb6439c30cc8288ae94edce326066cdb070288af",
   "onboarding_language_test_skip_note": "25fd828ea62b0a9cd58b65f8e7a74e9a8dd17d141e173f9c68256a187779c436",
   "onboarding_language_test_skip_part": "bc1c0b13cc1873e7d4ea2e7ef96d6017bcded3228c5c7042ba197f8e16316545",
@@ -629,7 +628,6 @@
     <string name="onboarding_language_test_play_again">Volver a reproducir el mensaje</string>
     <string name="onboarding_language_test_message_loading">Preparando el mensaje. La primera vez puede tardar unos segundos.</string>
     <string name="onboarding_language_test_message">Recibiste un mensaje de voz. Escucha y responde.</string>
-    <string name="onboarding_language_test_say_it">Dilo en voz alta</string>
     <string name="onboarding_language_test_skip_part">Saltar esta parte</string>
     <string name="onboarding_language_test_done_title">Tu nivel de %1$s</string>
     <string name="onboarding_language_test_done_description">Basado en la prueba. Cada semana lo estimamos con más precisión.</string>

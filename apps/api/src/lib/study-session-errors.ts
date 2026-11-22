@@ -81,7 +81,7 @@ const REFUSALS = {
     status: httpStatus.conflict,
   },
   summaryNotReady: {
-    message: "The session has not been stopped and has no finished queue",
+    message: "The session has never finished, has not been stopped and has no finished queue",
     status: httpStatus.conflict,
   },
   unanswered: {

@@ -30,6 +30,7 @@
 - “level”: “Level”
 - “start over” (answers or a plan): “von vorn beginnen”, not “neu starten”
 - “position” (the post an exam is for): “Stelle”
+- “notice” (an exam's official notice): “Prüfungsausschreibung”; an official guide: “offizieller Prüfungsleitfaden”
 - “listening”: “Hören”
 - “Speaking”: “Sprechen”
 - “card”: “Karte”, not “Lernkarte”

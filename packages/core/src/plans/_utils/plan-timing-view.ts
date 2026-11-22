@@ -1,4 +1,5 @@
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type WeekDay } from "../../sessions/daily-goal";
 import { type PlanView } from "../plan-view-contract";
 import { type StudyCalendar } from "../planner/plan-calendar";
 import { getExamDayRules } from "../planner/plan-days";
@@ -11,13 +12,13 @@ export function buildPlanTimingView({
   calendar,
   context,
   skillAreas,
-  studiedDates,
+  studyDays,
 }: {
   access: PlanView["access"];
   calendar: StudyCalendar;
   context: PlanReadContext;
   skillAreas: SkillAreas;
-  studiedDates: ReadonlySet<string>;
+  studyDays: readonly WeekDay[];
 }): Pick<PlanView, "fundedMocks" | "week"> {
   const { goal, items, state, today } = context;
 
@@ -29,8 +30,9 @@ export function buildPlanTimingView({
     overflow: state.settings.checkpointOverflow,
     skillAreas,
     startDate: getDateInTimeZone({ date: goal.createdAt, timeZone: context.timeZone }),
-    studiedDates,
+    studyDays,
     targetDate: goal.targetDate,
+    timeZone: context.timeZone,
     today,
   };
 

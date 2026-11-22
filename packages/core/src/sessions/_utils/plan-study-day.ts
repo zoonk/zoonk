@@ -8,6 +8,8 @@ import { pickMissions } from "../missions/pick-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { loadDayPlan } from "./day-plan";
 import { loadSessionBuildInput } from "./load-build-inputs";
+import { planPreparingMockReview } from "./plan-preparing-mock-review";
+import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 
@@ -17,12 +19,13 @@ export type PlannedStudyDay = {
   missions: MissionDocument;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
   plannedMinutes: number;
+  preparing: ReadonlySet<number>;
 };
 
 /** The day's blocks without its missions, for reads that show only what the day holds. */
 export async function planDayBlocks(
   context: SessionDayContext & { selection: SelectedDayPlan },
-): Promise<Omit<PlannedStudyDay, "missions">> {
+): Promise<Omit<PlannedStudyDay, "missions" | "preparing">> {
   const plan = await loadDayPlan(context);
   const input = await loadSessionBuildInput({ ...context, dayPlan: plan });
   return { ...buildSessionBlocks(input), input, plan };
@@ -34,17 +37,35 @@ export async function planStudyDay(
     readMistakes?: () => Promise<PracticeMistake[]>;
     readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
     readUsage?: () => Promise<UsageTotals>;
-    plannedDay?: Omit<PlannedStudyDay, "missions">;
+    plannedDay?: Omit<PlannedStudyDay, "missions" | "preparing">;
     selection: SelectedDayPlan;
   },
 ): Promise<PlannedStudyDay> {
-  const day = context.plannedDay ?? (await planDayBlocks(context));
+  const planned = context.plannedDay ?? (await planDayBlocks(context));
+  const blocks = toUnstartedBlocks(planned.blocks);
+  const preparing = await loadPreparingMockPositions({ ...context, blocks });
+
+  const review = await planPreparingMockReview({
+    ...context,
+    blocks,
+    due: planned.input.capsules,
+    plan: planned.plan,
+    preparing,
+  });
+
+  const day = {
+    ...planned,
+    blocks: review ? [...planned.blocks, review] : planned.blocks,
+    plannedMinutes: planned.plannedMinutes + (review?.estimatedMinutes ?? 0),
+    preparing,
+  };
 
   const facts = await loadDayMissionFacts({
     ...context,
     blocks: day.blocks,
     dayPlan: day.plan,
     plannedMinutes: day.plannedMinutes,
+    preparing: day.preparing,
   });
 
   return { ...day, missions: { picks: pickMissions(facts), version: 1 } };

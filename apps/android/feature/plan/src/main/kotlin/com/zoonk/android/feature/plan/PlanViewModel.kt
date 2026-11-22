@@ -21,6 +21,8 @@ import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
@@ -404,6 +406,8 @@ class PlanViewModel(
             if (saved != null && shown == PlanShown.Current) {
                 if (saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let { report(it, editor = sameOpening) }
                 answer(asker, started, opened, saved)
+            } else if (asker is PlanAsker.Offer && result.refused()) {
+                store.plan[goalId].refresh()
             } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
                 if (sameOpening) markFailed(part, editorOpened)
                 answer(asker, started, opened, null)
@@ -458,9 +462,9 @@ class PlanViewModel(
                 applied?.let { showInSlot(asker.item, it.change) }
             }
 
-            PlanAsker.FitLessons -> {
+            is PlanAsker.Offer -> {
                 if (result == null) outcomes.saveFailed.send(started, Unit)
-                applied?.let { showInSlot(SlotItem.FitLessons, it.change) }
+                applied?.let { showInSlot(asker.item, it.change) }
             }
 
             is PlanAsker.SuggestedChoice -> {
@@ -580,21 +584,34 @@ class PlanViewModel(
         slotPreviewState.value = PlanPreviewState.Idle
     }
 
-    /**
-     * Main's fit offer: adds its lessons when its numbers are today's, and applies the numbers a
-     * check showed instead on the next tap. Otherwise it checks today's first, in the slot's
-     * preview, and adds them only when they're the card's, while the suggestion's opening that asked
-     * lasts: Not now, closing the suggestion, a recreated layout that no longer shows it, or leaving the
-     * Plan drops the check, so a late answer adds nothing.
-     */
     fun addFitOffer(
         plan: Plan,
         offer: PlanFitOffer,
+    ) = addOffer(plan, SlotItem.FitLessons(offer), offer.operations.map { it.op }, offer.effect, offer.canApply)
+
+    fun addExtraOffer(
+        plan: Plan,
+        offer: PlanExtraOffer,
+    ) = addOffer(plan, SlotItem.ExtraOffer(offer), offer.operations.map { it.op }, offer.effect, offer.canApply)
+
+    /**
+     * Main's fit offer, which the exam strategy offer shares: adds its lessons when its numbers are
+     * today's, and applies the numbers a check showed instead on the next tap. Otherwise it checks
+     * today's first, in the slot's preview, and adds them only when they're the card's, while the
+     * suggestion's opening that asked lasts: Not now, closing the suggestion, a recreated layout that
+     * no longer shows it, or leaving the Plan drops the check, so a late answer adds nothing. A check
+     * the plan refuses, or one that finds the plan already holds the offer, reads the plan again.
+     */
+    private fun addOffer(
+        plan: Plan,
+        item: SlotItem,
+        operations: List<PlanOp>,
+        effect: PlanEffect,
+        canApply: Boolean,
     ) {
-        val operations = offer.operations.map { it.op }
         val shown = slotPreviewState.value.of(operations, plan)
-        if (offer.canApply || (shown is PlanPreviewState.Ready && !shown.preview.unchanged && shown.preview.effect != null)) {
-            addFitLessons(operations)
+        if (canApply || (shown is PlanPreviewState.Ready && !shown.preview.unchanged && shown.preview.effect != null)) {
+            addOfferLessons(item, operations)
             return
         }
 
@@ -605,7 +622,12 @@ class PlanViewModel(
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
             val today = (result as? MutationResult.Done)?.value
-            val same = today != null && today.ready && !today.unchanged && today.effect == offer.effect
+            if (result.refused() || (today?.ready == true && today.unchanged)) {
+                store.plan[goalId].refresh()
+                slotPreviewState.compareAndSet(request, PlanPreviewState.Idle)
+                return@launch
+            }
+            val same = today != null && today.ready && !today.unchanged && today.effect == effect
             val asking = opened == outcomes.suggestion.number
             var wanted = false
             slotPreviewState.update { current ->
@@ -616,11 +638,20 @@ class PlanViewModel(
                     else -> current.resolve(request, today)
                 }
             }
-            if (wanted && same) addFitLessons(operations)
+            if (wanted && same) addOfferLessons(item, operations)
         }
     }
 
-    private fun addFitLessons(operations: List<PlanOp>) = change(PlanPart.Suggestion, operations, PlanAsker.FitLessons)
+    /**
+     * The plan no longer holds what an offer asked for: it changed since it was read, on this device or another. Asking
+     * again would be refused again, so the plan is read again and shows the offer it holds now, if any.
+     */
+    private fun MutationResult<*>.refused() = this is MutationResult.Failed && status == UNPROCESSABLE
+
+    private fun addOfferLessons(
+        item: SlotItem,
+        operations: List<PlanOp>,
+    ) = change(PlanPart.Suggestion, operations, PlanAsker.Offer(item))
 
     private fun ask(
         state: MutableStateFlow<PlanPreviewState>,
@@ -673,6 +704,7 @@ class PlanViewModel(
 
     private companion object {
         const val TOO_MANY_REQUESTS = 429
+        const val UNPROCESSABLE = 422
     }
 }
 

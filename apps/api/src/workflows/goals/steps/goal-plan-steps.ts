@@ -96,12 +96,15 @@ export async function createGoalPlanStep({
   });
 }
 
-export async function followNoticeStep(input: GraphPlanInput): Promise<PlanStepOutcome<boolean>> {
+export async function followNoticeStep({
+  droppedNoticeSkillIds,
+  ...input
+}: GraphPlanInput & { droppedNoticeSkillIds: string[] }): Promise<PlanStepOutcome<boolean>> {
   "use step";
 
   return catchPlanConflict(async () => {
     const [built] = await Promise.allSettled([
-      createGoalPlan({ ...toGraphPlan(input), followNotice: true }),
+      createGoalPlan({ ...toGraphPlan(input), droppedNoticeSkillIds, followNotice: true }),
     ]);
 
     if (built.status === "fulfilled") {

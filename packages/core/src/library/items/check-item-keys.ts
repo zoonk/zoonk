@@ -44,6 +44,7 @@ export async function checkItemKeys<Item extends GeneratedItem>({
   analytics,
   items,
   language,
+  mockOnly,
   optionCount = null,
   optionLanguage = null,
   select,
@@ -53,6 +54,7 @@ export async function checkItemKeys<Item extends GeneratedItem>({
   analytics?: AiGenerationContext;
   items: readonly Item[];
   language: string;
+  mockOnly?: boolean;
   optionCount?: number | null;
   optionLanguage?: string | null;
   select?: OptionSelect;
@@ -81,6 +83,7 @@ export async function checkItemKeys<Item extends GeneratedItem>({
   const solutions = await solve({
     analytics,
     items: passing.map(({ item }) => item),
+    ...(mockOnly && { mockOnly }),
     select,
     serviceTier,
     stimulus,

@@ -52,6 +52,7 @@ function listScope({
   });
 
   const skills = input.graph.skills
+    .filter((skill) => !skill.extra)
     .map((skill) => ({
       area: getSkillArea({ graph: input.graph, skill }),
       skillId: skill.skillId,
@@ -283,7 +284,7 @@ export function getCoverage({
       ),
     },
     known: input.knownSkillIds ?? new Set(),
-    skills: input.graph.skills,
+    skills: input.graph.skills.filter((skill) => !skill.extra),
   });
 
   const whole = skills.every(

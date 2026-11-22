@@ -59,11 +59,11 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.language.PatternRow
+import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -628,10 +628,16 @@ private fun MistakeEntry(
         )
         RichText(snapshot.question, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
         snapshot.answer?.let { savedAnswerText(it, words, snapshot.format) }?.let {
-            if (snapshot.format in WRITTEN_ANSWER_FORMATS) MistakeAnswer(it, right = false) else MistakeAnswer(itemLine(it), right = false)
+            if (snapshot.format in
+                WRITTEN_ANSWER_FORMATS
+            ) {
+                MistakeAnswer(it, right = false)
+            } else {
+                MistakeAnswer(right = false) { ItemLine(it) }
+            }
         }
         snapshot.correctAnswer?.let { savedAnswerText(it, words, snapshot.format) }?.let {
-            if (snapshot.format == "typed") MistakeAnswer(it, right = true) else MistakeAnswer(itemLine(it), right = true)
+            if (snapshot.format == "typed") MistakeAnswer(it, right = true) else MistakeAnswer(right = true) { ItemLine(it) }
         }
         snapshot.explanation?.let {
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))

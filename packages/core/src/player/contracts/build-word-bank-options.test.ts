@@ -39,6 +39,7 @@ function makeSentence(overrides: Partial<SerializedSentence> = {}): SerializedSe
     ordersPending: false,
     otherSentenceOrders: [],
     otherTranslationOrders: [],
+    readsItself: false,
     romanization: null,
     sentence: "Guten Morgen, Anna!",
     translation: "Bom dia, Anna!",

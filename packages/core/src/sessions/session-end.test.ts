@@ -218,6 +218,8 @@ describe("ending a session", () => {
 
     const [first, ...rest] = today.session.blocks;
 
+    expect(first?.kind).toBe("learn");
+
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "skipped" },
@@ -499,6 +501,26 @@ describe("ending a session", () => {
 
     expect(summary.status === "ready" && summary.summary.extraTime).toStrictEqual(nothingLeft);
     expect(view.status === "ready" && view.session.extraTime).toStrictEqual(nothingLeft);
+  });
+
+  it("still sums up a finished day after its goal is deleted, with nothing more to offer", async () => {
+    const { goal, session } = await setup();
+
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { sessionId: session.id },
+    });
+
+    await prisma.goal.delete({ where: { id: goal.id } });
+
+    const summary = await getStudySessionSummary({ input: {}, sessionId: session.id });
+
+    expect(summary.status === "ready" && summary.summary.extraTime).toStrictEqual({
+      available: false,
+      lessons: [],
+      minutes: 0,
+      reason: "nothingToStudy",
+    });
   });
 
   it("keeps a lesson block's persisted minutes after its library estimate changes", async () => {

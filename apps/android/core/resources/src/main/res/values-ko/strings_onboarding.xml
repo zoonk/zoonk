@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "2bfcae3f5b605d7ccd72089e81cf7cf479996137d57ff9b6628ac31e57389a91",
   "onboarding_language_test_preparing_title": "94615d9e60fc65b2c577a1d067e72198df4441ce5370ca93659b3effde841a37",
   "onboarding_language_test_reading": "0051297ad6a930c747e8bc231b5885cefd451f8fbc285838064538af8eb81ac8",
-  "onboarding_language_test_say_it": "25b74caf4579eda9d8073bcb2725bcdb28a03b0992b4c09b6e804f3dbc7b94f7",
   "onboarding_language_test_skip": "6edb586dd333544d74d80eeae05d13c0ef07f6921679a0dd73f048a30d239a54",
   "onboarding_language_test_skip_note": "18079eb854c0cb2ddc3fe732b1905d44a5c2f52fd9edcc1ae13741dbc70f6f1d",
   "onboarding_language_test_skip_part": "8c1a1603c760a37c39ad4e5bab0afd6eb798746e814c635609227ec200b9566a",
@@ -623,7 +622,6 @@
     <string name="onboarding_language_test_play_again">메시지 다시 듣기</string>
     <string name="onboarding_language_test_message_loading">메시지를 준비하고 있어요. 처음에는 몇 초 걸릴 수 있어요.</string>
     <string name="onboarding_language_test_message">음성 메시지가 도착했어요. 듣고 답해 보세요.</string>
-    <string name="onboarding_language_test_say_it">소리 내어 말해 보세요</string>
     <string name="onboarding_language_test_skip_part">이 부분 건너뛰기</string>
     <string name="onboarding_language_test_done_title">내 %1$s 레벨</string>
     <string name="onboarding_language_test_done_description">테스트 결과를 바탕으로 했어요. 매주 더 정확해져요.</string>

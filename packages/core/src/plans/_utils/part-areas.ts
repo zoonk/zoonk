@@ -63,11 +63,9 @@ async function loadOperationsWithParts({
 
 export async function applyChangeOperations({
   context,
-  noticeGraph = null,
   operations,
 }: {
   context: Pick<PlanContext, "goal" | "items" | "plan" | "state" | "today">;
-  noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
 }): Promise<{ error: PlanOperationError } | { operations: PlanOperation[]; state: PlanState }> {
   const withParts = await loadOperationsWithParts({ context, operations });
@@ -98,7 +96,6 @@ export async function applyChangeOperations({
 
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
-    noticeGraph,
     operations: withParts,
     state: context.state,
     today: context.today,

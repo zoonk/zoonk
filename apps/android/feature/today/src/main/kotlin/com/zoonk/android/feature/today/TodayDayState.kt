@@ -30,8 +30,9 @@ val DayView.queue: TodayQueue
         )
     }
 
+/** The day's time left past [shown]'s rows; extra work isn't in the day's time. */
 internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
-    (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
+    (minutes.left - shown.filter { !it.isFinished && !it.extra }.sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
 
 internal val DayView.heldMinutes: Double
     get() = if (lessonsComing || lessonsToPrepare) minutesAfter(steps) else 0.0
@@ -49,8 +50,6 @@ fun DayView.isWaitingForLessons(lessonStatus: Map<String, LessonGenerationStatus
             (step.status == StudyBlock.Status.PENDING || step.status == StudyBlock.Status.ACTIVE) && step.isBeingWritten(lessonStatus)
         }
 
-/** Being done for the day, or resting, never hides what comes next. */
-fun DayView.upNextLessons(pastDate: Boolean): List<com.zoonk.api.models.StudyExtraTimeLessonsInner> {
-    val dayEnded = state == StudySession.State.DONE || state == StudySession.State.REST
-    return if (pastDate || !dayEnded || !extraTime.available) emptyList() else extraTime.lessons
-}
+/** Being done for the day, resting, or waiting on a mock never hides what comes next; core lists them only then. */
+fun DayView.upNextLessons(pastDate: Boolean): List<com.zoonk.api.models.StudyExtraTimeLessonsInner> =
+    if (pastDate || !extraTime.available) emptyList() else extraTime.lessons

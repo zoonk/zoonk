@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "056191b612797c0f88cf63211c612896bf978e523694d96afb4815be07cc0532",
   "onboarding_language_test_preparing_title": "8f638ad848204386acc63bdf8156e4100daade32e5f364d2fd44d612afa6590b",
   "onboarding_language_test_reading": "447d320b3399e9876cf2071a747b461f051873950c3025047a036f00a26d1d28",
-  "onboarding_language_test_say_it": "cf16d8564164d93c1cf0ca4a2a1b197d3591e7df3baf516d28efba977ab29cbe",
   "onboarding_language_test_skip": "3c65abf71c1829fb7f0cb19f74b632cd50b2531f8fae8c2eed3662d6523df9ee",
   "onboarding_language_test_skip_note": "51cd8d59c58bc08c3d171bca05c2ec864fe367d61ea2f1594d66685fbe1e2922",
   "onboarding_language_test_skip_part": "113d8a615a19dd3d0cc9fd7c7cd3717d9c58cf4a50d445441b5568dffdddfd9b",
@@ -626,7 +625,6 @@
     <string name="onboarding_language_test_play_again">Nachricht noch einmal abspielen</string>
     <string name="onboarding_language_test_message_loading">Wir bereiten die Nachricht vor. Beim ersten Mal kann das ein paar Sekunden dauern.</string>
     <string name="onboarding_language_test_message">Du hast eine Sprachnachricht bekommen. Hör sie dir an und antworte.</string>
-    <string name="onboarding_language_test_say_it">Sag es laut</string>
     <string name="onboarding_language_test_skip_part">Diesen Teil überspringen</string>
     <string name="onboarding_language_test_done_title">Dein Level in %1$s</string>
     <string name="onboarding_language_test_done_description">Basierend auf dem Test. Die Einschätzung wird jede Woche genauer.</string>

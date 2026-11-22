@@ -5,8 +5,10 @@ import { withoutLockedPhaseChallenges } from "../../../checkpoints/_utils/phase-
 import { getCarryOverEnd, pickCurrentDay } from "../../../sessions/_utils/current-session";
 import { type DayBlockInput } from "../../../sessions/_utils/day-block-view";
 import { planEntitlementLapseRefill } from "../../../sessions/_utils/entitlement-lapse-refill";
+import { loadPreparingMockPositions } from "../../../sessions/_utils/preparing-mock-blocks";
 import { getSessionBar } from "../../../sessions/_utils/session-view";
 import { readBlockPayload } from "../../../sessions/block-payload";
+import { getNextBlock } from "../../../sessions/day-blocks";
 import { countMissions } from "../../../sessions/missions";
 import { getDayMissions } from "../../../sessions/missions/get-day-missions";
 import { readDayMissionProgress } from "../../facts/day-mission-progress";
@@ -41,7 +43,7 @@ function findSavedDay({
   });
 }
 
-function getSummaryToday({
+async function getSummaryToday({
   day,
   goal,
   phaseChallengesRequired,
@@ -51,7 +53,7 @@ function getSummaryToday({
   day: SavedSession | null;
   goal: Goal;
   phaseChallengesRequired: boolean;
-}): LearnerSummaryToday | null {
+}): Promise<LearnerSummaryToday | null> {
   if (!day || goal.kind === "explain" || goal.status !== "active") {
     return null;
   }
@@ -60,10 +62,11 @@ function getSummaryToday({
     projected ?? withoutLockedPhaseChallenges({ blocks: day.blocks, phaseChallengesRequired });
 
   const bar = getSessionBar(blocks);
+  const preparing = await loadPreparingMockPositions({ blocks, goal, localDate: day.localDate });
 
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
+  const next = getNextBlock(
+    blocks.map((block) => ({ ...block, preparing: preparing.has(block.position) })),
+  );
 
   const payload = next ? readBlockPayload(next) : null;
 
@@ -143,10 +146,15 @@ export async function loadActiveGoalDay({
       })
     : null;
 
+  const [missions, today] = await Promise.all([
+    countDayMissions({ day, goal, now, timeZone }),
+    getSummaryToday({ day, goal, phaseChallengesRequired, projected: refill?.blocks }),
+  ]);
+
   return {
     carriedUntil: carried ? getCarryOverEnd(day) : null,
     dayDate: day?.localDate ?? localDate,
-    missions: await countDayMissions({ day, goal, now, timeZone }),
-    today: getSummaryToday({ day, goal, phaseChallengesRequired, projected: refill?.blocks }),
+    missions,
+    today,
   };
 }

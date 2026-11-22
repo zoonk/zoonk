@@ -13,10 +13,7 @@ struct LessonTextParts: Equatable {
   init(_ text: String, marks: StepMarks) {
     let text = RichTextBlock.lines(text).joined(separator: "\n")
     let quote = marks.example.map { RichTextBlock.lines($0).joined(separator: "\n") }
-    let range = quote.flatMap { $0.isEmpty ? nil : text.range(of: $0) }.flatMap {
-      RichTextBlock.cutsNumberedList(text, at: $0.lowerBound)
-        || RichTextBlock.cutsNumberedList(text, at: $0.upperBound) ? nil : $0
-    }
+    let range = quote.flatMap { $0.isEmpty ? nil : text.range(of: $0) }
     let pieces: [Substring] =
       range.map { [text[..<$0.lowerBound], text[$0], text[$0.upperBound...]] } ?? [
         text[...], "", "",

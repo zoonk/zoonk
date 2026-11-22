@@ -1,10 +1,10 @@
 import SwiftUI
 
+/// Main's `LessonRichText`: one line of lesson text. A text that is one code block, such as an
+/// option that is a program, shows as code.
 struct LessonRichText: View {
   let text: String
   let literalNumbers: Bool
-
-  @Environment(\.legibilityWeight) private var legibilityWeight
 
   init(_ text: String, literalNumbers: Bool = false) {
     self.text = text
@@ -12,10 +12,22 @@ struct LessonRichText: View {
   }
 
   var body: some View {
-    Text(Self.typeset(text, literalNumbers: literalNumbers), legibility: legibilityWeight)
+    let inline = Self.typeset(text, literalNumbers: literalNumbers)
+
+    if let snippet = inline.snippet {
+      CodeSnippet(code: snippet.code, language: snippet.language)
+    } else {
+      RichInlineText(inline)
+    }
   }
 
   nonisolated static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {
+    var line = CodeFence.line(text) { prose($0, literalNumbers: literalNumbers) }
+    line.snippet = CodeFence.whole(text)
+    return line
+  }
+
+  nonisolated private static func prose(_ text: String, literalNumbers: Bool) -> RichInline {
     LessonMathSegment.split(text).reduce(RichInline(text: AttributedString())) { result, segment in
       switch segment.kind {
       case .text: result + markdown(segment.text, literalNumbers: literalNumbers)
@@ -29,7 +41,8 @@ struct LessonRichText: View {
     let options = AttributedString.MarkdownParsingOptions(
       interpretedSyntax: .inlineOnlyPreservingWhitespace,
       failurePolicy: .returnPartiallyParsedIfPossible)
-    let parsed = (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
+    let parsed = CodeBreaks.inserted(
+      into: (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text))
     return RichInline(text: literalNumbers ? parsed : RichTextTypography.typesetNumbers(in: parsed))
   }
 }
@@ -61,23 +74,44 @@ struct LessonTextBlocks: View {
   let text: String
   let mark: String?
   let underline: String?
+  let wordTraits: AccessibilityTraits
 
-  init(_ text: String, mark: String? = nil, underline: String? = nil) {
+  init(
+    _ text: String, mark: String? = nil, underline: String? = nil,
+    wordTraits: AccessibilityTraits = []
+  ) {
     self.text = text
     self.mark = mark
     self.underline = underline
+    self.wordTraits = wordTraits
   }
 
   var body: some View {
     RichTextBlocks(
       text, mark: mark,
       marks: underline != nil || highlightsTerms
-        ? RichTextMarks(underline: underline, highlightsTerms: highlightsTerms) : nil
+        ? RichTextMarks(underline: underline, highlightsTerms: highlightsTerms) : nil,
+      wordTraits: wordTraits
     ) { LessonRichText.typeset($0) }
   }
 }
 
-/// A question as a VoiceOver heading, with any table of data above it as a check's context.
+/// Main's `LessonContext`: the table, code or words a check asks about, over its question.
+struct LessonContextText: View {
+  let text: String
+
+  init(_ text: String) {
+    self.text = text
+  }
+
+  var body: some View {
+    LessonTextBlocks(text)
+      .typeStyle(.lessonContext)
+  }
+}
+
+/// A question as a VoiceOver heading, with any table or code it asks about above it as a check's
+/// context.
 struct LessonQuestionText: View {
   let text: String
 
@@ -85,8 +119,7 @@ struct LessonQuestionText: View {
     let parts = LessonQuestionParts(text)
 
     if let data = parts.data {
-      LessonTextBlocks(data)
-        .foregroundStyle(.mutedForeground)
+      LessonContextText(data)
     }
 
     if !parts.question.isEmpty {
@@ -99,8 +132,8 @@ struct LessonQuestionText: View {
   }
 }
 
-/// Main's `splitQuestionData`: in a question with a table, the last run of prose lines asks, and the
-/// table with the rest of the lines is its data.
+/// Main's `splitQuestionData`: in a question with a table or a code block, the last run of prose
+/// lines asks, and the rest is its data.
 struct LessonQuestionParts: Equatable {
   let data: String?
   let question: String
@@ -109,15 +142,15 @@ struct LessonQuestionParts: Equatable {
 extension LessonQuestionParts {
   init(_ text: String) {
     let lines = RichTextBlock.lines(text)
-    let tableLines = RichTextBlock.tableLines(lines)
+    let dataLines = RichTextBlock.tableLines(lines).union(CodeFence.lines(in: lines))
 
-    guard !tableLines.isEmpty else {
+    guard !dataLines.isEmpty else {
       self.init(data: nil, question: text)
       return
     }
 
     let isProse = { (index: Int) in
-      !tableLines.contains(index) && !lines[index].trimmingCharacters(in: .whitespaces).isEmpty
+      !dataLines.contains(index) && !lines[index].trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     guard let end = lines.indices.last(where: isProse) else {
@@ -362,9 +395,31 @@ struct LessonVisualView: View {
   var body: some View {
     switch visual {
     case .chart(let chart):
-      LessonChartView(chart: chart)
+      card { LessonChartView(chart: chart) }
+    case .plot(let plot):
+      card { LessonPlotView(plot: plot) }
     case .timeline(let timeline):
-      LessonTimelineView(timeline: timeline)
+      card { LessonTimelineView(timeline: timeline) }
+    case .unknown:
+      EmptyView()
+    }
+  }
+
+  private func card(@ViewBuilder _ content: () -> some View) -> some View {
+    content()
+      .padding(16)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .panel()
+  }
+}
+
+extension LessonVisual {
+  var title: String? {
+    switch self {
+    case .chart(let chart): chart.title
+    case .plot(let plot): plot.title
+    case .timeline(let timeline): timeline.title
+    case .unknown: nil
     }
   }
 }

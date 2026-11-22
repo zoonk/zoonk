@@ -1,5 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { isUuid } from "@zoonk/utils/uuid";
 import { type MockIdentity, findScheduledMock } from "../../../plans/planner/mock-identity";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
@@ -37,4 +38,23 @@ export async function loadScheduledMock({
         funding: parsePlanSettings(plan.settings).mockFunding,
       })
     : null;
+}
+
+export async function readScheduledPaper({
+  client,
+  goalId,
+  planItemId,
+}: {
+  client: TransactionClient;
+  goalId: string;
+  planItemId: string;
+}) {
+  const item = isUuid(planItemId)
+    ? await client.planItem.findFirst({
+        select: { scheduledFor: true },
+        where: { id: planItemId, kind: "mock", plan: { goalId } },
+      })
+    : null;
+
+  return item ? (item.scheduledFor?.toISOString() ?? null) : undefined;
 }

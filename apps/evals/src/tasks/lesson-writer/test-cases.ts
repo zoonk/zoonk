@@ -498,6 +498,25 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in US English, for beginners
+      - The three screens planned as a chart show a \`visual\` of kind \`plot\` (time across, distance up, both numeric), not a category chart with "0 s, 2 s, 5 s, 10 s" as evenly spaced categories and not an \`image\`
+      - Each plot's points are the brief's readings exactly (0, 10, 25, 40 m at 0, 2, 5, 10 s; the runner's 0, 30, 40 m at 0, 4, 9 s), drawn as a line through measured points in increasing time, and the text, options and reasons use the same numbers
+      - The words name a reading by its time, distance or label, never by where the point sits ("the third dot")
+      - The check's right answer is 15 m and its tempting wrong answer 40 m; the application's is the first 4 s (7.5 m/s against 2 m/s)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-position-time-plot",
+    userInput: toInput({
+      chapterTitle: "Describing motion",
+      courseTitle: "Physics",
+      language: "en",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["en-position-time-plot-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
       - The balance growing year by year ($1,000, $1,100, $1,210, $1,331) is data the app draws: the screen planned with a picture of the curve shows a \`visual\` of kind chart (\`line\`) with those exact values and \`image\` null, never a picture request for it
       - The screen that compares simple and compound interest after 3 years shows the two balances ($1,300 and $1,331) as a table or chart, not a picture
       - No other screen has a picture: the words are clear on their own

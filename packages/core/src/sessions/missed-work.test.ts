@@ -15,6 +15,8 @@ import { findPlanTimeToCover } from "../plans/get-time-advice";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "./_test-utils/open-today";
+import { settleSessionDay } from "./_utils/settle-session-day";
+import { readBlockPayload } from "./block-payload";
 import { catchUpToday } from "./catch-up-today";
 import { getSessionDayMinutes } from "./fresh-start";
 
@@ -529,9 +531,38 @@ describe("catching up", () => {
     expect(catchUp?.later.offered).toBe(true);
     expect(catchUp?.later.minutes).toBeLessThanOrEqual(goal.dailyMinutes * 1.25);
 
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { sessionId: wednesday.id },
+    });
+
+    await prisma.studySession.update({ data: { plannedMinutes: 0 }, where: { id: wednesday.id } });
+    await settleSessionDay({ sessionId: wednesday.id, timeZone: "UTC", userId: user.id });
     const caughtUp = await catchUpToday({ input: { timeZone: "UTC" }, sessionId: wednesday.id });
 
     expect(caughtUp.status).toBe("ready");
+
+    if (caughtUp.status !== "ready") {
+      throw new Error("Expected catch-up");
+    }
+
+    expect(caughtUp.session.sessionBar).toMatchObject({
+      completed: wednesday.blocks.length,
+      total: wednesday.blocks.length,
+    });
+
+    const appended = await prisma.studySessionBlock.findMany({
+      where: { sessionId: wednesday.id, status: "pending" },
+    });
+
+    expect(appended.length).toBeGreaterThan(0);
+
+    expect(
+      appended
+        .map((block) => readBlockPayload(block))
+        .every((payload) => payload.extra && !payload.reinforcement),
+    ).toBe(true);
+
     expect(caughtUp.status === "ready" && caughtUp.session.catchUp?.later.lessons).toBe(0);
 
     await expect(

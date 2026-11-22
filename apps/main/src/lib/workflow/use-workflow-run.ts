@@ -1,7 +1,7 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
-import { type GenerationKind } from "@zoonk/learn/generation/kinds";
+import { type FollowedRunProps } from "@zoonk/learn/generation/follower";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
@@ -48,13 +48,7 @@ export function useWorkflowRun({
   onReady,
   readGenerationId,
   restart,
-}: {
-  generationId: string | null;
-  kind: GenerationKind;
-  onReady?: () => void;
-  readGenerationId?: () => Promise<string | null>;
-  restart: () => Promise<unknown>;
-}): GenerationRun {
+}: Omit<FollowedRunProps, "children">): GenerationRun {
   const [state, dispatch] = useReducer(workflowRunReducer, INITIAL_WORKFLOW_RUN_STATE);
   const runId = getFollowedRunId({ generationId, state });
   const status = getRunStatus({ runId, state });
@@ -63,7 +57,12 @@ export function useWorkflowRun({
 
   const poll = useEffectEvent(async () => {
     const { data } = await safeAsync(async () => (await readGenerationId?.()) ?? null);
-    dispatch({ runId: data ?? null, type: "polled" });
+
+    if (data && typeof data === "object") {
+      dispatch({ namespace: data.namespace, runId: data.id, type: "polled" });
+    } else {
+      dispatch({ runId: data ?? null, type: "polled" });
+    }
   });
 
   useEffect(() => {
@@ -77,13 +76,13 @@ export function useWorkflowRun({
   }, [canPoll, isWaiting]);
 
   useEffect(() => {
-    if (!isWaiting) {
+    if (!isWaiting || kind === "mockPaper") {
       return;
     }
 
     const timer = setTimeout(() => dispatch({ type: "notStarted" }), NOT_STARTED_MS);
     return () => clearTimeout(timer);
-  }, [isWaiting]);
+  }, [isWaiting, kind]);
 
   useEffect(() => {
     if (state.reconnectIn === null) {
@@ -128,6 +127,7 @@ export function useWorkflowRun({
 
   useGenerationEvents({
     connection: state.connection,
+    namespace: runId === state.polled ? state.namespace : null,
     onComplete: (id) => void checkRun(id),
     onError: () => dispatch({ type: "connectionLost" }),
     onMessage: (message) => dispatch({ kind, message, type: "event" }),

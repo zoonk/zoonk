@@ -126,13 +126,16 @@ export function listSelectedItemFacts({
 
   const placed = placeExamBosses({ built, input, rows: facts?.rows, survivors: facts?.survivors });
 
-  const listTested = (boss: (typeof plan.items)[number]) =>
+  const listTested = (boss: PlannedItem) =>
     placed.get(boss.key)?.tested ??
     (boss.status === "todo" ? [] : (readSelectedItemFacts(boss.facts)?.boss?.testedKeys ?? []));
 
-  const toBoss = (boss: (typeof plan.items)[number]): SelectedItemFacts["boss"] => {
+  const toBoss = (boss: PlannedItem): SelectedItemFacts["boss"] => {
     const sized = built.bossSizes.get(boss.key);
-    const testedSkillIds = sized?.skillIds ?? getBossSkillIds({ ...plan, boss });
+    const entry = plan.items.find((item) => item.key === boss.key);
+
+    const testedSkillIds =
+      sized?.skillIds ?? (entry ? getBossSkillIds({ ...plan, boss: entry }) : []);
 
     return {
       kind: getBossKind({
@@ -149,7 +152,7 @@ export function listSelectedItemFacts({
   };
 
   return new Map(
-    plan.items.map((item) => {
+    built.items.map((item) => {
       const end = built.teachingEnds.get(item.key);
 
       const teachingEnd =

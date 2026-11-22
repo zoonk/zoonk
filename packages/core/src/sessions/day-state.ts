@@ -5,9 +5,10 @@ export const DAY_STATES = ["ahead", "done", "prepare", "rest", "underway", "wait
 export type DayState = (typeof DAY_STATES)[number];
 
 type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPosition"> & {
+  endedAt?: Date | null;
   lessonsComing?: boolean;
   lessonsToPrepare?: boolean;
-  blocks: readonly Pick<StudyBlockView, "position" | "status">[];
+  blocks: readonly (Pick<StudyBlockView, "position" | "status"> & { preparing?: boolean })[];
 };
 
 /**
@@ -17,6 +18,10 @@ type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPositi
  * outlining them; otherwise it asks, so it never waits on nobody.
  */
 function getDayState(day: DayStateInput): DayState {
+  if (day.endedAt) {
+    return "done";
+  }
+
   const empty = day.blocks.length === 0;
   const studyDay = empty && day.minutes.dailyGoal > 0;
   const hasNext = day.blocks.some((block) => block.position === day.nextPosition);
@@ -31,6 +36,10 @@ function getDayState(day: DayStateInput): DayState {
 
   if (hasNext) {
     return "underway";
+  }
+
+  if (day.blocks.some((block) => block.status === "pending" && block.preparing)) {
+    return "waiting";
   }
 
   if (day.lessonsComing) {
@@ -48,6 +57,9 @@ function getDayState(day: DayStateInput): DayState {
   return empty && day.minutes.dailyGoal === 0 ? "rest" : "done";
 }
 
-export function withDayState<Day extends DayStateInput>(day: Day): Day & { state: DayState } {
-  return { ...day, state: getDayState(day) };
+export function withDayState<Day extends DayStateInput>(
+  day: Day,
+  endedAt?: Date | null,
+): Day & { state: DayState } {
+  return { ...day, state: getDayState({ ...day, endedAt: endedAt ?? day.endedAt }) };
 }

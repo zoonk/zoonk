@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
@@ -34,7 +31,6 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.WEEK_RING
 import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
@@ -117,7 +113,7 @@ private fun DayCell(
 ) {
     val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek
     val weekday = names.full.getValue(dayOfWeek)
-    val status = dayStatus(day, weekDate, exam)
+    val status = weekDayStatus(day, weekDate, exam)
     val description =
         when {
             challenge == null -> stringResource(R.string.today_week_day, weekday, status)
@@ -140,7 +136,7 @@ private fun DayCell(
                     .then(open)
                     .clearAndSetSemantics { contentDescription = description },
         ) {
-            DayRing(day, weekDate) {
+            WeekDayRing(day, weekDate) {
                 if (challenge != null && day.share == 0f) KindMark(challenge.kind())
             }
         }
@@ -198,103 +194,6 @@ private fun ChallengeLine(challenge: TodayWeeklyChallenge) {
         Text(challengeDayName(challenge).replaceFirstChar { it.titlecase(locale) })
     }
 }
-
-/** A day's ring as Today draws it, which the weekly recap draws for its days too. */
-@Composable
-internal fun DayRing(
-    day: StudyWeekDay,
-    weekDate: LocalDate,
-    content: @Composable () -> Unit,
-) {
-    if (day.isOutsidePlan && !day.isToday) {
-        Row(Modifier.size(RING), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            HorizontalDivider(Modifier.size(width = 12.dp, height = 2.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
-        }
-        return
-    }
-
-    val isTarget = !day.studied && (day.kind == StudyWeekDay.Kind.EXAM || day.kind == StudyWeekDay.Kind.DEADLINE)
-    val track =
-        when {
-            day.isToday -> GoalRingTrack.Today
-            day.isMissed(weekDate) -> GoalRingTrack.Missed
-            day.kind == StudyWeekDay.Kind.REST -> GoalRingTrack.Rest
-            else -> GoalRingTrack.Default
-        }
-
-    GoalRing(day.share, track = track, size = RING) {
-        when {
-            day.hitGoal -> DoneMark()
-            isTarget -> Icon(painterResource(R.drawable.ic_school), contentDescription = null, modifier = Modifier.size(14.dp))
-            else -> content()
-        }
-    }
-}
-
-/** A day the plan gave no time that the learner studied anyway fills whole. */
-private val WeekDay.share: Float
-    get() =
-        when {
-            hitGoal -> 1f
-            goalMinutes == 0.0 -> if (studied) 1f else 0f
-            else -> (minutes / goalMinutes).toFloat().coerceAtMost(1f)
-        }
-
-private fun WeekDay.isMissed(weekDate: LocalDate) = kind == StudyWeekDay.Kind.STUDY && !studied && !isToday && date < weekDate
-
-private val WeekDay.isOutsidePlan get() =
-    !studied &&
-        (kind == StudyWeekDay.Kind.BEFORE_START || kind == StudyWeekDay.Kind.AFTER_END)
-
-@Composable
-private fun dayStatus(
-    day: WeekDay,
-    weekDate: LocalDate,
-    exam: Boolean,
-): String =
-    stringResource(
-        when {
-            day.hitGoal -> {
-                R.string.today_week_goal_reached
-            }
-
-            day.studied -> {
-                R.string.today_week_studied
-            }
-
-            day.kind == StudyWeekDay.Kind.EXAM -> {
-                R.string.today_week_exam_day
-            }
-
-            day.kind == StudyWeekDay.Kind.DEADLINE -> {
-                R.string.today_week_deadline
-            }
-
-            day.kind == StudyWeekDay.Kind.BEFORE_START -> {
-                R.string.today_week_before_plan
-            }
-
-            day.kind == StudyWeekDay.Kind.AFTER_END -> {
-                if (exam) R.string.today_week_after_exam else R.string.today_week_after_date
-            }
-
-            day.kind == StudyWeekDay.Kind.REST -> {
-                R.string.today_week_rest_day
-            }
-
-            day.isToday -> {
-                R.string.today_week_today
-            }
-
-            day.date > weekDate -> {
-                R.string.today_week_planned
-            }
-
-            else -> {
-                R.string.today_week_not_studied
-            }
-        },
-    )
 
 /** A mock the learner's plan doesn't include leaves its day to a full review of every topic. */
 private val TodayWeeklyChallenge.isFullReview get() =
@@ -366,7 +265,5 @@ private fun ChallengeRow(
         )
     }
 }
-
-private val RING = WEEK_RING
 
 internal fun showsWeek(days: List<StudyWeekDay>): Boolean = days.isNotEmpty()

@@ -67,12 +67,15 @@ export async function buildPlanSkillGraph({
 }): Promise<PlanSkillGraph | null> {
   const planGraph = joinOptionSkills(parsePlanGraph(graph));
 
-  if (planGraph.skills.length === 0) {
+  const required = planGraph.skills.filter((skill) => !skill.extra);
+
+  if (required.length === 0) {
     return null;
   }
 
-  const skillIds = planGraph.skills.map((skill) => skill.skillId);
-  const courseIds = [...new Set(planGraph.skills.flatMap((skill) => skill.courseIds ?? []))];
+  const all = [...required, ...(planGraph.extraSkills ?? [])];
+  const skillIds = all.map((skill) => skill.skillId);
+  const courseIds = [...new Set(all.flatMap((skill) => skill.courseIds ?? []))];
 
   const [rows, edges, courses] = await Promise.all([
     prisma.skill.findMany({
@@ -98,9 +101,11 @@ export async function buildPlanSkillGraph({
 
   const byId = new Map(rows.map((row) => [row.id, row]));
 
-  const skills = planGraph.skills.flatMap((skill) =>
-    toGraphSkills({ prerequisites, rows: byId, skill }),
-  );
+  const toSkills = (input: PlanGraph["skills"]) =>
+    input.flatMap((skill) => toGraphSkills({ prerequisites, rows: byId, skill }));
+
+  const skills = toSkills(required);
+  const extraSkills = toSkills(planGraph.extraSkills ?? []);
 
   return {
     courseIdsByKey: Object.fromEntries(courseIds.map((id) => [id, id])),
@@ -112,15 +117,18 @@ export async function buildPlanSkillGraph({
         levels: [],
         title: course.title,
       })),
-      estimatedHours: toHours(planGraph.skills),
+      estimatedHours: toHours(required),
+      ...(extraSkills.length > 0 && { extraSkills }),
       phases: planGraph.phases.map((phase, index) => ({
-        estimatedHours: toHours(planGraph.skills.filter((skill) => skill.phase === index)),
+        estimatedHours: toHours(required.filter((skill) => skill.phase === index)),
         milestone: phase.milestone ?? "",
         title: phase.name,
       })),
       skills,
     },
-    idsByKey: Object.fromEntries(skills.map((skill) => [skill.key, skill.key.split(":")[0] ?? ""])),
+    idsByKey: Object.fromEntries(
+      [...skills, ...extraSkills].map((skill) => [skill.key, skill.key.split(":")[0] ?? ""]),
+    ),
     plannedAt,
     provenance,
   };

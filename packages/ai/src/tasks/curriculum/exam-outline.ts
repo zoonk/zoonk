@@ -17,6 +17,7 @@ type ExamSubject = {
   weight: number | null;
   /** In the notice's words and order. */
   topics: string[];
+  writtenTasks?: string[];
 };
 
 export type ExamOutline = {
@@ -52,7 +53,11 @@ function describeSubject({ index, subject }: { index: number; subject: ExamSubje
     (topic, topicIndex) => `  ${toTopicId({ subject: index, topic: topicIndex })} ${topic}`,
   );
 
-  return [heading, ...topics].join("\n");
+  return [
+    heading,
+    ...topics,
+    ...(subject.writtenTasks ?? []).map((task) => `  Written task: ${task}`),
+  ].join("\n");
 }
 
 export function formatExamOutline(outline: ExamOutline): string {

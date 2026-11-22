@@ -67,6 +67,7 @@ async function setsSetup() {
   const set = await itemSetFixture({
     content: { source: "A town paper.", text: PASSAGE, title: "Sunday openings" },
     examBlueprintId: blueprint.id,
+    mockOnly: true,
   });
 
   const inSet = await Promise.all(
@@ -74,6 +75,7 @@ async function setsSetup() {
       itemFixture({
         content: choiceItemContent(`On the text, question ${setPosition + 1}?`),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         setId: set.id,
         setPosition,
         skillId: skill.id,
@@ -87,6 +89,7 @@ async function setsSetup() {
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: skill.id,
       }),
     ),

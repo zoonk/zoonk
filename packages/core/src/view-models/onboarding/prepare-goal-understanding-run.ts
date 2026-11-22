@@ -1,34 +1,39 @@
 import "server-only";
+import { type OnboardingDraft } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getOnboardingDraftsCacheTag } from "../../cache/tags";
-import { claimAssist } from "../../entitlements/claim-usage";
-import { type RefusedUsage } from "../../entitlements/contract";
+import { getAllowanceCacheTag, getOnboardingDraftsCacheTag } from "../../cache/tags";
+import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { claimAssistInWrite } from "../../entitlements/claim-usage";
+import { type RefusedUsage, type UsageDecision } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { getSession } from "../../users/get-session";
 import { completeDraft, findOwnedDraft, loadDraftView } from "./_utils/onboarding-draft";
 import { findCompletableUnderstanding } from "./_utils/understanding-cache";
 import { type OnboardingDraftView } from "./onboarding-contract";
+
+type Admission =
+  | Exclude<UsageDecision, { status: "allowed" }>
+  | { claimed: boolean; draft: OnboardingDraft; written: boolean };
 
 export type GoalUnderstandingRunResult =
   | RefusedUsage
   | { status: "notFound" | "unauthorized" }
   | { draft: OnboardingDraftView; status: "start" | "understood" };
 
-/** Requires draft ownership; understood needs no run, start requires one, and retries claim another small AI allowance. */
+/** Requires draft ownership; understood needs no run, start requires one, and a retry claims another small AI allowance once per run that ran. */
 export async function prepareGoalUnderstandingRun({
   draftId,
 }: {
   draftId: string;
 }): Promise<GoalUnderstandingRunResult> {
-  const session = await getSession();
+  const viewer = await getEntitlementViewer();
 
-  if (!session) {
+  if (!viewer) {
     return { status: "unauthorized" };
   }
 
-  const draft = await findOwnedDraft({ draftId, userId: session.user.id });
+  const draft = await findOwnedDraft({ draftId, userId: viewer.userId });
 
   if (!draft) {
     return { status: "notFound" };
@@ -45,7 +50,7 @@ export async function prepareGoalUnderstandingRun({
           language: draft.language,
           normalizedPrompt: normalizeString(draft.prompt),
           now: new Date(),
-          userId: session.user.id,
+          userId: viewer.userId,
         });
 
   if (cached) {
@@ -60,34 +65,46 @@ export async function prepareGoalUnderstandingRun({
     return { limit: guestLimit, status: "limitReached" };
   }
 
-  const usage = draft.runId === null ? null : await claimAssist();
+  const admitted = await writeLearnerChange<Admission>({ userId: viewer.userId }, async (tx) => {
+    const current = await tx.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
 
-  if (usage && usage.status !== "allowed") {
-    return usage;
+    // A draft whose run never started was paid for by its start; a run that already ran is paid again.
+    const needsRun =
+      current.status === "failed" || (current.status === "understanding" && current.runId !== null);
+
+    if (!needsRun) {
+      return unchanged({ claimed: false, draft: current, written: false });
+    }
+
+    const usage =
+      current.runId === null ? null : await claimAssistInWrite({ transaction: tx, viewer });
+
+    if (usage && usage.status !== "allowed") {
+      return unchanged(usage);
+    }
+
+    // Clearing the run means a second retry of the same run, at once, finds nothing left to pay for.
+    const ready = await tx.onboardingDraft.update({
+      data: { runId: null, status: "understanding" },
+      where: { id: draft.id },
+    });
+
+    return { claimed: usage !== null, draft: ready, written: true };
+  });
+
+  if (!("draft" in admitted)) {
+    return admitted;
   }
 
-  const ready =
-    draft.status === "failed"
-      ? await writeLearnerChange({ userId: session.user.id }, async (tx) => {
-          const current = await tx.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
-
-          if (current.status !== "failed") {
-            return unchanged(current);
-          }
-
-          return tx.onboardingDraft.update({
-            data: { status: "understanding" },
-            where: { id: draft.id },
-          });
-        })
-      : draft;
-
-  if (draft.status === "failed") {
-    revalidateCacheTags([getOnboardingDraftsCacheTag(draft.userId)]);
+  if (admitted.written) {
+    revalidateCacheTags([
+      ...(admitted.claimed ? [getAllowanceCacheTag(viewer.userId)] : []),
+      getOnboardingDraftsCacheTag(viewer.userId),
+    ]);
   }
 
   return {
-    draft: await loadDraftView(ready),
-    status: ready.status === "understood" ? "understood" : "start",
+    draft: await loadDraftView(admitted.draft),
+    status: admitted.draft.status === "understood" ? "understood" : "start",
   };
 }

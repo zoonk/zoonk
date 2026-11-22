@@ -320,6 +320,7 @@ export async function buildPlanContextSnapshot(
     ...day,
     estimate: { endDate: plan.estimate.endDate, remainingHours: plan.estimate.remainingHours },
     exam,
+    ...(plan.extraOffer?.canApply && { examStrategyOffer: { lessons: plan.extraOffer.lessons } }),
     goal: {
       ...toGoalContext({ cutoff, dailyMinutes: plan.schedule.dailyMinutes, goal }),
       ...(contentCountry && { contentCountry }),

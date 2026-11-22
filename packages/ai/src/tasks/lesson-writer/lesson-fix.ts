@@ -101,7 +101,11 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const rules = selectPromptVariants({
     template: fixPrompt,
-    variants: { novice, shortAnswers: Boolean(params.shortAnswers) },
+    variants: {
+      novice,
+      shortAnswers: Boolean(params.shortAnswers),
+      usedSituations: Boolean(params.usedSituations?.length),
+    },
   }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterTarget(params.language)));
 
   const systemPrompt = `${rules}\n\n${fixOutput.outputRules}`;

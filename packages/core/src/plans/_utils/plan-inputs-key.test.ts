@@ -43,6 +43,7 @@ const input: Required<BuildPlanInput> = {
   bringBackSetAside: true,
   carryOver: { lessonIds: ["fractions-0"] },
   examWindows: [{ endDate: TODAY, kind: "finalStretch", startDate: TODAY }],
+  extras: { activeItemIds: new Set(["extra"]), bringBack: false, previousSkillIds: new Set() },
   finishedOn: new Map([["item-fractions-0", TODAY]]),
   fullMockMinutes: 300,
   goal: { dailyMinutes: 30, kind: "exam", targetDate: new Date("2026-12-18T00:00:00Z") },
@@ -109,9 +110,12 @@ const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
   it("keeps the bytes of the keys plans were saved with", () => {
-    expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
-      "480b724851fbb20e785a4edd241df195d98f8fb65562bb682227ba8b5e8f7189",
-    );
+    expect(
+      getPlanInputsKey({
+        input: { ...input, extras: undefined },
+        items: [{ ...item, status: "done" }],
+      }),
+    ).toBe("480b724851fbb20e785a4edd241df195d98f8fb65562bb682227ba8b5e8f7189");
   });
 
   it("reads a course lesson's published position and phase", () => {

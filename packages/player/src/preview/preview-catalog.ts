@@ -8,8 +8,11 @@ import {
   activityFixtureAreas,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
+import { challengeChartCaseFixture } from "@zoonk/testing/fixtures/challenge-chart-case";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { rightAnswer } from "./preview-answers";
+import { chartEntries } from "./preview-charts";
+import { type PreviewEntry, type PreviewState, entry } from "./preview-entry";
+import { heardListeningStep, heardSpokenSentenceStep } from "./preview-heard";
 import { buildLesson } from "./preview-lesson";
 import {
   type ActivityContent,
@@ -19,53 +22,12 @@ import {
   explanationStep,
   inlineImage,
   languageStep,
-  lawTimeline,
-  lettersChart,
   numberedCheckStep,
   pictureCheckStep,
-  spokenAnswerStep,
   teachingStep,
 } from "./preview-steps";
 
-export type PreviewState = "answering" | "checked" | "explore" | "reading";
-
-export type PreviewEntry = {
-  group: string;
-  id: string;
-  label: string;
-  screen: (state: PreviewState) => PlayableLibraryStep;
-  states: readonly PreviewState[];
-};
-
-function previewId(entryId: string): string {
-  return `preview-${entryId}`;
-}
-
-function statesOf(screen: PlayableLibraryStep): readonly PreviewState[] {
-  if (rightAnswer(screen)) {
-    return ["answering", "checked"];
-  }
-
-  const asks = "exercise" in screen || screen.kind === "activity" || screen.kind === "spokenAnswer";
-  return asks ? ["answering"] : ["reading"];
-}
-
-function entry({
-  explore,
-  group,
-  id,
-  label,
-  screen,
-}: Omit<PreviewEntry, "screen" | "states"> & {
-  explore?: (id: string) => PlayableLibraryStep;
-  screen: (id: string) => PlayableLibraryStep;
-}): PreviewEntry {
-  const build = (state: PreviewState) =>
-    state === "explore" && explore ? explore(previewId(id)) : screen(previewId(id));
-
-  const states = statesOf(build("answering"));
-  return { group, id, label, screen: build, states: explore ? ["explore", ...states] : states };
-}
+export type { PreviewEntry, PreviewState } from "./preview-entry";
 
 function exploreStep({
   content,
@@ -158,20 +120,7 @@ const screenEntries: PreviewEntry[] = [
         { id },
       ),
   }),
-  entry({
-    group: "Lesson screens",
-    id: "explanation-chart",
-    label: "Explanation with a chart",
-    screen: (id) =>
-      explanationStep({ ...playableStepContent.explanation, visual: lettersChart }, { id }),
-  }),
-  entry({
-    group: "Lesson screens",
-    id: "explanation-timeline",
-    label: "Explanation with a timeline",
-    screen: (id) =>
-      explanationStep({ ...playableStepContent.explanation, visual: lawTimeline }, { id }),
-  }),
+  ...chartEntries,
   entry({
     group: "Lesson screens",
     id: "worked-example",
@@ -194,7 +143,13 @@ const screenEntries: PreviewEntry[] = [
     group: "Lesson screens",
     id: "spoken-answer",
     label: "Spoken answer",
-    screen: (id) => spokenAnswerStep({ id }),
+    screen: (id) => heardSpokenSentenceStep({ id }),
+  }),
+  entry({
+    group: "Lesson screens",
+    id: "listening",
+    label: "Listening",
+    screen: (id) => heardListeningStep({ id }),
   }),
   entry({
     group: "Lesson screens",
@@ -207,6 +162,12 @@ const screenEntries: PreviewEntry[] = [
     id: "challenge",
     label: "Challenge",
     screen: (id) => teachingStep("challenge", { id }),
+  }),
+  entry({
+    group: "Lesson screens",
+    id: "challenge-chart",
+    label: "Challenge with a chart",
+    screen: (id) => contentStep("challenge", { content: challengeChartCaseFixture(), id }),
   }),
 ];
 

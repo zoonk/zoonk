@@ -156,6 +156,18 @@ class LanguageStepsFlowTest {
     }
 
     @Test
+    fun aSentenceThatIsItsOwnAnswerIsLeftOutOnceTheLearnerCantListen() {
+        play(listOf(dictation("dictation"), listening("listening", "https://audio.zoonk.test/sentence.mp3")))
+        rule.onNodeWithText("What do you hear?").assertExists()
+
+        tap("I can't listen now")
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Yo veo un gato.").assertExists()
+        rule.onNodeWithText("I see a cat.").assertDoesNotExist()
+    }
+
+    @Test
     fun aSentenceCanBeCheckedFromItsFirstWord() {
         play(listOf(reading("read"), summaryStep("end")))
 

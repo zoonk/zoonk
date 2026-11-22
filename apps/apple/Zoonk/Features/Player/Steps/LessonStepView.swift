@@ -34,6 +34,7 @@ struct LessonStepView: View {
       LessonQuestionStepView(
         step: step, state: state, context: context, part: part,
         cantTalk: Binding(get: { store.cantTalkToday }, set: { store.cantTalkToday = $0 }),
+        cantListen: Binding(get: { store.cantListenToday }, set: { store.cantListenToday = $0 }),
         micBlocked: Binding(get: { store.isMicBlocked }, set: { store.isMicBlocked = $0 }),
         team: store.challengeTeam, waitForRun: { await store.ensureRun() },
         studySessionId: { store.studySessionId })
@@ -69,6 +70,7 @@ struct LessonQuestionStepView: View {
   let context: LessonStepContext
   let part: LessonStepPart
   @Binding var cantTalk: Bool
+  @Binding var cantListen: Bool
   @Binding var micBlocked: Bool
   var team: [String] = []
   var waitForRun: @MainActor () async -> Bool = { true }
@@ -86,13 +88,15 @@ struct LessonQuestionStepView: View {
     case .spokenAnswer(let content, let listening):
       SpokenAnswerStepView(
         step: step, content: content, listening: listening, context: context,
-        cantTalk: $cantTalk, micBlocked: $micBlocked, waitForRun: waitForRun,
-        studySessionId: studySessionId, part: part, mistake: mistake,
+        cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
+        waitForRun: waitForRun, studySessionId: studySessionId, part: part, mistake: mistake,
         onPracticeGraded: onPracticeGraded, onCheckingChanged: onCheckingChanged)
     case .activity(let content):
       ActivityStepView(step: step, content: content, context: context, part: part)
     case .language(let exercise, let hints):
-      LanguageStepView(exercise: exercise, wordHints: hints, context: context, part: part)
+      LanguageStepView(
+        exercise: exercise, wordHints: hints, context: context, part: part,
+        cantListen: $cantListen)
     case .challenge(let content):
       ChallengeStepView(
         step: step, content: content, state: state, select: context.select, team: team, part: part)
@@ -320,8 +324,7 @@ private struct CheckStepView: View {
       StepMedia(step: step, visual: nil, asks: true)
 
       if let context = content.context {
-        LessonTextBlocks(context)
-          .foregroundStyle(.mutedForeground)
+        LessonContextText(context)
       }
 
       if let visual = content.visual {
@@ -355,8 +358,7 @@ private struct TypedAnswerStepView: View {
     switch part {
     case .screen:
       if let context = content.context {
-        LessonTextBlocks(context)
-          .foregroundStyle(.mutedForeground)
+        LessonContextText(context)
       }
 
       if content.isOwnWords {
@@ -427,8 +429,17 @@ enum SpokenAnswerMode: Equatable {
   case listen
   case type
 
-  init(canListen: Bool, canSpeak: Bool, cantTalk: Bool, micBlocked: Bool) {
-    if (cantTalk || !canSpeak) && canListen {
+  init(
+    canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
+  ) {
+    if heard != nil {
+      self = .speak
+    } else if case .spokenAnswer = lockedAnswer {
+      self = .type
+    } else if canListen, case .listening = lockedAnswer {
+      self = .listen
+    } else if (cantTalk || !canSpeak) && canListen && !cantListen {
       self = .listen
     } else if cantTalk || micBlocked || !canSpeak {
       self = .type
@@ -436,22 +447,31 @@ enum SpokenAnswerMode: Equatable {
       self = .speak
     }
   }
-
-  /// An answered screen shows the way it was answered, whatever the learner picks today. A
-  /// recording keeps no answer.
-  init(answered answer: LessonAnswer?) {
-    switch answer {
-    case .spokenAnswer: self = .type
-    case .listening: self = .listen
-    default: self = .speak
-    }
-  }
 }
 
-extension LessonPlayerStore {
-  func spokenAnswerMode(canListen: Bool, canSpeak: Bool) -> SpokenAnswerMode {
-    SpokenAnswerMode(
-      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalkToday, micBlocked: isMicBlocked)
+extension LessonStep {
+  func spokenAnswerMode(
+    canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    lockedAnswer: LessonAnswer?, heard: SpokenHeard?
+  ) -> SpokenAnswerMode? {
+    guard case .spokenAnswer(_, let listening) = content else { return nil }
+
+    return SpokenAnswerMode(
+      canListen: listening != nil, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
+      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
+  }
+
+  /// The prompt this screen plays. Main's `ListeningInstead`: a spoken screen answered by listening
+  /// is a listening screen.
+  func shownPromptAudio(spokenMode: SpokenAnswerMode?, cantListen: Bool) -> URL? {
+    switch content {
+    case .spokenAnswer(_, let listening?):
+      spokenMode == .listen ? listening.promptAudio(cantListen: cantListen) : nil
+    case .language(let exercise, _):
+      exercise.promptAudio(cantListen: cantListen)
+    default:
+      nil
+    }
   }
 }
 
@@ -464,6 +484,7 @@ private struct SpokenAnswerStepView: View {
   let listening: LanguageExercise?
   let context: LessonStepContext
   @Binding var cantTalk: Bool
+  @Binding var cantListen: Bool
   @Binding var micBlocked: Bool
   let waitForRun: @MainActor () async -> Bool
   let studySessionId: @MainActor () -> String?
@@ -473,18 +494,17 @@ private struct SpokenAnswerStepView: View {
   var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
 
   private var mode: SpokenAnswerMode {
-    context.isLocked
-      ? SpokenAnswerMode(answered: context.answer)
-      : SpokenAnswerMode(
-        canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-        micBlocked: micBlocked)
+    SpokenAnswerMode(
+      canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
+      cantListen: cantListen, micBlocked: micBlocked,
+      lockedAnswer: context.isLocked ? context.answer : nil, heard: context.result?.heard)
   }
 
   var body: some View {
     if mode == .listen, let listening {
-      LanguageStepView(exercise: listening, wordHints: nil, context: context, part: part)
-
-      if part == .turn {
+      ArrangeWordsView(
+        exercise: listening, context: context, part: part, cantListen: typingWhenCantListen
+      ) {
         modeSwitch
       }
     } else {
@@ -497,15 +517,20 @@ private struct SpokenAnswerStepView: View {
 
   @ViewBuilder
   private var screen: some View {
-    LessonQuestionText(text: content.prompt)
-    VStack(alignment: .leading, spacing: 4) {
-      Text(content.targetText)
-        .typeStyle(.section.weight(.medium))
-      if let romanization = content.romanization {
-        Text(romanization).foregroundStyle(.mutedForeground)
+    ClosingColumn(spacing: 12) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(content.targetText)
+          .typeStyle(.section.weight(.medium))
+          .accessibilityAddTraits(.isHeader)
+        if let romanization = content.romanization {
+          Text(romanization).foregroundStyle(.mutedForeground)
+        }
+        if let translation = content.translation {
+          Text(translation).foregroundStyle(.mutedForeground)
+        }
       }
-      if let translation = content.translation {
-        Text(translation).foregroundStyle(.mutedForeground)
+      if mode == .speak {
+        modeSwitch
       }
     }
   }
@@ -549,9 +574,19 @@ private struct SpokenAnswerStepView: View {
       ) {
         context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
       }
-    }
 
-    modeSwitch
+      modeSwitch
+    }
+  }
+
+  /// Not listening leaves this screen to be typed, and an answer started one way doesn't carry over.
+  private var typingWhenCantListen: Binding<Bool> {
+    Binding {
+      cantListen
+    } set: {
+      context.select(nil)
+      cantListen = $0
+    }
   }
 
   private static var micBlockedLine: String {
@@ -574,7 +609,7 @@ private struct SpokenAnswerStepView: View {
               "I can't talk now", tableName: "Player",
               comment: "Answers a spoken screen by listening or typing instead")
           } icon: {
-            Image(systemName: listening == nil ? "keyboard" : "headphones")
+            Image(systemName: "mic.slash")
           }
         } else {
           Label {
@@ -589,7 +624,42 @@ private struct SpokenAnswerStepView: View {
           }
         }
       }
-      .buttonStyle(.borderless)
+      .buttonStyle(.outline)
+      .controlSize(.large)
+    }
+  }
+}
+
+/// A leading column whose views that draw nothing take no room and no spacing, as main's
+/// `empty:hidden` does.
+struct ClosingColumn: Layout {
+  let spacing: CGFloat
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let sizes = subviews.map {
+      $0.sizeThatFits(ProposedViewSize(width: proposal.width, height: nil))
+    }
+    let shown = sizes.filter { $0.height > 0 }
+
+    return CGSize(
+      width: proposal.width ?? shown.map(\.width).max() ?? 0,
+      height: shown.map(\.height).reduce(0, +) + spacing * CGFloat(max(shown.count - 1, 0)))
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    var y = bounds.minY
+
+    for subview in subviews {
+      let size = subview.sizeThatFits(ProposedViewSize(width: bounds.width, height: nil))
+      subview.place(
+        at: CGPoint(x: bounds.minX, y: y),
+        proposal: ProposedViewSize(width: bounds.width, height: size.height))
+
+      if size.height > 0 {
+        y += size.height + spacing
+      }
     }
   }
 }

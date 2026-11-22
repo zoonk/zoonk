@@ -40,9 +40,17 @@ export function toRouting({
   const easierQuotas = apportion({ total: Math.ceil(size / 2), weights: quotas });
 
   const routes = subjects.map((items, index) => {
-    const sorted = items.toSorted(byDifficulty);
+    const quota = quotas[index] ?? 0;
+
+    const eligible = items.some((item) => item.lastMockUse !== undefined)
+      ? items
+          .toSorted((first, second) => (first.lastMockUse ?? 0) - (second.lastMockUse ?? 0))
+          .slice(0, quota)
+      : items;
+
+    const sorted = eligible.toSorted(byDifficulty);
     const easier = easierQuotas[index] ?? 0;
-    const harder = (quotas[index] ?? 0) - easier;
+    const harder = quota - easier;
 
     return {
       easier: sorted.slice(0, easier).map((item) => item.itemId),

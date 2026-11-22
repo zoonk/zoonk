@@ -1,5 +1,6 @@
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { challengePlotFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import { checkWrittenLesson } from "./lesson-code-checks";
@@ -191,6 +192,10 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(writtenTemperatureLesson(), tableSpec)).toStrictEqual([[4, "plannedVisual"]]);
     expect(flowCodes(tabled, tableSpec)).toStrictEqual([]);
     expect(flowCodes(withScreens({ 4: chart }), chartSpec)).toStrictEqual([]);
+
+    const plot = { ...chart, visual: challengePlotFixture() };
+
+    expect(flowCodes(withScreens({ 4: plot }), chartSpec)).toStrictEqual([]);
 
     const templateSpec = planned({
       4: { activityTemplate: "processOrder", visualKind: "template" },

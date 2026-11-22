@@ -19,7 +19,13 @@ import {
   workedExampleContentSchema,
 } from "./teaching-steps";
 
-export type { ChartVisual, LessonVisual, TimelineVisual } from "@zoonk/ai/tasks/visuals/schema";
+export type {
+  ChallengeVisual,
+  ChartVisual,
+  LessonVisual,
+  PlotVisual,
+  TimelineVisual,
+} from "@zoonk/ai/tasks/visuals/schema";
 
 export const STEP_CONTRACT_VERSION = 1;
 

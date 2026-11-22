@@ -15,10 +15,12 @@ function getSkillProblems({ given, plan }: { given: number; plan: ChallengePlan 
 }
 
 export function checkChallengePlan({
+  language,
   plan,
   skills,
   variant,
 }: {
+  language: string;
   plan: ChallengePlan;
   skills: readonly unknown[];
   variant: ChallengeLessonSpec["variant"];
@@ -26,7 +28,7 @@ export function checkChallengePlan({
   const { written } = assembleChallengeCase({ plan, script: draftEmptyScript(plan) });
 
   return [
-    ...checkWrittenChallenge({ variant, written }).problems,
+    ...checkWrittenChallenge({ language, variant, written }).problems,
     ...getSkillProblems({ given: skills.length, plan }),
     ...getPlanFactProblems(plan),
   ];

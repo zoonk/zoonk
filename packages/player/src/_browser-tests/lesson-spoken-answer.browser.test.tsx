@@ -1,5 +1,4 @@
 import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
-import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
@@ -16,22 +15,9 @@ import {
 } from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
-import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
+import { spokenAnswerStep, spokenSentenceStep, teachingStep } from "../preview/preview-steps";
 
 type GradeSpokenAnswer = NonNullable<LessonPlayerAdapters["gradeSpokenAnswer"]>;
-
-function spokenSentenceStep(): PlayableSpokenAnswerStep {
-  return {
-    ...spokenAnswerStep(),
-    content: parseStepContent("spokenAnswer", {
-      language: "en",
-      prompt: "Pergunte quanto é o aluguel.",
-      targetText: "How much is the rent?",
-      translation: "Quanto é o aluguel?",
-    }),
-    listening: languageStep("listening").exercise,
-  };
-}
 
 function openSpokenLesson({
   gradeSpokenAnswer,
@@ -51,6 +37,14 @@ function allowMicrophone() {
   vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
     async () => audio.createMediaStreamDestination().stream,
   );
+}
+
+function barNote() {
+  return document.querySelector("[data-slot=bottom-bar-note]");
+}
+
+function hang<T>(): Promise<T> {
+  return new Promise<T>(() => {});
 }
 
 async function sayIt() {
@@ -80,6 +74,26 @@ describe("spoken answers", () => {
 
     pending.resolve({ status: "failed" });
     await expect.element(page.getByRole("button", { name: /^Record/u })).toHaveFocus();
+  });
+
+  it("says over Record what to do, keeping the listening line out of what a screen reader announces", async () => {
+    allowMicrophone();
+    openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(() => hang()) });
+
+    await expect.poll(() => barNote()?.textContent).toBe("Tap Record and say it out loud");
+    await page.getByRole("button", { name: "Record" }).click();
+
+    await expect
+      .poll(() => barNote()?.querySelector("[aria-hidden=true]")?.textContent)
+      .toBe("Listening… Tap Stop to check.");
+
+    await page.getByRole("button", { name: /^Stop/u }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: /^Check/u }))
+      .toHaveAttribute("aria-busy", "true");
+
+    expect(barNote()?.textContent).toBe("");
   });
 
   it("keeps the way back in place, turned off, while a recording is checked", async () => {

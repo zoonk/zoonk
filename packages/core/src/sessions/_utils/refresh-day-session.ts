@@ -237,7 +237,7 @@ async function replaceNotStartedBlocks({
       if (unchanged) {
         // Ended days keep their binding.
         if (
-          locked.status !== "completed" &&
+          !locked.endedAt &&
           (locked.planVersion !== savedVersion || locked.plannedMinutes !== plannedMinutes)
         ) {
           await transaction.studySession.update({
@@ -273,6 +273,7 @@ async function replaceNotStartedBlocks({
           ...block,
           payload: {
             ...block.payload,
+            ...(locked.endedAt && { extra: true }),
             planItemId: block.payload.planItemKey
               ? (ids.get(block.payload.planItemKey) ?? block.payload.planItemId)
               : block.payload.planItemId,
@@ -287,7 +288,7 @@ async function replaceNotStartedBlocks({
       await transaction.studySession.update({
         data: {
           planVersion: savedVersion,
-          plannedMinutes,
+          plannedMinutes: locked.endedAt ? locked.plannedMinutes : plannedMinutes,
           ...(missions && { missions }),
           ...(reopens && { status: "active" }),
         },

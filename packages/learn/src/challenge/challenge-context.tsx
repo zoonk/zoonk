@@ -6,6 +6,7 @@ import { type UnfundedMove } from "@zoonk/core/plans/plan-error-contract";
 import { createContext, use } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
 import { type GenerationRun } from "../generation/generation-run";
+import { type MockWritingWait } from "../mock/mock-preparing";
 import { type ChallengeMoveState } from "./use-challenge-move";
 import { type ChallengeStartState } from "./use-challenge-start";
 
@@ -27,10 +28,13 @@ export type ChallengeActions = {
     | "failed"
     | "notToday"
     | "plusRequired"
+    | "preparing"
     | "started"
     | "writing"
   >;
   undoMove: (changeId: string) => Promise<boolean>;
+  /** A scheduled mock being prepared: the run writing its paper. */
+  mockWriting: MockWritingWait;
 };
 
 export type ChallengeWriting =
@@ -42,6 +46,7 @@ export type ChallengeHrefs = { exit: string; open: string | null };
 type ChallengeScreenValue = {
   challenge: ChallengeView;
   hrefs: ChallengeHrefs;
+  mockWriting: MockWritingWait;
   move: ChallengeMoveState;
   start: ChallengeStartState;
   writing: ChallengeWriting | null;

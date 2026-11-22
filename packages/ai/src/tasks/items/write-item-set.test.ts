@@ -13,6 +13,7 @@ vi.mock("./write-item-set.prompt.md", () => ({
 
 vi.mock("./item-rules", () => ({
   withItemRules: vi.fn((taskPrompt: string) => `${taskPrompt}\n# Rules`),
+  withPlotRule: vi.fn((taskPrompt: string) => taskPrompt),
 }));
 
 vi.mock("ai", async (importOriginal) => {

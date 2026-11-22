@@ -19,7 +19,7 @@ import { type SessionQueueRow } from "./session-queue-rows";
 import { useBlockTitle } from "./use-block-copy";
 
 /** One block as a list row; the next one is highlighted. */
-export function BlockRow({ block, state }: SessionQueueRow) {
+function BlockRow({ block, state }: SessionQueueRow) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const blockTitle = useBlockTitle();
@@ -76,17 +76,6 @@ export function useSessionQueueAside(
   }
 
   return { children, label: t("Today"), title: timeLeft };
-}
-
-export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
-  return (
-    <section aria-label={aside.label} className="with-aside:hidden flex flex-col gap-2">
-      {(aside.title || aside.meta) && (
-        <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
-      )}
-      {aside.children}
-    </section>
-  );
 }
 
 export function SessionQueueAsideContent({ aside }: { aside: TaskFrameAside }) {

@@ -21,6 +21,9 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.feature.exam.FakeMockApi
+import com.zoonk.android.feature.exam.writingPaperApi
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
@@ -81,6 +84,7 @@ class ChallengeScreenshots {
         dark: Boolean = false,
         rightToLeft: Boolean = false,
         refused: Boolean = false,
+        mocks: FakeMockApi = FakeMockApi(null),
     ) {
         val challenge: Challenge = decodeFixture("challenge", *fields)
         val api =
@@ -142,7 +146,15 @@ class ChallengeScreenshots {
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle())
+        val viewModel =
+            ChallengeViewModel(
+                challenge.planItemId,
+                null,
+                ChallengeStore(api, cache) { "UTC" },
+                source,
+                SavedStateHandle(),
+                MockStore(mocks, cache),
+            )
         if (moved) viewModel.moveToMonday()
 
         rule.setContent {
@@ -214,6 +226,18 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMockPreparing() = show("phone-mock-preparing", *mockToday, mocks = writingPaperApi(null))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletMockPreparing() = show("tablet-mock-preparing", *mockToday, mocks = writingPaperApi(null))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneMockPreparingDark() = show("phone-mock-preparing-dark-more-contrast", *mockToday, mocks = writingPaperApi(null), dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phonePlusRequired() = show("phone-plus", "status" to "plusRequired")
 
     @Test
@@ -273,6 +297,9 @@ class ChallengeScreenshots {
             "status" to "upcoming",
             "canMove" to true,
         )
+
+    /** Today's mock, still being prepared. */
+    private val mockToday = mock + arrayOf("access" to "preparing", "date" to "2026-10-29", "status" to "ready")
 
     @Test
     @Config(qualifiers = BOOK)

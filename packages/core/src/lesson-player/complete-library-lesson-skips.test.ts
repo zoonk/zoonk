@@ -2,9 +2,14 @@ import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  languageLessonFixture,
+  playableLessonFixture,
+} from "@zoonk/testing/fixtures/playable-lessons";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
+import { mockSession } from "../_test-utils/mock-session";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
 import { completeLibraryLesson } from "./complete-library-lesson";
@@ -181,5 +186,36 @@ describe("non-language open-answer skips", () => {
     ).resolves.toMatchObject({ endedAt: null });
 
     expect(gradeTypedAnswer).not.toHaveBeenCalled();
+  });
+});
+
+describe("dictations", () => {
+  it("finishes a lesson whose sentence that is its own answer was left out", async () => {
+    const [user, { lesson, steps }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture({
+        language: "en",
+        sentenceAudioUrl: "https://audio.zoonk.test/en-rent.mp3",
+        sentenceTranslation: "How much is the rent?",
+        wordTranslation: "rent",
+      }),
+    ]);
+
+    mockSession(user.id);
+    const runId = await startRun(lesson.id);
+
+    await checkLessonStep({
+      input: {
+        answer: { kind: "spokenAnswer", text: "How much is the rent?" },
+        durationMs: 5000,
+        runId,
+        timeZone: TIME_ZONE,
+      },
+      stepId: stepOfKind(steps, "spokenAnswer").id,
+    });
+
+    await expect(
+      completeLibraryLesson({ input: { runId, timeZone: TIME_ZONE }, lessonId: lesson.id }),
+    ).resolves.toMatchObject({ status: "completed" });
   });
 });

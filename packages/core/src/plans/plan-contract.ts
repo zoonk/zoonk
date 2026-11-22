@@ -215,6 +215,12 @@ const planOperationSchema = z
           }),
       })
       .strict(),
+    z
+      .object({ kind: z.literal("setExtras"), skillIds: z.array(z.string().min(1)).max(100) })
+      .strict()
+      .describe(
+        "Sets the optional exam skills the learner chose. New skills must be offered by the current plan.",
+      ),
   ])
   .meta({ id: "PlanOperation" });
 

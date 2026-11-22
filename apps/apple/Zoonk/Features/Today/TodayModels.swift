@@ -26,6 +26,8 @@ struct TodayView: Decodable, Equatable, Sendable {
 
     let dateEstimated: Bool
     let daysLeft: Int?
+    /// Nil from a server that doesn't send it yet.
+    let examDocument: ExamDocument?
     let id: String
     let kind: Kind
     let targetDate: String?
@@ -176,11 +178,9 @@ struct TodayView: Decodable, Equatable, Sendable {
     block.kind == .learn && block.lessonId.map { lessonStatus[$0] == "generating" } == true
   }
 
-  /// Mirrors main's `useUpNextLessons`.
+  /// Mirrors main's `useUpNextLessons`. Once extras are on the list, Continue plays them first.
   var upNextLessons: [StudyDay.ExtraTime.Lesson] {
-    let state = session.state
-
-    guard !isPastDate, state == .done || state == .rest, session.extraTime.available else {
+    guard !isPastDate, session.extraTime.available else {
       return []
     }
 

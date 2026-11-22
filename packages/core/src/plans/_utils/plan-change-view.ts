@@ -4,6 +4,7 @@ import { getExamDocument } from "../../exams/exam-document";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
+import { waitingPlanProposal } from "./notice-graph-proposal";
 import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
 import { getPlanChangeQuote } from "./plan-change-quote";
 
@@ -86,7 +87,10 @@ export async function loadPlanChangeViews({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_CHANGES,
     where: {
-      OR: [{ status: "proposed" }, { createdAt: { gte: addDays(now, -RECENT_CHANGE_DAYS) } }],
+      OR: [
+        waitingPlanProposal,
+        { createdAt: { gte: addDays(now, -RECENT_CHANGE_DAYS) }, status: { not: "proposed" } },
+      ],
       planId,
     },
   });

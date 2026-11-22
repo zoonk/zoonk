@@ -2,7 +2,10 @@ import "server-only";
 import { registerAiGenerationSink } from "@zoonk/ai/ai-generation-sink";
 import { registerEvaluationRunSink } from "@zoonk/ai/evaluation-run-sink";
 import { registerAuthEventSink } from "@zoonk/auth/auth-events";
-import { registerSubscriptionChangeSink } from "@zoonk/auth/subscription-events";
+import {
+  registerPlusGrantSink,
+  registerSubscriptionChangeSink,
+} from "@zoonk/auth/subscription-events";
 
 /**
  * For instrumentation's `register()`, which runs before the first request of every server, each
@@ -22,6 +25,11 @@ export function registerServerSinks(): void {
   registerAuthEventSink(async (event) => {
     const { trackAuthEvent } = await import("./analytics/auth-events");
     trackAuthEvent(event);
+  });
+
+  registerPlusGrantSink(async (tx, userId) => {
+    const { owePlusMocks } = await import("./subscriptions/owe-plus-mocks");
+    await owePlusMocks(tx, userId);
   });
 
   registerSubscriptionChangeSink(async (change) => {

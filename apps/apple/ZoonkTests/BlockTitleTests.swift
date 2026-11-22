@@ -13,27 +13,28 @@ final class BlockTitleTests: XCTestCase {
 
     XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
     XCTAssertEqual(
-      block.label, "1 more topic", "the title names the first topic; the line counts the rest")
+      block.label(document: .notice), "1 more topic",
+      "the title names the first topic; the line counts the rest")
   }
 
-  func testAnExtraPracticeIsNamedAfterItsFirstTopic() throws {
+  func testAnExtraPracticeKeepsItsTitleAndOnlyTheTagMarksIt() throws {
     let block: StudyBlock = try decode(practice(topics: topics, extra: true))
 
-    XCTAssertEqual(block.displayTitle, "Bonus practice: Reading slope as a rate")
+    XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
   }
 
   func testAPracticeOnOneTopicShowsItsSubjectUnderIt() throws {
     let block: StudyBlock = try decode(practice(topics: #"["Reading slope as a rate"]"#))
 
     XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
-    XCTAssertEqual(block.label, "Quantum physics from scratch")
+    XCTAssertEqual(block.label(document: .notice), "Quantum physics from scratch")
   }
 
   func testAPracticeWithoutTopicsIsNamedAfterItsSubjects() throws {
     let block: StudyBlock = try decode(practice(topics: "[]"))
 
     XCTAssertEqual(block.displayTitle, "Practice: Quantum physics from scratch")
-    XCTAssertEqual(block.label, "Quantum physics from scratch")
+    XCTAssertEqual(block.label(document: .notice), "Quantum physics from scratch")
   }
 
   func testThePracticePageNamesTheBlockAsTodaysRowDoes() throws {
@@ -53,7 +54,7 @@ final class BlockTitleTests: XCTestCase {
     "canDo":null,"canTestOut":false,"capsules":[],"chapterId":null,"checkpoint":null,
     "estimatedBrainPower":5,"estimatedMinutes":5,"extra":\(extra),"fullReview":false,
     "kind":"practice","lessonId":null,"mistakesOnly":false,"netScored":false,"opensInPlayer":false,
-    "oftenTested":false,"planItemId":null,"planItemKey":null,"position":0,"questions":6,
+    "oftenTested":false,"planItemId":null,"planItemKey":null,"position":0,"preparing":false,"questions":6,
     "refresh":false,"reinforcement":false,"screen":"session","status":"pending",
     "subject":"Quantum physics from scratch","title":null,"topics":\(topics),"waitReason":null,
     "weakest":false}

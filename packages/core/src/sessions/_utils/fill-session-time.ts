@@ -12,7 +12,6 @@ import {
   canAddSessionLessons,
   getLessonMinutes,
   getNewLessons,
-  isSessionReviewDay,
   toLessonBlock,
 } from "./session-lessons";
 import { holdUnwrittenTime } from "./unwritten-time";
@@ -128,7 +127,7 @@ export function fillRemainingLessonTime({
   ];
 
   const sum = filled.reduce((total, block) => total + block.estimatedMinutes, 0);
-  const newLessonsAllowed = canAddSessionLessons({ reviewDay: isSessionReviewDay(input) });
+  const newLessonsAllowed = canAddSessionLessons(input);
 
   const holdsMore = newLessonsAllowed && (writingMinutes > 0 || candidates.length > fill.length);
 

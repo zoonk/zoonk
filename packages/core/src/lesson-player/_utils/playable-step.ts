@@ -6,7 +6,6 @@ import {
   type StepKind,
   type StepOptionPicture,
 } from "@zoonk/db";
-import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { logError } from "@zoonk/utils/logger";
 import { getActivityAnswerRules } from "../../library/activities/activity-answers";
 import { getExploreExpected } from "../../library/activities/activity-expected";
@@ -16,6 +15,7 @@ import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exerci
 import {
   type ExerciseResources,
   type SerializedStep,
+  readsItself,
   serializeExerciseSteps,
 } from "../../player/contracts/prepare-lesson-data";
 import {
@@ -179,9 +179,7 @@ function showsOwnAnswer({ kind, sameLanguage, sentence, word }: ExerciseText): b
     ? definitionNamesWord({ definition: word.translation, word: word.word })
     : false;
 
-  const readsItself = sentence
-    ? normalizeDistractorKey(sentence.translation) === normalizeDistractorKey(sentence.sentence)
-    : false;
+  const showsItself = sentence ? readsItself(sentence) : false;
 
   switch (kind) {
     case "vocabulary":
@@ -189,9 +187,9 @@ function showsOwnAnswer({ kind, sameLanguage, sentence, word }: ExerciseText): b
     case "translation":
       return namesItself;
     case "reading":
-      return readsItself;
+      return showsItself;
     case "listening":
-      return readsItself && !sentence?.audioUrl;
+      return showsItself && !sentence?.audioUrl;
     case "alphabet":
     case "fillBlank":
     case "matchColumns":

@@ -127,6 +127,8 @@ data class ZoonkTypography(
     val lead: TextStyle,
     /** A lesson's running text (`LessonBody`). */
     val lessonText: TextStyle,
+    /** The table, code or words a check asks about, over its question (`LessonContext`). */
+    val context: TextStyle,
     /** A lesson's question (`QUESTION_TEXT_CLASS`). */
     val question: TextStyle,
     /** A checked answer's verdict (`FeedbackVerdict`), in its tone's word color. */
@@ -135,6 +137,10 @@ data class ZoonkTypography(
     val tag: TextStyle,
     /** The buddy's words on its page, its hello included, and the learner's bubble; a panel's answers stay `bodyMedium`, as main's. */
     val message: TextStyle,
+    /** Code, at a table's size (`CodeListing`, `CodeSnippet`). */
+    val code: TextStyle,
+    /** Code with a field in it (`CODE_FIELD_TEXT` on a phone). */
+    val codeField: TextStyle,
 )
 
 internal val ZoonkTypeRoles =
@@ -146,10 +152,14 @@ internal val ZoonkTypeRoles =
             label = labelSmall.role(11.5f, 550, 16f, 0.04f),
             lead = bodyLarge.role(17f, 400, 26f, -0.01f),
             lessonText = bodyLarge.role(18f, 400, 29.25f),
+            context = bodyLarge.role(16f, 400, 26f),
             question = titleMedium.role(19f, 560, 25.65f, -0.02f).balanced(),
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
             message = bodyLarge.role(15f, 400, 23.25f),
+            // Code wraps as an editor does: each row as full as it gets, never balanced.
+            code = bodyMedium.role(14f, 400, 24f, 0f, family = GeistMono).copy(lineBreak = LineBreak.Simple),
+            codeField = bodyLarge.role(16f, 400, 24f, 0f, family = GeistMono).copy(lineBreak = LineBreak.Simple),
         )
     }
 
@@ -212,6 +222,7 @@ internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography =
                 sectionTitle = sectionTitle.byPhrase(phrase),
                 lead = lead.byPhrase(phrase),
                 lessonText = lessonText.byPhrase(phrase),
+                context = context.byPhrase(phrase),
                 question = question.byPhrase(phrase),
             )
         }
@@ -260,6 +271,7 @@ internal fun ZoonkTypography.startingOn(direction: LayoutDirection): ZoonkTypogr
         label = label.startingOn(direction),
         lead = lead.startingOn(direction),
         lessonText = lessonText.startingOn(direction),
+        context = context.startingOn(direction),
         question = question.startingOn(direction),
         verdict = verdict.startingOn(direction),
         tag = tag.startingOn(direction),

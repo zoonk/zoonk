@@ -7,6 +7,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
 import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
+import { startMockSupply } from "../goals/mock-questions-workflow";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import {
@@ -57,6 +58,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     case "settleSessionPlan":
       await settleSessionPlanStep({ ...followUp.input, userId });
+      return;
+    case "prepareMockSupply":
+      await startMockSupply(followUp.input, { id: followUp.id, revision: followUp.revision });
       return;
     case "prepareSession":
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
@@ -164,7 +168,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 async function runFollowUp(followUp: OwedFollowUp): Promise<void> {
   await startFollowUp(followUp);
 
-  if (followUp.kind !== "rebuildGoalCurriculum" && followUp.kind !== "suggestProfileTools") {
+  if (
+    followUp.kind !== "rebuildGoalCurriculum" &&
+    followUp.kind !== "prepareMockSupply" &&
+    followUp.kind !== "suggestProfileTools"
+  ) {
     await endFollowUpStep({ id: followUp.id, revision: followUp.revision });
   }
 }

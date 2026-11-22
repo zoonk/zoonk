@@ -3,8 +3,8 @@ import { getDayMeterParts } from "./day-meter-parts";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 
-function step(position: number, status: DayStep["status"]): DayStep {
-  return { estimatedMinutes: 5, kind: "learn", position, status } as DayStep;
+function step(position: number, status: DayStep["status"], extra = false): DayStep {
+  return { estimatedMinutes: 5, extra, kind: "learn", position, status } as DayStep;
 }
 
 describe(getDayMeterParts, () => {
@@ -32,5 +32,19 @@ describe(getDayMeterParts, () => {
     });
 
     expect(parts.map((part) => part.share)).toStrictEqual([0, 0.5, 0]);
+  });
+
+  it("draws no part for extra work, so a done day stays full while an extra is next", () => {
+    const parts = getDayMeterParts({
+      rows: getSessionQueue({
+        blocks: [step(0, "completed"), step(1, "completed"), step(2, "pending", true)],
+        nextPosition: 2,
+      }),
+    });
+
+    expect(parts.map((part) => [part.id, part.state])).toStrictEqual([
+      [0, "done"],
+      [1, "done"],
+    ]);
   });
 });

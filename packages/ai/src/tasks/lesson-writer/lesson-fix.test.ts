@@ -21,6 +21,9 @@ vi.mock("./lesson-fix.prompt.md", () => ({
     "{{#shortAnswers}}",
     "Fix typed answers.",
     "{{/shortAnswers}}",
+    "{{#usedSituations}}",
+    "Avoid the mock's cases.",
+    "{{/usedSituations}}",
     "Keep the rest.",
   ].join("\n"),
 }));
@@ -74,7 +77,11 @@ const lesson: WrittenLesson = {
   summary: { ideas: [{ label: "Idea", text: "The idea." }], shape: "hub" },
 };
 
-function fix(params: { screenCount: number; shortAnswers?: boolean }) {
+function fix(params: {
+  screenCount: number;
+  shortAnswers?: boolean;
+  usedSituations?: readonly string[];
+}) {
   return fixLessonDraft({
     activityTemplates: [],
     chapterTitle: "Chapter",
@@ -87,6 +94,7 @@ function fix(params: { screenCount: number; shortAnswers?: boolean }) {
     problems: [{ problem: "Too long.", screen: 1, source: "check" }],
     shortAnswers: params.shortAnswers,
     spec: spec(params.screenCount),
+    usedSituations: params.usedSituations,
   });
 }
 
@@ -187,6 +195,31 @@ describe(fixLessonDraft, () => {
     expect(written.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
       "Fix the lesson.\nFix typed answers.\nKeep the rest.",
     );
+  });
+
+  it("tells the fix the mock's cases only when there are some", async () => {
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({ screens: [], summary: null }),
+    );
+
+    const [plain, noneUsed, used] = await Promise.all([
+      fix({ screenCount: 3 }),
+      fix({ screenCount: 3, usedSituations: [] }),
+      fix({ screenCount: 3, usedSituations: ["Ana splits a bill."] }),
+    ]);
+
+    expect([noneUsed.systemPrompt, noneUsed.userPrompt]).toStrictEqual([
+      plain.systemPrompt,
+      plain.userPrompt,
+    ]);
+
+    expect(plain.userPrompt).not.toContain("USED_SITUATIONS");
+
+    expect(used.systemPrompt.split(OUTPUT_FORMAT)[0]).toBe(
+      "Fix the lesson.\nAvoid the mock's cases.\nKeep the rest.",
+    );
+
+    expect(used.userPrompt).toContain("\nUSED_SITUATIONS:\n  - Ana splits a bill.\n");
   });
 
   it("drops a check's extra wrong option instead of failing the fix", async () => {

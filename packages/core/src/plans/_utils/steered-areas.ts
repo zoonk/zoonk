@@ -28,10 +28,14 @@ export function getChangePlanning(operations: readonly PlanOperation[]) {
   const movesWeeklyOnly =
     operations.length > 0 && operations.every((operation) => operation.kind === "moveWeeklyEvent");
 
+  const setsExtrasOnly =
+    operations.length > 0 && operations.every((operation) => operation.kind === "setExtras");
+
   return {
-    bringBackSetAside: !movesWeeklyOnly,
-    keepPhaseDates: movesWeeklyOnly || getSteeredAreas(operations) !== null,
-    mode: movesWeeklyOnly ? ("automatic" as const) : ("forced" as const),
+    bringBackExtras: true,
+    bringBackSetAside: !movesWeeklyOnly && !setsExtrasOnly,
+    keepPhaseDates: movesWeeklyOnly || setsExtrasOnly || getSteeredAreas(operations) !== null,
+    mode: movesWeeklyOnly || setsExtrasOnly ? ("automatic" as const) : ("forced" as const),
     todayExceptAreas: getTodayExceptAreas(operations),
   };
 }

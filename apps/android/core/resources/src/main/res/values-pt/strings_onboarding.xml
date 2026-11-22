@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "80b7f5532e84a78fb3fd9e10a452bad97d2138d83db9056db90e8e177073a293",
   "onboarding_language_test_preparing_title": "438ece0e9ec4d0fc9ab2ed7867d3c8ef457ad907cd883c461c6d95ce52e14abe",
   "onboarding_language_test_reading": "ad1557142f9ba523c89d4df8def17e358cc49e3b53d3399fd6eda4b43139ecc7",
-  "onboarding_language_test_say_it": "bd61db46e722d708c61e7bf68e2b705321c8f09dcd5ad5496e56ad5a02a5995d",
   "onboarding_language_test_skip": "8320beb6bade71911ecb154496c3d52786924ab8b764c7809d04fca8fb973bec",
   "onboarding_language_test_skip_note": "0aeb15fe4b08714f3575ce2f973d0d440704e108ff0c41355a018a11f1221420",
   "onboarding_language_test_skip_part": "6e84c7bc9451e5cd72f86d861b87f2c3e3d35a179e8b597e15bc3f11b7218ee2",
@@ -629,7 +628,6 @@
     <string name="onboarding_language_test_play_again">Ouvir a mensagem de novo</string>
     <string name="onboarding_language_test_message_loading">Preparando a mensagem. Na primeira vez, isso pode levar alguns segundos.</string>
     <string name="onboarding_language_test_message">Você recebeu uma mensagem de voz. Ouça e responda.</string>
-    <string name="onboarding_language_test_say_it">Fale em voz alta</string>
     <string name="onboarding_language_test_skip_part">Pular esta parte</string>
     <string name="onboarding_language_test_done_title">Seu nível de %1$s</string>
     <string name="onboarding_language_test_done_description">Com base no teste. Fica mais preciso a cada semana.</string>

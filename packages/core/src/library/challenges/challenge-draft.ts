@@ -50,7 +50,14 @@ function holdBack({
 
 export async function planChallenge(params: ChallengeCaseParams) {
   const { data: plan, provenance } = await generateChallengePlan(params);
-  const problems = checkChallengePlan({ plan, skills: params.skills, variant: params.variant });
+
+  const problems = checkChallengePlan({
+    language: params.language,
+    plan,
+    skills: params.skills,
+    variant: params.variant,
+  });
+
   return { plan, problems, provenance };
 }
 
@@ -63,7 +70,13 @@ export async function scriptChallenge({
 }): Promise<ChallengeDraft> {
   const scripted = await generateChallengeScript({ ...params, plan: planned.plan });
   const { missing, written } = assembleChallengeCase({ plan: planned.plan, script: scripted.data });
-  const checked = checkWrittenChallenge({ variant: params.variant, written });
+
+  const checked = checkWrittenChallenge({
+    language: params.language,
+    variant: params.variant,
+    written,
+  });
+
   const provenance = combineTaskProvenance([planned.provenance, scripted.provenance]);
   const problems = [...missing.map((id) => `The script left out ${id}`), ...checked.problems];
 
@@ -123,7 +136,10 @@ export async function fixChallenge({
   });
 
   const written = applyChallengeEdits({ edits: fix.data.edits, written: scripted.written });
-  const content = written && checkWrittenChallenge({ variant: params.variant, written }).content;
+
+  const content =
+    written &&
+    checkWrittenChallenge({ language: params.language, variant: params.variant, written }).content;
 
   if (!written || !content) {
     return holdBack({ findings, scripted });

@@ -100,6 +100,7 @@ describe(loadGoalCurriculumInputs, () => {
           shortName: null,
           topics: ["Percentages", "Functions"],
           weight: 0.25,
+          writtenTasks: [],
         },
         {
           choiceGroup: null,
@@ -109,6 +110,7 @@ describe(loadGoalCurriculumInputs, () => {
           shortName: null,
           topics: ["Reading"],
           weight: null,
+          writtenTasks: [],
         },
       ],
       topicFrequency: [{ level: "high", subject: "Mathematics", topic: "Percentages" }],

@@ -6,6 +6,8 @@ enum PlanSlotItem: Hashable {
   case choice(GoalPlan.ExamChoice)
   case courseComplete
   case coverage(String)
+  /// The exam's optional study, such as its strategy, which fits beside everything it tests.
+  case extraLessons
   case finished
   case fitLessons
   case pastDate
@@ -22,6 +24,7 @@ enum PlanSlotItem: Hashable {
     let coverage = planCoverageText(plan)
     let timeItems: [PlanSlotItem] = [
       open && plan.fitOffer != nil ? .fitLessons : nil,
+      open && plan.extraOffer != nil ? .extraLessons : nil,
       open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
     ].compactMap(\.self)
 
@@ -104,7 +107,7 @@ private struct PlanChangePanel: ViewModifier {
 /// One thing at a time, with "{count} more" bringing up the next, as main's slot does: "Not now"
 /// puts one off for as long as the app runs.
 /// An answer that changes the plan says what it did, with Undo, for a moment. A change to the plan
-/// (its coverage, a date that passed) is the whole card at every width, as main's; any other in the
+/// (its coverage, an offer, a date that passed) is the whole card at every width, as main's; any other in the
 /// page's column is main's suggestion line, its summary with "View" opening the whole suggestion in
 /// a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
 /// suggestion.
@@ -441,7 +444,7 @@ struct PlanSuggestionSection: View {
   /// Main's `PlanChangeSuggestion`: a change to the plan, one card at every width.
   private func isPlanChange(_ item: PlanSlotItem) -> Bool {
     switch item {
-    case .coverage: true
+    case .coverage, .fitLessons, .extraLessons: true
     case .pastDate: !isStatement(item)
     default: false
     }
@@ -515,7 +518,15 @@ struct PlanSuggestionSection: View {
       }
     case .fitLessons:
       if let offer = context.plan.fitOffer {
-        PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
+        PlanOfferSlot(
+          context: context, item: item, offer: offer, title: { fitTitle(offer, today: $0) },
+          actions: offers)
+      }
+    case .extraLessons:
+      if let offer = context.plan.extraOffer {
+        PlanOfferSlot(
+          context: context, item: item, offer: offer, title: { _ in extraTitle },
+          facts: { extraFacts(offer, today: $0) }, actions: offers)
       }
     case .coverage(let text):
       PlanCoverageSlot(context: context, title: text, actions: offers)
@@ -572,7 +583,13 @@ struct PlanSuggestionSection: View {
     case .pastDate:
       (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
-      (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
+      (
+        context.plan.fitOffer.map {
+          fitTitle($0, today: context.slotCheck(item).repriced?.preview.effect)
+        } ?? Text(verbatim: ""), .sparkle
+      )
+    case .extraLessons:
+      (extraTitle, .sparkle)
     case .coverage(let text):
       (Text(text), .sparkle)
     case .courseComplete:
@@ -600,15 +617,29 @@ struct PlanSuggestionSection: View {
           "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
 
-  private func fitTitle(_ offer: GoalPlan.FitOffer) -> Text {
-    guard offer.fits, let covers = planCoversEverythingText(context.plan) else {
+  private func fitTitle(_ offer: GoalPlan.Offer, today: PlanEffect?) -> Text {
+    guard today == nil, offer.fits, let covers = planCoversEverythingText(context.plan) else {
       return Text(
-        "You have time for \(offer.effect.lessonsAdded) more lessons", tableName: "Plan",
+        "You have time for \((today ?? offer.effect).lessonsAdded) more lessons", tableName: "Plan",
         comment: "Title of the offer that brings into the plan more lessons the learner's time fits"
       )
     }
 
     return covers
+  }
+
+  private var extraTitle: Text {
+    Text("Study exam strategy too?", tableName: "Plan")
+  }
+
+  /// "15 lessons · Not in the official guide".
+  private func extraFacts(_ offer: GoalPlan.Offer, today: PlanEffect?) -> [String] {
+    [
+      String(
+        localized: "\(today?.lessonsAdded ?? offer.lessons ?? offer.effect.lessonsAdded) lessons",
+        table: "Plan"),
+      context.plan.extraLabel,
+    ]
   }
 
   private func notNow(_ item: PlanSlotItem) {
