@@ -29,6 +29,8 @@ export function getPlayOrder<Block extends QueueBlock>(blocks: readonly Block[])
 }
 
 /** A mock whose questions aren't written yet keeps its place in the order but is never played next. */
-export function getNextBlock<Block extends QueueBlock>(blocks: readonly Block[]): Block | undefined {
+export function getNextBlock<Block extends QueueBlock>(
+  blocks: readonly Block[],
+): Block | undefined {
   return getPlayOrder(blocks).find((block) => !block.preparing);
 }

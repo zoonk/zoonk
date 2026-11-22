@@ -7,7 +7,6 @@ import {
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
 import { isCurrentSession } from "./_utils/current-session";
-import { getNextBlock } from "./day-blocks";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
@@ -19,6 +18,7 @@ import {
   type StudySessionRow,
   findStudySessionFor,
 } from "./_utils/study-session-access";
+import { getNextBlock } from "./day-blocks";
 import { getSessionPageView } from "./get-session-page-view";
 import { type OpenStudyBlockInput, type OpenStudyBlockResult } from "./open-block-contract";
 
