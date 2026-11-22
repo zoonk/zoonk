@@ -33,15 +33,6 @@ type Behind = NonNullable<PlanChangeView["behind"]>;
 type Answer = { kept: true } | { failed: true } | null;
 type Option = "adjustTime" | "focus" | "studyEverything";
 
-function useBehindSentence() {
-  const t = useExtracted();
-
-  return (behind: Behind): string =>
-    behind.measure === "exam"
-      ? t("Some lessons no longer fit before your exam.")
-      : t("Some lessons no longer fit before your date.");
-}
-
 /** On a return after a break, nothing that asks for more hours leads. */
 function getLeadingOption({
   behind,
@@ -178,7 +169,6 @@ export function FallingBehindNotice({
   onHold: (held: boolean) => void;
 }) {
   const t = useExtracted();
-  const sentence = useBehindSentence();
   const dateKind = useTodayDateKind();
   const [answer, setAnswer] = useState<Answer>(null);
   const { isPending, keep, superseded } = useKeepTime({ change, onAnswer: setAnswer, onHold });
@@ -200,7 +190,13 @@ export function FallingBehindNotice({
         ) : (
           <>
             <SuggestionHeader>{title}</SuggestionHeader>
-            <SuggestionDescription>{sentence(behind)}</SuggestionDescription>
+            <SuggestionDescription>
+              {t({
+                description:
+                  'Under "You missed a few days": the plan has more lessons than the days left hold. Followed by a button to see the plan\'s changes.',
+                message: "Let's fit your plan to the days left.",
+              })}
+            </SuggestionDescription>
             <SuggestionActions main={<SuggestionOpen>{t("See what changes")}</SuggestionOpen>} />
           </>
         )}

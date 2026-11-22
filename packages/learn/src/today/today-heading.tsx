@@ -12,13 +12,17 @@ import { useTodayScreen } from "./today-context";
 import { DayTime } from "./today-day-progress";
 import { useWelcomeBack } from "./use-today-copy";
 
-function NotEnoughTime() {
+function FitToTimeLeft() {
   const t = useExtracted();
   const routes = useLearnRoutes();
 
   return (
     <p>
-      {t("Not enough time left for all your lessons.")}{" "}
+      {t({
+        description:
+          "Above Today, when the plan has more lessons than days left. Followed by a link that opens the plan to change it.",
+        message: "Let's fit your plan to the time left.",
+      })}{" "}
       <LearnLink
         className="text-foreground hit-area focus-visible:ring-ring/50 relative inline-flex items-center gap-0.5 rounded-sm font-medium outline-none focus-visible:ring-[3px]"
         href={routes.journey}
@@ -60,7 +64,7 @@ function TodayLine() {
   if (today.progress?.status?.kind === "needsAdjusting") {
     return (
       <PageSubtitle>
-        <NotEnoughTime />
+        <FitToTimeLeft />
       </PageSubtitle>
     );
   }

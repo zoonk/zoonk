@@ -154,7 +154,7 @@ export function PlanSuggestionProvider({
 function DoesNotFitSuggestion() {
   const t = useExtracted();
   const { host } = usePlanSuggestionSlot();
-  const title = t("More lessons than days left");
+  const title = t("Let's fit your plan to the time left");
 
   return (
     <Suggestion label={title} mark={<CalendarClockIcon />}>
