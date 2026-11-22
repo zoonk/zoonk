@@ -301,6 +301,7 @@ export async function buildPlanView({
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,
+    suggestedTime: status?.kind === "pastDate" ? null : (summary?.advice.suggested ?? null),
     steering: buildSteeringView({ items, settings: state.settings }),
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),

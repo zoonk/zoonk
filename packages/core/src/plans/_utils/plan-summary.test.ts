@@ -42,6 +42,7 @@ const summary: PlanSummary = {
     },
     fitOffer: null,
     fullCourseEndDate: null,
+    suggested: null,
   },
   basis: {
     layoutInputVersion: 4,

@@ -86128,7 +86128,7 @@
                   "exclusiveMinimum": true,
                   "maximum": 9007199254740991
                 },
-                "description": "The daily times a picker offers, in order, from the shortest a plan accepts to a whole day; add the time shown when it's between them"
+                "description": "The daily times a learner can pick, in order, from the shortest a plan accepts to 8 hours, the longest a learner can set. The goal's own time (`schedule.dailyMinutes`) can fall between them, or above them for a time saved before that limit"
               },
               "fullCourse": {
                 "type": "boolean",
@@ -86346,6 +86346,31 @@
             ],
             "additionalProperties": false
           },
+          "suggestedTime": {
+            "nullable": true,
+            "description": "The daily time suggested for the goal while its own daily time (`schedule.dailyMinutes`) is below it: the fewest minutes that fit the selected curriculum by the goal's date, or, when that takes more than 4 hours a day, 4 hours (or the fewer minutes past which more time fits no more), which prioritize the most important material. Worked out when the plan is saved, for its own week (POST `/v1/goals/{goalId}/plan/time-to-cover` answers for another week). Null when the goal's own time covers everything or is at or above the suggestion, without a date, once the date has passed, and while the plan is being built. `setDailyMinutes` with these minutes applies it",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "everything",
+                  "focus"
+                ],
+                "description": "everything: the minutes fit the selected curriculum by the goal's date; focus: the minutes prioritize the most important material"
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 240
+              }
+            },
+            "required": [
+              "kind",
+              "minutes"
+            ],
+            "additionalProperties": false
+          },
           "tools": {
             "type": "array",
             "items": {
@@ -86440,6 +86465,7 @@
           "shortPlan",
           "status",
           "steering",
+          "suggestedTime",
           "tools",
           "week",
           "weekTime",
@@ -87395,7 +87421,7 @@
               "exclusiveMinimum": true,
               "maximum": 9007199254740991
             },
-            "description": "The daily times a picker offers, in order, from the shortest a plan accepts to a whole day; add the time shown when it's between them"
+            "description": "The daily times a learner can pick, in order, from the shortest a plan accepts to 8 hours, the longest a learner can set. The goal's own time (`schedule.dailyMinutes`) can fall between them, or above them for a time saved before that limit"
           },
           "outline": {
             "type": "object",

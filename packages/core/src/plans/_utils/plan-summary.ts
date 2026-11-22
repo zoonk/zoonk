@@ -44,6 +44,10 @@ export const planSummarySchema = z
         })
         .nullable(),
       fullCourseEndDate: z.iso.date().nullable(),
+      suggested: z
+        .object({ kind: z.enum(["everything", "focus"]), minutes: z.int().positive() })
+        .nullable()
+        .default(null),
     }),
     basis: planSummaryBasisSchema,
     schemaVersion: z.literal(PLAN_SUMMARY_SCHEMA_VERSION),

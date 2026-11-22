@@ -4,7 +4,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getBudgetForGoal } from "../goals/daily-budget";
+import { getBudgetForGoal, getDaySplit } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
@@ -24,6 +24,11 @@ import { type PlanTimeAdviceInput } from "./time-advice-contract";
 const NOW = new Date("2020-09-28T12:00:00Z");
 const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 const WEEKDAYS = [1, 2, 3, 4, 5];
+/** With `CLOSE_DATE`, lessons per topic that take more than four hours a day. */
+const BIG_LESSONS = 90;
+const CLOSE_DATE = new Date("2020-10-03T00:00:00Z");
+/** With `BIG_LESSONS`, a date this goal fits by in up to four hours a day, but not with another goal beside it. */
+const SHARED_DATE = new Date("2020-10-06T00:00:00Z");
 
 const WEEKEND_SCHEDULES = [
   {
@@ -134,6 +139,16 @@ async function readFeasibility(goalId: string) {
   }
 
   return result.plan.feasibility;
+}
+
+async function readSuggestedTime(goalId: string) {
+  const result = await getGoalPlan(goalId);
+
+  if (result.status !== "ready") {
+    throw new Error(`Expected the plan, got ${result.status}`);
+  }
+
+  return result.plan.suggestedTime;
 }
 
 function change(
@@ -355,6 +370,79 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
+    });
+  });
+
+  it("carries the time it suggests on the plan while the learner's own time is below it", async () => {
+    const { goal, library } = await setup();
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const { suggested } = await readPlanTime(goal.id);
+    const minutes = suggested?.minutes ?? 0;
+
+    expect(minutes).toBeGreaterThan(goal.dailyMinutes);
+
+    await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
+      kind: "everything",
+      minutes,
+    });
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes }]);
+    await expect(readSuggestedTime(goal.id)).resolves.toBeNull();
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: minutes - 5 }]);
+
+    await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
+      kind: "everything",
+      minutes,
+    });
+  });
+
+  it("suggests four hours on the plan, and no more, when everything takes longer", async () => {
+    const { goal, library } = await setup(BIG_LESSONS, 60);
+    await prisma.goal.update({ data: { targetDate: CLOSE_DATE }, where: { id: goal.id } });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
+      suggested: { kind: "focus", minutes: 240 },
+    });
+
+    await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
+      kind: "focus",
+      minutes: 240,
+    });
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: 300 }]);
+    await expect(readSuggestedTime(goal.id)).resolves.toBeNull();
+  });
+
+  it("suggests at most four hours for the day goals typed together share", async () => {
+    const { goal, library, user } = await setup(BIG_LESSONS);
+    const onboardingId = randomUUID();
+
+    await prisma.goal.update({
+      data: { details: { onboardingId }, targetDate: SHARED_DATE },
+      where: { id: goal.id },
+    });
+
+    await unplannedGoalFixture({
+      createdAt: new Date(NOW.getTime() + 1000),
+      details: { onboardingId },
+      userId: user.id,
+    });
+
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+    const ownTime = await readPlanTime(goal.id);
+    const own = ownTime.recommendedMinutes ?? 0;
+
+    expect(own).toBeLessThanOrEqual(240);
+    expect(getBudgetForGoal({ count: 2, minutes: own, place: 0 })).toBeGreaterThan(240);
+
+    const asked = await readAdvice(goal.id, EVERY_DAY);
+
+    expect(asked.suggested).toMatchObject({
+      kind: "focus",
+      minutes: 240,
+      split: getDaySplit({ budget: 240, count: 2, place: 0 }),
     });
   });
 

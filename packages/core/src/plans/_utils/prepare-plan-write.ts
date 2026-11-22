@@ -15,6 +15,7 @@ import { readPlanSummary, toPlanSummary } from "./plan-summary";
 import { type ProposalReplacement, getReplacedProposalIds } from "./replace-waiting-proposals";
 import { type ComputedPlan } from "./replan";
 import { retainPlanAllocation } from "./retained-plan-allocation";
+import { getPlanSuggestion } from "./suggested-time";
 import { type PlanWrite } from "./write-plan";
 
 function getComputedPlanContext({
@@ -76,6 +77,12 @@ async function prepareReadModel({
           built: computed.built,
           end: computed.selected.endDate,
           targetDate: computed.state.goal.targetDate,
+        }),
+        suggested: getPlanSuggestion({
+          dailyMinutes: saved.goal.dailyMinutes,
+          feasibility: computed.feasibility,
+          pastDate: saved.goal.targetDate !== null && saved.goal.targetDate < saved.today,
+          shown: feasibility,
         }),
       },
       context,

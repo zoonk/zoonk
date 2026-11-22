@@ -23,6 +23,7 @@ import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
 import { planFitOfferSchema } from "./plan-offers";
 import { planPhaseSchema } from "./plan-phases";
+import { planSuggestedTimeSchema } from "./plan-suggested-time";
 import { planWeekShapeSchema } from "./plan-week-shape";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
@@ -72,7 +73,7 @@ const dailyTimesSchema = z
   .array(z.int().positive())
   .meta({
     description:
-      "The daily times a picker offers, in order, from the shortest a plan accepts to a whole day; add the time shown when it's between them",
+      "The daily times a learner can pick, in order, from the shortest a plan accepts to 8 hours, the longest a learner can set. The goal's own time (`schedule.dailyMinutes`) can fall between them, or above them for a time saved before that limit",
   });
 
 export const planResponseSchema = z
@@ -211,6 +212,7 @@ export const planResponseSchema = z
         .array(z.enum(LANGUAGE_ACTIVITY_TYPES))
         .meta({ description: "Language practice left out of lessons; empty for other goals" }),
     }),
+    suggestedTime: planSuggestedTimeSchema,
     tools: z
       .array(planToolSchema)
       .meta({
