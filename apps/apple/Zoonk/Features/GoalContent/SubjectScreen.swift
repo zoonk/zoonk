@@ -695,7 +695,10 @@ private struct SubjectNotPlannedNotice: View {
             comment: "Why a subject isn't in the plan: the learner skipped it")
         case "time":
           Text(
-            "This subject isn't in your plan: not enough time.", tableName: "Plan")
+            "This subject isn't in your plan. Other subjects come first.", tableName: "Plan",
+            comment:
+              "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
+          )
         case "missing":
           Text(
             "This subject isn't in your plan yet.", tableName: "Plan",

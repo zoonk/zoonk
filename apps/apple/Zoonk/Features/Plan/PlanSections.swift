@@ -523,8 +523,10 @@ func planStatusText(_ status: GoalPlan.Status, isPaused: Bool) -> String {
     return String(localized: "Finished", table: "Plan", comment: "State of a finished plan")
   case .needsAdjusting:
     return String(
-      localized: "Not enough time", table: "Plan",
-      comment: "State of a plan with more lessons than days left")
+      localized: "Needs adjusting", table: "Plan",
+      comment:
+        "A plan's status: it has more lessons than days left, so the learner should change their time or date."
+    )
   case .onTrack:
     return String(
       localized: "Up to date", table: "Plan", comment: "State of a plan the learner keeps up with")

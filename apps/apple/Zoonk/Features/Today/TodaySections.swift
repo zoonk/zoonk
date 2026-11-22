@@ -401,7 +401,7 @@ struct TodayPlanChangeSection: View {
             .typeStyle(.body.weight(.semibold))
             .accessibilityAddTraits(.isHeader)
 
-          Text(behindSentence(behind))
+          Text(behindSentence)
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
@@ -508,10 +508,12 @@ struct TodayPlanChangeSection: View {
     }
   }
 
-  private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
-    behind.measure == "exam"
-      ? String(localized: "Some lessons no longer fit before your exam.", table: "Today")
-      : String(localized: "Some lessons no longer fit before your date.", table: "Today")
+  private var behindSentence: String {
+    String(
+      localized: "Let's fit your plan to the days left.", table: "Today",
+      comment:
+        "Under \"You missed a few days\": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes."
+    )
   }
 
   private func result(_ decision: PlanChangeDecision) -> String {
