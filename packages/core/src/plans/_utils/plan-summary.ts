@@ -171,7 +171,13 @@ export function reduceCompletedSummary({
   return {
     coveredShare: reduced.coveredShare,
     kind: "reduced",
-    summary: { ...summary, selected: { ...summary.selected, coverage: reduced } },
+    summary: {
+      ...summary,
+      advice: reduced.fits
+        ? { ...summary.advice, suggested: null, suggestionPending: false }
+        : summary.advice,
+      selected: { ...summary.selected, coverage: reduced },
+    },
   };
 }
 

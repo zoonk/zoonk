@@ -167,14 +167,24 @@ describe(reduceCompletedSummary, () => {
     expect(again).toStrictEqual({ kind: "unchanged" });
   });
 
-  it("fits once the last lesson it was short of is done", () => {
+  it("clears a time suggestion and its pending flag once the last short lesson is done", () => {
     const reduction = reduceCompletedSummary({
       completed: [{ lessonId: "shared" }, { lessonId: "after" }],
-      summary,
+      summary: {
+        ...summary,
+        advice: {
+          ...summary.advice,
+          feasibility: { ...summary.advice.feasibility, fits: false, timeCovers: false },
+          suggested: { kind: "everything", minutes: 30 },
+          suggestionPending: true,
+        },
+      },
     });
 
-    expect(reduction).toMatchObject({ coveredShare: 1, kind: "reduced" });
-    expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(true);
+    const reduced = reduction.kind === "reduced" ? reduction.summary : null;
+
+    expect(readSavedFeasibility(reduced)).toMatchObject({ fits: true, timeCovers: true });
+    expect(reduced?.advice).toMatchObject({ suggested: null, suggestionPending: false });
   });
 
   it("keeps missing topics out of its saved feasibility after crediting completed lessons", () => {
