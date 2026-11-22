@@ -1,48 +1,24 @@
 import Foundation
 
 /// Main's `schedule-time.ts` and `time-answer.ts`. `found` is the plan's answer for the days shown and
-/// `advice` its answer for the time shown on them; either is nil while it's asked for.
+/// `advice` its answer for the time shown on them, which only a goal without a date asks for; either
+/// is nil while it's asked for.
 enum ScheduleTime {
   enum Line: Equatable {
     case asking
     case askFailed
-    case everything
-    /// Everything the learner kept, with a subject they took out of the plan.
-    case everythingKept
     case findFailed
     case finish(endDate: String)
     case noDays
     case noFinish
     case pastDate
-    /// What the time reaches: 1 when every topic is in, though not everything.
-    case share(Double)
-    /// A dated plan that hasn't measured what the time reaches says nothing about it.
-    case unmeasured
+    /// A dated goal's line: the time the plan suggests, whatever time is picked.
+    case suggests(TimeToCover.Suggested)
+    /// A dated plan with no time to suggest says nothing.
+    case quiet
     case working
 
     var isBusy: Bool { self == .asking || self == .working }
-
-    var coversEverything: Bool { self == .everything || self == .everythingKept }
-  }
-
-  /// The longest time worth studying: what covers everything, or as much as any time does when part
-  /// never fits.
-  struct FullTime: Equatable {
-    let everything: Bool
-    let minutes: Int
-  }
-
-  /// What covering everything takes, said beside a suggestion that doesn't cover it.
-  enum Everything: Equatable {
-    /// A time that covers it, or as much as any time covers.
-    case takes(FullTime)
-    /// No time covers everything by the date.
-    case neverFits
-  }
-
-  struct Answer: Equatable {
-    let found: TimeToCover?
-    let line: Line
   }
 
   enum Wait: Equatable {
@@ -160,7 +136,7 @@ enum ScheduleTime {
       && suggestedMinutes(first) != nil
   }
 
-  /// Continue saves only a time the learner picked, or one the screen has said what it covers.
+  /// Continue saves only a time the learner picked, or one the screen has finished working out.
   static func waitsToSave(line: Line, picked: Int?) -> Bool {
     picked == nil && line.isBusy
   }
@@ -169,45 +145,15 @@ enum ScheduleTime {
     hasDays && minutes != nil && !waitsToSave(line: line, picked: picked)
   }
 
-  /// While the time shown is worked out again, the last answer stays in place, marked as updating.
-  static func shownAnswer(last: Answer, now: Answer) -> (answer: Answer, updating: Bool) {
-    let updating = now.line.isBusy && !last.line.isBusy
+  /// While the line is worked out again, the last one stays in place, marked as updating.
+  static func shownLine(last: Line, now: Line) -> (line: Line, updating: Bool) {
+    let updating = now.isBusy && !last.isBusy
     return (updating ? last : now, updating)
   }
 
-  static func fullTime(_ found: TimeToCover?) -> FullTime? {
-    if let minutes = found?.recommendedMinutes {
-      return FullTime(everything: true, minutes: minutes)
-    }
-
-    return found?.most.map {
-      FullTime(everything: false, minutes: $0.minutes)
-    }
-  }
-
-  /// The picker marks the suggestion; beside a focus, the time that covers everything is in its list.
-  static func markedTimes(_ found: TimeToCover?) -> (full: Int?, suggested: Int?) {
-    (
-      full: found?.suggested?.kind == .focus ? found?.recommendedMinutes : nil,
-      suggested: suggestedMinutes(found)
-    )
-  }
-
-  /// On a focus suggestion, what covering everything takes; nil when there's none to say.
-  static func everythingTakes(_ found: TimeToCover?) -> Everything? {
-    guard found?.suggested?.kind == .focus else {
-      return nil
-    }
-
-    return fullTime(found).map { .takes($0) } ?? .neverFits
-  }
-
-  /// The time that covers everything, offered while a shorter time is shown, only when that time is
-  /// the suggestion (so a realistic one).
-  static func offer(found: TimeToCover?, line: Line, minutes: Int?) -> Int? {
-    guard let suggested = found?.suggested, suggested.kind == .everything,
-      suggested.minutes != minutes, !line.coversEverything
-    else {
+  /// The time the plan suggests, offered while a shorter time is picked.
+  static func offer(line: Line, minutes: Int?) -> Int? {
+    guard case .suggests(let suggested) = line, let minutes, minutes < suggested.minutes else {
       return nil
     }
 
@@ -227,7 +173,7 @@ enum ScheduleTime {
       return .noDays
     }
 
-    guard let minutes else {
+    guard minutes != nil else {
       return .working
     }
 
@@ -243,47 +189,16 @@ enum ScheduleTime {
       return .pastDate
     }
 
-    if let suggested = found?.suggested, suggested.minutes == minutes {
-      return suggested.kind == .everything
-        ? everything(reached: suggested.reachedShare) : reached(suggested.reachedShare)
-    }
-
-    // The plan's own time can say what it covers before the time question answers.
-    if let advice {
-      return (advice.coveredShare ?? 0) >= 1
-        ? everything(reached: advice.reachedShare) : reached(advice.reachedShare)
-    }
-
-    guard found != nil else {
+    guard let found else {
       return findFailed ? .findFailed : .working
     }
 
-    return askFailed ? .askFailed : .asking
+    return found.suggested.map { .suggests($0) } ?? .quiet
   }
 
-  /// Covering everything while part of the goal isn't reached means a subject was taken out.
-  private static func everything(reached: Double?) -> Line {
-    (reached ?? 1) < 1 ? .everythingKept : .everything
-  }
-
-  private static func reached(_ share: Double?) -> Line {
-    share.map { .share($0) } ?? .unmeasured
-  }
-
-  /// The time picked needs the plan's own answer, except the one it suggested.
-  static func asksAboutTime(dated: Bool, found: TimeToCover?, minutes: Int?) -> Bool {
-    guard minutes != nil else {
-      return false
-    }
-
-    guard dated else {
-      return true
-    }
-
-    guard let found, !found.pastDate else {
-      return false
-    }
-
-    return found.suggested?.minutes != minutes
+  /// Only a goal without a date asks what the time picked gets it: a dated goal's line is about
+  /// the suggestion.
+  static func asksAboutTime(dated: Bool, minutes: Int?) -> Bool {
+    !dated && minutes != nil
   }
 }

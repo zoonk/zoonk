@@ -354,7 +354,10 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertTrue(shows(Self.changePlan, in: window), "What changes: \(spoken(in: window))")
 
     try await readAgain(
-      api, plan: goalPlanFixture(targetDate: "2027-06-01", feasibility: Self.short, studyDays: 5))
+      api,
+      plan: goalPlanFixture(
+        targetDate: "2027-06-01", feasibility: Self.short, studyDays: 5,
+        suggested: Self.suggested))
     try await waitForTestCondition("The old coverage preview disappears") {
       !shows(Self.changePlan, in: window)
     }
@@ -429,7 +432,7 @@ final class PlanSlotOpeningTests: XCTestCase {
       api,
       plan: goalPlanFixture(
         targetDate: "2027-06-01", feasibility: Self.short, today: today,
-        lessonsStudied: lessonsStudied))
+        lessonsStudied: lessonsStudied, suggested: Self.suggested))
     try await waitForTestCondition("The old coverage preview disappears") {
       !shows(Self.changePlan, in: window)
     }
@@ -449,8 +452,11 @@ final class PlanSlotOpeningTests: XCTestCase {
   /// A date the plan's time doesn't cover.
   private static let short = """
     {"coreFits": false, "coveredShare": 0.6, "deadline": "2027-06-01", "deepensMostAsked": false,
-     "fits": false, "measure": "goal", "reachedShare": 0.8, "timeCovers": false}
+     "fits": false, "measure": "goal", "timeCovers": false}
     """
+
+  /// The plan suggests an hour a day, more than its 30 minutes.
+  private static let suggested = #"{"kind": "everything", "minutes": 60, "split": null}"#
 
   /// A plan whose date passed; a later one fits.
   private func pastDate() async throws -> PlanAPIStub {
@@ -464,10 +470,9 @@ final class PlanSlotOpeningTests: XCTestCase {
   /// A plan whose time a day doesn't cover its date; 60 minutes would.
   private func coverage() async throws -> PlanAPIStub {
     let api = PlanAPIStub()
-    await api.setPlan(try goalPlanFixture(targetDate: "2027-06-01", feasibility: Self.short))
-    await api.setSuggested(
-      TimeToCover.Suggested(
-        kind: .everything, minutes: 60, reachedShare: 1, split: nil))
+    await api.setPlan(
+      try goalPlanFixture(
+        targetDate: "2027-06-01", feasibility: Self.short, suggested: Self.suggested))
     await api.setPreview(try Self.preview(lessons: 2))
     return api
   }

@@ -67,8 +67,8 @@ struct ScheduleQuestion: View {
     let adviceKey: AdviceKey
     let asksAdvice: Bool
     let line: ScheduleTime.Line
-    /// The answer on screen: the last one, updating, while the time shown is worked out again.
-    let answer: ScheduleTime.Answer
+    /// The line on screen: the last one, updating, while the new one is worked out.
+    let shownLine: ScheduleTime.Line
     let updating: Bool
   }
 
@@ -172,8 +172,8 @@ struct ScheduleQuestion: View {
           .locksWhileSaving()
       }
 
-      // What the time covers comes last, after the days and the date that change it as much as the
-      // time does, so its length moves nothing the learner taps.
+      // The suggestion comes last, after the days and the date that change it, so its length moves
+      // nothing the learner taps.
       Section {
         VStack(alignment: .leading, spacing: 12) {
           dateLink(shown)
@@ -256,19 +256,15 @@ struct ScheduleQuestion: View {
 
     let line = lineAt(advice, current)
 
-    let (answer, updating) = ScheduleTime.shownAnswer(
+    let (shownLine, updating) = ScheduleTime.shownLine(
       // A date answers one aim: a new aim's line works it out instead of showing the old one's.
-      last: .init(
-        found: lastFound,
-        line: lineAt(advised.last(for: adviceKey) { $0.aim == adviceKey.aim }, lastFound)),
-      now: .init(found: current, line: line))
+      last: lineAt(advised.last(for: adviceKey) { $0.aim == adviceKey.aim }, lastFound), now: line)
 
     return Shown(
       dated: dated, found: current, lastFound: lastFound, minutes: minutes, advice: advice,
       adviceKey: adviceKey,
-      asksAdvice: !days.isEmpty
-        && ScheduleTime.asksAboutTime(dated: dated, found: current, minutes: minutes),
-      line: line, answer: answer, updating: updating)
+      asksAdvice: !days.isEmpty && ScheduleTime.asksAboutTime(dated: dated, minutes: minutes),
+      line: line, shownLine: shownLine, updating: updating)
   }
 
   private func goalDate(_ shown: Shown) -> TimeAnswer.GoalDate? {
@@ -301,7 +297,7 @@ struct ScheduleQuestion: View {
 
   private func timeMenu(_ shown: Shown) -> some View {
     let minutes = shown.minutes ?? view.recommendedMinutes
-    let marked = ScheduleTime.markedTimes(shown.found)
+    let suggested = ScheduleTime.suggestedMinutes(shown.found)
 
     return Menu {
       Picker(
@@ -314,11 +310,10 @@ struct ScheduleQuestion: View {
           })
       ) {
         ForEach(
-          ScheduleTime.dailyTimes(
-            timeChoices.map(\.minutes), with: minutes, marked.suggested, marked.full),
+          ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: minutes, suggested),
           id: \.self
         ) { time in
-          Text(TimeAnswer.choiceLabel(time, marked: marked))
+          Text(TimeAnswer.choiceLabel(time, suggested: suggested))
             .tag(time)
         }
       } label: {
@@ -389,7 +384,7 @@ struct ScheduleQuestion: View {
   }
 
   private func finishDate(_ shown: Shown) -> String? {
-    if case .finish(let endDate) = shown.answer.line {
+    if case .finish(let endDate) = shown.shownLine {
       return endDate
     }
 
@@ -408,11 +403,8 @@ struct ScheduleQuestion: View {
   }
 
   private func timeAnswer(_ shown: Shown) -> some View {
-    let answer = shown.answer
-
-    return TimeAnswer(
-      date: goalDate(shown), exam: isExam, found: answer.found, line: answer.line,
-      minutes: shown.minutes,
+    TimeAnswer(
+      date: goalDate(shown), exam: isExam, line: shown.shownLine, minutes: shown.minutes,
       split: days.isEmpty
         ? nil
         : ScheduleTime.split(

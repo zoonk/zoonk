@@ -247,7 +247,8 @@ func goalPlanFixture(
   targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
   fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7,
   today: String = "2027-01-04", lessonsStudied: Int = 0, finishedOn: String? = nil,
-  weekdayMinutes: [Int] = [30, 30, 30, 30, 30, 30, 30], weekDays: [String] = []
+  weekdayMinutes: [Int] = [30, 30, 30, 30, 30, 30, 30], weekDays: [String] = [],
+  suggested: String? = nil
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
   let completion = finishedOn.map { "\"\($0)\"" } ?? "null"
@@ -273,7 +274,7 @@ func goalPlanFixture(
         },
         "weekdayMinutes": \(weekdayMinutes)
       },
-      "status": { "kind": "\(status)" },
+      "status": { "kind": "\(status)" }, "suggested": \(suggested ?? "null"),
       "steering": {
         "difficultyBias": "standard", "lessonsStudied": \(lessonsStudied), "practiceBias": "balanced",
         "skippedActivities": []

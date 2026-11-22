@@ -319,55 +319,27 @@ struct PlanOtherOptions<Items: View>: View {
   }
 }
 
-/// Main's coverage card: finding the time that covers everything plans the goal many times, so only
-/// "See what changes" asks, then shows what that time changes.
+/// Main's suggested time card, while the learner studies less than the plan suggests: "See what
+/// changes" previews that time, and the next tap applies it.
 struct PlanCoverageSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
-  let title: String
+  let suggested: TimeToCover.Suggested
   let actions: PlanSlotActions
 
   private var check: PlanSlotCheck {
-    context.slotCheck(.coverage(title))
-  }
-
-  enum Found: Equatable {
-    case unasked
-    case asking
-    case failed
-    case time(TimeToCover)
+    context.slotCheck(.coverage)
   }
 
   var body: some View {
-    card
-  }
-
-  private var time: Resource<TimeToCover> {
-    store.timeToCover(goalId: context.goal.id)
-  }
-
-  private var found: Found {
-    Self.found(time)
-  }
-
-  static func found(_ time: Resource<TimeToCover>) -> Found {
-    switch time.freshState {
-    case .loaded(let value): .time(value)
-    case .failed: .failed
-    case .loading: .asking
-    case .idle, .empty: .unasked
-    }
-  }
-
-  @ViewBuilder private var card: some View {
     if let asked = check.asked {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
-      let offer = offerMinutes
-
-      PlanSlotCard(title: Text(heading), mark: .sparkle, description: line.map(Text.init)) {
+      PlanSlotCard(
+        title: Text(Self.title(suggested)), mark: .sparkle, description: Text(description)
+      ) {
         if check.failed {
           FailureLine(
             message: LocalizedStringResource(
@@ -379,120 +351,50 @@ struct PlanCoverageSlot: View {
       } actions: {
         otherOptions
 
-        if found == .failed {
-          Button {
-            check.run { await seeChanges() }
-          } label: {
-            Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
-          }
-          .mainActionUnlessBarHoldsOne()
-        } else if case .time = found, offer == nil {
-          if context.goal.kind == .exam, !context.plan.schedule.fullCourse {
-            Button {
-              context.adjust(.everything)
-            } label: {
-              Text(
-                "Keep studying after the exam", tableName: "Plan",
-                comment: "Opens studying what's left after the exam")
-            }
-            .mainActionUnlessBarHoldsOne()
-          }
-        } else {
-          BusyButton(isBusy: found == .asking || check.isWorking) {
-            check.run { await seeChanges() }
-          } label: {
-            Text(
-              "See what changes", tableName: "Plan",
-              comment: "Works out the time that covers everything and shows what it changes")
-          }
-          .mainActionUnlessBarHoldsOne()
+        BusyButton(isBusy: check.isWorking) {
+          check.run { await seeChanges() }
+        } label: {
+          Text(
+            "See what changes", tableName: "Plan",
+            comment: "Shows what the suggested time a day changes in the plan, before it applies")
         }
+        .mainActionUnlessBarHoldsOne()
       }
     }
   }
 
-  private var suggested: TimeToCover.Suggested? {
-    guard case .time(let time) = found else {
-      return nil
-    }
-
-    return time.suggested
-  }
-
-  /// The time worth offering: one the learner doesn't study already.
-  private var offerMinutes: Int? {
-    guard let suggested, suggested.minutes != context.plan.schedule.dailyMinutes else {
-      return nil
-    }
-
-    return suggested.minutes
-  }
-
-  private var heading: String {
-    guard let suggested, offerMinutes != nil else {
-      return title
-    }
-
-    let time = planDurationText(minutes: Double(suggested.minutes))
-
-    return suggested.kind == .everything
-      ? String(
-        localized: "\(time) a day covers everything", table: "Plan",
-        comment: "The time a day that covers the whole goal; the argument is a duration")
-      : String(
-        localized: "We suggest \(time) a day", table: "Plan",
-        comment:
-          "The time a day worth most, when none covers everything; the argument is a duration"
-      )
-  }
-
-  private var line: String? {
-    switch found {
-    case .unasked:
-      return nil
-    case .asking:
-      return String(
-        localized: "Finding the time that covers everything…", table: "Plan",
-        comment: "While the time a day that covers everything is worked out")
-    case .failed:
-      return String(
-        localized: "We couldn't work out the time needed.", table: "Plan",
-        comment: "The time a day that covers everything couldn't be worked out")
-    case .time(let time):
-      if let suggested, offerMinutes != nil {
-        guard suggested.kind == .focus else {
-          return title
-        }
-
-        return suggested.reachedShare.map {
-          planCoverageLine(
-            minutes: suggested.minutes, share: $0,
-            exam: context.plan.feasibility?.measure == "exam")
-        }
-      }
-
-      return nothingToOffer(time)
-    }
-  }
-
-  private func nothingToOffer(_ time: TimeToCover) -> String {
-    if let minutes = time.recommendedMinutes {
-      return planEverythingTakesText(minutes: minutes)
-    }
-
-    if let most = time.most {
-      return planMostTimeText(minutes: most.minutes)
-    }
-
-    let date = context.plan.schedule.targetDate.map {
-      PlanDate.longDay($0, today: context.plan.today)
-    }
-
-    return String(
-      localized: "There isn't enough time to cover everything by \(date ?? "").", table: "Plan",
-      comment:
-        "No time a day covers the whole goal by its date; the argument is a day like \"May 5\""
+  static func title(_ suggested: TimeToCover.Suggested) -> String {
+    String(
+      localized: "We suggest \(planDurationText(minutes: Double(suggested.minutes))) a day",
+      table: "Plan",
+      comment: "The title of a suggestion to change the daily study time. {time} is like \"4 h\"."
     )
+  }
+
+  /// What the suggested time gets the learner: everything by the date, or what matters most first.
+  private var description: String {
+    let exam = context.goal.kind == .exam
+    let schedule = context.plan.schedule
+
+    guard suggested.kind == .everything, let targetDate = schedule.targetDate else {
+      return exam
+        ? String(localized: "Your plan starts with what matters most for your exam.", table: "Plan")
+        : String(localized: "Your plan starts with what matters most for your goal.", table: "Plan")
+    }
+
+    let date = PlanDate.longText(targetDate, month: schedule.targetDateNamedMonth)
+
+    return exam
+      ? String(
+        localized: "That's enough to be ready for your exam by \(date).", table: "Plan",
+        comment:
+          "Under \"We suggest {time} a day\": that time covers the whole exam by its date. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+      )
+      : String(
+        localized: "That's enough to reach your goal by \(date).", table: "Plan",
+        comment:
+          "Under \"We suggest {time} a day\": that time covers the whole goal by its date. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+      )
   }
 
   private var otherOptions: some View {
@@ -549,22 +451,12 @@ struct PlanCoverageSlot: View {
     }
   }
 
-  /// Finds the time first when it isn't found yet, as main's one tap does, then previews it.
   private func seeChanges() async {
     let check = check
-
-    if time.freshValue == nil {
-      await time.refresh()
-    }
-
-    guard !Task.isCancelled, let minutes = offerMinutes else {
-      return
-    }
-
     check.isWorking = true
     defer { check.isWorking = false }
 
-    let asked = await context.ask([.dailyMinutes(minutes)], store: store)
+    let asked = await context.ask([.dailyMinutes(suggested.minutes)], store: store)
 
     guard !Task.isCancelled else {
       return
@@ -674,54 +566,6 @@ extension PlanStore {
       return nil
     }
   }
-}
-
-/// Main's `timeCovers`: what a time a day reaches, where no picker shows the time. `share` is 1 when
-/// every topic gets its first lessons, though not everything.
-func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
-  let time = planDurationText(minutes: Double(minutes))
-
-  guard share < 1 else {
-    return exam
-      ? String(
-        localized: "\(time) a day covers the first lessons of every exam topic", table: "Plan")
-      : String(
-        localized: "\(time) a day covers the first lessons of every part of your goal",
-        table: "Plan")
-  }
-
-  let percent = share.formatted(.percent.precision(.fractionLength(0)))
-
-  return exam
-    ? String(
-      localized:
-        "\(time) a day covers the first lessons of about \(percent) of your exam",
-      table: "Plan",
-      comment:
-        "{share} is a share of the whole exam, by how much it asks, not a share of its topics.")
-    : String(
-      localized: "\(time) a day covers the first lessons of about \(percent) of your goal",
-      table: "Plan")
-}
-
-func planEverythingTakesText(minutes: Int) -> String {
-  String(
-    localized:
-      "Covering everything takes about \(planDurationText(minutes: Double(minutes))) a day.",
-    table: "Plan",
-    comment: "The time a day that would cover everything; the argument is a duration"
-  )
-}
-
-/// No time covers everything by the date: the fewest minutes that cover as much as any time does.
-func planMostTimeText(minutes: Int) -> String {
-  String(
-    localized:
-      "\(planDurationText(minutes: Double(minutes))) a day covers as much as any time can.",
-    table: "Plan",
-    comment:
-      "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more."
-  )
 }
 
 extension PlanContext {

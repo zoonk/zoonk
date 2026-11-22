@@ -61,9 +61,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let fits: Bool
     /// `exam` or `goal`.
     let measure: String
-    /// The share whose topics get at least their first lessons by the deadline: 1 when every topic
-    /// is in. Nil without a deadline.
-    let reachedShare: Double?
     let timeCovers: Bool
   }
 
@@ -268,6 +265,9 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let ready: Bool
   let schedule: Schedule
   let status: Status?
+  /// The time a day the plan suggests, worked out when it's saved: never more than 4 hours. Nil for
+  /// a plan without a date.
+  let suggested: TimeToCover.Suggested?
   let steering: Steering
   let tools: [Tool]
   let week: Week

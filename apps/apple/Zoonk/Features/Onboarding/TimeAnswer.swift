@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Main's `TimeAnswer`, shared by the time question and the plan editor: one line that says what the
-/// time shown gets the learner, and what covering everything takes when the suggestion doesn't. It
-/// never says a time covers everything unless it does, and offers another time only when the
-/// suggestion covers everything.
+/// Main's `TimeAnswer`, shared by the time question and the plan editor: one line under the picker.
+/// For a goal with a date it says the time the plan suggests, so it stays put as times are picked,
+/// with a button to use that time while a shorter one is picked; for one without, when the time
+/// picked finishes it.
 struct TimeAnswer: View {
   struct GoalDate: Equatable {
     let isoDate: String
@@ -12,8 +12,6 @@ struct TimeAnswer: View {
 
   let date: GoalDate?
   let exam: Bool
-  /// The plan's answer for the days shown, nil while it's asked for.
-  let found: TimeToCover?
   let line: ScheduleTime.Line
   let minutes: Int?
   var split: DaySplit?
@@ -24,22 +22,13 @@ struct TimeAnswer: View {
   let onRetry: () -> Void
   let onUseOffer: (Int) -> Void
 
-  @Environment(\.legibilityWeight) private var legibility
-
   var body: some View {
     let failed = line == .askFailed || line == .findFailed
-    let offer = failed ? nil : ScheduleTime.offer(found: found, line: line, minutes: minutes)
+    let offer = ScheduleTime.offer(line: line, minutes: minutes)
 
     VStack(alignment: .leading, spacing: 8) {
       if let lineWords {
-        Text(Self.sharedOut(lineWords, line: line), strong: .semibold, legibility: legibility)
-          .foregroundStyle(.mutedForeground)
-      }
-
-      if line != .unmeasured, !line.coversEverything,
-        let everything = ScheduleTime.everythingTakes(found)
-      {
-        Text(Self.everythingTakes(everything))
+        Text(lineWords)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -53,8 +42,12 @@ struct TimeAnswer: View {
         Button {
           onUseOffer(offer)
         } label: {
-          Self.offerLabel(offer)
-            .multilineTextAlignment(.leading)
+          Text(
+            "Use \(Self.duration(offer))", tableName: "Onboarding",
+            comment:
+              "A button that sets the daily study time to the one we suggest. {time} is like \"2 h\"."
+          )
+          .multilineTextAlignment(.leading)
         }
       }
     }
@@ -65,71 +58,19 @@ struct TimeAnswer: View {
     .announcesStatus(line.isBusy || updating ? nil : lineWords)
   }
 
-  /// The picker's times: the suggestion marked, and beside a focus the time that covers everything.
-  static func choiceLabel(_ minutes: Int, marked: (full: Int?, suggested: Int?)) -> String {
+  /// The picker's times, the suggestion marked.
+  static func choiceLabel(_ minutes: Int, suggested: Int?) -> String {
     let time = duration(minutes)
 
-    if minutes == marked.suggested {
-      return String(
+    return minutes == suggested
+      ? String(
         localized: "\(time) (suggested)", table: "Onboarding",
         comment: "The time a day the plan suggests, among the times to pick")
-    }
-
-    return minutes == marked.full
-      ? String(
-        localized: "\(time) (covers everything)", table: "Onboarding",
-        comment:
-          "A daily study time in a list of times: the one that covers the learner's whole goal by its date. {time} is like \"10 h\"."
-      )
       : time
-  }
-
-  static func offerLabel(_ minutes: Int) -> Text {
-    Text(
-      "Use \(duration(minutes)) to cover everything", tableName: "Onboarding",
-      comment:
-        "Picks the time a day that covers the whole goal by its date; the argument is a time like '45 min'. Say \"cover everything\", not \"study everything\": studying after an exam is a different choice."
-    )
-  }
-
-  /// What covering everything takes, under a sentence that already names the date.
-  static func everythingTakes(_ everything: ScheduleTime.Everything) -> String {
-    switch everything {
-    case .takes(let full) where full.everything:
-      planEverythingTakesText(minutes: full.minutes)
-    case .takes(let full):
-      planMostTimeText(minutes: full.minutes)
-    case .neverFits:
-      String(
-        localized: "There isn't enough time to cover everything.", table: "Plan",
-        comment:
-          "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date."
-      )
-    }
   }
 
   private static func duration(_ minutes: Int) -> String {
     planDurationText(minutes: Double(minutes))
-  }
-
-  /// Main's share line: the share stands out in its sentence.
-  private static func sharedOut(_ words: String, line: ScheduleTime.Line) -> AttributedString {
-    var text = AttributedString(words)
-
-    switch line {
-    case .share(let share) where share < 1:
-      if let range = text.range(of: percent(share)) {
-        text[range].inlinePresentationIntent = .stronglyEmphasized
-      }
-    default:
-      break
-    }
-
-    return text
-  }
-
-  nonisolated private static func percent(_ share: Double) -> String {
-    share.formatted(.percent.precision(.fractionLength(0)))
   }
 
   private var lineWords: String? {
@@ -152,31 +93,13 @@ struct TimeAnswer: View {
   }
 
   private var statusWords: String? {
-    let time = Self.duration(minutes ?? 0)
     let shown = date.map { PlanDate.longText($0.isoDate, month: $0.namedMonth) }
     let month = date?.namedMonth == true
 
     switch line {
-    case .everything:
-      return shown.map { Self.everythingWords(exam: exam, month: month, date: $0) }
-    case .everythingKept:
-      return shown.map { date in
-        month
-          ? String(
-            localized: "Covers everything in your plan by the start of \(date).",
-            table: "Onboarding",
-            comment:
-              "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
-          )
-          : String(
-            localized: "Covers everything in your plan by \(date).", table: "Onboarding",
-            comment:
-              "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
-          )
-      }
-    case .share(let share):
-      return shown.map { Self.shareWords(share, exam: exam, month: month, date: $0) }
-    case .unmeasured:
+    case .suggests(let suggested):
+      return shown.map { Self.suggestionWords(suggested, exam: exam, date: $0) }
+    case .quiet:
       return nil
     case .pastDate:
       return shown.map { date in
@@ -227,127 +150,54 @@ struct TimeAnswer: View {
         localized: "We couldn't work out the time your goal needs.", table: "Onboarding",
         comment: "The time a day a goal needs couldn't be worked out")
     case .asking:
-      return shown == nil
-        ? String(
-          localized: "Working out when you'd finish…", table: "Onboarding",
-          comment: "While the plan works out when a goal without a date finishes")
-        : String(
-          localized: "Working out what \(time) a day covers…", table: "Onboarding",
-          comment: "While the plan works out what a time a day covers")
+      return String(
+        localized: "Working out when you'd finish…", table: "Onboarding",
+        comment: "While the plan works out when a goal without a date finishes")
     case .askFailed:
-      return shown == nil
-        ? String(
-          localized: "We couldn't work out when you'd finish.", table: "Onboarding",
-          comment: "When a goal without a date finishes couldn't be worked out")
-        : String(
-          localized: "We couldn't work out what \(time) a day covers.", table: "Onboarding",
-          comment: "What a time a day covers couldn't be read")
+      return String(
+        localized: "We couldn't work out when you'd finish.", table: "Onboarding",
+        comment: "When a goal without a date finishes couldn't be worked out")
     }
   }
 
-  private static func everythingWords(exam: Bool, month: Bool, date: String) -> String {
-    switch (exam, month) {
-    case (true, false):
-      String(
-        localized: "Covers all your exam topics by \(date).", table: "Onboarding",
-        comment:
-          "The time a day shown covers a whole exam; the argument is a date like 'May 5, 2027'")
-    case (true, true):
-      String(
-        localized: "Covers all your exam topics by the start of \(date).", table: "Onboarding",
-        comment:
-          "The time a day shown covers a whole exam; the argument is the month the learner named, like 'May 2027'"
-      )
-    case (false, false):
-      String(
-        localized: "Covers your whole goal by \(date).", table: "Onboarding",
-        comment:
-          "The time a day shown covers a whole goal; the argument is a date like 'May 5, 2027'")
-    case (false, true):
-      String(
-        localized: "Covers your whole goal by the start of \(date).", table: "Onboarding",
-        comment:
-          "The time a day shown covers a whole goal; the argument is the month the learner named, like 'May 2027'"
-      )
-    }
-  }
-
-  /// What the time reaches by the date: the first lessons of every topic, or of a share that stands
-  /// out.
-  nonisolated static func shareWords(_ share: Double, exam: Bool, month: Bool, date: String)
+  /// Main's suggestion line: the time that gets the learner ready by their date, or, when that's
+  /// more than a day can hold, the time the plan starts on with what matters most. `date` is a day,
+  /// or the month the learner named.
+  static func suggestionWords(_ suggested: TimeToCover.Suggested, exam: Bool, date: String)
     -> String
   {
-    guard share < 1 else {
-      return everyTopicWords(exam: exam, month: month, date: date)
-    }
+    let time = duration(suggested.minutes)
 
-    let percent = Self.percent(share)
-
-    return switch (exam, month) {
-    case (true, false):
+    return switch (suggested.kind, exam) {
+    case (.everything, true):
+      String(
+        localized: "We suggest \(time) a day to be ready for your exam by \(date).",
+        table: "Onboarding",
+        comment:
+          "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\". {time} is a daily study time, like \"2 h\"."
+      )
+    case (.everything, false):
+      String(
+        localized: "We suggest \(time) a day to reach your goal by \(date).",
+        table: "Onboarding",
+        comment:
+          "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\". {time} is a daily study time, like \"2 h\"."
+      )
+    case (.focus, true):
       String(
         localized:
-          "Covers the first lessons of about \(percent) of your exam by \(date).",
+          "We suggest \(time) a day. Your plan starts with what matters most for your exam.",
         table: "Onboarding",
         comment:
-          "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'. The share is of the whole exam, by how much it asks, not a share of its topics."
+          "When studying everything by the exam would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what the exam asks most first."
       )
-    case (true, true):
+    case (.focus, false):
       String(
         localized:
-          "Covers the first lessons of about \(percent) of your exam by the start of \(date).",
+          "We suggest \(time) a day. Your plan starts with what matters most for your goal.",
         table: "Onboarding",
         comment:
-          "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'. The share is of the whole exam, by how much it asks, not a share of its topics."
-      )
-    case (false, false):
-      String(
-        localized:
-          "Covers the first lessons of about \(percent) of your goal by \(date).",
-        table: "Onboarding",
-        comment:
-          "The share of a goal whose parts get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'"
-      )
-    case (false, true):
-      String(
-        localized:
-          "Covers the first lessons of about \(percent) of your goal by the start of \(date).",
-        table: "Onboarding",
-        comment:
-          "The share of a goal whose parts get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'"
-      )
-    }
-  }
-
-  /// Every topic is in, though not everything: no topic is said to get more than its first lessons.
-  nonisolated private static func everyTopicWords(exam: Bool, month: Bool, date: String) -> String {
-    switch (exam, month) {
-    case (true, false):
-      String(
-        localized: "Covers the first lessons of every exam topic by \(date).", table: "Onboarding",
-        comment:
-          "A time a day reaches every exam topic, not all of each; the argument is a date like 'May 5, 2027'"
-      )
-    case (true, true):
-      String(
-        localized: "Covers the first lessons of every exam topic by the start of \(date).",
-        table: "Onboarding",
-        comment:
-          "A time a day reaches every exam topic, not all of each; the argument is the month the learner named, like 'May 2027'"
-      )
-    case (false, false):
-      String(
-        localized: "Covers the first lessons of every part of your goal by \(date).",
-        table: "Onboarding",
-        comment:
-          "A time a day reaches every part of a goal, not all of each; the argument is a date like 'May 5, 2027'"
-      )
-    case (false, true):
-      String(
-        localized: "Covers the first lessons of every part of your goal by the start of \(date).",
-        table: "Onboarding",
-        comment:
-          "A time a day reaches every part of a goal, not all of each; the argument is the month the learner named, like 'May 2027'"
+          "When studying everything by the goal's date would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what matters most first."
       )
     }
   }

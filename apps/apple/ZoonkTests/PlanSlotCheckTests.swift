@@ -68,9 +68,6 @@ final class PlanSlotCheckTests: XCTestCase {
 
   private func previewsAcross(from: Width, to: Width) async throws {
     let api = PlanAPIStub()
-    await api.setSuggested(
-      TimeToCover.Suggested(
-        kind: .everything, minutes: 60, reachedShare: 1, split: nil))
     await api.setPreview(
       PlanChangePreview(
         effect: try fitOffer().effect, feasibility: nil, finishDate: nil, ready: true,
@@ -82,13 +79,13 @@ final class PlanSlotCheckTests: XCTestCase {
       from: from, to: to, tap: "See what changes", api: api
     ) {
       PlanCoverageSlot(
-        context: context, title: "Coverage", actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+        context: context, suggested: .init(kind: .everything, minutes: 60, split: nil),
+        actions: PlanSlotActions(apply: { _ in }, notNow: {}))
     } completed: {
-      context.slotCheck(.coverage("Coverage")).asked != nil
+      context.slotCheck(.coverage).asked != nil
     }
 
-    XCTAssertNotNil(
-      context.slotCheck(.coverage("Coverage")).asked, "The change it found")
+    XCTAssertNotNil(context.slotCheck(.coverage).asked, "The change it found")
     try await waitForTestCondition("The card did not draw the change") {
       self.spoken(in: window).contains(String(localized: "Change my plan", table: "Plan"))
     }

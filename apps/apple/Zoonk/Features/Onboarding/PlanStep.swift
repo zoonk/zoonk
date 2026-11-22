@@ -599,7 +599,6 @@ private struct PlanReveal: View {
     Section {
       VStack(alignment: .leading, spacing: 20) {
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
-        coverage
         ForEach(plan.examChoices) { choice in
           if let line = choice.followingLine {
             PlanChoiceLine(line: line) { adjusting = .choice(choice.group) }
@@ -626,18 +625,6 @@ private struct PlanReveal: View {
             comment: "Under a plan revealed before its exam's official documents were read")
         }
       }
-    }
-  }
-
-  /// Main's `RevealCoverage`: what the learner's time reaches, when it doesn't cover the goal.
-  /// "Adjust plan" changes it; the rest of what fits lives on the Plan. A plan that goes on after the
-  /// exam covers the rest then.
-  @ViewBuilder private var coverage: some View {
-    if !plan.schedule.fullCourse, let covered = planCoverageText(plan) {
-      Text(covered)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 

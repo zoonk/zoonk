@@ -5,7 +5,7 @@ import SwiftUI
 enum PlanSlotItem: Hashable {
   case choice(GoalPlan.ExamChoice)
   case courseComplete
-  case coverage(String)
+  case coverage
   case finished
   case fitLessons
   case pastDate
@@ -19,10 +19,10 @@ enum PlanSlotItem: Hashable {
     let status = plan.status?.kind
     let finished = plan.end != nil
     let open = status != .pastDate
-    let coverage = planCoverageText(plan)
+    let belowSuggestion = plan.suggested.map { plan.schedule.dailyMinutes < $0.minutes } ?? false
     let timeItems: [PlanSlotItem] = [
       open && plan.fitOffer != nil ? .fitLessons : nil,
-      open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
+      open && belowSuggestion ? .coverage : nil,
     ].compactMap(\.self)
 
     var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
@@ -517,8 +517,10 @@ struct PlanSuggestionSection: View {
       if let offer = context.plan.fitOffer {
         PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
       }
-    case .coverage(let text):
-      PlanCoverageSlot(context: context, title: text, actions: offers)
+    case .coverage:
+      if let suggested = context.plan.suggested {
+        PlanCoverageSlot(context: context, suggested: suggested, actions: offers)
+      }
     case .courseComplete:
       PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
         CertificateClaimButton(context: context, item: .courseComplete)
@@ -554,8 +556,7 @@ struct PlanSuggestionSection: View {
 
   private var tooTightTitle: String {
     String(
-      localized: "More lessons than days left", table: "Plan",
-      comment: "Title of the Plan's notice when the plan has more lessons than days left")
+      localized: "Let's fit your plan to the time left", table: "Plan")
   }
 
   /// What the line says for each suggestion, as main's `SuggestionSummary`: its title.
@@ -573,8 +574,8 @@ struct PlanSuggestionSection: View {
       (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
       (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
-    case .coverage(let text):
-      (Text(text), .sparkle)
+    case .coverage:
+      (Text(context.plan.suggested.map(PlanCoverageSlot.title) ?? ""), .sparkle)
     case .courseComplete:
       (completeTitle, claimMark)
     case .finished:

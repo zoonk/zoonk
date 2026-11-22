@@ -6,38 +6,32 @@ final class ScheduleTimeTests: XCTestCase {
   private typealias Line = ScheduleTime.Line
 
   private func everything(_ minutes: Int) -> TimeToCover.Suggested {
-    .init(kind: .everything, minutes: minutes, reachedShare: 1, split: nil)
+    .init(kind: .everything, minutes: minutes, split: nil)
   }
 
   private func focus(_ minutes: Int) -> TimeToCover.Suggested {
-    .init(kind: .focus, minutes: minutes, reachedShare: 0.8, split: nil)
+    .init(kind: .focus, minutes: minutes, split: nil)
   }
 
   private func found(
-    suggested: TimeToCover.Suggested? = .init(
-      kind: .everything, minutes: 35, reachedShare: 1, split: nil),
-    recommendedMinutes: Int? = 35,
-    most: MostCoverage? = nil,
+    suggested: TimeToCover.Suggested? = .init(kind: .everything, minutes: 35, split: nil),
     pastDate: Bool = false
   ) -> TimeToCover {
     TimeToCover(
-      fittingDate: nil, most: most, pastDate: pastDate, readingNotice: false, ready: true,
-      recommendedMinutes: recommendedMinutes, suggested: suggested, targetDate: "2028-10-29",
-      targetDateNamedMonth: false)
+      fittingDate: nil, pastDate: pastDate, readingNotice: false, ready: true,
+      suggested: suggested, targetDate: "2028-10-29", targetDateNamedMonth: false)
   }
 
   private func everythingAt(_ minutes: Int) -> TimeToCover {
-    found(suggested: everything(minutes), recommendedMinutes: minutes)
+    found(suggested: everything(minutes))
   }
 
-  /// 240 minutes a day, which reaches 80% of the topics; nil when no time covers everything.
-  private func focusAt(_ recommendedMinutes: Int?, most: MostCoverage? = nil) -> TimeToCover {
-    found(suggested: focus(240), recommendedMinutes: recommendedMinutes, most: most)
-  }
+  /// Covering everything takes longer than the 4 hours the plan suggests at most.
+  private var focusFound: TimeToCover { found(suggested: focus(240)) }
 
-  private var noSuggestion: TimeToCover { found(suggested: nil, recommendedMinutes: nil) }
+  private var noSuggestion: TimeToCover { found(suggested: nil) }
 
-  private var passed: TimeToCover { found(suggested: nil, recommendedMinutes: nil, pastDate: true) }
+  private var passed: TimeToCover { found(suggested: nil, pastDate: true) }
 
   private func line(found: TimeToCover?, minutes: Int? = 35) -> Line {
     ScheduleTime.line(
@@ -112,65 +106,37 @@ final class ScheduleTimeTests: XCTestCase {
         startsOnRecommended: false, first: noSuggestion, found: found(), minutes: 35), 35)
   }
 
-  func testAsksAboutEveryTimeButTheSuggestedOne() {
-    func asks(dated: Bool = true, found: TimeToCover?, minutes: Int? = 35) -> Bool {
-      ScheduleTime.asksAboutTime(dated: dated, found: found, minutes: minutes)
-    }
-
-    XCTAssertFalse(asks(found: found()))
-    XCTAssertTrue(asks(found: found(), minutes: 30))
-    XCTAssertTrue(asks(dated: false, found: nil))
-    XCTAssertFalse(asks(found: nil))
-    XCTAssertFalse(asks(found: found(), minutes: nil))
-    XCTAssertFalse(asks(found: passed))
+  /// A dated goal's line is about the suggestion, so picking a time asks nothing.
+  func testAsksAboutTheTimePickedOnlyForAGoalWithoutADate() {
+    XCTAssertTrue(ScheduleTime.asksAboutTime(dated: false, minutes: 35))
+    XCTAssertFalse(ScheduleTime.asksAboutTime(dated: false, minutes: nil))
+    XCTAssertFalse(ScheduleTime.asksAboutTime(dated: true, minutes: 30))
   }
 
   func testOpensOnTheFocusSuggestionWhenCoveringEverythingTakesLonger() {
-    XCTAssertEqual(shown(first: focusAt(805), found: focusAt(805)), 240)
+    XCTAssertEqual(shown(first: focusFound, found: focusFound), 240)
   }
 
-  /// More time is offered only when it covers everything in a day someone keeps up; past that, what
-  /// everything takes is said, never offered.
-  func testOffersOnlyARealisticTimeThatCoversEverything() {
-    let realistic = everythingAt(120)
-
-    XCTAssertEqual(ScheduleTime.offer(found: realistic, line: .share(0.5), minutes: 30), 120)
-    XCTAssertNil(ScheduleTime.offer(found: realistic, line: .everything, minutes: 90))
-    XCTAssertNil(ScheduleTime.offer(found: realistic, line: .everything, minutes: 120))
-    XCTAssertNil(ScheduleTime.everythingTakes(realistic))
-
-    let long = focusAt(600)
-
-    XCTAssertEqual(line(found: long, minutes: 240), .share(0.8))
-    XCTAssertNil(ScheduleTime.offer(found: long, line: .share(0.4), minutes: 30))
-    XCTAssertNil(ScheduleTime.offer(found: long, line: .share(0.8), minutes: 240))
-    XCTAssertEqual(
-      ScheduleTime.everythingTakes(long),
-      .takes(.init(everything: true, minutes: 600)))
-    XCTAssertEqual(
-      ScheduleTime.everythingTakes(focusAt(nil, most: .init(minutes: 480))),
-      .takes(.init(everything: false, minutes: 480)))
-    XCTAssertEqual(ScheduleTime.everythingTakes(focusAt(nil)), .neverFits)
-    XCTAssertEqual(ScheduleTime.markedTimes(long).full, 600)
+  /// Whatever time is picked, the line says the suggestion, never what the time picked covers.
+  func testSaysTheSuggestionWhateverTimeIsPicked() {
+    XCTAssertEqual(line(found: everythingAt(120), minutes: 30), .suggests(everything(120)))
+    XCTAssertEqual(line(found: everythingAt(120), minutes: 480), .suggests(everything(120)))
+    XCTAssertEqual(line(found: focusFound, minutes: 30), .suggests(focus(240)))
+    XCTAssertEqual(line(found: noSuggestion), .quiet)
+    XCTAssertEqual(line(found: passed), .pastDate)
+    XCTAssertEqual(line(found: nil), .working)
   }
 
-  /// A time the plan was asked about says what it reaches, not what it covers in depth.
-  func testSaysWhatTheTimeAskedAboutReaches() {
-    func line(covered: Double, reached: Double?) -> Line {
-      ScheduleTime.line(
-        advice: TimeAdvice(
-          coveredShare: covered, endDate: nil, fullCourseEndDate: nil, readingNotice: false,
-          ready: true, reachedShare: reached),
-        askFailed: false, dated: true, findFailed: false, found: focusAt(600), hasDays: true,
-        minutes: 30)
-    }
+  /// The suggestion is offered only while a shorter time is picked.
+  func testOffersTheSuggestionOnlyBelowIt() {
+    let suggests = Line.suggests(everything(120))
 
-    XCTAssertEqual(line(covered: 0.2, reached: 0.45), .share(0.45))
-    XCTAssertEqual(line(covered: 0.6, reached: 1), .share(1))
-    XCTAssertEqual(line(covered: 1, reached: 1), .everything)
-    XCTAssertEqual(line(covered: 0.2, reached: nil), .unmeasured, "a plan saved before reach")
-    XCTAssertEqual(line(covered: 1, reached: 0.9), .everythingKept, "a subject taken out")
-    XCTAssertEqual(line(covered: 1, reached: nil), .everything)
+    XCTAssertEqual(ScheduleTime.offer(line: suggests, minutes: 30), 120)
+    XCTAssertNil(ScheduleTime.offer(line: suggests, minutes: 120))
+    XCTAssertNil(ScheduleTime.offer(line: suggests, minutes: 480))
+    XCTAssertEqual(ScheduleTime.offer(line: .suggests(focus(240)), minutes: 60), 240)
+    XCTAssertNil(ScheduleTime.offer(line: .quiet, minutes: 30))
+    XCTAssertNil(ScheduleTime.offer(line: .findFailed, minutes: 30))
   }
 
   func testWaitsForTheNewDaysSuggestionUnlessTheLearnerPickedATime() {
@@ -198,7 +164,7 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertTrue(ScheduleTime.waitsToSave(line: .asking, picked: nil))
     XCTAssertTrue(ScheduleTime.waitsToSave(line: .working, picked: nil))
     XCTAssertFalse(ScheduleTime.waitsToSave(line: .asking, picked: 830))
-    XCTAssertFalse(ScheduleTime.waitsToSave(line: .share(0.4), picked: nil))
+    XCTAssertFalse(ScheduleTime.waitsToSave(line: .suggests(everything(35)), picked: nil))
     XCTAssertFalse(ScheduleTime.waitsToSave(line: .findFailed, picked: nil))
   }
 
@@ -219,17 +185,16 @@ final class ScheduleTimeTests: XCTestCase {
       ScheduleTime.canContinue(hasDays: false, minutes: 35, line: .noDays, picked: 35))
   }
 
-  func testKeepsTheLastAnswerInPlaceWhileNewDaysAreWorkedOut() {
-    let settled = ScheduleTime.Answer(found: found(), line: .share(0.4))
-    let working = ScheduleTime.Answer(found: nil, line: .working)
-    let now = ScheduleTime.Answer(found: found(), line: .everything)
+  func testKeepsTheLastLineInPlaceWhileNewDaysAreWorkedOut() {
+    let settled = Line.suggests(everything(35))
+    let now = Line.suggests(everything(45))
 
-    XCTAssertEqual(ScheduleTime.shownAnswer(last: settled, now: working).answer, settled)
-    XCTAssertTrue(ScheduleTime.shownAnswer(last: settled, now: working).updating)
-    XCTAssertEqual(ScheduleTime.shownAnswer(last: working, now: working).answer, working)
-    XCTAssertFalse(ScheduleTime.shownAnswer(last: working, now: working).updating)
-    XCTAssertEqual(ScheduleTime.shownAnswer(last: settled, now: now).answer, now)
-    XCTAssertFalse(ScheduleTime.shownAnswer(last: settled, now: now).updating)
+    XCTAssertEqual(ScheduleTime.shownLine(last: settled, now: .working).line, settled)
+    XCTAssertTrue(ScheduleTime.shownLine(last: settled, now: .working).updating)
+    XCTAssertEqual(ScheduleTime.shownLine(last: .working, now: .working).line, .working)
+    XCTAssertFalse(ScheduleTime.shownLine(last: .working, now: .working).updating)
+    XCTAssertEqual(ScheduleTime.shownLine(last: settled, now: now).line, now)
+    XCTAssertFalse(ScheduleTime.shownLine(last: settled, now: now).updating)
   }
 
   func testAsksAboutAWeekendTimeOfItsOwnOnlyWhereItDiffers() {

@@ -255,428 +255,6 @@
         }
       }
     },
-    "%@ a day covers as much as any time can." : {
-      "comment" : "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ pro Tag lässt sich genauso viel abdecken wie mit beliebig viel Zeit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día se cubre tanto como se puede."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À partir de %@ par jour, augmenter la durée ne permet pas de couvrir davantage."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno copri il massimo possibile."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@学習すると、これ以上時間を増やしても学べる範囲は広がりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@씩 공부하면 목표를 가장 많이 다룰 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nauka przez %@ dziennie pozwala objąć tyle materiału, ile się da."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %@ de estudo por dia, você cobre o máximo possível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmak, hedefin mümkün olan en büyük kısmını kapsar."
-          }
-        }
-      }
-    },
-    "%@ a day covers everything" : {
-      "comment" : "The time a day that covers the whole goal; the argument is a duration",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ pro Tag deckst du alles ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día cubres todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %@ par jour, tu couvres tout"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno copri tutto"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で全範囲をカバーできます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@이면 전체 범위를 다룰 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy %@ dziennie plan obejmuje cały materiał"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %@ por dia, você cobre tudo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ ile hepsi planına sığar"
-          }
-        }
-      }
-    },
-    "%@ a day covers the first lessons of about %@ of your exam" : {
-      "comment" : "{share} is a share of the whole exam, by how much it asks, not a share of its topics.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ Lernzeit pro Tag deckst du mit den ersten Lektionen etwa %@ des Prüfungsstoffs ab"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day covers the first lessons of about %2$@ of your exam"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al día cubre las primeras lecciones de aproximadamente %@ de tu examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour couvre les premières leçons d’environ %@ de ton examen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno, puoi seguire le prime lezioni di circa %@ del tuo esame"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で、試験の約%@分の最初のレッスンをカバーできます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@ 학습하면 시험의 약 %@에 해당하는 부분의 초반 레슨을 학습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie wystarczy na pierwsze lekcje z około %@ egzaminu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia cobre as primeiras aulas de cerca de %@ da sua prova"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmayla sınavının yaklaşık %@ kadarının ilk derslerini kapsarsın"
-          }
-        }
-      }
-    },
-    "%@ a day covers the first lessons of about %@ of your goal" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ pro Tag deckst du die ersten Lektionen in etwa %@ deines Ziels ab"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day covers the first lessons of about %2$@ of your goal"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al día cubre las primeras lecciones de aproximadamente %@ de tu objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour couvre les premières leçons d’environ %@ de ton objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno, puoi seguire le prime lezioni di circa %@ del tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で、目標の約%@にあたる項目の最初のレッスンをカバーできます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@ 학습하면 목표의 약 %@에 해당하는 부분의 초반 레슨을 학습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie wystarczy na pierwsze lekcje z około %@ twojego celu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia cobre as primeiras aulas de cerca de %@ do seu objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmayla hedefinin yaklaşık %@ kadarının ilk derslerini kapsarsın"
-          }
-        }
-      }
-    },
-    "%@ a day covers the first lessons of every exam topic" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ pro Tag deckst du die ersten Lektionen zu jedem Prüfungsthema ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al día cubre las primeras lecciones de cada tema del examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour permet de faire les premières leçons de chaque sujet d’examen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno, puoi seguire le prime lezioni di ogni argomento d’esame"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で、すべての試験トピックの最初のレッスンをカバーできます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@ 학습하면 모든 시험 주제의 초반 레슨을 학습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie wystarczy na pierwsze lekcje z każdego tematu egzaminacyjnego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia cobre as primeiras aulas de cada tópico da prova"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmayla her sınav konusunun ilk derslerini kapsarsın"
-          }
-        }
-      }
-    },
-    "%@ a day covers the first lessons of every part of your goal" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ pro Tag deckst du die ersten Lektionen in jedem Teil deines Ziels ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al día cubre las primeras lecciones de cada parte de tu objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour couvre les premières leçons de chaque partie de ton objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno, puoi seguire le prime lezioni di ogni parte del tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で、目標のすべての項目の最初のレッスンをカバーできます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@ 학습하면 목표의 모든 영역에서 초반 레슨을 학습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie wystarczy na pierwsze lekcje z każdej części twojego celu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia cobre as primeiras aulas de cada parte do seu objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmayla hedefinin her bölümündeki ilk dersleri kapsarsın"
-          }
-        }
-      }
-    },
-    "%@ a day isn't enough time to cover your goal." : {
-      "comment" : "The time a day covers next to nothing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ am Tag reichen nicht aus, um dein Ziel vollständig abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día no te alcanza para cubrir tu objetivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour ne suffit pas pour couvrir tout ton objectif."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno non hai abbastanza tempo per studiare tutto ciò che serve per il tuo obiettivo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@では、目標に必要な内容をすべて学びきれません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표에 필요한 내용을 모두 공부하려면 하루 %@보다 더 많은 시간이 필요해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ nauki dziennie to za mało, by przerobić wszystko, co obejmuje twój cel."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia não é suficiente para estudar todo o conteúdo do seu objetivo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ ayırmak, hedefin için gereken her şeyi çalışmaya yetmiyor."
-          }
-        }
-      }
-    },
     "%@ added to your plan." : {
       "comment" : "Says one topic or subject joined the plan",
       "localizations" : {
@@ -17012,65 +16590,6 @@
         }
       }
     },
-    "Covering everything takes about %@ a day." : {
-      "comment" : "The time a day that would cover everything; the argument is a duration",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um alles zu schaffen, brauchst du etwa %@ pro Tag."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cubrir todo requiere aproximadamente %@ al día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour tout étudier, il faut environ %@ par jour."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per studiare tutto servono circa %@ al giorno."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべて学習するには、1日約%@の学習が必要です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 약 %@씩 공부하면 전부 학습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan obejmujący cały materiał wymaga około %@ nauki dziennie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para estudar tudo, você precisa de cerca de %@ por dia."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi bitirmek için günde yaklaşık %@ ayırman gerekir."
-          }
-        }
-      }
-    },
     "Daily study time" : {
       "localizations" : {
         "de" : {
@@ -19607,65 +19126,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tarih bul"
-          }
-        }
-      }
-    },
-    "Finding the time that covers everything…" : {
-      "comment" : "While the time a day that covers everything is worked out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir berechnen die tägliche Lernzeit für alle Inhalte…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando el tiempo necesario para cubrir todo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcul de la durée quotidienne nécessaire pour tout étudier…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo calcolando il tempo necessario per studiare tutto…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべて学ぶのに必要な1日の学習時間を計算しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모두 학습하는 데 필요한 하루 학습 시간을 계산하고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprawdzamy, ile czasu dziennie potrzeba na cały materiał…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o tempo diário para estudar tudo…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hepsine yetecek çalışma süresini hesaplıyoruz…"
           }
         }
       }
@@ -22439,6 +21899,8 @@
         }
       }
     },
+    "Let's fit your plan to the time left" : {},
+    "Let's fit your plan to the time left. Study longer each day or pick a later date." : {},
     "Linux" : {
       "comment" : "A device's system",
       "localizations" : {
@@ -23320,65 +22782,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeni dersler"
-          }
-        }
-      }
-    },
-    "More lessons than days left" : {
-      "comment" : "Title of the Plan's notice when the plan has more lessons than days left",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehr Lektionen als verbleibende Tage"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quedan más lecciones que días"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus de leçons que de jours restants"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Più lezioni che giorni rimasti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残り日数よりレッスン数が多くなっています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "남은 날보다 레슨이 더 많아요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Więcej lekcji niż dni do końca"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mais aulas do que dias restantes"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders sayısı kalan gün sayısından fazla"
           }
         }
       }
@@ -24541,6 +23944,9 @@
         }
       }
     },
+    "Needs adjusting" : {
+      "comment" : "A plan's status: it has more lessons than days left, so the learner should change their time or date."
+    },
     "New" : {
       "comment" : "A skill not studied yet",
       "localizations" : {
@@ -25302,65 +24708,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Belirlenmedi"
-          }
-        }
-      }
-    },
-    "Not enough time" : {
-      "comment" : "State of a plan with more lessons than days left",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht genug Zeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo insuficiente"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas assez de temps"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo insufficiente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間が足りません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시간 부족"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Za mało czasu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo insuficiente"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeterli zaman yok"
           }
         }
       }
@@ -29397,7 +28744,7 @@
       }
     },
     "See what changes" : {
-      "comment" : "Works out the time that covers everything and shows what it changes",
+      "comment" : "Shows what the suggested time a day changes in the plan, before it applies",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32272,6 +31619,12 @@
         }
       }
     },
+    "That's enough to be ready for your exam by %@." : {
+      "comment" : "Under \"We suggest {time} a day\": that time covers the whole exam by its date. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+    },
+    "That's enough to reach your goal by %@." : {
+      "comment" : "Under \"We suggest {time} a day\": that time covers the whole goal by its date. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+    },
     "The call didn't start. Try again in a moment." : {
       "comment" : "Says the practice call didn't start",
       "localizations" : {
@@ -32920,124 +32273,6 @@
         }
       }
     },
-    "There isn't enough time to cover everything by %@." : {
-      "comment" : "No time a day covers the whole goal by its date; the argument is a day like \"May 5\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Zeit reicht nicht aus, um bis zum %@ alles abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay tiempo suficiente para cubrir todo antes de %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il n’y a pas assez de temps pour tout couvrir d’ici %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è abbastanza tempo per completare tutto entro %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@までにすべてを学ぶ時間が足りません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@까지 모든 내용을 다루기엔 시간이 부족해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie wystarczy czasu, by przerobić wszystko do %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não dá tempo de estudar tudo até %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tarihine kadar her şeyi yetiştirmek için yeterli zaman yok."
-          }
-        }
-      }
-    },
-    "There isn't enough time to cover everything." : {
-      "comment" : "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Zeit reicht nicht aus, um alles abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay tiempo suficiente para cubrir todo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il n’y a pas assez de temps pour tout couvrir."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è abbastanza tempo per completare tutto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべてを学ぶ時間が足りません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모든 내용을 다루기엔 시간이 부족해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie wystarczy czasu, by przerobić wszystko."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não dá tempo de estudar tudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi yetiştirmek için yeterli zaman yok."
-          }
-        }
-      }
-    },
     "These lessons aren't ready yet. Try again later." : {
       "comment" : "A topic whose lessons can't be made ready now",
       "localizations" : {
@@ -33392,63 +32627,8 @@
         }
       }
     },
-    "This subject isn't in your plan: not enough time." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses Fach ist nicht in deinem Plan, weil die Zeit nicht reicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta materia no está en tu plan: no hay suficiente tiempo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette matière n’est pas dans ton plan : pas assez de temps."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questa materia non è nel tuo piano: non c’è abbastanza tempo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間が足りないため、この科目は学習計画に入っていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시간이 부족해 이 과목은 계획에 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tego przedmiotu nie ma w twoim planie: za mało czasu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essa matéria não está no seu plano: não tem tempo suficiente."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu branş planında yok: yeterli zaman yok."
-          }
-        }
-      }
+    "This subject isn't in your plan. Other subjects come first." : {
+      "comment" : "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
     },
     "This topic has no more lessons to get ready." : {
       "comment" : "A far topic the plan has nothing left to write for",
@@ -35357,65 +34537,6 @@
         }
       }
     },
-    "We couldn't work out the time needed." : {
-      "comment" : "The time a day that covers everything couldn't be worked out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten die nötige Lernzeit nicht berechnen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos calcular el tiempo necesario."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous n’avons pas pu calculer le temps nécessaire."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a calcolare il tempo necessario."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日に必要な学習時間を計算できませんでした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요한 학습 시간을 계산하지 못했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało nam się obliczyć potrzebnego czasu nauki."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente não conseguiu calcular o tempo necessário."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gereken süreyi hesaplayamadık."
-          }
-        }
-      }
-    },
     "We noticed a pattern" : {
       "comment" : "A rule the learner keeps getting wrong, noticed in the unit's mistakes",
       "localizations" : {
@@ -36599,65 +35720,6 @@
         }
       }
     },
-    "Working out what your time covers…" : {
-      "comment" : "While a change to the plan saves, in place of what the time a day covers",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir berechnen, wofür deine Lernzeit reicht…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando cuánto puedes cubrir con ese tiempo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcul de ce que ton temps d’étude permet de couvrir…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo calcolando cosa puoi studiare nel tempo che hai…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習時間内に学べる範囲を計算しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습 시간 안에 배울 수 있는 분량을 계산하고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obliczamy, ile materiału zmieści się w tym czasie…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o que dá tempo de estudar…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma sürene nelerin sığacağını hesaplıyoruz…"
-          }
-        }
-      }
-    },
     "Working out when you'd finish…" : {
       "comment" : "While a change to the time saves, in place of when the plan finishes",
       "localizations" : {
@@ -37476,65 +36538,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sende var"
-          }
-        }
-      }
-    },
-    "You have more lessons than days left. Study longer each day or pick a later date." : {
-      "comment" : "A plan with more lessons than days left before its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast mehr Lektionen als verbleibende Tage. Lern jeden Tag länger oder wähl ein späteres Datum."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te quedan más lecciones que días. Estudia más tiempo cada día o elige una fecha más adelante."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il te reste plus de leçons que de jours. Étudie plus longtemps chaque jour ou choisis une date plus éloignée."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai più lezioni che giorni a disposizione. Studia più a lungo ogni giorno o scegli una data più avanti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残りの日数よりレッスン数が多くなっています。1日の学習時間を増やすか、日付を後ろに設定してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "남은 날짜보다 레슨이 더 많아요. 하루 학습 시간을 늘리거나 날짜를 늦춰 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masz więcej lekcji niż pozostałych dni. Ucz się dłużej każdego dnia albo wybierz późniejszą datę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restam mais aulas do que dias. Aumente o tempo diário ou escolha uma data mais adiante."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalan gün sayısından fazla dersin var. Her gün daha uzun çalış ya da daha ileri bir tarih seç."
           }
         }
       }
@@ -41457,6 +40460,8 @@
         }
       }
     },
+    "Your plan starts with what matters most for your exam." : {},
+    "Your plan starts with what matters most for your goal." : {},
     "Your plan stays as it is." : {
       "comment" : "A preview with no change",
       "localizations" : {
