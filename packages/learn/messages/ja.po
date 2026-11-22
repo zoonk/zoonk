@@ -833,25 +833,25 @@ msgstr "テストを受けてユニットをスキップする"
 #: src/_components/time-answer-lines.tsx
 msgctxt "Z0YdGI"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your exam."
-msgstr ""
+msgstr "1日あたり{time}の学習をおすすめします。学習計画では、試験で特に重要な内容から学びます。"
 
 #. When studying everything by the goal's date would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what matters most first.
 #: src/_components/time-answer-lines.tsx
 msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
-msgstr ""
+msgstr "1日あたり{time}の学習をおすすめします。学習計画では、目標にとって特に重要な内容から学びます。"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
 msgid "{dateKind, select, month {We suggest {time} a day to be ready for your exam by {date}.} other {We suggest {time} a day to be ready for your exam by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {試験に向けて{date}までに準備できるよう、1日あたり{time}の学習をおすすめします。} other {試験に向けて{date}までに準備できるよう、1日あたり{time}の学習をおすすめします。}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "GkZo3V"
 msgid "{dateKind, select, month {We suggest {time} a day to reach your goal by {date}.} other {We suggest {time} a day to reach your goal by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {{date}までに目標を達成できるよう、1日あたり{time}の学習をおすすめします。} other {{date}までに目標を達成できるよう、1日あたり{time}の学習をおすすめします。}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -895,23 +895,23 @@ msgstr "いつ終わるか計算できませんでした。"
 #: src/_components/time-answer-texts.ts
 msgctxt "u1mVPL"
 msgid "{dateKind, select, month {That's enough to be ready for your exam by {date}.} other {That's enough to be ready for your exam by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {{date}までに試験の準備を整えるには十分です。} other {{date}までに試験の準備を整えるには十分です。}}"
 
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "UaCprI"
 msgid "{dateKind, select, month {That's enough to reach your goal by {date}.} other {That's enough to reach your goal by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {{date}までに目標を達成するには十分です。} other {{date}までに目標を達成するには十分です。}}"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "HK8AHe"
 msgid "Your plan starts with what matters most for your exam."
-msgstr ""
+msgstr "学習計画では、試験で特に重要な内容から学びます。"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "cok93L"
 msgid "Your plan starts with what matters most for your goal."
-msgstr ""
+msgstr "学習計画では、目標にとって特に重要な内容から学びます。"
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
@@ -933,7 +933,7 @@ msgstr "1日の学習時間は、この目標が{main}、ほかの目標が合�
 #: src/_components/time-answer.tsx
 msgctxt "T3LP-r"
 msgid "Use {time}"
-msgstr ""
+msgstr "{time}に設定"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -10460,7 +10460,7 @@ msgstr "{count, plural, other {すべてのレッスンが終わりました。�
 #: src/plan/plan-notice.tsx
 msgctxt "4hOU8H"
 msgid "Let's fit your plan to the time left. Study longer each day or pick a later date."
-msgstr ""
+msgstr "残り時間に合わせて学習計画を調整しましょう。1日の学習時間を延ばすか、日付を後ろにずらしてください。"
 
 #: src/plan/plan-notice.tsx
 msgctxt "Z7cgdl"
@@ -10595,7 +10595,7 @@ msgstr "完了"
 #: src/plan/plan-status-label.tsx
 msgctxt "WR0vTU"
 msgid "Needs adjusting"
-msgstr ""
+msgstr "調整が必要"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "aOfyGC"
@@ -10647,7 +10647,7 @@ msgstr "学習計画を更新しました"
 #: src/plan/plan-suggestion.tsx
 msgctxt "N8goTu"
 msgid "Let's fit your plan to the time left"
-msgstr ""
+msgstr "残り時間に合わせて学習計画を調整しましょう"
 
 #: src/plan/plan-suggestion.tsx
 msgctxt "fhGzJi"
@@ -12864,7 +12864,7 @@ msgstr "この科目を学習計画から外しました。"
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "ydjRGM"
 msgid "This subject isn't in your plan. Other subjects come first."
-msgstr ""
+msgstr "この科目は学習計画に含まれていません。ほかの科目を優先しています。"
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13205,7 +13205,7 @@ msgstr "学習計画の変更"
 #: src/today/today-falling-behind.tsx
 msgctxt "cgM2lt"
 msgid "Let's fit your plan to the days left."
-msgstr ""
+msgstr "残り日数に合わせて学習計画を調整しましょう。"
 
 #: src/today/today-focus-test.tsx
 msgctxt "44Z30Y"
@@ -13221,7 +13221,7 @@ msgstr "{count, plural, other {ほか#レッスン}}"
 #: src/today/today-heading.tsx
 msgctxt "m-yNq4"
 msgid "Let's fit your plan to the time left."
-msgstr ""
+msgstr "残り時間に合わせて学習計画を調整しましょう。"
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
