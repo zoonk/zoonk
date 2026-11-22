@@ -55,9 +55,29 @@ jobs:
       - name: Check Swift formatting
         run: make -C apps/apple format-check formatting-check
 
-      - name: Build Mac test bundle or run its units
-        id: mac
-        if: github.event_name == 'pull_request' || steps.last.outputs.build-hit != 'true'
+      - name: Run Mac unit tests
+        if: github.event_name == 'pull_request'
+        env:
+          XCODEBUILD_ARGUMENTS: >-
+            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
+            -onlyUsePackageVersionsFromResolvedFile
+            -skipPackageUpdates
+            -resultBundlePath ${{ runner.temp }}/apple-mac-units.xcresult
+            COMPILER_INDEX_STORE_ENABLE=NO
+            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
+        run: make -C apps/apple test-mac
+
+      - name: Report Mac unit test results
+        if: always() && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-mac-units.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      # Each main commit saves the Mac test build, so pull requests recompile only what changed since.
+      - name: Build Mac unit tests
+        if: github.event_name == 'push' && steps.last.outputs.build-hit != 'true'
         env:
           XCODEBUILD_ARGUMENTS: >-
             -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
@@ -65,20 +85,7 @@ jobs:
             -skipPackageUpdates
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        run: |
-          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
-            make -C apps/apple test-mac XCODEBUILD_ARGUMENTS="$XCODEBUILD_ARGUMENTS -resultBundlePath $RUNNER_TEMP/apple-mac-units.xcresult"
-          else
-            make -C apps/apple build-mac-tests
-          fi
-
-      - name: Report Mac unit test results
-        if: always() && github.event_name == 'pull_request' && steps.mac.outcome != 'skipped'
-        shell: bash
-        run: |
-          echo '```json' >> "$GITHUB_STEP_SUMMARY"
-          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-mac-units.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
+        run: make -C apps/apple build-mac-tests
 
       - name: Save Mac test build
         if: github.event_name == 'push' && steps.last.outputs.build-hit != 'true'
@@ -117,6 +124,10 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         run: make -C apps/apple build
+
+      - name: Trim unused Swift package binaries
+        if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
+        run: sh apps/apple/scripts/prune-swift-packages.sh "${{ runner.temp }}/apple-source-packages"
 
       - name: Save Swift packages
         if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
