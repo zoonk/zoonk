@@ -58,22 +58,11 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
 
 type SessionQueueView = { left: number; rows: readonly SessionQueueRow[] };
 
-/**
- * Under a header that already says "Today", the time left heads the list; a screen whose header
- * names something else asks for `named`.
- */
-export function useSessionQueueAside(
-  { left, rows }: SessionQueueView,
-  { named = false }: { named?: boolean } = {},
-): TaskFrameAside {
+export function useSessionQueueAside({ left, rows }: SessionQueueView): TaskFrameAside {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const timeLeft = left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined;
   const children = <SessionQueue rows={rows} />;
-
-  if (named) {
-    return { children, label: t("Today"), meta: timeLeft, title: t("Today") };
-  }
 
   return { children, label: t("Today"), title: timeLeft };
 }
