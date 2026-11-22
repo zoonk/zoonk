@@ -33,6 +33,24 @@ final class LessonPlotLayoutTests: XCTestCase {
     XCTAssertEqual(repeated.series[0][0].x, repeated.series[0][1].x)
   }
 
+  func testANameStaysOnItsDotsSideOfAReferenceLine() throws {
+    let points = series(
+      "points", (0.5, 810, "A"), (1.5, 880, "B"), (3, 952, "C"), (4.5, 890, "D"), (5.5, 820, "E"))
+
+    for width in [220.0, plotWidthOnAPhone, 560] {
+      let scan = layout(
+        try plot(series: [points], references: [("Target", 960)]), width: width)
+      let line = try XCTUnwrap(scan.references.first).y
+
+      for (index, label) in scan.labels.enumerated() {
+        let below = scan.series[0][index].y > line
+        let box = self.box(label)
+
+        XCTAssertTrue(below ? box.top >= line : box.bottom <= line, "\(label) at \(width)")
+      }
+    }
+  }
+
   func testEachNameSitsBesideItsDotInsideThePlotCoveringNoOtherDotOrName() throws {
     let scan = layout(
       try plot(series: [

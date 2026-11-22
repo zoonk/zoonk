@@ -413,6 +413,9 @@ struct LessonPlotLayout {
 
     return named.map { dot, text in
       let width = textWidth(text)
+      let dotBox = Box(
+        left: dot.x - dotRadius, top: dot.y - dotRadius, right: dot.x + dotRadius,
+        bottom: dot.y + dotRadius)
       let options = candidates(dot: dot, text: text).map {
         (label: $0, box: box(of: $0, width: width))
       }
@@ -423,7 +426,9 @@ struct LessonPlotLayout {
         .map { order, option in
           (
             option: option, order: order,
-            crossings: scene.segments.filter { crosses($0, option.box) }.count
+            // The label with the gap to its dot: a line through it, such as a reference, would part
+            // them.
+            crossings: scene.segments.filter { crosses($0, span(option.box, dotBox)) }.count
           )
         }
         .sorted { ($0.crossings, $0.order) < ($1.crossings, $1.order) }
@@ -461,6 +466,12 @@ struct LessonPlotLayout {
     return Box(
       left: start, top: label.y - lineHeight / 2, right: start + width,
       bottom: label.y + lineHeight / 2)
+  }
+
+  private static func span(_ a: Box, _ b: Box) -> Box {
+    Box(
+      left: min(a.left, b.left), top: min(a.top, b.top), right: max(a.right, b.right),
+      bottom: max(a.bottom, b.bottom))
   }
 
   private static func inside(_ box: Box, _ bounds: Box) -> Bool {
