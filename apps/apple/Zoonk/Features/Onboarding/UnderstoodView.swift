@@ -351,14 +351,16 @@ private struct UnderstoodCard: View {
     let rows = UnderstoodRows.rows(
       for: understood.goals[index], countryAsked: countryAsked.contains(index))
 
-    // The schedule goes with the first goal that starts, so it leaves when none can.
-    guard index == 0, !startable.isEmpty,
-      let schedule = UnderstoodRows.scheduleRow(understood)
-    else {
+    // The material and the schedule go with the first goal that starts, so they leave when none can.
+    guard index == 0, !startable.isEmpty else {
       return rows
     }
 
-    return rows + [schedule]
+    return rows
+      + [
+        UnderstoodRows.materialRow(titles: draft.sources.map(\.title)),
+        UnderstoodRows.scheduleRow(understood),
+      ].compactMap(\.self)
   }
 
   /// False when it couldn't be saved, so the editor stays open to try again.

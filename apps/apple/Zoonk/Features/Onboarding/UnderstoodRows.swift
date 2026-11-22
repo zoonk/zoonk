@@ -246,6 +246,28 @@ enum UnderstoodRows {
       editValue: schedule.studyTime ?? "")
   }
 
+  /// The material the draft was sent with, by title; pasted text has none.
+  static func materialRow(titles: [String]) -> UnderstoodRow? {
+    guard !titles.isEmpty else {
+      return nil
+    }
+
+    let names = titles.map {
+      $0.isEmpty
+        ? String(
+          localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+        : $0
+    }
+
+    return UnderstoodRow(
+      id: "material",
+      label: LocalizedStringResource(
+        "Your material", table: "Onboarding",
+        comment: "Header over the material attached to a goal"),
+      value: names.joined(separator: ", "),
+      note: String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
+  }
+
   private static func text(_ value: String?) -> String? {
     guard let value, !value.trimmingCharacters(in: .whitespaces).isEmpty else {
       return nil

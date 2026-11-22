@@ -89,6 +89,14 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertNil(examCountry.badge)
   }
 
+  func testTheMaterialRowNamesEachSourceAndPastedTextAsYourText() throws {
+    let row = try XCTUnwrap(UnderstoodRows.materialRow(titles: ["Cell cycle.pdf", ""]))
+
+    XCTAssertEqual(row.value, "Cell cycle.pdf, Your text")
+    XCTAssertNil(row.field, "The material is changed from the goal's words, not on the card")
+    XCTAssertNil(UnderstoodRows.materialRow(titles: []))
+  }
+
   private func examDay(_ date: String) -> [String: Any] {
     [
       "date": date, "estimated": false, "label": "", "registrationClosed": false,
