@@ -20,6 +20,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
@@ -316,6 +317,27 @@ class LessonPlayerFlowTest {
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNodeWithText("Each part is 20", substring = true).assertExists()
+    }
+
+    @Test
+    fun startingFiguresStayOpenOnRecreationAndFoldAtTheNextDecision() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(chartChallengeStep("case")), restoration = restoration)
+        tap("Start")
+
+        val figures = rule.onNodeWithText("8 hours")
+        rule.onNodeWithText("Starting figures").performScrollTo().performClick()
+        figures.assertExists()
+
+        rule.waitForIdle()
+        restoration.emulateSavedInstanceStateRestore()
+
+        figures.assertExists()
+        rule.onNodeWithText("Scan again in finer steps from B to D").performScrollTo().performClick()
+        tap("Confirm")
+
+        rule.onNodeWithText("Where does the detector go?").assertExists()
+        figures.assertDoesNotExist()
     }
 
     /** Going back to reread keeps the screen the learner left, so a sentence half built is still there when they return. */

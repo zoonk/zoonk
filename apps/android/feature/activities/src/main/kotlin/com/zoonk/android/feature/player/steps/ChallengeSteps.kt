@@ -25,8 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.withFrameNanos
@@ -295,7 +297,7 @@ private fun ChallengeConversation(
                         }
                         if (part.showsTurn) {
                             if (content.panels.isNotEmpty()) {
-                                ChallengeStartingFigures(content, names, progress.walk.node.id)
+                                key(progress.walk.node.id) { ChallengeStartingFigures(content, names) }
                             }
                             ChoiceOptions(
                                 options =
@@ -327,9 +329,8 @@ private fun ChallengeConversation(
 private fun ChallengeStartingFigures(
     content: ChallengeStepContent,
     names: ChallengeNames,
-    decisionId: String,
 ) {
-    var expanded by remember(decisionId) { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     DisclosureRow(
         title = stringResource(R.string.player_challenge_starting_figures),
         expanded = expanded,
