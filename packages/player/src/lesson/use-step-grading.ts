@@ -16,6 +16,7 @@ type RecordContext = CheckContext & { attemptId: string; isCorrect: boolean };
 
 type PendingAttempt = { attemptId: string; text: string };
 
+/** @internal */
 export const CHECK_BOUNDS = {
   slowMs: CHECK_SLOW_MS,
   timeoutMs: { spoken: 60_000, typed: 45_000 },

@@ -133,6 +133,7 @@ export function teachingStep<TKind extends ScreenKind>(
   return contentStep(kind, { content: playableStepContent[kind], ...options });
 }
 
+/** @internal */
 export function spokenAnswerStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
   return {
     ...contentStep("spokenAnswer", { content: playableStepContent.spokenAnswer, ...options }),
