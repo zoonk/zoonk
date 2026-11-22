@@ -11,13 +11,24 @@ msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Odpowiedzi do wyboru"
 
+#. Tags the learner's pick when it counts as neither right nor wrong.
+#: src/_components/answer-option.tsx
+msgctxt "ihtBFm"
+msgid "Your guess"
+msgstr "Twój strzał"
+
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Poprawna odpowiedź"
 
-#: src/_components/answer-option.tsx
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "Twoja odpowiedź i poprawna odpowiedź"
+
+#: src/_components/answer-pair.tsx
 #: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
@@ -28,17 +39,6 @@ msgstr "Poprawna odpowiedź"
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Twoja odpowiedź"
-
-#. Tags the learner's pick when it counts as neither right nor wrong.
-#: src/_components/answer-option.tsx
-msgctxt "ihtBFm"
-msgid "Your guess"
-msgstr "Twój strzał"
-
-#: src/_components/answer-pair.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "Twoja odpowiedź i poprawna odpowiedź"
 
 #: src/_components/brain-power-amount.tsx
 #: src/_components/moment-readouts.tsx
@@ -289,7 +289,6 @@ msgstr "Kontynuuj"
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
 #: src/mock/mock-chooser-page.tsx
-#: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/steps/plan-wait.tsx
@@ -404,16 +403,6 @@ msgstr "To już wszystkie wyjaśnienia na dziś"
 msgctxt "uycXLZ"
 msgid "You've used your explanations"
 msgstr "Wykorzystano limit wyjaśnień"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "uFNRuq"
-msgid "No more mock exams today"
-msgstr "Wykorzystano dzienny limit egzaminów próbnych"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "oTW-15"
-msgid "You've used your mock exams"
-msgstr "Wykorzystano limit egzaminów próbnych"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "TPgNQb"
@@ -534,7 +523,6 @@ msgstr "{done, number} z {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
-#: src/mock/mock-chooser-page.tsx
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
@@ -2179,6 +2167,14 @@ msgid "Move to Monday"
 msgstr "Przenieś na poniedziałek"
 
 #: src/challenge/challenge-footer.tsx
+#: src/mock/mock-chooser-page.tsx
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Ucz się dalej"
+
+#: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/mock/mock-chooser-page.tsx
 msgctxt "JUvBan"
@@ -2196,6 +2192,12 @@ msgstr "Po dzisiejszych lekcjach"
 msgctxt "X_k-eo"
 msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
 msgstr "{lessons, plural, =0 {Rewanż jutro.} one {Rewanż jutro, po # krótkiej lekcji.} other {Rewanż jutro, po # krótkich lekcjach.}}"
+
+#: src/challenge/challenge-footer.tsx
+#: src/generation/use-generation-copy.ts
+msgctxt "k2oGSw"
+msgid "Getting your mock exam ready"
+msgstr "Przygotowujemy egzamin próbny"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -4490,19 +4492,20 @@ msgid "Writing questions on what you studied"
 msgstr "Przygotowujemy pytania z przerobionego materiału"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "HxlS5i"
-msgid "Writing your mock exam"
-msgstr "Przygotowujemy twój egzamin próbny"
+msgctxt "UEvuXg"
+msgid "Recording the listening"
+msgstr "Nagrywamy część ze słuchaniem"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "M1AYoH"
-msgid "Writing questions like the exam's"
-msgstr "Przygotowujemy pytania takie jak na egzaminie"
+msgctxt "EIEV6g"
+msgid "Writing the questions"
+msgstr "Przygotowujemy pytania"
 
+#. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
 #: src/generation/use-generation-copy.ts
-msgctxt "bLGs-q"
-msgid "Picking what to ask in each subject…"
-msgstr "Wybieramy tematy pytań z każdego przedmiotu…"
+msgctxt "kO-7vs"
+msgid "Writing the texts"
+msgstr "Przygotowujemy teksty"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "xwzlmV"
@@ -7770,40 +7773,16 @@ msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Twój ostatni egzamin próbny"
 
+#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.
 #: src/mock/mock-chooser-page.tsx
-msgctxt "St9t1x"
-msgid "Not enough questions for this one yet. Pick another."
-msgstr "Nie mamy jeszcze dość pytań do tego egzaminu. Wybierz inny."
+msgctxt "qsDQE3"
+msgid "Getting this mock exam ready"
+msgstr "Przygotowujemy ten egzamin próbny"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
 msgid "We couldn't start the mock exam. Try again."
 msgstr "Nie udało się rozpocząć egzaminu próbnego. Spróbuj ponownie."
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "QsctwF"
-msgid "Questions like the ones on your exam. Your mock exam starts here when they're ready."
-msgstr "Pytania podobne do tych na egzaminie. Tutaj rozpocznie się egzamin próbny, gdy będą gotowe."
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "G2-rbQ"
-msgid "We couldn't write your questions"
-msgstr "Nie udało się przygotować pytań"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "AmTABH"
-msgid "Writing your questions…"
-msgstr "Przygotowujemy pytania…"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "qFtRJW"
-msgid "Getting your mock exam ready…"
-msgstr "Przygotowujemy twój egzamin próbny…"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "4FZiEz"
-msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
-msgstr "Przygotowujemy dla ciebie pytania podobne do tych na egzaminie. Egzamin próbny rozpocznie się tutaj, gdy tylko będą gotowe."
 
 #: src/mock/mock-chooser.tsx
 msgctxt "aDMxKM"
@@ -8141,6 +8120,17 @@ msgstr "zwykle {time}"
 msgctxt "-IhwDy"
 msgid "Leave blank"
 msgstr "Zostaw bez odpowiedzi"
+
+#. Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.
+#: src/mock/mock-preparing.tsx
+msgctxt "UaRfLh"
+msgid "Come back to this page to start it."
+msgstr "Wróć na tę stronę, żeby go rozpocząć."
+
+#: src/mock/mock-preparing.tsx
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "Około {time} do końca"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -8600,38 +8590,6 @@ msgstr "Twoje odpowiedzi są zapisane."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Oddana"
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "HwbZRQ"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
-msgstr "Dziś ten egzamin obejmuje {count, number} z {total, number} pytań, czyli około {time} pracy. Pełną wersję możesz rozwiązać jutro."
-
-#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
-#: src/mock/mock-short-dialog.tsx
-msgctxt "3-UMw5"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
-msgstr "Dziś ten egzamin ma {count, number} z {total, number} pytań, czyli około {time} na rozwiązanie. Pełną wersję możesz rozwiązać jeszcze dziś."
-
-#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
-#: src/mock/mock-short-dialog.tsx
-msgctxt "mZQ7Qe"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
-msgstr "Dziś ten egzamin ma {count, number} z {total, number} pytań, czyli około {time} na rozwiązanie. Pełną wersję możesz rozwiązać {date}."
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "Rr2HWA"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}."
-msgstr "Dziś ten egzamin obejmuje {count, number} z {total, number} pytań, czyli około {time} pracy."
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "hLpiWW"
-msgid "Start a shorter mock exam?"
-msgstr "Rozpocząć krótszy egzamin próbny?"
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "ggPo6m"
-msgid "Pick another"
-msgstr "Wybierz inny"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -10213,12 +10171,6 @@ msgstr "{group}: które opcje wybierzesz?"
 msgctxt "gDpw0U"
 msgid "{group}: which one will you take?"
 msgstr "{group}: który przedmiot będziesz zdawać?"
-
-#: src/plan/exam-over-actions.tsx
-#: src/plan/study-everything.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Ucz się dalej"
 
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"

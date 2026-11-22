@@ -1,9 +1,8 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
-import { type AllowanceLimit, type UsagePeriod } from "../../../entitlements/contract";
+import { USAGE_WINDOW_MS } from "../../../entitlements/limits";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -11,91 +10,70 @@ import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint
 import { admitWriting, readWritingExtraLimit } from "../../essays/writing-admission";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
-import { getMockFormatMix } from "../mock-format-mix";
 import { markPlannedItems } from "../mock-marking";
-import { planOptionMock } from "../mock-option-plan";
 import { type MockOption } from "../mock-options";
 import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
-import { isMockShort, listShortFormats } from "../mock-shortfall";
 import { snapshotMockWriting } from "../mock-written-points";
-import { bindMockWriting, outlineWrittenPrompts } from "../written-test-plan";
+import { type MockEssayCandidate, listMockWrittenRequests } from "../written-parts";
+import { bindMockWriting, hasMockWriting } from "../written-test-plan";
 import {
   type AnytimeMockSetup,
   findRunningAnytimeMock,
   listMissingRecordings,
-  loadMockSkillIds,
 } from "./anytime-mock-setup";
-import { loadMockCandidates } from "./mock-candidates";
+import { isPaperComplete } from "./mock-complete";
 import { getExamStartTime } from "./mock-conditions";
+import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
+import {
+  clearStartedPaperRequest,
+  mockPaperKey,
+  recordMockPaperRequest,
+} from "./mock-supply-request";
 import { findMockWriting } from "./mock-writing-supply";
+import { planFromBank } from "./plan-from-bank";
+
+export { planFromBank } from "./plan-from-bank";
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
-  | { status: "notEnoughQuestions" }
-  | { status: "needsQuestions" }
+  | { status: "preparing" }
   | { returnsOn: string; status: "limitReached" }
-  | { status: "signUpRequired" }
-  | {
-      availableAt?: Date | null;
-      examQuestions: number;
-      limit: UsagePeriod | null;
-      minutes: number;
-      questions: number;
-      status: "short";
-    };
+  | { status: "signUpRequired" };
 
-function isShortOfNew({
-  candidates,
+/** A start passes `writing` from the prompts it read under its lock. */
+export function isCompleteMock({
   option,
-  plan,
   setup,
+  plan,
+  writing = hasMockWriting({ essays: setup.essays, shape: option, structure: setup.structure }),
 }: {
-  candidates: readonly MockCandidate[];
   option: MockOption;
-  plan: MockPlan;
   setup: AnytimeMockSetup;
+  plan: MockPlan;
+  writing?: boolean;
 }) {
-  const mix = getMockFormatMix(setup.structure);
-
-  return (
-    listMissingRecordings({ option, setup }).length > 0 ||
-    listShortFormats({ candidates, mix, option, plan }).length > 0
-  );
+  return isPaperComplete({
+    missingRecordings: listMissingRecordings({ option, setup }).length,
+    plan,
+    questions: option.questions,
+    writing,
+  });
 }
 
-export async function planFromBank({
-  goal,
-  option,
-  setup,
-  userId,
-}: {
-  goal: Goal;
-  option: MockOption;
-  setup: AnytimeMockSetup;
-  userId: string;
-}): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
-  const candidates =
-    option.kind === "written"
-      ? []
-      : await loadMockCandidates({
-          goal,
-          itemIds: null,
-          skillIds: await loadMockSkillIds(goal.id),
-          structure: setup.structure,
-          userId,
-        });
+export async function canReuseMockItems(
+  client: TransactionClient,
+  userId: string,
+  now = new Date(),
+) {
+  const count = await client.mockExam.count({
+    where: {
+      conditions: { equals: "practice", path: ["purpose"] },
+      startedAt: { gte: new Date(now.getTime() - USAGE_WINDOW_MS), lte: now },
+      userId,
+    },
+  });
 
-  return {
-    candidates,
-    plan: planOptionMock({
-      candidates,
-      essays: outlineWrittenPrompts({ day: option.day, structure: setup.structure }),
-      listening: setup.listening,
-      option,
-      speaking: setup.speaking,
-      structure: setup.structure,
-    }),
-  };
+  return count >= 10;
 }
 
 function toConditions({
@@ -107,7 +85,7 @@ function toConditions({
   setup,
 }: {
   candidates: readonly MockCandidate[];
-  essays: Parameters<typeof snapshotMockWriting>[0]["essays"];
+  essays: readonly MockEssayCandidate[];
   goal: Goal;
   option: MockOption;
   plan: MockPlan;
@@ -120,11 +98,7 @@ function toConditions({
     day: plan.day,
     examQuestions: asked < option.questions ? option.questions : null,
     fullLength: option.kind === "full" || option.kind === "objective",
-    ...markPlannedItems({
-      candidates: [...candidates, ...[...setup.listening.values()].flat()],
-      plan,
-      structure: setup.structure,
-    }),
+    ...markPlannedItems({ candidates, plan, structure: setup.structure }),
     ...(option.pacing && { pacing: option.pacing }),
     partialCredit: getPartialCredit(setup.structure),
     purpose: "practice",
@@ -143,127 +117,76 @@ function toConditions({
   };
 }
 
-/**
- * Reuse a running mock; `needsQuestions` requires preparing questions before retrying with
- * `afterWriting`, which answers `short` when the mock still lacks questions.
- */
-export async function createAnytimeMock({
-  acceptFewer,
-  afterWriting = false,
-  goal,
-  option,
-  setup,
-  userId,
-  writesCap,
-}: {
-  acceptFewer: boolean;
-  afterWriting?: boolean;
-  goal: Goal;
-  option: MockOption;
-  setup: AnytimeMockSetup;
-  userId: string;
-  writesCap: Pick<AllowanceLimit, "period" | "availableAt"> | null;
-}): Promise<CreateAnytimeMockResult> {
-  const { candidates, plan } = await planFromBank({ goal, option, setup, userId });
-  const planned = countPlannedQuestions(plan);
-  const asksEssays = plan.sections.some((section) => section.essays.length > 0);
-  const shortOfNew = !acceptFewer && isShortOfNew({ candidates, option, plan, setup });
-  const asksForNew = !afterWriting && writesCap === null && shortOfNew;
+type AnytimeStart = { goal: Goal; option: MockOption; tx: TransactionClient; userId: string };
 
-  const short =
-    !acceptFewer &&
-    !asksForNew &&
-    planned >= MIN_CHECKPOINT_QUESTIONS &&
-    isMockShort({ option, planned });
+/** Saves the ask once and owes the run that writes its paper; a repeat while it's covered owes nothing. */
+async function askForPaper({ goal, option, tx, userId }: AnytimeStart) {
+  const shape = { area: option.area, day: option.day, kind: option.kind };
 
-  return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
-    const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
-
-    if (running) {
-      return unchanged({ id: running.id, status: "running" });
-    }
-
-    if (option.kind === "written" || option.kind === "full") {
-      await lockUsageForViewer({ transaction: tx, userId });
-    }
-
-    const writing = await findMockWriting({
-      goal,
-      goalId: goal.id,
-      shape: option,
-      structure: setup.structure,
-      tx,
-      userId,
-    });
-
-    if (writing.status === "missing") {
-      const localDate = getDateInTimeZone({
-        date: new Date(),
-        timeZone: getAnswerTimeZone({ goal }),
-      });
-
-      const refusal = await readWritingExtraLimit({ localDate, tx, userId });
-
-      return unchanged(refusal ?? { status: "needsQuestions" });
-    }
-
-    if (asksForNew) {
-      return unchanged({ status: "needsQuestions" });
-    }
-
-    if (short) {
-      return unchanged({
-        examQuestions: option.questions,
-        ...(shortOfNew &&
-          writesCap?.period === "rolling30Days" && { availableAt: writesCap.availableAt }),
-        limit: shortOfNew ? (writesCap?.period ?? null) : null,
-        minutes: plan.minutes,
-        questions: planned,
-        status: "short",
-      });
-    }
-
-    if (planned < MIN_CHECKPOINT_QUESTIONS && !(planned === 0 && asksEssays)) {
-      return unchanged({ status: "notEnoughQuestions" });
-    }
-
-    const sections = bindMockWriting({
-      day: option.day,
-      essays: writing.essays,
-      sections: plan.sections,
-      structure: setup.structure,
-    });
-
-    if (!sections) {
-      return unchanged({ status: "notEnoughQuestions" });
-    }
-
-    return persistAnytimeMock({
-      candidates,
-      essays: writing.essays,
-      goal,
-      option,
-      plan: { ...plan, sections },
-      setup,
-      tx,
-      userId,
-    });
+  const current = await tx.goal.findUniqueOrThrow({
+    select: { id: true, requestedMock: true },
+    where: { id: goal.id },
   });
+
+  if (await recordMockPaperRequest({ goal: current, paper: shape, tx })) {
+    await oweFollowUps({
+      db: tx,
+      followUps: [
+        {
+          input: {
+            examBlueprintId: goal.examBlueprintId,
+            goalId: goal.id,
+            later: false,
+            paper: mockPaperKey(shape),
+          },
+          kind: "prepareMockSupply",
+        },
+      ],
+      userId,
+    });
+  }
 }
 
-async function persistAnytimeMock({
+async function openSitting({
   candidates,
   essays,
   goal,
+  localDate,
+  now,
   option,
   plan,
+  reuse,
   setup,
   tx,
   userId,
-}: Parameters<typeof toConditions>[0] & { tx: TransactionClient; userId: string }) {
-  const now = new Date();
+}: AnytimeStart &
+  Omit<Parameters<typeof toConditions>[0], "essays"> & {
+    essays: MockEssayCandidate[];
+    localDate: Date;
+    now: Date;
+    reuse: boolean;
+  }) {
+  const shape = { area: option.area, day: option.day, kind: option.kind };
 
-  const conditions = toConditions({ candidates, essays, goal, option, plan, setup });
+  const sections = bindMockWriting({
+    day: option.day,
+    essays,
+    sections: plan.sections,
+    structure: setup.structure,
+  });
+
+  if (!sections) {
+    throw new Error(`Mock option ${mockPaperKey(shape)} has written prompts its plan can't seat.`);
+  }
+
+  const conditions = toConditions({
+    candidates,
+    essays,
+    goal,
+    option,
+    plan: { ...plan, sections },
+    setup,
+  });
 
   const created = await tx.mockExam.create({
     data: {
@@ -280,7 +203,7 @@ async function persistAnytimeMock({
     const admission = await admitWriting({
       extra: true,
       itemIds: essays.map((essay) => essay.itemId),
-      localDate: getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) }),
+      localDate,
       owner: { mock: created },
       tx,
       userId,
@@ -291,14 +214,105 @@ async function persistAnytimeMock({
     }
   }
 
-  // The speaking paper is written while the learner sits the papers before it.
-  if (conditions.sections.some((section) => section.kind === "speaking")) {
-    await oweFollowUps({
-      db: tx,
-      followUps: [{ input: { mockId: created.id }, kind: "writeSpeakingPaper" }],
-      userId,
-    });
-  }
+  const current = await tx.goal.findUniqueOrThrow({
+    select: { id: true, requestedMock: true },
+    where: { id: goal.id },
+  });
+
+  await claimMockItems({ candidates, conditions, mockExamId: created.id, now, tx, userId });
+  await clearStartedPaperRequest({ goal: current, paper: shape, tx });
+
+  await oweFollowUps({
+    db: tx,
+    followUps: [
+      ...(reuse
+        ? []
+        : [
+            {
+              input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: true },
+              kind: "prepareMockSupply" as const,
+            },
+          ]),
+      // The speaking paper is written while the learner sits the papers before it.
+      ...(conditions.sections.some((section) => section.kind === "speaking")
+        ? [{ input: { mockId: created.id }, kind: "writeSpeakingPaper" as const }]
+        : []),
+    ],
+    userId,
+  });
 
   return { id: created.id, status: "started" as const };
+}
+
+export async function createAnytimeMock({
+  goal,
+  option,
+  setup,
+  userId,
+}: {
+  goal: Goal;
+  option: MockOption;
+  setup: AnytimeMockSetup;
+  userId: string;
+}): Promise<CreateAnytimeMockResult> {
+  const asksWriting = listMockWrittenRequests({ shape: option, structure: setup.structure });
+
+  return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
+    const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
+
+    if (running) {
+      return unchanged({ id: running.id, status: "running" });
+    }
+
+    const now = new Date();
+    const localDate = getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) });
+
+    if (asksWriting.length > 0) {
+      await lockUsageForViewer({ transaction: tx, userId });
+      const refusal = await readWritingExtraLimit({ localDate, tx, userId });
+
+      if (refusal) {
+        return unchanged(refusal);
+      }
+    }
+
+    await releaseExpiredMockItems(tx, userId);
+    const reuse = await canReuseMockItems(tx, userId);
+    const planned = await planFromBank({ client: tx, goal, option, reuse, setup, userId });
+
+    const writing = await findMockWriting({
+      goal,
+      goalId: goal.id,
+      shape: option,
+      structure: setup.structure,
+      tx,
+      userId,
+    });
+
+    const complete = isCompleteMock({
+      option,
+      plan: planned.plan,
+      setup: planned.available,
+      writing: writing.status === "ready",
+    });
+
+    if (writing.status !== "ready" || !complete) {
+      await askForPaper({ goal, option, tx, userId });
+      return { status: "preparing" };
+    }
+
+    return openSitting({
+      candidates: planned.candidates,
+      essays: writing.essays,
+      goal,
+      localDate,
+      now,
+      option,
+      plan: planned.plan,
+      reuse,
+      setup: planned.available,
+      tx,
+      userId,
+    });
+  });
 }

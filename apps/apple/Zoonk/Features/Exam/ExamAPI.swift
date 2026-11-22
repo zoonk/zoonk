@@ -2,13 +2,9 @@ import Foundation
 import OpenAPIRuntime
 
 enum MockStartOutcome: Equatable, Sendable {
-  typealias Limit = Components.Schemas.AnytimeMock.LimitPayload
-
   case started(id: String)
-  case needsQuestions
-  /// `availableAt`: when the full mock fits, once a monthly cap shortened it.
-  case short(examQuestions: Int, limit: Limit?, availableAt: Date?, minutes: Int, questions: Int)
-  case notEnoughQuestions
+  /// Its questions are being written: nothing started, and the server keeps the request.
+  case preparing
   case plusRequired
   case refused(HelpLimit)
   /// A written test past the day's extra grades: it can start again on `returnsOn`.
@@ -17,23 +13,28 @@ enum MockStartOutcome: Equatable, Sendable {
   case needsChoice(choiceGroups: [String])
 }
 
-enum MockQuestionsStart: Equatable, Sendable {
-  case ready
-  case preparing
-  case writing(generationId: String)
-  case refused(HelpLimit)
-  /// The day's extra writing allowance is used until `returnsOn`.
-  case writingLimitReached(returnsOn: String)
-  case needsChoice(choiceGroups: [String])
-}
-
 /// The exam choices a refused written or full mock waits for (`EXAM_CHOICE_REQUIRED`).
-private func pendingChoice(_ error: Components.Schemas._Error?) -> [String]? {
+func pendingChoice(_ error: Components.Schemas._Error?) -> [String]? {
   let refusal = voiceRefusal(status: 409, error: error)
   guard refusal.code == "EXAM_CHOICE_REQUIRED" else { return nil }
 
   let groups = (refusal.details?.value as? [String: (any Sendable)?])?["choiceGroups"]
   return (groups as? [(any Sendable)?])?.compactMap { $0 as? String }
+}
+
+/// The run writing the paper of a mock being prepared (main's `MockWriting`).
+struct MockWriting: Equatable, Sendable {
+  enum Status: Sendable {
+    case writing
+    /// Its run starts in a few seconds: ask again.
+    case starting
+    /// Nothing is writing it now; the daily preparation goes on with it.
+    case none
+  }
+
+  let generationId: String?
+  let namespace: String?
+  let status: Status
 }
 
 enum MockStepOutcome: String, Decodable, Sendable {
@@ -135,13 +136,34 @@ struct ExamAPI {
     }
   }
 
-  /// `afterWriting` on the start that follows a questions run, so the server never asks for more.
-  func startMock(
-    token: String, goalId: String, shape: MockShape, acceptFewer: Bool, afterWriting: Bool = false
-  ) async throws -> MockStartOutcome {
-    let body = Components.Schemas.AnytimeMockInput(
-      shape: try Self.body(shape), acceptFewer: acceptFewer,
-      afterWriting: afterWriting ? true : nil)
+  /// Only reads: it never starts a run.
+  func mockWriting(token: String, goalId: String, planItemId: String?) async throws -> MockWriting {
+    try await clients.perform(token: token) { client in
+      switch try await client.getMockWriting(
+        path: .init(goalId: goalId), query: .init(planItemId: planItemId))
+      {
+      case .ok(let response):
+        let writing = try response.body.json
+
+        let status: MockWriting.Status =
+          switch writing.status {
+          case .writing: .writing
+          case .starting: .starting
+          case .none: .none
+          }
+
+        return MockWriting(
+          generationId: writing.generationId, namespace: writing.namespace, status: status)
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  /// Only from a learner's tap.
+  func startMock(token: String, goalId: String, shape: MockShape) async throws -> MockStartOutcome {
+    let body = Components.Schemas.AnytimeMockInput(shape: try Self.body(shape))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let started: Components.Schemas.AnytimeMock
@@ -150,6 +172,10 @@ struct ExamAPI {
       case .ok(let response): started = try response.body.json
       case .created(let response): started = try response.body.json
       case .code402: return .plusRequired
+      case .forbidden(let response):
+        let refusal = voiceRefusal(status: 403, error: try? response.body.json)
+        if refusal.code == "SIGN_UP_REQUIRED" { return .refused(.signUpRequired) }
+        throw APIError.unavailable
       case .tooManyRequests(let response):
         return .writingLimitReached(returnsOn: try response.body.json.returnsOn)
       case .conflict(let response):
@@ -157,10 +183,6 @@ struct ExamAPI {
           throw APIError.unavailable
         }
         return .needsChoice(choiceGroups: groups)
-      case .unprocessableContent(let response):
-        let code = try? response.body.json.error.code
-        if code == "NOT_ENOUGH_QUESTIONS" { return .notEnoughQuestions }
-        throw APIError.unavailable
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
@@ -170,62 +192,8 @@ struct ExamAPI {
       case .started, .running:
         guard let id = started.id else { throw APIError.unavailable }
         return .started(id: id)
-      case .needsQuestions:
-        return .needsQuestions
-      case .short:
-        return .short(
-          examQuestions: started.examQuestions ?? 0, limit: started.limit,
-          availableAt: started.availableAt, minutes: started.minutes ?? 0,
-          questions: started.questions ?? 0)
-      }
-    }
-  }
-
-  /// Only from a learner's tap: a run may write the questions.
-  func requestMockQuestions(token: String, goalId: String, shape: MockShape) async throws
-    -> MockQuestionsStart
-  {
-    let body = Components.Schemas.MockQuestionsInput(shape: try Self.body(shape))
-
-    return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
-      let generation: Components.Schemas.MockQuestionsGeneration
-
-      switch try await client.createMockQuestionsGeneration(
-        path: .init(goalId: goalId), body: .json(body))
-      {
-      case .ok(let response): generation = try response.body.json
-      case .accepted(let response): generation = try response.body.json
-      case .tooManyRequests(let response):
-        let refusal = voiceRefusal(status: 429, error: try? response.body.json)
-
-        // The day's extra writing is used: the written test's questions wait for that day.
-        if refusal.code == "USAGE_LIMIT_REACHED",
-          let returnsOn = (refusal.details?.value as? [String: (any Sendable)?])?["returnsOn"]
-            as? String
-        {
-          return .writingLimitReached(returnsOn: returnsOn)
-        }
-
-        return try refused(refusal)
-      case .conflict(let response):
-        guard let groups = pendingChoice(try? response.body.json) else {
-          throw APIError.unavailable
-        }
-        return .needsChoice(choiceGroups: groups)
-      case .forbidden(let response):
-        return try refused(voiceRefusal(status: 403, error: try? response.body.json))
-      case .code402(let response):
-        return try refused(voiceRefusal(status: 402, error: try? response.body.json))
-      case .unauthorized: throw APIError.unauthorized
-      default: throw APIError.unavailable
-      }
-
-      switch generation.status {
-      case .ready: return .ready
-      case .preparing: return .preparing
-      case .generating:
-        guard let generationId = generation.generationId else { throw APIError.unavailable }
-        return .writing(generationId: generationId)
+      case .preparing:
+        return .preparing
       }
     }
   }
@@ -240,22 +208,6 @@ struct ExamAPI {
     } catch {
       throw apiError(from: error)
     }
-  }
-
-  /// A refusal without a help limit is a failure.
-  private func refused(_ refusal: VoiceRefusal) throws -> MockQuestionsStart {
-    guard let limit = refusal.limit else { throw APIError.unavailable }
-    return .refused(limit)
-  }
-
-  /// A run that ends before the questions are ready fails the wait.
-  func waitForQuestions(token: String, generationId: String) async throws {
-    for try await event in clients.generationEvents(id: generationId, token: token)
-    where event.step == "mockQuestionsReady" && event.status == "completed" {
-      return
-    }
-
-    throw APIError.unavailable
   }
 
   func mock(token: String, blockId: String) async throws -> MockView? {

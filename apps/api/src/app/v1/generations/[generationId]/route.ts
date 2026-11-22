@@ -8,7 +8,6 @@ import { NextResponse } from "next/server";
 import { parseWorkflowName } from "workflow/observability";
 
 const WRITING_UNITS = new Map<string, "answer" | "drill">([
-  ["writingBatchWorkflow", "answer"],
   ["writingDrillWorkflow", "drill"],
   ["writingPromptWorkflow", "answer"],
 ]);

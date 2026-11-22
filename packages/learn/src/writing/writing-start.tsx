@@ -53,24 +53,18 @@ export function toWritingStartState(
   };
 }
 
-/** Once per run a learner sees being written, from a question's start or a written test's. */
-export function useWritingWaitViewed({
-  generationId,
-  surface,
-}: {
-  generationId: string | null;
-  surface: "mock" | "practice";
-}) {
+/** Once per run a learner sees being written. */
+function useWritingWaitViewed(generationId: string | null) {
   const { track } = useLearnAnalytics();
 
   useEffect(() => {
     if (generationId) {
       track({
         name: "Writing Prompt Wait Viewed",
-        properties: { generation_id: generationId, surface },
+        properties: { generation_id: generationId, surface: "practice" },
       });
     }
-  }, [generationId, surface, track]);
+  }, [generationId, track]);
 }
 
 /** The exam's notice was read again and dropped this task: nothing was admitted, so the learner moves on. */
@@ -221,7 +215,7 @@ export function WritingStartScreen({
   const generationId = "generationId" in state ? state.generationId : null;
   const unit = ("unit" in state ? state.unit : undefined) ?? task.unit;
 
-  useWritingWaitViewed({ generationId, surface: "practice" });
+  useWritingWaitViewed(generationId);
 
   async function ask(): Promise<string | null | undefined> {
     setAsking(true);

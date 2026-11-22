@@ -47,7 +47,26 @@ function getEstimateOutcome(block: DayBlockInput): { outcome: BlockOutcome; ques
 }
 
 function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["checkpoint"] {
-  return checkpoint ? studyCheckpointSchema.parse(checkpoint) : null;
+  if (!checkpoint) {
+    return null;
+  }
+
+  const { mockQuestions: _mockQuestions, ...view } = checkpoint;
+  return studyCheckpointSchema.parse(view);
+}
+
+function getBlockQuestions(
+  block: DayBlockInput,
+  checkpoint: BlockCheckpoint | null,
+  items: number,
+) {
+  if (typeof checkpoint?.mockQuestions === "number") {
+    return checkpoint.mockQuestions;
+  }
+
+  return checkpoint && !checkpoint.mock && checkpoint.passMark > 0 && block.status === "pending"
+    ? getPlannedQuestions(items)
+    : items;
 }
 
 function getWritingFields({
@@ -99,6 +118,7 @@ export function toDayBlockView({
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
   savedWritingTasks,
+  preparing = false,
   subject = null,
   writingTasks,
 }: {
@@ -110,20 +130,13 @@ export function toDayBlockView({
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
   savedWritingTasks?: ReadonlyMap<string, DayBlockView["writingTask"] | null>;
+  preparing?: boolean;
   subject?: string | null;
   writingTasks?: ReturnType<typeof indexWritingTasks>;
 }): DayBlockView {
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
   const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
-
-  const { checkpoint } = payload;
-
-  const waitsForQuestions =
-    checkpoint !== null &&
-    !checkpoint.mock &&
-    checkpoint.passMark > 0 &&
-    block.status === "pending";
 
   return {
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
@@ -153,13 +166,15 @@ export function toDayBlockView({
     lessonId: block.lessonId,
     mistakesOnly:
       block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,
+    ...(payload.mockPreparationReview && { mockPreparationReview: true }),
     netScored: payload.netScored,
     oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
     opensInPlayer: false,
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
-    questions: waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length,
+    preparing,
+    questions: getBlockQuestions(block, payload.checkpoint, itemIds.length),
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
     screen: getBlockScreen(block),

@@ -98,6 +98,7 @@ export async function createAnytimeMockLearner({
       itemFixture({
         content: question.content,
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: question.skill.id,
       }),
     ),
@@ -129,7 +130,7 @@ export async function createAnytimeMockLearner({
     ]),
   );
 
-  return { answers, goal, plan, skills, user };
+  return { answers, blueprint, goal, plan, skills, user };
 }
 
 export function answerForMockHeading<Answer>({

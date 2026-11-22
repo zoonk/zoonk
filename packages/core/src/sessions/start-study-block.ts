@@ -3,6 +3,8 @@ import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/d
 import { safeAsync } from "@zoonk/utils/error";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { type WritingNeedsChoice } from "../exams/essays/writing-contract";
+import { startScheduledSitting } from "../exams/mocks/_utils/start-scheduled-mock";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
@@ -40,8 +42,11 @@ export type StartStudyBlockResult =
   | { reason: "challenge" | "lessons"; status: "earlierFirst" }
   | { status: "notFound" }
   | { status: "plusRequired" }
+  | { status: "preparing" }
   | { status: "questionsNeeded" }
-  | { status: "unauthorized" };
+  | { status: "signUpRequired" }
+  | { status: "unauthorized" }
+  | WritingNeedsChoice;
 
 /** Replays and refusals must roll back the marks taken before the domain locks. */
 class StudyBlockStartUnchangedError extends Error {
@@ -138,6 +143,42 @@ async function loadStartableBlock({
   return { block: current, changed: current !== saved };
 }
 
+async function lockStartableSession({
+  block,
+  sessionId,
+  tx,
+  userId,
+}: {
+  block: StudySessionBlock;
+  sessionId: string;
+  tx: TransactionClient;
+  userId: string;
+}) {
+  await tx.$queryRaw`
+      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
+    `;
+
+  // Relations load one at a time: a transaction's connection runs one query at once.
+  const locked = await tx.studySession.findFirst({
+    include: { blocks: STUDY_SESSION_INCLUDE.blocks },
+    where: { id: sessionId, userId },
+  });
+
+  if (!locked) {
+    throw new StudyBlockStartUnchangedError({ status: "notFound" });
+  }
+
+  const wait = getStoredBlockWait({ block, blocks: locked.blocks });
+
+  if (wait) {
+    throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+  }
+
+  const goal = locked.goalId ? await tx.goal.findUnique({ where: { id: locked.goalId } }) : null;
+
+  return { ...locked, goal };
+}
+
 /** Requires ownership; fills checkpoint questions before starting, and owes the session's preparation. */
 export async function startStudyBlock({
   blockId,
@@ -205,29 +246,39 @@ export async function startStudyBlock({
         return { status: "blockFinished" as const };
       }
 
-      await tx.$queryRaw`
-      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
-    `;
+      const locked = await lockStartableSession({ block: current, sessionId, tx, userId });
 
-      const lockedSession = await tx.studySession.findFirst({
-        include: { blocks: STUDY_SESSION_INCLUDE.blocks },
-        where: { id: sessionId, userId },
+      const sitting = await startScheduledSitting({
+        block: current,
+        goal: locked.goal,
+        now,
+        sessionDate: locked.localDate,
+        timeZone,
+        tx,
+        userId,
       });
 
-      if (!lockedSession) {
-        throw new StudyBlockStartUnchangedError({ status: "notFound" });
+      if (sitting === "plusRequired" || sitting === "signUpRequired") {
+        throw new StudyBlockStartUnchangedError({ status: sitting });
       }
 
-      const wait = getStoredBlockWait({ block: current, blocks: lockedSession.blocks });
+      if (typeof sitting === "object" && sitting !== null) {
+        throw new StudyBlockStartUnchangedError(sitting);
+      }
 
-      if (wait) {
-        throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+      if (sitting === "preparing") {
+        return { status: "preparing" as const };
+      }
+
+      if (sitting === "finished") {
+        return { status: "blockFinished" as const };
       }
 
       if (
+        sitting !== "created" &&
         !changed &&
-        lockedSession.status === "active" &&
-        lockedSession.startedAt &&
+        locked.status === "active" &&
+        locked.startedAt &&
         isRunningBlock(current)
       ) {
         const { id, kind, lessonId, startedAt, status } = current;
@@ -237,12 +288,6 @@ export async function startStudyBlock({
           status: "ready",
         });
       }
-
-      const goal = lockedSession.goalId
-        ? await tx.goal.findUnique({ where: { id: lockedSession.goalId } })
-        : null;
-
-      const locked = { ...lockedSession, goal };
 
       const filled = await fillCheckpointQuestions({
         afterWriting: input.afterWriting,
@@ -276,7 +321,7 @@ export async function startStudyBlock({
               elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
             },
           },
-          startedAt: current.startedAt ?? now,
+          startedAt: filledBlock.startedAt ?? now,
           status: "active",
         },
         select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
@@ -303,7 +348,7 @@ export async function startStudyBlock({
 
   const result = attempt.data;
 
-  if (result.status === "blockFinished") {
+  if (result.status !== "ready") {
     return result;
   }
 

@@ -3703,61 +3703,60 @@
         }
       }
     },
-    "About %@" : {
-      "comment" : "A placement length",
+    "About %@ left" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwa %@"
+            "value" : "Noch etwa %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aproximadamente %@"
+            "value" : "Quedan aproximadamente %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Environ %@"
+            "value" : "Encore environ %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Circa %@"
+            "value" : "Ancora circa %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "約%@"
+            "value" : "残り約%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "약 %@"
+            "value" : "약 %@ 남음"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Około %@"
+            "value" : "Około %@ do końca"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerca de %@"
+            "value" : "Cerca de %@ para terminar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yaklaşık %@"
+            "value" : "Yaklaşık %@ kaldı"
           }
         }
       }
@@ -5556,6 +5555,65 @@
         }
       }
     },
+    "Come back to this page to start it." : {
+      "comment" : "Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Komm zurück auf diese Seite, um sie zu starten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a esta página para empezarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reviens sur cette page pour le commencer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torna su questa pagina per iniziare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このページに戻ると開始できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 페이지로 돌아와 시작해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wróć na tę stronę, żeby go rozpocząć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volte a esta página para começar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlatmak için bu sayfaya tekrar gel."
+          }
+        }
+      }
+    },
     "Continue" : {
       "comment" : "Hands in a section after its time\nLeaves a mock's result",
       "localizations" : {
@@ -6565,61 +6623,119 @@
         }
       }
     },
-    "Getting your mock exam ready…" : {
-      "comment" : "Questions being written",
+    "Getting this mock exam ready" : {
+      "comment" : "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir bereiten deine Probeprüfung vor…"
+            "value" : "Wir bereiten diese Probeprüfung vor"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tu simulacro…"
+            "value" : "Preparando este simulacro de examen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation de ton examen blanc…"
+            "value" : "Préparation de cet examen blanc"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando la tua simulazione…"
+            "value" : "Stiamo preparando questa simulazione d’esame"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模試を準備しています…"
+            "value" : "この模試を準備しています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모의고사를 준비하고 있어요…"
+            "value" : "선택한 모의고사를 준비하고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy twój egzamin próbny…"
+            "value" : "Przygotowujemy ten egzamin próbny"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando seu simulado…"
+            "value" : "Preparando este simulado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deneme sınavını hazırlıyoruz…"
+            "value" : "Bu deneme sınavı hazırlanıyor"
+          }
+        }
+      }
+    },
+    "Getting your mock exam ready" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir bereiten deine Probeprüfung vor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu simulacro de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ton examen blanc"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la simulazione d’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模試を準備しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모의고사를 준비하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy egzamin próbny"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando seu simulado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deneme sınavın hazırlanıyor"
           }
         }
       }
@@ -7273,65 +7389,6 @@
         }
       }
     },
-    "It starts here when it's ready." : {
-      "comment" : "While a mock's questions are written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sobald sie fertig ist, geht es hier los."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezará aquí cuando esté listo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il commencera ici dès qu’il sera prêt."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizierà qui appena sarà pronta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "準備ができると、ここで始まります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "준비되면 여기서 시작돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egzamin rozpocznie się tutaj, gdy będzie gotowy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O simulado começa aqui assim que estiver pronto."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazır olunca burada başlayacak."
-          }
-        }
-      }
-    },
     "Keep answering" : {
       "comment" : "Cancels handing in",
       "localizations" : {
@@ -7446,6 +7503,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Devam et"
+          }
+        }
+      }
+    },
+    "Keep studying" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiterlernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir estudiando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer à étudier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua a studiare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習を続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속 공부하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ucz się dalej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar estudando"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışmaya devam et"
           }
         }
       }
@@ -8318,6 +8433,72 @@
         }
       }
     },
+    "mockWritingDone" : {
+      "comment" : "The wait for a mock exam's questions is over: they're written.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Done"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gotowe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlandı"
+          }
+        }
+      }
+    },
     "Needs %@" : {
       "comment" : "A test's minimum, which this mock doesn't judge; the argument is like '8 points'",
       "localizations" : {
@@ -8914,65 +9095,6 @@
         }
       }
     },
-    "Not enough questions for this one yet. Pick another." : {
-      "comment" : "Too few questions for a mock exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dafür gibt es noch nicht genug Fragen. Wähl eine andere."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay suficientes preguntas para este simulacro. Elige otro."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore assez de questions pour cet examen blanc. Choisis-en un autre."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ci sono ancora abbastanza domande per questa simulazione. Scegline un’altra."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この模試にはまだ問題が足りません。別の模試を選んでください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 이 모의고사에 쓸 문제가 부족해요. 다른 모의고사를 고르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na ten egzamin próbny nie ma jeszcze dość pytań. Wybierz inny."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não tem questões suficientes para este simulado. Escolha outro."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu deneme sınavı için henüz yeterli soru yok. Başka birini seç."
-          }
-        }
-      }
-    },
     "Not every task was done, so there's no estimate for this paper." : {
       "comment" : "A speaking paper with tasks left undone",
       "localizations" : {
@@ -9327,65 +9449,6 @@
         }
       }
     },
-    "Not saved yet · retrying" : {
-      "comment" : "An answer waits to save",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch nicht gespeichert · wir versuchen es noch einmal"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún sin guardar · reintentando"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore enregistrée · nouvelle tentative"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ancora salvata · stiamo riprovando"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まだ保存できていません・再試行しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 저장되지 않았어요 · 다시 시도하고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jeszcze nie zapisano · próbujemy ponownie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não foi salva · tentando de novo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henüz kaydedilmedi · tekrar deniyoruz"
-          }
-        }
-      }
-    },
     "Not sure" : {
       "comment" : "A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.",
       "localizations" : {
@@ -9618,124 +9681,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısmen doğru"
-          }
-        }
-      }
-    },
-    "Parts" : {
-      "comment" : "The parts of the exam a picked mock asks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prüfungsteile"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Partes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parties"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "パート"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "파트"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Części"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Partes"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oturumlar"
-          }
-        }
-      }
-    },
-    "Pick another" : {
-      "comment" : "Closes the shorter mock exam dialog",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Andere auswählen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegir otro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En choisir un autre"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegline un’altra"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "別の模試を選ぶ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다른 모의고사 고르기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz inny"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolher outro"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başka birini seç"
           }
         }
       }
@@ -10170,64 +10115,6 @@
         }
       }
     },
-    "Questions like the ones on your exam. Your mock exam starts here when they're ready." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fragen wie in deiner Prüfung. Hier startet deine Probeprüfung, sobald die Fragen fertig sind."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preguntas como las de tu examen. Tu simulacro empieza aquí cuando estén listas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Des questions comme celles de ton examen. Ton examen blanc commencera ici dès qu’elles seront prêtes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Domande come quelle del tuo esame. La tua simulazione inizierà qui quando saranno pronte."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験に出る問題に似た問題です。準備ができると、ここから模試が始まります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험과 비슷한 문제예요. 준비되면 여기서 모의고사를 시작할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pytania podobne do tych na egzaminie. Tutaj rozpocznie się egzamin próbny, gdy będą gotowe."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questões como as da sua prova. Seu simulado começa quando elas estiverem prontas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavındakilere benzer sorular. Hazır olduklarında deneme sınavın burada başlayacak."
-          }
-        }
-      }
-    },
     "Questions per subject in the %@, as counted by %@." : {
       "comment" : "Where a mock's question counts come from",
       "localizations" : {
@@ -10466,6 +10353,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gereken %@ eşiğine ulaştı"
+          }
+        }
+      }
+    },
+    "Recording the listening" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir nehmen den Hörteil auf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabando la sección de Escucha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement de l’épreuve d’écoute"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo registrando la parte di ascolto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リスニングを録音しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "듣기를 녹음하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nagrywamy część ze słuchaniem"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravando a parte de escuta"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinleme bölümü kaydediliyor"
           }
         }
       }
@@ -11350,65 +11295,6 @@
         }
       }
     },
-    "Start a shorter mock exam?" : {
-      "comment" : "Title of the shorter mock exam dialog",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kürzere Probeprüfung starten?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Empezar un simulacro más corto?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer un examen blanc plus court ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuoi iniziare una simulazione più breve?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短い模試を始めますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 짧은 모의고사를 시작할까요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozpocząć krótszy egzamin próbny?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar um simulado mais curto?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daha kısa bir deneme sınavına başlayalım mı?"
-          }
-        }
-      }
-    },
     "Start now" : {
       "comment" : "Ends a mock's break early",
       "localizations" : {
@@ -11705,65 +11591,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En güçlü alanın: %1$@. Çalışman gereken alan: %2$@."
-          }
-        }
-      }
-    },
-    "Subjects" : {
-      "comment" : "The subjects a picked mock asks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fächer"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Materias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Matières"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Materie"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "科目"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "과목"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przedmioty"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Matérias"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Branşlar"
           }
         }
       }
@@ -13567,65 +13394,6 @@
         }
       }
     },
-    "Time limit" : {
-      "comment" : "The time a picked mock allows",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zeitlimit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Límite de tiempo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Temps imparti"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo limite"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "制限時間"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "제한 시간"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit czasu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite de tempo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Süre sınırı"
-          }
-        }
-      }
-    },
     "Time ran out while you were away" : {
       "comment" : "An abandoned mock",
       "localizations" : {
@@ -13980,266 +13748,6 @@
         }
       }
     },
-    "Today this one has %lld of its %lld questions, about %@." : {
-      "comment" : "A mock exam shorter today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute hat diese Probeprüfung %1$lld von %2$lld Fragen und dauert etwa %3$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi questa simulazione comprende %1$lld domande su %2$lld e dura circa %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の模試は%1$lld問（全%2$lld問）で、所要時間は約%3$@です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)를 풀어요. 약 %3$@ 걸려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś ten egzamin próbny ma %1$lld z %2$lld pytań, czyli około %3$@ pracy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e leva cerca de %3$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün bu deneme sınavında %1$lld soru var; tamamı %2$lld soru. Yaklaşık %3$@ sürer."
-          }
-        }
-      }
-    },
-    "Today this one has %lld of its %lld questions, about %@. You can take the full one later today." : {
-      "comment" : "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Probeprüfung hat heute %1$lld von %2$lld Fragen und dauert etwa %3$@ Die vollständige kannst du später am Tag machen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one later today."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@. Puedes hacerlo completo hoy más tarde."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@. Tu pourras passer la version complète plus tard dans la journée."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi questa simulazione ha %1$lld domande su %2$lld e dura circa %3$@. Potrai svolgerla per intero più tardi in giornata."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の模試は%1$lld問（全%2$lld問中）で、所要時間は約%3$@です。今日このあと、全問そろった模試を受けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)만 나오고, 약 %3$@ 걸려요. 전체 모의고사는 오늘 중에 볼 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś ten egzamin ma %1$lld z %2$lld pytań, czyli około %3$@ na rozwiązanie. Pełną wersję możesz rozwiązać jeszcze dziś."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@. Você pode fazer a versão completa mais tarde, ainda hoje."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün bu deneme sınavında %1$lld soru var (normalde %2$lld) ve yaklaşık %3$@ sürüyor. Tamamını bugün daha sonra çözebilirsin."
-          }
-        }
-      }
-    },
-    "Today this one has %lld of its %lld questions, about %@. You can take the full one on %@." : {
-      "comment" : "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as \"November 22\" in English.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Probeprüfung hat heute %1$lld von %2$lld Fragen und dauert etwa %3$@ Die vollständige kannst du am %4$@ machen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one on %4$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@. Puedes hacerlo completo el %4$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@. Tu pourras passer la version complète le %4$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi questa simulazione ha %1$lld domande su %2$lld e dura circa %3$@. Potrai svolgerla per intero il %4$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の模試は%1$lld問（全%2$lld問中）で、所要時間は約%3$@です。%4$@に全問そろった模試を受けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)만 나오고, 약 %3$@ 걸려요. 전체 모의고사는 %4$@에 볼 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś ten egzamin ma %1$lld z %2$lld pytań, czyli około %3$@ na rozwiązanie. Pełną wersję możesz rozwiązać %4$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@. Você pode fazer a versão completa em %4$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün bu deneme sınavında %1$lld soru var (normalde %2$lld) ve yaklaşık %3$@ sürüyor. Tamamını %4$@ tarihinde çözebilirsin."
-          }
-        }
-      }
-    },
-    "Today this one has %lld of its %lld questions, about %@. You can take the full one tomorrow." : {
-      "comment" : "A mock exam shorter today, when today's writing is used up",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute hat diese Probeprüfung %1$lld von %2$lld Fragen und dauert etwa %3$@ Morgen kannst du die vollständige Probeprüfung machen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one tomorrow."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@. Podrás hacer el simulacro completo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@. Tu pourras le faire en entier demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi questa simulazione comprende %1$lld domande su %2$lld e dura circa %3$@. Potrai fare quella completa domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の模試は%1$lld問（全%2$lld問）で、所要時間は約%3$@です。明日は全問に取り組めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)를 풀어요. 약 %3$@ 걸려요. 내일은 전체 모의고사를 볼 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś ten egzamin próbny ma %1$lld z %2$lld pytań, czyli około %3$@ pracy. Pełną wersję możesz rozwiązać jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@. Você pode fazer o simulado completo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün bu deneme sınavında %1$lld soru var; tamamı %2$lld soru. Yaklaşık %3$@ sürer. Tamamını yarın çözebilirsin."
-          }
-        }
-      }
-    },
     "Try again" : {
       "localizations" : {
         "de" : {
@@ -14532,65 +14040,6 @@
         }
       }
     },
-    "Usually takes" : {
-      "comment" : "How long a picked mock usually takes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übliche Dauer"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duración habitual"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Durée habituelle"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Durata media"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所要時間の目安"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "보통 걸리는 시간"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zwykle zajmuje"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Costuma levar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Genelde gereken süre"
-          }
-        }
-      }
-    },
     "We couldn't start the mock exam. Try again." : {
       "comment" : "Start failed",
       "localizations" : {
@@ -14646,64 +14095,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavını başlatamadık. Tekrar dene."
-          }
-        }
-      }
-    },
-    "We couldn't write your questions" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten deine Fragen nicht erstellen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos preparar tus preguntas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On n’a pas pu préparer tes questions"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a preparare le tue domande"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "問題を作成できませんでした"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제를 만들지 못했어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się przygotować pytań"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível criar suas questões"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sorularını hazırlayamadık"
           }
         }
       }
@@ -14826,60 +14217,119 @@
         }
       }
     },
-    "Writing your questions…" : {
+    "Writing the questions" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen deine Fragen…"
+            "value" : "Wir erstellen die Fragen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tus preguntas…"
+            "value" : "Preparando las preguntas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation de tes questions…"
+            "value" : "Préparation des questions"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando le tue domande…"
+            "value" : "Stiamo scrivendo le domande"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "問題を作成しています…"
+            "value" : "問題を作成しています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "문제를 만들고 있어요…"
+            "value" : "문제를 만들고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy pytania…"
+            "value" : "Przygotowujemy pytania"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criando suas questões…"
+            "value" : "Criando as questões"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorularını hazırlıyoruz…"
+            "value" : "Sorular hazırlanıyor"
+          }
+        }
+      }
+    },
+    "Writing the texts" : {
+      "comment" : "A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen die Texte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando los textos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation des textes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scrivendo i testi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文章を作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지문을 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy teksty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando os textos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metinler hazırlanıyor"
           }
         }
       }
@@ -16034,65 +15484,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "You've used today's essay grades. Try again tomorrow." : {
-      "comment" : "No essay grades left today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute alle Bewertungen für Aufsätze aufgebraucht. Versuch es morgen noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy ya usaste todas las calificaciones de redacciones disponibles. Inténtalo de nuevo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toutes tes corrections de rédaction pour aujourd’hui. Réessaie demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito le valutazioni dei temi per oggi. Riprova domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の小論文の採点回数は上限に達しました。明日また試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 에세이 채점 횟수를 다 썼어요. 내일 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzisiejszy limit ocen wypracowań został wykorzystany. Spróbuj ponownie jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já usou suas correções de redação de hoje. Tente de novo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün için kompozisyon değerlendirme hakkın kalmadı. Yarın tekrar dene."
           }
         }
       }

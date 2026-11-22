@@ -675,7 +675,11 @@ describe(getWeeklyChallenge, () => {
 
   it("puts the mock in the day's session for Plus learners, taking no study answer on it", async () => {
     const user = await userFixture();
-    const { goal, plan } = await sessionGoalFixture({ goal: { kind: "exam" }, userId: user.id });
+
+    const { goal, plan, skills } = await sessionGoalFixture({
+      goal: { kind: "exam" },
+      userId: user.id,
+    });
 
     await Promise.all([
       checkpointItemFixture({
@@ -689,6 +693,12 @@ describe(getWeeklyChallenge, () => {
       }),
     ]);
 
+    const reserve = await Promise.all(
+      Array.from({ length: 23 }, () =>
+        itemFixture({ mockOnly: true, skillId: skills[0]?.id ?? "" }),
+      ),
+    );
+
     mockSession(user.id);
 
     const [challenge, today] = await Promise.all([
@@ -697,7 +707,7 @@ describe(getWeeklyChallenge, () => {
     ]);
 
     expect(challenge).toMatchObject({
-      challenge: { access: "open", questions: 9 },
+      challenge: { access: "open", questions: 23 },
       status: "ready",
     });
 
@@ -707,9 +717,9 @@ describe(getWeeklyChallenge, () => {
         : undefined;
 
     expect(block).toMatchObject({
-      checkpoint: { kind: "weekly", mock: true, timeLimitMinutes: 27 },
+      checkpoint: { kind: "weekly", mock: true, timeLimitMinutes: 69 },
       kind: "checkpoint",
-      questions: 9,
+      questions: 23,
     });
 
     const sessionId = today.status === "ready" ? today.session.id : "";
@@ -719,11 +729,7 @@ describe(getWeeklyChallenge, () => {
 
     const answer = await answerStudyQuestion({
       blockId: row.id,
-      input: {
-        answer: { selectedIndex: 0 },
-        durationMs: 3000,
-        itemId: getBlockItemIds(readBlockPayload(row))[0] ?? "",
-      },
+      input: { answer: { selectedIndex: 0 }, durationMs: 3000, itemId: reserve[0]?.id ?? "" },
       sessionId,
     });
 
@@ -817,6 +823,7 @@ describe(getWeeklyChallenge, () => {
         },
         examBlueprintId: blueprint.id,
         format: "numeric",
+        mockOnly: true,
         skillId: skills[0]?.id ?? "",
       }),
     ]);

@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
+import { readMockWriting } from "@/lib/mocks/read-mock-writing";
 import { requestQuestionWriting } from "@/lib/questions/question-writing";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
@@ -177,6 +178,10 @@ function ChallengeVisit({
     };
 
     const challengeActions: ChallengeActions = {
+      mockWriting: {
+        read: () => readMockWriting({ goalId: challenge.goalId, planItemId }),
+        written: () => startRereading(() => router.refresh()),
+      },
       move: async () => {
         onDone();
         const outcome = await moveChallengeAction({ page, planItemId }, getLocalTimeZone());
@@ -198,7 +203,17 @@ function ChallengeVisit({
       openWritten: () => startOnce(true, openingHere()),
       startAfterWriting: () => start(true),
     };
-  }, [challenge.blockId, challenge.mock, onDone, page, planItemId, router, search, startRereading]);
+  }, [
+    challenge.blockId,
+    challenge.goalId,
+    challenge.mock,
+    onDone,
+    page,
+    planItemId,
+    router,
+    search,
+    startRereading,
+  ]);
 
   const hrefs = useMemo(
     () => ({

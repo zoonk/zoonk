@@ -65,39 +65,26 @@ async function chromeNames(role: string): Promise<string[]> {
     .map((node) => String(node.name?.value ?? ""));
 }
 
-async function expectTagOnLastLineAtEnd(name: string) {
+/** Misses, so the code option `name` holds the right answer's "Correct" when Check brings it. */
+async function expectTagOnLastLineAtEnd(name: string, miss: string) {
   const option = page.getByRole("radio", { name });
   await expect.element(option).toBeVisible();
 
-  const tagRow = () => {
-    const lines = option.element().querySelectorAll("[data-slot='code-snippet-line']");
-    const tags = option.element().querySelectorAll("[data-slot='line-marker']");
-    const last = [...lines].at(-1)?.getBoundingClientRect();
-    const tag = [...tags].at(-1)?.getBoundingClientRect();
+  const height = option.element().getBoundingClientRect().height;
 
-    return { height: option.element().getBoundingClientRect().height, last, tag };
-  };
+  await page.getByRole("radio", { exact: true, name: miss }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await expect.element(option.getByText("Correct")).toBeVisible();
 
-  const before = tagRow();
-
-  expect((before.tag?.top ?? 0) + (before.tag?.height ?? 0) / 2).toBeLessThan(
-    before.last?.bottom ?? 0,
-  );
-
-  await option.click();
-  await expect.element(option.getByText("Your answer")).toBeVisible();
-
-  const after = tagRow();
-  expect(after.height).toBe(before.height);
-  expect(after.tag?.top).toBe(before.tag?.top);
-
+  const lines = option.element().querySelectorAll("[data-slot='code-snippet-line']");
+  const last = [...lines].at(-1)?.getBoundingClientRect();
   const words = option.element().querySelector("[data-slot='answer-option-tag']");
+  const tag = words?.getBoundingClientRect();
   const row = words?.closest("[data-slot='line-marker']")?.parentElement;
 
-  expect(words?.getBoundingClientRect().right).toBeCloseTo(
-    row?.getBoundingClientRect().right ?? 0,
-    0,
-  );
+  expect(option.element().getBoundingClientRect().height).toBe(height);
+  expect((tag?.top ?? 0) + (tag?.height ?? 0) / 2).toBeLessThan(last?.bottom ?? 0);
+  expect(tag?.right).toBeCloseTo(row?.getBoundingClientRect().right ?? 0, 0);
 }
 
 describe("code in a lesson", () => {
@@ -244,29 +231,44 @@ describe("code in a lesson", () => {
     expect(panel.element().getAttribute("tabindex")).toBeNull();
   });
 
-  it("keeps a code option's tag on its last line at the card's end, picked or not", async () => {
-    await atViewport({ height: 844, width: 390 }, async () => {
-      const lesson = buildLesson([
-        contentStep("check", {
-          content: {
-            basis: null,
-            options: [
-              { id: "one", isCorrect: true, reason: "It prints both.", text: "```\n8 12\n```" },
-              { id: "two", isCorrect: false, reason: "One per line.", text: "```\n8\n12\n```" },
-              { id: "wide", isCorrect: false, reason: "No list.", text: fence("js", LONG_LINE) },
-            ],
-            question: "What does it print?",
-          },
-        }),
-      ]);
+  it.each([
+    { answer: "Line 1: 8 Line 2: 12", right: "two" },
+    { answer: `Line 1: ${LONG_LINE[0]} Line 2: ${LONG_LINE[1]}`, right: "wide" },
+  ])(
+    "puts the right code option's tag on its last line at the card's end ($right)",
+    async ({ answer, right }) => {
+      await atViewport({ height: 844, width: 390 }, async () => {
+        const lesson = buildLesson([
+          contentStep("check", {
+            content: {
+              basis: null,
+              options: [
+                { id: "one", isCorrect: false, reason: "It prints both.", text: "```\n8 12\n```" },
+                {
+                  id: "two",
+                  isCorrect: right === "two",
+                  reason: "One per line.",
+                  text: "```\n8\n12\n```",
+                },
+                {
+                  id: "wide",
+                  isCorrect: right === "wide",
+                  reason: "No list.",
+                  text: fence("js", LONG_LINE),
+                },
+              ],
+              question: "What does it print?",
+            },
+          }),
+        ]);
 
-      renderLessonPlayer({ lesson });
-      await document.fonts.ready;
+        renderLessonPlayer({ lesson });
+        await document.fonts.ready;
 
-      await expectTagOnLastLineAtEnd("Line 1: 8 Line 2: 12");
-      await expectTagOnLastLineAtEnd(`Line 1: ${LONG_LINE[0]} Line 2: ${LONG_LINE[1]}`);
-    });
-  });
+        await expectTagOnLastLineAtEnd(answer, "8 12");
+      });
+    },
+  );
 
   it("marks each extra row of a wrapped code option, so it never reads as a line of its own", async () => {
     await atViewport({ height: 844, width: 390 }, async () => {

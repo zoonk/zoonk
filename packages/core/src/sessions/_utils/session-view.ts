@@ -2,25 +2,67 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type studyBlockSchema } from "../block-view-contract";
-import { getPlayOrder, getSessionBlockOrder, isDayBlock } from "../day-blocks";
+import { getNextBlock, isDayBlock } from "../day-blocks";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
 import { toDayBlockView } from "./day-block-view";
+import { inDayOrder } from "./day-order";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
 import { type StudySessionRow } from "./study-session-access";
 
 export type StudyBlockView = z.infer<typeof studyBlockSchema>;
 
-const NO_SKILLS: ReadonlySet<string> = new Set();
-const NO_SUBJECTS: ReadonlyMap<number, string> = new Map();
-
 export function toStudyBlockView(
   input: Omit<Parameters<typeof toDayBlockView>[0], "block"> & { block: StudySessionBlock },
 ): StudyBlockView {
   return { ...toDayBlockView(input), id: input.block.id };
+}
+
+export function toStudyBlockViews({
+  answers,
+  blocks,
+  blockedTestOutChapters,
+  oftenTestedSkillIds,
+  preparing,
+  subjects,
+  writingTasks,
+}: {
+  answers: DayViewFieldsInput["answers"];
+  blocks: readonly StudySessionBlock[];
+  blockedTestOutChapters?: ReadonlySet<string>;
+  oftenTestedSkillIds?: ReadonlySet<string>;
+  preparing: ReadonlySet<number>;
+  subjects?: ReadonlyMap<number, string>;
+  writingTasks?: Parameters<typeof toDayBlockView>[0]["writingTasks"];
+}): StudyBlockView[] {
+  const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
+  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
+
+  const savedWritingTasks = new Map(
+    answers.flatMap(({ itemId, writingTask }) =>
+      itemId && writingTask !== undefined ? [[itemId, writingTask] as const] : [],
+    ),
+  );
+
+  return inDayOrder(
+    blocks.map((block) =>
+      toStudyBlockView({
+        answeredAttemptIds,
+        answeredItemIds,
+        block,
+        blockedTestOutChapters,
+        blocks,
+        oftenTestedSkillIds,
+        preparing: preparing.has(block.position),
+        savedWritingTasks,
+        subject: subjects?.get(block.position),
+        writingTasks,
+      }),
+    ),
+  );
 }
 
 export type EmptyDay = "lessonsComing" | "lessonsToPrepare" | "nothingNew";
@@ -84,57 +126,22 @@ export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status" 
   };
 }
 
-export function getNextBlock<
-  Block extends Pick<StudyBlockView, "extra" | "position" | "status" | "writingAvailability">,
->(blocks: readonly Block[]): Block | undefined {
-  return getPlayOrder(
-    blocks.filter(
-      (block) => block.status === "active" || block.writingAvailability?.status !== "tomorrow",
-    ),
-  )[0];
-}
-
 /** Adds only persisted session and block ids to the shared display projection. */
-export function toStudySessionView(
-  input: Omit<DayViewFieldsInput, "session" | "missions" | "sessionBar"> & {
-    blockViews?: StudyBlockView[];
-    blockSubjects?: ReadonlyMap<number, string>;
-    blockedTestOutChapters?: ReadonlySet<string>;
-    missions: Mission[];
-    oftenTestedSkillIds?: ReadonlySet<string>;
-    session: StudySessionRow;
-  },
-): StudySessionView {
-  const {
-    blockSubjects = NO_SUBJECTS,
-    blockedTestOutChapters = NO_SKILLS,
-    oftenTestedSkillIds,
-    session,
-  } = input;
-
-  function buildBlockViews() {
-    const answeredAttemptIds = new Set(input.answers.map((answer) => answer.id));
-    const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
-
-    return session.blocks.map((block) =>
-      toStudyBlockView({
-        answeredAttemptIds,
-        answeredItemIds,
-        block,
-        blockedTestOutChapters,
-        blocks: session.blocks,
-        oftenTestedSkillIds,
-        subject: blockSubjects.get(block.position) ?? null,
-      }),
-    );
-  }
-
-  const blocks = getSessionBlockOrder(input.blockViews ?? buildBlockViews());
+export function toStudySessionView({
+  blockViews: blocks,
+  ...input
+}: Omit<DayViewFieldsInput, "missions" | "preparing" | "session" | "sessionBar"> & {
+  blockViews: StudyBlockView[];
+  missions: Mission[];
+  session: StudySessionRow;
+}): StudySessionView {
+  const { session } = input;
+  const preparing = new Set(blocks.flatMap((block) => (block.preparing ? [block.position] : [])));
   const next = getNextBlock(blocks);
 
   return withDayState(
     {
-      ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
+      ...toDayViewFields({ ...input, preparing, sessionBar: getSessionBar(session.blocks) }),
       blocks,
       id: session.id,
       missions: input.missions,

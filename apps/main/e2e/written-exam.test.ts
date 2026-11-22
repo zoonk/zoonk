@@ -1,16 +1,19 @@
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
+import { WRITTEN_SPECIALTY } from "./written-exam-blueprint";
 import {
   SHORT_TITLE,
   SHORT_TITLES,
   addGradedAnswer,
   addWritingDrill,
+  addWrittenExamPrompts,
   createWrittenExamDay,
   useTodayExtraGrades,
 } from "./written-exam-fixtures";
 
 const DRAFT = "Internal control is done by each branch over its own acts.";
+const MOCK_READ_AGAIN_MS = 15_000;
 
 test.describe("Written exam practice", () => {
   test("Today's tap starts the written question, and its draft follows the learner to another device", async ({
@@ -132,16 +135,11 @@ test.describe("Written exam practice", () => {
     }
   });
 
-  test("a question still being written shows its wait, and the written test starts on its own clock", async ({
+  test("a question still being written shows its own wait and revisiting its address starts nothing", async ({
     browser,
   }) => {
     const missing = await createWrittenExamDay({ prompts: false });
-    const day = await createWrittenExamDay({ plus: true });
-
-    const [waiting, page] = await Promise.all([
-      openAs(browser, missing.user),
-      openAs(browser, day.user),
-    ]);
+    const waiting = await openAs(browser, missing.user);
 
     try {
       // The run's model never answers in E2E, so the question stays in writing.
@@ -170,11 +168,52 @@ test.describe("Written exam practice", () => {
 
       await expect(waiting.getByRole("button", { exact: true, name: "Write" })).toBeVisible();
       expect(starts).toHaveLength(0);
+    } finally {
+      await waiting.context().close();
+    }
+  });
 
+  test("the written test waits for its questions and starts on its own clock when ready", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay({ plus: true, prompts: false });
+    const page = await openAs(browser, day.user);
+    const mocks = () => prisma.mockExam.count({ where: { userId: day.user.id } });
+
+    try {
+      await page.clock.install();
       await page.goto("/mock/new");
       await page.getByRole("radio", { name: /^Written test/u }).click();
-      await page.getByRole("button", { name: "Start" }).click();
+      const start = page.getByRole("button", { name: "Start" });
+      await start.click();
+
+      await expect(page.getByText("Getting this mock exam ready")).toBeVisible();
+
+      await expect(page.getByRole("link", { name: "Keep studying" })).toHaveAttribute(
+        "href",
+        /\/today$/u,
+      );
+
+      await expect(start).toBeHidden();
+      await expect(page).toHaveURL(/\/mock\/new$/u);
+      await expect(mocks()).resolves.toBe(0);
+
+      await expect(prisma.writingAdmission.count({ where: { userId: day.user.id } })).resolves.toBe(
+        0,
+      );
+
+      await addWrittenExamPrompts(day);
+      await page.clock.runFor(MOCK_READ_AGAIN_MS);
+      await expect(start).toBeEnabled();
+      await expect(mocks()).resolves.toBe(0);
+
+      await start.click();
       await expect(page).toHaveURL(/\/mock\/[0-9a-f-]{36}/u);
+
+      await expect(page.getByRole("timer", { name: "Time left" })).toHaveText(
+        /^(?:3:30:00|3:29:[0-5]\d)$/u,
+      );
+
       await expect(page.getByText(/^0 of (?<lines>30|60) lines$/u)).toBeVisible();
       await expect(page.getByText("1 of 2", { exact: true })).toBeVisible();
       await expect(page.getByText("Question 1 of 2", { exact: true })).toBeVisible();
@@ -183,7 +222,7 @@ test.describe("Written exam practice", () => {
       await expect(page.getByText("2 of 2", { exact: true })).toBeVisible();
       await expect(page.getByText("Question 2 of 2", { exact: true })).toBeVisible();
     } finally {
-      await Promise.all([waiting.context().close(), page.context().close()]);
+      await page.context().close();
     }
   });
 
@@ -246,7 +285,45 @@ test.describe("Written exam practice", () => {
       // Under each option with the written test, the way Today says it, and Start waits for another pick.
       await expect(page.getByText("Back tomorrow: no more grading today")).toHaveCount(2);
       await expect(page.getByRole("button", { name: "Start" })).toBeDisabled();
-      await expect(page).toHaveURL(/\/mock\/new/u);
+      await expect(page.getByRole("link", { name: "Keep studying" })).toBeHidden();
+      await expect(page).toHaveURL(/\/mock\/new$/u);
+      await expect(prisma.mockExam.count({ where: { userId: day.user.id } })).resolves.toBe(0);
+
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: day.goalId } }),
+      ).resolves.toMatchObject({ requestedMock: null });
+
+      await page.getByRole("radio", { name: /^Objective test/u }).click();
+      await expect(page.getByRole("button", { name: "Start" })).toBeEnabled();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a written mock that needs a specialty takes the learner to Today's choice", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay({ plus: true, prompts: false, specialty: true });
+    const page = await openAs(browser, day.user);
+
+    try {
+      await page.goto("/mock/new");
+      const name = /^Written test/u;
+      await page.getByRole("radio", { name }).click();
+
+      await expect(page.getByRole("radio", { name })).toHaveAccessibleName(
+        new RegExp(`Depends on your choice of ${WRITTEN_SPECIALTY}`, "u"),
+      );
+
+      await expect(page.getByRole("button", { name: "Start" })).toBeHidden();
+      await expect(page.getByRole("link", { name: "Keep studying" })).toBeHidden();
+
+      await page.getByRole("link", { name: "Choose on Today" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
+
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: day.goalId } }),
+      ).resolves.toMatchObject({ requestedMock: null });
     } finally {
       await page.context().close();
     }

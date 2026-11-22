@@ -13,7 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
-import { CRITERIA, GRADING, STRUCTURE, task } from "./written-exam-blueprint";
+import { CRITERIA, GRADING, getWrittenExamStructure, task } from "./written-exam-blueprint";
 
 export const SHORT_TITLE = "Internal and external control";
 const SHORT_OTHER_TITLE = "Accountability of public agents";
@@ -63,6 +63,29 @@ function promptContent({
   };
 }
 
+export function addWrittenExamPrompts({
+  blueprintId,
+  skillId,
+}: {
+  blueprintId: string;
+  skillId: string;
+}) {
+  return Promise.all(
+    [
+      { key: "short" as const, title: SHORT_TITLE },
+      { key: "short" as const, title: SHORT_OTHER_TITLE },
+      { key: "long" as const, title: "Risk-based audit planning" },
+    ].map(({ key, title }) =>
+      itemFixture({
+        content: promptContent({ key, skillId, title }),
+        examBlueprintId: blueprintId,
+        format: "essay",
+        skillId,
+      }),
+    ),
+  );
+}
+
 /**
  * A CGU-like exam learner with a written-question block today, the question's prompt in the bank
  * and, with `prompts: false`, none, so its start has to write one.
@@ -70,12 +93,17 @@ function promptContent({
 export async function createWrittenExamDay({
   plus = false,
   prompts = true,
+  specialty = false,
   taskKey = "short",
-}: { plus?: boolean; prompts?: boolean; taskKey?: string } = {}) {
+}: { plus?: boolean; prompts?: boolean; specialty?: boolean; taskKey?: string } = {}) {
   const [user, skill, blueprint] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Write answers about public control ${randomUUID()}` }),
-    examBlueprintFixture({ identityKey: `cgu-${randomUUID()}`, name: "CGU", structure: STRUCTURE }),
+    examBlueprintFixture({
+      identityKey: `cgu-${randomUUID()}`,
+      name: "CGU",
+      structure: getWrittenExamStructure({ specialty }),
+    }),
   ]);
 
   const goal = await goalFixture({
@@ -103,20 +131,7 @@ export async function createWrittenExamDay({
   };
 
   const items = prompts
-    ? await Promise.all(
-        [
-          { key: "short" as const, title: SHORT_TITLE },
-          { key: "short" as const, title: SHORT_OTHER_TITLE },
-          { key: "long" as const, title: "Risk-based audit planning" },
-        ].map(({ key, title }) =>
-          itemFixture({
-            content: promptContent({ key, skillId: skill.id, title }),
-            examBlueprintId: blueprint.id,
-            format: "essay",
-            skillId: skill.id,
-          }),
-        ),
-      )
+    ? await addWrittenExamPrompts({ blueprintId: blueprint.id, skillId: skill.id })
     : [];
 
   const [session, plan] = await Promise.all([
@@ -149,6 +164,7 @@ export async function createWrittenExamDay({
 
   return {
     blockId: block.id,
+    blueprintId: blueprint.id,
     goalId: goal.id,
     items,
     sessionId: session.id,

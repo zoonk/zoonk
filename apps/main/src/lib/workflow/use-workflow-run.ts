@@ -1,8 +1,7 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
-import { WRITING_PROMPT_KIND } from "@zoonk/core/library/generation/steps";
-import { type GenerationKind } from "@zoonk/learn/generation/kinds";
+import { type FollowedRunProps } from "@zoonk/learn/generation/follower";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
@@ -28,7 +27,7 @@ function isRunStatus(value: string | null): value is RunStatus {
   return value !== null && RUN_STATUSES.has(value);
 }
 
-async function readRun(runId: string): Promise<unknown> {
+async function readRunStatus(runId: string): Promise<RunStatus | null> {
   const headers = await getWorkflowAuthHeaders();
   const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`;
   const { data: response } = await safeAsync(() => fetch(url, { headers }));
@@ -38,17 +37,9 @@ async function readRun(runId: string): Promise<unknown> {
   }
 
   const { data } = await safeAsync<unknown>(() => response.json());
-  return data;
-}
+  const status = getString(data, "status");
 
-async function readRunStatus(runId: string): Promise<RunStatus | null> {
-  const status = getString(await readRun(runId), "status");
   return isRunStatus(status) ? status : null;
-}
-
-/** Whether a run writes an exam's written questions: a mock's start can answer with one or with its objective questions' run. */
-export async function isWritingPromptRun(runId: string): Promise<boolean> {
-  return getString(await readRun(runId), "kind") === WRITING_PROMPT_KIND;
 }
 
 export function useWorkflowRun({
@@ -57,13 +48,7 @@ export function useWorkflowRun({
   onReady,
   readGenerationId,
   restart,
-}: {
-  generationId: string | null;
-  kind: GenerationKind;
-  onReady?: () => void;
-  readGenerationId?: () => Promise<string | null>;
-  restart: () => Promise<unknown>;
-}): GenerationRun {
+}: Omit<FollowedRunProps, "children">): GenerationRun {
   const [state, dispatch] = useReducer(workflowRunReducer, INITIAL_WORKFLOW_RUN_STATE);
   const runId = getFollowedRunId({ generationId, state });
   const status = getRunStatus({ runId, state });
@@ -72,7 +57,12 @@ export function useWorkflowRun({
 
   const poll = useEffectEvent(async () => {
     const { data } = await safeAsync(async () => (await readGenerationId?.()) ?? null);
-    dispatch({ runId: data ?? null, type: "polled" });
+
+    if (data && typeof data === "object") {
+      dispatch({ namespace: data.namespace, runId: data.id, type: "polled" });
+    } else {
+      dispatch({ runId: data ?? null, type: "polled" });
+    }
   });
 
   useEffect(() => {
@@ -86,13 +76,13 @@ export function useWorkflowRun({
   }, [canPoll, isWaiting]);
 
   useEffect(() => {
-    if (!isWaiting) {
+    if (!isWaiting || kind === "mockPaper") {
       return;
     }
 
     const timer = setTimeout(() => dispatch({ type: "notStarted" }), NOT_STARTED_MS);
     return () => clearTimeout(timer);
-  }, [isWaiting]);
+  }, [isWaiting, kind]);
 
   useEffect(() => {
     if (state.reconnectIn === null) {
@@ -137,6 +127,7 @@ export function useWorkflowRun({
 
   useGenerationEvents({
     connection: state.connection,
+    namespace: runId === state.polled ? state.namespace : null,
     onComplete: (id) => void checkRun(id),
     onError: () => dispatch({ type: "connectionLost" }),
     onMessage: (message) => dispatch({ kind, message, type: "event" }),

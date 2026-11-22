@@ -3,7 +3,7 @@ import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { findWritingPrompts } from "../../essays/writing-supply";
 import { type MockShape } from "../mock-contract";
-import { listWrittenRequests } from "../written-parts";
+import { listMockWrittenRequests } from "../written-parts";
 
 export async function findMockWriting({
   goal,
@@ -20,10 +20,7 @@ export async function findMockWriting({
   tx?: TransactionClient;
   userId: string;
 }) {
-  const requests =
-    shape.kind === "written" || shape.kind === "full"
-      ? listWrittenRequests({ day: shape.day, structure })
-      : [];
+  const requests = listMockWrittenRequests({ shape, structure });
 
   if (requests.length === 0) {
     return { essays: [], status: "ready" as const };

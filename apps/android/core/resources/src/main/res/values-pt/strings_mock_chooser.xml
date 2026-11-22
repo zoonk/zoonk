@@ -14,28 +14,13 @@
   "mock_chooser_last_mock": "eadb514982f2fc7e6dfe8e0738fac0e41880958104b80979c47e550326c0a7c5",
   "mock_chooser_line": "48e912b8dc485f29b7173140bad1a0233fd227fa67bf8b8795e5d21b31904bb1",
   "mock_chooser_no_written_part": "a1dc6ffbaff41d7e3efe06e436eed9201253c181962db142bec551ef445c2f02",
-  "mock_chooser_not_enough": "8613dceaef8c9076820212d697337dab6e942a2d85574a74fbaf4756a0fc5561",
   "mock_chooser_objective_only": "6cae6ae0caa4087964a66722726ae1879b00460a5360f4eca6159ef3cf7a2397",
   "mock_chooser_one_subject": "4cf12b80426cd68e2a609ee68e0a511086461fc855a2318b778393aa5eb6be09",
   "mock_chooser_option_size": "594e8f0fd19e14ff0f65321ca62fd421fff3111a1b180fe3a3cdeda6e85d0d77",
-  "mock_chooser_pick_another": "0ef1b0224f213925515809462e77df8579d1200dbc2790a7f331289ca2abd3f6",
-  "mock_chooser_preparing": "eadea9385f2afdd0e9cedbe6170324cf4bd246ccb3ccebcb424fda8f29f0a751",
-  "mock_chooser_preparing_detail": "7d92d53136c494f11b73e67984747d69335ac65f713b39475b469fde43d495dc",
-  "mock_chooser_short_day": "32cb6ba1f34cd77f0180955dfe6c3cc497293edfa3bca860b4ff790c927702c1",
-  "mock_chooser_short_later_today": "868d451eebf70a4861a79f0eb9164e2bd460e2b940741e662d69b0486b506079",
-  "mock_chooser_short_line": "e9b3af4dc86c7eadf543a2be9a2e178db53e50478a987ead8d1dc0c95a6a7e63",
-  "mock_chooser_short_on": "0bf5b5219e2e987343bb9b732148fbbf3bba09e4ed6bda554343a1de07fdf9e4",
-  "mock_chooser_short_title": "f02c071adfc3964ea1d97a7436b102240a948aba8c86e8f33d683f43eeea9376",
   "mock_chooser_start": "ee7906007cd5c81a150120585285075bc941dc13a96f6a9d73c3ca49f91a97fb",
   "mock_chooser_the_exam": "85cf40d8f8361db536a1a7443c111ecc248340a4d15116862b055733902a9b4e",
   "mock_chooser_title": "56f98ea0682b7eb2f5bd97141da22af8de068fe8d56b8455420abd5074a9b84d",
-  "mock_chooser_usually": "05d79cf01e1e76f43af21c74c14cbc319b98d8294c669f6076e4f55b07afd4d7",
-  "mock_chooser_writing": "34be40bb733d1ad0e3d1f8fdab1865d555a439eed91d3670698a28f328531518",
-  "mock_chooser_writing_questions": "d8e614ed4e9dc274e491bb5879e1f46a2dfaee3ae2632367e97e34b69addc746",
-  "mock_chooser_writing_questions_line": "075fbc4b91a4971a77ed8e57b7a864949bdb9c1043723697785f3c751bec5c6f",
-  "mock_chooser_writing_written": "6278f1be5dc5c4fceb10618d7122661b1ef6f53d3a5597f7077c4353eaa4188d",
-  "mock_chooser_writing_written_detail": "dd13358ff0bdbc14b4d4f2b03658aae245f6f5f337c78e4979105419ceb41671",
-  "mock_chooser_writing_written_failed": "439d1f6b141b7a0bef0b3dfad623c83c2cb3bbf18135f2f91461d52a3e37e409"
+  "mock_chooser_usually": "05d79cf01e1e76f43af21c74c14cbc319b98d8294c669f6076e4f55b07afd4d7"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -45,12 +30,15 @@
     <string name="mock_chooser_one_subject">Uma matéria</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">A prova</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Sua prova tem %d prova</item>
+        <item quantity="many">Sua prova tem %d provas</item>
+        <item quantity="other">Sua prova tem %d provas</item>
+    </plurals>
     <string name="mock_chooser_objective_only">Mais curta, só com questões objetivas</string>
     <!-- The option that takes both tests of an exam of two tests. -->
     <string name="mock_chooser_both_tests">As duas provas</string>
-    <string name="mock_chooser_writing_written">Criando suas questões…</string>
-    <string name="mock_chooser_writing_written_detail">Questões como as da sua prova. Seu simulado começa quando elas estiverem prontas.</string>
-    <string name="mock_chooser_writing_written_failed">Não foi possível criar suas questões</string>
     <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
     <plurals name="mock_chooser_all_tests">
         <item quantity="one">Todas as %1$d provas</item>
@@ -75,31 +63,8 @@
         <item quantity="many">%1$d questões · %2$s</item>
         <item quantity="other">%1$d questões · %2$s</item>
     </plurals>
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <string name="mock_chooser_not_enough">Ainda não tem questões suficientes para este simulado. Escolha outro.</string>
     <string name="mock_chooser_failed">Não deu para começar o simulado. Tente de novo.</string>
-    <string name="mock_chooser_short_title">Começar um simulado mais curto?</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_day">Hoje, este simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer a versão completa amanhã.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
-    <string name="mock_chooser_short_later_today">Hoje, este simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer a versão completa mais tarde, ainda hoje.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Hoje, este simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer a versão completa em %4$s.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_line">Hoje, este simulado tem %1$s das %2$s questões e leva cerca de %3$s.</string>
-    <string name="mock_chooser_pick_another">Escolher outro</string>
-    <string name="mock_chooser_preparing">Preparando seu simulado</string>
-    <string name="mock_chooser_preparing_detail">A gente está criando perguntas parecidas com as da prova para você. O simulado começa aqui assim que elas estiverem prontas.</string>
-    <string name="mock_chooser_writing">Criando seu simulado</string>
-    <string name="mock_chooser_writing_questions">Criando perguntas parecidas com as da prova</string>
-    <string name="mock_chooser_writing_questions_line">Escolhendo o que perguntar em cada matéria…</string>
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">geralmente %1$s</string>
     <string name="mock_chooser_last_mock">Seu último simulado</string>
-    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
-    <plurals name="mock_chooser_exam_tests">
-        <item quantity="one">Sua prova tem %d prova</item>
-        <item quantity="many">Sua prova tem %d provas</item>
-        <item quantity="other">Sua prova tem %d provas</item>
-    </plurals>
 </resources>

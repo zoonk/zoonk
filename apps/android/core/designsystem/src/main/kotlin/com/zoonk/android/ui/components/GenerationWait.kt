@@ -178,6 +178,24 @@ fun rememberGenerationProgress(
     ).coerceAtLeast(startedShare(progress.phases.map { it.phase.seconds }))
 }
 
+/** Main's `GenerationTimelineProgress` on its own, for a note with no room for the phases; [share] from [rememberGenerationProgress]. */
+@Composable
+fun GenerationProgressBar(
+    kind: GenerationKind,
+    run: GenerationRun,
+    share: Float,
+    modifier: Modifier = Modifier,
+) {
+    val progress = kind.progress(run)
+    WaitProgress(
+        name = stringResource(kind.label),
+        share = share,
+        weights = progress.phases.map { it.phase.seconds },
+        statuses = progress.phases.map { it.status },
+        modifier = modifier,
+    )
+}
+
 /** A bar that has started shows a little fill, never past what its first step's part can hold while it runs. */
 private fun startedShare(weights: List<Int>): Float {
     val total = weights.sumOf { it.coerceAtLeast(0) }

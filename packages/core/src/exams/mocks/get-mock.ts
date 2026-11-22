@@ -18,7 +18,7 @@ import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
 import { loadSkillAreas } from "./_utils/mock-candidates";
-import { buildMockConditions } from "./_utils/mock-conditions";
+import { previewMockConditions } from "./_utils/mock-conditions";
 import { loadCurrentSection } from "./_utils/mock-current-section";
 import { loadMockEssayViews } from "./_utils/mock-essays";
 import { loadMockMissionMoment } from "./_utils/mock-mission-moment";
@@ -186,7 +186,9 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
 
   const { owned } = found;
   const { mock } = owned;
-  const conditions = mock?.conditions ?? (await buildMockConditions(owned));
+
+  const conditions = mock?.conditions ?? (await previewMockConditions(owned));
+
   const areas = owned.goal ? await loadSkillAreas(owned.goal.id) : new Map<string, string>();
   const running = mock?.status === "active" ? mock : null;
 

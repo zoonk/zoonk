@@ -16,6 +16,7 @@ export type StartChallengeResult =
   | Extract<StartStudyBlockResult, { status: "earlierFirst" }>
   | { status: "notToday" }
   | { status: "signUpRequired" }
+  | { status: "preparing" }
   | { status: "blockFinished" | "notFound" | "plusRequired" | "questionsNeeded" | "unauthorized" };
 
 type StartedBlock = { id: string; isMock: boolean; sessionId: string };
@@ -38,11 +39,7 @@ async function startBlock({
       return started;
     }
 
-    if (started.status === "notEnoughQuestions") {
-      return { status: "questionsNeeded" };
-    }
-
-    if (started.status === "ready" || started.status === "writing") {
+    if (started.status === "ready") {
       return { status: "ready" };
     }
 

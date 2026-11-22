@@ -14,6 +14,7 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.sessionId;
     case "settleSessionDay":
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;
+    case "prepareMockSupply":
     case "prepareGoalLessons":
     case "preparePlacementItems":
     case "rebuildGoalCurriculum":
@@ -85,20 +86,18 @@ function askFor({
   });
 }
 
+type FollowUpRequest = { db?: TransactionClient; followUps: readonly FollowUp[]; userId: string };
+
 /**
  * Pass the transaction that decides the write, so a rolled-back write owes nothing. The same work
  * still pending is asked again instead of added twice. `userId` must come from the capability that
  * authorized the write.
  */
-export async function oweFollowUps({
+export async function recordFollowUps({
   db = prisma,
   followUps,
   userId,
-}: {
-  db?: TransactionClient;
-  followUps: readonly FollowUp[];
-  userId: string;
-}): Promise<void> {
+}: FollowUpRequest): Promise<void> {
   if (followUps.length === 0) {
     return;
   }
@@ -106,6 +105,12 @@ export async function oweFollowUps({
   const requestedAt = new Date();
 
   await Promise.all(followUps.map((followUp) => askFor({ db, followUp, requestedAt, userId })));
+}
 
-  after(() => startFollowUps(userId));
+export async function oweFollowUps(request: FollowUpRequest): Promise<void> {
+  await recordFollowUps(request);
+
+  if (request.followUps.length > 0) {
+    after(() => startFollowUps(request.userId));
+  }
 }

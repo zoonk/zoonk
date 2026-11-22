@@ -1,13 +1,10 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
-import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import { findExamSpeakingSetup } from "../../../language/exam-speaking/_utils/exam-speaking-setup";
-import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { readExamPicks } from "../../choices/exam-choices";
 import { loadExamPicks } from "../../choices/load-exam-choices";
@@ -19,8 +16,10 @@ import { type MockTypedPart } from "../mock-left-out";
 import { type MockOption, findMockOption, listMockOptions } from "../mock-options";
 import { type MockCandidate } from "../mock-plan";
 import { type MockSizeSource } from "../mock-view-contract";
+import { type MockEssayCandidate } from "../written-parts";
 import { loadSkillAreas } from "./mock-candidates";
-import { loadListeningCandidates } from "./mock-listening";
+import { loadMockEssays } from "./mock-essays";
+import { type MockListening, loadListeningCandidates } from "./mock-listening";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
 import { withMockWritingAvailability } from "./mock-writing-choices";
@@ -29,39 +28,25 @@ import { readMockSizeSource, readMockStructure, readUnpickedChoices } from "./re
 
 export type AnytimeMockSetup = {
   blueprint: ExamBlueprint | null;
+  /** The written prompts the learner has not seen yet. */
+  essays: MockEssayCandidate[];
   examName: string;
   goalAreas: string[];
   listening: ReadonlyMap<string, readonly MockCandidate[]>;
   unvoiced: ReadonlySet<string>;
+  missingParts: MockListening["missingParts"];
   options: MockOption[];
   sizeSource: MockSizeSource;
   speaking: boolean;
   structure: ExamStructure | null;
 };
 
-async function canBuildMock({
-  blueprint,
-  skillIds,
-}: {
-  blueprint: ExamBlueprint | null;
-  skillIds: readonly string[];
-}): Promise<boolean> {
-  if (blueprint) {
-    return true;
-  }
-
-  const questions = await prisma.item.count({
-    where: {
-      format: { in: [...GRADABLE_ITEM_FORMATS] },
-      skillId: { in: [...skillIds] },
-      ...getItemAudienceFilter({}),
-    },
-  });
-
-  return questions >= MIN_CHECKPOINT_QUESTIONS;
-}
-
-type AnytimeMockPage = { plan: Promise<SavedPlan | null>; typed: Promise<MockTypedPart[]> };
+type AnytimeMockPage = {
+  now?: Date;
+  essays: Promise<MockEssayCandidate[]>;
+  plan: Promise<SavedPlan | null>;
+  typed: Promise<MockTypedPart[]>;
+};
 
 export async function loadAnytimeMockSetup(
   goal: Goal,
@@ -70,18 +55,19 @@ export async function loadAnytimeMockSetup(
 ): Promise<AnytimeMockSetup> {
   const plan = page ? await page.plan : undefined;
 
-  const [blueprint, areas, pace, picks, typed, speaking] = await Promise.all([
+  const [blueprint, areas, pace, essays, picks, typed, speaking] = await Promise.all([
     knownBlueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : (knownBlueprint ?? null),
     loadSkillAreas(goal.id, plan ?? undefined),
     loadMockPace(goal.examBlueprintId),
+    page?.essays ?? loadMockEssays({ goal, userId: goal.userId }),
     plan === undefined ? loadExamPicks(goal.id) : readExamPicks(plan?.settings),
     page?.typed ?? loadBankTypedParts(goal.examBlueprintId),
     findExamSpeakingSetup({ goalId: goal.id, userId: goal.userId }),
   ]);
 
-  const buildable = await canBuildMock({ blueprint, skillIds: [...areas.keys()] });
+  const buildable = blueprint !== null || areas.size > 0;
 
   const notice = blueprint ? readBlueprintContent(blueprint).structure : null;
 
@@ -89,9 +75,10 @@ export async function loadAnytimeMockSetup(
     ? readMockStructure({ blueprint, includePendingWriting: true, picks })
     : null;
 
-  const { recordings, unvoiced } = await loadListeningCandidates({
+  const { recordings, unvoiced, missingParts } = await loadListeningCandidates({
     goalId: goal.id,
     mix: getMockFormatMix(structure),
+    now: page?.now,
     userId: goal.userId,
   });
 
@@ -99,9 +86,11 @@ export async function loadAnytimeMockSetup(
 
   return {
     blueprint,
+    essays,
     examName: getExamName({ blueprint, goal }),
     goalAreas,
     listening: recordings,
+    missingParts,
     options: buildable
       ? listMockOptions({
           goalAreas,
@@ -124,7 +113,7 @@ export function listMissingRecordings({
   option,
   setup,
 }: {
-  option: MockOption;
+  option: Pick<MockOption, "kind" | "day">;
   setup: AnytimeMockSetup;
 }): string[] {
   if ((option.kind !== "full" && option.kind !== "half") || setup.unvoiced.size === 0) {

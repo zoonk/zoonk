@@ -2,12 +2,16 @@
 
 export type AnswerOptionResult = "guess" | "right" | "wrong";
 
+/* Forced colors drop the tint and the ring, so a pick or a verdict keeps an outline there. */
+const FORCED_OUTLINE =
+  "forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-solid";
+
 export const ANSWER_TONE = {
-  guess: "ring-foreground/40 ring-[1.5px] ring-inset",
+  guess: `ring-foreground/40 ring-[1.5px] ring-inset ${FORCED_OUTLINE}`,
   idle: "ring-input ring-1 ring-inset",
-  picked: "bg-selected-tint contrast-more:ring-input ring-1 ring-transparent ring-inset",
-  right: "bg-success/9 ring-success ring-[1.5px] ring-inset",
-  wrong: "bg-destructive/9 ring-destructive ring-[1.5px] ring-inset",
+  picked: `bg-selected-tint contrast-more:ring-input ring-1 ring-transparent ring-inset ${FORCED_OUTLINE}`,
+  right: `bg-success/9 ring-success ring-[1.5px] ring-inset ${FORCED_OUTLINE}`,
+  wrong: `bg-destructive/9 ring-destructive ring-[1.5px] ring-inset ${FORCED_OUTLINE}`,
 } as const;
 
 export const ANSWER_TAG_TONE: Record<AnswerOptionResult, string> = {

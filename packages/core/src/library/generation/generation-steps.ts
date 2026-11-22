@@ -68,16 +68,6 @@ export type TestOutQuestionsStepName = (typeof TEST_OUT_QUESTIONS_STEPS)[number]
 
 export const TEST_OUT_QUESTIONS_READY_STEP: TestOutQuestionsStepName = "testOutQuestionsReady";
 
-const MOCK_QUESTIONS_STEPS = [
-  "joinMockQuestions",
-  "writeMockQuestions",
-  "mockQuestionsReady",
-] as const;
-
-export type MockQuestionsStepName = (typeof MOCK_QUESTIONS_STEPS)[number];
-
-export const MOCK_QUESTIONS_READY_STEP: MockQuestionsStepName = "mockQuestionsReady";
-
 export const WRITING_PROMPT_KIND = "writingPrompt";
 
 export const WRITING_PROMPT_STEPS = ["ready", "signUpRequired", "writeWritingPrompt"] as const;
@@ -122,6 +112,17 @@ const CALL_WRITING_STEPS = ["joinRunningCall", "writeCall", "callReady"] as cons
 export type CallWritingStepName = (typeof CALL_WRITING_STEPS)[number];
 
 export const CALL_READY_STEP: CallWritingStepName = "callReady";
+
+const MOCK_PAPER_STEPS = [
+  "writeMockTexts",
+  "writeMockQuestions",
+  "recordMockListening",
+  "mockPaperReady",
+] as const;
+
+export type MockPaperStepName = (typeof MOCK_PAPER_STEPS)[number];
+
+export const MOCK_PAPER_READY_STEP: MockPaperStepName = "mockPaperReady";
 
 const SETUP_LESSON_STEPS = ["joinSetupLessons", "writeSetupLessons", "setupLessonsReady"] as const;
 

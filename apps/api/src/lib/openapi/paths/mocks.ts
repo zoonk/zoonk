@@ -1,7 +1,6 @@
 import {
   anytimeMockInputSchema,
   mockPlanOfferInputSchema,
-  mockQuestionsInputSchema,
   mockTimeZoneInputSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { z } from "zod";
@@ -14,7 +13,8 @@ import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
-  mockQuestionsGenerationSchema,
+  mockWritingQuerySchema,
+  mockWritingSchema,
 } from "../schemas/mocks";
 import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import { planChangedWhileSavingResponse } from "../schemas/plan-errors";
@@ -23,7 +23,6 @@ import {
   forbiddenResponse,
   notFoundResponse,
   paymentRequiredResponse,
-  tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -39,10 +38,28 @@ const commonErrors = {
 };
 
 export const mockPaths = {
+  "/goals/{goalId}/mock-writing": {
+    get: {
+      description:
+        "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A supply run can write several papers. Each paper has its own stream namespace, whether supply started in the background or after a learner asked to start. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
+      operationId: "getMockWriting",
+      requestParams: { path: goalPathParamsSchema, query: mockWritingQuerySchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: mockWritingSchema } },
+          description: "Whether a run is writing the paper",
+        },
+        ...commonErrors,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get the run writing a mock's questions",
+      tags: TAGS,
+    },
+  },
   "/goals/{goalId}/mocks": {
     get: {
       description:
-        "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
+        "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; the last requested option and whether it is ready to start; and the diagnostic mock offered during onboarding.",
       operationId: "listMocks",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -59,7 +76,7 @@ export const mockPaths = {
     },
     post: {
       description:
-        "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`); `acceptFewer` starts it with those once the learner agreed, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "Starts the full requested option or resumes the running sitting. While a part needs questions, the request is saved and the clock stays stopped. The first ten on-demand sittings in a rolling 30 days use unseen questions. Later sittings may include questions last seen in earlier mocks, oldest first.",
       operationId: "startAnytimeMock",
       requestBody: {
         content: { "application/json": { schema: anytimeMockInputSchema } },
@@ -88,7 +105,7 @@ export const mockPaths = {
         },
         "422": {
           ...unprocessableEntityResponse,
-          description: "Not an exam, not one of its mocks, or too few questions for one",
+          description: "The goal is not an exam or does not offer the requested option",
         },
         "429": {
           content: {
@@ -112,47 +129,6 @@ export const mockPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Take a mock now",
-      tags: TAGS,
-    },
-  },
-  "/goals/{goalId}/mocks/generations": {
-    post: {
-      description:
-        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. When today's extra writing allowance is used, the latter includes `details.returnsOn` and no written prompts are started.",
-      operationId: "createMockQuestionsGeneration",
-      requestBody: {
-        content: { "application/json": { schema: mockQuestionsInputSchema } },
-        required: true,
-      },
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
-          description:
-            "The mock can start (the bank holds its questions, or fair use for new ones is used for now), or the skill map isn't ready yet",
-        },
-        "202": {
-          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
-          description: "A run is writing the questions",
-          headers: z.object({
-            Location: z
-              .string()
-              .meta({ description: "The run's status URL: GET /generations/{generationId}" }),
-          }),
-        },
-        ...commonErrors,
-        "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
-        "403": forbiddenResponse,
-        "409": {
-          ...conflictResponse,
-          description:
-            "The written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
-        },
-        "422": unprocessableEntityResponse,
-        "429": tooManyRequestsResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Write a mock's questions",
       tags: TAGS,
     },
   },
@@ -240,37 +216,6 @@ export const mockPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change the plan from a mock",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/starts": {
-    post: {
-      description:
-        "Starts the mock when the learner takes it on (or resumes it): its session block starts, the sections are fixed and the first section's clock starts. The plan's mock whose time ran out while the learner was away starts again in a new sitting; one taken any time stays expired (`MOCK_EXPIRED`): start a new one from the goal's mocks.",
-      operationId: "startMock",
-      requestBody: {
-        content: { "application/json": { schema: mockTimeZoneInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockPathParamsSchema },
-      responses: {
-        "202": {
-          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
-          description: "The written prompts are being prepared",
-        },
-        "204": { description: "Running" },
-        ...commonErrors,
-        "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
-        "409": {
-          ...conflictResponse,
-          description:
-            "The mock or its block finished, the mock expired, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
-        },
-        "422": unprocessableEntityResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Start a mock exam",
       tags: TAGS,
     },
   },

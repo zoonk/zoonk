@@ -48,6 +48,10 @@
   "mock_not_sure_tip_forward_only": "5899829b3232d60469c8b3bc1e2a79c3309d2f2c198f13119637a82203fecc3b",
   "mock_place": "4b5b7e09a78303ddca94df9a847bf54afa007747d930b3e25c42a920982778fa",
   "mock_points_of": "a13acef34ba69cf00f2c398bba677991350a4153ca10805e4427785b3d3de4ff",
+  "mock_preparing_chooser_title": "42d8a5697a3f6856e5e2667b068b785f81c36793bfab8407a0ed3d9876140d6e",
+  "mock_preparing_keep_studying": "4efb31e32bd801a8117ab4bca6d4074201abea3037d432ed176f42a4213676d7",
+  "mock_preparing_line": "0862d52722ad8b6f95bc398c21928e188820ba3a1ec37a752535dc76facea226",
+  "mock_preparing_title": "e5a516da0b1bc23b65e0aea09e44d3128ca72c280950ea4ab0e257726e8fb745",
   "mock_progress_label": "f82abb3130af1c21a87114a645b19ac71208f9c6dacfdaa5cd25a3455b917ca2",
   "mock_question_number": "46a502360822873bd86041f53cd891361896cf2fec14edd6b48c0269d87d1eab",
   "mock_question_place": "d323b81c9b59356522db78746209c68afa573c08b48b5b150882985c2bea4a50",
@@ -93,6 +97,11 @@
   "mock_try_again": "8e451b19b31422e3c68cf25c2178008e6a382c400a5b6ed561dc0e98a73343c7",
   "mock_unsure_count": "8b5d57131a826e102df20c33576c3052c82d5e2e18a693718bad4ed030839347",
   "mock_words": "43cb4068a9544f3d72f790e638c502d1828d1b86e4806c87964d672de5bfac9a",
+  "mock_writing_done": "814d62388e99d85f8fcadb0ee768f02f755d47466dd6a09c8a06badfd11a06f5",
+  "mock_writing_listening": "1198bfdb9f70abe73283cdb759819daacf02f2f29a6175c5491af9d4430ab82d",
+  "mock_writing_questions": "da703e19aa951dabbf8dd8853e07229fefe8ec3e32c011b9a406069e5125acc4",
+  "mock_writing_texts": "029799403fe3d8e0b71f7327bcfad0a03c95c420f42bfa57bb00b21b9ce7dfd5",
+  "mock_writing_time_left": "b2316f2ab4b24552f0971b7a26f0e57cf48721c4cadd5c1f2b908e0817a812a8",
   "mock_written_part": "d196438ea20f94b45d2f9805f8c98fcbcccb3bcb5dd38dd8144a801edbe2c607",
   "mock_written_part_area": "776f3ec7232d13e89256437497dc23d49d65a49a112494e884770df52bc01bff",
   "mock_written_question_blank": "8f60bffdba1ade2fd5efb1060f68149eeb888f485af31fc3ab3bda709ac0ae17",
@@ -282,4 +291,16 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Você concluiu todas as tarefas. Depois de entregar, não dá para fazer elas de novo neste simulado.</string>
     <string name="mock_keep_going">Continuar</string>
+    <string name="mock_preparing_title">Preparando seu simulado</string>
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away. -->
+    <string name="mock_preparing_chooser_title">Preparando este simulado</string>
+    <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
+    <string name="mock_preparing_line">Volte a esta página para começar.</string>
+    <string name="mock_preparing_keep_studying">Continuar estudando</string>
+    <!-- A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about. -->
+    <string name="mock_writing_texts">Criando os textos</string>
+    <string name="mock_writing_questions">Criando as questões</string>
+    <string name="mock_writing_listening">Gravando a parte de escuta</string>
+    <string name="mock_writing_time_left">Cerca de %1$s para terminar</string>
+    <string name="mock_writing_done">Concluído</string>
 </resources>

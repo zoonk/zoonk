@@ -143,7 +143,13 @@ export async function createFormatsExamGoal(userId: string) {
   });
 
   const item = (content: object, format: "multipleChoice" | "numeric" | "typed") =>
-    itemFixture({ content, examBlueprintId: blueprint.id, format, skillId: skill.id });
+    itemFixture({
+      content,
+      examBlueprintId: blueprint.id,
+      format,
+      mockOnly: true,
+      skillId: skill.id,
+    });
 
   const [picks, number, word] = await Promise.all([
     item(SEVERAL_PICKS, "multipleChoice"),

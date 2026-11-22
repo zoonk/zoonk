@@ -8,6 +8,7 @@ struct ChallengeScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
+  @Environment(ExamStore.self) private var exam
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var currentPlanItemId: String?
@@ -16,7 +17,9 @@ struct ChallengeScreen: View {
   @State private var isStartSlow = false
   @State private var isWriting = false
   @State private var writeLimit: HelpLimit?
+  @State private var pendingExamChoice: [String]?
   @State private var startProblem: LocalizedStringResource?
+  @State private var startFoundPreparing = false
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
   @State private var moved: Moved?
@@ -84,7 +87,7 @@ struct ChallengeScreen: View {
     // played, as on main.
     let won = isCheckpoint(challenge) && challenge.status == .done
 
-    return PracticeTaskLayout {
+    return PracticeTaskLayout(note: startNote(challenge)) {
       if isTrickster(challenge) {
         TricksterCharacter(beaten: won, reacts: !won)
           .frame(width: 112, height: 112)
@@ -227,6 +230,36 @@ struct ChallengeScreen: View {
     return Text(titleString(challenge))
   }
 
+  /// The choice a start needs, or the run writing the paper, over the bar as on the chooser.
+  private func startNote(_ challenge: Components.Schemas.Challenge) -> BarNote? {
+    if let pendingExamChoice {
+      return BarNote(
+        WritingLabels.choiceLine(pendingExamChoice), tone: .status,
+        action: .init(
+          label: Text("Choose on Today", tableName: "Mock"),
+          perform: {
+            dismiss()
+            hooks.navigate(.today)
+          }))
+    }
+
+    guard !isLocked(challenge), isPreparing(challenge) else { return nil }
+
+    return BarNote {
+      MockPreparingNote(
+        title: MockPreparing.title, goalID: challenge.goalId, surface: "scheduledMock",
+        read: { [exam, itemId] in
+          await exam.mockWriting(goalId: challenge.goalId, planItemId: itemId)
+        },
+        written: {
+          startFoundPreparing = false
+          await read()
+          return true
+        }
+      )
+    }
+  }
+
   @ViewBuilder
   private func actions(_ challenge: Components.Schemas.Challenge) -> some View {
     if isLocked(challenge) {
@@ -255,6 +288,21 @@ struct ChallengeScreen: View {
             ? .mock(blockId: blockId, sessionId: sessionId)
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
+    } else if isPreparing(challenge) {
+      PracticeActionRow {
+        if challenge.canMove, moved == nil {
+          PracticeSecondaryButton(
+            title: LocalizedStringResource(
+              "Move to Monday", table: "Practice",
+              comment: "Moves the weekly challenge to next Monday."),
+            icon: .setDate, isBusy: isMoving
+          ) { run { await move() } }
+        }
+
+        PracticeMainButton(title: MockPreparing.keepStudying, icon: .forward) {
+          dismiss()
+        }
+      }
     } else if canStart(challenge) {
       // The gate takes the buttons' place until its day has come, then they take it back.
       OpeningClock(availableAt: writeLimit?.availableAt) { now in
@@ -282,7 +330,7 @@ struct ChallengeScreen: View {
                 : LocalizedStringResource(
                   "Start", table: "Practice", comment: "Starts a challenge."),
               icon: .play, isBusy: isStarting || isWriting,
-              isDisabled: isMoving
+              isDisabled: isMoving || pendingExamChoice != nil
             ) { run { await start(afterWriting: false) } }
           }
         }
@@ -301,6 +349,11 @@ struct ChallengeScreen: View {
         ) { run { await move() } }
       }
     }
+  }
+
+  private func isPreparing(_ challenge: Components.Schemas.Challenge) -> Bool {
+    pendingExamChoice == nil && writeLimit == nil && canStart(challenge)
+      && (challenge.access == .preparing || startFoundPreparing)
   }
 
   private func canStart(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -649,6 +702,7 @@ struct ChallengeScreen: View {
     isStarting = true
     startProblem = nil
     writeLimit = nil
+    pendingExamChoice = nil
     defer { isStarting = false }
 
     let planItemId = itemId
@@ -658,7 +712,9 @@ struct ChallengeScreen: View {
     }
 
     switch started {
-    case .done(let start):
+    case .done(nil):
+      startFoundPreparing = true
+    case .done(let start?):
       // Closed while the start was answered: nothing opens behind the learner.
       guard !Task.isCancelled else { return }
       dismiss()
@@ -670,6 +726,10 @@ struct ChallengeScreen: View {
       }
     case .refused(.conflict(let code)) where code == "QUESTIONS_NEEDED" && !afterWriting:
       await writeThenStart()
+    case .refused(.needsExamChoice(let groups)):
+      pendingExamChoice = groups
+    case .refused(.limit(let limit)):
+      writeLimit = limit
     case .refused:
       // Plus, today's study time or the day changed since the intro opened: read it again.
       await read()

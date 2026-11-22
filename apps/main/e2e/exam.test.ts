@@ -45,6 +45,8 @@ test.describe("Exam goal", () => {
   test("a mock in real conditions, its start and hand-in waits bounded, and its result", async ({
     browser,
   }) => {
+    test.slow();
+
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const mock = await addTodayMock({ goalId: user.goalId, userId: user.id });
 

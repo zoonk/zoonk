@@ -76,7 +76,7 @@ async function areaSetup() {
     }),
     ...taught.flatMap((skill) =>
       Array.from({ length: QUESTIONS_PER_SKILL }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: skill?.id ?? "" }),
+        itemFixture({ content: choiceItemContent(), mockOnly: true, skillId: skill?.id ?? "" }),
       ),
     ),
   ]);

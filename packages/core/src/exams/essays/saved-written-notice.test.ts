@@ -389,11 +389,8 @@ describe("written preparation for the saved CGU notice", () => {
       });
 
       await expect(
-        startAnytimeMock({
-          goalId: goal.id,
-          input: { acceptFewer: true, afterWriting: true, shape: WRITTEN },
-        }),
-      ).resolves.toMatchObject(choice ? { status: "needsQuestions" } : NEEDS_CHOICE);
+        startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
+      ).resolves.toMatchObject(choice ? { status: "preparing" } : NEEDS_CHOICE);
     },
   );
 

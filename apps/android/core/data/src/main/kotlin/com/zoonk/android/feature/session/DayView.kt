@@ -133,12 +133,14 @@ data class DayStep(
     val writingTask: WritingTaskName? = null,
     /** A short writing task on what a lesson just taught, rather than a whole answer. */
     val drill: Boolean = false,
+    val preparing: Boolean = false,
+    val mockPreparationReview: Boolean = false,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
 
     val canOpen: Boolean
-        get() = !isFinished && waitReason == null
+        get() = !isFinished && waitReason == null && !preparing
 
     /**
      * A finished lesson opens again on its own, outside the session. A skipped one comes back in the
@@ -343,6 +345,8 @@ fun StudyBlock.toDayStep(): DayStep =
         writingReturnsOn = writingAvailability?.returnsOn(),
         writingTask = writingTask?.toName(),
         drill = writingUnit == StudyBlock.WritingUnit.DRILL,
+        preparing = preparing,
+        mockPreparationReview = mockPreparationReview == true,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -381,6 +385,8 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         writingReturnsOn = writingAvailability?.returnsOn(),
         writingTask = writingTask?.toName(),
         drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
+        preparing = preparing,
+        mockPreparationReview = mockPreparationReview == true,
     )
 
 fun StudyMission.toDayMission(): DayMission =

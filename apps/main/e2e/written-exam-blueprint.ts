@@ -29,77 +29,92 @@ export function task(key: "long" | "short") {
   return { count: 1, description, grading: GRADING, key, lines, points };
 }
 
-export const STRUCTURE = {
-  formats: [],
-  mock: {
-    adaptive: false,
-    citations: [],
-    order: null,
-    scoring: {
-      description: "Two tests, each worth half of the final score.",
-      finalShares: [
-        { citation: CITATION, parts: ["Objective test"], share: 0.5 },
-        { citation: CITATION, parts: ["Written test"], share: 0.5 },
-      ],
-      method: "wrongCancelsRight",
-      parts: [
+export const WRITTEN_SPECIALTY = "Specialty";
+const SPECIALTIES = ["Systems", "Accounting"];
+
+export function getWrittenExamStructure({ specialty }: { specialty: boolean }) {
+  return {
+    formats: [],
+    mock: {
+      adaptive: false,
+      citations: [],
+      order: null,
+      scoring: {
+        description: "Two tests, each worth half of the final score.",
+        finalShares: [
+          { citation: CITATION, parts: ["Objective test"], share: 0.5 },
+          { citation: CITATION, parts: ["Written test"], share: 0.5 },
+        ],
+        method: "wrongCancelsRight",
+        parts: [
+          {
+            citation: CITATION,
+            maxPoints: 100,
+            minimum: null,
+            name: "Objective test",
+            qualifying: false,
+            questions: 170,
+          },
+          {
+            citation: CITATION,
+            maxPoints: 100,
+            minimum: { unit: "points", value: 50 },
+            name: "Written test",
+            qualifying: false,
+            questions: null,
+          },
+        ],
+      },
+      sections: [
         {
-          citation: CITATION,
-          maxPoints: 100,
-          minimum: null,
+          day: null,
+          kind: "objective",
+          minutes: 300,
           name: "Objective test",
-          qualifying: false,
           questions: 170,
+          session: "Morning",
         },
         {
-          citation: CITATION,
-          maxPoints: 100,
-          minimum: { unit: "points", value: 50 },
+          day: null,
+          kind: "written",
+          minutes: 210,
           name: "Written test",
-          qualifying: false,
           questions: null,
+          session: "Afternoon",
+          tasks: [task("short"), { ...task("long"), ...(specialty && { subjects: SPECIALTIES }) }],
         },
       ],
+      timeLimitMinutes: 510,
+      totalQuestions: 170,
     },
-    sections: [
+    rules: [],
+    subjects: [
       {
-        day: null,
-        kind: "objective",
-        minutes: 300,
-        name: "Objective test",
+        citation: CITATION,
+        group: "Objective test",
+        name: "Public administration",
         questions: 170,
-        session: "Morning",
+        topics: [],
+        weight: null,
       },
       {
-        day: null,
-        kind: "written",
-        minutes: 210,
+        citation: CITATION,
+        group: "Written test",
         name: "Written test",
         questions: null,
-        session: "Afternoon",
-        tasks: [task("short"), task("long")],
+        topics: [],
+        weight: null,
       },
+      ...(specialty
+        ? SPECIALTIES.map((name) => ({
+            choiceGroup: WRITTEN_SPECIALTY,
+            citation: CITATION,
+            name,
+            questions: null,
+            topics: [],
+            weight: null,
+          }))
+        : []),
     ],
-    timeLimitMinutes: 510,
-    totalQuestions: 170,
-  },
-  rules: [],
-  subjects: [
-    {
-      citation: CITATION,
-      group: "Objective test",
-      name: "Public administration",
-      questions: 170,
-      topics: [],
-      weight: null,
-    },
-    {
-      citation: CITATION,
-      group: "Written test",
-      name: "Written test",
-      questions: null,
-      topics: [],
-      weight: null,
-    },
-  ],
-};
+  };
+}

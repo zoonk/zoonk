@@ -20,9 +20,11 @@ import { getGoalPlan } from "../../plans/get-goal-plan";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import { listListeningParts } from "../listening/listening-parts";
+import { CGU_WRITTEN_GRADING } from "./_test-utils/cgu-written";
 import { getMock } from "./get-mock";
 import { mockConditionsSchema } from "./mock-contract";
 import { getMockClock } from "./mock-plan";
+import { listMockPrepWrites } from "./prepare-mock-questions";
 import { startMock } from "./start-mock";
 
 const START = "2020-09-28";
@@ -248,18 +250,67 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("keeps 60 minutes when only the first of two objective sections has six questions", async () => {
+  it("keeps a short 60-minute mock preparing and offers the next available study block", async () => {
     const fixture = await setup({ structure: TWO_OBJECTIVE });
 
     await Promise.all(
       Array.from({ length: 6 }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: fixture.library.skills[0]?.id ?? "" }),
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: fixture.goal.examBlueprintId,
+          mockOnly: true,
+          skillId: fixture.library.skills[0]?.id ?? "",
+        }),
       ),
     );
 
-    const conditions = await assertScheduledClock({ ...fixture, minutes: 60, questions: 6 });
-    expect(conditions.sections).toHaveLength(1);
-    expect(conditions.sections[0]).toMatchObject({ minutes: 60, name: "Math", questions: 6 });
+    await itemFixture({
+      content: choiceItemContent(),
+      examBlueprintId: fixture.goal.examBlueprintId,
+      skillId: fixture.library.skills[0]!.id,
+    });
+
+    vi.setSystemTime(new Date(`${fixture.date}T12:00:00Z`));
+    const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+
+    if (today.status !== "ready") {
+      throw new Error(today.status);
+    }
+
+    const block = today.today.session.blocks.find((b) => b.checkpoint?.mock);
+
+    if (!block) {
+      throw new Error("Expected scheduled block");
+    }
+
+    expect.soft(block).toMatchObject({ preparing: true });
+
+    const next = today.today.session.blocks.find(
+      (entry) => entry.position === today.today.session.nextPosition,
+    );
+
+    expect.soft(next).toMatchObject({ kind: "practice", questions: 1, status: "pending" });
+    expect.soft(today.today.session.nextBlockId).not.toBe(block.id);
+
+    await expect(
+      getChallenge({ input: {}, planItemId: block.planItemId ?? "" }),
+    ).resolves.toMatchObject({ challenge: { access: "preparing" } });
+
+    expect(today.today.weeklyChallenge).toMatchObject({
+      access: "preparing",
+      questions: 40,
+      timeLimitMinutes: 60,
+    });
+
+    await expect(startMock({ blockId: block.id, input: {} })).resolves.toStrictEqual({
+      status: "preparing",
+    });
+
+    await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.studySessionBlock.findUnique({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ startedAt: null });
   });
 
   it("loads real voiced listening recordings in a scheduled 90-minute full mock", async () => {
@@ -280,6 +331,7 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
           content: { ...listeningContent(), task: part.task },
           examBlueprintId: blueprint.id,
           mediaAssetId: media.id,
+          mockOnly: true,
         });
 
         await Promise.all(
@@ -287,6 +339,7 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
             itemFixture({
               content: choiceItemContent(),
               examBlueprintId: blueprint.id,
+              mockOnly: true,
               setId: set.id,
               setPosition,
               skillId: fixture.library.skills[1]?.id ?? "",
@@ -299,15 +352,20 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     );
 
     await Promise.all(
-      Array.from({ length: 6 }, () =>
-        itemFixture({ content: choiceItemContent(), examBlueprintId: blueprint.id, skillId }),
+      Array.from({ length: 40 }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          mockOnly: true,
+          skillId,
+        }),
       ),
     );
 
-    const conditions = await assertScheduledClock({ ...fixture, minutes: 90, questions: 10 });
+    const conditions = await assertScheduledClock({ ...fixture, minutes: 90, questions: 44 });
 
     expect.soft(conditions.sections).toMatchObject([
-      { minutes: 60, name: "Reading", questions: 6 },
+      { minutes: 60, name: "Reading", questions: 40 },
       { kind: "listening", minutes: 30, name: "Listening", questions: 4 },
     ]);
 
@@ -326,7 +384,21 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
         ...TWO_OBJECTIVE.mock,
         sections: [
           { day: 1, kind: "objective", minutes: 60, name: "Math", questions: 40 },
-          { day: 1, kind: "written", minutes: 30, name: "Writing", questions: null },
+          {
+            day: 1,
+            kind: "written",
+            minutes: 30,
+            name: "Writing",
+            questions: null,
+            tasks: [
+              {
+                count: 1,
+                description: "Explain the rule",
+                grading: CGU_WRITTEN_GRADING,
+                key: "rule",
+              },
+            ],
+          },
         ],
         timeLimitMinutes: 90,
         totalQuestions: 40,
@@ -336,8 +408,13 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     const fixture = await setup({ fullLength: true, structure });
 
     await Promise.all(
-      Array.from({ length: 6 }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: fixture.library.skills[0]?.id ?? "" }),
+      Array.from({ length: 40 }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: fixture.goal.examBlueprintId,
+          mockOnly: true,
+          skillId: fixture.library.skills[0]?.id ?? "",
+        }),
       ),
     );
 
@@ -354,12 +431,101 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
       throw new Error("Expected the scheduled mock block");
     }
 
-    await expect(getMock(block.id)).resolves.toMatchObject({ mock: { minutes: 90, questions: 6 } });
+    expect(block).toMatchObject({ preparing: true });
+
+    await expect(getMock(block.id)).resolves.toMatchObject({
+      mock: {
+        minutes: 90,
+        questions: 40,
+        sections: [
+          { essays: 0, questions: 40 },
+          { essays: 1, minutes: 30, questions: 0 },
+        ],
+      },
+    });
 
     await expect(
-      startMock({ blockId: block.id, input: { timeZone: "UTC" } }),
-    ).resolves.toMatchObject({ requests: [{ count: 1, unit: "answer" }], status: "writing" });
+      getChallenge({ input: {}, planItemId: fixture.planItemId }),
+    ).resolves.toMatchObject({
+      challenge: {
+        access: "preparing",
+        fullLength: true,
+        written: [{ asked: true, minutes: 30, name: "Writing" }],
+      },
+    });
 
+    const paper = new Date(fixture.date).toISOString();
+    const start = () => startMock({ blockId: block.id, input: { timeZone: "UTC" } });
+
+    await expect(start()).resolves.toStrictEqual({ status: "preparing" });
     await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.followUp.findFirst({ where: { key: fixture.goal.id, kind: "prepareMockSupply" } }),
+    ).resolves.toMatchObject({ input: { later: false, paper } });
+
+    await expect(
+      listMockPrepWrites({ goalId: fixture.goal.id, only: paper, priority: paper }),
+    ).resolves.toMatchObject({
+      papers: [
+        {
+          key: paper,
+          writes: [],
+          writing: [
+            {
+              count: 1,
+              goalId: fixture.goal.id,
+              taskKey: "rule",
+              unit: "answer",
+              userId: fixture.goal.userId,
+            },
+          ],
+        },
+      ],
+    });
+
+    const skillId = fixture.library.skills[0]!.id;
+
+    const essay = await itemFixture({
+      content: {
+        context: null,
+        keyPoints: ["Apply the rule"],
+        question: "Explain the rule.",
+        rubric: [{ criterion: "Application", description: "Apply the rule.", points: null }],
+        sampleOutline: "Rule then facts",
+        writing: {
+          aspects: [],
+          assessedSkillIds: [skillId],
+          charactersPerLine: 55,
+          criteria: [],
+          grading: CGU_WRITTEN_GRADING,
+          keySource: "practiceKey",
+          lines: null,
+          minimumWords: 1,
+          points: null,
+          taskKey: "rule",
+          title: "Explain the rule",
+          unit: "answer",
+        },
+      },
+      examBlueprintId: fixture.goal.examBlueprintId,
+      format: "essay",
+      skillId,
+    });
+
+    await expect(start()).resolves.toStrictEqual({ status: "ready" });
+
+    await expect(
+      prisma.writingAdmission.findMany({ where: { userId: fixture.goal.userId } }),
+    ).resolves.toMatchObject([{ extra: false, itemIds: [essay.id] }]);
+
+    await expect(
+      prisma.mockExam.findUnique({ where: { blockId: block.id } }),
+    ).resolves.toMatchObject({
+      conditions: {
+        sections: [{ questions: 40 }, { essays: [essay.id], minutes: 30, questions: 0 }],
+        writtenParts: [{ tasks: [{ itemIds: [essay.id], key: "rule" }] }],
+      },
+    });
   });
 });

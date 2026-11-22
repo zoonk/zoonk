@@ -97,8 +97,8 @@ fun AnswerOption(
                 { AnswerTag(picked, result, guessed = guessed) }
             }
 
-            picked && role != Role.Button -> {
-                { PickedTag(guessed) }
+            picked && guessed && role != Role.Button -> {
+                { GuessTag() }
             }
 
             else -> {
@@ -122,9 +122,7 @@ fun AnswerOption(
                     },
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(optionStyle, content) },
-        // An option the learner can pick holds the room of the tag a pick or a check brings, so nothing moves when it comes.
-        tag = shownTag ?: { if (role != Role.Button) Box(Modifier.alpha(0f).clearAndSetSemantics {}) { PickedTag(guessed) } },
-        tagReserved = shownTag == null,
+        tag = shownTag ?: {},
         leading =
             if (key ==
                 AnswerKey.None
@@ -208,7 +206,6 @@ fun TagBesideOrUnder(
     modifier: Modifier,
     content: @Composable () -> Unit,
     tag: @Composable () -> Unit,
-    tagReserved: Boolean = false,
     leading: (@Composable () -> Unit)? = null,
     leadingAtTop: Boolean = false,
     readingContent: (@Composable () -> Unit)? = null,
@@ -264,9 +261,7 @@ fun TagBesideOrUnder(
                 } else {
                     text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth
                 }
-        // A tag that isn't there yet holds its room only under the words; beside them it would narrow every option for nothing.
-        val reservedBeside = tagReserved && beside
-        val wordsWidth = if (beside && tagPlaceable != null && !reservedBeside) besideWidth else contentWidth
+        val wordsWidth = if (beside && tagPlaceable != null) besideWidth else contentWidth
         val wordsPlaceable = codePlaceable ?: text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
         val wordsBaseline = wordsPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
@@ -289,14 +284,12 @@ fun TagBesideOrUnder(
             } else {
                 max(contentY + wordsHeight, if (tagAcross) keyBottom else 0) + gap / 2
             }
-        val height = max(max(wordsHeight + contentY, keyBottom), if (reservedBeside) 0 else tagY + tagHeight)
+        val height = max(max(wordsHeight + contentY, keyBottom), tagY + tagHeight)
 
         layout(width, max(height, constraints.minHeight)) {
             keyPlaceable?.placeRelative(0, keyY)
             wordsPlaceable?.placeRelative(contentX, contentY)
             when {
-                reservedBeside -> {}
-
                 beside -> {
                     tagPlaceable?.placeRelative(width - tagWidth, tagY)
                 }

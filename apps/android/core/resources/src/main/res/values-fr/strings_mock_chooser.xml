@@ -14,28 +14,13 @@
   "mock_chooser_last_mock": "b2e972243280a3559ab4134d39bca3b8bd0623035af9359da85ee0a784402e29",
   "mock_chooser_line": "e885d701ddf66cb643d7f78fe06fcac465ecdf74e1694ef9bb4ff46c8b202e72",
   "mock_chooser_no_written_part": "1b7dace157b5d686698d046230c29dd1f87bcfacb0882c4b4e8b91877ab7e07f",
-  "mock_chooser_not_enough": "d06f539411e08658139e1581008f8db314d56071dd643c44b06755a66602b6d2",
   "mock_chooser_objective_only": "1d270c24ef2860f0097c8d837ed4ff8e73d2769b77c6fe2376a005205b148c59",
   "mock_chooser_one_subject": "7dda8105567554fac64b787135170ffa872153a626b7af6ee5323c419c1a5ee5",
   "mock_chooser_option_size": "148d020240c7e4c01ffa5b231a2ffe71a0ba5cf973c89a240d709838ab0e56fb",
-  "mock_chooser_pick_another": "1b07e4c5d78ae1e865eed6b23316f57545cf0789fd956322fdff568f00924ed2",
-  "mock_chooser_preparing": "fe66cdd08244d6497fd9a68075e40bb4b257fd3b06ca9b66b31dbbc3326e7311",
-  "mock_chooser_preparing_detail": "c0b638db76ebb51afe9e50227c647d8f8c5d0a98f8a1e5ad2160032025c14aa8",
-  "mock_chooser_short_day": "70ca231af2714413b0f620d9d0d504559e3aa03543638c1a29002a24b2a0e8a6",
-  "mock_chooser_short_later_today": "326b33c231990c59324e80bc760cba74e42f0deae7d6198e75dfae1e4cd2d09c",
-  "mock_chooser_short_line": "daac8535bfd824f8c574f58c0533e02492533562cade6daec6229fc0b469782f",
-  "mock_chooser_short_on": "8f9df5124d959d0a7eb354acae6c1f191025134628f73e45de40b80173bddfd0",
-  "mock_chooser_short_title": "5ae0e80590712a7dcae39ea1defa51dcc8c9b20cc283229b348df64afed009b9",
   "mock_chooser_start": "021340f3ccf74b4e97ffb10d15c9749be48e1f967086b087b5797e67416ccb23",
   "mock_chooser_the_exam": "492313b49670fa036527cee12bdc46e36d00a70e319b0128378efee502e79327",
   "mock_chooser_title": "5a428291c5bc22932f66b94120c3940417e2cd2d649e5d98ee9536f0b07f803f",
-  "mock_chooser_usually": "70555b8b2867e20498a4981278ea1d89a95fdd6499fbe80b4ed7798c9f8d6315",
-  "mock_chooser_writing": "9d55ead46dad6f5ed3d475bd405cc4b6965dec913503053fac40f5810bfe63a9",
-  "mock_chooser_writing_questions": "4e480c497ecf8fbcf063021c210aaa22d478f4faa77e45b335da6945df20567a",
-  "mock_chooser_writing_questions_line": "32f7d7c6ca7cf60777ceef4d6877395b40870aab63f37c2b48a8758a53682136",
-  "mock_chooser_writing_written": "ff20b99e9ec53c52f18b0ab9e54065f8d7164b1c3c7e2aa5acc35ef064d9062c",
-  "mock_chooser_writing_written_detail": "77ab7df82b8767c5735b5d5c23778b851ceb3ae9661b12e011240de3483ba5bd",
-  "mock_chooser_writing_written_failed": "837fb950fedf3525d009015a32b3a1191e5b81191649d7f76cbbc529241580bc"
+  "mock_chooser_usually": "70555b8b2867e20498a4981278ea1d89a95fdd6499fbe80b4ed7798c9f8d6315"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -54,9 +39,6 @@
     <string name="mock_chooser_objective_only">Questions plus courtes, à réponse objective uniquement</string>
     <!-- The option that takes both tests of an exam of two tests. -->
     <string name="mock_chooser_both_tests">Les deux tests</string>
-    <string name="mock_chooser_writing_written">Préparation de tes questions…</string>
-    <string name="mock_chooser_writing_written_detail">Des questions comme celles de ton examen. Ton examen blanc commencera ici dès qu’elles seront prêtes.</string>
-    <string name="mock_chooser_writing_written_failed">On n’a pas pu préparer tes questions</string>
     <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
     <plurals name="mock_chooser_all_tests">
         <item quantity="one">Les %1$d tests</item>
@@ -81,24 +63,7 @@
         <item quantity="many">%1$d questions · %2$s</item>
         <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <string name="mock_chooser_not_enough">Pas encore assez de questions pour cet examen blanc. Choisis-en un autre.</string>
     <string name="mock_chooser_failed">Impossible de lancer l’examen blanc. Réessaie.</string>
-    <string name="mock_chooser_short_title">Commencer un examen blanc plus court ?</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_day">Aujourd’hui, cet examen blanc compte %1$s questions sur %2$s, soit environ %3$s. Tu pourras le faire en entier demain.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
-    <string name="mock_chooser_short_later_today">Aujourd’hui, cet examen blanc comprend %1$s questions sur %2$s, soit environ %3$s. Tu pourras passer la version complète plus tard dans la journée.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Aujourd’hui, cet examen blanc comprend %1$s questions sur %2$s, soit environ %3$s. Tu pourras passer la version complète le %4$s.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_line">Aujourd’hui, cet examen blanc compte %1$s questions sur %2$s, soit environ %3$s.</string>
-    <string name="mock_chooser_pick_another">En choisir un autre</string>
-    <string name="mock_chooser_preparing">Préparation de ton examen blanc</string>
-    <string name="mock_chooser_preparing_detail">Nous préparons des questions semblables à celles de l’examen. Ton examen blanc commencera ici dès qu’elles seront prêtes.</string>
-    <string name="mock_chooser_writing">Préparation de ton examen blanc</string>
-    <string name="mock_chooser_writing_questions">Préparation de questions semblables à celles de l’examen</string>
-    <string name="mock_chooser_writing_questions_line">Choix des questions pour chaque matière…</string>
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">généralement %1$s</string>
     <string name="mock_chooser_last_mock">Ton dernier examen blanc</string>

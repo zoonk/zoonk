@@ -140,48 +140,17 @@ async function waitForWriting(runId: string) {
   return (await waitForRun(runId)) ? readWritingResultStep(runId) : "failed";
 }
 
-async function writingBatchWorkflow(runIds: string[]) {
-  "use workflow";
+/** Returns once each missing prompt is stored, so the mock supply run that asked can recount its paper. */
+export async function writeMockWritingPrompts(requests: WritingSupplyInput[]): Promise<void> {
+  const results = await Promise.all(requests.map((request) => ensureWritingPrompts(request)));
 
-  const results = await Promise.all(runIds.map((runId) => waitForWriting(runId)));
-
-  if (results.every((status) => status !== "failed")) {
-    await progressStep<WritingPromptStepName>(
-      {
-        status: "completed",
-        step: results.includes("signUpRequired") ? "signUpRequired" : "writeWritingPrompt",
-      },
-      { last: true },
-    );
-
-    return;
-  }
-
-  await progressStep<WritingPromptStepName>(
-    { reason: "aiGenerationFailed", status: "error", step: "writeWritingPrompt" },
-    { last: true },
+  const written = await Promise.all(
+    results.flatMap((result) =>
+      result.status === "writing" ? [waitForWriting(result.runId)] : [],
+    ),
   );
 
-  throw new Error("Writing prompt preparation did not finish.");
-}
-
-export async function ensureMockWritingPrompts(requests: WritingSupplyInput[]) {
-  const results = await Promise.all(requests.map((request) => ensureWritingPrompts(request)));
-  const runIds = results.flatMap((result) => (result.status === "writing" ? [result.runId] : []));
-  const first = runIds[0];
-
-  if (!first) {
-    return { status: "ready" as const };
+  if (written.some((status) => status !== "ready")) {
+    throw new Error("A mock's written questions were not all written.");
   }
-
-  const runId =
-    runIds.length === 1
-      ? first
-      : await startOnce(
-          writingBatchWorkflow,
-          [runIds],
-          writingToken("writing-batch", runIds.toSorted()),
-        );
-
-  return { runId, status: "writing" as const };
 }

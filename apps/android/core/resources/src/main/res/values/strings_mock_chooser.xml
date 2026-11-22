@@ -14,9 +14,6 @@
     <string name="mock_chooser_objective_only">Shorter, objective questions only</string>
     <!-- The option that takes both tests of an exam of two tests. -->
     <string name="mock_chooser_both_tests">Both tests</string>
-    <string name="mock_chooser_writing_written">Writing your questions…</string>
-    <string name="mock_chooser_writing_written_detail">Questions like the ones on your exam. Your mock exam starts here when they\'re ready.</string>
-    <string name="mock_chooser_writing_written_failed">We couldn\'t write your questions</string>
     <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
     <plurals name="mock_chooser_all_tests">
         <item quantity="one">All %1$d test</item>
@@ -39,24 +36,7 @@
         <item quantity="one">%1$d question · %2$s</item>
         <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <string name="mock_chooser_not_enough">Not enough questions for this one yet. Pick another.</string>
     <string name="mock_chooser_failed">We couldn\'t start the mock exam. Try again.</string>
-    <string name="mock_chooser_short_title">Start a shorter mock exam?</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_day">Today this one has %1$s of its %2$s questions, about %3$s. You can take the full one tomorrow.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
-    <string name="mock_chooser_short_later_today">Today this one has %1$s of its %2$s questions, about %3$s. You can take the full one later today.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Today this one has %1$s of its %2$s questions, about %3$s. You can take the full one on %4$s.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_line">Today this one has %1$s of its %2$s questions, about %3$s.</string>
-    <string name="mock_chooser_pick_another">Pick another</string>
-    <string name="mock_chooser_preparing">Getting your mock exam ready</string>
-    <string name="mock_chooser_preparing_detail">We\'re writing questions like the exam\'s for you. It starts here as soon as they\'re ready.</string>
-    <string name="mock_chooser_writing">Writing your mock exam</string>
-    <string name="mock_chooser_writing_questions">Writing questions like the exam\'s</string>
-    <string name="mock_chooser_writing_questions_line">Picking what to ask in each subject…</string>
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">usually %1$s</string>
     <string name="mock_chooser_last_mock">Your last mock exam</string>

@@ -44,6 +44,19 @@ export function listWrittenRequests(input: Parameters<typeof getDayWrittenParts>
   );
 }
 
+/** Only the written test and the whole exam day sit written questions. */
+export function listMockWrittenRequests({
+  shape,
+  structure,
+}: {
+  shape: { day: number | null; kind: string };
+  structure: ExamStructure | null;
+}) {
+  return shape.kind === "written" || shape.kind === "full"
+    ? listWrittenRequests({ day: shape.day, structure })
+    : [];
+}
+
 export function countPartEssays(part: MockWrittenPart): number {
   return part.tasks.reduce((sum, task) => sum + task.count, 0);
 }

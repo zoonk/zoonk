@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "c8c671f2443618d0356eac79302dd7619bb7429593ed3e1012359558b9b974ba",
   "limit_mind_maps_guest": "5c0778561cc399a7bf05f71350df2ecf7ecce9402f9509432af69089c7873251",
   "limit_mind_maps_used": "bf78aa293ac98e579fa42c57146f0cb0f1b4441d09c1a67265c208c20d3fbf27",
-  "limit_mock_exams_used": "852361a5a7a7e72b9cecdcfedb99e1539d939600968e502eae9d1c3ee2863d64",
   "limit_more_later_today": "77cfda04c5a413920cf43ba504ba1e9d73ad2308c45e0e08a7dc6e35996fa872",
   "limit_more_later_today_or_subscribe": "bc1b83dff07eb272e435b7fd1d1abb08f85ef0fceddb6f437903a83c77002edf",
   "limit_more_on": "99823ef1f844b5de50e25efacfc5a3fc8300343f0fec2d42988f331e68cd569a",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">Você usou todo o seu tempo de conversa</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Seu tempo de conversa está de volta</string>
-    <string name="limit_mock_exams_used">Você atingiu o limite de simulados</string>
     <string name="limit_lessons_guest">Mais aulas só com uma conta</string>
     <string name="limit_lessons_free">Você usou todas as suas aulas grátis</string>
     <string name="limit_lessons_day">Sem novas aulas por hoje</string>

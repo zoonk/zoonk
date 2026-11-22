@@ -107,7 +107,7 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
   payload: BlockPayload;
 };
 
-function buildReviewBlock({
+export function buildReviewBlock({
   capsules,
   input: { placementItemIds, weakestReview = false },
 }: {

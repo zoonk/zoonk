@@ -28,7 +28,7 @@ import { getMockOptions } from "./get-mock-options";
 import { gradeMockEssays } from "./grade-mock-essays";
 import { mockAnswerInputSchema } from "./mock-answer-contract";
 import { type MockShape, mockConditionsSchema } from "./mock-contract";
-import { requestMockQuestions } from "./request-mock-questions";
+import { listMockPrepWrites } from "./prepare-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { startMock } from "./start-mock";
@@ -57,7 +57,13 @@ const EVIDENCE = {
 
 const PART_MINIMUM = { max: 100, minimum: { unit: "points", value: 50 } } as const;
 
-async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
+async function setup({
+  objectiveCount = 0,
+  plus = true,
+  shortOnly = false,
+  structure = CGU,
+  writtenTestScheduled = false,
+} = {}) {
   const [user, blueprint, control, writing] = await Promise.all([
     userFixture(),
     examBlueprintFixture({ structure }),
@@ -71,6 +77,8 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
     timezone: "UTC",
     userId: user.id,
   });
+
+  const date = SESSION_TODAY.toISOString().slice(0, 10);
 
   const plan = await planFixture({
     goalId: goal.id,
@@ -95,6 +103,13 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
         },
       ],
     },
+    ...(writtenTestScheduled && {
+      settings: {
+        writingSchedule: [
+          { date, minutes: 210, tasks: [], test: { day: null, title: "Written test" } },
+        ],
+      },
+    }),
   });
 
   const tasks = new Map(listWrittenTasks({ structure }).map((task) => [task.key, task]));
@@ -139,8 +154,13 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
     prompt("short"),
     shortOnly ? null : prompt("long"),
     Promise.all(
-      Array.from({ length: 8 }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: control.id }),
+      Array.from({ length: objectiveCount }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          mockOnly: true,
+          skillId: control.id,
+        }),
       ),
     ),
     planItemFixture({ kind: "lesson", planId: plan.id, position: 0, skillId: control.id }),
@@ -155,8 +175,20 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
   return { blueprint, goal, long, objective, prompt, short, user, writing };
 }
 
+function useExtraWriting(userId: string) {
+  return prisma.writingAdmission.createMany({
+    data: Array.from({ length: 6 }, () => ({
+      extra: true,
+      id: randomUUID(),
+      itemIds: [],
+      localDate: SESSION_TODAY,
+      userId,
+    })),
+  });
+}
+
 async function start(goalId: string, shape: MockShape) {
-  const result = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape } });
+  const result = await startAnytimeMock({ goalId, input: { shape } });
 
   if (result.status !== "started") {
     throw new Error(`Expected a new mock, got ${result.status}`);
@@ -258,8 +290,12 @@ describe("written mock sittings", () => {
     });
   });
 
-  it("advertises CGU before prompts exist and refuses a partial full or written sitting even with acceptFewer", async () => {
-    const { goal, user } = await setup({ shortOnly: true });
+  it.each([FULL, WRITTEN])("prepares a $kind paper missing a written prompt", async (shape) => {
+    const { goal, prompt, short, user } = await setup({
+      objectiveCount: shape.kind === "full" ? 170 : 0,
+      shortOnly: true,
+    });
+
     const options = await getMockOptions({ goalId: goal.id });
 
     expect(options).toMatchObject({
@@ -274,19 +310,68 @@ describe("written mock sittings", () => {
       },
     });
 
+    const key = JSON.stringify([shape.kind, null, null]);
+
+    await expect(startAnytimeMock({ goalId: goal.id, input: { shape } })).resolves.toStrictEqual({
+      status: "preparing",
+    });
+
+    await expect(prisma.goal.findUnique({ where: { id: goal.id } })).resolves.toMatchObject({
+      requestedMock: { papers: [key], shape },
+    });
+
     await expect(
-      Promise.all(
-        [FULL, WRITTEN].map((shape) =>
-          startAnytimeMock({
-            goalId: goal.id,
-            input: { acceptFewer: true, afterWriting: true, shape },
-          }),
-        ),
-      ),
-    ).resolves.toStrictEqual([{ status: "needsQuestions" }, { status: "needsQuestions" }]);
+      prisma.followUp.findFirst({ where: { key: goal.id, kind: "prepareMockSupply" } }),
+    ).resolves.toMatchObject({ input: { later: false, paper: key }, userId: user.id });
+
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: { requested: { shape, status: "preparing" } },
+    });
+
+    await expect(
+      listMockPrepWrites({ goalId: goal.id, only: key, priority: key }),
+    ).resolves.toStrictEqual({
+      papers: [
+        {
+          key,
+          later: false,
+          quickFormat: "multipleChoice",
+          writes: [],
+          writing: [
+            { count: 1, goalId: goal.id, taskKey: "long", unit: "answer", userId: user.id },
+          ],
+        },
+      ],
+      urgentShort: true,
+    });
 
     await expect(prisma.mockExam.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    const long = await prompt("long");
+
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: { requested: { shape, status: "ready" } },
+    });
+
+    const id = await start(goal.id, shape);
+
+    await expect(
+      prisma.writingAdmission.findMany({ where: { userId: user.id } }),
+    ).resolves.toMatchObject([{ extra: true, itemIds: [short.id, long.id] }]);
+
+    await expect(prisma.mockExam.findUnique({ where: { id } })).resolves.toMatchObject({
+      conditions: {
+        writtenParts: [
+          {
+            tasks: [
+              { itemIds: [short.id], key: "short" },
+              { itemIds: [long.id], key: "long" },
+            ],
+          },
+        ],
+      },
+    });
   });
 
   it("keeps both notice questions visible and refuses a written test that needs a specialty", async () => {
@@ -306,7 +391,8 @@ describe("written mock sittings", () => {
       { ...control, choiceGroup: "Specialty", name: "Accounting", questions: null },
     );
 
-    const { goal, user } = await setup({ structure });
+    const { goal, user } = await setup({ shortOnly: true, structure });
+
     const availability = { choiceGroups: ["Specialty"], status: "needsChoice" };
 
     await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
@@ -345,16 +431,33 @@ describe("written mock sittings", () => {
       sections: [{ questions: 170 }, { availability, questions: 2 }],
     });
 
+    await useExtraWriting(user.id);
+
     await expect(
       Promise.all(
-        [FULL, WRITTEN].flatMap((shape) => [
-          startAnytimeMock({ goalId: goal.id, input: { acceptFewer: true, shape } }),
-          requestMockQuestions({ goalId: goal.id, input: { shape } }),
-        ]),
+        [FULL, WRITTEN].map((shape) => startAnytimeMock({ goalId: goal.id, input: { shape } })),
       ),
-    ).resolves.toStrictEqual([availability, availability, availability, availability]);
+    ).resolves.toStrictEqual([availability, availability]);
 
-    await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(prisma.goal.findUnique({ where: { id: goal.id } })).resolves.toMatchObject({
+      requestedMock: null,
+    });
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "prepareMockSupply", userId: user.id } }),
+    ).resolves.toBe(0);
+
+    await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
+      papers: expect.not.arrayContaining([
+        expect.objectContaining({ key: JSON.stringify(["written", null, null]) }),
+      ]),
+    });
+
+    await expect(
+      listMockPrepWrites({ goalId: goal.id, only: JSON.stringify(["full", null, null]) }),
+    ).resolves.toStrictEqual({ papers: [], urgentShort: false });
+
+    await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(6);
   });
 
   it("cannot be started by a learner without Plus", async () => {
@@ -367,16 +470,23 @@ describe("written mock sittings", () => {
     await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("starts a written-only mock without overlapping queries on its transaction connection", async () => {
+    const { goal } = await setup();
+
+    const { overlaps } = await observeDatabaseQueries(() => start(goal.id, WRITTEN));
+
+    expect(overlaps).toStrictEqual([]);
+  });
+
   it("reuses the running sitting and admits both prompts once, then keeps an opened blank prompt out of the next sitting", async () => {
     const { blueprint, goal, prompt, short, user, writing } = await setup({ shortOnly: true });
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
+    ).resolves.toStrictEqual({ status: "preparing" });
 
     const long = await prompt("long");
-    const { overlaps, result: id } = await observeDatabaseQueries(() => start(goal.id, WRITTEN));
-    expect(overlaps).toStrictEqual([]);
+    const id = await start(goal.id, WRITTEN);
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
@@ -541,7 +651,7 @@ describe("written mock sittings", () => {
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
+    ).resolves.toStrictEqual({ status: "preparing" });
 
     const attempt = await prisma.attempt.findFirstOrThrow({
       where: { itemId: short.id, mockExamId: id, userId: user.id },
@@ -664,12 +774,12 @@ describe("written mock sittings", () => {
   });
 
   it("starts a full mock with both assigned essays, and retries a failed answer without regrading the saved answer", async () => {
-    const { goal, long, short } = await setup();
+    const { goal, long, short } = await setup({ objectiveCount: 170 });
     const id = await start(goal.id, FULL);
     const started = await view(id);
 
     expect(started.sections).toMatchObject([
-      { questions: 8 },
+      { questions: 170 },
       { essays: 2, minutes: 210, questions: 0 },
     ]);
 
@@ -677,10 +787,53 @@ describe("written mock sittings", () => {
       status: "invalidItem",
     });
 
+    const objectiveId = started.current?.questions[0]?.itemId ?? "";
+
+    await expect(
+      save({ id, itemId: objectiveId, text: "Not an objective answer" }),
+    ).resolves.toStrictEqual({ status: "invalidItem" });
+
+    await expect(
+      saveMockAnswer({
+        blockId: id,
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 1000,
+          flagged: true,
+          itemId: objectiveId,
+        },
+      }),
+    ).resolves.toStrictEqual({ status: "saved" });
+
     await submitMockSection({ blockId: id, input: UTC, section: 0 });
+
+    await expect(view(id)).resolves.toMatchObject({
+      current: {
+        questions: [
+          { format: "essay", itemId: short.id, writing: { taskKey: "short" } },
+          { format: "essay", itemId: long?.id, writing: { taskKey: "long" } },
+        ],
+      },
+    });
+
+    await expect(
+      saveMockAnswer({
+        blockId: id,
+        input: { answer: { selectedIndex: 0 }, durationMs: 1000, flagged: false, itemId: short.id },
+      }),
+    ).resolves.toStrictEqual({ status: "invalidItem" });
+
     await save({ id, itemId: short.id, text: "Short answer" });
     await save({ id, itemId: long?.id ?? "", text: "Long answer" });
     await submitMockSection({ blockId: id, input: UTC, section: 1 });
+
+    await expect(view(id)).resolves.toMatchObject({
+      essays: [{ status: "pending" }, { status: "pending" }],
+      result: { total: 170 },
+      status: "finished",
+    });
+
+    expect(gradeWritingEvidence).not.toHaveBeenCalled();
 
     vi.mocked(gradeWritingEvidence).mockRejectedValueOnce(new Error("Provider unavailable"));
 
@@ -698,8 +851,41 @@ describe("written mock sittings", () => {
 
     expect(gradeWritingEvidence).toHaveBeenCalledTimes(3);
 
+    const graded = await view(id);
+    expect(graded.essays).toMatchObject([{ status: "graded" }, { status: "graded" }]);
+    expect(graded.review.map(({ itemId }) => itemId)).toContain(objectiveId);
+    expect(graded.review.map(({ itemId }) => itemId)).not.toContain(short.id);
+    expect(graded.review.map(({ itemId }) => itemId)).not.toContain(long?.id);
+  });
+
+  it("sits an exam with only a written test as a full mock", async () => {
+    const structure = structuredClone(CGU);
+
+    if (!structure.mock) {
+      throw new Error("Expected an exam notice");
+    }
+
+    structure.mock.sections = structure.mock.sections.filter(({ kind }) => kind === "written");
+    structure.mock.timeLimitMinutes = 210;
+    structure.mock.totalQuestions = null;
+    structure.subjects = structure.subjects.filter(({ name }) => name === "Writing");
+
+    const { goal, short } = await setup({ structure });
+    const id = await start(goal.id, FULL);
+
     await expect(view(id)).resolves.toMatchObject({
-      essays: [{ status: "graded" }, { status: "graded" }],
+      current: { questions: [{ format: "essay" }, { format: "essay" }] },
+      sections: [{ essays: 2, minutes: 210, questions: 0 }],
+      shape: FULL,
+    });
+
+    await save({ id, itemId: short.id, text: "Answer to the written test" });
+    await submitMockSection({ blockId: id, input: UTC, section: 0 });
+
+    await expect(view(id)).resolves.toMatchObject({
+      essays: [{ itemId: short.id, status: "pending", unsure: false }, { status: "blank" }],
+      result: { total: 0 },
+      status: "finished",
     });
   });
 
@@ -833,7 +1019,7 @@ describe("written mock sittings", () => {
   });
 
   it("keeps short results out of the goal's written projection and preserves the objective answer cap", async () => {
-    const { blueprint, goal, objective, user } = await setup();
+    const { blueprint, goal, objective, user } = await setup({ objectiveCount: 85 });
     const id = await start(goal.id, HALF);
     const sitting = await view(id);
     const itemId = sitting.current?.questions[0]?.itemId ?? objective[0]?.id ?? "";
@@ -868,23 +1054,26 @@ describe("written mock sittings", () => {
   });
 
   it("refuses extra writing before start but admits a scheduled written test despite the extra limit", async () => {
-    const { goal, user } = await setup();
-
-    await prisma.writingAdmission.createMany({
-      data: Array.from({ length: 6 }, () => ({
-        extra: true,
-        id: randomUUID(),
-        itemIds: [],
-        localDate: SESSION_TODAY,
-        userId: user.id,
-      })),
+    const { goal, prompt, short, user } = await setup({
+      shortOnly: true,
+      writtenTestScheduled: true,
     });
+
+    await useExtraWriting(user.id);
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
     ).resolves.toMatchObject({ status: "limitReached" });
 
     await expect(prisma.mockExam.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    await expect(prisma.goal.findUnique({ where: { id: goal.id } })).resolves.toMatchObject({
+      requestedMock: null,
+    });
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "prepareMockSupply", userId: user.id } }),
+    ).resolves.toBe(0);
 
     const session = await prisma.studySession.create({
       data: {
@@ -916,6 +1105,38 @@ describe("written mock sittings", () => {
       },
     });
 
+    const paper = SESSION_TODAY.toISOString();
+
+    await expect(startMock({ blockId: block.id, input: UTC })).resolves.toStrictEqual({
+      status: "preparing",
+    });
+
+    await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.writingAdmission.count({ where: { extra: false, userId: user.id } }),
+    ).resolves.toBe(0);
+
+    await expect(
+      prisma.followUp.findFirst({ where: { key: goal.id, kind: "prepareMockSupply" } }),
+    ).resolves.toMatchObject({ input: { later: false, paper } });
+
+    await expect(
+      listMockPrepWrites({ goalId: goal.id, only: paper, priority: paper }),
+    ).resolves.toMatchObject({
+      papers: [
+        {
+          key: paper,
+          writes: [],
+          writing: [
+            { count: 1, goalId: goal.id, taskKey: "long", unit: "answer", userId: user.id },
+          ],
+        },
+      ],
+    });
+
+    const long = await prompt("long");
+
     const { overlaps, result } = await observeDatabaseQueries(() =>
       startMock({ blockId: block.id, input: UTC }),
     );
@@ -930,7 +1151,22 @@ describe("written mock sittings", () => {
     });
 
     await expect(
-      prisma.writingAdmission.count({ where: { extra: false, userId: user.id } }),
-    ).resolves.toBe(1);
+      prisma.writingAdmission.findMany({ where: { extra: false, userId: user.id } }),
+    ).resolves.toMatchObject([{ itemIds: [short.id, long.id] }]);
+
+    await expect(
+      prisma.mockExam.findUnique({ where: { blockId: block.id } }),
+    ).resolves.toMatchObject({
+      conditions: {
+        writtenParts: [
+          {
+            tasks: [
+              { itemIds: [short.id], key: "short" },
+              { itemIds: [long.id], key: "long" },
+            ],
+          },
+        ],
+      },
+    });
   });
 });

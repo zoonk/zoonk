@@ -20,7 +20,7 @@ export function openingResult(opening: StudyBlockOpening): OpenStudyBlockResult 
   return { opening, status: "ready" };
 }
 
-/** A refusal only a challenge's start gives (Plus, unwritten questions) is explained by its own screen. */
+/** A refusal only a challenge's start gives (Plus, unwritten questions, an exam choice) is explained by its own screen. */
 function afterStart({
   opening,
   sessionId,
@@ -32,8 +32,11 @@ function afterStart({
 }): OpenStudyBlockResult {
   switch (started.status) {
     case "ready":
+    case "needsChoice":
     case "plusRequired":
+    case "preparing":
     case "questionsNeeded":
+    case "signUpRequired":
       return openingResult(opening);
     case "blockFinished":
       return openingResult({ blockId: null, kind: "session", sessionId });
@@ -49,6 +52,27 @@ function afterStart({
 
 function prepareSession({ sessionId, userId }: Pick<BlockToOpen, "sessionId" | "userId">) {
   return oweFollowUps({ followUps: [{ input: { sessionId }, kind: "prepareSession" }], userId });
+}
+
+/**
+ * The plan's written test has no plan item, so no intro: the tap starts it, and what can't start yet
+ * stays on Today, which says why.
+ */
+async function startMockWithoutIntro({
+  screen,
+  toOpen: { block, sessionId, timeZone },
+}: {
+  screen: StudyBlockOpening;
+  toOpen: Omit<BlockToOpen, "userId">;
+}): Promise<OpenStudyBlockResult> {
+  const started = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
+
+  return started.status === "needsChoice" ||
+    started.status === "plusRequired" ||
+    started.status === "preparing" ||
+    started.status === "signUpRequired"
+    ? openingResult({ kind: "today" })
+    : afterStart({ opening: screen, sessionId, started });
 }
 
 /** A waiting language checkpoint opens its call first; any other challenge opens its intro. */
@@ -71,10 +95,20 @@ async function openChallenge({
     const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
 
     return afterStart({
-      opening: resumed.status === "plusRequired" && intro ? intro : screen,
+      opening:
+        (resumed.status === "needsChoice" ||
+          resumed.status === "plusRequired" ||
+          resumed.status === "preparing") &&
+        intro
+          ? intro
+          : screen,
       sessionId,
       started: resumed,
     });
+  }
+
+  if (block.status === "pending" && !intro && block.checkpoint?.mock && block.checkpoint.written) {
+    return startMockWithoutIntro({ screen, toOpen: { block, sessionId, timeZone } });
   }
 
   if ((block.status === "pending" || block.status === "skipped") && intro) {

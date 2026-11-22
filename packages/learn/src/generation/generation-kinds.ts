@@ -5,7 +5,7 @@ import {
   type GoalContentStepName,
   type GoalUnderstandingStepName,
   type LevelTestBankStepName,
-  type MockQuestionsStepName,
+  type MockPaperStepName,
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
   WRITING_PROMPT_KIND,
@@ -152,11 +152,6 @@ const testOutQuestions = {
   },
 } as const satisfies GenerationKindDefinition<TestOutQuestionsStepName, "questions">;
 
-const mockQuestions = {
-  phases: [{ id: "questions", seconds: 100 }],
-  steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
-} as const satisfies GenerationKindDefinition<MockQuestionsStepName, "questions">;
-
 const writingPrompt = {
   phases: [{ id: "question", seconds: 45 }],
   steps: { ready: "done", signUpRequired: "done", writeWritingPrompt: "question" },
@@ -170,6 +165,27 @@ const challengeQuestions = {
     writeChallengeQuestions: "questions",
   },
 } as const satisfies GenerationKindDefinition<ChallengeQuestionsStepName, "questions">;
+
+// Measured on model calls: a shared text and its questions take about 35 s; questions are written
+// ten at a time per subject, subjects side by side, about 25 s a batch with its checks; a full ENEM
+// day from an empty bank took about 4 min. A listening part writes its script, then voices its
+// clips one after another, part after part.
+const mockPaper = {
+  phases: [
+    { id: "texts", optional: true, seconds: 40 },
+    { id: "questions", seconds: 200 },
+    { id: "listening", optional: true, seconds: 120 },
+  ],
+  steps: {
+    mockPaperReady: "done",
+    recordMockListening: "listening",
+    writeMockQuestions: "questions",
+    writeMockTexts: "texts",
+  },
+} as const satisfies GenerationKindDefinition<
+  MockPaperStepName,
+  "listening" | "questions" | "texts"
+>;
 
 const explanation = {
   doneOnCompleted: "writeExplanation",
@@ -226,7 +242,7 @@ const GENERATION_KINDS = {
   firstLesson,
   lesson,
   levelTestBank,
-  mockQuestions,
+  mockPaper,
   placement,
   setupLesson,
   speakingMock,

@@ -2,7 +2,10 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
-import { loadCheckpointCandidates } from "../checkpoints/_utils/checkpoint-candidates";
+import {
+  listCheckpointQuestions,
+  loadCheckpointCandidates,
+} from "../checkpoints/_utils/checkpoint-candidates";
 import {
   getPassMark,
   hasPassedCheckpoint,
@@ -10,7 +13,7 @@ import {
 } from "../checkpoints/checkpoint-rules";
 import { readExamPicks } from "../exams/choices/exam-choices";
 import { loadSkillAreas } from "../exams/mocks/_utils/mock-candidates";
-import { buildMockConditions } from "../exams/mocks/_utils/mock-conditions";
+import { toPlannedConditions } from "../exams/mocks/_utils/mock-conditions";
 import { gradeMockItem } from "../exams/mocks/_utils/mock-item-grading";
 import { type MockItem, loadMockItems } from "../exams/mocks/_utils/mock-items";
 import { getAskedItemIds } from "../exams/mocks/_utils/mock-sections";
@@ -291,8 +294,14 @@ async function fillMock({
   const structure = readMockStructure({ blueprint, picks });
   const skillIds = plan.skills.map((skill) => skill.id);
 
+  const historicalItems = await listCheckpointQuestions({
+    examBlueprintId: goal.examBlueprintId,
+    skillIds,
+  });
+
   const planned = await planWeeklyMock({
     goal,
+    itemIds: historicalItems.map((item) => item.id),
     skillIds,
     structure,
     today: checkpoint.localDate,
@@ -312,14 +321,13 @@ async function fillMock({
     skillIds,
   });
 
-  const conditions = await buildMockConditions({
+  const conditions = toPlannedConditions({
+    bank: planned,
     blueprint,
     goal,
-    payload,
-    sessionDate: checkpoint.localDate,
+    plan: planned,
     structure,
     unpicked: readUnpickedChoices({ blueprint, picks }),
-    userId: goal.userId,
   });
 
   const asked = getAskedItemIds(conditions);

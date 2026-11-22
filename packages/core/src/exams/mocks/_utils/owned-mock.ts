@@ -28,7 +28,11 @@ import {
 import { type UnpickedChoice } from "../mock-unpicked";
 import { readMockAnswer } from "./mock-answers";
 import { getAskedItemIds } from "./mock-sections";
-import { readMockStructure, readUnpickedChoices } from "./read-mock-structure";
+import {
+  readMockStructure,
+  readScheduledStructure,
+  readUnpickedChoices,
+} from "./read-mock-structure";
 
 type MockSittingStatus = MockExam["status"] | "expired";
 
@@ -114,7 +118,12 @@ async function findScheduledMock({
     payload,
     picks,
     sessionDate: studySession.localDate,
-    structure: blueprint ? readMockStructure({ blueprint, picks }) : null,
+    structure: readScheduledStructure({
+      blueprint,
+      date: studySession.localDate,
+      goal: studySession.goal,
+      settings: studySession.goal?.plan?.settings,
+    }),
     unpicked: readUnpickedChoices({ blueprint, picks }),
     userId,
   };

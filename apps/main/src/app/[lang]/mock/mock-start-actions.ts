@@ -11,20 +11,8 @@ const goalIdSchema = uuidSchema();
 
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
-  | Extract<StartAnytimeMockResult, { status: "limitReached" | "needsChoice" | "short" }>
-  | { status: "failed" | "needsQuestions" | "notEnoughQuestions" | "signUpRequired" };
-
-type KeptRefusal = "needsQuestions" | "notEnoughQuestions" | "signUpRequired";
-
-const KEPT_REFUSALS: readonly KeptRefusal[] = [
-  "needsQuestions",
-  "notEnoughQuestions",
-  "signUpRequired",
-];
-
-function isKeptRefusal(status: string): status is KeptRefusal {
-  return KEPT_REFUSALS.some((kept) => kept === status);
-}
+  | Extract<StartAnytimeMockResult, { status: "limitReached" | "needsChoice" }>
+  | { status: "failed" | "preparing" };
 
 export async function startAnytimeMockAction(
   goalId: unknown,
@@ -43,13 +31,9 @@ export async function startAnytimeMockAction(
     return { id: result.id, status: result.status };
   }
 
-  if (
-    result.status === "short" ||
-    result.status === "limitReached" ||
-    result.status === "needsChoice"
-  ) {
+  if (result.status === "limitReached" || result.status === "needsChoice") {
     return result;
   }
 
-  return isKeptRefusal(result.status) ? { status: result.status } : { status: "failed" };
+  return { status: result.status === "preparing" ? "preparing" : "failed" };
 }

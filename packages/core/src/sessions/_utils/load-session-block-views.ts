@@ -10,8 +10,9 @@ import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
 import { loadExtraWritingAvailability } from "./extra-writing-availability";
 import { type LessonStatesReader, readLessonScreens } from "./lesson-screens";
+import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
-import { toStudyBlockView } from "./session-view";
+import { toStudyBlockViews } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 import { loadSessionWritingTasks } from "./writing-block-tasks";
 
@@ -19,6 +20,7 @@ export async function loadSessionBlockViews({
   answers: knownAnswers,
   blueprint: knownBlueprint,
   plan,
+  preparing: knownPreparing,
   readLessonStates,
   session: saved,
   timeZone,
@@ -26,6 +28,7 @@ export async function loadSessionBlockViews({
 }: {
   answers?: readonly SessionAnswer[];
   blueprint?: ExamBlueprint | null;
+  preparing?: ReadonlySet<number>;
   plan?: SavedPlan | null;
   readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
@@ -39,63 +42,55 @@ export async function loadSessionBlockViews({
 
   const session = { ...saved, blocks: saved.blocks.filter(({ id }) => !removed.has(id)) };
 
-  const [answers, subjects, blockedChapters, oftenTestedSkillIds, withWritingAvailability] =
-    await Promise.all([
-      knownAnswers ?? loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
-      loadBlockSubjects({ blocks: session.blocks, blueprint, goal: session.goal }),
-      session.goalId
-        ? loadBlockedTestOutChapters({
-            chapterIds: [
-              ...new Set(
-                session.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? []),
-              ),
-            ],
-            goalId: session.goalId,
-            known: {
-              blueprint,
-              goal: session.goal,
-              source: plan === undefined ? readSavedPlan(userId, session.goalId) : plan,
-            },
-            now,
-            timeZone,
-            userId,
-          })
-        : new Set<string>(),
-      loadOftenTestedSkillIds(session.goal),
-      loadExtraWritingAvailability({
-        blocks: session.blocks,
-        now,
-        timeZone: getAnswerTimeZone({ goal: session.goal, timeZone }),
-        userId,
-      }),
-    ]);
-
-  const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
-  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
-
-  const savedWritingTasks = new Map(
-    answers.flatMap(({ itemId, writingTask }) =>
-      itemId && writingTask !== undefined ? [[itemId, writingTask] as const] : [],
-    ),
-  );
+  const [
+    answers,
+    subjects,
+    blockedChapters,
+    oftenTestedSkillIds,
+    withWritingAvailability,
+    preparing,
+  ] = await Promise.all([
+    knownAnswers ?? loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
+    loadBlockSubjects({ blocks: session.blocks, blueprint, goal: session.goal }),
+    session.goalId
+      ? loadBlockedTestOutChapters({
+          chapterIds: [
+            ...new Set(session.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),
+          ],
+          goalId: session.goalId,
+          known: {
+            blueprint,
+            goal: session.goal,
+            source: plan === undefined ? readSavedPlan(userId, session.goalId) : plan,
+          },
+          now,
+          timeZone,
+          userId,
+        })
+      : new Set<string>(),
+    loadOftenTestedSkillIds(session.goal),
+    loadExtraWritingAvailability({
+      blocks: session.blocks,
+      now,
+      timeZone: getAnswerTimeZone({ goal: session.goal, timeZone }),
+      userId,
+    }),
+    knownPreparing ?? loadPreparingMockPositions({ ...session, blueprint }),
+  ]);
 
   const current = isCurrentSession({ now, session, timeZone });
 
   const { blocks } = await readLessonScreens(
     {
-      blocks: session.blocks.map((block) =>
-        toStudyBlockView({
-          answeredAttemptIds,
-          answeredItemIds,
-          block,
-          blockedTestOutChapters: blockedChapters,
-          blocks: session.blocks,
-          oftenTestedSkillIds,
-          savedWritingTasks,
-          subject: subjects.get(block.position) ?? null,
-          writingTasks,
-        }),
-      ),
+      blocks: toStudyBlockViews({
+        answers,
+        blockedTestOutChapters: blockedChapters,
+        blocks: session.blocks,
+        oftenTestedSkillIds,
+        preparing,
+        subjects,
+        writingTasks,
+      }),
       current,
       status: session.status,
     },
@@ -107,5 +102,6 @@ export async function loadSessionBlockViews({
     blocks: blocks.map((block) => withWritingAvailability(block)),
     current,
     displayBlocks: session.blocks,
+    preparing,
   };
 }

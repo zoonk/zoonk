@@ -11,14 +11,16 @@ import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill
 import { loadExtraWritingAvailability } from "./_utils/extra-writing-availability";
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
-import { followSavedDay } from "./_utils/refresh-study-day-selection";
-import { type StudyBlockView, getNextBlock, toStudyBlockView } from "./_utils/session-view";
+import { loadPreparingMockPositions } from "./_utils/preparing-mock-blocks";
+import { openSavedDay } from "./_utils/saved-mock-review";
+import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
   type StudySessionRow,
   findStudySessionFor,
 } from "./_utils/study-session-access";
 import { loadSessionWritingTasks } from "./_utils/writing-block-tasks";
+import { getNextBlock } from "./day-blocks";
 import { getSessionPageView } from "./get-session-page-view";
 import { type OpenStudyBlockInput, type OpenStudyBlockResult } from "./open-block-contract";
 
@@ -46,7 +48,7 @@ async function loadOpenedBlockViews({
   timeZone,
   userId,
 }: {
-  session: Pick<StudySessionRow, "blocks" | "goal">;
+  session: Pick<StudySessionRow, "blocks" | "goal" | "localDate">;
   now: Date;
   timeZone: string;
   userId: string;
@@ -54,16 +56,20 @@ async function loadOpenedBlockViews({
   const { removed, writingTasks } = await loadSessionWritingTasks({ fresh: true, session });
   const blocks = session.blocks.filter(({ id }) => !removed.has(id));
 
-  const withWritingAvailability = await loadExtraWritingAvailability({
-    blocks,
-    now,
-    timeZone,
-    userId,
-  });
+  const [withWritingAvailability, preparing] = await Promise.all([
+    loadExtraWritingAvailability({ blocks, now, timeZone, userId }),
+    loadPreparingMockPositions({ ...session, blocks }),
+  ]);
 
   return blocks.map((block) =>
     withWritingAvailability(
-      toStudyBlockView({ answeredItemIds: new Set(), block, blocks, writingTasks }),
+      toStudyBlockView({
+        answeredItemIds: new Set(),
+        block,
+        blocks,
+        preparing: preparing.has(block.position),
+        writingTasks,
+      }),
     ),
   );
 }
@@ -120,7 +126,7 @@ async function openSavedSession({
     current &&
     refilled.goal &&
     (!target || (target.status !== "pending" && target.status !== "active"))
-      ? await followSavedDay({ session: refilled, timeZone })
+      ? await openSavedDay({ session: refilled, timeZone })
       : refilled;
 
   const views =
@@ -204,6 +210,11 @@ async function openNext({
     return openSessionBlock({ block: next, sessionId: session.id, timeZone, userId });
   }
 
+  // The day isn't over while a mock is still being prepared, so there's no summary yet: Today says when to come back.
+  if (session.blocks.some((block) => block.preparing && block.status === "pending")) {
+    return openingResult({ kind: "today" });
+  }
+
   const seenWithoutPendingRewards = await prisma.studySummaryVisit.findUnique({
     select: { visitId: true },
     where: {
@@ -255,7 +266,7 @@ async function openTappedBlock({
   }
 
   // A day that's over starts nothing new, as Continue and missions don't; work under way goes on.
-  if (!opened.session.current && block.status === "pending") {
+  if (block.preparing || (!opened.session.current && block.status === "pending")) {
     return openingResult({ kind: "today" });
   }
 
@@ -285,7 +296,8 @@ async function openMission({
           (candidate) =>
             candidate.id === target.blockId &&
             (candidate.status === "pending" || candidate.status === "active") &&
-            candidate.waitReason === null,
+            candidate.waitReason === null &&
+            !candidate.preparing,
         )
       : undefined;
 

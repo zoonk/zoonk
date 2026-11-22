@@ -1,6 +1,7 @@
 // Better Auth models for Prisma
 
 model User {
+  mockItemUses          MockItemUse[]
   id                    String                    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name                  String
   email                 String

@@ -128,7 +128,7 @@ private fun StepLines(
     val count = step.questions.toInt()
     val line =
         when {
-            !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
+            step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
 
             step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
 
@@ -208,3 +208,8 @@ fun DayMinutes(minutes: Double) {
  */
 fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
     kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
+
+fun DayStep.isGettingReady(
+    lessonStatus: Map<String, LessonGenerationStatus>,
+    writingStalled: Boolean,
+): Boolean = preparing || (!writingStalled && isBeingWritten(lessonStatus))

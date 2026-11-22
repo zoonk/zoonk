@@ -665,11 +665,6 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
 
   var shape: MockShape { MockShape(area: area, day: day, kind: kind) }
 
-  /// Its start may write questions for a written part.
-  var asksWriting: Bool {
-    kind == .written || (sections ?? []).contains { $0.kind == .written } || !written.isEmpty
-  }
-
   /// It holds the written test, so the day's grading limits it.
   var hasWrittenTest: Bool {
     kind == .written || (sections ?? []).contains { $0.kind == .written }
@@ -707,11 +702,22 @@ struct MockOptions: Hashable, Decodable, Sendable {
     var purpose: MockPurpose
   }
 
+  struct Requested: Hashable, Decodable, Sendable {
+    enum Status: String, Decodable, Sendable {
+      case preparing
+      case ready
+    }
+
+    var shape: MockShape
+    var status: Status
+  }
+
   var access: Access
   var examDocument: ExamDocument
   var examName: String
   var lastMock: ExamMockSummary?
   var options: [MockOption]
+  var requested: Requested?
   var running: Running?
   var sizeSource: MockSizeSource
 

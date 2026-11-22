@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.mock.chooser
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -15,17 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.GenerationSource
-import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
@@ -33,11 +28,8 @@ import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.TaskActionBar
-import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
@@ -83,70 +75,37 @@ internal fun MockChooser(
     navigator: AppNavigator,
     mockStore: MockStore = app.mocks,
     starter: MockStarter = app.mockStarter,
-    generations: (AuthenticatedSession?) -> GenerationSource = { LiveGenerationSource(app.api, it) },
 ) {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val sessionId = (session as? SessionState.SignedIn)?.session?.localId
     val options = mockStore.options[goalId]
     val state by options.collectShown()
     val viewModel =
-        viewModel(
-            key = "mock-chooser-$goalId",
-        ) { MockChooserViewModel(goalId, starter, app.sessions, generations) { mockStore.refused(goalId) } }
+        viewModel(key = "mock-chooser:$goalId:$sessionId") {
+            MockChooserViewModel(goalId, starter, { scope -> mockStore.paperWait(scope, goalId) }) { mockStore.refused(goalId) }
+        }
     val opened by viewModel.opened.collectAsStateWithLifecycle()
-    val status by viewModel.status.collectAsStateWithLifecycle()
-    val run by viewModel.run.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val loaded = state.value
     val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state)
-    val writing = status == ChooserStatus.Writing
     val focus =
         rememberPressFocus(
-            when {
-                loaded == null -> null
-                writing -> "wait"
-                else -> "start"
-            },
+            loaded?.let { "start" },
             // On a phone the action is in the list's first row, which can be scrolled away.
             reveal = { listState.scrollToItem(0) },
         )
-    val retry = {
-        focus.pressInHolder()
-        viewModel.retry()
-    }
-
-    LifecycleStartEffect(viewModel) {
-        viewModel.onShown(true)
-        onStopOrDispose { viewModel.onShown(false) }
-    }
 
     if (exit != null) {
         Leave(exit, navigator)
         return
     }
 
-    // A written test's questions that couldn't be written get the page every writing failure has, with Try again in the bar.
-    val writtenFailed = writing && viewModel.writtenTestRun != null && run.status == GenerationRun.Status.Failed
-    ChooserFrame(
-        navigator,
-        title = loaded?.let { stringResource(R.string.mock_chooser_title) },
-        bottomBar =
-            if (writtenFailed) {
-                {
-                    TaskActionBar {
-                        TaskActions { width ->
-                            Button(onClick = retry, modifier = width) { Text(stringResource(R.string.essay_try_again)) }
-                        }
-                    }
-                }
-            } else {
-                null
-            },
-    ) {
+    ChooserFrame(navigator, title = loaded?.let { stringResource(R.string.mock_chooser_title) }) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
-            writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester, writtenTestRun = viewModel.writtenTestRun)
-            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
+            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press) { options.refresh() }
         }
     }
 }
@@ -193,13 +152,11 @@ private fun Leave(
 private fun ChooserFrame(
     navigator: AppNavigator,
     title: String? = null,
-    bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     PageScaffold(
         onBack = { navigator.back() },
         title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
-        bottomBar = bottomBar,
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }

@@ -483,7 +483,8 @@ private struct WritingEditorPage: View {
 
       // The bar's note floats over the page: the field gives it room so the count stays in view.
       if let note {
-        note.floatingNote()
+        note.barNoteLines(isWide: false)
+          .barNoteBackdrop()
           .hidden()
           .accessibilityHidden(true)
       }

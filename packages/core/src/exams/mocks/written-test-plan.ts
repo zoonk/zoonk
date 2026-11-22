@@ -1,6 +1,11 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockPlan, type MockSectionPlan } from "./mock-plan";
-import { type MockEssayCandidate, getDayWrittenParts, withWrittenParts } from "./written-parts";
+import {
+  type MockEssayCandidate,
+  getDayWrittenParts,
+  listMockWrittenRequests,
+  withWrittenParts,
+} from "./written-parts";
 import { isObjectiveSection } from "./written-subject";
 
 export function planWrittenTest({
@@ -39,6 +44,21 @@ export function outlineWrittenPrompts(input: Parameters<typeof getDayWrittenPart
       })),
     ),
   );
+}
+
+/** The written questions of a mock that the learner's unseen prompts can't fill yet. */
+export function listMissingMockWriting({
+  essays,
+  ...mock
+}: Parameters<typeof listMockWrittenRequests>[0] & { essays: readonly MockEssayCandidate[] }) {
+  return listMockWrittenRequests(mock).flatMap((request) => {
+    const unseen = essays.filter((essay) => essay.taskKey === request.taskKey).length;
+    return unseen < request.count ? [{ ...request, count: request.count - unseen }] : [];
+  });
+}
+
+export function hasMockWriting(input: Parameters<typeof listMissingMockWriting>[0]) {
+  return listMissingMockWriting(input).length === 0;
 }
 
 export function onlyObjectiveStructure(structure: ExamStructure | null): ExamStructure | null {

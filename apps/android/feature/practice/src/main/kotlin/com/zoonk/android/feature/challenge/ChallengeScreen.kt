@@ -54,11 +54,13 @@ import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
+import com.zoonk.android.feature.mock.MockPreparingNote
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.writing.ChooseOnToday
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -69,6 +71,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
@@ -131,6 +134,7 @@ fun ChallengeScreen(
                 app.challenges,
                 LiveGenerationSource(app.api, signedIn),
                 createSavedStateHandle(),
+                app.mocks,
             )
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
@@ -344,6 +348,7 @@ private fun IntroScreen(
             onClose = actions::close,
             lonePage = true,
             bottomBar = { TaskActionBar { ChallengeFooter(challenge, ui, actions) } },
+            note = if (isPreparing(challenge, ui)) ({ PreparingNote(challenge.goalId, actions) }) else null,
             aside = beside?.let { TaskAside(title = it.title) { it.content(false) } },
         ) { padding ->
             CenteredColumn(Modifier.padding(padding)) {
@@ -726,12 +731,25 @@ private fun ChallengeFooter(
         ChallengeGate(challenge, actions)
         return
     }
+    val groups = ui.choiceGroups
+    if (groups != null) {
+        ChooseOnToday(groups, onChoose = actions::toToday)
+        return
+    }
+    if (ui.refused == Limit.SignUpRequired) {
+        LimitNotice(Limit.SignUpRequired, LimitSubject.Help, onCreateAccount = actions::createAccount, onSubscribe = actions::seePlus)
+        return
+    }
     when (challenge.status) {
         Challenge.Status.READY, Challenge.Status.STARTED -> {
             val wait = challenge.waitReason
             when {
                 wait != null -> {
                     StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.challenge_opens_after_lessons))
+                }
+
+                isPreparing(challenge, ui) -> {
+                    PreparingActions(ui, movable, actions)
                 }
 
                 challenge.status == Challenge.Status.READY -> {
@@ -846,6 +864,49 @@ private fun StartActions(
         ) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }
+    }
+}
+
+/** A mock whose paper is still being written: its note shows in the bar's note slot, over these actions, as on the chooser. */
+private fun isPreparing(
+    challenge: Challenge,
+    ui: ChallengeUi,
+): Boolean =
+    (challenge.status == Challenge.Status.READY || challenge.status == Challenge.Status.STARTED) &&
+        challenge.waitReason == null &&
+        challenge.access == Challenge.Access.PREPARING &&
+        ui.problem != StartProblem.PlusRequired && ui.choiceGroups == null && ui.refused != Limit.SignUpRequired
+
+@Composable
+private fun PreparingNote(
+    goalId: UUID,
+    actions: ChallengeActions,
+) {
+    MockPreparingNote(
+        stringResource(R.string.mock_preparing_title),
+        goalId = goalId.toString(),
+        surface = "scheduledMock",
+        createWait = { scope -> actions.viewModel.paperWait(scope, goalId) },
+        onWritten = { actions.viewModel.challenge.refresh() },
+    )
+}
+
+@Composable
+private fun PreparingActions(
+    ui: ChallengeUi,
+    movable: Boolean,
+    actions: ChallengeActions,
+) {
+    MoveFailed(ui)
+    TaskActions { width ->
+        if (movable) {
+            OutlinedButton(
+                busy = ui.moving,
+                onClick = actions.viewModel::moveToMonday,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text(stringResource(R.string.challenge_move)) }
+        }
+        Button(onClick = actions::toToday, modifier = width) { Text(stringResource(R.string.mock_preparing_keep_studying)) }
     }
 }
 

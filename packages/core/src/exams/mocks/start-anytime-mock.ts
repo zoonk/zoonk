@@ -10,7 +10,6 @@ import {
   resolveAnytimeOption,
 } from "./_utils/anytime-mock-setup";
 import { type CreateAnytimeMockResult, createAnytimeMock } from "./_utils/create-anytime-mock";
-import { findMockQuestionsCap } from "./_utils/mock-question-writes";
 import { type AnytimeMockInput } from "./mock-contract";
 
 export type StartAnytimeMockResult =
@@ -49,10 +48,9 @@ export async function startAnytimeMock({
     return { status: "goalNotActive" };
   }
 
-  const [access, setup, writesCap] = await Promise.all([
+  const [access, setup] = await Promise.all([
     getAnytimeMockAccess(goal),
     loadAnytimeMockSetup(goal),
-    findMockQuestionsCap(),
   ]);
 
   if (access !== "open") {
@@ -72,17 +70,9 @@ export async function startAnytimeMock({
     return { status: "invalidOption" };
   }
 
-  const result = await createAnytimeMock({
-    acceptFewer: input.acceptFewer ?? false,
-    afterWriting: input.afterWriting,
-    goal,
-    option,
-    setup,
-    userId,
-    writesCap,
-  });
+  const result = await createAnytimeMock({ goal, option, setup, userId });
 
-  if (result.status === "started") {
+  if (result.status === "started" || result.status === "preparing") {
     revalidateCacheTags([getLearnerModelCacheTag(userId)]);
   }
 

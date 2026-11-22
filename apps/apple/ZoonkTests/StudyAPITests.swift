@@ -47,6 +47,27 @@ final class StudyAPITests: XCTestCase {
     XCTAssertEqual(shown["areaId"] as? NSNull, NSNull())
     XCTAssertEqual(shown["checkpoint"] as? NSNull, NSNull())
     XCTAssertEqual(shown["lessonId"] as? String, "bf2cf2eb-ea8d-8423-8d56-c97287bf412e")
+    let flags = try XCTUnwrap(shown["flags"] as? NSDictionary)
+    XCTAssertNil(
+      flags["mockPreparationReview"], "core refuses a null for a flag it reads as absent")
+  }
+
+  func testTheReviewOfferedWhileTheMockIsPreparedSaysSoInItsRef() async throws {
+    let transport = StudyRecordingTransport()
+    let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let review = Self.block.replacingOccurrences(
+      of: #""kind": "learn""#, with: #""kind": "review", "mockPreparationReview": true"#)
+    let block = try JSONDecoder().decode(StudyBlock.self, from: Data(review.utf8))
+
+    _ = try? await api.openDay(
+      token: "token", goalID: "56adb511-8f30-426f-b358-fb4a556aaeb1", shownDate: "2026-10-28",
+      timeZone: "America/Sao_Paulo", target: .ref(DayBlockRef(block)))
+
+    let sent = try XCTUnwrap(transport.sent.value.first)
+    let target = try XCTUnwrap(sent.json["target"] as? NSDictionary)
+    let ref = try XCTUnwrap(target["ref"] as? NSDictionary)
+    let flags = try XCTUnwrap(ref["flags"] as? NSDictionary)
+    XCTAssertEqual(flags["mockPreparationReview"] as? Bool, true)
   }
 
   func testAPlanThatChangedWhileTheDayOpenedIsAskedOnceMore() async throws {
@@ -88,7 +109,7 @@ final class StudyAPITests: XCTestCase {
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 
   private static let block = #"""
-    {"answered": 0, "areaId": null, "brainPower": 0, "canDo": "You'll explain what you really own when you buy a share, and what you don't.", "areas": [], "topics": [], "canTestOut": true, "capsules": [], "chapterId": "01a14c5e-bbc7-7f60-a0d7-9f3ed9dc83c1", "checkpoint": null, "estimatedBrainPower": 24, "estimatedMinutes": 5, "extra": false, "fullReview": false, "kind": "learn", "lessonId": "bf2cf2eb-ea8d-8423-8d56-c97287bf412e", "mistakesOnly": false, "netScored": false, "opensInPlayer":false,"oftenTested": false, "planItemId": "01a182f3-64b4-7b61-82d2-47d32878c251", "planItemKey": "lesson:bf2cf2eb-ea8d-8423-8d56-c97287bf412e", "position": 0, "questions": 0, "refresh": false, "reinforcement": false, "screen": "session", "status": "pending", "subject": "Shares and companies", "title": "What you own when you buy a share", "waitReason": null, "weakest": false}
+    {"answered": 0, "areaId": null, "brainPower": 0, "canDo": "You'll explain what you really own when you buy a share, and what you don't.", "areas": [], "topics": [], "canTestOut": true, "capsules": [], "chapterId": "01a14c5e-bbc7-7f60-a0d7-9f3ed9dc83c1", "checkpoint": null, "estimatedBrainPower": 24, "estimatedMinutes": 5, "extra": false, "fullReview": false, "kind": "learn", "lessonId": "bf2cf2eb-ea8d-8423-8d56-c97287bf412e", "mistakesOnly": false, "netScored": false, "opensInPlayer":false,"oftenTested": false, "planItemId": "01a182f3-64b4-7b61-82d2-47d32878c251", "planItemKey": "lesson:bf2cf2eb-ea8d-8423-8d56-c97287bf412e", "position": 0, "preparing": false, "questions": 0, "refresh": false, "reinforcement": false, "screen": "session", "status": "pending", "subject": "Shares and companies", "title": "What you own when you buy a share", "waitReason": null, "weakest": false}
     """#
 }
 

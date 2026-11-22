@@ -1,4 +1,6 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { examError } from "@/lib/exam-errors";
+import { signUpRequiredError } from "@/lib/lesson-player-errors";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
@@ -16,6 +18,18 @@ async function createStart(
   ]);
 
   const result = await startStudyBlock({ ...path, input: body });
+
+  if (result.status === "preparing") {
+    return NextResponse.json({ status: result.status }, { status: 202 });
+  }
+
+  if (result.status === "needsChoice") {
+    return examError(result);
+  }
+
+  if (result.status === "signUpRequired") {
+    return signUpRequiredError();
+  }
 
   if (result.status !== "ready") {
     return studySessionError(result);

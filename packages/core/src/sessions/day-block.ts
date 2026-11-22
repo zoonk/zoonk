@@ -45,6 +45,7 @@ export const dayBlockRefSchema = z
         extra: z.boolean(),
         fullReview: z.boolean(),
         mistakesOnly: z.boolean(),
+        mockPreparationReview: z.boolean().optional(),
         refresh: z.boolean(),
         reinforcement: z.boolean(),
         weakest: z.boolean(),
@@ -127,6 +128,7 @@ export function toDayBlockRef(block: DayWork): DayBlockRef {
       extra: block.extra,
       fullReview: block.fullReview,
       mistakesOnly: block.mistakesOnly,
+      ...(block.mockPreparationReview && { mockPreparationReview: true }),
       refresh: block.refresh,
       reinforcement: block.reinforcement,
       weakest: block.weakest,
@@ -168,6 +170,7 @@ export function isSameDayWork(first: DayBlockRef, second: DayBlockRef): boolean 
     first.flags.extra === second.flags.extra &&
     first.flags.fullReview === second.flags.fullReview &&
     first.flags.mistakesOnly === second.flags.mistakesOnly &&
+    Boolean(first.flags.mockPreparationReview) === Boolean(second.flags.mockPreparationReview) &&
     first.flags.refresh === second.flags.refresh &&
     first.flags.reinforcement === second.flags.reinforcement &&
     first.flags.weakest === second.flags.weakest

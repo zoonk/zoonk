@@ -645,7 +645,7 @@ describe(getMockQuestionsShortfall, () => {
 
   it("asks for each skill's share when the bank is short of the mock's questions", () => {
     expect(shortfall(candidates("Matemática", 9))).toStrictEqual([
-      { format: getMockFormatMix(null)[0], questionsPerSkill: 12, skillIds, target: 15 },
+      { format: getMockFormatMix(null)[0], questionsPerSkill: 12, skillIds },
     ]);
   });
 

@@ -22,6 +22,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
+  /// The bar's note over its buttons, as the bottom bar's, so the buttons never move when it shows.
+  private var note: BarNote?
 
   init(
     isResult: Bool = false, segments: [TaskSegment]? = nil, index: Int = 0,
@@ -57,10 +59,15 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     }
   }
 
+  private var isWide: Bool { barWidth >= WideBar.width && !isStacked }
+
   private var layout: some View {
     Group {
       if kind == .oneDecision {
-        QuestionColumn(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
+        QuestionColumn(
+          readableWidth: PracticeLayout.readableWidth, spacing: 20,
+          note: actionsHidden ? nil : note, noteIsWide: isWide
+        ) {
           EmptyView()
         } content: {
           stimulus()
@@ -70,7 +77,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         .lonePage()
       } else {
         QuestionSpread(
-          readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread
+          readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread,
+          note: actionsHidden ? nil : note, noteIsWide: isWide
         ) {
           EmptyView()
         } stimulus: {
@@ -83,6 +91,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       }
     }
     .background(Color(.systemBackground))
+    // As the bottom bar: a soft edge would fade the page above the bar's hairline.
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 
   private var segmentsBar: TaskSegments? {
@@ -102,13 +112,14 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         actions()
       }
       // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
-      .environment(\.practiceBarIsWide, barWidth >= WideBar.width && !isStacked)
+      .environment(\.practiceBarIsWide, isWide)
       .frame(maxWidth: .infinity)
       .onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
       .frame(maxWidth: PracticeLayout.readableWidth)
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
       .frame(maxWidth: .infinity)
+      .barBackdrop(hairline: note == nil)
     }
   }
 }
@@ -118,12 +129,14 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 extension PracticeTaskLayout where Response == EmptyView {
   init(
     isResult: Bool = false,
+    note: BarNote? = nil,
     @ViewBuilder content: @escaping () -> Stimulus,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
     self.init(
       kind: isResult ? .result : .oneDecision, segments: nil, index: 0, stimulus: content,
       response: { EmptyView() }, actions: actions)
+    self.note = note
   }
 }
 
@@ -135,6 +148,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   var isSpread = true
   /// The bar's one line, over the page with the actions.
   var note: BarNote?
+  var noteIsWide = false
   @ViewBuilder let header: () -> Header
   @ViewBuilder let stimulus: () -> Stimulus
   @ViewBuilder let response: () -> Response
@@ -146,10 +160,13 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
         .pageHeader(header)
     } secondary: {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: response)
-        .barNote(note)
+        .practiceBarNote(note, isWide: noteIsWide, readableWidth: readableWidth)
         .safeAreaBar(edge: .bottom, content: actions)
     } single: {
-      QuestionColumn(readableWidth: readableWidth, spacing: spacing, note: note, header: header) {
+      QuestionColumn(
+        readableWidth: readableWidth, spacing: spacing, note: note, noteIsWide: noteIsWide,
+        header: header
+      ) {
         stimulus()
         response()
       } actions: {
@@ -165,6 +182,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
   var note: BarNote?
+  var noteIsWide = false
   @ViewBuilder let header: () -> Header
   @ViewBuilder let content: () -> Content
   @ViewBuilder let actions: () -> Actions
@@ -172,12 +190,23 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   var body: some View {
     ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
       .pageHeader(header)
-      .barNote(note)
+      .practiceBarNote(note, isWide: noteIsWide, readableWidth: readableWidth)
       .safeAreaBar(edge: .bottom, content: actions)
   }
 }
 
 extension View {
+  fileprivate func practiceBarNote(
+    _ note: BarNote?, isWide: Bool, readableWidth: CGFloat
+  ) -> some View {
+    barNote(note) {
+      $0.barNoteLines(isWide: isWide)
+        .frame(maxWidth: readableWidth)
+        .scenePadding(.horizontal)
+        .frame(maxWidth: .infinity)
+    }
+  }
+
   /// A page without a header gets no bar: a top bar around an empty view takes the page's free
   /// height and pushes its content down out of sight.
   @ViewBuilder

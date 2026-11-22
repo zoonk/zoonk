@@ -229,6 +229,8 @@ describe("ending a session", () => {
 
     const [first, ...rest] = today.session.blocks;
 
+    expect(first?.kind).toBe("learn");
+
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "skipped" },

@@ -14,28 +14,13 @@
   "mock_chooser_last_mock": "b7d8423c88cd598464a9d867b311e1cc1c58db8a34c4bbc5314a3d41e4891acd",
   "mock_chooser_line": "1a18952e83c6767a74eca190c46d0080f5d1ea6d4caa5b974a4e63422c775d33",
   "mock_chooser_no_written_part": "853056d2150b1868f8e4ce7d282591475e05aaa1973b622118520d8b1d397f99",
-  "mock_chooser_not_enough": "70a15672164b5e8d068ae62e656de94e4ff56cef2de66dbe11a0c46a9238f5b1",
   "mock_chooser_objective_only": "66203a63715fe078109965300b627a21f756e757018d17e84314f68c9b6d10a2",
   "mock_chooser_one_subject": "bb643e4c1836624c66a4933d36f9f6b91fd2556c2e8f6b5f2bd21e7a5ff0ca6e",
   "mock_chooser_option_size": "cbd8204b4b3fc3b1a26443957471437014872d764b6676f9e62b8d85bc4d936b",
-  "mock_chooser_pick_another": "72d6f73e7ae0b9be4c9ee5a0d5cd2a79c8f1f78d8e6fb9cc827591fb4eb986e6",
-  "mock_chooser_preparing": "d94a35a5644dced0cd014157c4fcae7b781464903b65039fc3ad24b9a1bbadc4",
-  "mock_chooser_preparing_detail": "eab9db4249c33a374766bbb01604cd66f7cb76eee9f94e3a07494f1040a6f95e",
-  "mock_chooser_short_day": "ee4c52bfa145e03e35c0d6c09f4aba0ef4602c5a417fc80efc8cfbbfc4812608",
-  "mock_chooser_short_later_today": "8dcbf071837eecc504906fb052540fd736018ea92ae864f53f17eb73c13f9630",
-  "mock_chooser_short_line": "64d869615302f77b0183b7562b8cef2e58b4ce53258adbadf4ef13dbd9244a4e",
-  "mock_chooser_short_on": "3137551fd91c1d27e3e92c17a2b53a102c213473220c0eb897c4cb76b929e072",
-  "mock_chooser_short_title": "07bec76a5aa206d0d3e227960c2db36c45b66ec00b1b22556574bb2508336b82",
   "mock_chooser_start": "ca34c5635b72b1e75b75b02db0d1aa60079665ca23ed1cfcded75997d05a215b",
   "mock_chooser_the_exam": "6b23ca6f1612bead032d892c5c3579516d04f13242f59372fadf1d1ea58f7101",
   "mock_chooser_title": "c96726ffa340d6e5b431b4b00b374a6373796194d024fc805b766fa80b36c795",
-  "mock_chooser_usually": "15ff7382a3969f22434fd505a514f920d6e94be3ebd2652c45e5bdaaba88664d",
-  "mock_chooser_writing": "529db79095009a9808650edd68063876b649b6e0702a658d511ba31360436689",
-  "mock_chooser_writing_questions": "92daccea4445b11888ba270e6f49bf105fc6b0488c18db257115e54e54b25bf0",
-  "mock_chooser_writing_questions_line": "e6e6235e57d52a4d69f7c8bbd7d7e404a8710fc4434c5805f68554438f2e81a8",
-  "mock_chooser_writing_written": "80f736722bb8ff855c96242a791c4867a8cdc3d7166957304e4a57e59618fe05",
-  "mock_chooser_writing_written_detail": "08ae13ad465a36c336921d8a63d6b5c63ac02c982506c8031218c3ce5be2ef6c",
-  "mock_chooser_writing_written_failed": "9457c40ecf5af232e847899e17d83388b80a52ec467e901cb7839f2dfc8efde6"
+  "mock_chooser_usually": "15ff7382a3969f22434fd505a514f920d6e94be3ebd2652c45e5bdaaba88664d"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -55,9 +40,6 @@
     <string name="mock_chooser_objective_only">Tylko krótsze pytania zamknięte</string>
     <!-- The option that takes both tests of an exam of two tests. -->
     <string name="mock_chooser_both_tests">Oba testy</string>
-    <string name="mock_chooser_writing_written">Przygotowujemy pytania…</string>
-    <string name="mock_chooser_writing_written_detail">Pytania podobne do tych na egzaminie. Tutaj rozpocznie się egzamin próbny, gdy będą gotowe.</string>
-    <string name="mock_chooser_writing_written_failed">Nie udało się przygotować pytań</string>
     <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
     <plurals name="mock_chooser_all_tests">
         <item quantity="one">Cały %1$d test</item>
@@ -84,24 +66,7 @@
         <item quantity="many">%1$d pytań · %2$s</item>
         <item quantity="other">%1$d pytań · %2$s</item>
     </plurals>
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <string name="mock_chooser_not_enough">Nie ma jeszcze dość pytań na ten egzamin. Wybierz inny.</string>
     <string name="mock_chooser_failed">Nie udało nam się rozpocząć egzaminu próbnego. Spróbuj ponownie.</string>
-    <string name="mock_chooser_short_title">Rozpocząć krótszy egzamin próbny?</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_day">Ten egzamin ma dziś %1$s z %2$s pytań, czyli około %3$s na rozwiązanie. Pełną wersję możesz rozwiązać jutro.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
-    <string name="mock_chooser_short_later_today">Dziś ten egzamin ma %1$s z %2$s pytań, czyli około %3$s na rozwiązanie. Pełną wersję możesz rozwiązać jeszcze dziś.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Dziś ten egzamin ma %1$s z %2$s pytań, czyli około %3$s na rozwiązanie. Pełną wersję możesz rozwiązać %4$s.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_line">Ten egzamin ma dziś %1$s z %2$s pytań, czyli około %3$s na rozwiązanie.</string>
-    <string name="mock_chooser_pick_another">Wybierz inny</string>
-    <string name="mock_chooser_preparing">Przygotowujemy twój egzamin próbny</string>
-    <string name="mock_chooser_preparing_detail">Przygotowujemy dla ciebie pytania podobne do tych na egzaminie. Egzamin próbny rozpocznie się tutaj, gdy tylko będą gotowe.</string>
-    <string name="mock_chooser_writing">Przygotowujemy twój egzamin próbny</string>
-    <string name="mock_chooser_writing_questions">Przygotowujemy pytania takie jak na egzaminie</string>
-    <string name="mock_chooser_writing_questions_line">Wybieramy tematy pytań z każdego przedmiotu…</string>
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">zwykle %1$s</string>
     <string name="mock_chooser_last_mock">Twój ostatni egzamin próbny</string>

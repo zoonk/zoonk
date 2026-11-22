@@ -376,12 +376,9 @@ describe("written tasks scoped to the learner's subjects", () => {
       mockSession(developer.userId);
 
       const start = () =>
-        startAnytimeMock({
-          goalId: developer.goalId,
-          input: { acceptFewer: true, afterWriting: true, shape: WRITTEN_TEST },
-        });
+        startAnytimeMock({ goalId: developer.goalId, input: { shape: WRITTEN_TEST } });
 
-      await expect(start()).resolves.toStrictEqual({ status: "needsQuestions" });
+      await expect(start()).resolves.toStrictEqual({ status: "preparing" });
 
       const systemsCase = await writePrompt(developer, long.key);
 
@@ -409,7 +406,7 @@ describe("written tasks scoped to the learner's subjects", () => {
         },
       });
 
-      await expect(start()).resolves.toStrictEqual({ status: "needsQuestions" });
+      await expect(start()).resolves.toStrictEqual({ status: "preparing" });
 
       const unseen = await writePrompt(developer, short.key);
       expect(lastWriterInput()).toMatchObject({ choices: [], subject: { name: COMPLEMENTARY[1] } });

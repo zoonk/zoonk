@@ -8,17 +8,19 @@ import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
-import { getSessionBlockOrder } from "../day-blocks";
+import { getNextBlock } from "../day-blocks";
 import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
 import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
-import { toDayBlockView } from "./day-block-view";
+import { type DayBlockInput, toDayBlockView } from "./day-block-view";
+import { inDayOrder } from "./day-order";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
-import { getNextBlock, getSessionBar } from "./session-view";
+import { planSavedMockReview } from "./saved-mock-review";
+import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 import { getBlueprintWritingTasks } from "./writing-block-tasks";
 
@@ -39,7 +41,7 @@ export async function readSavedDayView({
   const { goalId } = session;
   const readCatchUp = goalId ? () => readCatchUpItems(userId, goalId) : undefined;
 
-  const [view, refill] = await Promise.all([
+  const [view, entitlement] = await Promise.all([
     loadStudySessionView({
       blueprint,
       readCatchUp,
@@ -60,7 +62,35 @@ export async function readSavedDayView({
       : null,
   ]);
 
-  if (!refill || !view.current || !session.goalId) {
+  if (!view.current || !session.goalId) {
+    return view;
+  }
+
+  const preparing = new Set(
+    view.blocks.filter((block) => block.preparing).map((block) => block.position),
+  );
+
+  const review =
+    !entitlement && view.nextBlockId === null
+      ? await planSavedMockReview({ preparing, session, timeZone })
+      : null;
+
+  const refill: { blocks: DayBlockInput[]; plannedMinutes: number } | null =
+    entitlement ??
+    (review && {
+      blocks: [
+        ...session.blocks,
+        {
+          ...review,
+          brainPower: 0,
+          position: Math.max(-1, ...session.blocks.map((block) => block.position)) + 1,
+          status: "pending" as const,
+        },
+      ],
+      plannedMinutes: session.plannedMinutes + review.estimatedMinutes,
+    });
+
+  if (!refill) {
     return view;
   }
 
@@ -90,23 +120,25 @@ export async function readSavedDayView({
 
   const writingTasks = getBlueprintWritingTasks(blueprint);
 
-  const blocks = getSessionBlockOrder(refill.blocks).map((block) => {
-    const saved = block.id ? savedViews.get(block.id) : undefined;
+  const blocks = inDayOrder(
+    refill.blocks.map((block) => {
+      const saved = block.id ? savedViews.get(block.id) : undefined;
 
-    if (saved) {
-      const { id: _id, ...fields } = saved;
-      return fields;
-    }
+      if (saved) {
+        const { id: _id, ...fields } = saved;
+        return fields;
+      }
 
-    return toDayBlockView({
-      answeredItemIds: new Set(),
-      block,
-      blockedTestOutChapters,
-      blocks: refill.blocks,
-      subject: subjects.get(block.position) ?? null,
-      writingTasks,
-    });
-  });
+      return toDayBlockView({
+        answeredItemIds: new Set(),
+        block,
+        blockedTestOutChapters,
+        blocks: refill.blocks,
+        subject: subjects.get(block.position) ?? null,
+        writingTasks,
+      });
+    }),
+  );
 
   const next = getNextBlock(blocks);
 
@@ -120,7 +152,13 @@ export async function readSavedDayView({
         ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
         : null,
       emptyDay: null,
-      extraTime: getExtraTime({ blocks: refill.blocks, current: view.current }),
+      extraTime: getExtraTime({
+        blocks: refill.blocks.map((block) => ({
+          preparing: preparing.has(block.position),
+          status: block.status,
+        })),
+        current: view.current,
+      }),
       minutes: getSessionMinutes({
         blocks: refill.blocks,
         dailyGoal: view.minutes.dailyGoal,
