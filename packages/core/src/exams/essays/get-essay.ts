@@ -56,7 +56,7 @@ export async function getEssay({
       blockId,
       context: content.context,
       draft: admissionId && writing?.draft && !submitted ? { ...writing.draft, admissionId } : null,
-      drafts: writingTask ? drafts.map((draft) => ({ ...draft, writingTask })) : drafts,
+      drafts,
       gradesLeft,
       pacing: { minutes: block.estimatedMinutes ?? 1, source: writingPacing ?? "practice" },
       question: content.question,

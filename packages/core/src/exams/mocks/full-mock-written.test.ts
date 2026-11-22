@@ -563,7 +563,7 @@ describe("written mock sittings", () => {
     const before = await readHistory();
 
     expect(before).toMatchObject({
-      detail: { status: "ready" },
+      detail: { attempt: { writingTask: { lines: 30, number: 1, total: 2 } }, status: "ready" },
       samples: [{ id: attempt.id, itemId: short.id }],
     });
 
@@ -610,6 +610,7 @@ describe("written mock sittings", () => {
 
     const afterCorrection = await readHistory();
     expect(afterCorrection.history).toStrictEqual(before.history);
+    expect(afterCorrection.detail).toStrictEqual(before.detail);
     section.name = "Replacement written part";
     await prisma.examBlueprint.update({
       data: { structure: corrected },

@@ -28,6 +28,7 @@ export async function loadEssayDrafts({
             grade: answer.grade,
             submittedAt: attempt.answeredAt.toISOString(),
             text: answer.text,
+            ...(answer.writingTask && { writingTask: answer.writingTask }),
           },
         ]
       : [];

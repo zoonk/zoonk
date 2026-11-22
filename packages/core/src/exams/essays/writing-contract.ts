@@ -230,6 +230,7 @@ export const writtenAnswerSchema = z.object({
   writing: writtenItemSchema
     .omit({ aspects: true, chosenSubjects: true, subject: true })
     .extend({ part: z.string().min(1).nullable() }),
+  writingTask: writingTaskSchema.optional(),
 });
 
 export type WritingDraft = z.infer<typeof writingDraftSchema>;

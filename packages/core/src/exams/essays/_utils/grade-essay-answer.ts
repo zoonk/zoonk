@@ -20,6 +20,7 @@ import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 import { getWritingAttemptId } from "./writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./writing-feedback";
+import { indexWritingTasks } from "./writing-task-positions";
 
 const GOOD_SHARE = 0.6;
 
@@ -177,12 +178,16 @@ async function confirmAdmission(
   return false;
 }
 
-async function loadPromptPart(item: Item, taskKey: string) {
+async function loadPromptTask(item: Item, taskKey: string) {
   const blueprint = item.examBlueprintId
     ? await prisma.examBlueprint.findUnique({ where: { id: item.examBlueprintId } })
     : null;
 
-  return listBlueprintWritingTasks(blueprint).find(({ key }) => key === taskKey)?.section ?? null;
+  const tasks = listBlueprintWritingTasks(blueprint);
+  return {
+    part: tasks.find(({ key }) => key === taskKey)?.section ?? null,
+    writingTask: indexWritingTasks(tasks).get(taskKey),
+  };
 }
 
 export async function recordEssayGrade(
@@ -207,7 +212,7 @@ export async function recordEssayGrade(
     throw new Error("The writing grade is incompatible with its scoring basis.");
   }
 
-  const part = basis.part ?? (await loadPromptPart(item, basis.taskKey));
+  const task = await loadPromptTask(item, basis.taskKey);
   const writtenConditions = { ...conditions, estimatedLines: grade.estimatedLines };
 
   const share =
@@ -221,7 +226,11 @@ export async function recordEssayGrade(
         grade,
         itemId: item.id,
         text,
-        writing: writtenAnswerSchema.shape.writing.parse({ ...basis, part }),
+        writing: writtenAnswerSchema.shape.writing.parse({
+          ...basis,
+          part: basis.part ?? task.part,
+        }),
+        ...(task.writingTask && { writingTask: task.writingTask }),
       },
       attemptId,
       graded: { durationMs, isCorrect: share !== null && share >= GOOD_SHARE, score: share },

@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { loadWritingTask } from "../../sessions/_utils/writing-block-tasks";
 import { getSession } from "../../users/get-session";
 import { writingAttemptSchema } from "./essay-contract";
 import { writtenAnswerSchema } from "./writing-contract";
@@ -36,12 +35,8 @@ export async function getWritingAttempt(attemptId: string) {
     submittedAt: attempt.answeredAt.toISOString(),
     text: answer.text,
     writing: answer.writing,
+    ...(answer.writingTask && { writingTask: answer.writingTask }),
   });
 
-  const writingTask = await loadWritingTask({
-    blueprintId: answer.examBlueprintId,
-    taskKey: result.writing.taskKey,
-  });
-
-  return { attempt: { ...result, ...(writingTask && { writingTask }) }, status: "ready" } as const;
+  return { attempt: result, status: "ready" } as const;
 }
