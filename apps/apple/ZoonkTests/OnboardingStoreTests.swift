@@ -351,7 +351,12 @@ actor DraftServer: ClientTransport {
           from: try await Data(collecting: body, upTo: .max)))
 
       return (
-        HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
+        HTTPResponse(
+          status: .created,
+          headerFields: [
+            .contentType: "application/json",
+            HTTPField.Name("Location")!: "/v1/goal-understandings/\(served.id)",
+          ]),
         HTTPBody(try JSONEncoder().encode(served))
       )
     }
