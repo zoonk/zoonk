@@ -302,7 +302,7 @@ export async function buildPlanView({
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,
     steering: buildSteeringView({ items, settings: state.settings }),
-    suggestedTime: status?.kind === "pastDate" ? null : (summary?.advice.suggested ?? null),
+    suggestedTime: status?.kind === "pastDate" ? null : (fresh?.advice.suggested ?? null),
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
     weekTime: studyWeek.time,

@@ -329,6 +329,24 @@ describe("the visible Plan after days away, before any learner POST", () => {
       targetDate: new Date("2020-10-07T00:00:00Z"),
     });
 
+    const original = await saved(plan.id);
+    const originalSuggestion = planSummarySchema.parse(original.summary).advice.suggested;
+    expect(originalSuggestion).toMatchObject({ kind: "everything" });
+
+    vi.setSystemTime(START);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: originalSuggestion },
+      status: "ready",
+    });
+
+    vi.setSystemTime(RETURN);
+    const read = await countDatabaseStatements(() => getGoalPlan(goal.id));
+
+    expect(read.result).toMatchObject({ plan: { suggestedTime: null }, status: "ready" });
+    expect(read.writes).toBe(0);
+    await expect(saved(plan.id)).resolves.toStrictEqual(original);
+
     const opened = await openStudyDay({
       goalId: goal.id,
       shownDate: "2020-10-01",
