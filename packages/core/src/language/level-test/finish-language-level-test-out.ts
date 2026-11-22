@@ -6,11 +6,12 @@ import {
   getLearnerModelCacheTag,
   getUserProgressCacheTag,
 } from "../../cache/tags";
+import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { isSkillConfirmed } from "../../learner/_utils/skill-claims";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { oweTestOutChange } from "../../plans/_utils/owe-test-out-change";
 import { levelTestOutReceipt } from "../../plans/_utils/test-out-receipt";
+import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { loadTestOutAnswers, saveTestOut } from "./_utils/level-test-out-state";
@@ -148,14 +149,19 @@ export async function finishLanguageLevelTestOut({
 
       await saveTestOut({ goal: current, progress: finished, tx });
 
-      await oweTestOutChange({
-        db: tx,
+      await recordTestOutChange({
         goalId,
         itemIds,
+        now,
         receipt: levelTestOutReceipt(attemptId),
         timeZone,
+        tx,
         userId,
       });
+
+      if (itemIds.length > 0) {
+        await owePlanStartLessons({ db: tx, goalId, userId });
+      }
 
       return finished;
     },

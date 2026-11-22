@@ -22,8 +22,6 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.goalId;
     case "replenishLevelTestChecks":
       return `${followUp.input.goalId}:${followUp.input.level}`;
-    case "recordTestOutChange":
-      return followUp.input.receipt;
     case "prepareLevelTestOut":
       return followUp.input.attemptId;
     case "preparePlacementItems":

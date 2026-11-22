@@ -18,7 +18,6 @@ import {
 import { mockSession } from "../../_test-utils/mock-session";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
 import { decidePlanChange } from "../../plans/decide-plan-change";
-import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
@@ -846,7 +845,11 @@ describe("a post-start level test", () => {
     const finished = await finishLanguageLevelTest(goal.id, attemptId);
 
     expect(finished).toMatchObject({
-      result: { changeId: null, lessonsSkipped: 1, levelsSkipped: expect.arrayContaining(["A1"]) },
+      result: {
+        changeId: expect.any(String),
+        lessonsSkipped: 1,
+        levelsSkipped: expect.arrayContaining(["A1"]),
+      },
       status: "ready",
     });
 
@@ -866,48 +869,20 @@ describe("a post-start level test", () => {
 
     await expect(readBlocks()).resolves.toStrictEqual(blocks);
 
-    await expect(
-      prisma.planChange.count({
-        where: { kind: "testedOut", planId: lowItem.planId, status: "applied" },
-      }),
-    ).resolves.toBe(0);
+    if (finished.status !== "ready" || !finished.result?.changeId) {
+      throw new Error("Expected the finish's Undo ID");
+    }
 
-    const receipt = `levelTest:${attemptId}`;
-    const owed = await listOwed(user.id);
+    const { changeId } = finished.result;
 
-    expect(owed).toStrictEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ key: receipt, kind: "recordTestOutChange" }),
-      ]),
-    );
-
-    await recordTestOutChange({
-      goalId: goal.id,
-      itemIds: [lowItem.id],
-      receipt,
-      timeZone: "UTC",
-      userId: user.id,
-    });
-
-    const change = await prisma.planChange.findFirstOrThrow({
-      where: { kind: "testedOut", planId: lowItem.planId, status: "applied" },
-    });
-
-    const recovered = await finishLanguageLevelTest(goal.id, attemptId);
-
-    expect(recovered).toMatchObject({
-      result: { changeId: change.id, lessonsSkipped: 1 },
-      status: "ready",
-    });
-
-    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toStrictEqual(recovered);
+    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toStrictEqual(finished);
 
     await expect(
       prisma.planChange.count({ where: { kind: "testedOut", planId: lowItem.planId } }),
     ).resolves.toBe(1);
 
     await expect(
-      decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "undone" } }),
+      decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
     ).resolves.toMatchObject({ status: "updated" });
 
     await expect(prisma.planItem.findUnique({ where: { id: lowItem.id } })).resolves.toMatchObject({

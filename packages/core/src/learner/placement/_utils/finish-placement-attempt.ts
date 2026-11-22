@@ -4,10 +4,10 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
-import { oweTestOutChange } from "../../../plans/_utils/owe-test-out-change";
 import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
+import { recordTestOutChange } from "../../../plans/record-test-out-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
 import { testOutKnownPlanItems } from "../../_utils/test-out-known-plan-items";
@@ -124,12 +124,13 @@ export async function finishPlacementAttempt({
       tx,
     });
 
-    await oweTestOutChange({
-      db: tx,
+    await recordTestOutChange({
       goalId,
       itemIds: [...testedOutPlanItemIds, ...changed.sharedItemIds],
+      now,
       receipt: receiptKey,
       timeZone,
+      tx,
       userId,
     });
 

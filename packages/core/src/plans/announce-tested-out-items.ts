@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import {
   keepOpenSessionSelection,
   skipTestedOutBlocks,
@@ -12,7 +12,7 @@ import {
   loadLivingPlanBatch,
   mergeChangeTopics,
 } from "./_utils/living-plan-change";
-import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
+import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
@@ -27,18 +27,16 @@ function readSkipBatch({
   context,
   livingPlanDay,
   now,
-  testReceipt,
 }: {
   context: PlanContext;
   livingPlanDay?: string;
   now: Date;
-  testReceipt?: string;
 }) {
   if (livingPlanDay) {
     return loadLivingPlanBatch({ context, day: livingPlanDay });
   }
 
-  return testReceipt ? null : findUnseenSkip({ context, now });
+  return findUnseenSkip({ context, now });
 }
 
 export async function announceTestedOutItems({
@@ -49,7 +47,6 @@ export async function announceTestedOutItems({
   now,
   planItemIds,
   skipBlocks = false,
-  testReceipt,
   timeZone,
 }: {
   extraWrites?: (tx: TransactionClient, changeId: string | null) => Promise<unknown>;
@@ -64,7 +61,6 @@ export async function announceTestedOutItems({
   planItemIds: readonly string[];
   /** Shared notices save every goal's undo snapshot before pending blocks are skipped. */
   skipBlocks?: boolean;
-  testReceipt?: string;
   timeZone: string;
 }): Promise<{ changeId: string | null; lessonsSkipped: number; planVersion: number } | null> {
   if (planItemIds.length === 0) {
@@ -80,28 +76,9 @@ export async function announceTestedOutItems({
       return null;
     }
 
-    if (testReceipt) {
-      const recorded = await prisma.planChange.findFirst({
-        select: { id: true, payload: true },
-        where: {
-          kind: "testedOut",
-          payload: { equals: testReceipt, path: ["testReceipt"] },
-          planId: context.plan.id,
-        },
-      });
-
-      if (recorded) {
-        return {
-          changeId: recorded.id,
-          lessonsSkipped: parsePlanChangePayload(recorded.payload).lessonsSkipped ?? 0,
-          planVersion: context.plan.version,
-        };
-      }
-    }
-
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
-    const unseen = await readSkipBatch({ context, livingPlanDay, now, testReceipt });
+    const unseen = await readSkipBatch({ context, livingPlanDay, now });
 
     if (
       unseen &&
@@ -173,7 +150,6 @@ export async function announceTestedOutItems({
               ...(livingPlanDay && { livingPlanDay }),
               planItemIds: [...skipped],
               source: "system",
-              ...(testReceipt && { testReceipt }),
               ...(keepSession && { todaySession: "unchanged" }),
             }),
             reason: TESTED_OUT_NOTE,

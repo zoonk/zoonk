@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type Plan, type PlanItem, prisma } from "@zoonk/db";
+import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { readLanguageAim } from "../../language/aims/language-aims";
@@ -105,26 +105,28 @@ export function getStateTargetDate(state: PlanState): Date | null {
   return state.goal.targetDate ? fromIsoDate(state.goal.targetDate) : null;
 }
 
-function loadPlan(goalId: string) {
-  return prisma.plan.findUnique({
+function loadPlan(goalId: string, db: TransactionClient) {
+  return db.plan.findUnique({
     include: { items: { orderBy: { position: "asc" }, select: itemSelect } },
     where: { goalId },
   });
 }
 
 export async function loadPlanContext({
+  db = prisma,
   goal,
   now = new Date(),
   saved,
   timeZone,
 }: {
+  db?: TransactionClient;
   goal: Goal;
   now?: Date;
   /** A GET's `readSavedPlan` row, so the request reads the plan once; writes leave it out. */
   saved?: SavedPlan | null;
   timeZone?: string | null;
 }): Promise<PlanContext | null> {
-  const plan = saved === undefined ? await loadPlan(goal.id) : saved;
+  const plan = saved === undefined ? await loadPlan(goal.id, db) : saved;
 
   if (!plan) {
     return null;

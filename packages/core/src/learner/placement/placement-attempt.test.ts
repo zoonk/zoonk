@@ -9,12 +9,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
-import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getGoalPlan } from "../../plans/get-goal-plan";
-import { recordTestOutChange } from "../../plans/record-test-out-change";
+import { refreshTestedOutPlan } from "../../plans/refresh-tested-out-plan";
 import { gradeOrder, parseOrderItem } from "../../sessions/_utils/order-items";
 import { loadSessionPlacement } from "../../sessions/_utils/session-placement";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
@@ -359,18 +358,9 @@ describe("learn placement attempts", () => {
       const finish = () => finishGoalPlacement({ goalId: goal.id, input: { attemptId } });
       const [finished, retried] = await Promise.all([finish(), finish()]);
 
-      const receipt = `${attemptId}:1`;
-      const notice = { goalId: goal.id, itemIds: [item.id], receipt, timeZone: "UTC" };
-
-      const owed = await listOwed(user.id);
-
-      expect(owed.filter(({ kind }) => kind === "recordTestOutChange")).toStrictEqual([
-        { input: notice, key: receipt, kind: "recordTestOutChange" },
-      ]);
-
       expect(finished).toMatchObject({
         completion: {
-          changeId: null,
+          changeId: expect.any(String),
           lessonsSkipped: 1,
           result: { lessonsSkipped: 1 },
           testedOutPlanItemIds: [item.id],
@@ -378,7 +368,12 @@ describe("learn placement attempts", () => {
         status: "ready",
       });
 
-      expect(retried).toMatchObject({ completion: { changeId: null, lessonsSkipped: 1 } });
+      if (finished.status !== "ready" || !finished.completion.changeId) {
+        throw new Error("Expected the finish's Undo ID");
+      }
+
+      const { changeId } = finished.completion;
+      expect(retried).toMatchObject({ completion: { changeId, lessonsSkipped: 1 } });
 
       const nextAttempt = movedOn
         ? await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } })
@@ -389,15 +384,7 @@ describe("learn placement attempts", () => {
 
       expect(Boolean(nextAttemptId && nextAttemptId !== attemptId)).toBe(movedOn);
 
-      const work = { ...notice, userId: user.id };
-      await recordTestOutChange(work);
-      await recordTestOutChange(work);
-
-      const change = await prisma.planChange.findFirstOrThrow({
-        where: { kind: "testedOut", planId: item.planId },
-      });
-
-      const changeId = change.id;
+      await refreshTestedOutPlan({ goalId: goal.id, userId: user.id });
 
       await expect(
         prisma.planChange.count({ where: { kind: "testedOut", planId: item.planId } }),

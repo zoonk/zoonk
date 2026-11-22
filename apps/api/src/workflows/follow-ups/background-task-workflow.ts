@@ -27,7 +27,6 @@ export type BackgroundTask = Exclude<
       | "preparePlacementItems"
       | "prepareLevelTestBank"
       | "prepareLevelTestOut"
-      | "recordTestOutChange"
       | "replenishLevelTestChecks"
       | "rebuildGoalCurriculum"
       | "prepareSession"

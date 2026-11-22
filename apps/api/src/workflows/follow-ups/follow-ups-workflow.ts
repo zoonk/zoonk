@@ -30,8 +30,8 @@ import {
   requestLessonWritingStep,
   requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
-import { recordTestOutChangeStep } from "./steps/record-test-out-change-step";
 import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
+import { refreshTestedOutPlanStep } from "./steps/refresh-tested-out-plan-step";
 import { settleSessionPlanStep } from "./steps/settle-session-plan-step";
 
 const MAX_PASSES = 20;
@@ -75,10 +75,8 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;
     case "prepareGoalLessons":
+      await refreshTestedOutPlanStep({ goalId: followUp.input.goalId, userId });
       await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
-      return;
-    case "recordTestOutChange":
-      await recordTestOutChangeStep({ ...followUp.input, userId });
       return;
     case "prepareLevelTestBank":
       await startLevelTestBank({

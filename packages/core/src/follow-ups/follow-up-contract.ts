@@ -61,15 +61,6 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
     input: z.object({
       goalId: uuidSchema(),
-      itemIds: z.array(uuidSchema()),
-      receipt: z.string(),
-      timeZone: z.string(),
-    }),
-    kind: z.literal("recordTestOutChange"),
-  }),
-  z.object({
-    input: z.object({
-      goalId: uuidSchema(),
       pair: z.object({ language: z.string(), targetLanguage: z.string() }),
     }),
     kind: z.literal("prepareLevelTestBank"),

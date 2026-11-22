@@ -170,16 +170,10 @@ describe(followUpsWorkflow, () => {
       >);
   });
 
-  it("records the receipt after a finish and replenishes only the short level", async () => {
-    const { goal, items, user } = await languageGoalFixture();
+  it("replenishes only the short level", async () => {
+    const { goal, user } = await languageGoalFixture();
     const level = "B2" as const;
     const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "en" };
-    const receipt = crypto.randomUUID();
-    const [skipped] = items;
-
-    if (!skipped) {
-      throw new Error("Expected a lesson skipped by the finish");
-    }
 
     const confirmations = (["reading", "listening"] as const).flatMap((skill) =>
       [0, 1].map((index) => ({
@@ -211,10 +205,6 @@ describe(followUpsWorkflow, () => {
         data: { ...pair, details: { levelTest: { usedConfirmations: ["existing-reading-0"] } } },
         where: { id: goal.id },
       }),
-      prisma.planItem.update({
-        data: { completedAt: new Date(), status: "testedOut" },
-        where: { id: skipped.id },
-      }),
       prisma.languageLevelTest.create({
         data: {
           ...pair,
@@ -227,21 +217,13 @@ describe(followUpsWorkflow, () => {
           runId: "fixture",
         },
       }),
-      prisma.followUp.createMany({
-        data: [
-          {
-            input: { goalId: goal.id, itemIds: [skipped.id], receipt, timeZone: "UTC" },
-            key: receipt,
-            kind: "recordTestOutChange",
-            userId: user.id,
-          },
-          {
-            input: { goalId: goal.id, level, pair },
-            key: `${goal.id}:${level}`,
-            kind: "replenishLevelTestChecks",
-            userId: user.id,
-          },
-        ],
+      prisma.followUp.create({
+        data: {
+          input: { goalId: goal.id, level, pair },
+          key: `${goal.id}:${level}`,
+          kind: "replenishLevelTestChecks",
+          userId: user.id,
+        },
       }),
     ]);
 
@@ -265,12 +247,6 @@ describe(followUpsWorkflow, () => {
         questions: [expect.objectContaining({ id: confirmations[0]?.id })],
       },
     });
-
-    await expect(
-      prisma.planChange.findFirstOrThrow({
-        where: { kind: "testedOut", planId: skipped.planId, status: "applied" },
-      }),
-    ).resolves.toMatchObject({ payload: { planItemIds: [skipped.id], testReceipt: receipt } });
 
     await expect(countOwed(user.id)).resolves.toBe(0);
   });

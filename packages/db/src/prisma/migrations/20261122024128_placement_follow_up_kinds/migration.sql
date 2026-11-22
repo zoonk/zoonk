@@ -8,5 +8,4 @@
 
 ALTER TYPE "FollowUpKind" ADD VALUE 'prepare_level_test_bank';
 ALTER TYPE "FollowUpKind" ADD VALUE 'prepare_level_test_out';
-ALTER TYPE "FollowUpKind" ADD VALUE 'record_test_out_change';
 ALTER TYPE "FollowUpKind" ADD VALUE 'replenish_level_test_checks';

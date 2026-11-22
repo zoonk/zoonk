@@ -5,7 +5,6 @@ enum FollowUpKind {
   preparePlacementItems      @map("prepare_placement_items")
   prepareLevelTestBank       @map("prepare_level_test_bank")
   prepareLevelTestOut        @map("prepare_level_test_out")
-  recordTestOutChange        @map("record_test_out_change")
   replenishLevelTestChecks   @map("replenish_level_test_checks")
   rebuildGoalCurriculum      @map("rebuild_goal_curriculum")
   writeLesson                @map("write_lesson")

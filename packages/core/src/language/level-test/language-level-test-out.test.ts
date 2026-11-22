@@ -6,8 +6,8 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
+import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getGoalPlan } from "../../plans/get-goal-plan";
-import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { finishLanguageLevelTestOut } from "./finish-language-level-test-out";
 import {
   type LanguageLevelTestOutResult,
@@ -190,25 +190,25 @@ describe("a language level test-out", () => {
       test: {
         answered: 8,
         next: null,
-        result: { changeId: null, lessonsSkipped: 2, topicsSkipped: [reading.id, listening.id] },
+        result: {
+          changeId: expect.any(String),
+          lessonsSkipped: 2,
+          topicsSkipped: [reading.id, listening.id],
+        },
       },
     });
 
     await expect(finishLanguageLevelTestOut(input)).resolves.toStrictEqual(finished);
 
-    await recordTestOutChange({
-      goalId: goal.id,
-      itemIds: items.slice(0, 2).map(({ id }) => id),
-      receipt: `levelTestOut:${input.attemptId}`,
-      timeZone: "UTC",
-      userId: user.id,
-    });
+    if (finished.status !== "ready" || !finished.test.result?.changeId) {
+      throw new Error("Expected the finish's Undo ID");
+    }
 
-    const recorded = await finishLanguageLevelTestOut(input);
+    const { changeId } = finished.test.result;
 
     await expect(loadTodayPlanChange({ goal, now: new Date() })).resolves.toMatchObject({
       canUndo: true,
-      id: recorded.status === "ready" ? recorded.test.result?.changeId : null,
+      id: changeId,
     });
 
     const statuses = await prisma.planItem.findMany({
@@ -223,5 +223,13 @@ describe("a language level test-out", () => {
       "testedOut",
       "todo",
     ]);
+
+    await expect(
+      decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(finishLanguageLevelTestOut(input)).resolves.toMatchObject({
+      test: { result: { changeId: null, lessonsSkipped: 0, topicsSkipped: [] } },
+    });
   });
 });

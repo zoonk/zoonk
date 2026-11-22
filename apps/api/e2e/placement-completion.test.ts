@@ -17,7 +17,7 @@ import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
-test("a finished placement can be undone from Plan after the change is recorded", async () => {
+test("a finished placement returns an Undo ID accepted by Plan", async () => {
   const { apiContext, user } = await createAuthenticatedApiContext({
     baseURL: process.env.E2E_BASE_URL ?? "",
     prefix: "placement-finish",
@@ -82,18 +82,12 @@ test("a finished placement can be undone from Plan after the change is recorded"
         schema: placementCompletionResponseSchema,
       });
 
-    await expect(finish()).resolves.toMatchObject({ lessonsSkipped: 1 });
+    const completed = await finish();
+    expect(completed).toMatchObject({ changeId: expect.any(String), lessonsSkipped: 1 });
+    const { changeId } = completed;
 
     const plan = async () =>
       readBody({ response: await apiContext.get(`${goalPath}/plan`), schema: planResponseSchema });
-
-    const currentUndo = async () => {
-      const { changes } = await plan();
-      return changes.find(({ canUndo, kind }) => canUndo && kind === "testedOut")?.id;
-    };
-
-    await expect.poll(currentUndo).toEqual(expect.any(String));
-    const changeId = await currentUndo();
 
     await expect(finish()).resolves.toMatchObject({ changeId, lessonsSkipped: 1 });
 
