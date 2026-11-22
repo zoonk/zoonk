@@ -2,6 +2,7 @@ import { type PlotVisual } from "@zoonk/core/library/steps/contract";
 import { placeChartUnit } from "@zoonk/core/library/steps/contract/chart-unit";
 import {
   type LinearScale,
+  type NumericDomain,
   createLinearScale,
   fittingTickIndices,
   formatTicks,
@@ -197,6 +198,41 @@ function placeXTicks({
     .map(({ center, label, value }) => ({ center, label, value }));
 }
 
+/**
+ * When the end labels are all that would be left and both are left out, the learner gets no x
+ * scale, so the plot narrows just enough for the first and last numbers to sit under their values.
+ */
+function getXScale({
+  domain,
+  labels,
+  left,
+  measured,
+  plotRight,
+  ticks,
+  width,
+}: {
+  domain: NumericDomain;
+  labels: string[];
+  left: number;
+  measured: Measure;
+  plotRight: number;
+  ticks: number[];
+  width: number;
+}): LinearScale {
+  const full = createLinearScale({ domain, range: [left, plotRight] });
+  const placed = placeXTicks({ labels, left, measured, ticks, width, x: full });
+
+  if (ticks.length < 2 || placed.length >= 2) {
+    return full;
+  }
+
+  const half = (label = "") => measured.textWidth(label) / 2;
+  const start = left + Math.max(0, half(labels[0]) - LABEL_GAP + CORNER_CLEARANCE);
+  const end = Math.min(plotRight, width - half(labels.at(-1)));
+
+  return end > start ? createLinearScale({ domain, range: [start, end] }) : full;
+}
+
 export function getPlotLayout({
   locale,
   textWidth = estimateTextWidth,
@@ -215,7 +251,23 @@ export function getPlotLayout({
 
   const plan = planReferences({ left, measured, references: visual.references, width, y });
   const plotRight = Math.max(width - plan.width, left + 1);
-  const x = createLinearScale({ domain: axes.x.domain, range: [left, plotRight] });
+  const xLabels = formatTicks({
+    axis: "x",
+    locale,
+    ticks: axes.x.ticks,
+    unit: placeChartUnit({ label: visual.xLabel, unit: visual.xUnit }).numberUnit,
+  });
+
+  const x = getXScale({
+    domain: axes.x.domain,
+    labels: xLabels,
+    left,
+    measured,
+    plotRight,
+    ticks: axes.x.ticks,
+    width,
+  });
+
   const marks = visual.series.map((item) => item.mark);
 
   const series = visual.series.map((item) =>
@@ -275,19 +327,7 @@ export function getPlotLayout({
     series,
     x,
     xTickY: plotBottom + AXIS_LABEL_OFFSET,
-    xTicks: placeXTicks({
-      labels: formatTicks({
-        axis: "x",
-        locale,
-        ticks: axes.x.ticks,
-        unit: placeChartUnit({ label: visual.xLabel, unit: visual.xUnit }).numberUnit,
-      }),
-      left,
-      measured,
-      ticks: axes.x.ticks,
-      width,
-      x,
-    }),
+    xTicks: placeXTicks({ labels: xLabels, left, measured, ticks: axes.x.ticks, width, x }),
     y,
     yTicks,
   };

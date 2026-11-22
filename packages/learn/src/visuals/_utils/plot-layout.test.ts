@@ -429,6 +429,33 @@ describe(getPlotLayout, () => {
     expect(wide.xTicks.length).toBeGreaterThan(narrow.xTicks.length);
   });
 
+  it("narrows the plot so two years at its ends both keep their labels", () => {
+    const years: PlotVisual = {
+      ...scan,
+      series: [
+        {
+          mark: "points",
+          name: "Sales",
+          points: [
+            { label: null, x: 2024, y: 810 },
+            { label: null, x: 2025, y: 880 },
+          ],
+        },
+      ],
+    };
+
+    const layout = layoutFor(years, 318);
+
+    expect(layout.xTicks.map((tick) => tick.label)).toStrictEqual(["2024", "2025"]);
+
+    layout.xTicks.forEach((tick) => {
+      const half = (getLabelWidth(tick.label) - LABEL_GAP) / 2;
+
+      expect(tick.center - half).toBeGreaterThanOrEqual(layout.left - LABEL_GAP);
+      expect(tick.center + half).toBeLessThanOrEqual(318);
+    });
+  });
+
   it("uses the full width when there are no references", () => {
     expect(layoutFor(scan).plotRight).toBe(PHONE - PADDING.right);
   });
