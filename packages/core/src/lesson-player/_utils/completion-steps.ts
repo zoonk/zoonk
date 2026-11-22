@@ -6,6 +6,7 @@ import {
 } from "../../language/activities/language-activities";
 import { loadSkippedActivities } from "../../language/activities/skipped-activities";
 import { isAnswerableStep } from "../lesson-run";
+import { isDictation } from "../playable-lesson";
 import { findFixedScreenIds } from "./fixed-screens";
 import { loadPlayableSteps } from "./load-playable-steps";
 import { getLatePictureStepIds } from "./screen-pictures";
@@ -75,6 +76,7 @@ export async function loadCompletionSteps({
       ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt }),
       ...fixedStepIds,
       ...skippedWritingStepIds,
+      ...steps.filter((step) => isDictation(step)).map((step) => step.id),
     ]),
     steps,
   };

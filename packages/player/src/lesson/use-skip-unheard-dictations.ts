@@ -1,21 +1,11 @@
 "use client";
 
+import { isDictation } from "@zoonk/core/lesson-player/playable-lesson";
 import { useEffect } from "react";
 import { useLessonPlayer } from "./lesson-player-context";
-import { type PlayableLibraryStep } from "./lesson-player-types";
 import { CANT_LISTEN_TODAY, useTodayChoice } from "./use-today-choice";
 
-function isDictation(step: PlayableLibraryStep): boolean {
-  return (
-    step.kind === "listening" && "exercise" in step && step.exercise.sentence?.readsItself === true
-  );
-}
-
-/**
- * A listening sentence that is its own answer, as in a lesson in the learner's own language, can't
- * be read instead without giving the answer away, so while the learner can't listen it's left out,
- * as core leaves one out that has no sound.
- */
+/** While the learner can't listen, the lesson leaves its dictations out, the screen in view included. */
 export function useSkipUnheardDictations() {
   const { actions, state } = useLessonPlayer();
   const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);

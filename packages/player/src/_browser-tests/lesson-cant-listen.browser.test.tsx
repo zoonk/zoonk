@@ -1,4 +1,7 @@
-import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
+import {
+  type PlayableLanguageStep,
+  type PlayableSpokenAnswerStep,
+} from "@zoonk/core/lesson-player/playable-lesson";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
@@ -19,7 +22,7 @@ function withSentenceAudio(exercise: SerializedStep): SerializedStep {
   };
 }
 
-function listeningStep(): PlayableLibraryStep {
+function listeningStep(): PlayableLanguageStep {
   const step = languageStep("listening");
   return { ...step, exercise: withSentenceAudio(step.exercise) };
 }
