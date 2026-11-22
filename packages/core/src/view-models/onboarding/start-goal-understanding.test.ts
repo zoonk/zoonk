@@ -21,6 +21,10 @@ function countAssists(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "assist", userId } });
 }
 
+function countDrafts(userId: string) {
+  return prisma.onboardingDraft.count({ where: { userId } });
+}
+
 describe(startGoalUnderstanding, () => {
   it("needs a session, which guests have", async () => {
     mockSession(null);
@@ -315,6 +319,62 @@ describe(startGoalUnderstanding, () => {
 
     await expect(startGoalUnderstanding({ goal: known, language: "en" })).resolves.toMatchObject({
       status: "understood",
+    });
+  });
+
+  describe("the same words sent again while they're still being read", () => {
+    it("reads words sent twice at once only once, from two tabs or a double send", async () => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const input = { goal: uniqueGoal("learn chess openings"), language: "en" };
+
+      const [first, second] = await Promise.all([
+        startGoalUnderstanding(input),
+        startGoalUnderstanding(input),
+      ]);
+
+      expect(first.status).toBe("understanding");
+      expect("draft" in second && second.draft.id).toBe("draft" in first && first.draft.id);
+      await expect(countAssists(user.id)).resolves.toBe(1);
+      await expect(countDrafts(user.id)).resolves.toBe(1);
+    });
+
+    it("follows the draft still being read when the words come again after a lost response", async () => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const goal = uniqueGoal("learn chess openings");
+
+      const first = await startGoalUnderstanding({ goal, language: "en" });
+
+      const again = await startGoalUnderstanding({
+        goal: ` ${goal.toUpperCase()} `,
+        language: "en",
+      });
+
+      expect(again).toStrictEqual(first);
+      await expect(countAssists(user.id)).resolves.toBe(1);
+      await expect(countDrafts(user.id)).resolves.toBe(1);
+    });
+
+    it("reads them again once their reading failed, and apart in another language", async () => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const goal = uniqueGoal("learn chess openings");
+
+      await startGoalUnderstanding({ goal, language: "en" });
+
+      await prisma.onboardingDraft.updateMany({
+        data: { status: "failed" },
+        where: { userId: user.id },
+      });
+
+      const retried = await startGoalUnderstanding({ goal, language: "en" });
+      const inPortuguese = await startGoalUnderstanding({ goal, language: "pt" });
+
+      expect(retried.status).toBe("understanding");
+      expect(inPortuguese.status).toBe("understanding");
+      await expect(countAssists(user.id)).resolves.toBe(3);
+      await expect(countDrafts(user.id)).resolves.toBe(3);
     });
   });
 });
