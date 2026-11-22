@@ -10099,6 +10099,11 @@ msgid "Reason"
 msgstr "Grund"
 
 #: src/onboarding/understood/use-understood-rows.ts
+msgctxt "quZfVt"
+msgid "Some of your material can't be read anymore, so your plan won't follow it."
+msgstr ""
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "Dein Plan und deine Lektionen richten sich nach diesem Material"

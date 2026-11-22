@@ -8,6 +8,7 @@ import {
   isLanguageReason,
 } from "@zoonk/core/language/aims";
 import {
+  type OnboardingDraftView,
   type OnboardingExamDate,
   type UnderstoodGoalView,
 } from "@zoonk/core/view-models/onboarding/contract";
@@ -300,16 +301,21 @@ export function useUnderstoodRows(timeZone: string) {
 export function useMaterialRow() {
   const t = useExtracted();
 
-  return function toMaterialRow(material: readonly { title: string }[]): UnderstoodRow | null {
-    if (material.length === 0) {
+  return function toMaterialRow({
+    materialMissing,
+    sources,
+  }: Pick<OnboardingDraftView, "materialMissing" | "sources">): UnderstoodRow | null {
+    if (sources.length === 0 && !materialMissing) {
       return null;
     }
 
     return {
       id: "material",
       label: t("Your material"),
-      note: t("Your plan and lessons follow this material"),
-      value: material.map((source) => source.title || t("Your text")).join(", "),
+      note: materialMissing
+        ? t("Some of your material can't be read anymore, so your plan won't follow it.")
+        : t("Your plan and lessons follow this material"),
+      value: sources.map((source) => source.title || t("Your text")).join(", "),
     };
   };
 }
