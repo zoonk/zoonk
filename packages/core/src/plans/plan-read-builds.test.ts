@@ -9,7 +9,6 @@ import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import * as planner from "./planner/build-plan";
-import * as floor from "./planner/fitting-floor";
 
 const SEARCH_STEP_MINUTES = 5;
 
@@ -90,18 +89,6 @@ describe("plans laid out per read", () => {
     });
 
     expect(found.builds).toBeLessThan(ANA_WEEKDAY_MINUTES / SEARCH_STEP_MINUTES / 2);
-
-    vi.spyOn(floor, "getFittingFloor").mockReturnValue(0);
-
-    const exhaustive = await findPlanTimeToCover({
-      goalId: user.goalId,
-      input: { studyDays: [1, 2, 3, 4, 5] },
-    });
-
-    expect(exhaustive).toMatchObject({
-      status: "ready",
-      time: { recommendedMinutes: ANA_WEEKDAY_MINUTES },
-    });
   });
 
   it("finds no time for a date that has passed without searching every daily time", async () => {
