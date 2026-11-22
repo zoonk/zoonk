@@ -24186,7 +24186,6 @@
       }
     },
     "Move your date to cover everything" : {
-      "comment" : "Opens the goal's date to move it later",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -35650,6 +35649,7 @@
         }
       }
     },
+    "We couldn't find a date that covers everything." : {},
     "We couldn't reach the server. Check your connection." : {
       "comment" : "A far topic's lessons couldn't be asked for",
       "localizations" : {

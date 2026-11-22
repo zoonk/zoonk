@@ -320,7 +320,8 @@ struct PlanOtherOptions<Items: View>: View {
 }
 
 /// Main's suggested time card, while the learner studies less than the plan suggests: "See what
-/// changes" previews that time, and the next tap applies it.
+/// changes" previews that time, and the next tap applies it. A goal that isn't an exam can instead
+/// preview moving its date to the day its own time covers everything.
 struct PlanCoverageSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
@@ -340,6 +341,12 @@ struct PlanCoverageSlot: View {
       PlanSlotCard(
         title: Text(Self.title(suggested)), mark: .sparkle, description: Text(description)
       ) {
+        if check.noDate {
+          Text("We couldn't find a date that covers everything.", tableName: "Plan")
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
         if check.failed {
           FailureLine(
             message: LocalizedStringResource(
@@ -403,13 +410,11 @@ struct PlanCoverageSlot: View {
     let areas = context.plan.areas.filter { !$0.skipped && $0.partOf == nil }
 
     return PlanOtherOptions {
-      if !isExam {
+      if !isExam, !check.noDate {
         Button {
-          context.adjust(.date)
+          check.run { await moveDate() }
         } label: {
-          Text(
-            "Move your date to cover everything", tableName: "Plan",
-            comment: "Opens the goal's date to move it later")
+          Text("Move your date to cover everything", tableName: "Plan")
         }
       }
 
@@ -465,6 +470,51 @@ struct PlanCoverageSlot: View {
 
     check.asked = asked
     check.failed = asked == nil
+  }
+
+  /// Finds the day the learner's own time covers everything by, then previews moving the date there.
+  private func moveDate() async {
+    let check = check
+    check.isWorking = true
+    defer { check.isWorking = false }
+    check.failed = false
+
+    let time = store.timeToCover(goalId: context.goal.id)
+    await time.load()
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    guard let time = time.freshValue else {
+      check.failed = true
+      return
+    }
+
+    guard let date = time.fittingDate else {
+      check.noDate = true
+      return
+    }
+
+    let asked = await context.ask([.targetDate(date)], store: store)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    check.asked = asked.map {
+      PlanSlotAskedChange(edits: $0.edits, question: dateTitle(date), effect: $0.effect)
+    }
+    check.failed = asked == nil
+  }
+
+  private func dateTitle(_ fittingDate: String) -> String {
+    String(
+      localized:
+        "Your time covers everything by \(PlanDate.longDay(fittingDate, today: context.plan.today))",
+      table: "Plan",
+      comment:
+        "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
   }
 }
 
