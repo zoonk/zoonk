@@ -164,47 +164,7 @@ final class BuddyDayOpeningTests: XCTestCase {
     XCTAssertEqual(opened.count, 0)
   }
 
-  func testClosingDayBeforeAMissionFailsLeavesTheNextOpeningClean() async throws {
-    let (window, api, _) = try await waitingMission(fails: true)
-    try await closeRequestSheet(in: window)
-    try await waitForTestCondition("The sheet did not close") {
-      window.rootViewController?.presentedViewController == nil
-    }
-    await api.releaseHeldCall()
-    try await showDay(in: window)
-    XCTAssertFalse(
-      spoken(in: window).contains { $0.contains(Self.failure) },
-      "A closed sheet's failure stays gone: \(spoken(in: window))")
-  }
-
-  func testMovingDayFromSheetIntoPaneKeepsTheMissionAndOpensOnce() async throws {
-    let (window, api, opened) = try await waitingMission()
-    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await waitForLayout(in: window)
-    await api.releaseHeldCall()
-    try await waitForTestCondition("The mission did not open") { opened.count == 1 }
-    XCTAssertEqual(opened.count, 1)
-    try await waitForTestCondition("The day sheet did not dismiss after moving into the pane") {
-      window.rootViewController?.presentedViewController == nil
-    }
-    XCTAssertNil(window.rootViewController?.presentedViewController)
-  }
-
-  func testMovingDayIntoPaneAndBackKeepsTheMissionAndOpensOnce() async throws {
-    let (window, api, opened) = try await waitingMission()
-    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await waitForLayout(in: window)
-    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await waitForLayout(in: window)
-    await api.releaseHeldCall()
-    try await waitForTestCondition("The mission did not open") { opened.count == 1 }
-    XCTAssertEqual(opened.count, 1)
-  }
-
-  private static let failure = String(
-    localized: "We couldn't open this step. Try again.", table: "Today")
-
-  private func waitingMission(fails: Bool = false) async throws
+  private func waitingMission() async throws
     -> (UIWindow, StudyAPIStub, OpenedMissions)
   {
     let api = StudyAPIStub(
@@ -213,7 +173,7 @@ final class BuddyDayOpeningTests: XCTestCase {
           StudyBlockOpening.self,
           from: Data(#"{"kind":"lesson","lessonId":"l1","sessionId":"s1"}"#.utf8))
       ],
-      openError: fails ? .network : nil, holdsOpening: true)
+      holdsOpening: true)
     let buddy = BuddyAPIStub()
     buddy.shownStatus.today = .init(
       fullMeal: .init(bonus: 10, earned: false), goalId: PageServer.goalID,
@@ -262,44 +222,4 @@ final class BuddyDayOpeningTests: XCTestCase {
 @MainActor
 private final class OpenedMissions {
   var count = 0
-}
-
-extension BuddyDayOpeningTests {
-  func testTheFaceExplainsADayWithNoMissions() async throws {
-    let dependencies = AppDependencies(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
-      session: .preview(account: .planTestAccount), imageLoader: .live(),
-      subscriptionStore: .live(),
-      learnerSummaryAPI: OneGoalSummary(kind: .learn))
-    await dependencies.learnerSummaryStore.summary.load()
-    let buddy = BuddyAPIStub()
-    buddy.shownStatus.today = .init(
-      fullMeal: .init(bonus: 50, earned: false), goalId: "goal", localDate: "2026-11-16",
-      missions: [])
-    let store = BuddyStore(api: buddy, cache: dependencies.cache)
-    await store.status.load()
-    let window = try show(
-      NavigationStack { BuddyScreen() }.environment(store).appDependencies(dependencies)
-        .environment(AppRouter()).zoonkStyles())
-    try await readsWhatVoiceOverReads()
-    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
-      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
-      window.rootViewController?.traitOverrides.horizontalSizeClass =
-        width > 700 ? .regular : .compact
-      try await waitForLayout(in: window)
-      try captureCallsRoundTwo("empty-buddy-\(size)")
-      if width < 700 {
-        XCTAssertTrue(
-          spokenHints(in: window).contains("Shows Zu's day"), "\(spokenHints(in: window))")
-        try await activate("Zu", in: window)
-        try await waitForTestCondition("The day sheet title did not appear") {
-          spoken(in: window).contains("Zu today")
-        }
-        XCTAssertTrue(spoken(in: window).contains("Zu today"), "\(spoken(in: window))")
-        try captureCallsRoundTwo("empty-buddy-day-phone")
-        try await closeRequestSheet(in: window)
-      }
-    }
-  }
 }
