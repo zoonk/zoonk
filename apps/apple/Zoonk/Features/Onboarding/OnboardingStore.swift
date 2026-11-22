@@ -525,14 +525,6 @@ final class OnboardingStore {
     }
   }
 
-  func levelTest(goalID: String) async throws -> LevelTest {
-    guard let token = session.authenticatedSession?.bearerToken else {
-      throw CancellationError()
-    }
-
-    return try await api.levelTest(goalID: goalID, token: token)
-  }
-
   /// Only from the learner's tap; nil once the questions are written.
   func prepareLevelTest(goalID: String) async throws -> String? {
     try await cache.onboardingWrite { [api] identity in
@@ -540,8 +532,7 @@ final class OnboardingStore {
     }
   }
 
-  /// `answerIndices` answers a confirmation, where every right option is picked. `attemptID` is the
-  /// test taken from the plan; nil for onboarding's.
+  /// `answerIndices` answers a confirmation, where every right option is picked.
   func answerLevelTest(
     goalID: String,
     questionID: String,
@@ -549,7 +540,7 @@ final class OnboardingStore {
     answerIndices: [Int]? = nil,
     skipped: Bool,
     duration: Duration,
-    attemptID: String? = nil
+    attemptID: String
   ) async throws -> LevelTest {
     let input = Components.Schemas.LanguageLevelTestAnswerInput(
       answerIndex: answerIndex, answerIndices: answerIndices, attemptId: attemptID,

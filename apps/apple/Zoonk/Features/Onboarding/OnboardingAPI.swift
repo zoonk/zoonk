@@ -831,24 +831,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Read-only: it never starts writing questions.
-  func levelTest(goalID: String, token: String) async throws -> LevelTest {
-    let output = try await clients.perform(token: token) { client in
-      try await client.getLanguageLevelTest(path: .init(goalId: goalID))
-    }
-
-    switch output {
-    case .ok(let response):
-      return try PracticeJSON.recode(try response.body.json)
-    case .unauthorized:
-      throw APIError.unauthorized
-    case .notFound:
-      throw APIError.notFound
-    default:
-      throw APIError.unavailable
-    }
-  }
-
   /// Joins the run already writing the questions; nil when they're written.
   func prepareLevelTest(goalID: String, token: String) async throws -> String? {
     let output = try await clients.perform(token: token) { client in
