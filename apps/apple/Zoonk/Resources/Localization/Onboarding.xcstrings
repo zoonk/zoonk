@@ -15176,65 +15176,6 @@
         }
       }
     },
-    "Some of your material can't be read anymore, so your plan won't follow it." : {
-      "comment" : "Under the learner's material on the goal card, when some of it can't be read anymore.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einige deiner Materialien können nicht mehr gelesen werden, deshalb kann dein Plan sie nicht berücksichtigen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parte de tu material ya no se puede leer, así que tu plan no lo tomará en cuenta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une partie de tes documents n’est plus lisible, donc ton plan n’en tiendra pas compte."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è più possibile leggere parte del tuo materiale, quindi il piano non ne terrà conto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "資料の一部を読み取れなくなったため、学習計画に反映されません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "자료 일부를 더 이상 읽을 수 없어 계획에 반영되지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niektórych twoich materiałów nie da się już odczytać, więc plan nie będzie ich uwzględniać."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parte do seu material não dá mais para ler, então seu plano não vai levar isso em conta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Materyallerinin bir kısmı artık okunamıyor, bu yüzden planın bunları temel almayacak."
-          }
-        }
-      }
-    },
     "Something else" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -24722,6 +24663,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın"
+          }
+        }
+      }
+    },
+    "Your plan and lessons follow only this material. The rest can't be read anymore." : {
+      "comment" : "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan und deine Lektionen richten sich nur nach diesem Material. Der Rest lässt sich nicht mehr lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y tus lecciones se basan solo en este material. El resto ya no se puede leer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et tes leçons s’appuient uniquement sur ces documents. Le reste n’est plus lisible."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano e le tue lezioni si basano solo su questo materiale. Il resto non si riesce più a leggere."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画とレッスンはこの資料だけに基づいています。残りは読み取れなくなりました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획과 레슨은 이 자료만 바탕으로 진행돼요. 나머지는 더 이상 읽을 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan i lekcje opierają się tylko na tych materiałach. Pozostałych nie da się już odczytać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e suas aulas seguem apenas este material. O restante não pode mais ser lido."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın ve derslerin yalnızca bu materyale göre ilerliyor. Geri kalanı artık okunamıyor."
           }
         }
       }

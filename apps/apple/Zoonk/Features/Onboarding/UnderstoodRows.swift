@@ -279,10 +279,12 @@ enum UnderstoodRows {
 
     return anyLeft
       ? String(
-        localized: "Some of your material can't be read anymore, so your plan won't follow it.",
+        localized:
+          "Your plan and lessons follow only this material. The rest can't be read anymore.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when some of it can't be read anymore.")
+          "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists."
+      )
       : String(
         localized: "It can't be read anymore, so your plan won't follow it.",
         table: "Onboarding",
