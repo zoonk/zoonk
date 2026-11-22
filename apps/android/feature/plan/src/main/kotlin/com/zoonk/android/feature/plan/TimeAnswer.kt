@@ -114,7 +114,8 @@ internal fun goalDateText(
     date: GoalDate,
     today: LocalDate,
 ): String {
-    val formatted = formatDate(date.date.toJavaLocalDate(), currentLocale(), if (date.namedMonth) DateStyle.Month else DateStyle.Long, today)
+    val formatted =
+        formatDate(date.date.toJavaLocalDate(), currentLocale(), if (date.namedMonth) DateStyle.Month else DateStyle.Long, today)
     return if (date.estimated) stringResource(R.string.plan_date_estimate, formatted) else formatted
 }
 
