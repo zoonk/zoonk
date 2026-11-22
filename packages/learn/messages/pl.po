@@ -13977,6 +13977,16 @@ msgid "You'll have more tomorrow."
 msgstr "Jutro będzie można ocenić więcej prac."
 
 #: src/writing/writing-result.tsx
+msgctxt "LNSVOW"
+msgid "This answer is too short to grade. Add more and send it again."
+msgstr "Ta odpowiedź jest za krótka, żeby ją ocenić. Dopisz więcej i wyślij ją ponownie."
+
+#: src/writing/writing-result.tsx
+msgctxt "1LzJmn"
+msgid "Write a longer answer"
+msgstr "Napisz dłuższą odpowiedź"
+
+#: src/writing/writing-result.tsx
 msgctxt "QYZhu-"
 msgid "Graders stop at line {lines}, so the rest isn't read."
 msgstr "Oceniający czytają tylko do wiersza {lines}, więc dalsza część nie jest czytana."

@@ -13977,6 +13977,16 @@ msgid "You'll have more tomorrow."
 msgstr "Yarın daha fazla değerlendirme yapabileceksin."
 
 #: src/writing/writing-result.tsx
+msgctxt "LNSVOW"
+msgid "This answer is too short to grade. Add more and send it again."
+msgstr "Bu cevap değerlendirilemeyecek kadar kısa. Biraz daha ekleyip tekrar gönder."
+
+#: src/writing/writing-result.tsx
+msgctxt "1LzJmn"
+msgid "Write a longer answer"
+msgstr "Daha uzun bir cevap yaz"
+
+#: src/writing/writing-result.tsx
 msgctxt "QYZhu-"
 msgid "Graders stop at line {lines}, so the rest isn't read."
 msgstr "Değerlendirenler {lines} satırdan sonrasını okumaz."
