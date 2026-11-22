@@ -11,7 +11,7 @@ import { buildSessionBlocks } from "../sessions/session-builder";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
-import { parsePlanSettings } from "./planner/plan-state";
+import { parsePlanPhases, parsePlanSettings } from "./planner/plan-state";
 
 const START = new Date("2026-09-30");
 const DAYS = 35;
@@ -138,6 +138,29 @@ describe("written exam allocation", () => {
     const schedule = parsePlanSettings(fixture.saved.settings).writingSchedule ?? [];
     expect(schedule.filter(({ test }) => test)).toHaveLength(2);
     expect(schedule[0]?.tasks[0]).toMatchObject({ minutes: 70, placement: true, taskKey: "short" });
+
+    const itemMinutes = fixture.saved.items.reduce((sum, item) => sum + (item.minutes ?? 0), 0);
+    const writingMinutes = schedule.reduce((sum, day) => sum + day.minutes, 0);
+    expect.soft(fixture.saved.estimateHours).toBe(Math.round(itemMinutes + writingMinutes) / 60);
+
+    const phases = parsePlanPhases(fixture.saved.phases);
+
+    for (const [index, phase] of phases.entries()) {
+      const phaseItemMinutes = fixture.saved.items
+        .filter((item) => item.phase === index)
+        .reduce((sum, item) => sum + (item.minutes ?? 0), 0);
+
+      const phaseWritingMinutes = schedule
+        .filter(
+          ({ date }) =>
+            phase.startDate && phase.endDate && date >= phase.startDate && date <= phase.endDate,
+        )
+        .reduce((sum, day) => sum + day.minutes, 0);
+
+      expect
+        .soft(phase.minutes, phase.kind)
+        .toBe(Math.round(phaseItemMinutes + phaseWritingMinutes));
+    }
 
     const minutes = await measurePlan(fixture);
     expect(minutes.writtenLessons).toBeGreaterThan(0);

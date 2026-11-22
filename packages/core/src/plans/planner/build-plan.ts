@@ -266,6 +266,7 @@ function planGoal({
     queue: [...queue.filter((unit) => work.finishedKeys.has(unit.key)), ...pending],
     scheduleStart: start,
     windows,
+    writingSchedule: work.writing.writingSchedule,
   });
 
   return {

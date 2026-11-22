@@ -18,10 +18,6 @@ export type SettlingPlan = {
   teachingEnds: ReadonlyMap<string, Date>;
 };
 
-function sumMinutes(items: readonly PlannedItem[]): number {
-  return items.reduce((total, item) => total + item.minutes, 0);
-}
-
 function putBosses({
   bosses,
   items,
@@ -117,7 +113,18 @@ export function settleExamBosses<T extends SettlingPlan>({
   );
 
   const lateKeys = new Set(late.map((boss) => boss.key));
-  const bossPhases = new Set(items.flatMap((item) => (item.kind === "boss" ? [item.phase] : [])));
+
+  const previousBossMinutes = new Map(
+    built.items.filter((item) => item.kind === "boss").map((item) => [item.key, item.minutes]),
+  );
+
+  const bossChanges = items
+    .filter((item) => item.kind === "boss")
+    .map((boss) => ({
+      ...boss,
+      difference: boss.minutes - (previousBossMinutes.get(boss.key) ?? 0),
+    }));
+
   const lastBoss = items.findLast((item) => item.kind === "boss")?.scheduledFor ?? null;
   const endDate = built.estimate.endDate;
 
@@ -136,17 +143,24 @@ export function settleExamBosses<T extends SettlingPlan>({
     }),
     estimate: {
       endDate: lastBoss && (!endDate || lastBoss > endDate) ? lastBoss : endDate,
-      remainingMinutes: Math.round(sumMinutes(items.filter((item) => item.status === "todo"))),
-      totalMinutes: Math.round(sumMinutes(items)),
+      remainingMinutes:
+        built.estimate.remainingMinutes +
+        bossChanges
+          .filter((boss) => boss.status === "todo")
+          .reduce((sum, boss) => sum + boss.difference, 0),
+      totalMinutes:
+        built.estimate.totalMinutes + bossChanges.reduce((sum, boss) => sum + boss.difference, 0),
     },
     items,
-    phases: built.phases.map((phase, index) =>
-      bossPhases.has(index) && phase.kind !== "afterExam"
-        ? {
-            ...phase,
-            minutes: Math.round(sumMinutes(items.filter((item) => item.phase === index))),
-          }
-        : phase,
-    ),
+    phases: built.phases.map((phase, index) => ({
+      ...phase,
+      minutes:
+        phase.kind === "afterExam"
+          ? phase.minutes
+          : phase.minutes +
+            bossChanges
+              .filter((boss) => boss.phase === index)
+              .reduce((sum, boss) => sum + boss.difference, 0),
+    })),
   };
 }
