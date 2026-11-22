@@ -42,6 +42,7 @@ import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanSuggestedTime
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import kotlinx.coroutines.CoroutineScope
@@ -130,6 +131,17 @@ class PlanScreenshots {
         RuntimeEnvironment.setFontScale(2f)
         capture("plan-exam-phone-font200", exam = examPage(dated = true))
     }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examBelowItsSuggestionPhone() =
+        capture(
+            "plan-card-page-exam-below-suggestion",
+            exam =
+                examPage(dated = true).let {
+                    it.copy(plan = it.plan.copy(suggestedTime = PlanSuggestedTime(PlanSuggestedTime.Kind.EVERYTHING, 110)))
+                },
+        )
 
     @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
@@ -417,7 +429,12 @@ class PlanScreenshots {
     ) {
         val learn = learnerSummary()
         val exam = learnerSummary(kind = "exam", title = "ENEM")
-        val goalPlan = coveragePlan(areas = "[${area("Mathematics")},${area("Natural sciences")}]")
+        val goalAreas = "[${area("Mathematics")},${area("Natural sciences")}]"
+        val goalPlan = coveragePlan(areas = goalAreas)
+        val goalCard = coveragePlan(areas = goalAreas, suggested = SUGGESTED_EVERYTHING)
+        val goalCapped = coveragePlan(areas = goalAreas, suggested = SUGGESTED_FOCUS)
+        val examCard = coveragePlan(kind = "exam", suggested = SUGGESTED_EVERYTHING)
+        val examCapped = coveragePlan(kind = "exam", suggested = SUGGESTED_FOCUS)
         val fitPlan =
             plan(
                 """"fitOffer":{"canApply":true,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
@@ -428,9 +445,15 @@ class PlanScreenshots {
         val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
         val pastDate = pastDatePlan()
         val timeLeft = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null")
-        val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75))
+        val goalRevision = planAdviceRevision(goalCard)
+        val dateFound = TimeToCoverState.Answered(goalRevision, timeToCover(recommended = 105, fittingDate = "2027-04-18"))
+        val noDate = TimeToCoverState.Answered(goalRevision, timeToCover(recommended = 105))
+        val askedDate = { SlotState(intent = CoverageIntent.Date) }
+        val suggestedTime = listOf<PlanOp>(PlanOp.DailyMinutes(105))
+        // More time adds many lessons while the weekly mock it funds takes a few study days.
+        val moreAndFewer = """"lessonsAdded":102,"lessonsRemoved":12"""
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
-        val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
+        val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":105}]""", effect = effect(""""lessonsAdded":14"""))
         val course = java.util.UUID.fromString(CHANGE_ID)
         val next =
             com.zoonk.api.models.StudyNext(
@@ -463,15 +486,13 @@ class PlanScreenshots {
         fun ready(
             operations: List<PlanOp>,
             plan: com.zoonk.api.models.Plan,
+            fields: String = """"lessonsAdded":14,"endDateBefore":"2027-01-31","endDateAfter":"2027-04-18"""",
         ) = PlanPreviewState.Loading(operations, plan).let {
             it.resolve(
                 it,
                 PlanChangePreview(
                     finishDate = null,
-                    effect =
-                        ApiJson.decodeFromString(
-                            effect(""""lessonsAdded":14,"endDateBefore":"2027-01-31","endDateAfter":"2027-04-18""""),
-                        ),
+                    effect = ApiJson.decodeFromString(effect(fields)),
                     feasibility = null,
                     ready = true,
                     unchanged = false,
@@ -488,32 +509,33 @@ class PlanScreenshots {
         )
         val shots =
             mapOf(
-                "plan-slot-coverage-ask" to Shot(goalPlan),
-                "plan-slot-coverage-focus-test" to Shot(goalPlan.withFocusTest(NOT_STARTED), summary = exam),
-                "plan-slot-coverage-found" to Shot(goalPlan, edits = PlanEdits(timeToCover = found)),
-                "plan-slot-coverage-preview" to
+                "plan-card-exam-fitting" to Shot(examCard, summary = exam),
+                "plan-card-exam-capped" to Shot(examCapped, summary = exam),
+                "plan-card-goal-fitting" to Shot(goalCard),
+                "plan-card-goal-capped" to Shot(goalCapped),
+                "plan-card-exam-capped-focus-test" to Shot(examCapped.withFocusTest(NOT_STARTED), summary = exam),
+                "plan-card-exam-checking" to
+                    Shot(examCard, summary = exam, host = SlotHost(preview = PlanPreviewState.Loading(suggestedTime, examCard))),
+                "plan-card-exam-preview" to
+                    Shot(examCard, summary = exam, host = SlotHost(preview = ready(suggestedTime, examCard, moreAndFewer))),
+                "plan-card-goal-move-date-checking" to
+                    Shot(goalCard, edits = PlanEdits(timeToCover = TimeToCoverState.Pending(goalRevision)), state = askedDate),
+                "plan-card-goal-move-date-preview" to
                     Shot(
-                        goalPlan,
-                        edits = PlanEdits(timeToCover = found),
-                        host = SlotHost(preview = ready(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
+                        goalCard,
+                        edits = PlanEdits(timeToCover = dateFound),
+                        host = SlotHost(preview = ready(moved, goalCard)),
+                        state = askedDate,
                     ),
-                "plan-slot-coverage-checking" to
-                    Shot(
-                        goalPlan,
-                        edits = PlanEdits(timeToCover = found),
-                        host = SlotHost(preview = PlanPreviewState.Loading(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
-                    ),
-                "plan-slot-coverage-checking-date" to
-                    Shot(
-                        goalPlan,
-                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(planAdviceRevision(goalPlan))),
-                        state = { SlotState(intent = CoverageIntent.Date) },
-                    ),
-                "plan-slot-coverage-applied" to
+                "plan-card-goal-move-date-no-date" to Shot(goalCard, edits = PlanEdits(timeToCover = noDate), state = askedDate),
+                "plan-card-goal-move-date-failed" to
+                    Shot(goalCard, edits = PlanEdits(timeToCover = TimeToCoverState.Failed(goalRevision)), state = askedDate),
+                "plan-card-at-suggestion" to Shot(coveragePlan(kind = "exam"), summary = exam),
+                "plan-card-applied" to
                     Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
-                "plan-slot-coverage-undo-failed" to
+                "plan-card-undo-failed" to
                     Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change, undoFailed = true))), state = {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),

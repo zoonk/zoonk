@@ -25,155 +25,120 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.api.models.PlanSuggestedTime
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.datetime.toJavaLocalDate
-import java.time.LocalDate
 
-/** The change a found time offers, as main's `useAnswerOffer` picks it. */
-internal sealed interface CoverageChange {
-    val operations: List<PlanOp>
-
-    data class Date(
-        val date: LocalDate,
-    ) : CoverageChange {
-        override val operations get() = listOf(PlanOp.TargetDate(date))
-    }
-
-    data class Time(
-        val minutes: Int,
-    ) : CoverageChange {
-        override val operations get() = listOf(PlanOp.DailyMinutes(minutes))
-    }
-}
-
-/**
- * A goal moves its date when asked to, or when no suggested time covers everything; an exam's date
- * never moves. A focus suggestion is offered only to a learner who studies less than it each day:
- * one who already studies longer is never asked to cut down.
- */
-internal fun coverageChange(
-    isExam: Boolean,
-    intent: CoverageIntent,
-    time: PlanTimeToCover,
-    dailyMinutes: Int,
-): CoverageChange? {
-    val answer = time.answer()
-    val fitting = time.fittingDate?.toJavaLocalDate()
-    if (!isExam && fitting != null && (intent == CoverageIntent.Date || answer !is TimeToCoverAnswer.Covers)) {
-        return CoverageChange.Date(fitting)
-    }
-    if (intent == CoverageIntent.Date) return null
-    return when (answer) {
-        is TimeToCoverAnswer.Covers -> CoverageChange.Time(answer.minutes)
-        is TimeToCoverAnswer.Focus -> CoverageChange.Time(answer.minutes).takeIf { answer.minutes > dailyMinutes }
-        TimeToCoverAnswer.None -> null
-    }
-}
-
+/** What the card offers: a change, its title and the line under it. */
 private class CoverageOffer(
-    val description: List<String> = emptyList(),
+    val description: String? = null,
     val operations: List<PlanOp>,
     val title: String,
 )
 
-/** Main's `useCourseOffer`: an exam studying everything offers to stop once its date comes. */
+/** Main's `useSuggestedTimeOffer`: the time the plan suggests, its title the time, its line why. */
 @Composable
-private fun courseOffer(page: PlanPageState): CoverageOffer? {
-    val course = fullCourse(page)?.takeIf { it.on } ?: return null
+private fun suggestedTimeOffer(
+    page: PlanPageState,
+    suggested: PlanSuggestedTime,
+): CoverageOffer {
+    val schedule = page.plan.schedule
+    val target = schedule.targetDate
+    val line =
+        if (suggested.kind == PlanSuggestedTime.Kind.EVERYTHING && target != null) {
+            enoughBy(page, GoalDate(target, schedule.targetDateNamedMonth), schedule.targetDateEstimated)
+        } else {
+            startsWithMost(page.isExam)
+        }
+    val minutes = suggested.minutes.toInt()
     return CoverageOffer(
-        description = listOf(stringResource(R.string.plan_most_asked_first_until_exam)),
-        operations = course.operations(false),
-        title = finishText(course, course.endDate, page) ?: stringResource(R.string.plan_study_everything_after_exam),
+        description = line,
+        operations = listOf(PlanOp.DailyMinutes(minutes)),
+        title = stringResource(R.string.plan_time_suggest_title, formatMinutes(minutes, currentLocale())),
     )
 }
 
+/** The suggested time is enough to cover everything by the goal's date, marked "~" when that date is estimated. */
 @Composable
-private fun answerOffer(
+private fun enoughBy(
     page: PlanPageState,
-    covered: String,
-    intent: CoverageIntent,
+    date: GoalDate,
+    estimated: Boolean,
+): String {
+    val formatted = goalDateText(date, page.today)
+    val shown = if (estimated) stringResource(R.string.plan_date_estimate, formatted) else formatted
+    val words =
+        when {
+            page.isExam && date.namedMonth -> R.string.plan_time_enough_exam_month
+            page.isExam -> R.string.plan_time_enough_exam
+            date.namedMonth -> R.string.plan_time_enough_goal_month
+            else -> R.string.plan_time_enough_goal
+        }
+    return stringResource(words, shown)
+}
+
+/** Main's `useDateOffer`: a goal that isn't an exam can move its date to where its own time covers everything. */
+@Composable
+private fun dateOffer(
+    page: PlanPageState,
     time: PlanTimeToCover,
 ): CoverageOffer? {
-    val locale = currentLocale()
-    val change =
-        coverageChange(
-            page.isExam,
-            intent,
-            time,
-            page.plan.schedule.dailyMinutes
-                .toInt(),
-        ) ?: return null
-    return when (change) {
-        is CoverageChange.Date -> {
-            CoverageOffer(
-                description = listOf(covered),
-                operations = change.operations,
-                title =
-                    stringResource(
-                        R.string.plan_time_covers_everything_by,
-                        formatDate(change.date, locale, DateStyle.Long, page.today),
-                    ),
-            )
-        }
-
-        is CoverageChange.Time -> {
-            val focus = time.answer() is TimeToCoverAnswer.Focus
-            val words = if (focus) R.string.plan_time_suggest_title else R.string.plan_time_covers_everything
-            CoverageOffer(
-                description = listOf(covered),
-                operations = change.operations,
-                title = stringResource(words, formatMinutes(change.minutes, locale)),
-            )
-        }
-    }
+    val fitting = time.fittingDate?.toJavaLocalDate()?.takeIf { !page.isExam } ?: return null
+    return CoverageOffer(
+        operations = listOf(PlanOp.TargetDate(fitting)),
+        title = stringResource(R.string.plan_time_covers_everything_by, formatDate(fitting, currentLocale(), DateStyle.Long, page.today)),
+    )
 }
 
 /**
- * Main's `CoverageSuggestion`: what the learner's time covers, and the time or date that covers
- * everything, found only from their tap since finding it plans the goal at each time.
+ * Main's `CoverageSuggestion`: the time the plan suggests, shown only while the learner's own time
+ * is below it. Its time previews at once; only moving the date is asked for, since finding one plans
+ * the goal many times.
  */
 @Composable
 internal fun CoverageSuggestion(slot: Slot) {
+    val suggested = slot.page.plan.suggestedTime
+    if (suggested == null) {
+        // Once the time is applied nothing is suggested, but the card still says so, with its Undo.
+        PlanChangeSuggestion(SlotItem.Coverage, "", slot) {}
+        return
+    }
+    SuggestedTimeCard(slot, suggested)
+}
+
+@Composable
+private fun SuggestedTimeCard(
+    slot: Slot,
+    suggested: PlanSuggestedTime,
+) {
     val page = slot.page
     val plan = page.plan
     val edits = slot.edits
     val state = slot.state
-    val coverage = planCoverage(plan)
-    val covered = startsWithMost(page.isExam)
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
+    val asked = state.intent == CoverageIntent.Date
+    val askedOffer = found?.takeIf { asked }?.let { dateOffer(page, it) }
+    val retry = asked && (search is TimeToCoverState.Failed || search is TimeToCoverState.Building)
+    val pending = asked && search is TimeToCoverState.Pending
+    val shown = askedOffer ?: suggestedTimeOffer(page, suggested)
+    val offer = shown.takeIf { !retry && !pending }
+    val dateless = found != null && found.fittingDate == null
     val course = fullCourse(page)
-    val courseOffer = courseOffer(page)
-    val offer = courseOffer ?: found?.takeIf { coverage != null }?.let { answerOffer(page, covered, state.intent, it) }
-    val title = offer?.title ?: covered.takeIf { coverage != null } ?: return
-    val isGoal = !page.isExam
-    val pending = search is TimeToCoverState.Pending
-    val retry = search is TimeToCoverState.Failed || search is TimeToCoverState.Building
-    val dateless = isGoal && found != null && found.fittingDate == null
-    val noDate = dateless && state.intent == CoverageIntent.Date
-    val moveDate = isGoal && courseOffer == null && !dateless && offer?.operations?.firstOrNull() !is PlanOp.TargetDate
-    val studiesEverything = !isGoal && courseOffer == null && found != null && found.answer() !is TimeToCoverAnswer.Covers && course != null
-    val failed = stringResource(if (state.intent == CoverageIntent.Date) R.string.plan_couldnt_check_changes else R.string.plan_find_failed)
     val status =
         when {
-            retry -> if (search is TimeToCoverState.Building) stringResource(R.string.plan_find_building) else failed
-
-            pending && state.intent == CoverageIntent.Time -> stringResource(R.string.plan_finding)
-
-            noDate -> stringResource(R.string.plan_find_no_date)
-
-            // The suggestion is no more than the learner already studies, so no time is offered.
-            found?.answer() is TimeToCoverAnswer.Focus && offer == null -> stringResource(R.string.plan_already_study_suggested)
-
+            retry && search is TimeToCoverState.Building -> stringResource(R.string.plan_find_building)
+            retry -> stringResource(R.string.plan_couldnt_check_changes)
+            asked && found != null && askedOffer == null -> stringResource(R.string.plan_find_no_date)
             else -> null
         }
     val preview = slot.host.preview.of(offer?.operations.orEmpty(), plan)
 
-    fun ask(next: CoverageIntent) {
-        state.asking = next
-        state.intent = next
+    fun askDate() {
+        state.asking = CoverageIntent.Date
+        state.intent = CoverageIntent.Date
         slot.host.clearPreview()
-        edits.findTimeToCover(plan, TimeAsker.Coverage(next))
+        edits.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Date))
     }
 
     fun stopAsking() {
@@ -181,18 +146,18 @@ internal fun CoverageSuggestion(slot: Slot) {
         state.intent = CoverageIntent.Time
     }
 
-    PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
+    PlanChangeSuggestion(SlotItem.Coverage, shown.title, slot) {
         // The card asks: paging away drops what the search owes it, so coming back only shows what was found.
         VisitOf(edits.outcomes.suggestion)
         // Focus moves to the suggestion once the search answers, as the control that asked gives way. What's kept is
-        // the answer for the plan shown now ([found]), never the time an older plan's search carried.
+        // the answer for the plan shown now ([found]), never the date an older plan's search carried.
         ActOn(edits.outcomes.coverageFound) { (next, _) ->
-            if (state.asking == next) focus()
-            val time = found ?: return@ActOn
-            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@ActOn
-            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
+            if (state.asking != next) return@ActOn
+            focus()
+            val date = found?.fittingDate?.toJavaLocalDate()?.takeIf { !page.isExam } ?: return@ActOn
+            slot.host.requestPreview(listOf(PlanOp.TargetDate(date)))
         }
-        offer?.description?.filter { it != title }?.forEach { SuggestionDescription(it) }
+        shown.description?.let { SuggestionDescription(it) }
         status?.let { StatusDescription(it) }
 
         when {
@@ -208,26 +173,21 @@ internal fun CoverageSuggestion(slot: Slot) {
                 )
             }
 
-            pending && state.intent == CoverageIntent.Date -> {
+            pending -> {
                 CheckingChange(::stopAsking)
             }
 
             else -> {
                 SuggestionActions {
-                    offer?.let {
-                        SuggestionAction(
-                            stringResource(R.string.plan_see_changes),
-                            onClick = { slot.host.requestPreview(it.operations) },
-                        )
-                    }
-                    if (offer == null && found == null) {
-                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time) }
-                    }
-                    if (studiesEverything) {
-                        SuggestionAction(stringResource(R.string.plan_study_everything_after_exam), onClick = {
-                            close()
-                            edits.studyEverything()
-                        })
+                    if (retry) {
+                        SuggestionAction(stringResource(R.string.plan_try_again), onClick = ::askDate)
+                    } else {
+                        offer?.let {
+                            SuggestionAction(
+                                stringResource(R.string.plan_see_changes),
+                                onClick = { slot.host.requestPreview(it.operations) },
+                            )
+                        }
                     }
                     if (focusTestOffer(plan) != null) {
                         SuggestionAction(stringResource(R.string.focustest_take_test), onClick = {
@@ -240,48 +200,29 @@ internal fun CoverageSuggestion(slot: Slot) {
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
-                    if (coverage != null) {
-                        SuggestionMenu { done ->
-                            if (moveDate) {
-                                SuggestionMenuItem(
-                                    stringResource(R.string.plan_move_date),
-                                    done,
-                                ) { ask(CoverageIntent.Date) }
-                            }
-                            if (canChooseFocus(plan)) {
-                                SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {
-                                    close()
-                                    edits.chooseFocus()
-                                }
-                            }
-                            if (course != null && !course.on && !studiesEverything) {
-                                val text = if (course.isExam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything
-                                SuggestionMenuItem(stringResource(text), done) {
-                                    close()
-                                    edits.studyEverything()
-                                }
-                            }
-                            SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(SlotItem.Coverage) }
+                    SuggestionMenu { done ->
+                        if (!page.isExam && !dateless && !asked) {
+                            SuggestionMenuItem(stringResource(R.string.plan_move_date), done, ::askDate)
                         }
+                        if (canChooseFocus(plan)) {
+                            SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {
+                                close()
+                                edits.chooseFocus()
+                            }
+                        }
+                        if (course != null && !course.on) {
+                            val text = if (course.isExam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything
+                            SuggestionMenuItem(stringResource(text), done) {
+                                close()
+                                edits.studyEverything()
+                            }
+                        }
+                        SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(SlotItem.Coverage) }
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun FindAction(
-    pending: Boolean,
-    retry: Boolean,
-    onFind: () -> Unit,
-) {
-    val finding = stringResource(R.string.plan_finding)
-    SuggestionAction(
-        onClick = onFind,
-        modifier = if (pending) Modifier.semantics { stateDescription = finding } else Modifier,
-        busy = pending,
-    ) { Text(stringResource(if (retry) R.string.plan_try_again else R.string.plan_see_changes)) }
 }
 
 /** Main's `FitLessonsSuggestion`: the lessons the learner's own time fits that the plan doesn't hold. */
@@ -409,7 +350,7 @@ private fun DateOverSuggestion(
             if (state.waiting != request) return@ActOn
             state.waiting = 0
             val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
-            date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
+            date?.let { slot.host.requestPreview(listOf(PlanOp.TargetDate(it))) }
             state.dateSearch =
                 when (found) {
                     is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null

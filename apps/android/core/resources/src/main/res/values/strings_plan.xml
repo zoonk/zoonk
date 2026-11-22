@@ -590,10 +590,8 @@
     <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
-    <string name="plan_finding">Finding the time…</string>
     <string name="plan_try_again">Try again</string>
     <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
-    <string name="plan_find_failed">We couldn\'t work out the time needed.</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
     <string name="plan_find_no_date">We couldn\'t find a date that covers everything.</string>
@@ -640,14 +638,18 @@
     <string name="plan_updated_sentence">Your plan is updated.</string>
     <string name="plan_see_changes">See what changes</string>
     <string name="plan_study_everything_after_exam">Keep studying after the exam</string>
-    <string name="plan_most_asked_first_until_exam">Until the exam, what comes up most comes first.</string>
-    <string name="plan_time_covers_everything">%1$s a day covers everything</string>
-    <!-- On the plan's time card, when the learner's time a day doesn't cover their whole exam by its date: the plan puts what the exam needs most first. Its button finds a time or date that covers more. -->
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole exam by its date. %1$s is a day, such as "May 5", or "~May 5" when the date is estimated. -->
+    <string name="plan_time_enough_exam">That\'s enough to be ready for your exam by %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole exam by its date. %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_enough_exam_month">That\'s enough to be ready for your exam by %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole goal by its date. %1$s is a day, such as "May 5", or "~May 5" when the date is estimated. -->
+    <string name="plan_time_enough_goal">That\'s enough to reach your goal by %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole goal by its date. %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_enough_goal_month">That\'s enough to reach your goal by %1$s.</string>
+    <!-- On the plan's time card, under "We suggest 4 h a day", when covering the whole exam by its date takes longer than the time we suggest: the plan puts what the exam needs most first. -->
     <string name="plan_starts_with_most_exam">Your plan starts with what matters most for your exam.</string>
-    <!-- On the plan's time card, when the learner's time a day doesn't cover their whole goal by its date: the plan puts what the goal needs most first. Its button finds a time or date that covers more. -->
+    <!-- On the plan's time card, under "We suggest 4 h a day", when covering the whole goal by its date takes longer than the time we suggest: the plan puts what the goal needs most first. -->
     <string name="plan_starts_with_most_goal">Your plan starts with what matters most for your goal.</string>
-    <!-- On the plan's time card, once the suggested time is found: the learner already studies at least that long each day, so no time is offered. -->
-    <string name="plan_already_study_suggested">You already study as long as we suggest.</string>
     <plurals name="plan_more_lessons_fit">
         <item quantity="one">You have time for %1$d more lesson</item>
         <item quantity="other">You have time for %1$d more lessons</item>

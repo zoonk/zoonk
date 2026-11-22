@@ -45,14 +45,14 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
-/** The coverage suggestion's search is asked from its card, at every width, which is what its answer belongs to. */
+/** Moving the time card's date is asked from the card, at every width, which is what its answer belongs to. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class CoverageCardWindowTest {
     @get:Rule
     val rule: ComposeTestRule = createEmptyComposeRule()
 
-    private val api = FakePlanApi()
+    private val api = FakePlanApi().apply { timeToCover = timeToCover(fittingDate = "2027-04-18") }
     private val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
     private lateinit var scenario: ActivityScenario<CoverageCardTestActivity>
 
@@ -66,7 +66,7 @@ class CoverageCardWindowTest {
             },
         )
         val summary = learnerSummary()
-        val plan = coveragePlan().also { api.shownPlan = it }
+        val plan = coveragePlan(suggested = SUGGESTED_EVERYTHING).also { api.shownPlan = it }
         val page = PlanPageState(summary.goals.first(), plan, summary)
         val cache =
             AppCache(
@@ -85,7 +85,8 @@ class CoverageCardWindowTest {
                 PlanNavigationModel(GoalSwitch { true }),
             )
         scenario = ActivityScenario.launch(CoverageCardTestActivity::class.java)
-        rule.onNodeWithText("See what changes").performClick()
+        rule.onNodeWithText("Other options").performClick()
+        rule.onNodeWithText("Move your date to cover everything").performClick()
     }
 
     @After

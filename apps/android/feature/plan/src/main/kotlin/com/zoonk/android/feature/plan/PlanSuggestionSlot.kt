@@ -114,7 +114,7 @@ internal fun slotItems(
     val time =
         listOfNotNull(
             SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
-            SlotItem.Coverage.takeIf { open && planCoverage(plan) != null && !timeEnough(plan) },
+            SlotItem.Coverage.takeIf { open && plan.suggestedTime != null },
         )
 
     return buildList {

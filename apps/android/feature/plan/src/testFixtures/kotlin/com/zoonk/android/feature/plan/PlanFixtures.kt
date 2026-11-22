@@ -207,16 +207,21 @@ internal fun coveragePlan(
     timeCovers: Boolean = false,
     fullCourse: Boolean = false,
     areas: String = "[]",
+    suggested: String = "null",
 ): Plan =
     plan(
         """
-        "areas":$areas,
+        "areas":$areas,"suggestedTime":$suggested,
         "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
          "measure":"$kind","timeCovers":$timeCovers},
         "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":$fullCourse,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
          "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]}
         """.trimIndent(),
     )
+
+/** The time a plan suggests while the learner studies less: one that covers everything, and one capped at 4 hours. */
+internal const val SUGGESTED_EVERYTHING = """{"kind":"everything","minutes":105}"""
+internal const val SUGGESTED_FOCUS = """{"kind":"focus","minutes":240}"""
 
 internal fun area(
     name: String,

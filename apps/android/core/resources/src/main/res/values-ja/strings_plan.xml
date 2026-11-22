@@ -264,10 +264,8 @@
   "plan_far_writing": "5ba0284b639cbf9890463bf6ee680789d2a7bb4a618f142f06b8317548cc39c8",
   "plan_find_building": "63fcbd9520f5b40c76b7e888e233a5a10155957d635df008a6e3b0f43ec8f733",
   "plan_find_date": "62b7b1cc6f1f8b871eecd9256f56428435c8e064eb8685e13ce3e2ab503caf5d",
-  "plan_find_failed": "0a548b83140052cab9b3ccb8e522d5676ce0ac110812c4043a50f7dc10da6e3a",
   "plan_find_fitting_date": "00d77e78d15687a061be1406c085f3c29fb650720e0475f893c00f3b1cf0214d",
   "plan_find_no_date": "b4c20e9f21526966d7a0dc8f751d2150c2757ad90e78c0442e09dacf71ddd072",
-  "plan_finding": "c7290f6138f5871132c1a622d6787a782931eff4441d6147ad12496fc56fe1d1",
   "plan_finish": "6002088d8b7e846ce08825773f2920be23617d612e88bac23e317f7c2f1b79ee",
   "plan_finish_after_exam": "3420bb57d753d2cd7afa29766f006d3070732fad76ec9e8f1b8d852557dcac3e",
   "plan_finish_after_exam_month": "bd1f1ba04b25a8d5d353cb97134b4f34ad687c528df1439b6e9463c3c02b0a3d",
@@ -312,7 +310,6 @@
   "plan_more_lessons": "93b6d7beaec1e05f57cd4b40b99b45b3e83faafa8f5b39f1ea966d701904ae2f",
   "plan_more_lessons_fit": "ea52d2c18cfef31fb8ffe137cc07f2f7cea146837cdb9c7a9140ca35d7ad5ee5",
   "plan_more_units": "b9b02534920367556e9a84d8cd15afe1cc3ba65fa87ae47bed334aaf5d3c7c44",
-  "plan_most_asked_first_until_exam": "1d5c3d819096d78636b0fceff983d5f4a898b95372a71b35ffa3eb0c8dbb0511",
   "plan_move_date": "e42592ace7c0f56872b2d48d37d398176426a4e2521c727ae8254715d6cc816f",
   "plan_move_date_to": "0e8a94d543c124582ace869c690d850fb3eadb922113995d78a116af580d8dfd",
   "plan_named_month_note": "e959a085e6c0ae252a094cecc262d69e5cc6a15f695bfa3485c27f7dd496d883",
@@ -430,7 +427,6 @@
   "plan_this_week": "711721e0d9252c9ab4fbcce3378696713200538ee32e1701892fb69feb7139ca",
   "plan_thursdays": "40fa8d2e25c9b31fa6fb22721a4a676d6815eae0395597d3bdcfe89891d70928",
   "plan_time_a_day": "3d001ed56c8d3524ab4ff21e34224e271339e064f65951d503c821ce636dd778",
-  "plan_time_covers_everything": "ee5f3fc3b240ea25c15307290814c015c85fef7c3bc7421128f46b3f21533acc",
   "plan_time_covers_everything_by": "794c88837180a61dd92c24fe0c219108d3ca7581f6b433ad0699eecd87ad7b5c",
   "plan_time_covers_everything_by_month": "d0a14710121c2d89968c5a855e7dc1137df4a62c6d2f88d639aaed856244869d",
   "plan_time_find_failed": "695e21c3219eee2a09049a58f71c84448c5bd12e26bf67b24a10d915793e3d46",
@@ -1011,10 +1007,8 @@
     <string name="plan_time_covers_everything_by">今の学習時間なら、%1$sまでにすべて学べます</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">今の学習時間なら、%1$sまでにすべて学べます</string>
-    <string name="plan_finding">学習時間を調べています…</string>
     <string name="plan_try_again">もう一度試す</string>
     <string name="plan_find_building">学習計画を作成しています。もう少し待ってから再度お試しください。</string>
-    <string name="plan_find_failed">必要な学習時間を計算できませんでした。</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">1日%1$sなら、学習計画では%2$sまでにすべてを学べます。</string>
     <string name="plan_find_no_date">すべてを学び終える日を見つけられませんでした。</string>
@@ -1059,8 +1053,6 @@
     <string name="plan_updated_sentence">学習計画を更新しました。</string>
     <string name="plan_see_changes">変更内容を見る</string>
     <string name="plan_study_everything_after_exam">試験後も学習を続ける</string>
-    <string name="plan_most_asked_first_until_exam">試験までは、よく出る内容を優先して学びます。</string>
-    <string name="plan_time_covers_everything">1日%1$sですべて学べます</string>
     <plurals name="plan_more_lessons_fit">
         <item quantity="other">あと%1$dレッスン分の時間があります</item>
     </plurals>
