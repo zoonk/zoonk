@@ -7,6 +7,7 @@ import XCTest
 @MainActor
 final class LineCrossingAxisTests: XCTestCase {
   func testRenderedLampTicksMatchMain() async throws {
+    try requireIPhoneUI()
     let fields = lampFields
     let window = try show(
       LineCrossingCanvas(

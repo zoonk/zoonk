@@ -62,6 +62,7 @@ final class FactsLayoutTests: XCTestCase {
   }
 
   func testWideDateUsesItsCompactForm() async throws {
+    try requireIPhoneUI()
     let window = try show(
       FactSegments(facts: [
         .init(text: "Sunday, 14 November 2027", compact: "14 Nov 2027")

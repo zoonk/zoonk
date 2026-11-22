@@ -59,6 +59,7 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
   }
 
   private func checkNarrow(moved: Bool, revealed: Bool = false) async throws {
+    try requireIPhoneUI()
     let fields = LineCrossingFields(
       change: "The rent for the workshop goes up by $500 a month.",
       feedback: .init(
