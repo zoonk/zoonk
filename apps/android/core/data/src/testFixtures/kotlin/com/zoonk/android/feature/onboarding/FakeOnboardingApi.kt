@@ -58,17 +58,17 @@ fun understoodDraft(
     activeGoalsLeft: Int? = null,
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalsLeft":$activeGoalsLeft,"generationId":null,"goalId":null,"id":"$DRAFT_ID","materialIntent":null,"prompt":"$prompt","sources":[],"status":"understood","timeZone":"UTC","understanding":$understanding}""",
+        """{"activeGoalsLeft":$activeGoalsLeft,"generationId":null,"goalId":null,"id":"$DRAFT_ID","materialIntent":null,"materialMissing":false,"prompt":"$prompt","sources":[],"status":"understood","timeZone":"UTC","understanding":$understanding}""",
     )
 
 fun failedDraft(): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalsLeft":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","materialIntent":null,"prompt":"pass the bar exam","sources":[],"status":"failed","timeZone":"UTC","understanding":null}""",
+        """{"activeGoalsLeft":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","materialIntent":null,"materialMissing":false,"prompt":"pass the bar exam","sources":[],"status":"failed","timeZone":"UTC","understanding":null}""",
     )
 
 fun readingDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalsLeft":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","materialIntent":null,"prompt":"$prompt","sources":[],"status":"understanding","timeZone":"UTC","understanding":null}""",
+        """{"activeGoalsLeft":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","materialIntent":null,"materialMissing":false,"prompt":"$prompt","sources":[],"status":"understanding","timeZone":"UTC","understanding":null}""",
     )
 
 fun goalsUnderstanding(
