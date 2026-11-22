@@ -18,6 +18,8 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.scaffold.barNoteAlignment
+import com.zoonk.android.ui.scaffold.barNoteTextAlign
 
 /** Main's `GateWords`: what stopped, and at most one line under it. */
 @Composable
@@ -26,9 +28,17 @@ fun GateWords(
     line: String?,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        title?.let { Text(it, style = MaterialTheme.typography.titleSmall) }
-        line?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+    val align = barNoteTextAlign()
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp), horizontalAlignment = barNoteAlignment()) {
+        title?.let { Text(it, style = MaterialTheme.typography.titleSmall, textAlign = align) }
+        line?.let {
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = align,
+            )
+        }
     }
 }
 

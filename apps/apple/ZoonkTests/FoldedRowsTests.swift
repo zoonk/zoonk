@@ -26,7 +26,7 @@ final class FoldedRowsTests: XCTestCase {
       "canDo":null,"canTestOut":false,"capsules":[],"chapterId":null,"checkpoint":null,
       "estimatedBrainPower":5,"estimatedMinutes":5,"extra":false,"fullReview":false,
       "kind":"\(kind)","lessonId":null,"mistakesOnly":false,"netScored":false,"opensInPlayer":false,
-      "oftenTested":false,"planItemId":null,"planItemKey":null,"position":0,"questions":6,
+      "oftenTested":false,"planItemId":null,"planItemKey":null,"position":0,"preparing":false,"questions":6,
       "refresh":false,"reinforcement":false,"screen":"session","status":"pending",
       "subject":"Biology","title":"A lesson","topics":[],"waitReason":null,"weakest":false}
       """

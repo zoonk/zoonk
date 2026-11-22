@@ -3,6 +3,7 @@ import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
+import { getMockPaperSkillIds } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
 import {
@@ -57,13 +58,13 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
   ];
 }
 
-function toReviewInput({
+export function toReviewInput({
   context: { goal, localDate, timeZone, userId },
   field,
   netScored,
   plan,
 }: {
-  context: BuildContext;
+  context: Pick<BuildContext, "goal" | "localDate" | "timeZone" | "userId">;
   field: string | null;
   netScored: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
@@ -191,7 +192,10 @@ export async function loadSessionBuildInput(
       includesMockExams: access.includesMockExams,
       items: plan.items,
       mockFunding: context.selection?.state.settings.mockFunding,
-      mockSkillIds: testSkillIds,
+      mockSkillIds: getMockPaperSkillIds({
+        graph: plan.graph,
+        skillIds: plan.goalPlan.skills.map((skill) => skill.id),
+      }),
       now,
       skillIds: textSkillIds,
       structure: plan.structure,

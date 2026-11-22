@@ -102,6 +102,7 @@ async function setup(examChoices: readonly { group: string; subjects: string[] }
         itemFixture({
           content: choiceItemContent(),
           examBlueprintId: blueprint.id,
+          mockOnly: true,
           skillId: skill.id,
         }),
       ),

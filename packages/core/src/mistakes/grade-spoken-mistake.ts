@@ -28,6 +28,7 @@ import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { getSession } from "../users/get-session";
 import { runMistakeGrade } from "./_utils/mistake-grade";
 import { finishPracticeAnswer } from "./_utils/practice-feedback";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { applyDrillRules } from "./drill-answer";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
 import { type MistakeLessonReplay, loadMistakeReplay } from "./mistake-replay";
@@ -55,7 +56,11 @@ export async function gradeSpokenMistake({
   }
 
   const userId = session.user.id;
-  const mistake = await prisma.mistake.findFirst({ where: { id: fields.mistakeId, userId } });
+
+  const mistake = await prisma.mistake.findFirst({
+    where: { ...visibleMistakeWhere, id: fields.mistakeId, userId },
+  });
+
   const replay = mistake ? await loadMistakeReplay({ mistake, userId }) : null;
 
   if (

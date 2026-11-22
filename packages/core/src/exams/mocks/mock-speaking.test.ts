@@ -95,6 +95,7 @@ async function speakingSetup() {
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: reading.id,
       }),
     ),

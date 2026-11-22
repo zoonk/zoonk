@@ -12,6 +12,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getChallenge } from "../../checkpoints/get-challenge";
+import { followUpSchema } from "../../follow-ups/follow-up-contract";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
@@ -22,6 +23,8 @@ import { buildSessionBlocks } from "../../sessions/session-builder";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { getMock } from "./get-mock";
 import { mockConditionsSchema } from "./mock-contract";
+import { getMockPaperWriting } from "./mock-paper-writing";
+import { listMockPrepWrites } from "./prepare-mock-questions";
 import { startMock } from "./start-mock";
 
 const NOW = new Date("2020-10-12T12:00:00Z");
@@ -45,7 +48,12 @@ const STRUCTURE = examStructureSchema.parse({
   subjects: [],
 });
 
-async function overduePlan({ dailyMinutes = 30, mockMinutes = 150, structure = STRUCTURE } = {}) {
+async function overduePlan({
+  bankSize = 45,
+  dailyMinutes = 30,
+  mockMinutes = 150,
+  structure = STRUCTURE,
+} = {}) {
   const [user, blueprint, languages, math] = await Promise.all([
     userFixture(),
     examBlueprintFixture({ structure }),
@@ -95,10 +103,11 @@ async function overduePlan({ dailyMinutes = 30, mockMinutes = 150, structure = S
       const lesson = await libraryLessonFixture();
 
       const questions = await Promise.all(
-        Array.from({ length: 6 }, () =>
+        Array.from({ length: bankSize }, () =>
           itemFixture({
             content: choiceItemContent(),
             examBlueprintId: blueprint.id,
+            mockOnly: true,
             skillId: skill.id,
           }),
         ),
@@ -276,9 +285,7 @@ describe("an overdue scheduled mock's canonical identity", () => {
     const saved = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
     expect(readBlockPayload(saved).planItemId).toBe(mock.id);
 
-    expect
-      .soft(new Set(readBlockPayload(saved).itemIds))
-      .toStrictEqual(new Set(mathQuestions.map((question) => question.id)));
+    expect(readBlockPayload(saved).itemIds).toStrictEqual([]);
 
     await expect(getMock(block.id)).resolves.toMatchObject({
       mock: { day: 2, fullLength: false, minutes: 150 },
@@ -291,6 +298,11 @@ describe("an overdue scheduled mock's canonical identity", () => {
 
     const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { blockId: block.id } });
     const conditions = mockConditionsSchema.parse(sitting.conditions);
+
+    expect(new Set(conditions.sections.flatMap((section) => section.itemIds))).toStrictEqual(
+      new Set(mathQuestions.map((question) => question.id)),
+    );
+
     expect(conditions).toMatchObject({ day: 2, fullLength: false });
 
     expect(conditions.sections.reduce((minutes, section) => minutes + section.minutes, 0)).toBe(
@@ -308,5 +320,49 @@ describe("an overdue scheduled mock's canonical identity", () => {
     await expect(
       prisma.planItem.findUniqueOrThrow({ where: { id: skipped.id } }),
     ).resolves.toMatchObject({ status: "skipped" });
+  });
+
+  it("asks for and prioritizes the carried paper by its scheduled date", async () => {
+    const { goal, mock } = await overduePlan({ bankSize: 0 });
+    const today = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    if (today.status !== "ready") {
+      throw new Error("Expected the late-return Today");
+    }
+
+    const block = today.today.session.blocks.find((entry) => entry.checkpoint?.mock);
+
+    if (!block) {
+      throw new Error("Expected the overdue mock's session block");
+    }
+
+    await expect(
+      startMock({ blockId: block.id, input: { timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "preparing" });
+
+    const paper = new Date(EVENT_DATE).toISOString();
+
+    const ask = await prisma.followUp.findFirstOrThrow({
+      where: { key: goal.id, kind: "prepareMockSupply" },
+    });
+
+    expect.soft(ask.input).toMatchObject({ later: false, paper });
+
+    await expect
+      .soft(getMockPaperWriting({ goalId: goal.id, planItemId: mock.id }))
+      .resolves.toStrictEqual({ goalId: goal.id, owed: true, paper, status: "ready" });
+
+    const followUp = followUpSchema.parse(ask);
+
+    if (followUp.kind !== "prepareMockSupply") {
+      throw new Error("Expected a mock supply request");
+    }
+
+    const { papers } = await listMockPrepWrites({
+      goalId: goal.id,
+      priority: followUp.input.paper,
+    });
+
+    expect(papers).toContainEqual(expect.objectContaining({ key: paper, later: false }));
   });
 });

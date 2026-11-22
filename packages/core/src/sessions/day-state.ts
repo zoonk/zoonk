@@ -8,7 +8,7 @@ type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPositi
   endedAt?: Date | null;
   lessonsComing?: boolean;
   lessonsToPrepare?: boolean;
-  blocks: readonly Pick<StudyBlockView, "position" | "status">[];
+  blocks: readonly (Pick<StudyBlockView, "position" | "status"> & { preparing?: boolean })[];
 };
 
 /**
@@ -36,6 +36,10 @@ function getDayState(day: DayStateInput): DayState {
 
   if (hasNext) {
     return "underway";
+  }
+
+  if (day.blocks.some((block) => block.status === "pending" && block.preparing)) {
+    return "waiting";
   }
 
   if (day.lessonsComing) {

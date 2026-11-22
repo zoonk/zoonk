@@ -32,7 +32,7 @@ export async function goalFixture({
   details,
   title = "Learn test subjects",
   ...attrs
-}: FixtureAttrs<Goal, "details" | "openingSkill"> & Pick<Goal, "userId">) {
+}: FixtureAttrs<Goal, "details" | "openingSkill" | "requestedMock"> & Pick<Goal, "userId">) {
   return prisma.goal.create({
     data: {
       dailyMinutes: DEFAULT_DAILY_MINUTES,

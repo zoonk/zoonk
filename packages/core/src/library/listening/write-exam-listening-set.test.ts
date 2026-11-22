@@ -50,6 +50,7 @@ describe(writeExamListeningSet, () => {
         skills: input.skills,
         task: PART.task,
       }),
+      false,
     );
 
     expect(written).toMatchObject({
@@ -60,7 +61,11 @@ describe(writeExamListeningSet, () => {
       provenance: { runId: provenance.runId },
     });
 
-    expect(listeningContentSchema.parse(written?.content)).toMatchObject({
+    if (!written || written === "flawed") {
+      throw new Error("Expected a valid listening set.");
+    }
+
+    expect(listeningContentSchema.parse(written.content)).toMatchObject({
       plays: 1,
       script: { turns: set.turns },
       scriptLanguage: "en",
@@ -68,16 +73,16 @@ describe(writeExamListeningSet, () => {
       title: "Booking a hall",
     });
 
-    expect(written?.items.map((item) => item.skillId)).toStrictEqual([
+    expect(written.items.map((item) => item.skillId)).toStrictEqual([
       input.skills[1]?.skillId,
       input.skills[0]?.skillId,
     ]);
   });
 
-  it("returns nothing when the writer couldn't make the set clean", async () => {
+  it("reports a flawed draft without returning it to store", async () => {
     mockWrittenListeningSet({ problems: ["Question 2's evidence isn't in the script."] });
 
-    await expect(writeExamListeningSet(await inputs())).resolves.toBeNull();
+    await expect(writeExamListeningSet(await inputs())).resolves.toBe("flawed");
   });
 
   it("writes nothing for a part whose exam has no listening skills", async () => {

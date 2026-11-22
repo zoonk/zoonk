@@ -30,6 +30,9 @@ import com.zoonk.api.apis.WarmUpsApi
 import com.zoonk.api.apis.WorkflowsApi
 import com.zoonk.api.models.ContentWriting
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import okhttp3.HttpUrl
@@ -141,9 +144,13 @@ class ContentWritingAnswer(
     val generationId: String,
 ) : RuntimeException("The request waits on run $generationId")
 
+/** The request was answered `{"status":"preparing"}`: what it starts isn't ready yet, and nothing started. */
+class PreparingAnswer : RuntimeException("What the request starts is still being prepared")
+
 /**
- * An operation that can answer `202` with [ContentWriting] declares only its finished answer, which
- * that body can't be read as, so it arrives as [ContentWritingAnswer] instead.
+ * An operation that can also answer [ContentWriting] or `{"status":"preparing"}` declares only its
+ * finished answer, which those bodies can't be read as, so they arrive as [ContentWritingAnswer] or
+ * [PreparingAnswer] instead.
  */
 private object ContentWritingBodies : Converter.Factory() {
     override fun responseBodyConverter(
@@ -159,16 +166,26 @@ private object ContentWritingBodies : Converter.Factory() {
             try {
                 next.convert(text.toResponseBody(body.contentType()))
             } catch (e: SerializationException) {
-                val writing =
-                    try {
-                        ApiJson.decodeFromString<ContentWriting>(text)
-                    } catch (_: SerializationException) {
-                        throw e
-                    }
-                throw ContentWritingAnswer(writing.generationId)
+                throw waitingAnswer(text) ?: e
             }
         }
     }
+
+    private fun waitingAnswer(text: String): RuntimeException? =
+        try {
+            ContentWritingAnswer(ApiJson.decodeFromString<ContentWriting>(text).generationId)
+        } catch (_: SerializationException) {
+            PreparingAnswer().takeIf { text.isPreparing() }
+        }
+
+    private fun String.isPreparing(): Boolean =
+        try {
+            ApiJson.parseToJsonElement(this).jsonObject == PREPARING
+        } catch (_: SerializationException) {
+            false
+        }
+
+    private val PREPARING = JsonObject(mapOf("status" to JsonPrimitive("preparing")))
 
     private const val MAX_WRITING_BYTES = 512L
 }

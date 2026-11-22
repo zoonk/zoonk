@@ -84,6 +84,7 @@ export async function loadUnstartedDayView({
     ...reservation,
     missions,
     outlines: unwrittenRoom ? (day.plan.outlines ?? "idle") : null,
+    preparing: day.preparing,
     session: {
       blocks,
       freshStart: day.input.freshStart,
@@ -110,29 +111,28 @@ export async function loadUnstartedDayView({
       readItems: () => readCatchUpItems(userId, goal.id),
       selectedItems,
     }),
-    withExtraStudyCheck({
-      extraTime: fields.extraTime,
-      session: { blocks, goal, goalId: goal.id },
-      userId,
-    }),
+    withExtraStudyCheck({ day: fields, session: { blocks, goal, goalId: goal.id }, userId }),
   ]);
 
   const previewCatchUp = catchUp
     ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
     : null;
 
+  const views = blocks.map((block) =>
+    toDayBlockView({
+      answeredItemIds: new Set(),
+      block,
+      blockedTestOutChapters,
+      blocks,
+      oftenTestedSkillIds,
+      preparing: day.preparing.has(block.position),
+      subject: subjects.get(block.position) ?? null,
+    }),
+  );
+
   return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
-    blocks: blocks.map((block) =>
-      toDayBlockView({
-        answeredItemIds: new Set(),
-        block,
-        blockedTestOutChapters,
-        blocks,
-        oftenTestedSkillIds,
-        subject: subjects.get(block.position) ?? null,
-      }),
-    ),
+    blocks: views,
     catchUp: previewCatchUp,
     extraTime,
     missions,

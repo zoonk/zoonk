@@ -18,7 +18,7 @@ export function getListeningSetsToken(goalId: string): string {
   return `listening-sets:${goalId}`;
 }
 
-export async function prepareListeningRecordings(
+async function prepareListeningRecordings(
   { analytics, goalId, userId, wait }: ListeningSetsInput,
   workflowRunId: string,
 ): Promise<ListeningSetsResult> {

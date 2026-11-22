@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "485ad6c64f0ff0bc1ab0b63bd247fd3126d548fd0a21ae6d7fa1d16c577fced8",
   "limit_mind_maps_guest": "204eaf69d1fb17b52e56adf31d6dea18850335e199d2419d62c3614b37529e6c",
   "limit_mind_maps_used": "c4d26751f96f9f470943f3600a233182fcfc43a560787969ec203e885bd89b49",
-  "limit_mock_exams_used": "3138869b727f23b888d3271f3e80ea0c354fc6e903bdcc2d0eaf688306ef5977",
   "limit_more_later_today": "b3c2ccfe60a19d01dc55a52044c3ef5e243e99968d97c6dcfd51f1abf9ae2811",
   "limit_more_later_today_or_subscribe": "95fa0056cbc50c743706b6579004eb21ad824d5cc821ed36807efa5ae9094a3a",
   "limit_more_on": "961c1e27eb1f39d55d467a0a5d2f0cebdda9d3ea6d4182d84f7fd18a7d7317c6",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">Sohbet süren doldu</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Sohbet süren yenilendi</string>
-    <string name="limit_mock_exams_used">Deneme sınavı hakkın bitti</string>
     <string name="limit_lessons_guest">Daha fazla ders için bir hesap gerekiyor</string>
     <string name="limit_lessons_free">Ücretsiz derslerini kullandın</string>
     <string name="limit_lessons_day">Bugün yeni ders hakkın kalmadı</string>

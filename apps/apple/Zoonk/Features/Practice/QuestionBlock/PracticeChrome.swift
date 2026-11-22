@@ -22,6 +22,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
+  /// The bar's note over its buttons, as the bottom bar's, so the buttons never move when it shows.
+  private var note: BarNote?
 
   init(
     isResult: Bool = false, segments: [TaskSegment]? = nil, index: Int = 0,
@@ -83,6 +85,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       }
     }
     .background(Color(.systemBackground))
+    // As the bottom bar: a soft edge would fade the page above the bar's hairline.
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 
   private var segmentsBar: TaskSegments? {
@@ -98,17 +102,30 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 
   @ViewBuilder private var actionsBar: some View {
     if !actionsHidden {
+      let isWide = barWidth >= WideBar.width && !isStacked
+
       VStack(spacing: 10) {
         actions()
       }
       // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
-      .environment(\.practiceBarIsWide, barWidth >= WideBar.width && !isStacked)
+      .environment(\.practiceBarIsWide, isWide)
       .frame(maxWidth: .infinity)
       .onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
       .frame(maxWidth: PracticeLayout.readableWidth)
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
       .frame(maxWidth: .infinity)
+      .barBackdrop(hairline: note == nil)
+      .floatingAbove {
+        if let note {
+          note
+            .barNoteLines(isWide: isWide)
+            .frame(maxWidth: PracticeLayout.readableWidth)
+            .scenePadding(.horizontal)
+            .frame(maxWidth: .infinity)
+            .barNoteBackdrop()
+        }
+      }
     }
   }
 }
@@ -118,12 +135,14 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 extension PracticeTaskLayout where Response == EmptyView {
   init(
     isResult: Bool = false,
+    note: BarNote? = nil,
     @ViewBuilder content: @escaping () -> Stimulus,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
     self.init(
       kind: isResult ? .result : .oneDecision, segments: nil, index: 0, stimulus: content,
       response: { EmptyView() }, actions: actions)
+    self.note = note
   }
 }
 

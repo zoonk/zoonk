@@ -1,7 +1,7 @@
 import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
-import { isJsonObject } from "@zoonk/utils/json";
+import { isJsonObject, readStringArray } from "@zoonk/utils/json";
 import { CheckIcon } from "lucide-react";
 
 type Fields = Record<string, unknown>;
@@ -12,10 +12,6 @@ export function textOf(value: unknown): string | null {
 
 export function jsonObjects(value: unknown): Fields[] {
   return Array.isArray(value) ? value.filter((entry) => isJsonObject(entry)) : [];
-}
-
-function strings(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
 }
 
 /** A word set in code is one chip: it wraps inside itself instead of splitting in two past the column. */
@@ -106,8 +102,8 @@ export function ContentWords({ content }: { content: unknown }) {
 
   const steps = jsonObjects(content.steps);
   const ideas = jsonObjects(content.ideas);
-  const blanks = strings(content.answers);
-  const accepted = strings(content.acceptedAnswers);
+  const blanks = readStringArray(content.answers);
+  const accepted = readStringArray(content.acceptedAnswers);
 
   return (
     <>
@@ -147,7 +143,7 @@ export function ContentWords({ content }: { content: unknown }) {
         {blanks.join(", ") || textOf(content.targetText)}
       </ContentAnswer>
       <ContentAnswer label="Wrong options">
-        {strings(content.distractors).join(", ") || null}
+        {readStringArray(content.distractors).join(", ") || null}
       </ContentAnswer>
       <ContentAnswer label="Accepted">{accepted.join(FACT_SEPARATOR) || null}</ContentAnswer>
       <Prose quiet>

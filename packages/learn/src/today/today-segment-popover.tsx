@@ -19,6 +19,7 @@ import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
 import { DaySegment, type DaySegmentState } from "./day-segments";
 import { useComingLessons } from "./today-coming-lessons";
+import { useStepGettingReady } from "./use-today-copy";
 
 export const DAY_SEGMENT_SLOT = "today-day-segment";
 
@@ -50,12 +51,17 @@ type SegmentFacts = { data?: string; status?: string };
 function useSegmentFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const isGettingReady = useStepGettingReady();
 
   return ({ block, state }: { block: DayStep; state: DaySegmentState }): SegmentFacts => {
     const time = formatDuration(block.estimatedMinutes);
 
     if (state === "done") {
       return { status: t("Done") };
+    }
+
+    if (isGettingReady(block)) {
+      return { data: time, status: t("Getting ready…") };
     }
 
     if (state === "ahead") {

@@ -19,6 +19,10 @@ export function getString(body: unknown, key: string): string | null {
   return typeof value === "string" ? value : null;
 }
 
+export function readStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
+}
+
 export function getNumber(body: unknown, key: string): number | null {
   if (!isJsonObject(body) || !(key in body)) {
     return null;

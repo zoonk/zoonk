@@ -1,4 +1,4 @@
-import { type TransactionClient, type UsageKind } from "@zoonk/db";
+import { type TransactionClient, type UsageKind, type UsageRecord } from "@zoonk/db";
 import { type AllowanceLimit, type UsageDecision } from "../contract";
 import { FREE_LESSON_LIMIT, getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
@@ -22,7 +22,7 @@ export type UsageLedger = {
   viewer: EntitlementViewer;
 };
 
-function toClaimKey({ kind, targetId }: Pick<BundleClaim, "kind" | "targetId">): string {
+function toClaimKey({ kind, targetId }: Pick<UsageRecord, "kind" | "targetId">): string {
   return `${kind}:${targetId}`;
 }
 

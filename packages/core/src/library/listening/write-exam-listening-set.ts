@@ -42,33 +42,36 @@ export async function writeExamListeningSet({
   scriptLanguage: string;
   serviceTier?: ServiceTier;
   skills: readonly ListeningSetSkill[];
-}): Promise<ItemSetToStore<WrittenSetItem> | null> {
+}): Promise<ItemSetToStore<WrittenSetItem> | "flawed" | null> {
   const [firstSkill, ...otherSkills] = skills;
 
   if (!firstSkill) {
     return null;
   }
 
-  const written = await writeListeningSet({
-    accents: [],
-    analytics: { ...analytics, contentScope: "shared" },
-    count: part.count,
-    exam: exam.name,
-    formats: LISTENING_QUESTION_FORMATS,
-    language,
-    level: null,
-    plays: part.plays,
-    scriptLanguage,
-    serviceTier,
-    skills,
-    task: part.task,
-  });
+  const written = await writeListeningSet(
+    {
+      accents: [],
+      analytics: { ...analytics, contentScope: "shared" },
+      count: part.count,
+      exam: exam.name,
+      formats: LISTENING_QUESTION_FORMATS,
+      language,
+      level: null,
+      plays: part.plays,
+      scriptLanguage,
+      serviceTier,
+      skills,
+      task: part.task,
+    },
+    false,
+  );
 
   const { problems, set } = written.data;
 
   if (problems.length > 0) {
-    logError("A listening set kept flaws after its redraft:", problems);
-    return null;
+    logError("A listening draft has flaws:", problems);
+    return "flawed";
   }
 
   const listed = [firstSkill, ...otherSkills] as const;

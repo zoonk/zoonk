@@ -1,4 +1,5 @@
 import { request } from "@playwright/test";
+import { toDayBlockRef } from "@zoonk/core/sessions/day-block";
 import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -9,19 +10,23 @@ import {
   planItemFixture,
   suggestedGoalFixture,
 } from "@zoonk/testing/fixtures/goals";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { preparingMockResponseSchema } from "../src/lib/openapi/schemas/mocks";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { planRevealTodayResponseSchema } from "../src/lib/openapi/schemas/study-day";
+import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { createExamGoal as createFundedExamGoal } from "./helpers/exams";
+import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
 const DAYS_TO_EXAM = 20;
@@ -329,6 +334,120 @@ test.describe("Today API", () => {
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(saved.settings).toMatchObject({ mockFunding: funding });
 
+    await api.dispose();
+  });
+
+  test("offers a regular review and then waits for the preparing mock", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "today-mock-review" });
+    const { blueprintId, goal } = await createFundedExamGoal(userId);
+
+    const { skillId } = await prisma.item.findFirstOrThrow({
+      select: { skillId: true },
+      where: { examBlueprintId: blueprintId, mockOnly: true },
+    });
+
+    const yesterday = new Date(Date.now() - DAY_MS);
+
+    await Promise.all([
+      prisma.item.updateMany({
+        data: { retiredAt: yesterday },
+        where: { examBlueprintId: blueprintId, mockOnly: true },
+      }),
+      prisma.planItem.updateMany({
+        data: { status: "done" },
+        where: { kind: "lesson", plan: { goalId: goal.id } },
+      }),
+      itemFixture({ skillId }),
+      learnerSkillFixture({
+        difficulty: 5,
+        due: new Date(Date.now() + DAY_MS),
+        lastReviewedAt: yesterday,
+        reps: 2,
+        skillId,
+        stability: 3,
+        state: "learning",
+        userId,
+      }),
+    ]);
+
+    const response = await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`);
+    const { session } = await readBody({ response, schema: todayResponseSchema });
+
+    expect(session.blocks).toContainEqual(
+      expect.objectContaining({ kind: "checkpoint", preparing: true }),
+    );
+
+    const next = session.blocks.find((block) => block.position === session.nextPosition);
+    expect(next).toMatchObject({ kind: "review", mockPreparationReview: true, status: "pending" });
+    expect(session).toMatchObject({ state: "underway" });
+
+    await expect(
+      prisma.studySession.count({
+        where: { goalId: goal.id, localDate: new Date(session.localDate) },
+      }),
+    ).resolves.toBe(0);
+
+    const opened = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/study-sessions`, {
+        data: {
+          shownDate: session.localDate,
+          target: { kind: "next", shown: next ? toDayBlockRef(next) : null },
+          timeZone: "UTC",
+        },
+      }),
+      schema: openedStudyDayResponseSchema,
+      status: 201,
+    });
+
+    expect(opened).toMatchObject({
+      opening: { blockId: opened.target?.id, kind: "session", sessionId: opened.sessionId },
+      target: { kind: "review", mockPreparationReview: true },
+      targetStatus: "next",
+    });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: opened.target?.id } }),
+    ).resolves.toMatchObject({ kind: "review", status: "active" });
+
+    const mock = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "checkpoint", sessionId: opened.sessionId },
+    });
+
+    const preparing = await readBody({
+      response: await api.post(`/v1/study-sessions/${opened.sessionId}/blocks/${mock.id}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
+      schema: preparingMockResponseSchema,
+      status: 202,
+    });
+
+    expect(preparing).toStrictEqual({ status: "preparing" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock.id } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+    await expect(prisma.mockExam.count({ where: { goalId: goal.id, userId } })).resolves.toBe(0);
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { id: opened.target?.id },
+    });
+
+    const [summary, today] = await Promise.all([
+      readBody({
+        response: await api.get(`/v1/study-sessions/${opened.sessionId}/summary?timeZone=UTC`),
+        schema: studySessionSummaryResponseSchema,
+      }),
+      readBody({
+        response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
+        schema: todayResponseSchema,
+      }),
+    ]);
+
+    expect(today.session).toMatchObject({ nextPosition: null, state: "waiting" });
+
+    expect(summary).toMatchObject({ finished: true, status: "active" });
     await api.dispose();
   });
 

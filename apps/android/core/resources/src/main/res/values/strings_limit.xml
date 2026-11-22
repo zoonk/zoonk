@@ -34,7 +34,6 @@
     <string name="limit_call_time_used">You\'ve used your call time</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Your call time is back</string>
-    <string name="limit_mock_exams_used">You\'ve used your mock exams</string>
     <string name="limit_lessons_guest">No more lessons without an account</string>
     <string name="limit_lessons_free">You\'ve used your free lessons</string>
     <string name="limit_lessons_day">No more new lessons today</string>
