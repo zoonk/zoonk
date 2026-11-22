@@ -1,12 +1,11 @@
 import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { isUnderstandingRunning, startUnderstandingRun } from "@/lib/goal-understanding";
+import { runSavedDraft } from "@/lib/goal-understanding";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalUnderstandingPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
-import { prepareGoalUnderstandingRun } from "@zoonk/core/view-models/onboarding/prepare-understanding-run";
 import { type NextRequest, NextResponse } from "next/server";
 
 const ACCEPTED = 202;
@@ -16,33 +15,27 @@ async function createGoalUnderstandingGeneration(
   context: RouteContext<"/v1/goal-understandings/[understandingId]/generations">,
 ) {
   const path = await readPathParams(context, goalUnderstandingPathParamsSchema);
-
-  const draftId = path.understandingId;
-  const current = await getOnboardingDraft({ draftId });
+  const current = await getOnboardingDraft({ draftId: path.understandingId });
 
   if (current.status !== "ready") {
     return accessError(current.status);
   }
 
-  if (await isUnderstandingRunning(current.draft)) {
-    return NextResponse.json(current.draft, { status: ACCEPTED });
+  const run = await runSavedDraft(current.draft);
+
+  if (isRefusedUsage(run)) {
+    return usageDecisionError(run);
   }
 
-  const prepared = await prepareGoalUnderstandingRun({ draftId });
-
-  if (isRefusedUsage(prepared)) {
-    return usageDecisionError(prepared);
+  if (run.status === "reading") {
+    return NextResponse.json(run.draft, { status: ACCEPTED });
   }
 
-  if (prepared.status === "understood") {
-    return NextResponse.json(prepared.draft);
+  if (run.status === "understood") {
+    return NextResponse.json(run.draft);
   }
 
-  if (prepared.status !== "start") {
-    return accessError(prepared.status);
-  }
-
-  return NextResponse.json(await startUnderstandingRun(prepared.draft), { status: ACCEPTED });
+  return accessError(run.status);
 }
 
 export const POST = withApiErrorBoundary(createGoalUnderstandingGeneration);

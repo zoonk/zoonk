@@ -165,6 +165,37 @@ test.describe("Goal understandings API", () => {
     await api.dispose();
   });
 
+  test("reads words sent again once more, counted once, when the run reading them is gone", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "understanding-gone" });
+    const goal = `learn pottery ${randomUUID()}`;
+
+    const stalled = await onboardingDraftFixture({
+      prompt: goal,
+      runId: `wrun_${randomUUID()}`,
+      status: "understanding",
+      userId,
+    });
+
+    const sent = await Promise.all([
+      api.post("/v1/goal-understandings", { data: { goal, language: "en" } }),
+      api.post("/v1/goal-understandings", { data: { goal, language: "en" } }),
+    ]);
+
+    const drafts = await Promise.all(
+      sent.map((response) =>
+        readBody({ response, schema: onboardingDraftViewSchema, status: 202 }),
+      ),
+    );
+
+    expect(drafts.map((draft) => draft.id)).toEqual([stalled.id, stalled.id]);
+    expect(drafts[0]?.generationId).not.toBe(stalled.runId);
+    expect(drafts[1]?.generationId).toBe(drafts[0]?.generationId);
+
+    await expect(prisma.usageRecord.count({ where: { kind: "assist", userId } })).resolves.toBe(1);
+
+    await api.dispose();
+  });
+
   test("starts a draft's run again after it failed", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "understanding-retry" });
 
