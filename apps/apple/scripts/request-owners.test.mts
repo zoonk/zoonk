@@ -44,7 +44,7 @@ const OWNERS: Record<string, string> = {
     "The draft's visit (DraftCreation): leaving it is the end its create waits for.",
   "Features/Onboarding/GoalStartScreen.swift: materialDraft, sending":
     "The start flow has no split.",
-  "Features/Onboarding/LevelTestStep.swift: finishing, undoRequest": "The level test has no split.",
+  "Features/Onboarding/LevelTestStep.swift: finishing": "The level test has no split.",
   "Features/Onboarding/PlacementStep.swift: tasks":
     "Placement is the onboarding aside's PaneBeside content, which keeps its identity.",
   "Features/Onboarding/PlanStep.swift: starting":
