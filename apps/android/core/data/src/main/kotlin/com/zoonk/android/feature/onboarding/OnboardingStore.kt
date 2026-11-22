@@ -87,6 +87,12 @@ sealed interface Refusal {
     /** Research already read this upload for an earlier ask, so it needs a different one. */
     data object AlreadyRead : Refusal
 
+    /** Material sent with a goal that can't be read anymore, by the ids the app sent: nothing was saved or charged. */
+    @Serializable
+    data class MaterialUnavailable(
+        val sourceIds: List<String>,
+    ) : Refusal
+
     /** The day the goals typed together share is shorter than [minutes], the least that gives each of the [goals] its share. */
     @Serializable
     data class DayTooShort(
@@ -607,6 +613,10 @@ internal fun ApiException.refusal(receivedAt: Instant): Refusal? =
 
         "UPLOAD_ALREADY_READ" -> {
             Refusal.AlreadyRead
+        }
+
+        "MATERIAL_UNAVAILABLE" -> {
+            details?.decode<Refusal.MaterialUnavailable>()
         }
 
         "USAGE_LIMIT_REACHED" -> {

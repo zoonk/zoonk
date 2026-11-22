@@ -115,6 +115,10 @@ class StartGoalViewModel(
     var entryError by mutableStateOf<GoalError?>(null)
         private set
 
+    /** Ids of attached material the last send couldn't read, marked until it's removed or added again. */
+    var unreadable by mutableStateOf(emptySet<String>())
+        private set
+
     /** A draft whose read hit a limit when started again. */
     var draftLimit by mutableStateOf<GoalError?>(null)
         private set
@@ -199,7 +203,10 @@ class StartGoalViewModel(
         if (canAttach) attachFailed.clear()
     }
 
-    fun removeAttached(id: String) = update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
+    fun removeAttached(id: String) {
+        unreadable -= id
+        update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
+    }
 
     fun attachFile(
         file: PickedFile,
@@ -242,6 +249,7 @@ class StartGoalViewModel(
             when (val outcome = add()) {
                 is WriteOutcome.Done -> {
                     isAttachOpen = false
+                    unreadable -= outcome.value.id
                     update { it.copy(attached = it.attached.filterNot { source -> source.id == outcome.value.id } + outcome.value) }
                 }
 
@@ -266,13 +274,14 @@ class StartGoalViewModel(
             update { it.copy(screen = StartScreen.Questions) }
             return
         }
-        send(typed.ifBlank { materialGoal }, language)
+        send(typed.ifBlank { materialGoal }, language, words = typed)
     }
 
-    /** One goal on its way at a time. */
+    /** One goal on its way at a time; a goal that isn't read gives the entry back its [words], what the learner typed. */
     fun send(
         goal: String,
         language: String,
+        words: String = goal,
     ) {
         if (isSending) return
         val sourceIds = flow.attached.map { UUID.fromString(it.id) }.ifEmpty { null }
@@ -304,11 +313,13 @@ class StartGoalViewModel(
                 }
 
                 WriteOutcome.Obsolete -> {
-                    showEntry(goal)
+                    showEntry(words)
                 }
 
                 else -> {
-                    showEntry(goal, outcome.startError())
+                    val missing = ((outcome as? WriteOutcome.Refused)?.refusal as? Refusal.MaterialUnavailable)?.sourceIds
+                    showEntry(words, outcome.startError().takeIf { missing == null })
+                    unreadable = missing.orEmpty().toSet()
                 }
             }
         }
@@ -586,6 +597,7 @@ class StartGoalViewModel(
         editing = null
         creationFailure.clear()
         entryError = error
+        unreadable = emptySet()
         update { it.copy(screen = StartScreen.Entry, words = words) }
     }
 

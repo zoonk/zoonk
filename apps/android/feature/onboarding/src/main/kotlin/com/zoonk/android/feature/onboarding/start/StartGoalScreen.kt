@@ -264,7 +264,7 @@ private fun ColumnScope.Entry(
         },
     )
 
-    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm::removeAttached)
+    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm.unreadable, vm::removeAttached)
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
     if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
     if (vm.isAttachOpen && canAttach) {
@@ -468,6 +468,7 @@ private fun ColumnScope.DraftContent(
                 activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
                 material = draft.sources.map { it.title },
+                materialMissing = draft.materialMissing,
                 hasAccount = hasAccount,
                 isCreating = vm.isCreating || rereading,
                 error = vm.creationError,
