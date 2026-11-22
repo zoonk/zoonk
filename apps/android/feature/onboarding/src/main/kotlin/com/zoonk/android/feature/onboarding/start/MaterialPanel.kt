@@ -23,11 +23,13 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +48,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.AttachedSource
@@ -357,30 +360,33 @@ private fun AttachedChip(
         color = if (unreadable) colors.errorContainer else colors.surfaceContainerHigh,
         contentColor = if (unreadable) colors.onErrorContainer else colors.onSurface,
     ) {
-        Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Icon(
                 painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
                 contentDescription = null,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(16.dp),
                 tint = LocalContentColor.current,
             )
             Text(
                 title,
-                modifier =
-                    Modifier
-                        .padding(start = 6.dp)
-                        .widthIn(max = 240.dp)
-                        .semantics { if (unreadable) stateDescription = state },
+                modifier = Modifier.widthIn(max = 240.dp).semantics { if (unreadable) stateDescription = state },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            IconButton(onClick = { onRemove(item.id) }) {
-                Icon(
-                    painterResource(R.drawable.ic_close),
-                    contentDescription = stringResource(R.string.onboarding_remove_material, title),
-                    modifier = Modifier.size(18.dp),
-                )
+            // Main's 28dp ✕ keeps the chip at main's height; a tap anywhere in the 48dp target around it still removes.
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+                IconButton(onClick = { onRemove(item.id) }, modifier = Modifier.size(28.dp)) {
+                    Icon(
+                        painterResource(R.drawable.ic_close),
+                        contentDescription = stringResource(R.string.onboarding_remove_material, title),
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
             }
         }
     }
