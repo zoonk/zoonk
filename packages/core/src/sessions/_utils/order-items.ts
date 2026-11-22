@@ -37,17 +37,12 @@ function getStepOrder(item: OrderItem): number[] {
 export function toOrderQuestion(item: OrderItem) {
   return {
     context: null,
-    entry: null,
     format: item.format,
     image: null,
     itemId: item.id,
-    left: null,
     options: getStepOrder(item).map((index) => item.content.steps[index] ?? ""),
     question: item.content.question,
-    right: null,
-    select: null,
     skillId: item.skillId,
-    unit: null,
     visual: null,
   };
 }
