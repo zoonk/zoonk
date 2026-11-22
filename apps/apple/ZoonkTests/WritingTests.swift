@@ -15,16 +15,6 @@ final class WrittenTrendTests: XCTestCase {
   }
 }
 
-@MainActor
-final class DraftConflictChoiceTests: XCTestCase {
-  func testOnlyKeepingThisDraftIsTheDefault() {
-    XCTAssertEqual(DraftConflictChoice.keep.shortcut, .defaultAction)
-    XCTAssertNil(DraftConflictChoice.keep.role)
-    XCTAssertNil(DraftConflictChoice.useOther.shortcut)
-    XCTAssertEqual(DraftConflictChoice.useOther.role, .destructive)
-  }
-}
-
 /// Core's `countWritingLines` gives these counts and offsets; the writer, the result and the
 /// server must agree on where the board stops reading.
 final class WritingLinesTests: XCTestCase {
@@ -530,6 +520,28 @@ final class WritingDraftTests: XCTestCase {
     let saves = await server.saves
     XCTAssertEqual(saves.count, 1, "The other draft is already saved")
     XCTAssertNil(KeptWriting.read(blockId))
+  }
+
+  func testReopeningAConflictingDraftRequiresChoosingAVersion() async throws {
+    KeptWriting.keep(
+      .init(admissionId: Self.admission, base: 1, text: "Typed here."), blockId: blockId)
+    let server = WritingServer(draft: .init(revision: 3, text: "Saved on the phone."))
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(baseURL: Self.baseURL, transport: server),
+      session: .preview(account: .writingTest), imageLoader: .live(), subscriptionStore: .live())
+    let window = try show(
+      EssayScreen(blockId: blockId)
+        .appDependencies(dependencies)
+        .environment(AppRouter())
+        .zoonkStyles())
+
+    try await waitForTestCondition("The draft conflict alert did not appear") {
+      window.rootViewController?.presentedViewController is UIAlertController
+    }
+    let alert = try XCTUnwrap(
+      window.rootViewController?.presentedViewController as? UIAlertController)
+    XCTAssertEqual(Set(alert.actions.compactMap(\.title)), ["Keep this one", "Use the other"])
+    XCTAssertEqual(alert.actions.count, 2)
   }
 
   func testASavesAnswerNeverErasesNewerTyping() async {

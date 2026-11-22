@@ -186,6 +186,7 @@ private struct EssayContent: View {
           Button(role: .close) {
             Task {
               let saved = await writer.flush()
+              guard writer.conflict == nil else { return }
 
               if saved || !writer.saveFailed || writer.mode != .write {
                 dismiss()
@@ -239,7 +240,7 @@ private struct EssayContent: View {
         Text("This answer changed on another device", tableName: "Essay"),
         isPresented: Binding(get: { writer.conflict != nil }, set: { _ in })
       ) {
-        Button(role: DraftConflictChoice.keep.role) {
+        Button {
           Task { await writer.keepThisOne() }
         } label: {
           Text(
@@ -248,8 +249,9 @@ private struct EssayContent: View {
               "A choice between two versions of one written answer: keep what's typed on this device and save it over the other."
           )
         }
-        .keyboardShortcut(DraftConflictChoice.keep.shortcut)
-        Button(role: DraftConflictChoice.useOther.role) {
+        .keyboardShortcut(.defaultAction)
+        // A destructive role makes SwiftUI add Cancel, which leaves the draft unresolved.
+        Button {
           writer.useTheOther()
         } label: {
           Text(
@@ -258,7 +260,6 @@ private struct EssayContent: View {
               "A choice between two versions of one written answer: replace what's typed here with the version saved on another device."
           )
         }
-        .keyboardShortcut(DraftConflictChoice.useOther.shortcut)
       } message: {
         Text(
           "Keep the version you're writing here, or switch to the other one.", tableName: "Essay")
@@ -620,12 +621,4 @@ struct WritingCriteriaList: View {
       }
     }
   }
-}
-
-enum DraftConflictChoice {
-  case keep
-  case useOther
-
-  var role: ButtonRole? { self == .useOther ? .destructive : nil }
-  var shortcut: KeyboardShortcut? { self == .keep ? .defaultAction : nil }
 }
