@@ -111,7 +111,6 @@ export async function finishPlacementAttempt({
         attempt: canContinue
           ? {
               ...attempt,
-              estimatedMinutes: state.attempt?.estimatedMinutes ?? attempt.estimatedMinutes,
               lessonsSkipped,
               partComplete: true,
               remainingSkillIds: attemptRemainingSkillIds,

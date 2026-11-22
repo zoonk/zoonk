@@ -160,7 +160,6 @@ export async function openPlacementAttempt({
         }),
         partStartedAt: at,
         skillIds,
-        topicCount: skillIds.length,
       };
 
       await savePlacementAttempt({

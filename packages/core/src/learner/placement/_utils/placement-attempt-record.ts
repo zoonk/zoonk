@@ -3,6 +3,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { LOW_GUESS_ANSWERS_TO_SKIP } from "../../_utils/placement-guess-rate";
 import { DAY_PLACEMENT_MINUTES } from "../placement-budget";
 import {
   placementAttemptViewSchema,
@@ -28,7 +29,6 @@ const attemptSchema = placementAttemptViewSchema.extend({
   partStartedAt: z.iso.datetime(),
   remainingSkillIds: z.array(uuidSchema()).optional(),
   skillIds: z.array(uuidSchema()),
-  topicCount: z.number().int().nonnegative(),
 });
 
 const recordSchema = z.object({
@@ -78,10 +78,21 @@ export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemp
   return { estimatedMinutes, id, length, part, partComplete };
 }
 
-const MINUTES_PER_AHEAD_TOPIC = 1;
+const MINUTE_MS = 60_000;
 const PART_MINUTES = 10;
 
-export const TOPICS_PER_PART = PART_MINUTES / MINUTES_PER_AHEAD_TOPIC;
+export const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
+export const TOPICS_PER_PART = PART_MINUTES;
+
+export function getWholeCourseMinutes({
+  questions,
+  paceMs = MINUTE_MS / QUESTIONS_PER_TOPIC,
+}: {
+  questions: number;
+  paceMs?: number;
+}) {
+  return Math.ceil((questions * paceMs) / MINUTE_MS);
+}
 
 export function getPlacementEstimate({
   length,
@@ -90,7 +101,9 @@ export function getPlacementEstimate({
   length: PlacementLength;
   topics: number;
 }) {
-  return length === "quick" ? DAY_PLACEMENT_MINUTES : topics * MINUTES_PER_AHEAD_TOPIC;
+  return length === "quick"
+    ? DAY_PLACEMENT_MINUTES
+    : getWholeCourseMinutes({ questions: topics * QUESTIONS_PER_TOPIC });
 }
 
 export function getTopicsAhead(plan: GoalPlan) {

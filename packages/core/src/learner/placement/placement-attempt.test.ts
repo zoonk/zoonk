@@ -18,13 +18,77 @@ import { gradeOrder, parseOrderItem } from "../../sessions/_utils/order-items";
 import { loadSessionPlacement } from "../../sessions/_utils/session-placement";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
-import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
+import { lowGuessTapItems, placementItemBank } from "../_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
+import { getGoalPlacement } from "./get-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
 
 describe("learn placement attempts", () => {
+  it("uses the same per-question estimate on the plan and at a whole-course part break", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [4],
+      userId: user.id,
+    });
+
+    const bank = await placementItemBank(skills.map(({ id }) => id));
+    const answers = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));
+    mockSession(user.id);
+
+    const started = await startPlacementSitting({
+      goalId: goal.id,
+      input: { length: "wholeCourse" },
+    });
+
+    if (started.status !== "ready" || !started.placement.attempt || !started.placement.next) {
+      throw new Error("Expected a whole-course question");
+    }
+
+    const { id: attemptId } = started.placement.attempt;
+    const durations = [30_000, 30_000, 30_000, 30_000, 60_000];
+
+    const send = async (itemId: string, [durationMs, ...remaining]: number[]): Promise<void> => {
+      const answer = answers.get(itemId);
+
+      if (!answer || durationMs === undefined) {
+        throw new Error("Expected an answer to the next question");
+      }
+
+      const result = await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer, attemptId, durationMs, itemId },
+      });
+
+      if (remaining.length > 0 && result.status === "ready" && result.placement.next) {
+        await send(result.placement.next.itemId, remaining);
+        return;
+      }
+
+      expect(remaining).toHaveLength(0);
+      expect(result.status).toBe("ready");
+    };
+
+    await send(started.placement.next.itemId, durations);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { placementTest: { attempt: { estimatedMinutes: 7 }, estimatedMinutes: 7 } },
+    });
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
+    ).resolves.toMatchObject({
+      completion: { attempt: { estimatedMinutes: 7, partComplete: true } },
+    });
+
+    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+      placement: { attempt: { estimatedMinutes: 7 } },
+    });
+  });
+
   it("resumes the same saved attempt and refuses a finish from the previous attempt", async () => {
     const user = await userFixture();
     const { goal } = await learnerGoalFixture({ itemsPerSkill: 1, phases: [1], userId: user.id });
