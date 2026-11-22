@@ -214,10 +214,14 @@ final class TestGate {
 
   func open() { isOpen = true }
 
+  /// Waits even when the task waiting is canceled, as work already sent keeps going.
   func wait(file: StaticString = #filePath, line: UInt = #line) async {
-    _ = try? await waitForTestCondition("The gate was never opened", file: file, line: line) {
-      self.isOpen
+    let opened = Task { @MainActor in
+      try await waitForTestCondition("The gate was never opened", file: file, line: line) {
+        self.isOpen
+      }
     }
+    _ = try? await opened.value
   }
 }
 
