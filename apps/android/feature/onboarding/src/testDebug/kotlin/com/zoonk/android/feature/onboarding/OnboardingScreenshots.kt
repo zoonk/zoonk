@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -69,6 +70,7 @@ import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -181,6 +183,34 @@ class OnboardingScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun levelTestWaitingTablet() = captureLevelTestWaiting("tablet")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun levelTestResult() = captureLevelTestResult("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun levelTestResultDark() = captureLevelTestResult("phone-dark", dark = true)
+
+    /** Onboarding's Quick test, from its Start to the end of its questions: its ranges and what it skipped. */
+    private fun captureLevelTestResult(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val api =
+            FakeOnboardingApi().apply {
+                levelTest = levelTestOf(next = DONE_NEXT, answered = 10, total = 10)
+                startedLevelTest = { levelTestOf(next = DONE_NEXT, answered = 10, total = 10, attemptId = ATTEMPT) }
+                levelTestResult = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), LEVEL_RESULT)
+            }
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { LevelTest(api) } } }
+        compose.onNodeWithText("Start").performClick()
+        compose.waitUntil(WAIT_MS) { compose.onAllNodesWithText("See plan").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("See plan").performClick()
+        compose.waitUntil(WAIT_MS) { compose.onAllNodesWithText("Your Italian level").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("Your Italian level").assertExists()
+        write("level-test-result-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun captureLevelTestWaiting(
         name: String,
         dark: Boolean = false,
@@ -228,6 +258,13 @@ class OnboardingScreenshots {
     }
 
     private companion object {
+        const val ATTEMPT = "0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"
+        const val WAIT_MS = 5_000L
+
+        const val LEVEL_RESULT =
+            """{"levels":[],"result":{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":12,
+             "levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}}}}"""
+
         val SPECIALTY =
             """
             [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
@@ -512,23 +549,16 @@ class OnboardingScreenshots {
                 "research-notices" to { ResearchNotices(SuggestionLayout.Panel) },
                 "research-notices-line" to { ResearchNotices(SuggestionLayout.Line) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
-                "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
+                "level-test-reading" to
+                    { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3, attemptId = ATTEMPT) }) },
                 "level-test-listening" to {
-                    LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = listeningQuestion(), answered = 6) })
-                },
-                "level-test-done" to {
                     LevelTest(
                         FakeOnboardingApi().apply {
                             levelTest =
                                 levelTestOf(
-                                    next = DONE_NEXT,
-                                    answered = 12,
-                                    levels =
-                                        listOf(
-                                            skillLevelOf("reading", "B1", 2.0),
-                                            skillLevelOf("listening", "A2+", 1.5),
-                                            skillLevelOf("speaking", "A2", 1.0),
-                                        ),
+                                    next = listeningQuestion(),
+                                    answered = 6,
+                                    attemptId = ATTEMPT,
                                 )
                         },
                     )

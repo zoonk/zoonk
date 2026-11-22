@@ -238,9 +238,6 @@
     <string name="onboarding_language_test_play_again">Play the message again</string>
     <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
     <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
-    <string name="onboarding_language_test_done_title">Your %1$s level</string>
-    <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>
-    <string name="onboarding_language_test_build_plan">Build my plan</string>
     <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Reading</string>
     <string name="onboarding_language_test_listening">Listening</string>
@@ -490,16 +487,4 @@
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">where you live</string>
     <string name="onboarding_test_question_progress">Question %1$d of %2$d</string>
-    <string name="onboarding_test_level_a1">A1</string>
-    <string name="onboarding_test_level_a1_plus">A1+</string>
-    <string name="onboarding_test_level_a2">A2</string>
-    <string name="onboarding_test_level_a2_plus">A2+</string>
-    <string name="onboarding_test_level_b1">B1</string>
-    <string name="onboarding_test_level_b1_plus">B1+</string>
-    <string name="onboarding_test_level_b2">B2</string>
-    <string name="onboarding_test_level_b2_plus">B2+</string>
-    <string name="onboarding_test_level_c1">C1</string>
-    <string name="onboarding_test_level_c1_plus">C1+</string>
-    <string name="onboarding_test_level_c2">C2</string>
-    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

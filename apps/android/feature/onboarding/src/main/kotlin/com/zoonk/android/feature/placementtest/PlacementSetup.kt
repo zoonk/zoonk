@@ -6,17 +6,23 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.setup.LevelTestLanguageNotes
 import com.zoonk.android.feature.onboarding.setup.LevelTestSteps
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanAttempt
+import com.zoonk.android.feature.onboarding.setup.StepLoading
+import com.zoonk.android.feature.onboarding.setup.showAlphabetNote
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.PlacementLength
 import java.util.UUID
 
@@ -104,40 +110,57 @@ internal fun ColumnScope.PlacementSetup(
 
     val assessment = viewModel(key = "setup-level-assessment:$id") { LevelTestPlanViewModel(id, store, createSavedStateHandle()) }
     VisitOf(assessment.visit)
-    val attempt = assessment.attemptId
+    val opened by store.levelTest(id, null).collectShown()
+    val attempt = assessment.attemptId ?: opened.value?.openAttemptId
+    if (attempt == null) {
+        if (opened == LoadState.Idle || opened == LoadState.Loading) {
+            StepLoading()
+            return
+        }
+        TrackOnboardingQuestion(id, "placement")
+        LengthChoice(
+            wholeCourseMinutes = minutes,
+            pressed = assessment.pressed,
+            failed = assessment.failed,
+            onStart = assessment::start,
+            onSkip = { assessment.skip(onQuickDone) },
+            notes = { LevelTestLanguageNotes(language, showAlphabetNote = opened.value?.showAlphabetNote == true) },
+        )
+        return
+    }
+
     LevelTestSteps(
         goalId = id,
-        language = language,
         targetLanguage = targetLanguage,
         store = store,
         navigator = navigator,
         onProgress = onProgress,
-        onDone = onQuickDone,
         onReportSaveFailure = onReportSaveFailure,
         onProgressLabel = onProgressLabel,
         plan =
-            attempt?.let {
-                PlanAttempt(it, onLeave = navigator::closeTask, leaving = false) { result ->
-                    val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
-                    LevelResult(
-                        result = result,
-                        walks = result.result?.wholeCourseReady == true,
-                        targetLanguage = targetLanguage,
-                        testOutLevel = null,
-                        pressed = if (end.saving) Pressed.Main else assessment.pressed,
-                        failed = assessment.failed,
-                        onDone = { end.continueWith(null) },
-                        onWalkTopics = assessment::walkTopics,
-                        onTestOut = {},
-                        undo = rememberPlacementUndo(plans, goalId, changeId),
-                    )
-                }
+            PlanAttempt(attempt, onLeave = { end.continueWith(null) }, leaving = end.saving, onboarding = true) { result ->
+                val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
+                LevelResult(
+                    result = result,
+                    walks = result.result?.wholeCourseReady == true,
+                    targetLanguage = targetLanguage,
+                    testOutLevel = null,
+                    pressed = if (end.saving) Pressed.Main else assessment.pressed,
+                    failed = assessment.failed,
+                    onDone = { end.continueWith(null) },
+                    onWalkTopics = assessment::walkTopics,
+                    onTestOut = {},
+                    undo = rememberPlacementUndo(plans, goalId, changeId),
+                    onboarding = true,
+                )
             },
-        lengthChoice =
-            SetupTestChoice(
-                minutes,
-                assessment.pressed,
-                assessment.failed,
-            ) { assessment.start(PlacementLength.WHOLE_COURSE) },
     )
 }
+
+/** The test onboarding opened earlier and left open, which a new visit goes on with. */
+private val LanguageLevelTest.openAttemptId: UUID?
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId.takeIf { value.length != null }
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId.takeIf { value.length != null }
+        }
