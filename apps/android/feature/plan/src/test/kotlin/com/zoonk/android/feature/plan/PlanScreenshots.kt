@@ -30,8 +30,8 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.conversation.callStarter
-import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.goalcontent.examSyllabus
+import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout

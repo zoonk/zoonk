@@ -25,7 +25,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.GoalError
@@ -48,7 +47,6 @@ import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
 
-/** [titleLanguage] is the title's own language where it isn't the app's, such as a sentence to say. */
 @Composable
 internal fun OnboardingHeading(
     title: String,
@@ -60,7 +58,7 @@ internal fun OnboardingHeading(
         Text(
             text = title,
             modifier = Modifier.pageTitle().semantics { paneTitle = title },
-            style = MaterialTheme.typography.headlineMedium.copy(localeList = titleLanguage?.let { LocaleList(it) }),
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (description != null) {
             Text(
