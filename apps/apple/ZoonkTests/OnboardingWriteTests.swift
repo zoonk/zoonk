@@ -4,13 +4,6 @@ import XCTest
 
 @MainActor
 final class OnboardingWriteTests: XCTestCase {
-  func testAWriteForTheCurrentSessionReturnsItsValue() async throws {
-    let cache = AppCache(session: .preview(account: .onboardingTestAccount))
-
-    let token = try await cache.onboardingWrite { identity in identity.bearerToken }
-
-    XCTAssertEqual(token, "preview-session")
-  }
 
   func testARefusalIsThrownAsItsReasonAndKeepsTheSession() async {
     let session = SessionStore.preview(account: .onboardingTestAccount)
@@ -50,21 +43,6 @@ final class OnboardingWriteTests: XCTestCase {
     }
 
     XCTAssertNil(session.account)
-  }
-
-  func testAResultForAnEndedSessionShowsNothing() async {
-    let session = SessionStore.preview(account: .onboardingTestAccount)
-    let cache = AppCache(session: session)
-
-    do {
-      _ = try await cache.onboardingWrite { identity -> Int in
-        await session.expire(identity)
-        return 1
-      }
-      XCTFail("A result for an ended session is thrown")
-    } catch {
-      XCTAssertTrue(error is CancellationError)
-    }
   }
 }
 

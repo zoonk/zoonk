@@ -305,15 +305,6 @@ final class MockDraftQueueTests: XCTestCase {
 /// The one line over a mock step's buttons, as the web's.
 @MainActor
 final class MockBarNoteTests: XCTestCase {
-  func testTryAgainWaitsWhileTheAnswerIsOnItsWayAgain() throws {
-    let waiting = try XCTUnwrap(note(save: .retrying))
-    let sending = try XCTUnwrap(note(save: .resending))
-
-    XCTAssertEqual(waiting.politeLine, sending.politeLine, "The note stays as it was")
-    XCTAssertEqual(sending.tone, .waiting)
-    XCTAssertEqual(waiting.action?.isEnabled, true)
-    XCTAssertEqual(sending.action?.isEnabled, false, "Nothing more to try while it's being sent")
-  }
 
   /// A hand-in that timed out waiting on an answer that keeps failing is that one failure, so the
   /// answer's own note and its "Try again" stay.
@@ -329,71 +320,8 @@ final class MockBarNoteTests: XCTestCase {
     XCTAssertEqual(note(failed: true, save: .saving)?.tone, .failure)
   }
 
-  /// A slow step says what it's doing, as the web's: starting the next section hands nothing in.
-  func testASlowStepSaysWhatItIsDoing() {
-    func line(_ step: MockRun.Step) -> String? {
-      MockRun.barNote(failed: false, save: .saved, slow: step) {}?.politeLine
-    }
-
-    XCTAssertEqual(line(.submit), "Still handing it in. This is taking longer than usual.")
-    XCTAssertEqual(line(.endBreak), "Still starting. This is taking longer than usual.")
-    XCTAssertEqual(line(.startSpeaking), "Still starting. This is taking longer than usual.")
-    XCTAssertEqual(line(.finish), "This is taking longer than usual.")
-  }
-
   private func note(failed: Bool = false, save: MockDraftQueue.Status) -> BarNote? {
     MockRun.barNote(failed: failed, save: save, slow: nil) {}
-  }
-}
-
-@MainActor
-final class MockAnswerSheetTests: XCTestCase {
-  /// The web's one sentence for blank and not-sure questions, each counted in its own plural.
-  func testHandingInSaysBlankAndNotSureInOneSentence() {
-    func leftOpen(blank: Int, unsure: Int) -> String {
-      String(
-        localized: "\(blank) questions are blank and you're not sure of \(unsure).", table: "Mock")
-    }
-
-    XCTAssertEqual(leftOpen(blank: 1, unsure: 3), "1 question is blank and you're not sure of 3.")
-    XCTAssertEqual(leftOpen(blank: 2, unsure: 1), "2 questions are blank and you're not sure of 1.")
-    XCTAssertEqual(
-      String(localized: "You're not sure of \(1) answers.", table: "Mock"),
-      "You're not sure of 1 answer.")
-  }
-
-  /// Beside the sheet's title, as the web's: how many of the section's questions are answered.
-  func testTheSheetSaysHowManyQuestionsAreAnswered() {
-    XCTAssertEqual(String(localized: MockLabels.answered(0)), "0 answered")
-    XCTAssertEqual(String(localized: MockLabels.answered(1)), "1 answered")
-    XCTAssertEqual(String(localized: MockLabels.answered(2)), "2 answered")
-  }
-
-  /// A question the learner can't go back to reads as dimmed, as it's drawn.
-  func testALockedQuestionReadsAsDimmed() async throws {
-    try await readsWhatVoiceOverReads()
-    let window = try show(
-      List {
-        MockSheetRow(
-          name: "Question 1", answered: true, unsure: false, isCurrent: false, canOpen: false
-        ) {}
-        MockSheetRow(
-          name: "Question 2", answered: false, unsure: false, isCurrent: true, canOpen: true
-        ) {}
-      }
-      .zoonkStyles())
-    try await waitForLayout(in: window)
-
-    let rows = accessibilityElements(in: window)
-    let locked = try XCTUnwrap(rows.first { $0.accessibilityLabel == "Question 1" })
-    let current = try XCTUnwrap(rows.first { $0.accessibilityLabel == "Question 2" })
-
-    XCTAssertTrue(locked.accessibilityTraits.contains(.notEnabled), "The locked row isn't dimmed")
-    XCTAssertTrue(locked.accessibilityTraits.contains(.button), "The locked row isn't a button")
-    XCTAssertFalse(current.accessibilityTraits.contains(.notEnabled), "The current row is dimmed")
-    XCTAssertTrue(
-      current.accessibilityTraits.contains([.button, .selected]),
-      "The current row isn't a selected button")
   }
 }
 

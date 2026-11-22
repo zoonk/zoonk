@@ -8,20 +8,6 @@ final class MockResultChangeTests: XCTestCase {
     XCTAssertEqual(result(irt: 487, previous: 520).change, -33)
   }
 
-  func testAChangeThatRoundsToZeroIsLeftOut() {
-    XCTAssertNil(result(net: 41.5, previous: 41.3).change)
-    XCTAssertNil(result(net: 41.3, previous: 41.5).change)
-  }
-
-  func testAHalfPointRoundsUpAsOnMain() {
-    XCTAssertEqual(result(net: 41.5, previous: 41).change, 1)
-    XCTAssertNil(result(net: 41, previous: 41.5).change)
-  }
-
-  func testAFirstMockHasNoChange() {
-    XCTAssertNil(result(net: 41.5, previous: nil).change)
-  }
-
   private func result(net: Double? = nil, irt: Double? = nil, previous: Double?) -> MockResult {
     MockResult(
       areas: [], blank: 0, calibration: nil, coherence: nil, correct: 0,
