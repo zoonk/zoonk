@@ -18,6 +18,7 @@ import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { createSkill } from "../skills/create-skill";
+import { requireWritingPromptSpend } from "./_utils/writing-prompt-spend";
 import { type WritingSupplyInput, loadWritingSupply, readWritingPool } from "./writing-prompt-pool";
 
 const DRILL_WORD_FLOOR = 5;
@@ -147,11 +148,19 @@ export function promptContent({
   };
 }
 
-export async function writeWritingItem(
-  input: WritingSupplyInput,
-  itemId: string,
-  poolToken?: string,
-) {
+export async function writeWritingItem({
+  input,
+  poolToken,
+  runId,
+  slot,
+}: {
+  input: WritingSupplyInput;
+  poolToken: string;
+  runId: string;
+  slot: number;
+}) {
+  const itemId = getWritingPromptId(runId, slot);
+
   const alreadySaved = await prisma.item.findUnique({
     select: { id: true },
     where: { id: itemId },
@@ -166,6 +175,8 @@ export async function writeWritingItem(
   if (!supply || supply.missing === 0) {
     return;
   }
+
+  await requireWritingPromptSpend({ runId, slot, userId: input.userId });
 
   const { blueprint, goal, scope, structure, task } = supply;
 

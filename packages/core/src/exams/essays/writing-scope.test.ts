@@ -7,11 +7,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
+import { admitWritingPromptWork } from "../../library/items/_utils/writing-prompt-spend";
 import { getWritingPromptId, writeWritingItem } from "../../library/items/write-writing-item";
+import { loadWritingSupply } from "../../library/items/writing-prompt-pool";
 import reading from "../choices/_test-utils/cgu-2026-structure.json";
 import { CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
 import { findMockWriting } from "../mocks/_utils/mock-writing-supply";
 import { startAnytimeMock } from "../mocks/start-anytime-mock";
+import { writingPromptRunFixture } from "./_test-utils/writing-prompt-run";
 import { findWritingPrompts } from "./writing-supply";
 
 // Substitute the model boundary, while the prompt bank, its scope and the mock allocation use the test database.
@@ -112,8 +115,14 @@ type Learner = Awaited<ReturnType<typeof learnerFixture>>;
 
 /** `count` is how many unseen prompts the learner wants, so a pool they already have grows by one. */
 async function writePrompt(learner: Learner, taskKey: string, count = 1) {
-  const itemId = getWritingPromptId(crypto.randomUUID(), 0);
-  await writeWritingItem({ ...learner, count, taskKey, unit: "answer" }, itemId);
+  const { itemId, write } = await writingPromptRunFixture({
+    ...learner,
+    count,
+    taskKey,
+    unit: "answer",
+  });
+
+  await write();
   return itemId;
 }
 
@@ -142,6 +151,52 @@ describe("written tasks scoped to the learner's subjects", () => {
   beforeEach(() => {
     vi.mocked(writeWritingPrompt).mockReset();
     useWriter();
+  });
+
+  it("requires a guest reservation for the slot and replays the saved prompt without charging again", async () => {
+    const blueprint = await examBlueprintFixture({ structure: cguStructure() });
+    const guest = await learnerFixture({ blueprintId: blueprint.id, specialty: AUDIT });
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.userId } });
+    const input = { ...guest, count: 2, taskKey: "long", unit: "answer" as const };
+    const runId = crypto.randomUUID();
+    const supply = await loadWritingSupply(input);
+
+    if (!supply) {
+      throw new Error("Expected a writing prompt pool.");
+    }
+
+    const { poolToken } = supply;
+    const write = (slot: number) => writeWritingItem({ input, poolToken, runId, slot });
+    const day = new Date("2040-11-23");
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(day);
+
+    try {
+      await expect(write(0)).rejects.toThrow("Writing prompt slot has no spend reservation.");
+      expect(writeWritingPrompt).not.toHaveBeenCalled();
+
+      await expect(admitWritingPromptWork({ input, poolToken, runId })).resolves.toStrictEqual({
+        count: 2,
+        status: "writing",
+      });
+
+      await expect(write(2)).rejects.toThrow("Writing prompt slot has no spend reservation.");
+      expect(writeWritingPrompt).not.toHaveBeenCalled();
+
+      await write(0);
+      await write(0);
+      expect(writeWritingPrompt).toHaveBeenCalledOnce();
+
+      await expect(
+        prisma.item.count({ where: { id: getWritingPromptId(runId, 0) } }),
+      ).resolves.toBe(1);
+
+      await expect(prisma.guestSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+        spentMicros: 20_000,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("writes each specialty its own 60-line question, in practice and in the written test", async () => {

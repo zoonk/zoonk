@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { type WritingPromptStepName } from "@zoonk/core/library/generation/steps";
-import { getWritingPromptId, writeWritingItem } from "@zoonk/core/library/items/write-writing-item";
+import { writeWritingItem } from "@zoonk/core/library/items/write-writing-item";
 import {
   type WritingSupplyInput,
   loadWritingSupply,
 } from "@zoonk/core/library/items/writing-prompt-pool";
-import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
+import { admitWritingPromptWork } from "@zoonk/core/library/items/writing-prompt-spend";
 import { getWorkflowMetadata } from "workflow";
 import { getRun } from "workflow/api";
 import { claimRunToken, startOnce, waitForRun, waitForRunToken } from "../_shared/run-token";
@@ -21,24 +21,13 @@ async function writePromptStep(
 ) {
   "use step";
 
-  await writeWritingItem(input, getWritingPromptId(runId, slot), poolToken);
+  await writeWritingItem({ input, poolToken, runId, slot });
 }
 
 async function admitPromptWorkStep({ input, poolToken }: WritingPromptRun, runId: string) {
   "use step";
 
-  const supply = await loadWritingSupply(input, poolToken);
-  const count = supply?.missing ?? 0;
-
-  if (count === 0) {
-    return { count, status: "ready" as const };
-  }
-
-  const reserved = await reserveWritingPromptSpend({ count, runId, userId: input.userId });
-
-  return reserved === null
-    ? { count: 0, status: "signUpRequired" as const }
-    : { count: reserved, status: "writing" as const };
+  return admitWritingPromptWork({ input, poolToken, runId });
 }
 
 async function trackFailureStep() {

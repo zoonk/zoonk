@@ -11,7 +11,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
-import { getWritingPromptId, writeWritingItem } from "../../library/items/write-writing-item";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { getStudyBlock } from "../../sessions/get-study-block";
@@ -21,6 +20,7 @@ import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { CGU } from "../mocks/_test-utils/cgu-written";
 import { pickWrittenTestDays } from "../mocks/written-test-schedule";
+import { writingPromptRunFixture } from "./_test-utils/writing-prompt-run";
 import { loadSessionProduce } from "./_utils/load-produce";
 import { createWritingBlock } from "./create-writing-block";
 import { getEssay } from "./get-essay";
@@ -351,8 +351,8 @@ describe("CGU written exam preparation", () => {
       throw new Error("Expected the empty bank to need a prompt");
     }
 
-    const itemId = getWritingPromptId(crypto.randomUUID(), 0);
-    await writeWritingItem(request.input, itemId);
+    const { itemId, write } = await writingPromptRunFixture(request.input);
+    await write();
 
     expect(writeWritingPrompt).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -723,8 +723,8 @@ describe("CGU written exam preparation", () => {
       userId: user.id,
     };
 
-    const staleId = getWritingPromptId(crypto.randomUUID(), 0);
-    await writeWritingItem(request, staleId);
+    const stale = await writingPromptRunFixture(request);
+    await stale.write();
 
     const structure = structuredClone(CGU);
     const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
@@ -742,8 +742,8 @@ describe("CGU written exam preparation", () => {
       status: "needsPrompt",
     });
 
-    const currentId = getWritingPromptId(crypto.randomUUID(), 0);
-    await writeWritingItem(request, currentId);
+    const current = await writingPromptRunFixture(request);
+    await current.write();
 
     await expect(startWriting({ blockId: block.id })).resolves.toMatchObject({ status: "ready" });
 
@@ -752,7 +752,7 @@ describe("CGU written exam preparation", () => {
       status: "ready",
     });
 
-    await expect(prisma.item.findUnique({ where: { id: staleId } })).resolves.toMatchObject({
+    await expect(prisma.item.findUnique({ where: { id: stale.itemId } })).resolves.toMatchObject({
       content: { writing: { points: 30 } },
       retiredAt: null,
     });
@@ -770,12 +770,16 @@ describe("CGU written exam preparation", () => {
     const [middle] = pickWrittenTestDays({ sectionMinutes: 210, studyDays, targetDate: TARGET });
     expect(middle).toBe("2026-10-14");
     const today = new Date(`${middle}T00:00:00Z`);
-    const itemId = getWritingPromptId(crypto.randomUUID(), 0);
 
-    await writeWritingItem(
-      { count: 1, goalId: goal.id, taskKey: "long", unit: "answer", userId: user.id },
-      itemId,
-    );
+    const { itemId, write } = await writingPromptRunFixture({
+      count: 1,
+      goalId: goal.id,
+      taskKey: "long",
+      unit: "answer",
+      userId: user.id,
+    });
+
+    await write();
 
     await attemptFixture({
       answer: {

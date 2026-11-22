@@ -3,7 +3,7 @@ import { writeWritingPrompt } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { GUEST_DAILY_SPEND_BUDGET_MICROS } from "@zoonk/core/entitlements/limits";
 import { loadWritingSupply } from "@zoonk/core/library/items/writing-prompt-pool";
-import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
+import { admitWritingPromptWork } from "@zoonk/core/library/items/writing-prompt-spend";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -431,6 +431,7 @@ describe(writingPromptWorkflow, () => {
 
   it("replays the committed guest reservation after the workflow missed its acknowledgment", async () => {
     const { input } = await setup();
+    const { poolToken } = await writingRun(input);
     const { workflowRunId: runId } = getWorkflowMetadata();
     const day = new Date("2040-11-21");
 
@@ -438,12 +439,17 @@ describe(writingPromptWorkflow, () => {
     vi.setSystemTime(day);
 
     try {
-      const reserve = () => reserveWritingPromptSpend({ count: 1, runId, userId: input.userId });
-      await expect(Promise.all([reserve(), reserve()])).resolves.toStrictEqual([1, 1]);
+      const reserve = () => admitWritingPromptWork({ input, poolToken, runId });
+      const admitted = { count: 1, status: "writing" };
+
+      await expect(Promise.all([reserve(), reserve()])).resolves.toStrictEqual([
+        admitted,
+        admitted,
+      ]);
 
       vi.setSystemTime(new Date("2040-11-22"));
 
-      await expect(reserve()).resolves.toBe(1);
+      await expect(reserve()).resolves.toStrictEqual(admitted);
 
       await expect(prisma.guestSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
         spentMicros: 10_000,

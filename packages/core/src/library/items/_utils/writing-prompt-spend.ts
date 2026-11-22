@@ -5,6 +5,7 @@ import {
   fitsGuestSpend,
   readGuestSpentMicros,
 } from "../../../entitlements/_utils/guest-spend-budget";
+import { type WritingSupplyInput, loadWritingSupply } from "../writing-prompt-pool";
 
 const PROMPT_COST_MICROS = 10_000;
 
@@ -24,7 +25,7 @@ export async function canFundWritingPrompts(userId: string, count: number): Prom
   );
 }
 
-export function reserveWritingPromptSpend({
+function reserveWritingPromptSpend({
   count,
   runId,
   userId,
@@ -70,4 +71,52 @@ export function reserveWritingPromptSpend({
 
     return count;
   });
+}
+
+export async function admitWritingPromptWork({
+  input,
+  poolToken,
+  runId,
+}: {
+  input: WritingSupplyInput;
+  poolToken: string;
+  runId: string;
+}) {
+  const supply = await loadWritingSupply(input, poolToken);
+  const count = supply?.missing ?? 0;
+
+  if (count === 0) {
+    return { count, status: "ready" as const };
+  }
+
+  const reserved = await reserveWritingPromptSpend({ count, runId, userId: input.userId });
+
+  return reserved === null
+    ? { count: 0, status: "signUpRequired" as const }
+    : { count: reserved, status: "writing" as const };
+}
+
+export async function requireWritingPromptSpend({
+  runId,
+  slot,
+  userId,
+}: {
+  runId: string;
+  slot: number;
+  userId: string;
+}): Promise<void> {
+  const user = await prisma.user.findUnique({
+    select: { isAnonymous: true },
+    where: { id: userId },
+  });
+
+  if (user && !user.isAnonymous) {
+    return;
+  }
+
+  const reservation = await prisma.writingPromptSpend.findUnique({ where: { runId } });
+
+  if (!user || !Number.isInteger(slot) || slot < 0 || slot >= (reservation?.count ?? 0)) {
+    throw new Error("Writing prompt slot has no spend reservation.");
+  }
 }

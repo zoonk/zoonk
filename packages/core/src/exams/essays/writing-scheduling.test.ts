@@ -3,8 +3,8 @@ import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { getWritingPromptId, writeWritingItem } from "../../library/items/write-writing-item";
 import { sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
+import { writingPromptRunFixture } from "./_test-utils/writing-prompt-run";
 import { loadSessionProduce } from "./_utils/load-produce";
 import { findWritingPrompts } from "./writing-supply";
 
@@ -155,10 +155,11 @@ describe("writing with an empty prompt bank", () => {
         userPrompt: "",
       }));
 
-      const itemId = getWritingPromptId(crypto.randomUUID(), 0);
-
-      const write = () =>
-        writeWritingItem({ ...request, goalId: goal.id, userId: user.id }, itemId);
+      const { itemId, write } = await writingPromptRunFixture({
+        ...request,
+        goalId: goal.id,
+        userId: user.id,
+      });
 
       await expect(write()).rejects.toThrow("Writer temporarily unavailable");
       await expect(prisma.item.findUnique({ where: { id: itemId } })).resolves.toBeNull();

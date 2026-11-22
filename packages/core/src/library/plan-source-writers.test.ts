@@ -39,6 +39,7 @@ import {
   SPANISH,
   choiceBlueprintFixture,
 } from "../exams/choices/_test-utils/choice-blueprint";
+import { writingPromptRunFixture } from "../exams/essays/_test-utils/writing-prompt-run";
 import { CGU } from "../exams/mocks/_test-utils/cgu-written";
 import { loadPlanContext } from "../plans/_utils/plan-context";
 import { resolvePlanInputDependents } from "../plans/_utils/plan-input-dependencies";
@@ -77,7 +78,6 @@ import {
 } from "./items/_test-utils/generated-items";
 import { createItems } from "./items/create-items";
 import { savePastQuestions } from "./items/past-questions";
-import { writeWritingItem } from "./items/write-writing-item";
 import { getAlphabetIdentityKey } from "./language/alphabet/alphabet-identity";
 import { publishAlphabetLesson } from "./language/alphabet/write-alphabet-lesson";
 import {
@@ -1085,7 +1085,14 @@ async function writingPromptCase(): Promise<WriterCase> {
   const blueprint = await examBlueprintFixture({ structure: CGU });
   const plan = await examPlan(blueprint.id);
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: plan.goalId } });
-  const id = randomUUID();
+
+  const { itemId, write } = await writingPromptRunFixture({
+    count: 1,
+    goalId: goal.id,
+    taskKey: "short",
+    unit: "answer",
+    userId: goal.userId,
+  });
 
   vi.mocked(writeWritingPrompt, { partial: true }).mockImplementation(async ({ input }) => ({
     data: {
@@ -1108,14 +1115,11 @@ async function writingPromptCase(): Promise<WriterCase> {
   }));
 
   return {
-    expectWritten: () => expect(prisma.item.findUnique({ where: { id } })).resolves.not.toBeNull(),
+    expectWritten: () =>
+      expect(prisma.item.findUnique({ where: { id: itemId } })).resolves.not.toBeNull(),
     plan,
     root: blueprintRoot(blueprint.id),
-    write: () =>
-      writeWritingItem(
-        { count: 1, goalId: goal.id, taskKey: "short", unit: "answer", userId: goal.userId },
-        id,
-      ),
+    write,
   };
 }
 
