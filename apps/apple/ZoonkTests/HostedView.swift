@@ -3,6 +3,12 @@ import Synchronization
 import XCTest
 
 extension XCTestCase {
+  func requireIPhoneUI() throws {
+    try XCTSkipIf(
+      ProcessInfo.processInfo.isMacCatalystApp,
+      "Exercises native iOS layout or accessibility in the iPhone suite.")
+  }
+
   /// Shows a view in a real window on the app's scene, taken down when the test ends.
   @MainActor @discardableResult
   func show(_ view: some View) throws -> UIWindow {
@@ -23,6 +29,7 @@ extension XCTestCase {
   /// nothing, so this returns once it has loaded.
   @MainActor
   func readsWhatVoiceOverReads() async throws {
+    try requireIPhoneUI()
     typealias Enabled = @convention(c) () -> Bool
     typealias SetEnabled = @convention(c) (Bool) -> Void
     let library = try XCTUnwrap(dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW))

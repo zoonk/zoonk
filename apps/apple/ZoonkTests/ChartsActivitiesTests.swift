@@ -17,7 +17,8 @@ final class ChartsActivitiesTests: XCTestCase {
       })
     XCTAssertEqual(ticks, [0, 200])
   }
-  @MainActor func testAxisTitleWrapsWithinItsFrameAtLargeText() {
+  @MainActor func testAxisTitleWrapsWithinItsFrameAtLargeText() throws {
+    try requireIPhoneUI()
     let normal = TypeStyle.small.uiFont(.large, legibility: nil).pointSize
     let large = TypeStyle.small.uiFont(.accessibility2, legibility: nil)
     XCTAssertGreaterThanOrEqual(large.pointSize, normal * 2)
@@ -81,7 +82,8 @@ final class ChartsActivitiesTests: XCTestCase {
     }
   }
 
-  @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
+  @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() throws {
+    try requireIPhoneUI()
     let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
     let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
     let format = scale.tickFormatter(unit: "R$", locale: Locale(identifier: "en_US"))

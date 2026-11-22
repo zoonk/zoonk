@@ -34,23 +34,58 @@ jobs:
       app: apple
 
   format:
+    name: ${{ github.event_name == 'pull_request' && 'Swift formatting and Mac unit tests' || 'Swift formatting and Mac build cache' }}
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
+    timeout-minutes: 35
     concurrency:
       group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.run_id }}
-      cancel-in-progress: false
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - name: Restore Mac test build
+        id: last
+        uses: ./.github/actions/apple-last-build
         with:
-          node-version-file: package.json
+          build: catalyst
 
       - name: Check Swift formatting
         run: make -C apps/apple format-check formatting-check
+
+      - name: Build Mac test bundle or run its units
+        id: mac
+        if: github.event_name == 'pull_request' || steps.last.outputs.build-hit != 'true'
+        env:
+          XCODEBUILD_ARGUMENTS: >-
+            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
+            -onlyUsePackageVersionsFromResolvedFile
+            -skipPackageUpdates
+            COMPILER_INDEX_STORE_ENABLE=NO
+            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
+            make -C apps/apple test-mac XCODEBUILD_ARGUMENTS="$XCODEBUILD_ARGUMENTS -resultBundlePath $RUNNER_TEMP/apple-mac-units.xcresult"
+          else
+            make -C apps/apple build-mac-tests
+          fi
+
+      - name: Report Mac unit test results
+        if: always() && github.event_name == 'pull_request' && steps.mac.outcome != 'skipped'
+        shell: bash
+        run: |
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-mac-units.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save Mac test build
+        if: github.event_name == 'push' && steps.last.outputs.build-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/apple/DerivedData/Make
+          key: ${{ steps.last.outputs.build-key }}
 
   build:
     needs: changes
