@@ -8,7 +8,7 @@ import { DraftScreen } from "./entry/draft-screen";
 import { GoalStartEntry } from "./entry/goal-attachments";
 import { GoalExamples } from "./entry/goal-examples";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
-import { toDraftMaterial, useStartMaterial, useSubmitGoal } from "./entry/material-goal";
+import { useStartMaterial, useSubmitGoal } from "./entry/material-goal";
 import { MaterialQuestions } from "./entry/material-questions";
 import { forgetHandedOffGoal, getHandedOffGoal, getSentGoal } from "./entry/understanding-start";
 import { SendingGoal } from "./entry/understanding-wait";
@@ -247,6 +247,10 @@ function GoalStartFlow({
     onDraft: showDraft,
     onError: showEntry,
     onExplanation: startExplanation,
+    onMaterialUnavailable: ({ sourceIds, words }) => {
+      material.markUnreadable(sourceIds);
+      showEntry({ words });
+    },
     onSending: ({ attemptId, goal, sentAt }) => {
       draftActions.cancel();
       setState({ attemptId, goal, kind: "sending", sentAt });
@@ -268,10 +272,10 @@ function GoalStartFlow({
     }
   }, [shownDraft]);
 
-  const submit = useSubmitGoal({
+  const goalSend = useSubmitGoal({
     material,
     onAsk: () => setState({ kind: "questions" }),
-    understand: (goal, sent) => void submission.send(goal, sent),
+    understand: (sent) => void submission.send(sent),
   });
 
   /** The draft holds the material it was sent with, so editing brings it back after a reload too. */
@@ -286,7 +290,7 @@ function GoalStartFlow({
 
   const rail = showsRail({ atGoalLimit, state }) ? (
     <>
-      {state.kind === "entry" && <SectionExamples onPick={submit} />}
+      {state.kind === "entry" && <SectionExamples onPick={goalSend.submit} />}
       <OnboardingHowItWorks hasAccount={canAttach} />
     </>
   ) : null;
@@ -298,15 +302,12 @@ function GoalStartFlow({
           <GoalStartEntry
             atGoalLimit={atGoalLimit}
             attach={actions.attach}
-            attached={material.attached}
             canAttach={canAttach}
             defaultGoal={state.words}
             error={state.error}
             fromSharedPlan={fromSharedPlan}
-            intent={material.intent}
-            onAttachedChange={material.setAttached}
-            onIntentChange={material.setIntent}
-            onSubmit={submit}
+            material={material}
+            onSubmit={goalSend.submit}
             routes={routes}
           />
         )}
@@ -338,7 +339,7 @@ function GoalStartFlow({
             goalLimit={goalLimit}
             hasAccount={canAttach}
             onBack={() => editDraft(state.draft)}
-            onRewrite={(goal) => void submission.send(goal, toDraftMaterial(state.draft))}
+            onRewrite={(goal) => goalSend.rewrite({ draft: state.draft, goal })}
             routes={routes}
             sentAt={state.sentAt}
           />

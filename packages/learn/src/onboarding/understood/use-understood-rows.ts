@@ -8,6 +8,7 @@ import {
   isLanguageReason,
 } from "@zoonk/core/language/aims";
 import {
+  type OnboardingDraftView,
   type OnboardingExamDate,
   type UnderstoodGoalView,
 } from "@zoonk/core/view-models/onboarding/contract";
@@ -297,19 +298,36 @@ export function useUnderstoodRows(timeZone: string) {
   };
 }
 
-export function useMaterialRow() {
+type DraftMaterial = Pick<OnboardingDraftView, "materialMissing" | "sources">;
+
+function useMaterialNote() {
   const t = useExtracted();
 
-  return function toMaterialRow(material: readonly { title: string }[]): UnderstoodRow | null {
-    if (material.length === 0) {
+  return ({ materialMissing, sources }: DraftMaterial): string => {
+    if (!materialMissing) {
+      return t("Your plan and lessons follow this material");
+    }
+
+    return sources.length > 0
+      ? t("Some of your material can't be read anymore, so your plan won't follow it.")
+      : t("It can't be read anymore, so your plan won't follow it.");
+  };
+}
+
+export function useMaterialRow() {
+  const t = useExtracted();
+  const materialNote = useMaterialNote();
+
+  return function toMaterialRow(material: DraftMaterial): UnderstoodRow | null {
+    if (material.sources.length === 0 && !material.materialMissing) {
       return null;
     }
 
     return {
       id: "material",
       label: t("Your material"),
-      note: t("Your plan and lessons follow this material"),
-      value: material.map((source) => source.title || t("Your text")).join(", "),
+      note: materialNote(material),
+      value: material.sources.map((source) => source.title || t("Your text")).join(", "),
     };
   };
 }

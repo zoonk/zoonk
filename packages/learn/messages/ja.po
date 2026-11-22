@@ -8839,16 +8839,34 @@ msgctxt "G3iV_U"
 msgid "Musicianship for {instrument}"
 msgstr "{instrument}のための音楽の基礎"
 
+#. Read by screen readers after the name of an attached file that can't be read anymore.
 #: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "2d2ZJ4"
-msgid "Your material"
-msgstr "資料"
+msgctxt "yJQoIT"
+msgid "Can't be read"
+msgstr ""
 
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "{title}を取り除く"
+
+#. Under the learner's attached material when several items sent with their goal can't be read anymore.
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "2FABsh"
+msgid "We can't read some of your files anymore. Remove them and add them again."
+msgstr ""
+
+#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
+#: src/onboarding/entry/goal-attachments.tsx
+msgctxt "-9IdF4"
+msgid "We can't read “{title}” anymore. Remove it and add it again."
+msgstr ""
+
+#: src/onboarding/entry/goal-attachments.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "2d2ZJ4"
+msgid "Your material"
+msgstr "資料"
 
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx
@@ -10102,6 +10120,16 @@ msgstr "理由"
 msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "この資料に沿って学習計画とレッスンを作成します"
+
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "quZfVt"
+msgid "Some of your material can't be read anymore, so your plan won't follow it."
+msgstr ""
+
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "YOP-LJ"
+msgid "It can't be read anymore, so your plan won't follow it."
+msgstr ""
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts

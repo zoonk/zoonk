@@ -112,7 +112,7 @@ function ReadDraft({
           goalLimit={goalLimit}
           hasAccount={hasAccount}
           isCreating={creation.isCreating}
-          material={draft.sources}
+          material={draft}
           onConfirm={() => creation.run(() => actions.createGoals(toGoalCreateInput(card)))}
           onRevise={draftActions.revise}
           onRewrite={onRewrite}

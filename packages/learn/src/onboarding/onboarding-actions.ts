@@ -32,6 +32,8 @@ export type StartUnderstandingOutcome =
   | ({ status: "limitReached" } & UsageCap)
   | { status: "needsAccount" }
   | { status: "signUpRequired" }
+  /** Only the sent ids that can't be read anymore. */
+  | { sourceIds: string[]; status: "materialUnavailable" }
   | { status: "failed" };
 
 export type UnderstandingActions = {
