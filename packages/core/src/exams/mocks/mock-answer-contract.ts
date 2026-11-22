@@ -41,6 +41,7 @@ export type MockAnswer = z.infer<typeof mockAnswerSchema>;
 
 /** An hour covers the slowest question; anything longer is a tab left open. */
 export const MAX_OBJECTIVE_ANSWER_DURATION_MS = 3_600_000;
+export const MOCK_ANSWER_DEADLINE_GRACE_MS = 30_000;
 
 export const MAX_OBJECTIVE_ANSWER_CHARACTERS = 12_000;
 

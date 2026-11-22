@@ -41,6 +41,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import java.util.UUID
 import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -404,7 +405,7 @@ class MockRunnerViewModel(
         if (run.value.pending) return
         val wasFinished = run.value.view.status == MockExam.Status.FINISHED
         val refusals = queue.refusals
-        run.value.question?.let { leaveQuestion(it.itemId, countTime = !run.value.timeUp) }
+        run.value.question?.let { leaveQuestion(it.itemId) }
         run.update { it.copy(busy = kind, error = false) }
         viewModelScope.launch {
             val slow = launch { delay(SLOW_AFTER).also { run.update { it.copy(slow = true) } } }
@@ -512,7 +513,7 @@ class MockRunnerViewModel(
         }
         if (timedOut && target == current.questions.size) {
             questionTimeUp = true
-            setTimeUp(countTime = true)
+            setTimeUp()
             return
         }
         if (!(if (timedOut) current.moves.canOpenAfterTimeout(target) else current.moves.canOpen(target))) return
@@ -549,18 +550,22 @@ class MockRunnerViewModel(
     }
 
     private fun withTimeSpent(itemId: String): MockDraft {
-        val draft = run.value.drafts[itemId] ?: MockDraft(itemId)
+        val current = run.value
+        val draft = current.drafts[itemId] ?: MockDraft(itemId)
         val since = shown?.takeIf { it.first == itemId }?.second
         shown = itemId to time.markNow()
-        return since?.let { draft.copy(durationMs = draft.durationMs + it.elapsedNow().inWholeMilliseconds) } ?: draft
+        val afterDeadline = current.view.current?.let { (clock.now() - it.deadline).coerceAtLeast(Duration.ZERO) } ?: Duration.ZERO
+        val elapsed = ((since?.elapsedNow() ?: Duration.ZERO) - afterDeadline).inWholeMilliseconds.coerceAtLeast(0)
+        val limit = if (current.question?.essay == true) 86_400_000L else 3_600_000L
+        return draft.copy(durationMs = (draft.durationMs + elapsed).coerceAtMost(limit))
     }
 
-    private fun leaveQuestion(
-        itemId: String,
-        countTime: Boolean = true,
-    ) {
+    private fun leaveQuestion(itemId: String) {
         if (shown?.first != itemId) return
-        val shouldSave = unsavedText != null || (countTime && !queue.wasRefused(itemId))
+        val canSaveTime =
+            run.value.view.current
+                ?.let { clock.now() <= it.deadline + ANSWER_DEADLINE_GRACE } ?: true
+        val shouldSave = unsavedText != null || (canSaveTime && !queue.wasRefused(itemId))
         unsavedText = null
         saveText()
         if (shouldSave) persist(withTimeSpent(itemId).nextEdit())
@@ -572,7 +577,7 @@ class MockRunnerViewModel(
         val current = run.value
         val question = current.question
         if (current.timeUp || question == null) {
-            question?.let { leaveQuestion(it.itemId, countTime = false) }
+            question?.let { leaveQuestion(it.itemId) }
             return
         }
         shown = question.itemId to time.markNow()
@@ -592,9 +597,9 @@ class MockRunnerViewModel(
             }
     }
 
-    private fun setTimeUp(countTime: Boolean = false) {
+    private fun setTimeUp() {
         if (run.value.timeUp) return
-        run.value.question?.let { leaveQuestion(it.itemId, countTime) }
+        run.value.question?.let { leaveQuestion(it.itemId) }
         run.update { it.copy(timeUp = true) }
     }
 
@@ -642,6 +647,7 @@ class MockRunnerViewModel(
 
     private companion object {
         val TEXT_SAVE_DELAY = 1500.milliseconds
+        val ANSWER_DEADLINE_GRACE = 30.seconds
         val LEAVE_WAIT = 5.seconds
         val SLOW_AFTER = 10.seconds
 

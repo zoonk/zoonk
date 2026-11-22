@@ -121,13 +121,11 @@ function useShownQuestion({
   currentItemId,
   drafts,
   forwardOnly,
-  sectionTimeUp,
   shownItemId,
 }: {
   currentItemId?: string;
   drafts: ReturnType<typeof useMockDrafts>;
   forwardOnly: boolean;
-  sectionTimeUp: boolean;
   shownItemId?: string;
 }) {
   const synchronize = useEffectEvent((itemId: string | undefined) => {
@@ -142,7 +140,7 @@ function useShownQuestion({
     }
 
     if (currentItemId) {
-      drafts.leave(currentItemId, !sectionTimeUp);
+      drafts.leave(currentItemId);
     }
   });
 
@@ -215,7 +213,6 @@ export function useMockRunner({
     currentItemId: question?.itemId,
     drafts,
     forwardOnly: moves.forwardOnly,
-    sectionTimeUp,
     shownItemId,
   });
 
@@ -225,7 +222,7 @@ export function useMockRunner({
     setError(false);
 
     if (question) {
-      drafts.leave(question.itemId, !sectionTimeUp);
+      drafts.leave(question.itemId);
     }
 
     const settled = await stepAfterSaves({ flush: drafts.flush, request });

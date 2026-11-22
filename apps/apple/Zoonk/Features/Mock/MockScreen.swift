@@ -545,7 +545,7 @@ extension View {
       }
 
       guard !Task.isCancelled else { return }
-      run.sectionTimeUp = true
+      run.timeOutSection()
     }
   }
 }

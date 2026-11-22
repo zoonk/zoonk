@@ -27,6 +27,7 @@ final class MockRun {
   private static let gradingTimeout = Duration.seconds(120)
   private static let textSaveDelay = Duration.milliseconds(1500)
   private static let leaveWait = Duration.seconds(5)
+  private static let answerDeadlineGrace: TimeInterval = 30
 
   let mock: Resource<MockView>
   let queue: MockDraftQueue
@@ -40,7 +41,7 @@ final class MockRun {
   private(set) var slow = false
   private(set) var isWritingPaper = false
   private(set) var essayGrading: EssayGrading = .idle
-  var sectionTimeUp = false
+  private var sectionTimeUp = false
 
   private var reached = 0
   private var changed: [Int] = []
@@ -221,9 +222,18 @@ final class MockRun {
     }
   }
 
-  func leave(_ itemId: String, countTime: Bool = true) {
+  func timeOutSection() {
+    if let question {
+      leave(question.itemId)
+    }
+    sectionTimeUp = true
+  }
+
+  func leave(_ itemId: String) {
     guard shown?.itemId == itemId else { return }
-    let shouldSave = unsavedText != nil || (countTime && !queue.wasRefused(itemId))
+    let canSaveTime =
+      current.map { now() <= $0.deadline.addingTimeInterval(Self.answerDeadlineGrace) } ?? true
+    let shouldSave = unsavedText != nil || (canSaveTime && !queue.wasRefused(itemId))
     unsavedText = nil
     saveText()
     if shouldSave {
@@ -360,7 +370,7 @@ final class MockRun {
     failed = false
 
     if let question {
-      leave(question.itemId, countTime: !sectionTimeUp)
+      leave(question.itemId)
     }
 
     saveText()
@@ -466,10 +476,11 @@ final class MockRun {
 
   private func withTimeSpent(_ itemId: String) -> MockDraft {
     var draft = drafts[itemId] ?? .empty(itemId)
-    let now = ContinuousClock.now
+    let instant = ContinuousClock.now
 
     if let shown, shown.itemId == itemId {
-      let elapsed = now - shown.at
+      let afterDeadline = max(0, current.map { now().timeIntervalSince($0.deadline) } ?? 0)
+      let elapsed = max(.zero, (instant - shown.at) - .seconds(afterDeadline))
       let elapsedMs =
         Int(elapsed.components.seconds * 1000)
         + Int(elapsed.components.attoseconds / 1_000_000_000_000_000)
@@ -477,7 +488,7 @@ final class MockRun {
       draft.durationMs = min(draft.durationMs + elapsedMs, limit)
     }
 
-    shown = (itemId, now)
+    shown = (itemId, instant)
     return draft
   }
 

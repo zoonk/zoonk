@@ -12,12 +12,10 @@ import {
 import {
   MAX_OBJECTIVE_ANSWER_CHARACTERS,
   MAX_OBJECTIVE_ANSWER_DURATION_MS,
+  MOCK_ANSWER_DEADLINE_GRACE_MS,
   type MockAnswerInput,
 } from "./mock-answer-contract";
 import { type MockConditions } from "./mock-contract";
-
-/** A slow network shouldn't lose the last answer given right before time ran out. */
-const DEADLINE_GRACE_MS = 30_000;
 
 export type SaveMockAnswerResult = {
   status:
@@ -162,7 +160,7 @@ async function judgeSave({
     return { status: "invalidItem" };
   }
 
-  if (now > getSectionDeadline(mock).getTime() + DEADLINE_GRACE_MS) {
+  if (now > getSectionDeadline(mock).getTime() + MOCK_ANSWER_DEADLINE_GRACE_MS) {
     return { status: "timeUp" };
   }
 

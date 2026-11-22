@@ -1,8 +1,14 @@
 "use client";
 
-import { type MockAnswer, type MockAnswerInput } from "@zoonk/core/exams/mocks/answer-contract";
+import { MAX_WRITING_MS } from "@zoonk/core/exams/essays/contract";
+import {
+  MAX_OBJECTIVE_ANSWER_DURATION_MS,
+  MOCK_ANSWER_DEADLINE_GRACE_MS,
+  type MockAnswer,
+  type MockAnswerInput,
+} from "@zoonk/core/exams/mocks/answer-contract";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
-import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
+import { type MockDraft, type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
@@ -33,6 +39,29 @@ function emptyDraft(itemId: string): MockDraft {
   return { answer: null, durationMs: 0, flagged: false, itemId };
 }
 
+function addQuestionTime({
+  deadline,
+  draft,
+  questions,
+  now,
+  since,
+}: {
+  deadline: number;
+  draft: MockDraft;
+  questions: readonly MockQuestion[] | undefined;
+  now: number;
+  since: number | null;
+}): MockDraft {
+  if (since === null) {
+    return draft;
+  }
+
+  const elapsed = Math.max(0, Math.min(now, deadline) - since);
+  const question = questions?.find(({ itemId }) => itemId === draft.itemId);
+  const limit = question?.format === "essay" ? MAX_WRITING_MS : MAX_OBJECTIVE_ANSWER_DURATION_MS;
+  return { ...draft, durationMs: Math.min(limit, draft.durationMs + elapsed) };
+}
+
 function nextEdit(draft: PendingMockDraft): PendingMockDraft {
   const edit = draft.edit;
 
@@ -56,6 +85,43 @@ function readKept({ blockId, view }: { blockId: string; view: MockView }): Pendi
   });
 }
 
+function useQueueLifecycle({
+  enter,
+  queue,
+  replay,
+  stopText,
+}: {
+  enter: () => void;
+  queue: ReturnType<typeof createDraftSaveQueue<PendingMockDraft>>;
+  replay: () => void;
+  stopText: () => void;
+}) {
+  const entered = useRef(false);
+
+  const enterOnMount = useEffectEvent(() => {
+    if (entered.current) {
+      replay();
+    } else {
+      entered.current = true;
+      enter();
+    }
+  });
+
+  const stopOnUnmount = useEffectEvent(stopText);
+
+  useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- Device storage can be read only after hydration.
+    enterOnMount();
+    globalThis.addEventListener("online", queue.retryNow);
+
+    return () => {
+      stopOnUnmount();
+      globalThis.removeEventListener("online", queue.retryNow);
+      queue.stop();
+    };
+  }, [queue]);
+}
+
 export function useMockDrafts({
   onEnter,
   save,
@@ -67,13 +133,13 @@ export function useMockDrafts({
   view: MockView;
 }) {
   const { blockId } = view;
+  const deadline = view.current ? Date.parse(view.current.deadline) : Infinity;
   const [drafts, setDrafts] = useState<Drafts>(() => toDrafts(view));
   const [failedDrafts, setFailedDrafts] = useState<Partial<Drafts>>({});
   const [savedDrafts, setSavedDrafts] = useState<Drafts>(drafts);
   const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
   // Read by the first question's visit, which runs right after the restore and before it renders.
   const latestDrafts = useRef(drafts);
-  const entered = useRef(false);
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   const unsavedText = useRef<PendingMockDraft | null>(null);
   const textTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -114,27 +180,12 @@ export function useMockDrafts({
   }
 
   // Back and forward show this screen again as it was, so only what's still unsent goes out again.
-  const enterOnMount = useEffectEvent(() => {
-    if (entered.current) {
-      readKept({ blockId, view }).forEach((draft) => queue.add(draft));
-    } else {
-      entered.current = true;
-      enter(view);
-    }
+  useQueueLifecycle({
+    enter: () => enter(view),
+    queue,
+    replay: () => readKept({ blockId, view }).forEach((draft) => queue.add(draft)),
+    stopText: () => clearTimeout(textTimer.current ?? undefined),
   });
-
-  useEffect(() => {
-    // oxlint-disable-next-line react/set-state-in-effect -- Device storage can be read only after hydration.
-    enterOnMount();
-    const retry = () => queue.retryNow();
-    globalThis.addEventListener("online", retry);
-
-    return () => {
-      clearTimeout(textTimer.current ?? undefined);
-      globalThis.removeEventListener("online", retry);
-      queue.stop();
-    };
-  }, [queue]);
 
   function persist(draft: PendingMockDraft) {
     setAllDrafts({ ...latestDrafts.current, [draft.itemId]: draft });
@@ -155,11 +206,17 @@ export function useMockDrafts({
 
   function withTimeSpent(itemId: string): MockDraft {
     const draft = latestDrafts.current[itemId] ?? emptyDraft(itemId);
-    const since = shown.current?.itemId === itemId ? shown.current.at : null;
+    const before = shown.current;
     const now = Date.now();
-
     shown.current = { at: now, itemId };
-    return since === null ? draft : { ...draft, durationMs: draft.durationMs + (now - since) };
+
+    return addQuestionTime({
+      deadline,
+      draft,
+      now,
+      questions: view.current?.questions,
+      since: before?.itemId === itemId ? before.at : null,
+    });
   }
 
   return {
@@ -181,9 +238,13 @@ export function useMockDrafts({
       queue.retryNow();
       return settleWithin({ ms: LEAVE_WAIT_MS, request: () => queue.idle() });
     },
-    leave: (itemId: string, countTime = true) => {
+    leave: (itemId: string) => {
       if (shown.current?.itemId === itemId) {
-        const shouldSave = unsavedText.current !== null || (countTime && !queue.wasRefused(itemId));
+        const canSaveTime = Date.now() <= deadline + MOCK_ANSWER_DEADLINE_GRACE_MS;
+
+        const shouldSave =
+          unsavedText.current !== null || (canSaveTime && !queue.wasRefused(itemId));
+
         unsavedText.current = null;
 
         if (shouldSave) {

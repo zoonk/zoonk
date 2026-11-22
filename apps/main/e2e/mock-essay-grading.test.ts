@@ -91,6 +91,45 @@ async function writtenSitting({ expired }: { expired: boolean }) {
 }
 
 test.describe("Mock essays need a learner's grading request", () => {
+  test("section expiry saves the time spent after the written answer autosaved", async ({
+    browser,
+  }) => {
+    const { mock, user } = await writtenSitting({ expired: false });
+    const page = await openAs(browser, user);
+    const where = { mockExamId: mock.id };
+
+    try {
+      await prisma.mockExamAnswer.updateMany({ data: { durationMs: 0 }, where });
+      await page.clock.install();
+      await page.goto(`/mock/${mock.id}`);
+      const answer = page.getByRole("textbox");
+
+      await expectHydrated(answer);
+      await answer.fill(OFFLINE_EDIT);
+
+      await expect
+        .poll(() => prisma.mockExamAnswer.findFirstOrThrow({ where }))
+        .toMatchObject({ answer: { text: OFFLINE_EDIT } });
+
+      await prisma.mockExam.update({
+        data: { sectionStartedAt: new Date(Date.now() - 60_000) },
+        where: { id: mock.id },
+      });
+
+      await page.clock.fastForward(60_000);
+      await expect(page.getByRole("heading", { name: "Time's up" })).toBeVisible();
+
+      await expect
+        .poll(async () => {
+          const stored = await prisma.mockExamAnswer.findFirstOrThrow({ where });
+          return stored.durationMs;
+        })
+        .toBeGreaterThan(45_000);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a written answer survives a failed save and a stale edit stops the first hand-in", async ({
     browser,
   }) => {
@@ -217,7 +256,7 @@ test.describe("Mock essays need a learner's grading request", () => {
         await expect(page.getByRole("timer", { exact: true, name: "Time left" })).toBeVisible();
 
         await prisma.mockExam.update({
-          data: { sectionStartedAt: new Date(Date.now() - 120_000) },
+          data: { sectionStartedAt: new Date(Date.now() - 60_000) },
           where: { id: mock.id },
         });
 
