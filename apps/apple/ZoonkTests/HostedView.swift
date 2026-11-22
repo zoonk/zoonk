@@ -207,6 +207,20 @@ final class TestContinuation<Value: Sendable>: Sendable {
   }
 }
 
+/// Holds test work until `open()`, and fails the test instead of hanging when it never opens.
+@MainActor
+final class TestGate {
+  private var isOpen = false
+
+  func open() { isOpen = true }
+
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("The gate was never opened", file: file, line: line) {
+      self.isOpen
+    }
+  }
+}
+
 extension TestContinuation where Value == Void {
   nonisolated func resume() { resume(returning: ()) }
 }

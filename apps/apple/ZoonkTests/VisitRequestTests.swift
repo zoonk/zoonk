@@ -6,8 +6,8 @@ import XCTest
 final class VisitRequestTests: XCTestCase {
   func testWorkThatLandsAfterLeavingShowsNothingAndOpensNothing() async {
     let request = VisitRequest<String>()
-    let answer = Gate()
-    let ended = Gate()
+    let answer = TestGate()
+    let ended = TestGate()
     var followed: [String?] = []
 
     request.run(
@@ -29,10 +29,10 @@ final class VisitRequestTests: XCTestCase {
 
   func testASecondRunReplacesTheFirstSoOnlyTheNewerResultLands() async {
     let request = VisitRequest<String>()
-    let firstAnswer = Gate()
-    let firstEnded = Gate()
-    let secondAnswer = Gate()
-    let secondFollowed = Gate()
+    let firstAnswer = TestGate()
+    let firstEnded = TestGate()
+    let secondAnswer = TestGate()
+    let secondFollowed = TestGate()
     var followed: [String?] = []
 
     request.run(
@@ -63,7 +63,7 @@ final class VisitRequestTests: XCTestCase {
 
   func testLeavingClearsAFinishedRunsOutcome() async {
     let request = VisitRequest<String>()
-    let followed = Gate()
+    let followed = TestGate()
 
     request.run({ "failed" }, then: { _ in followed.open() })
     await followed.wait()
@@ -73,27 +73,5 @@ final class VisitRequestTests: XCTestCase {
 
     XCTAssertNil(request.outcome)
     XCTAssertFalse(request.isRunning)
-  }
-}
-
-@MainActor
-private final class Gate {
-  private var isOpen = false
-  private var waiting: [CheckedContinuation<Void, Never>] = []
-
-  func wait() async {
-    guard !isOpen else {
-      return
-    }
-
-    await withCheckedContinuation { waiting.append($0) }
-  }
-
-  func open() {
-    isOpen = true
-    for continuation in waiting {
-      continuation.resume()
-    }
-    waiting = []
   }
 }

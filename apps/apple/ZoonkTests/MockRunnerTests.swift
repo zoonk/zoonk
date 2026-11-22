@@ -99,7 +99,7 @@ final class MockDraftQueueTests: XCTestCase {
 
   func testAnswersGoOutInOrderAndANewerOneReplacesOneStillWaiting() async {
     let sent = Recorder()
-    let gate = Gate()
+    let gate = TestGate()
     let queue = MockDraftQueue { draft in
       await gate.wait()
       sent.items.append(draft)
@@ -246,7 +246,7 @@ final class MockDraftQueueTests: XCTestCase {
   /// "Try again" sends an answer that didn't get through, and it stays unanswered until the server
   /// keeps it.
   func testAnAnswerSentAgainCountsOnlyOnceItIsStored() async {
-    let gate = Gate()
+    let gate = TestGate()
     var saves = 0
     let queue = MockDraftQueue(
       retryDelay: { _ in .seconds(60) },
@@ -273,7 +273,7 @@ final class MockDraftQueueTests: XCTestCase {
   }
 
   func testStoppingDropsAnAnswerStillOnItsWayInsteadOfSendingItAgain() async {
-    let gate = Gate()
+    let gate = TestGate()
     var saves = 0
     let queue = MockDraftQueue(
       retryDelay: { _ in .milliseconds(10) },
@@ -328,17 +328,6 @@ final class MockBarNoteTests: XCTestCase {
 @MainActor
 private final class Recorder {
   var items: [MockDraft] = []
-}
-
-@MainActor
-private final class Gate {
-  private var isOpen = false
-
-  func open() { isOpen = true }
-
-  func wait(file: StaticString = #filePath, line: UInt = #line) async {
-    _ = try? await waitForTestCondition("The draft gate was never released") { self.isOpen }
-  }
 }
 
 @MainActor
