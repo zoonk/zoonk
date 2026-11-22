@@ -10,15 +10,67 @@ import { StepLoadFailed, StepLoading } from "../../onboarding/steps/step-parts";
 import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
 import { LevelTestPreparing } from "./level-test-preparing";
 import { LevelResult, TestOutResult } from "./level-test-results";
+import { TestIntro } from "./level-test-screens";
 import { TestStep, useLevelTestAudio } from "./level-test-step";
 import { type LanguagePlanTestActions, useLanguagePlanTest } from "./use-language-plan-test";
 
 export type { LanguagePlanTestActions } from "./use-language-plan-test";
 
+/** Onboarding's own way past the test, before one opens, and the learner's own language. */
+type OnboardingLevelTest = {
+  language: string;
+  /** Goes on without a test; false when it didn't. */
+  skip: () => Promise<boolean>;
+  switchLanguage: (language: string) => void;
+};
+
+function LengthStep({
+  onboarding,
+  showAlphabetNote,
+  test,
+  testOutFirst,
+  testOutLevel,
+  wholeCourseMinutes,
+}: {
+  onboarding?: OnboardingLevelTest;
+  showAlphabetNote: boolean;
+  test: ReturnType<typeof useLanguagePlanTest>;
+  testOutFirst: boolean;
+  testOutLevel: string | null;
+  wholeCourseMinutes: number;
+}) {
+  if (onboarding) {
+    return (
+      <TestIntro
+        failed={test.failed}
+        language={onboarding.language}
+        onSkip={() => test.onSkip(onboarding.skip)}
+        onStart={test.onStart}
+        onSwitch={onboarding.switchLanguage}
+        pressed={test.pressed}
+        showAlphabetNote={showAlphabetNote}
+        wholeCourseMinutes={wholeCourseMinutes}
+      />
+    );
+  }
+
+  return (
+    <PlacementLengthChoice
+      failed={test.failed}
+      onStart={test.onStart}
+      initialChoice={testOutFirst && testOutLevel ? "testOut" : "quick"}
+      onTestOut={testOutLevel ? () => test.onTestOut(testOutLevel) : undefined}
+      pressed={test.pressed}
+      testOutLevel={testOutLevel}
+      wholeCourseMinutes={wholeCourseMinutes}
+    />
+  );
+}
+
 export function LanguagePlanTestFlow({
   actions,
   onDone,
-  onboarding = false,
+  onboarding,
   readWarmUp,
   targetLanguage,
   testOutFirst = false,
@@ -29,7 +81,7 @@ export function LanguagePlanTestFlow({
   actions: LanguagePlanTestActions;
   /** Goes back to the plan, read again; false when it didn't. */
   onDone: () => Promise<boolean>;
-  onboarding?: boolean;
+  onboarding?: OnboardingLevelTest;
   readWarmUp: OnboardingActions["readWarmUp"];
   targetLanguage: string;
   /** Opened from a lesson's offer to test out of a level, so that choice comes picked. */
@@ -40,7 +92,7 @@ export function LanguagePlanTestFlow({
   wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
-  const test = useLanguagePlanTest({ actions, onDone, onboarding });
+  const test = useLanguagePlanTest({ actions, onDone, onboarding: Boolean(onboarding) });
   const { failed, phase, pressed } = test;
 
   const audioPending = useLevelTestAudio({
@@ -60,12 +112,11 @@ export function LanguagePlanTestFlow({
       return <StepLoadFailed onRetry={test.reopen} />;
     case "choose":
       return (
-        <PlacementLengthChoice
-          failed={failed}
-          onStart={test.onStart}
-          initialChoice={testOutFirst && testOutLevel ? "testOut" : "quick"}
-          onTestOut={testOutLevel ? () => test.onTestOut(testOutLevel) : undefined}
-          pressed={pressed}
+        <LengthStep
+          onboarding={onboarding}
+          showAlphabetNote={phase.showAlphabetNote}
+          test={test}
+          testOutFirst={testOutFirst}
           testOutLevel={testOutLevel}
           wholeCourseMinutes={wholeCourseMinutes}
         />
@@ -111,7 +162,7 @@ export function LanguagePlanTestFlow({
           onDone={test.onDone}
           onTestOut={test.onTestOut}
           onWalkTopics={test.onWalkTopics}
-          onboarding={onboarding}
+          onboarding={Boolean(onboarding)}
           pressed={pressed}
           result={phase.result}
           targetLanguage={targetLanguage}

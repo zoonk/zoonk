@@ -1,18 +1,12 @@
 "use client";
 
-import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
-import { useLanguageNameInSentence } from "../../_utils/use-language-name";
-import { TestOutcome } from "../../onboarding/test-outcome";
 import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
-import { getPlacementPressed } from "../../placement-test/use-placement-test";
-import { LevelBars } from "./level-test-parts";
-
-type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
+import { type PlacementPressed } from "../../placement-test/use-placement-test";
 
 function InterfaceOffer({
   language,
@@ -42,33 +36,34 @@ function InterfaceOffer({
   );
 }
 
+/** The length choice as onboarding opens it: the learner can skip the test or switch the app to their own language. */
 export function TestIntro({
-  goal,
-  onScratch,
+  failed,
+  language,
+  onSkip,
   onStart,
   onSwitch,
-  pending,
+  pressed,
   showAlphabetNote,
-  starting,
   wholeCourseMinutes,
 }: {
-  goal: { language: string; targetLanguage: string };
-  onScratch: () => void;
+  failed: boolean;
+  language: string;
+  onSkip: () => void;
   onStart: React.ComponentProps<typeof PlacementLengthChoice>["onStart"];
   onSwitch: (language: string) => void;
-  pending: boolean;
+  pressed: PlacementPressed;
   showAlphabetNote: boolean;
-  starting: boolean;
   wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
 
   return (
     <PlacementLengthChoice
-      failed={false}
-      onSkip={onScratch}
+      failed={failed}
+      onSkip={onSkip}
       onStart={onStart}
-      pressed={getPlacementPressed({ pending, starting })}
+      pressed={pressed}
       wholeCourseMinutes={wholeCourseMinutes}
     >
       {showAlphabetNote && (
@@ -77,36 +72,7 @@ export function TestIntro({
         </p>
       )}
 
-      <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
+      <InterfaceOffer language={language} onSwitch={onSwitch} />
     </PlacementLengthChoice>
-  );
-}
-
-export function TestDone({
-  failed,
-  levels,
-  onContinue,
-  pending,
-  targetLanguage,
-}: {
-  failed: boolean;
-  levels: ReadyTest["levels"];
-  onContinue: () => void;
-  pending: boolean;
-  targetLanguage: string;
-}) {
-  const t = useExtracted();
-  const languageName = useLanguageNameInSentence();
-
-  return (
-    <TestOutcome
-      busy={pending}
-      failed={failed}
-      onContinue={onContinue}
-      subject={t("Level test")}
-      title={t("Your {language} level", { language: languageName(targetLanguage) })}
-    >
-      <LevelBars levels={levels} />
-    </TestOutcome>
   );
 }

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { FocusTestFlow } from "../../focus-test/focus-test-flow";
 import { type GenerationRun } from "../../generation/generation-run";
 import { LanguagePlanTestFlow } from "../../language/level-test/level-test-flow";
-import { LanguageLevelTestStep } from "../../language/level-test/level-test-step";
 import { PlacementTestFlow } from "../../placement-test/placement-test-flow";
 import { getNativeLanguage } from "../_utils/onboarding-view-reads";
 import { type OnboardingActions } from "../onboarding-actions";
@@ -26,10 +25,7 @@ type Props = {
 function CoursePlacementStep({ actions, onDone, onFinishFailed, run, subject, view }: Props) {
   const { goal } = view;
 
-  const [course, setCourse] = useState<{
-    minutes: number;
-    stage: "quick" | "assessment" | "topics";
-  } | null>(null);
+  const [course, setCourse] = useState<{ minutes: number; stage: "test" | "topics" } | null>(null);
 
   const [failed, setFailed] = useState(false);
   const placement = actions.placementTest(goal.id);
@@ -64,19 +60,16 @@ function CoursePlacementStep({ actions, onDone, onFinishFailed, run, subject, vi
           outcome.attempt?.length === "wholeCourse") ||
         (outcome.status === "ready" && outcome.result);
 
-      const assessment = data.assessment?.length === "wholeCourse" ? "assessment" : "quick";
-      const stage = topics ? "topics" : assessment;
       setFailed(false);
-      setCourse({ minutes: data.minutes, stage });
+      setCourse({ minutes: data.minutes, stage: topics ? "topics" : "test" });
     },
     read: async () => {
-      const [minutes, outcome, assessment] = await Promise.all([
+      const [minutes, outcome] = await Promise.all([
         actions.getPlacementMinutes(goal.id),
         placement.get(),
-        goal.kind === "language" ? level.get() : null,
       ]);
 
-      return { assessment, minutes, placement: outcome };
+      return { minutes, placement: outcome };
     },
   });
 
@@ -103,37 +96,24 @@ function CoursePlacementStep({ actions, onDone, onFinishFailed, run, subject, vi
   }
 
   if (goal.kind === "language" && goal.targetLanguage) {
-    if (course.stage === "assessment") {
-      return (
-        <LanguagePlanTestFlow
-          actions={level}
-          onDone={() => onDone()}
-          onboarding
-          readWarmUp={actions.readWarmUp}
-          targetLanguage={goal.targetLanguage}
-          testOutLevel={null}
-          trueFalseLabels="trueFalse"
-          wholeCourseMinutes={course.minutes}
-        />
-      );
-    }
+    const levelTest = actions.languageLevelTest(goal.id);
 
     return (
-      <LanguageLevelTestStep
-        actions={actions.languageLevelTest(goal.id)}
-        goal={{ language: getNativeLanguage(view), targetLanguage: goal.targetLanguage }}
-        goalId={goal.id}
-        onDone={onDone}
-        onFinishFailed={onFinishFailed}
-        onWholeCourse={async () => {
-          const opened = await level.start("wholeCourse");
-
-          if (opened?.attemptId) {
-            setCourse({ ...course, stage: "assessment" });
-          }
-
-          return Boolean(opened?.attemptId);
+      <LanguagePlanTestFlow
+        actions={level}
+        onDone={() => onDone()}
+        onboarding={{
+          language: getNativeLanguage(view),
+          skip: async () => {
+            await levelTest.finish();
+            return onDone();
+          },
+          switchLanguage: levelTest.switchLanguage,
         }}
+        readWarmUp={actions.readWarmUp}
+        targetLanguage={goal.targetLanguage}
+        testOutLevel={null}
+        trueFalseLabels="trueFalse"
         wholeCourseMinutes={course.minutes}
       />
     );

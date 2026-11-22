@@ -23,7 +23,6 @@ import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/dra
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type FocusTestActions } from "../focus-test/focus-test-actions";
-import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
 import { type LanguagePlanTestActions } from "../language/level-test/use-language-plan-test";
 import { type PlacementTestActions } from "../placement-test/placement-test-actions";
 import { type ItemPictureData } from "../questions/item-picture";
@@ -199,7 +198,11 @@ export type OnboardingActions = {
     goalId: string;
     itemId: string;
   }) => Promise<PlacementOutcome>;
-  languageLevelTest: (goalId: string) => LanguageLevelTestActions;
+  languageLevelTest: (goalId: string) => {
+    /** Ends a test that never opened, so a skip moves on; false when there was nothing to end. */
+    finish: () => Promise<boolean>;
+    switchLanguage: (language: string) => void;
+  };
   languagePlanTest: (input: {
     goalId: string;
     walkTopics: () => Promise<boolean>;
