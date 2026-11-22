@@ -4860,7 +4860,6 @@ msgstr "Poziom: {language}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/level-test/level-test-results.tsx
-#: src/language/level-test/level-test-screens.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
@@ -6455,12 +6454,6 @@ msgstr "Ustaw język aplikacji: {language}"
 msgctxt "4Itq02"
 msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 msgstr "Nie znasz jeszcze tego alfabetu? Pomiń test. Na pierwszej lekcji nauczysz się go czytać."
-
-#: src/language/level-test/level-test-screens.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "Test poziomujący"
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -10635,6 +10628,11 @@ msgstr "Sprawdź swój poziom i pomiń to, co już znasz"
 msgctxt "42QSqg"
 msgid "Skip lessons you already know"
 msgstr "Pomiń lekcje, które już znasz"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "Test poziomujący"
 
 #: src/plan/plan-placement-test.tsx
 msgctxt "QZI9sA"

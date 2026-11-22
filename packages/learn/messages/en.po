@@ -4860,7 +4860,6 @@ msgstr "{language} level"
 
 #: src/journey/journey-hero.tsx
 #: src/language/level-test/level-test-results.tsx
-#: src/language/level-test/level-test-screens.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
@@ -6455,12 +6454,6 @@ msgstr "Use the app in {language}"
 msgctxt "4Itq02"
 msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 msgstr "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
-
-#: src/language/level-test/level-test-screens.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "Level test"
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -10635,6 +10628,11 @@ msgstr "Find your level and skip what you know"
 msgctxt "42QSqg"
 msgid "Skip lessons you already know"
 msgstr "Skip lessons you already know"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "Level test"
 
 #: src/plan/plan-placement-test.tsx
 msgctxt "QZI9sA"
