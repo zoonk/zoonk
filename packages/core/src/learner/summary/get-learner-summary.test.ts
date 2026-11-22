@@ -29,6 +29,7 @@ import { mistakeListInputSchema } from "../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
 import { lapsedDayFixture } from "../../sessions/_test-utils/entitlement-lapse";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
+import { toBlockPayload } from "../../sessions/block-payload";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getLearnerSummary } from "./get-learner-summary";
 
@@ -452,6 +453,42 @@ describe(getLearnerSummary, () => {
 
     await expect(getLearnerSummary()).resolves.toMatchObject({
       today: { blocksLeft: 2, next: { minutes: 7, sessionId: day.id, title: "Later practice" } },
+    });
+  });
+
+  it("goes on past a mock whose questions are still being written, as Today does", async () => {
+    const { goal, user } = await learnerWithGoal({ kind: "exam" });
+    const day = await studySessionFixture({ goalId: goal.id, localDate: TODAY, userId: user.id });
+
+    await Promise.all([
+      studySessionBlockFixture({
+        kind: "checkpoint",
+        payload: toBlockPayload({
+          checkpoint: {
+            kind: "weekly",
+            mock: true,
+            mockIdentity: { day: null, fullLength: false },
+            passMark: 1,
+            phase: null,
+            rematch: false,
+            timeLimitMinutes: 10,
+          },
+          title: "Mock exam 1",
+        }),
+        position: 0,
+        sessionId: day.id,
+      }),
+      studySessionBlockFixture({
+        estimatedMinutes: 6,
+        kind: "review",
+        payload: { title: "Simple interest" },
+        position: 1,
+        sessionId: day.id,
+      }),
+    ]);
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
+      today: { blocksLeft: 2, next: { minutes: 6, sessionId: day.id, title: "Simple interest" } },
     });
   });
 

@@ -1339,7 +1339,8 @@ private let reading = language(
   sentence: #"""
     {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": [],
-     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": []}
+     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": [],
+     "readsItself": false}
     """#, sentenceWords: ["Je", "suis", "Marie."])
 
 private let japaneseReading = language(
@@ -1347,7 +1348,8 @@ private let japaneseReading = language(
   sentence: #"""
     {"id": "s", "sentence": "私は学生です。", "translation": "I am a student.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": ["学", "生"],
-     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": []}
+     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": [],
+     "readsItself": false}
     """#, sentenceWords: ["私", "は", "学生", "です。"])
 
 private let numericActivity = teaching(

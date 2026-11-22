@@ -53,6 +53,22 @@ describe(withDayState, () => {
     ).toBe("done");
   });
 
+  it("waits on the mock after the regular review is done", () => {
+    const blocks = [
+      { position: 0, preparing: true, status: "pending" as const },
+      { position: 1, preparing: false, status: "completed" as const },
+    ];
+
+    expect(withDayState(day({ blocks, nextPosition: null }))).toMatchObject({ state: "waiting" });
+    expect(withDayState(day())).toMatchObject({ state: "underway" });
+  });
+
+  it("waits while a study day is being outlined", () => {
+    expect(
+      withDayState(day({ blocks: [], emptyDay: "lessonsComing", nextPosition: null })),
+    ).toMatchObject({ state: "waiting" });
+  });
+
   it("waits while a study day's lessons are still being outlined", () => {
     expect(dayState(day({ blocks: [], emptyDay: "lessonsComing", nextPosition: null }))).toBe(
       "waiting",

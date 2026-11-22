@@ -6,6 +6,7 @@ import { routeNextModule } from "../scoring/adaptive-routing";
 import { endMock, withSectionTimeout } from "./_utils/end-mock";
 import { readMockAnswer } from "./_utils/mock-answers";
 import { gradeMockItem } from "./_utils/mock-item-grading";
+import { spendSection } from "./_utils/mock-item-uses";
 import { type MockItem, loadMockItems } from "./_utils/mock-items";
 import { type MockSitting, findMockSitting, findOwnedMock } from "./_utils/owned-mock";
 import { isMockAnswerPresent } from "./mock-answer-presence";
@@ -88,16 +89,20 @@ const MS_PER_MINUTE = 60_000;
 
 function refuseHandIn({
   mock,
+  now,
   section,
 }: {
   mock: MockSitting | null;
+  now: Date;
   section: number;
 }): "expired" | "finished" | "notRunning" | null {
   if (mock?.status === "expired" || mock?.status === "finished") {
     return mock.status;
   }
 
-  return mock?.status === "active" && mock.sectionIndex === section ? null : "notRunning";
+  const running = mock?.status === "active" && mock.sectionIndex === section;
+
+  return running && mock.sectionStartedAt <= now ? null : "notRunning";
 }
 
 /** Scores and moves the section from the sitting read under the learner's lock, which saves take too. */
@@ -118,7 +123,7 @@ export async function submitMockSection({
 
   const { owned } = found;
   const { mock } = owned;
-  const refused = refuseHandIn({ mock, section });
+  const refused = refuseHandIn({ mock, now: new Date(), section });
 
   if (refused || !mock) {
     return { status: refused ?? "notRunning" };
@@ -133,23 +138,30 @@ export async function submitMockSection({
   const items = routed ? await loadMockItems(routed.itemIds) : new Map<string, MockItem>();
 
   const status = await writeLearnerChange({ userId: owned.userId }, async (tx) => {
+    const now = new Date();
     const current = await findMockSitting(tx, mock.id);
-    const refusedNow = refuseHandIn({ mock: current, section });
+    const refusedNow = refuseHandIn({ mock: current, now, section });
 
     if (refusedNow || !current) {
       return unchanged(refusedNow ?? "notRunning");
     }
 
-    const now = new Date();
     const breakMs = (current.conditions.sections[section]?.breakAfterMinutes ?? 0) * MS_PER_MINUTE;
+    const nextStart = new Date(now.getTime() + breakMs);
+    const conditions = advanceConditions({ items, mock: current, now });
 
     await tx.mockExam.update({
-      data: {
-        conditions: advanceConditions({ items, mock: current, now }),
-        sectionIndex: section + 1,
-        sectionStartedAt: new Date(now.getTime() + breakMs),
-      },
+      data: { conditions, sectionIndex: section + 1, sectionStartedAt: nextStart },
       where: { id: mock.id },
+    });
+
+    await spendSection({
+      conditions,
+      mockExamId: mock.id,
+      now: nextStart,
+      section: section + 1,
+      tx,
+      userId: owned.userId,
     });
 
     return "next" as const;

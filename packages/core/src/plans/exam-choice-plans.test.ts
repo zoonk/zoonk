@@ -219,6 +219,7 @@ describe("plans of an exam with choices of subject", () => {
             content: choiceItemContent(),
             examBlueprintId: blueprint.id,
             language: "es",
+            mockOnly: true,
             skillId: skill.skillId,
           }),
         ),
@@ -230,7 +231,7 @@ describe("plans of an exam with choices of subject", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: { area: null, day: 1, kind: "full" } },
+      input: { shape: { area: null, day: 1, kind: "full" } },
     });
 
     if (started.status !== "started") {

@@ -23,6 +23,21 @@ describe(toRouting, () => {
     expect(new Set([...routes.easier, ...routes.harder]).size).toBe(20);
   });
 
+  it("fills both routes with unseen questions before the oldest repeats", () => {
+    const pool: MockCandidate[] = [1, 2, 3, 4, 5].map((difficulty, index) => ({
+      answered: false,
+      area: null,
+      difficulty,
+      itemFormat: "trueFalse",
+      itemId: String(index),
+      skillId: "skill",
+      ...(index >= 2 && { lastMockUse: index }),
+    }));
+
+    const routes = toRouting({ pool, wanted: 2 });
+    expect([...routes.easier, ...routes.harder].toSorted()).toStrictEqual(["0", "1", "2", "3"]);
+  });
+
   it.each([0, 1, 3, 6, 12])("keeps both routes disjoint with %i candidates", (size) => {
     const pool: MockCandidate[] = Array.from({ length: size }, (_, index) => ({
       answered: false,

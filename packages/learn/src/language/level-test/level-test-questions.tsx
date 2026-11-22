@@ -7,10 +7,10 @@ import {
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { useExtracted } from "next-intl";
 import { useCallback, useState, useTransition } from "react";
-import { CreateAccountLink } from "../../_components/create-account-link";
 import {
   OnboardingActions,
   OnboardingColumn,
+  OnboardingDescription,
   OnboardingHeading,
   OnboardingSecondaryButton,
   OnboardingTitle,
@@ -18,9 +18,9 @@ import {
 import { OnboardingTestQuestion } from "../../onboarding/onboarding-host";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { RecordButton } from "../../speech/record-button";
+import { type RecordProblem, useRecordNote } from "../../speech/record-note";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
-import { useNoSpeechMessage } from "../no-speech-message";
-import { ListeningMessage, SpeakingPrompt } from "./level-test-parts";
+import { ListeningMessage } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type NextStep = ReadyTest["next"];
@@ -104,12 +104,14 @@ export function LevelTestQuestion({
 }
 
 export function SpeakingStep({
+  language,
   onSkip,
   onView,
   progress,
   sentence,
   speak,
 }: {
+  language: string;
   onSkip: () => void;
   onView: (view: LanguageLevelTestView) => void;
   /** 0 to 1. */
@@ -118,34 +120,23 @@ export function SpeakingStep({
   speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;
 }) {
   const t = useExtracted();
-  const noSpeech = useNoSpeechMessage();
-  const [error, setError] = useState<string | null>(null);
-  const [needsAccount, setNeedsAccount] = useState(false);
+  const [problem, setProblem] = useState<RecordProblem | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const send = useCallback(
     ({ audio }: { audio: Blob }) =>
       startTransition(async () => {
         const result = await speak(audio).catch(() => null);
-        setNeedsAccount(result === "signUpRequired");
 
-        if (result === "noSpeech") {
-          setError(noSpeech);
+        if (result === null || result === "noSpeech" || result === "signUpRequired") {
+          setProblem(result ?? "failed");
           return;
         }
 
-        if (result === "signUpRequired") {
-          setError(t("Create your free account to continue."));
-          return;
-        }
-
-        setError(result ? null : t("We couldn't check that. Try again."));
-
-        if (result) {
-          onView(result);
-        }
+        setProblem(null);
+        onView(result);
       }),
-    [noSpeech, onView, speak, t],
+    [onView, speak],
   );
 
   const canRecord = useCanRecord();
@@ -153,17 +144,26 @@ export function SpeakingStep({
   const micAvailable = canRecord && recorder.status !== "denied";
   const recording = recorder.status === "recording";
 
+  const note = useRecordNote({
+    checking: isPending,
+    problem,
+    recording,
+    unavailable: micAvailable
+      ? null
+      : t("The microphone isn't available here. You can skip this part."),
+  });
+
   return (
     <OnboardingTestQuestion progress={progress}>
       <OnboardingColumn
         bar={
-          <OnboardingActions note={needsAccount && <CreateAccountLink />}>
+          <OnboardingActions note={note}>
             <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
               {t("Skip this part")}
             </OnboardingSecondaryButton>
             {micAvailable && (
               <RecordButton
-                busy={recorder.status === "acquiring"}
+                busy={recorder.status === "acquiring" || isPending}
                 disabled={isPending}
                 elapsedMs={recorder.elapsedMs}
                 onStart={() => void recorder.start()}
@@ -175,15 +175,9 @@ export function SpeakingStep({
         }
       >
         <OnboardingHeading>
-          <OnboardingTitle>{t("Say it out loud")}</OnboardingTitle>
+          <OnboardingTitle lang={language}>{sentence.speaking.sentence}</OnboardingTitle>
+          <OnboardingDescription>{sentence.speaking.translation}</OnboardingDescription>
         </OnboardingHeading>
-        <SpeakingPrompt
-          error={error}
-          micAvailable={micAvailable}
-          pending={isPending}
-          recording={recording}
-          sentence={sentence}
-        />
       </OnboardingColumn>
     </OnboardingTestQuestion>
   );

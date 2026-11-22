@@ -7,6 +7,7 @@ import { type PlanChangeView } from "../plan-view-contract";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { asksAboutAutomaticChange } from "./automatic-plan-change";
 import { foldChangeAreas } from "./fold-part-areas";
+import { waitingPlanProposal } from "./notice-graph-proposal";
 import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { toPlanChangeView } from "./plan-change-view";
@@ -31,25 +32,26 @@ async function findTodayChanges({
     prisma.planChange.findMany({
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: MAX_PROPOSALS,
-      where: { planId, status: "proposed" },
+      where: { ...waitingPlanProposal, planId },
     }),
     prisma.planChange.findMany({
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       where: {
-        createdAt: { gte: new Date(now.getTime() - RECENT_CHANGE_MS) },
+        OR: [
+          { createdAt: { gte: new Date(now.getTime() - RECENT_CHANGE_MS) } },
+          { kind: "noticeChanged" },
+        ],
         planId,
         status: "applied",
       },
     }),
   ]);
 
-  const automatic = recent.find(
-    (change) =>
-      asksAboutAutomaticChange({ change, dateReached }) &&
-      parsePlanChangePayload(change.payload).seenAt === null,
-  );
+  const unseen = recent.filter((change) => parsePlanChangePayload(change.payload).seenAt === null);
+  const notice = unseen.find((change) => change.kind === "noticeChanged");
+  const automatic = unseen.find((change) => asksAboutAutomaticChange({ change, dateReached }));
 
-  return { automatic: automatic ?? null, proposals };
+  return { automatic: automatic ?? null, notice, proposals };
 }
 
 async function pickTodayChange({
@@ -61,7 +63,11 @@ async function pickTodayChange({
   now: Date;
   planId: string;
 }): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
-  const { automatic, proposals } = await findTodayChanges({ dateReached, now, planId });
+  const { automatic, notice, proposals } = await findTodayChanges({ dateReached, now, planId });
+
+  if (notice) {
+    return { change: notice, effect: parsePlanChangePayload(notice.payload).effect };
+  }
 
   const proposal = proposals.find(
     (candidate) => parsePlanChangePayload(candidate.payload).effect !== null,

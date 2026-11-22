@@ -11,6 +11,13 @@ kotlin {
     }
 }
 
+val inlineVisuals =
+    mapOf(
+        "ItemSet_visual" to "ItemSetVisual",
+        "PlayableLibraryStep_anyOf_1_content_nodes_inner_visual" to "ChallengeNodeVisual",
+        "PlayableLibraryStep_anyOf_2_content_visual" to "StepContentVisual",
+    )
+
 openApiGenerate {
     generatorName = "kotlin"
     library = "jvm-retrofit2"
@@ -51,6 +58,9 @@ openApiGenerate {
             "SpokenAnswerRequest",
             "__schema0",
             "__schema1",
+            // The app reads a visual itself, so a kind it doesn't know yet draws nothing instead of failing the response.
+            "LessonVisual",
+            *inlineVisuals.values.toTypedArray(),
         ).associateWith { "kotlinx.serialization.json.JsonElement" } +
         // The response's copy of `LessonStepAnswer`, which differs only in refusing extra keys.
         mapOf(
@@ -58,6 +68,8 @@ openApiGenerate {
             // A new reason still means outside the plan; the UI gives it the plain label.
             "NotPlannedReason" to "kotlin.String",
         )
+    // The generator maps an inline schema only once it has a name.
+    inlineSchemaNameMappings = inlineVisuals
     // The plugin passes its own supporting-file list, which skips any ignore file; the app builds its
     // own client, so only the serializers the models use are listed.
     globalProperties =

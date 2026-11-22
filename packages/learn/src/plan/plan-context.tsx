@@ -22,9 +22,12 @@ export type PlanChangeOutcome =
   | { change: PlanChangeView | null; status: "applied" }
   | { reason: "alreadyIn" | "cantMove"; status: "unchanged" };
 
+/** `refused`: the plan as it now is doesn't allow it, and the page reads the plan again. */
+export type PlanChangeReply = PlanChangeOutcome | { status: "refused" };
+
 /** Each action resolves to what it did, or null when it didn't work. */
 export type PlanActions = {
-  change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeOutcome | null>;
+  change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeReply | null>;
   /** Nothing is saved. */
   preview: (operations: LearnerPlanOperation[]) => Promise<PlanChangePreview | null>;
   /**
@@ -45,6 +48,8 @@ export type PlanActions = {
     system: ToolSystem | null;
     tools: string[];
   }) => Promise<boolean | { generationId: string }>;
+  /** Shows the plan as it now is, such as when a check finds it already holds what was offered. */
+  readPlanAgain: () => void;
 };
 
 /** A null `buddy` uses the default buddy. */

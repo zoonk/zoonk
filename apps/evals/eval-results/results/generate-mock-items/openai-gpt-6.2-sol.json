@@ -1,0 +1,1314 @@
+{
+  "modelId": "openai/gpt-6.2-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.40 and released ones 2.33 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 1.00 of written and 0.00 of released questions as imitations. Paraphrases art. 3 of Lei 4.320 in plain terms ('ingressos de empréstimos contratados para financiar obras públicas') rather than the board's usual legal wording. Swaps the legal 'últimos quatro meses' for a specific month (outubro), turning a recall item into simple date arithmetic. Turns on the recent LC 177/2021 detail of a dedicated fund, with a 'recursos ordinários' contrast and an 'ainda que' clause built to set the trap. The trap is plain: stating that the total value is known points straight to empenho global, not empenho por estimativa. Invents a made-up exception (authorization in the LDO) for an obvious ban, LRF art. 44, so the trap is easy to see.",
+          "score": 1,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1836,
+          "outputTokens": 1374,
+          "reasoningTokens": 871
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.33 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Paraphrases art. 3 of Lei 4.320 in plain terms ('ingressos de empréstimos contratados para financiar obras públicas') rather than the board's usual legal wording. Swaps the legal 'últimos quatro meses' for a specific month (outubro), turning a recall item into simple date arithmetic. Turns on the recent LC 177/2021 detail of a dedicated fund, with a 'recursos ordinários' contrast and an 'ainda que' clause built to set the trap. The trap is plain: stating that the total value is known points straight to empenho global, not empenho por estimativa. Invents a made-up exception (authorization in the LDO) for an obvious ban, LRF art. 44, so the trap is easy to see. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.33 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Paraphrases art. 3 of Lei 4.320 in plain terms ('ingressos de empréstimos contratados para financiar obras públicas') rather than the board's usual legal wording. Swaps the legal 'últimos quatro meses' for a specific month (outubro), turning a recall item into simple date arithmetic. Turns on the recent LC 177/2021 detail of a dedicated fund, with a 'recursos ordinários' contrast and an 'ainda que' clause built to set the trap. The trap is plain: stating that the total value is known points straight to empenho global, not empenho por estimativa. Invents a made-up exception (authorization in the LDO) for an obvious ban, LRF art. 44, so the trap is easy to see. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.33 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Paraphrases art. 3 of Lei 4.320 in plain terms ('ingressos de empréstimos contratados para financiar obras públicas') rather than the board's usual legal wording. Swaps the legal 'últimos quatro meses' for a specific month (outubro), turning a recall item into simple date arithmetic. Turns on the recent LC 177/2021 detail of a dedicated fund, with a 'recursos ordinários' contrast and an 'ainda que' clause built to set the trap. The trap is plain: stating that the total value is known points straight to empenho global, not empenho por estimativa. Invents a made-up exception (authorization in the LDO) for an obvious ban, LRF art. 44, so the trap is easy to see. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 7.3
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.",
+          "released": [
+            {
+              "key": "true",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nDestaques são descentralizações externas que ocorrem entre unidades de órgãos distintos."
+            },
+            {
+              "key": "false",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nEntes governamentais podem realizar repasses de recursos públicos a entidades privadas. Exemplo dessa prerrogativa, o Tesouro Nacional pode realizar operação de redesconto, a qual, por sua vez, demanda lei específica, independentemente do prazo que for concedido ao ente privado para liquidação."
+            },
+            {
+              "key": "false",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nAs despesas empenhadas, não liquidadas e não pagas advêm de uma despesa extra-orçamentária e a sua inscrição constitui receita orçamentária."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-budget-law-1",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nOs créditos adicionais suplementares têm a finalidade de reforçar programas com dotação orçamentária existente e são constituídos para despesas urgentes e previsíveis.",
+              "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nO excesso de recursos financeiros advindos de arrecadação poderá ser aplicado em programa de governo não previsto na lei orçamentária anual, mesmo sem que haja autorização legislativa para tal."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Aplicar normas gerais de direito financeiro sobre orçamento, receitas e despesas públicas.",
+            "name": "Aplicar normas gerais de direito financeiro"
+          },
+          "usedSituations": [
+            "Valéria verifica que um tributo foi lançado em 2025 e arrecadado em 2026. Para fins orçamentários, a receita pertence ao exercício financeiro de 2026.",
+            "Danilo constatou que materiais solicitados por um órgão público foram entregues sem empenho prévio. Nessa situação, o órgão pode pagar a despesa sem empenhá-la, pois a entrega já ocorreu.",
+            "Iara identificou, no balanço patrimonial do exercício anterior, superávit financeiro não comprometido de recursos legalmente vinculados à saúde. Esse superávit pode ser indicado como fonte para abrir "
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.40 and released ones 2.67 (1-5): as hard as the exam.",
+          "score": 9.933333333333334,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 1.00 of written and 0.00 of released questions as imitations. Swaps a single term in LRF art. 9 §2. 'Ressalvadas pela LDO' are exactly the expenses excluded from limitação de empenho, so the trap is easy to spot. Builds a textbook case of despesa de exercícios anteriores and mislabels it as restos a pagar. The contrast is too didactic for this board. Reads as a near-literal paraphrase of LRF art. 38 §1, with the 10 December date planted to test simple recall of the rule. Restates LRF art. 14 §3, II almost verbatim, with no scenario or twist. The September date is chosen just to place the act inside the last four months of the year. It is a mechanical restatement of CF art. 167 §2.",
+          "score": 1,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1857,
+          "outputTokens": 1192,
+          "reasoningTokens": 701
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.67 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Swaps a single term in LRF art. 9 §2. 'Ressalvadas pela LDO' are exactly the expenses excluded from limitação de empenho, so the trap is easy to spot. Builds a textbook case of despesa de exercícios anteriores and mislabels it as restos a pagar. The contrast is too didactic for this board. Reads as a near-literal paraphrase of LRF art. 38 §1, with the 10 December date planted to test simple recall of the rule. Restates LRF art. 14 §3, II almost verbatim, with no scenario or twist. The September date is chosen just to place the act inside the last four months of the year. It is a mechanical restatement of CF art. 167 §2. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 7.276666666666667
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.67 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Swaps a single term in LRF art. 9 §2. 'Ressalvadas pela LDO' are exactly the expenses excluded from limitação de empenho, so the trap is easy to spot. Builds a textbook case of despesa de exercícios anteriores and mislabels it as restos a pagar. The contrast is too didactic for this board. Reads as a near-literal paraphrase of LRF art. 38 §1, with the 10 December date planted to test simple recall of the rule. Restates LRF art. 14 §3, II almost verbatim, with no scenario or twist. The September date is chosen just to place the act inside the last four months of the year. It is a mechanical restatement of CF art. 167 §2. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 7.276666666666667
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.67 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Swaps a single term in LRF art. 9 §2. 'Ressalvadas pela LDO' are exactly the expenses excluded from limitação de empenho, so the trap is easy to spot. Builds a textbook case of despesa de exercícios anteriores and mislabels it as restos a pagar. The contrast is too didactic for this board. Reads as a near-literal paraphrase of LRF art. 38 §1, with the 10 December date planted to test simple recall of the rule. Restates LRF art. 14 §3, II almost verbatim, with no scenario or twist. The September date is chosen just to place the act inside the last four months of the year. It is a mechanical restatement of CF art. 167 §2. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 7.276666666666667
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.",
+          "released": [
+            {
+              "key": "true",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nDestaques são descentralizações externas que ocorrem entre unidades de órgãos distintos."
+            },
+            {
+              "key": "false",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nEntes governamentais podem realizar repasses de recursos públicos a entidades privadas. Exemplo dessa prerrogativa, o Tesouro Nacional pode realizar operação de redesconto, a qual, por sua vez, demanda lei específica, independentemente do prazo que for concedido ao ente privado para liquidação."
+            },
+            {
+              "key": "false",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nAs despesas empenhadas, não liquidadas e não pagas advêm de uma despesa extra-orçamentária e a sua inscrição constitui receita orçamentária."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-budget-law-2",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nOs créditos adicionais suplementares têm a finalidade de reforçar programas com dotação orçamentária existente e são constituídos para despesas urgentes e previsíveis.",
+              "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nO excesso de recursos financeiros advindos de arrecadação poderá ser aplicado em programa de governo não previsto na lei orçamentária anual, mesmo sem que haja autorização legislativa para tal."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Aplicar normas gerais de direito financeiro sobre orçamento, receitas e despesas públicas.",
+            "name": "Aplicar normas gerais de direito financeiro"
+          },
+          "usedSituations": [
+            "Valéria verifica que um tributo foi lançado em 2025 e arrecadado em 2026. Para fins orçamentários, a receita pertence ao exercício financeiro de 2026.",
+            "Danilo constatou que materiais solicitados por um órgão público foram entregues sem empenho prévio. Nessa situação, o órgão pode pagar a despesa sem empenhá-la, pois a entrega já ocorreu.",
+            "Iara identificou, no balanço patrimonial do exercício anterior, superávit financeiro não comprometido de recursos legalmente vinculados à saúde. Esse superávit pode ser indicado como fonte para abrir "
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 3.00 and released ones 2.50 (1-5): harder than the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 0.60 of written and 0.00 of released questions as imitations. Its scenario-plus-statement layout differs from the board's 'julgue os itens' format. It turns on the literal exception in art. 11, §2, of Lei 9.868/1999 (the cautelar revives the prior law unless the Court says otherwise), and the scenario is built to fit that exception. Its scenario-plus-statement layout differs from the board's format. The trap is a direct restatement of Súmula Vinculante 10 (removing a law's effect without expressly declaring it unconstitutional still violates the reserva de plenário), so it is easy to spot. The scenario states outright that the repeal was meant to frustrate the judgment, which signals the fraud exception to loss of object and gives the answer away. Its layout is not the board's.",
+          "score": 4.6000000000000005,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 0.75 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2160,
+          "outputTokens": 1351,
+          "reasoningTokens": 821
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.00 and released ones 2.50 (1-5): harder than the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. Its scenario-plus-statement layout differs from the board's 'julgue os itens' format. It turns on the literal exception in art. 11, §2, of Lei 9.868/1999 (the cautelar revives the prior law unless the Court says otherwise), and the scenario is built to fit that exception. Its scenario-plus-statement layout differs from the board's format. The trap is a direct restatement of Súmula Vinculante 10 (removing a law's effect without expressly declaring it unconstitutional still violates the reserva de plenário), so it is easy to spot. The scenario states outright that the repeal was meant to frustrate the judgment, which signals the fraud exception to loss of object and gives the answer away. Its layout is not the board's. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 8.38
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.00 and released ones 2.50 (1-5): harder than the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. Its scenario-plus-statement layout differs from the board's 'julgue os itens' format. It turns on the literal exception in art. 11, §2, of Lei 9.868/1999 (the cautelar revives the prior law unless the Court says otherwise), and the scenario is built to fit that exception. Its scenario-plus-statement layout differs from the board's format. The trap is a direct restatement of Súmula Vinculante 10 (removing a law's effect without expressly declaring it unconstitutional still violates the reserva de plenário), so it is easy to spot. The scenario states outright that the repeal was meant to frustrate the judgment, which signals the fraud exception to loss of object and gives the answer away. Its layout is not the board's. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 8.38
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.00 and released ones 2.50 (1-5): harder than the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. Its scenario-plus-statement layout differs from the board's 'julgue os itens' format. It turns on the literal exception in art. 11, §2, of Lei 9.868/1999 (the cautelar revives the prior law unless the Court says otherwise), and the scenario is built to fit that exception. Its scenario-plus-statement layout differs from the board's format. The trap is a direct restatement of Súmula Vinculante 10 (removing a law's effect without expressly declaring it unconstitutional still violates the reserva de plenário), so it is easy to spot. The scenario states outright that the repeal was meant to frustrate the judgment, which signals the fraud exception to loss of object and gives the answer away. Its layout is not the board's. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 8.38
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.",
+          "released": [
+            {
+              "key": "true",
+              "text": "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nO único legitimado ativo para a propositura de ação direta de inconstitucionalidade interventiva, no Supremo Tribunal Federal, é o procurador-geral da República, quando lei ou ato normativo federal, estadual ou distrital contrariar princípios sensíveis da Constituição Federal."
+            },
+            {
+              "key": "false",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nSuponha-se que X seja prefeito e Y, vereador no município de Vila Velha - ES, tendo sido eles eleitos pelo mesmo partido e os mais votados na eleição municipal. Suponha-se, ainda, que ambos planejem mudar de partido em razão de insatisfação com o programa partidário. Nessa situação, a mudança de partido no primeiro ano do mandato ensejará a perda dos cargos de X e de Y."
+            },
+            {
+              "key": "true",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nO estrangeiro de qualquer nacionalidade, desde que naturalizado brasileiro, pode assumir o cargo de auditor do estado."
+            },
+            {
+              "key": "true",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nA iniciativa popular, a autoria de ação popular e o exercício da soberania popular pelo sufrágio universal e pelo voto direto e secreto são modalidades por meio das quais o cidadão pode exercer direitos políticos."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-judicial-review-1",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nA declaração incidental de inconstitucionalidade de lei pode constituir a causa de pedir de uma ação popular.",
+              "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nAção direta de inconstitucionalidade de competência do tribunal de justiça do estado pode ter por objeto de controle lei federal que ofenda a constituição estadual."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Distinguir modalidades e efeitos do controle de constitucionalidade no Brasil.",
+            "name": "Aplicar regras de controle de constitucionalidade"
+          },
+          "usedSituations": [
+            "Otávio acompanha uma ação direta de inconstitucionalidade em que o STF declara inconstitucional uma lei federal aplicada durante muitos anos.",
+            "Em recurso extraordinário interposto em processo individual, o STF declarou definitivamente inconstitucional uma lei municipal em face da Constituição Federal. Débora analisa as consequências da decis",
+            "Wesley analisa uma lei municipal editada após a Constituição Federal de 1988, cuja aplicação pode ofender preceito fundamental."
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.60 and released ones 2.75 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 1.00 of written and 0.00 of released questions as imitations. Restates the exception in art. 12-H, §1º, of Lei 9.868/99 almost word for word, which reads more like a crafted law-recall item than a typical board item. Paraphrases art. 11, §2º, of Lei 9.868/99 directly, including the 'salvo manifestação expressa' clause, which flags the answer. The phrase 'mesmo que o Plenário do STF já tenha declarado' points too obviously at the well-known exception to the reserva de plenário. Built straight from the thesis of STF Tema 484, mirroring its wording closely. Swaps 'controvérsia judicial' for decisions of administrative bodies, a trap too easy to spot.",
+          "score": 1,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 0.75 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2097,
+          "outputTokens": 1315,
+          "reasoningTokens": 802
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.60 and released ones 2.75 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Restates the exception in art. 12-H, §1º, of Lei 9.868/99 almost word for word, which reads more like a crafted law-recall item than a typical board item. Paraphrases art. 11, §2º, of Lei 9.868/99 directly, including the 'salvo manifestação expressa' clause, which flags the answer. The phrase 'mesmo que o Plenário do STF já tenha declarado' points too obviously at the well-known exception to the reserva de plenário. Built straight from the thesis of STF Tema 484, mirroring its wording closely. Swaps 'controvérsia judicial' for decisions of administrative bodies, a trap too easy to spot. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.60 and released ones 2.75 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Restates the exception in art. 12-H, §1º, of Lei 9.868/99 almost word for word, which reads more like a crafted law-recall item than a typical board item. Paraphrases art. 11, §2º, of Lei 9.868/99 directly, including the 'salvo manifestação expressa' clause, which flags the answer. The phrase 'mesmo que o Plenário do STF já tenha declarado' points too obviously at the well-known exception to the reserva de plenário. Built straight from the thesis of STF Tema 484, mirroring its wording closely. Swaps 'controvérsia judicial' for decisions of administrative bodies, a trap too easy to spot. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.60 and released ones 2.75 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Restates the exception in art. 12-H, §1º, of Lei 9.868/99 almost word for word, which reads more like a crafted law-recall item than a typical board item. Paraphrases art. 11, §2º, of Lei 9.868/99 directly, including the 'salvo manifestação expressa' clause, which flags the answer. The phrase 'mesmo que o Plenário do STF já tenha declarado' points too obviously at the well-known exception to the reserva de plenário. Built straight from the thesis of STF Tema 484, mirroring its wording closely. Swaps 'controvérsia judicial' for decisions of administrative bodies, a trap too easy to spot. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 7.3
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.",
+          "released": [
+            {
+              "key": "true",
+              "text": "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nO único legitimado ativo para a propositura de ação direta de inconstitucionalidade interventiva, no Supremo Tribunal Federal, é o procurador-geral da República, quando lei ou ato normativo federal, estadual ou distrital contrariar princípios sensíveis da Constituição Federal."
+            },
+            {
+              "key": "false",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nSuponha-se que X seja prefeito e Y, vereador no município de Vila Velha - ES, tendo sido eles eleitos pelo mesmo partido e os mais votados na eleição municipal. Suponha-se, ainda, que ambos planejem mudar de partido em razão de insatisfação com o programa partidário. Nessa situação, a mudança de partido no primeiro ano do mandato ensejará a perda dos cargos de X e de Y."
+            },
+            {
+              "key": "true",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nO estrangeiro de qualquer nacionalidade, desde que naturalizado brasileiro, pode assumir o cargo de auditor do estado."
+            },
+            {
+              "key": "true",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nA iniciativa popular, a autoria de ação popular e o exercício da soberania popular pelo sufrágio universal e pelo voto direto e secreto são modalidades por meio das quais o cidadão pode exercer direitos políticos."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-judicial-review-2",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nA declaração incidental de inconstitucionalidade de lei pode constituir a causa de pedir de uma ação popular.",
+              "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nAção direta de inconstitucionalidade de competência do tribunal de justiça do estado pode ter por objeto de controle lei federal que ofenda a constituição estadual."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Distinguir modalidades e efeitos do controle de constitucionalidade no Brasil.",
+            "name": "Aplicar regras de controle de constitucionalidade"
+          },
+          "usedSituations": [
+            "Otávio acompanha uma ação direta de inconstitucionalidade em que o STF declara inconstitucional uma lei federal aplicada durante muitos anos.",
+            "Em recurso extraordinário interposto em processo individual, o STF declarou definitivamente inconstitucional uma lei municipal em face da Constituição Federal. Débora analisa as consequências da decis",
+            "Wesley analisa uma lei municipal editada após a Constituição Federal de 1988, cuja aplicação pode ofender preceito fundamental."
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.40 and released ones 2.20 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 0.60 of written and 0.00 of released questions as imitations. Scenario framing restates art. 8º, §2º almost verbatim, so the answer is a direct recall of the dissent exception. Built scenario that swaps the art. 94 condition of efficacy (publication in the PNCP) for efficacy from signature 'sob pena de nulidade'; a manufactured distortion of the provision. Scenario restates art. 132 and inverts its exception about anticipating the effects with formalization within one month; the trap is a direct negation of the provision's text.",
+          "score": 4.6000000000000005,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 0.80 of written keys and 1.00 of official released keys.",
+          "score": 8.2,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2127,
+          "outputTokens": 1464,
+          "reasoningTokens": 986
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.20 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. Scenario framing restates art. 8º, §2º almost verbatim, so the answer is a direct recall of the dissent exception. Built scenario that swaps the art. 94 condition of efficacy (publication in the PNCP) for efficacy from signature 'sob pena de nulidade'; a manufactured distortion of the provision. Scenario restates art. 132 and inverts its exception about anticipating the effects with formalization within one month; the trap is a direct negation of the provision's text. Keys a blind expert reproduces: The judge reproduced 0.80 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 8.02
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.20 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. Scenario framing restates art. 8º, §2º almost verbatim, so the answer is a direct recall of the dissent exception. Built scenario that swaps the art. 94 condition of efficacy (publication in the PNCP) for efficacy from signature 'sob pena de nulidade'; a manufactured distortion of the provision. Scenario restates art. 132 and inverts its exception about anticipating the effects with formalization within one month; the trap is a direct negation of the provision's text. Keys a blind expert reproduces: The judge reproduced 0.80 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 8.02
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.20 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. Scenario framing restates art. 8º, §2º almost verbatim, so the answer is a direct recall of the dissent exception. Built scenario that swaps the art. 94 condition of efficacy (publication in the PNCP) for efficacy from signature 'sob pena de nulidade'; a manufactured distortion of the provision. Scenario restates art. 132 and inverts its exception about anticipating the effects with formalization within one month; the trap is a direct negation of the provision's text. Keys a blind expert reproduces: The judge reproduced 0.80 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 8.02
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.",
+          "released": [
+            {
+              "key": "true",
+              "text": "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nA lei prevê, em regra, sete etapas sequenciais do processo de licitação, o qual se inicia na fase preparatória e se encerra na fase de homologação."
+            },
+            {
+              "key": "true",
+              "text": "Acerca de direito administrativo, julgue os itens que se seguem.\nSegundo o critério teleológico, o direito administrativo é definido como o sistema dos princípios jurídicos que regulam a atividade do Estado para o cumprimento de seus fins."
+            },
+            {
+              "key": "false",
+              "text": "Acerca de direito administrativo, julgue os itens que se seguem.\nDada a origem francesa do direito administrativo pátrio, a jurisprudência, no Brasil, assim como ocorre na França, revela-se a principal fonte do direito administrativo."
+            },
+            {
+              "key": "true",
+              "text": "Em relação a bens públicos, julgue os itens seguintes.\nOs bens de uso comum do povo e os bens de uso especial têm como características a imprescritibilidade, a impenhorabilidade e a impossibilidade de oneração, que decorrem da inalienabilidade; porém, a inalienabilidade dos bens dessas duas modalidades é relativizada caso, sendo suscetíveis esses bens de valoração patrimonial, ocorra a perda da sua destinação pública, que se dá por meio da desafetação."
+            },
+            {
+              "key": "false",
+              "text": "Em relação a bens públicos, julgue os itens seguintes.\nNo direito brasileiro, os bens públicos são classificados segundo o critério de sua destinação ou afetação, sendo definidos como bens dominicais os que se destinam à consecução específica de determinado objetivo da administração pública."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-procurement-law-1",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nEm atenção ao princípio da vinculação ao edital, as propostas que contiverem vícios, ainda que sanáveis, serão desclassificadas na fase de julgamento do processo de licitação.",
+              "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nA designação de agentes públicos para o desempenho das funções essenciais à execução da lei em referência caberá à autoridade máxima do órgão ou da entidade, que, entre outros critérios, indicará, necessariamente, servidor efetivo ou empregado público dos quadros permanentes da administração pública para desempenhar as referidas funções."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar as regras da Lei nº 14.133/2021 sobre fases da licitação, julgamento das propostas, agentes de contratação e contratos administrativos.",
+            "name": "Aplicar a Lei de Licitações e Contratos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 3.20 and released ones 2.40 (1-5): harder than the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 0.20 of written and 0.00 of released questions as imitations. Swaps the 50% acréscimo for reforma with a 30% supressão, a numeric trap built by mixing art. 125 limits; easy to spot for anyone who knows supressão is capped at 25%.",
+          "score": 8.2,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2110,
+          "outputTokens": 1494,
+          "reasoningTokens": 1106
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.20 and released ones 2.40 (1-5): harder than the exam. Exam style (blind): The judge marked 0.20 of written and 0.00 of released questions as imitations. Swaps the 50% acréscimo for reforma with a 30% supressão, a numeric trap built by mixing art. 125 limits; easy to spot for anyone who knows supressão is capped at 25%. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 9.46
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.20 and released ones 2.40 (1-5): harder than the exam. Exam style (blind): The judge marked 0.20 of written and 0.00 of released questions as imitations. Swaps the 50% acréscimo for reforma with a 30% supressão, a numeric trap built by mixing art. 125 limits; easy to spot for anyone who knows supressão is capped at 25%. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 9.46
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.20 and released ones 2.40 (1-5): harder than the exam. Exam style (blind): The judge marked 0.20 of written and 0.00 of released questions as imitations. Swaps the 50% acréscimo for reforma with a 30% supressão, a numeric trap built by mixing art. 125 limits; easy to spot for anyone who knows supressão is capped at 25%. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 9.46
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.",
+          "released": [
+            {
+              "key": "true",
+              "text": "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nA lei prevê, em regra, sete etapas sequenciais do processo de licitação, o qual se inicia na fase preparatória e se encerra na fase de homologação."
+            },
+            {
+              "key": "true",
+              "text": "Acerca de direito administrativo, julgue os itens que se seguem.\nSegundo o critério teleológico, o direito administrativo é definido como o sistema dos princípios jurídicos que regulam a atividade do Estado para o cumprimento de seus fins."
+            },
+            {
+              "key": "false",
+              "text": "Acerca de direito administrativo, julgue os itens que se seguem.\nDada a origem francesa do direito administrativo pátrio, a jurisprudência, no Brasil, assim como ocorre na França, revela-se a principal fonte do direito administrativo."
+            },
+            {
+              "key": "true",
+              "text": "Em relação a bens públicos, julgue os itens seguintes.\nOs bens de uso comum do povo e os bens de uso especial têm como características a imprescritibilidade, a impenhorabilidade e a impossibilidade de oneração, que decorrem da inalienabilidade; porém, a inalienabilidade dos bens dessas duas modalidades é relativizada caso, sendo suscetíveis esses bens de valoração patrimonial, ocorra a perda da sua destinação pública, que se dá por meio da desafetação."
+            },
+            {
+              "key": "false",
+              "text": "Em relação a bens públicos, julgue os itens seguintes.\nNo direito brasileiro, os bens públicos são classificados segundo o critério de sua destinação ou afetação, sendo definidos como bens dominicais os que se destinam à consecução específica de determinado objetivo da administração pública."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-procurement-law-2",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nEm atenção ao princípio da vinculação ao edital, as propostas que contiverem vícios, ainda que sanáveis, serão desclassificadas na fase de julgamento do processo de licitação.",
+              "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nA designação de agentes públicos para o desempenho das funções essenciais à execução da lei em referência caberá à autoridade máxima do órgão ou da entidade, que, entre outros critérios, indicará, necessariamente, servidor efetivo ou empregado público dos quadros permanentes da administração pública para desempenhar as referidas funções."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar as regras da Lei nº 14.133/2021 sobre fases da licitação, julgamento das propostas, agentes de contratação e contratos administrativos.",
+            "name": "Aplicar a Lei de Licitações e Contratos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 1.60 and released ones 2.20 (1-5): easier than the exam.",
+          "score": 8.6,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 1.00 of written and 0.00 of released questions as imitations. The scenario setup ('dispõe de conselho', 'permaneceu sem solução') points straight at the rule that an unresolved risk is escalated to the board. The trap of having the auditor define the risk response is easy to spot. The scenario is engineered so that output and accuracy are held constant and only inputs differ, which makes the efficiency concept obvious. The scenario confuses reliability with sufficiency, and the flaw is spelled out by stressing that the processing conditions differed across months. The trap is too easy to see. The question is framed as a short scenario built to test a single normative rule, which is unlike the board's usual wording. The scenario is a direct restatement of the IIA standard on errors and omissions in final communications.",
+          "score": 1,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2443,
+          "outputTokens": 1219,
+          "reasoningTokens": 667
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 1.60 and released ones 2.20 (1-5): easier than the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. The scenario setup ('dispõe de conselho', 'permaneceu sem solução') points straight at the rule that an unresolved risk is escalated to the board. The trap of having the auditor define the risk response is easy to spot. The scenario is engineered so that output and accuracy are held constant and only inputs differ, which makes the efficiency concept obvious. The scenario confuses reliability with sufficiency, and the flaw is spelled out by stressing that the processing conditions differed across months. The trap is too easy to see. The question is framed as a short scenario built to test a single normative rule, which is unlike the board's usual wording. The scenario is a direct restatement of the IIA standard on errors and omissions in final communications. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 6.81
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 1.60 and released ones 2.20 (1-5): easier than the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. The scenario setup ('dispõe de conselho', 'permaneceu sem solução') points straight at the rule that an unresolved risk is escalated to the board. The trap of having the auditor define the risk response is easy to spot. The scenario is engineered so that output and accuracy are held constant and only inputs differ, which makes the efficiency concept obvious. The scenario confuses reliability with sufficiency, and the flaw is spelled out by stressing that the processing conditions differed across months. The trap is too easy to see. The question is framed as a short scenario built to test a single normative rule, which is unlike the board's usual wording. The scenario is a direct restatement of the IIA standard on errors and omissions in final communications. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 6.81
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 1.60 and released ones 2.20 (1-5): easier than the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. The scenario setup ('dispõe de conselho', 'permaneceu sem solução') points straight at the rule that an unresolved risk is escalated to the board. The trap of having the auditor define the risk response is easy to spot. The scenario is engineered so that output and accuracy are held constant and only inputs differ, which makes the efficiency concept obvious. The scenario confuses reliability with sufficiency, and the flaw is spelled out by stressing that the processing conditions differed across months. The trap is too easy to see. The question is framed as a short scenario built to test a single normative rule, which is unlike the board's usual wording. The scenario is a direct restatement of the IIA standard on errors and omissions in final communications. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 6.81
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.",
+          "released": [
+            {
+              "key": "true",
+              "text": "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nPara que sejam mitigados, os riscos de fraude e corrupção requerem controles específicos, o que implica à alta administração, com apoio de unidades especializadas como, por exemplo, o comitê de ética ou o comitê de riscos, o dever de gerenciar a probabilidade de ocorrência de fraude e corrupção que atente contra a boa e regular gestão dos bens e recursos públicos."
+            },
+            {
+              "key": "true",
+              "text": "Em relação à estrutura da gestão de riscos, definida, segundo a ABNT NBR ISO 31000, como o conjunto de componentes que fornecem os fundamentos e os arranjos organizacionais para a concepção, implementação, monitoramento, análise crítica e melhoria contínua da gestão de riscos, julgue os itens a seguir.\nOs arranjos organizacionais incluem planos, relacionamentos, responsabilidades, recursos, processos e atividades da organização."
+            },
+            {
+              "key": "true",
+              "text": "Em relação à estrutura da gestão de riscos, definida, segundo a ABNT NBR ISO 31000, como o conjunto de componentes que fornecem os fundamentos e os arranjos organizacionais para a concepção, implementação, monitoramento, análise crítica e melhoria contínua da gestão de riscos, julgue os itens a seguir.\nConceitualmente, a estrutura da gestão de riscos está incorporada ao âmbito das políticas e práticas estratégicas e operacionais de toda a organização."
+            },
+            {
+              "key": "false",
+              "text": "Com base no que dispõe o Código de Conduta Ética dos Servidores da Secretaria de Controle e Transparência do Estado do Espírito Santo, julgue os itens subsequentes.\nConsiderando o princípio da publicidade, as informações obtidas nas atividades realizadas pelo auditor do Estado devem ser reveladas em sua completude aos cidadãos."
+            },
+            {
+              "key": "true",
+              "text": "Com base no que dispõe o Código de Conduta Ética dos Servidores da Secretaria de Controle e Transparência do Estado do Espírito Santo, julgue os itens subsequentes.\nAo auditor do estado do Espírito Santo que necessite dirimir dúvidas relacionadas à conduta ética e a práticas ou situações que possam configurar conflito de interesse cabe consultar, em primeiro lugar, a Comissão de Ética da Secretaria de Controle e Transparência do Estado do Espírito Santo, que, em seu turno, poderá remeter a demanda recebida ao Conselho de Ética Pública do Estado do Espírito Santo."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-audit-standards-1",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nA auditoria interna poderá agregar valor oferecendo serviços de consultoria, destinados a melhorar os processos de governança, gerenciamento de riscos e controle, desde que não assuma responsabilidades de gestão.",
+              "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nOs auditores internos são responsáveis por implementar medidas de controle preventivas, de detecção e corretivas nos processos sob sua responsabilidade e sob a responsabilidade de terceiros, especificamente para manter um controle interno efetivo."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Distinguir objetivos, tipos, princípios e normas aplicáveis à auditoria governamental.",
+            "name": "Distinguir tipos e normas de auditoria"
+          },
+          "usedSituations": [
+            "Nayara integra uma equipe que avalia um programa federal de capacitação. Entre as questões examinadas estão a observância das regras de seleção dos participantes e a relação entre os recursos empregad",
+            "Rosana integra uma equipe encarregada de opinar sobre as demonstrações contábeis de um órgão federal, considerando a estrutura de relatório financeiro aplicável.",
+            "Leandro examina se o prazo médio de atendimento dos pedidos de aposentadoria em uma unidade do INSS ficou dentro da meta fixada no plano administrativo.",
+            "Antes de integrar uma equipe de auditoria, Valéria elaborou a minuta de um edital federal cuja regularidade a equipe agora examinará. Ela declarou formalmente que atuará com isenção."
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.80 and released ones 2.60 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 1.00 of written and 0.00 of released questions as imitations. Scenario-style item with an absolute 'impede' that makes the false answer easy to spot; it hinges on the ISSAI idea that compliance criteria can include sound financial management principles. It paraphrases the IN SFC 3/2017 escalation rule as a short case, with the expected conclusion placed directly in the item. A constructed scenario in which the 'não afasta o dever' phrasing makes the true answer obvious. A short scenario plus a 'dispensa' claim, an easy-to-see trap about changes to the audit plan. It is built to test the efficiency versus effectiveness distinction, and the 'ainda que' clause signals the intended answer.",
+          "score": 1,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2491,
+          "outputTokens": 1194,
+          "reasoningTokens": 659
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.80 and released ones 2.60 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Scenario-style item with an absolute 'impede' that makes the false answer easy to spot; it hinges on the ISSAI idea that compliance criteria can include sound financial management principles. It paraphrases the IN SFC 3/2017 escalation rule as a short case, with the expected conclusion placed directly in the item. A constructed scenario in which the 'não afasta o dever' phrasing makes the true answer obvious. A short scenario plus a 'dispensa' claim, an easy-to-see trap about changes to the audit plan. It is built to test the efficiency versus effectiveness distinction, and the 'ainda que' clause signals the intended answer. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.80 and released ones 2.60 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Scenario-style item with an absolute 'impede' that makes the false answer easy to spot; it hinges on the ISSAI idea that compliance criteria can include sound financial management principles. It paraphrases the IN SFC 3/2017 escalation rule as a short case, with the expected conclusion placed directly in the item. A constructed scenario in which the 'não afasta o dever' phrasing makes the true answer obvious. A short scenario plus a 'dispensa' claim, an easy-to-see trap about changes to the audit plan. It is built to test the efficiency versus effectiveness distinction, and the 'ainda que' clause signals the intended answer. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.80 and released ones 2.60 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Scenario-style item with an absolute 'impede' that makes the false answer easy to spot; it hinges on the ISSAI idea that compliance criteria can include sound financial management principles. It paraphrases the IN SFC 3/2017 escalation rule as a short case, with the expected conclusion placed directly in the item. A constructed scenario in which the 'não afasta o dever' phrasing makes the true answer obvious. A short scenario plus a 'dispensa' claim, an easy-to-see trap about changes to the audit plan. It is built to test the efficiency versus effectiveness distinction, and the 'ainda que' clause signals the intended answer. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 7.3
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.",
+          "released": [
+            {
+              "key": "true",
+              "text": "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nPara que sejam mitigados, os riscos de fraude e corrupção requerem controles específicos, o que implica à alta administração, com apoio de unidades especializadas como, por exemplo, o comitê de ética ou o comitê de riscos, o dever de gerenciar a probabilidade de ocorrência de fraude e corrupção que atente contra a boa e regular gestão dos bens e recursos públicos."
+            },
+            {
+              "key": "true",
+              "text": "Em relação à estrutura da gestão de riscos, definida, segundo a ABNT NBR ISO 31000, como o conjunto de componentes que fornecem os fundamentos e os arranjos organizacionais para a concepção, implementação, monitoramento, análise crítica e melhoria contínua da gestão de riscos, julgue os itens a seguir.\nOs arranjos organizacionais incluem planos, relacionamentos, responsabilidades, recursos, processos e atividades da organização."
+            },
+            {
+              "key": "true",
+              "text": "Em relação à estrutura da gestão de riscos, definida, segundo a ABNT NBR ISO 31000, como o conjunto de componentes que fornecem os fundamentos e os arranjos organizacionais para a concepção, implementação, monitoramento, análise crítica e melhoria contínua da gestão de riscos, julgue os itens a seguir.\nConceitualmente, a estrutura da gestão de riscos está incorporada ao âmbito das políticas e práticas estratégicas e operacionais de toda a organização."
+            },
+            {
+              "key": "false",
+              "text": "Com base no que dispõe o Código de Conduta Ética dos Servidores da Secretaria de Controle e Transparência do Estado do Espírito Santo, julgue os itens subsequentes.\nConsiderando o princípio da publicidade, as informações obtidas nas atividades realizadas pelo auditor do Estado devem ser reveladas em sua completude aos cidadãos."
+            },
+            {
+              "key": "true",
+              "text": "Com base no que dispõe o Código de Conduta Ética dos Servidores da Secretaria de Controle e Transparência do Estado do Espírito Santo, julgue os itens subsequentes.\nAo auditor do estado do Espírito Santo que necessite dirimir dúvidas relacionadas à conduta ética e a práticas ou situações que possam configurar conflito de interesse cabe consultar, em primeiro lugar, a Comissão de Ética da Secretaria de Controle e Transparência do Estado do Espírito Santo, que, em seu turno, poderá remeter a demanda recebida ao Conselho de Ética Pública do Estado do Espírito Santo."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-audit-standards-2",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nA auditoria interna poderá agregar valor oferecendo serviços de consultoria, destinados a melhorar os processos de governança, gerenciamento de riscos e controle, desde que não assuma responsabilidades de gestão.",
+              "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nOs auditores internos são responsáveis por implementar medidas de controle preventivas, de detecção e corretivas nos processos sob sua responsabilidade e sob a responsabilidade de terceiros, especificamente para manter um controle interno efetivo."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Distinguir objetivos, tipos, princípios e normas aplicáveis à auditoria governamental.",
+            "name": "Distinguir tipos e normas de auditoria"
+          },
+          "usedSituations": [
+            "Nayara integra uma equipe que avalia um programa federal de capacitação. Entre as questões examinadas estão a observância das regras de seleção dos participantes e a relação entre os recursos empregad",
+            "Rosana integra uma equipe encarregada de opinar sobre as demonstrações contábeis de um órgão federal, considerando a estrutura de relatório financeiro aplicável.",
+            "Leandro examina se o prazo médio de atendimento dos pedidos de aposentadoria em uma unidade do INSS ficou dentro da meta fixada no plano administrativo.",
+            "Antes de integrar uma equipe de auditoria, Valéria elaborou a minuta de um edital federal cuja regularidade a equipe agora examinará. Ela declarou formalmente que atuará com isenção."
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.80 and released ones 2.67 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 0.00 of written and 0.33 of released questions as imitations. ",
+          "score": 10,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1873,
+          "outputTokens": 1289,
+          "reasoningTokens": 947
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.80 and released ones 2.67 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.00 of written and 0.33 of released questions as imitations.  Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.80 and released ones 2.67 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.00 of written and 0.33 of released questions as imitations.  Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.80 and released ones 2.67 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.00 of written and 0.33 of released questions as imitations.  Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.",
+          "released": [
+            {
+              "key": "true",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nDestaques são descentralizações externas que ocorrem entre unidades de órgãos distintos."
+            },
+            {
+              "key": "false",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nEntes governamentais podem realizar repasses de recursos públicos a entidades privadas. Exemplo dessa prerrogativa, o Tesouro Nacional pode realizar operação de redesconto, a qual, por sua vez, demanda lei específica, independentemente do prazo que for concedido ao ente privado para liquidação."
+            },
+            {
+              "key": "false",
+              "text": "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nAs despesas empenhadas, não liquidadas e não pagas advêm de uma despesa extra-orçamentária e a sua inscrição constitui receita orçamentária."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-budget-law-3",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nOs créditos adicionais suplementares têm a finalidade de reforçar programas com dotação orçamentária existente e são constituídos para despesas urgentes e previsíveis.",
+              "Julgue os itens que se seguem, acerca da administração financeira e orçamentária pública brasileira.\nO excesso de recursos financeiros advindos de arrecadação poderá ser aplicado em programa de governo não previsto na lei orçamentária anual, mesmo sem que haja autorização legislativa para tal."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Aplicar normas gerais de direito financeiro sobre orçamento, receitas e despesas públicas.",
+            "name": "Aplicar normas gerais de direito financeiro"
+          },
+          "usedSituations": [
+            "Valéria verifica que um tributo foi lançado em 2025 e arrecadado em 2026. Para fins orçamentários, a receita pertence ao exercício financeiro de 2026.",
+            "Danilo constatou que materiais solicitados por um órgão público foram entregues sem empenho prévio. Nessa situação, o órgão pode pagar a despesa sem empenhá-la, pois a entrega já ocorreu.",
+            "Iara identificou, no balanço patrimonial do exercício anterior, superávit financeiro não comprometido de recursos legalmente vinculados à saúde. Esse superávit pode ser indicado como fonte para abrir "
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.60 and released ones 2.50 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 0.40 of written and 0.00 of released questions as imitations. The trap that doctrinal controversy could replace the judicial controversy the law requires is easy to see. The phrase 'supre a falta' reads as built to be false. It closely paraphrases the STF thesis in RE 650.898 and adds the qualifier 'ainda que não conste expressamente', which looks crafted to test a single detail.",
+          "score": 6.4,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 0.75 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2052,
+          "outputTokens": 1152,
+          "reasoningTokens": 754
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.60 and released ones 2.50 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.40 of written and 0.00 of released questions as imitations. The trap that doctrinal controversy could replace the judicial controversy the law requires is easy to see. The phrase 'supre a falta' reads as built to be false. It closely paraphrases the STF thesis in RE 650.898 and adds the qualifier 'ainda que não conste expressamente', which looks crafted to test a single detail. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 8.92
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.60 and released ones 2.50 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.40 of written and 0.00 of released questions as imitations. The trap that doctrinal controversy could replace the judicial controversy the law requires is easy to see. The phrase 'supre a falta' reads as built to be false. It closely paraphrases the STF thesis in RE 650.898 and adds the qualifier 'ainda que não conste expressamente', which looks crafted to test a single detail. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 8.92
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.60 and released ones 2.50 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.40 of written and 0.00 of released questions as imitations. The trap that doctrinal controversy could replace the judicial controversy the law requires is easy to see. The phrase 'supre a falta' reads as built to be false. It closely paraphrases the STF thesis in RE 650.898 and adds the qualifier 'ainda que não conste expressamente', which looks crafted to test a single detail. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 0.75 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 8.92
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.",
+          "released": [
+            {
+              "key": "true",
+              "text": "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nO único legitimado ativo para a propositura de ação direta de inconstitucionalidade interventiva, no Supremo Tribunal Federal, é o procurador-geral da República, quando lei ou ato normativo federal, estadual ou distrital contrariar princípios sensíveis da Constituição Federal."
+            },
+            {
+              "key": "false",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nSuponha-se que X seja prefeito e Y, vereador no município de Vila Velha - ES, tendo sido eles eleitos pelo mesmo partido e os mais votados na eleição municipal. Suponha-se, ainda, que ambos planejem mudar de partido em razão de insatisfação com o programa partidário. Nessa situação, a mudança de partido no primeiro ano do mandato ensejará a perda dos cargos de X e de Y."
+            },
+            {
+              "key": "true",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nO estrangeiro de qualquer nacionalidade, desde que naturalizado brasileiro, pode assumir o cargo de auditor do estado."
+            },
+            {
+              "key": "true",
+              "text": "Considerando as disposições constitucionais acerca da administração pública e dos direitos e garantias fundamentais, julgue os itens a seguir.\nA iniciativa popular, a autoria de ação popular e o exercício da soberania popular pelo sufrágio universal e pelo voto direto e secreto são modalidades por meio das quais o cidadão pode exercer direitos políticos."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-judicial-review-3",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nA declaração incidental de inconstitucionalidade de lei pode constituir a causa de pedir de uma ação popular.",
+              "No que diz respeito ao controle de constitucionalidade, julgue os seguintes itens.\nAção direta de inconstitucionalidade de competência do tribunal de justiça do estado pode ter por objeto de controle lei federal que ofenda a constituição estadual."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Distinguir modalidades e efeitos do controle de constitucionalidade no Brasil.",
+            "name": "Aplicar regras de controle de constitucionalidade"
+          },
+          "usedSituations": [
+            "Otávio acompanha uma ação direta de inconstitucionalidade em que o STF declara inconstitucional uma lei federal aplicada durante muitos anos.",
+            "Em recurso extraordinário interposto em processo individual, o STF declarou definitivamente inconstitucional uma lei municipal em face da Constituição Federal. Débora analisa as consequências da decis",
+            "Wesley analisa uma lei municipal editada após a Constituição Federal de 1988, cuja aplicação pode ofender preceito fundamental."
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 3.00 and released ones 2.80 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 1.00 of written and 0.00 of released questions as imitations. Builds the trap around a contract clause 'suprindo' the edital, a construction that reads like a deliberately engineered distortion of art. 107 rather than the board's usual literal swap. Near-verbatim paraphrase of art. 8º, §2º with no twist, under the same generic stem as the other imitation items. Close literal transcription of art. 61, §1º; it tests pure recall of a single paragraph. The phrase 'ainda que o edital não a tenha previsto' is an obvious appended trap that negates the express requirement of art. 17, §1º. Picks 40% to sit between the 25% and 50% limits, a numeric trap typical of imitation items.",
+          "score": 1,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2104,
+          "outputTokens": 1491,
+          "reasoningTokens": 953
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.00 and released ones 2.80 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Builds the trap around a contract clause 'suprindo' the edital, a construction that reads like a deliberately engineered distortion of art. 107 rather than the board's usual literal swap. Near-verbatim paraphrase of art. 8º, §2º with no twist, under the same generic stem as the other imitation items. Close literal transcription of art. 61, §1º; it tests pure recall of a single paragraph. The phrase 'ainda que o edital não a tenha previsto' is an obvious appended trap that negates the express requirement of art. 17, §1º. Picks 40% to sit between the 25% and 50% limits, a numeric trap typical of imitation items. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.00 and released ones 2.80 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Builds the trap around a contract clause 'suprindo' the edital, a construction that reads like a deliberately engineered distortion of art. 107 rather than the board's usual literal swap. Near-verbatim paraphrase of art. 8º, §2º with no twist, under the same generic stem as the other imitation items. Close literal transcription of art. 61, §1º; it tests pure recall of a single paragraph. The phrase 'ainda que o edital não a tenha previsto' is an obvious appended trap that negates the express requirement of art. 17, §1º. Picks 40% to sit between the 25% and 50% limits, a numeric trap typical of imitation items. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 3.00 and released ones 2.80 (1-5): as hard as the exam. Exam style (blind): The judge marked 1.00 of written and 0.00 of released questions as imitations. Builds the trap around a contract clause 'suprindo' the edital, a construction that reads like a deliberately engineered distortion of art. 107 rather than the board's usual literal swap. Near-verbatim paraphrase of art. 8º, §2º with no twist, under the same generic stem as the other imitation items. Close literal transcription of art. 61, §1º; it tests pure recall of a single paragraph. The phrase 'ainda que o edital não a tenha previsto' is an obvious appended trap that negates the express requirement of art. 17, §1º. Picks 40% to sit between the 25% and 50% limits, a numeric trap typical of imitation items. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 7.3
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.",
+          "released": [
+            {
+              "key": "true",
+              "text": "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nA lei prevê, em regra, sete etapas sequenciais do processo de licitação, o qual se inicia na fase preparatória e se encerra na fase de homologação."
+            },
+            {
+              "key": "true",
+              "text": "Acerca de direito administrativo, julgue os itens que se seguem.\nSegundo o critério teleológico, o direito administrativo é definido como o sistema dos princípios jurídicos que regulam a atividade do Estado para o cumprimento de seus fins."
+            },
+            {
+              "key": "false",
+              "text": "Acerca de direito administrativo, julgue os itens que se seguem.\nDada a origem francesa do direito administrativo pátrio, a jurisprudência, no Brasil, assim como ocorre na França, revela-se a principal fonte do direito administrativo."
+            },
+            {
+              "key": "true",
+              "text": "Em relação a bens públicos, julgue os itens seguintes.\nOs bens de uso comum do povo e os bens de uso especial têm como características a imprescritibilidade, a impenhorabilidade e a impossibilidade de oneração, que decorrem da inalienabilidade; porém, a inalienabilidade dos bens dessas duas modalidades é relativizada caso, sendo suscetíveis esses bens de valoração patrimonial, ocorra a perda da sua destinação pública, que se dá por meio da desafetação."
+            },
+            {
+              "key": "false",
+              "text": "Em relação a bens públicos, julgue os itens seguintes.\nNo direito brasileiro, os bens públicos são classificados segundo o critério de sua destinação ou afetação, sendo definidos como bens dominicais os que se destinam à consecução específica de determinado objetivo da administração pública."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-procurement-law-3",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nEm atenção ao princípio da vinculação ao edital, as propostas que contiverem vícios, ainda que sanáveis, serão desclassificadas na fase de julgamento do processo de licitação.",
+              "À luz da Lei n.º 14.133/2021, que trata de licitações e contratos administrativos, julgue os itens subsequentes.\nA designação de agentes públicos para o desempenho das funções essenciais à execução da lei em referência caberá à autoridade máxima do órgão ou da entidade, que, entre outros critérios, indicará, necessariamente, servidor efetivo ou empregado público dos quadros permanentes da administração pública para desempenhar as referidas funções."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar as regras da Lei nº 14.133/2021 sobre fases da licitação, julgamento das propostas, agentes de contratação e contratos administrativos.",
+            "name": "Aplicar a Lei de Licitações e Contratos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "difficulty",
+          "label": "Difficulty against released questions",
+          "reasoning": "Written questions rate 2.40 and released ones 2.60 (1-5): as hard as the exam.",
+          "score": 10,
+          "weight": 35
+        },
+        {
+          "categoryId": "style",
+          "label": "Exam style (blind)",
+          "reasoning": "The judge marked 0.60 of written and 0.00 of released questions as imitations. An invented, detailed scenario that leads straight to the textbook output-versus-effectiveness distinction. The trap is easy to see. An invented case built to test the attestation-versus-direct-reporting distinction. The phrase 'é suficiente para caracterizar' signals the false item. A conditional rewording of the NBASP 100 'experienced auditor' documentation test into a negative construction, in the style of a written imitation.",
+          "score": 4.6000000000000005,
+          "weight": 30
+        },
+        {
+          "categoryId": "keys",
+          "label": "Keys a blind expert reproduces",
+          "reasoning": "The judge reproduced 1.00 of written keys and 1.00 of official released keys.",
+          "score": 10,
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 questions passed the code checks.",
+          "score": 10,
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 838,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2522,
+          "outputTokens": 1339,
+          "reasoningTokens": 882
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.60 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. An invented, detailed scenario that leads straight to the textbook output-versus-effectiveness distinction. The trap is easy to see. An invented case built to test the attestation-versus-direct-reporting distinction. The phrase 'é suficiente para caracterizar' signals the false item. A conditional rewording of the NBASP 100 'experienced auditor' documentation test into a negative construction, in the style of a written imitation. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "majorErrors",
+          "score": 8.38
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.60 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. An invented, detailed scenario that leads straight to the textbook output-versus-effectiveness distinction. The trap is easy to see. An invented case built to test the attestation-versus-direct-reporting distinction. The phrase 'é suficiente para caracterizar' signals the false item. A conditional rewording of the NBASP 100 'experienced auditor' documentation test into a negative construction, in the style of a written imitation. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "minorErrors",
+          "score": 8.38
+        },
+        {
+          "conclusion": "Difficulty against released questions: Written questions rate 2.40 and released ones 2.60 (1-5): as hard as the exam. Exam style (blind): The judge marked 0.60 of written and 0.00 of released questions as imitations. An invented, detailed scenario that leads straight to the textbook output-versus-effectiveness distinction. The trap is easy to see. An invented case built to test the attestation-versus-direct-reporting distinction. The phrase 'é suficiente para caracterizar' signals the false item. A conditional rewording of the NBASP 100 'experienced auditor' documentation test into a negative construction, in the style of a written imitation. Keys a blind expert reproduces: The judge reproduced 1.00 of written keys and 1.00 of official released keys. Code checks: All 5 questions passed the code checks.",
+          "kind": "potentialImprovements",
+          "score": 8.38
+        }
+      ],
+      "testCase": {
+        "expectations": "Original Cebraspe certo/errado items for the CGU mock, as hard as the released items the blind judge mixes them with and indistinguishable from them in wording, length and traps. Each item turns on one exact condition a prepared candidate can decide for sure, since a wrong answer cancels a right one. None restates, negates or renames a used situation or a past question.",
+        "expected": {
+          "command": "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.",
+          "released": [
+            {
+              "key": "true",
+              "text": "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nPara que sejam mitigados, os riscos de fraude e corrupção requerem controles específicos, o que implica à alta administração, com apoio de unidades especializadas como, por exemplo, o comitê de ética ou o comitê de riscos, o dever de gerenciar a probabilidade de ocorrência de fraude e corrupção que atente contra a boa e regular gestão dos bens e recursos públicos."
+            },
+            {
+              "key": "true",
+              "text": "Em relação à estrutura da gestão de riscos, definida, segundo a ABNT NBR ISO 31000, como o conjunto de componentes que fornecem os fundamentos e os arranjos organizacionais para a concepção, implementação, monitoramento, análise crítica e melhoria contínua da gestão de riscos, julgue os itens a seguir.\nOs arranjos organizacionais incluem planos, relacionamentos, responsabilidades, recursos, processos e atividades da organização."
+            },
+            {
+              "key": "true",
+              "text": "Em relação à estrutura da gestão de riscos, definida, segundo a ABNT NBR ISO 31000, como o conjunto de componentes que fornecem os fundamentos e os arranjos organizacionais para a concepção, implementação, monitoramento, análise crítica e melhoria contínua da gestão de riscos, julgue os itens a seguir.\nConceitualmente, a estrutura da gestão de riscos está incorporada ao âmbito das políticas e práticas estratégicas e operacionais de toda a organização."
+            },
+            {
+              "key": "false",
+              "text": "Com base no que dispõe o Código de Conduta Ética dos Servidores da Secretaria de Controle e Transparência do Estado do Espírito Santo, julgue os itens subsequentes.\nConsiderando o princípio da publicidade, as informações obtidas nas atividades realizadas pelo auditor do Estado devem ser reveladas em sua completude aos cidadãos."
+            },
+            {
+              "key": "true",
+              "text": "Com base no que dispõe o Código de Conduta Ética dos Servidores da Secretaria de Controle e Transparência do Estado do Espírito Santo, julgue os itens subsequentes.\nAo auditor do estado do Espírito Santo que necessite dirimir dúvidas relacionadas à conduta ética e a práticas ou situações que possam configurar conflito de interesse cabe consultar, em primeiro lugar, a Comissão de Ética da Secretaria de Controle e Transparência do Estado do Espírito Santo, que, em seu turno, poderá remeter a demanda recebida ao Conselho de Ética Pública do Estado do Espírito Santo."
+            }
+          ]
+        },
+        "id": "pt-cebraspe-cgu-audit-standards-3",
+        "language": "pt",
+        "userInput": {
+          "count": 5,
+          "examFormat": {
+            "name": "Concurso CGU",
+            "style": "Banca Cebraspe. trueFalse: itens para julgamento individual como Certo ou Errado.",
+            "wrongPenalty": 1,
+            "pastQuestions": [
+              "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nA auditoria interna poderá agregar valor oferecendo serviços de consultoria, destinados a melhorar os processos de governança, gerenciamento de riscos e controle, desde que não assuma responsabilidades de gestão.",
+              "Acerca da auditoria interna, de suas características e importância para o serviço público, julgue os itens seguintes.\nOs auditores internos são responsáveis por implementar medidas de controle preventivas, de detecção e corretivas nos processos sob sua responsabilidade e sob a responsabilidade de terceiros, especificamente para manter um controle interno efetivo."
+            ]
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Distinguir objetivos, tipos, princípios e normas aplicáveis à auditoria governamental.",
+            "name": "Distinguir tipos e normas de auditoria"
+          },
+          "usedSituations": [
+            "Nayara integra uma equipe que avalia um programa federal de capacitação. Entre as questões examinadas estão a observância das regras de seleção dos participantes e a relação entre os recursos empregad",
+            "Rosana integra uma equipe encarregada de opinar sobre as demonstrações contábeis de um órgão federal, considerando a estrutura de relatório financeiro aplicável.",
+            "Leandro examina se o prazo médio de atendimento dos pedidos de aposentadoria em uma unidade do INSS ficou dentro da meta fixada no plano administrativo.",
+            "Antes de integrar uma equipe de auditoria, Valéria elaborou a minuta de um edital federal cuja regularidade a equipe agora examinará. Ela declarou formalmente que atuará com isenção."
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "generate-mock-items"
+}

@@ -15,8 +15,11 @@ const SSE_HEADERS = {
  * What an ended run wrote, then the end. Workflow can leave a cancelled run's stream open
  * (vercel/workflow#964), and a client can only tell it has every event once the stream ends.
  */
-async function writtenEvents(runId: string, startIndex = 0): Promise<ReadableStream<string>> {
-  const readable = getRun(runId).getReadable<string>({ startIndex });
+async function writtenEvents(
+  runId: string,
+  { namespace, startIndex = 0 }: { namespace?: string; startIndex?: number },
+): Promise<ReadableStream<string>> {
+  const readable = getRun(runId).getReadable<string>({ namespace, startIndex });
   let left = (await readable.getTailIndex()) + 1 - startIndex;
   const reader = readable.getReader();
 
@@ -57,8 +60,8 @@ async function streamGenerationEvents(
   }
 
   const stream = hasRunEnded(status)
-    ? await writtenEvents(path.generationId, query.startIndex)
-    : getRun(path.generationId).getReadable<string>({ startIndex: query.startIndex });
+    ? await writtenEvents(path.generationId, query)
+    : getRun(path.generationId).getReadable<string>(query);
 
   return new Response(stream, { headers: SSE_HEADERS });
 }

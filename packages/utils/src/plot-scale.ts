@@ -1,3 +1,6 @@
+import { fractionDigitsFor } from "./localized-number";
+import { formatWithUnit } from "./math-answer";
+
 export type NumericDomain = readonly [min: number, max: number];
 
 export type LinearScale = {
@@ -47,6 +50,12 @@ function cleanFloat(value: number): number {
   return Number(value.toPrecision(12));
 }
 
+/** One whole unit for a whole number, else its own order of magnitude: 3 gives 2–4, 0.5 gives 0.4–0.6. */
+function padFlat(value: number): NumericDomain {
+  const pad = Number.isInteger(value) ? 1 : 10 ** Math.floor(Math.log10(Math.abs(value)));
+  return [cleanFloat(value - pad), cleanFloat(value + pad)];
+}
+
 export function niceTicks(domain: NumericDomain, count = DEFAULT_TICK_COUNT): number[] {
   const [min, max] = domain;
   const step = niceStep(max - min, count);
@@ -84,7 +93,7 @@ export function niceDomain(
   }
 
   if (low === high) {
-    return [low, low + 1];
+    return includeZero ? [0, 1] : padFlat(low);
   }
 
   const step = niceStep(high - low, count);
@@ -96,6 +105,148 @@ export function niceDomain(
 
   // Rounding out to a whole step can pass the largest number a double holds.
   return rounded.every((bound) => Number.isFinite(bound)) ? rounded : [low, high];
+}
+
+export function getChartValueAxis(chart: {
+  axisStart: number | null;
+  chart: "bar" | "line";
+  series: readonly { values: readonly number[] }[];
+}) {
+  const values = chart.series.flatMap((series) => series.values);
+  const anchors = chart.axisStart === null ? values : [...values, chart.axisStart];
+  const nice = niceDomain(anchors, { includeZero: chart.chart === "bar" });
+  const domain: NumericDomain = chart.axisStart === null ? nice : [chart.axisStart, nice[1]];
+  const wholeNumbers = values.every((value) => Number.isInteger(value));
+  const ticks = niceTicks(domain).filter((tick) => !wholeNumbers || Number.isInteger(tick));
+
+  return { domain, ticks, values };
+}
+
+/* oxlint-disable-next-line no-magic-numbers -- These are the round steps themselves, largest first. */
+const ROUND_FACTORS = [10, 5, 2, 1] as const;
+
+/** The round step nearest `span / count` on a log scale, so ticks fill a span without running past it. */
+function nearestStep(span: number, count: number): number {
+  const rough = span / count;
+  const magnitude = 10 ** Math.floor(Math.log10(rough));
+
+  const factor =
+    ROUND_FACTORS.find(
+      (round, index) => rough / magnitude >= Math.sqrt(round * (ROUND_FACTORS[index + 1] ?? round)),
+    ) ?? 1;
+
+  return factor * magnitude;
+}
+
+function ticksWithin([min, max]: NumericDomain, step: number): number[] {
+  if (!Number.isFinite(step) || step <= 0) {
+    return [];
+  }
+
+  const first = Math.ceil(cleanFloat(min / step));
+  const last = Math.floor(cleanFloat(max / step));
+
+  return Array.from({ length: Math.max(last - first + 1, 0) }, (_, index) =>
+    cleanFloat((first + index) * step),
+  );
+}
+
+function wholeTicks(ticks: number[], values: number[]): number[] {
+  const whole = values.every((value) => Number.isInteger(value));
+  return ticks.filter((tick) => !whole || Number.isInteger(tick));
+}
+
+/**
+ * The x axis spans the data and no further, so the points fill the plot; its round ticks sit
+ * inside it. One x value sits in the middle.
+ */
+function getPlotXAxis(values: number[]) {
+  const finite = values.filter((value) => Number.isFinite(value));
+  const low = Math.min(...finite);
+  const high = Math.max(...finite);
+
+  if (!Number.isFinite(low) || !Number.isFinite(high)) {
+    return { domain: [0, 1] as NumericDomain, ticks: [0, 1] };
+  }
+
+  const domain = low === high ? padFlat(low) : ([low, high] as const);
+  const ticks = ticksWithin(domain, nearestStep(domain[1] - domain[0], DEFAULT_TICK_COUNT));
+
+  return { domain, ticks: wholeTicks(ticks, finite) };
+}
+
+function getPlotYAxis(values: number[]) {
+  const domain = niceDomain(values, { includeZero: false });
+  return { domain, ticks: wholeTicks(niceTicks(domain), values) };
+}
+
+export function getPlotAxes(plot: {
+  references: readonly { y: number }[];
+  series: readonly { points: readonly { x: number; y: number }[] }[];
+}) {
+  const points = plot.series.flatMap((series) => series.points);
+
+  return {
+    x: getPlotXAxis(points.map((point) => point.x)),
+    y: getPlotYAxis([...points.map((point) => point.y), ...plot.references.map(({ y }) => y)]),
+  };
+}
+
+const COMPACT_FROM = 10_000;
+const COMPACT_FRACTION_DIGITS = 2;
+const MAX_FRACTION_DIGITS = 20;
+
+export function isLarge(values: readonly number[]): boolean {
+  return values.some((value) => Math.abs(value) >= COMPACT_FROM);
+}
+
+function decimalsOf(step: number): number {
+  const [, decimals = ""] = cleanFloat(step).toFixed(MAX_FRACTION_DIGITS).split(".");
+  return decimals.replace(/0+$/u, "").length;
+}
+
+type TickFormat = { compact: boolean; grouping: boolean; maximumFractionDigits: number };
+
+/** Prints one tick in a chart's own notation, such as with its unit or currency. */
+export type TickFormatter = (value: number, options: TickFormat) => string;
+
+/**
+ * Tick labels a learner reads on every platform: as many decimals as the step between ticks needs,
+ * and large numbers shortened ("12.5K") only where every shortened tick stays exact, so no two ticks
+ * print the same. The x axis groups digits only in large numbers, so years don't read as "2,024".
+ */
+export function formatTicks({
+  axis,
+  ticks,
+  ...notation
+}: { axis: "x" | "y"; ticks: readonly number[] } & (
+  | { format: TickFormatter }
+  | { locale: string; unit?: string | null }
+)): string[] {
+  const [first = 0, second] = ticks;
+  const large = isLarge(ticks);
+  const grouping = axis === "y" || large;
+  const digits = second === undefined ? fractionDigitsFor(first) : decimalsOf(second - first);
+
+  const print: TickFormatter =
+    "format" in notation
+      ? notation.format
+      : (value, options) =>
+          formatWithUnit({ ...options, locale: notation.locale, unit: notation.unit, value });
+
+  const format = (options: { compact: boolean; maximumFractionDigits: number }) =>
+    ticks.map((value) => print(value, { ...options, grouping }));
+
+  if (large) {
+    const compact = format({ compact: true, maximumFractionDigits: COMPACT_FRACTION_DIGITS });
+    const exact = format({ compact: true, maximumFractionDigits: MAX_FRACTION_DIGITS });
+
+    if (compact.every((label, index) => label === exact[index])) {
+      return compact;
+    }
+  }
+
+  return format({ compact: false, maximumFractionDigits: digits });
 }
 
 const TICK_LABEL_GAP = 4;

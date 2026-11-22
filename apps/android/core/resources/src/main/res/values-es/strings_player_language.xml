@@ -15,14 +15,12 @@
   "player_language_move_later": "32f683a5948c3f5e441bef3a3117e7cc9e73461e337a5944f3721e56b229ef2a",
   "player_language_not_a_pair": "c2672bf73d3e43bdaf0a91ed034c45c7ad9c8206c9f4eb939bb4bddd5676108e",
   "player_language_pick_words": "21b45987a50a15d20175117932726f08ca2169dce71742f806bdf09ccbfdf343",
-  "player_language_play": "17fadedc0542cce2350837bd26383f415b9546bdfad9adf2e2b63ef1d3f2ea23",
   "player_language_play_pronunciation": "cdde28721aa82af23572ddd18aa0b684e10a877ceb11edb65195626b4a6b6f4d",
   "player_language_position": "d2d873ff08985577fd63df0f1800f529773ecf56975ad897bd2a25d70dd689fc",
   "player_language_pronunciation_tip": "0c531cc5ab4afdab04d6d3ea2283a4f164ac06ce71bbb51765c97fbf62bac122",
   "player_language_remove": "21274364169eafc1aeca18b071679aa591b8479301dfb528c1b6ea49de1bb238",
   "player_language_selected": "7220b55352d0a07d82a44198d78d6d303c9d74454ca47b63ca3fe84f4ce6e423",
   "player_language_show_translation": "42d1cbffdfd595f8b78e6ca92602d3313c7a5d8c0e4cb3cb86de21b0bc2d9af2",
-  "player_language_stop": "4be1104e58643b4c449e5af654861890bd9940b0c57f17ddc911b9ea0ebeb6e9",
   "player_language_translate": "fe343639bb19d874ef2ae28d0c149dd6dd6aa70fa19a97d5650fd7207abf2e51",
   "player_language_usage": "71a9feb2c08bf509ebce97dff251e017c06a0ec315645a370f1e43ac33adc91c",
   "player_language_vocabulary": "0bab6f7c0389aacb48a2cd31b43ba2c8056a24f4e2da26851bce1f4ab39690cd",
@@ -37,9 +35,6 @@
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">¿Cuál significa lo mismo?</string>
     <string name="player_language_what_do_you_hear">¿Qué escuchas?</string>
-    <string name="player_language_play">Reproducir</string>
-    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">Detener</string>
     <string name="player_language_play_pronunciation">Reproducir la pronunciación</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Vocabulario: %1$s</string>

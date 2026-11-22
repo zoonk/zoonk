@@ -42,11 +42,13 @@ async function partSet({
   createdAt,
   exam,
   id,
+  mockOnly,
   voiced = true,
 }: {
   createdAt?: Date;
   exam: ListeningExam;
   id?: string;
+  mockOnly?: boolean;
   voiced?: boolean;
 }) {
   const [skill, media] = await Promise.all([skillFixture(), voiced ? mediaAssetFixture() : null]);
@@ -61,6 +63,7 @@ async function partSet({
     examBlueprintId: exam.blueprintId,
     id,
     mediaAssetId: media?.id ?? null,
+    mockOnly,
   });
 
   const item = await prisma.item.create({
@@ -74,6 +77,7 @@ async function partSet({
       },
       format: "trueFalse",
       language: "pt",
+      mockOnly,
       model: "test",
       promptVersion: "test",
       runId: randomUUID(),
@@ -173,6 +177,50 @@ describe(loadListeningSkills, () => {
 });
 
 describe(pickListeningSets, () => {
+  it("uses spare unheard mock sets before the oldest compatible repeats", async () => {
+    const { goal, user } = await listeningGoalFixture();
+    const exam = await loadExam(goal.id);
+    const part = { ...firstPart(exam), count: 1 };
+
+    const [newer, older, fresh] = await Promise.all(
+      Array.from({ length: 3 }, () => partSet({ exam, mockOnly: true })),
+    );
+
+    if (!newer || !older || !fresh) {
+      throw new Error("Expected three recordings");
+    }
+
+    const sitting = await prisma.mockExam.create({
+      data: { conditions: {}, sectionStartedAt: new Date(), status: "finished", userId: user.id },
+    });
+
+    await prisma.mockItemUse.createMany({
+      data: [newer, older].map(({ item }, index) => ({
+        itemId: item.id,
+        mockExamId: sitting.id,
+        section: 0,
+        spentAt: new Date(Date.UTC(2020, 0, 2 - index)),
+        userId: user.id,
+      })),
+    });
+
+    const picks = await pickListeningSets({
+      examBlueprintId: exam.blueprintId,
+      mockOnly: true,
+      parts: [part, part, part, part],
+      reuse: true,
+      scriptLanguage: exam.scriptLanguage,
+      userId: user.id,
+    });
+
+    expect(picks.map(({ needsSet, setId }) => ({ needsSet, setId }))).toStrictEqual([
+      { needsSet: false, setId: fresh.set.id },
+      { needsSet: false, setId: older.set.id },
+      { needsSet: false, setId: newer.set.id },
+      { needsSet: true, setId: null },
+    ]);
+  });
+
   it("plays a second learner the recording the first one heard, with nothing new to make", async () => {
     const { goal } = await listeningGoalFixture();
     const exam = await loadExam(goal.id);
@@ -303,6 +351,7 @@ describe(writePartSet, () => {
         })),
         task: part.task,
       }),
+      false,
     );
 
     expect(written).toMatchObject({

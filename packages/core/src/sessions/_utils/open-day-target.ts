@@ -40,12 +40,13 @@ export function findOpenDayTarget({
     return { target: null, targetStatus: "changed" };
   }
 
-  if (
-    (block.status !== "pending" && block.status !== "active") ||
-    getBlockWait({ block, blocks: session.blocks })
-  ) {
+  if (!isOpenable(block) || getBlockWait({ block, blocks: session.blocks })) {
     return { target: null, targetStatus: "notStartable" };
   }
 
   return { target: block, targetStatus: target.kind === "next" ? "next" : "resolved" };
+}
+
+function isOpenable(block: StudyBlockView) {
+  return !block.preparing && (block.status === "pending" || block.status === "active");
 }

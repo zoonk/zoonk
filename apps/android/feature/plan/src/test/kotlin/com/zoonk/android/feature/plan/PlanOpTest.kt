@@ -38,6 +38,7 @@ class PlanOpTest {
                 PlanOp.BaseChoices(listOf(BaseChoice("k1", "quick"))) to
                     """{"kind":"setBaseChoices","choices":[{"skillId":"k1","choice":"quick"}]}""",
                 PlanOp.FitLessons to """{"kind":"fitLessons"}""",
+                PlanOp.Extras(listOf("s1")) to """{"kind":"setExtras","skillIds":["s1"]}""",
             )
 
         sent.forEach { (op, json) ->

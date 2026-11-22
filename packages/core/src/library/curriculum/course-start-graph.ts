@@ -1,9 +1,9 @@
 import { type Course, type CourseFormat, type CourseLevel, type Goal } from "@zoonk/db";
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type CourseOutlineChapter, toCoursePlanGraph } from "../../goals/_utils/course-plan-graph";
 import { getExamCourseSkills } from "../../goals/_utils/exam-course-skills";
 import { readCourseStart } from "../../goals/course-start-details";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
@@ -27,6 +27,9 @@ export function pinGraphToCourse({
   return {
     ...graph,
     courses: [{ countrySpecific: Boolean(course.country), key, levels, title: course.title }],
+    ...(graph.extraSkills && {
+      extraSkills: graph.extraSkills.map((skill) => ({ ...skill, course: key })),
+    }),
     skills: graph.skills.map((skill) => ({ ...skill, course: key })),
   };
 }
@@ -49,7 +52,7 @@ export function pinPlanGraphToCourse({
     .filter(
       (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
     )
-    .map(({ area, lessons, name, outcome, phase, skillId, topics = [], weight }) => ({
+    .map(({ area, lessons, name, outcome, phase, skillId, topics, weight }) => ({
       area: area || course.title,
       courseIds: [course.id],
       lessons,
@@ -57,7 +60,7 @@ export function pinPlanGraphToCourse({
       ...(outcome ? { outcome } : {}),
       phase: phaseIndexes.indexOf(phase),
       skillId,
-      ...(topics.length > 0 ? { topics } : {}),
+      ...(topics ? { topics } : {}),
       weight,
     }));
 
@@ -99,6 +102,12 @@ export function pinPlanGraphToCourse({
   });
 
   return {
+    ...(graph.extraSkills && {
+      extraSkills: graph.extraSkills.map((skill) => ({
+        ...skill,
+        phase: Math.max(0, phases.length - 1),
+      })),
+    }),
     phases: phases.map((phase) => ({ milestone: phase.milestone ?? "", name: phase.name })),
     skills: withOutline,
   };

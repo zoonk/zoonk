@@ -73,18 +73,19 @@ describe(computeCallCostUsd, () => {
   });
 
   it("prices Gemini speech by its audio tokens, 25 a second, and the text it reads", () => {
-    // Gemini 3.8 Flash TTS: $0.50 per million text tokens in, $9 per million audio tokens out.
+    // Gemini 3.8 Flash TTS: $0.50 per million text tokens in, $9 per million audio tokens out,
+    // until the price change on 1 January 2027.
+    const at = new Date("2026-10-06T00:00:00Z");
     const usage = { audioSeconds: 4, inputTokens: 100 };
 
-    expect(computeCallCostUsd({ model: "google/gemini-3.8-flash-tts", usage })).toBeCloseTo(
+    expect(computeCallCostUsd({ at, model: "google/gemini-3.8-flash-tts", usage })).toBeCloseTo(
       (4 * 25 * 9 + 100 * 0.5) / MILLION,
       CENT_FRACTION_DIGITS,
     );
 
-    expect(computeCallCostUsd({ model: "google/gemini-3.8-flash-lite-tts", usage })).toBeCloseTo(
-      (4 * 25 * 6 + 100 * 0.5) / MILLION,
-      CENT_FRACTION_DIGITS,
-    );
+    expect(
+      computeCallCostUsd({ at, model: "google/gemini-3.8-flash-lite-tts", usage }),
+    ).toBeCloseTo((4 * 25 * 6 + 100 * 0.5) / MILLION, CENT_FRACTION_DIGITS);
   });
 
   it("prices a call at the price of its day, so an announced change applies from that day on", () => {

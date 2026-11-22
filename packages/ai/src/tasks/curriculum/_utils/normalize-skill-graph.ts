@@ -14,6 +14,7 @@ type RawSkillGraphSkill = {
   description: string;
   estimatedLessons: number;
   examWeight: number | null;
+  extra?: boolean;
   key: string;
   level: CourseLevel;
   /** A Library skill the graph reuses (see `applyLibraryReuse`). */
@@ -82,6 +83,7 @@ type SkillGraphPhase = {
 
 export type SkillGraph = {
   courses: SkillGraphCourse[];
+  extraSkills?: SkillGraphSkill[];
   phases: SkillGraphPhase[];
   skills: SkillGraphSkill[];
   estimatedHours: number;
@@ -293,6 +295,30 @@ function dropChoicePrerequisites({
   }));
 }
 
+function normalizeExtras({
+  courseTitles,
+  phase,
+  raw,
+}: {
+  courseTitles: ReadonlyMap<string, string>;
+  phase: number;
+  raw: RawSkillGraph;
+}): SkillGraphSkill[] {
+  const { aliases, skills } = dedupeSkills(raw.skills.filter((skill) => skill.extra));
+  const area = skills.find((skill) => skill.area.trim())?.area.trim();
+
+  return skills.map((skill) => ({
+    ...toGraphSkill({ aliases, courseTitles, phaseCount: phase, skill }),
+    ...(area && { area }),
+    examWeight: null,
+    key: `extra:${skill.key}`,
+    outcome: false,
+    phase,
+    prerequisites: [],
+    topics: [],
+  }));
+}
+
 export function normalizeSkillGraph(
   raw: RawSkillGraph,
   outline?: ExamOutline,
@@ -302,11 +328,13 @@ export function normalizeSkillGraph(
     raw.courses.map((course) => [toKey(course.key), course.title.trim()]),
   );
 
-  if (courseTitles.size === 0 || raw.phases.length === 0 || raw.skills.length === 0) {
+  const required = raw.skills.filter((skill) => !skill.extra);
+
+  if (courseTitles.size === 0 || raw.phases.length === 0 || required.length === 0) {
     throw new EmptySkillGraphError();
   }
 
-  const { aliases, skills: uniqueSkills } = dedupeSkills(raw.skills);
+  const { aliases, skills: uniqueSkills } = dedupeSkills(required);
 
   const graphSkills = dropChoicePrerequisites({
     outline,
@@ -315,11 +343,9 @@ export function normalizeSkillGraph(
     ),
   });
 
-  const subjectCourse = graphSkills[0]?.course;
-
   const supportingCourses = new Set(
     raw.courses
-      .filter((course) => course.supporting && toKey(course.key) !== subjectCourse)
+      .filter((course) => course.supporting && toKey(course.key) !== graphSkills[0]?.course)
       .map((course) => toKey(course.key)),
   );
 
@@ -331,13 +357,15 @@ export function normalizeSkillGraph(
   });
 
   const normalized = normalizePhases({ phases: raw.phases, skills: ordered });
-  const { phases } = normalized;
   const skills = fitLessonBudget({ budget: lessonBudget, skills: normalized.skills });
 
+  const extraSkills = normalizeExtras({ courseTitles, phase: normalized.phases.length, raw });
+
   return {
-    courses: normalizeCourses({ courses: raw.courses, skills }),
+    courses: normalizeCourses({ courses: raw.courses, skills: [...skills, ...extraSkills] }),
+    ...(extraSkills.length > 0 && { extraSkills }),
     estimatedHours: toHours(skills.reduce((total, skill) => total + skill.estimatedLessons, 0)),
-    phases,
+    phases: normalized.phases,
     skills,
   };
 }

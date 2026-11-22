@@ -8,6 +8,10 @@ import { teachingStep } from "../preview/preview-steps";
 
 const TYPO = "It shows where the electorn is likely to be";
 
+function barNote() {
+  return document.querySelector("[data-slot=bottom-bar-note]")?.textContent;
+}
+
 function hang<T>(): Promise<T> {
   return new Promise<T>(() => {});
 }
@@ -21,7 +25,7 @@ describe("bounded waits", () => {
     vi.useRealTimers();
   });
 
-  it("a typed answer's check says it's still going, then checks it again under the same id", async () => {
+  it("a typed answer's check says over the bar it's still going, then checks it again under the same id", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 
     const checkStep = vi
@@ -55,16 +59,9 @@ describe("bounded waits", () => {
     await expect.element(check).toBeDisabled();
 
     await vi.advanceTimersByTimeAsync(CHECK_BOUNDS.slowMs + 1000);
-
-    await expect
-      .element(page.getByText("Still checking. This is taking longer than usual."))
-      .toBeVisible();
-
+    await expect.poll(barNote).toBe("Still checking. This is taking longer than usual.");
     await vi.advanceTimersByTimeAsync(CHECK_BOUNDS.timeoutMs.typed);
-
-    await expect
-      .element(page.getByText("We couldn't check your answer this time. Try again."))
-      .toBeVisible();
+    await expect.poll(barNote).toBe("We couldn't check your answer this time. Try again.");
 
     await page.getByRole("button", { name: /^Check/u }).click();
 

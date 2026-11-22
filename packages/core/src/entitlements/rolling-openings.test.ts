@@ -1,4 +1,4 @@
-import { UsageKind } from "@zoonk/db";
+import { USAGE_KINDS, type UsageKind } from "@zoonk/db";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { toAllowance } from "./_utils/allowance-view";
@@ -311,7 +311,7 @@ describe("rolling request openings", () => {
   });
 
   it.each(
-    Object.values(UsageKind).flatMap((kind) =>
+    Object.values(USAGE_KINDS).flatMap((kind) =>
       (["free", "guest", "plus"] as const).flatMap((tier) => {
         const rule = getUsageRule({ kind, tier });
         const day = kind === "conversation" ? rule.daySeconds : rule.day;

@@ -24,6 +24,8 @@ function toStudyLevers(operation: StudyOperation): string[] {
       return ["difficulty"];
     case "setWrittenCadence":
       return ["writtenCadence"];
+    case "setExtras":
+      return ["extras"];
     case "setFullCourse":
       return ["fullCourse"];
     case "setBaseChoices":

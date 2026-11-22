@@ -18,7 +18,8 @@ export type ItemFormat = (typeof ITEM_FORMATS)[number];
 
 const MIN_OPTIONS = 2;
 /** USMLE and the PMP print up to 8 options and the solver letters them A to H, so code drops wrong ones past it. */
-export const MAX_OPTIONS = 8;
+export const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
+export const MAX_OPTIONS = OPTION_LETTERS.length;
 /** JEE Advanced asks numbers to 2 decimal places; no exam asks more than 4. */
 const MAX_DECIMAL_PLACES = 4;
 /** An AP scoring guideline's row is worth up to 6 points (a long essay's evidence row is 3 or 4). */

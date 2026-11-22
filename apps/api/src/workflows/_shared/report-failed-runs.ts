@@ -10,26 +10,43 @@ declare global {
   var zoonkFailedRunReports: (() => void) | undefined;
 }
 
-/** Next's `onRequestError` never sees a failed run: runs fail in the runtime's own invocations. */
-async function reportFailedRun({ error, run, workflowName }: RunFailedHookParams): Promise<void> {
-  const failure = error.cause ?? error;
-  const name = parseWorkflowName(workflowName)?.shortName ?? workflowName;
+export async function reportWorkflowFailure({
+  error,
+  errorCode,
+  message,
+  runId,
+  workflowName,
+}: {
+  error: unknown;
+  errorCode?: string;
+  message: string;
+  runId: string;
+  workflowName: string;
+}): Promise<void> {
+  logError(message, error);
 
-  logError(
-    `[Workflow Run Failed] ${name} (${run.runId}): ${error.errorCode ?? "unknown"}`,
-    failure,
-  );
-
-  captureException(failure, {
+  captureException(error, {
     tags: {
-      "workflow.error_code": error.errorCode,
-      "workflow.name": name,
-      "workflow.run_id": run.runId,
+      ...(errorCode && { "workflow.error_code": errorCode }),
+      "workflow.name": workflowName,
+      "workflow.run_id": runId,
     },
   });
 
-  // The handler runs after the run ended, so the report is sent before the invocation finishes.
   await flush(SENTRY_FLUSH_TIMEOUT_MS);
+}
+
+/** Next's `onRequestError` never sees a failed run: runs fail in the runtime's own invocations. */
+async function reportFailedRun({ error, run, workflowName }: RunFailedHookParams): Promise<void> {
+  const name = parseWorkflowName(workflowName)?.shortName ?? workflowName;
+
+  await reportWorkflowFailure({
+    error: error.cause ?? error,
+    errorCode: error.errorCode,
+    message: `[Workflow Run Failed] ${name} (${run.runId}): ${error.errorCode ?? "unknown"}`,
+    runId: run.runId,
+    workflowName: name,
+  });
 }
 
 export function registerFailedRunReports(): void {

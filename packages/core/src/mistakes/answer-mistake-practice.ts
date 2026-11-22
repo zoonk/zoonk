@@ -6,6 +6,7 @@ import { getSession } from "../users/get-session";
 import { answerItemMistake } from "./_utils/answer-item-mistake";
 import { answerLessonMistake } from "./_utils/answer-lesson-mistake";
 import { readPracticeClaim } from "./_utils/practice-claim";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakePracticeAnswerInput } from "./contract";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
 import { loadMistakeReplay } from "./mistake-replay";
@@ -41,7 +42,10 @@ export async function answerMistakePractice({
   }
 
   const userId = session.user.id;
-  const mistake = await prisma.mistake.findFirst({ where: { id: mistakeId, userId } });
+
+  const mistake = await prisma.mistake.findFirst({
+    where: { ...visibleMistakeWhere, id: mistakeId, userId },
+  });
 
   if (!mistake) {
     return { status: "notFound" };

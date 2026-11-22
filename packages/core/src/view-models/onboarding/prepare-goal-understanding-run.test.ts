@@ -52,6 +52,35 @@ describe(prepareGoalUnderstandingRun, () => {
     ).resolves.toMatchObject({ status: "understanding" });
   });
 
+  it("counts a retry sent twice at once once, and the next retry after its run again", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const draft = await onboardingDraftFixture({
+      prompt: `learn welding ${randomUUID()}`,
+      runId: "failed-run",
+      status: "failed",
+      userId: user.id,
+    });
+
+    const retries = await Promise.all([
+      prepareGoalUnderstandingRun({ draftId: draft.id }),
+      prepareGoalUnderstandingRun({ draftId: draft.id }),
+    ]);
+
+    expect(retries.map((retry) => retry.status)).toStrictEqual(["start", "start"]);
+    await expect(countAssists(user.id)).resolves.toBe(1);
+
+    await prisma.onboardingDraft.update({
+      data: { runId: "second-run", status: "failed" },
+      where: { id: draft.id },
+    });
+
+    await prepareGoalUnderstandingRun({ draftId: draft.id });
+
+    await expect(countAssists(user.id)).resolves.toBe(2);
+  });
+
   it("asks a guest who used today's small AI calls to sign up before reading a draft again", async () => {
     const guest = await useGuestOutOfHelp();
 

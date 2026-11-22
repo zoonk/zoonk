@@ -1265,6 +1265,15 @@ extension LessonStep {
     return !content.isNumberAnswer
   }
 
+  /// A listening sentence that is its own answer, as in a lesson in the learner's own language.
+  var isDictation: Bool {
+    guard case .language(let exercise, _) = content else {
+      return false
+    }
+
+    return exercise.kind == .listening && exercise.sentence?.readsItself == true
+  }
+
   var canSelfCorrect: Bool {
     guard case .language(let exercise, _) = content else {
       return false

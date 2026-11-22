@@ -215,17 +215,17 @@ final class GenerationEventsTests: XCTestCase {
     let transport = RunsTransport(
       events: [
         "/v1/generations/run-1/events?startIndex=0": [
-          #"data: {"status":"started","step":"writeMockQuestions"}"# + "\n\n"
+          #"data: {"status":"started","step":"writeChallengeQuestions"}"# + "\n\n"
         ],
         "/v1/generations/run-1/events?startIndex=1": [
-          #"data: {"status":"completed","step":"mockQuestionsReady"}"# + "\n\n"
+          #"data: {"status":"completed","step":"challengeQuestionsReady"}"# + "\n\n"
         ],
       ],
       statuses: ["/v1/generations/run-1": ["completed"]])
 
     let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
 
-    XCTAssertEqual(events.map(\.step), ["writeMockQuestions", "mockQuestionsReady"])
+    XCTAssertEqual(events.map(\.step), ["writeChallengeQuestions", "challengeQuestionsReady"])
     let requests = await transport.requests
     XCTAssertEqual(
       requests,

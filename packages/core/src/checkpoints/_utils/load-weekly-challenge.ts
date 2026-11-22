@@ -1,9 +1,9 @@
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
+import { loadWeeklyOutline } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { loadScheduledMock } from "../../exams/mocks/_utils/scheduled-mock";
-import { getPlannedItemIds } from "../../exams/mocks/mock-plan";
+import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockIdentity, findScheduledMock } from "../../plans/planner/mock-identity";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -73,7 +73,6 @@ async function loadMockItems({
   goal,
   identity: selectedIdentity,
   planItemId,
-  skillIds,
   structure,
   today,
   userId,
@@ -81,7 +80,6 @@ async function loadMockItems({
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
   identity?: MockIdentity | null;
   planItemId: string | null;
-  skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
   userId: string;
@@ -91,13 +89,14 @@ async function loadMockItems({
       ? await loadScheduledMock({ date: today, goalId: goal.id, planItemId })
       : selectedIdentity;
 
-  const plan = await planWeeklyMock({ goal, identity, skillIds, structure, today, userId });
+  const { outline } = await loadWeeklyOutline({ goal, identity, structure, today, userId });
 
   return {
-    itemIds: getPlannedItemIds(plan),
-    minutes: plan.minutes,
-    mockIdentity: { day: plan.day, fullLength: plan.fullLength },
-    timeLimitMinutes: plan.minutes,
+    itemIds: [],
+    minutes: outline.minutes,
+    mockIdentity: { day: outline.day, fullLength: outline.fullLength },
+    mockQuestions: countPlannedQuestions(outline),
+    timeLimitMinutes: outline.minutes,
   };
 }
 
@@ -204,12 +203,11 @@ export async function loadSessionWeeklyChallenge({
             ? findScheduledMock({ date: toIsoDate(item.scheduledFor), funding: mockFunding })
             : undefined,
           planItemId: item.id,
-          skillIds: asked,
           structure,
           today,
           userId,
         })),
-        writable: false,
+        writable: true,
       }
     : await loadMixedItems({ examBlueprintId: goal.examBlueprintId, now, skillIds, userId });
 
@@ -217,7 +215,8 @@ export async function loadSessionWeeklyChallenge({
     return { checkpoint: null, plusRequired: false };
   }
 
-  const questions = isMock ? picked.itemIds.length : getPlannedQuestions(picked.itemIds.length);
+  const questions =
+    "mockQuestions" in picked ? picked.mockQuestions : getPlannedQuestions(picked.itemIds.length);
 
   return {
     checkpoint: {

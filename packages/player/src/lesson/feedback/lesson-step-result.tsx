@@ -168,11 +168,13 @@ function getShownKeyPoints(result: LessonStepResult): LessonStepResult["keyPoint
 export function LessonStepResultView({
   hyperdriveStreak,
   next,
+  notes,
   result,
   step,
 }: {
   hyperdriveStreak: number | null;
   next: LessonResultNext;
+  notes?: React.ReactNode;
   result: LessonStepResult;
   step: PlayableLibraryStep;
 }) {
@@ -216,6 +218,7 @@ export function LessonStepResultView({
       {canExplain && <ExplainAnswer answer={answerText} stepId={step.id} />}
 
       <LessonResultNote {...next} />
+      {notes}
     </FeedbackPanel>
   );
 }

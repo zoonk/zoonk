@@ -10,6 +10,7 @@ import {
   loadGoalCurriculumInputs,
 } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
+import { pruneGoalNoticeGraph } from "@zoonk/core/library/curriculum/prune-goal-notice-graph";
 import { saveExamSkillGraph } from "@zoonk/core/library/curriculum/reusable-curriculum";
 import {
   type GoalSkillGraph,
@@ -151,6 +152,12 @@ export async function checkGraphCoverageStep({
   });
 
   return applyGraphCoverage({ coverage: coverage.data, graph, outline });
+}
+
+export async function pruneNoticeGraphStep(input: Parameters<typeof pruneGoalNoticeGraph>[0]) {
+  "use step";
+
+  return pruneGoalNoticeGraph(input);
 }
 
 export async function saveGoalSkillsStep({

@@ -12,7 +12,6 @@ type PlotPadding = { bottom: number; left: number; right: number; top: number };
 
 type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScale };
 
-const FALLBACK_WIDTH = 318;
 export const PLOT_LINE_WIDTH = 3;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: PLOT_TICK_ROOM, right: 12, top: 12 };
 const GUIDE_STROKE = 1.5;
@@ -48,7 +47,7 @@ export function ActivityPlot({
   yLabel?: string;
   yDomain: NumericDomain;
 }) {
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>();
   const inset = { ...DEFAULT_PADDING, ...padding };
   const height = typeof heightProp === "number" ? heightProp : heightProp(width);
 

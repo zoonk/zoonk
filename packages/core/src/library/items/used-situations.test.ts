@@ -15,6 +15,19 @@ function caseItem({ context, ...attrs }: Parameters<typeof itemFixture>[0] & { c
 }
 
 describe(loadUsedSituations, () => {
+  it("only includes the mock reserve when a writer requests it", async () => {
+    const skill = await skillFixture();
+    await caseItem({ context: "Reserved case.", mockOnly: true, skillId: skill.id });
+
+    const [practice, writing] = await Promise.all([
+      loadUsedSituations({ skillIds: [skill.id] }),
+      loadUsedSituations({ includeMockReserve: true, skillIds: [skill.id] }),
+    ]);
+
+    expect(practice.get(skill.id)).toStrictEqual([]);
+    expect(writing.get(skill.id)).toStrictEqual(["Reserved case."]);
+  });
+
   it("lists the cases of every question its learner can be served, and none of another exam's or field's", async () => {
     const [skill, exam, otherExam] = await Promise.all([
       skillFixture(),

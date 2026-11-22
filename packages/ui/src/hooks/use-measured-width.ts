@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function useMeasuredWidth<TElement extends HTMLElement>(fallback: number) {
+const PHONE_CONTENT_WIDTH = 318;
+
+export function useMeasuredWidth<TElement extends HTMLElement>(fallback = PHONE_CONTENT_WIDTH) {
   const ref = useRef<TElement>(null);
   const [width, setWidth] = useState(fallback);
 

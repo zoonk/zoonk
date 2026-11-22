@@ -874,6 +874,25 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(store.nextPlanChange(in: reread))
   }
 
+  func testASeenNoticeThatThePlanFollowsTheGuideLeavesForWhatComesNext() async throws {
+    let notice = try planChange(status: "applied", kind: "noticeChanged")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: notice)
+    let api = StudyAPIStub(
+      today: .day(view), decided: try planChange(status: "applied", kind: "noticeChanged"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(notice, with: .seen, in: view)
+
+    XCTAssertNil(store.shownPlanChange(in: view), "it leaves before Today is read again")
+
+    let date = try planChange(status: "proposed", id: "c2")
+    let reread = try today(session: day(blocks: [], nextPosition: nil), planChange: date)
+
+    XCTAssertEqual(store.shownPlanChange(in: reread), AnsweredPlanChange(change: date))
+    XCTAssertNil(store.nextPlanChange(in: reread))
+  }
+
   func testAnAnswerStaysWithItsGoal() async throws {
     let proposed = try planChange(status: "proposed")
     let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
@@ -989,7 +1008,7 @@ private func blockJSON(
   "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
   "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
   "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"opensInPlayer":false,"oftenTested":false,
-  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"questions":3,
+  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"preparing":false,"questions":3,
   "refresh":false,"reinforcement":false,"screen":"session","status":"\(status)",
   "subject":null,"title":"Block",
   "waitReason":null,"weakest":false\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
@@ -1043,12 +1062,13 @@ private func day(
 }
 
 private func planChange(
-  status: String, canUndo: Bool = false, id: String = "c1", quote: String = "q1"
+  status: String, canUndo: Bool = false, id: String = "c1", quote: String = "q1",
+  kind: String = "edited"
 ) throws -> TodayView.PlanChange {
   try decode(
     """
     {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice","quote":"\(quote)",
-    "id":"\(id)","kind":"edited","officialDate":null,"operations":[],
+    "id":"\(id)","kind":"\(kind)","officialDate":null,"operations":[],
     "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)
 }

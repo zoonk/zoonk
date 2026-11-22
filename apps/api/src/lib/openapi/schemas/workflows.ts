@@ -34,5 +34,12 @@ export const generationEventStreamSchema = z
   });
 
 export const workflowEventsQuerySchema = z
-  .object({ startIndex: startIndexSchema })
+  .object({
+    namespace: z
+      .string()
+      .startsWith("mock-paper:")
+      .optional()
+      .meta({ description: "Mock paper stream namespace returned by the mock writing lookup" }),
+    startIndex: startIndexSchema,
+  })
   .meta({ id: "WorkflowEventsQuery" });

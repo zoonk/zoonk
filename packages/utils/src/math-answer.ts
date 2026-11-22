@@ -1,4 +1,4 @@
-import { getNumberFormatter } from "./localized-number";
+import { formatLocalizedNumber, getNumberFormatter } from "./localized-number";
 
 const MAX_FRACTION_DIGITS = 2;
 const SMALL_VALUE_SIGNIFICANT_DIGITS = 2;
@@ -89,12 +89,53 @@ export function formatMoney({
   return formatted.replace("-", MINUS_SIGN);
 }
 
+/** A sign written against the digits, with no space: "45%", "90°". */
+export function isAttachedUnit(unit?: string | null): boolean {
+  return Boolean(unit && ATTACHED_UNITS.has(unit));
+}
+
 export function withUnit(formatted: string, unit?: string | null): string {
   if (!unit) {
     return formatted;
   }
 
-  return ATTACHED_UNITS.has(unit) ? `${formatted}${unit}` : `${formatted}${NO_BREAK_SPACE}${unit}`;
+  return isAttachedUnit(unit) ? `${formatted}${unit}` : `${formatted}${NO_BREAK_SPACE}${unit}`;
+}
+
+/** Money in its currency's format ("R$12.50 per hour"), any other unit after the number ("45%"). */
+export function formatWithUnit({
+  compact,
+  grouping,
+  locale,
+  maximumFractionDigits,
+  unit,
+  value,
+}: {
+  compact?: boolean;
+  grouping?: boolean;
+  locale: string;
+  maximumFractionDigits?: number;
+  unit?: string | null;
+  value: number;
+}): string {
+  const money = splitMoneyUnit(unit);
+
+  if (money) {
+    const amount = formatMoney({
+      compact,
+      currency: money.currency,
+      locale,
+      maximumFractionDigits,
+      value,
+    });
+
+    return money.rest ? `${amount} ${money.rest}` : amount;
+  }
+
+  return withUnit(
+    formatLocalizedNumber({ compact, grouping, locale, maximumFractionDigits, value }),
+    unit,
+  );
 }
 
 export function getUnitPosition({

@@ -718,13 +718,12 @@ describe("phase dates through system refreshes", () => {
 
     const [endAfter] = await readPhaseEnds(plan.id);
 
-    const applied = await prisma.planChange.findMany({
-      orderBy: { createdAt: "desc" },
-      where: { planId: plan.id, status: "applied" },
+    const applied = await prisma.planChange.findUniqueOrThrow({
+      where: { id: proposal?.id ?? "", status: "applied" },
     });
 
     const quoted = parsePlanChangePayload(proposal?.payload).effect;
-    const recorded = parsePlanChangePayload(applied[0]?.payload).effect;
+    const recorded = parsePlanChangePayload(applied.payload).effect;
 
     expect(recorded?.lessonsAdded).toBe(quoted?.lessonsAdded);
     expect(recorded?.lessonsRemoved).toBe(quoted?.lessonsRemoved);

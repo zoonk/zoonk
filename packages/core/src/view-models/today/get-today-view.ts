@@ -4,6 +4,7 @@ import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
 import { readExamPicks } from "../../exams/choices/exam-choices";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
+import { type ExamDocument, getExamDocument } from "../../exams/exam-document";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
@@ -48,6 +49,7 @@ type TodayGoal = {
   dateEstimated: boolean;
   /** From the session's learner-local day; null without a date or after it passed. */
   daysLeft: number | null;
+  examDocument: ExamDocument;
   id: string;
   kind: GoalKind;
   targetDate: Date | null;
@@ -66,7 +68,7 @@ type TodayProgress =
     };
 
 type TodayWeeklyChallenge = {
-  access: "open" | "plusRequired";
+  access: "open" | "plusRequired" | "preparing";
   date: Date | null;
   kind: "mixed" | "mock";
   /** An unsaved selected challenge stays visible without an intro action until Open persists it. */
@@ -313,6 +315,7 @@ async function readAdmittedToday({
         dateEstimated: dateKind.estimated,
         daysLeft: getDaysLeft({ localDate: studySession.localDate, targetDate }),
         displayName: owned.goal.displayName,
+        examDocument: getExamDocument(owned.goal),
         id,
         kind,
         targetDate,

@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "70b8ca537b67c7817cce4a4f69a66d91a88a7912f3c08f79b8759065b175a858",
   "limit_mind_maps_guest": "0d5c6d49b69d39e99fc7bc33e63ee08c64b5d3d604a539e39ff65d7cc6081132",
   "limit_mind_maps_used": "1fa71ec289ffba1fda32a4f430e7a0aa28d1fb6876ede6c3476bc5afe8e3b0bb",
-  "limit_mock_exams_used": "5d0c09afd0fdddcf11a05124161711cf6e8a34a061b7fe886dd15dc9fca0e2f5",
   "limit_more_later_today": "1fb4bea7508fd0f5b2f717fc592525f439a244e1cd8e3e3e5c32afc42cd46f1a",
   "limit_more_later_today_or_subscribe": "d20e527c90f890ba9256e3603282eaf51f091bff98f3d026eaa0a0b7f8cd357a",
   "limit_more_on": "f35441dd4405f069b966750a0706666ad3ce5413f9d66371ba00c532bf93397b",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">会話の利用時間が上限に達しました</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">また会話練習ができます</string>
-    <string name="limit_mock_exams_used">模試の利用上限に達しました</string>
     <string name="limit_lessons_guest">アカウントなしで受けられるレッスンはここまでです</string>
     <string name="limit_lessons_free">無料レッスンを使い切りました</string>
     <string name="limit_lessons_day">今日はこれ以上新しいレッスンを始められません</string>

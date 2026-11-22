@@ -74,8 +74,10 @@ export async function updateMemoryFact({
 
     const reworded = input.statement !== undefined && input.statement !== existing.statement;
 
-    const checked =
-      reworded && viewer !== null && (await claimAssistInWrite({ transaction: tx, viewer }));
+    const check =
+      reworded && viewer !== null ? await claimAssistInWrite({ transaction: tx, viewer }) : null;
+
+    const checked = check?.status === "allowed";
 
     const updated = await tx.memoryFact.update({
       data: {

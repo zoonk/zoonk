@@ -3,6 +3,9 @@ import {
   createLinearScale,
   fittingTickIndices,
   fittingTicks,
+  formatTicks,
+  getChartValueAxis,
+  getPlotAxes,
   niceDomain,
   niceTicks,
 } from "./plot-scale";
@@ -49,10 +52,138 @@ describe(niceDomain, () => {
     expect(niceTicks(niceDomain([-1.7e308, 1.7e308]), 3)).toStrictEqual([]);
   });
 
+  it("centers a flat line instead of resting it on the bottom", () => {
+    expect(niceDomain([5, 5], { includeZero: false })).toStrictEqual([4, 6]);
+    expect(niceDomain([0.5], { includeZero: false })).toStrictEqual([0.4, 0.6]);
+    expect(niceDomain([0, 0])).toStrictEqual([0, 1]);
+  });
+
   it("ignores values that can't be drawn", () => {
     expect(niceDomain([Number.NaN, 4])).toStrictEqual([0, 4]);
     expect(niceDomain([])).toStrictEqual([0, 1]);
     expect(niceDomain([], { includeZero: false })).toStrictEqual([0, 1]);
+  });
+});
+
+describe(getChartValueAxis, () => {
+  it("honors an explicit axis start and filters fractional ticks for whole-number values", () => {
+    expect(
+      getChartValueAxis({ axisStart: 9, chart: "line", series: [{ values: [9, 10, 11] }] }),
+    ).toStrictEqual({ domain: [9, 11], ticks: [9, 10, 11], values: [9, 10, 11] });
+  });
+});
+
+describe(getPlotAxes, () => {
+  it("uses numeric x spacing and includes references only in the y domain", () => {
+    const { x, y } = getPlotAxes({
+      references: [{ y: 40 }],
+      series: [
+        {
+          points: [
+            { x: 10, y: 27 },
+            { x: 11, y: 25 },
+            { x: 20, y: 30 },
+          ],
+        },
+      ],
+    });
+
+    expect(x).toStrictEqual({ domain: [10, 20], ticks: [10, 12, 14, 16, 18, 20] });
+    expect(y).toStrictEqual({ domain: [25, 40], ticks: [25, 30, 35, 40] });
+
+    const scale = createLinearScale({ domain: x.domain, range: [0, 100] });
+
+    expect(scale.toPixel(11)).toBe(10);
+  });
+
+  it("keeps fractional ticks only when the data has fractions", () => {
+    const axes = getPlotAxes({
+      references: [],
+      series: [
+        {
+          points: [
+            { x: 1, y: 0.5 },
+            { x: 10, y: 1.5 },
+          ],
+        },
+      ],
+    });
+
+    expect(axes.x.ticks).toStrictEqual([2, 4, 6, 8, 10]);
+    expect(axes.y.ticks).toStrictEqual([0.5, 0.75, 1, 1.25, 1.5]);
+  });
+
+  it("spans x from the first value to the last, with its round ticks inside", () => {
+    const months = getPlotAxes({
+      references: [],
+      series: [{ points: [1, 4, 8, 12].map((x) => ({ x, y: x })) }],
+    });
+
+    expect(months.x).toStrictEqual({ domain: [1, 12], ticks: [2, 4, 6, 8, 10, 12] });
+  });
+
+  it("puts a single point in the middle of both axes", () => {
+    const { x, y } = getPlotAxes({ references: [], series: [{ points: [{ x: 3, y: 952.5 }] }] });
+
+    expect(x.domain).toStrictEqual([2, 4]);
+    expect(y.domain[0] + y.domain[1]).toBeCloseTo(952.5 * 2);
+    expect(createLinearScale({ domain: x.domain, range: [0, 100] }).toPixel(3)).toBe(50);
+  });
+});
+
+describe(formatTicks, () => {
+  it("prints as many decimals as the step between ticks needs, so no two ticks read the same", () => {
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [1000, 1000.5, 1001] })).toStrictEqual([
+      "1,000",
+      "1,000.5",
+      "1,001",
+    ]);
+
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [0, 0.25, 0.5] })).toStrictEqual([
+      "0",
+      "0.25",
+      "0.5",
+    ]);
+  });
+
+  it("shortens large numbers only when every shortened tick stays exact", () => {
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [10_000, 10_100, 10_200] })).toStrictEqual(
+      ["10K", "10.1K", "10.2K"],
+    );
+
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [10_000, 10_025, 10_050] })).toStrictEqual(
+      ["10,000", "10,025", "10,050"],
+    );
+
+    expect(formatTicks({ axis: "y", locale: "ja", ticks: [10_000, 10_050, 10_100] })).toStrictEqual(
+      ["10,000", "10,050", "10,100"],
+    );
+  });
+
+  it("keeps a unit that is part of how the number is written on each tick", () => {
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [9, 10, 11], unit: "%" })).toStrictEqual([
+      "9%",
+      "10%",
+      "11%",
+    ]);
+
+    expect(formatTicks({ axis: "y", locale: "en", ticks: [0, 5, 10], unit: "BRL" })).toStrictEqual([
+      "R$0",
+      "R$5",
+      "R$10",
+    ]);
+  });
+
+  it("writes years on the x axis without a thousands separator, in the learner's notation", () => {
+    expect(formatTicks({ axis: "x", locale: "en", ticks: [1960, 1980] })).toStrictEqual([
+      "1960",
+      "1980",
+    ]);
+
+    expect(formatTicks({ axis: "y", locale: "pt", ticks: [950, 1000] })).toStrictEqual([
+      "950",
+      "1.000",
+    ]);
   });
 });
 

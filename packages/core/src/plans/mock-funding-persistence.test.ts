@@ -19,6 +19,38 @@ describe("saved mock funding and planner inputs", () => {
 
   afterEach(() => vi.useRealTimers());
 
+  it("owes background mock supply when a paid exam gets its first plan without a scheduled mock", async () => {
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({ skills: [{ area: "Math", lessons: 2 }] }),
+    ]);
+
+    const [{ goal, plan }] = await Promise.all([
+      unplannedGoalFixture({
+        details: { placementDeclined: true },
+        kind: "exam",
+        targetDate: null,
+        timezone: "UTC",
+        userId: user.id,
+      }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+    ]);
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await expect(prisma.planItem.count({ where: { kind: "mock", planId: plan.id } })).resolves.toBe(
+      0,
+    );
+
+    await expect(
+      prisma.followUp.findFirst({
+        where: { key: goal.id, kind: "prepareMockSupply", userId: user.id },
+      }),
+    ).resolves.toMatchObject({ input: { examBlueprintId: null, goalId: goal.id, later: true } });
+  });
+
   it("saves the inputs key for the funded settings the next run actually reads", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ area: "Math", lessons: 30 }] });

@@ -77,7 +77,7 @@ interface StepActions {
 
     fun setCantTalk(chosen: Boolean)
 
-    /** The day's "I can't listen now", which shows a sound to find by ear as its notes. */
+    /** The day's "I can't listen now", which shows a sound to find by ear as its notes and a sentence to hear as text. */
     val cantListen: Boolean
 
     fun setCantListen(chosen: Boolean)

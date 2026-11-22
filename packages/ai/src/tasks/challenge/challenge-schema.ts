@@ -2,6 +2,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { type Reasoning, type ServedSpeed, type ServiceTier } from "../../provider-options";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
+import { challengeVisualSchema } from "../visuals/visual-schema";
 
 /** A work case feels like a real job; a "What if" is a light scenario for overview courses. */
 type ChallengeCaseVariant = "whatIf" | "work";
@@ -56,6 +57,7 @@ export const challengeCaseSchema = z.object({
     z.object({
       id: z.string(),
       messages: z.array(messageSchema),
+      visual: challengeVisualSchema.nullable(),
       prompt: z.string(),
       choices: z.array(choiceSchema),
     }),

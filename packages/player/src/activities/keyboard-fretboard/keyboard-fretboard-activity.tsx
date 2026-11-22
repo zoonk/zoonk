@@ -2,6 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { CantListenSwitch } from "../../components/cant-listen-switch";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivitySoundNote } from "../_components/activity-sound-button";
 import { type NoteMarkKind } from "../_components/note-mark";
@@ -32,7 +33,7 @@ import {
   targetSpelling,
   togglePitch,
 } from "./keyboard-fretboard-notes";
-import { CantListenSwitch, SoundAsText, useKeyboardListening } from "./sound-as-text";
+import { SoundAsText, useKeyboardListening } from "./sound-as-text";
 
 type KeyboardFretboardProps = ActivityRendererProps<"keyboardFretboard">;
 

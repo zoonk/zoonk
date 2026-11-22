@@ -157,6 +157,7 @@ describe(getTodayView, () => {
       dateEstimated: false,
       daysLeft: DAYS_TO_EXAM,
       displayName: "ENEM 2026",
+      examDocument: "notice",
       id: goal.id,
       kind: "exam",
       targetDate: goal.targetDate,

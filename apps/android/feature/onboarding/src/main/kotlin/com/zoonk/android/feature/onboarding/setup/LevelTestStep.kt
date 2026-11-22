@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -58,8 +57,8 @@ import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.VoiceAnswerButton
-import com.zoonk.android.feature.audio.VoiceAnswerLine
 import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.voiceAnswerModel
@@ -477,27 +476,12 @@ private fun ColumnScope.LevelTestSpeaking(
     val recorderKey = "level-test-sentence:$goalId"
     // Skipping while a sentence is graded would race the grade.
     val voice = voiceAnswerModel(recorderKey) { store.speakLevelTest(goalId, it) }
+    val note = recordNote(voice, navigator)
     QuestionPages(
         questionId = recorderKey,
-        read = {
-            OnboardingHeading(stringResource(R.string.onboarding_language_test_say_it))
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    sentence.sentence,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleLarge.copy(localeList = TextLocales(targetLanguage)),
-                )
-                Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-            }
-        },
-        answer = {
-            // The title already asks to say it out loud; the line says only how the take went.
-            if (voice.microphoneOff) {
-                MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
-            } else {
-                VoiceAnswerLine(voice, navigator, asksToSpeak = false)
-            }
-        },
+        read = { OnboardingHeading(sentence.sentence, sentence.translation, titleLanguage = targetLanguage) },
+        answer = {},
+        note = if (voice.microphoneOff) ({ MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), titled = false) }) else note,
     ) {
         if (!voice.microphoneOff) VoiceAnswerButton(voice, Modifier.fillMaxWidth())
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {

@@ -1,6 +1,16 @@
 import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
-import { describeContentIssues, safeParseStepContent } from "../steps/contract/step-contract";
+import {
+  drawsWithCharacters,
+  getChartProblems,
+  pointsAtFigure,
+} from "../quality/_utils/visual-references";
+import {
+  type ChallengeVisual,
+  describeContentIssues,
+  safeParseStepContent,
+} from "../steps/contract/step-contract";
+import { getChallengeEditableTexts } from "./challenge-edits";
 import { type ChallengeLessonSpec } from "./challenge-lesson-spec";
 
 type WrittenPanel = WrittenChallengeCase["panels"][number];
@@ -69,6 +79,7 @@ function toChallengeContent({
       id: node.id,
       messages: node.messages,
       prompt: node.prompt,
+      visual: optional(node.visual),
     })),
     panels: written.panels.map((panel) => toPanel(panel)),
     setting: written.setting,
@@ -101,15 +112,91 @@ function getMultilineMetricProblems(written: WrittenChallengeCase): string[] {
   );
 }
 
+function chartTexts(visual: ChallengeVisual): string[] {
+  const names = visual.series.map(({ name }) => name);
+
+  const labels =
+    visual.kind === "plot"
+      ? [
+          visual.xLabel,
+          visual.xUnit,
+          visual.yLabel,
+          visual.yUnit,
+          ...visual.references.map(({ label }) => label),
+          ...visual.series.flatMap(({ points }) => points.map(({ label }) => label)),
+        ]
+      : [visual.categoryLabel, visual.valueLabel, visual.unit, ...visual.categories];
+
+  return [visual.title, visual.source, ...names, ...labels].filter((text) => text !== null);
+}
+
+function getWrittenVisualProblems({
+  language,
+  written,
+}: {
+  language: string;
+  written: WrittenChallengeCase;
+}): string[] {
+  const pointsAtChart = (text: string) => pointsAtFigure({ kind: "chart", language, text });
+  const visuals = written.nodes.flatMap(({ visual }) => (visual ? [visual] : []));
+
+  const texts = [
+    ...getChallengeEditableTexts(written),
+    ...visuals.flatMap((visual) => chartTexts(visual)),
+  ];
+
+  const decisions = written.nodes.flatMap(({ id, choices, messages, prompt, visual }) => {
+    if (visual) {
+      return getChartProblems(visual).map((problem) => `Decision "${id}": ${problem}`);
+    }
+
+    const decisionTexts = [
+      prompt,
+      ...messages.map(({ text }) => text),
+      ...choices.map(({ text }) => text),
+    ];
+
+    return decisionTexts.some((text) => pointsAtChart(text))
+      ? [
+          `Decision "${id}" points at a chart but shows none: give that decision a chart or remove the reference.`,
+        ]
+      : [];
+  });
+
+  const endings = written.endings.flatMap(({ id, outcome }) =>
+    pointsAtChart(outcome)
+      ? [
+          `Ending "${id}" points at a chart: name the result in words, since the ending has no chart.`,
+        ]
+      : [],
+  );
+
+  return [
+    ...decisions,
+    ...endings,
+    ...(texts.some((text) => drawsWithCharacters(text))
+      ? [
+          "The challenge draws a chart or diagram with characters: use a decision's visual for data and keep the words plain.",
+        ]
+      : []),
+  ];
+}
+
 export function checkWrittenChallenge({
+  language,
   variant,
   written,
 }: {
+  language: string;
   variant: ChallengeLessonSpec["variant"];
   written: WrittenChallengeCase;
 }) {
   const parsed = safeParseStepContent("challenge", toChallengeContent({ variant, written }));
-  const problems = getMultilineMetricProblems(written);
+
+  const problems = [
+    ...getMultilineMetricProblems(written),
+    ...getWrittenVisualProblems({ language, written }),
+  ];
 
   if (!parsed.success) {
     return { content: null, problems: [...describeContentIssues(parsed.error), ...problems] };

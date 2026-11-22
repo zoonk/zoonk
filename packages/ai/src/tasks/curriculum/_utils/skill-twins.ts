@@ -152,8 +152,14 @@ export function mergeSkillTwins({
   const ordered = sortSkillsTopologically(pushPhasesAfterPrerequisites(removeCycles(merged)));
   const { phases, skills } = normalizePhases({ phases: graph.phases, skills: ordered });
 
+  const extraSkills = graph.extraSkills?.map((skill) => ({ ...skill, phase: phases.length }));
+
   return {
-    courses: normalizeCourses({ courses: graph.courses, skills }),
+    courses: normalizeCourses({
+      courses: graph.courses,
+      skills: [...skills, ...(extraSkills ?? [])],
+    }),
+    ...(extraSkills && { extraSkills }),
     estimatedHours: toHours(skills.reduce((total, skill) => total + skill.estimatedLessons, 0)),
     phases,
     skills,

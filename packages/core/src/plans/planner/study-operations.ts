@@ -2,11 +2,12 @@ import { type GoalKind } from "@zoonk/db";
 import { type PlanOperation } from "../plan-contract";
 import { type BaseChoice, type PlanState } from "./plan-state";
 
-type OperationResult = { error: "notExam" } | { state: PlanState };
+type OperationResult = { error: "extraUnavailable" | "notExam" } | { state: PlanState };
 
 const STUDY_KINDS: ReadonlySet<PlanOperation["kind"]> = new Set([
   "setBaseChoices",
   "setDifficultyBias",
+  "setExtras",
   "setFullCourse",
   "setPracticeBias",
   "setWrittenCadence",
@@ -29,12 +30,38 @@ function setBaseChoices({
   return { ...state, settings: { ...state.settings, baseChoices: [...kept, ...added] } };
 }
 
+function setExtras({
+  goalKind,
+  skillIds,
+  state,
+}: {
+  goalKind: GoalKind;
+  skillIds: readonly string[];
+  state: PlanState;
+}): OperationResult {
+  if (goalKind !== "exam") {
+    return { error: "notExam" };
+  }
+
+  const extras = [...new Set(skillIds)].toSorted();
+
+  const known = new Set([
+    ...(state.settings.extras ?? []),
+    ...(state.graph.extraSkills ?? []).map((skill) => skill.skillId),
+  ]);
+
+  return extras.some((id) => !known.has(id))
+    ? { error: "extraUnavailable" }
+    : { state: { ...state, settings: { ...state.settings, extras } } };
+}
+
 export type StudyOperation = Extract<
   PlanOperation,
   {
     kind:
       | "setBaseChoices"
       | "setDifficultyBias"
+      | "setExtras"
       | "setFullCourse"
       | "setPracticeBias"
       | "setWrittenCadence";
@@ -65,6 +92,8 @@ export function applyStudyOperation({
       return goalKind === "exam"
         ? withSettings({ fullCourse: operation.fullCourse })
         : { error: "notExam" };
+    case "setExtras":
+      return setExtras({ goalKind, skillIds: operation.skillIds, state });
     case "setBaseChoices":
       return { state: setBaseChoices({ choices: operation.choices, state }) };
     default:

@@ -1,5 +1,7 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
@@ -113,11 +115,13 @@ async function carryOpenUndo({
 export async function writePlan({
   context,
   keepsOpenUndo = false,
+  owe = oweFollowUps,
   plan,
   tx,
 }: {
   context: PlanContext;
   keepsOpenUndo?: boolean;
+  owe?: typeof oweFollowUps;
   plan: PlanWrite;
   tx: TransactionClient;
 }): Promise<void> {
@@ -174,7 +178,7 @@ export async function writePlan({
     },
   });
 
-  await savePlanItems({
+  const mockScheduled = await savePlanItems({
     existing: context.items,
     items: plan.items,
     planId: context.plan.id,
@@ -182,13 +186,34 @@ export async function writePlan({
     tx,
   });
 
+  const { goal } = context;
+  const firstPlan = context.state.graph.skills.length === 0 && plan.state.graph.skills.length > 0;
+
+  if (
+    goal.kind === "exam" &&
+    goal.status === "active" &&
+    (mockScheduled || firstPlan) &&
+    (await findActiveSubscriptionForUser({ client: tx, now: new Date(), userId: goal.userId }))
+  ) {
+    await owe({
+      db: tx,
+      followUps: [
+        {
+          input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: true },
+          kind: "prepareMockSupply",
+        },
+      ],
+      userId: goal.userId,
+    });
+  }
+
   await creditFinishedNewLessons({ context, plan, tx });
 
   await saveProposalPreviews({ previews: plan.previews, tx });
 
-  if (context.goal.kind === "exam") {
-    const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
-    await keepSummaryCurrent({ goal, plan: plan.state, tx });
+  if (goal.kind === "exam") {
+    const updated = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    await keepSummaryCurrent({ goal: updated, plan: plan.state, tx });
   }
 }
 

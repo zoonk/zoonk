@@ -247,10 +247,62 @@ final class PlanStoreTests: XCTestCase {
     await api.setPreview(preview(effect: offer.effect))
     var applied: [[PlanEdit]] = []
 
-    let check = await makeStore(api: api).addFitOffer(offer, goalId: "goal") { applied.append($0) }
+    let check = await makeStore(api: api).addOffer(offer, goalId: "goal") { applied.append($0) }
 
     XCTAssertEqual(check, .applied)
     XCTAssertEqual(applied.count, 1)
+  }
+
+  func testAnOfferThePlanNoLongerTakesReadsThePlanAgainSoItLeaves() async throws {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    var applied: [[PlanEdit]] = []
+
+    let check = await store.addOffer(try fitOffer(), goalId: "goal") { applied.append($0) }
+    await api.setChanged(true)
+    await plan.load()
+
+    XCTAssertEqual(check, .refused)
+    XCTAssertEqual(applied, [])
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
+  }
+
+  func testAnOfferThePlanAlreadyHoldsReadsThePlanAgainSoItLeaves() async throws {
+    let api = PlanAPIStub()
+    await api.setPreview(
+      PlanChangePreview(
+        effect: nil, feasibility: nil, finishDate: nil, ready: true, unchanged: true))
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    var applied: [[PlanEdit]] = []
+
+    let check = await store.addOffer(try fitOffer(), goalId: "goal") { applied.append($0) }
+    await api.setChanged(true)
+    await plan.load()
+
+    XCTAssertEqual(check, .refused)
+    XCTAssertEqual(applied, [])
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
+  }
+
+  func testARefusedChangeReadsThePlanAgain() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    await api.setChangeOutcome(.invalid)
+
+    await PlanEditor(goalId: "goal", store: store).change([.dailyMinutes(20)], sentence: "")
+    await api.setChanged(true)
+    await plan.load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
   }
 
   func testAFitOfferPutOffWhileItsCheckWaitsChangesNothing() async throws {
@@ -261,7 +313,7 @@ final class PlanStoreTests: XCTestCase {
     let store = makeStore(api: api)
     var applied: [[PlanEdit]] = []
 
-    let check = Task { await store.addFitOffer(offer, goalId: "goal") { applied.append($0) } }
+    let check = Task { await store.addOffer(offer, goalId: "goal") { applied.append($0) } }
     try await api.waitForHeldCall()
     check.cancel()
     await api.releaseHeldCall()
@@ -568,9 +620,9 @@ final class PlanStoreTests: XCTestCase {
   }
 
   /// A fixed clock and zone: a real one in the minute after midnight puts a plan's read on the day before.
-  private func fitOffer() throws -> GoalPlan.FitOffer {
+  private func fitOffer() throws -> GoalPlan.Offer {
     try JSONDecoder().decode(
-      GoalPlan.FitOffer.self,
+      GoalPlan.Offer.self,
       from: Data(
         #"""
         {"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,

@@ -8,17 +8,23 @@ import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { getSourceHost } from "../_utils/source-host";
 import { type SubjectGroup } from "./group-subjects";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
+import { useExtraLabel } from "./use-extra-label";
 
-/** Over a list's group of subjects: the notice's own grouping, or the ones the plan adds. */
+/** Over a list's group of subjects: the notice's own grouping, or what the exam doesn't test. */
 export function SubjectGroupHeading({
   group,
   id,
+  syllabus,
 }: {
   group: Pick<SubjectGroup<SyllabusSectionSubject>, "extra" | "name">;
   id: string;
+  syllabus: Pick<SyllabusView, "examDocument" | "hasNotice">;
 }) {
-  const t = useExtracted();
-  const name = group.extra ? t("Also in your plan") : group.name;
+  const extraLabel = useExtraLabel();
+
+  const name = group.extra
+    ? extraLabel({ document: syllabus.examDocument, hasNotice: Boolean(syllabus.hasNotice) })
+    : group.name;
 
   if (!name) {
     return null;

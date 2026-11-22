@@ -8,7 +8,7 @@ import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { loadGoalReferences } from "./goal-content-inputs";
 import { type GoalRunContext } from "./goal-run-context";
 import { buildGoalSkillGraph } from "./goal-skill-graph";
-import { checkGraphCoverageStep } from "./steps/goal-curriculum-steps";
+import { checkGraphCoverageStep, pruneNoticeGraphStep } from "./steps/goal-curriculum-steps";
 import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
 
 export async function buildGraph({
@@ -37,7 +37,11 @@ export async function buildGraph({
     ? await checkGraphCoverageStep({ ...context, graph: built.graph, inputs, references, scope })
     : built;
 
-  const merged = await mergeSkillTwinsStep({ ...context, graph: covered.graph, scope });
+  const { graph } = outline
+    ? await pruneNoticeGraphStep({ graph: covered.graph, outline })
+    : covered;
+
+  const merged = await mergeSkillTwinsStep({ ...context, graph, scope });
   const kept = keepOpeningFirst({ graph: merged, opening: first });
   const courseIdsByKey = { ...built.courseIdsByKey, ...kept.courseIdsByKey };
 

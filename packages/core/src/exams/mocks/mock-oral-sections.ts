@@ -1,6 +1,5 @@
 import { type BlueprintSection, sectionMinutes, toSectionRules } from "./mock-day-sections";
 import { type MockCandidate, type MockSectionPlan } from "./mock-plan";
-import { takeQuestions } from "./mock-sets";
 
 export function planListeningSection({
   pace,
@@ -13,7 +12,7 @@ export function planListeningSection({
   section: BlueprintSection;
   wanted: number;
 }): MockSectionPlan {
-  const picked = takeQuestions({ pool, wanted });
+  const picked = pool.slice(0, wanted).map((question) => question.itemId);
 
   return {
     ...toSectionRules(section),

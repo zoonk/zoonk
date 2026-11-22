@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player
 
+import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.key.Key
@@ -49,6 +50,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
 class LessonPlayerFlowTest {
@@ -909,6 +911,17 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("Leave for now?").assertIsDisplayed()
         tap("Keep writing")
         assertEquals(0, closed)
+    }
+
+    /** Enter presses what the bar shows as its main action: on a speaking screen not yet answered, Record. */
+    @Test
+    fun enterRecordsOnASpeakingScreen() {
+        play(listOf(spokenStep("say"), summaryStep("end")))
+        shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
+
+        rule.onRoot().performKeyInput { pressKey(Key.Enter) }
+
+        rule.onNodeWithText("Stop").assertExists()
     }
 
     /**

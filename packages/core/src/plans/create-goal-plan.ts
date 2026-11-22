@@ -23,6 +23,7 @@ import { trackPlanCreated } from "./_utils/track-plan-created";
 import { checkNoticeLanding, getNoticeWaitEnd } from "./notice-wait";
 import { withPlanRetry } from "./plan-conflict";
 import { listPlanSetupTasks } from "./plan-setup";
+import { followNoticeGraph } from "./planner/follow-notice-graph";
 import { toIsoDate } from "./planner/plan-calendar";
 import { type PlanGraph, parsePlanSettings, planGraphSchema } from "./planner/plan-state";
 import { getTargetDateBounds } from "./target-date-range";
@@ -123,6 +124,7 @@ async function findNoticeNextDay({
 }
 
 type GraphPlanning = {
+  droppedNoticeSkillIds: readonly string[];
   primaryCourseId?: string;
   followUp?: GoalRebuildFollowUp;
   followNotice: boolean;
@@ -133,6 +135,7 @@ type GraphPlanning = {
 };
 
 async function planFromGraph({
+  droppedNoticeSkillIds,
   followUp,
   primaryCourseId,
   followNotice,
@@ -163,12 +166,21 @@ async function planFromGraph({
   const firstCoursePlan =
     isFirst || (graph.editionCandidate && context.state.graph.editionCandidate);
 
+  const reading = followNotice
+    ? followNoticeGraph({
+        askedExtras: context.state.settings.extras,
+        current: context.state.graph,
+        droppedIds: new Set(droppedNoticeSkillIds),
+        graph: skills,
+      })
+    : skills;
+
   const state = {
     goal: { ...context.state.goal, targetDate: target.targetDate },
     graph:
       firstCoursePlan && !followUp && unpinnedCourseSourceId(goal)
-        ? { ...skills, editionCandidate: true }
-        : skills,
+        ? { ...reading, editionCandidate: true }
+        : reading,
     settings: { ...context.state.settings, noticeDate: target.noticeDate },
   };
 
@@ -270,6 +282,7 @@ async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> 
  * also when the plan was already built, for the goal's run to apply.
  */
 export async function createGoalPlan({
+  droppedNoticeSkillIds = [],
   followUp,
   primaryCourseId,
   followNotice = false,
@@ -280,6 +293,7 @@ export async function createGoalPlan({
   provenance = null,
   waitsForNotice = false,
 }: {
+  droppedNoticeSkillIds?: readonly string[];
   /**
    * The notice was read before the learner saw the plan, so a date taken from it follows its new
    * day.
@@ -309,6 +323,7 @@ export async function createGoalPlan({
 
   const built = await withPlanRetry(() =>
     planFromGraph({
+      droppedNoticeSkillIds,
       followNotice,
       followUp,
       goalId,
