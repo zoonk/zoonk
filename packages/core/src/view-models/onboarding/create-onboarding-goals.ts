@@ -13,7 +13,14 @@ export async function createOnboardingGoals(input: GoalCreateInput): Promise<Goa
     const session = await getSession();
 
     if (session) {
+      // Material sent with the request fills a goal only when its card kept none.
       await writeLearnerChange({ userId: session.user.id }, async (tx) => {
+        const kept = await tx.learnerSource.count({ where: { goalId: main.id } });
+
+        if (kept > 0) {
+          return unchanged(null);
+        }
+
         const { count } = await tx.learnerSource.updateMany({
           data: { goalId: main.id },
           where: { goalId: null, sourceId: { in: input.sourceIds }, userId: session.user.id },

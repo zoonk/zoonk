@@ -316,6 +316,25 @@ describe(createOnboardingGoals, () => {
       ]);
     });
 
+    it("links only the card's material, never more the client sends with it", async () => {
+      const user = await userFixture();
+      const [notes, extra] = await Promise.all([uploadFixture(user.id), uploadFixture(user.id)]);
+      const card = await onboardingDraftFixture({ sourceIds: [notes], userId: user.id });
+      mockSession(user.id);
+
+      const sent = { dailyMinutes: 30, goals: [cardGoal(card.id)], timeZone: "UTC" };
+      const created = await createOnboardingGoals({ ...sent, sourceIds: [extra] });
+      const again = await createOnboardingGoals({ ...sent, sourceIds: [extra] });
+
+      const goalId = created.status === "created" ? created.goals[0]?.id : undefined;
+
+      expect(again).toMatchObject({ goals: [{ id: goalId }] });
+
+      await expect(
+        findLinkedGoalIds({ sourceIds: [notes, extra], userId: user.id }),
+      ).resolves.toStrictEqual([goalId, null]);
+    });
+
     it("leaves out a choice the learner didn't make on the card", async () => {
       const user = await userFixture();
       const notes = await uploadFixture(user.id);
