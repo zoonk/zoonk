@@ -101,8 +101,8 @@ internal fun drawsDot(
 
 class PlotGeometry(
     val visual: LessonVisual.Plot,
-    width: Float,
-    text: PlotText,
+    private val width: Float,
+    private val text: PlotText,
     locale: Locale,
 ) {
     private val gutters = Gutters(visual, text, locale)
@@ -112,7 +112,9 @@ class PlotGeometry(
     val y = LinearScale(axes.second.domain, plotBottom to PLOT_TOP)
     private val plan = planReferences(left, text, visual.references, width, y)
     val plotRight = max(width - plan.width, left + 1)
-    val x = LinearScale(axes.first.domain, left to plotRight)
+    private val xLabels =
+        formatTicks(axes.first.ticks, locale, xAxis = true, unit = placeChartUnit(visual.xUnit, visual.xLabel).numberUnit)
+    val x = xScale()
 
     val series = visual.series.map { series -> series.points.map { Offset(x.toPixel(it.x), y.toPixel(it.y)) } }
 
@@ -152,11 +154,13 @@ class PlotGeometry(
      * Each number sits centered under its value. The first or last one is left out when it would reach the y axis's
      * numbers or past the drawing's edge, and the rest thin out evenly when they would touch.
      */
-    val xTicks =
+    val xTicks = placeXTicks(x)
+
+    private fun placeXTicks(scale: LinearScale): List<PlacedTick> =
         axes.first.ticks
-            .zip(formatTicks(axes.first.ticks, locale, xAxis = true, unit = placeChartUnit(visual.xUnit, visual.xLabel).numberUnit))
+            .zip(xLabels)
             .map { (value, label) ->
-                val center = x.toPixel(value)
+                val center = scale.toPixel(value)
                 val half = text.label(label) / 2
                 Triple(PlacedTick(value, label, center), center - half, center + half)
             }.filter { (_, start, end) -> start >= left - PLOT_LABEL_GAP + CORNER_CLEARANCE && end <= width }
@@ -164,6 +168,19 @@ class PlotGeometry(
                 val kept = fittingTickIndices(placed.map { (_, start, end) -> start to end }, PLOT_LABEL_GAP)
                 placed.filterIndexed { index, _ -> index in kept }.map { it.first }
             }
+
+    /**
+     * When the end labels are all that would be left and both are left out, the learner gets no x scale, so the plot
+     * narrows just enough for the first and last numbers to sit under their values.
+     */
+    private fun xScale(): LinearScale {
+        val full = LinearScale(axes.first.domain, left to plotRight)
+        if (axes.first.ticks.size < 2 || placeXTicks(full).size >= 2) return full
+
+        val start = left + max(0f, text.label(xLabels.first()) / 2 - PLOT_LABEL_GAP + CORNER_CLEARANCE)
+        val end = min(plotRight, width - text.label(xLabels.last()) / 2)
+        return if (end > start) LinearScale(axes.first.domain, start to end) else full
+    }
 
     private fun segments(): List<Pair<Offset, Offset>> {
         val lines =

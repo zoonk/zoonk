@@ -36,6 +36,21 @@ class PlotLayoutTest {
     }
 
     @Test
+    fun twoYearsAtThePlotsEndsBothKeepTheirLabels() {
+        val years =
+            SCAN.copy(
+                series = listOf(Plot.Series("Sales", Plot.Mark.Points, listOf(Plot.Point(2024.0, 810.0), Plot.Point(2025.0, 880.0)))),
+            )
+        val layout = layoutFor(years, width = 318f)
+
+        assertEquals(listOf("2024", "2025"), layout.xTicks.map { it.label })
+        layout.xTicks.forEach {
+            val half = it.label.length * 6.6f / 2
+            assertTrue("$it", it.center - half >= layout.left - PLOT_LABEL_GAP && it.center + half <= 318f)
+        }
+    }
+
+    @Test
     fun theXAxisSpansFromTheFirstDayToTheLast() {
         val layout = layoutFor(CONTROL)
 
