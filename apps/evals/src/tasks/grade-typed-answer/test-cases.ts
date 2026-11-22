@@ -310,6 +310,29 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
+    expected: { isCorrect: true, keyPoints: [true, true, true] },
+    id: "pt-language-missing-question-mark",
+    origin: "production",
+    userInput: {
+      acceptedAnswers: [
+        "Il biglietto è valido per 90 minuti dalla convalida?",
+        "Il biglietto è valido 90 minuti dalla convalida?",
+        "Il biglietto è valido per 90 minuti dal momento della convalida?",
+      ],
+      answer: "Il biglietto è valido per novanta minuti dalla convalida",
+      keyPoints: [
+        "Indique a duração de 90 minutos.",
+        "Use “dalla convalida” ou uma expressão equivalente para indicar o início da validade.",
+        "Escreva a pergunta com ponto de interrogação.",
+      ],
+      language: "pt",
+      practicedLanguage: "it",
+      question:
+        "Escreva uma mensagem perguntando: “A passagem é válida por 90 minutos a partir da validação?”",
+      sampleAnswer: "Il biglietto è valido per 90 minuti dalla convalida?",
+    },
+  },
+  {
     expected: { corrections: ["your"], isCorrect: false, keyPoints: [true, true, true] },
     id: "pt-language-form-mistake-idea-stated",
     userInput: {
