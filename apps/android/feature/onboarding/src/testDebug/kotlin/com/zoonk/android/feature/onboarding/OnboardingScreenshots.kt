@@ -185,6 +185,19 @@ class OnboardingScreenshots {
         write("start-material-full-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    /** A class test has no exam notice, so the card asks for its date when the learner knows it. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun classTest() {
+        val api =
+            FakeOnboardingApi().apply {
+                draft = understoodDraft(prompt = "biology test next week", understanding = goalsUnderstanding(title = "Biology test"))
+            }
+        compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write("understood-class-test-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     /** The card says when some of the goal's material can't be read anymore, with what's left of it or with none. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
