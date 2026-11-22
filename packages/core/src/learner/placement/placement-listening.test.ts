@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { askPlacement } from "../_test-utils/exam-test-goal";
 import { loadGoalPlan } from "../_utils/goal-skill-graph";
-import { pickSessionPlacementItems } from "./_utils/session-placement-items";
+import { pickSessionChecks } from "./_utils/session-placement-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -132,7 +132,7 @@ describe("placement on an exam whose listening is practiced only with recordings
     const { goal, onReading, user } = await setup();
     const plan = await loadGoalPlan(goal.id);
 
-    const picked = await pickSessionPlacementItems({
+    const { placementItemIds: picked } = await pickSessionChecks({
       areaShares: null,
       excludeItemIds: new Set(),
       focusAreas: [],

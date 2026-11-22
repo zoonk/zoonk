@@ -269,10 +269,3 @@ export async function pickSessionChecks({
     placementRecheckItemIds,
   };
 }
-
-export async function pickSessionPlacementItems(
-  input: Parameters<typeof pickSessionChecks>[0],
-): Promise<string[]> {
-  const picked = await pickSessionChecks(input);
-  return picked.placementItemIds;
-}

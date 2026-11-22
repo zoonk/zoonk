@@ -57,6 +57,7 @@ export async function loadLivingPlanSignals({
   return planSignals({ plan: plan.goalPlan, prerequisites: plan.prerequisites, windows: due });
 }
 
+/** Exported for its unit test only. @internal */
 export function planSignals({
   plan,
   prerequisites,

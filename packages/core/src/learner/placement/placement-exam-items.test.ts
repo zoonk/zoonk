@@ -6,7 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { askPlacement } from "../_test-utils/exam-test-goal";
-import { pickSessionPlacementItems } from "./_utils/session-placement-items";
+import { pickSessionChecks } from "./_utils/session-placement-items";
 
 async function examGoalFixture() {
   const [user, skill, blueprint] = await Promise.all([
@@ -103,7 +103,7 @@ describe("placement questions for an exam goal", () => {
       sectionTitle: null,
     }));
 
-    const picked = await pickSessionPlacementItems({
+    const { placementItemIds: picked } = await pickSessionChecks({
       excludeItemIds: new Set(),
       goal: { details: {}, examBlueprintId: blueprint.id, id: goal.id },
       limit: 4,
@@ -207,7 +207,7 @@ describe("placement questions for an exam goal", () => {
     }));
 
     const pick = (areaShares: Map<string, number> | null) =>
-      pickSessionPlacementItems({
+      pickSessionChecks({
         areaShares,
         excludeItemIds: new Set(),
         goal: { details: {}, examBlueprintId: blueprint.id, id: goal.id },
@@ -215,7 +215,7 @@ describe("placement questions for an exam goal", () => {
         quickFormat: "multipleChoice",
         skills,
         userId: user.id,
-      });
+      }).then(({ placementItemIds }) => placementItemIds);
 
     await expect(
       pick(

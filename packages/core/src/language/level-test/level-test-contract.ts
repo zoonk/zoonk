@@ -241,7 +241,7 @@ const levelResultSchema = z.object({
 
 export const LEVEL_TEST_PREPARING_SECONDS = 120;
 
-export const LEVEL_TEST_MINUTES = 4;
+const LEVEL_TEST_MINUTES = 4;
 
 /** How long the level question's quick test takes: a language goal's is its level test. */
 export function getQuickTestMinutes(kind: GoalKind): number {

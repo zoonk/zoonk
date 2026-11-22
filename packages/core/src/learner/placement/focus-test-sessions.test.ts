@@ -5,7 +5,7 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { PLAN_SHOWN, examTestGoalFixture } from "../_test-utils/exam-test-goal";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
-import { pickSessionPlacementItems } from "./_utils/session-placement-items";
+import { pickSessionChecks } from "./_utils/session-placement-items";
 import { settleFocusTestAfterSession } from "./_utils/settle-focus-test";
 import { readFocusTestRecord } from "./focus-test-state";
 
@@ -39,7 +39,7 @@ async function setup({ inferred = false }: { inferred?: boolean } = {}) {
   const plan = await loadPlacementPlan(goal.id);
 
   const pick = async (unaskedOnly: boolean) => {
-    const picked = await pickSessionPlacementItems({
+    const { placementItemIds: picked } = await pickSessionChecks({
       excludeItemIds: new Set(),
       goal,
       limit: 3,
