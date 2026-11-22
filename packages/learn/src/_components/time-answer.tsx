@@ -1,15 +1,14 @@
 "use client";
 
 import { type DaySplit } from "@zoonk/core/goals/daily-budget";
-import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
-import { type TimeLine, getEverythingTakes, getOffer, isBusyLine } from "../_utils/time-answer";
+import { type TimeLine, getOffer, isBusyLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { LineWords } from "./time-answer-lines";
-import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
+import { type GoalDate } from "./time-answer-texts";
 
 export { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
@@ -30,12 +29,11 @@ function DaySplitWords({ split }: { split: DaySplit }) {
     : t("This goal gets {main} a day and your other goals {other} together.", { main, other });
 }
 
-/** What the time and days picked get the learner, whose number is its subject. */
+/** The time the goal needs, under the time picked, with the suggestion to take while less is picked. */
 export function TimeAnswer({
   aim = null,
   date,
   exam,
-  found,
   line,
   minutes,
   onRetry,
@@ -47,8 +45,6 @@ export function TimeAnswer({
   aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
-  /** The plan's answer for the days shown, null while it's being asked for. */
-  found: PlanTimeToCover | null;
   line: TimeLine;
   minutes: number | null;
   onRetry: () => void;
@@ -58,15 +54,9 @@ export function TimeAnswer({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const texts = useTimeAnswerTexts();
   const space = useSentenceSpace();
   const failed = FAILED_KINDS.has(line.kind);
-  const offer = failed ? null : getOffer({ found, line, minutes });
-
-  const full =
-    line.kind === "everything" || (line.kind === "share" && line.share === null)
-      ? undefined
-      : getEverythingTakes(found);
+  const offer = getOffer({ line, minutes });
 
   return (
     <p
@@ -80,13 +70,6 @@ export function TimeAnswer({
       <span>
         <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
       </span>
-
-      {full !== undefined && (
-        <span>
-          {space}
-          {texts.everythingTakes({ full })}
-        </span>
-      )}
 
       {split && (
         <>
@@ -118,7 +101,12 @@ export function TimeAnswer({
             size="sm"
             variant="outline"
           >
-            {t("Use {time} to cover everything", { time: formatDuration(offer) })}
+            {t({
+              description:
+                'A button that sets the daily study time to the one we suggest. {time} is like "2 h".',
+              message: "Use {time}",
+              values: { time: formatDuration(offer) },
+            })}
           </Button>
         </>
       )}

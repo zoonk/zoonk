@@ -10,7 +10,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
-import { getMarkedTimes } from "../../_utils/time-answer";
+import { getSuggestedMinutes } from "../../_utils/time-answer";
 import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
 import { OnboardingQuestionShown } from "../onboarding-clock";
@@ -72,14 +72,12 @@ function DateLinkLabel({ dated, exam }: { dated: boolean; exam: boolean }) {
 function ScheduleTime({ schedule }: { schedule: Schedule }) {
   const t = useExtracted();
   const { found, minutes, setPicked } = schedule;
-  const marked = getMarkedTimes(found.found);
 
   return (
     <>
       <OnboardingQuestionShown step="schedule" />
 
       <DailyTimePicker
-        full={marked.full}
         label={t("Time a day")}
         minutes={minutes}
         onChange={(next) =>
@@ -92,7 +90,7 @@ function ScheduleTime({ schedule }: { schedule: Schedule }) {
           )
         }
         stale={schedule.stale}
-        suggested={marked.suggested}
+        suggested={getSuggestedMinutes(found.found)}
       />
     </>
   );
@@ -115,7 +113,6 @@ function ScheduleAnswer({
       aim={aim}
       date={getGoalDate(schedule)}
       exam={exam}
-      found={shown.found}
       line={shown.line}
       minutes={minutes}
       onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}

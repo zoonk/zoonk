@@ -7,21 +7,17 @@ import { requestWithin } from "./request-within";
 
 export type TimeToCoverAnswer =
   | { kind: "covers"; minutes: number }
-  | { kind: "focus"; minutes: number; reachedShare: number }
+  | { kind: "focus"; minutes: number }
   | { kind: "none" };
 
 export function readTimeToCover(time: PlanTimeToCover): TimeToCoverAnswer {
   const { suggested } = time;
 
-  if (suggested?.kind === "everything") {
-    return { kind: "covers", minutes: suggested.minutes };
-  }
-
-  if (!suggested || suggested.reachedShare === null) {
+  if (!suggested) {
     return { kind: "none" };
   }
 
-  return { kind: "focus", minutes: suggested.minutes, reachedShare: suggested.reachedShare };
+  return { kind: suggested.kind === "everything" ? "covers" : "focus", minutes: suggested.minutes };
 }
 
 export function useTimeToCover() {

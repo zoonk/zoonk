@@ -199,14 +199,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
       readingNotice: false,
       ready: true,
       recommendedMinutes: minutes,
-      suggested: {
-        coveredShare: 1,
-        everyTopic: true,
-        kind: "everything",
-        minutes,
-        reachedShare: 1,
-        split: null,
-      },
+      suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes, split: null },
       targetDate: targetDate.toISOString().slice(0, 10),
       targetDateNamedMonth: false,
     };

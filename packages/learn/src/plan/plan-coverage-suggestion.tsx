@@ -9,10 +9,9 @@ import {
   SuggestionLinkAction,
 } from "../_components/suggestion";
 import { useTimeAnswerTexts } from "../_components/time-answer";
-import { getEverythingTakes } from "../_utils/time-answer";
 import { useSharedMark, useSharedState } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
-import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
+import { type FindStatus, useFallsShort } from "./plan-coverage";
 import { useFocusTestOfferHref, useTakeFocusTestLabel } from "./plan-focus-test";
 import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import {
@@ -35,8 +34,6 @@ import {
 } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { readTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
-
-type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
 type CardFlags = {
   findsTime: boolean;
@@ -93,19 +90,14 @@ function useCardLines({
 }) {
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
-  const answerTexts = useTimeAnswerTexts();
   const { state } = useTimeToCover();
   const failed = intent === "date" ? t("We couldn't check what changes.") : texts.failed;
   const retryText = state.status === "building" ? texts.building : failed;
 
-  const full = getEverythingTakes(found);
-
+  // The suggestion is no more than the learner already studies, so no time is offered.
   const none =
-    found?.targetDate && full !== undefined && !offer && !flags.noDate
-      ? answerTexts.everythingTakes({
-          date: { isoDate: found.targetDate, namedMonth: found.targetDateNamedMonth },
-          full,
-        })
+    found?.suggested?.kind === "focus" && !offer && !flags.noDate
+      ? t("You already study as long as we suggest.")
       : null;
 
   const noDate = flags.noDate ? texts.noDate : null;
@@ -140,7 +132,7 @@ function CoverageBody({
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
   const keepStudying = useKeepStudyingLabel();
-  const coverage = usePlanCoverage();
+  const fallsShort = useFallsShort();
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
   const fullCourse = useFullCourse();
@@ -193,7 +185,7 @@ function CoverageBody({
         </>
       }
       menu={
-        coverage && (
+        fallsShort && (
           <OtherOptions
             onMoveDate={moveDate ? () => ask("date") : null}
             studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
@@ -215,8 +207,9 @@ function CoverageBody({
   );
 }
 
-export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
-  const coveredText = useCoveredText();
+export function CoverageSuggestion() {
+  const answerTexts = useTimeAnswerTexts();
+  const fallsShort = useFallsShort();
   const courseOffer = useCourseOffer();
   const answerOffer = useAnswerOffer();
   const { goal, plan } = usePlanScreen();
@@ -224,9 +217,9 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const { preview: storedPreview, requestPreview, setPreview } = usePlanSuggestionSlot();
   const [intent, setIntent] = useSharedState<Intent>("intent", "time");
   const asking = useSharedMark<Intent | null>("asking", null);
-  const covered = coverage ? coveredText(coverage) : "";
+  const covered = answerTexts.startsWithMost(goal.kind === "exam");
   const found = finder.answered;
-  const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
+  const answered = found && fallsShort ? answerOffer({ covered, intent, time: found }) : null;
   const offer = courseOffer ?? answered;
   const item: SlotItem = { key: "coverage", kind: "coverage" };
   const { apply, isPending } = useApplyPreview(item);
@@ -255,7 +248,7 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
     setPreview();
     const outcome = await finder.find();
     const time = outcome.status === "answered" ? outcome.time : null;
-    const asked = time && coverage ? answerOffer({ covered, intent: next, time }) : null;
+    const asked = time && fallsShort ? answerOffer({ covered, intent: next, time }) : null;
 
     if (asked && asking.read() === next) {
       void requestPreview(asked.operations);

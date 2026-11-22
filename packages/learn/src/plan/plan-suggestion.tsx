@@ -18,7 +18,7 @@ import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
 import { RequestScope } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
-import { usePlanCoverage, useTimeEnough } from "./plan-coverage";
+import { useFallsShort, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
 import { ExamChoiceSuggestion } from "./plan-exam-choices";
 import { FitLessonsSuggestion } from "./plan-fit-suggestion";
@@ -46,13 +46,13 @@ function isLearnerOnSlot(): boolean {
 
 function useTimeItems(): SlotItem[] {
   const { plan } = usePlanScreen();
-  const coverage = usePlanCoverage();
+  const fallsShort = useFallsShort();
   const timeEnough = useTimeEnough();
   const open = plan.status?.kind !== "pastDate";
 
   return [
     open && plan.fitOffer !== null && { key: "fitLessons", kind: "fitLessons" as const },
-    open && coverage !== null && !timeEnough && { key: "coverage", kind: "coverage" as const },
+    open && fallsShort && !timeEnough && { key: "coverage", kind: "coverage" as const },
   ].filter((item) => item !== false);
 }
 
@@ -179,7 +179,6 @@ function DoesNotFitSuggestion() {
 }
 
 function SlotSuggestion({ item }: { item: SlotItem }) {
-  const coverage = usePlanCoverage();
   const { host } = usePlanSuggestionSlot();
 
   switch (item.kind) {
@@ -197,7 +196,7 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
         )
       );
     case "coverage":
-      return <CoverageSuggestion coverage={coverage} />;
+      return <CoverageSuggestion />;
     case "finished":
       return (
         host.next && (

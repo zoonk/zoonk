@@ -1,16 +1,15 @@
 import { useExtracted } from "next-intl";
 import { useGoalDateValues } from "../_utils/iso-date";
-import { useFormatShare } from "../_utils/percent";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFinishSentence } from "./finish-sentence";
 import { type GoalDate } from "./time-answer-texts";
 
-type DatedLine = Extract<TimeLine, { kind: "everything" | "pastDate" | "share" }>;
+type DatedLine = Extract<TimeLine, { kind: "pastDate" | "suggestion" }>;
 
 type FinishLine = Extract<TimeLine, { kind: "finish" | "noFinish" }>;
 
-const DATED_KINDS = new Set<TimeLine["kind"]>(["everything", "pastDate", "share"]);
+const DATED_KINDS = new Set<TimeLine["kind"]>(["pastDate", "suggestion"]);
 const FINISH_KINDS = new Set<TimeLine["kind"]>(["finish", "noFinish"]);
 
 function isDatedLine(line: TimeLine): line is DatedLine {
@@ -21,53 +20,54 @@ function isFinishLine(line: TimeLine): line is FinishLine {
   return FINISH_KINDS.has(line.kind);
 }
 
-/**
- * Under a time picker, whose number is the sentence's subject: the first lessons it reaches, of
- * every topic or of a share that stands out.
- */
-function ReachedWords({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) {
+/** The time a dated goal needs, which the picker can take: the same words whatever time is picked. */
+function SuggestionWords({
+  date,
+  exam,
+  line,
+}: {
+  date: GoalDate;
+  exam: boolean;
+  line: Extract<TimeLine, { kind: "suggestion" }>;
+}) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
-  const formatShare = useFormatShare();
-  const shown = goalDate(date);
+  const formatDuration = useFormatDuration();
+  const time = formatDuration(line.minutes);
 
-  if (value >= 1) {
+  if (line.focus) {
     return exam
       ? t({
           description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            "When studying everything by the exam would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what the exam asks most first.",
           message:
-            "{dateKind, select, month {Covers the first lessons of every exam topic by {date}.} other {Covers the first lessons of every exam topic by {date}.}}",
-          values: shown,
+            "We suggest {time} a day. Your plan starts with what matters most for your exam.",
+          values: { time },
         })
       : t({
           description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            "When studying everything by the goal's date would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what matters most first.",
           message:
-            "{dateKind, select, month {Covers the first lessons of every part of your goal by {date}.} other {Covers the first lessons of every part of your goal by {date}.}}",
-          values: shown,
+            "We suggest {time} a day. Your plan starts with what matters most for your goal.",
+          values: { time },
         });
   }
 
-  const values = {
-    ...shown,
-    b: (chunks: React.ReactNode) => <strong className="font-semibold">{chunks}</strong>,
-    share: formatShare(value),
-  };
+  const values = { ...goalDate(date), time };
 
   return exam
-    ? t.rich({
+    ? t({
         description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.',
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".',
         message:
-          "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}.}}",
+          "{dateKind, select, month {We suggest {time} a day to be ready for your exam by {date}.} other {We suggest {time} a day to be ready for your exam by {date}.}}",
         values,
       })
-    : t.rich({
+    : t({
         description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".',
         message:
-          "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your goal by {date}.} other {Covers the first lessons of about <b>{share}</b> of your goal by {date}.}}",
+          "{dateKind, select, month {We suggest {time} a day to reach your goal by {date}.} other {We suggest {time} a day to reach your goal by {date}.}}",
         values,
       });
 }
@@ -75,44 +75,17 @@ function ReachedWords({ date, exam, value }: { date: GoalDate; exam: boolean; va
 function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
-  const shown = goalDate(date);
 
   switch (line.kind) {
-    case "everything":
-      if (!line.whole) {
-        return t({
-          description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-          message:
-            "{dateKind, select, month {Covers everything in your plan by {date}.} other {Covers everything in your plan by {date}.}}",
-          values: shown,
-        });
-      }
-
-      return exam
-        ? t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}",
-            values: shown,
-          })
-        : t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}",
-            values: shown,
-          });
-    case "share":
-      return line.share !== null && <ReachedWords date={date} exam={exam} value={line.share} />;
+    case "suggestion":
+      return <SuggestionWords date={date} exam={exam} line={line} />;
     case "pastDate":
       return t({
         description:
           'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
         message:
           "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}",
-        values: shown,
+        values: goalDate(date),
       });
     default:
       return line satisfies never;
@@ -142,18 +115,8 @@ function FinishWords({
   }
 }
 
-function StatusWords({
-  dated,
-  line,
-  minutes,
-}: {
-  dated: boolean;
-  line: Exclude<TimeLine, DatedLine | FinishLine>;
-  minutes: number | null;
-}) {
+function StatusWords({ line }: { line: Exclude<TimeLine, DatedLine | FinishLine> }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const time = formatDuration(minutes ?? 0);
 
   switch (line.kind) {
     case "noDays":
@@ -163,13 +126,9 @@ function StatusWords({
     case "findFailed":
       return t("We couldn't work out the time your goal needs.");
     case "asking":
-      return dated
-        ? t("Working out what {time} a day covers…", { time })
-        : t("Working out when you'd finish…");
+      return t("Working out when you'd finish…");
     case "askFailed":
-      return dated
-        ? t("We couldn't work out what {time} a day covers.", { time })
-        : t("We couldn't work out when you'd finish.");
+      return t("We couldn't work out when you'd finish.");
     default:
       return line satisfies never;
   }
@@ -196,5 +155,5 @@ export function LineWords({
     return <FinishWords aim={aim} line={line} minutes={minutes} />;
   }
 
-  return <StatusWords dated={date !== null} line={line} minutes={minutes} />;
+  return <StatusWords line={line} />;
 }

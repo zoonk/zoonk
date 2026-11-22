@@ -12,7 +12,7 @@ import {
   type GoalsTogether,
   type StudyWeek,
   asksAboutTime,
-  getShownAnswer,
+  getShownLine,
   getShownMinutes,
   toFindWeek,
   toStudyWeek,
@@ -173,7 +173,7 @@ export function useSchedule({
 
   const timeAdvice = usePlanAnswer({
     ask: () => askAdvice(),
-    enabled: hasDays && asksAboutTime({ dated, found: found.found, minutes }),
+    enabled: hasDays && asksAboutTime({ dated, minutes }),
     key: JSON.stringify({ ...asked, aim, dailyMinutes: minutes }),
     paused,
     planMade,
@@ -200,7 +200,6 @@ export function useSchedule({
   };
 
   return {
-    advice,
     dated,
     draft: {
       days: week.days,
@@ -216,10 +215,7 @@ export function useSchedule({
     picked,
     readAimEnd,
     setPicked,
-    shown: getShownAnswer({
-      last: { found: lastAnswers.found, line: lineAt(lastAnswers) },
-      now: { found: found.found, line },
-    }),
+    shown: getShownLine({ last: lineAt(lastAnswers), now: line }),
     split: hasDays && minutes !== null ? getDaySplit({ budget: minutes, ...together }) : null,
     stale:
       hasDays &&

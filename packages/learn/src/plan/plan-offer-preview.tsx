@@ -240,16 +240,10 @@ export function useAnswerOffer() {
     }
 
     if (answer.kind === "focus") {
-      // A learner who already studies longer is never asked to cut down: what everything takes is said instead.
+      // A learner who already studies longer is never asked to cut down.
       return answer.minutes > plan.schedule.dailyMinutes
         ? {
-            description: [
-              answerTexts.timeCovers({
-                exam: goal.kind === "exam",
-                minutes: answer.minutes,
-                value: answer.reachedShare,
-              }),
-            ],
+            description: [answerTexts.startsWithMost(goal.kind === "exam")],
             operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
             title: answerTexts.suggestTitle(answer.minutes),
           }
