@@ -10,7 +10,6 @@ import {
   useCanRecord,
   useVoiceRecorder,
 } from "@zoonk/ui/hooks/voice-recorder";
-import { cn } from "@zoonk/ui/lib/utils";
 import { MicIcon, MicOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
