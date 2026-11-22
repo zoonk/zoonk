@@ -132,6 +132,7 @@ type RecordGrade = {
 type AdmittedGrade = RecordGrade & {
   conditions: EssayGradeConditions;
   grade: Awaited<ReturnType<typeof gradeWriting>>;
+  mockPrompt?: ReturnType<typeof writtenAnswerSchema.parse>["mockPrompt"];
 };
 
 async function confirmAdmission(
@@ -199,6 +200,7 @@ export async function recordEssayGrade(
     grade,
     item,
     mockExamId,
+    mockPrompt,
     studySessionId,
     text,
     timeZone,
@@ -225,6 +227,7 @@ export async function recordEssayGrade(
         examBlueprintId: item.examBlueprintId,
         grade,
         itemId: item.id,
+        ...(mockPrompt && { mockPrompt }),
         text,
         writing: writtenAnswerSchema.shape.writing.parse({
           ...basis,

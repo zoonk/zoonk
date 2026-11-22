@@ -5,6 +5,7 @@ import { claimEssayGrades, releaseEssayGradeClaims } from "../essays/_utils/essa
 import { gradeWriting, recordEssayGrade } from "../essays/_utils/grade-essay-answer";
 import { getWritingAttemptId } from "../essays/_utils/writing-attempt-id";
 import { readMockEssayText } from "./_utils/mock-answers";
+import { loadSkillAreas } from "./_utils/mock-candidates";
 import { loadMockEssayItems } from "./_utils/mock-essays";
 import { getEssayItemIds } from "./_utils/mock-sections";
 import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
@@ -23,25 +24,23 @@ async function listUngradedEssays({
 }) {
   const itemIds = getEssayItemIds(mock.conditions);
 
-  const [items, graded] = await Promise.all([
-    loadMockEssayItems(itemIds),
-    prisma.attempt.findMany({
-      select: { itemId: true },
-      where: { itemId: { in: itemIds }, mockExamId: mock.id },
-    }),
-  ]);
+  const asked = itemIds.map((itemId) => ({
+    attemptId: getWritingAttemptId({ admissionId, itemId }),
+    itemId,
+  }));
+  const graded = await prisma.attempt.findMany({
+    select: { id: true },
+    where: { id: { in: asked.map(({ attemptId }) => attemptId) }, mockExamId: mock.id },
+  });
+  const saved = new Set(graded.map(({ id }) => id));
+  const ungraded = asked.filter(({ attemptId }) => !saved.has(attemptId));
+  const items = await loadMockEssayItems(ungraded.map(({ itemId }) => itemId));
 
-  return itemIds.flatMap((itemId) => {
+  return ungraded.flatMap(({ attemptId, itemId }) => {
     const essay = items.get(itemId);
     const draft = mock.answers.find((answer) => answer.itemId === itemId);
     const text = readMockEssayText(draft?.answer);
-    const isGraded = graded.some((attempt) => attempt.itemId === itemId);
-
-    const attemptId = getWritingAttemptId({ admissionId, itemId });
-
-    return essay && text && !isGraded
-      ? [{ ...essay, attemptId, durationMs: draft?.durationMs ?? 0, text }]
-      : [];
+    return essay && text ? [{ ...essay, attemptId, durationMs: draft?.durationMs ?? 0, text }] : [];
   });
 }
 
@@ -58,12 +57,19 @@ async function gradeEssays({
   owned: OwnedMock;
   timeZone: string;
 }) {
+  const areas = owned.goal && essays.length > 0 ? await loadSkillAreas(owned.goal.id) : null;
+
   const grades = await Promise.allSettled(
     essays.map(async (essay) => {
       const common = {
         durationMs: essay.durationMs,
         item: essay.item,
         mockExamId: mock.id,
+        mockPrompt: {
+          area: areas?.get(essay.item.skillId) ?? null,
+          context: essay.content.context,
+          question: essay.content.question,
+        },
         studySessionId: owned.block?.sessionId ?? null,
         text: essay.text,
         timeZone,

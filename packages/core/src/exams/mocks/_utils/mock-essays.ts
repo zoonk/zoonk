@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, type Item, prisma } from "@zoonk/db";
 import { type EssayContent, readEssayContent } from "../../essays/_utils/essay-content";
+import { getWritingAttemptId } from "../../essays/_utils/writing-attempt-id";
 import { writingPromptSchema, writtenAnswerSchema } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
 import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
@@ -60,29 +61,54 @@ export async function loadMockEssayViews({
     return { numericBlankItems: new Set(), views: [] };
   }
 
-  const [items, attempts] = await Promise.all([
-    loadMockEssayItems(itemIds),
-    prisma.attempt.findMany({
-      select: { answer: true, itemId: true },
-      where: { itemId: { in: itemIds }, mockExamId: mock.id },
+  const admissionId = mock.conditions.writingAdmissionId;
+  const attempts = admissionId
+    ? await prisma.attempt.findMany({
+        select: { answer: true },
+        where: {
+          id: { in: itemIds.map((itemId) => getWritingAttemptId({ admissionId, itemId })) },
+          mockExamId: mock.id,
+          userId: mock.userId,
+        },
+      })
+    : [];
+
+  const graded = new Map(
+    attempts.flatMap(({ answer }) => {
+      const saved = writtenAnswerSchema.safeParse(answer).data;
+      return saved?.mockPrompt ? [[saved.itemId, saved] as const] : [];
     }),
-  ]);
+  );
+
+  const items = await loadMockEssayItems(itemIds.filter((itemId) => !graded.has(itemId)));
 
   const numericBlankItems = new Set<string>();
 
   const views = itemIds.flatMap((itemId): MockEssayView[] => {
+    const draft = mock.answers.find((answer) => answer.itemId === itemId);
+    const saved = graded.get(itemId);
+
+    if (saved?.mockPrompt) {
+      return [
+        {
+          ...saved.mockPrompt,
+          grade: saved.grade,
+          itemId,
+          status: "graded",
+          text: saved.text,
+          unsure: draft?.flagged ?? false,
+          writing: writingPromptSchema.parse(saved.writing),
+        },
+      ];
+    }
+
     const essay = items.get(itemId);
 
     if (!essay) {
       return [];
     }
 
-    const draft = mock.answers.find((answer) => answer.itemId === itemId);
     const text = readMockEssayText(draft?.answer);
-    const recorded = attempts.find((attempt) => attempt.itemId === itemId);
-
-    const grade = writtenAnswerSchema.safeParse(recorded?.answer).data?.grade ?? null;
-
     const basis = essay.content.writing;
     const writing = writingPromptSchema.parse(basis);
 
@@ -94,10 +120,10 @@ export async function loadMockEssayViews({
       {
         area: areas.get(essay.item.skillId) ?? null,
         context: essay.content.context,
-        grade,
+        grade: null,
         itemId,
         question: essay.content.question,
-        status: getEssayStatus({ grade, text }),
+        status: text ? "pending" : "blank",
         text,
         unsure: draft?.flagged ?? false,
         writing,
@@ -106,18 +132,4 @@ export async function loadMockEssayViews({
   });
 
   return { numericBlankItems, views };
-}
-
-function getEssayStatus({
-  grade,
-  text,
-}: {
-  grade: MockEssayView["grade"];
-  text: string | null;
-}): MockEssayView["status"] {
-  if (grade) {
-    return "graded";
-  }
-
-  return text ? "pending" : "blank";
 }

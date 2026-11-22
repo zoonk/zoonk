@@ -226,6 +226,9 @@ export const writtenAnswerSchema = z.object({
   examBlueprintId: uuidSchema().nullable(),
   grade: writingResultSchema.transform(withSavedNextStep),
   itemId: uuidSchema(),
+  mockPrompt: z
+    .object({ area: z.string().nullable(), context: z.string().nullable(), question: z.string() })
+    .optional(),
   text: z.string(),
   writing: writtenItemSchema
     .omit({ aspects: true, chosenSubjects: true, subject: true })

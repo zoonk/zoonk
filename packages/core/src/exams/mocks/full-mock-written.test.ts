@@ -9,6 +9,7 @@ import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadWrittenSamples } from "../../learner/facts/written-samples";
+import { loadWritingEvidence } from "../../learner/written-evidence";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
@@ -16,6 +17,7 @@ import { readEssayContent } from "../essays/_utils/essay-content";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
+import { loadExamHistory } from "../view/_utils/exam-history";
 import { CGU, CGU_WRITTEN_GRADING } from "./_test-utils/cgu-written";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
@@ -140,7 +142,7 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
 
   mockSession(user.id);
 
-  return { blueprint, goal, long, objective, prompt, short, user };
+  return { blueprint, goal, long, objective, prompt, short, user, writing };
 }
 
 async function start(goalId: string, shape: MockShape) {
@@ -352,7 +354,7 @@ describe("written mock sittings", () => {
   });
 
   it("reuses the running sitting and admits both prompts once, then keeps an opened blank prompt out of the next sitting", async () => {
-    const { blueprint, goal, prompt, short, user } = await setup({ shortOnly: true });
+    const { blueprint, goal, prompt, short, user, writing } = await setup({ shortOnly: true });
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
@@ -532,23 +534,35 @@ describe("written mock sittings", () => {
     });
 
     async function readHistory() {
-      const [syllabus, detail, projection, samples] = await Promise.all([
-        getSyllabusView({ goalId: goal.id }),
-        getWritingAttempt(attempt.id),
-        loadWrittenProjection({
-          goalId: goal.id,
-          objective: null,
-          structure: CGU,
-          userId: user.id,
-        }),
-        loadWrittenSamples({
-          scope: { examBlueprintId: goal.examBlueprintId, firstDraft: true, wholeAnswers: true },
-          userId: user.id,
-        }),
-      ]);
+      const [syllabus, detail, projection, samples, finished, history, evidence] =
+        await Promise.all([
+          getSyllabusView({ goalId: goal.id }),
+          getWritingAttempt(attempt.id),
+          loadWrittenProjection({
+            goalId: goal.id,
+            objective: null,
+            structure: CGU,
+            userId: user.id,
+          }),
+          loadWrittenSamples({
+            scope: { examBlueprintId: goal.examBlueprintId, firstDraft: true, wholeAnswers: true },
+            userId: user.id,
+          }),
+          view(id),
+          loadExamHistory({ goalId: goal.id, today: new Date() }),
+          loadWritingEvidence({
+            examBlueprintId: blueprint.id,
+            skillIds: new Set([writing.id]),
+            tx: prisma,
+            userId: user.id,
+          }),
+        ]);
 
       return {
         detail,
+        evidence,
+        mock: { essays: finished.essays, written: finished.result?.points?.written },
+        mockHistory: history.mocks,
         history:
           syllabus.status === "ready" &&
           syllabus.syllabus.writtenPractice?.subjects?.map(({ answers, trend }) => ({
@@ -564,6 +578,12 @@ describe("written mock sittings", () => {
 
     expect(before).toMatchObject({
       detail: { attempt: { writingTask: { lines: 30, number: 1, total: 2 } }, status: "ready" },
+      evidence: [{ attemptId: attempt.id, kind: "writing", skillId: writing.id }],
+      mock: {
+        essays: [{ itemId: short.id, status: "graded" }, { status: "blank" }],
+        written: [{ name: "Written test" }],
+      },
+      mockHistory: [{ blockId: id }],
       samples: [{ id: attempt.id, itemId: short.id }],
     });
 
@@ -577,6 +597,8 @@ describe("written mock sittings", () => {
       data: {
         content: {
           ...gradedContent,
+          context: "Revised context",
+          question: "Revised question",
           writing: { ...gradedContent.writing, title: "Updated prompt", unit: "drill" },
         },
         examBlueprintId: null,
@@ -611,6 +633,9 @@ describe("written mock sittings", () => {
     const afterCorrection = await readHistory();
     expect(afterCorrection.history).toStrictEqual(before.history);
     expect(afterCorrection.detail).toStrictEqual(before.detail);
+    expect(afterCorrection.mock).toStrictEqual(before.mock);
+    expect(afterCorrection.mockHistory).toStrictEqual(before.mockHistory);
+    expect(afterCorrection.evidence).toStrictEqual(before.evidence);
     section.name = "Replacement written part";
     await prisma.examBlueprint.update({
       data: { structure: corrected },
