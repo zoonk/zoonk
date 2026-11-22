@@ -40,6 +40,7 @@ export type {
   FollowUp,
   GenerationStatus,
   Goal,
+  GoalSource,
   InstrumentWaitlistEntry,
   Item,
   ItemSet,

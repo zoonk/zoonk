@@ -155,14 +155,8 @@ export async function findKeptReading(draft: UnderstandingRunDraft): Promise<Goa
   return cached ? toReading({ draft, result: cached }) : null;
 }
 
-/** Sharing an upload during the run moves the draft to the shared copy, so the ids are read now. */
 async function readMaterial(draft: UnderstandingRunDraft) {
-  const current = await prisma.onboardingDraft.findUnique({
-    select: { sourceIds: true, userId: true },
-    where: { id: draft.id },
-  });
-
-  const sources = current ? await loadDraftMaterial(current) : [];
+  const sources = await loadDraftMaterial(draft);
   const overview = formatReadingMaterial({ sources });
   return overview === null ? null : { intent: draft.materialIntent, overview };
 }

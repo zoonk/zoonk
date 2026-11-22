@@ -20,6 +20,7 @@ import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
 import { courseFollowersFilter } from "../products/course-release";
 import { readsProductPage } from "../products/product-pages";
+import { linkGoalSources } from "../sources/link-goal-sources";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
 
@@ -76,7 +77,7 @@ export async function countActiveSourceGoals(sourceId: string): Promise<number> 
   return prisma.goal.count({
     where: {
       OR: [
-        { learnerSources: { some: { sourceId } } },
+        { goalSources: { some: { sourceId } } },
         { examBlueprint: { sourceId } },
         ...productGoals,
         ...lessonGoals,
@@ -234,14 +235,24 @@ export async function linkGoalToResearchSources({
     return;
   }
 
-  await prisma.learnerSource.createMany({
-    data: sourceIds.map((sourceId) => ({
+  await writeLearnerChange({ userId: goal.userId }, async (tx) => {
+    const kept = await tx.learnerSource.createMany({
+      data: sourceIds.map((sourceId) => ({
+        origin: "research" as const,
+        sourceId,
+        userId: goal.userId,
+      })),
+      skipDuplicates: true,
+    });
+
+    const linked = await linkGoalSources(tx, {
       goalId,
       origin: "research",
-      sourceId,
+      sourceIds,
       userId: goal.userId,
-    })),
-    skipDuplicates: true,
+    });
+
+    return kept.count + linked === 0 ? unchanged(null) : null;
   });
 }
 
@@ -249,14 +260,14 @@ export async function getResearchGoal(goalId: string) {
   const goal = await prisma.goal.findUnique({
     select: {
       details: true,
-      id: true,
-      kind: true,
-      language: true,
-      learnerSources: {
+      goalSources: {
         orderBy: { createdAt: "asc" },
         select: { sourceId: true },
         where: { origin: "upload" },
       },
+      id: true,
+      kind: true,
+      language: true,
       prompt: true,
       targetDate: true,
       title: true,
@@ -269,12 +280,12 @@ export async function getResearchGoal(goalId: string) {
     return null;
   }
 
-  const { learnerSources, targetDate: _targetDate, ...rest } = goal;
+  const { goalSources, targetDate: _targetDate, ...rest } = goal;
 
   return {
     ...rest,
     referenceSyllabi: getReferenceSyllabusNeed(goal),
-    uploadIds: learnerSources.map((link) => link.sourceId),
+    uploadIds: goalSources.map((link) => link.sourceId),
   };
 }
 

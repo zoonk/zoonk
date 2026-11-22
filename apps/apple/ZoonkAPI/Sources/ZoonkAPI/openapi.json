@@ -21604,6 +21604,16 @@
               }
             }
           },
+          "422": {
+            "description": "`MATERIAL_UNAVAILABLE`: ids in `sourceIds` name none of the learner's uploads, listed in `details.sourceIds`. Nothing is saved or charged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Too many requests",
             "content": {
@@ -22882,7 +22892,7 @@
     },
     "/research": {
       "post": {
-        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers one request, so when research asks again, the answer needs a new upload.",
+        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once, so when research asks that goal again, the answer needs a new upload; the same upload can still answer another goal's request.",
         "operationId": "createResearch",
         "security": [
           {
@@ -22948,7 +22958,7 @@
             }
           },
           "409": {
-            "description": "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
+            "description": "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer to this goal (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
             "content": {
               "application/json": {
                 "schema": {
@@ -23136,10 +23146,12 @@
             "in": "query",
             "name": "goalId",
             "schema": {
+              "description": "Only the material this goal of the learner's reads",
               "type": "string",
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            }
+            },
+            "description": "Only the material this goal of the learner's reads"
           }
         ],
         "responses": {
@@ -31464,7 +31476,7 @@
             ]
           },
           "sourceIds": {
-            "description": "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id that isn't one of the learner's uploads, or a repeated one, is left out; the draft's `sources` lists what was kept",
+            "description": "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id `POST /v1/uploads` returned keeps working after the upload is merged into a shared copy. When an id names none of the learner's uploads, the start is refused with 422 `MATERIAL_UNAVAILABLE` before anything is charged; a repeated id counts once",
             "maxItems": 5,
             "type": "array",
             "items": {
@@ -92342,6 +92354,10 @@
               "understand"
             ]
           },
+          "materialMissing": {
+            "type": "boolean",
+            "description": "Material sent with the words can't be read: an id no longer names one of the learner's uploads, or an upload holds no text. `sources` leaves it out, and the words are read without it"
+          },
           "prompt": {
             "type": "string",
             "description": "What the learner typed"
@@ -92351,7 +92367,7 @@
             "items": {
               "$ref": "#/components/schemas/OnboardingDraftSource"
             },
-            "description": "The learner's material sent with the words, in the order they attached it, read together with them. The draft's main goal is created with it. Empty when none was sent"
+            "description": "The learner's material read together with the words, in the order they attached it: the uploads `sourceIds` named that hold text, each as it is now (a merged upload is its shared copy). The draft's main goal is created with every upload `sourceIds` still names. Empty when none was sent"
           },
           "status": {
             "type": "string",
@@ -92382,6 +92398,7 @@
           "goalId",
           "id",
           "materialIntent",
+          "materialMissing",
           "prompt",
           "sources",
           "status",
@@ -96659,11 +96676,14 @@
                   "format": "date-time",
                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                 },
-                "goalId": {
-                  "nullable": true,
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                "goalIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "description": "The learner's goals that read it, oldest link first; one source can serve several goals"
                 },
                 "origin": {
                   "type": "string",
@@ -96678,7 +96698,7 @@
               },
               "required": [
                 "addedAt",
-                "goalId",
+                "goalIds",
                 "origin",
                 "source"
               ],

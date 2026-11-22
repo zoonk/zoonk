@@ -64,7 +64,7 @@ export const goalUnderstandingInputSchema = z
       .optional()
       .meta({
         description:
-          "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id that isn't one of the learner's uploads, or a repeated one, is left out; the draft's `sources` lists what was kept",
+          "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id `POST /v1/uploads` returned keeps working after the upload is merged into a shared copy. When an id names none of the learner's uploads, the start is refused with 422 `MATERIAL_UNAVAILABLE` before anything is charged; a repeated id counts once",
       }),
     timeZone: timeZoneSchema,
   })
@@ -151,8 +151,10 @@ export type OnboardingDraftView = {
   id: string;
   /** What the learner wants from `sources`; null when they didn't choose or sent none. */
   materialIntent: MaterialIntent | null;
+  /** Material sent with the words that can't be read: it no longer names one of the learner's uploads, or holds no text. */
+  materialMissing: boolean;
   prompt: string;
-  /** The learner's material sent with the words, in the order they attached it; `title` is "" for pasted text. */
+  /** The material read with the words, in the order the learner attached it; `title` is "" for pasted text. */
   sources: DraftSource[];
   status: (typeof ONBOARDING_DRAFT_STATUSES)[number];
   /** Counts the learner's today, which a `targetDate` fix must come after. */

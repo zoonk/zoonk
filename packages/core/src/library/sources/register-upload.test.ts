@@ -415,20 +415,43 @@ describe(registerSourceUpload, () => {
     const user = await userFixture();
     const text = uniqueText();
 
-    const shared = await sourceFixture({
-      contentHash: hashDocument({ bytes: new TextEncoder().encode(text), text }),
+    const [researched, uploadedFor, shared] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+      sourceFixture({ contentHash: hashDocument({ bytes: new TextEncoder().encode(text), text }) }),
+    ]);
+
+    await learnerSourceFixture({
+      goalId: researched.id,
+      origin: "research",
+      sourceId: shared.id,
+      userId: user.id,
     });
 
-    await learnerSourceFixture({ origin: "research", sourceId: shared.id, userId: user.id });
     mockSession(user.id);
 
     await expect(
-      registerSourceUpload({ kind: "text", language: "pt", text }),
+      registerSourceUpload({ goalId: uploadedFor.id, kind: "text", language: "pt", text }),
     ).resolves.toMatchObject({ source: { id: shared.id }, status: "ready" });
 
-    await expect(
+    const [links, attached] = await Promise.all([
       prisma.learnerSource.findMany({ select: { origin: true }, where: { userId: user.id } }),
-    ).resolves.toStrictEqual([{ origin: "upload" }]);
+      prisma.goalSource.findMany({
+        select: { goalId: true, origin: true },
+        where: { sourceId: shared.id },
+      }),
+    ]);
+
+    expect(links).toStrictEqual([{ origin: "upload" }]);
+
+    expect(attached).toHaveLength(2);
+
+    expect(attached).toStrictEqual(
+      expect.arrayContaining([
+        { goalId: researched.id, origin: "research" },
+        { goalId: uploadedFor.id, origin: "upload" },
+      ]),
+    );
   });
 
   it("charges each download when the same link is sent twice at once, and stores it once", async () => {
@@ -583,12 +606,49 @@ describe(registerSourceUpload, () => {
       text: uniqueText(),
     });
 
-    const links = await prisma.learnerSource.findMany({
-      orderBy: { createdAt: "asc" },
-      where: { userId: user.id },
+    const [links, attached] = await Promise.all([
+      prisma.learnerSource.count({ where: { userId: user.id } }),
+      prisma.goalSource.findMany({
+        select: { goalId: true },
+        where: { source: { learnerSources: { some: { userId: user.id } } } },
+      }),
+    ]);
+
+    expect(links).toBe(2);
+    expect(attached).toStrictEqual([{ goalId: ownGoal.id }]);
+  });
+
+  it("adds the same upload to another of the learner's goals, keeping it on the first", async () => {
+    const user = await userFixture();
+
+    const [first, second] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const text = uniqueText();
+    mockSession(user.id);
+
+    const upload = await registerSourceUpload({
+      goalId: first.id,
+      kind: "text",
+      language: "pt",
+      text,
     });
 
-    expect(links.map((link) => link.goalId)).toStrictEqual([ownGoal.id, null]);
+    await registerSourceUpload({ goalId: second.id, kind: "text", language: "pt", text });
+
+    const sourceId = upload.status === "ready" ? upload.source.id : "";
+
+    await expect(
+      prisma.goalSource.findMany({
+        orderBy: { goalId: "asc" },
+        select: { goalId: true, origin: true },
+        where: { sourceId },
+      }),
+    ).resolves.toStrictEqual(
+      [first.id, second.id].toSorted().map((goalId) => ({ goalId, origin: "upload" })),
+    );
   });
 
   it("stops at the plan's daily upload allowance and keeps no file", async () => {

@@ -6,8 +6,8 @@ import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
 import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { findOwnSources } from "../../library/sources/own-sources";
 import { getSession } from "../../users/get-session";
-import { findOwnUploadIds } from "./_utils/draft-material";
 import { completeDraft, toDraftView } from "./_utils/onboarding-draft";
 import { findCompletableUnderstanding } from "./_utils/understanding-cache";
 import { type GoalUnderstandingInput, type OnboardingDraftView } from "./onboarding-contract";
@@ -15,12 +15,13 @@ import { type GoalUnderstandingInput, type OnboardingDraftView } from "./onboard
 export type StartGoalUnderstandingResult =
   | RefusedUsage
   | { status: "unauthorized" }
+  | { sourceIds: string[]; status: "materialUnavailable" }
   | { draft: OnboardingDraftView; status: "understanding" | "understood" };
 
 /**
  * Requires a session, including guests; understands this learner's recent words at once unless they
  * name an exam or come with material, otherwise claims AI allowance and returns a draft to start.
- * The draft keeps only material that's the learner's own uploads.
+ * Material that names none of the learner's uploads is refused, with its ids, before any claim.
  */
 export async function startGoalUnderstanding(
   input: GoalUnderstandingInput,
@@ -37,10 +38,17 @@ export async function startGoalUnderstanding(
     return { limit: guestLimit, status: "limitReached" };
   }
 
-  const sourceIds = await findOwnUploadIds({
+  const material = await findOwnSources({
+    origin: "upload",
     sourceIds: input.sourceIds ?? [],
     userId: session.user.id,
   });
+
+  if (material.unresolved.length > 0) {
+    return { sourceIds: material.unresolved, status: "materialUnavailable" };
+  }
+
+  const sourceIds = material.resolved;
 
   // The words alone don't say what a reading with material found, so it's never reused.
   const cached =

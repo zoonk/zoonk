@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import {
   type ExamBlueprint,
+  type GoalSource,
   type LearnerSource,
   type Source,
   type SourceChangeNotice,
@@ -42,10 +43,25 @@ export async function examBlueprintFixture(
   });
 }
 
-export async function learnerSourceFixture(
-  attrs: FixtureAttrs<LearnerSource> & Pick<LearnerSource, "sourceId" | "userId">,
+/** With `goalId`, the goal reads the source too, as the learner's material or research's find. */
+export async function learnerSourceFixture({
+  goalId,
+  ...attrs
+}: FixtureAttrs<LearnerSource> &
+  Pick<LearnerSource, "sourceId" | "userId"> & { goalId?: string | null }) {
+  const link = await prisma.learnerSource.create({ data: { origin: "upload", ...attrs } });
+
+  if (goalId) {
+    await goalSourceFixture({ goalId, origin: link.origin, sourceId: link.sourceId });
+  }
+
+  return link;
+}
+
+export async function goalSourceFixture(
+  attrs: FixtureAttrs<GoalSource> & Pick<GoalSource, "goalId" | "sourceId">,
 ) {
-  return prisma.learnerSource.create({ data: { origin: "upload", ...attrs } });
+  return prisma.goalSource.create({ data: { origin: "upload", ...attrs } });
 }
 
 export async function sourceChangeNoticeFixture(

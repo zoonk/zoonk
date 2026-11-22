@@ -140,6 +140,12 @@ export const onboardingDraftViewSchema = z
         description:
           "What the learner wants from `sources`: `exam` to prepare for a test on it, `understand` to learn what it covers; null when they didn't choose or sent no material. The main goal created from the draft carries it in `details.materialIntent`",
       }),
+    materialMissing: z
+      .boolean()
+      .meta({
+        description:
+          "Material sent with the words can't be read: an id no longer names one of the learner's uploads, or an upload holds no text. `sources` leaves it out, and the words are read without it",
+      }),
     prompt: z.string().meta({ description: "What the learner typed" }),
     sources: z
       .array(
@@ -154,7 +160,7 @@ export const onboardingDraftViewSchema = z
       )
       .meta({
         description:
-          "The learner's material sent with the words, in the order they attached it, read together with them. The draft's main goal is created with it. Empty when none was sent",
+          "The learner's material read together with the words, in the order they attached it: the uploads `sourceIds` named that hold text, each as it is now (a merged upload is its shared copy). The draft's main goal is created with every upload `sourceIds` still names. Empty when none was sent",
       }),
     status: z
       .enum(ONBOARDING_DRAFT_STATUSES)

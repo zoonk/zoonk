@@ -80,6 +80,7 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
     transaction.mistakePattern.updateMany({ data: toAccount, where: fromGuest }),
     transaction.mockExam.updateMany({ data: toAccount, where: fromGuest }),
     transaction.examResult.updateMany({ data: toAccount, where: fromGuest }),
+    transaction.sourceRedirect.updateMany({ data: toAccount, where: fromGuest }),
     transaction.skill.updateMany({ data: ownedByAccount, where: ownedByGuest }),
     transaction.chapter.updateMany({ data: ownedByAccount, where: ownedByGuest }),
     transaction.lesson.updateMany({ data: ownedByAccount, where: ownedByGuest }),

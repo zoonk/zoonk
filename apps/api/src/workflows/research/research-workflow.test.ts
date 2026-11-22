@@ -1790,7 +1790,7 @@ describe("research for goals that aren't exams", () => {
 
     expect(vi.mocked(findOfficialSources).mock.calls[0]?.[0]).toMatchObject({ topic: "syllabus" });
 
-    const links = await prisma.learnerSource.findMany({
+    const links = await prisma.goalSource.findMany({
       include: { source: true },
       where: { goalId: goal.id },
     });
@@ -1890,7 +1890,7 @@ describe("research for goals that aren't exams", () => {
     expect(findOfficialSources).not.toHaveBeenCalled();
 
     await expect(
-      prisma.learnerSource.findFirst({ where: { goalId: goal.id, sourceId: stored.id } }),
+      prisma.goalSource.findFirst({ where: { goalId: goal.id, sourceId: stored.id } }),
     ).resolves.toMatchObject({ origin: "research" });
 
     await expect(

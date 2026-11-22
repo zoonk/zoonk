@@ -64,6 +64,11 @@ export const onboardingPaths = {
           description: "The free plan's small AI calls are used up for now",
         },
         "403": guestRefusalResponse,
+        "422": {
+          ...unprocessableEntityResponse,
+          description:
+            "`MATERIAL_UNAVAILABLE`: ids in `sourceIds` name none of the learner's uploads, listed in `details.sourceIds`. Nothing is saved or charged",
+        },
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,

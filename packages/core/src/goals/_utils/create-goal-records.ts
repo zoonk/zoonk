@@ -7,6 +7,8 @@ import { type UsageDecision } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { linkGoalSources } from "../../library/sources/link-goal-sources";
+import { findOwnSources } from "../../library/sources/own-sources";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type CourseStart } from "../course-start-details";
@@ -86,6 +88,13 @@ type GoalRecord = {
   input: Pick<GoalCreateInput, "studyDays" | "studyTime" | "timeZone">;
   testedLanguage: string | null;
   userId: string;
+};
+
+type NewGoalRecord = GoalRecord & {
+  input: GoalCreateInput;
+  /** Material a request sent for its main goal, read only when the goal's card kept none. */
+  sentSourceIds?: readonly string[];
+  viewer: EntitlementViewer;
 };
 
 /** Runs in the caller's learner write, so a goal can be created atomically with other writes. */
@@ -227,15 +236,14 @@ function withCardMaterialIntent({
   return { ...draft, details: needsPurpose ? { ...withIntent, purpose: "other" } : withIntent };
 }
 
-/** An upload already on another goal stays there: a source follows one goal. */
-async function linkCardMaterial(
+/** What resolves is linked: material that no longer names one of the learner's uploads is left out. */
+async function linkMaterial(
   tx: TransactionClient,
-  { goalId, material, userId }: { goalId: string; material: CardMaterial; userId: string },
+  { goalId, sourceIds, userId }: { goalId: string; sourceIds: readonly string[]; userId: string },
 ): Promise<void> {
-  await tx.learnerSource.updateMany({
-    data: { goalId },
-    where: { goalId: null, origin: "upload", sourceId: { in: material.sourceIds }, userId },
-  });
+  const uploads = await findOwnSources({ db: tx, origin: "upload", sourceIds, userId });
+
+  await linkGoalSources(tx, { goalId, origin: "upload", sourceIds: uploads.resolved, userId });
 }
 
 /**
@@ -245,9 +253,9 @@ async function linkCardMaterial(
  * twice, at once or after a lost response, gets the goal the first confirm made.
  */
 export async function createGoal(
-  record: GoalRecord & { input: GoalCreateInput; viewer: EntitlementViewer },
+  record: NewGoalRecord,
 ): Promise<UsageDecision | { goalId: string; status: "existing" }> {
-  const { draft, id, input, userId, viewer } = record;
+  const { draft, id, input, sentSourceIds = [], userId, viewer } = record;
   const isExplanation = draft.kind === "explain";
 
   return writeLearnerChange<UsageDecision, UsageDecision | { goalId: string; status: "existing" }>(
@@ -285,7 +293,7 @@ export async function createGoal(
         return unchanged(decision);
       }
 
-      if (!material || isExplanation) {
+      if (isExplanation) {
         await insertGoalWithPlan(transaction, { ...record, card });
         return decision;
       }
@@ -293,10 +301,15 @@ export async function createGoal(
       await insertGoalWithPlan(transaction, {
         ...record,
         card,
-        draft: withCardMaterialIntent({ draft, material }),
+        draft: material ? withCardMaterialIntent({ draft, material }) : draft,
       });
 
-      await linkCardMaterial(transaction, { goalId: id, material, userId });
+      await linkMaterial(transaction, {
+        goalId: id,
+        sourceIds: material?.sourceIds ?? sentSourceIds,
+        userId,
+      });
+
       return decision;
     },
   );

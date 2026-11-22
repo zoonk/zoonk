@@ -157,15 +157,15 @@ test.describe("Goal understandings API", () => {
     await api.dispose();
   });
 
-  test("keeps the learner's own material with the draft and leaves out what isn't theirs", async () => {
+  test("keeps the learner's own material with the draft and refuses what isn't theirs before charging", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "understanding-material" }),
       createBearerLearner({ baseURL, prefix: "understanding-material-other" }),
     ]);
 
     const [notes, theirs] = await Promise.all([
-      sourceFixture({ kind: "upload", title: "" }),
-      sourceFixture({ kind: "upload", title: "Their notes" }),
+      sourceFixture({ extractedText: "Mitosis has four phases.", kind: "upload", title: "" }),
+      sourceFixture({ extractedText: "Their notes", kind: "upload", title: "Their notes" }),
     ]);
 
     await Promise.all([
@@ -175,14 +175,27 @@ test.describe("Goal understandings API", () => {
 
     const goal = `test on Friday ${randomUUID()}`;
 
-    const response = await api.post("/v1/goal-understandings", {
+    const refused = await api.post("/v1/goal-understandings", {
       data: { goal, language: "en", materialIntent: "exam", sourceIds: [theirs.id, notes.id] },
+    });
+
+    expect(refused.status()).toBe(422);
+
+    await expect(refused.json()).resolves.toMatchObject({
+      error: { code: "MATERIAL_UNAVAILABLE", details: { sourceIds: [theirs.id] } },
+    });
+
+    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+
+    const response = await api.post("/v1/goal-understandings", {
+      data: { goal, language: "en", materialIntent: "exam", sourceIds: [notes.id] },
     });
 
     const draft = await readBody({ response, schema: onboardingDraftViewSchema, status: 202 });
 
     expect(draft).toMatchObject({
       materialIntent: "exam",
+      materialMissing: false,
       sources: [{ id: notes.id, title: "" }],
       status: "understanding",
     });

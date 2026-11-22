@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
+import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { startGoalUnderstanding } from "./start-goal-understanding";
@@ -22,8 +23,16 @@ function countAssists(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "assist", userId } });
 }
 
-async function uploadFixture({ title, userId }: { title: string; userId: string }) {
-  const source = await sourceFixture({ kind: "upload", title });
+async function uploadFixture({
+  text = "Mitosis splits one cell into two.",
+  title,
+  userId,
+}: {
+  text?: string | null;
+  title: string;
+  userId: string;
+}) {
+  const source = await sourceFixture({ extractedText: text, kind: "upload", title });
   await learnerSourceFixture({ sourceId: source.id, userId });
   return source;
 }
@@ -248,6 +257,7 @@ describe(startGoalUnderstanding, () => {
         goalId: null,
         id: expect.any(String),
         materialIntent: null,
+        materialMissing: false,
         prompt: goal,
         sources: [],
         status: "understanding",
@@ -310,27 +320,27 @@ describe(startGoalUnderstanding, () => {
     expect(result.status).toBe("understanding");
   });
 
-  it("keeps the learner's own material with the draft in the order sent, and leaves out the rest", async () => {
-    const [user, other] = await Promise.all([userFixture(), userFixture()]);
+  it("keeps the learner's own material with the draft in the order sent, each once", async () => {
+    const user = await userFixture();
     mockSession(user.id);
 
-    const [slides, notes, theirs] = await Promise.all([
+    const [slides, notes] = await Promise.all([
       uploadFixture({ title: "Cell cycle.pdf", userId: user.id }),
       uploadFixture({ title: "", userId: user.id }),
-      uploadFixture({ title: "Their notes", userId: other.id }),
     ]);
 
     const result = await startGoalUnderstanding({
       goal: uniqueGoal("test on Friday"),
       language: "en",
       materialIntent: "exam",
-      sourceIds: [notes.id, theirs.id, randomUUID(), slides.id, notes.id],
+      sourceIds: [notes.id, slides.id, notes.id],
     });
 
     const draft = result.status === "understanding" ? result.draft : null;
 
     expect(draft).toMatchObject({
       materialIntent: "exam",
+      materialMissing: false,
       sources: [
         { id: notes.id, title: "" },
         { id: slides.id, title: "Cell cycle.pdf" },
@@ -345,19 +355,82 @@ describe(startGoalUnderstanding, () => {
     await expect(countAssists(user.id)).resolves.toBe(1);
   });
 
-  it("forgets the intent when none of the material is the learner's", async () => {
+  it("refuses material that isn't the learner's, naming it, before charging or saving anything", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     mockSession(user.id);
-    const theirs = await uploadFixture({ title: "Their notes", userId: other.id });
+    const unknown = randomUUID();
+
+    const [notes, theirs] = await Promise.all([
+      uploadFixture({ title: "My notes", userId: user.id }),
+      uploadFixture({ title: "Their notes", userId: other.id }),
+    ]);
+
+    await expect(
+      startGoalUnderstanding({
+        goal: uniqueGoal("test on Friday"),
+        language: "en",
+        materialIntent: "understand",
+        sourceIds: [notes.id, theirs.id, unknown],
+      }),
+    ).resolves.toStrictEqual({ sourceIds: [theirs.id, unknown], status: "materialUnavailable" });
+
+    await expect(countAssists(user.id)).resolves.toBe(0);
+    await expect(prisma.onboardingDraft.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("keeps an upload merged into a shared copy before the learner sent it", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const { shared, upload } = await uploadWithSharedCopyFixture(user.id);
+    await mergeIntoSharedCopy(upload);
 
     const result = await startGoalUnderstanding({
-      goal: uniqueGoal("test on Friday"),
-      language: "en",
-      materialIntent: "understand",
-      sourceIds: [theirs.id],
+      goal: uniqueGoal("concurso TJ-CE"),
+      language: "pt",
+      materialIntent: "exam",
+      sourceIds: [upload.id],
     });
 
-    expect(result).toMatchObject({ draft: { materialIntent: null, sources: [] } });
+    expect(result).toMatchObject({
+      draft: { materialMissing: false, sources: [{ id: shared.id }] },
+      status: "understanding",
+    });
+  });
+
+  it("refuses another learner's merged upload, even when this learner reads the shared copy too", async () => {
+    const [owner, learner] = await Promise.all([userFixture(), userFixture()]);
+    const { shared, upload } = await uploadWithSharedCopyFixture(owner.id);
+    await mergeIntoSharedCopy(upload);
+    await learnerSourceFixture({ sourceId: shared.id, userId: learner.id });
+    mockSession(learner.id);
+
+    await expect(
+      startGoalUnderstanding({
+        goal: uniqueGoal("concurso TJ-CE"),
+        language: "pt",
+        sourceIds: [upload.id],
+      }),
+    ).resolves.toStrictEqual({ sourceIds: [upload.id], status: "materialUnavailable" });
+
+    await expect(countAssists(learner.id)).resolves.toBe(0);
+  });
+
+  it("marks material it can't read: an upload with no text is left out of what's read", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const [photo, notes] = await Promise.all([
+      uploadFixture({ text: null, title: "board.jpg", userId: user.id }),
+      uploadFixture({ title: "Notes", userId: user.id }),
+    ]);
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("learn biology"),
+      language: "en",
+      sourceIds: [photo.id, notes.id],
+    });
+
+    expect(result).toMatchObject({ draft: { materialMissing: true, sources: [{ id: notes.id }] } });
   });
 
   it("reads words sent with material in a run, even when the same words alone were read today", async () => {

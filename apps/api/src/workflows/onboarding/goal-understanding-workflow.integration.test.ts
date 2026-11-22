@@ -199,32 +199,31 @@ describe(goalUnderstandingWorkflow, () => {
     expect(findExamDate).toHaveBeenCalledWith(expect.objectContaining({ exam }));
   });
 
-  it("reads the material the draft holds when the words are read, after sharing moved it", async () => {
+  it("reads an upload merged into a shared copy after the draft was saved", async () => {
     vi.mocked(understandGoal).mockResolvedValue(taskResult({ route: "unclear" }));
 
     const user = await userFixture();
     const sharedText = `Interphase and mitosis ${randomUUID()}`;
 
     const [upload, shared] = await Promise.all([
-      sourceFixture({ extractedText: "The private copy", kind: "upload" }),
+      sourceFixture({ extractedText: "The private copy", kind: "upload", ownerId: user.id }),
       sourceFixture({ extractedText: sharedText, kind: "upload" }),
     ]);
 
     await learnerSourceFixture({ sourceId: shared.id, userId: user.id });
 
-    const draft = await onboardingDraftFixture({
-      materialIntent: "exam",
-      prompt: "test on Friday",
-      sourceIds: [shared.id],
-      status: "understanding",
-      userId: user.id,
-    });
+    await prisma.$transaction([
+      prisma.sourceRedirect.create({
+        data: { fromId: upload.id, toId: shared.id, userId: user.id },
+      }),
+      prisma.source.delete({ where: { id: upload.id } }),
+    ]);
 
     await understandGoalWords({
-      id: draft.id,
+      id: randomUUID(),
       language: "en",
       materialIntent: "exam",
-      prompt: draft.prompt,
+      prompt: "test on Friday",
       sourceIds: [upload.id],
       status: "understanding",
       timeZone: "UTC",

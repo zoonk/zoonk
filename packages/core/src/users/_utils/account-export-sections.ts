@@ -74,7 +74,7 @@ export async function loadLanguageExport(userId: string) {
 
 /** Excludes private source file addresses. */
 export async function loadStartExport(userId: string) {
-  const [drafts, suggestedGoals, sources, instrumentWaitlist] = await Promise.all([
+  const [drafts, suggestedGoals, sources, goalSources, instrumentWaitlist] = await Promise.all([
     prisma.onboardingDraft.findMany({
       omit: { runId: true },
       orderBy: byCreation,
@@ -88,10 +88,14 @@ export async function loadStartExport(userId: string) {
       orderBy: byCreation,
       where: { userId },
     }),
+    prisma.goalSource.findMany({
+      orderBy: [{ createdAt: "asc" }, { goalId: "asc" }, { sourceId: "asc" }],
+      where: { goal: { userId } },
+    }),
     prisma.instrumentWaitlistEntry.findMany({ orderBy: byCreation, where: { userId } }),
   ]);
 
-  return { drafts, instrumentWaitlist, sources, suggestedGoals };
+  return { drafts, goalSources, instrumentWaitlist, sources, suggestedGoals };
 }
 
 /** Excludes Zoonk's internal costs. */

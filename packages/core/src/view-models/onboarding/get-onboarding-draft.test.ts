@@ -55,6 +55,7 @@ describe(getOnboardingDraft, () => {
         goalId: null,
         id: draft.id,
         materialIntent: null,
+        materialMissing: false,
         prompt: "pass the bar exam",
         sources: [],
         status: "understanding",

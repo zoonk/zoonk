@@ -177,7 +177,7 @@ export async function toDraftView({
   const stored =
     draft.status === "understood" ? parseStoredUnderstanding(draft.understanding) : null;
 
-  const [viewer, now, sources] = await Promise.all([
+  const [viewer, now, material] = await Promise.all([
     readEntitlementViewer(),
     getRequestInstant(),
     readDraftSources(draft),
@@ -202,8 +202,9 @@ export async function toDraftView({
     goalId,
     id: draft.id,
     materialIntent: draft.materialIntent,
+    materialMissing: material.materialMissing,
     prompt: draft.prompt,
-    sources,
+    sources: material.sources,
     // An unreadable stored understanding must be retried rather than exposed as understood.
     status: draft.status === "understood" && !understanding ? "failed" : draft.status,
     timeZone: draft.timeZone,
