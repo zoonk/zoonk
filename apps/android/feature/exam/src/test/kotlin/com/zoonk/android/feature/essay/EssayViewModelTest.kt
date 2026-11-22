@@ -212,12 +212,36 @@ class EssayViewModelTest {
             gate.complete(Unit)
             advanceTimeBy(100)
 
-            assertEquals(KeptWriting("first plus a new paragraph", 1, ADMISSION.toString()), device.keptOnDisk()?.copy(writingMs = 0))
+            assertEquals(
+                KeptWriting("first plus a new paragraph", 1, ADMISSION.toString()),
+                device.keptOnDisk()?.copy(writingMs = 0, version = null),
+            )
             assertEquals("first plus a new paragraph", viewModel.ui.value.text)
 
             advanceUntilIdle()
             assertEquals(listOf(0L to "first", 1L to "first plus a new paragraph"), device.api.saved.map { it.revision to it.text })
             assertNull(device.keptOnDisk())
+        }
+
+    @Test
+    fun aSavesAnswerKeepsTheReopenedEditorsDraft() =
+        runTest(dispatcher) {
+            val device = Device(this, FakeEssayApi())
+            val first = with(device) { open() }
+            val second = with(device) { open() }
+            val gate = CompletableDeferred<Unit>()
+            device.api.saveGate = gate
+
+            first.write("First editor")
+            advanceTimeBy(2_000)
+            assertEquals(listOf("First editor"), device.api.saved.map { it.text })
+            second.write("Unsaved in the second editor")
+            runCurrent()
+            device.api.saveGate = null
+            gate.complete(Unit)
+            runCurrent()
+
+            assertEquals("Unsaved in the second editor", device.keptOnDisk()?.text)
         }
 
     @Test

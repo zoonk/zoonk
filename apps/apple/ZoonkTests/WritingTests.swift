@@ -183,9 +183,9 @@ final class WritingResultDecodingTests: XCTestCase {
       SyllabusSubject.self,
       """
       {
-        "areas":["Writing"],"chapters":[],"group":"Written test","key":"writing","lessonsDone":0,
+        "areas":["Writing"],"chapters":[],"group":"Written test (P2)","key":"writing","lessonsDone":0,
         "lessonsKnown":0,"lessonsTotal":1,"name":"Writing","sharedWith":[],"shortName":"Writing",
-        "source":"notice","topics":[]
+        "source":"notice","topics":[],"writtenPart":"Written test"
       }
       """)
 
@@ -556,13 +556,29 @@ final class WritingDraftTests: XCTestCase {
     await saving.value
 
     XCTAssertEqual(writer.text, "first plus a new paragraph")
-    XCTAssertEqual(
-      KeptWriting.read(blockId),
-      .init(admissionId: Self.admission, base: 2, text: "first plus a new paragraph"))
+    let kept = KeptWriting.read(blockId)
+    XCTAssertEqual(kept?.admissionId, Self.admission)
+    XCTAssertEqual(kept?.base, 2)
+    XCTAssertEqual(kept?.text, "first plus a new paragraph")
 
     await writer.flush()
     let stored = await server.draft
     XCTAssertEqual(stored, .init(revision: 3, text: "first plus a new paragraph"))
+  }
+
+  func testASavesAnswerKeepsAnotherWindowsDraft() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), holdsSaves: true)
+    let first = makeWriter(server, draftRevision: 1, draftText: "Started.")
+    let second = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    first.write("First window")
+    let saving = Task { await first.flush() }
+    await server.waitForSaves(1)
+    second.write("Unsaved in the second window")
+    await server.releaseSaves()
+    await saving.value
+
+    XCTAssertEqual(KeptWriting.read(blockId)?.text, "Unsaved in the second window")
   }
 
   func testItsOwnSaveThatLandedWithItsAnswerLostIsBuiltOn() async {

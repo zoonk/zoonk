@@ -46,7 +46,8 @@ export function parseKeptDraft(raw: string | null): Kept | null {
 }
 
 export function keepDraftText(blockId: string, kept: Kept) {
-  deviceStorage.set(keptDraftKey(blockId), JSON.stringify(kept));
+  const raw = JSON.stringify({ ...kept, version: crypto.randomUUID() });
+  return deviceStorage.set(keptDraftKey(blockId), raw) ? raw : null;
 }
 
 /**

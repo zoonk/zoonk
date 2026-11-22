@@ -53,6 +53,7 @@ final class EssayWriter {
   @ObservationIgnored private var admissionId: String?
   @ObservationIgnored private var revision: Int
   @ObservationIgnored private var savedText: String
+  @ObservationIgnored private var keptByEditor: KeptWriting.Kept?
   /// A save sent over `revision` without an answer yet: it may have landed.
   @ObservationIgnored private var sending: String?
   /// Text sent for grading under this admission whose answer was lost: it may have been graded.
@@ -76,8 +77,9 @@ final class EssayWriter {
     savedText = view.draft?.text ?? ""
     var text = view.draft?.text ?? ""
 
+    let kept = KeptWriting.read(view.blockId)
     switch KeptWriting.recover(
-      KeptWriting.read(view.blockId), saved: view.draft, admissionId: admissionId,
+      kept, saved: view.draft, admissionId: admissionId,
       graded: view.drafts.first?.text)
     {
     case .saved:
@@ -91,6 +93,7 @@ final class EssayWriter {
       editsAfterGrading = kept
     }
 
+    keptByEditor = kept?.admissionId == admissionId || admissionId == nil ? kept : nil
     self.text = text
     let hasDraft = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     mode = hasDraft || view.drafts.isEmpty ? .question : .result
@@ -114,7 +117,7 @@ final class EssayWriter {
 
     // The field stops at the longest answer the server saves.
     text = Self.fitted(next)
-    keep()
+    keep(typed: true)
     scheduleSave(after: Self.saveAfter)
   }
 
@@ -170,7 +173,6 @@ final class EssayWriter {
     guard let other = conflict else { return }
     acknowledge(other)
     conflict = nil
-    keep()
     await flush()
   }
 
@@ -253,7 +255,7 @@ final class EssayWriter {
     saveRetries = 0
 
     if text == saved.text {
-      KeptWriting.clear(blockId)
+      replaceKept(nil)
     } else {
       keep()
     }
@@ -266,10 +268,25 @@ final class EssayWriter {
     scheduleSave(after: .seconds(min(1 << min(saveRetries, 4), 15)))
   }
 
-  private func keep() {
-    KeptWriting.keep(
-      .init(admissionId: admissionId, base: revision, text: text, sending: sending),
-      blockId: blockId)
+  private func keep(typed: Bool = false) {
+    let next = KeptWriting.Kept(
+      admissionId: admissionId, base: revision, text: text, sending: sending, version: UUID())
+    if typed {
+      KeptWriting.keep(next, blockId: blockId)
+      keptByEditor = next
+    } else {
+      replaceKept(next)
+    }
+  }
+
+  private func replaceKept(_ next: KeptWriting.Kept?) {
+    guard KeptWriting.read(blockId) == keptByEditor else { return }
+    if let next {
+      KeptWriting.keep(next, blockId: blockId)
+    } else {
+      KeptWriting.clear(blockId)
+    }
+    keptByEditor = next
   }
 
   /// The admission its start issued; a block opened without one replays its start.
@@ -339,11 +356,12 @@ final class EssayWriter {
       let recorded = read ? latest?.text : earlier
       if let recorded, recorded != text {
         editsAfterGrading = text
-        KeptWriting.keep(
-          .init(admissionId: admissionId, base: revision, text: text, afterGrading: true),
-          blockId: blockId)
+        replaceKept(
+          .init(
+            admissionId: admissionId, base: revision, text: text, afterGrading: true,
+            version: UUID()))
       } else {
-        KeptWriting.clear(blockId)
+        replaceKept(nil)
       }
     case .done(.blockNotActive):
       fail()
@@ -426,6 +444,7 @@ enum KeptWriting {
     var sending: String?
     /// Typed after the admission's answer was graded: for the rewrite, never its draft.
     var afterGrading: Bool?
+    var version: UUID?
   }
 
   enum Recovery: Equatable {

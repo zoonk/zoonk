@@ -169,6 +169,48 @@ test.describe("Written answer drafts", () => {
     }
   });
 
+  test("a save in one tab preserves the unsaved answer in another tab", async ({ browser }) => {
+    const day = await createWrittenExamDay();
+    const first = await openAs(browser, day.user);
+    const context = first.context();
+    const { promise: held, resolve: release } = Promise.withResolvers<null>();
+
+    try {
+      const firstField = await openEditor(first);
+      const second = await context.newPage();
+      await second.goto(`/essay/${day.blockId}`);
+      await second.getByRole("button", { exact: true, name: "Write" }).click();
+
+      await first.route("**/draft", async (route) => {
+        await held;
+        await route.continue();
+      });
+
+      await second.route("**/draft", (route) => route.abort());
+
+      const sending = first.waitForRequest((request) => request.url().endsWith("/draft"));
+      await firstField.fill("First tab");
+      await sending;
+      await second.getByLabel("Your answer").fill("Unsaved in the second tab");
+      await expect(second.getByText("Not saved yet. It's kept on this device.")).toBeVisible();
+
+      release(null);
+      await first.getByRole("link", { exact: true, name: "Leave" }).click();
+      await expect(first).toHaveURL(/\/today/u);
+      expect(await savedDraftText(day.blockId)).toBe("First tab");
+
+      const kept = await second.evaluate(
+        (id) => localStorage.getItem(`writing:${id}`),
+        day.blockId,
+      );
+
+      expect(kept).toContain("Unsaved in the second tab");
+    } finally {
+      release(null);
+      await context.close();
+    }
+  });
+
   test("leaving right after typing saves the last edit for another device", async ({ browser }) => {
     const day = await createWrittenExamDay();
     const page = await openAs(browser, day.user);

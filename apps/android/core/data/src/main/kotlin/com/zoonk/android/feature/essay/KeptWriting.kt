@@ -20,6 +20,7 @@ data class KeptWriting(
     val writingMs: Long = 0,
     // The server already graded the earlier text under this admission. These edits are for Rewrite.
     val replayed: Boolean = false,
+    val version: String? = null,
 )
 
 /** Where an opened answer starts: the server's draft, this device's text over it, or both to choose between. */

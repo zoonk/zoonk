@@ -113,6 +113,7 @@ class EssayViewModel(
     val move: StateFlow<SessionMove> = mover.move
 
     private var keptText: KeptWriting? = null
+    private var replacingKept: Job? = null
     private var keptRead = false
     private var essayRead: Essay? = null
     private var opening = false
@@ -168,7 +169,13 @@ class EssayViewModel(
         if (mutableUi.value.send == WritingSend.Pending || text.length > MAX_WRITING_CHARACTERS) return
         if (writingSince == null) writingSince = clock.markNow()
         mutableUi.update { it.copy(text = text) }
-        keep()
+        val draft = currentDraft()
+        if (draft == null) {
+            replaceKept(null)
+        } else {
+            keptText = draft
+            kept?.saveDebounced(draft)
+        }
         saveSoon?.cancel()
         saveSoon =
             viewModelScope.launch {
@@ -183,7 +190,7 @@ class EssayViewModel(
         revision = other.revision
         savedText = other.text
         mutableUi.update { it.copy(conflict = null) }
-        keep()
+        replaceKept(currentDraft())
         scope.launch { saveLatest() }
     }
 
@@ -193,7 +200,7 @@ class EssayViewModel(
         revision = other.revision
         savedText = other.text
         mutableUi.update { it.copy(conflict = null, saveFailed = false, text = other.text) }
-        scope.launch { kept?.remove() }
+        replaceKept(null)
     }
 
     /** The same answer sent again while its earlier send is out joins that request. */
@@ -301,9 +308,9 @@ class EssayViewModel(
 
     private fun leave() {
         saveSoon?.cancel()
-        keep()
+        val kept = replaceKept(currentDraft())
         scope.launch {
-            kept?.flush()
+            kept.join()
             saveLatest()
         }
     }
@@ -330,7 +337,7 @@ class EssayViewModel(
             if (start !is DraftStart.Saved) writingMs = recovery?.writingMs ?: 0
             // A kept copy that's the saved draft, or another admission's, is gone, so it's never offered again; one
             // whose admission couldn't be asked stays for the next visit.
-            if (start is DraftStart.Saved && recovery != null && admission != null && unsent == null) kept?.remove()
+            if (start is DraftStart.Saved && recovery != null && admission != null && unsent == null) replaceKept(null)
             if (unsent != null) closeAdmission()
             val graded = start is DraftStart.Saved && start.text.isBlank() && results.isNotEmpty()
             mutableUi.update {
@@ -368,15 +375,29 @@ class EssayViewModel(
     }
 
     /** The device's copy of what's on screen, with the draft it was typed over; none once the server has it. */
-    private fun keep() {
-        val admissionId = admission ?: return
+    private fun currentDraft(): KeptWriting? {
+        val admissionId = admission ?: return null
         val ui = mutableUi.value
-        if (ui.results == null) return
-        if (ui.text == savedText && sendingText == null && ui.conflict == null) {
-            scope.launch { kept?.remove() }
-            return
-        }
-        kept?.saveDebounced(KeptWriting(ui.text, revision, admissionId.toString(), sendingText, writingDuration()))
+        if (ui.results == null || (ui.text == savedText && sendingText == null && ui.conflict == null)) return null
+        return KeptWriting(
+            ui.text,
+            revision,
+            admissionId.toString(),
+            sendingText,
+            writingDuration(),
+            version = UUID.randomUUID().toString(),
+        )
+    }
+
+    private fun replaceKept(next: KeptWriting?): Job {
+        val expected = keptText
+        val previous = replacingKept
+        keptText = next
+        return scope
+            .launch {
+                previous?.join()
+                kept?.replace(expected, next)
+            }.also { replacingKept = it }
     }
 
     /**
@@ -392,7 +413,7 @@ class EssayViewModel(
                 if (text == savedText) return mutableUi.update { it.copy(saveFailed = false) }
                 val admissionId = (admit() as? Admitted.Ready)?.admissionId ?: return
                 sendingText = text
-                keep()
+                replaceKept(currentDraft()).join()
                 val result = store.saveDraft(blockId, SaveWritingDraft(admissionId, revision, text))
                 sendingText = null
                 mutableUi.update { it.copy(saveFailed = result is MutationResult.Failed) }
@@ -400,7 +421,7 @@ class EssayViewModel(
                     is DraftSave.Saved -> {
                         revision = saved.draft.revision
                         savedText = text
-                        keep()
+                        replaceKept(currentDraft()).join()
                         return
                     }
 
@@ -412,12 +433,12 @@ class EssayViewModel(
 
                     is DraftSave.Conflict -> {
                         mutableUi.update { it.copy(conflict = saved.draft) }
-                        keep()
+                        replaceKept(currentDraft()).join()
                         return
                     }
 
                     DraftSave.Closed, null -> {
-                        keep()
+                        replaceKept(currentDraft()).join()
                         return
                     }
                 }
@@ -470,7 +491,7 @@ class EssayViewModel(
                 switched = true,
             )
         }
-        scope.launch { kept?.remove() }
+        replaceKept(null)
     }
 
     /**
@@ -483,9 +504,9 @@ class EssayViewModel(
         changed: String,
         grade: WritingResultOutput,
     ) {
-        val recovery = KeptWriting(changed, revision, admissionId.toString(), replayed = true)
+        val recovery = KeptWriting(changed, revision, admissionId.toString(), replayed = true, version = UUID.randomUUID().toString())
         closeAdmission()
-        kept?.save(recovery)
+        replaceKept(recovery).join()
         mutableUi.update { ui ->
             val results = ui.results.orEmpty().filter { it.text != recorded }
             ui.copy(

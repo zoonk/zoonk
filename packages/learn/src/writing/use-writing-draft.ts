@@ -6,6 +6,7 @@ import { deviceStorage, subscribeToDeviceStorage } from "../_utils/device-storag
 import { createWritingClock } from "./writing-clock";
 import {
   type DraftPosition,
+  type Kept,
   type ServerDraft,
   acknowledgeSave,
   keepDraftText,
@@ -78,11 +79,46 @@ function useOpenedDraft(essay: WrittenEssay) {
     () => null,
   );
 
-  return openDraft({
-    admissionId: essay.admissionId ?? null,
-    kept: parseKeptDraft(raw),
-    saved: essay.draft ?? null,
-  });
+  const kept = parseKeptDraft(raw);
+  const admissionId = essay.admissionId ?? null;
+
+  return {
+    ...openDraft({ admissionId, kept, saved: essay.draft ?? null }),
+    raw: kept?.admissionId === admissionId ? raw : null,
+  };
+}
+
+function useKeptDraft(blockId: string, openedRaw: () => string | null) {
+  const key = keptDraftKey(blockId);
+  const owned = useRef<string | null | undefined>(undefined);
+
+  function claimOpened() {
+    if (owned.current === undefined) {
+      owned.current = openedRaw();
+    }
+
+    return owned.current;
+  }
+
+  function keep(draft: Kept) {
+    owned.current = keepDraftText(blockId, draft);
+  }
+
+  function replace(next: Kept | null) {
+    const expected = claimOpened();
+
+    if (deviceStorage.get(key) !== expected) {
+      return;
+    }
+
+    if (next) {
+      keep(next);
+    } else if (expected !== null && deviceStorage.remove(key)) {
+      owned.current = null;
+    }
+  }
+
+  return { claimOpened, keep, replace };
 }
 
 /**
@@ -98,7 +134,6 @@ export function useWritingDraft({
   essay: WrittenEssay;
 }) {
   const { blockId } = essay;
-  const key = keptDraftKey(blockId);
   const opened = useOpenedDraft(essay);
 
   // Null until the learner types or answers a conflict; before that, what the page opened with.
@@ -108,6 +143,7 @@ export function useWritingDraft({
   const conflict = local ? local.conflict : opened.conflict;
 
   const live = useRef({ conflict, opened, text });
+  const kept = useKeptDraft(blockId, () => live.current.opened.raw);
   const position = useRef<DraftPosition | null>(null);
   const sending = useRef<Promise<boolean>>(Promise.resolve(true));
   const locked = useRef(false);
@@ -124,7 +160,7 @@ export function useWritingDraft({
   }
 
   function keep(next: string, base = at().revision) {
-    keepDraftText(blockId, { admissionId: at().admissionId, base, text: next });
+    kept.keep({ admissionId: at().admissionId, base, text: next });
   }
 
   function show(next: { conflict: ServerDraft | null; text: string }) {
@@ -165,6 +201,7 @@ export function useWritingDraft({
       return false;
     }
 
+    kept.claimOpened();
     const admissionId = await ensureAdmission();
 
     const answer = admissionId
@@ -192,11 +229,7 @@ export function useWritingDraft({
 
     position.current = acknowledged.position;
 
-    if (acknowledged.kept) {
-      keepDraftText(blockId, acknowledged.kept);
-    } else {
-      deviceStorage.remove(key);
-    }
+    kept.replace(acknowledged.kept);
 
     setSaveFailed(false);
     return !acknowledged.kept;
@@ -239,7 +272,7 @@ export function useWritingDraft({
       keep(live.current.text);
       void flush();
     } else {
-      deviceStorage.remove(key);
+      kept.replace(null);
     }
   }
 
@@ -263,13 +296,12 @@ export function useWritingDraft({
      * typed here since stays on this device for the rewrite: the server stops offering its draft once
      * the admission is graded.
      */
-    graded: (gradedText: string) => {
-      if (gradedText === live.current.text) {
-        deviceStorage.remove(key);
-      } else {
-        keep(live.current.text);
-      }
-    },
+    graded: (gradedText: string) =>
+      kept.replace(
+        gradedText === live.current.text
+          ? null
+          : { admissionId: at().admissionId, base: at().revision, text: live.current.text },
+      ),
     keepMine: () => answerConflict(true),
     /** While an answer is out for grading, the field takes no edits. */
     lock: (value: boolean) => {
