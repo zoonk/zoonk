@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +58,7 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.materialCitationLabel
@@ -311,7 +311,7 @@ internal fun AttachedChips(
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items.forEach { item ->
             val title = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
-            Surface(shape = RoundedCornerShape(ZoonkRadius.xxl), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+            Surface(shape = RoundedCornerShape(ZoonkRadius.md), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
                 Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(painterResource(R.drawable.ic_description), contentDescription = null, modifier = Modifier.size(18.dp))
                     Text(
@@ -340,14 +340,7 @@ internal fun MaterialIntentChoice(
     onChange: (MaterialIntent) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.onboarding_intent_title),
-            modifier =
-                Modifier.semantics {
-                    heading()
-                },
-            style = MaterialTheme.typography.titleMedium,
-        )
+        SectionHeader(stringResource(R.string.onboarding_intent_title))
         ChoiceList(
             choices =
                 listOf(

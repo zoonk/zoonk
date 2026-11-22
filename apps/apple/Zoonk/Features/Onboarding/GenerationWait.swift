@@ -1015,9 +1015,9 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
       restart: restart, readResult: readResult
     ) { run in
       ZoonkList {
-        StepHeader(title: Text(title), description: Text(description))
-
         leading()
+
+        StepHeader(title: Text(title), description: Text(description))
 
         Section {
           GenerationTimeline(
