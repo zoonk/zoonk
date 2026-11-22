@@ -31,7 +31,9 @@ export function reserveWritingDrill(
   lesson: PlannedLesson,
   drill: PlannedProduce | undefined,
 ): PlannedLesson {
-  return drill ? { ...lesson, drill, minutes: lesson.minutes + drill.minutes } : lesson;
+  return drill && lesson.lessonId
+    ? { ...lesson, drill, minutes: lesson.minutes + drill.minutes }
+    : lesson;
 }
 
 export function addWritingDrill({
@@ -43,12 +45,14 @@ export function addWritingDrill({
 }): PlannedBlock[] {
   const drill = lesson?.drill;
 
-  if (!drill) {
+  if (!drill || !block.lessonId) {
     return [block];
   }
 
+  const exercise = toProduceBlock(drill);
+
   return [
     { ...block, estimatedMinutes: Math.max(1, block.estimatedMinutes - drill.minutes) },
-    toProduceBlock(drill),
+    { ...exercise, payload: { ...exercise.payload, writingLessonId: block.lessonId } },
   ];
 }

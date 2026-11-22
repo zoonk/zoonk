@@ -2,10 +2,6 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { type PlannedBlock } from "../session-builder";
 
-export const ONE_PER_DAY: ReadonlySet<StudySessionBlock["kind"]> = new Set<
-  StudySessionBlock["kind"]
->(["produce", "review"]);
-
 function getContent({
   anyOrder,
   block,
@@ -21,6 +17,8 @@ function getContent({
     block.estimatedMinutes,
     block.payload.writing?.taskKey,
     block.payload.writing?.unit,
+    block.payload.writingLessonId,
+    Boolean(block.payload.writingPlacement),
     ...(anyOrder ? itemIds.toSorted() : itemIds),
   ].join(":");
 }

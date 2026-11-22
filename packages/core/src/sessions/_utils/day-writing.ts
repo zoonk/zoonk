@@ -12,8 +12,37 @@ import { type loadDayPlan } from "./day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { pickWritingDrill, reserveWritingDrill } from "./writing-drills";
 
+async function loadLegacyProduces({
+  context,
+  onDemand,
+  planSettings,
+}: {
+  context: SessionDayContext;
+  onDemand: boolean;
+  planSettings: unknown;
+}) {
+  const { blueprint, goal, localDate, readWritingAnswers = loadScheduledAnswers, userId } = context;
+
+  const produce = await loadSessionProduce({
+    blueprint,
+    goal,
+    onDemand,
+    planSettings,
+    today: localDate,
+    userId,
+  });
+
+  if (!produce) {
+    return [];
+  }
+
+  const answers = await readWritingAnswers(userId, goal.id);
+  const date = toIsoDate(localDate);
+  return answers.some((answer) => answer.date === date) ? [] : [produce];
+}
+
 export async function loadDayWriting({
-  context: { blueprint, goal, localDate, readWritingAnswers = loadScheduledAnswers, userId },
+  context,
   includesMockExams,
   plan,
 }: {
@@ -21,6 +50,7 @@ export async function loadDayWriting({
   includesMockExams: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
 }) {
+  const { blueprint, goal, localDate, readWritingAnswers = loadScheduledAnswers, userId } = context;
   const settings = parsePlanSettings(plan.settings);
   const date = toIsoDate(localDate);
   const schedule = settings.writingSchedule;
@@ -86,21 +116,14 @@ export async function loadDayWriting({
         }
       : null;
 
-  const legacyProduce = schedule
-    ? null
-    : await loadSessionProduce({
-        blueprint,
-        goal,
-        onDemand: Boolean(scheduledWriting) && !includesMockExams,
-        planSettings: plan.settings,
-        today: localDate,
-        userId,
-      });
-
   return {
     produces: schedule
       ? (allocated?.tasks.filter(({ taskKey }) => taskKeys.has(taskKey)) ?? [])
-      : [legacyProduce].filter((produce) => produce !== null),
+      : await loadLegacyProduces({
+          context,
+          onDemand: Boolean(scheduledWriting) && !includesMockExams,
+          planSettings: plan.settings,
+        }),
     reserveDrill: (lesson: PlannedLesson) =>
       reserveWritingDrill(lesson, pickWritingDrill({ lesson, tasks })),
     writtenTest,

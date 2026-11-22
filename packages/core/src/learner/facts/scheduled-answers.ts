@@ -1,11 +1,35 @@
 import "server-only";
-import { AnyNull, prisma } from "@zoonk/db";
+import { AnyNull, type StudySessionBlock, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { readBlockPayload } from "../../sessions/block-payload";
 
-export async function loadScheduledAnswers(userId: string, goalId: string) {
+function scheduledAnswer({
+  block,
+  date,
+  includeUnadmitted = false,
+}: {
+  block: Pick<StudySessionBlock, "estimatedMinutes" | "payload" | "status">;
+  date: string;
+  includeUnadmitted?: boolean;
+}) {
+  const { extra, writing, writingPlacement } = readBlockPayload(block);
+
+  return !extra && writing?.unit === "answer" && (includeUnadmitted || writing.admissionId)
+    ? [
+        {
+          completed: block.status === "completed",
+          date,
+          minutes: block.estimatedMinutes ?? 0,
+          placement: Boolean(writingPlacement),
+          taskKey: writing.taskKey,
+        },
+      ]
+    : [];
+}
+
+export async function loadScheduledAnswers(userId: string, goalId: string, excludingDate?: Date) {
   const blocks = await prisma.studySessionBlock.findMany({
     select: {
       estimatedMinutes: true,
@@ -20,26 +44,37 @@ export async function loadScheduledAnswers(userId: string, goalId: string) {
         { payload: { not: AnyNull, path: ["writing", "admissionId"] } },
       ],
       kind: "produce",
-      session: { goalId, userId },
+      session: { goalId, userId, ...(excludingDate && { localDate: { not: excludingDate } }) },
       status: { in: ["active", "completed"] },
     },
   });
 
-  return blocks.flatMap((block) => {
-    const { writing, writingPlacement } = readBlockPayload(block);
+  return blocks.flatMap((block) =>
+    scheduledAnswer({ block, date: toIsoDate(block.session.localDate) }),
+  );
+}
 
-    return writing?.admissionId
-      ? [
-          {
-            completed: block.status === "completed",
-            date: toIsoDate(block.session.localDate),
-            minutes: block.estimatedMinutes ?? 0,
-            placement: Boolean(writingPlacement),
-            taskKey: writing.taskKey,
-          },
-        ]
-      : [];
-  });
+export async function loadScheduledAnswersForRefresh({
+  goalId,
+  kept,
+  localDate,
+  userId,
+}: {
+  goalId: string;
+  kept: readonly StudySessionBlock[];
+  localDate: Date;
+  userId: string;
+}) {
+  const history = await loadScheduledAnswers(userId, goalId, localDate);
+  const date = toIsoDate(localDate);
+
+  // Use the queue snapshot for this day, including kept answers whose admission has not landed.
+  return [
+    ...history,
+    ...kept.flatMap((block) =>
+      block.kind === "produce" ? scheduledAnswer({ block, date, includeUnadmitted: true }) : [],
+    ),
+  ];
 }
 
 export async function readScheduledAnswers(userId: string, goalId: string) {

@@ -9,10 +9,19 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { toProduceBlock } from "../exams/essays/produce-block";
 import { CGU } from "../exams/mocks/_test-utils/cgu-written";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
 import { listWritingPreparation } from "../lookahead/writing-preparation";
+import {
+  captureDaySession,
+  lockDaySession,
+  restoreDaySession,
+} from "../sessions/_utils/day-session-snapshot";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
+import { followPlanChangeToday } from "../sessions/_utils/refresh-day-session";
+import { addWritingDrill } from "../sessions/_utils/writing-drills";
+import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 import { buildSessionBlocks } from "../sessions/session-builder";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -192,6 +201,200 @@ async function recordWritingBlock({
 
 describe("written exam allocation", () => {
   afterEach(() => vi.useRealTimers());
+
+  it("restores only the unmatched writing occurrences when undo keeps a new answer", async () => {
+    const { goal } = await setup({ dailyMinutes: 120, structure: CGU });
+    const key = { goalId: goal.id, localDate: START, userId: goal.userId };
+    const day = await studySessionFixture({ ...key, plannedMinutes: 120, status: "active" });
+
+    const answer = toProduceBlock({
+      minutes: 45,
+      taskKey: "short",
+      title: "Written answer",
+      unit: "answer",
+    });
+
+    const drill = toProduceBlock({
+      minutes: 8,
+      taskKey: "short",
+      title: "Writing exercise",
+      unit: "drill",
+    });
+
+    const originals = await Promise.all(
+      [answer, answer, drill].map((block, position) =>
+        studySessionBlockFixture({ ...block, position, sessionId: day.id, status: "pending" }),
+      ),
+    );
+
+    await prisma.$transaction(async (tx) => {
+      const snapshot = await captureDaySession({ ...key, tx });
+
+      if (!snapshot) {
+        throw new Error("Expected a saved day");
+      }
+
+      await tx.studySessionBlock.deleteMany({ where: { sessionId: day.id } });
+
+      const started = await tx.studySessionBlock.create({
+        data: {
+          ...answer,
+          position: 0,
+          sessionId: day.id,
+          startedAt: new Date(),
+          status: "active",
+        },
+      });
+
+      const session = await lockDaySession({ ...key, snapshot, tx });
+
+      if (!session) {
+        throw new Error("Expected to lock the saved day");
+      }
+
+      await restoreDaySession({ session, snapshot, tx });
+
+      const blocks = await tx.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: day.id },
+      });
+
+      expect(blocks.map(({ id }) => id)).toStrictEqual([
+        started.id,
+        originals[1]?.id,
+        originals[2]?.id,
+      ]);
+    });
+  });
+
+  it.each(["admitted", "opened", "drill"] as const)(
+    "keeps the pending writing after refreshing a day with a kept answer (%s)",
+    async (shape) => {
+      const { goal, saved, writingSkill } = await setup({ dailyMinutes: 120, structure: CGU });
+
+      const answer = {
+        minutes: 45,
+        taskKey: "short",
+        title: "Written answer",
+        unit: "answer",
+      } as const;
+
+      const tasks = shape === "drill" ? [answer] : [answer, answer];
+      const plan = parsePlanSettings(saved.settings);
+
+      await prisma.plan.update({
+        data: {
+          settings: {
+            ...plan,
+            writingSchedule: [
+              { date: toIsoDate(START), minutes: tasks.length * answer.minutes, tasks },
+            ],
+          },
+        },
+        where: { id: saved.id },
+      });
+
+      const day = await studySessionFixture({
+        goalId: goal.id,
+        localDate: START,
+        plannedMinutes: 120,
+        startedAt: new Date(),
+        status: "active",
+        userId: goal.userId,
+      });
+
+      const kept = toProduceBlock(answer);
+
+      const first = await studySessionBlockFixture({
+        ...kept,
+        payload: {
+          ...kept.payload,
+          writing: {
+            admissionId: shape === "opened" ? null : randomUUID(),
+            draft: null,
+            taskKey: "short",
+            unit: "answer",
+          },
+        },
+        sessionId: day.id,
+        startedAt: new Date(),
+        status: shape === "opened" ? "active" : "completed",
+      });
+
+      async function savePendingWriting() {
+        if (shape !== "drill") {
+          return studySessionBlockFixture({
+            ...toProduceBlock(answer),
+            sessionId: day.id,
+            status: "pending",
+          });
+        }
+
+        const lesson = saved.items.find((item) => item.lessonId && item.skillId === writingSkill);
+
+        if (!lesson?.lessonId) {
+          throw new Error("Expected a writing lesson");
+        }
+
+        const lessonBlock = {
+          canDo: null,
+          estimatedMinutes: 23,
+          kind: "learn" as const,
+          lessonId: lesson.lessonId,
+          payload: toBlockPayload({ planItemId: lesson.id }),
+        };
+
+        const [parent, drill] = addWritingDrill({
+          block: lessonBlock,
+          lesson: {
+            canDo: null,
+            chapterId: null,
+            drill: { ...answer, minutes: 8, unit: "drill" },
+            lessonId: lesson.lessonId,
+            minutes: 23,
+            planItemId: lesson.id,
+            planSkillId: writingSkill ?? null,
+            skillIds: [],
+            title: "Writing lesson",
+          },
+        });
+
+        await studySessionBlockFixture({ ...parent!, sessionId: day.id, status: "completed" });
+        return studySessionBlockFixture({ ...drill!, sessionId: day.id, status: "pending" });
+      }
+
+      const pending = await savePendingWriting();
+
+      await followPlanChangeToday({
+        goalId: goal.id,
+        localDate: START,
+        timeZone: "UTC",
+        userId: goal.userId,
+      });
+
+      const writing = await prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { kind: "produce", sessionId: day.id },
+      });
+
+      expect(writing[0]?.id).toBe(first.id);
+
+      const remaining = writing.filter(({ status }) => status === "pending");
+
+      const pendingAnswers = remaining.filter(
+        (block) => readBlockPayload(block).writing?.unit === "answer",
+      );
+
+      const source = readBlockPayload(pending).writingLessonId;
+
+      const keptDrill = remaining.filter(
+        (block) => source && readBlockPayload(block).writingLessonId === source,
+      );
+
+      expect(pendingAnswers).toHaveLength(shape === "drill" ? 0 : 1);
+      expect(keptDrill.map(({ id }) => id)).toStrictEqual(shape === "drill" ? [pending.id] : []);
+    },
+  );
 
   it("pays about half of a five-week CGU plan mostly in whole answers and drills", async () => {
     const fixture = await setup({ dailyMinutes: 240, structure: CGU });

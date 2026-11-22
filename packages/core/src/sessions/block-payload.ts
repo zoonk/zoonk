@@ -114,6 +114,7 @@ const blockPayloadSchema = z.object({
   /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
   writing: writingBlockSchema.optional(),
+  writingLessonId: uuidSchema().optional(),
   writingPacing: writingPacingSchema.shape.source.optional(),
   writingPlacement: z.boolean().optional(),
 });
@@ -121,6 +122,10 @@ const blockPayloadSchema = z.object({
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;
 export type BlockCapsule = z.infer<typeof capsuleSchema>;
 export type BlockCheckpoint = z.infer<typeof checkpointSchema>;
+
+export function hasWritingProgress({ writing }: BlockPayload): boolean {
+  return Boolean(writing?.admissionId || writing?.draft);
+}
 
 const EMPTY_BLOCK_PAYLOAD: BlockPayload = blockPayloadSchema.parse({});
 

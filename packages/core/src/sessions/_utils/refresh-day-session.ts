@@ -1,13 +1,14 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import { loadScheduledAnswersForRefresh } from "../../learner/facts/scheduled-answers";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { getBlockItemIds, readBlockPayload } from "../block-payload";
+import { getBlockItemIds, hasWritingProgress, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
-import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { ONE_PER_DAY, hasSameBlocks, hasSameContent } from "./day-block-content";
+import { hasSameBlocks, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
@@ -24,9 +25,22 @@ export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
 
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
+  const openedLessons = new Set(
+    blocks.flatMap(({ lessonId, status }) =>
+      lessonId && (status === "active" || status === "completed") ? [lessonId] : [],
+    ),
+  );
+
   return blocks.filter((block) => {
-    const { extra, writing } = readBlockPayload(block);
-    return block.status !== "pending" || extra || Boolean(writing?.admissionId || writing?.draft);
+    const payload = readBlockPayload(block);
+    const { extra, writingLessonId } = payload;
+
+    return (
+      block.status !== "pending" ||
+      extra ||
+      hasWritingProgress(payload) ||
+      (writingLessonId !== undefined && openedLessons.has(writingLessonId))
+    );
   });
 }
 
@@ -73,21 +87,16 @@ function withoutKept({
   const isNewLesson = (lesson: { lessonId: string | null }) =>
     !lesson.lessonId || !lessonIds.has(lesson.lessonId);
 
-  const writtenTasks = new Map<string, number>();
+  const drillLessons = new Set(kept.map((block) => readBlockPayload(block).writingLessonId));
 
-  for (const block of kept) {
-    const { extra, writing } = readBlockPayload(block);
-
-    if (!extra && writing?.unit === "answer") {
-      writtenTasks.set(writing.taskKey, (writtenTasks.get(writing.taskKey) ?? 0) + 1);
-    }
-  }
-
-  const produces = input.produces.filter(({ taskKey }) => {
-    const count = writtenTasks.get(taskKey) ?? 0;
-    writtenTasks.set(taskKey, count - 1);
-    return count <= 0;
-  });
+  const newLessons = (lessons: readonly PlannedLesson[]) =>
+    lessons
+      .filter((lesson) => isNewLesson(lesson))
+      .map((lesson) =>
+        lesson.drill && lesson.lessonId && drillLessons.has(lesson.lessonId)
+          ? { ...lesson, drill: undefined, minutes: lesson.minutes - lesson.drill.minutes }
+          : lesson,
+      );
 
   return {
     ...input,
@@ -98,14 +107,13 @@ function withoutKept({
         ...checkpoint,
         reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
       })),
-    fillLessons: input.fillLessons?.filter(isNewLesson),
-    lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
+    fillLessons: input.fillLessons && newLessons(input.fillLessons),
+    lessons: newLessons(input.lessons),
     openedPractice: getOpenedPractice({ kept, session }),
     placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
     practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
     // A day that keeps its practice gives the rest of its time to lessons.
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
-    produces,
     usedMinutes: getSessionUsedMinutes(kept),
   };
 }
@@ -127,6 +135,8 @@ export async function planRestOfDayWithPlan({
     localDate: session.localDate,
     now: new Date(),
     readSubscription,
+    readWritingAnswers: (userId: string, goalId: string) =>
+      loadScheduledAnswersForRefresh({ goalId, kept, localDate: session.localDate, userId }),
     timeZone,
     userId: session.userId,
   };
@@ -148,10 +158,8 @@ export async function planRestOfDayWithPlan({
     withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
   );
 
-  const keptKinds = new Set(kept.map((block) => block.kind));
-
   return {
-    blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
+    blocks,
     plan: await dayPlan,
     plannedMinutes: Math.ceil(getSessionUsedMinutes(kept) + plannedMinutes),
   };
