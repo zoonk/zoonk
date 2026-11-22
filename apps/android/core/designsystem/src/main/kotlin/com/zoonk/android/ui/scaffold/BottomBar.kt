@@ -106,7 +106,7 @@ fun BottomBar(
             // bar's hairline.
             Box(
                 Modifier
-                    .aboveBar(room) { barTop }
+                    .aboveBar(room, overlap = (columnMargin - BAR_NOTE_GAP).coerceAtLeast(0.dp)) { barTop }
                     .zIndex(1f)
                     .fillMaxWidth()
                     .semantics { liveRegion = LiveRegionMode.Polite },
@@ -261,16 +261,17 @@ fun PaddingValues.plusBottom(extra: Dp): PaddingValues {
 
 /**
  * Laid out with no height of its own and drawn just above its parent's top ([barTop]), over the bar's hairline so the note's own is
- * the bar's only one, and what it holds never moves the bar. It draws only when it fits between the page's content top and the bar;
+ * the bar's only one, and what it holds never moves the bar; its last [overlap] covers the bar's room above its buttons. It draws only when it fits between the page's content top and the bar;
  * otherwise it sends the note into the page's scroll.
  */
 private fun Modifier.aboveBar(
     room: BarNoteRoom,
+    overlap: Dp,
     barTop: () -> Float,
 ): Modifier =
     layout { measurable, constraints ->
         val placeable = measurable.measure(constraints.copy(minHeight = 0))
-        val above = (placeable.height - DividerDefaults.Thickness.roundToPx()).coerceAtLeast(0)
+        val above = (placeable.height - DividerDefaults.Thickness.roundToPx() - overlap.roundToPx()).coerceAtLeast(0)
         val bar = barTop()
         val fits = room.top.isNaN() || above <= bar - room.top
         // Until the bar has its place, nothing draws and nothing is decided.
@@ -295,6 +296,12 @@ fun barNoteTextAlign(): TextAlign = if (LocalBarNoteAtEnd.current) TextAlign.End
 /** Where a [BottomBar] note's parts sit across its width: on the bar's end edge where the note sits there ([LocalBarNoteAtEnd]). */
 @Composable
 fun barNoteAlignment(): Alignment.Horizontal = if (LocalBarNoteAtEnd.current) Alignment.End else Alignment.Start
+
+/**
+ * From a [BottomBar] note to the buttons under it, the same on every screen and width: a bar whose margin is wider draws the note
+ * over the extra room above its buttons.
+ */
+private val BAR_NOTE_GAP = 16.dp
 
 /** Main's gap between a bar's buttons. */
 val BAR_GAP = 8.dp

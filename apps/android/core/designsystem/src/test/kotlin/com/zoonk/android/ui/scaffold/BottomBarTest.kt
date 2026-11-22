@@ -183,7 +183,8 @@ class BottomBarTest {
         noteHeight = page - 44.dp
         compose.waitForIdle()
 
-        assertEquals("the note draws its full height over the page", (page - 20.dp).value, room.height.value, 1f)
+        // The note's 24dp margin over its content, less the 8dp of it that covers this bar's wider room above its buttons.
+        assertEquals("the note draws its full height over the page", (page - 28.dp).value, room.height.value, 1f)
     }
 
     @Composable
