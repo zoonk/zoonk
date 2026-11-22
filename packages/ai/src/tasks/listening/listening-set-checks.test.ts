@@ -263,6 +263,7 @@ describe(findListeningSetProblems, () => {
 
   it.each([
     "The answer is $x_1$.",
+    "The answer is $x + *y*$.",
     "Run `ls -la` first.",
     "We compare $$x + y$$ with the total.",
     String.raw`So $\frac{1}{2}$ of them came.`,
@@ -271,7 +272,8 @@ describe(findListeningSetProblems, () => {
     "It's urgent (we leave at dawn).",
     "[phone rings] Hi there.",
     "(laughs) That's a good one.",
-    "It's *very* important.",
+    "Multiply 2*3*4.",
+    "Run `find . -name '*draft*'` first.",
   ])("preserves %s for the spoken-script check to reject", (text) => {
     const set = repairListeningSet(setOf({ turns: scriptOf([...LINES, text]) }), REQUEST);
 
@@ -281,6 +283,17 @@ describe(findListeningSetProblems, () => {
       `A spoken line has written notation a voice can't say: "${text}". Write it as the words a speaker would say.`,
     ]);
   });
+
+  it.each(["*very important*", "**very important**", "_very important_", "__very important__"])(
+    "repairs paired emphasis %s in otherwise spoken prose",
+    (emphasis) => {
+      const turns = scriptOf([...LINES, `It's ${emphasis}.`]);
+      const set = repairListeningSet(setOf({ turns }), REQUEST);
+
+      expect(set.turns.at(-1)?.text).toBe("It's very important.");
+      expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
+    },
+  );
 
   it("accepts spoken math and commands alongside ordinary prices and punctuation", () => {
     const set = repairListeningSet(

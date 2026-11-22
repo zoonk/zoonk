@@ -22,7 +22,12 @@ const MAX_SCRIPT_WORDS = 1000;
 
 const TITLE_ASIDES = /\[[^\]]*\]|\([^)]*\)/gu;
 const TITLE_EMPHASIS = /[*_]+/gu;
-const WRITTEN_NOTATION = /[`\\[\](){}*_~|<>#［］（）]/u;
+const WRITTEN_NOTATION = /[`\\[\](){}~|<>#［］（）]/u;
+const EMPHASIS_MARKS = /[*_]/u;
+
+const PAIRED_PROSE_EMPHASIS =
+  /(?<![\p{L}\p{M}\p{N}*_])(?<mark>\*{1,3}|_{1,3})(?<words>\p{L}[\p{L}\p{M}]*(?:[ ,.'’!?-]+\p{L}[\p{L}\p{M}]*)*[,.!?]?)\k<mark>(?![\p{L}\p{M}\p{N}*_])/gu;
+
 const SPACES = /\s+/gu;
 
 export type ListeningSetRequest = {
@@ -35,6 +40,16 @@ export type ListeningSetRequest = {
 
 function cleanLine(text: string): string {
   return replaceEmDashes(text).replaceAll(SPACES, " ").trim();
+}
+
+function cleanSpokenLine(text: string): string {
+  const line = cleanLine(text);
+
+  if (!EMPHASIS_MARKS.test(line) || WRITTEN_NOTATION.test(line) || findMath(line)) {
+    return line;
+  }
+
+  return line.replaceAll(PAIRED_PROSE_EMPHASIS, "$<words>");
 }
 
 /**
@@ -128,7 +143,7 @@ function toKnownSkill(skill: number, request: ListeningSetRequest): number {
 export function repairListeningSet(set: ListeningSet, request: ListeningSetRequest): ListeningSet {
   const turns = mergeTurns(
     set.turns
-      .map((turn) => ({ speaker: turn.speaker.trim(), text: cleanLine(turn.text) }))
+      .map((turn) => ({ speaker: turn.speaker.trim(), text: cleanSpokenLine(turn.text) }))
       .filter((turn) => turn.text.length > 0),
   );
 
@@ -209,7 +224,7 @@ function findSpokenNotation(text: string): string[] {
     return bare;
   }
 
-  return WRITTEN_NOTATION.test(text) || findMath(text) ? [text] : [];
+  return WRITTEN_NOTATION.test(text) || EMPHASIS_MARKS.test(text) || findMath(text) ? [text] : [];
 }
 
 function findScriptProblems(set: ListeningSet): string[] {
