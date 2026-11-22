@@ -9,6 +9,7 @@ import { toIsoDate } from "./plan-calendar";
 import { type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import { type DroppedUnit, type PlanDay } from "./schedule-units";
+import { getPlacementCarry } from "./writing-schedule";
 import { isWrittenDay } from "./written-cadence";
 import { scheduleWrittenPapers } from "./written-test-planning";
 
@@ -175,9 +176,8 @@ function listWritingSchedule({
   }));
 
   const today = toIsoDate(input.today);
-  const saved = input.settings.writingSchedule ?? [];
 
-  const kept = saved.filter(
+  const kept = (input.settings.writingSchedule ?? []).filter(
     ({ date }) => date < toIsoDate(start) || (input.todayShown && date === today),
   );
 
@@ -205,7 +205,8 @@ function listWritingSchedule({
   const budget = Math.max(practiceMinutes, practiceBudget - testsMinutes);
   const share = room > 0 ? Math.min(1, budget / room) : 0;
 
-  const state = { accrued: 0, next: 0, remaining: 0, room, spent: 0 };
+  const carry = getPlacementCarry(kept, writing.practice[0]?.taskKey);
+  const state = { ...carry, accrued: 0, room, spent: 0 };
 
   const entries = eligible.flatMap((day): Entry[] => {
     const paper = tests.get(day.date);
@@ -232,9 +233,7 @@ function listWritingSchedule({
 
     const entry = takeWriting({ budget, day, inCadence, practice: writing.practice, state });
 
-    if (!paper) {
-      state.room -= day.minutes;
-    }
+    state.room -= paper ? 0 : day.minutes;
 
     return entry ? [entry] : [];
   });

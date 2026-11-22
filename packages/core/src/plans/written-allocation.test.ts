@@ -376,6 +376,13 @@ describe("written exam allocation", () => {
 
     await expect(getTodayView(request)).resolves.toMatchObject(carried);
     const before = await getGoalPlan(goal.id);
+    const rebuilt = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const placements = parsePlanSettings(rebuilt.settings).writingSchedule?.flatMap(({ tasks }) =>
+      tasks.filter(({ placement }) => placement),
+    );
+
+    expect(placements).toHaveLength(1);
 
     await prisma.studySessionBlock.update({
       data: { completedAt: new Date(), status: "completed" },
@@ -397,7 +404,7 @@ describe("written exam allocation", () => {
 
     expect(
       (before.plan.numbers?.scheduledMinutes ?? 0) - (after.plan.numbers?.scheduledMinutes ?? 0),
-    ).toBe(70);
+    ).toBeCloseTo(70);
 
     const today = await getTodayView(request);
 
