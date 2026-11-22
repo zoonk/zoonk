@@ -22,14 +22,10 @@ concurrency:
   # finishes. GitHub keeps one run pending, the newest.
   cancel-in-progress: false
 
-# Temporary, for the runner benchmark: every turbo task runs instead of replaying the remote cache.
-env:
-  TURBO_FORCE: "true"
-
 jobs:
   suites:
     name: e2e (${{ matrix.suite }})
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -127,7 +123,7 @@ jobs:
       # Through turbo's cache: a shard whose inputs passed before replays that run. Streamed, since
       # turbo's CI default holds a task's output until it ends, and a hung task's never does.
       - name: Run E2E tests
-        run: pnpm turbo run e2e:suite --filter main --env-mode=loose --log-order=stream --log-prefix=none -- ${{ matrix.args }} --workers=6
+        run: pnpm turbo run e2e:suite --filter main --env-mode=loose --log-order=stream --log-prefix=none -- ${{ matrix.args }} --workers=2
 
       # Only main saves, once the build finished (`pnpm e2e:main` marks it), whether or not the tests
       # then passed. A pull request's own entries serve only its later runs, and in the repository's

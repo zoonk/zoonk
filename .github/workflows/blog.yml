@@ -22,7 +22,7 @@ jobs:
     concurrency:
       group: blog-production
       cancel-in-progress: false
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 30
     env:
       DEPLOY_REF: main

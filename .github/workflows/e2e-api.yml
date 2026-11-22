@@ -22,13 +22,9 @@ concurrency:
   # finishes. GitHub keeps one run pending, the newest.
   cancel-in-progress: false
 
-# Temporary, for the runner benchmark: every turbo task runs instead of replaying the remote cache.
-env:
-  TURBO_FORCE: "true"
-
 jobs:
   e2e-api:
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 15
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci

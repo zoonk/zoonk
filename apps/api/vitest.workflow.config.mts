@@ -28,7 +28,7 @@ export default defineConfig({
     include: ["src/**/*.integration.test.ts"],
     // On CI's 4-vCPU runners, 3 files at once took a third of the time of 1, and 4 no less; 6 or
     // more starved steps past their inline lease, so they ran twice and tests failed.
-    maxWorkers: 6,
+    maxWorkers: 3,
     server: { deps: { inline: [/@workflow\/vitest/u] } },
     setupFiles: ["./setup-workflow-tests.ts"],
     // The Workflow runtime waits at least 1 s before each step retry, so a step that uses all 3 of

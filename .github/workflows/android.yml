@@ -32,7 +32,7 @@ jobs:
     # Release lint and the R8 build take over 5 minutes each here, so they run only when started by
     # hand; agents run them locally instead.
     if: github.event_name == 'workflow_dispatch'
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 10
     concurrency:
       group: ${{ github.workflow }}-compile-release-${{ github.event.pull_request.number || github.run_id }}
@@ -89,7 +89,7 @@ jobs:
     name: tests
     needs: changes
     if: needs.changes.outputs.changed == 'true'
-    runs-on: celesto-xl
+    runs-on: celesto-large
     # A shard takes up to 10 minutes when the Gradle cache is cold.
     timeout-minutes: 15
     concurrency:
@@ -126,7 +126,7 @@ jobs:
     name: ${{ matrix.job }}
     needs: compile-release
     if: ${{ !cancelled() && needs.compile-release.result != 'skipped' }}
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 10
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.job }}-${{ github.event.pull_request.number || github.run_id }}
@@ -168,7 +168,7 @@ jobs:
     name: style
     needs: changes
     if: needs.changes.outputs.changed == 'true'
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 10
     concurrency:
       group: ${{ github.workflow }}-style-${{ github.event.pull_request.number || github.run_id }}

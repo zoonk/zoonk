@@ -21,14 +21,10 @@ concurrency:
   group: vitest-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
-# Temporary, for the runner benchmark: every turbo task runs instead of replaying the remote cache.
-env:
-  TURBO_FORCE: "true"
-
 jobs:
   suites:
     name: vitest (${{ matrix.part }})
-    runs-on: celesto-xl
+    runs-on: celesto-large
     timeout-minutes: 15
     # Runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy; more
     # at once only slowed every test down. The API's workflow runs mostly wait on durable retries and
@@ -107,7 +103,7 @@ jobs:
           exit 1
 
       - name: Run Vitest
-        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=100% ${{ matrix.args }}
+        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:
