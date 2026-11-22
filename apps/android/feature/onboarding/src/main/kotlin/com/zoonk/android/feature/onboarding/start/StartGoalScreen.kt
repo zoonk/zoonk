@@ -252,7 +252,7 @@ private fun ColumnScope.Entry(
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
-            IconButton(onClick = vm::toggleAttach, enabled = vm.hasRoomForMaterial) {
+            IconButton(onClick = vm::toggleAttach, enabled = vm.materialLimitReached == null) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
                     Icon(
                         painterResource(R.drawable.ic_attach_file),
@@ -264,7 +264,7 @@ private fun ColumnScope.Entry(
         },
     )
 
-    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm.unreadable, vm::removeAttached)
+    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm.unreadable, vm.materialLimitReached, vm::removeAttached)
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
     if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
     if (vm.isAttachOpen && canAttach) {

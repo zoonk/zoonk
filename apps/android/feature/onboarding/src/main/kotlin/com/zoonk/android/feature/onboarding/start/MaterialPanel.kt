@@ -304,11 +304,15 @@ private fun PanelCard(content: @Composable () -> Unit) {
     }
 }
 
-/** Removing material takes its own button, never a tap on its name; material that can't be read anymore ([unreadable]) is marked. */
+/**
+ * Removing material takes its own button, never a tap on its name; material that can't be read anymore ([unreadable]) is marked,
+ * and a [limitReached] says why no more can be added.
+ */
 @Composable
 internal fun AttachedChips(
     items: List<AttachedSource>,
     unreadable: Set<String>,
+    limitReached: Int?,
     onRemove: (String) -> Unit,
 ) {
     val marked = items.filter { it.id in unreadable }
@@ -322,6 +326,14 @@ internal fun AttachedChips(
                     ?: stringResource(R.string.onboarding_material_unreadable_some),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        if (limitReached != null) {
+            Text(
+                stringResource(R.string.onboarding_material_limit, limitReached),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

@@ -238,7 +238,8 @@ class StartGoalViewModel(
 
     val canAttach: Boolean get() = !isAttaching && attachFailure.canAttachMaterial(java.time.Instant.now())
 
-    val hasRoomForMaterial: Boolean get() = flow.attached.size < MAX_GOAL_SOURCES
+    /** The most material a goal is sent with, once that many are attached: no more can be added until one is removed. */
+    val materialLimitReached: Int? get() = MAX_GOAL_SOURCES.takeIf { flow.attached.size >= it }
 
     private fun attach(add: suspend () -> WriteOutcome<AttachedSource>) {
         if (!canAttach) return
