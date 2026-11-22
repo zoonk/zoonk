@@ -107,7 +107,7 @@ jobs:
           exit 1
 
       - name: Run Vitest
-        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
+        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=100% ${{ matrix.args }}
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:

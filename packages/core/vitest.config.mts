@@ -14,7 +14,7 @@ const markdownAsText = {
 };
 
 /** Each node-postgres worker pool may open 10 connections; one worker per core exceeds PostgreSQL's default 100. */
-const MAX_DATABASE_WORKERS = 6;
+const MAX_DATABASE_WORKERS = 8;
 
 /** File-local module mocks persist in shared workers, so those files require isolation. */
 const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).filter((file) =>
