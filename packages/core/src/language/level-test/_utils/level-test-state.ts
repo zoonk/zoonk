@@ -21,7 +21,7 @@ import {
   levelTestProgressSchema,
 } from "../level-test-contract";
 import {
-  getLevelTestScores,
+  getLevelTestFloors,
   getNextLevelTestStep,
   levelTestTotal,
   listLevelTestLevels,
@@ -281,7 +281,7 @@ export async function toLevelTestView({
 
   const { start } = progress;
   const step = getNextLevelTestStep({ bank, progress, start });
-  const scores = progress.scores ?? getLevelTestScores({ bank, progress, start });
+  const scores = progress.scores ?? getLevelTestFloors({ bank, progress, start });
 
   const next =
     step.kind === "question" || step.kind === "confirmation"

@@ -285,6 +285,18 @@ export function getLevelTestScores(input: Parameters<typeof getAssessment>[0]): 
   );
 }
 
+/**
+ * The level each skill's answers say the learner is at least at: the bottom of its range. The
+ * middle of the range overstates a learner's level too often to save, show or plan from.
+ */
+export function getLevelTestFloors(input: Parameters<typeof getAssessment>[0]): LevelTestScores {
+  return Object.fromEntries(
+    getAssessment(input).flatMap(({ posterior, scored, skill }) =>
+      scored.length > 0 ? [[skill, Math.floor(getLowerBound(posterior))]] : [],
+    ),
+  );
+}
+
 export function getLevelTestRanges(input: Parameters<typeof getAssessment>[0]): LevelTestRanges {
   return Object.fromEntries(
     getAssessment(input).flatMap(({ posterior, scored, skill }) =>

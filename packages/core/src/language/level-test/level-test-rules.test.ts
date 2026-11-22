@@ -1,7 +1,14 @@
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
-import { getLevelTestScores, getNextLevelTestStep, toLevelLabels } from "./level-test-rules";
+import {
+  getBand,
+  getLevelTestFloors,
+  getLevelTestRanges,
+  getLevelTestScores,
+  getNextLevelTestStep,
+  toLevelLabels,
+} from "./level-test-rules";
 
 const TEST_LEVELS = CEFR_LEVELS;
 const A2 = 1;
@@ -52,6 +59,22 @@ describe("level estimates", () => {
 
     expect(scores.speaking).toBeUndefined();
     expect(toLevelLabels(scores)).not.toHaveProperty("speaking");
+  });
+
+  it("keeps a test stopped after one wrong answer at the bottom of what it could mean", () => {
+    const C1 = getBand("C1");
+
+    const input = {
+      bank,
+      progress: progress([{ answerIndex: 1, correct: false, id: "reading-C1-0" }]),
+      start: C1,
+    };
+
+    const low = getLevelTestRanges(input).reading?.low;
+
+    expect(low).toBeDefined();
+    expect(getLevelTestFloors(input).reading).toBe(getBand(low ?? "C2"));
+    expect(getLevelTestFloors(input).reading).toBeLessThan(getBand("B1"));
   });
 
   it("rises with right answers and falls with wrong ones", () => {

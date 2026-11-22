@@ -166,7 +166,13 @@ describe("language level test", () => {
     expect(levels.map((level) => level.skill).toSorted()).toStrictEqual(["reading"]);
 
     expect(levels.every((level) => level.score === level.startScore)).toBe(true);
-    expect(saved.details).toMatchObject({ skillLevels: { reading: expect.any(String) } });
+    const readingLevel = CEFR_LEVELS[levels[0]?.score ?? -1];
+
+    expect(saved.details).toMatchObject({
+      levelTest: { lastResult: { ranges: { reading: { low: readingLevel } } } },
+      skillLevels: { reading: readingLevel },
+    });
+
     expect(saved.details).toHaveProperty("level", "A2");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");

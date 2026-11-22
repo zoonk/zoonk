@@ -9,6 +9,7 @@ import {
 import {
   getBand,
   getLevelTestConfirmation,
+  getLevelTestFloors,
   getLevelTestRanges,
   getLevelTestScores,
   getNextLevelTestStep,
@@ -109,6 +110,7 @@ function runTest({
   return {
     asked,
     confirmed: getLevelTestConfirmation(input).through,
+    floors: getLevelTestFloors(input),
     ranges: getLevelTestRanges(input),
     scores: getLevelTestScores(input),
   };
@@ -131,7 +133,7 @@ describe("matched-model level test", () => {
   });
 
   it.each(["quick", "wholeCourse"] as const)(
-    "keeps %s estimates within a band and wrong skips below one percent",
+    "keeps %s estimates within a band, and saved levels and wrong skips over a learner below one percent",
     (length) => {
       const learnersPerBand = 500;
 
@@ -157,6 +159,7 @@ describe("matched-model level test", () => {
           );
 
           return {
+            overplaced: SKILLS.filter((skill) => (result.floors[skill] ?? 0) > theta),
             skipped: result.confirmed !== null,
             withinOne: Math.abs(estimate - band) <= 1,
             wrongSkip: result.confirmed !== null && getBand(result.confirmed) >= theta,
@@ -169,6 +172,12 @@ describe("matched-model level test", () => {
       ).toBeGreaterThanOrEqual(0.9);
 
       expect(learners.filter(({ skipped }) => skipped).length).toBeGreaterThan(0);
+
+      for (const skill of SKILLS) {
+        expect(
+          learners.filter(({ overplaced }) => overplaced.includes(skill)).length / learners.length,
+        ).toBeLessThanOrEqual(0.01);
+      }
 
       expect(
         learners.filter(({ wrongSkip }) => wrongSkip).length / learners.length,

@@ -35,8 +35,8 @@ import {
   type LevelTestScores,
   getBand,
   getLevelTestConfirmation,
+  getLevelTestFloors,
   getLevelTestRanges,
-  getLevelTestScores,
   getNextLevelTestStep,
   listLevelTestLevels,
   toLevelLabels,
@@ -98,7 +98,7 @@ async function recordLevelTestResult({
   const { id: goalId, userId } = current;
   const now = new Date();
   const input = { bank, progress: currentProgress, start: currentProgress.start };
-  const scores = getLevelTestScores(input);
+  const scores = getLevelTestFloors(input);
   const { shortLevels, through } = getLevelTestConfirmation(input);
   const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
   const itemIds = await skipConfirmedLanguageLessons({ goalId, now, through, tx: transaction });
