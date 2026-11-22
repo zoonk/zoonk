@@ -24,7 +24,7 @@ struct GoalMaterialButton: View {
             "Your plan and lessons will use it.", tableName: "Onboarding",
             comment: "Over the ways to add material to a goal, in their menu")
         ) {
-          paperclip
+          Paperclip()
         } onAttached: { source in
           material.attach(source)
         }
@@ -32,16 +32,22 @@ struct GoalMaterialButton: View {
         Button {
           draft.showsSignUp.toggle()
         } label: {
-          paperclip
+          Paperclip()
         }
       }
     }
     // Only the paperclip, not the box's row it's in, opens it.
     .menuStyle(.button)
     .buttonStyle(.borderless)
+    .disabled(!material.hasRoom)
   }
+}
 
-  private var paperclip: some View {
+/// Its muted ink overrides the borderless style's disabled look, so it fades as ghost buttons do.
+private struct Paperclip: View {
+  @Environment(\.isEnabled) private var isEnabled
+
+  var body: some View {
     Label {
       Text(
         "Add your material", tableName: "Onboarding",
@@ -51,6 +57,7 @@ struct GoalMaterialButton: View {
     }
     .labelStyle(.iconOnly)
     .foregroundStyle(.mutedForeground)
+    .opacity(isEnabled ? 1 : 0.5)
     .frame(minWidth: 44, minHeight: 44, alignment: .leading)
     .contentShape(.rect)
   }
@@ -167,7 +174,14 @@ extension LearnerSummaryStore {
   }
 }
 
+extension AttachedSource {
+  /// Core's `MAX_GOAL_SOURCES`: a goal is sent with this many at most.
+  static let maxPerGoal = 5
+}
+
 extension [AttachedSource] {
+  var hasRoom: Bool { count < AttachedSource.maxPerGoal }
+
   /// The same source added again replaces itself at the end.
   fileprivate mutating func attach(_ source: AttachedSource) {
     self = filter { $0.id != source.id } + [source]
