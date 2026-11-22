@@ -29,7 +29,7 @@ env:
 jobs:
   suites:
     name: e2e (${{ matrix.suite }})
-    runs-on: celesto-micro
+    runs-on: celesto-large
     timeout-minutes: 15
     strategy:
       fail-fast: false

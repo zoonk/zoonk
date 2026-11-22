@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   checks-needed:
-    runs-on: celesto-micro
+    runs-on: celesto-large
     outputs:
       required: ${{ steps.check.outputs.required }}
     steps:

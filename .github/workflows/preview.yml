@@ -30,7 +30,7 @@ env:
 jobs:
   preview:
     if: github.event_name == 'workflow_dispatch'
-    runs-on: celesto-micro
+    runs-on: celesto-large
     timeout-minutes: 95
     env:
       PR_NUMBER: ${{ inputs.pr }}
@@ -126,7 +126,7 @@ jobs:
 
   cleanup:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: celesto-micro
+    runs-on: celesto-large
     timeout-minutes: 10
     env:
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}

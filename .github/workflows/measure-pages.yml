@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   measure:
-    runs-on: celesto-micro
+    runs-on: celesto-large
     timeout-minutes: 60
     env:
       APP: ${{ inputs.app }}

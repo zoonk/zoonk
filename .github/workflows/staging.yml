@@ -21,7 +21,7 @@ jobs:
     concurrency:
       group: staging
       cancel-in-progress: true
-    runs-on: celesto-micro
+    runs-on: celesto-large
     timeout-minutes: 95
     env:
       DEPLOY_TARGET: staging
