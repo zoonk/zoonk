@@ -96,13 +96,13 @@ import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
-import com.zoonk.android.feature.player.engine.asAnswered
 import com.zoonk.android.feature.player.engine.canSelfCorrect
 import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.engine.screen
+import com.zoonk.android.feature.player.engine.shownStep
 import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.language.PromptAudio
 import com.zoonk.android.feature.player.language.PromptAudioBarButton
@@ -138,6 +138,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
@@ -145,6 +146,8 @@ import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskBarKey
+import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
@@ -263,7 +266,7 @@ fun LessonPlayer(
         onPauseOrDispose {}
     }
     val promptStep = shownStep?.takeIf { viewModel.todayChoicesRead }
-    language.prompt?.let { PromptAudioEffect(promptStep, viewModel.cantTalk, viewModel.cantListen, it) }
+    language.prompt?.let { PromptAudioEffect(promptStep, state, viewModel.cantTalk, viewModel.cantListen, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
         viewModel.resume()
@@ -327,6 +330,7 @@ fun LessonPlayer(
         }
     val focus = remember { FocusRequester() }
     val primaryFocus = remember { FocusRequester() }
+    val barKeys = remember { TaskBarKeys() }
     val canvasWork = rememberSaveableStateHolder()
     var asking by rememberSaveable { mutableStateOf(false) }
     // Ask opened beside the screen on an open book sits on the page after the fold, so it hides while the device is closed.
@@ -396,7 +400,7 @@ fun LessonPlayer(
                     }.onKeyEvent { event ->
                         // A shortcut acts once per press, as main's do: a held number key would otherwise sort every card.
                         event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0 && state != null && screen != null &&
-                            handleKey(event.key, state, screen, viewModel, actions, leave) {
+                            handleKey(event.key, state, screen, viewModel, actions, barKeys, leave) {
                                 if (ownEnd == null) {
                                     completionMainAction(lesson, state, ending, viewModel, exits)
                                 } else {
@@ -445,8 +449,10 @@ fun LessonPlayer(
                             val spread = spreadShows()
                             TaskActionBar {
                                 ActionBar(
+                                    state,
                                     screen,
                                     actions,
+                                    barKeys,
                                     offersDontKnow(screen, state),
                                     language.prompt,
                                     primaryFocus,
@@ -523,6 +529,7 @@ private fun handleKey(
     screen: LessonScreen,
     viewModel: LessonPlayerViewModel,
     actions: StepActions,
+    barKeys: TaskBarKeys,
     leave: () -> Unit,
     completionAction: () -> (() -> Unit)?,
 ): Boolean {
@@ -535,8 +542,12 @@ private fun handleKey(
         }
 
         key == Key.Enter || key == Key.NumPadEnter -> {
-            actions.runPrimary()
+            if (!barKeys.press(TaskBarKey.Main)) actions.runPrimary()
             true
+        }
+
+        key == Key.P -> {
+            barKeys.press(TaskBarKey.Sound)
         }
 
         key == Key.DirectionLeft && screen.canGoBack -> {
@@ -882,7 +893,7 @@ private fun Result(
             if (!notesInOwnCard(step)) LessonResultNotes(next, screen.hyperdriveStreak)
         } else {
             val explanations by viewModel.explanations.collectAsStateWithLifecycle()
-            LessonStepResultView(step.asAnswered(state.answers[step.id]), result, next, screen.hyperdriveStreak) {
+            LessonStepResultView(state.shownStep(step, viewModel.cantTalk, viewModel.cantListen), result, next, screen.hyperdriveStreak) {
                 ExplainAnswer(
                     explanation = explanations[step.id],
                     onExplain = viewModel::explainAnswer,
@@ -908,8 +919,10 @@ private suspend fun PointerInputScope.countTouches(touches: MutableIntState) {
 
 @Composable
 private fun ActionBar(
+    state: LessonPlayerState,
     screen: LessonScreen,
     actions: StepActions,
+    barKeys: TaskBarKeys,
     dontKnow: Boolean,
     prompt: PromptAudio?,
     primaryFocus: FocusRequester,
@@ -926,7 +939,7 @@ private fun ActionBar(
     }
 
     val step = screen.step
-    val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, actions)
+    val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, state, actions)
 
     val dontKnowAbove = dontKnow && !isWideLayout()
     val giveUp: @Composable (Modifier) -> Unit = { modifier ->
@@ -939,20 +952,23 @@ private fun ActionBar(
 
     Column(verticalArrangement = Arrangement.spacedBy(BAR_GAP)) {
         if (dontKnowAbove) giveUp(Modifier.fillMaxWidth())
-        TaskActions(back) { width ->
-            if (dontKnow && !dontKnowAbove) giveUp(Modifier)
-            if (step != null && prompt != null) PromptAudioBarButton(step, actions, prompt)
-            if (records && step != null) {
-                SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
-            } else {
-                Button(
-                    busy = primary.busy,
-                    onClick = actions::runPrimary,
-                    modifier = width.focusRequester(primaryFocus),
-                    enabled = primary.enabled,
-                ) { Text(stringResource(primary.label.text())) }
+        // The bar's sound and Record take P and Enter from the frame while they show.
+        CompositionLocalProvider(LocalTaskBarKeys provides barKeys) {
+            TaskActions(back) { width ->
+                if (dontKnow && !dontKnowAbove) giveUp(Modifier)
+                if (step != null && prompt != null) PromptAudioBarButton(step, state, actions, prompt)
+                if (records && step != null) {
+                    SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
+                } else {
+                    Button(
+                        busy = primary.busy,
+                        onClick = actions::runPrimary,
+                        modifier = width.focusRequester(primaryFocus),
+                        enabled = primary.enabled,
+                    ) { Text(stringResource(primary.label.text())) }
+                }
+                ask()
             }
-            ask()
         }
     }
 }

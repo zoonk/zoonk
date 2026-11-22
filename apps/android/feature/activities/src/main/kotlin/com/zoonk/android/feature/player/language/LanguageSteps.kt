@@ -193,10 +193,11 @@ fun LanguageStepView(
             exercise.sentence?.let { sentence ->
                 val url = listeningAudioUrl(sentence, actions.cantListen)
                 val offersCantListen = !locked && sentence.audioUrl != null
-                // Its sentence plays from the bar's sound button.
+                // Its sentence plays from the bar's sound button. A sentence that is its own answer is never shown in place of
+                // its sound: a lesson leaves it out while the learner can't listen, and mistake practice offers "I don't know yet".
                 val listen = @Composable {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        if (url != null && prompt != null) {
+                        if ((url != null && prompt != null) || sentence.readsItself) {
                             QuestionText(stringResource(R.string.player_language_what_do_you_hear))
                         } else {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -213,14 +214,14 @@ fun LanguageStepView(
                                 wayOut?.invoke()
                             }
                         }
-                        // Without its sound the screen still works: it shows the sentence to translate.
+                        // Without its sound the screen still works: it shows the sentence to translate, unless that's the answer.
                         if (url != null && prompt != null && prompt.state is SpeechState.Failed) {
                             SpeechFailedNote(
                                 language = languages.target,
                                 limit = null,
                                 onRetry = { prompt.toggle(url) },
                                 navigator = null,
-                                text = stripWrappingQuotes(sentence.sentence),
+                                text = stripWrappingQuotes(sentence.sentence).takeUnless { sentence.readsItself },
                             )
                         }
                     }

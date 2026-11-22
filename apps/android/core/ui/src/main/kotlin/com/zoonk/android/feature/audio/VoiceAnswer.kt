@@ -56,6 +56,8 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TakeTaskBarKey
+import com.zoonk.android.ui.components.TaskBarKey
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.theme.GeistMono
 import kotlinx.coroutines.delay
@@ -233,7 +235,7 @@ fun rememberRecordTap(
 
 /**
  * Record while idle; Stop with the take's clock while recording, in the same filled button; [busy] while the take is checked. It
- * stays one button through all three, so TalkBack keeps its focus.
+ * stays one button through all three, so TalkBack keeps its focus. In a frame's bar it's the main action, so Enter presses it.
  */
 @Composable
 fun RecordButton(
@@ -244,10 +246,13 @@ fun RecordButton(
     busy: Boolean = false,
 ) {
     val recording = status as? VoiceRecorder.Status.Recording
+    val held = busy && recording == null
+    val press = if (recording != null) onStop else onStart
+    TakeTaskBarKey(TaskBarKey.Main, press.takeUnless { held })
     Button(
-        onClick = if (recording != null) onStop else onStart,
+        onClick = press,
         modifier = modifier,
-        busy = busy && recording == null,
+        busy = held,
     ) {
         if (recording == null) {
             Text(stringResource(R.string.audio_record))

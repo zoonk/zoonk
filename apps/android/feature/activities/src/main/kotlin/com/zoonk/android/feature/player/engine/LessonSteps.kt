@@ -33,20 +33,44 @@ val LessonStep.isReadStep: Boolean
 
 val LessonStep.isLanguageStep: Boolean get() = content is StepContent.Language
 
-private fun StepContent.SpokenAnswer.asListening(): StepContent.Language? =
-    listening?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
+/** How a spoken screen is answered: said into the recorder, heard instead, or typed. */
+enum class SpokenMode { Speak, Listen, Type }
 
-/** A learner who can't talk today hears the spoken screen's sentence instead, unless they can't listen either: then they type it. */
-internal fun StepContent.SpokenAnswer.listeningInstead(
+/**
+ * Main's `getGivenMode`, then its `getAnswerMode`: an answered spoken screen shows the way it was answered (said once something
+ * was heard, typed, or heard instead) whatever today's choices are now; one still to answer follows them, heard instead when the
+ * learner can't talk, typed when they can't listen either or the microphone is blocked. Null on any other screen.
+ */
+fun LessonPlayerState.spokenMode(
+    step: LessonStep,
     cantTalk: Boolean,
     cantListen: Boolean,
-): StepContent.Language? = asListening()?.takeIf { cantTalk && !cantListen }
+    micBlocked: Boolean = false,
+): SpokenMode? {
+    val content = step.content as? StepContent.SpokenAnswer ?: return null
+    val answer = answers[step.id]
+    val canListen = content.listening != null
 
-fun LessonStep.asAnswered(answer: LessonAnswer?): LessonStep =
-    (content as? StepContent.SpokenAnswer)
-        ?.takeIf { answer is LessonAnswer.Listening }
-        ?.asListening()
-        ?.let { copy(content = it) } ?: this
+    return when {
+        results[step.id]?.heard != null -> SpokenMode.Speak
+        answer is LessonAnswer.Spoken && answer.text.isNotEmpty() -> SpokenMode.Type
+        answer is LessonAnswer.Listening && canListen -> SpokenMode.Listen
+        cantTalk && canListen && !cantListen -> SpokenMode.Listen
+        cantTalk || micBlocked -> SpokenMode.Type
+        else -> SpokenMode.Speak
+    }
+}
+
+/** The screen as it shows: a spoken screen heard instead is its listening exercise, as main's `ListeningInstead`. */
+fun LessonPlayerState.shownStep(
+    step: LessonStep,
+    cantTalk: Boolean,
+    cantListen: Boolean,
+): LessonStep {
+    val listening = (step.content as? StepContent.SpokenAnswer)?.listening
+    if (listening == null || spokenMode(step, cantTalk, cantListen) != SpokenMode.Listen) return step
+    return step.copy(content = StepContent.Language(StepKind.Listening, listening, wordHints = null))
+}
 
 val LessonStep.canSelfCorrect: Boolean get() = isLanguageStep && kind in SELF_CORRECT_KINDS
 

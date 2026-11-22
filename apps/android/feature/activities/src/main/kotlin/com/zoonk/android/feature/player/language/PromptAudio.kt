@@ -26,13 +26,16 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.isReadStep
-import com.zoonk.android.feature.player.engine.listeningInstead
+import com.zoonk.android.feature.player.engine.shownStep
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.TakeTaskBarKey
+import com.zoonk.android.ui.components.TaskBarKey
 
 /**
  * A language screen's own recording (a letter, a word, a sentence to hear), which plays as its screen
@@ -97,17 +100,18 @@ internal fun listeningAudioUrl(
 /**
  * The previous screen's sound stops, including when the lesson ends; this one's starts once per
  * visit, so going back plays it again while rotating or resizing doesn't. A spoken screen's listening exercise, shown when the
- * learner can't talk, plays each time they switch to it and stops when they switch back, as on main; a learner who can't listen
- * today hears neither, and the sound plays again once they can.
+ * learner can't talk, plays each time they switch to it and stops when they switch back, as on main, and an answered one plays
+ * only when it was answered by ear; a learner who can't listen today hears neither, and the sound plays again once they can.
  */
 @Composable
 fun PromptAudioEffect(
     step: LessonStep?,
+    state: LessonPlayerState?,
     cantTalk: Boolean,
     cantListen: Boolean,
     prompt: PromptAudio,
 ) {
-    val url = step?.let { shownPromptUrl(it, cantTalk, cantListen) }
+    val url = if (step == null || state == null) null else shownPromptUrl(step, state, cantTalk, cantListen)
     LaunchedEffect(step?.id, url) {
         prompt.cancel()
         val id = step?.id ?: return@LaunchedEffect
@@ -117,30 +121,29 @@ fun PromptAudioEffect(
 
 internal fun shownPromptUrl(
     step: LessonStep,
+    state: LessonPlayerState,
     cantTalk: Boolean,
     cantListen: Boolean,
-): String? =
-    when (val content = step.content) {
-        is StepContent.SpokenAnswer -> content.listeningInstead(cantTalk, cantListen)?.let { promptAudioUrl(it, cantListen) }
-        is StepContent.Language -> promptAudioUrl(content, cantListen)
-        else -> null
-    }
+): String? = (state.shownStep(step, cantTalk, cantListen).content as? StepContent.Language)?.let { promptAudioUrl(it, cantListen) }
 
 /**
- * The bar's sound, between back and the main action: the word or letter a reading screen shows, or the sentence a listening
- * screen asks about, which stays quiet once the learner can't listen. Listening says on its screen when its sentence didn't
- * play, with that note's Try again.
+ * The bar's sound, between back and the main action, which P plays and pauses too, as on main: the word or letter a reading
+ * screen shows, or the sentence a listening screen asks about, which stays quiet once the learner can't listen. Listening says
+ * on its screen when its sentence didn't play, with that note's Try again.
  */
 @Composable
 fun PromptAudioBarButton(
     step: LessonStep,
+    lesson: LessonPlayerState,
     actions: StepActions,
     prompt: PromptAudio,
 ) {
-    val url = shownPromptUrl(step, actions.cantTalk, actions.cantListen) ?: return
+    val url = shownPromptUrl(step, lesson, actions.cantTalk, actions.cantListen) ?: return
     val state = if (step.isReadStep) prompt.state else prompt.state.withoutFailure()
     val label = pronunciationLabel(state)
-    OutlinedIconButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
+    val toggle = { prompt.toggle(url) }
+    TakeTaskBarKey(TaskBarKey.Sound, toggle)
+    OutlinedIconButton(onClick = toggle, modifier = Modifier.semantics { contentDescription = label }) {
         SpeechStatusIcon(state) { PlayIcon() }
     }
 }

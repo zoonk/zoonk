@@ -283,7 +283,7 @@ class MistakePracticeScreenshots {
                   "matchColumnsRightItems":[],"position":0,"readingPromptWords":[],"sentenceWordOptions":[],"translationOptions":[],
                   "vocabularyOptions":[],"word":null,"wordBankOptions":[$bank],
                   "sentence":{"audioUrl":"https://blob.test/s.mp3","distractors":[],"explanation":null,"id":"s-1","ordersPending":false,
-                   "otherSentenceOrders":[],"otherTranslationOrders":[],"romanization":null,"sentence":"How much is the rent?",
+                   "otherSentenceOrders":[],"otherTranslationOrders":[],"readsItself":false,"romanization":null,"sentence":"How much is the rent?",
                    "translation":"Quanto é o aluguel?","translationDistractors":[]}}}
                 """.trimIndent(),
             )

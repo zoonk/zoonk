@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -87,13 +88,13 @@ class DayChoices(
 
     val cantListen: Boolean get() = listenDay == choices.today()
 
-    /** A learner without a session has chosen nothing. */
+    /** A learner without a session has chosen nothing. The job ends once the choices are read. */
     fun read(
         session: AuthenticatedSession?,
         scope: CoroutineScope,
-    ) {
+    ): Job {
         isRead = false
-        scope.launch {
+        return scope.launch {
             talkDay = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
             listenDay = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
             isRead = true

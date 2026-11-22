@@ -15,6 +15,7 @@ import com.zoonk.android.feature.player.LocalLessonSpeech
 import com.zoonk.android.feature.player.ResultNext
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.screen
+import com.zoonk.android.feature.player.engine.shownStep
 import com.zoonk.android.feature.player.language.PromptAudioBarButton
 import com.zoonk.android.feature.player.language.PromptAudioEffect
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
@@ -108,10 +109,10 @@ internal fun MistakeLessonQuestion(
     val checked = state.run.phase is RunPhase.Checked
     val primary = screen.primary
     val primaryLabel = if (checked || primary?.isCheck == false) R.string.practice_continue else R.string.practice_check
-    val records = !checked && lesson.phase != LessonPhase.Checking && recordsInBar(task.step, actions)
+    val records = !checked && lesson.phase != LessonPhase.Checking && recordsInBar(task.step, lesson, actions)
     val language = rememberLessonLanguage(task.language, task.targetLanguage, app.speech)
     val promptStep = task.step.takeIf { viewModel.todayChoicesRead && !ideas }
-    language.prompt?.let { PromptAudioEffect(promptStep, viewModel.cantTalk, viewModel.cantListen, it) }
+    language.prompt?.let { PromptAudioEffect(promptStep, lesson, viewModel.cantTalk, viewModel.cantListen, it) }
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
         question = null,
@@ -153,7 +154,7 @@ internal fun MistakeLessonQuestion(
                             )
                         }
                     }
-                    language.prompt?.let { PromptAudioBarButton(task.step, actions, it) }
+                    language.prompt?.let { PromptAudioBarButton(task.step, lesson, actions, it) }
                     if (records) {
                         SpokenRecordAction(task.step, actions, width)
                     } else {
@@ -201,7 +202,8 @@ internal fun MistakeLessonQuestion(
             StepView(task.step, lesson, screen, actions, navigator, language, part, writingOptions = false)
             if (part.showsTurn) {
                 lesson.results[task.step.id]?.let {
-                    LessonStepResultView(task.step, it, ResultNext(savedMistake = false, willReturn = false), null)
+                    val shown = lesson.shownStep(task.step, viewModel.cantTalk, viewModel.cantListen)
+                    LessonStepResultView(shown, it, ResultNext(savedMistake = false, willReturn = false), null)
                     DrillAnswerNotes(
                         task.drill,
                         notSure = state.run.answers[state.run.index]?.blank == true,

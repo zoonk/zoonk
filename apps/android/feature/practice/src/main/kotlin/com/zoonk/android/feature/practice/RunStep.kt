@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -82,9 +83,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskBarKey
+import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
@@ -132,7 +136,8 @@ interface RunControls {
 }
 
 /**
- * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player. On a wide window
+ * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player; Enter presses a Record in [actions] instead,
+ * and P its sound ([TaskBarKeys]). On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
  * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
  * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
@@ -155,6 +160,7 @@ internal fun RunFrame(
     content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
+    val barKeys = remember { TaskBarKeys() }
     val set = question?.set?.takeIf { it.listening == null }
     val hasAside = set == null && aside != null
     // The one column and the screen's page across a fold share their scroll, so a reading place keeps as the book opens
@@ -184,16 +190,39 @@ internal fun RunFrame(
                 modifier =
                     Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
                         when {
-                            event.type != KeyEventType.KeyDown -> false
-                            event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
-                            event.key == Key.Escape -> true.also { onClose() }
-                            else -> false
+                            event.type != KeyEventType.KeyDown -> {
+                                false
+                            }
+
+                            event.key == Key.Enter || event.key == Key.NumPadEnter -> {
+                                // A held Enter acts once, as main's shortcuts do, so it never stops the take it started.
+                                event.nativeKeyEvent.repeatCount > 0 || barKeys.press(TaskBarKey.Main) || mainAction?.invoke() != null
+                            }
+
+                            event.key == Key.P -> {
+                                event.nativeKeyEvent.repeatCount == 0 && barKeys.press(TaskBarKey.Sound)
+                            }
+
+                            event.key == Key.Escape -> {
+                                true.also { onClose() }
+                            }
+
+                            else -> {
+                                false
+                            }
                         }
                     },
                 title = { LessonTitle(title) },
                 actions = { report?.let { ReportProblemMenu(app, it) } },
                 closeLabel = closeLabel,
-                bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
+                bottomBar =
+                    actions?.let {
+                        {
+                            TaskActionBar {
+                                CompositionLocalProvider(LocalTaskBarKeys provides barKeys) { it(asideShown(hasAside, fold)) }
+                            }
+                        }
+                    },
                 note = note,
                 // A passage takes the rail over the run's own pane, as main's aside; across a fold both go on the page before it.
                 aside =

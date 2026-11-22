@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "e24d91d3487021b2358f7ddd4dbcd6f76335d94851042eb091fd770d4b923347",
   "onboarding_language_test_preparing_title": "c811f5cbdde4e7b4c453e728e5e30d43ebf7e8fd149842ac5e065d4b69b30fe4",
   "onboarding_language_test_reading": "591f0cb9521fb34d33d3f20376144e67cc67743375ce4d78f7423a201a49dcc1",
-  "onboarding_language_test_say_it": "848123e47a86c20bccb72a9d2d74e319120072ee22b978c7b34e4ce3dec5b013",
   "onboarding_language_test_skip": "43e6a3d93103d0068b50bbbcfb81f7877b1408649517e3cafb8c2f6cf2deda3e",
   "onboarding_language_test_skip_note": "d32c83d3a7f2bca2bd3f67a729716ed8eb399535b20d9292131ca603fcfc081a",
   "onboarding_language_test_skip_part": "3aebbd216e6a16c2b4105a01536c777c3e15336b46aed22bbb5cbe103a882b5a",
@@ -608,7 +607,6 @@
     <string name="onboarding_language_test_play_again">メッセージをもう一度再生する</string>
     <string name="onboarding_language_test_message_loading">メッセージを準備しています。初回は数秒かかることがあります。</string>
     <string name="onboarding_language_test_message">音声メッセージが届きました。聞いて答えてください。</string>
-    <string name="onboarding_language_test_say_it">声に出して言う</string>
     <string name="onboarding_language_test_skip_part">このパートをスキップ</string>
     <string name="onboarding_language_test_done_title">%1$sのレベル</string>
     <string name="onboarding_language_test_done_description">テスト結果をもとにしています。毎週、より正確になります。</string>

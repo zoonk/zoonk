@@ -42,6 +42,7 @@ import com.zoonk.android.feature.player.engine.playedSteps
 import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.engine.revealGuess
 import com.zoonk.android.feature.player.engine.round
+import com.zoonk.android.feature.player.language.isDictation
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -344,10 +345,14 @@ class LessonPlayerViewModel(
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
         mutableExplanations.value = emptyMap()
-        day.read(session, work)
+        val reading = day.read(session, work)
         // Written content is usable while admission runs; server work still waits for its run.
         openedAt = now()
         mutableState.value = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt)
+        work.launch {
+            reading.join()
+            leaveOutUnheardDictations()
+        }
         if (activated) startRun()
     }
 
@@ -557,7 +562,26 @@ class LessonPlayerViewModel(
     /** "I can't listen now": a sound to find by ear is shown as its notes for the rest of the day on this device. */
     val cantListen: Boolean get() = day.cantListen
 
-    fun setCantListen(chosen: Boolean) = day.setCantListen(chosen, owner, work)
+    fun setCantListen(chosen: Boolean) {
+        day.setCantListen(chosen, owner, work)
+        leaveOutUnheardDictations()
+    }
+
+    /**
+     * A sentence to hear that is its own answer can't be read instead without giving the answer away, so while the learner can't
+     * listen it's left out from the screen in view on, as core leaves out one with no sound; one already answered stays.
+     */
+    private fun leaveOutUnheardDictations() {
+        if (!day.cantListen) return
+        val dictations =
+            mutableState.value
+                ?.steps
+                ?.values
+                ?.filter { it.isDictation }
+                ?.map(LessonStep::id)
+                .orEmpty()
+        if (dictations.isNotEmpty()) dispatch(LessonAction.SkipSteps(dictations))
+    }
 
     /** Until this learner's choices for the day are read, no screen plays its sound on its own. */
     val todayChoicesRead: Boolean get() = day.isRead
@@ -800,6 +824,7 @@ class LessonPlayerViewModel(
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
                         mutableState.value = state
+                        leaveOutUnheardDictations()
                         if (hasHeld) sendUnsent()
                         work.launch { followLatePictures() }
                     }

@@ -79,10 +79,11 @@ import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
-import com.zoonk.android.feature.player.engine.asAnswered
+import com.zoonk.android.feature.player.engine.SpokenMode
 import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
-import com.zoonk.android.feature.player.engine.listeningInstead
+import com.zoonk.android.feature.player.engine.shownStep
+import com.zoonk.android.feature.player.engine.spokenMode
 import com.zoonk.android.feature.player.language.LanguageStepView
 import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.model.CheckOption
@@ -640,21 +641,13 @@ internal fun SpokenAnswerView(
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
     val voice = spokenVoice(step, actions)
-    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || voice.blocked
+    val types = state.spokenMode(step, actions.cantTalk, actions.cantListen, voice.blocked) == SpokenMode.Type
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
         voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening =
-        if (locked) {
-            step
-                .asAnswered(
-                    answer,
-                ).content as? StepContent.Language
-        } else {
-            content.listeningInstead(actions.cantTalk, actions.cantListen)
-        }
+    val listening = state.shownStep(step, actions.cantTalk, actions.cantListen).content as? StepContent.Language
 
     if (listening != null) {
         val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
@@ -757,17 +750,20 @@ fun lessonBarNote(
 ): (@Composable () -> Unit)? {
     val answering = state.phase == LessonPhase.Playing || state.phase == LessonPhase.Checking
     if (step == null || !answering) return null
-    if (recordsInBar(step, actions)) return recordNote(spokenVoice(step, actions))
+    if (recordsInBar(step, state, actions)) return recordNote(spokenVoice(step, actions))
     // A check that names its own problem (no words heard, a limit) says it where the learner answers.
     return checkNote(checking = state.phase == LessonPhase.Checking, failed = state.checkFailed && state.checkIssue == null)
 }
 
-/** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
+/** Whether [SpokenRecordAction] takes the bar's main action on this screen now: while it's answered out loud. */
 @Composable
 fun recordsInBar(
     step: LessonStep?,
+    state: LessonPlayerState,
     actions: StepActions,
-): Boolean = step?.content is StepContent.SpokenAnswer && !actions.cantTalk && !spokenVoice(step, actions).blocked
+): Boolean =
+    step?.content is StepContent.SpokenAnswer &&
+        state.spokenMode(step, actions.cantTalk, actions.cantListen, spokenVoice(step, actions).blocked) == SpokenMode.Speak
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {

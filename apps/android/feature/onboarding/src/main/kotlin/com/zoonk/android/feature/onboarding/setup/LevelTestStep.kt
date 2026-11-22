@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -480,17 +479,7 @@ private fun ColumnScope.LevelTestSpeaking(
     val note = recordNote(voice, navigator)
     QuestionPages(
         questionId = recorderKey,
-        read = {
-            OnboardingHeading(stringResource(R.string.onboarding_language_test_say_it))
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    sentence.sentence,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleLarge.copy(localeList = TextLocales(targetLanguage)),
-                )
-                Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-            }
-        },
+        read = { OnboardingHeading(sentence.sentence, sentence.translation, titleLanguage = targetLanguage) },
         answer = {},
         note = if (voice.microphoneOff) ({ MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), titled = false) }) else note,
     ) {

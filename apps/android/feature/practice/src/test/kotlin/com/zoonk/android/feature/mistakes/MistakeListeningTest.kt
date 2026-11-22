@@ -2,10 +2,14 @@ package com.zoonk.android.feature.mistakes
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.pressKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
@@ -36,6 +40,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.shadows.ShadowLooper
+import java.net.ServerSocket
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
@@ -51,21 +56,24 @@ class MistakeListeningTest {
     private val ana = AuthenticatedSession(ANA, "token", "local")
     private val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
 
-    private val step =
-        ApiJson.parseToJsonElement(
-            """
-            {"id":"4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","kind":"listening","position":2,
-             "skillId":"5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","wordHints":null,
-             "exercise":{"content":{},"fillBlankOptions":[],"id":"00000000-0000-4000-8000-000000000001","kind":"listening",
-               "matchColumnsRightItems":[],"position":0,"readingPromptWords":[],
-               "sentence":{"audioUrl":"http://127.0.0.1:9/sentence.mp3","distractors":[],"explanation":null,"id":"s-1",
-                 "ordersPending":false,"otherSentenceOrders":[],"otherTranslationOrders":[],"romanization":null,
-                 "sentence":"Tengo hambre.","translation":"I'm hungry.","translationDistractors":[]},
-               "sentenceWordOptions":[],"translationOptions":[],"vocabularyOptions":[],"word":null,
-               "wordBankOptions":[{"audioUrl":null,"romanization":null,"translation":null,"word":"I'm"},
-                 {"audioUrl":null,"romanization":null,"translation":null,"word":"hungry."}]}}
-            """.trimIndent(),
-        )
+    /** A listening step; a dictation's sentence is its own answer, as in a lesson in the learner's own language. */
+    private fun listening(
+        dictation: Boolean,
+        audioUrl: String,
+    ) = ApiJson.parseToJsonElement(
+        """
+        {"id":"4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","kind":"listening","position":2,
+         "skillId":"5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","wordHints":null,
+         "exercise":{"content":{},"fillBlankOptions":[],"id":"00000000-0000-4000-8000-000000000001","kind":"listening",
+           "matchColumnsRightItems":[],"position":0,"readingPromptWords":[],
+           "sentence":{"audioUrl":"$audioUrl","distractors":[],"explanation":null,"id":"s-1",
+             "ordersPending":false,"otherSentenceOrders":[],"otherTranslationOrders":[],"readsItself":$dictation,"romanization":null,
+             "sentence":"Tengo hambre.","translation":"${if (dictation) "Tengo hambre." else "I'm hungry."}","translationDistractors":[]},
+           "sentenceWordOptions":[],"translationOptions":[],"vocabularyOptions":[],"word":null,
+           "wordBankOptions":[{"audioUrl":null,"romanization":null,"translation":null,"word":"I'm"},
+             {"audioUrl":null,"romanization":null,"translation":null,"word":"hungry."}]}}
+        """.trimIndent(),
+    )
 
     private fun practiceListening(viewModel: MistakePracticeViewModel): AppContainer {
         viewModel.started()
@@ -81,11 +89,14 @@ class MistakeListeningTest {
         return app
     }
 
-    private fun listeningMistake(): FakeMistakesApi {
+    private fun listeningMistake(
+        dictation: Boolean = false,
+        audioUrl: String = "http://127.0.0.1:9/sentence.mp3",
+    ): FakeMistakesApi {
         val entry = fixture("mistake-practice-lesson-entry")
         val lesson = entry.getValue("lesson").jsonObject
-        val listening = JsonObject(lesson + mapOf("targetLanguage" to JsonPrimitive("es"), "step" to step))
-        return FakeMistakesApi(practice(JsonObject(entry + ("lesson" to listening))))
+        val listeningLesson = JsonObject(lesson + mapOf("targetLanguage" to JsonPrimitive("es"), "step" to listening(dictation, audioUrl)))
+        return FakeMistakesApi(practice(JsonObject(entry + ("lesson" to listeningLesson))))
     }
 
     @Test
@@ -97,6 +108,34 @@ class MistakeListeningTest {
         rule.waitForIdle()
         rule.onNodeWithText("I can listen now").assertExists()
         assertNull(app.speech.playback.value)
+    }
+
+    @Test
+    fun pPausesAndPlaysTheSentenceAsTheBarsSoundButtonDoes() {
+        // A server that never answers keeps the sentence loading, as on a slow network, so it's still playing when P is pressed.
+        ServerSocket(0).use { silent ->
+            val audioUrl = "http://127.0.0.1:${silent.localPort}/sentence.mp3"
+            val app = practiceListening(practiceViewModel(cache, listeningMistake(audioUrl = audioUrl)))
+            assertNotNull(app.speech.playback.value)
+
+            rule.onRoot().performKeyInput { pressKey(Key.P) }
+            rule.waitForIdle()
+            assertNull(app.speech.playback.value)
+
+            rule.onRoot().performKeyInput { pressKey(Key.P) }
+            rule.waitForIdle()
+            assertNotNull(app.speech.playback.value)
+        }
+    }
+
+    @Test
+    fun aSentenceThatIsItsOwnAnswerIsNeverShownInPlaceOfItsSound() {
+        practiceListening(practiceViewModel(cache, listeningMistake(dictation = true)))
+
+        rule.onNodeWithText("I can't listen now").performScrollTo().performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("What do you hear?").assertExists()
+        rule.onNodeWithText("Tengo hambre.").assertDoesNotExist()
     }
 
     @Test

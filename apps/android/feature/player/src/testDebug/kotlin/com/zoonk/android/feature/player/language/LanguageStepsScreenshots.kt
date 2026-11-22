@@ -139,7 +139,7 @@ class LanguageStepsScreenshots {
             "reading",
             sentence =
                 """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-3","ordersPending":false,"otherSentenceOrders":[["Quando","pioveva","è","arrivato","l'autobus"]],
-                   "otherTranslationOrders":[],"romanization":null,"sentence":"Quando pioveva l'autobus è arrivato",
+                   "otherTranslationOrders":[],"readsItself":false,"romanization":null,"sentence":"Quando pioveva l'autobus è arrivato",
                    "translation":"Quando chovia o ônibus chegou","translationDistractors":[]}""",
             wordBank = bank("arrivato", "Quando", "l'autobus", "pioveva", "è"),
             promptWords = promptWords("Quando" to null, "chovia" to null, "o" to null, "ônibus" to null, "chegou" to null),
