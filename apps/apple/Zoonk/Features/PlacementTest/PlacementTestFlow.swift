@@ -375,6 +375,7 @@ struct PlacementTestScreen: View {
 extension GoalPlan {
   /// The first topic still to study, where the plan goes on after a test; nil when none is left.
   var nextTopic: String? {
-    phases.lazy.flatMap(\.chapters).first { $0.state != .done && !$0.isSkipped }?.title
+    let title = phases.lazy.flatMap(\.chapters).first { $0.state != .done && !$0.isSkipped }?.title
+    return title?.isEmpty == false ? title : nil
   }
 }

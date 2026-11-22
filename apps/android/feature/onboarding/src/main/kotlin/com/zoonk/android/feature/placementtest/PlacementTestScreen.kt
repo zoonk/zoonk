@@ -284,7 +284,11 @@ internal fun ColumnScope.PlacementTestFlow(
 
 /** The first topic still to study, where the plan goes on after a test; null when none is left. */
 internal fun Plan.nextTopic(): String? =
-    phases.flatMap { it.chapters }.firstOrNull { it.state != PlanPhaseChaptersInner.State.DONE && !it.testedOut }?.title
+    phases
+        .flatMap { it.chapters }
+        .firstOrNull { it.state != PlanPhaseChaptersInner.State.DONE && !it.testedOut }
+        ?.title
+        ?.takeIf { it.isNotBlank() }
 
 internal val PlanPlacementTest.estimatedMinutes: Int
     get() =
