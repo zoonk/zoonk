@@ -172,18 +172,16 @@ struct ScheduleQuestion: View {
           .locksWhileSaving()
       }
 
-      Section {
-        dateLink(shown)
-          .listRowBackground(Color.clear)
-      }
-
       // What the time covers comes last, after the days and the date that change it as much as the
       // time does, so its length moves nothing the learner taps.
       Section {
-        timeAnswer(shown)
-          .listRowBackground(Color.clear)
+        VStack(alignment: .leading, spacing: 12) {
+          dateLink(shown)
+          timeAnswer(shown)
+            .locksWhileSaving()
+        }
+        .listRowBackground(Color.clear)
       }
-      .locksWhileSaving()
     } buttons: {
       StepButtons(
         canContinue: ScheduleTime.canContinue(
