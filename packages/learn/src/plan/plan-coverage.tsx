@@ -19,16 +19,10 @@ export function useFallsShort(): boolean {
   return Boolean(feasibility?.deadline && !feasibility.fits);
 }
 
-export function useTimeEnough(): boolean {
-  const { plan } = usePlanScreen();
-  return plan.feasibility?.timeCovers ?? false;
-}
-
 export function useCanMoveDate(): boolean {
-  const { goal } = usePlanScreen();
+  const { goal, plan } = usePlanScreen();
   const fallsShort = useFallsShort();
-  const timeEnough = useTimeEnough();
-  return goal.kind !== "exam" && fallsShort && !timeEnough;
+  return goal.kind !== "exam" && fallsShort && !plan.feasibility?.timeCovers;
 }
 
 type MoveOutcome = "building" | "failed" | "noDate" | null;
@@ -162,5 +156,3 @@ export function MoveDateSwitch({
     </>
   );
 }
-
-export type FindStatus = "answered" | "building" | "failed" | "idle" | "pending";
