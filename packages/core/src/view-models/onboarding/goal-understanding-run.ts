@@ -103,6 +103,10 @@ export async function recordUnderstandingRun({
   }
 }
 
+function hasMaterial(draft: UnderstandingRunDraft): boolean {
+  return draft.sourceIds.length > 0;
+}
+
 function toReading({
   draft,
   result,
@@ -110,11 +114,6 @@ function toReading({
   draft: UnderstandingRunDraft;
   result: GoalUnderstanding;
 }): GoalReading {
-  // An exam on the learner's own material is theirs alone: no public exam has its dates.
-  if (draft.materialIntent === "exam") {
-    return { exams: [], result };
-  }
-
   const exams = listExamLookups({
     language: draft.language,
     today: getLearnerToday(draft.timeZone),
@@ -122,11 +121,19 @@ function toReading({
     words: draft.prompt,
   });
 
-  return { exams, result };
-}
+  if (!hasMaterial(draft)) {
+    return { exams, result };
+  }
 
-function hasMaterial(draft: UnderstandingRunDraft): boolean {
-  return draft.sourceIds.length > 0;
+  // A test on the learner's own material has no public dates, but a public exam they name does.
+  const words = normalizeString(draft.prompt);
+
+  return {
+    exams: exams.map((lookup) =>
+      lookup && words.includes(normalizeString(lookup.exam.examName)) ? lookup : null,
+    ),
+    result,
+  };
 }
 
 /**
@@ -148,8 +155,15 @@ export async function findKeptReading(draft: UnderstandingRunDraft): Promise<Goa
   return cached ? toReading({ draft, result: cached }) : null;
 }
 
+/** Sharing an upload during the run moves the draft to the shared copy, so the ids are read now. */
 async function readMaterial(draft: UnderstandingRunDraft) {
-  const overview = formatReadingMaterial({ sources: await loadDraftMaterial(draft) });
+  const current = await prisma.onboardingDraft.findUnique({
+    select: { sourceIds: true, userId: true },
+    where: { id: draft.id },
+  });
+
+  const sources = current ? await loadDraftMaterial(current) : [];
+  const overview = formatReadingMaterial({ sources });
   return overview === null ? null : { intent: draft.materialIntent, overview };
 }
 
