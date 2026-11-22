@@ -26,7 +26,7 @@ export async function markLockedPlanSourcesChanged(
  * Learner writers lock plans, then learner rows, then their own rows, so two of them wait for each
  * other instead of deadlocking.
  */
-export async function lockLearnerPlans(
+async function lockLearnerPlans(
   tx: LearnerWriteTransaction,
   { goalIds, userIds }: { goalIds?: readonly string[]; userIds: readonly string[] },
 ): Promise<string[]> {
