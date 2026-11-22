@@ -131,11 +131,10 @@ test.describe("Goal understandings API", () => {
   });
 
   test("reads new words in a run the draft follows, and a second start follows the same run", async () => {
-    const { api } = await createBearerLearner({ baseURL, prefix: "understanding-run" });
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "understanding-run" });
+    const start = { goal: `build a birdhouse ${randomUUID()}`, language: "en" };
 
-    const response = await api.post("/v1/goal-understandings", {
-      data: { goal: `build a birdhouse ${randomUUID()}`, language: "en" },
-    });
+    const response = await api.post("/v1/goal-understandings", { data: start });
 
     const draft = await readBody({ response, schema: onboardingDraftViewSchema, status: 202 });
 
@@ -152,6 +151,16 @@ test.describe("Goal understandings API", () => {
 
     const run = await api.get(`/v1/generations/${encodeURIComponent(draft.generationId ?? "")}`);
     expect(run.status()).toBe(200);
+
+    const again = await readBody({
+      response: await api.post("/v1/goal-understandings", { data: start }),
+      schema: onboardingDraftViewSchema,
+      status: 202,
+    });
+
+    expect(again).toMatchObject({ generationId: draft.generationId, id: draft.id });
+
+    await expect(prisma.usageRecord.count({ where: { kind: "assist", userId } })).resolves.toBe(1);
 
     await api.dispose();
   });
