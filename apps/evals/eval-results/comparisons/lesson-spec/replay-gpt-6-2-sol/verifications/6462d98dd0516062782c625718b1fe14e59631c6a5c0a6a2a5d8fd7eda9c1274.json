@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "3dc0ae2f8f6bbee2",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "48f11ea37aa840764709abc0ee74009f727c27b640af3dd8abd27a5dfd6afa9c.first.bf376485-f1ce-460a-bed4-acfbd6a5999c.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00292655,
+    "id": "6462d98dd0516062782c625718b1fe14e59631c6a5c0a6a2a5d8fd7eda9c1274",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "1a7c7f9e54729f62",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "claim": "The traffic-light guess asks where visual processing occurs but shows no brain diagram or marked location.",
+        "claimId": "3dc0ae2f8f6bbee2",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "the traffic-light guess screen",
+          "kind": "range"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "1a7c7f9e54729f62",
+          "finding": "doesn't hold",
+          "reason": "Output A says the monthly rent stays due even with no production (\"o aluguel mensal contratado continua devido mesmo sem fazer nenhum bolo\"), and its application screen keeps aluguel in the reserve for the paused month. It never says the R$ 900,00 rent stops being paid."
+        },
+        {
+          "claimId": "3dc0ae2f8f6bbee2",
+          "finding": "holds",
+          "reason": "In output A, the traffic-light guess screen has visualKind \"none\" and visual null, so no brain diagram or marked location is shown while the question asks where the brain first processes eye signals. In output B, the same guess screen includes a picture with regions A and B marked, so the claim is true of A and not of B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -14,3 +14,16 @@ export function openExclusiveLock({ flags = 0, lockPath }: { flags?: number; loc
   // oxlint-disable-next-line no-bitwise -- open(2) takes its flags as bits
   return openSync(lockPath, constants.O_RDWR | constants.O_CREAT | O_EXLOCK | flags);
 }
+
+/** Undefined while another process holds the lock. */
+export function tryExclusiveLock(lockPath: string): number | undefined {
+  try {
+    return openExclusiveLock({ flags: constants.O_NONBLOCK, lockPath });
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "EAGAIN") {
+      return undefined;
+    }
+
+    throw error;
+  }
+}

@@ -1,9 +1,12 @@
-/** A fold row's title, with its value on the row's end edge in mono so values line up down the list. */
+/**
+ * A fold row's title, with its value on the row's end edge in mono so values line up down the list.
+ * When both don't fit on one line, the value moves under the title, still on the end edge.
+ */
 export function FoldRowTitle({ children, title }: React.PropsWithChildren<{ title: string }>) {
   return (
-    <span className="flex min-w-0 flex-1 items-baseline justify-between gap-6">
+    <span className="flex min-w-0 flex-1 flex-wrap items-baseline justify-between gap-x-6">
       <span className="min-w-0 wrap-break-word">{title}</span>
-      <span className="text-compact shrink-0 font-mono">{children}</span>
+      <span className="text-compact ms-auto shrink-0 font-mono">{children}</span>
     </span>
   );
 }

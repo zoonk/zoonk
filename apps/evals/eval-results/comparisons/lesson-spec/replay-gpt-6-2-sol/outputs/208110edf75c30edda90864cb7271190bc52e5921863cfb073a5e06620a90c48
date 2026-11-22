@@ -1,0 +1,142 @@
+{
+  "lessons": [
+    {
+      "canDo": "Prever quais lâmpadas apagam quando uma queima em série ou paralelo",
+      "description": "Entender como os caminhos da corrente determinam quais lâmpadas apagam quando uma queima.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Wesley acende a luz do quarto, mas a lâmpada queima; a da sala continua acesa. Por que uma não apagou a outra?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Desenho simples de uma pilha com polos + e − identificados, fios formando um caminho fechado e uma lâmpada L nesse caminho; pilha, fios e lâmpada identificados.",
+          "visualKind": "picture",
+          "brief": "Para uma lâmpada permanecer acesa, o movimento de cargas elétricas, chamado corrente elétrica, precisa de um caminho fechado. Mostrar esse caminho saindo de um polo da pilha, passando pela lâmpada e voltando ao outro polo.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Circuito com uma pilha à esquerda, polo + acima e − abaixo, e um único caminho retangular de fios passando sucessivamente pelas lâmpadas A, B e C, sem divisões; nenhuma indicação de brilho ou de corrente.",
+          "visualKind": "picture",
+          "brief": "As três lâmpadas estão acesas: o que acontecerá se B queimar? Opções: “Todas apagam” (correta), “Só B apaga” e “B e C apagam” (tentadora: imaginar que a eletricidade ainda consegue alimentar A).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Circuito com uma pilha à esquerda, polo + acima e − abaixo, e um único caminho retangular passando pelas lâmpadas A, B e C; B tem uma abertura visível no fio interno, identificada como interrupção, e nenhuma lâmpada tem brilho indicado.",
+          "visualKind": "picture",
+          "brief": "Nos exemplos desta lição, uma lâmpada queimada deixa uma interrupção por dentro, como um fio cortado. Em B, essa abertura impede a passagem da corrente.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Circuito com uma pilha à esquerda, polo + acima e − abaixo, e um único caminho retangular de fios passando sucessivamente pelas lâmpadas A, B e C, sem divisões; nenhuma indicação de brilho ou de corrente.",
+          "visualKind": "picture",
+          "brief": "Quando as lâmpadas ficam no mesmo caminho, sem divisões, a ligação é em série. No desenho, qualquer percurso completo pela pilha precisa passar por A, B e C.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "Circuito em série com uma pilha e três lâmpadas A, B e C em um único caminho retangular; A apresenta uma abertura no fio interno, B e C estão intactas e nenhuma tem brilho indicado.",
+          "visualKind": "picture",
+          "brief": "Resolver em etapas: “A queimou; B e C continuam acesas?”: localizar a abertura em A; tentar completar o caminho entre os polos; concluir que nenhuma acende, pois não existe caminho fechado, nem para uma lâmpada situada antes da abertura.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Circuito em série com uma pilha à esquerda e lâmpadas A, B e C em sequência em um único caminho fechado; C apresenta uma abertura no fio interno, e nenhuma lâmpada tem brilho indicado.",
+          "visualKind": "picture",
+          "brief": "Pedir que o aluno preveja quais lâmpadas permanecem acesas se C queimar no circuito mostrado. Resposta: “Nenhuma”; incluir “A e B” como alternativa tentadora, para verificar se ele abandonou a ideia de que só o trecho depois da falha é afetado.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Circuito com uma pilha à esquerda e dois fios horizontais ligados aos seus polos; entre esses fios há dois caminhos verticais separados, um contendo apenas a lâmpada A e outro apenas a lâmpada B; pontos de conexão marcados e nenhuma indicação de brilho.",
+          "visualKind": "picture",
+          "brief": "Na ligação em paralelo, cada lâmpada tem seu próprio caminho entre os mesmos dois pontos ligados à fonte. Mostrar A e B em caminhos separados entre os polos da pilha.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Circuito com uma pilha à esquerda e dois fios horizontais ligados aos seus polos; entre esses fios há dois caminhos verticais separados, contendo A e B; B apresenta uma abertura no fio interno, e o percurso fechado pela lâmpada A está destacado.",
+          "visualKind": "picture",
+          "brief": "Se B queimar nessa ligação em paralelo, apenas o caminho de B fica interrompido. A continua acesa porque ainda tem um caminho completo de ida e volta pela pilha.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Circuito com uma pilha à esquerda e dois fios horizontais comuns ligados aos seus polos; três caminhos verticais separados contêm, da esquerda para a direita, as lâmpadas P, Q e R; Q apresenta abertura no fio interno, sem indicação de brilho em nenhuma lâmpada.",
+          "visualKind": "picture",
+          "brief": "No circuito com três caminhos separados, perguntar quais lâmpadas continuam acesas quando Q queima. Resposta: “P e R”; incluir “Só P” como erro tentador de tratar a posição no desenho como uma sequência obrigatória.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Circuito com pilha à esquerda e duas lâmpadas A e B em caminhos paralelos entre dois fios horizontais; o fio inferior está interrompido no ponto X, entre a pilha e a primeira conexão das lâmpadas, sem destaque de brilho.",
+          "visualKind": "picture",
+          "brief": "Mesmo em paralelo, uma interrupção no fio usado por todos os caminhos apaga todas as lâmpadas. No ponto X, o corte impede que qualquer caminho volte à pilha.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Dois esquemas elétricos simplificados, identificados como projeto 1 e projeto 2, sem instruções de montagem: no projeto 1, lâmpadas Sala e Quarto em série com uma fonte; no projeto 2, Sala e Quarto em caminhos paralelos ligados à mesma fonte, com X marcado no fio de retorno entre a fonte e a primeira conexão, sem interrupções ou brilho indicados.",
+          "visualKind": "picture",
+          "brief": "Uma planta simplificada propõe duas ligações para sala e quarto: escolher a que mantém a sala acesa quando a lâmpada do quarto queima e prever o efeito de um corte em X. Resposta: projeto 2, em paralelo; em X, ambas apagam porque o trecho é compartilhado.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Determinar quais lâmpadas mantêm um caminho fechado pela fonte quando uma delas queima.",
+          "example": "Com três lâmpadas em série, uma queimada apaga todas; em paralelo, as outras continuam acesas.",
+          "hard": true,
+          "name": "Prever efeitos de lâmpadas queimadas",
+          "topic": "Circuitos em série e paralelo",
+          "useCase": "Entender por que uma lâmpada queimada em casa normalmente não apaga as outras."
+        }
+      ],
+      "title": "Circuitos em série e em paralelo"
+    }
+  ]
+}

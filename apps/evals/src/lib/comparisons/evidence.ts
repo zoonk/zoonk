@@ -1,0 +1,408 @@
+import { type Decision, type Direction } from "./decision-schema";
+import { type Comparison, type Reader } from "./schemas";
+
+export const sides = ["incumbent", "challenger"] as const;
+type Side = (typeof sides)[number];
+export const opposite = (value: Side) => (value === "incumbent" ? "challenger" : "incumbent");
+function voteFor(preference: "A" | "B" | "tie" | undefined, first: Side) {
+  if (!preference || preference === "tie") {
+    return preference;
+  }
+
+  return preference === "A" ? first : opposite(first);
+}
+export function acceptedReads(comparison: Comparison) {
+  return comparison.manifest.packets.flatMap((packet) => {
+    const attempts = comparison.attempts
+      .filter((prior) => prior.packetId === packet.id && prior.passed)
+      .toSorted((prior, next) => prior.attempt.localeCompare(next.attempt));
+
+    return packet.mapping
+      .filter((mapping) => mapping.kind === "real")
+      .flatMap((mapping) => {
+        const ruling =
+          packet.reader.channel === "owner"
+            ? comparison.adjudications.find((entry) => entry.caseId === mapping.caseId)
+            : undefined;
+
+        const attempt = ruling
+          ? attempts.find(
+              (entry) =>
+                entry.recordedAt && ruling.recordedAt && entry.recordedAt <= ruling.recordedAt,
+            )
+          : attempts[0];
+
+        if (!attempt) {
+          return [];
+        }
+
+        const verdict = attempt.response.verdicts.find((vote) => vote.pairId === mapping.pairId);
+
+        if (!verdict) {
+          return [];
+        }
+
+        const preference = verdict.overall?.preference;
+
+        return [{ attempt, mapping, packet, verdict, vote: voteFor(preference, mapping.first) }];
+      });
+  });
+}
+type Read = ReturnType<typeof acceptedReads>[number];
+
+type Preference = NonNullable<Read["vote"]>;
+type PreferenceBreakdown = Pick<Decision["preferences"][number], "families" | "lean" | "total">;
+
+function preferenceCounts(votes: Preference[]) {
+  const groups = Map.groupBy(votes, (vote) => vote);
+
+  return {
+    challenger: groups.get("challenger")?.length ?? 0,
+    incumbent: groups.get("incumbent")?.length ?? 0,
+    tie: groups.get("tie")?.length ?? 0,
+  };
+}
+
+function preferenceBreakdown({
+  criterion,
+  reads,
+}: {
+  criterion: string | null;
+  reads: Read[];
+}): PreferenceBreakdown {
+  const ballots = reads.flatMap(({ mapping, packet, verdict, vote }) => {
+    const preference = criterion
+      ? voteFor(
+          verdict.criteria.find((entry) => entry.criterion === criterion)?.preference,
+          mapping.first,
+        )
+      : vote;
+
+    const family = packet.reader.channel === "owner" ? "owner" : packet.reader.family;
+
+    return preference ? [{ family, preference }] : [];
+  });
+
+  const families = [...Map.groupBy(ballots, (ballot) => ballot.family)]
+    .toSorted(([first], [second]) => first.localeCompare(second))
+    .map(([family, votes]) => ({
+      family,
+      ...preferenceCounts(votes.map((vote) => vote.preference)),
+    }));
+
+  const models = families.filter(({ family }) => family !== "owner");
+
+  const lean = sides.find(
+    (side) => models.length > 1 && models.every((votes) => votes[side] > votes[opposite(side)]),
+  );
+
+  return {
+    families,
+    lean: lean ?? null,
+    total: preferenceCounts(ballots.map((ballot) => ballot.preference)),
+  };
+}
+
+export function readerPreferences({
+  manifest,
+  reads,
+}: {
+  manifest: Comparison["manifest"];
+  reads: Read[];
+}) {
+  const pairedReads = reads.filter((read) => read.vote !== undefined);
+
+  if (pairedReads.length === 0) {
+    return [];
+  }
+
+  const caseLanguages = new Map(manifest.cases.map(({ id, language }) => [id, language]));
+  const byLanguage = Map.groupBy(pairedReads, ({ mapping }) => caseLanguages.get(mapping.caseId));
+
+  return [{ id: null, label: "Overall" }, ...manifest.criteria].map(({ id, label }) => ({
+    ...preferenceBreakdown({ criterion: id, reads: pairedReads }),
+    byLanguage: [...byLanguage].flatMap(([language, languageReads]) =>
+      language
+        ? [{ language, ...preferenceBreakdown({ criterion: id, reads: languageReads }) }]
+        : [],
+    ),
+    criterion: id,
+    label,
+  }));
+}
+
+function isControlFreeOwnerRead({ attempt, packet }: Read) {
+  return (
+    packet.reader.channel === "owner" &&
+    !packet.mapping.some(
+      (entry) =>
+        entry.kind !== "real" &&
+        attempt.response.verdicts.some((verdict) => verdict.pairId === entry.pairId),
+    )
+  );
+}
+
+function majorClaimsIncludingMissingPairs(comparison: Comparison) {
+  return acceptedReads(comparison).flatMap((read) =>
+    read.verdict.observations.flatMap((observation, index) =>
+      observation.severity === "major"
+        ? [
+            {
+              caseId: read.mapping.caseId,
+              id: [read.packet.id, read.attempt.attempt, read.mapping.pairId, index].join("."),
+              observation,
+              pair: read.packet.packet.pairs.find((pair) => pair.pairId === read.mapping.pairId),
+              reader: read.packet.reader,
+              run: read.mapping.run,
+              side: observation.output === "A" ? read.mapping.first : opposite(read.mapping.first),
+              source: isControlFreeOwnerRead(read) ? ("owner" as const) : ("verification" as const),
+            },
+          ]
+        : [],
+    ),
+  );
+}
+
+function majorClaims(comparison: Comparison) {
+  return majorClaimsIncludingMissingPairs(comparison).flatMap((claim) =>
+    claim.pair ? [{ ...claim, pair: claim.pair }] : [],
+  );
+}
+
+function summarizeVotes(votes: Direction[]): Direction {
+  const directions = sides.filter((subject) => votes.includes(subject));
+
+  if (directions.length === 2) {
+    return "split";
+  }
+
+  return directions[0] ?? "tie";
+}
+
+export function settle(votes: Direction[]): Direction {
+  if (votes.includes("split")) {
+    return "unresolved";
+  }
+
+  const winner = sides.find(
+    (subject) =>
+      votes.filter((vote) => vote === subject).length >= 2 && !votes.includes(opposite(subject)),
+  );
+
+  return (
+    winner ?? (votes.length >= 2 && votes.every((vote) => vote === "tie") ? "tie" : "unresolved")
+  );
+}
+
+export function caseVotes(comparison: Comparison, reads: ReturnType<typeof acceptedReads>) {
+  const { manifest } = comparison;
+
+  return manifest.cases.map(({ id: caseId, language }) => {
+    const matches = manifest.runsCompared.filter(
+      (record) => record.caseId === caseId && record.incumbent && record.challenger,
+    );
+
+    const votes: Record<string, Direction> = {};
+
+    for (const family of new Set(reads.map((record) => record.packet.reader.family))) {
+      const ballots = reads.filter(
+        (record) =>
+          record.mapping.caseId === caseId && record.packet.reader.family === family && record.vote,
+      );
+
+      const complete =
+        family === "owner" ? ballots.filter((record) => !isControlFreeOwnerRead(record)) : ballots;
+
+      if (
+        matches.length > 0 &&
+        matches.every((run) => complete.some((next) => next.mapping.run === run.run))
+      ) {
+        votes[family] = summarizeVotes(
+          complete.flatMap((record) => (record.vote ? [record.vote] : [])),
+        );
+      }
+    }
+
+    const { owner: legacyOwner, ...families } = votes;
+
+    const blindOwner = reads.find(
+      (record) =>
+        record.mapping.caseId === caseId &&
+        !record.packet.reverse &&
+        isControlFreeOwnerRead(record),
+    );
+
+    const modelResult =
+      missingReaderFamilies(manifest, families).length > 0
+        ? "unresolved"
+        : settle(Object.values(families));
+
+    const canSettle = canAdjudicate(manifest, { votes: families });
+
+    const adjudication = canSettle
+      ? latestRuling(
+          comparison.adjudications.find((entry) => entry.caseId === caseId),
+          blindOwner,
+        )
+      : undefined;
+
+    const result = canSettle
+      ? (adjudication?.direction ?? blindOwner?.vote ?? modelResult)
+      : modelResult;
+
+    return {
+      ...(adjudication && { adjudication }),
+      caseId,
+      language,
+      legacyOwner: legacyOwner ?? null,
+      owner: blindOwner?.vote ?? legacyOwner ?? null,
+      result,
+      votes: families,
+    };
+  });
+}
+
+function latestRuling(
+  ruling: Comparison["adjudications"][number] | undefined,
+  blindOwner: Read | undefined,
+) {
+  return ruling &&
+    (!blindOwner?.vote || (ruling.recordedAt ?? "") >= (blindOwner.attempt.recordedAt ?? ""))
+    ? ruling
+    : undefined;
+}
+
+export function needsBlindOwnerRead(
+  manifest: Comparison["manifest"],
+  item: Pick<Decision["cases"][number], "owner">,
+) {
+  return manifest.priorities.distribution === "shared" && !item.owner;
+}
+
+function requiredReaderFamilies(manifest: Comparison["manifest"]) {
+  return [
+    ...new Set(
+      manifest.readers
+        .filter((reader) => reader.channel !== "owner" && !reader.reserve)
+        .map((reader) => reader.family),
+    ),
+  ];
+}
+
+export function missingReaderFamilies(
+  manifest: Comparison["manifest"],
+  votes: Record<string, Direction>,
+) {
+  return requiredReaderFamilies(manifest).filter((family) => !Object.hasOwn(votes, family));
+}
+
+export function canAdjudicate(
+  manifest: Comparison["manifest"],
+  item: Pick<Decision["cases"][number], "votes">,
+) {
+  return (
+    settle(Object.values(item.votes)) === "unresolved" &&
+    requiredReaderFamilies(manifest).length >= 2 &&
+    missingReaderFamilies(manifest, item.votes).length === 0
+  );
+}
+export function readerRecords(comparison: Comparison, reads: ReturnType<typeof acceptedReads>) {
+  const { manifest } = comparison;
+
+  return manifest.readers.map((reader) => {
+    const ballots = reads.filter((record) => record.packet.reader.model === reader.model);
+
+    const ownSide = sides.filter((subject) =>
+      manifest.variants[subject]?.model.startsWith(`${reader.family}/`),
+    );
+
+    const opportunities = ownSide.length === 1 ? ballots.filter((record) => record.vote) : [];
+
+    const withOwner = (reader.channel === "owner" ? [] : ballots).flatMap((record) => {
+      const owner = reads.find(
+        (ownerRead) =>
+          ownerRead.packet.reader.channel === "owner" &&
+          !ownerRead.packet.reverse &&
+          ownerRead.mapping.caseId === record.mapping.caseId &&
+          ownerRead.mapping.run === record.mapping.run,
+      );
+
+      return owner?.vote && record.vote ? [owner.vote === record.vote] : [];
+    });
+
+    return {
+      ...reader,
+      failedPackets: comparison.attempts.filter(
+        (prior) => prior.reader.model === reader.model && !prior.passed,
+      ).length,
+      ownOpportunities: opportunities.length,
+      ownWins: opportunities.filter((record) => record.vote === ownSide[0]).length,
+      ownerAgrees: withOwner.filter(Boolean).length,
+      ownerCompared: withOwner.length,
+    };
+  });
+}
+function verifierKey({ channel, family, model }: Reader) {
+  return JSON.stringify([channel, family, model]);
+}
+
+function qualifiedVerifications(comparison: Comparison) {
+  const plantedPackets = new Map(
+    comparison.manifest.packets
+      .filter(
+        (packet) =>
+          packet.reader.channel !== "owner" &&
+          packet.mapping.some((entry) => entry.kind === "defect"),
+      )
+      .map((packet) => [packet.id, packet]),
+  );
+
+  const qualifiedReaders = new Set(
+    comparison.attempts.flatMap((attempt) => {
+      const packet = plantedPackets.get(attempt.packetId);
+
+      return attempt.passed && packet?.reader.model === attempt.reader.model
+        ? [verifierKey(attempt.reader)]
+        : [];
+    }),
+  );
+
+  return comparison.verifications.filter(
+    (attempt) =>
+      attempt.passed &&
+      attempt.reader.channel !== "owner" &&
+      (attempt.plantedDefectPassed || qualifiedReaders.has(verifierKey(attempt.reader))),
+  );
+}
+
+export function verifiedClaims(comparison: Comparison) {
+  const verifications = qualifiedVerifications(comparison);
+
+  return majorClaims(comparison).map((claim) => {
+    const results = verifications
+      .filter((vote) => vote.reader.family !== claim.reader.family)
+      .flatMap((vote) =>
+        vote.response.results
+          .filter((record) =>
+            vote.claims.some(
+              (item) => item.claimId === record.claimId && item.observationId === claim.id,
+            ),
+          )
+          .map(({ finding, reason }) => ({ family: vote.reader.family, finding, reason })),
+      );
+
+    const findings = results
+      .map(({ finding }) => finding)
+      .filter((finding) => finding !== "unsure");
+
+    const verified = new Set(findings);
+    const finding = verified.size === 1 ? (findings[0] ?? "unsure") : "unsure";
+
+    return {
+      ...claim,
+      checked: results.length > 0,
+      finding: claim.source === "owner" ? ("holds" as const) : finding,
+      results,
+    };
+  });
+}

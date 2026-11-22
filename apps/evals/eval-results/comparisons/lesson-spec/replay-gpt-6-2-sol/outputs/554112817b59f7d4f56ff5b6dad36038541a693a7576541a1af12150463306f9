@@ -1,0 +1,183 @@
+{
+  "lessons": [
+    {
+      "canDo": "Locate the four brain lobes and connect them with their main jobs",
+      "description": "Find the four major brain lobes and connect their locations with everyday thinking, movement, and senses.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Tanya’s eyes are healthy, but a brain injury leaves her unable to see. How can damage away from the eyes affect sight?",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with the four major lobes outlined in distinct colors but unnamed; the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "A lobe is a broad region of the brain’s large, wrinkled upper part, like one of the outlined sections shown here. Show where this upper part sits inside the head.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with the front region marked A and the rear region marked B; the eyes and nose are visible, with no lobe names or function labels.",
+          "visualKind": "picture",
+          "brief": "Which area would you predict was injured in someone whose eyes work but who cannot see: the front nearest the eyes, or the back farthest from them? Answer: the back; the tempting choice is the front because it is closer to the eyes.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored lobe regions; only the rear region is named 'occipital lobe,' and the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The occipital lobe sits at the back of the brain, behind the region near your ear. Locate it using the head’s nose to identify the opposite end.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored lobe regions; only the rear region is named 'occipital lobe,' and the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The occipital lobe processes information for vision, such as the shapes and colors of a video. Information from the eyes travels here, so the nearest brain region is not necessarily the one doing the job.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A researcher wants to study how the brain processes the colors on a screen: should the main target be near the forehead or the back of the head? Answer: back of the head; include forehead as the tempting choice because the eyes face forward.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored lobe regions; the frontal and occipital lobes are labeled, and the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The frontal lobe occupies the front of the brain, behind your forehead. Find the large region at the nose-facing end of the diagram.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored lobe regions; the frontal and occipital lobes are labeled, and the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The frontal lobe helps turn intentions into actions: deciding to pick up a cup and starting that deliberate movement are examples. Planning and voluntary movement are two of its major jobs.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored lobe regions; the frontal, parietal, and occipital lobes are labeled, and the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The parietal lobe lies toward the upper back of the brain, behind the frontal lobe. Find the upper region between the frontal and occipital lobes.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored lobe regions; the frontal, parietal, and occipital lobes are labeled, and the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The parietal lobe helps make sense of body sensations, such as where a sleeve brushes your arm. Processing touch is one of its major jobs.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "matchPairs",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Match three actions to their main lobe: choosing a route—frontal; feeling a phone vibrate against your leg—parietal; seeing a traffic light’s color—occipital. Explain the tempting frontal–parietal swap: choosing an action differs from processing a body sensation.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "The temporal lobe lies along the side of the brain near your ear, below the frontal and parietal lobes. Let the learner explore the completed four-lobe map with all names already visible and no question to answer.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A left-side view of the brain inside a faint head outline facing left, with four colored regions labeled frontal lobe, parietal lobe, temporal lobe, and occipital lobe; the nose, ear, front of head, and back of head establish orientation.",
+          "visualKind": "picture",
+          "brief": "The temporal lobe helps process sounds, such as a ringing phone or someone’s voice. Hearing is one of its major jobs.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "These jobs are specialties, not separate jobs done by isolated lobes. Reading a recipe and following its instructions uses several lobes working together.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "A right-side view of the brain inside a faint head outline facing right, with four colored regions numbered but unnamed: 1 frontal, 2 parietal, 3 temporal, and 4 occipital; the nose and ear clearly establish orientation, and no function labels appear.",
+          "visualKind": "picture",
+          "brief": "While cooking, you see a recipe, hear a timer, feel a warm handle, and decide to lower the heat; connect each action to its main numbered region. Key: seeing—4 occipital, hearing—3 temporal, touch—2 parietal, deciding—1 frontal; include swapping touch and deciding as the tempting error.",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Identify the frontal, parietal, temporal, and occipital lobes by their positions in the brain.",
+          "example": "Locate the occipital lobe at the back of a side-view brain diagram.",
+          "hard": false,
+          "name": "Locate the four brain lobes",
+          "topic": "Brain lobe locations",
+          "useCase": "Follow a brain diagram in a health article or a conversation with a healthcare professional."
+        },
+        {
+          "description": "Connect each major brain lobe with examples of its main functions while recognizing that lobes work together.",
+          "example": "Connect hearing a ringtone with the temporal lobe and deciding to answer with the frontal lobe.",
+          "hard": false,
+          "name": "Match brain lobes to their main jobs",
+          "topic": "Brain lobe functions",
+          "useCase": "Make sense of how different brain regions contribute to everyday actions and sensations."
+        }
+      ],
+      "title": "The lobes of the brain"
+    }
+  ]
+}

@@ -1,11 +1,12 @@
 import { reserveCarriedTime } from "./carry-over";
 import { findDayIndex } from "./day-index";
-import { type StudyPortion, listIntervalPortions } from "./interval-study-minutes";
-import { type KeptPiece } from "./kept-items";
+import { type StudyPortion, listIntervalPortions, toDayMinutes } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { isStandInUnit } from "./plan-item-rules";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, getCumulativeCapacity } from "./schedule-units";
+import { type KeptPiece } from "./this-week-work";
 
 type LaidOut = {
   carriedSchedule: { units: readonly ScheduledUnit[] };
@@ -78,6 +79,30 @@ function listKeptPortions({
   units: readonly QueueUnit[];
 }): Map<string, StudyPortion[]> {
   const cumulative = getCumulativeCapacity(days);
+  const written = new Map(units.flatMap((unit) => (unit.lessonId ? [[unit.key, unit]] : [])));
+
+  // A written lesson saved without its days is studied on its own day.
+  const onItsDay = (piece: KeptPiece): StudyPortion[] | undefined => {
+    const lessonMinutes = written.get(piece.key)?.minutes;
+    const day = days.find((planDay) => planDay.date >= piece.date);
+
+    return lessonMinutes && day
+      ? [
+          {
+            date: toIsoDate(day.date),
+            lessonMinutes,
+            minutes: toDayMinutes({ lessonMinutes, share: day.shape.share }),
+          },
+        ]
+      : undefined;
+  };
+
+  const saved = new Map(
+    kept.flatMap((piece) => {
+      const own = piece.days ?? onItsDay(piece);
+      return own ? [[piece.key, own]] : [];
+    }),
+  );
 
   return listKeptIntervals({ cumulative, days, kept, units }).reduce((portions, interval) => {
     if (interval.kind === "boss" || interval.end <= interval.start) {
@@ -86,19 +111,21 @@ function listKeptPortions({
 
     const { end, start } = interval;
 
-    const own = listIntervalPortions({ cumulative, days, end, start }).flatMap((portion) => {
-      const day = days[portion.index];
+    const own =
+      saved.get(interval.key) ??
+      listIntervalPortions({ cumulative, days, end, start }).flatMap((portion) => {
+        const day = days[portion.index];
 
-      return day
-        ? [
-            {
-              date: toIsoDate(day.date),
-              lessonMinutes: portion.lessonMinutes,
-              minutes: portion.studyMinutes,
-            },
-          ]
-        : [];
-    });
+        return day
+          ? [
+              {
+                date: toIsoDate(day.date),
+                lessonMinutes: portion.lessonMinutes,
+                minutes: portion.studyMinutes,
+              },
+            ]
+          : [];
+      });
 
     return portions.set(interval.key, [...(portions.get(interval.key) ?? []), ...own]);
   }, new Map<string, StudyPortion[]>());
@@ -114,6 +141,45 @@ function listLaidPortions(own: readonly ScheduledUnit[]): Map<string, StudyPorti
   );
 }
 
+function listLaterPart({
+  kept,
+  thisWeek,
+  unit,
+}: {
+  kept: readonly KeptPiece[];
+  thisWeek: ReadonlySet<string>;
+  unit: QueueUnit;
+}): QueueUnit[] {
+  if (!thisWeek.has(unit.key)) {
+    return [unit];
+  }
+
+  const later = kept.find((piece) => piece.key === unit.key)?.later ?? 0;
+  const minutes = unit.minutes * later;
+
+  if (minutes <= PLAN_EPSILON) {
+    return [];
+  }
+
+  return [
+    {
+      ...unit,
+      minutes,
+      ...(unit.lessons !== undefined && { lessons: Math.max(1, Math.round(unit.lessons * later)) }),
+    },
+  ];
+}
+
+function joinPortions(
+  kept: ReadonlyMap<string, StudyPortion[]>,
+  later: ReadonlyMap<string, StudyPortion[]>,
+): Map<string, StudyPortion[]> {
+  return [...later].reduce(
+    (all, [key, portions]) => all.set(key, [...(all.get(key) ?? []), ...portions]),
+    new Map(kept),
+  );
+}
+
 function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: number }) {
   if (minutes <= 0) {
     return null;
@@ -123,7 +189,14 @@ function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: num
   return (days[index] ?? days.at(-1))?.date ?? null;
 }
 
-export function layOutAfterThisWeek<T extends LaidOut>({
+type KeptWeek = {
+  keptPortions: Map<string, StudyPortion[]>;
+  keptUntil: Date | null;
+  spill: number;
+};
+
+/** A layout of every unit, when it leaves this week's items in this week. */
+function layOutWholeWeek<T extends LaidOut>({
   days,
   kept,
   layOut,
@@ -135,21 +208,14 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   layOut: (laid: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => T;
   start: Date;
   units: readonly QueueUnit[];
-}): T & {
-  keptParts: ScheduledUnit[];
-  keptPortions: Map<string, StudyPortion[]>;
-  keptUntil: Date | null;
-  spill: number;
-} {
+}): (T & KeptWeek) | null {
   const thisWeek = new Set(kept.map((piece) => piece.key));
-  const saved = new Set(kept.flatMap((piece) => (piece.saved ? [piece.key] : [])));
   const first = layOut({ days, units });
   const scheduled = [...first.carriedSchedule.units, ...first.restSchedule.units];
   const own = scheduled.filter((unit) => thisWeek.has(unit.key));
 
   const begins = own.filter(
-    (unit, index) =>
-      saved.has(unit.key) && own.findIndex((part) => part.key === unit.key) === index,
+    (unit, index) => own.findIndex((part) => part.key === unit.key) === index,
   );
 
   const keepsThisWeek =
@@ -170,30 +236,71 @@ export function layOutAfterThisWeek<T extends LaidOut>({
     );
   });
 
-  if (keepsThisWeek && !invertsSkill) {
-    const parts = own.filter((unit) => isStandInUnit(unit));
-    const last = Math.max(...parts.map((unit) => unit.date.getTime()));
-
-    return {
-      ...first,
-      keptParts: [],
-      keptPortions: listLaidPortions(own),
-      keptUntil: parts.length > 0 ? new Date(last) : null,
-      spill: 0,
-    };
+  if (!keepsThisWeek || invertsSkill) {
+    return null;
   }
 
+  const parts = own.filter((unit) => isStandInUnit(unit));
+  const last = Math.max(...parts.map((unit) => unit.date.getTime()));
+
+  return {
+    ...first,
+    keptPortions: listLaidPortions(own),
+    keptUntil: parts.length > 0 ? new Date(last) : null,
+    spill: 0,
+  };
+}
+
+/**
+ * With `keepsSavedDays`, this week's items stay on the days they were saved on, whichever days a
+ * layout of `units` would give them.
+ */
+export function layOutAfterThisWeek<T extends LaidOut>({
+  days,
+  keepsSavedDays = false,
+  kept,
+  layOut,
+  start,
+  units,
+}: {
+  days: readonly PlanDay[];
+  keepsSavedDays?: boolean;
+  kept: readonly KeptPiece[];
+  layOut: (laid: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => T;
+  start: Date;
+  units: readonly QueueUnit[];
+}): T & KeptWeek {
+  const whole = keepsSavedDays ? null : layOutWholeWeek({ days, kept, layOut, start, units });
+
+  if (whole) {
+    return whole;
+  }
+
+  const thisWeek = new Set(kept.map((piece) => piece.key));
   const after = days.filter((day) => day.date >= start);
   const spill = getTimePastThisWeek({ days, kept, start, units });
 
+  const laid = layOut({
+    days: reserveCarriedTime({ days: after, minutes: spill }),
+    units: units.flatMap((unit) => listLaterPart({ kept, thisWeek, unit })),
+  });
+
+  const laterParts = [...laid.carriedSchedule.units, ...laid.restSchedule.units].filter((unit) =>
+    thisWeek.has(unit.key),
+  );
+
+  const ends = [
+    getSpillEnd({ days: after, minutes: spill }),
+    ...laterParts.map((unit) => unit.date),
+  ].flatMap((date) => (date ? [date.getTime()] : []));
+
   return {
-    ...layOut({
-      days: reserveCarriedTime({ days: after, minutes: spill }),
-      units: units.filter((unit) => !thisWeek.has(unit.key)),
-    }),
-    keptParts: own,
-    keptPortions: listKeptPortions({ days, kept, units }),
-    keptUntil: getSpillEnd({ days: after, minutes: spill }),
+    ...laid,
+    keptPortions: joinPortions(
+      listKeptPortions({ days, kept, units }),
+      listLaidPortions(laterParts),
+    ),
+    keptUntil: ends.length > 0 ? new Date(Math.max(...ends)) : null,
     spill,
   };
 }

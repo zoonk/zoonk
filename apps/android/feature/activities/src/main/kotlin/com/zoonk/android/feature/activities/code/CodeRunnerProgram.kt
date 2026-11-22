@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.activities.code
 
+import com.zoonk.android.ui.code.SPACE_CHARS
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16FieldsMistakesInner as CodeRunnerMistake
 
 private val TRAILING_LINE_SPACE = Regex("""[\t ]+(?=[\n\r  ]|\z)""")

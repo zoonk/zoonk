@@ -40,9 +40,11 @@ import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.findCodeFenceLines
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.balanced
+import com.zoonk.android.ui.theme.zoonkType
 
 /**
  * Main's `LessonStepPicture`: the picture, centered in a compact window and start-aligned otherwise,
@@ -114,16 +116,16 @@ fun LessonStepVisual(visual: StepVisual?) {
 }
 
 /**
- * A question with a table of data above it: main splits the table off so the question reads as one
- * sentence (`splitQuestionData`).
+ * A question with a table of data or code above it: main splits them off so the question reads as
+ * one sentence, its last run of sentences (`splitQuestionData`).
  */
 fun splitQuestionData(text: String): Pair<String?, String> {
     val lines = text.lines()
-    val tableLines = findMarkdownTableLines(lines)
+    val dataLines = findMarkdownTableLines(lines) + findCodeFenceLines(lines)
 
-    if (tableLines.isEmpty()) return null to text
+    if (dataLines.isEmpty()) return null to text
 
-    val isProse = { index: Int -> index !in tableLines && lines[index].isNotBlank() }
+    val isProse = { index: Int -> index !in dataLines && lines[index].isNotBlank() }
     val end = lines.indices.lastOrNull(isProse) ?: return text to ""
     val start = (lines.indices.lastOrNull { it < end && !isProse(it) } ?: -1) + 1
     val data = (lines.take(start) + lines.drop(end + 1)).joinToString("\n").trim()
@@ -131,7 +133,7 @@ fun splitQuestionData(text: String): Pair<String?, String> {
     return data to lines.subList(start, end + 1).joinToString("\n")
 }
 
-/** A question as a TalkBack heading, with any table of data above it. */
+/** A question as a TalkBack heading, with any table of data or code above it. */
 @Composable
 fun QuestionText(text: String) {
     val (data, question) = remember(text) { splitQuestionData(text) }
@@ -152,5 +154,5 @@ fun QuestionText(text: String) {
 @Composable
 fun ContextText(text: String?) {
     if (text.isNullOrBlank()) return
-    RichText(text = text, style = MaterialTheme.typography.bodyLarge)
+    RichText(text = text, style = MaterialTheme.zoonkType.context)
 }

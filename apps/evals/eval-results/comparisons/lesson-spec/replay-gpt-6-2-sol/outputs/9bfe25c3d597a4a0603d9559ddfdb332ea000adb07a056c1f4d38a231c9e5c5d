@@ -1,0 +1,119 @@
+{
+  "lessons": [
+    {
+      "canDo": "Localizar o alcance romano e relacioná-lo às rotas pelo Mediterrâneo",
+      "description": "Localizar os domínios romanos em seu auge e entender como o Mediterrâneo ligava suas regiões.",
+      "estimatedMinutes": 3,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um navio descarrega em Roma trigo cultivado no Egito, uma terra distante governada pelos próprios romanos. Como Roma passou a controlar terras dos dois lados desse mar?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Roma ampliou seus domínios por conquistas realizadas ao longo de séculos: em 30 a.C., por exemplo, conquistou o Egito. Destacar que essa expansão não aconteceu de uma vez.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Perguntar: no auge dessa expansão, o que um viajante encontraria ao percorrer todo o litoral do Mediterrâneo? Opções: “Só terras sob domínio romano” (correta) e “Terras de Roma e de Estados rivais” (tentadora, pela ideia do mar como separação entre domínios).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "mapExplorer",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Mostrar que, em 117 d.C., sob Trajano, o domínio romano cercava todo o Mediterrâneo, alcançando Europa, África e Ásia. Usar a base roman-empire-117, com Roma (41,90; 12,50), Hispânia (40,42; -3,70), Gália (45,76; 4,84), Grécia (37,98; 23,73), Ásia Menor (37,94; 27,34) e Egito (31,20; 29,92); cada toque destaca a região correspondente, com os três continentes identificados.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O Mediterrâneo funcionava como ligação entre regiões romanas, não apenas como uma barreira: navios levavam trigo do Egito para abastecer Roma. Estar em margens diferentes não significava pertencer a Estados diferentes.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "mapExplorer",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Explicar que alcançar um continente não significava dominá-lo inteiro: Roma controlava o sul da ilha da Grã-Bretanha, mas não seu extremo norte. Na base roman-empire-117, permitir explorar o sul (51,51; -0,13), com domínio romano, e o extremo norte (58,44; -3,09), fora dele, mantendo visível a fronteira de 117.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um administrador quer abastecer Roma com trigo de outra região do império: deve descartar o Egito apenas porque há um mar no caminho? Oferecer “Manter o Egito como fornecedor” (correta) e “Buscar apenas fornecedores na Itália” (tentadora); justificar pela ligação marítima ensinada.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "mapExplorer",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Na base roman-empire-117, pedir que o aluno localize Hispânia (40,42; -3,70), Gália (45,76; 4,84) e Egito (31,20; 29,92), com os nomes ocultos até cada escolha. Depois, perguntar qual parada exigiria sair do império: sul da Grã-Bretanha (51,51; -0,13) ou extremo norte (58,44; -3,09); correta: extremo norte, com feedback para a confusão entre dominar parte da ilha e dominá-la inteira.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Você revisa uma legenda de museu: “Em 117, Roma dominava toda a Europa; o Mediterrâneo separava suas regiões”. Pedir uma correção curta que situe o império em três continentes sem afirmar domínio total e use o trigo do Egito para mostrar o mar como ligação.",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Localizar as principais regiões dominadas por Roma em 117 d.C., distinguindo seu território das áreas que permaneceram fora dele.",
+          "example": "Em 117 d.C., o Egito e a Hispânia eram romanos, mas o extremo norte da Grã-Bretanha não.",
+          "hard": false,
+          "name": "Localizar os domínios romanos em seu auge",
+          "topic": "Extensão do Império Romano",
+          "useCase": "Interpretar mapas históricos sem confundir presença romana em um continente com domínio sobre ele inteiro."
+        },
+        {
+          "description": "Relacionar o controle das margens do Mediterrâneo à circulação marítima entre regiões do Império Romano.",
+          "example": "Navios transportavam trigo do Egito para Roma, conectando duas regiões sob domínio romano.",
+          "hard": false,
+          "name": "Relacionar domínio mediterrâneo e circulação de mercadorias",
+          "topic": "Mediterrâneo romano",
+          "useCase": "Explicar como regiões distantes do império podiam participar das mesmas redes de abastecimento."
+        }
+      ],
+      "title": "A expansão do Império Romano"
+    }
+  ]
+}

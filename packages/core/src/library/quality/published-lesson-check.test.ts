@@ -86,13 +86,17 @@ function mockFix({ changedScreens, lesson }: { changedScreens: number[]; lesson:
 }
 
 function mockReview(issues: ReviewIssue[] = []) {
+  const reviewer = provenance("anthropic/claude-sonnet-5.5");
+
   vi.mocked(checkLessonQuality).mockResolvedValueOnce({
     data: { issues },
-    provenance: provenance("anthropic/claude-sonnet-5.5"),
+    provenance: reviewer,
     systemPrompt: "",
     usage: {} as never,
     userPrompt: "",
   });
+
+  return reviewer;
 }
 
 function withScreen(lesson: WrittenLesson, index: number, screen: WrittenScreen): WrittenLesson {
@@ -454,6 +458,7 @@ describe(checkPublishedLesson, () => {
 
   it("leaves a version the reviewer passes as it is, reviewing it at flex", async () => {
     const { draft, lesson, plan } = await publishLesson();
+    const reviewer = mockReview();
     mockReview();
 
     await expect(
@@ -467,6 +472,16 @@ describe(checkPublishedLesson, () => {
         writerModel: draft.model,
       }),
     );
+
+    await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({
+        where: { lessonId: lesson.id, phase: "firstReview" },
+      }),
+    ).resolves.toMatchObject([
+      { blocking: [], outcome: "passed", reviewerRunId: reviewer.runId, writerRunId: draft.runId },
+    ]);
 
     const steps = await listSteps(lesson.id);
     expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);

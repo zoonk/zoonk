@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-water-cycle",
+        "claimId": "a218023c9f77cca1",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "8cac9f5fb0cabe7469ede1c8e6bc0c337e485a21b4bdc357a1ecb6634cecc272.first.09c63cff-fc08-4fa8-89bd-56910db63d90.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0029910499999999994,
+    "id": "5ce8503bf60245b9e9bad6f60b4ff9d9efae94ee2fd6482f0d63a174f92560d0",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "365d811529b8bb89",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "3fb85737bc4d6b5457c1b7db4ebc1d342d96af5d2ec36af1fac4bc0c5c36d7d1",
+          "format": "text"
+        },
+        "B": {
+          "blob": "19502343bda76e37f5b9dd5a195b3339b31c2a7994995c7316e32605651d8445",
+          "format": "text"
+        },
+        "claim": "The plan never presents collection as a stage: it returns water to the ocean, but does not show or identify a collection step in the cycle.",
+        "claimId": "a218023c9f77cca1",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e8f5cf04091b62079033f12d36e09defd19aff54d8c15c99ebd5c4dd596f1bf",
+          "format": "text"
+        },
+        "input": {
+          "blob": "b50c46f695666f99d56d11f96910b388595282254a14a5697e40bb1e28dcce42",
+          "format": "json"
+        },
+        "location": {
+          "detail": "whole: the cycle explanations and process-order activity",
+          "kind": "whole"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "365d811529b8bb89",
+          "finding": "doesn't hold",
+          "reason": "The worked example divides by the starting wage: $3 ÷ $20 = 0.15, so it reports a 15% increase, not a 13% increase divided by $23. Both outputs contain this same worked example, so the claim is false of both."
+        },
+        {
+          "claimId": "a218023c9f77cca1",
+          "finding": "holds for both",
+          "reason": "Neither output names or shows collection as a stage of the cycle. Output B mentions runoff entering a river and a reservoir in the application, but never identifies a collection step, and output A is likewise silent on it, so the claim is true of both."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

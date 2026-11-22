@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "71955e34b54a49f7",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "d8c24937b6863a98e78d2a6ebf7e395942c18b74196437a6824b8105f7788b37.second.d225d1b3-75a5-4b01-9624-2784b070ce8a.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0030783499999999997,
+    "id": "67f67eebe5dcb8ef56a3bb8bb89e0ddafb8b3b0bacaa0268913128ae29c41634",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "6ba696b043d766de",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "claim": "Screens 4, 5, 6, and 7 reuse the exact same diagram description word for word with three unlabeled groups of dots instead of labeling Defenders on screen 5, Midfielders on screen 6, and Forwards on screen 7, breaking the expectation that a planned picture names every part or label its screen talks about and repeating the same picture with nothing new.",
+        "claimId": "71955e34b54a49f7",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screens 4 to 7",
+          "kind": "range"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "6ba696b043d766de",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen (Malik's pay after a 50% cut and a 50% raise) asks the learner to find the overall change from the original pay, which is 25% lower. It never mentions a compound annual growth rate, and neither output does."
+        },
+        {
+          "claimId": "71955e34b54a49f7",
+          "finding": "holds",
+          "reason": "In output A, screens 4 to 7 have the same visual description word for word, with a labeled goalkeeper and three unlabeled groups of dots. Screens 5, 6 and 7 talk about defenders, midfielders and forwards, but their pictures don't label those groups. The claim doesn't hold for output B, which has different visuals and labels its groups."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

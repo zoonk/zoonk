@@ -1,0 +1,155 @@
+{
+  "attempt": "first",
+  "costUsd": 0.010444389999999998,
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "f2003e3db8adfb419b213efd79a029c11088572a7f1be9dc0c045e120ee52895",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and teach the same two closely linked skills, locating the four lobes and matching each to a job.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the screen plans are identical.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so they share the same visual gap on the traffic-light guess.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so they fit the beginner level and scope equally.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks where the brain first processes eye signals, a location question, but its screen shows no brain picture, so the learner must imagine the spot from words alone.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot judge the location from words alone, so the guess teaches nothing about where the occipital lobe is.",
+            "location": {
+              "detail": "where does the brain first process signals from the eyes in its outer layer?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess asks where the brain first processes eye signals, a location question, but its screen shows no brain picture, so the learner must imagine the spot from words alone.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot judge the location from words alone, so the guess teaches nothing about where the occipital lobe is.",
+            "location": {
+              "detail": "where does the brain first process signals from the eyes in its outer layer?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "12fb0a8d-4f7f-40ed-b323-5aa3a6adc8d8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both lessons teach one skill, calculating a percent change, with the same steps and examples.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens on a concrete salary scene and then a jacket guess, while B opens on a formula that asks the learner nothing they can use yet.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use text screens and the same tables in the same places, with no visual on the procedural screens.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A keeps to plain words and everyday numbers, while B uses notation before intuition and brings in out-of-scope ideas such as logarithmic returns.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "A opens with a real salary case and follows the beginner plan; B's formula hook breaks the lesson's own expectation of a concrete hook."
+        },
+        "pairId": "2346c03c-65b8-40a8-af90-d473d7031962"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both lessons teach the same two closely linked skills, locating the lobes and matching them to jobs.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B adds a real check after its first explanations and a closing application with numbered regions, while A's plan is mostly explanation with one matching activity.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B shows a picture for the front-versus-back guess, which A leaves text only, and its application uses numbered regions to match actions to lobes.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "B",
+            "reason": "B's everyday examples, such as Tanya's injury and a warm handle, are more concrete, though it adds the word specialties.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks where the brain first processes eye signals, a location question, but its screen shows no brain picture, so the learner must imagine the spot from words alone.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot judge the location from words alone, so the guess teaches nothing about where the occipital lobe is.",
+            "location": {
+              "detail": "where does the brain first process signals from the eyes in its outer layer?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The four explanation pictures label regions by place (front, upper middle, lower side, back), not by lobe name, so the picture does not name the lobe each screen explains.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner has to map each place onto a lobe name themselves, which slows the link between picture and name.",
+            "location": {
+              "detail": "The four explanation screens reuse one picture that labels regions by place rather than by lobe name.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has no missing visual on its guess, and its closing application uses numbered regions the learner can check; A has a major missing visual."
+        },
+        "pairId": "c63fe2a6-ff46-46b4-8ed0-ad9b14f020b9"
+      }
+    ]
+  }
+}

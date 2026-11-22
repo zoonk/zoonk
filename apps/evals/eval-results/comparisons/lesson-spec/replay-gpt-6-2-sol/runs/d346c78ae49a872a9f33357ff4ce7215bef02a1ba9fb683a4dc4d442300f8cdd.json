@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-en-soccer-formation",
+  "challenger": {
+    "costUsd": 0.0344798,
+    "durationMs": 37842.02241700003,
+    "hash": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+    "userPromptHash": "ea7310f9310b6da8f59152bfb7b08a047f10aaf4e1cecc3494073ad9204297cc"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0462506,
+    "durationMs": 100753.79733300001,
+    "hash": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+    "userPromptHash": "ea7310f9310b6da8f59152bfb7b08a047f10aaf4e1cecc3494073ad9204297cc"
+  },
+  "run": 1
+}

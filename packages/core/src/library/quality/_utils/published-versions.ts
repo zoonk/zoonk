@@ -37,6 +37,7 @@ export type PublishedDraftState = {
   version: WrittenVersion;
   replaces: number;
   repairBase: string;
+  writerRunId?: string;
 };
 
 export type PublishedFix =
@@ -100,6 +101,22 @@ export async function loadCheck({
     inputs,
     repairBase,
   };
+}
+
+export async function readVersionWriterRunId({
+  lessonId,
+  version,
+}: {
+  lessonId: string;
+  version: number;
+}): Promise<string | undefined> {
+  const step = await prisma.step.findFirst({
+    orderBy: { position: "asc" },
+    select: { runId: true },
+    where: { lessonId, version },
+  });
+
+  return step?.runId;
 }
 
 export async function loadVersionSteps({

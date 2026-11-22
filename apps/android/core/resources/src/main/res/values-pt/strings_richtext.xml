@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_code": "0166caf5d3552f1bb4a989584b64d2bb57fa7fb2b59687ef2724745e472cda87",
+  "richtext_code_indented": "d6f7367311922a06f388a3225aedaa716a5efca065bfac12055fd809b781ff05",
+  "richtext_code_line": "e154e069741ec5f0e4f290375008c438f88a5af8f72689c0c2d39f763a52debf",
+  "richtext_code_line_blank": "7632cf1b6a7472bc93e3e12c6ac0899154f7b703decd276dd4e74e5e2354ed8d",
+  "richtext_code_line_indented": "0915d224f0fb8d66b55646c27cf3aaf8caef9d53443541a9f39b3c1d7ddd02d1",
+  "richtext_code_spaces": "fab91d07745c3d4e4b259250345e90ace22d2b9b1348337f8f2653ed4a5d1fa7",
+  "richtext_code_tabs": "634651c66b387bf9eed9d7e9bcc001e810bdbc95dee51207bc067868b646cf3c",
   "richtext_math_bar": "1ac881b956084d7a2124eb7c2ef725eb0dba2c08c7fa6bf70f829bbcbf5594d6",
   "richtext_math_cube_root": "e01e05d51f6421836131c3680a8594312bd8557df9b2e82d6ee2fc999dc2c9f0",
   "richtext_math_cubed": "91d0c38f67946b4bb3fe7f8b58bcd374d4d0d3a5915907146c052b5a801a9a39",
@@ -17,6 +24,28 @@
 }
 -->
 <resources>
+    <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
+    <string name="richtext_code">Código</string>
+    <!-- Read by screen readers for a line of a program: its number, then its code as written. -->
+    <string name="richtext_code_line">Linha %1$d: %2$s</string>
+    <!-- Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_line_indented">Linha %1$d, com recuo de %2$s: %3$s</string>
+    <!-- Read by screen readers for an empty line of a program. -->
+    <string name="richtext_code_line_blank">Linha %1$d: em branco</string>
+    <!-- Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_indented">Com recuo de %1$s: %2$s</string>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”. -->
+    <plurals name="richtext_code_spaces">
+        <item quantity="one">%d espaço</item>
+        <item quantity="many">%d espaços</item>
+        <item quantity="other">%d espaços</item>
+    </plurals>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”. -->
+    <plurals name="richtext_code_tabs">
+        <item quantity="one">%d tabulação</item>
+        <item quantity="many">%d tabulações</item>
+        <item quantity="other">%d tabulações</item>
+    </plurals>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">ao quadrado</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

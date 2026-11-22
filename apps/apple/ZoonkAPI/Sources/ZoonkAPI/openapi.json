@@ -25356,7 +25356,7 @@
     },
     "/study-sessions/{sessionId}/stops": {
       "post": {
-        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
+        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` stays true after the first finish; otherwise it is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
         "operationId": "createStudySessionStop",
         "security": [
           {
@@ -25543,7 +25543,7 @@
     },
     "/study-sessions/{sessionId}/summary/visit": {
       "post": {
-        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped or its work is finished. Retrying the first visit with its original ID returns the same result.",
+        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped, finished at least once (even with extras remaining), or every block is done or skipped. Retrying the first visit with its original ID returns the same result.",
         "operationId": "createStudySessionSummaryVisit",
         "security": [
           {
@@ -25623,7 +25623,7 @@
             }
           },
           "409": {
-            "description": "The session has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
+            "description": "The session has never finished, has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
             "content": {
               "application/json": {
                 "schema": {
@@ -77392,10 +77392,12 @@
               "completed",
               "total"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "Completed day blocks and total day blocks not skipped, excluding extra work."
           },
           "sessionCompleted": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether nothing is left to play: the session is completed and no block is next. A finished day with extra work next stays false; dayProgress says the day is complete."
           },
           "testOutOffer": {
             "nullable": true,
@@ -77901,7 +77903,7 @@
               "open",
               "complete"
             ],
-            "description": "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the session is complete."
+            "description": "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the day first finished."
           },
           "lessonsComing": {
             "type": "boolean",
@@ -77909,7 +77911,7 @@
           },
           "percent": {
             "nullable": true,
-            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
+            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the day first finishes and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
             "type": "integer",
             "minimum": 0,
             "maximum": 100
@@ -77936,18 +77938,18 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Personal estimated minutes of completed blocks. Study statistics report elapsed time separately."
+            "description": "Personal estimated minutes of completed day blocks, excluding extra work. Study statistics report elapsed time separately."
           },
           "left": {
             "type": "number",
             "minimum": 0,
-            "description": "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Clients display this value without rebuilding it from blocks."
+            "description": "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Excludes extra work."
           },
           "planned": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "The day's total commitment, persisted at Start, including reserved lessons and accepted extra time."
+            "description": "The day's total commitment, persisted at Start, including reserved lessons and excluding extra work."
           }
         },
         "required": [
@@ -86737,6 +86739,9 @@
               "today",
               "upcoming"
             ]
+          },
+          "study": {
+            "$ref": "#/components/schemas/StudyWeekDay"
           }
         },
         "required": [
@@ -86744,7 +86749,8 @@
           "items",
           "minutes",
           "mockFunding",
-          "state"
+          "state",
+          "study"
         ],
         "additionalProperties": false
       },
@@ -86867,6 +86873,76 @@
           "mockDate",
           "mockMinutes",
           "setAsideMinutes"
+        ],
+        "additionalProperties": false
+      },
+      "StudyWeekDay": {
+        "type": "object",
+        "properties": {
+          "completed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Completed day blocks, excluding extra work."
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Learner-local calendar date"
+          },
+          "goalMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
+            "example": 15
+          },
+          "hitGoal": {
+            "type": "boolean",
+            "description": "The session first finished, or the day has no day blocks and the learner studied."
+          },
+          "isToday": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "afterEnd",
+              "beforeStart",
+              "deadline",
+              "exam",
+              "rest",
+              "study"
+            ],
+            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). An `afterEnd` day is after the goal's date; a plan whose date came with lessons left continues once the learner moves its date"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
+          },
+          "studied": {
+            "type": "boolean",
+            "description": "Any study of this goal counts, partial days included"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Day blocks not skipped, excluding extra work; zero without a session."
+          }
+        },
+        "required": [
+          "completed",
+          "date",
+          "goalMinutes",
+          "hitGoal",
+          "isToday",
+          "kind",
+          "minutes",
+          "studied",
+          "total"
         ],
         "additionalProperties": false
       },
@@ -88431,61 +88507,6 @@
           "week",
           "weekEnd",
           "weekStart"
-        ],
-        "additionalProperties": false
-      },
-      "StudyWeekDay": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-            "description": "Learner-local calendar date"
-          },
-          "goalMinutes": {
-            "type": "number",
-            "minimum": 0,
-            "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-            "example": 15
-          },
-          "hitGoal": {
-            "type": "boolean"
-          },
-          "isToday": {
-            "type": "boolean"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "afterEnd",
-              "beforeStart",
-              "deadline",
-              "exam",
-              "rest",
-              "study"
-            ],
-            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). An `afterEnd` day is after the goal's date; a plan whose date came with lessons left continues once the learner moves its date"
-          },
-          "minutes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-          },
-          "studied": {
-            "type": "boolean",
-            "description": "Any study of this goal counts, partial days included"
-          }
-        },
-        "required": [
-          "date",
-          "goalMinutes",
-          "hitGoal",
-          "isToday",
-          "kind",
-          "minutes",
-          "studied"
         ],
         "additionalProperties": false
       },
@@ -93818,7 +93839,7 @@
               "total"
             ],
             "additionalProperties": false,
-            "description": "One step per block still in the day, filled as blocks are done"
+            "description": "Completed day blocks and total day blocks not skipped, excluding extra work"
           },
           "state": {
             "default": "underway",
@@ -94118,7 +94139,7 @@
               "total"
             ],
             "additionalProperties": false,
-            "description": "One step per block still in the day, filled as blocks are done"
+            "description": "Completed day blocks and total day blocks not skipped, excluding extra work"
           },
           "state": {
             "default": "underway",
@@ -97900,7 +97921,7 @@
           },
           "finished": {
             "type": "boolean",
-            "description": "Every block is done or skipped. False right after \"Stop for today\": the rest of the session waits to be picked up"
+            "description": "The session has finished at least once, or every block is done or skipped. Remains true while extra blocks wait. False after \"Stop for today\" if the session has never finished and blocks remain"
           },
           "fullMeal": {
             "type": "boolean"

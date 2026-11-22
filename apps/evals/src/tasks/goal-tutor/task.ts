@@ -1,3 +1,4 @@
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type Task } from "@/lib/types";
 import {
   type GenerateGoalTutorAnswerParams,
@@ -16,6 +17,7 @@ import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
 import { createAnswerLinks } from "@zoonk/core/lesson-questions/app-links";
 import { LEARNER_NEEDS_CASES } from "../lesson-question/learner-needs-cases";
 import { QUANTUM_PLAN } from "../lesson-question/screen-contexts";
+import { PLAIN_LANGUAGE_CRITERION } from "../plain-language-criterion";
 import { TEST_CASES } from "./test-cases";
 
 type GoalTutorOutput = {
@@ -162,12 +164,26 @@ async function generate({
 }
 
 export const goalTutorTask: Task<GoalTutorInput, GoalTutorOutput> = {
+  criteria: [PLAIN_LANGUAGE_CRITERION],
   description:
     "The learner's buddy as their tutor for a goal: answer doubts, explain the plan, and propose plan changes asked for in plain words",
   generate,
   id: "goal-tutor",
   latencyBudget: { p50: 8, p95: 15 },
   name: "Goal tutor",
+  priorities: {
+    comparison: {
+      criteria: { plainLanguage: "counts" },
+      preference: "separates",
+      trade: COMPARISON_TRADES.private,
+    },
+    distribution: "private",
+    first: "cost",
+    reads: "A learner reads the buddy's streamed answer",
+    reason:
+      "One learner's chat: the cheapest model that matches quality, with a high prompt-cache rate",
+    waits: "A learner waits: the answer streams in the request",
+  },
   testCases: [
     ...TEST_CASES,
     ...LEARNER_NEEDS_CASES.map((testCase) => ({

@@ -1,0 +1,208 @@
+{
+  "attempt": "first",
+  "costUsd": 0.013097189999999998,
+  "failures": [],
+  "packetId": "783f0a533d01af687302fd7bf489794cbf2606acb1d9569437682c8aec0ec412",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is a real ward problem a nurse manager would face, with a supply deadline and colleagues pushing for a decision. B is a training-design review, which feels closer to planning a study than doing the job.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives several meaningful branches with different meters and outcomes, and the strong path is not simply the first option. B's decisions also matter, but A's choices are more varied.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give a clear team of colleagues with different roles, and both use the AI assistant as a real option that helps when used well.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debriefs praise specific strategies, such as checking whether a gap could be chance, and both give concrete rewordings for the weaker choices.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "A's ask-the-AI reply gives a p-value of 50% for 6 vs 4 out of 40, which should be about 74%, and its ending invents a $5,400.00 saving and a 6.5% redness rate. B's figures, such as the 82-per-format estimate and the 0.30 Fisher result, check out.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "A teaches a wrong number and presents invented results as outcomes, which is dishonest about what the data shows. B stays within what the pilot can support and makes no promise of a result.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses everyday phrases such as random luck and a coin toss, which a non-specialist can follow. B uses terms like false-alarm limit and standard estimate that are more abstract.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The AI reply gives a 50% chance of luck for a 6-versus-4 split in 40 per group. The two-sided Fisher p-value for that table is about 0.74, so 50% is a wrong figure taught as fact. The same wrong 50% appears in the 80-patient panel.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner takes away a wrong probability and may misjudge how likely a small gap is to be chance.",
+            "location": {
+              "detail": "quote from the quality message in the explain-small-result node",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The ending states a $5,400.00 yearly saving and a redness rate of 6.5% from skin-prep swabs. Neither figure is in the case data, and the outcome presents them as real results.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner is taught an invented result as if it were a measured outcome.",
+            "location": {
+              "detail": "quote from the end-saved-budget ending",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The learner-facing choice uses the unexplained terms fail to reject the null hypothesis and a LaTeX-style p-value comparison for a charge nurse.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A reader with no statistics background meets jargon before the plain idea, which may make them stop reading the choice.",
+            "location": {
+              "detail": "quote from the jargon-keep-standard choice",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The phrase false-alarm limit is a technical idea given without a plain explanation of what it means for the ward.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A non-specialist reader must decode the term and may not take in the reason for the sample size.",
+            "location": {
+              "detail": "quote from the plan node messages",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The case is set in a training-design review, so the decision is mostly about planning a study rather than handling a real job problem on the floor.",
+            "criterion": "realism",
+            "learnerCost": "The learner may feel they are doing a meta task rather than practising the job.",
+            "location": {
+              "detail": "whole case",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A teaches a wrong p-value of 50% and presents invented savings and redness results as outcomes, which are major accuracy problems. B is accurate and teaches the same chance check, though it is more abstract and less grounded in the ward."
+        },
+        "pairId": "07cd7acf-abbc-42b5-b0f7-aa9012a8b9bd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's sales briefing is a direct data-analyst task for a manager with a deadline, which fits the job the learner is preparing for better than a bay-loading count.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices differ in what they do to the total and the channel data, and each leads to a different ending, while B's choices mostly change the count split.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both cases have a manager or floor lead who pushes for speed and a colleague who checks the data, plus an AI assistant used in a real way.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debriefs name specific strategies, such as checking order IDs rather than row counts, and give concrete alternatives.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both cases' numbers add up after cleaning in the paths I checked, so neither has a wrong fact.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are at the right level for beginners, use the AI assistant as a checkable tool, and make no promises of results.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use plain words for a beginner, such as duplicate, blank and draft, and explain the cleanup in everyday terms.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "Both cases are sound and teach the same skills, but A's sales total is closer to real analyst work and separates the known paid amount from the unknown channel more clearly."
+        },
+        "pairId": "52271b0d-fa20-4c5e-adfa-74b6b4587fc3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither serves its reader better on realism.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the decisions are the same.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the team is the same.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the debriefs are the same.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the accuracy is the same.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the depth and language are the same.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the plain language is the same.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are the same kit-count case, so neither is better."
+        },
+        "pairId": "70a49948-3f9b-4393-b3ba-1cebdd462441"
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "e5bbdf9276c4b38f",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "69bb942d9fcc96a78de97bee895433fc033467ef5a8cc4724f77a104bd9ae36d.second.27754d69-2803-473f-8636-2235e0870e82.3",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0030028499999999996,
+    "id": "917c942722387060fa32fe1388422219c9d656c51c308ba8ef9032b9be87f905",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "8319a705091eb4da",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "B": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "claim": "A aplicação pede situar o império em três continentes e usar o trajeto do trigo para explicar a ligação marítima, mas não fornece mapa nem outra representação visual.",
+        "claimId": "e5bbdf9276c4b38f",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "a tela application sobre corrigir a legenda do museu",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "8319a705091eb4da",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A computes $23 − $20 = $3, then 3 ÷ 20 = 0.15 and reports 15%. It divides by the starting wage of $20, not $23, and reports 15%, not 13%."
+        },
+        {
+          "claimId": "e5bbdf9276c4b38f",
+          "finding": "holds",
+          "reason": "In output B the application screen asks the learner to situate the empire on three continents and uses Egypt's wheat to show the sea as a link, but its visualKind is none and visual is null, so no map or other representation is provided. Output A's application screen has a map picture, so the claim does not apply to it."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

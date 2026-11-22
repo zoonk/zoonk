@@ -2,29 +2,6 @@
   "modelId": "microsoft/mai-image-2.7",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A shield hints at defense, but the checkmark makes it a generic security or verified icon with nothing specific to immunology. This is capped as a generic object.",
-          "score": 4,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "A single object with a clean silhouette in smooth matte 3D, with soft lighting and a subtle shadow on a plain white background, matches the app-icon style well. The palette is limited to two colors, and the low-contrast white face is a minor weakness.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The image contains no letters, numbers or captions; the checkmark is a symbol, not text.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -35,23 +12,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "The shield with a checkmark is a generic security/verification icon (antivirus, 'protected', 'verified') rather than an immunology symbol. It has no cell, antibody or germ to tie it to the body's defenses, so a learner would likely read it as cybersecurity or a privacy setting rather than immunology.",
-          "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "The palette is nearly monochrome (blue and white only), so it lacks an accent color. The shield sits slightly off-center and leans at an angle. The white inner plate is low contrast against the white background.",
-          "kind": "minorErrors",
-          "score": 8.5
-        },
-        {
-          "conclusion": "Replace the checkmark with a Y-shaped antibody or a stylized immune cell on the shield face to anchor the immunology meaning. Add a soft accent color, such as coral or green, for the antibody.",
-          "kind": "potentialImprovements",
-          "score": 7.5
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-immunology-1",
@@ -61,32 +22,10 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "The shield hints at 'defense', but the checkmark makes it a generic security or verified icon with no biological cue, which matches the generic-object cap.",
-          "score": 5,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It is a single centered object with a clean silhouette, smooth matte 3D, soft lighting and a subtle shadow on plain white, which is strong app-icon styling. It uses only two colors and has a slightly odd raised blob behind the checkmark.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions; the checkmark is a symbol, not text.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -97,23 +36,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "The object is a generic security shield with a checkmark, the familiar 'verified/protected' or antivirus/security-app symbol. Nothing in it (no cell, antibody, germ or other biological detail) ties it to immunology, so a learner would more likely read it as cybersecurity or 'approved' than as the body's immune defenses.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The checkmark sits on a raised blob shaped somewhat like a heart, which adds a muddled secondary form without adding meaning. The palette is nearly monochrome blue and white, so it lacks a distinct accent color.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Replace the checkmark with a Y-shaped antibody or a rounded immune cell on the shield. This would keep the clean defensive silhouette and make it read as immunology at a glance. Adding a soft accent color, such as a warm coral for the antibody, would improve contrast.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-immunology-2",
@@ -123,32 +46,10 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "The shield hints at defense, but the checkmark makes it read as a generic security or verification badge. With no biological element, it falls under the generic-object cap.",
-          "score": 5,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is one centered object with a clean silhouette in smooth matte 3D, with soft lighting and a subtle shadow, on a plain white background. It uses only two colors, which is within the 2 to 4 range. This is a strong app-icon match.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The checkmark is a symbol, not text.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -159,23 +60,7 @@
           "reasoningTokens": 0
         }
       },
-      "steps": [
-        {
-          "conclusion": "The shield with a checkmark is a generic 'security/verified' or antivirus icon rather than an immunology symbol. It has no cell, antibody, germ or other biological cue, so a learner would more likely read it as cybersecurity or 'protected/approved' than as the body's immune defenses.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The rendering is close to the requested matte style but leans slightly toward a glossy, plastic app-badge look. The palette is limited to blue and white with no accent color, so the icon feels flat and generic.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Replace the checkmark with a stylized Y-shaped antibody, or a shield guarding a rounded cell. Add one accent color, for example a soft coral germ being deflected, to tie the icon clearly to immunology.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-immunology-3",
@@ -185,32 +70,10 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A lone rising arrow suggests growth or statistics but does not clearly signal money, prices or markets. It is too generic to read as economics at a glance.",
-          "score": 5,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a single clean-silhouette object in smooth matte 3D with soft lighting and a subtle shadow, matching the icon style. However, the white panel with a gray border is not a plain white background, the palette is basically one color, and the arrow is slightly off-center.",
-          "score": 7,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -221,23 +84,7 @@
           "reasoningTokens": 163
         }
       },
-      "steps": [
-        {
-          "conclusion": "The object is only a green stepped rising arrow with no coin, money, price tag or market element, so it reads as generic 'growth/progress' rather than clearly economics. The image also sits on a white square framed by a light gray border instead of a plain white background.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The palette is effectively a single green in two shades, so there is little color contrast or accent. The arrow sits slightly right of center.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Combine the rising arrow with a coin (for example, an arrow rising from or around a coin) so it signals prices and money. Remove the gray frame so the icon is isolated on plain white, and add a warm accent color such as gold for the coin.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "pt-economia-1",
@@ -247,32 +94,10 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A rising stepped arrow hints at markets or growth, but without any monetary element it is generic and could stand for any progress or statistics topic.",
-          "score": 5,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is a single matte 3D object with soft lighting, a subtle shadow and a clean silhouette. However, the gray framed border breaks the plain white background, the arrow is slightly off-center, and the color range is minimal.",
-          "score": 6,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "No letters, numbers or captions appear.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -283,23 +108,7 @@
           "reasoningTokens": 222
         }
       },
-      "steps": [
-        {
-          "conclusion": "The icon is only a green rising arrow with no money, coin, price or market cue. It reads as generic growth or progress rather than clearly standing for economics. The background is also not plain white: the icon sits on a white square inset inside a light gray frame, so it looks like a framed tile instead of an isolated app icon.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The arrow sits slightly right of center, and its shadow floats detached well below the object. The palette is a single green in two shades, so it lacks a clear accent and looks a little flat.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Integrate the arrow with a coin, for example a coin with the arrow rising from or through it, so the icon reads as economics at a glance. Remove the gray frame so the object sits on a plain white background. Add one accent color, such as gold for the coin, and center the composition.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "pt-economia-2",
@@ -309,32 +118,10 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A green rising arrow hints at markets or prices going up, but it is a generic growth symbol with no money or market element, so it does not clearly stand for economics at a glance.",
-          "score": 5,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "There is one object rendered in smooth matte 3D with soft lighting, a subtle shadow and a limited green palette. However, the white square panel with a gray border breaks the plain white background requirement, and the arrow is slightly off-center.",
-          "score": 7,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The image contains no letters, numbers or captions.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -345,23 +132,7 @@
           "reasoningTokens": 230
         }
       },
-      "steps": [
-        {
-          "conclusion": "The rising stepped arrow alone reads as generic 'growth' or 'progress' rather than clearly as economics. Nothing in the icon shows money, prices or markets, such as a coin, currency or goods. The expectation calls for a coin with a rising arrow, so the subject is under-specified.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The white background is not plain. The object sits on a white square panel framed by a light gray border, which makes the icon look like a framed card rather than an isolated object on white. The arrow also sits slightly to the right of center.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Add a clear economic cue, such as a matte gold coin with the arrow rising from it, to tie the icon to prices and money. Remove the gray frame so the object sits on pure white. Add a small accent color to complement the green.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "pt-economia-3",
@@ -371,32 +142,10 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A bar chart reads as data at a glance, which fits the subject. The upward trend arrow pushes the meaning toward growth or sales rather than analysis and honest checking.",
-          "score": 8,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image has a single centered object in smooth matte 3D with soft lighting and a restrained teal-and-blue palette on a plain white background. However, the tallest bar's warped base and the tilted, floating pose weaken the clean silhouette.",
-          "score": 7,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -407,23 +156,7 @@
           "reasoningTokens": 256
         }
       },
-      "steps": [
-        {
-          "conclusion": "The tallest dark-blue bar is warped: its lower right edge curves into a rounded, melted shape instead of a straight rectangular base, so the chart's silhouette looks malformed.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The whole chart is tilted and floats high above a detached shadow, so it feels unstable rather than grounded like an app icon. The rising arrow also suggests business growth more than analysis.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make all bars clean, upright rounded rectangles on a shared baseline, and move the shadow up so it sits under the base. Consider swapping the growth arrow for a cue such as a magnifying glass over the bars to signal analysis rather than profit.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-1",
@@ -433,32 +166,10 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A bar chart clearly signals data and charts, but the rising arrow pushes the meaning toward financial growth rather than analysis, cleaning or checking conclusions.",
-          "score": 8,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The object is a single centered piece in smooth matte 3D with soft lighting, a subtle floating shadow, a white background and 4 colors. The malformed curved bottom of the tall bar and the misaligned bases hurt the clean silhouette.",
-          "score": 7,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -469,23 +180,7 @@
           "reasoningTokens": 281
         }
       },
-      "steps": [
-        {
-          "conclusion": "The tallest dark-blue bar is malformed: its lower part curves into a blade or shield shape instead of staying a clean rectangular bar. This breaks the chart's geometry and weakens the clean silhouette.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The bars do not share a common baseline; their bottoms are staggered and the group is tilted, which makes the chart read less clearly. The bars-plus-rising-arrow motif leans toward business growth or profit rather than analysis. The palette is almost entirely blue, so there is little distinct accent.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make all bars clean rounded rectangles on a shared baseline. Consider a magnifying glass over the bars, or a trend line, so the icon reads as analysis rather than growth. Add one contrasting accent color, such as warm orange on the arrow.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-2",
@@ -495,32 +190,10 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A bar chart is recognizably about data, so the subject reads quickly. However, the upward growth arrow pushes the meaning toward business growth rather than analysis or checking conclusions.",
-          "score": 7,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is one centered object in smooth matte 3D with soft lighting and a subtle shadow, uses 3 to 4 harmonious blues and teal, and sits on a plain white background. The skewed bars and the malformed curved base of the tallest bar weaken the clean silhouette.",
-          "score": 8,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The image contains no letters, numbers or captions.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -531,23 +204,7 @@
           "reasoningTokens": 291
         }
       },
-      "steps": [
-        {
-          "conclusion": "The rising arrow over the bars makes this read more like a generic business-growth or profit icon than data analysis. The course is about cleaning data, summarizing it and checking conclusions, not about growth. The tallest bar also has a malformed, curved, shield-like bottom that breaks the bar-chart geometry.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The bars are skewed and tilted at an odd angle, with no baseline, so the chart looks unstable rather than having a crisp, grounded silhouette. The arrow and bars also overlap heavily, which muddies the outline.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Replace the growth arrow with a magnifying glass over the bars to signal analysis rather than growth. Make the tallest bar a proper rectangle so all bars are regular and upright, and add a simple baseline for a cleaner app-icon silhouette.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-3",
@@ -557,7 +214,8 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     }
   ],
   "taskId": "course-icon"

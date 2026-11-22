@@ -4,19 +4,24 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { SpokenMath } from "../rich-text/spoken-math";
-import { OptionMarker, ResultTag, TagBesideOrUnder } from "./answer-option";
+import { OptionMarker, TagBesideOrUnder, useAnswerTag } from "./answer-option";
 import { ANSWER_OPTION_CLASS, ANSWER_TONE } from "./answer-tone";
 
 /** An answer shown after the fact: drawn as an option with its result, but nothing to pick. */
 function ShownAnswer({
   children,
+  label,
   marker,
   result,
 }: {
   children: React.ReactNode;
+  /** Says whose answer it is to a screen reader, which can't see its mark. */
+  label?: string;
   marker: React.ReactNode;
   result: "right" | "wrong";
 }) {
+  const tag = useAnswerTag({ guessed: false, picked: result === "wrong", result });
+
   return (
     <div
       className={cn(
@@ -29,9 +34,8 @@ function ShownAnswer({
     >
       <OptionMarker isChecked layout="row" marker={marker} picked={false} />
 
-      <TagBesideOrUnder
-        tag={<ResultTag guessed={false} picked={result === "wrong"} result={result} />}
-      >
+      <TagBesideOrUnder tag={tag}>
+        {label && <span className="sr-only">{label}</span>}
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
     </div>
@@ -55,7 +59,7 @@ export function AnswerPair({
       role="group"
     >
       {yours !== null && (
-        <ShownAnswer marker={<XIcon />} result="wrong">
+        <ShownAnswer label={t("Your answer")} marker={<XIcon />} result="wrong">
           {yours}
         </ShownAnswer>
       )}

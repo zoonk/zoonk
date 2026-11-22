@@ -182,13 +182,8 @@
   "plan_date_estimate_spoken": "9f2deee4e9147dd0949531cdb5e74aa9e628ec41a1979ccbba59f8e13901e913",
   "plan_date_range": "06346c9ab74b77b842e68ca39e79449da88d8400c792a1177349b89fa68e299f",
   "plan_date_to_be_confirmed": "045ff01cf6e043d813d161fa7e8c6901fef0b4f36b48c3462161fddbb6ed93ef",
-  "plan_day_done": "f1cbcd2ba2e46015f81cce5d1c07f99bbadde175d54859840e5f9c112d782762",
   "plan_day_is_here": "b38a0c7bbbe15d9a442c3ac9c5d46deb2eb34907e299787beeab3800978bc81d",
-  "plan_day_missed": "846618d0a4e88c6a643db84bb85e9f34e01adb4d0fd758eed31c443dc29575a1",
-  "plan_day_planned": "b8a9700fe76ab95354326b84c9e245fd06838a4830c7bf2a62e2c072f4ebf353",
   "plan_day_range": "2be150be9897aa5a37ce0fed29fa9833ba8255e912085e52e2318cb1275f5842",
-  "plan_day_rest": "769917b4231fecf8eb7cfc8dcd117c979467ab9ed00d390a6f391c5fdf1823be",
-  "plan_day_today": "d20431aea64b353049d3bb13d327698b8e5a16485dbda176894e28ac9caf0b51",
   "plan_days_left": "255f2e6ae1068b95dc04df8294b94776361b24917981d7b592d26f81b17dba77",
   "plan_days_left_estimate": "e51fcd21117e5367e7135c85749edac9e2a0a8a9dbfbb320b7bf93bb7aa6c2e3",
   "plan_days_left_estimate_spoken": "795126f478f49067d8385c5bff1e4a80d94c76a0060a046dbc24700e30e25a79",
@@ -515,7 +510,6 @@
   "plan_use_this_date": "591466ea0b8970d04b0d5d544f04de8973247770ce2e1428b9ee33c0330d9084",
   "plan_use_time": "5ae8c82a8f3c7bf06bbaf5ea60ab063f0ab35418add17dcfd121dee593d95a49",
   "plan_wednesdays": "ea6d9361b259ce9795f4f9257c6d22526240aaeaedede0974931b03dab29cf53",
-  "plan_week_day": "a9da5a520f21fd98eb38a1cb44d662d6c9fb77df304490538d9c0cc747f8cb25",
   "plan_week_time": "ab4da42c128baac6053dfdfccc24e6b14ccb72163e102863d24c3fb0aac0b32a",
   "plan_weekly_challenges": "8bca881cb6b3dbe5eba32f3145688f1e482134154526e783e566dbe6ab9fb8a8",
   "plan_what_you_practice": "7139e33e6bd6d9cd5a19939561aab77a1cd2acd5590c5031674e9c5a9204da5c",
@@ -772,12 +766,6 @@
     </plurals>
     <string name="plan_this_week">Bu hafta</string>
     <string name="plan_week_time">%1$s / %2$s</string>
-    <string name="plan_week_day">%1$s: %2$s</string>
-    <string name="plan_day_done">tamamlandı</string>
-    <string name="plan_day_missed">çalışılmadı</string>
-    <string name="plan_day_rest">dinlenme günü</string>
-    <string name="plan_day_today">bugün</string>
-    <string name="plan_day_planned">planlandı</string>
     <string name="plan_preparation">Hazırlık</string>
     <string name="plan_progress">İlerleme</string>
     <string name="plan_your_preparation">Hazırlığın</string>

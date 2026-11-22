@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-partes-da-flor",
+        "claimId": "e7baa93faa353938",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "97d65dda3ce751bc486b8123807086a342f96bee518e879178617ccabeef1500.first.a8b2e4d0-9ca5-4d4c-bf89-ca5c8b620ec8.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0031281499999999997,
+    "id": "a7fe6492af512993ada8dd0e4b6011b75b77d9636bfd8da5f503da8c8adcf5a7",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "07783cf70cadf4a4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "2135040d4559f8786a4ae28f350f2b3aa4400316d273dbf3a4ed962793eb1653",
+          "format": "text"
+        },
+        "B": {
+          "blob": "2efe01467da1ffa9ee4eb0ef950e4c5a044dc10397874177aed854267063224e",
+          "format": "text"
+        },
+        "claim": "As imagens não identificam todas as partes exigidas: faltam antera e filamento nos estames, e estigma e estilete no pistilo.",
+        "claimId": "e7baa93faa353938",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "4123e033214a5db609e86e049db2733250bee2e4a099b37a554804baf1298740",
+          "format": "text"
+        },
+        "input": {
+          "blob": "cc079301480b5f4c04098375f98511e493c5afd12bf3cc732509021f5c378888",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Explicações e atividade visual ao longo da lição; nenhuma imagem identifica antera, filamento, estigma e estilete.",
+          "kind": "range"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "e7baa93faa353938",
+          "finding": "holds for both",
+          "reason": "In output A, no visual labels anther, filament, stigma or style: the stamen arrow reads only \"estame\", the pistil is outlined as \"pistilo inteiro\", and the labeledDiagram asks only for petal, sepal, stamen, pistil and ovary. Output B also has only numbered parts for stamen (3) and pistil (4) with no anther, filament, stigma or style, so the gap is shared."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

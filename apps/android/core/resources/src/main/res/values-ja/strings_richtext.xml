@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_code": "bf0d3a2703434370061c8737eda39dcd17a702f6a89e90335dafc7ba490120b2",
+  "richtext_code_indented": "dd24faf5507f5d4a9a0477817efc438bbae281b6691b3b979a24eb5079f5c53d",
+  "richtext_code_line": "d9470b9fdd25fdbc60adab60bc0fa2809efcb0f38b9b6700a4b33bf5f31e07a6",
+  "richtext_code_line_blank": "59fdeedca80591f5e849baf60d068dff5678d5ad535061272e8e36fc975d668b",
+  "richtext_code_line_indented": "c25fb8826ce78f5ca12889be8cd73a80f4311a6beff822e8dbfc355ce9558b5a",
+  "richtext_code_spaces": "f57862b10867c829f6f11a40454aa56ea4ee3dfc7af0d16c0ff6c170f7a65dde",
+  "richtext_code_tabs": "c4e5cbd568cf09af4471cde3e6defce3f9c88c1bf0516d58fd4125c0edbfdfcf",
   "richtext_math_bar": "4538a48dcc63da59741ee931ef4ac7609f8bae7a190a985b0b391ba27fe7ec5e",
   "richtext_math_cube_root": "dc1f58d9fe9fab42e209436edce5e4b0cc968fe7f92a14e48161bd3548d278a3",
   "richtext_math_cubed": "d8d0019d7c28f4dd6a50e0ec5ada663c129ee920ba735ce9192d7b2abd2fdb7c",
@@ -17,6 +24,24 @@
 }
 -->
 <resources>
+    <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
+    <string name="richtext_code">コード</string>
+    <!-- Read by screen readers for a line of a program: its number, then its code as written. -->
+    <string name="richtext_code_line">%1$d行目：%2$s</string>
+    <!-- Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_line_indented">%1$d行目、インデント%2$s：%3$s</string>
+    <!-- Read by screen readers for an empty line of a program. -->
+    <string name="richtext_code_line_blank">%1$d行目：空行</string>
+    <!-- Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written. -->
+    <string name="richtext_code_indented">インデント%1$s：%2$s</string>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”. -->
+    <plurals name="richtext_code_spaces">
+        <item quantity="other">%d個のスペース</item>
+    </plurals>
+    <!-- How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”. -->
+    <plurals name="richtext_code_tabs">
+        <item quantity="other">%d個のタブ</item>
+    </plurals>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">の2乗</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

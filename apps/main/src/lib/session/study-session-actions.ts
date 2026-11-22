@@ -18,7 +18,7 @@ import {
   openStudyBlockInputSchema,
 } from "@zoonk/core/sessions/open-block-contract";
 import { saveDayForMission } from "@zoonk/core/sessions/save-for-mission";
-import { stopStudySession } from "@zoonk/core/sessions/stop";
+import { recordStudySessionStop } from "@zoonk/core/sessions/stop";
 import { claimStudySessionSummaryVisit } from "@zoonk/core/sessions/summary-visit";
 import { studySessionSummaryVisitInputSchema } from "@zoonk/core/sessions/summary-visit-contract";
 import { type StudyFinishOutcome } from "@zoonk/learn/session/types";
@@ -135,7 +135,7 @@ export async function stopStudySessionAction(input: SessionInput): Promise<boole
   }
 
   const { data: result, error } = await safeAsync(() =>
-    stopStudySession({
+    recordStudySessionStop({
       input: { timeZone: parsed.data.timeZone },
       sessionId: parsed.data.sessionId,
     }),

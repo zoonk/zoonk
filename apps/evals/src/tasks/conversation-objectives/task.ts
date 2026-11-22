@@ -71,6 +71,13 @@ export const conversationObjectivesTask: Task<
   generate: (input) => checkConversationObjectives({ ...input, useFallback: false }),
   id: "conversation-objectives",
   name: "Conversation objectives",
+  priorities: {
+    distribution: "private",
+    first: "latency",
+    reads: "Code marks objectives met during a live call",
+    reason: "It runs while the call goes on, so speed and cost both matter",
+    waits: "A learner is live in the call: it runs after each answer",
+  },
   score: scoreConversationObjectives,
   testCases: TEST_CASES,
 };

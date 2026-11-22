@@ -1,0 +1,265 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005001439999999999,
+  "failures": [
+    "Unexpected verdict count.",
+    "Missing or repeated pair."
+  ],
+  "packetId": "69bb942d9fcc96a78de97bee895433fc033467ef5a8cc4724f77a104bd9ae36d",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A ensina a localizar a extensão; B acrescenta a circulação pelo Mediterrâneo, que está ligada ao alcance do império e ao “por que isso importava” do pedido.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A apresenta uma sequência mais clara de explicação, previsão e prática. B tem um ponto de mapa fora dos limites da base e deixa sem mapa a aplicação que pede marcar lugares.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A usa mapas nos momentos em que o aprendiz precisa comparar locais e trajetos. B deixa sem mapa a rota do trigo e a aplicação que pede situar o império em continentes.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois planos estão em português brasileiro e tratam de história em nível acessível; as diferenças principais estão na sequência e nos recursos visuais.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A aplicação manda manter a afirmação de que Roma não dominava territórios além das margens do Mediterrâneo, mas o próprio plano ensina que Roma governava o sul da Britânia e parte da Mesopotâmia.",
+            "criterion": "screenPlan",
+            "learnerCost": "O aprendiz pode sair com uma conclusão que contradiz os exemplos da própria aula.",
+            "location": {
+              "detail": "brief da aplicação",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A imagem da previsão repete o mapa físico anterior e não mostra quais margens tinham portos romanos, justamente o que a pergunta pede para comparar.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa precisa responder sem ver no mapa a informação geográfica que deveria orientar a previsão.",
+            "location": {
+              "detail": "Mapa físico simples do Mediterrâneo, sem fronteiras políticas, com Roma marcada na península Itálica e os nomes Itália, mar Mediterrâneo, Europa, África e Ásia.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "A coordenada de Inverness, 58,44; -3,09, fica fora do limite de latitude da base roman-empire-117, que vai até 57°.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "O ponto que a atividade quer usar pode não aparecer no mapa, inviabilizando a comparação planejada.",
+            "location": {
+              "detail": "screen da atividade mapExplorer",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A aplicação pede corrigir uma legenda e situar o império em três continentes, mas não planeja mapa nem outra visualização.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "O aprendiz precisa imaginar a localização das regiões que a tarefa manda marcar.",
+            "location": {
+              "detail": "screen da aplicação",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A explicação sobre o trigo do Egito levado a Roma fala de circulação marítima, mas não mostra a rota ou um mapa.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "O aprendiz precisa construir mentalmente o trajeto entre as duas regiões para acompanhar a explicação.",
+            "location": {
+              "detail": "screen de explicação após a primeira exploração do mapa",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A aplicação de A ensina uma conclusão histórica que contradiz os exemplos da própria aula. B tem falhas importantes de visualização e uma coordenada fora da base, mas mantém a ideia histórica central sem essa contradição."
+        },
+        "pairId": "27754d69-2803-473f-8636-2235e0870e82"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Ambos apresentam uma única habilidade prática: distinguir custos fixos dos variáveis.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A abre com uma cena cotidiana e pergunta que conduz ao tema; B começa com uma instrução abstrata e uma fórmula, não com um gancho para o aprendiz.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Nenhum plano pede que o aprendiz imagine algo visual, e ambos deixam as telas em texto.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A usa palavras e exemplos acessíveis para iniciantes. B abre com siglas e notação de custos antes de explicar a ideia, o que não combina com o nível.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O primeiro brief não é uma cena cotidiana nem termina com uma pergunta que introduza a ideia; é uma instrução de conteúdo e inclui a fórmula CT = CF + CVu · q.",
+            "criterion": "screenPlan",
+            "learnerCost": "A pessoa começa diante de uma exposição abstrata, sem contexto que a ajude a entender por que deve aprender o assunto.",
+            "location": {
+              "detail": "brief do gancho",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A fórmula e as siglas CT, CF, CVu e q aparecem antes de qualquer explicação ou exemplo concreto.",
+            "criterion": "levelAndScope",
+            "learnerCost": "Um iniciante pode não entender a tela inicial e desistir antes de chegar à explicação mais simples.",
+            "location": {
+              "detail": "brief do gancho",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A oferece uma abertura concreta e acessível para iniciantes. B começa com uma fórmula desnecessária e uma instrução abstrata, o que pode afastar o público-alvo."
+        },
+        "pairId": "b16cc1f3-8693-4c16-b8cd-981b95523ea2"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas; ambas propõem uma habilidade única de localizar a extensão do Império Romano.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e têm a mesma sequência de telas.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e compartilham os mesmos mapas, incluindo as mesmas limitações visuais.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e usam português brasileiro acessível.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A aplicação manda manter a afirmação de que Roma não dominava territórios além das margens do Mediterrâneo, mas o próprio plano ensina que Roma governava o sul da Britânia e parte da Mesopotâmia.",
+            "criterion": "screenPlan",
+            "learnerCost": "O aprendiz pode sair com uma conclusão que contradiz os exemplos da própria aula.",
+            "location": {
+              "detail": "brief da aplicação",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A imagem da previsão repete o mapa físico anterior e não mostra quais margens tinham portos romanos, justamente o que a pergunta pede para comparar.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa precisa responder sem ver no mapa a informação geográfica que deveria orientar a previsão.",
+            "location": {
+              "detail": "Mapa físico simples do Mediterrâneo, sem fronteiras políticas, com Roma marcada na península Itálica e os nomes Itália, mar Mediterrâneo, Europa, África e Ásia.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os dois planos são idênticos e, portanto, têm as mesmas qualidades e falhas."
+        },
+        "pairId": "f53cd012-e362-46ce-a94c-d19352e6bdeb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas; ambas propõem uma habilidade única de localizar a extensão do Império Romano.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e têm a mesma sequência de telas.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e compartilham os mesmos mapas, incluindo as mesmas limitações visuais.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e usam português brasileiro acessível.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A aplicação manda manter a afirmação de que Roma não dominava territórios além das margens do Mediterrâneo, mas o próprio plano ensina que Roma governava o sul da Britânia e parte da Mesopotâmia.",
+            "criterion": "screenPlan",
+            "learnerCost": "O aprendiz pode sair com uma conclusão que contradiz os exemplos da própria aula.",
+            "location": {
+              "detail": "brief da aplicação",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A imagem da previsão repete o mapa físico anterior e não mostra quais margens tinham portos romanos, justamente o que a pergunta pede para comparar.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa precisa responder sem ver no mapa a informação geográfica que deveria orientar a previsão.",
+            "location": {
+              "detail": "Mapa físico simples do Mediterrâneo, sem fronteiras políticas, com Roma marcada na península Itálica e os nomes Itália, mar Mediterrâneo, Europa, África e Ásia.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os dois planos são idênticos e, portanto, têm as mesmas qualidades e falhas."
+        },
+        "pairId": "f53cd012-e362-46ce-a94c-d19352e6bdeb"
+      }
+    ]
+  }
+}

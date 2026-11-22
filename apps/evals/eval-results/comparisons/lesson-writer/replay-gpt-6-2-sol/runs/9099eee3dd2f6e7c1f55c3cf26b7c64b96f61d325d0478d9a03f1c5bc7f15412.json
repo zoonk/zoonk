@@ -1,0 +1,17 @@
+{
+  "caseId": "pt-patrimonio-liquido-dense-brief",
+  "challenger": {
+    "costUsd": 0.040299100000000004,
+    "durationMs": 38979.482040999996,
+    "hash": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
+    "userPromptHash": "d653ae75576466e63324f9cabff5b34b221b09a965196f0d21fd7785317acaf1"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.26820140000000003,
+    "durationMs": 107328.589709,
+    "hash": "5d2e63c7789074e4bfb70fc72cd5e4d2c7e54e90ca9c1fff366a30e70406df44",
+    "userPromptHash": "d653ae75576466e63324f9cabff5b34b221b09a965196f0d21fd7785317acaf1"
+  },
+  "run": 2
+}

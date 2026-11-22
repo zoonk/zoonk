@@ -1,11 +1,12 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type PublishedAlphabetLesson,
   listAlphabetScreens,
   pickWholeLesson,
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { checkAlphabetFix } from "@zoonk/core/library/language/alphabet-lesson-validator";
+import { alphabetAnswerKeys } from "../alphabet-lesson/answer-keys";
 import { ALPHABET_LESSON_FIX_SCORE_CATEGORIES } from "./score-categories";
 import { type AlphabetLessonFixInput } from "./test-cases";
 
@@ -39,21 +40,26 @@ function checkFix({
     targetLanguage: input.targetLanguage,
   });
 
+  const problems = checks.flatMap((check) => (check.passed ? [] : [check.problem]));
+
   return {
+    blockingProblems: problems,
+    criteria: ["fixed"],
     judgedOutput: JSON.stringify(listFixedParts({ fixed, input }), null, 2),
+    ...alphabetAnswerKeys({ lesson: fixed }),
     passed: checks.filter((check) => check.passed).length,
-    problems: checks.flatMap((check) => (check.passed ? [] : [check.problem])),
+    problems,
     total: checks.length,
   };
 }
 
-export const scoreAlphabetLessonFix: TaskScorer = ({ output, testCase }) => {
-  const input = testCase.userInput as AlphabetLessonFixInput;
+export const checkAlphabetLessonFixOutput: TaskCodeChecks = ({ output, testCase }) =>
+  checkFix({ input: testCase.userInput as AlphabetLessonFixInput, output });
 
-  return scoreWithCodeChecks({
-    check: (text) => checkFix({ input, output: text }),
+export const scoreAlphabetLessonFix: TaskScorer = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkAlphabetLessonFixOutput({ output: value, testCase }),
     output,
     scoreCategories: ALPHABET_LESSON_FIX_SCORE_CATEGORIES,
     testCase,
   });
-};

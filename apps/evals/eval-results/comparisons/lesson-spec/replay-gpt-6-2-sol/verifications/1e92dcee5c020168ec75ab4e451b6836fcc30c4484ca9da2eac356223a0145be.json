@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-water-cycle",
+        "claimId": "f888e25d60cb2c60",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "8cac9f5fb0cabe7469ede1c8e6bc0c337e485a21b4bdc357a1ecb6634cecc272.first.09c63cff-fc08-4fa8-89bd-56910db63d90.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00294495,
+    "id": "1e92dcee5c020168ec75ab4e451b6836fcc30c4484ca9da2eac356223a0145be",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "8b11a050a2da8dd6",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "3fb85737bc4d6b5457c1b7db4ebc1d342d96af5d2ec36af1fac4bc0c5c36d7d1",
+          "format": "text"
+        },
+        "B": {
+          "blob": "19502343bda76e37f5b9dd5a195b3339b31c2a7994995c7316e32605651d8445",
+          "format": "text"
+        },
+        "claim": "The plan never presents collection as a stage: it returns water to the ocean, but does not show or identify a collection step in the cycle.",
+        "claimId": "f888e25d60cb2c60",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e8f5cf04091b62079033f12d36e09defd19aff54d8c15c99ebd5c4dd596f1bf",
+          "format": "text"
+        },
+        "input": {
+          "blob": "b50c46f695666f99d56d11f96910b388595282254a14a5697e40bb1e28dcce42",
+          "format": "json"
+        },
+        "location": {
+          "detail": "whole: the cycle explanations and process-order activity",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "8b11a050a2da8dd6",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A computes $23 − $20 = $3, then 3 ÷ 20 = 0.15, and reports a 15% increase. It divides by the starting $20, not $23, and never gives 13%. Output B has the same worked example, so the claim is false for both."
+        },
+        {
+          "claimId": "f888e25d60cb2c60",
+          "finding": "holds for both",
+          "reason": "Neither output uses the word 'collection' or presents it as a stage. Output A's stages are evaporation, condensation, precipitation, runoff and river, and output B's are the same plus a reservoir in the application. So the claim is true of A and equally true of B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

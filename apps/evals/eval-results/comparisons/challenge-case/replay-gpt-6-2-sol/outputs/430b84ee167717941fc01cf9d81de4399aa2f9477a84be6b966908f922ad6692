@@ -1,0 +1,485 @@
+{
+  "title": "A dose de amicacina do leito 4 está segura?",
+  "setting": "Ala Pediátrica · Hospital Santa Clara",
+  "mission": "Confira a prescrição do leito 4, valide o cálculo por peso e garanta o **volume exato e seguro** antes de administrar o antibiótico.",
+  "deadline": "Horário da dose às 14h00 (faltam 15 min)",
+  "panels": [
+    {
+      "title": "Prescrição e dados · Leito 4 (6 anos)",
+      "metrics": [
+        {
+          "label": "Peso na admissão",
+          "value": "18 kg",
+          "note": "Triagem às 08h00"
+        },
+        {
+          "label": "Prescrição médica",
+          "value": "450 mg EV",
+          "note": "Dose única diária (15 mg/kg/dia)"
+        },
+        {
+          "label": "Apresentação disponível",
+          "value": "250 mg / 2 mL",
+          "note": "Ampola de 2 mL (125 mg/mL)"
+        }
+      ],
+      "note": "Amicacina sulfato · Infusão em 60 minutos"
+    }
+  ],
+  "team": [
+    {
+      "id": "farm",
+      "role": "Farmacêutica clínica",
+      "expertise": "Domina protocolos de segurança, diluição e dupla checagem.",
+      "ai": false
+    },
+    {
+      "id": "med",
+      "role": "Médico residente",
+      "expertise": "Prescreveu a medicação na correria da passagem de plantão.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de IA",
+      "expertise": "Calcula doses por peso e confere limites da diretriz hospitalar.",
+      "ai": true
+    }
+  ],
+  "meters": [
+    {
+      "id": "seguranca",
+      "label": "Segurança do paciente",
+      "start": 50,
+      "goodWhen": "high"
+    },
+    {
+      "id": "agilidade",
+      "label": "Agilidade no plantão",
+      "start": 70,
+      "goodWhen": "high"
+    }
+  ],
+  "skills": [
+    {
+      "id": "calculo-peso",
+      "name": "Calcular dose por peso",
+      "practice": "Pegue três pesos fictícios de crianças e calcule a dose em mg e o volume em mL para um antibiótico de $15\\text{ mg/kg}$."
+    },
+    {
+      "id": "conferencia",
+      "name": "Conferir a prescrição",
+      "practice": "Antes de preparar o próximo medicamento, compare em voz alta a dose prescrita com a dose calculada pelo peso atual e a concentração do frasco."
+    },
+    {
+      "id": "comunicacao",
+      "name": "Comunicar uma dúvida ao médico",
+      "practice": "Escreva uma mensagem curta de três linhas apresentando o peso do paciente, a dose calculada pela diretriz e o ajuste que você sugere."
+    }
+  ],
+  "startNodeId": "conferencia-inicial",
+  "nodes": [
+    {
+      "id": "conferencia-inicial",
+      "messages": [
+        {
+          "from": "farm",
+          "text": "Oi! Acabei de liberar a amicacina do leito 4, mas achei a dose de 450 mg alta para uma criança de 6 anos. Como é um medicamento de alta vigilância, você confere a conta antes de aspirar?"
+        },
+        {
+          "from": "med",
+          "text": "Pessoal, a febre dele subiu. Precisamos iniciar esse antibiótico logo às 14h00 sem atrasar!"
+        }
+      ],
+      "prompt": "Você está com a prescrição e as ampolas na bancada. O que você faz primeiro?",
+      "choices": [
+        {
+          "id": "calcular-ia",
+          "text": "Calcular a dose para 18 kg e pedir ao {{ai}} para validar a conta com a diretriz.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Cálculo verificado: $18\\text{ kg} \\times 15\\text{ mg/kg} = 270\\text{ mg}$. A dose prescrita de 450 mg corresponde a $25\\text{ mg/kg}$ (ou a um paciente de 30 kg), acima do teto pediátrico padrão."
+            },
+            {
+              "from": "farm",
+              "text": "Exatamente o que eu suspeitava! 450 mg daria uma sobredose importante para ele."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": 25
+            },
+            {
+              "meter": "agilidade",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "calculo-peso",
+              "kind": "good",
+              "text": "Você conferiu a relação mg/kg e usou o {{ai}} para validar o limite seguro antes de preparar a dose.",
+              "example": null
+            }
+          ],
+          "next": "falar-com-medico"
+        },
+        {
+          "id": "preparar-450",
+          "text": "Aspirar os 450 mg prescritos para não atrasar o início do antibiótico às 14h00.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "farm",
+              "text": "Espera, não aspira ainda! Fiz a conta aqui: $18\\text{ kg} \\times 15\\text{ mg/kg}$ dá 270 mg, não 450 mg. Se administrarmos isso, há risco real de toxicidade renal."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": -25
+            },
+            {
+              "meter": "agilidade",
+              "change": 5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "conferencia",
+              "kind": "improve",
+              "text": "Você seguiu a prescrição sem refazer o cálculo por peso, mesmo após o alerta da farmácia.",
+              "example": "Sempre multiplique o peso do paciente pela dose em mg/kg indicada antes de abrir a ampola."
+            }
+          ],
+          "next": "falar-com-medico"
+        },
+        {
+          "id": "repesar-crianca",
+          "text": "Ir até o leito pesar a criança novamente antes de fazer qualquer cálculo de dose.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "farm",
+              "text": "Você confirmou que ele tem 18 kg mesmo, mas perdemos alguns minutos. Olha a conta: $18\\text{ kg} \\times 15\\text{ mg/kg}$ dá 270 mg, bem abaixo dos 450 mg prescritos."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": 10
+            },
+            {
+              "meter": "agilidade",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "calculo-peso",
+              "kind": "improve",
+              "text": "Confirmar o peso é seguro, mas o cálculo simples na bancada já mostraria a discrepância de 180 mg na hora.",
+              "example": "Calcule $18\\text{ kg} \\times 15\\text{ mg/kg} = 270\\text{ mg}$ primeiro para identificar o erro de prescrição rapidamente."
+            }
+          ],
+          "next": "falar-com-medico"
+        }
+      ]
+    },
+    {
+      "id": "falar-com-medico",
+      "messages": [
+        {
+          "from": "med",
+          "text": "E aí, já instalaram a amicacina do leito 4? Preciso passar visita nos outros leitos."
+        }
+      ],
+      "prompt": "A dose correta para 18 kg (a 15 mg/kg) é 270 mg, mas a prescrição no sistema está com 450 mg. Como você aborda o {{med}}?",
+      "choices": [
+        {
+          "id": "comunicar-dados",
+          "text": "Informar que para 18 kg a diretriz de 15 mg/kg resulta em 270 mg, e pedir o ajuste no sistema.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "med",
+              "text": "Nossa, ainda bem que você conferiu! Olhei o peso de 30 kg do prontuário antigo por engano. Já alterei no sistema para 270 mg EV."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": 20
+            },
+            {
+              "meter": "agilidade",
+              "change": 10
+            }
+          ],
+          "timeJump": {
+            "label": "5 minutos depois",
+            "panel": {
+              "title": "Prescrição atualizada · Leito 4",
+              "metrics": [
+                {
+                  "label": "Dose ajustada",
+                  "value": "270 mg EV",
+                  "note": "15 mg/kg para 18 kg"
+                },
+                {
+                  "label": "Concentração da ampola",
+                  "value": "250 mg / 2 mL",
+                  "note": "Equivale a 125 mg/mL"
+                }
+              ],
+              "note": "Prescrição corrigida e assinada pelo médico"
+            }
+          },
+          "notes": [
+            {
+              "skill": "comunicacao",
+              "kind": "good",
+              "text": "Você apresentou o peso, a regra de cálculo e o valor exato com clareza, facilitando a correção imediata pelo médico.",
+              "example": null
+            }
+          ],
+          "next": "calculo-volume"
+        },
+        {
+          "id": "questionar-vago",
+          "text": "Dizer que a farmácia achou a dose de 450 mg perigosa e perguntar se ele tem certeza do valor.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "med",
+              "text": "Como assim perigosa? Deixa eu abrir o sistema de novo... Ah, puxei o peso de outro paciente, ele tem 18 kg. Vou mudar para 270 mg, mas da próxima vez já me traz o valor calculado!"
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": 10
+            },
+            {
+              "meter": "agilidade",
+              "change": -15
+            }
+          ],
+          "timeJump": {
+            "label": "10 minutos depois",
+            "panel": {
+              "title": "Prescrição atualizada · Leito 4",
+              "metrics": [
+                {
+                  "label": "Dose ajustada",
+                  "value": "270 mg EV",
+                  "note": "15 mg/kg para 18 kg"
+                },
+                {
+                  "label": "Concentração da ampola",
+                  "value": "250 mg / 2 mL",
+                  "note": "Equivale a 125 mg/mL"
+                }
+              ],
+              "note": "Prescrição corrigida após revisão do prontuário"
+            }
+          },
+          "notes": [
+            {
+              "skill": "comunicacao",
+              "kind": "improve",
+              "text": "Você alertou sobre o risco, mas não levou os números prontos, o que atrasou a tomada de decisão.",
+              "example": "\"Doutor, o paciente pesa 18 kg. A 15 mg/kg, a dose fica em 270 mg em vez de 450 mg. Pode ajustar no sistema?\""
+            }
+          ],
+          "next": "calculo-volume"
+        },
+        {
+          "id": "aplicar-270-sem-aviso",
+          "text": "Dizer que já está preparando a medicação e decidir aspirar só 270 mg por conta própria.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "farm",
+              "text": "Não podemos administrar uma dose diferente da prescrita sem o médico alterar no sistema! Chamei o {{med}} aqui e ele acabou de corrigir para 270 mg na prescrição eletrônica."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": -20
+            },
+            {
+              "meter": "agilidade",
+              "change": -10
+            }
+          ],
+          "timeJump": {
+            "label": "10 minutos depois",
+            "panel": {
+              "title": "Prescrição atualizada · Leito 4",
+              "metrics": [
+                {
+                  "label": "Dose ajustada",
+                  "value": "270 mg EV",
+                  "note": "15 mg/kg para 18 kg"
+                },
+                {
+                  "label": "Concentração da ampola",
+                  "value": "250 mg / 2 mL",
+                  "note": "Equivale a 125 mg/mL"
+                }
+              ],
+              "note": "Prescrição corrigida após intervenção da farmácia"
+            }
+          },
+          "notes": [
+            {
+              "skill": "comunicacao",
+              "kind": "improve",
+              "text": "Alterar a dose na seringa sem atualizar a prescrição médica gera erro de registro e risco legal e assistencial.",
+              "example": "Comunique a divergência ao prescritor e aguarde a correção na prescrição antes de preparar."
+            }
+          ],
+          "next": "calculo-volume"
+        }
+      ]
+    },
+    {
+      "id": "calculo-volume",
+      "messages": [
+        {
+          "from": "farm",
+          "text": "Prescrição atualizada para 270 mg! Cada ampola tem 250 mg em 2 mL. Vamos fazer a dupla checagem do volume antes de diluir no soro?"
+        }
+      ],
+      "prompt": "Qual volume você deve aspirar das ampolas de 250 mg / 2 mL para obter exatamente 270 mg?",
+      "choices": [
+        {
+          "id": "aspirar-2-16",
+          "text": "Abrir duas ampolas, aspirar 2,16 mL no total e mostrar a seringa para a {{farm}} conferir.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Dupla checagem: $\\frac{270\\text{ mg} \\times 2\\text{ mL}}{250\\text{ mg}} = 2{,}16\\text{ mL}$ (ou $270 \\div 125\\text{ mg/mL} = 2{,}16\\text{ mL}$). Volume exato."
+            },
+            {
+              "from": "farm",
+              "text": "Conferido, 2,16 mL na seringa de 3 mL! Já podemos diluir e instalar no horário."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": 25
+            },
+            {
+              "meter": "agilidade",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "calculo-peso",
+              "kind": "good",
+              "text": "Você converteu corretamente a dose de 270 mg na concentração de 125 mg/mL, chegando a 2,16 mL.",
+              "example": null
+            },
+            {
+              "skill": "conferencia",
+              "kind": "good",
+              "text": "Você realizou a dupla checagem visual do volume aspirado com a farmacêutica.",
+              "example": null
+            }
+          ],
+          "next": "desfecho-seguro"
+        },
+        {
+          "id": "aspirar-1-08",
+          "text": "Fazer a conta dividindo 270 por 250, aspirar 1,08 mL de uma única ampola e mostrar à {{farm}}.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "farm",
+              "text": "Calma aí! A ampola tem 250 mg em 2 mL, não em 1 mL. Em 1,08 mL só temos 135 mg, metade da dose! Precisamos multiplicar por 2 mL, o que dá 2,16 mL."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": -15
+            },
+            {
+              "meter": "agilidade",
+              "change": -10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "conferencia",
+              "kind": "improve",
+              "text": "Você esqueceu de multiplicar pelo volume total da ampola (2 mL), o que resultaria em subdose de 135 mg.",
+              "example": "Verifique sempre a concentração por mL: $250\\text{ mg} \\div 2\\text{ mL} = 125\\text{ mg/mL}$, logo $270 \\div 125 = 2{,}16\\text{ mL}$."
+            }
+          ],
+          "next": "desfecho-corrigido"
+        },
+        {
+          "id": "aspirar-2-0",
+          "text": "Aspirar apenas 1 ampola inteira (2 mL = 250 mg) para evitar abrir a segunda ampola por causa de 20 mg.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "farm",
+              "text": "Entendo querer evitar desperdício, mas em antibiótico pediátrico 20 mg fazem falta para atingir o nível sérico. Vamos abrir a segunda ampola e completar os 2,16 mL."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "seguranca",
+              "change": -10
+            },
+            {
+              "meter": "agilidade",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "conferencia",
+              "kind": "improve",
+              "text": "Arredondar a dose de antimicrobiano por conta própria reduz a eficácia do tratamento em cerca de 7,4%.",
+              "example": "Abra a segunda ampola e aspire os 0,16 mL adicionais para entregar os 270 mg prescritos."
+            }
+          ],
+          "next": "desfecho-corrigido"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "desfecho-seguro",
+      "outcome": "A infusão começou pontualmente às 14h00 com a dose exata de 270 mg (2,16 mL), evitando uma sobredose de 450 mg e garantindo a segurança do paciente."
+    },
+    {
+      "id": "desfecho-corrigido",
+      "outcome": "Graças à dupla checagem com a farmácia na bancada, o volume foi corrigido para 2,16 mL (270 mg) a tempo, e o paciente recebeu a dose certa com 10 minutos de atraso."
+    }
+  ],
+  "summary": [
+    "Em pediatria, sempre confira a dose prescrita multiplicando o peso atual do paciente pela faixa recomendada em mg/kg antes de preparar o medicamento.",
+    "Ao encontrar divergência na prescrição, comunique ao médico de forma objetiva informando o peso, o cálculo esperado e a sugestão de ajuste.",
+    "Atente-se ao volume total da ampola (como 250 mg em 2 mL, ou 125 mg/mL) na regra de três para não administrar metade da dose por engano."
+  ]
+}

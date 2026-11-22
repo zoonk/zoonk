@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "94883efff4da32a0",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "3a11fd14ee9be3e84a0611969e7670dea20755f6239031c525c9d24b9bee0b09.first.1b1afe2e-58b8-48c7-84d1-dba55f349a47.2",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0028896499999999997,
+    "id": "477a91b64cfa4dadb82f2aa7f36c997c23261880aac554b66c0dbf436df00071",
+    "packet": [
+      {
+        "A": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "B": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "claim": "The check asks which site was outside Roman rule, but its map does not show the Roman frontier or shaded territory.",
+        "claimId": "94883efff4da32a0",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The check screen’s map description: \"Mapa da ilha da Britânia com Londres e Inverness marcadas e uma seta apontando o norte, sem traçar a fronteira romana.\"",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "e70e4e7cdfd42d6c",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "94883efff4da32a0",
+          "finding": "holds",
+          "reason": "Output B's check screen asks which Britain site (Londres or Inverness) was outside Roman rule in 117 d.C., and its map description reads \"sem traçar a fronteira romana\", so no frontier or shaded territory is shown. The answer depends on seeing that frontier, so the claim is true of B."
+        },
+        {
+          "claimId": "e70e4e7cdfd42d6c",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: the explanation states that the rent \"continua devido mesmo sem fazer nenhum bolo\", and the final application keeps the R$ 900,00 aluguel in the reserve for the paused month. The claim misreads the named output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

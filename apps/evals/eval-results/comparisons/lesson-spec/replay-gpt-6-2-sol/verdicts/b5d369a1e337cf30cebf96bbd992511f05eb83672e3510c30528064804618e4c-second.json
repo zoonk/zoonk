@@ -1,0 +1,232 @@
+{
+  "attempt": "second",
+  "costUsd": 0.36523500000000003,
+  "failures": [],
+  "packetId": "b5d369a1e337cf30cebf96bbd992511f05eb83672e3510c30528064804618e4c",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": true
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both plans keep the lesson to one clear topic with the same two closely linked, verb-first skills, canonical topics, concrete examples, and everyday use cases.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives the learner hands-on checks for all four lobe locations and all four lobe jobs in a tight 11-screen arc, whereas B repeats its guess as screen 6's check, leaves temporal lobe and most lobe locations untested until the application, and misplans screen 12 as a passive activity.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "Both plans repeat unchanged explanation visuals, and A omits lobe names on its explanation diagram, but A's two interactive activities and application visual work as designed while B puts labeledDiagram on an explanation screen with instructions that directly contradict the template.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both plans use US English, stay at a clear beginner level without jargon or filler screens, and remain inside the lesson's scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screens 2, 4, 5, and 6 reuse the exact same brain diagram labeled only by general location (front behind the forehead, upper middle behind the front, lower side near the ear, and back) without naming the four lobes or highlighting the lobe each screen teaches, breaking the expectation that explanation visuals label or highlight the lobes they discuss.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner never sees the lobe names anchored on a brain diagram during explanations and sees the same unchanged image four times in a row.",
+            "location": {
+              "detail": "screens 2, 4, 5, and 6",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 switches to the frontal lobe and planning right after screen 1's hook asked where eye signals turn into sight, breaking the hook's thread until screen 3's guess, and screen 8's voluntary movement job is never directly checked before being excluded in screen 11's application.",
+            "criterion": "screenPlan",
+            "learnerCost": "The opening feels slightly disjointed from the hook's question, and the learner gets no direct practice checking the frontal lobe's movement role.",
+            "location": {
+              "detail": "screens 2 and 8",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 12 assigns activityTemplate labeledDiagram to an explanation screen with visual set to null and asks for all names already visible with no question to answer, contradicting the labeledDiagram template (which requires a wordless numbered picture for the learner to match with names).",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The writer cannot build screen 12 as specified, and the learner loses all interactive practice locating the lobes before the application.",
+            "location": {
+              "detail": "Let the learner explore the completed four-lobe map with all names already visible and no question to answer.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 5, 8, and 10 repeat the exact same brain diagram as screens 4, 7, and 9 with nothing new even though those screens explain functions rather than new locations.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "Repeating unchanged pictures across three consecutive job-explanation screens adds visual clutter without helping the learner see anything new.",
+            "location": {
+              "detail": "screens 5, 8, and 10",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3's visual marks the front and rear regions as A and B, but the brief never references A or B and instead asks about the front nearest the eyes versus the back farthest from them.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The writer gets mismatched visual labels and question text that would leave unused letters on the diagram unless manually reconciled.",
+            "location": {
+              "detail": "screen 3 (guess visual and brief text mismatching A and B markers with word-only options):",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 6's check repeats almost the exact same question and tempting trap as screen 3's guess (forehead versus back of the head for processing sight/colors), while locating the frontal, parietal, and temporal lobes and matching the temporal lobe's job are never checked before the application.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner wastes a check re-answering the opening guess and reaches the application without having practiced locating most lobes or using the temporal lobe.",
+            "location": {
+              "detail": "screen 6 and screens 7 to 14",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Although A's explanation screens need lobe labels or highlighting instead of repeating a location-only diagram, its lesson plan is buildable, tighter, and checks both skills across all four lobes, whereas B breaks the labeledDiagram template on an explanation screen, repeats three unchanged diagrams, duplicates its guess as a check, and leaves key lobes unchecked until the application."
+        },
+        "pairId": "29ef6fa2-bfee-452e-9e34-793c6cef650a"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the exact same lesson scope, title, description, can-do line, and single well-formed skill.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "A swaps the answer key and error trap on screen 7, calling 13.04% right and 15% wrong for a rise from $40 to $46, whereas B has the correct 15% answer and 13.04% new-value trap.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same two data tables on screens 12 and 13 and keep all other screens text only.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in US English, beginner-friendly framing, and staying within the percent-change scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 7 gives the wrong answer key and reverses the trap: rising from $40 to $46 is a $6 increase over the $40 starting value, which is 6 divided by 40 times 100 = 15%, not 13.04% (which comes from mistakenly dividing by the new $46 fee).",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner would be told their correct 15% calculation is wrong and taught to divide by the new value instead of the starting value, directly contradicting the rest of the lesson.",
+            "location": {
+              "detail": "Ask the learner to calculate the percent increase when a monthly service fee rises from $40 to $46: 13.04%. Include 15% as the tempting answer from dividing by the old fee.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A and B are identical except for screen 7, where A reverses the answer key and teaches the classic error of dividing by the new value as correct; B gets the calculation and trap right throughout."
+        },
+        "pairId": "86439962-a3bb-4a6b-ae2c-90696fe5c3fc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs with the same single-lesson structure and two well-scoped, verb-first skills.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs with the exact same 11-screen sequence and briefs.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs with the exact same visuals and activity templates.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs in US English at the beginner level and within scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screens 2, 4, 5, and 6 reuse the exact same brain diagram labeled only by general location (front behind the forehead, upper middle behind the front, lower side near the ear, and back) without naming the four lobes or highlighting the lobe each screen teaches, breaking the expectation that explanation visuals label or highlight the lobes they discuss.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner never sees the lobe names anchored on a brain diagram during explanations and sees the same unchanged image four times in a row.",
+            "location": {
+              "detail": "screens 2, 4, 5, and 6",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 2, 4, 5, and 6 reuse the exact same brain diagram labeled only by general location (front behind the forehead, upper middle behind the front, lower side near the ear, and back) without naming the four lobes or highlighting the lobe each screen teaches, breaking the expectation that explanation visuals label or highlight the lobes they discuss.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner never sees the lobe names anchored on a brain diagram during explanations and sees the same unchanged image four times in a row.",
+            "location": {
+              "detail": "screens 2, 4, 5, and 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 switches to the frontal lobe and planning right after screen 1's hook asked where eye signals turn into sight, breaking the hook's thread until screen 3's guess, and screen 8's voluntary movement job is never directly checked before being excluded in screen 11's application.",
+            "criterion": "screenPlan",
+            "learnerCost": "The opening feels slightly disjointed from the hook's question, and the learner gets no direct practice checking the frontal lobe's movement role.",
+            "location": {
+              "detail": "screens 2 and 8",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 switches to the frontal lobe and planning right after screen 1's hook asked where eye signals turn into sight, breaking the hook's thread until screen 3's guess, and screen 8's voluntary movement job is never directly checked before being excluded in screen 11's application.",
+            "criterion": "screenPlan",
+            "learnerCost": "The opening feels slightly disjointed from the hook's question, and the learner gets no direct practice checking the frontal lobe's movement role.",
+            "location": {
+              "detail": "screens 2 and 8",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "A and B are identical word for word, so neither serves the writer or learner better."
+        },
+        "pairId": "b467cb9a-d174-4fe8-9e5b-6f8a4c004c19"
+      }
+    ]
+  }
+}

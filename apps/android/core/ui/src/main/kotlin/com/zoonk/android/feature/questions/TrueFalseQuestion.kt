@@ -70,7 +70,8 @@ fun TrueFalseQuestion(
     part: StepPart = StepPart.Whole,
 ) {
     val locked = !enabled || check != null
-    val hasTable = remember(statement) { parseRichBlocks(statement).any { it is RichBlock.Table } }
+    // A table or code can scroll sideways, which a swipe would fight.
+    val scrollsSideways = remember(statement) { parseRichBlocks(statement).any { it is RichBlock.Table || it is RichBlock.Code } }
     val sides = if (allowBlank) Side.entries else listOf(Side.False, Side.True)
     val shown = (check?.answer ?: picked)?.let { answer -> Side.entries.firstOrNull { it.answer == answer } }
 
@@ -79,7 +80,7 @@ fun TrueFalseQuestion(
             StatementCard(
                 statement = statement,
                 graded = check != null,
-                canSwipe = !locked && !hasTable,
+                canSwipe = !locked && !scrollsSideways,
                 onSwipe = { isTrue -> onAnswer(if (isTrue) Side.True.answer else Side.False.answer) },
             )
         }

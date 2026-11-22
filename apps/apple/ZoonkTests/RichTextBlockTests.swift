@@ -29,10 +29,19 @@ final class RichTextBlockTests: XCTestCase {
       RichTextBlock.parse(text),
       [
         .paragraph(lines: ["Owning shares gives you:"]),
-        .list(
-          items: ["A part of the **profit**", "A vote", "A slice of the future"], ordered: false),
-        .list(items: ["First", "Second"], ordered: true),
+        .list(items: ["A part of the **profit**", "A vote", "A slice of the future"], start: nil),
+        .list(items: ["First", "Second"], start: 1),
         .paragraph(lines: ["It doesn't give you a guaranteed return."]),
+      ])
+  }
+
+  func testANumberedListNumbersOnAcrossACodeBlock() {
+    XCTAssertEqual(
+      RichTextBlock.parse("1. Install it:\n   ```bash\n   npm i zod\n   ```\n2. Run it.\n3. Done."),
+      [
+        .list(items: ["Install it:"], start: 1),
+        .code(code: "npm i zod", language: "bash"),
+        .list(items: ["Run it.", "Done."], start: 2),
       ])
   }
 

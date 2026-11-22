@@ -14,6 +14,18 @@ describe(decodeHtmlEntities, () => {
     );
   });
 
+  it("keeps entities in code as written, since code may teach them", () => {
+    expect(
+      decodeHtmlEntities("Escreva `&lt;` e n&atilde;o `<`:\n```html\n<p>a &amp; b</p>\n```"),
+    ).toBe("Escreva `&lt;` e não `<`:\n```html\n<p>a &amp; b</p>\n```");
+  });
+
+  it("decodes the words after a block in text with Windows line breaks", () => {
+    expect(decodeHtmlEntities("```html\r\n&amp;\r\n```\r\nFish &amp; chips.")).toBe(
+      "```html\r\n&amp;\r\n```\r\nFish & chips.",
+    );
+  });
+
   it("leaves text without entities and unknown or invalid entities as written", () => {
     expect(decodeHtmlEntities("R$ 5 & R$ 6; &bogus; &#0; &zcedil;")).toBe(
       "R$ 5 & R$ 6; &bogus; &#0; &zcedil;",

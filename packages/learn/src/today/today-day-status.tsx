@@ -8,11 +8,12 @@ import { LearnLink } from "../learn-link";
 import { usePastDateText } from "../plan/plan-status-label";
 import { useTodayScreen } from "./today-context";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
-import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
+import { useDayState, useHasNextBlock, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 function DoneStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();
+  const hasNext = useHasNextBlock();
   const keepLearning = useUpNextLessons().length > 0;
   const restDay = today.session.minutes.dailyGoal === 0;
 
@@ -21,7 +22,7 @@ function DoneStatus({ className }: { className?: string }) {
       <TodayStatusSentence>
         {restDay ? t("You studied on your day off.") : t("You're done for today.")}
       </TodayStatusSentence>
-      {keepLearning && (
+      {(hasNext || keepLearning) && (
         <LearnLink
           className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
           href={actions.summaryHref}

@@ -1,0 +1,176 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005461339999999999,
+  "failures": [],
+  "packetId": "ba4b61155e75f2d5507ea1e9d6d34f992ce0fe932f4d7b56f03d064675a2b71b",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, including the lesson’s scope and screen plan.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide the same scene, explanation-before-check order, worked example, practice, and realistic application.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same visuals and have the same places where the map labels do not meet the stated A/B requirement.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in US English and stay at the same beginner level and scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The questions asking which stretch is steeper or gentler use X/Y and N/M rather than labeling the named places A and B, as the case requires.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The plan does not follow the specified labeling convention for these map questions.",
+            "location": {
+              "detail": "The worked example and the check asking which stretch climbs more gently",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The questions asking which stretch is steeper or gentler use X/Y and N/M rather than labeling the named places A and B, as the case requires.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The plan does not follow the specified labeling convention for these map questions.",
+            "location": {
+              "detail": "The worked example and the check asking which stretch climbs more gently",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "21ad0cc2-a334-49c2-8dd0-9d9ebcf84c1c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both focus on calculating percent change as a single skill.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the correct answer for the $40-to-$46 increase and identifies dividing by the new value as the tempting error; A marks the correct answer as wrong.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither plan needs a visual for its calculation questions, and both use tables for the data comparisons.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use beginner-appropriate language and stay within the lesson’s scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check says the increase from $40 to $46 is 13.04%, but the increase is $6 ÷ $40 = 15%. It also calls 15% the tempting answer from dividing by the old fee, even though that is the correct method.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner could be taught the wrong answer and led away from using the original value as the denominator.",
+            "location": {
+              "detail": "The check about the monthly service fee rising from $40 to $46",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B gets the service-fee check right and identifies the new-value denominator as the error; A reverses the correct answer and the tempting mistake."
+        },
+        "pairId": "5f56411d-405a-4086-b4f3-59c949646e6e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B keeps the lesson focused on reading spacing to identify steep and gentle slopes. A also adds a separate mini-lesson on following a contour line to stay at the same height.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives a more varied sequence of map examples and practice on changing steepness along a route; A adds a check on following a contour line, which drifts from the main skill.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B supplies tailored maps for its different comparisons and applications, while A repeatedly reuses the same map and also has questions that do not use the required A/B labels.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "B",
+            "reason": "Both use US English and beginner-friendly explanations, but B stays more tightly within the specified lesson on slope steepness.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Several questions asking which location is steeper or gentler use labels W/E or N/S instead of labeling the named places A and B as required.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The plan misses the specified labeling convention for questions that depend on comparing places on a contour map.",
+            "location": {
+              "detail": "The worked example comparing W and E and the check comparing N and S",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The screen teaches a separate idea: that a path following a contour line stays at the same height, then checks which path gains no height.",
+            "criterion": "oneIdea",
+            "learnerCost": "This adds a second takeaway beyond identifying steep and gentle slopes from contour spacing.",
+            "location": {
+              "detail": "The contour-following explanation and its following check",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The worked example and the check asking which stretch is steeper or gentler use W/E and N/S rather than labeling the named places A and B, as the case requires.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The plan does not follow the specified labeling convention for these map questions.",
+            "location": {
+              "detail": "The worked example and the check comparing N and S",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B is more focused and uses a stronger variety of tailored contour-map examples. Both plans miss the required A/B labeling in some comparison questions, but A also adds a separate contour-following idea."
+        },
+        "pairId": "7072c5a6-241d-4a8a-aed1-218befda8385"
+      }
+    ]
+  }
+}
