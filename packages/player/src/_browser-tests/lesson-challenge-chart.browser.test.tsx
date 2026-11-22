@@ -37,6 +37,10 @@ describe("challenge charts", () => {
     const chart = page.getByRole("figure", { name: "Detector scan" });
     await expect.element(chart).toBeVisible();
 
+    await expect
+      .element(page.getByRole("button", { name: "Starting figures" }))
+      .not.toBeInTheDocument();
+
     const message = page.getByText("C has the highest count. I'd park it there and go home.");
 
     const prompt = page.getByRole("heading", {

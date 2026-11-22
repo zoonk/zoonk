@@ -1,10 +1,13 @@
 "use client";
 
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
+import { Disclosure } from "@zoonk/learn/disclosure";
+import { ListRowIcon } from "@zoonk/learn/list";
 import { QuestionTitle } from "@zoonk/learn/question-title";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
+import { FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type Ref, useEffect, useRef } from "react";
 import {
@@ -16,7 +19,12 @@ import { type ChallengeProgress } from "../../_utils/challenge-progress";
 import { LESSON_CONTENT_ID } from "../../_utils/lesson-focus";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeEffectsView, ChallengeMeters } from "./challenge-meters";
-import { ChallengeMessageView, ChallengePickView, ChallengeTimeJump } from "./challenge-parts";
+import {
+  ChallengeMessageView,
+  ChallengePanelView,
+  ChallengePickView,
+  ChallengeTimeJump,
+} from "./challenge-parts";
 import { type ChallengeNames } from "./use-challenge-names";
 
 type ChallengeContent = StepOf<"challenge">["content"];
@@ -77,11 +85,13 @@ function ChallengeDecision({
   isLocked,
   names,
   onPick,
+  panels,
   progress,
 }: {
   isLocked: boolean;
   names: ChallengeNames;
   onPick: (choiceId: string | null) => void;
+  panels: ChallengeContent["panels"];
   progress: Extract<PlayingProgress, { stage: "deciding" }>;
 }) {
   const t = useExtracted();
@@ -92,6 +102,26 @@ function ChallengeDecision({
       <div id={`challenge-prompt-${node.id}`}>
         <QuestionTitle text={names.fill(node.prompt)} />
       </div>
+
+      {panels.length > 0 && (
+        <Disclosure
+          icon={
+            <ListRowIcon>
+              <FileTextIcon />
+            </ListRowIcon>
+          }
+          key={node.id}
+          title={t({
+            description: "Opens the figures shown at the start of a challenge.",
+            message: "Starting figures",
+          })}
+        >
+          {panels.map((panel, index) => {
+            const key = `panel-${index}`;
+            return <ChallengePanelView fill={names.fill} key={key} panel={panel} />;
+          })}
+        </Disclosure>
+      )}
 
       <PlayerChoiceSceneOptions
         ariaLabel={t("Your options")}
@@ -220,6 +250,7 @@ export function ChallengeConversation({
             isLocked={isLocked}
             names={names}
             onPick={onPick}
+            panels={content.panels}
             progress={progress}
           />
         ) : null}
