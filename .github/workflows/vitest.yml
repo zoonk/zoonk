@@ -21,10 +21,6 @@ concurrency:
   group: vitest-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
-# Temporary, for the runner benchmark: every turbo task runs instead of replaying the remote cache.
-env:
-  TURBO_FORCE: "true"
-
 jobs:
   suites:
     name: vitest (${{ matrix.part }})

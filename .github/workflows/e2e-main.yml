@@ -22,10 +22,6 @@ concurrency:
   # finishes. GitHub keeps one run pending, the newest.
   cancel-in-progress: false
 
-# Temporary, for the runner benchmark: every turbo task runs instead of replaying the remote cache.
-env:
-  TURBO_FORCE: "true"
-
 jobs:
   suites:
     name: e2e (${{ matrix.suite }})
