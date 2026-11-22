@@ -33,6 +33,19 @@ final class LessonPlotLayoutTests: XCTestCase {
     XCTAssertEqual(repeated.series[0][0].x, repeated.series[0][1].x)
   }
 
+  func testTwoYearsAtThePlotsEndsBothKeepTheirLabels() throws {
+    let years = layout(
+      try plot(series: [series("points", (2024, 810, nil), (2025, 880, nil))]), width: 318)
+
+    XCTAssertEqual(years.xTicks.map(\.label), ["2024", "2025"])
+
+    for tick in years.xTicks {
+      let half = textWidth(tick.label) / 2
+      XCTAssertGreaterThanOrEqual(tick.center - half, years.left - LessonPlotLayout.labelGap)
+      XCTAssertLessThanOrEqual(tick.center + half, 318)
+    }
+  }
+
   func testANameStaysOnItsDotsSideOfAReferenceLine() throws {
     let points = series(
       "points", (0.5, 810, "A"), (1.5, 880, "B"), (3, 952, "C"), (4.5, 890, "D"), (5.5, 820, "E"))

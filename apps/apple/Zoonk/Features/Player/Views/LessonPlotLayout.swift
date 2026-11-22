@@ -118,7 +118,14 @@ struct LessonPlotLayout {
     let plan = Self.planReferences(
       plot.references, left: left, width: width, measure: measure, y: toY)
     let plotRight = max(width - plan.width, left + 1)
-    let toX = { (x: Double) in Self.position(x, domain: scale.x.domain, range: left...plotRight) }
+    let xLabels = LessonPlotTicks.format(
+      scale.x.ticks, xAxis: true,
+      unit: LessonChartUnit.place(plot.xUnit, label: plot.xLabel).numberUnit,
+      locale: locale)
+    let xRange = Self.xRange(
+      labels: xLabels, ticks: scale.x.ticks, domain: scale.x.domain, left: left,
+      plotRight: plotRight, width: width, measure: measure)
+    let toX = { (x: Double) in Self.position(x, domain: scale.x.domain, range: xRange) }
 
     self.scale = scale
     self.left = left
@@ -167,25 +174,50 @@ struct LessonPlotLayout {
         line: plan.marks.allSatisfy { abs($0.y - toY(tick.value)) >= Self.gridSnap })
     }
 
-    // Each number sits centered under its value. The first or last one is left out when it would
-    // reach the y axis's numbers or past the drawing's edge, and the rest thin out evenly when they
-    // would touch.
-    let xLabels = LessonPlotTicks.format(
-      scale.x.ticks, xAxis: true,
-      unit: LessonChartUnit.place(plot.xUnit, label: plot.xLabel).numberUnit,
-      locale: locale)
-    let xPlaced = zip(scale.x.ticks, xLabels).map { value, label in
+    xTicks = Self.placeXTicks(
+      labels: xLabels, ticks: scale.x.ticks, toX: toX, left: left, width: width, measure: measure)
+  }
+
+  /// Each number sits centered under its value. The first or last one is left out when it would
+  /// reach the y axis's numbers or past the drawing's edge, and the rest thin out evenly when they
+  /// would touch.
+  private static func placeXTicks(
+    labels: [String], ticks: [Double], toX: (Double) -> Double, left: Double, width: Double,
+    measure: Measure
+  ) -> [PlacedTick] {
+    let placed = zip(ticks, labels).map { value, label in
       PlacedTick(label: label, value: value, center: toX(value))
     }.filter { tick in
       let half = measure.text(tick.label) / 2
-      return tick.center - half >= left - Self.labelGap + Self.cornerClearance
+      return tick.center - half >= left - labelGap + cornerClearance
         && tick.center + half <= width
     }
-    let frames = xPlaced.map { tick in
+    let frames = placed.map { tick in
       let half = measure.text(tick.label) / 2
       return (left: tick.center - half, right: tick.center + half)
     }
-    xTicks = LessonChartTicks.labeled(frames, gap: Self.labelGap).map { xPlaced[$0] }
+    return LessonChartTicks.labeled(frames, gap: labelGap).map { placed[$0] }
+  }
+
+  /// When the end labels are all that would be left and both are left out, the learner gets no x
+  /// scale, so the plot narrows just enough for the first and last numbers to sit under their
+  /// values.
+  private static func xRange(
+    labels: [String], ticks: [Double], domain: ClosedRange<Double>, left: Double,
+    plotRight: Double, width: Double, measure: Measure
+  ) -> ClosedRange<Double> {
+    let full = left...plotRight
+    let placed = placeXTicks(
+      labels: labels, ticks: ticks, toX: { position($0, domain: domain, range: full) },
+      left: left, width: width, measure: measure)
+
+    guard ticks.count >= 2, placed.count < 2 else { return full }
+
+    let start =
+      left + max(0, measure.text(labels.first ?? "") / 2 - labelGap + cornerClearance)
+    let end = min(plotRight, width - measure.text(labels.last ?? "") / 2)
+
+    return end > start ? start...end : full
   }
 
   /// The drawing's text grows with the reader's text size until the plot area would get narrower
