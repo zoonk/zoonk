@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -95,13 +96,33 @@ private fun topicWalk(
     plans: PlanStore,
     goalId: UUID,
 ): Boolean? {
-    val read by plans.plan[goalId].collectShown()
+    val resource = plans.plan[goalId]
+    val read by resource.collectShown()
+    val fresh by resource.freshState.collectAsStateWithLifecycle()
     val walked = remember(goalId) { mutableStateOf(false) }
-    val plan = read.value?.plan ?: return null
-    val walking = (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null
-    if (walking && !walked.value) SideEffect { walked.value = true }
-    return walking || walked.value
+    val walking =
+        read.value?.plan?.let { plan ->
+            (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null
+        }
+    val shown = topicWalkOf(walking, fresh, walked.value)
+    if (shown == true && !walked.value) SideEffect { walked.value = true }
+    return shown
 }
+
+/**
+ * The level result's Keep going opens the walk and comes here while the plan cached before it says there's none, so
+ * "not walking" waits for a read made since.
+ */
+internal fun topicWalkOf(
+    walking: Boolean?,
+    fresh: LoadState<Unit>,
+    walked: Boolean,
+): Boolean? =
+    when {
+        walked || walking == true -> true
+        walking == null || fresh == LoadState.Idle || fresh == LoadState.Loading -> null
+        else -> false
+    }
 
 /**
  * The frame both tests from the plan share: its progress in the bar, and the goal in the route or the
