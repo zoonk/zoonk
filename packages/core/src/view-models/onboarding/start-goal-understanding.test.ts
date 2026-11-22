@@ -356,6 +356,27 @@ describe(startGoalUnderstanding, () => {
       await expect(countDrafts(user.id)).resolves.toBe(1);
     });
 
+    it("follows the draft once its reading is saved, before the draft is understood", async () => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const goal = uniqueGoal("learn chess openings");
+
+      const first = await startGoalUnderstanding({ goal, language: "en" });
+
+      await goalUnderstandingFixture({
+        goal,
+        result: {
+          followUps: [],
+          goals: [{ countryDependent: false, kind: "learn", subject: "Chess", title: "Chess" }],
+          route: "goals",
+        },
+        userId: user.id,
+      });
+
+      await expect(startGoalUnderstanding({ goal, language: "en" })).resolves.toStrictEqual(first);
+      await expect(countDrafts(user.id)).resolves.toBe(1);
+    });
+
     it("reads them again once their reading failed, and apart in another language", async () => {
       const user = await userFixture();
       mockSession(user.id);

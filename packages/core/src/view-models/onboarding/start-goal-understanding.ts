@@ -3,7 +3,10 @@ import { type OnboardingDraft, type TransactionClient } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag, getOnboardingDraftsCacheTag } from "../../cache/tags";
-import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import {
+  type EntitlementViewer,
+  getEntitlementViewer,
+} from "../../entitlements/_utils/entitlement-viewer";
 import { claimAssistInWrite } from "../../entitlements/claim-usage";
 import { type RefusedUsage, type UsageDecision } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
@@ -20,7 +23,7 @@ export type StartGoalUnderstandingResult =
 
 type ReadingStart =
   | Exclude<UsageDecision, { status: "allowed" }>
-  | { draft: OnboardingDraft; status: "claimed" | "followed" };
+  | { draft: OnboardingDraft; status: "cached" | "claimed" | "followed" };
 
 function toDraftData({ input, userId }: { input: GoalUnderstandingInput; userId: string }) {
   return {
@@ -49,38 +52,41 @@ async function findDraftBeingRead({
   return drafts.find((draft) => normalizeString(draft.prompt) === words) ?? null;
 }
 
-/** The learner's lock makes finding the draft already reading these words and claiming a new reading one step, so two starts at once read the words once. */
-async function startReading(input: GoalUnderstandingInput): Promise<ReadingStart> {
-  const viewer = await getEntitlementViewer();
-
-  if (!viewer) {
-    return { status: "unauthorized" };
-  }
-
-  const started = await writeLearnerChange<ReadingStart>({ userId: viewer.userId }, async (tx) => {
-    const beingRead = await findDraftBeingRead({ input, tx, userId: viewer.userId });
+/**
+ * The learner's lock makes finding the draft already reading these words and saving a new one a
+ * single step, so two starts at once read the words once. A null viewer saves words already read.
+ */
+async function startReading({
+  input,
+  userId,
+  viewer,
+}: {
+  input: GoalUnderstandingInput;
+  userId: string;
+  viewer: EntitlementViewer | null;
+}): Promise<ReadingStart> {
+  const started = await writeLearnerChange<ReadingStart>({ userId }, async (tx) => {
+    const beingRead = await findDraftBeingRead({ input, tx, userId });
 
     if (beingRead) {
       return unchanged({ draft: beingRead, status: "followed" });
     }
 
-    const usage = await claimAssistInWrite({ transaction: tx, viewer });
+    const usage = viewer ? await claimAssistInWrite({ transaction: tx, viewer }) : null;
 
-    if (usage.status !== "allowed") {
+    if (usage && usage.status !== "allowed") {
       return unchanged(usage);
     }
 
-    const draft = await tx.onboardingDraft.create({
-      data: toDraftData({ input, userId: viewer.userId }),
-    });
+    const draft = await tx.onboardingDraft.create({ data: toDraftData({ input, userId }) });
 
-    return { draft, status: "claimed" };
+    return { draft, status: usage ? "claimed" : "cached" };
   });
 
-  if (started.status === "claimed") {
+  if (started.status === "cached" || started.status === "claimed") {
     revalidateCacheTags([
-      getAllowanceCacheTag(viewer.userId),
-      getOnboardingDraftsCacheTag(viewer.userId),
+      ...(started.status === "claimed" ? [getAllowanceCacheTag(userId)] : []),
+      getOnboardingDraftsCacheTag(userId),
     ]);
   }
 
@@ -110,24 +116,30 @@ export async function startGoalUnderstanding(
     userId: session.user.id,
   });
 
-  if (!cached) {
-    const started = await startReading(input);
+  const viewer = cached ? null : await getEntitlementViewer();
 
-    return "draft" in started
-      ? {
-          draft: await toDraftView({ draft: started.draft, goalId: null }),
-          status: "understanding",
-        }
-      : started;
+  if (!cached && !viewer) {
+    return { status: "unauthorized" };
   }
 
-  const draft = await writeLearnerChange({ userId: session.user.id }, (tx) =>
-    tx.onboardingDraft.create({ data: toDraftData({ input, userId: session.user.id }) }),
-  );
+  const started = await startReading({ input, userId: session.user.id, viewer });
 
-  revalidateCacheTags([getOnboardingDraftsCacheTag(session.user.id)]);
+  if (!("draft" in started)) {
+    return started;
+  }
 
-  const understood = await completeDraft({ draft, exams: [], understanding: cached });
+  if (started.status !== "cached" || !cached) {
+    return {
+      draft: await toDraftView({ draft: started.draft, goalId: null }),
+      status: "understanding",
+    };
+  }
+
+  const understood = await completeDraft({
+    draft: started.draft,
+    exams: [],
+    understanding: cached,
+  });
 
   return { draft: await toDraftView({ draft: understood, goalId: null }), status: "understood" };
 }
