@@ -194,11 +194,15 @@ export function toTestOutQuestion({
 }) {
   const item = parseSessionItem(row);
 
-  return item
-    ? {
-        ...toSessionQuestion({ blockId: attemptId, item }),
-        set: toItemSetView({ item: row, reveal: false }),
-        skill,
-      }
-    : null;
+  if (!item) {
+    return null;
+  }
+
+  const {
+    entry: _entry,
+    unit: _unit,
+    ...question
+  } = toSessionQuestion({ blockId: attemptId, item });
+
+  return { ...question, set: toItemSetView({ item: row, reveal: false }), skill };
 }

@@ -17,6 +17,23 @@ import {
 } from "./language-level-test-out";
 import { startLanguageLevelTest } from "./start-language-level-test";
 
+/** `LanguageLevelTestOut.next` in the API contract; native clients reject any other field. */
+const PUBLISHED_QUESTION_FIELDS = [
+  "context",
+  "format",
+  "image",
+  "itemId",
+  "left",
+  "options",
+  "question",
+  "right",
+  "select",
+  "set",
+  "skill",
+  "skillId",
+  "visual",
+];
+
 async function writeTapQuestions({ setId, skillId }: { setId?: string; skillId: string }) {
   const quick = choiceItemContent();
 
@@ -55,6 +72,7 @@ async function takeTest({
 
   seenSkills.add(next.skill);
 
+  expect(Object.keys(next).toSorted()).toStrictEqual(PUBLISHED_QUESTION_FIELDS);
   expect(Boolean(next.set?.listening?.audio?.url)).toBe(next.skill === "listening");
 
   const answer = next.select === "all" ? { selectedIndexes: [0, 1] } : { selectedIndex: 0 };
