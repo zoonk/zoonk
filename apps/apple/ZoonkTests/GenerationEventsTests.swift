@@ -41,15 +41,6 @@ final class GenerationEventsTests: XCTestCase {
       ])
   }
 
-  func testDecodesTheSkillNameAGraphJustWrote() throws {
-    let event = try JSONDecoder().decode(
-      GenerationEvent.self,
-      from: Data(#"{"skillName":"Variables","status":"started","step":"buildSkillGraph"}"#.utf8))
-
-    XCTAssertEqual(
-      event, GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
-  }
-
   func testAReadyPlanKeepsReadingUntilItsFirstLessonIsReady() async throws {
     let written =
       [

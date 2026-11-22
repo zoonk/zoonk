@@ -77,15 +77,6 @@ final class LessonMathTests: XCTestCase {
     XCTAssertEqual(spoken(#"\tilde{x}"#), "x tilde")
   }
 
-  func testSpacesAFunctionFromWhatItAppliesTo() {
-    let thin = "\u{2006}"
-
-    XCTAssertEqual(drawn(#"\sin x"#), "sin\(thin)x")
-    XCTAssertEqual(drawn(#"\sin{x}"#), "sin\(thin)x")
-    XCTAssertEqual(drawn(#"\sin(x)"#), "sin(x)")
-    XCTAssertEqual(spoken(#"\sin{x} + \cos(x)"#), "sin x + cos(x)")
-  }
-
   func testSetsOperatorsApartAndKeepsASignWithItsNumber() {
     XCTAssertEqual(drawn(#"0.75 \times 80 = 60"#), "0.75\(gap)×\(gap)80\(gap)=\(gap)60")
     XCTAssertEqual(

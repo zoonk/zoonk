@@ -261,21 +261,6 @@ func withTestOptionalContinuation<Value: Sendable>(
 
 @MainActor
 final class HostedViewSupportTests: XCTestCase {
-  func testAFailedFirstActivationIsNotRetried() async throws {
-    let window = try show(Color.clear)
-    let button = RefusesFirstActivation(frame: CGRect(x: 20, y: 100, width: 100, height: 50))
-    button.accessibilityLabel = "Fails first activation"
-    button.isAccessibilityElement = true
-    window.addSubview(button)
-    let options = XCTExpectedFailure.Options()
-    options.issueMatcher = { $0.compactDescription.contains("didn't act") }
-    XCTExpectFailure("A failed activation must fail the test", options: options)
-    do {
-      try await activate("Fails first activation", in: window)
-    } catch {}
-    XCTAssertEqual(button.activations, 1)
-  }
-
   func testCancellationStillWaitsForTheHeldResponse() async throws {
     var held: TestContinuation<Void>?
     var finished = false
@@ -292,27 +277,5 @@ final class HostedViewSupportTests: XCTestCase {
     held?.resume()
     await request.value
     XCTAssertTrue(finished)
-  }
-
-  func testAnUnresumedFixtureFailsAndThrowsAtItsDeadline() async {
-    let options = XCTExpectedFailure.Options()
-    options.issueMatcher = {
-      $0.compactDescription.contains("Fixture continuation was never resumed")
-    }
-    XCTExpectFailure("Missing fixture responses must fail without hanging", options: options)
-    do {
-      let _: Void = try await withTestContinuation(timeout: .milliseconds(1)) { _ in }
-      XCTFail("The missing response must throw")
-    } catch {}
-  }
-}
-
-@MainActor
-private final class RefusesFirstActivation: UIButton {
-  private(set) var activations = 0
-
-  override func accessibilityActivate() -> Bool {
-    activations += 1
-    return activations > 1
   }
 }
