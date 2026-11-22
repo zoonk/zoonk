@@ -20,6 +20,7 @@ import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
@@ -189,15 +190,18 @@ class TestOutScreenshots {
         name: String,
         passed: Boolean = true,
         fold: Boolean = false,
+        undone: Boolean = false,
+        dark: Boolean = false,
     ) {
         val viewModel = viewModel(passed)
         viewModel.begin(questions)
         rule.waitForIdle()
         questions.forEach { viewModel.answer(questions, it, Answer.Choice(0)) }
         rule.setContent {
-            ZoonkTheme {
+            ZoonkTheme(darkTheme = dark) {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity), onClose = {}) }
+                val shown = if (undone) ui.copy(undo = UndoState.Done) else ui
+                shown.outcome?.let { TestOutResult(it, shown, viewModel, AppContainer.preview(rule.activity), onClose = {}) }
             }
         }
         rule.mainClock.advanceTimeBy(10_000)
@@ -251,6 +255,14 @@ class TestOutScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phonePassed() = result("phone-passed")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneUndone() = result("testout-phone-undone-light", undone = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneUndoneDark() = result("testout-phone-undone-dark", undone = true, dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

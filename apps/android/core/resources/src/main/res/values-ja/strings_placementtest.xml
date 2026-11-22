@@ -11,11 +11,11 @@
   "placementtest_done": "345e9b8bb499382a12c8b3339547b5134ab50681a1d8431b7f9647c319728ed4",
   "placementtest_find_level": "2b38fa85fe9905144365ea1b82b4e9defe0d4d697b42505bf5752c2cd0b9871b",
   "placementtest_finish_for_today": "9a05124e2d6c934cd25c3806c33d1f1b9c9bd03def71dc02eb1a1d5a06099b71",
-  "placementtest_in_parts": "c525bc470099794dfd39cef70a136817b1dbafd4a4889262881c9879e1e55fca",
   "placementtest_in_progress": "043be67d30508fb01883dab65906b95b926149ea022158d8a702b2d014c21f5e",
   "placementtest_keep_going": "b2d6a98132bb6ac306a254621dea96b673db247eadd7c0727729ad0b88a31268",
   "placementtest_keeps_adjusting": "e584a031736dddc3cacbadf3bc013cc4a79cecee71944448e0eed5be52f1d3a4",
-  "placementtest_known": "f6cd0af5ee425ea0ffc11a31f7b174be76158d4effa7dd184cd4d880bac9e0cf",
+  "placementtest_known_one": "1710971fcf95264ad77d7a2a9b106cc2389f9f36d884651382a2071b0ce3ac7f",
+  "placementtest_known_other": "59ab3b474f38e6f0f9c30b403b3dadcd7948da8664c9d50bb74a59b741f5c073",
   "placementtest_left_saved": "bccb0d5511e19da917071831bffdff0a4f4175cc9a45b6642e0e3cb62e1ca612",
   "placementtest_lessons_skipped": "08c5ee7e856652695e34e8da537227a9e48ccf94917ca20cf83c359f8cd72494",
   "placementtest_level_stays": "50e02b4c50590f0bae9d87349b5a26c238b8e880f05de771f2589f0fee5649a7",
@@ -73,7 +73,6 @@
     <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
     <string name="placementtest_about_in_parts">約%1$s、数回に分けて</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
-    <string name="placementtest_in_parts">複数回に分けて</string>
     <string name="placementtest_test_out">「%1$s」のレベル診断を受ける</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">すでに知っている%1$sをスキップする</string>
@@ -88,9 +87,9 @@
     <string name="placementtest_finish_for_today">今日はここまで</string>
     <string name="placementtest_keep_going">続ける</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
-    <plurals name="placementtest_known">
-        <item quantity="other">どれもすでに知っている内容です。練習でも引き続き復習できます。</item>
-    </plurals>
+    <string name="placementtest_known_one">どれもすでに知っている内容です。練習でも引き続き復習できます。</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">どれもすでに知っている内容です。練習でも引き続き復習できます。</string>
     <string name="placementtest_plan_stays">学習計画はそのままです。</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">次の学習</string>

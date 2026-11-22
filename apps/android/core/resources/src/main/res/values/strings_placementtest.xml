@@ -31,7 +31,6 @@
     <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
     <string name="placementtest_about_in_parts">About %1$s, in parts</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
-    <string name="placementtest_in_parts">In parts</string>
     <string name="placementtest_test_out">Test out of %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Skip %1$s if you already know it</string>
@@ -46,10 +45,9 @@
     <string name="placementtest_finish_for_today">Finish for today</string>
     <string name="placementtest_keep_going">Keep going</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
-    <plurals name="placementtest_known">
-        <item quantity="one">You already know it. It stays in your practice.</item>
-        <item quantity="other">You already know them. They stay in your practice.</item>
-    </plurals>
+    <string name="placementtest_known_one">You already know it. It stays in your practice.</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">You already know them. They stay in your practice.</string>
     <string name="placementtest_plan_stays">Your plan stays as it is.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Up next</string>

@@ -1608,65 +1608,6 @@
         }
       }
     },
-    "About %@ of reading and listening, so your plan starts at your level." : {
-      "comment" : "What the level test is; %@ is about how long it takes, such as \"3 minutes\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etwa %@ Lesen und Hören, damit dein Plan auf deinem Level beginnt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aproximadamente %@ de lectura y escucha para que tu plan empiece en tu nivel."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %@ d’épreuves de lecture et d’écoute pour que ton plan commence à ton niveau."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Circa %@ tra lettura e ascolto, così il tuo piano parte dal tuo livello."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "リーディングとリスニングのレベル診断に約%@かかります。学習計画は今のレベルに合わせて始まります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "읽기와 듣기를 약 %@ 동안 테스트해 계획을 내 수준에 맞춰 시작해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Około %@ czytania i słuchania, żeby twój plan zaczynał się od twojego poziomu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerca de %@ de leitura e escuta para seu plano começar no seu nível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planının seviyene göre başlaması için yaklaşık %@ okuma ve dinleme."
-          }
-        }
-      }
-    },
     "About %@ of reading, listening and one sentence out loud, so your plan starts at your level." : {
       "comment" : "What the level test is; %@ is about how long it takes, such as \"3 minutes\"",
       "localizations" : {
@@ -7513,65 +7454,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seviyeni öğren ve bildiklerini atla"
-          }
-        }
-      }
-    },
-    "Find your level in %@" : {
-      "comment" : "Title of a language goal's level test",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finde dein Level in %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descubre tu nivel de %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvre ton niveau en %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scopri il tuo livello in %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@のレベル診断テスト"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 레벨 알아보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprawdź swój poziom: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descubra seu nível em %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ seviyeni öğren"
           }
         }
       }

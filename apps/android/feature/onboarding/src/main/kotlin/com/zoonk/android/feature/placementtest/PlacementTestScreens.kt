@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -54,12 +53,11 @@ internal fun ColumnScope.LengthChoice(
     initial: TestChoice = TestChoice.Quick,
     onTestOut: () -> Unit = {},
     onSkip: (() -> Unit)? = null,
+    notes: @Composable () -> Unit = {},
 ) {
     val locale = currentLocale()
-    var choice by rememberSaveable {
-        mutableStateOf(
-            initial.takeIf { it != TestChoice.TestOut || testOutLevel != null } ?: TestChoice.Quick,
-        )
+    var selected by rememberSaveable {
+        mutableStateOf(initial.takeIf { it != TestChoice.TestOut || testOutLevel != null } ?: TestChoice.Quick)
     }
     val title = stringResource(R.string.placementtest_choose_title)
     val choices =
@@ -69,15 +67,13 @@ internal fun ColumnScope.LengthChoice(
                 stringResource(R.string.placementtest_quick),
                 stringResource(R.string.placementtest_about, formatMinutes(QUICK_TEST_MINUTES, locale)),
             ),
-            Choice(
-                TestChoice.WholeCourse,
-                stringResource(R.string.placementtest_whole_course),
-                if (wholeCourseMinutes > 0) {
-                    stringResource(R.string.placementtest_about_in_parts, formatMinutes(wholeCourseMinutes, locale))
-                } else {
-                    stringResource(R.string.placementtest_in_parts)
-                },
-            ),
+            wholeCourseMinutes.takeIf { it > 0 }?.let {
+                Choice(
+                    TestChoice.WholeCourse,
+                    stringResource(R.string.placementtest_whole_course),
+                    stringResource(R.string.placementtest_about_in_parts, formatMinutes(it, locale)),
+                )
+            },
             testOutLevel?.let {
                 Choice(
                     TestChoice.TestOut,
@@ -87,10 +83,13 @@ internal fun ColumnScope.LengthChoice(
             },
         )
 
+    val choice = selected.takeIf { value -> choices.any { it.value == value } } ?: TestChoice.Quick
+
     SetupContent {
         OnboardingHeading(title)
-        ChoiceList(choices, choice, title, onChange = { choice = it })
+        ChoiceList(choices, choice, title, onChange = { selected = it })
         Note(stringResource(R.string.placementtest_choose_note))
+        notes()
         OnboardingActions {
             FinishFailed(failed)
             Button(
@@ -108,7 +107,12 @@ internal fun ColumnScope.LengthChoice(
                 Text(stringResource(R.string.placementtest_start))
             }
             if (onSkip != null) {
-                TextButton(onClick = onSkip, modifier = Modifier.fillMaxWidth(), enabled = pressed == null) {
+                TextButton(
+                    onClick = onSkip,
+                    busy = pressed == Pressed.Other,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = pressed == null,
+                ) {
                     Text(stringResource(R.string.onboarding_skip))
                 }
             }
@@ -157,6 +161,10 @@ internal fun ColumnScope.BetweenParts(
     }
 }
 
+@Composable
+internal fun placementKnownLine(lessons: Int): String =
+    stringResource(if (lessons == 1) R.string.placementtest_known_one else R.string.placementtest_known_other)
+
 /** Main's `PlacementResult`: what the test skipped, and where the plan goes on. */
 @Composable
 internal fun ColumnScope.PlacementResult(
@@ -172,7 +180,7 @@ internal fun ColumnScope.PlacementResult(
         title = lessonsSkippedLine(lessonsSkipped),
         lead =
             if (lessonsSkipped > 0) {
-                pluralStringResource(R.plurals.placementtest_known, lessonsSkipped)
+                placementKnownLine(lessonsSkipped)
             } else {
                 stringResource(R.string.placementtest_plan_stays)
             },

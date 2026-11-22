@@ -11,11 +11,11 @@
   "placementtest_done": "3f6e3991979e915292684f799765940681297bba80d01e9c30dd13817f33f5dd",
   "placementtest_find_level": "6c488f7f2a2f4b9bd7790d99b910ca7b53c18ca362af16eca2f6a2476114525e",
   "placementtest_finish_for_today": "5b6cfe8d7fb7fb6639c5860a0efdb916c345616fd0a93630127e68163f3a4bf2",
-  "placementtest_in_parts": "691926d6dc3fc5d2721f8ef38d907a3c79c3ab4f7fa9c69b4a4dd22ecb515ade",
   "placementtest_in_progress": "e362b3c6bf0ee5a14152f193d6154fbd69b2fad0f3a40c63b154b37fd74c43be",
   "placementtest_keep_going": "160c7244cd9db97c661e63a7cfba59792522b6952caf4b53560d9d6f726f57d6",
   "placementtest_keeps_adjusting": "4baa491aa716aa8f08e22bd76615e4dfe21a3befdafd92c856c358779eae8809",
-  "placementtest_known": "3f993e4cae5b39393310b3d946ee48d2787ccbd76999cb967ae150ea1350b206",
+  "placementtest_known_one": "4955c4bfd367c81302f57dbe60765d17d7f42c3623b3602f9341e6cce8b4f7a1",
+  "placementtest_known_other": "bf10158f8bab1fc0f3fb9ab7d9b386c912845c55388d866ae6daa99c853f00ac",
   "placementtest_left_saved": "367054c99d53a437d71bca11e922e4360bb9eb4f608b6e8d4bbca76761b266e4",
   "placementtest_lessons_skipped": "37c5614e133add5890bac8871fe4dd7a03c6811a4a94e4228ba68a60dd201ea3",
   "placementtest_level_stays": "2fb90d73bc6bd92084b9392f5fa651e9fe03373d2c06ef7e0c108c06f72f00ed",
@@ -75,7 +75,6 @@
     <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
     <string name="placementtest_about_in_parts">Environ %1$s, en plusieurs parties</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
-    <string name="placementtest_in_parts">En plusieurs fois</string>
     <string name="placementtest_test_out">Tester le niveau %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Sauter le niveau %1$s si tu le connais déjà</string>
@@ -90,11 +89,9 @@
     <string name="placementtest_finish_for_today">Terminer pour aujourd’hui</string>
     <string name="placementtest_keep_going">Continuer</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
-    <plurals name="placementtest_known">
-        <item quantity="one">Tu la connais déjà. Elle reste dans tes révisions.</item>
-        <item quantity="many">Tu les connais déjà. Elles restent dans tes révisions.</item>
-        <item quantity="other">Tu les connais déjà. Elles restent dans tes révisions.</item>
-    </plurals>
+    <string name="placementtest_known_one">Tu la connais déjà. Elle reste dans tes révisions.</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">Tu les connais déjà. Elles restent dans tes révisions.</string>
     <string name="placementtest_plan_stays">Ton plan reste tel qu’il est.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">À suivre</string>

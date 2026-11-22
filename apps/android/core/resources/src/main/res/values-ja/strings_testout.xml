@@ -6,7 +6,8 @@
   "testout_continue": "f54a2459e4c5ef5cbd4c0809f41b2362085c9a556540d6e0b90ab567e7dac5ce",
   "testout_intro_detail": "e73bf192924542073d4309803ea0b27b21db56685c231e6da4d2d68a1f7a6688",
   "testout_intro_title": "81d66218093c5cc4815423a4ff271dfbfe50cd48170f13acda60149382d0f062",
-  "testout_lessons_back": "3ba4ca4e2785b085ba10f3677696c1a767eb816a4ff343ccd15718507ea2bede",
+  "testout_lessons_back_one": "20560af8d42594d6ac7284976ad97395211efb870362b3f7c0efad10c16340e4",
+  "testout_lessons_back_other": "8be581979188b8027d1032ac19c2804ae77e5240c51efdc7c7d2996615765100",
   "testout_lessons_left": "98a1143c1dd740b1f66dd5043b634720bbaf8f6c8501f8e7c2e28b67c328c6d7",
   "testout_lessons_off": "50d5acb85c065b5531b20c4c2af3dfd503b48f774f91918625638e7b2f11090d",
   "testout_not_passed": "5347016b8176705b38f48094a0190d8efea084b8048bc9d296c515ba84db5955",
@@ -48,8 +49,7 @@
     <plurals name="testout_lessons_off">
         <item quantity="other">すでに知っている%dレッスンは、学習計画でスキップされます。</item>
     </plurals>
-    <plurals name="testout_lessons_back">
-        <item quantity="other">レッスンが学習計画に戻ります。</item>
-    </plurals>
+    <string name="testout_lessons_back_one">レッスンが学習計画に戻ります。</string>
+    <string name="testout_lessons_back_other">レッスンが学習計画に戻ります。</string>
     <string name="testout_continue">続ける</string>
 </resources>
