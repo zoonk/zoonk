@@ -19,25 +19,29 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   private let kind: PracticeTaskKind
   private let segments: [TaskSegment]?
   private let index: Int
+  private let fillsHeight: Bool
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
   /// The bar's note over its buttons, as the bottom bar's, so the buttons never move when it shows.
   private var note: BarNote?
 
+  /// `fillsHeight`: one column is at least the screen's height, so a word bank waits at its bottom,
+  /// as in a lesson.
   init(
     isResult: Bool = false, segments: [TaskSegment]? = nil, index: Int = 0,
+    fillsHeight: Bool = false,
     @ViewBuilder stimulus: @escaping () -> Stimulus,
     @ViewBuilder response: @escaping () -> Response,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
     self.init(
-      kind: isResult ? .result : .spread, segments: segments, index: index, stimulus: stimulus,
-      response: response, actions: actions)
+      kind: isResult ? .result : .spread, segments: segments, index: index,
+      fillsHeight: fillsHeight, stimulus: stimulus, response: response, actions: actions)
   }
 
   fileprivate init(
-    kind: PracticeTaskKind, segments: [TaskSegment]?, index: Int,
+    kind: PracticeTaskKind, segments: [TaskSegment]?, index: Int, fillsHeight: Bool = false,
     stimulus: @escaping () -> Stimulus,
     response: @escaping () -> Response,
     actions: @escaping () -> Actions
@@ -45,6 +49,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     self.kind = kind
     self.segments = segments
     self.index = index
+    self.fillsHeight = fillsHeight
     self.stimulus = stimulus
     self.response = response
     self.actions = actions
@@ -78,7 +83,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       } else {
         QuestionSpread(
           readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread,
-          note: actionsHidden ? nil : note, noteIsWide: isWide
+          fillsHeight: fillsHeight, note: actionsHidden ? nil : note, noteIsWide: isWide
         ) {
           EmptyView()
         } stimulus: {
@@ -146,6 +151,8 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   let readableWidth: CGFloat
   let spacing: CGFloat
   var isSpread = true
+  /// Only one column fills the height: on a spread, the turn's page leaves its bank under the turn.
+  var fillsHeight = false
   /// The bar's one line, over the page with the actions.
   var note: BarNote?
   var noteIsWide = false
@@ -164,8 +171,8 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
         .safeAreaBar(edge: .bottom, content: actions)
     } single: {
       QuestionColumn(
-        readableWidth: readableWidth, spacing: spacing, note: note, noteIsWide: noteIsWide,
-        header: header
+        readableWidth: readableWidth, spacing: spacing, fillsHeight: fillsHeight, note: note,
+        noteIsWide: noteIsWide, header: header
       ) {
         stimulus()
         response()
@@ -181,6 +188,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
 struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
+  var fillsHeight = false
   var note: BarNote?
   var noteIsWide = false
   @ViewBuilder let header: () -> Header
@@ -188,10 +196,12 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   @ViewBuilder let actions: () -> Actions
 
   var body: some View {
-    ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
-      .pageHeader(header)
-      .practiceBarNote(note, isWide: noteIsWide, readableWidth: readableWidth)
-      .safeAreaBar(edge: .bottom, content: actions)
+    ScrollingPage(
+      readableWidth: readableWidth, spacing: spacing, fillsHeight: fillsHeight, content: content
+    )
+    .pageHeader(header)
+    .practiceBarNote(note, isWide: noteIsWide, readableWidth: readableWidth)
+    .safeAreaBar(edge: .bottom, content: actions)
   }
 }
 
@@ -222,10 +232,11 @@ extension View {
 private struct ScrollingPage<Content: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
+  var fillsHeight = false
   @ViewBuilder let content: () -> Content
 
   var body: some View {
-    ScrollView {
+    FillingScrollView(fillsHeight: fillsHeight) {
       VStack(alignment: .leading, spacing: spacing) {
         content()
       }

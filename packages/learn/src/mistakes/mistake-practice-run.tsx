@@ -129,7 +129,8 @@ function PracticeBody({
 
   return (
     <>
-      <TaskBody>
+      {/* A lesson's step keeps the lesson's room above the actions, so its word bank sits where it does there. */}
+      <TaskBody className={cn(run.step.lesson && "pb-6")}>
         <PracticeStepView
           lessonHref={lessonHref}
           renderLesson={renderLesson}
