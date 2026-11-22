@@ -17,7 +17,6 @@ import { levelTestReceipt } from "../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
-import { getOverallLevel } from "../levels/skill-level-rules";
 import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
 import { withLevelTestChange } from "./_utils/level-test-result-change";
 import {
@@ -118,7 +117,6 @@ async function recordLevelTestResult({
   const saved = { ...currentProgress, counted: currentProgress.answers.length, result, scores };
 
   const details = levelTestDetailsWithProgress(current, saved);
-  const overall = getOverallLevel(listLevelTestLevels(scores).map(({ score }) => score));
 
   const answeredIds = new Set(
     currentProgress.answers.filter(({ skipped }) => !skipped).map(({ id }) => id),
@@ -141,7 +139,6 @@ async function recordLevelTestResult({
     data: {
       details: {
         ...details,
-        ...(overall && { level: overall }),
         levelTest: {
           ...details.levelTest,
           lastResult: result,

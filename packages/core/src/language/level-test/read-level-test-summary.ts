@@ -3,6 +3,7 @@ import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
+import { getTestStartingLevel } from "../levels/skill-level-rules";
 import {
   levelTestOutLevelSchema,
   levelTestProgressSchema,
@@ -49,7 +50,11 @@ export function readLevelTestSummary(goal: Pick<Goal, "details">) {
   const progress = readLevelTestAttempts(goal);
   const { lastResult } = progress;
   const details = isJsonObject(goal.details) ? goal.details : {};
-  const score = parseCefrScore(details.level === "advanced" ? "B2" : details.level);
+
+  const score =
+    getTestStartingLevel(details) ??
+    parseCefrScore(details.level === "advanced" ? "B2" : details.level);
+
   const skipped = lastResult?.levelsSkipped ?? [];
   const current = score === null ? null : Math.floor(score);
 
