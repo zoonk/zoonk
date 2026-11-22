@@ -114,25 +114,59 @@ function listNoticeSubjects({
   ]);
 }
 
-/** A subject an earlier reading left out comes back once a corrected reading lists it again. */
+/**
+ * A subject an earlier reading left out comes back once a corrected reading lists it again: whole
+ * when the plan teaches none of it, and skill by skill when a base of it stayed in the plan. A
+ * subject the plan teaches with skills of its own gains nothing, since the shared ones would
+ * teach it twice.
+ */
 function addSharedSubjects(graph: PlanGraph, notice: NoticeRepair): PlanGraph {
-  const taught = listNoticeSubjects({ notice, skills: joinOptionSkills(graph).skills });
+  const planned = joinOptionSkills(graph).skills;
+  const plannedIds = new Set(planned.map((skill) => skill.skillId));
+  const sharedIds = new Set(notice.skills.map((skill) => skill.skillId));
+  const taught = listNoticeSubjects({ notice, skills: planned });
 
-  const missing = notice.skills.flatMap((skill) =>
-    skill.area &&
-    !skill.extra &&
-    [...listNoticeSubjects({ notice, skills: [skill] })].some((subject) => !taught.has(subject))
-      ? [skill.area]
-      : [],
+  const followed = listNoticeSubjects({
+    notice,
+    skills: planned.filter((skill) => sharedIds.has(skill.skillId)),
+  });
+
+  const taughtTopics = new Set(
+    planned.flatMap((skill) => (skill.extra ? [] : (skill.topics?.map(normalizeString) ?? []))),
   );
 
-  return missing.length === 0
-    ? graph
-    : addSharedOptionSkills({
-        areas: new Set(missing),
-        graph,
-        shared: { phases: [], skills: notice.skills },
-      });
+  const missing = notice.skills.filter((skill) => {
+    if (!skill.area || skill.extra || plannedIds.has(skill.skillId)) {
+      return false;
+    }
+
+    const subjects = [...listNoticeSubjects({ notice, skills: [skill] })];
+    const topics = skill.topics ?? [];
+
+    return (
+      subjects.some((subject) => !taught.has(subject)) ||
+      (topics.length > 0 &&
+        subjects.some((subject) => followed.has(subject)) &&
+        !topics.some((topic) => taughtTopics.has(normalizeString(topic))))
+    );
+  });
+
+  if (missing.length === 0) {
+    return graph;
+  }
+
+  const missingIds = new Set(missing.map((skill) => skill.skillId));
+
+  return addSharedOptionSkills({
+    areas: new Set(missing.flatMap((skill) => skill.area ?? [])),
+    graph,
+    shared: {
+      phases: [],
+      skills: notice.skills.filter(
+        (skill) => plannedIds.has(skill.skillId) || missingIds.has(skill.skillId),
+      ),
+    },
+  });
 }
 
 async function verifyNoticeInputs({
