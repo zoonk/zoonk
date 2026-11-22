@@ -11,6 +11,14 @@ extension ShapeStyle where Self == Color {
   static var successText: Color { Color(.successText) }
   static var destructive: Color { Color(.destructive) }
   static var destructiveText: Color { Color(.destructiveText) }
+  /// Main's soft error fill: `bg-destructive/10`, and `/20` in dark.
+  static var destructiveSoft: Color {
+    Color(
+      UIColor { traits in
+        UIColor(resource: .destructive).resolvedColor(with: traits)
+          .withAlphaComponent(traits.userInterfaceStyle == .dark ? 0.2 : 0.1)
+      })
+  }
   static var warning: Color { Color(.warning) }
   static var warningText: Color { Color(.warningText) }
   static var brain: Color { Color(.brain) }

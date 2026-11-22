@@ -186,7 +186,8 @@ struct GoalMaterialSections: View {
   }
 }
 
-/// One attached source, removed with its ✕ as main's chip is, or by swiping.
+/// One attached source, removed with its ✕ as main's chip is, or by swiping. One a goal found gone
+/// takes main's soft error look.
 private struct MaterialRow: View {
   let title: String
   let isUnavailable: Bool
@@ -197,6 +198,7 @@ private struct MaterialRow: View {
       Label {
         Text(title)
           .lineLimit(1)
+          .foregroundStyle(isUnavailable ? .destructiveText : Color(.foreground))
       } icon: {
         if isUnavailable {
           Image(systemName: "exclamationmark.circle")
@@ -226,8 +228,9 @@ private struct MaterialRow: View {
         .contentShape(.rect)
       }
       .buttonStyle(.borderless)
-      .foregroundStyle(.mutedForeground)
+      .foregroundStyle(isUnavailable ? .destructiveText : .mutedForeground)
     }
+    .listRowBackground(isUnavailable ? Color.destructiveSoft : nil)
   }
 }
 

@@ -281,9 +281,11 @@ enum UnderstoodRows {
         table: "Onboarding",
         comment: "On the goal's card: some of the material the goal was sent with is gone")
       : String(
-        localized: "Your material can't be read anymore, so your plan won't follow it.",
+        localized: "It can't be read anymore, so your plan won't follow it.",
         table: "Onboarding",
-        comment: "On the goal's card: all the material the goal was sent with is gone")
+        comment:
+          "On the goal's card, under \"Your material\": all the material the goal was sent with is gone"
+      )
   }
 
   private static func text(_ value: String?) -> String? {
