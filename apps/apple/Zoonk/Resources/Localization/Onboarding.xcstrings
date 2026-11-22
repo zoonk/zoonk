@@ -15006,7 +15006,7 @@
       }
     },
     "Some of your material can't be read anymore, so your plan won't follow it." : {
-      "comment" : "On the goal's card: material the learner attached is gone since they sent it"
+      "comment" : "On the goal's card: some of the material the goal was sent with is gone"
     },
     "Something else" : {
       "comment" : "Purpose choice",
@@ -24327,6 +24327,9 @@
           }
         }
       }
+    },
+    "Your material can't be read anymore, so your plan won't follow it." : {
+      "comment" : "On the goal's card: all the material the goal was sent with is gone"
     },
     "Your plan" : {
       "comment" : "Title of a new plan",

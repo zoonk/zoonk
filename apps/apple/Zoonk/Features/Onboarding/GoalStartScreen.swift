@@ -308,6 +308,7 @@ private struct GoalStartFlow: View {
       edit(SentGoal(draft: shown))
     }
 
+    self.words = words
     send(words)
   }
 
@@ -318,7 +319,6 @@ private struct GoalStartFlow: View {
     UsageAnalytics.track(
       .goalTyped(hasAttachment: !material.isEmpty, attemptID: attempt, submittedAt: .now))
     sending?.cancel()
-    words = goal
     error = nil
     draft = .sending(goal)
 
