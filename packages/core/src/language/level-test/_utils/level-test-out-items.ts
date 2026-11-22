@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import {
   LOW_GUESS_ANSWERS_TO_SKIP,
@@ -42,12 +42,14 @@ function pickTopicQuestions(
 export async function listTestOutSkillIds({
   goalId,
   level,
+  now = new Date(),
   timeZone,
   tx,
   userId,
 }: {
   goalId: string;
   level: LevelTestOutLevel;
+  now?: Date;
   timeZone: string;
   tx: TransactionClient;
   userId: string;
@@ -66,7 +68,11 @@ export async function listTestOutSkillIds({
     ...new Set(lessons.flatMap(({ lesson }) => lesson?.skills.map(({ skillId }) => skillId) ?? [])),
   ];
 
-  const today = getDateInTimeZone({ date: new Date(), timeZone });
+  if (skillIds.length === 0) {
+    return skillIds;
+  }
+
+  const today = getDateInTimeZone({ date: now, timeZone });
   const undone = await loadUndoneTestOuts(goalId, { timeZone, tx });
 
   const misses = await tx.attempt.findMany({
@@ -90,6 +96,22 @@ export async function listTestOutSkillIds({
   ]);
 
   return skillIds.filter((id) => !blocked.has(id));
+}
+
+export async function availableLevelTestOut({
+  level,
+  tx = prisma,
+  ...input
+}: Omit<Parameters<typeof listTestOutSkillIds>[0], "level" | "tx"> & {
+  level: LevelTestOutLevel | null;
+  tx?: TransactionClient;
+}) {
+  if (!level) {
+    return null;
+  }
+
+  const skillIds = await listTestOutSkillIds({ ...input, level, tx });
+  return skillIds.length > 0 ? level : null;
 }
 
 export async function readTestOutBank({

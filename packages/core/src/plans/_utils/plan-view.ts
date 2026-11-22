@@ -219,7 +219,7 @@ export async function buildPlanView({
       ),
     ),
     readSyllabusInput(goal.userId, goal.id),
-    readPlanPlacementTest(context),
+    readPlanPlacementTest(context, now),
   ]);
 
   const skillAreas = getSkillAreas({

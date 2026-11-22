@@ -1,3 +1,4 @@
+import { availableLevelTestOut } from "../../language/level-test/_utils/level-test-out-items";
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import {
@@ -11,6 +12,7 @@ import { type PlanContext } from "./plan-context";
 
 export async function readPlanPlacementTest(
   context: PlanContext,
+  now: Date,
 ): Promise<PlanView["placementTest"]> {
   const { goal } = context;
 
@@ -41,12 +43,23 @@ export async function readPlanPlacementTest(
     const continuing = attempt || summary.attempt || waitingForTopicWalk;
     const idleState = summary.result ? "result" : "start";
 
+    const [nextTestOutLevel, levelResult] = await Promise.all([
+      availableLevelTestOut({
+        goalId: goal.id,
+        level: summary.nextTestOutLevel,
+        now,
+        timeZone: context.timeZone,
+        userId: goal.userId,
+      }),
+      summary.result ? withLevelTestChange(goal.id, summary.result) : null,
+    ]);
+
     return {
       attempt: attemptView,
       estimatedMinutes,
       kind: "language",
-      nextTestOutLevel: summary.nextTestOutLevel,
-      result: summary.result ? await withLevelTestChange(goal.id, summary.result) : null,
+      nextTestOutLevel,
+      result: levelResult,
       state: continuing ? "continue" : idleState,
     };
   }

@@ -9,7 +9,11 @@ import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goa
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { readPendingTopicWalkAssessmentId } from "../../learner/placement/_utils/placement-attempt-record";
 import { gradeSessionAnswer, parseSessionItem } from "../../sessions/_utils/session-items";
-import { listTestOutSkillIds, readTestOutBank } from "./_utils/level-test-out-items";
+import {
+  availableLevelTestOut,
+  listTestOutSkillIds,
+  readTestOutBank,
+} from "./_utils/level-test-out-items";
 import {
   loadTestOutAnswers,
   nextTestOutQuestion,
@@ -22,7 +26,11 @@ import {
   type LevelTestOutProgress,
   isOpenLevelTestOut,
 } from "./level-test-out-contract";
-import { hasOpenLanguageTopicWalk, readLevelTestAttempts } from "./read-level-test-summary";
+import {
+  hasOpenLanguageTopicWalk,
+  readLevelTestAttempts,
+  readLevelTestSummary,
+} from "./read-level-test-summary";
 
 const PREPARATION_WINDOW_MS = 10 * 60 * 1000;
 
@@ -57,6 +65,24 @@ export async function getLanguageLevelTestOut({
         test: await readTestOutView({ goalId, progress: testOut, tx: prisma, userId }),
       }
     : { status: "notFound" };
+}
+
+export async function getNextAvailableLevelTestOut(goalId: string) {
+  const owned = await findOwnedGoal(goalId);
+
+  if (owned.status !== "ready" || owned.goal.kind !== "language") {
+    return null;
+  }
+
+  const { goal, userId } = owned;
+  const { nextTestOutLevel } = readLevelTestSummary(goal);
+
+  return availableLevelTestOut({
+    goalId,
+    level: nextTestOutLevel,
+    timeZone: getAnswerTimeZone({ goal }),
+    userId,
+  });
 }
 
 export async function startLanguageLevelTestOut({

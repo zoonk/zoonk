@@ -10,14 +10,12 @@ import {
 import { finishLanguageLevelTest } from "@zoonk/core/language/level-test/finish";
 import { getLanguageLevelTest } from "@zoonk/core/language/level-test/get";
 import { startLanguageLevelTest } from "@zoonk/core/language/level-test/start";
-import {
-  readLevelTestAttempts,
-  readLevelTestSummary,
-} from "@zoonk/core/language/level-test/summary";
+import { readLevelTestAttempts } from "@zoonk/core/language/level-test/summary";
 import {
   type LanguageLevelTestOutResult,
   answerLanguageLevelTestOut,
   getLanguageLevelTestOut,
+  getNextAvailableLevelTestOut,
   startLanguageLevelTestOut,
 } from "@zoonk/core/language/level-test/test-out";
 import { levelTestOutAnswerSchema } from "@zoonk/core/language/level-test/test-out-contract";
@@ -61,10 +59,7 @@ export async function finishLevelTestAttemptAction(
     return null;
   }
 
-  const owned = await getOwnedGoal(goalId);
-
-  const nextTestOutLevel =
-    owned.status === "ready" ? readLevelTestSummary(owned.goal).nextTestOutLevel : null;
+  const nextTestOutLevel = await getNextAvailableLevelTestOut(goalId);
 
   return { nextTestOutLevel, result: finished.result ?? null };
 }

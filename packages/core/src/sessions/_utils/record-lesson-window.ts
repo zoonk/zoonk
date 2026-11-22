@@ -7,25 +7,42 @@ import {
   type TransactionClient,
 } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { availableLevelTestOut } from "../../language/level-test/_utils/level-test-out-items";
 import { levelTestOutLevelSchema } from "../../language/level-test/level-test-contract";
 import { recordLanguageLessonWindow } from "../../language/levels/record-language-evidence";
 import { getStepLanguageSkill } from "../../language/levels/skill-level-rules";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getRunStudySessionId } from "../../lesson-player/_utils/lesson-runs";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type ClosedLivingPlanWindow, recordLivingPlanAnswers } from "./living-plan-window";
 
-function selectPlacementOffer({
-  goalId,
+async function selectPlacementOffer({
+  goal,
+  now,
+  tx,
+  userId,
   window,
 }: {
-  goalId: string;
+  goal: Pick<Goal, "id" | "timezone">;
+  now: Date;
+  tx: TransactionClient;
+  userId: string;
   window: ClosedLivingPlanWindow | null;
 }) {
   if (window?.result !== "easy" || window.streak < 2) {
     return null;
   }
 
-  const level = levelTestOutLevelSchema.safeParse(window.levelTestOut).data;
+  const { id: goalId } = goal;
+
+  const level = await availableLevelTestOut({
+    goalId,
+    level: levelTestOutLevelSchema.safeParse(window.levelTestOut).data ?? null,
+    now,
+    timeZone: getAnswerTimeZone({ goal }),
+    tx,
+    userId,
+  });
 
   if (level) {
     return { goalId, kind: "levelTestOut", level } as const;
@@ -97,6 +114,7 @@ export async function recordLessonWindowAnswer(
       kind: true,
       livingPlanWindow: true,
       targetLanguage: true,
+      timezone: true,
       updatedAt: true,
     },
     where: {
@@ -126,7 +144,7 @@ export async function recordLessonWindowAnswer(
     return;
   }
 
-  const placementOffer = selectPlacementOffer({ goalId: goal.id, window: closed });
+  const placementOffer = await selectPlacementOffer({ goal, now: at, tx, userId, window: closed });
 
   if (placementOffer) {
     await tx.$executeRaw`

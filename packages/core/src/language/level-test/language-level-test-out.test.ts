@@ -6,6 +6,7 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { finishLanguageLevelTestOut } from "./finish-language-level-test-out";
 import {
@@ -14,7 +15,6 @@ import {
   getLanguageLevelTestOut,
   startLanguageLevelTestOut,
 } from "./language-level-test-out";
-import { readLevelTestSummary } from "./read-level-test-summary";
 import { startLanguageLevelTest } from "./start-language-level-test";
 
 async function writeTapQuestions({ setId, skillId }: { setId?: string; skillId: string }) {
@@ -77,7 +77,7 @@ describe("a language level test-out", () => {
     const days = [new Date("2026-11-18"), new Date("2026-11-19")];
     const [studied, ahead] = [items.slice(0, 2), items.slice(2)];
 
-    const [current] = await Promise.all([
+    await Promise.all([
       prisma.goal.update({ data: { details: { level: "B1" } }, where: { id: goal.id } }),
       ...studied.map(({ id }, index) =>
         prisma.planItem.update({
@@ -97,7 +97,11 @@ describe("a language level test-out", () => {
 
     mockSession(user.id);
 
-    expect(readLevelTestSummary(current).nextTestOutLevel).toBe("B2");
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { placementTest: { kind: "language", nextTestOutLevel: null } },
+      status: "ready",
+    });
+
     const started = await startLanguageLevelTestOut({ goalId: goal.id, level: "B2" });
 
     expect(started).toMatchObject({
@@ -122,8 +126,23 @@ describe("a language level test-out", () => {
     ).resolves.toBe(0);
 
     await expect(
-      prisma.followUp.count({ where: { kind: "preparePlacementItems", userId: user.id } }),
+      prisma.followUp.count({ where: { kind: "prepareLevelTestOut", userId: user.id } }),
     ).resolves.toBe(0);
+
+    await Promise.all(
+      ahead.map(({ chapterId, id, lessonId }) =>
+        prisma.planItem.update({ data: { chapterId, lessonId, lessons: null }, where: { id } }),
+      ),
+    );
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { placementTest: { kind: "language", nextTestOutLevel: "B2" } },
+      status: "ready",
+    });
+
+    await expect(
+      startLanguageLevelTestOut({ goalId: goal.id, level: "B2" }),
+    ).resolves.toMatchObject({ status: "ready", test: { level: "B2", preparing: true } });
   });
 
   it("confirms one topic in each assessed skill and only skips lessons that teach them", async () => {
