@@ -906,9 +906,10 @@ enum PlanDate {
     format(isoDate, month ? .sentenceMonth : .sentence, today: isoDate, year: .always)
   }
 
-  /// Main's `useGoalDateValues`: a goal's date in a sentence, marked "~" when it's estimated.
+  /// Main's `useGoalDateValues`: a goal's date in a sentence, kept on one line and marked "~" when
+  /// it's estimated.
   static func goalText(_ isoDate: String, month: Bool, estimated: Bool) -> String {
-    let date = longText(isoDate, month: month)
+    let date = longText(isoDate, month: month).replacingOccurrences(of: " ", with: "\u{00A0}")
 
     return estimated
       ? String(
