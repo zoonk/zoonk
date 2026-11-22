@@ -711,7 +711,16 @@ describe("written mock sittings", () => {
       throw new Error("Expected the written tasks");
     }
 
-    const provenance = { model: "fixture/model", promptVersion: "fixture-revision" };
+    const provenance = {
+      generatedAt: SESSION_NOW.toISOString(),
+      latencyMs: 1,
+      model: "fixture/model",
+      promptVersion: "fixture-revision",
+      provider: "fixture",
+      requestedModel: "fixture/model",
+      runId: "fixture",
+      usage: {},
+    };
 
     for (const task of section.tasks) {
       const points = task.points ?? null;
