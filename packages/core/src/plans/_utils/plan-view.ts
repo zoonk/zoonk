@@ -192,6 +192,7 @@ export async function buildPlanView({
     taughtSkillIds,
     challengeResults,
     syllabus,
+    placementTest,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
@@ -218,6 +219,7 @@ export async function buildPlanView({
       ),
     ),
     readSyllabusInput(goal.userId, goal.id),
+    readPlanPlacementTest(context),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -296,7 +298,7 @@ export async function buildPlanView({
       taughtSkillIds,
       today,
     }),
-    placementTest: readPlanPlacementTest(context),
+    placementTest,
     planId: context.plan.id,
     ready: isPlanReady(savedContext),
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),

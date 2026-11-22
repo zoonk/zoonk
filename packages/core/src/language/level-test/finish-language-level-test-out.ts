@@ -1,6 +1,5 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -10,23 +9,18 @@ import {
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { isSkillConfirmed } from "../../learner/_utils/skill-claims";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
-import { isPlanConflictError } from "../../plans/plan-conflict";
+import { oweTestOutChange } from "../../plans/_utils/owe-test-out-change";
+import { levelTestOutReceipt } from "../../plans/_utils/test-out-receipt";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { loadTestOutAnswers, saveTestOut } from "./_utils/level-test-out-state";
 import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
-import { oweLevelTestNotice } from "./_utils/owe-level-test-notice";
 import {
   type LanguageLevelTestOutResult,
   getLanguageLevelTestOut,
 } from "./language-level-test-out";
 import { type LevelTestOutProgress } from "./level-test-out-contract";
 import { readLevelTestAttempts } from "./read-level-test-summary";
-
-class AlreadyAnnouncedError extends Error {
-  override name = "AlreadyAnnouncedError";
-}
 
 async function getPassedTopics({
   progress,
@@ -84,56 +78,6 @@ async function getPassedTopics({
   return new Set(passed.length === 2 ? passed : []);
 }
 
-export async function announceLevelTestOutSkips({
-  goalId,
-  progress,
-  timeZone,
-}: {
-  goalId: string;
-  progress: LevelTestOutProgress;
-  timeZone: string;
-}) {
-  const ids = progress.result?.unannounced ?? [];
-
-  if (ids.length === 0) {
-    return true;
-  }
-
-  async function clear(tx: TransactionClient, changeId: string | null) {
-    const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
-    const { testOut } = readLevelTestAttempts(goal);
-
-    if (testOut?.id !== progress.id || !testOut.result?.unannounced.length) {
-      throw new AlreadyAnnouncedError("The level test-out's skip was already recorded");
-    }
-
-    await saveTestOut({
-      goal,
-      progress: { ...testOut, result: { ...testOut.result, changeId, unannounced: [] } },
-      tx,
-    });
-  }
-
-  const { data, error } = await safeAsync(() =>
-    announceTestedOutItems({
-      extraWrites: clear,
-      followToday: false,
-      goalId,
-      now: new Date(),
-      planItemIds: ids,
-      skipBlocks: false,
-      testReceipt: `levelTestOut:${progress.id}`,
-      timeZone,
-    }),
-  );
-
-  if (error && !(error instanceof AlreadyAnnouncedError) && !isPlanConflictError(error)) {
-    throw error;
-  }
-
-  return Boolean(data) || error instanceof AlreadyAnnouncedError;
-}
-
 export async function finishLanguageLevelTestOut({
   attemptId,
   goalId,
@@ -187,7 +131,6 @@ export async function finishLanguageLevelTestOut({
           finishedAt: now.toISOString(),
           planItemIds: itemIds,
           topicsSkipped: itemIds.length > 0 ? [...topicIds] : [],
-          unannounced: itemIds,
         },
       };
 
@@ -204,7 +147,16 @@ export async function finishLanguageLevelTestOut({
       }
 
       await saveTestOut({ goal: current, progress: finished, tx });
-      await oweLevelTestNotice({ db: tx, goalId, unannounced: itemIds, userId });
+
+      await oweTestOutChange({
+        db: tx,
+        goalId,
+        itemIds,
+        receipt: levelTestOutReceipt(attemptId),
+        timeZone,
+        userId,
+      });
+
       return finished;
     },
   );
@@ -219,6 +171,5 @@ export async function finishLanguageLevelTestOut({
     getUserProgressCacheTag(userId),
   ]);
 
-  await announceLevelTestOutSkips({ goalId, progress, timeZone });
   return getLanguageLevelTestOut({ attemptId, goalId });
 }

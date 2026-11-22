@@ -165,7 +165,7 @@ export async function openPlacementAttempt({
 
       await savePlacementAttempt({
         goal,
-        record: { ...record, ...(assessmentId && { assessmentId }), attempt },
+        record: { ...record, ...(assessmentId && { assessmentId }), attempt, finishedParts: [] },
         tx,
       });
 

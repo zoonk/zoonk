@@ -1,3 +1,4 @@
+import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import {
   getPlacementEstimate,
@@ -8,7 +9,9 @@ import {
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
 
-export function readPlanPlacementTest(context: PlanContext): PlanView["placementTest"] {
+export async function readPlanPlacementTest(
+  context: PlanContext,
+): Promise<PlanView["placementTest"]> {
   const { goal } = context;
 
   if (goal.kind !== "learn" && goal.kind !== "language") {
@@ -43,7 +46,7 @@ export function readPlanPlacementTest(context: PlanContext): PlanView["placement
       estimatedMinutes,
       kind: "language",
       nextTestOutLevel: summary.nextTestOutLevel,
-      result: summary.result,
+      result: summary.result ? await withLevelTestChange(goal.id, summary.result) : null,
       state: continuing ? "continue" : idleState,
     };
   }

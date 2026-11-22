@@ -74,7 +74,7 @@ const levelTestConfirmationsInputSchema = z.array(
 );
 
 const levelTestConfirmationSchema = z
-  .object({ ...confirmationFields, id: z.string() })
+  .object({ ...confirmationFields, addedAt: z.iso.datetime().optional(), id: z.string() })
   .refine(isValidConfirmation);
 
 export type LevelTestConfirmation = z.infer<typeof levelTestConfirmationSchema>;
@@ -135,11 +135,7 @@ export const levelTestProgressSchema = z.object({
   counted: z.int().min(0).default(0),
   length: levelTestLengthSchema.optional(),
   placement: z
-    .object({
-      pastBasicsAreas: z.array(z.string()).default([]),
-      placed: z.boolean(),
-      unannounced: z.array(z.string()).default([]),
-    })
+    .object({ placed: z.boolean(), unannounced: z.array(uuidSchema()).optional() })
     .optional(),
   /** The test's row in `anonymous_level_tests`, made on its first answer. */
   recordId: uuidSchema().optional(),

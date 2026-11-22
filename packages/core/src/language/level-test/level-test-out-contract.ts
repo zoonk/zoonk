@@ -19,11 +19,9 @@ const testOutQuestionSchema = z.object({
 });
 
 const testOutResultSchema = z.object({
-  changeId: uuidSchema().nullable().optional(),
   finishedAt: z.iso.datetime(),
   planItemIds: z.array(uuidSchema()),
   topicsSkipped: z.array(uuidSchema()),
-  unannounced: z.array(uuidSchema()),
 });
 
 export const levelTestOutProgressSchema = z.object({
@@ -45,8 +43,7 @@ export function isPreparingLevelTestOut(testOut: LevelTestOutProgress) {
 export function isOpenLevelTestOut(testOut: LevelTestOutProgress | undefined) {
   return Boolean(
     testOut &&
-    (testOut.result
-      ? testOut.result.unannounced.length > 0
-      : testOut.questions.length > 0 || isPreparingLevelTestOut(testOut)),
+    !testOut.result &&
+    (testOut.questions.length > 0 || isPreparingLevelTestOut(testOut)),
   );
 }

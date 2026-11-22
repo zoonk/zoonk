@@ -1,11 +1,13 @@
 import { waitForSleep } from "@workflow/vitest";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
+import { generateLevelTestConfirmations } from "@zoonk/ai/tasks/language/level-test-confirmations";
 import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -29,6 +31,14 @@ vi.mock("@zoonk/ai/tasks/language/exam-speaking-card", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/language/mistake-pattern", () => ({ findMistakePattern: vi.fn() }));
+
+vi.mock("@zoonk/ai/tasks/language/level-test-confirmations", () => ({
+  generateLevelTestConfirmations: vi.fn(),
+}));
+
+vi.mock("@zoonk/core/language/level-test/prepare-audio", () => ({
+  voiceLevelTestPassage: vi.fn(),
+}));
 
 const WAIT = { interval: 200, timeout: 10_000 };
 
@@ -158,6 +168,111 @@ describe(followUpsWorkflow, () => {
       .mockResolvedValue({ decision: "keep", sensitive: true } as Awaited<
         ReturnType<typeof gateMemoryFact>
       >);
+  });
+
+  it("records the receipt after a finish and replenishes only the short level", async () => {
+    const { goal, items, user } = await languageGoalFixture();
+    const level = "B2" as const;
+    const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "en" };
+    const receipt = crypto.randomUUID();
+    const [skipped] = items;
+
+    if (!skipped) {
+      throw new Error("Expected a lesson skipped by the finish");
+    }
+
+    const confirmations = (["reading", "listening"] as const).flatMap((skill) =>
+      [0, 1].map((index) => ({
+        answerIndices: [0, 2],
+        id: `existing-${skill}-${index}`,
+        level,
+        options: ["a", "b", "c", "d", "e"],
+        passage: `Prior ${skill} example ${index}`,
+        question: "What does it say?",
+        skill,
+      })),
+    );
+
+    vi.mocked(generateLevelTestConfirmations).mockResolvedValue({
+      data: {
+        confirmations: confirmations.map(({ passage, ...question }) => ({
+          ...question,
+          passage: `New version of ${passage}`,
+        })),
+      },
+      provenance: {} as never,
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { ...pair, details: { levelTest: { usedConfirmations: ["existing-reading-0"] } } },
+        where: { id: goal.id },
+      }),
+      prisma.planItem.update({
+        data: { completedAt: new Date(), status: "testedOut" },
+        where: { id: skipped.id },
+      }),
+      prisma.languageLevelTest.create({
+        data: {
+          ...pair,
+          content: {
+            confirmations,
+            questions: [{ ...confirmations[0], answerIndex: 0, options: ["a", "b", "c", "d"] }],
+          },
+          model: "fixture",
+          promptVersion: "fixture",
+          runId: "fixture",
+        },
+      }),
+      prisma.followUp.createMany({
+        data: [
+          {
+            input: { goalId: goal.id, itemIds: [skipped.id], receipt, timeZone: "UTC" },
+            key: receipt,
+            kind: "recordTestOutChange",
+            userId: user.id,
+          },
+          {
+            input: { goalId: goal.id, level, pair },
+            key: `${goal.id}:${level}`,
+            kind: "replenishLevelTestChecks",
+            userId: user.id,
+          },
+        ],
+      }),
+    ]);
+
+    await runFollowUps(user.id);
+
+    expect(generateLevelTestConfirmations).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        level,
+        previousPassages: confirmations.map(({ passage }) => passage),
+      }),
+    );
+
+    await expect(
+      prisma.languageLevelTest.findUniqueOrThrow({ where: { languagePair: pair } }),
+    ).resolves.toMatchObject({
+      content: {
+        confirmations: expect.arrayContaining([
+          ...confirmations,
+          expect.objectContaining({ passage: "New version of Prior reading example 0" }),
+        ]),
+        questions: [expect.objectContaining({ id: confirmations[0]?.id })],
+      },
+    });
+
+    await expect(
+      prisma.planChange.findFirstOrThrow({
+        where: { kind: "testedOut", planId: skipped.planId, status: "applied" },
+      }),
+    ).resolves.toMatchObject({ payload: { planItemIds: [skipped.id], testReceipt: receipt } });
+
+    await expect(countOwed(user.id)).resolves.toBe(0);
   });
 
   it("runs each owed work in its own run and ends its row", async () => {

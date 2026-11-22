@@ -11,6 +11,7 @@ import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { levelTestOutPreparationWorkflow } from "../language/level-test-out-preparation-workflow";
+import { replenishLevelTestChecks } from "../language/replenish-level-test-checks";
 import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
@@ -23,13 +24,13 @@ import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
-import { announceLevelTestNoticeStep } from "./steps/announce-level-test-notice-step";
 import {
   endFollowUpStep,
   listFollowUpsStep,
   requestLessonWritingStep,
   requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
+import { recordTestOutChangeStep } from "./steps/record-test-out-change-step";
 import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
 import { settleSessionPlanStep } from "./steps/settle-session-plan-step";
 
@@ -52,54 +53,10 @@ function startSentenceOrders(lessonId: string) {
 async function startPlacementPreparation(
   followUp: Extract<OwedFollowUp, { kind: "preparePlacementItems" }>,
 ) {
-  const { userId } = followUp;
+  const { input, userId } = followUp;
+  const ask = `placement-items:${input.goalId}:${followUp.id}:${followUp.revision}`;
 
-  const {
-    goalId,
-    levelTestBank,
-    levelTestOutAttemptId,
-    placementPart,
-    skillIds,
-    waitsForNotice,
-    writeTopics = true,
-  } = followUp.input;
-
-  const ask = `placement-items:${goalId}:${followUp.id}:${followUp.revision}`;
-
-  if (levelTestOutAttemptId) {
-    await startOnce(
-      levelTestOutPreparationWorkflow,
-      [{ attemptId: levelTestOutAttemptId, goalId, skillIds: skillIds ?? [], userId }],
-      ask,
-    );
-
-    return;
-  }
-
-  await Promise.all([
-    levelTestBank
-      ? startLevelTestBank({
-          analytics: { distinctId: userId, goalId },
-          pair: levelTestBank,
-          upgrade: true,
-        })
-      : null,
-    writeTopics
-      ? startOnce(
-          placementItemsWorkflow,
-          [
-            {
-              analytics: { distinctId: userId },
-              goalId,
-              ...(placementPart && { placementPart }),
-              skillIds,
-              waitsForNotice,
-            },
-          ],
-          ask,
-        )
-      : null,
-  ]);
+  await startOnce(placementItemsWorkflow, [{ ...input, analytics: { distinctId: userId } }], ask);
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
@@ -118,9 +75,33 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;
     case "prepareGoalLessons":
-      await (followUp.input.levelTestNotice
-        ? announceLevelTestNoticeStep({ goalId: followUp.input.goalId, userId })
-        : start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]));
+      await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
+      return;
+    case "recordTestOutChange":
+      await recordTestOutChangeStep({ ...followUp.input, userId });
+      return;
+    case "prepareLevelTestBank":
+      await startLevelTestBank({
+        analytics: { distinctId: userId, goalId: followUp.input.goalId },
+        pair: followUp.input.pair,
+        upgrade: true,
+      });
+
+      return;
+    case "replenishLevelTestChecks":
+      await replenishLevelTestChecks({
+        ...followUp.input,
+        batchId: `${followUp.id}:${followUp.revision}`,
+        userId,
+      });
+
+      return;
+    case "prepareLevelTestOut":
+      await startOnce(
+        levelTestOutPreparationWorkflow,
+        [{ ...followUp.input, userId }],
+        `prepare-level-test-out:${followUp.id}:${followUp.revision}`,
+      );
 
       return;
     case "rebuildGoalCurriculum": {

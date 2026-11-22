@@ -33,6 +33,7 @@ import {
 } from "../read-level-test-summary";
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
 import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
+import { withLevelTestChange } from "./level-test-result-change";
 import { getLevelTestStartScore } from "./level-test-start-score";
 
 /** About how long the bank's run takes to voice its clips, retries included, after the questions. */
@@ -92,7 +93,8 @@ export function readLevelTestProgress(
   const stored = parsed.success ? parsed.data : levelTestProgressSchema.parse({});
 
   const scores =
-    stored.scores ?? (stored.placement ? readFinishedLabels(details.skillLevels) : undefined);
+    stored.scores ??
+    (stored.result || stored.placement ? readFinishedLabels(details.skillLevels) : undefined);
 
   return {
     ...stored,
@@ -132,7 +134,12 @@ function bankForAttempt(
 
   return {
     ...bank,
-    confirmations: progress.attemptId ? bank.confirmations?.filter(({ id }) => !used.has(id)) : [],
+    confirmations: progress.attemptId
+      ? bank.confirmations?.filter(
+          ({ addedAt, id }) =>
+            !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
+        )
+      : [],
   };
 }
 
@@ -230,7 +237,11 @@ async function findQuestionAudio({
     return { audio: toSpeechClip(clip), audioPending: false };
   }
 
-  const writtenAt = bankWrittenAt?.getTime() ?? 0;
+  const writtenAt =
+    "addedAt" in question && question.addedAt
+      ? Date.parse(question.addedAt)
+      : (bankWrittenAt?.getTime() ?? 0);
+
   return { audio: null, audioPending: Date.now() - writtenAt < AUDIO_PENDING_MS };
 }
 
@@ -249,10 +260,12 @@ export async function toLevelTestView({
   lastCorrect?: boolean | null;
   progress: LevelTestProgress;
 }): Promise<LanguageLevelTestView> {
+  const result = progress.attemptId && (progress.result ?? readLevelTestSummary(goal).result);
+
   const attempt = progress.attemptId && {
     attemptId: progress.attemptId,
     length: progress.length,
-    result: progress.result ?? readLevelTestSummary(goal).result,
+    result: result ? await withLevelTestChange(goal.id, result) : null,
     testOutLevel: progress.testOutLevel,
   };
 

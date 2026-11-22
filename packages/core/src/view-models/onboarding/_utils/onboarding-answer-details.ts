@@ -110,7 +110,8 @@ export function isInvalidGoalAnswer({
   }
 
   if (input.question === "placement" && input.attemptId) {
-    return readPlacementAttempt(current).lastPart?.attemptId !== input.attemptId;
+    const { attempt, finishedParts, result } = readPlacementAttempt(current);
+    return (attempt?.id ?? result?.attemptId) !== input.attemptId || finishedParts.length === 0;
   }
 
   return (

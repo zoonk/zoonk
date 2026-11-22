@@ -8,7 +8,7 @@ import {
 } from "./level-test-contract";
 import {
   getBand,
-  getConfirmedLevel,
+  getLevelTestConfirmation,
   getLevelTestRanges,
   getLevelTestScores,
   getNextLevelTestStep,
@@ -108,7 +108,7 @@ function runTest({
 
   return {
     asked,
-    confirmed: getConfirmedLevel(input),
+    confirmed: getLevelTestConfirmation(input).through,
     ranges: getLevelTestRanges(input),
     scores: getLevelTestScores(input),
   };

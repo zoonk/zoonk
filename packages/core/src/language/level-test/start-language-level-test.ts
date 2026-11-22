@@ -34,12 +34,7 @@ async function oweLevelTestPreparation({
   await oweFollowUps({
     db,
     followUps: levelTestBank
-      ? [
-          {
-            input: { goalId, levelTestBank, waitsForNotice: false, writeTopics: false },
-            kind: "preparePlacementItems",
-          },
-        ]
+      ? [{ input: { goalId, pair: levelTestBank }, kind: "prepareLevelTestBank" }]
       : [],
     userId,
   });
@@ -79,7 +74,7 @@ export async function startLanguageLevelTest({
       return unchanged({ attemptId: pendingAssessment, opened: false });
     }
 
-    if (attempt?.attemptId && (!attempt.result || attempt.placement?.unannounced.length)) {
+    if (attempt?.attemptId && !attempt.result) {
       return unchanged({ attemptId: attempt.attemptId, opened: false });
     }
 
@@ -91,7 +86,9 @@ export async function startLanguageLevelTest({
       level: level ?? readGoalDetails(current).level,
     });
 
-    const continueOnboarding = !attempt && !legacy.placement && legacy.answers.length > 0;
+    const continueOnboarding =
+      !attempt && !legacy.result && !legacy.placement && legacy.answers.length > 0;
+
     const fresh: LevelTestProgress = { answers: [], counted: 0, speaking: null, start };
     const id = randomUUID();
 
@@ -99,7 +96,7 @@ export async function startLanguageLevelTest({
       ...(continueOnboarding ? legacy : fresh),
       attemptId: id,
       length,
-      startedAt: continueOnboarding ? legacy.startedAt : new Date().toISOString(),
+      startedAt: (continueOnboarding && legacy.startedAt) || new Date().toISOString(),
     };
 
     const details = levelTestDetailsWithProgress(current, progress);

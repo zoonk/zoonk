@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type LanguageSkill, type TransactionClient, prisma } from "@zoonk/db";
+import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
@@ -9,36 +9,33 @@ import {
   getLearnerModelCacheTag,
   getUserProgressCacheTag,
 } from "../../cache/tags";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { type ProgressLock } from "../../sessions/_utils/session-progress";
-import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
+import { oweTestOutChange } from "../../plans/_utils/owe-test-out-change";
+import { levelTestReceipt } from "../../plans/_utils/test-out-receipt";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
 import { getOverallLevel } from "../levels/skill-level-rules";
-import {
-  announceLevelTestPlacement,
-  skipConfirmedLanguageLessons,
-} from "./_utils/level-test-placement";
+import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
+import { withLevelTestChange } from "./_utils/level-test-result-change";
 import {
   canWriteLevelTest,
   levelTestDetailsWithProgress,
   loadLevelTestContext,
   readLevelTestProgress,
 } from "./_utils/level-test-state";
-import { oweLevelTestNotice } from "./_utils/owe-level-test-notice";
+import { recordLevelTestActivity } from "./_utils/record-level-test-activity";
 import {
   type LevelTestBank,
   type LevelTestProgress,
-  type LevelTestQuestion,
   type LevelTestResult,
 } from "./level-test-contract";
 import {
   type LevelTestScores,
-  getAnswerVerdict,
   getBand,
-  getConfirmedLevel,
+  getLevelTestConfirmation,
   getLevelTestRanges,
   getLevelTestScores,
   getNextLevelTestStep,
@@ -81,57 +78,6 @@ async function saveSkillLevels(
   }
 }
 
-function isAnsweredRight({
-  answer,
-  question,
-}: {
-  answer: LevelTestProgress["answers"][number];
-  question?: LevelTestQuestion;
-}): boolean | null {
-  return question ? getAnswerVerdict({ answer, question }) === true : null;
-}
-
-async function recordTestActivity({
-  bank,
-  goalId,
-  lock,
-  progress,
-  timeZone,
-  transaction,
-  userId,
-}: {
-  bank: LevelTestBank;
-  goalId: string;
-  lock: ProgressLock;
-  progress: LevelTestProgress;
-  timeZone: string;
-  transaction: TransactionClient;
-  userId: string;
-}) {
-  const asked = new Map(bank.questions.map((question) => [question.id, question]));
-  const confirmations = new Set((bank.confirmations ?? []).map(({ id }) => id));
-  const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
-
-  if (fresh.length === 0) {
-    return;
-  }
-
-  await settleAnsweredActivity(transaction, {
-    answers: fresh.map((answer) => ({
-      durationMs: answer.durationMs,
-      isCorrect: confirmations.has(answer.id)
-        ? answer.correct === true
-        : isAnsweredRight({ answer, question: asked.get(answer.id) }),
-    })),
-    contentIds: {},
-    goalId,
-    lessonKind: "levelTest",
-    lock,
-    timeZone,
-    userId,
-  });
-}
-
 async function recordLevelTestResult({
   bank,
   current,
@@ -142,6 +88,7 @@ async function recordLevelTestResult({
   bank: LevelTestBank;
   current: Parameters<typeof levelTestDetailsWithProgress>[0] & {
     id: string;
+    language: string;
     targetLanguage: string;
     userId: string;
   };
@@ -153,36 +100,34 @@ async function recordLevelTestResult({
   const now = new Date();
   const input = { bank, progress: currentProgress, start: currentProgress.start };
   const scores = getLevelTestScores(input);
-  const through = getConfirmedLevel(input);
+  const { shortLevels, through } = getLevelTestConfirmation(input);
   const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
-  const unannounced = await skipConfirmedLanguageLessons({ goalId, now, through, tx: transaction });
+  const itemIds = await skipConfirmedLanguageLessons({ goalId, now, through, tx: transaction });
   const { usedConfirmations } = readLevelTestAttempts(current);
 
   const result = {
     attemptId: currentProgress.attemptId ?? null,
-    changeId: null,
     finishedAt: now.toISOString(),
-    lessonsSkipped: unannounced.length,
-    levelsSkipped:
-      through && unannounced.length > 0 ? CEFR_LEVELS.slice(0, getBand(through) + 1) : [],
+    lessonsSkipped: itemIds.length,
+    levelsSkipped: through && itemIds.length > 0 ? CEFR_LEVELS.slice(0, getBand(through) + 1) : [],
     ranges: getLevelTestRanges(input),
     ...(currentProgress.length === "wholeCourse" &&
       getNextLevelTestStep(input).kind === "done" && { wholeCourseReady: true as const }),
   };
 
-  const saved = {
-    ...currentProgress,
-    counted: currentProgress.answers.length,
-    placement: { pastBasicsAreas: [], placed: true, unannounced },
-    result,
-    scores,
-  };
+  const saved = { ...currentProgress, counted: currentProgress.answers.length, result, scores };
 
   const details = levelTestDetailsWithProgress(current, saved);
   const overall = getOverallLevel(listLevelTestLevels(scores).map(({ score }) => score));
-  const countedIds = new Set(currentProgress.answers.map(({ id }) => id));
 
-  await recordTestActivity({
+  const answeredIds = new Set(
+    currentProgress.answers.filter(({ skipped }) => !skipped).map(({ id }) => id),
+  );
+
+  const checksUsed = (bank.confirmations ?? []).filter(({ id }) => answeredIds.has(id));
+  const levelsToRefill = new Set([...shortLevels, ...checksUsed.map(({ level }) => level)]);
+
+  await recordLevelTestActivity({
     bank,
     goalId,
     lock,
@@ -200,12 +145,7 @@ async function recordLevelTestResult({
         levelTest: {
           ...details.levelTest,
           lastResult: result,
-          usedConfirmations: [
-            ...usedConfirmations,
-            ...(bank.confirmations ?? [])
-              .filter(({ id }) => countedIds.has(id))
-              .map(({ id }) => id),
-          ],
+          usedConfirmations: [...usedConfirmations, ...checksUsed.map(({ id }) => id)],
         },
         skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
       },
@@ -214,41 +154,39 @@ async function recordLevelTestResult({
   });
 
   await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
+
+  if (currentProgress.attemptId) {
+    await oweFollowUps({
+      db: transaction,
+      followUps: [...levelsToRefill].map((level) => ({
+        input: {
+          goalId,
+          level,
+          pair: { language: current.language, targetLanguage: current.targetLanguage },
+        },
+        kind: "replenishLevelTestChecks",
+      })),
+      userId,
+    });
+  }
+
   await owePlanStartLessons({ db: transaction, goalId, userId });
-  await oweLevelTestNotice({ db: transaction, goalId, unannounced, userId });
+
+  await oweTestOutChange({
+    db: transaction,
+    goalId,
+    itemIds,
+    receipt: levelTestReceipt(result.attemptId),
+    timeZone,
+    userId,
+  });
+
   return saved;
 }
 
 function readPreviousSkillLevels(goal: Parameters<typeof readGoalDetails>[0]) {
   const { skillLevels } = readGoalDetails(goal);
   return isJsonObject(skillLevels) ? skillLevels : {};
-}
-
-async function finishLevelTestNotice({
-  attemptId,
-  goal,
-  progress,
-  timeZone,
-}: {
-  attemptId?: string;
-  goal: Pick<Goal, "id" | "userId">;
-  progress: LevelTestProgress;
-  timeZone: string;
-}) {
-  const { placement, result } = progress;
-
-  if (!placement?.unannounced.length) {
-    return result;
-  }
-
-  const announced = await announceLevelTestPlacement({ attemptId, goal, placement, timeZone });
-
-  if (!announced || !result) {
-    return result;
-  }
-
-  const current = await prisma.goal.findUnique({ where: { id: goal.id, userId: goal.userId } });
-  return (current && readLevelTestProgress(current, attemptId)?.result) ?? result;
 }
 
 export async function finishLanguageLevelTest(
@@ -276,6 +214,29 @@ export async function finishLanguageLevelTest(
 
     if (!progress) {
       return unchanged(null);
+    }
+
+    const { placement } = progress;
+    const legacyItemIds = placement?.unannounced;
+
+    if (!attemptId && placement && legacyItemIds?.length) {
+      const migrated = { ...progress, placement: { placed: placement.placed } };
+
+      await transaction.goal.update({
+        data: { details: levelTestDetailsWithProgress(current, migrated) },
+        where: { id: goalId },
+      });
+
+      await oweTestOutChange({
+        db: transaction,
+        goalId,
+        itemIds: legacyItemIds,
+        receipt: levelTestReceipt(null),
+        timeZone,
+        userId,
+      });
+
+      return { newResult: false, progress: migrated };
     }
 
     if (progress.result || progress.placement || !canWriteLevelTest(current, progress)) {
@@ -319,11 +280,11 @@ export async function finishLanguageLevelTest(
     });
   }
 
-  const result = await finishLevelTestNotice({ attemptId, goal, progress, timeZone });
+  const { result } = progress;
 
   return {
     levels: listLevelTestLevels(progress.scores ?? {}),
-    ...(result && { result: { ...result, changeId: result.changeId ?? null } }),
+    ...(result && { result: await withLevelTestChange(goalId, result) }),
     status: "ready",
   };
 }

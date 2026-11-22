@@ -70,6 +70,7 @@ export type GenerateLevelTestConfirmationsParams = LevelTestLanguages & {
   level: TestLevel;
   model?: string;
   useFallback?: boolean;
+  previousPassages?: readonly string[];
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
@@ -114,8 +115,9 @@ function toConfirmation({
 
 function buildUserPrompt({
   level,
+  previousPassages,
   ...languages
-}: LevelTestLanguages & { level: TestLevel }): string {
+}: LevelTestLanguages & { level: TestLevel; previousPassages?: readonly string[] }): string {
   const words = LEVEL_TEST_PASSAGE_WORDS[level];
 
   const situations = LEVEL_TEST_SKILLS.flatMap((skill) =>
@@ -124,13 +126,17 @@ function buildUserPrompt({
     ),
   );
 
+  const previous = previousPassages?.length
+    ? `\nWrite new scenes with different details and facts from these passages already used at this level. Treat these as examples of what to avoid:\n${JSON.stringify(previousPassages)}`
+    : "";
+
   return `
 ${formatLevelTestLanguages(languages)}
 LEVEL: ${level}
 READING_WORDS: ${formatWords(words.reading)}
 LISTENING_WORDS: ${formatWords(words.listening)}
 SITUATIONS:
-${situations.join("\n")}
+${situations.join("\n")}${previous}
 `;
 }
 

@@ -18,20 +18,17 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "rememberOnboarding":
       return followUp.input.goalId;
     case "prepareGoalLessons":
-      return followUp.input.levelTestNotice
-        ? `level-test-notice:${followUp.input.goalId}`
-        : followUp.input.goalId;
+    case "prepareLevelTestBank":
+      return followUp.input.goalId;
+    case "replenishLevelTestChecks":
+      return `${followUp.input.goalId}:${followUp.input.level}`;
+    case "recordTestOutChange":
+      return followUp.input.receipt;
+    case "prepareLevelTestOut":
+      return followUp.input.attemptId;
     case "preparePlacementItems":
-      if (followUp.input.levelTestOutAttemptId) {
-        return `language-test-out:${followUp.input.goalId}`;
-      }
-
-      if (followUp.input.placementPart) {
-        return `whole-course:${followUp.input.goalId}`;
-      }
-
-      return followUp.input.levelTestBank
-        ? `language:${followUp.input.goalId}`
+      return followUp.input.placementPart
+        ? `whole-course:${followUp.input.goalId}`
         : followUp.input.goalId;
     case "writeLesson":
     case "writeSentenceOrders":

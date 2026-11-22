@@ -52,7 +52,10 @@ export async function getLanguageLevelTestOut({
   const { testOut } = readLevelTestAttempts(goal);
 
   return testOut?.id === attemptId
-    ? { status: "ready", test: await readTestOutView({ progress: testOut, tx: prisma, userId }) }
+    ? {
+        status: "ready",
+        test: await readTestOutView({ goalId, progress: testOut, tx: prisma, userId }),
+      }
     : { status: "notFound" };
 }
 
@@ -82,7 +85,7 @@ export async function startLanguageLevelTestOut({
     if (
       hasOpenLanguageTopicWalk(current) ||
       readPendingTopicWalkAssessmentId(current) !== null ||
-      (attempt && (!attempt.result || attempt.placement?.unannounced.length))
+      (attempt && !attempt.result)
     ) {
       return unchanged(null);
     }
@@ -112,10 +115,7 @@ export async function startLanguageLevelTestOut({
       await oweFollowUps({
         db: tx,
         followUps: [
-          {
-            input: { goalId, levelTestOutAttemptId: progress.id, skillIds, waitsForNotice: false },
-            kind: "preparePlacementItems",
-          },
+          { input: { attemptId: progress.id, goalId, skillIds }, kind: "prepareLevelTestOut" },
         ],
         userId,
       });

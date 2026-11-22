@@ -6,8 +6,8 @@ import {
   clampCefrScore,
   formatCefrScore,
 } from "@zoonk/utils/cefr";
-import { isLowGuessTap } from "../../learner/_utils/placement-guess-rate";
 import { LANGUAGE_SKILLS } from "../levels/skill-level-rules";
+import { hasCompleteLevelCheck, listLevelConfirmations } from "./_utils/confirmation-bank";
 import {
   type Posterior,
   type ScoredAnswer,
@@ -40,7 +40,6 @@ const QUESTION_SKILLS = ["reading", "listening"] as const;
 const LEVEL_TEST_TOTAL = QUICK_QUESTIONS_PER_SKILL * QUESTION_SKILLS.length;
 
 const HALF_STEP = 0.5;
-const CONFIRMATIONS_PER_SKILL = 2;
 
 type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
@@ -194,41 +193,23 @@ function getConfirmations({
   bank: LevelTestBank;
   progress: TestAnswers;
   floor: number;
-}): { next: LevelTestConfirmation | null; through: CefrLevel | null } {
+}): { next: LevelTestConfirmation | null; shortLevels: CefrLevel[]; through: CefrLevel | null } {
   const answers = new Map(progress.answers.map((answer) => [answer.id, answer]));
   const levels = CEFR_LEVELS.slice(0, floor + 1).toReversed();
+  const shortLevels: CefrLevel[] = [];
 
   for (const level of levels) {
-    const items = QUESTION_SKILLS.flatMap((skill) =>
-      (bank.confirmations ?? [])
-        .filter(
-          (question) =>
-            question.skill === skill &&
-            question.level === level &&
-            isLowGuessTap({
-              content: { options: question.options, select: "all" },
-              format: "multipleChoice",
-            }),
-        )
-        .slice(0, CONFIRMATIONS_PER_SKILL),
-    );
+    const items = listLevelConfirmations({ bank, level });
 
-    if (
-      new Set(items.map((question) => question.id)).size !==
-      CONFIRMATIONS_PER_SKILL * QUESTION_SKILLS.length
-    ) {
-      return { next: null, through: null };
-    }
-
-    const missed = items.some(({ id }) => answers.has(id) && answers.get(id)?.correct !== true);
-
-    if (!missed) {
+    if (!hasCompleteLevelCheck(items)) {
+      shortLevels.push(level);
+    } else if (items.every(({ id }) => !answers.has(id) || answers.get(id)?.correct === true)) {
       const next = items.find(({ id }) => !answers.has(id)) ?? null;
-      return { next, through: next ? null : level };
+      return { next, shortLevels, through: next ? null : level };
     }
   }
 
-  return { next: null, through: null };
+  return { next: null, shortLevels, through: null };
 }
 
 function getAssessment({
@@ -256,16 +237,16 @@ function getProposedFloor(assessment: ReturnType<typeof getAssessment>) {
   );
 }
 
-export function getConfirmedLevel({
+export function getLevelTestConfirmation({
   bank,
   progress,
   start,
-}: Parameters<typeof getAssessment>[0]): CefrLevel | null {
+}: Parameters<typeof getAssessment>[0]) {
   return getConfirmations({
     bank,
     floor: getProposedFloor(getAssessment({ bank, progress, start })),
     progress,
-  }).through;
+  });
 }
 
 export function getNextLevelTestStep({

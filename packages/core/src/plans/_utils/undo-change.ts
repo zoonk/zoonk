@@ -16,6 +16,7 @@ import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-paylo
 import { type PlanContext } from "./plan-context";
 import { revalidatePlanTags } from "./replan";
 import { canRestore, loadPlanSnapshot, restorePlan } from "./restore-plan";
+import { undoTestOutResult } from "./undo-test-out-result";
 
 async function isAskedAgain({
   change,
@@ -157,6 +158,15 @@ export async function undoChange({
           : undone,
       where: { id: change.id },
     });
+
+    if (payload.testReceipt && undone.status === "undone") {
+      await undoTestOutResult({
+        goalId: context.goal.id,
+        lessonsSkipped: payload.lessonsSkipped ?? 0,
+        receipt: payload.testReceipt,
+        tx,
+      });
+    }
 
     if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
       await keepTestFocus({

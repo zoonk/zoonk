@@ -1,5 +1,7 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
+import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
+import { levelTestOutReceipt } from "../../../plans/_utils/test-out-receipt";
 import { readGoalDetails } from "../../_utils/language-goal";
 import { type LevelTestOutProgress, isPreparingLevelTestOut } from "../level-test-out-contract";
 import { readLevelTestDetails } from "../read-level-test-summary";
@@ -75,11 +77,17 @@ export async function nextTestOutQuestion({
 }
 
 export async function readTestOutView({
+  goalId,
   progress,
   tx,
   userId,
-}: Parameters<typeof loadTestOutAnswers>[0]) {
-  const answers = await loadTestOutAnswers({ progress, tx, userId });
+}: Parameters<typeof loadTestOutAnswers>[0] & { goalId: string }) {
+  const [answers, change] = await Promise.all([
+    loadTestOutAnswers({ progress, tx, userId }),
+    progress.result?.planItemIds.length
+      ? readTestOutChange({ goalId, receipt: levelTestOutReceipt(progress.id) })
+      : null,
+  ]);
 
   const next = await nextTestOutQuestion({
     answered: new Set(answers.map(({ itemId }) => itemId)),
@@ -95,7 +103,7 @@ export async function readTestOutView({
     preparing: isPreparingLevelTestOut(progress),
     result: progress.result
       ? {
-          changeId: progress.result.changeId ?? null,
+          changeId: change?.id ?? null,
           finishedAt: progress.result.finishedAt,
           lessonsSkipped: progress.result.planItemIds.length,
           topicsSkipped: progress.result.topicsSkipped,

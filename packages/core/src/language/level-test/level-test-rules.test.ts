@@ -132,6 +132,36 @@ describe(getNextLevelTestStep, () => {
     expect(step).toMatchObject({ kind: "question", question: { level: "B1", skill: "reading" } });
   });
 
+  it("tries the next level down when there are too few fresh checks at the proposed level", () => {
+    const answers = ["reading", "listening"].flatMap((skill) =>
+      ["A2", "B1", "B2", "C1", "C2"].map((level) => ({
+        answerIndex: 0,
+        correct: true,
+        id: `${skill}-${level}-0`,
+      })),
+    );
+
+    const confirmations = (["reading", "listening"] as const).flatMap((skill) =>
+      [0, 1].map((index) => ({
+        answerIndices: [0, 2],
+        id: `confirm-${skill}-A1-${index}`,
+        level: "A1" as const,
+        options: ["a", "b", "c", "d", "e"],
+        passage: `${skill} ${index}`,
+        question: "?",
+        skill,
+      })),
+    );
+
+    expect(
+      getNextLevelTestStep({
+        bank: { ...bank, confirmations },
+        progress: progress(answers),
+        start: A2,
+      }),
+    ).toMatchObject({ kind: "confirmation", question: { level: "A1" } });
+  });
+
   it("finishes after five Quick questions in each skill without asking for speech", () => {
     const answers = ["reading", "listening"].flatMap((skill) =>
       ["A2", "B1", "B2", "C1", "C2"].map((level) => ({

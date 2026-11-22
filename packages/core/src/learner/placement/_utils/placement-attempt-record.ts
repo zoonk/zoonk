@@ -15,7 +15,6 @@ export type PlacementLength = z.infer<typeof placementLengthSchema>;
 export type PlacementResult = z.infer<typeof placementResultSchema>;
 
 const partReceiptSchema = z.object({
-  finishedAt: z.iso.datetime(),
   knownSkillIds: z.array(uuidSchema()),
   lessonsSkipped: z.number().int().nonnegative(),
   part: z.number().int().positive(),
@@ -35,7 +34,7 @@ const attemptSchema = placementAttemptViewSchema.extend({
 const recordSchema = z.object({
   assessmentId: uuidSchema().optional(),
   attempt: attemptSchema.nullable(),
-  lastPart: partReceiptSchema.extend({ attemptId: uuidSchema() }).nullable(),
+  finishedParts: z.array(partReceiptSchema).default([]),
   quickFollowUpSkillIds: z.array(uuidSchema()).optional(),
   result: placementResultSchema.nullable(),
 });
@@ -46,7 +45,7 @@ export type PlacementRecord = z.infer<typeof recordSchema>;
 export function readPlacementAttempt(goal: { details: unknown }): PlacementRecord {
   const details = isJsonObject(goal.details) ? goal.details : {};
   const record = recordSchema.safeParse(details.placementTest);
-  return record.data ?? { attempt: null, lastPart: null, result: null };
+  return record.data ?? { attempt: null, finishedParts: [], result: null };
 }
 
 export function readReadyAssessmentId(details: unknown): string | null {

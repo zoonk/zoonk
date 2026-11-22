@@ -39,12 +39,9 @@ describe("preparing level test-out questions", () => {
     await expect(start()).resolves.toStrictEqual(opened);
 
     await expect(
-      prisma.followUp.findMany({ where: { kind: "preparePlacementItems", userId: user.id } }),
+      prisma.followUp.findMany({ where: { kind: "prepareLevelTestOut", userId: user.id } }),
     ).resolves.toMatchObject([
-      {
-        input: { goalId: goal.id, levelTestOutAttemptId: input.attemptId, skillIds: [topic.id] },
-        revision: 0,
-      },
+      { input: { attemptId: input.attemptId, goalId: goal.id, skillIds: [topic.id] }, revision: 0 },
     ]);
 
     const set = await listeningSetFixture();

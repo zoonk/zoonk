@@ -7,6 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
 import {
@@ -16,15 +17,14 @@ import {
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
-import * as announcements from "../../plans/announce-tested-out-items";
 import { decidePlanChange } from "../../plans/decide-plan-change";
-import { PlanConflictError } from "../../plans/plan-conflict";
+import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
-import { announcePendingLevelTestSkips } from "./announce-pending-level-test-skips";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { type LanguageLevelTestView, type LevelTestBank } from "./level-test-contract";
+import { appendLevelTestChecks, readLevelTestCheckShortage } from "./replenish-level-test-checks";
 import { startLanguageLevelTest } from "./start-language-level-test";
 
 const TEST_LEVELS = CEFR_LEVELS;
@@ -646,6 +646,129 @@ describe("a post-start level test", () => {
     ).resolves.toStrictEqual(lessonMoved);
   });
 
+  it("can confirm a missed level on a later day after its shared bank is replenished", async () => {
+    const { goal, skills, user } = await languageGoalFixture();
+    const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
+
+    const confirmations = CEFR_LEVELS.flatMap((level) =>
+      (["reading", "listening"] as const).flatMap((skill) =>
+        [0, 1].map((index) => ({
+          answerIndices: [0, 2],
+          id: `confirm-${skill}-${level}-${index}`,
+          level,
+          options: ["a", "b", "c", "d", "e"],
+          passage: `${skill} ${level} ${index}`,
+          question: "What does it say?",
+          skill,
+        })),
+      ),
+    );
+
+    await Promise.all([
+      prisma.goal.update({ data: { ...pair, details: { level: "C2" } }, where: { id: goal.id } }),
+      prisma.languageLevelTest.create({
+        data: {
+          ...pair,
+          content: { ...BANK, confirmations },
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+        },
+      }),
+      prisma.skill.updateMany({
+        data: { cefrLevel: "B2" },
+        where: { id: { in: skills.map(({ id }) => id) } },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const start = async () => {
+      const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+
+      if (started.status !== "ready" || !started.test.attemptId) {
+        throw new Error("Expected a Quick test");
+      }
+
+      return { attemptId: started.test.attemptId, goalId: goal.id, test: started.test };
+    };
+
+    const missed: string[] = [];
+    const first = await start();
+
+    await completeTapTest({
+      ...first,
+      confirm: ({ id }) => {
+        if (missed.length === 0) {
+          missed.push(id);
+          return [];
+        }
+
+        return [2, 0];
+      },
+    });
+
+    expect(missed).toStrictEqual(["confirm-reading-B2-0"]);
+
+    await expect(finishLanguageLevelTest(goal.id, first.attemptId)).resolves.toMatchObject({
+      result: { lessonsSkipped: 0, levelsSkipped: [] },
+      status: "ready",
+    });
+
+    const replenishment = { goalId: goal.id, level: "B2" as const, pair, userId: user.id };
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          input: { goalId: goal.id, level: "B2", pair },
+          kind: "replenishLevelTestChecks",
+        }),
+      ]),
+    );
+
+    await expect(readLevelTestCheckShortage(replenishment)).resolves.toHaveLength(4);
+
+    const newQuestions = confirmations
+      .filter(({ level }) => level === "B2")
+      .map(({ passage, ...item }) => ({ ...item, passage: `A new example for ${passage}` }));
+
+    const saved = { batchId: "test-refill", confirmations: newQuestions, pair };
+    const written = await appendLevelTestChecks(saved);
+    expect(written).toHaveLength(2);
+    await expect(appendLevelTestChecks(saved)).resolves.toStrictEqual(written);
+    await expect(readLevelTestCheckShortage(replenishment)).resolves.toBeNull();
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    try {
+      vi.setSystemTime(Date.now() + MS_PER_DAY);
+      const retake = await start();
+      const asked: string[] = [];
+
+      await completeTapTest({
+        ...retake,
+        confirm: ({ id }) => {
+          asked.push(id);
+          return [2, 0];
+        },
+      });
+
+      expect(asked).toHaveLength(4);
+      expect(asked).not.toContain(missed[0]);
+      expect(asked).toContain("confirmation-refill-test-refill-0");
+
+      await expect(finishLanguageLevelTest(goal.id, retake.attemptId)).resolves.toMatchObject({
+        result: {
+          lessonsSkipped: expect.any(Number),
+          levelsSkipped: expect.arrayContaining(["B2"]),
+        },
+        status: "ready",
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("skips only fully tagged lessons and keeps both shown session blocks and Undo", async () => {
     const { goal, items, lessons, skills, user } = await languageGoalFixture();
 
@@ -720,13 +843,7 @@ describe("a post-start level test", () => {
     const { attemptId } = started.test;
     await completeTapTest({ attemptId, goalId: goal.id, test: started.test });
 
-    const announce = vi
-      .spyOn(announcements, "announceTestedOutItems")
-      .mockRejectedValueOnce(new PlanConflictError());
-
-    const finished = await finishLanguageLevelTest(goal.id, attemptId).finally(() =>
-      announce.mockRestore(),
-    );
+    const finished = await finishLanguageLevelTest(goal.id, attemptId);
 
     expect(finished).toMatchObject({
       result: { changeId: null, lessonsSkipped: 1, levelsSkipped: expect.arrayContaining(["A1"]) },
@@ -755,18 +872,22 @@ describe("a post-start level test", () => {
       }),
     ).resolves.toBe(0);
 
+    const receipt = `levelTest:${attemptId}`;
     const owed = await listOwed(user.id);
 
     expect(owed).toStrictEqual(
       expect.arrayContaining([
-        expect.objectContaining({
-          input: expect.objectContaining({ goalId: goal.id, levelTestNotice: true }),
-          kind: "prepareGoalLessons",
-        }),
+        expect.objectContaining({ key: receipt, kind: "recordTestOutChange" }),
       ]),
     );
 
-    await announcePendingLevelTestSkips({ goalId: goal.id, userId: user.id });
+    await recordTestOutChange({
+      goalId: goal.id,
+      itemIds: [lowItem.id],
+      receipt,
+      timeZone: "UTC",
+      userId: user.id,
+    });
 
     const change = await prisma.planChange.findFirstOrThrow({
       where: { kind: "testedOut", planId: lowItem.planId, status: "applied" },
@@ -792,15 +913,22 @@ describe("a post-start level test", () => {
     await expect(prisma.planItem.findUnique({ where: { id: lowItem.id } })).resolves.toMatchObject({
       status: "todo",
     });
+
+    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toMatchObject({
+      result: { changeId: null, lessonsSkipped: 0, levelsSkipped: [] },
+      status: "ready",
+    });
   });
 });
 
 async function completeTapTest({
   attemptId,
+  confirm = () => [2, 0],
   goalId,
   test,
 }: {
   attemptId: string;
+  confirm?: (question: { id: string }) => number[];
   goalId: string;
   test: LanguageLevelTestView;
 }): Promise<void> {
@@ -814,7 +942,7 @@ async function completeTapTest({
 
   const input =
     test.next.kind === "confirmation"
-      ? { answerIndex: null, answerIndices: [2, 0] }
+      ? { answerIndex: null, answerIndices: confirm(test.next.question) }
       : { answerIndex: 1 };
 
   const next = await answerLanguageLevelTest({
@@ -826,5 +954,5 @@ async function completeTapTest({
     throw new Error(`Answer returned ${next.status}`);
   }
 
-  await completeTapTest({ attemptId, goalId, test: next.test });
+  await completeTapTest({ attemptId, confirm, goalId, test: next.test });
 }

@@ -23,6 +23,20 @@ export const TEST_CASES: TestCase<unknown, LevelTestConfirmationsInput>[] = [
     userInput: { learnerLanguage: "pt", level: "B2", targetLanguage: "es" },
   },
   {
+    expectations:
+      "Write two fresh texts and two voice messages for A1. Their scenes, details and facts differ from the previous passages, and every option is decided by its own text.",
+    id: "pt-en-a1-retake",
+    userInput: {
+      learnerLanguage: "pt",
+      level: "A1",
+      previousPassages: [
+        "The bookstore opens at nine today. It closes at six. The cafe opens at eight. It is next to the bookstore.",
+        "Hi Bea. Your bus leaves at eight. My bus leaves at ten. I'll meet you at the library at eleven.",
+      ],
+      targetLanguage: "en",
+    },
+  },
+  {
     expectations: `French texts as written and spoken in France at C1 for US English speakers, with options on implicit meaning, stance, tone or a qualified view: a reader who understands every sentence literally gets at least one wrong. No option asks what an idiom means.`,
     id: "en-fr-c1",
     userInput: { learnerLanguage: "en", level: "C1", targetLanguage: "fr" },
