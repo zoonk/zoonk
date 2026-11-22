@@ -58,7 +58,7 @@ function isCarriedOver({
   );
 }
 
-function hasContinuingAnswer(session: SessionTimes): boolean {
+export function hasContinuingAnswer(session: SessionTimes): boolean {
   return session.blocks.some((block) => {
     if (block.kind !== "produce" || block.status !== "active" || block.payload === undefined) {
       return false;
@@ -69,7 +69,22 @@ function hasContinuingAnswer(session: SessionTimes): boolean {
   });
 }
 
-/** Includes yesterday's still-active session, never older sessions. */
+export const CONTINUING_ANSWER_SESSION_WHERE = {
+  blocks: {
+    some: {
+      AND: [
+        { payload: { equals: "answer", path: ["writing", "unit"] } },
+        { payload: { equals: false, path: ["extra"] } },
+        { payload: { not: AnyNull, path: ["writing", "admissionId"] } },
+      ],
+      kind: "produce" as const,
+      status: "active" as const,
+    },
+  },
+  goal: { kind: "exam" as const },
+};
+
+/** Includes yesterday within the carry window and any earlier day with a continuing answer. */
 export function isCurrentSession({
   now,
   session,
@@ -112,22 +127,6 @@ export function isRunStartDay({
   );
 }
 
-/** Today's started session takes precedence; otherwise a still-active yesterday may remain current. */
-export function pickCurrentDay<Session extends SessionTimes>({
-  now,
-  previous,
-  timeZone,
-  today,
-}: {
-  now: Date;
-  previous: Session | null;
-  timeZone: string;
-  today: Session | null;
-}): Session | null {
-  const carried = previous && isCarriedOver({ now, session: previous, timeZone }) ? previous : null;
-  return carried && !today?.startedAt ? carried : today;
-}
-
 export async function findCarriedOverSession({
   goalId,
   now,
@@ -150,35 +149,14 @@ export async function findCarriedOverSession({
     where: {
       OR: [
         { localDate: yesterday },
-        {
-          blocks: {
-            some: {
-              AND: [
-                { payload: { equals: "answer", path: ["writing", "unit"] } },
-                { payload: { equals: false, path: ["extra"] } },
-                { payload: { not: AnyNull, path: ["writing", "admissionId"] } },
-              ],
-              kind: "produce",
-              status: "active",
-            },
-          },
-          goal: { kind: "exam" },
-          localDate: { lt: yesterday },
-        },
+        { ...CONTINUING_ANSWER_SESSION_WHERE, localDate: { lt: yesterday } },
       ],
       goalId,
       userId,
     },
   });
 
-  return (
-    candidates.find(
-      (session) =>
-        hasContinuingAnswer(session) ||
-        (session.localDate.getTime() === yesterday.getTime() &&
-          isCarriedOver({ now, session, timeZone })),
-    ) ?? null
-  );
+  return candidates.find((session) => isCurrentSession({ now, session, timeZone })) ?? null;
 }
 
 export async function hasStartedDay({

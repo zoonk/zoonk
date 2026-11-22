@@ -1,8 +1,11 @@
 import "server-only";
 import { type Goal, type StudySession, type StudySessionBlock } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { withoutLockedPhaseChallenges } from "../../../checkpoints/_utils/phase-challenge-access";
-import { getCarryOverEnd, pickCurrentDay } from "../../../sessions/_utils/current-session";
+import {
+  getCarryOverEnd,
+  hasContinuingAnswer,
+  isCurrentSession,
+} from "../../../sessions/_utils/current-session";
 import { type DayBlockInput } from "../../../sessions/_utils/day-block-view";
 import { planEntitlementLapseRefill } from "../../../sessions/_utils/entitlement-lapse-refill";
 import { loadPreparingMockPositions } from "../../../sessions/_utils/preparing-mock-blocks";
@@ -30,17 +33,18 @@ function findSavedDay({
   sessions: readonly SavedSession[];
   timeZone: string;
 }): SavedSession | null {
-  const on = (date: Date) =>
-    sessions.find(
-      (session) => session.goalId === goal.id && session.localDate.getTime() === date.getTime(),
-    ) ?? null;
+  const goalDays = sessions.filter((session) => session.goalId === goal.id);
+  const today = goalDays.find((session) => session.localDate.getTime() === localDate.getTime());
 
-  return pickCurrentDay({
-    now,
-    previous: on(new Date(localDate.getTime() - MS_PER_DAY)),
-    timeZone,
-    today: on(localDate),
-  });
+  if (today?.startedAt) {
+    return today;
+  }
+
+  const carried = goalDays.find(
+    (session) => session.localDate < localDate && isCurrentSession({ now, session, timeZone }),
+  );
+
+  return carried ?? today ?? null;
 }
 
 async function getSummaryToday({
@@ -108,7 +112,6 @@ async function countDayMissions({
   return countMissions(missions);
 }
 
-/** dayDate may name yesterday's carried session; carriedUntil bounds how long it remains active. */
 export async function loadActiveGoalDay({
   goal,
   localDate,
@@ -152,7 +155,7 @@ export async function loadActiveGoalDay({
   ]);
 
   return {
-    carriedUntil: carried ? getCarryOverEnd(day) : null,
+    carriedUntil: carried && !hasContinuingAnswer(day) ? getCarryOverEnd(day) : null,
     dayDate: day?.localDate ?? localDate,
     missions,
     today,
