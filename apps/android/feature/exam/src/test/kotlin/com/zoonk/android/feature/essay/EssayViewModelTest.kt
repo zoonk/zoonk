@@ -409,6 +409,7 @@ class EssayViewModelTest {
             val answer = CompletableDeferred<Unit>()
             api.grade = {
                 answer.await()
+                api.read = essay(graded = listOf(LEVELS_RESULT))
                 result(LEVELS_RESULT)
             }
             val viewModel = opened(api)
@@ -473,6 +474,47 @@ class EssayViewModelTest {
             advanceUntilIdle()
             assertEquals("$ANSWER_TEXT Changed after the failure.", restored.ui.value.text)
             assertEquals(api.defaultStart, WritingStartAnswer.Ready(api.saved.last().admissionId))
+        }
+
+    @Test
+    fun aReplayedGradeKeepsTheEditsUntilTheRecordedAnswerCanBeRead() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi()
+            api.grade = { throw ApiException(ApiError.Network) }
+            val device = Device(this, api)
+            val writer = with(device) { open() }
+            val changed = "$ANSWER_TEXT Changed after the failure."
+
+            writer.startWriting()
+            writer.write(ANSWER_TEXT)
+            writer.send()
+            advanceUntilIdle()
+
+            api.saveError = ApiException(ApiError.Network)
+            api.grade = {
+                api.readError = ApiException(ApiError.Network)
+                result(LEVELS_RESULT)
+            }
+            writer.write(changed)
+            writer.send()
+            advanceUntilIdle()
+
+            assertEquals(changed, device.keptOnDisk()?.text)
+            assertEquals(WritingMode.Write, writer.ui.value.mode)
+            assertEquals(WritingSend.Failed, writer.ui.value.send)
+
+            api.grade = { result(LEVELS_RESULT) }
+            api.readError = null
+            api.read = essay(graded = listOf(LEVELS_RESULT))
+            writer.send()
+            advanceUntilIdle()
+
+            assertEquals(
+                ANSWER_TEXT,
+                writer.ui.value.latest
+                    ?.text,
+            )
+            assertEquals(changed, writer.ui.value.unsent)
         }
 
     @Test

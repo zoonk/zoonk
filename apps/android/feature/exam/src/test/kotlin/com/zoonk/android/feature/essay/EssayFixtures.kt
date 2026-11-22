@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.essay
 
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
@@ -153,13 +154,17 @@ internal class FakeEssayApi(
     var saveError: com.zoonk.android.data.ApiException? = null
 
     var grade: suspend (EssaySubmissionInput) -> WritingResultOutput = { awaitCancellation() }
+    var readError: ApiException? = null
     val submitted = mutableListOf<EssaySubmissionInput>()
 
     override suspend fun essay(
         session: AuthenticatedSession,
         blockId: UUID,
         timeZone: String,
-    ) = read
+    ): Essay {
+        readError?.let { throw it }
+        return read
+    }
 
     override suspend fun start(
         session: AuthenticatedSession,

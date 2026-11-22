@@ -249,8 +249,7 @@ extension WritingResult {
   }
 }
 
-/// A graded answer with its text, latest first on a block. `attemptId` is empty for an answer just
-/// graded here, until the block is read again.
+/// A saved grade with the text it was given for.
 struct WritingAnswer: Hashable, Decodable, Sendable {
   var attemptId: String
   var grade: WritingResult

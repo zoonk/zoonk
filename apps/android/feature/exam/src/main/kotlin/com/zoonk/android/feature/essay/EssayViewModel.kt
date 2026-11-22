@@ -226,11 +226,11 @@ class EssayViewModel(
             val request = sending.getOrPut(admissionId to text) { submission(admissionId, text, writingDuration()) }
             when (val result = withTimeoutOrNull(GRADING_TIMEOUT) { request.await() }) {
                 is MutationResult.Done -> {
-                    val recorded = recordedText(result.value)
-                    if (recorded != null && recorded != text) {
-                        replayed(admissionId, recorded, text, result.value)
-                    } else {
-                        graded(text, result.value)
+                    val recorded = recordedText(admissionId, result.value)
+                    when {
+                        recorded == null -> mutableUi.update { it.copy(send = WritingSend.Failed) }
+                        recorded != text -> replayed(admissionId, recorded, text, result.value)
+                        else -> graded(text, result.value)
                     }
                 }
 
@@ -464,9 +464,17 @@ class EssayViewModel(
     }
 
     /** The text the server recorded with [grade], from the essay read by the store after submission. */
-    private fun recordedText(grade: WritingResultOutput): String? {
+    private fun recordedText(
+        admissionId: UUID,
+        grade: WritingResultOutput,
+    ): String? {
+        if (essay.freshState.value !is LoadState.Loaded) return null
         val read = (essay.state.value as? LoadState.Loaded)?.value ?: return null
-        return read.drafts.firstOrNull { it.grade == grade }?.text
+        if (read.admissionId != admissionId || read.draft != null) return null
+        return read.drafts
+            .firstOrNull()
+            ?.takeIf { it.grade == grade }
+            ?.text
     }
 
     private fun submission(

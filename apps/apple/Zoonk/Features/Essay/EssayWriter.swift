@@ -38,7 +38,7 @@ final class EssayWriter {
   private(set) var failures = 0
   private(set) var slow = false
   private(set) var isRewriting = false
-  /// Graded answers, latest first: the read's, then each one sent this visit.
+  /// The block's saved grades, newest first.
   private(set) var answers: [WritingAnswer]
   private(set) var text: String
   /// A draft saved on another device over the one `text` was typed on: nothing saves until the
@@ -57,8 +57,6 @@ final class EssayWriter {
   @ObservationIgnored private var keptByEditor: KeptWriting.Kept?
   /// A save sent over `revision` without an answer yet: it may have landed.
   @ObservationIgnored private var sending: String?
-  /// Text sent for grading under this admission whose answer was lost: it may have been graded.
-  @ObservationIgnored private var sentForGrading: String?
   @ObservationIgnored private var saveRetries = 0
   @ObservationIgnored private var writingTime = Duration.zero
   @ObservationIgnored private var writingSince: ContinuousClock.Instant?
@@ -342,7 +340,6 @@ final class EssayWriter {
 
     let blockId = blockId
     let durationMs = writingMs
-    let earlier = sentForGrading
     let result: MutationResult<EssaySubmission>? = await within(Self.timeout) { [store] in
       await store.write(invalidating: [.learnerModel, .userProgress, .userSession]) { api, token in
         try await api.submitEssay(
@@ -354,12 +351,11 @@ final class EssayWriter {
     switch result {
     case .done(.graded(let grade)):
       admissionGraded = true
-      let read = await readAnswers()
-
-      let recorded = (read ? latest?.text : earlier) ?? text
-      if !read {
-        answers.insert(.init(attemptId: "", grade: grade, submittedAt: .now, text: recorded), at: 0)
+      guard let recorded = await recordedText(admissionId: admissionId, grade: grade) else {
+        fail()
+        return
       }
+
       if recorded != text {
         editsAfterGrading = text
         replaceKept(
@@ -371,7 +367,6 @@ final class EssayWriter {
       }
       status = .idle
       failures = 0
-      sentForGrading = nil
       writingTime = .zero
       writingSince = nil
       mode = .result
@@ -383,8 +378,6 @@ final class EssayWriter {
     case .obsolete:
       status = .idle
     case .failed, nil:
-      // It may have been graded with its answer lost on the way: sending again replays that grade.
-      sentForGrading = sentForGrading ?? text
       fail()
     }
   }
@@ -394,15 +387,16 @@ final class EssayWriter {
     status = .failed
   }
 
-  /// True when the server's answers came back.
-  @discardableResult
-  private func readAnswers() async -> Bool {
+  private func recordedText(admissionId: String, grade: WritingResult) async -> String? {
     essay.invalidate()
     await essay.refresh()
 
-    guard let drafts = essay.freshValue?.drafts, !drafts.isEmpty else { return false }
-    answers = drafts
-    return true
+    guard let view = essay.freshValue, view.admissionId == admissionId, view.draft == nil,
+      let saved = view.drafts.first, saved.grade == grade
+    else { return nil }
+
+    answers = view.drafts
+    return saved.text
   }
 
   /// A tap on "Rewrite" is a start, admitted here; past the day's extra grades it's refused before
@@ -412,10 +406,6 @@ final class EssayWriter {
 
     isRewriting = true
     defer { isRewriting = false }
-
-    if latest?.attemptId.isEmpty == true {
-      await readAnswers()
-    }
 
     guard let latest, !latest.attemptId.isEmpty else {
       failures += 1
@@ -429,7 +419,6 @@ final class EssayWriter {
       revision = 0
       savedText = ""
       sending = nil
-      sentForGrading = nil
       conflict = nil
       writingTime = .zero
       writingSince = nil

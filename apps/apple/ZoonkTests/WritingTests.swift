@@ -664,11 +664,17 @@ final class WritingDraftTests: XCTestCase {
     // The reopened screen starts from the cached draft and the edits kept on this device.
     let reopened = makeWriter(server, draftRevision: 2, draftText: "A")
     XCTAssertEqual(reopened.text, "A, improved")
+    await server.failReadAfterNextGrade()
+    await reopened.send()
+    XCTAssertEqual(KeptWriting.read(blockId)?.text, "A, improved")
+    XCTAssertEqual(reopened.status, .failed)
+    XCTAssertNil(reopened.latest)
+
     await reopened.send()
 
     let submitted = await server.submitted
-    XCTAssertEqual(submitted.map(\.admissionId), [Self.admission, Self.admission])
-    XCTAssertEqual(submitted.map(\.text), ["A", "A, improved"])
+    XCTAssertEqual(submitted.map(\.admissionId), [Self.admission, Self.admission, Self.admission])
+    XCTAssertEqual(submitted.map(\.text), ["A", "A, improved", "A, improved"])
     XCTAssertEqual(reopened.mode, .result)
     XCTAssertEqual(reopened.latest?.text, "A")
     XCTAssertEqual(reopened.editsAfterGrading, "A, improved")
@@ -813,6 +819,8 @@ private actor WritingServer: ClientTransport {
   private var holdsGrading: Bool
   private var losesFirstAnswer: Bool
   private var losesFirstGrade: Bool
+  private var failsReadAfterGrade = false
+  private var failsRead = false
   private var failsSaves: Int
   private var released: [CheckedContinuation<Void, Never>] = []
 
@@ -830,6 +838,10 @@ private actor WritingServer: ClientTransport {
 
   func waitForSaves(_ count: Int) async {
     while saves.count < count { await Task.yield() }
+  }
+
+  func failReadAfterNextGrade() {
+    failsReadAfterGrade = true
   }
 
   func waitForGrading() async {
@@ -908,11 +920,19 @@ private actor WritingServer: ClientTransport {
         return (HTTPResponse(status: .gatewayTimeout), nil)
       }
 
+      failsRead = failsReadAfterGrade
+      failsReadAfterGrade = false
+
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
         HTTPBody(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))
       )
     case "getEssay":
+      if failsRead {
+        failsRead = false
+        return (HTTPResponse(status: .serviceUnavailable), nil)
+      }
+
       let drafts =
         graded.map {
           #"[{"attemptId":"3674d948-e89d-8489-851c-fd3687fcb325","submittedAt":"2026-11-20T12:00:00.000Z","text":\#(String(data: try! JSONEncoder().encode($0), encoding: .utf8)!),"grade":\#(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))}]"#

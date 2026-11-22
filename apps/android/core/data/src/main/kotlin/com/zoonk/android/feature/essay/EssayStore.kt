@@ -418,7 +418,13 @@ class EssayStore(
     ): MutationResult<WritingResultOutput> =
         cache
             .mutate { session -> api.submit(session, blockId, EssaySubmissionInput(admissionId, durationMs, text, timeZone())) }
-            .also { if (it is MutationResult.Done) essays[blockId].refresh() }
+            .also {
+                if (it is MutationResult.Done) {
+                    val essay = essays[blockId]
+                    essay.invalidate()
+                    essay.refresh()
+                }
+            }
 
     suspend fun finish(
         sessionId: UUID,
