@@ -221,7 +221,9 @@ export function PlacementBetweenParts({
             : sentences.skipped(undone ? 0 : lessonsSkipped)}
         </OnboardingTitle>
         <OnboardingDescription>{left(minutesLeft)}</OnboardingDescription>
-        {heldUntilTomorrow && <OnboardingDescription>{retakeTomorrow}</OnboardingDescription>}
+        {heldUntilTomorrow && lessonsSkipped === 0 && (
+          <OnboardingDescription>{retakeTomorrow}</OnboardingDescription>
+        )}
       </OnboardingHeading>
       {undone && <p role="status">{sentences.back(lessonsSkipped ?? 0)}</p>}
       {onContinueOnboarding && (
@@ -261,8 +263,7 @@ export function PlacementResult({
 
   const unchangedPlan = heldUntilTomorrow ? retakeTomorrow : t("Your plan stays as it is.");
 
-  const description =
-    lessonsSkipped > 0 && !heldUntilTomorrow ? sentences.known(lessonsSkipped) : unchangedPlan;
+  const description = lessonsSkipped > 0 ? sentences.known(lessonsSkipped) : unchangedPlan;
 
   return (
     <TestOutcome

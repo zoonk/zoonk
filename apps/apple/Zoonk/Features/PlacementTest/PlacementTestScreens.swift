@@ -138,7 +138,7 @@ struct PlacementBetweenParts: View {
             "Between the whole-course test's parts: how long the rest takes, such as \"15 min\""
         ))
 
-      if heldUntilTomorrow {
+      if heldUntilTomorrow, lessonsSkipped == 0 {
         Text(PlacementTestCopy.retakeTomorrow)
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
@@ -235,12 +235,12 @@ struct PlacementTestResultView: View {
   }
 
   private var description: Text {
-    if heldUntilTomorrow {
-      return Text(PlacementTestCopy.retakeTomorrow)
-    }
-
     if lessonsSkipped > 0 {
       return Text(PlacementTestCopy.knownLessons(lessonsSkipped))
+    }
+
+    if heldUntilTomorrow {
+      return Text(PlacementTestCopy.retakeTomorrow)
     }
 
     return Text(

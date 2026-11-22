@@ -132,6 +132,18 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testRetakeThatSkipsOtherLessonsSaysWhatItSkipped() async throws {
+    try await capture(
+      "placement-retake-skipped-others", title: "23 lessons skipped",
+      detail: "You already know them. They stay in your practice.",
+      absent: ["You undid these today. Answer again tomorrow to skip them."]
+    ) {
+      PlacementTestResultView(
+        length: .quick, lessonsSkipped: 23, nextTopic: "Fractions", isSaving: false,
+        failed: false, heldUntilTomorrow: true, onDone: {})
+    }
+  }
+
   func testPlanShowsTheTestedSkillRanges() async throws {
     let standing = LanguageStanding(
       goal: .init(targetLanguage: "en"), level: .init(label: "B2+", target: "C1"), levels: [])

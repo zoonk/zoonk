@@ -148,7 +148,7 @@ internal fun ColumnScope.BetweenParts(
             shownLessons?.let { lessonsSkippedLine(it) } ?: stringResource(R.string.placementtest_continue_title),
             stringResource(R.string.placementtest_left_saved, formatMinutes(minutesLeft, currentLocale())),
         )
-        if (heldUntilTomorrow) Note(stringResource(R.string.placementtest_retake_tomorrow))
+        if (heldUntilTomorrow && lessonsSkipped == 0) Note(stringResource(R.string.placementtest_retake_tomorrow))
         PlacementUndoStatus(undo)
         if (inSetup) Note(stringResource(R.string.placementtest_continue_from_plan))
         PlacementResultActions(
@@ -193,8 +193,8 @@ internal fun ColumnScope.PlacementResult(
         title = lessonsSkippedLine(lessonsSkipped),
         lead =
             when {
-                heldUntilTomorrow -> stringResource(R.string.placementtest_retake_tomorrow)
                 lessonsSkipped > 0 -> placementKnownLine(lessonsSkipped)
+                heldUntilTomorrow -> stringResource(R.string.placementtest_retake_tomorrow)
                 else -> stringResource(R.string.placementtest_plan_stays)
             },
         action = stringResource(if (inSetup) R.string.onboarding_continue else R.string.placementtest_done),
