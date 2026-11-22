@@ -2,11 +2,13 @@ import SwiftUI
 
 struct LearnerBubble: View {
   let words: String
+  var spokenLabel: Text?
 
   var body: some View {
     if !words.isEmpty {
       ShareRow(share: 0.85, edge: .trailing) {
         Text(verbatim: words)
+          .accessibilityLabel(spokenLabel ?? Text(verbatim: words))
           .typeStyle(.body)
           .padding(.horizontal, 12)
           .padding(.vertical, 8)

@@ -187,10 +187,10 @@ private struct CallTranscript: View {
         let text = turn.text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if turn.speaker == .learner {
-          LearnerBubble(words: text)
-            .accessibilityLabel(
-              Text(
-                "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
+          LearnerBubble(
+            words: text,
+            spokenLabel: Text(
+              "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
         } else {
           Text(text)
             .frame(maxWidth: .infinity, alignment: .leading)
