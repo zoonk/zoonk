@@ -29,6 +29,19 @@ final class CertificatesStoreTests: XCTestCase {
     XCTAssertEqual(reads, 2, "Expected the list to be read again for the certificates just earned")
   }
 
+  func testALockedCertificateHasNoPictureOrLink() throws {
+    let certificates = try JSONDecoder().decode(
+      [OwnedCertificate].self,
+      from: Data(
+        "[\(certificateJSON(code: "LOCKED000001", locked: true)), \(certificateJSON(code: "ISSUED000001"))]"
+          .utf8))
+
+    XCTAssertEqual(certificates.map(\.facts.code), ["LOCKED000001", "ISSUED000001"])
+    XCTAssertNil(certificates[0].issued)
+    XCTAssertEqual(
+      certificates[1].issued?.url, URL(string: "https://zoonk.com/c/ISSUED000001"))
+  }
+
   func testTheDayEarnedNeverShiftsWithTheDevicesTimeZone() throws {
     let previous = NSTimeZone.default
     NSTimeZone.default = try XCTUnwrap(TimeZone(identifier: "America/Los_Angeles"))
@@ -68,20 +81,35 @@ final class CertificatesStoreTests: XCTestCase {
 private func decodedCertificate(
   code: String, recipientName: String?, title: String = "Quantum physics from scratch"
 ) throws -> Certificate {
+  try JSONDecoder().decode(
+    Certificate.self,
+    from: Data(certificateJSON(code: code, recipientName: recipientName, title: title).utf8))
+}
+
+/// One entry of the learner's list.
+private func certificateJSON(
+  code: String, recipientName: String? = "Ana Souza",
+  title: String = "Quantum physics from scratch", locked: Bool = false
+) -> String {
   let recipient = String(
     decoding: (try? JSONEncoder().encode(recipientName)) ?? Data(), as: UTF8.self)
-  let json = #"""
+  let links =
+    locked
+    ? #""url": null, "imageUrls": null, "linkedInUrl": null"#
+    : #"""
+    "url": "https://zoonk.com/c/\#(code)",
+    "imageUrls": {"screen": "https://zoonk.com/a.png", "print": "https://zoonk.com/b.png",
+      "link": "https://zoonk.com/c.png", "post": "https://zoonk.com/d.png"},
+    "linkedInUrl": "https://www.linkedin.com/profile/add"
+    """#
+
+  return #"""
     {"code": "\#(code)", "kind": "course", "recipientName": \#(recipient),
      "completedOn": "2026-11-03", "title": "\#(title)", "courseLevel": "beginner",
      "targetLanguage": null, "level": null, "topics": ["Variables"], "canDo": [],
-     "lessonsStudied": 148, "lessonsTestedOut": 0, "minutes": 2460, "locked": false,
-     "shownAt": null, "url": "https://zoonk.com/c/\#(code)",
-     "imageUrls": {"screen": "https://zoonk.com/a.png", "print": "https://zoonk.com/b.png",
-       "link": "https://zoonk.com/c.png", "post": "https://zoonk.com/d.png"},
-     "linkedInUrl": "https://www.linkedin.com/profile/add"}
+     "lessonsStudied": 148, "lessonsTestedOut": 0, "minutes": 2460, "locked": \#(locked),
+     "shownAt": null, \#(links)}
     """#
-
-  return try JSONDecoder().decode(Certificate.self, from: Data(json.utf8))
 }
 
 private actor CertificatesAPIStub: CertificatesAPIClient {
