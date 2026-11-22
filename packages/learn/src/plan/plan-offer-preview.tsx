@@ -2,23 +2,22 @@
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type SuggestedDailyTime } from "@zoonk/core/plans/view-contract";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { useExtracted } from "next-intl";
 import { SuggestionAction, SuggestionActions } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatDuration } from "../_utils/time-format";
 import { type GoalDateMove } from "../plan-diff/change-names";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
-import { useFullCourse, useFullCourseText, useKeepStudyingLabel } from "./plan-full-course";
+import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
-import { readTimeToCover } from "./use-time-to-cover";
 
 export function getGoalDateMove({
   operations,
@@ -200,87 +199,61 @@ export type CoverageOffer = {
 
 export type Intent = "date" | "time";
 
-export function useAnswerOffer() {
+/** A goal that isn't an exam can move its date to where its own time covers everything. */
+export function useDateOffer() {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
-  const answerTexts = useTimeAnswerTexts();
-  const { goal, plan } = usePlanScreen();
+  const { goal } = usePlanScreen();
 
-  return function answerOffer({
-    covered,
-    intent,
-    time,
-  }: {
-    covered: string;
-    intent: Intent;
-    time: PlanTimeToCover;
-  }): CoverageOffer | null {
-    const answer = readTimeToCover(time);
+  return function dateOffer(time: PlanTimeToCover): CoverageOffer | null {
     const { fittingDate } = time;
 
-    if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
-      const date = formatDate(fittingDate, "sentence");
-
-      return {
-        description: [covered],
-        operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
-        title: t({
-          description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-          message:
-            "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-          values: { date, dateKind: "day" },
-        }),
-      };
-    }
-
-    if (intent === "date" || answer.kind === "none") {
+    if (goal.kind === "exam" || !fittingDate) {
       return null;
     }
 
-    if (answer.kind === "focus") {
-      // A learner who already studies longer is never asked to cut down.
-      return answer.minutes > plan.schedule.dailyMinutes
-        ? {
-            description: [answerTexts.startsWithMost(goal.kind === "exam")],
-            operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
-            title: answerTexts.suggestTitle(answer.minutes),
-          }
-        : null;
-    }
-
     return {
-      description: [covered],
-      operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
-      title: t("{time} a day covers everything", { time: formatDuration(answer.minutes) }),
+      description: [],
+      operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
+      title: t({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
+        values: { date: formatDate(fittingDate, "sentence"), dateKind: "day" },
+      }),
     };
   };
 }
 
-export function useCourseOffer(): CoverageOffer | null {
-  const course = useFullCourse();
-  const text = useFullCourseText();
-  const keepStudying = useKeepStudyingLabel();
+/** The time the plan suggests, applied as any change: its title names the time, its line why. */
+export function useSuggestedTimeOffer() {
+  const answerTexts = useTimeAnswerTexts();
+  const { goal, plan } = usePlanScreen();
+  const exam = goal.kind === "exam";
+  const { schedule } = plan;
 
-  if (!course?.on) {
-    return null;
-  }
+  return function suggestedTimeOffer(suggested: SuggestedDailyTime): CoverageOffer {
+    const date = schedule.targetDate && {
+      estimated: schedule.targetDateEstimated,
+      isoDate: schedule.targetDate,
+      namedMonth: schedule.targetDateNamedMonth,
+    };
 
-  return {
-    description: [],
-    operations: course.operations(false),
-    title: text.finish(course) ?? keepStudying,
+    const line =
+      suggested.kind === "everything" && date
+        ? answerTexts.enoughBy({ date, exam })
+        : answerTexts.startsWithMost(exam);
+
+    return {
+      description: [line],
+      operations: [{ kind: "setDailyMinutes", minutes: suggested.minutes }],
+      title: answerTexts.suggestTitle(suggested.minutes),
+    };
   };
 }
 
-export function OtherOptions({
-  onMoveDate,
-  studyEverythingLeads,
-}: {
-  onMoveDate: (() => void) | null;
-  studyEverythingLeads: boolean;
-}) {
+export function OtherOptions({ onMoveDate }: { onMoveDate: (() => void) | null }) {
   const t = useExtracted();
   const canChooseFocus = useCanChooseFocus();
   const chooseFocus = useChooseFocus();
@@ -301,7 +274,7 @@ export function OtherOptions({
           {t("Choose where to focus")}
         </DropdownMenuItem>
       )}
-      {course && !course.on && !studyEverythingLeads && (
+      {course && !course.on && (
         <DropdownMenuItem onClick={() => studyEverything(course)}>
           {course.isExam ? keepStudying : t("Remove end date")}
         </DropdownMenuItem>

@@ -18,7 +18,6 @@ import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
 import { RequestScope } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
-import { useFallsShort, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
 import { ExamChoiceSuggestion } from "./plan-exam-choices";
 import { FitLessonsSuggestion } from "./plan-fit-suggestion";
@@ -46,13 +45,11 @@ function isLearnerOnSlot(): boolean {
 
 function useTimeItems(): SlotItem[] {
   const { plan } = usePlanScreen();
-  const fallsShort = useFallsShort();
-  const timeEnough = useTimeEnough();
   const open = plan.status?.kind !== "pastDate";
 
   return [
     open && plan.fitOffer !== null && { key: "fitLessons", kind: "fitLessons" as const },
-    open && fallsShort && !timeEnough && { key: "coverage", kind: "coverage" as const },
+    open && plan.suggestedTime !== null && { key: "coverage", kind: "coverage" as const },
   ].filter((item) => item !== false);
 }
 
