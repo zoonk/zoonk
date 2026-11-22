@@ -274,7 +274,7 @@ func goalPlanFixture(
         },
         "weekdayMinutes": \(weekdayMinutes)
       },
-      "status": { "kind": "\(status)" }, "suggested": \(suggested ?? "null"),
+      "status": { "kind": "\(status)" }, "suggestedTime": \(suggested ?? "null"),
       "steering": {
         "difficultyBias": "standard", "lessonsStudied": \(lessonsStudied), "practiceBias": "balanced",
         "skippedActivities": []

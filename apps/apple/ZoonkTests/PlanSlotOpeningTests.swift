@@ -456,7 +456,7 @@ final class PlanSlotOpeningTests: XCTestCase {
     """
 
   /// The plan suggests an hour a day, more than its 30 minutes.
-  private static let suggested = #"{"kind": "everything", "minutes": 60, "split": null}"#
+  private static let suggested = #"{"kind": "everything", "minutes": 60}"#
 
   /// A plan whose date passed; a later one fits.
   private func pastDate() async throws -> PlanAPIStub {

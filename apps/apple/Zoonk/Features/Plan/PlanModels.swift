@@ -265,9 +265,9 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let ready: Bool
   let schedule: Schedule
   let status: Status?
-  /// The time a day the plan suggests, worked out when it's saved: never more than 4 hours. Nil for
-  /// a plan without a date.
-  let suggested: TimeToCover.Suggested?
+  /// The time a day the plan suggests, worked out when it's saved and never more than 4 hours; nil
+  /// unless the goal's own time is below it.
+  let suggestedTime: TimeToCover.Suggested?
   let steering: Steering
   let tools: [Tool]
   let week: Week

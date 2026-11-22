@@ -19,10 +19,9 @@ enum PlanSlotItem: Hashable {
     let status = plan.status?.kind
     let finished = plan.end != nil
     let open = status != .pastDate
-    let belowSuggestion = plan.suggested.map { plan.schedule.dailyMinutes < $0.minutes } ?? false
     let timeItems: [PlanSlotItem] = [
       open && plan.fitOffer != nil ? .fitLessons : nil,
-      open && belowSuggestion ? .coverage : nil,
+      open && plan.suggestedTime != nil ? .coverage : nil,
     ].compactMap(\.self)
 
     var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
@@ -518,7 +517,7 @@ struct PlanSuggestionSection: View {
         PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
       }
     case .coverage:
-      if let suggested = context.plan.suggested {
+      if let suggested = context.plan.suggestedTime {
         PlanCoverageSlot(context: context, suggested: suggested, actions: offers)
       }
     case .courseComplete:
@@ -575,7 +574,7 @@ struct PlanSuggestionSection: View {
     case .fitLessons:
       (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
     case .coverage:
-      (Text(context.plan.suggested.map(PlanCoverageSlot.title) ?? ""), .sparkle)
+      (Text(context.plan.suggestedTime.map(PlanCoverageSlot.title) ?? ""), .sparkle)
     case .courseComplete:
       (completeTitle, claimMark)
     case .finished:
