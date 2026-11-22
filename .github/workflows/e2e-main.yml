@@ -142,7 +142,7 @@ jobs:
   e2e-main:
     if: always()
     needs: suites
-    runs-on: ubuntu-latest
+    runs-on: celesto-micro
     steps:
       - name: Every part passed
         run: test "${{ needs.suites.result }}" = success
