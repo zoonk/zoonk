@@ -26,11 +26,12 @@ export type GenerationFailure = {
 
 /** Workflows write `updated_at` through Prisma in UTC, so the cutoff is UTC too. */
 const stuckBeforeSql = sql`(NOW() AT TIME ZONE 'UTC') - make_interval(mins => ${STUCK_RUNNING_MINUTES}::int)`;
+const failedLessonContentSql = sql`content_status = 'failed' AND set_aside_at IS NULL`;
 
 function countFailures() {
   return prisma.$queryRaw<WorkflowCountRow[]>`
     SELECT 1 AS position, 'lessonContent' AS workflow,
-      COUNT(*) FILTER (WHERE content_status = 'failed') AS failed,
+      COUNT(*) FILTER (WHERE ${failedLessonContentSql}) AS failed,
       COUNT(*) FILTER (WHERE content_status = 'running' AND updated_at < ${stuckBeforeSql}) AS stuck
     FROM library_lessons
     UNION ALL SELECT 2, 'lessonSpec',
@@ -60,7 +61,7 @@ function listLatestFailures() {
     (SELECT 'lessonContent' AS workflow, id, title AS label, NULL::uuid AS "parentId",
       content_status::text AS status, updated_at AS "updatedAt"
     FROM library_lessons
-    WHERE content_status = 'failed' OR (content_status = 'running' AND updated_at < ${stuckBeforeSql})
+    WHERE (${failedLessonContentSql}) OR (content_status = 'running' AND updated_at < ${stuckBeforeSql})
     ORDER BY updated_at DESC LIMIT ${limit})
     UNION ALL (SELECT 'lessonSpec', id, title, NULL::uuid, spec_status::text, updated_at
     FROM library_lessons
