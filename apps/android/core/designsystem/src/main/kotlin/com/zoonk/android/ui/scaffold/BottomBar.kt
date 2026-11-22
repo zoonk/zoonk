@@ -49,12 +49,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.zoonk.android.app.LocalSnackbarAnchors
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LocalButtonSize
+import com.zoonk.android.ui.components.isWideLayout
 
 /**
  * Main's `BottomBar`: the one home of a screen's main action, pinned to the bottom over a hairline. It
@@ -63,7 +65,7 @@ import com.zoonk.android.ui.components.LocalButtonSize
  * under a page's column, which a page whose column starts at its pane's edge or keeps another side margin says
  * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) is the bar's top:
  * the hairline moves above it, the bar's surface behind it and its words in the buttons' column, as far from the hairline as the
- * buttons are from it. It draws over the page rather than pushing the bar's buttons up, so they never move; [noteRoom] tells the page
+ * buttons are from it; on a wide layout it ends on the bar's end edge, over the main action ([LocalBarNoteAtEnd]). It draws over the page rather than pushing the bar's buttons up, so they never move; [noteRoom] tells the page
  * how tall it is, for its scrolling content to end clear of it. A note taller than the room between the page's content ([barNoteViewport]) and the bar goes into the
  * page's scroll instead ([BarNoteInPage]), where it can be read whole. Its slot stays in place as a polite live region, so a new note
  * is read out. The window's snackbars show above it. Across an unfolded book's fold,
@@ -84,6 +86,7 @@ fun BottomBar(
     var span by remember { mutableStateOf<PageSpan?>(null) }
     var barTop by remember { mutableFloatStateOf(Float.NaN) }
     val room = noteRoom ?: remember { BarNoteRoom() }
+    val noteAtEnd = isWideLayout()
 
     DisposableEffect(anchors) { onDispose { anchors.remove(key) } }
     SideEffect { room.show(note) }
@@ -118,7 +121,8 @@ fun BottomBar(
                                 columnWidth = columnWidth,
                                 columnAtStart = columnAtStart,
                                 padding = PaddingValues(start = columnMargin, top = columnMargin, end = columnMargin),
-                            ) { it() }
+                                alignment = if (noteAtEnd) Alignment.End else Alignment.Start,
+                            ) { CompositionLocalProvider(LocalBarNoteAtEnd provides noteAtEnd) { it() } }
                         }
                     }
                 }
@@ -152,6 +156,7 @@ private fun BarRow(
     columnWidth: Dp,
     columnAtStart: Boolean,
     padding: PaddingValues,
+    alignment: Alignment.Horizontal = Alignment.Start,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
@@ -164,6 +169,7 @@ private fun BarRow(
         Column(
             Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(padding),
             verticalArrangement = Arrangement.spacedBy(BAR_GAP),
+            horizontalAlignment = alignment,
             content = content,
         )
     }
@@ -276,11 +282,30 @@ private fun Modifier.aboveBar(
 
 private const val BAR_NOTE_KEY = "bar-note"
 
+/**
+ * True inside a [BottomBar]'s note on a wide layout, where the note ends on the bar's end edge over its main action (main's
+ * `lg:text-end`): a note's words end there too.
+ */
+val LocalBarNoteAtEnd = compositionLocalOf { false }
+
+/** How a [BottomBar] note's lines align: on the bar's end edge where the note sits there ([LocalBarNoteAtEnd]). */
+@Composable
+fun barNoteTextAlign(): TextAlign = if (LocalBarNoteAtEnd.current) TextAlign.End else TextAlign.Start
+
+/** Where a [BottomBar] note's parts sit across its width: on the bar's end edge where the note sits there ([LocalBarNoteAtEnd]). */
+@Composable
+fun barNoteAlignment(): Alignment.Horizontal = if (LocalBarNoteAtEnd.current) Alignment.End else Alignment.Start
+
 /** Main's gap between a bar's buttons. */
 val BAR_GAP = 8.dp
 
 /** A [BottomBar] note for what its last tap couldn't do, such as a failed save: read out as the note's slot appears. */
 @Composable
 fun BarError(message: String) {
-    Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+    Text(
+        text = message,
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodyMedium,
+        textAlign = barNoteTextAlign(),
+    )
 }

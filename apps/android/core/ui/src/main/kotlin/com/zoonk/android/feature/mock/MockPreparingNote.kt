@@ -31,6 +31,8 @@ import com.zoonk.android.ui.components.rememberGenerationProgress
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.barNoteAlignment
+import com.zoonk.android.ui.scaffold.barNoteTextAlign
 import kotlinx.coroutines.CoroutineScope
 import kotlin.math.ceil
 
@@ -88,15 +90,21 @@ private fun MockWritingProgress(
     val line = if (run.status == GenerationRun.Status.Ready) stringResource(R.string.mock_writing_done) else listOf(step, left).factsLine()
 
     // On a wide bar the bar keeps a short note's width (main's `max-w-sm`) instead of crossing the page.
-    Column(Modifier.widthIn(max = 384.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(title, style = MaterialTheme.typography.titleSmall)
+    val align = barNoteTextAlign()
+    Column(
+        Modifier.widthIn(max = 384.dp).fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = barNoteAlignment(),
+    ) {
+        Text(title, style = MaterialTheme.typography.titleSmall, textAlign = align)
         // The bar's note is a live region: TalkBack hears the line as it changes (a step, a minute), not every tick of the bar.
         Column(
             Modifier.clearAndSetSemantics { contentDescription = line },
             verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = barNoteAlignment(),
         ) {
             GenerationProgressBar(kind, run, share)
-            Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium, textAlign = align)
         }
     }
 }

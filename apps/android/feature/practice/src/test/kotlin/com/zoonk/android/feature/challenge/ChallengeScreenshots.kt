@@ -229,6 +229,10 @@ class ChallengeScreenshots {
     fun phoneMockPreparing() = show("phone-mock-preparing", *mockToday, mocks = writingPaperApi(null))
 
     @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletMockPreparing() = show("tablet-mock-preparing", *mockToday, mocks = writingPaperApi(null))
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneMockPreparingDark() = show("phone-mock-preparing-dark-more-contrast", *mockToday, mocks = writingPaperApi(null), dark = true)
 
