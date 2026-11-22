@@ -15,13 +15,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -263,7 +267,9 @@ class OnboardingScreenshots {
                         sources = sources,
                     )
             }
+        lateinit var focus: FocusManager
         compose.setContent {
+            focus = LocalFocusManager.current
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } }
         }
         compose.waitForIdle()
@@ -276,7 +282,9 @@ class OnboardingScreenshots {
                 status = 422,
                 details = buildJsonObject { putJsonArray("sourceIds") { sources.take(unreadable).forEach { add(it.id.toString()) } } },
             )
-        compose.onNodeWithText("Build my plan").performClick()
+        // Sent from the keyboard and the box left, as a tap on Build my plan leaves its press ripple drawn in the picture.
+        compose.onNode(hasSetTextAction()).performImeAction()
+        compose.runOnUiThread { focus.clearFocus() }
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
