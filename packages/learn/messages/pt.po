@@ -8843,7 +8843,7 @@ msgstr "Formação musical para {instrument}"
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "yJQoIT"
 msgid "Can't be read"
-msgstr ""
+msgstr "Não pode mais ser lido"
 
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "G5e8UX"
@@ -8854,13 +8854,13 @@ msgstr "Remover {title}"
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "2FABsh"
 msgid "We can't read some of your files anymore. Remove them and add them again."
-msgstr ""
+msgstr "Não dá mais para ler alguns dos seus arquivos. Remova-os e adicione-os de novo."
 
 #. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
 #: src/onboarding/entry/goal-attachments.tsx
 msgctxt "-9IdF4"
 msgid "We can't read “{title}” anymore. Remove it and add it again."
-msgstr ""
+msgstr "Não dá mais para ler “{title}”. Remova esse arquivo e adicione-o de novo."
 
 #: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10121,15 +10121,17 @@ msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "Seu plano e suas aulas seguem este material"
 
+#. Under the learner's material on the goal card, when some of it can't be read anymore.
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "quZfVt"
 msgid "Some of your material can't be read anymore, so your plan won't follow it."
-msgstr ""
+msgstr "Parte do seu material não dá mais para ler, então seu plano não vai levar isso em conta."
 
+#. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "YOP-LJ"
 msgid "It can't be read anymore, so your plan won't follow it."
-msgstr ""
+msgstr "Não dá mais para ler esse material, então seu plano não vai levá-lo em conta."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
