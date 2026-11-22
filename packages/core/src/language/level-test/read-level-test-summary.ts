@@ -9,7 +9,7 @@ import {
   levelTestProgressSchema,
   levelTestResultSchema,
 } from "./level-test-contract";
-import { levelTestOutProgressSchema } from "./level-test-out-contract";
+import { isOpenLevelTestOut, levelTestOutProgressSchema } from "./level-test-out-contract";
 
 const attemptStateSchema = z.object({
   attempt: levelTestProgressSchema.optional(),
@@ -74,6 +74,10 @@ export function readLevelTestSummary(goal: Pick<Goal, "details">) {
   return {
     attempt: readOpenAttempt(progress),
     nextTestOutLevel: nextTestOutLevel ?? null,
+    /** Offered whatever happened since it started, so the learner can always go back to it. */
+    openTestOutLevel: isOpenLevelTestOut(progress.testOut)
+      ? (progress.testOut?.level ?? null)
+      : null,
     result: lastResult ?? null,
   };
 }

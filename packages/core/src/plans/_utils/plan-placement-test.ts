@@ -66,13 +66,14 @@ export async function readPlanPlacementTest(
     const idleState = summary.result ? "result" : "start";
 
     const [nextTestOutLevel, levelResult] = await Promise.all([
-      availableLevelTestOut({
-        goalId: goal.id,
-        level: summary.nextTestOutLevel,
-        now,
-        timeZone: context.timeZone,
-        userId: goal.userId,
-      }),
+      summary.openTestOutLevel ??
+        availableLevelTestOut({
+          goalId: goal.id,
+          level: summary.nextTestOutLevel,
+          now,
+          timeZone: context.timeZone,
+          userId: goal.userId,
+        }),
       summary.result ? withLevelTestChange(goal.id, summary.result) : null,
     ]);
 

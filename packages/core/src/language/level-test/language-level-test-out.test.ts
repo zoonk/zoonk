@@ -13,6 +13,7 @@ import {
   type LanguageLevelTestOutResult,
   answerLanguageLevelTestOut,
   getLanguageLevelTestOut,
+  getNextAvailableLevelTestOut,
   startLanguageLevelTestOut,
 } from "./language-level-test-out";
 import { startLanguageLevelTest } from "./start-language-level-test";
@@ -90,6 +91,68 @@ async function takeTest({
 }
 
 describe("a language level test-out", () => {
+  it("still offers an open test-out after today's misses rule its level out of a new one", async () => {
+    const { goal, skills, user } = await languageGoalFixture();
+    const [reading, listening] = skills;
+
+    if (!reading || !listening) {
+      throw new Error("Expected two topics");
+    }
+
+    const media = await mediaAssetFixture({ durationMs: 30_000, kind: "audio" });
+    const set = await listeningSetFixture({ mediaAssetId: media.id });
+
+    await Promise.all([
+      prisma.skill.updateMany({
+        data: { cefrLevel: "C2" },
+        where: { id: { in: [reading.id, listening.id] } },
+      }),
+      writeTapQuestions({ skillId: reading.id }),
+      writeTapQuestions({ setId: set.id, skillId: listening.id }),
+    ]);
+
+    mockSession(user.id);
+    const started = await startLanguageLevelTestOut({ goalId: goal.id, level: "C2" });
+
+    if (started.status !== "ready") {
+      throw new Error(`Start returned ${started.status}`);
+    }
+
+    const missed = new Set<string>();
+    let view = started.test;
+
+    while (view.next && missed.size < 2) {
+      const { next } = view;
+      missed.add(next.skill);
+      const answer = next.select === "all" ? { selectedIndexes: [4] } : { selectedIndex: 1 };
+
+      // oxlint-disable-next-line no-await-in-loop -- Each answer reads the question the last one left.
+      const result = await answerLanguageLevelTestOut({
+        goalId: goal.id,
+        input: { answer, attemptId: view.attemptId, durationMs: 1500, itemId: next.itemId },
+      });
+
+      if (result.status !== "ready") {
+        throw new Error(`Answer returned ${result.status}`);
+      }
+
+      view = result.test;
+    }
+
+    expect(missed).toStrictEqual(new Set(["reading", "listening"]));
+    expect(view.next).not.toBeNull();
+
+    await expect(getNextAvailableLevelTestOut(goal.id)).resolves.toBe("C2");
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { placementTest: { nextTestOutLevel: "C2", state: "continue" } },
+    });
+
+    await expect(
+      startLanguageLevelTestOut({ goalId: goal.id, level: "C2" }),
+    ).resolves.toMatchObject({ status: "ready", test: { attemptId: started.test.attemptId } });
+  });
+
   it("keeps B2 in the plan when a B1 learner's B2 lessons are still stand-ins", async () => {
     const { goal, items, plan, skills, user } = await languageGoalFixture();
     const days = [new Date("2026-11-18"), new Date("2026-11-19")];

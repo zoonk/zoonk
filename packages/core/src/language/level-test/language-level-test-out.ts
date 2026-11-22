@@ -75,14 +75,17 @@ export async function getNextAvailableLevelTestOut(goalId: string) {
   }
 
   const { goal, userId } = owned;
-  const { nextTestOutLevel } = readLevelTestSummary(goal);
+  const { nextTestOutLevel, openTestOutLevel } = readLevelTestSummary(goal);
 
-  return availableLevelTestOut({
-    goalId,
-    level: nextTestOutLevel,
-    timeZone: getAnswerTimeZone({ goal }),
-    userId,
-  });
+  return (
+    openTestOutLevel ??
+    availableLevelTestOut({
+      goalId,
+      level: nextTestOutLevel,
+      timeZone: getAnswerTimeZone({ goal }),
+      userId,
+    })
+  );
 }
 
 export async function startLanguageLevelTestOut({
