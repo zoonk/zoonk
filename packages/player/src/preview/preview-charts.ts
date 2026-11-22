@@ -2,10 +2,10 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { DETECTOR_SCAN_PLOT, FILL_WEIGHT_PLOT } from "@zoonk/testing/fixtures/plot-visuals";
 import { type PreviewEntry, entry } from "./preview-entry";
 import {
+  distanceChart,
   explanationStep,
   japaneseRegionsChart,
   lawTimeline,
-  lettersChart,
   visitorsChart,
 } from "./preview-steps";
 
@@ -15,7 +15,7 @@ export const chartEntries: PreviewEntry[] = [
     id: "explanation-chart",
     label: "Explanation with a chart",
     screen: (id) =>
-      explanationStep({ ...playableStepContent.explanation, visual: lettersChart }, { id }),
+      explanationStep({ ...playableStepContent.explanation, visual: distanceChart }, { id }),
   }),
   entry({
     group: "Lesson screens",
