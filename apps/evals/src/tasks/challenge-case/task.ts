@@ -20,6 +20,7 @@ async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
   const plan = await generateChallengePlan(params);
 
   const problems = checkChallengePlan({
+    language: params.language,
     plan: plan.data,
     skills: params.skills,
     variant: params.variant,
@@ -46,9 +47,9 @@ async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
 }
 
 const checkOutput: TaskCodeChecks = ({ output, testCase }) => {
-  const { variant } = testCase.userInput as ChallengeCaseParams;
+  const { language, variant } = testCase.userInput as ChallengeCaseParams;
   const written = JSON.parse(output) as WrittenChallengeCase;
-  const { problems } = checkWrittenChallenge({ variant, written });
+  const { problems } = checkWrittenChallenge({ language, variant, written });
 
   return {
     blockingProblems: problems,

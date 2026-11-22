@@ -38399,6 +38399,129 @@
                   "events"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "plot"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  },
+                  "xLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "xUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "yLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "yUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "series": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "mark": {
+                          "type": "string",
+                          "enum": [
+                            "points",
+                            "line",
+                            "lineWithPoints"
+                          ]
+                        },
+                        "points": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "x": {
+                                "type": "number"
+                              },
+                              "y": {
+                                "type": "number"
+                              },
+                              "label": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "x",
+                              "y",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "mark",
+                        "points"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "y": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "y"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "source": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  }
+                },
+                "required": [
+                  "kind",
+                  "title",
+                  "xLabel",
+                  "xUnit",
+                  "yLabel",
+                  "yUnit",
+                  "series",
+                  "references",
+                  "source"
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -38556,9 +38679,132 @@
               "events"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "plot"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "description": "Aim for 120 characters or fewer."
+              },
+              "xLabel": {
+                "type": "string",
+                "description": "Aim for 40 characters or fewer."
+              },
+              "xUnit": {
+                "nullable": true,
+                "type": "string",
+                "description": "Aim for 12 characters or fewer."
+              },
+              "yLabel": {
+                "type": "string",
+                "description": "Aim for 40 characters or fewer."
+              },
+              "yUnit": {
+                "nullable": true,
+                "type": "string",
+                "description": "Aim for 12 characters or fewer."
+              },
+              "series": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Aim for 40 characters or fewer."
+                    },
+                    "mark": {
+                      "type": "string",
+                      "enum": [
+                        "points",
+                        "line",
+                        "lineWithPoints"
+                      ]
+                    },
+                    "points": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          },
+                          "label": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "mark",
+                    "points"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Aim for 40 characters or fewer."
+                    },
+                    "y": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "y"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "source": {
+                "nullable": true,
+                "type": "string",
+                "description": "Aim for 120 characters or fewer."
+              }
+            },
+            "required": [
+              "kind",
+              "title",
+              "xLabel",
+              "xUnit",
+              "yLabel",
+              "yUnit",
+              "series",
+              "references",
+              "source"
+            ],
+            "additionalProperties": false
           }
         ],
-        "description": "A bar or line chart (categories with one or more series of values) or a timeline of dated events, drawn from its data"
+        "description": "A category chart, numeric plot, or timeline of dated events, drawn from its data"
       },
       "TrueFalseLabels": {
         "type": "string",
@@ -62572,6 +62818,223 @@
                           "type": "string",
                           "minLength": 1,
                           "description": "Aim for 240 characters or fewer."
+                        },
+                        "visual": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "chart"
+                                  ]
+                                },
+                                "chart": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bar",
+                                    "line"
+                                  ]
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                },
+                                "categoryLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "valueLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "unit": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 12 characters or fewer."
+                                },
+                                "axisStart": {
+                                  "nullable": true,
+                                  "type": "number"
+                                },
+                                "categories": {
+                                  "minItems": 2,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "description": "Aim for 40 characters or fewer."
+                                  }
+                                },
+                                "series": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      },
+                                      "values": {
+                                        "minItems": 2,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "number"
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "values"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "source": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "chart",
+                                "title",
+                                "categoryLabel",
+                                "valueLabel",
+                                "unit",
+                                "axisStart",
+                                "categories",
+                                "series",
+                                "source"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "plot"
+                                  ]
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                },
+                                "xLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "xUnit": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 12 characters or fewer."
+                                },
+                                "yLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "yUnit": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 12 characters or fewer."
+                                },
+                                "series": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      },
+                                      "mark": {
+                                        "type": "string",
+                                        "enum": [
+                                          "points",
+                                          "line",
+                                          "lineWithPoints"
+                                        ]
+                                      },
+                                      "points": {
+                                        "minItems": 1,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "x": {
+                                              "type": "number"
+                                            },
+                                            "y": {
+                                              "type": "number"
+                                            },
+                                            "label": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "description": "Aim for 40 characters or fewer."
+                                            }
+                                          },
+                                          "required": [
+                                            "x",
+                                            "y",
+                                            "label"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "mark",
+                                      "points"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "references": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "label": {
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "label",
+                                      "y"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "source": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "title",
+                                "xLabel",
+                                "xUnit",
+                                "yLabel",
+                                "yUnit",
+                                "series",
+                                "references",
+                                "source"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -63224,6 +63687,129 @@
                           "kind",
                           "title",
                           "events"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
                         ],
                         "additionalProperties": false
                       }
@@ -68149,6 +68735,129 @@
                           "events"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
+                        ],
+                        "additionalProperties": false
                       }
                     ]
                   }
@@ -68635,6 +69344,129 @@
                               "events"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "plot"
+                                ]
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              },
+                              "xLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "xUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "yLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "yUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "series": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "mark": {
+                                      "type": "string",
+                                      "enum": [
+                                        "points",
+                                        "line",
+                                        "lineWithPoints"
+                                      ]
+                                    },
+                                    "points": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "x": {
+                                            "type": "number"
+                                          },
+                                          "y": {
+                                            "type": "number"
+                                          },
+                                          "label": {
+                                            "nullable": true,
+                                            "type": "string",
+                                            "description": "Aim for 40 characters or fewer."
+                                          }
+                                        },
+                                        "required": [
+                                          "x",
+                                          "y",
+                                          "label"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "mark",
+                                    "points"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "references": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "label": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "label",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "source": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "title",
+                              "xLabel",
+                              "xUnit",
+                              "yLabel",
+                              "yUnit",
+                              "series",
+                              "references",
+                              "source"
+                            ],
+                            "additionalProperties": false
                           }
                         ]
                       }
@@ -68828,6 +69660,129 @@
                               "kind",
                               "title",
                               "events"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "plot"
+                                ]
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              },
+                              "xLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "xUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "yLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "yUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "series": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "mark": {
+                                      "type": "string",
+                                      "enum": [
+                                        "points",
+                                        "line",
+                                        "lineWithPoints"
+                                      ]
+                                    },
+                                    "points": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "x": {
+                                            "type": "number"
+                                          },
+                                          "y": {
+                                            "type": "number"
+                                          },
+                                          "label": {
+                                            "nullable": true,
+                                            "type": "string",
+                                            "description": "Aim for 40 characters or fewer."
+                                          }
+                                        },
+                                        "required": [
+                                          "x",
+                                          "y",
+                                          "label"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "mark",
+                                    "points"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "references": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "label": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "label",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "source": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "title",
+                              "xLabel",
+                              "xUnit",
+                              "yLabel",
+                              "yUnit",
+                              "series",
+                              "references",
+                              "source"
                             ],
                             "additionalProperties": false
                           }
@@ -72805,6 +73760,129 @@
                           "events"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
+                        ],
+                        "additionalProperties": false
                       }
                     ]
                   }
@@ -73257,6 +74335,129 @@
                           "kind",
                           "title",
                           "events"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
                         ],
                         "additionalProperties": false
                       }
@@ -89746,6 +90947,129 @@
                   "kind",
                   "title",
                   "events"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "plot"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  },
+                  "xLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "xUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "yLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "yUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "series": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "mark": {
+                          "type": "string",
+                          "enum": [
+                            "points",
+                            "line",
+                            "lineWithPoints"
+                          ]
+                        },
+                        "points": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "x": {
+                                "type": "number"
+                              },
+                              "y": {
+                                "type": "number"
+                              },
+                              "label": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "x",
+                              "y",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "mark",
+                        "points"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "y": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "y"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "source": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  }
+                },
+                "required": [
+                  "kind",
+                  "title",
+                  "xLabel",
+                  "xUnit",
+                  "yLabel",
+                  "yUnit",
+                  "series",
+                  "references",
+                  "source"
                 ],
                 "additionalProperties": false
               }

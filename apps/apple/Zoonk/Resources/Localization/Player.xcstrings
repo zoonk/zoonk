@@ -4829,6 +4829,64 @@
         }
       }
     },
+    "Horizontal axis: %@, from %@ to %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horizontale Achse: %@, von %@ bis %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eje horizontal: %@, de %@ a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Axe horizontal : %@, de %@ à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asse orizzontale: %@, da %@ a %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "横軸：%@、%@から%@まで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가로축: %@, %@부터 %@까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oś pozioma: %@, od %@ do %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eixo horizontal: %@, de %@ a %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yatay eksen: %@, %@ ile %@ arasında"
+          }
+        }
+      }
+    },
     "How to say %@" : {
       "comment" : "A word to practice saying",
       "localizations" : {
@@ -8031,6 +8089,64 @@
         }
       }
     },
+    "Reference lines" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Referenzlinien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Líneas de referencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes de référence"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linee di riferimento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基準線"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기준선"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linie odniesienia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linhas de referência"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Referans çizgileri"
+          }
+        }
+      }
+    },
     "Result" : {
       "comment" : "Above a worked example's result in a recap",
       "localizations" : {
@@ -9325,7 +9441,7 @@
       }
     },
     "Source: %@" : {
-      "comment" : "Where a model's numbers come from",
+      "comment" : "Where a model's or a chart's numbers come from",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11559,6 +11675,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ vektörü"
+          }
+        }
+      }
+    },
+    "Vertical axis: %@, from %@ to %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vertikale Achse: %@, von %@ bis %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eje vertical: %@, de %@ a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Axe vertical : %@, de %@ à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asse verticale: %@, da %@ a %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦軸：%@、%@から%@まで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세로축: %@, %@부터 %@까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oś pionowa: %@, od %@ do %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eixo vertical: %@, de %@ a %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dikey eksen: %@, %@ ile %@ arasında"
           }
         }
       }

@@ -110,4 +110,27 @@ export const TEST_CASES: TestCase<unknown, WriteItemSetInput>[] = [
       ],
     },
   },
+  {
+    expectations: `One ENEM Ciências da Natureza set in Brazilian Portuguese built on a chart stimulus: \`kind\` chart with a \`visual\` of kind \`plot\`, since both axes are measured numbers (for example a temperature or a concentration measured at uneven times, or one quantity against another), never a category chart that spaces uneven times evenly. 3 multiple-choice questions with 5 options each that need the plot: a reading, a rate or trend between two points, and a comparison or a limit. Every point a question turns on has a \`label\`, the question names it by that label (never "the third point"), and its \`evidence\` is exactly that label or a series name. Values asked for sit on round numbers or are printed in the label, so a learner can read them on a phone. Every key follows from the plotted data, and the text and reasons use the plot's numbers exactly.`,
+    id: "pt-enem-natureza-grafico-de-pontos",
+    userInput: {
+      examFormat: ENEM,
+      format: "multipleChoice",
+      language: "pt",
+      questionCount: 3,
+      skills: [
+        {
+          description:
+            "Ler e interpretar gráficos de dispersão que relacionam duas grandezas medidas em um experimento (como a concentração de um reagente e a velocidade da reação, ou a dose e a resposta), incluindo um valor de referência.",
+          level: "intermediate",
+          name: "Interpretar gráficos de dados experimentais",
+        },
+        {
+          description: "Calcular uma taxa de variação entre dois pontos de um gráfico.",
+          level: "intermediate",
+          name: "Taxa de variação em um gráfico",
+        },
+      ],
+    },
+  },
 ];

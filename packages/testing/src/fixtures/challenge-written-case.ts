@@ -38,11 +38,36 @@ export function writtenChallengeCaseFixture() {
             ? { label: choice.timeJump.label, panel: writtenPanel(choice.timeJump.panel) }
             : null,
       })),
+      visual: null,
     })),
     panels: content.panels.map((panel) => writtenPanel(panel)),
     summary: [
       "A gap between two versions can be chance when few people saw them.",
       "Explain a test result in plain words to people who aren't data people.",
     ],
+  };
+}
+
+export function challengePlotFixture() {
+  return {
+    kind: "plot" as const,
+    references: [{ label: "Control limit", y: 40 }],
+    series: [
+      {
+        mark: "lineWithPoints" as const,
+        name: "Scan A",
+        points: [
+          { label: null, x: 10, y: 27 },
+          { label: "Valley", x: 11, y: 25 },
+          { label: null, x: 20, y: 30 },
+        ],
+      },
+    ],
+    source: null,
+    title: "Pressure over time",
+    xLabel: "Time",
+    xUnit: "s",
+    yLabel: "Pressure",
+    yUnit: "kPa",
   };
 }

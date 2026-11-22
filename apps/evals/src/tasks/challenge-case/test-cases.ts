@@ -159,7 +159,7 @@ export const TEST_CASES: TestCase<unknown, ChallengeCaseInput>[] = [
     },
   },
   {
-    expectations: `A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.`,
+    expectations: `A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The decisions that need a plot show one from the plan's \`visuals\`, drawn by the app: a \`plot\` for numbers on both axes (counts against voltage or time), a \`chart\` with \`axisStart\` for a cropped axis. Every path reaches a decision that shows a plot. A value the text states from a plot matches its data, the text names points by label and series by name (never "the third point"), and every value the learner must read sits on a round value or a label, never finer than the ticks. No panel repeats a plot's data, and no metric or message draws a chart in text. General to the field, with no real lab.`,
     id: "en-plot-reading-field-research",
     userInput: {
       chapterDescription:
@@ -176,6 +176,100 @@ export const TEST_CASES: TestCase<unknown, ChallengeCaseInput>[] = [
         { description: null, name: "Estimate values from a plotted curve" },
         { description: null, name: "Read values on a truncated axis" },
         { description: null, name: "Interpret axis intervals" },
+      ],
+      variant: "work",
+    },
+  },
+  {
+    expectations: `A work case for a beginner analyst who must interpret a scatterplot (for example ad spend against sales across stores, or study hours against scores), where a colleague wants to act on the pattern. The case shows a \`plot\` with \`mark\` \`points\` from \`visuals\` at the decision that needs it, and every path reaches a decision that shows it. The strong path reads the direction and strength of the pattern, notices an outlier by its label, and doesn't treat correlation as proof of cause. Text and plot agree: every value or count the text states from the plot (how many points above a line, a point's values) matches the data and is a fact whose derivation names the plot. Points are named by label, never by position. No panel repeats the plot's data.`,
+    id: "en-scatterplot-work",
+    userInput: {
+      chapterDescription: "Read relationships between two numeric variables from scatterplots.",
+      chapterTitle: "Correlation",
+      courseTitle: "Statistics",
+      language: "en",
+      level: "beginner",
+      skills: [
+        {
+          description: "Describe the direction, form and strength of a pattern and spot outliers.",
+          name: "Interpret scatterplots",
+        },
+        {
+          description:
+            "Know that two things moving together doesn't show that one causes the other.",
+          name: "Tell correlation from causation",
+        },
+      ],
+      variant: "work",
+    },
+  },
+  {
+    expectations: `Um caso de trabalho em português do Brasil sobre ler um gráfico posição-tempo (por exemplo, um técnico de trânsito, um treinador ou um engenheiro de testes olhando a posição de um veículo medida em instantes irregulares). O caso mostra um \`plot\` de \`visuals\` com tempo no eixo x e posição no eixo y, linha pelos pontos medidos com espaçamento proporcional, na decisão que precisa dele, e todo caminho passa por uma decisão que o mostra. O caminho forte lê a inclinação como velocidade e distingue posição de distância percorrida. Toda velocidade ou distância dita no texto bate com os dados do gráfico e é um fato com \`derivation\` que cita o gráfico; pontos são nomeados pelo rótulo ou pelo instante, nunca pela posição na tela. Nenhum painel repete os dados do gráfico.`,
+    id: "pt-position-time-graph-work",
+    userInput: {
+      chapterDescription: "Ler posição, deslocamento e velocidade em gráficos posição-tempo.",
+      chapterTitle: "Gráficos do movimento",
+      courseTitle: "Física",
+      language: "pt",
+      level: "beginner",
+      skills: [
+        {
+          description: "Ler a posição de um objeto em cada instante num gráfico posição-tempo.",
+          name: "Ler um gráfico posição-tempo",
+        },
+        {
+          description: "Calcular a velocidade a partir da inclinação entre dois pontos.",
+          name: "Calcular velocidade pela inclinação",
+        },
+      ],
+      variant: "work",
+    },
+  },
+  {
+    expectations: `A work case in manufacturing quality: reading a control chart of a process measurement (for example fill weight or a part's diameter by sample number) to decide whether to stop the line. The case shows a \`plot\` from \`visuals\` with a line through the samples and horizontal \`references\` for the center line and the control limits, at the decision that needs it, and every path reaches a decision that shows it. The strong path tells a point outside the limits or a run on one side (special cause) from ordinary variation, and doesn't adjust the process for common-cause noise. Every count or reading the text states (how many samples above the upper limit, which sample) matches the data, names samples by label, and is readable at the ticks. No panel repeats the chart's data.`,
+    id: "en-control-chart-field-manufacturing",
+    userInput: {
+      chapterDescription:
+        "Use control charts to tell special-cause variation from common-cause variation.",
+      chapterTitle: "Statistical process control",
+      courseTitle: "Quality management",
+      field: "manufacturing",
+      language: "en",
+      level: "intermediate",
+      skills: [
+        {
+          description: "Read a control chart's center line, limits and the samples against them.",
+          name: "Read a control chart",
+        },
+        {
+          description:
+            "Decide when variation calls for action and when to leave the process alone.",
+          name: "Tell special-cause from common-cause variation",
+        },
+      ],
+      variant: "work",
+    },
+  },
+  {
+    expectations: `A work case on negotiating a supplier contract, where no skill is about reading data: \`visuals\` is empty and no decision shows a chart. The strong path anchors with a researched first offer and explores the other side's interests instead of splitting the difference at once. Numbers (prices, volumes, deadlines) are consistent across panels, replies and endings.`,
+    id: "en-negotiation-no-chart-work",
+    userInput: {
+      chapterDescription:
+        "Prepare and run a negotiation around interests and a strong first offer.",
+      chapterTitle: "Negotiation basics",
+      courseTitle: "Business communication",
+      language: "en",
+      level: "beginner",
+      skills: [
+        {
+          description:
+            "Open with a first offer backed by research, so the talk starts near your goal.",
+          name: "Anchor a first offer",
+        },
+        {
+          description: "Ask about what the other side needs behind its position.",
+          name: "Find the other side's interests",
+        },
       ],
       variant: "work",
     },
