@@ -35649,7 +35649,64 @@
         }
       }
     },
-    "We couldn't find a date that covers everything." : {},
+    "We couldn't find a date that covers everything." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten kein Datum finden, bis zu dem du alles durchgehen kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos encontrar una fecha que permita cubrir todo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu trouver de date pour tout couvrir."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a trovare una data entro cui studiare tutto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてを学び終える日を見つけられませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 내용을 마칠 수 있는 날짜를 찾지 못했어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało nam się znaleźć terminu, w którym zmieści się cały materiał."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não conseguiu encontrar uma data para estudar tudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm konuları bitirebileceğin bir tarih bulamadık."
+          }
+        }
+      }
+    },
     "We couldn't reach the server. Check your connection." : {
       "comment" : "A far topic's lessons couldn't be asked for",
       "localizations" : {
