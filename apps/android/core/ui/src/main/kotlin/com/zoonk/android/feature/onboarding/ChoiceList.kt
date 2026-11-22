@@ -3,13 +3,11 @@ package com.zoonk.android.feature.onboarding
 import android.view.KeyEvent
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -28,6 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LayoutPart
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.controlInk
@@ -83,8 +82,8 @@ fun <T> ChoiceList(
                 .semantics { contentDescription = label },
     ) {
         choices.forEachIndexed { index, choice ->
-            if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val selected = choice.value == value
+            if (index > 0) ListDivider(besideHighlight = selected || choices[index - 1].value == value)
             val interaction = remember { MutableInteractionSource() }
             ListRow(
                 headline = { Text(choice.label) },
@@ -140,8 +139,8 @@ fun <T> CheckList(
             .semantics { contentDescription = label },
     ) {
         choices.forEachIndexed { index, choice ->
-            if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val checked = choice.value in value
+            if (index > 0) ListDivider(besideHighlight = checked || choices[index - 1].value in value)
             val interaction = remember { MutableInteractionSource() }
             val open = checked || !full
             // Past the limit an option is dimmed in its words' own colors (Material's disabled emphasis), so what it
