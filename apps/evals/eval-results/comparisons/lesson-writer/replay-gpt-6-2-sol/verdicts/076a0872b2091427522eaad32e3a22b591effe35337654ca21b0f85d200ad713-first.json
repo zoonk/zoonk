@@ -1,0 +1,368 @@
+{
+  "attempt": "first",
+  "costUsd": 0.622413,
+  "failures": [],
+  "packetId": "076a0872b2091427522eaad32e3a22b591effe35337654ca21b0f85d200ad713",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "Output B calculates the worked example correctly (−3 + 3 = 0, then 0 + 2 = 2 °C), while Output A makes an arithmetic error on screen 4 by claiming 3 degrees remain out of a 5-degree rise and concluding 3 °C.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same hook, examples, voice, and pacing across every screen.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B shows the step equations (−3 + 3 = 0 and 0 + 2 = 2) on screen 4 and matches the 2 °C revealed on screen 3, whereas Output A omits the step math and contradicts screen 3 with 3 °C.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "All check, activity, typed-answer, and application screens are identical in both outputs.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the exact same level fit, hook, Chicago application, and summary.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 4's worked example states that after climbing 3 degrees from −3 °C to zero out of a 5-degree rise, 'The rest of the rise, 3 degrees, takes you above zero' and gives the result as '3 °C' instead of 2 °C (5 − 3 = 2).",
+            "criterion": "accuracy",
+            "learnerCost": "The learner is taught a wrong sum that directly contradicts the 2 °C revealed on screen 3 and asked about on screen 8.",
+            "location": {
+              "detail": "screen 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B gets every calculation right and shows clear step equations in the worked example, whereas Output A has a major arithmetic error on screen 4 that contradicts the rest of the lesson."
+        },
+        "pairId": "02a444d7-c839-457f-8747-5eb0a06ee6bf"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A keeps every calculation and check explanation accurate (including 1.50 eV on screen 10 and 5 total zeros on screen 8), whereas Output B's screen 8 feedback wrongly blames counting the two walls for picking 4 interior nodes (3 interior nodes plus 2 walls is 5, not 4).",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Output A explains the core physics more intuitively and conversationally on screens 2 and 3, while Output B has a more vivid hook, an engaging error-spotting check on screen 6, and a relatable QLED TV application on screen 11.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A explains what ψ and every constant represent, keeps LaTeX notation clean and consistent, and uses a distinct variable u in the activity, whereas Output B drops ψ unexplained on screen 2, mixes raw ASCII underscores (E_1, k_n, ψ_4) with LaTeX, and reuses x for x/L.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B offers richer four-option checks with stronger misconceptions, a realistic spot-the-error scenario on screen 6, and a variable box width on screen 10, outweighing its minor wall-counting mismatch in one screen 8 distractor.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B fits the advanced level better by naming the Schrödinger equation and defining 'quantized', and it grounds screen 11 in a concrete QLED TV screen rather than repeating the lab bench from screen 1.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 2 introduces the mathematical notation (ψ, 0 < x < L, ψ = 0, ψ(0) = ψ(L) = 0) before comparing the setup to a guitar string pinned at both ends at the end of the screen, breaking the expectation that standing waves on a string come before the notation.",
+            "criterion": "clarity",
+            "learnerCost": "The learner sees abstract boundary equations before having the familiar standing-wave picture to make sense of them.",
+            "location": {
+              "detail": "screen 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The lesson never introduces or explains the terms 'wave function', 'boundary condition', or 'quantized' (using informal substitutes like 'a particle's wave', 'the walls', and 'only specific energies'), breaking the expectation that each term is explained when it first appears.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "An advanced quantum mechanics learner finishes the lesson without linking the derivation to the standard terms they need for the subject.",
+            "location": {
+              "detail": "across screens 2 to 5",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 9 jumps from symbolic formulas to rounded answers (0.38 eV, 1.50 eV, 1,100 nm) without showing the numerical values of h, m_e, the J-to-eV conversion, or hc, and tells the learner to keep the unrounded value of E_1 without ever stating what it is (0.376 eV).",
+            "criterion": "clarity",
+            "learnerCost": "A learner trying to verify the arithmetic cannot check the substitutions or see why 4 times 0.38 eV gives 1.50 eV.",
+            "location": {
+              "detail": "screen 9",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The activity prompt calls n 'the wave number index', even though the slider labels it 'State number n' and earlier screens used k for wavenumber.",
+            "criterion": "clarity",
+            "learnerCost": "Changing the label for n can momentarily confuse the learner between the state index n and the wavenumber k_n.",
+            "location": {
+              "detail": "Change the wave number index and see how the wave shape and energy change.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 repeats the generic lab-bench setting from screen 1 instead of naming a concrete real-world place where quantum dots appear.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner misses seeing a realistic everyday application of quantum-dot confinement outside a lab.",
+            "location": {
+              "detail": "At a lab bench, you compare tiny cadmium selenide crystals called quantum dots.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 introduces V = 0, 0 < x < L, V = ∞, ψ = 0, and ψ(0) = 0, ψ(L) = 0 before mentioning the guitar string pinned at both ends, breaking the expectation that standing waves on a string come before the notation.",
+            "criterion": "clarity",
+            "learnerCost": "The learner encounters the mathematical setup before getting the standing-wave analogy that explains why the wave vanishes at the walls.",
+            "location": {
+              "detail": "screen 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 introduces ψ ('so ψ = 0 beyond the walls') without ever explaining what ψ represents or naming it a wave function, and the lesson never introduces or explains the term 'boundary condition', breaking the expectation that these terms are explained when they first appear.",
+            "criterion": "clarity",
+            "learnerCost": "A learner is asked to manipulate ψ without being told what physical quantity it represents and never learns the term 'boundary condition'.",
+            "location": {
+              "detail": "screens 2 and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Notation switches inconsistently across screens between LaTeX, Unicode subscripts (ψ₁), and raw ASCII underscores (E_1, k_n, ψ_4, E_3), and screen 8 reuses the symbol x for the dimensionless fraction x/L.",
+            "criterion": "clarity",
+            "learnerCost": "Raw underscores and inconsistent formatting make formulas harder to read, and reusing x for x/L clashes with x meaning position across the rest of the lesson.",
+            "location": {
+              "detail": "screens 2, 4 to 10, and summary",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "For the wrong options stating that ψ_4 has 4 interior nodes, the feedback blames counting the two walls at x = 0 and x = L, even though 3 interior nodes plus 2 walls equals 5 zeros, not 4.",
+            "criterion": "checks",
+            "learnerCost": "A learner who picked 4 by confusing n with the node count gets an explanation that does not add up to the number they chose.",
+            "location": {
+              "detail": "The zeros at x = 0 and x = L are the walls, not interior nodes. Inside the box, ψ_4 crosses zero only 3 times.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screens 2 and 3 open with formal textbook phrasing ('Let a particle move on a line...', 'so the Schrödinger equation reduces to...') and leave V, ħ, m, and E undefined.",
+            "criterion": "teacher",
+            "learnerCost": "The dry textbook tone and undefined symbols make the core derivation feel less approachable than a teacher explaining the physics.",
+            "location": {
+              "detail": "screens 2 and 3",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "All five image alt texts are noun-phrase fragments without a main verb (such as 'Six glowing vials in a row, from blue labeled 2 nm to red labeled 6 nm.') rather than whole sentences as expected.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Screen-reader users hear terse fragments instead of complete sentences.",
+            "location": {
+              "detail": "image alt texts on screens 1, 2, 5, 7, and 11",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both lessons miss the expectation to put the string analogy before notation and skip some named terms, but Output A serves the reader better overall by explaining ψ and every constant, keeping notation clean and consistent, and giving accurate feedback on every check."
+        },
+        "pairId": "c8326f0b-df95-4161-b118-41ba6ec6d81e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 2 introduces the mathematical notation (ψ, 0 < x < L, ψ = 0, ψ(0) = ψ(L) = 0) before comparing the setup to a guitar string pinned at both ends at the end of the screen, breaking the expectation that standing waves on a string come before the notation.",
+            "criterion": "clarity",
+            "learnerCost": "The learner sees abstract boundary equations before having the familiar standing-wave picture to make sense of them.",
+            "location": {
+              "detail": "screen 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The lesson never introduces or explains the terms 'wave function', 'boundary condition', or 'quantized' (using informal substitutes like 'a particle's wave', 'the walls', and 'only specific energies'), breaking the expectation that each term is explained when it first appears.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "An advanced quantum mechanics learner finishes the lesson without linking the derivation to the standard terms they need for the subject.",
+            "location": {
+              "detail": "across screens 2 to 5",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 9 jumps from symbolic formulas to rounded answers (0.38 eV, 1.50 eV, 1,100 nm) without showing the numerical values of h, m_e, the J-to-eV conversion, or hc, and tells the learner to keep the unrounded value of E_1 without ever stating what it is (0.376 eV).",
+            "criterion": "clarity",
+            "learnerCost": "A learner trying to verify the arithmetic cannot check the substitutions or see why 4 times 0.38 eV gives 1.50 eV.",
+            "location": {
+              "detail": "screen 9",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The activity prompt calls n 'the wave number index', even though the slider labels it 'State number n' and earlier screens used k for wavenumber.",
+            "criterion": "clarity",
+            "learnerCost": "Changing the label for n can momentarily confuse the learner between the state index n and the wavenumber k_n.",
+            "location": {
+              "detail": "Change the wave number index and see how the wave shape and energy change.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 repeats the generic lab-bench setting from screen 1 instead of naming a concrete real-world place where quantum dots appear.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner misses seeing a realistic everyday application of quantum-dot confinement outside a lab.",
+            "location": {
+              "detail": "At a lab bench, you compare tiny cadmium selenide crystals called quantum dots.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 introduces the mathematical notation (ψ, 0 < x < L, ψ = 0, ψ(0) = ψ(L) = 0) before comparing the setup to a guitar string pinned at both ends at the end of the screen, breaking the expectation that standing waves on a string come before the notation.",
+            "criterion": "clarity",
+            "learnerCost": "The learner sees abstract boundary equations before having the familiar standing-wave picture to make sense of them.",
+            "location": {
+              "detail": "screen 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The lesson never introduces or explains the terms 'wave function', 'boundary condition', or 'quantized' (using informal substitutes like 'a particle's wave', 'the walls', and 'only specific energies'), breaking the expectation that each term is explained when it first appears.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "An advanced quantum mechanics learner finishes the lesson without linking the derivation to the standard terms they need for the subject.",
+            "location": {
+              "detail": "across screens 2 to 5",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 9 jumps from symbolic formulas to rounded answers (0.38 eV, 1.50 eV, 1,100 nm) without showing the numerical values of h, m_e, the J-to-eV conversion, or hc, and tells the learner to keep the unrounded value of E_1 without ever stating what it is (0.376 eV).",
+            "criterion": "clarity",
+            "learnerCost": "A learner trying to verify the arithmetic cannot check the substitutions or see why 4 times 0.38 eV gives 1.50 eV.",
+            "location": {
+              "detail": "screen 9",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The activity prompt calls n 'the wave number index', even though the slider labels it 'State number n' and earlier screens used k for wavenumber.",
+            "criterion": "clarity",
+            "learnerCost": "Changing the label for n can momentarily confuse the learner between the state index n and the wavenumber k_n.",
+            "location": {
+              "detail": "Change the wave number index and see how the wave shape and energy change.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 repeats the generic lab-bench setting from screen 1 instead of naming a concrete real-world place where quantum dots appear.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner misses seeing a realistic everyday application of quantum-dot confinement outside a lab.",
+            "location": {
+              "detail": "At a lab bench, you compare tiny cadmium selenide crystals called quantum dots.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical across all screens and the summary."
+        },
+        "pairId": "ee3c5942-285f-4c55-90db-2b3811d0b91d"
+      }
+    ]
+  }
+}

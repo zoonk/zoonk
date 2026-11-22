@@ -781,6 +781,21 @@ describe(toReviewedLesson, () => {
 });
 
 describe(checkScreenText, () => {
+  it("reads a code block as code, never as sentences, sums or marks", () => {
+    const text = [
+      "A função devolve zero quando a lista está vazia:",
+      "```python",
+      "# 2 + 2 = 5 é só um comentário",
+      "total = soma(*valores, **opcoes) if valores and len(valores) > 0 and valores[0] is not None and valores[-1] is not None and pronto else 0",
+      "```",
+      "Com uma lista vazia, ela mostra 0.",
+    ].join("\n");
+
+    expect(
+      checkScreenText({ language: "pt", level: "beginner", screen: explanation(text) }),
+    ).toStrictEqual([]);
+  });
+
   it("checks one screen on its own in the lesson's language", () => {
     expect(
       checkScreenText({

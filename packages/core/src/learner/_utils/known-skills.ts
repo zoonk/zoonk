@@ -3,7 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { settleFinishedChapters } from "../../mind-maps/finished-chapters";
 import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
-import { afterPlanInputWrite } from "../../plans/plan-conflict";
+import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
@@ -174,7 +174,7 @@ export async function markPlanItemsTestedOut({
       timeZone,
     });
 
-  const announcement = extraWrites ? await announce() : await afterPlanInputWrite(announce);
+  const announcement = extraWrites ? await announce() : await unlessPlanConflict(announce);
 
   return {
     changeId: announcement?.changeId ?? null,

@@ -228,6 +228,12 @@ class TodayFlowTest {
             node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.replace('\u00a0', ' ') == text } == true
         }
 
+    private val placeholder =
+        buildJsonObject {
+            put("title", "Negotiating a raise")
+            put("minutes", 15)
+        }
+
     private fun timeLeft(left: Double) =
         buildJsonObject {
             put("dailyGoal", 240)
@@ -288,7 +294,9 @@ class TodayFlowTest {
     @Config(qualifiers = "w411dp-h1000dp-xxhdpi")
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun renderComingLessonsOnAPhone() =
-        render("today-coming-not-written-phone") { show("blocks" to practiceOnly(), "lessonsToPrepare" to true) }
+        render("today-coming-not-written-phone") {
+            show("blocks" to practiceOnly(), "lessonsToPrepare" to true, "lessonPlaceholder" to placeholder, "minutes" to timeLeft(23.0))
+        }
 
     @Test
     @Config(qualifiers = "pt-rBR-w411dp-h1000dp-xxhdpi")
@@ -411,6 +419,7 @@ class TodayFlowTest {
         isToday: Boolean = false,
         kind: String = "study",
     ) = buildJsonObject {
+        put("completed", if (hitGoal) 1 else 0)
         put("date", date)
         put("goalMinutes", goal)
         put("hitGoal", hitGoal)
@@ -418,6 +427,7 @@ class TodayFlowTest {
         put("kind", kind)
         put("minutes", minutes)
         put("studied", minutes > 0)
+        put("total", if (hitGoal) 1 else 0)
     }
 
     private fun weeklyChallenge(date: String) =
@@ -503,14 +513,15 @@ class TodayFlowTest {
     }
 
     @Test
-    fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenSaysItsTakingLonger() {
+    fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenOffersToGetTheLessons() {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
         rule.mainClock.advanceTimeBy(10.minutes.plus(30.seconds).inWholeMilliseconds)
         rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
-        rule.onNodeWithText("Taking longer than usual").assertExists()
+        rule.onNodeWithText("Not ready yet").assertExists()
+        rule.onNodeWithText("Get lessons").assertExists()
         val asks = todayApi.asked.size
         assertTrue("asked $asks times", asks >= 180)
         assertEquals(1, todayApi.reads)
@@ -531,12 +542,12 @@ class TodayFlowTest {
         rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(6.minutes.inWholeMilliseconds)
-        rule.onNodeWithText("Taking longer than usual").assertExists()
+        rule.onNodeWithText("Not ready yet").assertExists()
     }
 
     @Test
     fun theUpNextRowSpinsAloneWhileKeepLearningWaits() {
-        show("state" to "done", "extraTime" to upNext())
+        show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
 
         rule.onNodeWithText("Membranes").performClick()
         rule.waitForIdle()
@@ -548,7 +559,7 @@ class TodayFlowTest {
 
     @Test
     fun keepLearningSpinsAloneWhileTheUpNextRowWaits() {
-        show("state" to "done", "extraTime" to upNext())
+        show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
 
         rule.onNodeWithText("Keep learning").performClick()
         rule.waitForIdle()
@@ -560,7 +571,7 @@ class TodayFlowTest {
 
     @Test
     fun theWaitingUpNextRowKeepsFocusWhileKeepLearningsRequestRuns() {
-        show("state" to "done", "extraTime" to upNext())
+        show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
         val row = rule.onNodeWithText("Membranes")
         row.performSemanticsAction(SemanticsActions.RequestFocus)
         row.assertIsFocused()

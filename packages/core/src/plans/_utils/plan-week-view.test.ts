@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getWeekDays } from "../../sessions/daily-goal";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanReadItem } from "./plan-read-projection";
 import { buildWeekView } from "./plan-week-view";
@@ -27,10 +28,14 @@ function buildWeek({
   items = [],
   startDate = MONDAY,
   studiedDates = [],
+  finishedDates = [],
+  counts = [],
 }: {
   items?: PlanReadItem[];
   startDate?: Date;
   studiedDates?: string[];
+  finishedDates?: Date[];
+  counts?: { date: Date; completed: number; total: number }[];
 }) {
   return buildWeekView({
     access: { mocksRequirePlus: false },
@@ -39,13 +44,68 @@ function buildWeek({
     items,
     skillAreas: new Map([["skill-stock", "Stock market"]]),
     startDate,
-    studiedDates: new Set(studiedDates),
+    studyDays: getWeekDays({
+      counts,
+      days: studiedDates.map((day) => ({ date: new Date(`${day}T00:00:00Z`), seconds: 60 })),
+      finishedDates,
+      getPlanDay: (date) => ({
+        goalMinutes: date < startDate ? 0 : 30,
+        kind: date < startDate ? "beforeStart" : "study",
+      }),
+      today: TODAY,
+    }),
     targetDate: null,
+    timeZone: "America/Sao_Paulo",
     today: TODAY,
   });
 }
 
 describe(buildWeekView, () => {
+  it("carries the same study facts as the session week", () => {
+    const { days } = buildWeek({ counts: [{ completed: 1, date: TODAY, total: 3 }] });
+
+    const sessionWeek = getWeekDays({
+      counts: [{ completed: 1, date: TODAY, total: 3 }],
+      days: [],
+      getPlanDay: () => ({ goalMinutes: 30, kind: "study" }),
+      today: TODAY,
+    });
+
+    expect(days.map((day) => day.study)).toStrictEqual(
+      sessionWeek.map((day) => ({ ...day, date: day.date.toISOString().slice(0, 10) })),
+    );
+  });
+
+  it("lists early and late finishes on their local finish date and written splits once", () => {
+    const finished = (planned: string) => ({
+      ...lesson(planned, "done"),
+      completedAt: new Date("2026-09-24T01:00:00Z"),
+      lessonId: planned,
+      minutes: 6,
+    });
+
+    const split = {
+      ...lesson("2026-09-24", "todo"),
+      facts: {
+        days: [
+          ["2026-09-23", 2, 2],
+          ["2026-09-24", 4, 4],
+        ],
+        minutes: 6,
+        parts: { checkpoint: 0, practice: 0, unwritten: 0, written: 6 },
+        schemaVersion: 1,
+        skillIds: [],
+      },
+      lessonId: "split",
+      minutes: 6,
+    };
+
+    const { days } = buildWeek({ items: [finished("2026-09-21"), finished("2026-09-24"), split] });
+    expect(days[0]?.items).toStrictEqual([]);
+    expect(days[2]?.items).toHaveLength(2);
+    expect(days[3]?.items).toMatchObject([{ lessonId: "split", lessons: 1, minutes: 6 }]);
+  });
+
   it("projects a saved multi-day allocation onto each shown day", () => {
     const item = {
       ...lesson("2026-09-23", "todo"),
@@ -70,21 +130,23 @@ describe(buildWeekView, () => {
   it("counts a past day with nothing scheduled as done only when the learner studied", () => {
     const { days } = buildWeek({ studiedDates: ["2026-09-21"] });
 
-    expect(days.slice(0, 3).map((day) => day.state)).toStrictEqual(["done", "rest", "today"]);
+    expect(days.slice(0, 3).map((day) => day.state)).toStrictEqual(["done", "missed", "today"]);
   });
 
   it("keeps the days before the goal started neutral, with no time to study", () => {
     const { days } = buildWeek({ startDate: TODAY, studiedDates: ["2026-09-21"] });
 
     expect(days.slice(0, 3).map(({ minutes, state }) => ({ minutes, state }))).toStrictEqual([
-      { minutes: 0, state: "rest" },
+      { minutes: 0, state: "done" },
       { minutes: 0, state: "rest" },
       { minutes: 30, state: "today" },
     ]);
   });
 
-  it("follows a past day's items when it has some", () => {
+  it("uses session completion instead of item completion", () => {
     const { days } = buildWeek({
+      counts: [{ completed: 1, date: MONDAY, total: 2 }],
+      finishedDates: [new Date("2026-09-22T00:00:00Z")],
       items: [lesson("2026-09-21", "todo"), lesson("2026-09-22", "done")],
       studiedDates: ["2026-09-21"],
     });
@@ -94,6 +156,8 @@ describe(buildWeekView, () => {
 
   it("never counts a past day whose lessons were set aside as done", () => {
     const { days } = buildWeek({
+      counts: [{ completed: 1, date: MONDAY, total: 2 }],
+      finishedDates: [new Date("2026-09-22T00:00:00Z")],
       items: [
         lesson("2026-09-21", "done"),
         { ...lesson("2026-09-21", "skipped"), id: "set-aside" },
@@ -155,5 +219,55 @@ describe(buildWeekView, () => {
       [2],
       [1, 0],
     ]);
+  });
+
+  it("never counts more lessons across a week than a topic still to be written holds", () => {
+    const standIn = {
+      ...lesson("2026-09-21", "todo"),
+      facts: {
+        days: [
+          ["2026-09-21", 5, 5],
+          ["2026-09-22", 5, 5],
+          ["2026-09-23", 5, 5],
+          ["2026-09-24", 5, 5],
+        ],
+        minutes: 20,
+        parts: { checkpoint: 0, practice: 0, unwritten: 20, written: 0 },
+        schemaVersion: 1,
+        skillIds: ["skill-stock"],
+      },
+      lessons: 3,
+      minutes: 20,
+      skillId: "skill-stock",
+    };
+
+    const { days } = buildWeek({ items: [standIn] });
+    const counts = days.flatMap(({ items }) => items.map((item) => item.lessons));
+
+    expect(counts.reduce((sum, count) => sum + count, 0)).toBe(3);
+  });
+
+  it("counts a kept topic's lessons by the minutes its saved days hold", () => {
+    const standIn = {
+      ...lesson("2026-09-21", "todo"),
+      facts: {
+        days: [
+          ["2026-09-21", 10, 5],
+          ["2026-09-22", 10, 5],
+        ],
+        minutes: 20,
+        parts: { checkpoint: 0, practice: 10, unwritten: 10, written: 0 },
+        schemaVersion: 1,
+        skillIds: ["skill-stock"],
+      },
+      lessons: 4,
+      minutes: 10,
+      skillId: "skill-stock",
+    };
+
+    const { days } = buildWeek({ items: [standIn] });
+    const counts = days.flatMap(({ items }) => items.map((item) => item.lessons));
+
+    expect(counts).toStrictEqual([2, 2]);
   });
 });

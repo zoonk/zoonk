@@ -58,7 +58,7 @@ export function CountryField({
         ))}
       </NativeSelect>
 
-      <p className="text-muted-foreground text-sm text-pretty" id={noteId}>
+      <p className="text-muted-foreground text-sm" id={noteId}>
         {note ??
           t({
             description:

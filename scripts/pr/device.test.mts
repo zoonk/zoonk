@@ -2,20 +2,39 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import sharp from "sharp";
 import { describe, it } from "vitest";
 import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture } from "./check-fixture.mts";
 import { deviceSection } from "./device-section.mts";
 import { type DeviceBridge, type Installed, takeDevicePicture } from "./device.mts";
-import { type CaptureItem, deviceLine, readManifest, writeManifest } from "./media.mts";
+import {
+  type CaptureItem,
+  type Finding,
+  deviceLine,
+  readManifest,
+  writeManifest,
+} from "./media.mts";
+import { sha256File } from "./provenance.mts";
+import { recordReads } from "./read.mts";
 import { formatCheck } from "./report.mts";
 
+/** A blank picture of `background`, as a device draws one. */
+async function png(background: string) {
+  return sharp({ create: { background, channels: 4, height: 8, width: 8 } })
+    .png()
+    .toBuffer();
+}
+
+const PICTURE = await png("#fff");
+
 /** A booted device that draws `bytes` and reports `installed` as its app's build. */
-function bridge(installed: Installed, booted = true): DeviceBridge {
+function bridge(installed: Installed, booted = true, bytes = PICTURE): DeviceBridge {
   return {
+    appearance: async () => "light",
     describe: async () => (booted ? "iPhone 17, iOS 26.1" : null),
     installed: async () => installed,
-    screenshot: async (_id, file) => writeFileSync(file, "the simulator's picture"),
+    screenshot: async (_id, file) => writeFileSync(file, bytes),
   };
 }
 
@@ -49,7 +68,7 @@ async function take(repository: string, installed: Installed, platform: "android
   const markdown = deviceSection([{ item, link: picture }]);
   const result = await checkBody({ markdown, repository, root: repository });
 
-  return { item, result };
+  return { item, result, to };
 }
 
 describe("pnpm pr:media device: a picture the tool takes from a booted device", () => {
@@ -65,6 +84,38 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
       formatCheck(result, repository),
       /^On a device, layout not measured \(1\):\n {2}.*sheet-over-plan\.png: iPhone 17, iOS 26\.1; build \w{10}$/mu,
     );
+  });
+
+  it("records a retake as unread, its new read keeping the findings of the read it retakes", async () => {
+    const { repository } = checkFixture();
+    const installed = { commit: head(repository), dirty: false };
+    const { item: first, to } = await take(repository, installed, "apple");
+    const finding: Finding = { id: "a-1", state: "open", text: "the sheet hides the plan" };
+    await writeManifest(to, [{ ...first, read: { ...CLEAN, findings: [finding] } }]);
+
+    const retaken = await takeDevicePicture({
+      bridge: bridge(installed, true, await png("#000")),
+      deviceId: "booted-device",
+      name: "sheet over plan",
+      platform: "apple",
+      repository,
+      to,
+    });
+
+    const picture = join(to, "sheet-over-plan.png");
+    assert.deepEqual(await readManifest(to), [retaken]);
+    assert.equal(retaken.sha256, await sha256File(picture));
+
+    const markdown = deviceSection([{ item: retaken, link: picture }]);
+    const unread = await checkBody({ markdown, repository, root: repository });
+    assert.deepEqual(unread.problems, [{ kind: "unread", picture }]);
+
+    await recordReads({ by: "reader", entries: [], root: to });
+    const read = await checkBody({ markdown, repository, root: repository });
+
+    assert.deepEqual(read.problems, [
+      { detail: "a-1: the sheet hides the plan", kind: "finding", picture },
+    ]);
   });
 
   it("refuses a simulator whose installed build isn't the head's, or was built from changes", async () => {
@@ -185,5 +236,26 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
       versions.every((why) => /GitHub links/u.test(why)),
       versions.join("\n"),
     );
+  });
+});
+
+describe("pnpm pr:media device: the scheme a picture shows", () => {
+  it("records the scheme the device shows, so a picture in dark mode is labeled dark", async () => {
+    const { repository } = checkFixture();
+    const to = mkdtempSync(join(repository, "device-"));
+
+    const item = await takeDevicePicture({
+      bridge: {
+        ...bridge({ commit: head(repository), dirty: false }),
+        appearance: async () => "dark",
+      },
+      deviceId: "booted-device",
+      name: "sheet in dark mode",
+      platform: "apple",
+      repository,
+      to,
+    });
+
+    assert.equal(item.scheme, "dark");
   });
 });

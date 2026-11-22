@@ -10,6 +10,7 @@ import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
 import { checkLevelTestQuestionsTask } from "./check-level-test-questions/task";
+import { checkSentenceOrdersTask } from "./check-sentence-orders/task";
 import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
 import { compareReleaseLessonsTask } from "./compare-release-lessons/task";
@@ -93,6 +94,7 @@ import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
 import { speakingScoreTask } from "./speaking-score/task";
 import { statuteDrillsTask } from "./statute-drills/task";
 import { stepVariantTask } from "./step-variant/task";
+import { suggestProfileToolsTask } from "./suggest-profile-tools/task";
 import { teachingChaptersTask } from "./teaching-chapters/task";
 import { topicSkillNamesTask } from "./topic-skill-names/task";
 import { transcribeSpeechTask } from "./transcribe-speech/task";
@@ -223,6 +225,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       memoryRelevanceTask,
       memoryInsightTask,
       memorySessionPatternsTask,
+      suggestProfileToolsTask,
     ],
   },
   {
@@ -232,6 +235,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       languageLessonCheckTask,
       languageLessonFixTask,
       languageSentenceOrdersTask,
+      checkSentenceOrdersTask,
       alphabetLessonTask,
       alphabetLessonFixTask,
       levelTestBankTask,

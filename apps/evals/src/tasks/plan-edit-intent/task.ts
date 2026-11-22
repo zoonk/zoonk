@@ -29,6 +29,13 @@ export const planEditIntentTask: Task<
     }),
   id: "plan-edit-intent",
   name: "Plan edit intent",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code turns a typed plan change into plan edits",
+    reason: "Code checks the edit; the cheapest that passed",
+    waits: "A learner waits in the buddy's answer",
+  },
   score: scorePlanEditIntent,
   testCases: [
     ...TEST_CASES,

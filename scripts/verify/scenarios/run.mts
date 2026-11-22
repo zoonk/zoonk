@@ -11,6 +11,7 @@ import { alignmentLines, summaryLine } from "../alignment-summary.mts";
 import { WEB_TABLE } from "../alignment-table.mts";
 import { evaluateFile } from "../alignment.mts";
 import { installPageHelpers } from "../page-helpers.mts";
+import { screenshot } from "../screenshot.mts";
 import { signIn } from "../sign-in.mts";
 import { VIEWPORTS, VIEWPORT_NAMES, type ViewportName } from "../viewports.mts";
 import { localePath, proofIn } from "./configuration.mts";
@@ -148,7 +149,16 @@ async function take(page: Page, step: Step) {
     const field = page.getByLabel(step.fill.field).or(page.getByPlaceholder(step.fill.field));
     await field.first().fill(step.fill.value);
   } else {
-    await page.evaluate(() => globalThis.scrollTo(0, document.documentElement.scrollHeight));
+    // A full-screen task (the lesson player) scrolls inside its own element, not the document.
+    await page.evaluate(() => {
+      const scrollers = [...document.querySelectorAll("*")].filter((element) =>
+        ["auto", "scroll"].includes(getComputedStyle(element).overflowY),
+      );
+
+      for (const element of [document.documentElement, ...scrollers]) {
+        element.scrollTop = element.scrollHeight;
+      }
+    });
   }
 }
 
@@ -265,7 +275,7 @@ async function capture(
 
     const read = await page.evaluate(readAlignment, { ...WEB_TABLE, anchors });
 
-    await page.screenshot({
+    await screenshot(page, {
       fullPage: true,
       path: join(out, `${scenario.id}-${label.replaceAll(" ", "-")}.png`),
     });

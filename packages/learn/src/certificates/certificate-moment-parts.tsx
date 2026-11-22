@@ -11,6 +11,7 @@ import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateSentence } from "./certificate-labels";
 import { CertificateSheet } from "./certificate-sheet";
@@ -83,7 +84,7 @@ export function NameRow({ name, onChange }: { name: string; onChange: () => void
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground text-sm">
+    <p className={cn("text-muted-foreground text-sm", SENTENCE_WITH_ACTION_CLASS)}>
       {t.rich("On your certificate: <strong>{name}</strong>", { name, strong: NameStrong })}
       <Button className="ml-2 font-medium" onClick={onChange} variant="link">
         {t("Change")}

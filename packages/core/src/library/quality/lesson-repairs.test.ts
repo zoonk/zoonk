@@ -262,6 +262,31 @@ describe(repairWrittenLesson, () => {
     });
   });
 
+  it("keeps code in a screen's text as written while repairing its words", () => {
+    const code = ["```python", 'print("$-5")', "```"];
+
+    const explanation: WrittenScreen = {
+      exampleLineIdea: null,
+      explore: null,
+      image: null,
+      kind: "explanation",
+      text: ["The balance is $-5 and `<div>` holds it. <b>Run</b> this:", ...code].join("\n"),
+      title: "What does `<div>` hold?",
+      visual: null,
+    };
+
+    const [repaired] = repairWrittenLesson({
+      language: "en",
+      lesson: { screens: [explanation], summary: hubMap(["Money in code stays code."]) },
+      spec,
+    }).screens;
+
+    expect(repaired).toMatchObject({
+      text: ["The balance is -$5 and `<div>` holds it. Run this:", ...code].join("\n"),
+      title: "What does `<div>` hold?",
+    });
+  });
+
   it("leaves a lesson with nothing to repair as it was", () => {
     const lesson = writtenTemperatureLesson();
     expect(repairWrittenLesson({ language: "en", lesson, spec })).toStrictEqual(lesson);

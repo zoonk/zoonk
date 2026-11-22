@@ -264,7 +264,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/stops": {
     post: {
       description:
-        '"Stop for today": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.',
+        '"Stop for today": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` stays true after the first finish; otherwise it is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.',
       operationId: "createStudySessionStop",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },

@@ -8,11 +8,12 @@ import { LearnLink } from "../learn-link";
 import { usePastDateText } from "../plan/plan-status-label";
 import { useTodayScreen } from "./today-context";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
-import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
+import { useDayState, useHasNextBlock, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 function DoneStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();
+  const hasNext = useHasNextBlock();
   const keepLearning = useUpNextLessons().length > 0;
   const restDay = today.session.minutes.dailyGoal === 0;
 
@@ -21,7 +22,7 @@ function DoneStatus({ className }: { className?: string }) {
       <TodayStatusSentence>
         {restDay ? t("You studied on your day off.") : t("You're done for today.")}
       </TodayStatusSentence>
-      {keepLearning && (
+      {(hasNext || keepLearning) && (
         <LearnLink
           className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
           href={actions.summaryHref}
@@ -52,18 +53,6 @@ function RestStatus({ className }: { className?: string }) {
 
 function WaitingStatus({ className }: { className?: string }) {
   const t = useExtracted();
-  const { writingStalled } = useTodayScreen();
-
-  if (writingStalled) {
-    return (
-      <TodayStatusLine className={className} icon={<ClockIcon />}>
-        <TodayStatusSentence>
-          {t("Today's lessons are taking longer than usual.")}
-        </TodayStatusSentence>
-        <TodayStatusClause>{t("Come back in a few minutes.")}</TodayStatusClause>
-      </TodayStatusLine>
-    );
-  }
 
   return (
     <TodayStatusLine className={className} icon={<Spinner />}>
@@ -98,13 +87,16 @@ export function TodayDayStatus({ className }: { className?: string }) {
     return <PastDateStatus className={className} lessons={pastDate.lessons} />;
   }
 
+  // A started day's lessons to come have their own row in its list, which says how they're doing.
+  const listHolds = today.session.blocks.length > 0;
+
   switch (state) {
     case "done":
       return <DoneStatus className={className} />;
     case "waiting":
-      return <WaitingStatus className={className} />;
+      return listHolds ? null : <WaitingStatus className={className} />;
     case "prepare":
-      return (
+      return listHolds ? null : (
         <TodayStatusLine className={className} icon={<ClockIcon />}>
           <TodayStatusSentence>{t("Today's lessons aren't ready yet.")}</TodayStatusSentence>
         </TodayStatusLine>

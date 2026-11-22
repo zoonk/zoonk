@@ -275,7 +275,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let writtenPractice: WrittenPractice?
 
   var today: String {
-    week.days.first { $0.state == .today }?.date ?? week.startDate
+    week.days.first { $0.study.isToday }?.date ?? week.startDate
   }
 
   /// The phases a drawing of the plan counts: studying after an exam comes past its finish, and a
@@ -411,37 +411,12 @@ struct PlanChapter: Decodable, Equatable, Identifiable, Sendable {
   var isWritingAhead: Bool { writing && !far && skills.isEmpty }
 }
 
+/// The Plan draws a day as Today's week does, from the same study facts.
 struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
-  enum State: String, Decodable, Sendable {
-    case done
-    case missed
-    case rest
-    case today
-    case upcoming
-  }
-
-  struct Item: Decodable, Equatable, Sendable {
-    let status: String
-  }
-
   let date: String
-  let items: [Item]
-  let state: State
+  let study: StudyWeek.Day
 
   var id: String { date }
-
-  var share: Double {
-    if state == .done {
-      return 1
-    }
-
-    guard !items.isEmpty else {
-      return 0
-    }
-
-    let done = items.filter { $0.status == "done" || $0.status == "testedOut" }.count
-    return Double(done) / Double(items.count)
-  }
 }
 
 /// The day Today will show, which the reveal's Start opens.

@@ -8,7 +8,7 @@ import {
   listDayStretch,
   placePutOffChallenges,
 } from "./_utils/day-stretch";
-import { fillRemainingLessonTime } from "./_utils/fill-session-time";
+import { fillRemainingLessonTime, getWritingMinutes } from "./_utils/fill-session-time";
 import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
 import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-blocks";
@@ -19,6 +19,7 @@ import {
   takeLessons,
   toLessonBlock,
 } from "./_utils/session-lessons";
+import { type PlannedTime } from "./_utils/unwritten-time";
 import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "./block-minutes";
 import {
   type BlockCapsule,
@@ -91,8 +92,8 @@ export type SessionBuildInput = {
   reviewPlanItemKey?: string | null;
   /** Reviews weak studied topics when nothing is due and no other work remains. */
   weakestReview?: boolean;
-  /** Today's minutes for lessons someone is still writing: practice and review leave them free so those lessons fit once written. */
-  writingMinutes?: number;
+  /** Today's time for each lesson someone is still writing, at its place in the plan: it holds what the lessons before it leave, and practice and review leave that free so it fits once written. */
+  unwritten?: readonly PlannedTime[];
   /** Each practice topic's name and area as the plan shows them (`getPlanTopics`). */
   topics: ReadonlyMap<string, PracticeTopic>;
   /** Minutes held by preserved blocks; rebuilding fills only the remaining time. */
@@ -145,17 +146,17 @@ function fillReview({
   blocks,
   budget,
   input,
+  writingMinutes,
 }: {
   blocks: readonly PlannedBlock[];
   budget: number;
   input: SessionBuildInput;
+  writingMinutes: number;
 }): PlannedBlock[] {
   const others = blocks.filter((block) => block.kind !== "review");
 
   const left =
-    budget -
-    (input.writingMinutes ?? 0) -
-    others.reduce((sum, block) => sum + block.estimatedMinutes, 0);
+    budget - writingMinutes - others.reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
   const fillsDay =
     !input.weakestReview &&
@@ -309,11 +310,13 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     overflow: false,
   });
 
-  const learnBudget =
-    remaining - getPracticeMinutes({ budget, input, remaining }) - getLessonMinutes(reinforcement);
+  const lessonRoom = remaining - getLessonMinutes(reinforcement);
+  const learnBudget = lessonRoom - getPracticeMinutes({ budget, input, remaining });
+  const writingMinutes = getWritingMinutes({ input, room: lessonRoom });
+  const leadingMinutes = leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0);
 
   const stretch = listDayStretch({
-    budget: learnBudget + leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0),
+    budget: learnBudget + leadingMinutes,
     checkpoints: available,
     items: planItems,
     leading,
@@ -329,10 +332,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     0,
   );
 
-  const learnMinutes =
-    getLessonMinutes(reinforcement) +
-    stretchMinutes -
-    leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0);
+  const learnMinutes = getLessonMinutes(reinforcement) + stretchMinutes - leadingMinutes;
 
   const built = [
     review,
@@ -344,7 +344,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     ),
     ...buildPracticeBlocks({
       fullReviewSkillIds: input.fullReviewSkillIds,
-      minutes: Math.max(0, remaining - learnMinutes - (input.writingMinutes ?? 0)),
+      minutes: Math.max(0, remaining - learnMinutes - writingMinutes),
       netScored: input.netScored,
       planItemId: input.reviewPlanItemId,
       planItemKey: input.reviewPlanItemKey,
@@ -358,7 +358,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   return fillRemainingLessonTime({
     available,
-    blocks: fillReview({ blocks: built, budget, input: reviewInput }),
+    blocks: fillReview({ blocks: built, budget, input: reviewInput, writingMinutes }),
     budget,
     checkpointMinutes,
     input,
@@ -366,5 +366,6 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     learnBudget,
     lessons,
     produceMinutes: produce?.estimatedMinutes ?? 0,
+    writingMinutes,
   });
 }

@@ -567,6 +567,7 @@ describe(sessionPreparationWorkflow, () => {
             },
           ],
           courseId: course.id,
+          forGuest: false,
           scope: {
             exams: [],
             // Named by the language it teaches, never the goal's title.

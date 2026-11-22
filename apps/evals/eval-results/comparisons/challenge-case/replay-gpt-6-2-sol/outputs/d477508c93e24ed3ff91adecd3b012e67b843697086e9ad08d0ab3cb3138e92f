@@ -1,0 +1,234 @@
+{
+  "deadline": null,
+  "endings": [
+    {
+      "id": "dots-and-stripes",
+      "outcome": "Com a luz fraca e as duas aberturas livres, você viu a luz pingar em pontos separados. Em poucos minutos, esses mesmos pontos formaram faixas com muitas marcas e faixas com poucas, como no desenho que ondas fazem quando se encontram."
+    },
+    {
+      "id": "quick-view",
+      "outcome": "A luz forte chegou em porções iguais, e as duas aberturas livres deixaram aparecer depressa um desenho de faixas típico de ondas. Deu pra ver o desenho inteiro, mas não acompanhar as marcas chegando ponto por ponto."
+    }
+  ],
+  "meters": [],
+  "mission": "Brinque com uma luz verde que deixa rastros numa tela. O que muda quando você baixa o brilho: **o tamanho de cada pingo de luz ou quantos chegam**?",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "compare",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você manteve a cor e comparou tanto a energia por chegada quanto o ritmo. Assim deu pra ver que baixar o brilho diminui o número de chegadas no mesmo tempo, sem diminuir a energia de cada porção.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Com a luz forte, o visor marca a mesma porção de energia a cada chegada. Cada porção chega inteira, de uma vez: é um quantum de luz."
+            },
+            {
+              "from": "friend",
+              "text": "Na luz fraca, deu mais trabalho esperar, mas olha só: no mesmo tempo chegam menos porções, e cada uma traz a mesma energia que na luz forte."
+            }
+          ],
+          "text": "Vou alternar entre a luz forte e a fraca e comparar as porções e o ritmo das chegadas.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "ask",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você aproveitou o que {{friend}} já tinha visto: na luz forte, o visor marca a mesma energia a cada chegada.",
+              "example": null
+            },
+            {
+              "skill": "packets",
+              "kind": "improve",
+              "text": "Pra descobrir o que muda quando o brilho baixa, faltou olhar também a luz fraca, sem trocar de cor.",
+              "example": "Compare a energia de cada chegada e quantas chegadas acontecem no mesmo tempo com cada brilho."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Na luz forte, o visor marcou sempre a mesma energia a cada chegada. A luz entregava uma porção inteira por vez, e é isso que a gente chama de quantum."
+            },
+            {
+              "from": "friend",
+              "text": "Pronto, te poupei a espera no visor. Só fiquei com uma dúvida: com a luz fraca, será que muda a porção, o ritmo ou os dois?"
+            }
+          ],
+          "text": "Me conta o que você viu no visor com a luz forte, aí a gente vai pras aberturas.",
+          "timeJump": null
+        }
+      ],
+      "id": "brightness",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "Se eu baixar o brilho, será que cada pingo encolhe? Dá pra espiar o visor com as aberturas ainda fora do caminho."
+        },
+        {
+          "from": "friend",
+          "text": "Tô doida pra ver o desenho na tela. Posso te contar o que vi no visor com a luz forte e a gente já vai pras aberturas."
+        }
+      ],
+      "prompt": "O que você quer ver no visor?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "bright-view",
+          "next": "quick-view",
+          "notes": [
+            {
+              "skill": "duality",
+              "kind": "good",
+              "text": "Com a luz forte, você viu logo o que só aparece no conjunto: faixas com muitas marcas e faixas com poucas, como no desenho que ondas fazem quando se encontram.",
+              "example": null
+            },
+            {
+              "skill": "duality",
+              "kind": "improve",
+              "text": "O brilho forte deixou pouco tempo pra acompanhar cada chegada. Com a luz fraca, dá pra ver onde cada pingo cai e como os pontos vão formando as faixas.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Nossa, foi rapidinho! Ficaram faixas cheias de marcas e outras com poucas, bem o tipo de desenho que ondas fazem quando se encontram."
+            },
+            {
+              "from": "friend",
+              "text": "Deu pra ver as faixas de cara, mas as marcas chegaram tão depressa que não consegui acompanhar os pingos chegando separados."
+            }
+          ],
+          "text": "Vou usar a luz forte e olhar o desenho que aparece na tela.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "dot-view",
+          "next": "dots-and-stripes",
+          "notes": [
+            {
+              "skill": "duality",
+              "kind": "good",
+              "text": "Você deixou os pontos se acumularem com a luz fraca. Deu pra ver tanto a marca que cada chegada deixa num lugar só quanto as faixas que aparecem no conjunto, como quando ondas se encontram.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Achei que ia ficar só nesses pontinhos soltos! Cada pingo cai num lugar só, mas olha as faixas que aparecem quando os pontos se juntam."
+            },
+            {
+              "from": "friend",
+              "text": "Parece o que acontece quando ondas se encontram: em alguns lugares elas se reforçam, em outros ficam mais fracas."
+            }
+          ],
+          "text": "Vou usar a luz fraca e acompanhar os pontinhos que aparecem na tela.",
+          "timeJump": {
+            "label": "Poucos minutos depois",
+            "panel": {
+              "title": "Poucos minutos depois",
+              "metrics": [
+                {
+                  "label": "Luz verde fraca",
+                  "value": "Duas aberturas livres",
+                  "note": null
+                },
+                {
+                  "label": "Chegadas na tela",
+                  "value": "Pontinhos separados",
+                  "note": "Dá pra acompanhar as marcas conforme chegam."
+                },
+                {
+                  "label": "Desenho na tela",
+                  "value": "Faixas com muitas marcas e com poucas",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        }
+      ],
+      "id": "pattern",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "As duas aberturas já estão no caminho da luz. Que desenho será que vai sair na tela?"
+        },
+        {
+          "from": "friend",
+          "text": "Eu colocaria no forte. A tela enche de marcas mais rápido e dá pra ver logo o desenho inteiro."
+        }
+      ],
+      "prompt": "Com as duas aberturas livres, como você quer olhar pra tela?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Luz no coreto",
+      "metrics": [
+        {
+          "label": "Cor da luz",
+          "value": "Verde, do brilho fraco ao forte.",
+          "note": null
+        },
+        {
+          "label": "Na frente da tela",
+          "value": "2 aberturas finas, bem próximas.",
+          "note": null
+        }
+      ],
+      "note": "A tela marca onde a luz chega, e o visor ao lado mostra quanta energia veio em cada chegada."
+    }
+  ],
+  "setting": "Coreto da praça, ao anoitecer",
+  "skills": [
+    {
+      "id": "packets",
+      "name": "Explicar a energia em pacotes",
+      "practice": "Em uma frase, diferencie o que muda e o que fica igual quando você baixa o brilho de uma luz sem mudar sua cor."
+    },
+    {
+      "id": "duality",
+      "name": "Reconhecer a dualidade onda-partícula",
+      "practice": "Rabisque uma faixa de pontinhos e aponte o que você descobre olhando um pontinho e o que só aparece olhando o conjunto."
+    }
+  ],
+  "startNodeId": "brightness",
+  "summary": [
+    "Um quantum de luz é uma porção de energia que chega inteira, de uma vez.",
+    "Se a cor não muda, baixar o brilho faz chegar menos porções no mesmo tempo, sem mudar a energia de cada uma.",
+    "A luz pode chegar em pontos separados e ainda assim formar, no conjunto, um desenho típico de ondas."
+  ],
+  "team": [
+    {
+      "id": "friend",
+      "role": "Amiga curiosa",
+      "expertise": "Já espiou o visor com a luz forte e quer ver que desenho aparece atrás das aberturas.",
+      "ai": false
+    }
+  ],
+  "title": "E se desse pra ver a luz pingar?"
+}

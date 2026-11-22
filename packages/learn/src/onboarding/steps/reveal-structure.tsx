@@ -153,7 +153,7 @@ function SubjectRow({ subject }: { subject: SyllabusSubject }) {
         >
           {subject.shortName}
         </ListRowTitle>
-        {line && <ListRowDescription className="text-pretty">{line}</ListRowDescription>}
+        {line && <ListRowDescription>{line}</ListRowDescription>}
       </ListRowContent>
       <ListRowTrailing className="hidden empty:hidden @lg/structure:flex">
         {subject.questions !== null && subject.questions > 0 && questionCount(subject.questions)}

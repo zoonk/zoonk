@@ -11,7 +11,6 @@
   "today_building_plan_goal": "2d40df567720f45a951a4b06e1292cfc3190ee3cc05ad2c9f7a19a5e212a728f",
   "today_choose_focus": "e149028297c8a18a4ae7355e053c19cf0282209f704cd1072c12b4cc9a12db70",
   "today_coming_not_written": "bdf5f19ce373f804079b0782f8f528c34ac6542d3ac5f417455b11d8816ef0ac",
-  "today_coming_stalled": "f0bada095eb1d97d2606e416e2c4a4c8f9a2a4499cb7dae5846a8b26045592db",
   "today_coming_title": "60ec15c7f3011287e4b022344833989dc6e0a63d21afd25f7bf66b682b67ca7a",
   "today_coming_writing": "2b768aa429451953100dd6d8bd16602ae381a52ee3ab6ad4da41ae7727d288ec",
   "today_completed_lessons_line": "bb9bb206e7f7dd46e317d4259420b555c1191c571ed30065345b1aeca47d03d2",
@@ -29,7 +28,6 @@
   "today_exam_speaking_detail": "cc8c483157a40a87f5eabf4b1af4882622947f3360fd7b484cb084f3d07cc630",
   "today_finished_goal": "e6f730d2cb179059c05a34be8d856a7c0e0ffcc18606be18dffaec4724efa385",
   "today_get_lessons": "00e44abf3860f90de2b44777bb56997cf57ee1219a5d7ef9f4dd5ab47cac1b6c",
-  "today_get_them_now": "81f5d6f03d444a8514f0571cf3b0b9dd9f660f4d75e4ea2dd47d2ce3607ba40c",
   "today_insight_add_it": "fc853e962d49a193f58c0d074435eef0cf1bfc85d9b04441725f44da68d46944",
   "today_insight_got_it": "90d705281063652f16ab6225bf7868a29244e18fedb33c4f0dd91cbc99bd816f",
   "today_insight_keep_it": "372a42f5f5aa013132a6b025f5a12e744c683c6adccdb075d5a419f4650ccbab",
@@ -111,6 +109,7 @@
   "today_step_counts_toward_mission": "3beb7fb4a12891722b345290ebe86bb83b2d0280869b7fbd44e2b9ef85ac7742",
   "today_step_done": "4ed8a68cbf5bf611ad4dbf7bbd4891cbdfe6d42b35336971e27c7db2e66a6bfd",
   "today_step_every_topic": "bcda124079fa2fa9cb85d80f2ed6707b8d81d2a19e87ba1e9469b2624d86651d",
+  "today_step_extra": "7f24c4124aead8ad69bda1d116de2639a0e316fc8a4475c436299ad57c8794c8",
   "today_step_next": "a864cce1dbd79f1349f7620c06dc9dfc3185abe8ba5ea95d3225acb806045d88",
   "today_step_often_tested": "41babfbc2beaaa29db3434ac4f41c250794a733201a60a6bb1383c377b2e07ed",
   "today_step_open_failed": "6e24ae7c8e26eb89bd664748d490fe4e723c0ce6a42c8796971c63a942cddab3",
@@ -131,8 +130,6 @@
   "today_unfinished_setup": "63552fcd908f127e7b7f53b480d9d4a5b01c644527a676d3b907f919e2fc3b6d",
   "today_up_next": "f37cfd888b3f92d712ab251d6c02628a3a5c56db1acd30c03137b6d7e763c1fd",
   "today_waiting": "b8ee94a1a389470fe17c6ae0030dafeb8192595ccfb5fe32b754da8a8b93130f",
-  "today_waiting_stalled": "9e66b97d39ea59a6dbfdc3411b63e399c1e7585de52503699e60f767cfcf5126",
-  "today_waiting_stalled_detail": "0087af8b5fe921ea1e06e7c0688fe4121e43bc3927042b75be01bb86b12e7c64",
   "today_week_after_date": "6071c8c5f20bba48e6d66f453568ed322f2fb874d0b95c16db7530e1a7216691",
   "today_week_after_exam": "95e4dcf5696bcb8c13f2c2b573c9e906326893c192e1b817cc6721d598510754",
   "today_week_before_plan": "64669b001a0b993dce1a61899f465cabaf668f6b5b8fc3299a5772a665dddbac",
@@ -201,6 +198,8 @@
     <string name="today_step_done">Tamamlandı</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Sıradaki adım</string>
+    <!-- Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress. -->
+    <string name="today_step_extra">Ekstra</string>
     <string name="today_step_skipped">Atlandı</string>
     <string name="today_step_counts_toward_mission">Bir görevde ilerleme sağlar</string>
     <string name="today_step_often_tested">Sınavlarda sık çıkar</string>
@@ -213,8 +212,6 @@
     <string name="today_rest_next_lessons">Çalışmak istersen sıradaki derslerin aşağıda.</string>
     <string name="today_rest_enjoy">Dinlenme gününün tadını çıkar!</string>
     <string name="today_waiting">Bugünkü dersleri hazırlıyoruz…</string>
-    <string name="today_waiting_stalled">Bugünkü dersleri hazırlamamız normalden uzun sürüyor.</string>
-    <string name="today_waiting_stalled_detail">Birkaç dakika sonra tekrar gel.</string>
     <string name="today_nothing_new">Planın yolunda.</string>
     <string name="today_up_next">Planında sıradakiler</string>
     <string name="today_start_session">Başla</string>
@@ -354,8 +351,6 @@
     <string name="today_coming_title">Sıradaki derslerin</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Hazırlıyoruz…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Her zamankinden uzun sürüyor</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Henüz hazır değil</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -376,7 +371,6 @@
     <string name="today_week_day_planned">%1$s planlandı</string>
     <string name="today_plan_finished">Planını tamamladın.</string>
     <string name="today_week_after_exam">sınavından sonra</string>
-    <string name="today_get_them_now">Şimdi hazırla</string>
     <string name="today_resume">Devam et</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

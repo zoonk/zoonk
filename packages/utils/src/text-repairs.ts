@@ -1,3 +1,4 @@
+import { editProse, findCodeFenceLines, findCodeFences } from "./code-fence";
 import { type InlineMarkupRange, parseInlineMarkupRanges } from "./inline-markup";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
 import { splitAtMath } from "./math-spans";
@@ -23,15 +24,18 @@ const STYLE_TAG = /<\/?(?:a|b|div|em|i|p|small|span|strong|u)\b[^>]*>/giu;
 
 const LINE_BREAK = /\s*\n\s*/gu;
 
+/** Taking out a mark can leave its neighbor stray ("_**a" leaves "_a"), so it repeats until none is. */
 function removeStrayEmphasis(line: string): string {
   const stray = findStrayEmphasis(line);
 
   return stray.size === 0
     ? line
-    : line
-        .split("")
-        .filter((_, index) => !stray.has(index))
-        .join("");
+    : removeStrayEmphasis(
+        line
+          .split("")
+          .filter((_, index) => !stray.has(index))
+          .join(""),
+      );
 }
 
 function removeLineMarks(line: string): string {
@@ -57,32 +61,50 @@ function editOutsideMath(line: string, edit: (text: string) => string): string {
   });
 }
 
+/** Emphasis pairs with its inline code in view, since players never pair it across code. */
 function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string }): string {
-  return editOutsideMath(line, (text) =>
-    text
-      .replaceAll(LINK, "$<text>")
-      .replaceAll(ANGLE_LINK, "$<address>")
-      .replaceAll(LINE_BREAK_TAG, breakAs)
-      .replaceAll(STYLE_TAG, ""),
+  return editProse(line, (prose) =>
+    editOutsideMath(prose, (text) =>
+      text
+        .replaceAll(LINK, "$<text>")
+        .replaceAll(ANGLE_LINK, "$<address>")
+        .replaceAll(LINE_BREAK_TAG, breakAs)
+        .replaceAll(STYLE_TAG, ""),
+    ),
   )
     .split("\n")
     .map((part) => removeStrayEmphasis(part))
     .join("\n");
 }
 
+function repairLine({
+  code,
+  index,
+  line,
+  tableLines,
+}: {
+  code: ReadonlySet<number>;
+  index: number;
+  line: string;
+  tableLines: ReadonlySet<number>;
+}): string {
+  if (code.has(index)) {
+    return line;
+  }
+
+  return tableLines.has(index)
+    ? splitTableCells(line)
+        .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
+        .join("|")
+    : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) });
+}
+
 function repairBlocks(text: string): string {
   const lines = text.split("\n");
+  const code = findCodeFenceLines(lines);
   const tableLines = findMarkdownTableLines(lines);
 
-  return lines
-    .map((line, index) =>
-      tableLines.has(index)
-        ? splitTableCells(line)
-            .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
-            .join("|")
-        : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) }),
-    )
-    .join("\n");
+  return lines.map((line, index) => repairLine({ code, index, line, tableLines })).join("\n");
 }
 
 function repairInline(text: string): string {
@@ -95,9 +117,14 @@ function repairInline(text: string): string {
   return removeInlineMarks({ breakAs: " ", line });
 }
 
+function hasCodeBlock(text: string): boolean {
+  return findCodeFences(text.split(/\r?\n/u)).length > 0;
+}
+
 /**
- * What code can't repair safely stays for a writer: a table where one line shows, rows with no
- * header, a code fence and other HTML.
+ * Code keeps every character: a `#` comment, `**kwargs` and `<div>` are code, never marks. What
+ * code can't repair safely stays for a writer: a table or a code block where one line shows, rows
+ * with no header, a code fence that never closed, and other HTML.
  */
 export function repairMarkdown({ layout, text }: { layout: TextLayout; text: string }): string {
   if (findUnrenderedMarkdown({ layout, text }).length === 0) {
@@ -108,7 +135,7 @@ export function repairMarkdown({ layout, text }: { layout: TextLayout; text: str
     return repairBlocks(text);
   }
 
-  return hasTableRows(text) ? text : repairInline(text);
+  return hasTableRows(text) || hasCodeBlock(text) ? text : repairInline(text);
 }
 
 function unmark({ line, segment }: { line: string; segment: InlineMarkupRange }): string {

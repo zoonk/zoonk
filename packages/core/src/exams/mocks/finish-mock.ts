@@ -1,7 +1,7 @@
 import "server-only";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { endMock } from "./_utils/end-mock";
-import { findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
+import { findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
 
 export type FinishMockResult = {
@@ -32,19 +32,7 @@ export async function finishMock({
     return { status: mock?.status === "finished" ? "finished" : "notRunning" };
   }
 
-  const timedOut =
-    mock.sectionIndex < mock.conditions.sections.length &&
-    Date.now() >= getSectionDeadline(mock).getTime();
-
-  const conditions = timedOut
-    ? {
-        ...mock.conditions,
-        timedOutSections: [...mock.conditions.timedOutSections, mock.sectionIndex],
-      }
-    : mock.conditions;
-
   const status = await endMock({
-    conditions,
     mock,
     owned,
     timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone }),

@@ -290,4 +290,21 @@ export const EXCEPTIONS: AlignmentException[] = [
     relation: "lone-word",
     scenario: "/plan/matematica-e-suas-tecnologias",
   },
+  {
+    configuration: "laptop keys",
+    issue: 2944,
+    piece: "page",
+    reason:
+      "An out-of-plan subject's facts line wraps in the meter's column on the Plan, on main too",
+    relation: "lone-word",
+    scenario: "/plan",
+  },
+  {
+    configuration: "laptop keys pt",
+    issue: 2955,
+    piece: "page",
+    reason: "A two-line phase name on the Plan's roadmap leaves one word alone, on main too",
+    relation: "lone-word",
+    scenario: "/pt/plan",
+  },
 ];

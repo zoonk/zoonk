@@ -1,0 +1,169 @@
+{
+  "lessons": [
+    {
+      "canDo": "Identificar partes da flor e relacioná-las à formação de frutos e sementes",
+      "description": "Conhecer as principais partes da flor e suas funções para entender de onde vêm frutos e sementes.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Otávio encontra flores brancas e pequenos pimentões verdes no mesmo pé. De que parte da flor nasce o pimentão?",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "As pétalas são as peças que muitas vezes atraem animais visitantes: no pimentoeiro, elas são brancas. Associar o número 1 à pétala, sem apresentar ainda os nomes das outras partes.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "Perguntar: “Quando essa flor der um pimentão, qual região terá crescido para formar o fruto?”; opções: “A base da estrutura central” e “O conjunto de pétalas”, com a primeira correta e a segunda como palpite tentador por serem as pétalas a parte mais chamativa.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "O pistilo é a estrutura feminina da flor, que recebe o pó reprodutivo em sua ponta. Na flor desenhada, ele ocupa o centro e corresponde ao número 4.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "O ovário é a região do pistilo que geralmente se desenvolve em fruto: no pimentoeiro, é a base dilatada marcada com 5. É essa região, não as pétalas, que cresce para formar o pimentão.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "Cada óvulo contém uma célula reprodutiva feminina e pode virar uma semente após a união das células reprodutivas. No desenho, o número 6 aponta um óvulo dentro do ovário.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Uma única vagem de ervilha aberta longitudinalmente, com a parede identificada como “fruto” e três ervilhas internas identificadas como “sementes”, sem mostrar estruturas da flor nem indicar as respostas.",
+          "visualKind": "picture",
+          "brief": "Perguntar de quais estruturas vieram, respectivamente, a vagem de uma ervilha e as sementes dentro dela; resposta: “Ovário e óvulos”. Incluir “Óvulos e ovário” como troca tentadora e esclarecer que a vagem é o fruto.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Botão floral de pimentoeiro parcialmente aberto, com sépalas verdes envolvendo as pétalas brancas ainda dobradas; uma sépala identificada pelo nome e as pétalas identificadas pelo nome, sem outras legendas.",
+          "visualKind": "picture",
+          "brief": "As sépalas são as peças externas que protegem a flor enquanto ela ainda está fechada em botão. No pimentoeiro, são verdes e ficam por fora das pétalas.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "O estame é a estrutura masculina da flor: no pimentoeiro, aparece como uma haste fina com uma extremidade que produz pó reprodutivo. Associar o número 3 ao estame inteiro, não apenas à sua ponta.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Flor de pimentoeiro em corte longitudinal simplificado, com pétalas brancas e estruturas internas visíveis; números discretos indicam 1 uma pétala, 2 uma sépala verde externa, 3 um estame com haste e extremidade contendo pó, 4 o pistilo inteiro delimitado por uma chave, 5 sua base dilatada em corte e 6 um dos pequenos óvulos dentro dessa base; nenhum nome escrito.",
+          "visualKind": "picture",
+          "brief": "O pó produzido pelos estames é formado por grãos de pólen, que carregam as células reprodutivas masculinas. No pimentoeiro, esse pó precisa chegar à ponta do pistilo para participar da formação de sementes.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma flor tem pétalas vistosas, mas seus estames não produzem pólen: perguntar qual função fica diretamente comprometida; resposta: “Fornecer células reprodutivas masculinas”. Incluir “Atrair animais visitantes” como confusão tentadora entre estames e pétalas.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "activity",
+          "visual": "Flor simplificada em vista oblíqua com corte que revela o centro, sem palavras na imagem; número 1 em uma pétala, 2 em uma sépala externa, 3 ligado por chave a um estame inteiro e 4 ligado por chave ao pistilo inteiro, da ponta à base dilatada.",
+          "visualKind": "template",
+          "brief": "Pedir para nomear quatro partes de uma flor em posição diferente da usada antes: 1 pétala (petal), 2 sépala (sepal), 3 estame (stamen), 4 pistilo (pistil); oferecer ovário como distrator para o pistilo inteiro. Após a montagem, perguntar qual peça protege o botão, com sépala como resposta e pétala como confusão provável; o feedback distingue o pistilo inteiro de sua base.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Flor de pimentoeiro após a queda das pétalas, ainda presa à planta, com sépalas e pistilo preservados; marcador A na ponta do pistilo, B na base dilatada do pistilo e C em uma sépala, sem nomes nem indicação de qual estrutura formará o fruto.",
+          "visualKind": "picture",
+          "brief": "Débora vê as pétalas de uma flor de pimentoeiro caírem depois que o pólen chegou ao pistilo e acha que perdeu o futuro fruto. Pedir que indique a estrutura preservada que deve acompanhar e explique se a queda das pétalas, por si só, impede o fruto; resposta: acompanhar o ovário, pois perder pétalas não basta para impedir seu desenvolvimento.",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Reconhecer pétalas, sépalas, estames e pistilo pela posição e pela estrutura em uma flor.",
+          "example": "Em uma flor de pimentoeiro, identificar as sépalas verdes externas e o pistilo no centro.",
+          "hard": false,
+          "name": "Identificar as principais partes de uma flor",
+          "topic": "Partes da flor",
+          "useCase": "Observar flores de uma horta ou interpretar desenhos de reprodução vegetal."
+        },
+        {
+          "description": "Relacionar as estruturas florais às funções de proteção, atração e reprodução, distinguindo a origem do fruto e da semente.",
+          "example": "No pimentoeiro, o ovário origina o fruto e os óvulos podem originar as sementes.",
+          "hard": false,
+          "name": "Relacionar partes da flor às suas funções",
+          "topic": "Funções das partes florais",
+          "useCase": "Entender quais estruturas participam da produção de frutos e sementes nas plantas."
+        }
+      ],
+      "title": "As partes da flor"
+    }
+  ]
+}

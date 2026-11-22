@@ -55,7 +55,7 @@ export function useSpeechActionLabel(state: SpokenAudioState, idle: string): str
 
 function LimitTitle({ limit }: { limit: HelpLimit }) {
   const { line, title } = useHelpLimitWords(limit);
-  return <p className="font-medium text-pretty">{title ?? line}</p>;
+  return <p className="font-medium">{title ?? line}</p>;
 }
 
 export function SpeechFailedNote({
@@ -80,7 +80,7 @@ export function SpeechFailedNote({
       {limit && <LimitTitle limit={limit} />}
 
       {(text || !limit) && (
-        <p className="text-muted-foreground text-pretty">
+        <p className="text-muted-foreground">
           {!limit && t("The audio didn't play.")}
           {!limit && space}
           {text && t("Here's what it says:")}
@@ -88,7 +88,7 @@ export function SpeechFailedNote({
       )}
 
       {text && (
-        <p className="text-foreground text-base text-pretty" lang={language}>
+        <p className="text-foreground text-base" lang={language}>
           {text}
         </p>
       )}

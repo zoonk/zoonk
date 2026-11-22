@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "ca3967e0674a88ec",
+        "criterion": "accuracy",
+        "observationId": "75077874121734f81383f44d148fe5aa8598870663da78027bd9e0f23daf31f1.first.a84478dd-c25e-4964-a1e9-15dcc0794451.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0022494499999999996,
+    "id": "f327f2ca2efc34e8c009f56a72c9317369b96f92d9fc3eadc5ec10a2de060403",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "657e640b44357f1f",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "claim": "A afirmação de que o servidor «sempre» pode se explicar antes de perder o cargo é ampla demais: a Constituição também admite redução de cargos em caso de excesso de gastos com pessoal, sem essa defesa individual como condição geral.",
+        "claimId": "ca3967e0674a88ec",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Antes de perder o cargo, o servidor estável sempre pode se explicar e apresentar provas, o que se chama ampla defesa.",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "657e640b44357f1f",
+          "finding": "doesn't hold",
+          "reason": "The term 'additive inverse' appears in neither output. Screen 5 of output A is a mathCheck, not an explanation about that term, and in B screen 5 is a long explanation that uses only 'Additive increments' in its title. The claim is false for both."
+        },
+        {
+          "claimId": "ca3967e0674a88ec",
+          "finding": "holds",
+          "reason": "Output B's quoted sentence, 'Antes de perder o cargo, ele sempre pode se explicar e apresentar provas', is stated as a general rule. Article 169 §4 of the Constitution allows a stable servant to be dismissed for excess personnel spending without an individual defense requirement, so 'sempre' is overbroad. Output A does not use 'sempre' in that way."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

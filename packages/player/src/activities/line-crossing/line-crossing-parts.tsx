@@ -2,9 +2,9 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvasLabel, ActivityTextAlternative } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type LineOffsets, type ShiftAxis, lineShiftAnswer } from "./line-crossing-model";

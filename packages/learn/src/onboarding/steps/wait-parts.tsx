@@ -25,7 +25,7 @@ export function WaitHeading({ description, title }: { description: ReactNode; ti
     return (
       <div className="flex flex-col gap-1">
         <PageSectionTitle>{title}</PageSectionTitle>
-        <p className="text-muted-foreground text-sm text-pretty">{description}</p>
+        <p className="text-muted-foreground text-sm">{description}</p>
       </div>
     );
   }

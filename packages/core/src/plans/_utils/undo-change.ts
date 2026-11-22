@@ -8,6 +8,7 @@ import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
 import { keepOpenSessionSelection } from "../../sessions/_utils/skip-tested-out-blocks";
+import { unlessPlanConflict } from "../plan-conflict";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
@@ -191,10 +192,14 @@ export async function undoChange({
   });
 
   if (parsePlanChangePayload(change.payload).replannedSince) {
-    await refreshGoalPlan({ goalId: context.goal.id, settleMissedDays: false });
+    await refreshGoalPlan({
+      goalId: context.goal.id,
+      onConflict: "yield",
+      settleMissedDays: false,
+    });
   }
 
-  await refreshSavedGoalPlanAdvice(context.goal.id);
+  await unlessPlanConflict(() => refreshSavedGoalPlanAdvice(context.goal.id));
   revalidatePlanTags(context.goal.userId);
 
   if (!restored && !keepSession) {

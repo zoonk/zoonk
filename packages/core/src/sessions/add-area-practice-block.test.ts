@@ -5,9 +5,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-goal";
+import { settleSessionDay } from "./_utils/settle-session-day";
 import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { readBlockPayload } from "./block-payload";
+import { getStudySession } from "./get-study-session";
 
 async function setup({ itemsPerSkill = 2 }: { itemsPerSkill?: number } = {}) {
   const user = await userFixture();
@@ -40,6 +43,50 @@ describe(addAreaPracticeBlock, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("keeps area practice outside the day count and first finish", async () => {
+    const { chapters, goal, user } = await setup();
+    const before = await getTodayStudySession({ goalId: goal.id });
+
+    if (before.status !== "ready") {
+      throw new Error("Expected a day");
+    }
+
+    const extra = await addAreaPracticeBlock({
+      goalId: goal.id,
+      input: { areaId: chapters[1]?.id ?? "", timeZone: "UTC" },
+    });
+
+    if (extra.status !== "ready") {
+      throw new Error("Expected extra practice");
+    }
+
+    const after = await getStudySession({ input: {}, sessionId: extra.sessionId });
+    expect(after).toMatchObject({ session: { sessionBar: before.session.sessionBar } });
+
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: SESSION_NOW, status: "completed" },
+      where: { id: { not: extra.block.id }, sessionId: extra.sessionId },
+    });
+
+    await prisma.studySession.update({
+      data: {
+        plannedMinutes: before.session.blocks.reduce(
+          (sum, block) => sum + (block.estimatedMinutes ?? 0),
+          0,
+        ),
+      },
+      where: { id: extra.sessionId },
+    });
+
+    await settleSessionDay({ sessionId: extra.sessionId, timeZone: "UTC", userId: user.id });
+    const stored = await prisma.studySession.findUniqueOrThrow({ where: { id: extra.sessionId } });
+    expect(stored.endedAt).not.toBeNull();
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: extra.block.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
   });
 
   it("requires a session, the learner's own goal and a known area", async () => {

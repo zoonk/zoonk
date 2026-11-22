@@ -162,7 +162,8 @@ describe("a question whose picture is removed after a failed check", () => {
       mediaAssetFixture(),
     ]);
 
-    const [answered, unasked, plain] = await Promise.all([
+    const [earlier, answered, unasked, plain] = await Promise.all([
+      itemFixture({ skillId: skill.id }),
       itemFixture({ content: picturedContent(), mediaAssetId: asset.id, skillId: skill.id }),
       itemFixture({ content: picturedContent(), mediaAssetId: asset.id, skillId: skill.id }),
       itemFixture({ skillId: skill.id }),
@@ -179,6 +180,14 @@ describe("a question whose picture is removed after a failed check", () => {
           reused: 0,
           scoring: "raw",
           sections: [
+            {
+              essays: [],
+              itemIds: [earlier.id],
+              minutes: 30,
+              name: "First section",
+              questions: 1,
+              routing: null,
+            },
             {
               essays: [],
               itemIds: [answered.id, unasked.id, plain.id],
@@ -208,19 +217,38 @@ describe("a question whose picture is removed after a failed check", () => {
         input: { answer: RIGHT, durationMs: 4000, flagged: false, itemId },
       });
 
+    await save(earlier.id);
+
+    await expect(
+      submitMockSection({ blockId: mock.id, input: {}, section: 0 }),
+    ).resolves.toStrictEqual({ status: "next" });
+
     await save(answered.id);
     await removeImageAsset({ assetId: asset.id });
 
     const view = await getMock(mock.id);
 
-    expect(
-      view.status === "ready" && view.mock.current?.questions.map((question) => question.itemId),
-    ).toStrictEqual([answered.id, plain.id]);
-
-    await save(plain.id);
+    expect(view).toMatchObject({
+      mock: {
+        current: {
+          questionTotal: 2,
+          questions: [
+            { itemId: answered.id, number: 1 },
+            { itemId: plain.id, number: 2 },
+          ],
+          section: 1,
+        },
+      },
+      status: "ready",
+    });
 
     await expect(finishMock({ blockId: mock.id, input: {} })).resolves.toStrictEqual({
       status: "finished",
+    });
+
+    await expect(getMock(mock.id)).resolves.toMatchObject({
+      mock: { review: [{ itemId: plain.id, number: 2, outcome: "blank", section: 1, total: 2 }] },
+      status: "ready",
     });
 
     const attempts = await prisma.attempt.findMany({
@@ -231,9 +259,11 @@ describe("a question whose picture is removed after a failed check", () => {
     expect(
       attempts.toSorted((a, b) => (a.itemId ?? "").localeCompare(b.itemId ?? "")),
     ).toStrictEqual(
-      [answered, plain]
-        .map((item) => ({ isCorrect: true, itemId: item.id }))
-        .toSorted((a, b) => a.itemId.localeCompare(b.itemId)),
+      [
+        { isCorrect: true, itemId: earlier.id },
+        { isCorrect: true, itemId: answered.id },
+        { isCorrect: false, itemId: plain.id },
+      ].toSorted((a, b) => a.itemId.localeCompare(b.itemId)),
     );
   });
 

@@ -79,7 +79,8 @@ struct TodayMoreSection: View {
             .tint(.primary)
           }
 
-          if state == .done && view.session.extraTime.available {
+          // While extras wait, Continue is the day's action.
+          if state == .done && view.session.nextBlock == nil && view.session.extraTime.available {
             Button(action: addTime) {
               Label {
                 VStack(alignment: .leading, spacing: 2) {
@@ -512,10 +513,13 @@ struct TodayPlanChangeSection: View {
   }
 }
 
-/// Today's missions: the header, and the missions behind a press on its title (B1-002).
+/// Today's missions: the header, and the missions behind a press on its title (B1-002). Beside the
+/// week in the iPad's grid, the missions show without the press, filling the room the week leaves.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.isGridBlock) private var isGridBlock
+  @Environment(\.stacksContent) private var isStacked
 
   @State private var showsMissions = false
 
@@ -528,15 +532,16 @@ struct TodayMissionsSection: View {
 
   var body: some View {
     let earned = view.session.fullMeal.earned
+    let listed = isGridBlock && !isStacked
 
     PageSection(isPanel: true) {
       MissionsSummary(
         missions: missions, bonus: view.session.fullMeal.bonus, earned: earned,
-        isOpen: $showsMissions
+        isOpen: listed ? nil : $showsMissions
       )
       .rowSeparatorHiddenBelow()
 
-      if !earned, showsMissions {
+      if !earned, listed || showsMissions {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
           let block = view.session.blocks.first { mission.opens($0) }
           let tap = block.map { TodayDayView.Tap.mission($0.position) }
@@ -668,12 +673,6 @@ private struct MissedDayKey: View {
     .typeStyle(.meta)
     .foregroundStyle(.mutedForeground)
     .rowSeparatorHiddenBelow()
-  }
-}
-
-extension StudyWeek.Day {
-  func isMissed(on localDate: String) -> Bool {
-    kind == "study" && !studied && !isToday && date < localDate
   }
 }
 
@@ -822,46 +821,16 @@ private struct WeekDayMark: View {
     return saidByTime ? nil : status.labelCased()
   }
 
-  /// Main's `DayRing`: a dash for a day outside the plan.
-  @ViewBuilder
   private var ring: some View {
-    if !day.studied && (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
-      Image(systemName: "minus")
-        .foregroundStyle(Color(.foreground).opacity(0.2))
-    } else {
-      GoalRing(share: day.share, track: track, size: ringSize) {
-        mark
+    WeekDayRing(day: day, localDate: localDate, size: ringSize) {
+      if let kind = challengeKind, day.share == 0 {
+        KindMark(kind: kind)
       }
-    }
-  }
-
-  @ViewBuilder
-  private var mark: some View {
-    if day.hitGoal {
-      Image(systemName: "checkmark")
-        .foregroundStyle(.success)
-    } else if !day.studied && (day.kind == "exam" || day.kind == "deadline") {
-      Image(systemName: "graduationcap")
-        .foregroundStyle(.primary)
-    } else if let kind = challengeKind, day.share == 0 {
-      KindMark(kind: kind)
     }
   }
 
   private var isMissed: Bool {
     day.isMissed(on: localDate)
-  }
-
-  private var track: GoalRingTrack {
-    if day.isToday {
-      return .today
-    }
-
-    if isMissed {
-      return .missed
-    }
-
-    return day.kind == "rest" ? .rest : .standard
   }
 
   /// A mock the learner's plan doesn't include leaves its day to a full review of every topic.
@@ -912,40 +881,7 @@ private struct WeekDayMark: View {
   }
 
   private var status: String {
-    if day.hitGoal {
-      return String(
-        localized: "done", table: "Today",
-        comment: "A day's status: the day's study time was met")
-    }
-
-    if day.studied {
-      return String(localized: "studied", table: "Today", comment: "A day's status")
-    }
-
-    switch day.kind {
-    case "exam":
-      return String(localized: "exam day", table: "Today", comment: "A day's status")
-    case "deadline":
-      return String(localized: "end date", table: "Today", comment: "A day's status")
-    case "beforeStart":
-      return String(localized: "before your plan", table: "Today", comment: "A day's status")
-    case "afterEnd":
-      return isExam
-        ? String(localized: "after your exam", table: "Today", comment: "A day's status")
-        : String(localized: "after your end date", table: "Today", comment: "A day's status")
-    case "rest":
-      return String(localized: "rest day", table: "Today", comment: "A day's status")
-    default:
-      break
-    }
-
-    if day.isToday {
-      return String(localized: "today", table: "Today", comment: "A day's status")
-    }
-
-    return day.date > localDate
-      ? String(localized: "planned", table: "Today", comment: "A day's status")
-      : String(localized: "not studied", table: "Today", comment: "A day's status")
+    day.status(on: localDate, isExam: isExam)
   }
 }
 

@@ -11,13 +11,24 @@ msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "선택지"
 
+#. Tags the learner's pick when it counts as neither right nor wrong.
+#: src/_components/answer-option.tsx
+msgctxt "ihtBFm"
+msgid "Your guess"
+msgstr "내 예상"
+
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "정답"
 
-#: src/_components/answer-option.tsx
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "내 답과 정답"
+
+#: src/_components/answer-pair.tsx
 #: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
@@ -26,17 +37,6 @@ msgstr "정답"
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "내 답"
-
-#. Tags the learner's pick when it counts as neither right nor wrong.
-#: src/_components/answer-option.tsx
-msgctxt "ihtBFm"
-msgid "Your guess"
-msgstr "내 예상"
-
-#: src/_components/answer-pair.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "내 답과 정답"
 
 #: src/_components/brain-power-amount.tsx
 #: src/_components/moment-readouts.tsx
@@ -54,7 +54,6 @@ msgstr "두뇌력"
 #: src/_components/lesson-list.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -604,13 +603,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "왼쪽으로 스크롤하기"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "오른쪽으로 스크롤하기"
@@ -804,6 +801,11 @@ msgstr "화면 옵션"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "테스트가 열리지 않았어요. 다시 시도해 보세요."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "다음 챕터를 이미 알고 있나요?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
@@ -1015,6 +1017,63 @@ msgstr "맞았어요, 철자만 확인해 보세요"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "이번에는 답을 확인하지 않았어요"
+
+#: src/_components/week-row.tsx
+#: src/generation/generation-wait.tsx
+msgctxt "B7ijKz"
+msgid "done"
+msgstr "완료"
+
+#: src/_components/week-row.tsx
+msgctxt "F8phHs"
+msgid "studied"
+msgstr "학습함"
+
+#: src/_components/week-row.tsx
+msgctxt "uMBOLl"
+msgid "exam day"
+msgstr "시험일"
+
+#: src/_components/week-row.tsx
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "종료일"
+
+#: src/_components/week-row.tsx
+msgctxt "KQR6jo"
+msgid "before your plan"
+msgstr "계획 시작 전"
+
+#: src/_components/week-row.tsx
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "시험 이후"
+
+#: src/_components/week-row.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "종료일 이후"
+
+#: src/_components/week-row.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "쉬는 날"
+
+#: src/_components/week-row.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "오늘"
+
+#: src/_components/week-row.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "학습 예정"
+
+#: src/_components/week-row.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "학습 안 함"
 
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
@@ -1332,7 +1391,6 @@ msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배�
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "이전 질문"
@@ -2597,6 +2655,48 @@ msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "다음에 공부할 때 재대결"
 
+#. Name of a block of program code in a lesson or a question, read by screen readers.
+#: src/code/code-listing.tsx
+msgctxt "h2vipu"
+msgid "Code"
+msgstr "코드"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, other {탭 #개}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, other {공백 #개}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "{number}번째 줄: 빈 줄"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "{number}번째 줄, 들여쓰기 {indent}: {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "{number}번째 줄: {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "들여쓰기 {indent}: {code}"
+
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-sections.tsx
@@ -3631,19 +3731,19 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "{answered, number}문제 답변 완료 (전체 {questions, number}문제)"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "5wOk8O"
-msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr "모의고사에서 표시하지 않은 문제는 {sureRight, plural, =0 {#개를 맞혔어요(총 {sureAnswered}개)} other {#개를 맞혔어요(총 {sureAnswered}개)}}. 표시한 문제는 {unsureRight, plural, =0 {#개를 맞혔어요(총 {unsureAnswered}개)} other {#개를 맞혔어요(총 {unsureAnswered}개)}}."
+msgctxt "FvTaDr"
+msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
+msgstr "모의고사에서 확신했을 때는 {sureRight, plural, =0 {#개/{sureAnswered}개 정답} other {#개/{sureAnswered}개 정답}}, 헷갈렸을 때는 {unsureRight, plural, =0 {#개/{unsureAnswered}개 정답} other {#개/{unsureAnswered}개 정답}}이에요."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "d5aD04"
-msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr "표시한 문제는 얻는 점수보다 잃는 점수가 더 많아요. 답을 비워 두세요."
+msgctxt "kJlaFe"
+msgid "When you're not sure, leave it blank: those answers cost more than they earn."
+msgstr "헷갈릴 때는 답을 비워 두세요. 맞혀서 얻는 점수보다 틀려서 잃는 점수가 더 커요."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "8ghbty"
-msgid "Your flagged answers still earn points: keep answering them."
-msgstr "표시한 문제에서도 점수를 얻고 있어요. 계속 풀어 보세요."
+msgctxt "FxZzRf"
+msgid "When you're not sure, still answer: those answers earn points."
+msgstr "헷갈려도 답을 고르세요. 그런 답도 점수를 얻을 수 있어요."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -4235,13 +4335,6 @@ msgstr "연결이 끊겼어요"
 msgctxt "NhDwgx"
 msgid "in progress"
 msgstr "진행 중"
-
-#: src/generation/generation-wait.tsx
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "B7ijKz"
-msgid "done"
-msgstr "완료"
 
 #: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
@@ -4852,7 +4945,6 @@ msgid "Progress"
 msgstr "진도"
 
 #: src/journey/journey-hero.tsx
-#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -5265,31 +5357,6 @@ msgstr "계획 완료"
 msgctxt "pwcc1H"
 msgid "exam"
 msgstr "시험"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "학습 안 함"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "쉬는 날"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "오늘"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-segment-popover.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "학습 예정"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -6368,6 +6435,18 @@ msgctxt "_lLAdM"
 msgid "Press Record and say it out loud"
 msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
 
+#. A CEFR level range the test found for reading, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "hSzKEx"
+msgid "Reading {range}"
+msgstr "읽기 {range}"
+
+#. A CEFR level range the test found for listening, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "fFePx9"
+msgid "Listening {range}"
+msgstr "듣기 {range}"
+
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
 msgid "Your plan starts from the level you gave, and your first days fine-tune it."
@@ -6430,15 +6509,6 @@ msgstr "답변에 따라 레슨이 계속 조정돼요."
 msgctxt "Jrp0gH"
 msgid "There aren't enough questions for {level} yet."
 msgstr "아직 {level} 문제는 충분하지 않아요."
-
-#. The title after a placement test: how many lessons it took out of the plan.
-#. A fact on the Plan's test row: how many lessons the last test skipped.
-#: src/language/level-test/level-test-results.tsx
-#: src/placement-test/placement-test-screens.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "psTUYu"
-msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
-msgstr "{count, plural, =0 {건너뛴 레슨 없음} other {건너뛴 레슨 #개}}"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "8CPaDq"
@@ -7827,10 +7897,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {답한 문제 #개} other {답한 문제 #개}}"
 
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "뒤쪽 문제"
+msgctxt "q_puC8"
+msgid "{unsure, plural, one {# not sure} other {# not sure}}"
+msgstr "{unsure, plural, other {헷갈린 답 #개}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -7992,23 +8063,23 @@ msgctxt "P-hmyB"
 msgid "An answer wasn't saved."
 msgstr "답변이 저장되지 않았어요."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, other {빈 문제 #개}}, {flagged, plural, other {표시한 문제 #개}}입니다."
+msgctxt "INKJBm"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
+msgstr "{blank, plural, other {빈 문제 #개}}이고 헷갈리는 답이 {unsure, plural, other {#개}} 있어요."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, other {답하지 않은 문제가 #개 있어요.}}"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, other {표시한 문제 #개입니다.}}"
+msgctxt "MVVQnK"
+msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
+msgstr "{count, plural, other {헷갈리는 답이 #개 있어요.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8036,6 +8107,27 @@ msgstr "제출하면 답안을 수정할 수 없어요."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "계속 풀기"
+
+#. A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.
+#: src/mock/mock-labels.tsx
+msgctxt "BsQPJC"
+msgid "Not sure"
+msgstr "헷갈려요"
+
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "파트 {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "{number}번 문제 (총 {total}문제) · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "{number}번 문제 (총 {total}문제)"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8224,18 +8316,7 @@ msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "서술형"
 
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "{number}번 문제 (총 {total}문제) · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "{number}번 문제 (총 {total}문제)"
-
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "부분 정답"
@@ -8252,7 +8333,6 @@ msgid "Wrong"
 msgstr "오답"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "미응답"
@@ -8350,24 +8430,24 @@ msgid "You missed {count, plural, one {# easy question} other {# easy questions}
 msgstr "쉬운 문제 {count, plural, other {#개}}를 틀렸어요. 이 문제부터 복습해 보세요."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "Gac05z"
-msgid "Flagged answers"
-msgstr "표시한 문제"
+msgctxt "v-WZ1x"
+msgid "Answers you weren't sure of"
+msgstr "‘헷갈려요’로 표시한 답"
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "EnpXr5"
-msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "표시 안 함: {sureRight, plural, =0 {정답 #개 / 전체 {sureAnswered}개} other {정답 #개 / 전체 {sureAnswered}개}}. 표시함: {unsureRight, plural, =0 {정답 #개 / 전체 {unsureAnswered}개} other {정답 #개 / 전체 {unsureAnswered}개}}."
+msgctxt "eQCLMt"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr "확신한 답: {sureRight, plural, =0 {#개/{sureAnswered}개 정답} other {#개/{sureAnswered}개 정답}}. 헷갈려요로 표시한 답: {unsureRight, plural, =0 {#개/{unsureAnswered}개 정답} other {#개/{unsureAnswered}개 정답}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "1yogM5"
-msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr "표시한 문제에 답하지 않았다면 {points, plural, other {#점}}을 더 받았을 거예요."
+msgctxt "BxnoFo"
+msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
+msgstr "헷갈렸던 답을 비워 뒀다면 {points, plural, other {#점}}을 더 얻었을 거예요."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "ZkBfTU"
-msgid "Your flagged answers still earned points, so keep answering them."
-msgstr "표시한 문제에서도 점수를 얻었으니 계속 답해 보세요."
+msgctxt "riHnND"
+msgid "The answers you weren't sure of still earned points, so keep answering them."
+msgstr "헷갈렸던 답으로도 점수를 얻었으니 계속 답을 골라 보세요."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8595,11 +8675,29 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "이번 모의고사 이후"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "{number}번 문제"
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "미응답"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "부분 정답"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "정답"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "오답"
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
@@ -8617,14 +8715,14 @@ msgid "{number} of {total}"
 msgstr "{number} / {total}"
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "bSCV9J"
-msgid "Flag"
-msgstr "표시하기"
+msgctxt "d9n-z1"
+msgid "Check it again before you hand in. Your result shows how these answers went."
+msgstr "제출하기 전에 다시 확인해 보세요. 결과에서 이 답들이 어땠는지 확인할 수 있어요."
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "sflabU"
-msgid "Remove flag"
-msgstr "표시 해제"
+msgctxt "vmWccn"
+msgid "Your result shows how these answers went."
+msgstr "결과에서 각 답변이 어땠는지 확인할 수 있어요."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8664,11 +8762,6 @@ msgstr "답변은 저장되어 있어요."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "제출 완료"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "파트 {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8764,11 +8857,16 @@ msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "더 공부할 부분: {worst}."
 
-#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "ETtb7q"
-msgid "{question}, flagged"
-msgstr "{question} (표시)"
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "{number}번 문제"
+
+#. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#: src/mock/use-question-cell-label.ts
+msgctxt "n8sv3N"
+msgid "{question}, not sure"
+msgstr "{question}, 헷갈려요"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9269,6 +9367,19 @@ msgid "Getting started"
 msgstr "시작하기"
 
 #: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "레벨 테스트"
+
+#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "TdP-3q"
+msgid "What you know"
+msgstr "이미 아는 것"
+
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-properties.tsx
 msgctxt "bpAaId"
@@ -9286,13 +9397,6 @@ msgstr "설정 안 됨"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "목표"
-
-#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "TdP-3q"
-msgid "What you know"
-msgstr "이미 아는 것"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/schedule-step.tsx
@@ -10607,18 +10711,6 @@ msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "날짜 찾기"
 
-#. A CEFR level range the test found for reading, such as “B1–B2”.
-#: src/plan/plan-placement-test.tsx
-msgctxt "hSzKEx"
-msgid "Reading {range}"
-msgstr "읽기 {range}"
-
-#. A CEFR level range the test found for listening, such as “B1–B2”.
-#: src/plan/plan-placement-test.tsx
-msgctxt "fFePx9"
-msgid "Listening {range}"
-msgstr "듣기 {range}"
-
 #: src/plan/plan-placement-test.tsx
 msgctxt "Ye4GUJ"
 msgid "Find your level and skip what you know"
@@ -10628,11 +10720,6 @@ msgstr "레벨을 확인하고 아는 내용 건너뛰기"
 msgctxt "42QSqg"
 msgid "Skip lessons you already know"
 msgstr "이미 아는 레슨 건너뛰기"
-
-#: src/plan/plan-placement-test.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "레벨 테스트"
 
 #: src/plan/plan-placement-test.tsx
 msgctxt "QZI9sA"
@@ -11459,6 +11546,12 @@ msgctxt "Ng8L3W"
 msgid "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}"
 msgstr "{count, plural, =1 {이미 알고 있는 레슨이에요. 계속 복습에 포함돼요.} other {이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.}}"
 
+#. The title after a placement test: how many lessons it took out of the plan.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "psTUYu"
+msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
+msgstr "{count, plural, =0 {건너뛴 레슨 없음} other {건너뛴 레슨 #개}}"
+
 #: src/plan/use-study-days-text.ts
 msgctxt "1ooK0d"
 msgid "Every day"
@@ -11777,6 +11870,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "예: 빵 굽기, 자동차, 천문학"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "추가"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11807,6 +11906,12 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "예: 언론학"
 
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "{tool} 삭제"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -11815,7 +11920,7 @@ msgstr "지금은 어떤 일을 하고 있나요?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "가장 자주 쓰는 앱과 도구는 무엇인가요?"
+msgstr "어떤 앱과 도구를 가장 자주 쓰나요?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
@@ -11875,9 +11980,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "이 정보를 바탕으로 관심이 갈 만한 예시를 골라요."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "예전에 했든 지금 하고 있든, 마쳤든 아니든 괜찮아요. 최대 3개까지 고르세요."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "과거든 현재든, 끝났든 아니든."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11893,11 +11998,6 @@ msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞�
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "도움이 되는 항목은 모두 고르세요."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "3개까지 골라 주세요."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
@@ -12714,34 +12814,17 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "새 레슨"
 
-#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
-#: src/session/use-block-copy.ts
-msgctxt "60PbK5"
-msgid "Bonus practice: {topic}"
-msgstr "추가 연습: {topic}"
-
 #. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "YGPuF7"
 msgid "Practice: {topic}"
 msgstr "연습: {topic}"
 
-#. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
-#: src/session/use-block-copy.ts
-msgctxt "7zIxxl"
-msgid "Bonus practice: {areas}"
-msgstr "추가 연습: {areas}"
-
 #. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "I85zr9"
 msgid "Practice: {areas}"
 msgstr "연습: {areas}"
-
-#: src/session/use-block-copy.ts
-msgctxt "JfeRyY"
-msgid "Bonus practice"
-msgstr "추가 연습"
 
 #: src/session/use-block-copy.ts
 msgctxt "MbAJ4_"
@@ -13208,6 +13291,7 @@ msgstr "{minutes}분 연습하기"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "레슨 준비하기"
@@ -13234,18 +13318,18 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "준비하고 있어요…"
 
+#. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
+#: src/today/today-block-row.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr "추가"
+
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
 msgid "What changed"
 msgstr "변경 사항"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "지금 레슨 준비하기"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "다음 레슨"
@@ -13256,12 +13340,6 @@ msgstr "다음 레슨"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "아직 준비되지 않았어요"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "평소보다 오래 걸리고 있어요"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13302,16 +13380,6 @@ msgstr "공부하고 싶다면 아래에서 다음 레슨을 시작해 보세요
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "편히 쉬세요!"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "오늘 레슨을 준비하는 데 평소보다 시간이 더 걸리고 있어요."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "몇 분 뒤에 다시 와 보세요."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"
@@ -13609,36 +13677,6 @@ msgstr "주간 챌린지"
 msgctxt "J3eMtx"
 msgid "every topic"
 msgstr "모든 주제"
-
-#: src/today/today-week-day.tsx
-msgctxt "F8phHs"
-msgid "studied"
-msgstr "학습함"
-
-#: src/today/today-week-day.tsx
-msgctxt "uMBOLl"
-msgid "exam day"
-msgstr "시험일"
-
-#: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "종료일"
-
-#: src/today/today-week-day.tsx
-msgctxt "KQR6jo"
-msgid "before your plan"
-msgstr "계획 시작 전"
-
-#: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "시험 이후"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "종료일 이후"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

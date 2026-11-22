@@ -1,5 +1,6 @@
+import { setTimeout as sleep } from "node:timers/promises";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { prisma, sql } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   languageLessonFixture,
@@ -21,6 +22,7 @@ import { SPEECH_PROVENANCE, mockVoice } from "./_test-utils/mock-fix-voice";
 import { clipMediaKey, readContentFixMedia } from "./media-schema";
 import { listPendingFixMedia, recordFixClip, recordFixMedia } from "./prepare-content-fix-media";
 import { proposeContentFix } from "./propose-content-fix";
+import { updateLessonsShowing } from "./update-lessons-showing";
 
 async function pendingClip(fixId: string) {
   const pending = await listPendingFixMedia(fixId);
@@ -37,7 +39,7 @@ async function voiceContentFix({ fixId }: { fixId: string }) {
   await recordFixClip({ fixId, need: await pendingClip(fixId) });
 }
 
-/** Proposes a fix, records its clip as the API workflow would, and approves it. */
+/** Proposes a fix, records its clip as the API workflow would, and approves it, which applies it. */
 async function proposeVoiceAndApprove(input: unknown) {
   await signInProposer();
   const fix = await proposeFix(input);
@@ -48,7 +50,32 @@ async function proposeVoiceAndApprove(input: unknown) {
   const { key } = await signInApprover();
   const decision = await approve({ fixId: fix.id, key });
 
+  expect(decision).toMatchObject({ fix: { status: "applied" } });
+
   return { decision, fix };
+}
+
+/** Holds a lesson past an approval's 5 s transaction limit, so an approval that waits for it fails. */
+async function whileLessonHeld<Result>(lessonId: string, run: () => Promise<Result>) {
+  const released = Promise.withResolvers<null>();
+  const taken = Promise.withResolvers<null>();
+
+  const holding = prisma.$transaction(
+    async (tx) => {
+      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lessonId}::uuid FOR UPDATE`;
+      taken.resolve(null);
+      await released.promise;
+    },
+    { timeout: 15_000 },
+  );
+
+  await taken.promise;
+  const running = run();
+  await Promise.race([running, sleep(6000)]);
+  released.resolve(null);
+
+  const [result] = await Promise.all([running, holding]);
+  return result;
 }
 
 /** Every default language lesson's reading tiles show "rent", so a word whose text changes needs its own. */
@@ -120,7 +147,7 @@ describe("word and sentence fixes", () => {
       mediaOwedAt: null,
     });
 
-    const { key } = await signInApprover();
+    const { key, user: approver } = await signInApprover();
 
     await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
       fix: { status: "applied" },
@@ -131,6 +158,12 @@ describe("word and sentence fixes", () => {
       audioUrl: expect.stringContaining("blob.test"),
       word: "rental",
     });
+
+    await expect(listOwed(approver.id)).resolves.toStrictEqual([
+      { input: { id: word.id, kind: "word" }, key: word.id, kind: "updateLessonsShowing" },
+    ]);
+
+    await updateLessonsShowing({ id: word.id, kind: "word" });
 
     const fixedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
     expect(fixedLesson.updatedAt.getTime()).toBeGreaterThan(lesson.updatedAt.getTime());
@@ -224,59 +257,22 @@ describe("word and sentence fixes", () => {
     await expect(optionsFor(fix.id)).resolves.toMatchObject({ status: "ready" });
   });
 
-  it("approves a single-clip row converted from the outgoing release without recording it again", async () => {
-    const { word } = await languageLessonFixture();
+  it("re-records a clip without waiting on the lessons that teach the word", async () => {
+    const { lesson, word } = await languageLessonFixture({ wordText: uniqueWordText() });
     await signInProposer();
 
-    const proposal = await proposeFix({
+    const fix = await proposeFix({
       changes: [{ id: word.id, model: "Word", revoice: true }],
       reason: "The clip says another word.",
     });
 
-    const legacyId = crypto.randomUUID();
-
-    const legacyClip = {
-      provenance: SPEECH_PROVENANCE,
-      status: "voiced",
-      text: word.word,
-      url: "https://blob.test/already-recorded.mp3",
-    };
-
-    await prisma.$executeRaw(sql`
-      INSERT INTO content_fixes (id, batch_id, changes, effects, proposer_client_id, reason, unit, unit_id, voice)
-      VALUES (
-        ${legacyId}::uuid, ${legacyId}::uuid, ${JSON.stringify(proposal.changes)}::jsonb,
-        ${JSON.stringify(proposal.effects)}::jsonb, 'test', 'A legacy proposal',
-        'word', ${word.id}::uuid, ${JSON.stringify(legacyClip)}::jsonb
-      )`);
-
-    await prisma.$executeRaw(
-      sql`UPDATE content_fixes SET media = NULL WHERE id = ${legacyId}::uuid`,
-    );
-
-    await prisma.$executeRaw(sql`
-      UPDATE content_fixes SET voice = voice WHERE media IS NULL AND id = ${legacyId}::uuid`);
-
-    const stored = await prisma.contentFix.findUniqueOrThrow({ where: { id: legacyId } });
-
-    expect(readContentFixMedia(stored.media)).toMatchObject([
-      {
-        need: { kind: "clip", model: "Word", text: word.word },
-        result: { kind: "clip", url: legacyClip.url },
-      },
-    ]);
+    mockVoice();
+    await voiceContentFix({ fixId: fix.id });
 
     const { key } = await signInApprover();
+    const decision = await whileLessonHeld(lesson.id, () => approve({ fixId: fix.id, key }));
 
-    await expect(approve({ fixId: legacyId, key })).resolves.toMatchObject({
-      fix: { status: "applied" },
-    });
-
-    await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
-      audioUrl: legacyClip.url,
-    });
-
-    expect(generateLanguageAudio).not.toHaveBeenCalled();
+    expect(decision).toMatchObject({ fix: { status: "applied" } });
   });
 
   it("re-records a clip whose text is right", async () => {
@@ -572,6 +568,51 @@ describe("word and sentence fixes", () => {
     ]);
   });
 
+  it("applies a word fix without waiting on the other lessons that show the word", async () => {
+    const [{ lesson, word }, other] = await Promise.all([
+      languageLessonFixture(),
+      languageLessonFixture(),
+    ]);
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: { lessonId: lesson.id, wordId: word.id },
+          model: "LessonWord",
+          set: { translation: "o aluguel" },
+        },
+      ],
+      reason: "The lesson teaches the noun with its article.",
+    });
+
+    expect(fix.effects).toContainEqual({
+      kind: "lessonsUpdated",
+      lessonIds: expect.arrayContaining([lesson.id, other.lesson.id]),
+    });
+
+    const { key, user } = await signInApprover();
+    const decision = await whileLessonHeld(other.lesson.id, () => approve({ fixId: fix.id, key }));
+
+    expect(decision).toMatchObject({ fix: { status: "applied" } });
+
+    await expect(listOwed(user.id)).resolves.toContainEqual({
+      input: { id: word.id, kind: "word" },
+      key: word.id,
+      kind: "updateLessonsShowing",
+    });
+
+    await updateLessonsShowing({ id: word.id, kind: "word" });
+
+    const [fixedLesson, otherLesson] = await Promise.all(
+      [lesson.id, other.lesson.id].map((id) => prisma.lesson.findUniqueOrThrow({ where: { id } })),
+    );
+
+    expect(fixedLesson?.updatedAt.getTime()).toBeGreaterThan(lesson.updatedAt.getTime());
+    expect(otherLesson?.updatedAt.getTime()).toBeGreaterThan(other.lesson.updatedAt.getTime());
+  });
+
   it("updates the lessons whose tiles show a word as a distractor in another case", async () => {
     const text = uniqueWordText();
     const shown = `R${text.slice(1)}`;
@@ -656,6 +697,11 @@ describe("word and sentence fixes", () => {
 
     await expect(listOwed(approver.deciderId ?? "")).resolves.toStrictEqual([
       { input: { lessonId: lesson.id }, key: lesson.id, kind: "writeSentenceOrders" },
+      {
+        input: { id: sentence.id, kind: "sentence" },
+        key: sentence.id,
+        kind: "updateLessonsShowing",
+      },
     ]);
 
     await prisma.lessonSentence.update({
@@ -718,6 +764,55 @@ describe("word and sentence fixes", () => {
     });
 
     expect(fix.changes).toHaveLength(13);
+  });
+
+  it("flags a lesson word's distractors that are the lesson's translations and still reverts them", async () => {
+    const { lesson, word } = await languageLessonFixture();
+    const id = { lessonId: lesson.id, wordId: word.id };
+
+    await prisma.lessonWord.update({
+      data: { distractors: ["aluguel"] },
+      where: { lessonId_wordId: id },
+    });
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id,
+          model: "LessonWord",
+          set: { distractors: ["deposit", "renda"], translation: "renda" },
+        },
+      ],
+      reason: "Clearer options.",
+    });
+
+    expect(fix.effects).toContainEqual({
+      kind: "distractorsLikeTranslations",
+      texts: ["renda"],
+      wordId: word.id,
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    const inverse = await revertFix({ fixId: fix.id, reason: "Put the options back." });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${JSON.stringify(inverse)}`);
+    }
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.lessonWord.findUniqueOrThrow({ where: { lessonId_wordId: id } }),
+    ).resolves.toMatchObject({ distractors: ["aluguel"], translation: "aluguel" });
   });
 
   it("fixes one lesson's rows of a word and a sentence by their key", async () => {

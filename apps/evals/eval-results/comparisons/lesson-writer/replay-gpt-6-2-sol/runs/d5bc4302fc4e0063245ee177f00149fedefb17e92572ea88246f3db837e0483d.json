@@ -1,0 +1,17 @@
+{
+  "caseId": "en-python-range-beginner",
+  "challenger": {
+    "costUsd": 0.045359500000000004,
+    "durationMs": 16788.429916,
+    "hash": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
+    "userPromptHash": "259631b13af418b8fe30b1de1951a214c4c12cbccb257f8b2cb1835da2577059"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.18649500000000002,
+    "durationMs": 45341.16,
+    "hash": "3da0e3df2dfc01ccb83650c829eda92afcff54aa6638441391c5973489612c96",
+    "userPromptHash": "259631b13af418b8fe30b1de1951a214c4c12cbccb257f8b2cb1835da2577059"
+  },
+  "run": 1
+}

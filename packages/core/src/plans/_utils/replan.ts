@@ -24,7 +24,7 @@ import { getBossKey } from "../planner/plan-units";
 import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
 import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/selected-item-facts";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
-import { getSettledSkillIds } from "../planner/settled-skills";
+import { getSettledSkillIds, getStartedSkillIds } from "../planner/settled-skills";
 import { loadRunBossFacts } from "./boss-plan-facts";
 import { type PlanCarrySnapshot, isTodayShown, loadPlanCarryOver } from "./carried-lessons";
 import { choosePlanSettings } from "./choose-plan-pace";
@@ -175,6 +175,7 @@ export async function computePlan({
     currentLevel: loaded.currentLanguageLevel,
     goal: context.goal,
     graph: resolved,
+    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
     state,
   });

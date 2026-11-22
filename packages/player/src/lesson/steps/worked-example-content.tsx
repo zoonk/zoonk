@@ -1,5 +1,6 @@
 "use client";
 
+import { NumberedLine } from "@zoonk/learn/numbered-line";
 import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
 import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
@@ -9,7 +10,6 @@ import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { LessonStepHeading, useTermHighlighter } from "../_components/lesson-step-text";
 import { MarkedText } from "../_components/marked-text";
-import { NumberedLine } from "../_components/numbered-line";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];

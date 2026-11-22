@@ -4,12 +4,12 @@ import {
   type ProfileQuestionView,
   profileAnswerInputSchema,
 } from "@zoonk/core/profile/questions/contract";
+import { splitProfileFavorites } from "@zoonk/core/profile/questions/favorites";
+import { TYPED_SEPARATOR, addTypedTools } from "./typed-tools";
 
 export type ProfileQuestion = ProfileQuestionView["id"];
 
 export type ChipQuestion = "tools" | "watch" | "listen" | "play" | "read" | "activities";
-
-export const MAX_PROFILE_PICKS = 3;
 
 /**
  * The row that declines a pick-one question in Settings, the only way to take a pick back there. A
@@ -21,19 +21,13 @@ type ProfileStudyDraft = { field: string; subject: string };
 
 export type ProfileDraft = {
   picks: string[];
+  /** What's in the text field; on the tools question, what's typed and not added yet. */
   text: string;
+  /** The tools question's typed tools, each shown as its own chip. */
+  typed: string[];
   studies: ProfileStudyDraft[];
   exclusive: ProfileExclusive | null;
 };
-
-const CHIP_QUESTIONS = new Set<ProfileQuestion>([
-  "tools",
-  "watch",
-  "listen",
-  "play",
-  "read",
-  "activities",
-]);
 
 const JOB_STATUSES = new Set(["work", "workAndStudy"]);
 
@@ -46,10 +40,6 @@ const PRECHECKS: Partial<Record<string, string[]>> = {
   dyscalculia: ["stepByStep", "examplesFirst"],
   dyslexia: ["shortAnswers"],
 };
-
-function isChipQuestion(question: ProfileQuestion): boolean {
-  return CHIP_QUESTIONS.has(question);
-}
 
 function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive | null {
   switch (question) {
@@ -72,7 +62,7 @@ function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive | null
 }
 
 function emptyProfileDraft(): ProfileDraft {
-  return { exclusive: null, picks: [], studies: [], text: "" };
+  return { exclusive: null, picks: [], studies: [], text: "", typed: [] };
 }
 
 export function getProfileJobPrefill(role: string | null): string | null {
@@ -87,11 +77,14 @@ export function toProfileDraft(view: ProfileQuestionView): ProfileDraft {
 
   const hasSaved = view.saved.picks.length > 0 || view.saved.text !== "" || studies.length > 0;
 
+  const typed = view.id === "tools" ? splitProfileFavorites(view.saved.text) : [];
+
   return {
     exclusive: view.status === "declined" && !hasSaved ? getDeclineExclusive(view.id) : null,
     picks: view.saved.picks,
     studies,
-    text: view.saved.text,
+    text: view.id === "tools" ? "" : view.saved.text,
+    typed,
   };
 }
 
@@ -109,7 +102,6 @@ export function withPrecheckedSupports({
   return { ...draft, picks: [...new Set([...draft.picks, ...getPrecheckedSupports(conditions)])] };
 }
 
-/** `capped` is true when the pick was refused because the screen already holds three. */
 export function toggleProfilePick({
   draft,
   id,
@@ -118,39 +110,27 @@ export function toggleProfilePick({
   draft: ProfileDraft;
   id: string;
   question: ProfileQuestion;
-}): { capped: boolean; draft: ProfileDraft } {
+}): ProfileDraft {
   if (question === "work" || question === "addressForm") {
-    return { capped: false, draft: { ...draft, exclusive: null, picks: [id] } };
+    return { ...draft, exclusive: null, picks: [id] };
   }
 
   if (question === "studies") {
     const picked = draft.studies.some((study) => study.field === id);
 
-    if (!picked && draft.studies.length >= MAX_PROFILE_PICKS) {
-      return { capped: true, draft };
-    }
-
     return {
-      capped: false,
-      draft: {
-        ...draft,
-        exclusive: null,
-        studies: picked
-          ? draft.studies.filter((study) => study.field !== id)
-          : [...draft.studies, { field: id, subject: "" }],
-      },
+      ...draft,
+      exclusive: null,
+      studies: picked
+        ? draft.studies.filter((study) => study.field !== id)
+        : [...draft.studies, { field: id, subject: "" }],
     };
   }
 
   const picked = draft.picks.includes(id);
-
-  if (!picked && isChipQuestion(question) && draft.picks.length >= MAX_PROFILE_PICKS) {
-    return { capped: true, draft };
-  }
-
   const picks = picked ? draft.picks.filter((pick) => pick !== id) : [...draft.picks, id];
 
-  return { capped: false, draft: { ...draft, exclusive: null, picks } };
+  return { ...draft, exclusive: null, picks };
 }
 
 /** Picking an exclusive row clears the screen; picking it again clears it too. */
@@ -182,8 +162,9 @@ function hasContent({
     case "conditions":
     case "addressForm":
       return draft.picks.length > 0;
-    case "learningSupport":
     case "tools":
+      return draft.picks.length > 0 || draft.typed.length > 0;
+    case "learningSupport":
     case "watch":
     case "listen":
     case "play":
@@ -204,13 +185,18 @@ function isComplete({ draft, question }: { draft: ProfileDraft; question: Profil
     return !draft.picks.includes("other") || draft.text.trim() !== "";
   }
 
+  // Names that didn't fit stay in the tools field; sending would drop them.
+  if (question === "tools") {
+    return draft.text.trim() === "";
+  }
+
   return true;
 }
 
 /** Where a question is asked: in onboarding, or again from Settings › About you. */
 export type ProfileQuestionPlace = "onboarding" | "settings";
 
-export function canSendProfileDraft({
+function canSendProfileDraft({
   draft,
   from,
   question,
@@ -266,6 +252,7 @@ function toAnswer({
         soundEffects: !draft.picks.includes(NO_SOUND_EFFECTS),
       };
     case "tools":
+      return { favorites: draft.typed.join(TYPED_SEPARATOR), picks: draft.picks };
     case "watch":
     case "listen":
     case "play":
@@ -283,7 +270,7 @@ export function declineProfileQuestion(question: ProfileQuestion): ProfileAnswer
 }
 
 /** An empty or exclusive screen declines. */
-export function toProfileAnswer({
+function toProfileAnswer({
   draft,
   memoryEnabled,
   question,
@@ -305,4 +292,39 @@ export function toProfileAnswer({
 
   const parsed = profileAnswerInputSchema.safeParse({ answer, question });
   return parsed.success ? parsed.data : null;
+}
+
+/** The draft a screen sends: text left in the tools field counts as added, so it's never lost. */
+export function toSentDraft({
+  draft,
+  question,
+}: {
+  draft: ProfileDraft;
+  question: ProfileQuestionView;
+}): ProfileDraft {
+  return question.id === "tools" ? addTypedTools({ draft, options: question.options }) : draft;
+}
+
+/** What a screen's Continue or Save sends, or null while it can't send. */
+export function toProfileInput({
+  draft,
+  from,
+  memoryEnabled,
+  question,
+}: {
+  draft: ProfileDraft;
+  from: ProfileQuestionPlace;
+  memoryEnabled: boolean;
+  question: ProfileQuestionView;
+}): ProfileAnswerInput | null {
+  const sent = toSentDraft({ draft, question });
+
+  return canSendProfileDraft({
+    draft: sent,
+    from,
+    question: question.id,
+    savedStatus: question.status,
+  })
+    ? toProfileAnswer({ draft: sent, memoryEnabled, question: question.id })
+    : null;
 }

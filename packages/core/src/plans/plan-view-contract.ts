@@ -17,6 +17,7 @@ import {
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
+import { type WeekDay } from "../sessions/daily-goal";
 import { type NotPlannedReason } from "../view-models/syllabus/syllabus-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
@@ -146,6 +147,7 @@ export type PlanPhaseView = {
 };
 
 export type PlanDayView = {
+  study: Omit<WeekDay, "date"> & { date: string };
   date: string;
   items: PlanItemView[];
   minutes: number;

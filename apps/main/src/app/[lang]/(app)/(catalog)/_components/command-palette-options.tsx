@@ -111,7 +111,7 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
 const OPTION_TEXT_CLASS = "flex min-w-0 flex-1 flex-col sm:flex-row sm:items-center sm:gap-2";
 
 const OPTION_META_CLASS =
-  "text-muted-foreground text-xs max-sm:truncate sm:max-w-[45%] sm:text-right sm:text-pretty";
+  "text-muted-foreground text-xs max-sm:truncate sm:max-w-[45%] sm:text-right";
 
 function SimpleOptionContent({
   item,

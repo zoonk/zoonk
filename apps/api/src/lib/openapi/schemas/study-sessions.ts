@@ -11,6 +11,7 @@ import {
   dayStateSchema,
   emptyDaySchema,
   examTomorrowSchema,
+  lessonPlaceholderSchema,
   lessonsComingSchema,
   lessonsToPrepareSchema,
 } from "./day-lessons";
@@ -23,6 +24,10 @@ export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local
 
 export const studyWeekDaySchema = z
   .object({
+    completed: z
+      .int()
+      .nonnegative()
+      .meta({ description: "Completed day blocks, excluding extra work." }),
     date: logicalDateSchema,
     goalMinutes: z
       .number()
@@ -32,7 +37,12 @@ export const studyWeekDaySchema = z
           "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
         examples: [EXAMPLE_DAILY_MINUTES],
       }),
-    hitGoal: z.boolean(),
+    hitGoal: z
+      .boolean()
+      .meta({
+        description:
+          "The session first finished, or the day has no day blocks and the learner studied.",
+      }),
     isToday: z.boolean(),
     kind: z
       .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
@@ -51,6 +61,12 @@ export const studyWeekDaySchema = z
     studied: z
       .boolean()
       .meta({ description: "Any study of this goal counts, partial days included" }),
+    total: z
+      .int()
+      .nonnegative()
+      .meta({
+        description: "Day blocks not skipped, excluding extra work; zero without a session.",
+      }),
   })
   .meta({ id: "StudyWeekDay" });
 
@@ -113,6 +129,7 @@ export const studySessionResponseSchema = z
     goalId: idSchema.nullable(),
     hyperdrive: hyperdriveSchema,
     id: idSchema,
+    lessonPlaceholder: lessonPlaceholderSchema,
     lessonsComing: lessonsComingSchema,
     lessonsToPrepare: lessonsToPrepareSchema,
     localDate: logicalDateSchema,
@@ -128,7 +145,9 @@ export const studySessionResponseSchema = z
     pauseSuggested: z.boolean(),
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
-      .meta({ description: "One step per block still in the day, filled as blocks are done" }),
+      .meta({
+        description: "Completed day blocks and total day blocks not skipped, excluding extra work",
+      }),
     state: dayStateSchema,
     status: z.enum(StudySessionStatus),
     week: z

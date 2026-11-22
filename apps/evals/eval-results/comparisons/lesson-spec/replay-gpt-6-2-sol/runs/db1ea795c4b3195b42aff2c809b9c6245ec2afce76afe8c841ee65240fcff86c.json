@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-pt-juros-compostos",
+  "challenger": {
+    "costUsd": 0.042839800000000004,
+    "durationMs": 52340.869999999995,
+    "hash": "21f040ef8f1426bfd908ff8204b2110b257ed34b31a846203d900b96a1b91e8a",
+    "userPromptHash": "4a8ea83e302a66f9e20789e7f7509a1d6ffe517b024e82678819fa869dd4d215"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0368406,
+    "durationMs": 57961.80691700001,
+    "hash": "320fd609f961604737471a5ddb87c3036d17788bcdc9b230a40bf033aabb9897",
+    "userPromptHash": "4a8ea83e302a66f9e20789e7f7509a1d6ffe517b024e82678819fa869dd4d215"
+  },
+  "run": 1
+}

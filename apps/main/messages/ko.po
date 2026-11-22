@@ -99,6 +99,8 @@ msgid "Keyboard shortcuts"
 msgstr "키보드 단축키"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(settings)/_components/follow-us.tsx
+#: src/components/public/public-footer.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "블로그"
@@ -2375,11 +2377,6 @@ msgid "Play or pause the audio"
 msgstr "오디오 재생 또는 일시 정지"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "PpAjCi"
-msgid "Flag a question in a mock exam"
-msgstr "모의고사 문제 표시하기"
-
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "uY3Caj"
 msgid "Close or leave"
 msgstr "닫기 또는 나가기"
@@ -2423,6 +2420,11 @@ msgstr "사이드바 표시 또는 숨기기"
 msgctxt "DOENlK"
 msgid "Tap the rhythm in a music question"
 msgstr "음악 문제에서 리듬에 맞춰 두드리기"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "HmGSbZ"
+msgid "Mark an answer as not sure in a mock exam"
+msgstr "모의고사에서 답을 ‘헷갈려요’로 표시"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"
@@ -3085,10 +3087,11 @@ msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, other {목표 #개}} · 월 {lessons, plural, other {레슨 #개}}"
 
+#. Beside the numbers 1 to 4, one per week, in a picture of a month of study.
 #: src/components/pricing/plus-adds.tsx
-msgctxt "RdGReZ"
-msgid "Week {number, number}"
-msgstr "{number, number}주차"
+msgctxt "g6-IGw"
+msgid "Weeks"
+msgstr "주차"
 
 #. Small label over a section that shows what a subscription adds.
 #: src/components/pricing/plus-adds.tsx

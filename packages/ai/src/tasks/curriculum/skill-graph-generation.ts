@@ -52,6 +52,7 @@ function generateCheckedWholeGraph({ params, tasks }: Generation) {
  */
 async function generateSectionedGraph({ params, tasks }: Generation) {
   const frame = await tasks.frame(params);
+  const initialPrompt = { systemPrompt: frame.systemPrompt, userPrompt: frame.userPrompt };
 
   const output = {
     ...frame.output,
@@ -65,7 +66,8 @@ async function generateSectionedGraph({ params, tasks }: Generation) {
   const calls = toSectionCalls(output.sections);
 
   if (calls.length === 0) {
-    return generateCheckedWholeGraph({ params, tasks });
+    const whole = await generateCheckedWholeGraph({ params, tasks });
+    return { ...whole, initialPrompt };
   }
 
   const courses = output.courses.map(({ key, title }) => ({ key, title }));
@@ -96,6 +98,7 @@ async function generateSectionedGraph({ params, tasks }: Generation) {
   return {
     ...draft,
     courseIdsByKey: library?.courseIdsByKey ?? {},
+    initialPrompt,
     provenance: combineTaskProvenance(parts.map((part) => part.provenance)),
     systemPrompt: frame.systemPrompt,
     usage: sumLanguageModelUsage(parts.map((part) => part.usage)),

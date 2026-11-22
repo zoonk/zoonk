@@ -1,29 +1,25 @@
 import { startListeningSets } from "@/lib/listening-sets";
-import { OUTLINE_AHEAD_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { type SessionPreparation } from "@zoonk/core/lookahead/session-preparation";
 import { getWorkflowMetadata, sleep } from "workflow";
-import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken, startOnce } from "../_shared/run-token";
-import {
-  listPlanOutlines,
-  startAll,
-  startPlanOutline,
-  whileLessonsAsked,
-} from "../goals/goal-outlines";
+import { claimRunToken } from "../_shared/run-token";
+import { whileLessonsAsked } from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
   prepareSkillFieldItems,
   readGoalField,
 } from "../goals/steps/field-items-steps";
-import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
-import { getLessonContentHookToken } from "../lessons/lesson-content-result";
-import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { endLessonsAskStep } from "../goals/steps/goal-lookahead-steps";
 import { startChallengeQuestions } from "./challenge-question-starts";
+import { prepareExampleLines } from "./prepare-example-lines";
 import { prepareFieldChallenge } from "./prepare-field-challenge";
+import {
+  type PlanLessonPreparationInput,
+  outlineAndReselect,
+  selectPlanLessons,
+} from "./prepare-plan-lessons";
 import { prepareToolVersion } from "./prepare-tool-version";
 import { writeLanguageCalls } from "./steps/language-call-steps";
 import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
@@ -32,18 +28,10 @@ import {
   type SessionPreparationRequest,
   decidePreparationStep,
 } from "./steps/preparation-decision-step";
-import {
-  countLessonsBeingWrittenStep,
-  createSessionGenerationManifestStep,
-  listSessionPreparationStep,
-} from "./steps/session-preparation-steps";
+import { countLessonsBeingWrittenStep } from "./steps/session-preparation-steps";
 
-type SessionPreparationInput = {
+type SessionPreparationInput = PlanLessonPreparationInput & {
   claimQuestions: ClaimQuestions | null;
-  goalId: string;
-  lessonsAskedAt: number | null;
-  timeZone: string;
-  userId: string;
 };
 
 export type SessionPreparationResult =
@@ -57,10 +45,12 @@ async function preparePersonalLayer({
   analytics,
   goalId,
   lessonIds,
+  userId,
 }: {
   analytics: ContentAnalytics;
   goalId: string;
   lessonIds: string[];
+  userId: string;
 }) {
   const { workflowRunId } = getWorkflowMetadata();
   const context = { analytics, workflowRunId };
@@ -75,75 +65,8 @@ async function preparePersonalLayer({
     ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
     ...versions.tools.map((target) => prepareToolVersion({ ...context, target })),
     ...versions.challenges.map((target) => prepareFieldChallenge({ ...context, target })),
+    prepareExampleLines({ lessonIds, userId }),
   ]);
-}
-
-async function startLessonWork({
-  analytics,
-  input,
-  started,
-}: {
-  analytics: ContentAnalytics;
-  input: SessionPreparationInput;
-  started: string[];
-}): Promise<PlanStepOutcome<SessionPreparation | null>> {
-  using claim = await claimRunToken(`session-prep:${input.userId}`);
-
-  // The learner's own ask waits for their other preparation instead of being dropped.
-  if (claim.conflict) {
-    return input.lessonsAskedAt ? { conflict: true } : { conflict: false, value: null };
-  }
-
-  const [preparation, outlines] = await Promise.all([
-    listSessionPreparationStep(input),
-    listPlanOutlines({ days: OUTLINE_AHEAD_DAYS, goalId: input.goalId }),
-  ]);
-
-  const { forExam, laterLessonIds, lessonIds } = preparation;
-
-  const manifest = await createSessionGenerationManifestStep({
-    goalId: input.goalId,
-    lessonIds: [...lessonIds, ...laterLessonIds],
-  });
-
-  if (manifest.conflict) {
-    return manifest;
-  }
-
-  const planManifest = manifest.value;
-  const admitted = new Set(planManifest?.targets.map((target) => target.lessonId));
-
-  await startAll([
-    ...lessonIds
-      .filter((lessonId) => admitted.has(lessonId))
-      .map((lessonId) =>
-        start(lessonContentWorkflow, [
-          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest },
-        ]),
-      ),
-    ...laterLessonIds
-      .filter((lessonId) => admitted.has(lessonId))
-      .map((lessonId) =>
-        start(lessonContentWorkflow, [
-          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "later" },
-        ]),
-      ),
-    ...outlines.map((outline) => startPlanOutline({ analytics, outline, started })),
-  ]);
-
-  const requested = new Set([...lessonIds, ...laterLessonIds]);
-
-  return {
-    conflict: false,
-    value: {
-      ...preparation,
-      laterLessonIds: laterLessonIds.filter((id) => admitted.has(id)),
-      lessonIds: lessonIds.filter((id) => admitted.has(id)),
-      plannedLessonIds: preparation.plannedLessonIds.filter(
-        (id) => !requested.has(id) || admitted.has(id),
-      ),
-    },
-  };
 }
 
 function waitForWrittenLessons(lessonIds: string[]): Promise<number> {
@@ -180,6 +103,7 @@ async function personalizeLessons({
     analytics,
     goalId: input.goalId,
     lessonIds: preparation.plannedLessonIds,
+    userId: input.userId,
   });
 }
 
@@ -238,21 +162,43 @@ async function prepareLessons({
   analytics: ContentAnalytics;
   input: SessionPreparationInput;
 }): Promise<SessionPreparationResult> {
+  const sessionWork: Promise<unknown>[] = [];
+
   const preparation = await whileLessonsAsked({
     goalId: input.goalId,
     lessonsAskedAt: input.lessonsAskedAt,
-    run: (started) => retryPlanConflicts(startLessonWork, { analytics, input, started }),
+    run: async (started) => {
+      const selected = await selectPlanLessons({ analytics, input });
+
+      if (!selected) {
+        return null;
+      }
+
+      // The session's own questions and calls don't wait for its next topics to be outlined.
+      if (!input.guest) {
+        sessionWork.push(
+          writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
+          writeClaimQuestions({ analytics, input }).catch(() => null),
+          writePlacementWeekQuestions({ analytics, input }).catch(() => null),
+        );
+      }
+
+      return outlineAndReselect({ analytics, input, preparation: selected, started });
+    },
   });
 
   if (!preparation) {
+    await Promise.all(sessionWork);
     return { status: "alreadyRunning" };
+  }
+
+  if (input.guest) {
+    return { status: "guest" };
   }
 
   await Promise.all([
     preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
-    writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
-    writeClaimQuestions({ analytics, input }).catch(() => null),
-    writePlacementWeekQuestions({ analytics, input }).catch(() => null),
+    ...sessionWork,
   ]);
 
   return {
@@ -260,32 +206,6 @@ async function prepareLessons({
     lessonIds: preparation.lessonIds,
     status: "prepared",
   };
-}
-
-/** A placement or a plan edit can move a guest's plan past the bands its build outlined. */
-async function outlineGuestLessons({
-  analytics,
-  goalId,
-  lessonsAskedAt,
-}: {
-  analytics: ContentAnalytics;
-  goalId: string;
-  lessonsAskedAt: number | null;
-}) {
-  await whileLessonsAsked({
-    goalId,
-    lessonsAskedAt,
-    run: async (started) => {
-      const { outlineDays } = await readGoalLookaheadStep(goalId);
-      const outlines = await listPlanOutlines({ days: outlineDays, goalId });
-
-      await startAll(
-        outlines.map((outline) =>
-          startPlanOutline({ analytics, forGuest: true, outline, started }),
-        ),
-      );
-    },
-  });
 }
 
 export async function sessionPreparationWorkflow(
@@ -309,33 +229,24 @@ export async function sessionPreparationWorkflow(
     return { status: "skipped" };
   }
 
-  if (decision.status === "guest") {
-    const { goalId, lesson } = decision;
-    const analytics = { distinctId: userId, goalId: goalId ?? undefined, platform };
-
-    await Promise.all([
-      lesson
-        ? startOnce(lessonContentWorkflow, [lesson], getLessonContentHookToken(lesson.lessonId))
-        : null,
-      goalId ? outlineGuestLessons({ analytics, goalId, lessonsAskedAt }) : null,
-    ]);
-
-    return { status: "guest" };
-  }
-
   const { goalId } = decision;
   const analytics = { distinctId: userId, goalId, platform };
 
-  await Promise.allSettled([
-    decision.listening ? startListeningSets({ analytics, goalId, userId, wait: "later" }) : null,
-    ...startChallengeQuestions(decision),
-  ]);
+  if (decision.status === "ready") {
+    await Promise.allSettled([
+      decision.listening ? startListeningSets({ analytics, goalId, userId, wait: "later" }) : null,
+      ...startChallengeQuestions(decision),
+    ]);
+  }
 
   return prepareLessons({
     analytics,
     input: {
-      claimQuestions: decision.claimQuestions,
+      claimQuestions: decision.status === "ready" ? decision.claimQuestions : null,
       goalId,
+      guest: decision.status === "guest",
+      guestSessionId:
+        decision.status === "guest" && "sessionId" in request ? request.sessionId : undefined,
       lessonsAskedAt,
       timeZone: decision.timeZone,
       userId,

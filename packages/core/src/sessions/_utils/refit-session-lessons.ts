@@ -10,7 +10,7 @@ import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { getLessonLookahead, getUnwrittenMinutesOn } from "./day-lessons";
+import { getLessonLookahead } from "./day-lessons";
 import { orderDayBlocks } from "./day-stretch";
 import { getExamPrepAccess } from "./exam-access";
 import { loadPlanLessons } from "./load-plan-lessons";
@@ -19,6 +19,7 @@ import { fitRefillStretch } from "./refill-challenges";
 import {
   getSessionLessonCandidates,
   hasSessionLessonReservation,
+  holdCandidateTime,
 } from "./session-lesson-reservation";
 import { toLessonBlock } from "./session-lessons";
 import { lockSessionQueue } from "./session-queue-lock";
@@ -158,7 +159,10 @@ export async function refitSessionLessons(
     return { reserved: false };
   }
 
-  const { blocks, leaving } = await trimSessionLessons({ completedBlockId, session, tx });
+  const { blocks, leaving } = session.endedAt
+    ? { blocks: session.blocks, leaving: [] }
+    : await trimSessionLessons({ completedBlockId, session, tx });
+
   const room = session.plannedMinutes - getSessionUsedMinutes(blocks);
 
   if (room < 1) {
@@ -199,7 +203,12 @@ export async function refitSessionLessons(
     prerequisites,
   });
 
-  const writingMinutes = getUnwrittenMinutesOn({ items: candidates, today: session.localDate });
+  const writingMinutes = holdCandidateTime({
+    candidates,
+    plan,
+    room,
+    today: session.localDate,
+  }).reduce((sum, hold) => sum + hold.held, 0);
 
   const lessons =
     room - writingMinutes >= 1
@@ -234,6 +243,7 @@ export async function refitSessionLessons(
       ? await tx.studySessionBlock.createManyAndReturn({
           data: fitting.map((block, index) => ({
             ...block,
+            payload: { ...block.payload, ...(session.endedAt && { extra: true }) },
             position: position + index,
             sessionId,
           })),
@@ -246,9 +256,12 @@ export async function refitSessionLessons(
 
   const current = { ...session, blocks: [...blocks, ...added] };
 
-  const reserved = hasSessionLessonReservation({ access, plan, prerequisites, session: current });
+  const reserved =
+    !session.endedAt &&
+    hasSessionLessonReservation({ access, plan, prerequisites, session: current });
 
   if (
+    !session.endedAt &&
     !reserved &&
     fitting.length === 0 &&
     room > 0 &&

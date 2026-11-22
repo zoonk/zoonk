@@ -99,6 +99,8 @@ msgid "Keyboard shortcuts"
 msgstr "Atalhos de teclado"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(settings)/_components/follow-us.tsx
+#: src/components/public/public-footer.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "Blog"
@@ -2375,11 +2377,6 @@ msgid "Play or pause the audio"
 msgstr "Reproduzir ou pausar o áudio"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "PpAjCi"
-msgid "Flag a question in a mock exam"
-msgstr "Marcar uma questão no simulado"
-
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "uY3Caj"
 msgid "Close or leave"
 msgstr "Fechar ou sair"
@@ -2423,6 +2420,11 @@ msgstr "Mostrar ou ocultar a barra lateral"
 msgctxt "DOENlK"
 msgid "Tap the rhythm in a music question"
 msgstr "Marcar o ritmo em uma pergunta de música"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "HmGSbZ"
+msgid "Mark an answer as not sure in a mock exam"
+msgstr "Marcar uma resposta como Em dúvida no simulado"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"
@@ -3085,10 +3087,11 @@ msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, one {# objetivo} other {# objetivos}} · {lessons, plural, one {# aula} other {# aulas}} por mês"
 
+#. Beside the numbers 1 to 4, one per week, in a picture of a month of study.
 #: src/components/pricing/plus-adds.tsx
-msgctxt "RdGReZ"
-msgid "Week {number, number}"
-msgstr "Semana {number, number}"
+msgctxt "g6-IGw"
+msgid "Weeks"
+msgstr "Semanas"
 
 #. Small label over a section that shows what a subscription adds.
 #: src/components/pricing/plus-adds.tsx

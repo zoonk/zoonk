@@ -13,8 +13,24 @@ FROM pg_database WHERE datname ~ '^zoonk_wt_[a-f0-9]{12}_(dev|test|e2e)$'
   return worktrees.split("\n").filter((path) => path && !existsSync(path));
 }
 
-function isInside({ directories, path }: { directories: string[]; path: string }): boolean {
+export function isInside({ directories, path }: { directories: string[]; path: string }): boolean {
   return directories.some((directory) => path === directory || path.startsWith(`${directory}/`));
+}
+
+/** The working directory of each of this user's processes. */
+export async function listProcessDirectories(): Promise<{ directory: string; pid: number }[]> {
+  const listing = await run({
+    args: ["-a", "-d", "cwd", "-u", userInfo().username, "-Fpn"],
+    command: "lsof",
+  });
+
+  return listing.split(/^p/mu).flatMap((record) => {
+    const [pid, ...fields] = record.split("\n");
+
+    return fields
+      .filter((field) => field.startsWith("n"))
+      .map((field) => ({ directory: field.slice(1), pid: Number(pid) }));
+  });
 }
 
 function signal(pid: number): boolean {
@@ -31,24 +47,14 @@ export async function stopProcessesInRemovedDirectories(directories: string[]): 
     return [];
   }
 
-  const listing = await run({
-    args: ["-a", "-d", "cwd", "-u", userInfo().username, "-Fpn"],
-    command: "lsof",
-  });
+  const processes = await listProcessDirectories();
 
   // T3 recreates a resumed thread's worktree at the same path, so one that came back meanwhile is live.
   const removed = directories.filter((directory) => !existsSync(directory));
 
-  return listing
-    .split(/^p/mu)
-    .map((record) => record.split("\n"))
-    .filter(([, ...fields]) =>
-      fields.some(
-        (field) =>
-          field.startsWith("n") && isInside({ directories: removed, path: field.slice(1) }),
-      ),
-    )
-    .map(([pid]) => Number(pid))
+  return processes
+    .filter(({ directory }) => isInside({ directories: removed, path: directory }))
+    .map(({ pid }) => pid)
     .filter((pid) => pid !== process.pid && signal(pid));
 }
 

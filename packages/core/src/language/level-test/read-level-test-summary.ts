@@ -52,6 +52,7 @@ export function readLevelTestSummary(goal: Pick<Goal, "details">) {
   const score = parseCefrScore(details.level === "advanced" ? "B2" : details.level);
   const skipped = lastResult?.levelsSkipped ?? [];
   const current = score === null ? null : Math.floor(score);
+
   const highestKnown = Math.max(
     current ?? -1,
     ...skipped.map((level) => CEFR_LEVELS.indexOf(level)),

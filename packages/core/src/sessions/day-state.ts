@@ -5,6 +5,7 @@ export const DAY_STATES = ["ahead", "done", "prepare", "rest", "underway", "wait
 export type DayState = (typeof DAY_STATES)[number];
 
 type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPosition"> & {
+  endedAt?: Date | null;
   lessonsComing?: boolean;
   lessonsToPrepare?: boolean;
   blocks: readonly Pick<StudyBlockView, "position" | "status">[];
@@ -13,9 +14,14 @@ type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPositi
 /**
  * A day with no blocks is a rest day, one still being outlined (`waiting`), one whose lessons wait
  * for the learner to ask for them (`prepare`), or one with nothing new (`ahead`): never a finished
- * session.
+ * session. A started day whose time holds lessons not written yet waits only while someone is
+ * outlining them; otherwise it asks, so it never waits on nobody.
  */
 function getDayState(day: DayStateInput): DayState {
+  if (day.endedAt) {
+    return "done";
+  }
+
   const empty = day.blocks.length === 0;
   const studyDay = empty && day.minutes.dailyGoal > 0;
   const hasNext = day.blocks.some((block) => block.position === day.nextPosition);
@@ -32,8 +38,12 @@ function getDayState(day: DayStateInput): DayState {
     return "underway";
   }
 
-  if (day.lessonsComing || day.lessonsToPrepare) {
+  if (day.lessonsComing) {
     return "waiting";
+  }
+
+  if (day.lessonsToPrepare) {
+    return "prepare";
   }
 
   if (studyDay) {
@@ -43,6 +53,9 @@ function getDayState(day: DayStateInput): DayState {
   return empty && day.minutes.dailyGoal === 0 ? "rest" : "done";
 }
 
-export function withDayState<Day extends DayStateInput>(day: Day): Day & { state: DayState } {
-  return { ...day, state: getDayState(day) };
+export function withDayState<Day extends DayStateInput>(
+  day: Day,
+  endedAt?: Date | null,
+): Day & { state: DayState } {
+  return { ...day, state: getDayState({ ...day, endedAt: endedAt ?? day.endedAt }) };
 }

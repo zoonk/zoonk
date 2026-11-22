@@ -97,6 +97,24 @@ fun phase(
     "endDate":"$end","hours":10,"index":$index,"kind":"learn","lessonsDone":$done,"lessonsTotal":$total,"mocks":$mocks,
     "name":"$name","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state"}"""
 
+/** Tomorrow's lesson, finished today: the week shows it on the day it was done. */
+private const val AHEAD_LESSON =
+    """{"chapterId":null,"id":null,"kind":"lesson","lessonId":null,"lessons":1,"minutes":6,"requiresPlus":false,""" +
+        """"scheduledFor":"2026-10-29","skillId":null,"status":"done","title":"Dictionaries","writing":false}"""
+
+/** A day of the week as Today and the Plan both read it. */
+internal fun studyDay(
+    date: String,
+    kind: String = "study",
+    goalMinutes: Int = 20,
+    minutes: Int = 0,
+    completed: Int = 0,
+    total: Int = 0,
+    hitGoal: Boolean = false,
+    isToday: Boolean = false,
+) = """{"completed":$completed,"date":"$date","goalMinutes":$goalMinutes,"hitGoal":$hitGoal,"isToday":$isToday,"kind":"$kind",""" +
+    """"minutes":$minutes,"studied":${minutes > 0},"total":$total}"""
+
 /** A learn goal three weeks into four phases: the second one open, its next chapter half done, a day behind. */
 internal fun learnPlan(): Plan =
     plan(
@@ -146,13 +164,25 @@ internal fun learnPlan(): Plan =
           "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":true,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":30,"weekendDays":[0,6]},"weekdayMinutes":[30,20,20,20,20,20,30]},
         "status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null},
         "languageAim":null,"week":{"startDate":"2026-10-26","endDate":"2026-11-01","days":[
-          {"date":"2026-10-26","items":[],"minutes":20,"state":"done"},
-          {"date":"2026-10-27","items":[],"minutes":20,"state":"missed"},
-          {"date":"2026-10-28","items":[],"minutes":20,"state":"today"},
-          {"date":"2026-10-29","items":[],"minutes":20,"state":"upcoming"},
-          {"date":"2026-10-30","items":[],"minutes":20,"state":"upcoming"},
-          {"date":"2026-10-31","items":[],"minutes":30,"state":"upcoming"},
-          {"date":"2026-11-01","items":[],"minutes":0,"state":"rest"}]},
+          {"date":"2026-10-26","items":[],"minutes":20,"state":"done","study":${studyDay(
+            "2026-10-26",
+            minutes = 21,
+            completed = 3,
+            total = 3,
+            hitGoal = true,
+        )}},
+          {"date":"2026-10-27","items":[],"minutes":20,"state":"missed","study":${studyDay("2026-10-27")}},
+          {"date":"2026-10-28","items":[$AHEAD_LESSON],"minutes":20,"state":"today","study":${studyDay(
+            "2026-10-28",
+            minutes = 12,
+            completed = 1,
+            total = 2,
+            isToday = true,
+        )}},
+          {"date":"2026-10-29","items":[],"minutes":20,"state":"upcoming","study":${studyDay("2026-10-29")}},
+          {"date":"2026-10-30","items":[],"minutes":20,"state":"upcoming","study":${studyDay("2026-10-30")}},
+          {"date":"2026-10-31","items":[],"minutes":30,"state":"upcoming","study":${studyDay("2026-10-31", goalMinutes = 30)}},
+          {"date":"2026-11-01","items":[],"minutes":0,"state":"rest","study":${studyDay("2026-11-01", kind = "rest", goalMinutes = 0)}}]},
         "weekTime":{"studiedMinutes":20,"targetMinutes":130}
         """.trimIndent(),
     )

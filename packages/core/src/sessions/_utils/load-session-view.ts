@@ -20,7 +20,7 @@ import { type LessonStatesReader } from "./lesson-screens";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
-import { hasSessionLessonReservation } from "./session-lesson-reservation";
+import { getSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionPlanItem } from "./session-plan-item";
 import { EMPTY_WEEK, type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -73,16 +73,16 @@ async function loadLessonReservation({
   current,
   plan,
   ...input
-}: Parameters<typeof hasSessionLessonReservation>[0] & { current: boolean }): Promise<boolean> {
+}: Parameters<typeof getSessionLessonReservation>[0] & { current: boolean }) {
   if (!current || !plan) {
-    return false;
+    return { lessonPlaceholder: null, lessonRoom: false, unwrittenRoom: false };
   }
 
   const prerequisites = await loadSkillPrerequisites(
     parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId),
   );
 
-  return hasSessionLessonReservation({ ...input, plan, prerequisites });
+  return getSessionLessonReservation({ ...input, plan, prerequisites });
 }
 
 export async function loadStudySessionView({
@@ -169,7 +169,7 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true };
 
-  const [outlines, missions, reserved] = await Promise.all([
+  const [outlines, missions, { unwrittenRoom, ...reservation }] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
@@ -188,9 +188,9 @@ export async function loadStudySessionView({
     dayEndsAt,
     dayMinutes,
     examAccess,
-    lessonRoom: reserved,
+    ...reservation,
     missions,
-    outlines: reserved ? (outlines ?? "idle") : null,
+    outlines: unwrittenRoom ? (outlines ?? "idle") : null,
     session,
     timeZone,
     week,

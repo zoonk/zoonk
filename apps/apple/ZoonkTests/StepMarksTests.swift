@@ -91,22 +91,18 @@ final class StepMarksTests: XCTestCase {
     XCTAssertNil(parts.after)
   }
 
-  func testAnExampleInsideANumberedListLeavesTheListWhole() {
+  func testAnExampleInsideANumberedListIsFramedAndTheListCountsOnAfterIt() {
     let parts = LessonTextParts(
       "1. Heat the water.\n2. Add the tea.\n3. Pour it into a cup.",
       marks: StepMarks(example: "2. Add the tea."))
 
-    XCTAssertNil(parts.example, "framing it would number every part from 1")
     XCTAssertEqual(
-      parts.before?.text, "1. Heat the water.\n2. Add the tea.\n3. Pour it into a cup.")
-  }
-
-  func testAnExampleInsideANumberedListWithWindowsLineEndingsLeavesTheListWhole() {
-    let parts = LessonTextParts(
-      "1. Heat the water.\r\n2. Add the tea.\r\n3. Pour it into a cup.",
-      marks: StepMarks(example: "2. Add the tea."))
-
-    XCTAssertNil(parts.example)
+      [parts.before, parts.example, parts.after].map { RichTextBlock.parse($0?.text ?? "") },
+      [
+        [.list(items: ["Heat the water."], start: 1)],
+        [.list(items: ["Add the tea."], start: 2)],
+        [.list(items: ["Pour it into a cup."], start: 3)],
+      ])
   }
 
   @MainActor

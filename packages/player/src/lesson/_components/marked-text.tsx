@@ -13,24 +13,12 @@ type TextPart = { isExample: boolean; text: string };
 /** Paragraphs as plain blocks, so their lines wrap around an icon floated on the corner. */
 const FLOWING_TEXT_CLASS = "block space-y-3";
 
-const NUMBERED_LINE = /^\s*\d{1,3}[.)]\s/u;
-
-/** Framing part of a numbered list would split it, and each part would count from 1 again. */
-function isInNumberedList({ end, start, text }: { end: number; start: number; text: string }) {
-  const lineStart = text.lastIndexOf("\n", start - 1) + 1;
-  const lineEnd = text.indexOf("\n", end);
-  const lines = text.slice(lineStart, lineEnd === -1 ? undefined : lineEnd).split("\n");
-  return lines.some((line) => NUMBERED_LINE.test(line));
-}
-
 /** Where the example sits in the text, or null when the screen shows no frame. */
 function findFramedExample({ marks, text }: { marks: StepMarks | null; text: string }) {
   const example = marks?.example;
   const start = example ? text.indexOf(example) : -1;
 
-  return example && start !== -1 && !isInNumberedList({ end: start + example.length, start, text })
-    ? { example, start }
-    : null;
+  return example && start !== -1 ? { example, start } : null;
 }
 
 /** Without a frame, the screen's icon sits on the text's corner instead. */

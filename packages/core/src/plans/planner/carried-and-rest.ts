@@ -84,6 +84,7 @@ export function scheduleCarriedAndRest({
           knownAreas: input.knownAreas ?? new Set(),
           noticeAreas: input.noticeAreas ?? null,
         },
+        order: [...unitsByKey.values()],
         phaseEnds,
         planStart,
         queue,

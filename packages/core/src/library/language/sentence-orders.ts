@@ -102,6 +102,32 @@ function keepApproved({
   return candidates.filter((_candidate, index) => verdicts[index]);
 }
 
+type OrderVerdicts = Awaited<ReturnType<typeof checkSentenceOrders>>["data"];
+
+/** The candidates the review kept, as written; throws when it didn't judge each one once, in order. */
+export function keepReviewedCandidates({
+  candidates,
+  verdicts,
+}: {
+  candidates: readonly SentenceOrders[];
+  verdicts: OrderVerdicts;
+}): SentenceOrders[] {
+  if (verdicts.sentences.length !== candidates.length) {
+    throw new Error("The review must include one result per requested sentence, in order.");
+  }
+
+  return candidates.map((item, index) => ({
+    otherOrders: keepApproved({
+      candidates: item.otherOrders,
+      verdicts: verdicts.sentences[index]?.sentenceKeep,
+    }),
+    otherTranslationOrders: keepApproved({
+      candidates: item.otherTranslationOrders,
+      verdicts: verdicts.sentences[index]?.translationKeep,
+    }),
+  }));
+}
+
 /** The candidates a native teacher accepts, as the screen's tiles; a lesson without any skips the review. */
 export async function checkOrderCandidates({
   analytics,
@@ -142,20 +168,5 @@ export async function checkOrderCandidates({
     targetLanguage,
   });
 
-  if (data.sentences.length !== sentences.length) {
-    throw new Error("The review must include one result per requested sentence, in order.");
-  }
-
-  return keep(
-    candidates.map((item, index) => ({
-      otherOrders: keepApproved({
-        candidates: item.otherOrders,
-        verdicts: data.sentences[index]?.sentenceKeep,
-      }),
-      otherTranslationOrders: keepApproved({
-        candidates: item.otherTranslationOrders,
-        verdicts: data.sentences[index]?.translationKeep,
-      }),
-    })),
-  );
+  return keep(keepReviewedCandidates({ candidates, verdicts: data }));
 }

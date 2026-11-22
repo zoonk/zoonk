@@ -1,3 +1,4 @@
+import { assert, constantFrom, nat, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   countWords,
@@ -357,6 +358,25 @@ describe(replaceEmDashes, () => {
   it("keeps en dashes, which join ranges", () => {
     expect(replaceEmDashes("Nível B1–B2, artigos 1º–5º")).toBe("Nível B1–B2, artigos 1º–5º");
   });
+
+  it.each([
+    [
+      "Rode `print('a — b')` — e veja:\n```python\nprint('a — b')\n```\nPronto — fim.",
+      "Rode `print('a — b')`, e veja:\n```python\nprint('a — b')\n```\nPronto, fim.",
+    ],
+    ["Rode —\n```\n— x\n```\n— Sim.", "Rode\n```\n— x\n```\nSim."],
+    ["Use—`x`—e só.", "Use, `x`, e só."],
+    [
+      'Veja — isto:\n~~~js\nconsole.log("A—B");\n~~~',
+      'Veja, isto:\n~~~js\nconsole.log("A—B");\n~~~',
+    ],
+    [
+      "Rode:\r\n```\r\na — b\r\n```\r\nPronto — fim.",
+      "Rode:\r\n```\r\na — b\r\n```\r\nPronto, fim.",
+    ],
+  ])("keeps code as written in %j", (text, expected) => {
+    expect(replaceEmDashes(text)).toBe(expected);
+  });
 });
 
 function stream(pieces: string[]): string {
@@ -373,6 +393,9 @@ describe(createEmDashReplacer, () => {
     "Ends with a dash —",
     "— Could you repeat that?\n— Sure.",
     "Antes:\n\n- um ponto — outro\n— fala\nfim — \nnova linha",
+    "Rode `a — b` — e veja:\n```js\nf('a — b');\n```\n— Sim — `x`.",
+    "Um ` solto — e `fim — já`.\n  ```js\nx — y\n```\n— x",
+    "Veja — isto:\n~~~js\nf('a — b');\n~~~\n— Sim.",
   ];
 
   it.each(TEXTS)("reads %j as the whole text would, wherever the stream cuts it", (text) => {
@@ -392,6 +415,24 @@ describe(createEmDashReplacer, () => {
     expect(replacer.push("Sim, dá ")).toBe("Sim, dá");
     expect(replacer.push("— e")).toBe(", e");
     expect(replacer.end()).toBe("");
+  });
+
+  it("reads any text as the whole text would, wherever the stream cuts it", () => {
+    const pieces = constantFrom("a", " ", "—", "`", "```", "~", "~~~", "\n", ".", "x — y");
+
+    assert(
+      property(
+        string({ maxLength: 16, unit: pieces }),
+        nat({ max: 64 }),
+        nat({ max: 64 }),
+        (text, first, second) => {
+          const [from, to] = [first, second].toSorted((left, right) => left - right);
+          const cuts = [text.slice(0, from), text.slice(from, to), text.slice(to)];
+
+          expect(stream(cuts)).toBe(replaceEmDashes(text));
+        },
+      ),
+    );
   });
 });
 

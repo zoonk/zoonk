@@ -22,7 +22,7 @@
 - “task” (a speaking exam's task): “tâche”, not “exercice”
 - “section” (a part of a mock exam): “partie”, not “section”; it’s feminine, so a handed-in part is “rendue”
 - “hand in” (a mock or one of its parts): “rendre”, not “remettre”
-- “flagged” (a mock exam question to come back to): “marquée”, not “signalée”
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “J'hésite”
 - “pattern” (a mistake that recurs): “erreur récurrente”
 - “mind map”: “carte mentale”
 - “topic”: “sujet”, not “thème”

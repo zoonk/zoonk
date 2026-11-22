@@ -1,0 +1,34 @@
+{
+  "pairs": [
+    {
+      "input": {
+        "question": "A $50 jacket is marked down 20%. What do you pay?",
+        "answer": "$10",
+        "correctAnswer": "$40",
+        "language": "en"
+      },
+      "expectations": "Name the difference between the discount and the final price.",
+      "clean": "You found the $10 discount. Take it off the $50 price and you pay $40.",
+      "flawed": "You found the $10 discount. Add it to the $50 price and you pay $60.",
+      "criterion": "accuracy",
+      "defect": "Adding the discount reverses the operation and gives $60 instead of $40.",
+      "falseAllegation": "The explanation tells the learner to add the discount to the original price.",
+      "provenance": "Arithmetic control. 50 minus (0.20 times 50) equals 40."
+    },
+    {
+      "input": {
+        "question": "Uma ciclista percorre 18 km em uma hora. Mantendo esse ritmo, quantos quilômetros percorre em 20 minutos?",
+        "answer": "18 km",
+        "correctAnswer": "6 km",
+        "language": "pt"
+      },
+      "expectations": "Mostre que 20 minutos são um terço de uma hora e que a distância também cai para um terço.",
+      "clean": "Os 18 km são a distância de uma hora inteira. Como 20 minutos são um terço de 60 minutos, você também divide a distância por três e chega a 6 km.",
+      "flawed": "Os 18 km são a distância de uma hora inteira. Como 20 minutos são um terço de 60 minutos, você multiplica a distância por três e chega a 54 km.",
+      "criterion": "accuracy",
+      "defect": "Multiplicar por três inverte a relação. A distância é 6 km, não 54 km.",
+      "falseAllegation": "A explicação diz que a ciclista percorre 54 km em 20 minutos.",
+      "provenance": "Validated arithmetic. 18 km/h times 20/60 h equals 6 km."
+    }
+  ]
+}

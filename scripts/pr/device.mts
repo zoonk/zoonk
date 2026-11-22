@@ -1,10 +1,19 @@
 import { execFile } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
+import { carryReads } from "./carry.mts";
 import { REFERENCE, captionWords, unwritablePath } from "./device-section.mts";
-import { type CaptureItem, fileName, pathWithin, registerItems } from "./media.mts";
+import {
+  type CaptureItem,
+  fileName,
+  isRecorded,
+  pathWithin,
+  readManifest,
+  registerItems,
+} from "./media.mts";
 import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
 
 const run = promisify(execFile);
@@ -17,8 +26,8 @@ const MS_PER_SECOND = 1000;
  */
 export type Installed = { commit: string; dirty: boolean } | { installedAt: Date; version: string };
 
-/** What the command asks a booted device: its own description, its picture, its app's build. */
 export type DeviceBridge = {
+  appearance: (id: string) => Promise<"dark" | "light">;
   describe: (id: string) => Promise<string | null>;
   installed: (id: string) => Promise<Installed>;
   screenshot: (id: string, file: string) => Promise<void>;
@@ -40,6 +49,10 @@ const SCREENSHOT_BYTES = 67_108_864;
 
 /** A booted simulator, by its udid. */
 const simulator: DeviceBridge = {
+  appearance: async (udid) => {
+    const { stdout } = await run("xcrun", ["simctl", "ui", udid, "appearance"]);
+    return stdout.trim() === "dark" ? "dark" : "light";
+  },
   describe: async (udid) => {
     const { stdout } = await run("xcrun", ["simctl", "list", "devices", "booted", "-j"]);
     const { devices } = BOOTED.parse(JSON.parse(stdout));
@@ -71,6 +84,10 @@ const simulator: DeviceBridge = {
 
 /** A booted emulator, by its adb serial. */
 const emulator: DeviceBridge = {
+  appearance: async (serial) => {
+    const { stdout } = await run("adb", ["-s", serial, "shell", "cmd", "uimode", "night"]);
+    return stdout.includes("Night mode: yes") ? "dark" : "light";
+  },
   describe: async (serial) => {
     const state = await run("adb", ["-s", serial, "get-state"]).then(
       ({ stdout }) => stdout.trim(),
@@ -219,9 +236,10 @@ export async function takeDevicePicture({
     );
   }
 
-  const [{ current: _current, ...checkout }, installed] = await Promise.all([
+  const [{ current: _current, ...checkout }, installed, scheme] = await Promise.all([
     readCheckoutBuild({ app: platform, repository }),
     bridge.installed(deviceId),
+    bridge.appearance(deviceId),
   ]);
 
   const why = await refusal({
@@ -257,7 +275,7 @@ export async function takeDevicePicture({
     platform,
     pointer: "coarse",
     scale: 1,
-    scheme: "light",
+    scheme,
     sha256: "",
     shows: name,
     side: "after",
@@ -275,9 +293,25 @@ export async function takeDevicePicture({
   }
 
   await mkdir(to, { recursive: true });
-  await bridge.screenshot(deviceId, join(to, file));
+  const shot = await mkdtemp(join(tmpdir(), "device-"));
 
-  const taken = { ...item, sha256: await sha256File(join(to, file)) };
-  await registerItems(to, [taken]);
-  return taken;
+  try {
+    await bridge.screenshot(deviceId, join(shot, file));
+    const taken = { ...item, sha256: await sha256File(join(shot, file)) };
+
+    // Before the new picture overwrites the old one: a retake keeps the read it retakes.
+    const [carried = taken] = await carryReads({
+      folder: shot,
+      items: [taken],
+      keep: to,
+      previous: ((await readManifest(to)) ?? []).filter((earlier) => isRecorded(earlier)),
+      previousFolder: to,
+    });
+
+    await copyFile(join(shot, file), join(to, file));
+    await registerItems(to, [carried]);
+    return carried;
+  } finally {
+    await rm(shot, { force: true, recursive: true });
+  }
 }

@@ -1,9 +1,11 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { defineScoreCategories } from "@/lib/score-categories";
-import { type Task, type TaskScorer, type TestCase } from "@/lib/types";
+import { type Task, type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type ImageSceneInput, generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { getString } from "@zoonk/utils/json";
+import { readCriteria } from "../plain-language-criterion";
 import { type ImageSceneExpected, TEST_CASES } from "./test-cases";
 
 type ImageSceneOutput = Awaited<ReturnType<typeof generateImageScene>>["data"];
@@ -30,6 +32,8 @@ const scoreCategories = defineScoreCategories([
       "Labels appear only when a word, number or price makes the idea readable, and a whole shown with its parts labels each part its screen names; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions cap this at 6.",
     id: "labels",
     label: "Labels",
+    readerExpectations:
+      "Labels appear only when a word, number or price makes the idea readable, and a whole shown with its parts labels each part its screen names; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions clutter the picture.",
     weight: 25,
   },
   {
@@ -73,37 +77,61 @@ function checkLabelNumbers({
   return unknown.length > 0 ? `Label numbers not on the screen: ${unknown.join(", ")}.` : null;
 }
 
-function checkScene(testCase: TestCase<ImageSceneExpected>) {
-  return (output: string): CodeCheckResult => {
-    const scene = JSON.parse(output) as ImageScene;
-    const expected = testCase.expected ?? { labels: "any" };
-    const screenText = getString(testCase.userInput, "screenText");
+const checkScene: TaskCodeChecks<ImageSceneExpected> = ({ output, testCase }) => {
+  const scene = JSON.parse(output) as ImageScene;
+  const expected = testCase.expected ?? { labels: "any" };
+  const screenText = getString(testCase.userInput, "screenText");
 
-    const results = [
-      checkLabelCount({ expected, scene }),
-      checkLabelNumbers({ scene, screenText }),
-      ...(expected.layout ? [checkLayout({ layout: expected.layout, scene })] : []),
-    ];
+  const labelProblems = [
+    checkLabelCount({ expected, scene }),
+    checkLabelNumbers({ scene, screenText }),
+  ].filter((problem) => problem !== null);
 
-    const problems = results.filter((problem) => problem !== null);
+  const layoutProblem = expected.layout ? checkLayout({ layout: expected.layout, scene }) : null;
+  const total = expected.layout ? 3 : 2;
 
-    return {
-      judgedOutput: output,
-      passed: results.length - problems.length,
-      problems,
-      total: results.length,
-    };
+  const problems = [...labelProblems, ...(layoutProblem ? [layoutProblem] : [])];
+
+  return {
+    criteria: [
+      ...(labelProblems.length > 0 ? ["labels"] : []),
+      ...(layoutProblem ? ["teaches"] : []),
+    ],
+    judgedOutput: output,
+    passed: total - problems.length,
+    problems,
+    total,
   };
-}
+};
 
 const scoreImageScene: TaskScorer<ImageSceneExpected> = ({ output, testCase }) =>
-  scoreWithCodeChecks({ check: checkScene(testCase), output, scoreCategories, testCase });
+  scoreWithCodeChecks({
+    check: (value) => checkScene({ output: value, testCase }),
+    output,
+    scoreCategories,
+    testCase,
+  });
 
 export const imageSceneTask: Task<ImageSceneInput, ImageSceneOutput, ImageSceneExpected> = {
+  codeChecks: checkScene,
+  criteria: readCriteria(scoreCategories),
   description: "Plan one lesson picture as a structured scene",
   generate: generateImageScene,
   id: "image-scene",
   name: "Image scene",
+  priorities: {
+    comparison: {
+      criteria: { fields: "counts", labels: "counts", simplicity: "counts", teaches: "counts" },
+      preference: "separates",
+      trade: COMPARISON_TRADES.shared,
+      weights: { labels: 3, teaches: 3 },
+    },
+    distribution: "shared",
+    first: "cost",
+    reads: "An image model draws from the scene",
+    reason: "It costs little next to the image itself, so the cheaper of two equal models",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreImageScene,
   scoreCategories,
   testCases: TEST_CASES,

@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-deslocamento-demanda",
+        "claimId": "a47f636b0826e136",
+        "criterion": "screenPlan",
+        "observationId": "eef034b65ba5548650284e756f008eb939a8f2cd7b8a34050e748e3b35d0ac76.first.5f42a9f5-3316-47e4-abe6-4e92aad07acf.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00335375,
+    "id": "82d2f061953552375cf6c6bd5325fdc9faee270aaa0aa454bc6e310a80541a40",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "0d7210015b915a9a",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "06331ee798cfdae5825c6492dcf78036f7ceb23678566159b089a293c4bc0db8",
+          "format": "text"
+        },
+        "B": {
+          "blob": "41a018c234986f9d011d6c2dbefc1ad5c5061b9a06c81221aebdc7f46e14a6a9",
+          "format": "text"
+        },
+        "claim": "The guess brief identifies the correct choice, so it gives away the prediction rather than letting the learner make it.",
+        "claimId": "a47f636b0826e136",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "d3b6c90f84fbda83324df1eec30aef49cb74d63b07a088ea82a24efa0189fc2b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "4c0bf4d0f20b1fd8bfd9461375213bba372d7ebe280368ef3eadb5a699d15f87",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Depois do vídeo, os clientes querem comprar mais açaí a qualquer preço; os vendedores continuam oferecendo as mesmas quantidades a cada preço. O que tende a acontecer com o valor da tigela: fica mais alto (correta), fica igual (tentadora, porque nada mudou para os vendedores) ou fica mais baixo?",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "a47f636b0826e136",
+          "finding": "holds for both",
+          "reason": "Output A's guess brief labels the options \"fica mais alto (correta)\", \"fica igual (tentadora...)\", so it gives the answer away. Output B's guess screen in the same place does the same thing, with \"Resposta: na curva atual\" and \"correta: ambos maiores\" in its guess briefs, so the problem is shared rather than specific to A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

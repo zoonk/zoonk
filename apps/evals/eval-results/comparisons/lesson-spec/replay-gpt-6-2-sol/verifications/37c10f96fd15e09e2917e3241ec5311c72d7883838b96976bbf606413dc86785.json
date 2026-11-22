@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "e8f2af1da6bd12e4",
+        "criterion": "screenPlan",
+        "observationId": "48f11ea37aa840764709abc0ee74009f727c27b640af3dd8abd27a5dfd6afa9c.first.bf376485-f1ce-460a-bed4-acfbd6a5999c.6",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0029849499999999997,
+    "id": "37c10f96fd15e09e2917e3241ec5311c72d7883838b96976bbf606413dc86785",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "49a7317f1d518f0b",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "claim": "The guess brief gives the answer and the tempting choice instead of leaving the prediction open.",
+        "claimId": "e8f2af1da6bd12e4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "“Answer: the back; the tempting choice is the front”",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "49a7317f1d518f0b",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear anywhere in output A, so the problem the claim describes is not in the named output. The first explanation is about fixed and variable costs, with no depreciation term."
+        },
+        {
+          "claimId": "e8f2af1da6bd12e4",
+          "finding": "holds for both",
+          "reason": "Output B's guess brief reads 'Answer: the back; the tempting choice is the front because it is closer to the eyes', so it gives the answer and the tempting choice. Output A's guess brief does the same: 'near the back of the head is right, and near the forehead is tempting because it's close to the eyes'."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

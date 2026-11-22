@@ -82,7 +82,7 @@ struct LessonCompletionView: View {
       }
     } secondary: {
       page {
-        upNext
+        testOut
         levelCheckOffer
         planRevealRow
         guestEndingView
@@ -92,7 +92,7 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
-        upNext
+        testOut
         levelCheckOffer
         planRevealRow
         guestEndingView
@@ -209,25 +209,13 @@ struct LessonCompletionView: View {
     completion.status == .saved ? completion.summary?.block : nil
   }
 
-  /// The day's next step, and the chapter test's line when the next lesson starts a chapter the
-  /// learner may already know (B2's R1).
+  /// The chapter test's line, the one thing about what's next the end shows: Continue opens it.
   @ViewBuilder
-  private var upNext: some View {
-    if let block, let next = block.upNext {
-      VStack(alignment: .leading, spacing: 8) {
-        // Titled as the day's summary titles "Tomorrow" and a lost challenge "What's next".
-        SectionTitle(
-          Text("Up next", tableName: "Session", comment: "Over the session's next block"))
-
-        BlockRow(
-          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
-
-        if let chapterID = block.testChapterID {
-          TestOutLine {
-            router.dismissTask()
-            router.open(.testOut(chapterId: chapterID))
-          }
-        }
+  private var testOut: some View {
+    if let block, let chapterID = block.testChapterID {
+      TestOutLine(isNextChapter: block.testOutOffer == nil) {
+        router.dismissTask()
+        router.open(.testOut(chapterId: chapterID))
       }
     }
   }

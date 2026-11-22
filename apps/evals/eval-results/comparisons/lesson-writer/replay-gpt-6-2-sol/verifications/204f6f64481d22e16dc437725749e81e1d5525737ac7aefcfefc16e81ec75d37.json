@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-patrimonio-liquido-dense-brief",
+        "claimId": "6ba6572b7039a74c",
+        "criterion": "fitAndApplication",
+        "observationId": "a3aa8ef9dddbaf3dec923fc23ec5bc4ad7d57aedf187031348d218a5e6b261c8.first.66118520-c8e3-466a-96a4-dbd0c8a63fd9.1",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0030427499999999994,
+    "id": "204f6f64481d22e16dc437725749e81e1d5525737ac7aefcfefc16e81ec75d37",
+    "packet": [
+      {
+        "A": {
+          "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
+          "format": "text"
+        },
+        "B": {
+          "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
+          "format": "text"
+        },
+        "claim": "A tela 3 usa a fórmula E = mc² para explicar por que o elétron não cai no núcleo.",
+        "claimId": "417b923263c817b0",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
+          "format": "text"
+        },
+        "input": {
+          "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "5d2e63c7789074e4bfb70fc72cd5e4d2c7e54e90ca9c1fff366a30e70406df44",
+          "format": "text"
+        },
+        "B": {
+          "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
+          "format": "text"
+        },
+        "claim": "O plano pede que o exemplo de patrimônio líquido negativo seja sobre a oficina de Davi, mas A atribui os valores a Fábio.",
+        "claimId": "6ba6572b7039a74c",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
+          "format": "text"
+        },
+        "input": {
+          "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
+          "format": "json"
+        },
+        "location": {
+          "detail": "A oficina de Fábio tem R$ 4.000 em bens e direitos, mas deve R$ 5.000.",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "6ba6572b7039a74c",
+          "finding": "holds",
+          "reason": "The plan's explanation screen for the negative case says to use 'a oficina de Davi' with bens and direitos of R$ 4.000,00 and obrigações of R$ 5.000,00. Output A instead writes 'A oficina de Fábio tem R$ 4.000 em bens e direitos, mas deve R$ 5.000.', so the claim is accurate. Output B names no one and does not attribute the values to Fábio."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

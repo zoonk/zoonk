@@ -1,10 +1,8 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -28,12 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -53,8 +46,9 @@ import com.zoonk.android.feature.language.LevelValue
 import com.zoonk.android.feature.language.SkillLevelsCard
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPracticeRow
+import com.zoonk.android.feature.today.WeekDayRing
+import com.zoonk.android.feature.today.weekDayStatus
 import com.zoonk.android.ui.components.DetailRow
-import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -65,7 +59,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.WEEK_RING
 import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
@@ -85,10 +78,10 @@ import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
 import com.zoonk.api.models.GoalProgressStillNeeded
 import com.zoonk.api.models.LanguagePlanLevel
-import com.zoonk.api.models.PlanDay
-import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
 import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
+import java.time.LocalDate
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -475,82 +468,20 @@ private fun PlanWeek(page: PlanPageState) {
                 )
             }
         }
+        val names = weekdayNames(locale)
+        val weekDate = days.firstOrNull { it.study.isToday }?.date ?: LocalDate.now().toKotlinLocalDate()
         WeekDaysRow {
             days.forEach { day ->
-                val date = day.date.toJavaLocalDate()
-                val spoken =
-                    stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
+                val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek
+                val status = weekDayStatus(day.study, weekDate, page.isExam)
+                val spoken = stringResource(R.string.today_week_day, names.full.getValue(dayOfWeek), status)
                 WeekDayCell(
-                    letter = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
-                    today = day.state == PlanDay.State.TODAY,
+                    letter = names.narrow.getValue(dayOfWeek),
+                    today = day.study.isToday,
                     modifier = Modifier.padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
-                ) { DayRing(day) }
+                ) { WeekDayRing(day.study, weekDate) }
             }
         }
-    }
-}
-
-@Composable
-private fun dayStatus(state: PlanDay.State): String =
-    stringResource(
-        when (state) {
-            PlanDay.State.DONE -> R.string.plan_day_done
-            PlanDay.State.MISSED -> R.string.plan_day_missed
-            PlanDay.State.REST -> R.string.plan_day_rest
-            PlanDay.State.TODAY -> R.string.plan_day_today
-            PlanDay.State.UPCOMING -> R.string.plan_day_planned
-        },
-    )
-
-private val PlanItem.isDone: Boolean get() = status == PlanItem.Status.DONE || status == PlanItem.Status.TESTED_OUT
-
-@Composable
-private fun DayRing(day: PlanDay) {
-    val ink = MaterialTheme.colorScheme.onSurface
-    val fill = MaterialTheme.colorScheme.tertiary
-    val share =
-        when {
-            day.state == PlanDay.State.DONE -> 1f
-            day.items.isNotEmpty() -> day.items.count { it.isDone }.toFloat() / day.items.size
-            else -> 0f
-        }
-    val trackAlpha =
-        when (day.state) {
-            PlanDay.State.REST -> 0.06f
-            PlanDay.State.MISSED, PlanDay.State.TODAY -> 0.25f
-            else -> 0.1f
-        }
-
-    val ring = WEEK_RING
-    Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.size(ring)) {
-            val width = 3.dp.toPx()
-            val inset = width / 2
-            val arcSize = Size(size.width - width, size.height - width)
-            val dashes =
-                if (day.state ==
-                    PlanDay.State.MISSED
-                ) {
-                    PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 3.3.dp.toPx()))
-                } else {
-                    null
-                }
-            drawArc(
-                ink.copy(alpha = trackAlpha),
-                0f,
-                360f,
-                false,
-                Offset(inset, inset),
-                arcSize,
-                style = Stroke(width, pathEffect = dashes),
-            )
-            if (share >
-                0
-            ) {
-                drawArc(fill, -90f, 360f * share, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
-            }
-        }
-        if (day.state == PlanDay.State.DONE) DoneMark()
     }
 }
 

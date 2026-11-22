@@ -54,7 +54,7 @@ export type ProducedContentFixMedia = z.infer<typeof producedSchema>;
 export type ContentFixMedia = z.infer<typeof contentFixMediaSchema>;
 
 export function readContentFixMedia(value: unknown): ContentFixMedia {
-  return contentFixMediaSchema.parse(value ?? []);
+  return contentFixMediaSchema.parse(value);
 }
 
 export function normalizeContentFixMediaNeed(need: ContentFixMediaNeed): ContentFixMediaNeed {

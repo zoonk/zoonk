@@ -480,9 +480,9 @@ const REGISTRY: Record<string, Registration[]> = {
   ],
   "staff/content-fixes/_utils/vocabulary-unit.ts": [
     {
-      fields: ["sentenceOrdersAttempts", "updatedAt"],
+      fields: ["sentenceOrdersAttempts"],
       verdict: "excluded",
-      why: "a word or sentence fix bumps the player version and owes word orders again; plans read neither",
+      why: "a word or sentence fix owes word orders again",
       writes: ["lesson.updateMany"],
     },
   ],
@@ -573,6 +573,14 @@ const REGISTRY: Record<string, Registration[]> = {
       verdict: "marks",
       why: "chapter and lesson text and maps are plan inputs",
       writes: ["chapter.update", "lesson.update"],
+    },
+  ],
+  "staff/content-fixes/update-lessons-showing.ts": [
+    {
+      fields: ["updatedAt"],
+      verdict: "excluded",
+      why: "a word or sentence fix bumps the player version of every lesson showing it",
+      writes: ["lesson.updateMany"],
     },
   ],
 };

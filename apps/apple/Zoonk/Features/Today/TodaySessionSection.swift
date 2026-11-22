@@ -42,7 +42,7 @@ struct TodaySessionSection: View {
     let done = session.blocks.filter(\.isFinished)
     let (before, upcoming) = session.queue(next: next)
     let foldsDone = done.count > doneRows
-    let coming = next == nil ? nil : session.comingLessons
+    let coming = session.comingLessons
     let timedRows = upcoming.count + (coming == nil ? 0 : 1)
     let upcomingCount = timedRows
     let foldedShown = StudyDay.shownUpcomingRows(upcomingCount)
@@ -87,7 +87,8 @@ struct TodaySessionSection: View {
 
     ForEach(Array(upcoming.prefix(shownUpcoming)), id: \.position) { block in
       if next == nil {
-        BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+        BlockRow(
+          block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
       } else {
         blockButton(block, isNext: false)
       }
@@ -95,8 +96,8 @@ struct TodaySessionSection: View {
 
     if let coming, upcoming.count < shownUpcoming {
       ComingLessonsRow(
-        coming: coming, writingStalled: writingStalled, isBusy: busy == .prepare,
-        failed: failed == .prepare, prepare: prepare
+        session: session, coming: coming.asked(writingStalled: writingStalled),
+        isBusy: busy == .prepare, failed: failed == .prepare, prepare: prepare
       )
       .disabled(busy != nil && busy != .prepare)
     }
@@ -121,7 +122,8 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position), failed: failed == .block(block.position))
+      tagsExtra: true, isBusy: busy == .block(block.position),
+      failed: failed == .block(block.position))
 
     if block.waitReason == nil {
       Button {
@@ -139,7 +141,8 @@ struct TodaySessionSection: View {
 
   @ViewBuilder
   private func doneRow(_ block: StudyBlock) -> some View {
-    let row = BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+    let row = BlockRow(
+      block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
 
     if let lessonId = block.lessonToReopen {
       Button {
@@ -169,6 +172,7 @@ struct TodaySessionAction: View {
   let view: TodayView
   let busy: TodayDayView.Tap?
   let failed: TodayDayView.Tap?
+  let writingStalled: Bool
   let open: (StudyBlock, Bool) -> Void
   let prepare: () -> Void
   /// Adds the plan's next lessons once the day is done or resting.
@@ -180,7 +184,7 @@ struct TodaySessionAction: View {
   private var session: StudyDay { view.session }
 
   /// Whether the day has one, so a place that holds it can leave itself out.
-  static func offers(_ view: TodayView) -> Bool {
+  static func offers(_ view: TodayView, writingStalled: Bool) -> Bool {
     if view.isPastDate {
       return true
     }
@@ -189,9 +193,11 @@ struct TodaySessionAction: View {
       return true
     }
 
-    switch view.session.state {
+    switch view.shownState(writingStalled: writingStalled) {
     case .underway: return view.session.nextBlock != nil
-    case .done, .prepare: return true
+    case .done: return true
+    // A started day asks from its list's row for the lessons to come.
+    case .prepare: return view.session.blocks.isEmpty
     case .ahead, .rest: return view.session.extraTime.available
     case .waiting: return false
     }
@@ -226,7 +232,7 @@ struct TodaySessionAction: View {
   }
 
   private var action: TodayMainAction? {
-    let state = session.state
+    let state = view.shownState(writingStalled: writingStalled)
 
     if view.isPastDate {
       return TodayMainAction(kind: .seePlan, isBusy: false, failed: false) {
@@ -252,7 +258,16 @@ struct TodaySessionAction: View {
       ) {
         open(next, true)
       }
+    // A finished day stays done while its extras play.
     case .done:
+      if let next = session.nextBlock {
+        return TodayMainAction(
+          kind: .continueSession, isBusy: busy == .main, failed: failed == .main
+        ) {
+          open(next, true)
+        }
+      }
+
       guard let sessionID = session.id else {
         return nil
       }
@@ -261,6 +276,10 @@ struct TodaySessionAction: View {
         router.open(.sessionSummary(sessionId: sessionID))
       }
     case .prepare:
+      guard session.blocks.isEmpty else {
+        return nil
+      }
+
       return TodayMainAction(
         kind: .prepareLessons, isBusy: busy == .prepare, failed: failed == .prepare,
         action: prepare)
@@ -395,6 +414,8 @@ struct BlockRow: View {
   let view: TodayView?
   let isNext: Bool
   let countsTowardMission: Bool
+  /// Today's list tags work past the day's own, which never counts toward it.
+  var tagsExtra = false
   var isBusy = false
   var failed = false
   var showsDetail = false
@@ -446,8 +467,14 @@ struct BlockRow: View {
 
   @ViewBuilder
   private var trailing: some View {
-    if !block.isFinished {
+    if tagsExtra && block.extra && block.isFinished {
+      extraTag
+    } else if !block.isFinished {
       HStack(spacing: 6) {
+        if tagsExtra && block.extra {
+          extraTag
+        }
+
         if countsTowardMission {
           Image(systemName: "checklist")
             .foregroundStyle(.brain)
@@ -464,6 +491,15 @@ struct BlockRow: View {
       }
       .coveredBySpinner(isBusy, alignment: .trailing)
     }
+  }
+
+  private var extraTag: some View {
+    Text(
+      "Extra", tableName: "Today",
+      comment:
+        "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress."
+    )
+    .chip()
   }
 
   @ViewBuilder
@@ -504,78 +540,54 @@ struct BlockRow: View {
   }
 }
 
-/// Holds the place of the day's lessons that aren't written yet: Today reads again until they land
-/// while they're outlined, and asks the learner for them while nobody is.
+/// Mirrors main's `ComingLessonsRow`: holds the place of the day's lessons that aren't written yet,
+/// named by their plan topic, with their time, or the ask for them while nobody is writing them.
 private struct ComingLessonsRow: View {
+  let session: StudyDay
   let coming: ComingLessons
-  let writingStalled: Bool
   let isBusy: Bool
   let failed: Bool
   let prepare: () -> Void
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
   var body: some View {
-    switch coming {
-    case .toPrepare:
-      Button(action: prepare) {
-        row
-          .spinnerAtEnd(isBusy)
-      }
-      .tint(.primary)
-      .accessibilityBusy(isBusy)
-    case .beingWritten:
-      row
-        .accessibilityElement(children: .combine)
-    }
-  }
-
-  private var row: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
+    RowLayout {
       KindMark(kind: .lesson)
         .frame(minWidth: 20)
-
+    } words: {
       VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Your next lessons", tableName: "Today",
-          comment: "Holds the place of the day's lessons that aren't written yet"
-        )
-        .typeStyle(.rowTitle)
+        Text(session.comingLessonsTitle)
+          .typeStyle(.rowTitle)
 
-        Group {
-          switch coming {
-          case .toPrepare:
-            Text(
-              AttributedString(
-                localized: "**Get them now**", table: "Today",
-                comment:
-                  "Under Your next lessons: asks for the day's next lessons, which nobody has asked for yet"
-              ),
-              legibility: legibilityWeight)
-          case .beingWritten where writingStalled:
-            Text(
-              "Taking longer than usual", tableName: "Today",
-              comment: "The day's next lessons are taking long to outline")
-          case .beingWritten:
-            Text(
-              "Getting ready…", tableName: "Today",
-              comment:
-                "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-            )
-          }
-        }
-        .typeStyle(.meta)
-        .foregroundStyle(.mutedForeground)
+        Text(coming.note)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
 
         if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
-          )
-          .typeStyle(.meta)
+          FailureLine(message: TodayMainAction.saveFailure)
+            .typeStyle(.meta)
+        }
+      }
+    } value: {
+      switch coming {
+      case .toPrepare:
+        BusyButton(isBusy: isBusy, action: prepare) {
+          Text(
+            "Get lessons", tableName: "Today",
+            comment: "Asks for the day's lessons, which aren't written yet")
+        }
+        .buttonStyle(.outline)
+        .controlSize(.small)
+      case .beingWritten:
+        let minutes = session.foldedMinutes(showing: session.blocks)
+
+        if minutes > 0 {
+          Text(studyDuration(minutes: minutes))
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }
+    .accessibilityElement(children: coming == .toPrepare ? .contain : .combine)
   }
 }
 
@@ -702,8 +714,10 @@ struct TodayDayStatus: View {
     }
 
     let keepLearning = !view.upNextLessons.isEmpty
+    // A started day's lessons to come have their own row in its list, which says how they're doing.
+    let listHolds = !session.blocks.isEmpty
 
-    switch session.state {
+    switch view.shownState(writingStalled: writingStalled) {
     case .done:
       systemImage = "checkmark.circle"
       sentence =
@@ -713,15 +727,11 @@ struct TodayDayStatus: View {
         : String(
           localized: "You're done for today.", table: "Today", comment: "Day done")
       clause = nil
-      link = keepLearning ? session.id.map { .summary(sessionID: $0) } : nil
-    case .waiting where writingStalled:
-      systemImage = "clock"
-      sentence = String(
-        localized: "Today's lessons are taking longer than usual.", table: "Today",
-        comment: "The day's lessons are taking long to outline")
-      clause = String(
-        localized: "Come back in a few minutes.", table: "Today",
-        comment: "The day's lessons are taking long to outline")
+      // The summary has its link here while the main action is another.
+      link =
+        keepLearning || session.nextBlock != nil ? session.id.map { .summary(sessionID: $0) } : nil
+    case .waiting where listHolds, .prepare where listHolds:
+      return nil
     case .waiting:
       systemImage = "hourglass"
       sentence = String(

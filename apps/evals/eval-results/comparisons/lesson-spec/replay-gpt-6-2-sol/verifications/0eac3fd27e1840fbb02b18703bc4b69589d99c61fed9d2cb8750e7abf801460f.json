@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-syntax-tree",
+        "claimId": "2ec6b9514c126817",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "12ef784f7ef5635991c57e4e816db111a5ac733d9bcdd20079937b7bffff1de6.first.ed04e563-a90a-4ea6-a0ae-3073608a2e96.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00275905,
+    "id": "0eac3fd27e1840fbb02b18703bc4b69589d99c61fed9d2cb8750e7abf801460f",
+    "packet": [
+      {
+        "A": {
+          "blob": "cc2fe5638354ae5d6013fdbdbe10dc4e85b923da8b87acd8895d12d8ad0593e0",
+          "format": "text"
+        },
+        "B": {
+          "blob": "d5ceec17237c7d0ba6059beb3cf48a278dbb09f32a593db09fa732597adf4e5b",
+          "format": "text"
+        },
+        "claim": "The guess asks how many groups sit directly below the whole sentence in a tree, but provides no tree picture to inspect.",
+        "claimId": "2ec6b9514c126817",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6ba709473bea4b4f9e1e1887f2671f167af27ce422d6179ad491b27b05ff20dc",
+          "format": "text"
+        },
+        "input": {
+          "blob": "7d05a8e8c2858f458147a122567ce4832bbf94e6aeb49550a0a3fa33425fc550",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Ask: “How many groups will sit directly below the whole sentence in our tree for ‘The puppy chewed the slipper’?”",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "595d86619fa58900",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2ec6b9514c126817",
+          "finding": "holds",
+          "reason": "In output B the guess screen has visual set to null and asks how many groups sit directly below S in \"our tree\" for \"The puppy chewed the slipper\", so answering depends on seeing the branches of a tree that no screen at that point shows. The claim is accurate."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

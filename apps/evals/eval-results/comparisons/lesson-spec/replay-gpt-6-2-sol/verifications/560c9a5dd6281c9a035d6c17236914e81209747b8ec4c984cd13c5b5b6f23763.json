@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "d9859bde5c7d514f",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "69bb942d9fcc96a78de97bee895433fc033467ef5a8cc4724f77a104bd9ae36d.second.27754d69-2803-473f-8636-2235e0870e82.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0031411499999999997,
+    "id": "560c9a5dd6281c9a035d6c17236914e81209747b8ec4c984cd13c5b5b6f23763",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "41e95f7f2d40d79e",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "B": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "claim": "A previsão pergunta em que margens ficavam portos romanos, mas não mostra um mapa ou outra representação dessas margens e do domínio romano.",
+        "claimId": "d9859bde5c7d514f",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "a tela guess sobre o litoral do Mediterrâneo",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "41e95f7f2d40d79e",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen asks the learner to judge whether the 50% cut and 50% raise cancel out, by finding the overall change from the original $4,000 (still 25% lower). It never asks for a compound annual growth rate, and that term doesn't appear in the plan."
+        },
+        {
+          "claimId": "d9859bde5c7d514f",
+          "finding": "doesn't hold",
+          "reason": "The question about which margins Roman ports stood on is in Output A's guess screen, which has a picture. Output B's guess screen asks what a traveler would find along the Mediterranean coast (Roman land only, or Roman and rival states) and has no visual, so the claim misdescribes the screen it names."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

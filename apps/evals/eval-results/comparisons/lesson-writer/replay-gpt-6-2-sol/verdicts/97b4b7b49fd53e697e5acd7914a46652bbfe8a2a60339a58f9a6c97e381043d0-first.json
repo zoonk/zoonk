@@ -1,0 +1,500 @@
+{
+  "attempt": "first",
+  "costUsd": 0.530673,
+  "failures": [],
+  "packetId": "97b4b7b49fd53e697e5acd7914a46652bbfe8a2a60339a58f9a6c97e381043d0",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B keeps its numbers consistent across screens 9 and 10 (0.376 eV giving 1.50 eV and 1.13 eV), explicitly checks the E = 0 and E < 0 cases, and accurately notes that a quantum dot's material also contributes to photon energy. A has minor rounding mismatches (4 × 0.38 = 1.52 written as 1.50 on screen 9, then 1.52 on screen 10) and a hook text-to-image count mismatch.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A reads with a livelier, more concrete teacher voice, using Owen's misconception on screen 6 and QLED TVs on screen 11 to pull the learner forward. B is clear and conversational too, but slightly drier in its check framing and tacks a hint sentence onto the end of screen 3.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "B defines the wave function ψ, probability density, physical constants, electronvolts, photon, and the link between higher energy and bluer light before testing them. A never defines ψ or explains why |ψ|² integrates to 1, and never states that shorter wavelength means bluer light before screen 11.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives four sharp options on every multiple-choice check and doesn't telegraph the answer right beforehand. B drops a giveaway sentence at the end of screen 3 right before screen 4 tests it, and hides the term 'zero-point energy' inside only one option's feedback on screen 6.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both break the expectation to put standing waves on a string before notation and omit 'quantized'; A also omits defining 'wave function' while B omits 'boundary condition'. A wins on real-world application with QLED TVs, whereas B has plainer summary labels and a hook image that matches its text.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Uses ψ on screen 2 and the integral of |ψ|² = 1 on screen 7 without ever naming or explaining what the wave function ψ is or that |ψ|² represents probability density, breaking the expectation to explain each new term when it first appears.",
+            "criterion": "clarity",
+            "learnerCost": "A learner who does not already remember Born's rule is left guessing what ψ stands for and why its squared magnitude integrates to 1.",
+            "location": {
+              "detail": "screens 2 and 7",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Introduces the potential and wave-function notation before the pinned guitar string analogy on screen 2, and never uses or explains the term 'quantized', breaking the written expectation.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner sees abstract boundary equations before the physical string picture and finishes without learning the standard term for discrete levels.",
+            "location": {
+              "detail": "screen 2 and whole lesson",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Rounding inconsistency across the worked example and follow-up check: screen 9 writes 6.0×10⁻²⁰ / 1.602×10⁻¹⁹ ≈ 0.38 eV (0.375 eV from the rounded value), then writes E_2 = 4E_1 ≈ 1.50 eV and ΔE = E_2 − E_1 ≈ 1.13 eV even though 4 × 0.38 = 1.52 and 1.50 − 0.38 = 1.12; screen 10 then uses 0.38 eV to get 1.52 eV.",
+            "criterion": "accuracy",
+            "learnerCost": "A learner checking the steps with a calculator gets slightly different numbers on screen 9 and sees 4E_1 equal 1.50 eV on screen 9 but 1.52 eV on screen 10.",
+            "location": {
+              "detail": "screens 9 and 10",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 9 converts ΔE to wavelength with λ = hc/ΔE without explaining that higher photon energy means a shorter, bluer wavelength, yet screen 11 expects the learner to deduce the blue shift.",
+            "criterion": "clarity",
+            "learnerCost": "A learner who does not already connect shorter wavelengths to bluer light has to guess that link on the final check.",
+            "location": {
+              "detail": "screens 9 and 11",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The opening text mentions two vials while the paired image prompt and alt text describe five glowing vials.",
+            "criterion": "accuracy",
+            "learnerCost": "The mismatch between text and picture can briefly distract the learner on the hook screen.",
+            "location": {
+              "detail": "Two vials hold tiny crystals of the same material, cadmium selenide.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The image and alt text on screen 11 explicitly show wider gaps and a blue arrow for the 3 nm crystal, giving away the direction of the energy and color shift asked in the question.",
+            "criterion": "checks",
+            "learnerCost": "A learner can read the color-shift part of the answer straight off the diagram or alt text instead of reasoning from 1/L².",
+            "location": {
+              "detail": "Two energy ladders: the 6 nm one has close rungs and a short red arrow; the 3 nm one has wider gaps and a long blue arrow.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Summary labels use technical terms and a symbol ('Boundary conditions', 'Energy levels E_n', 'Zero-point energy') rather than plain names a learner can read before the lesson.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A learner previewing the summary before the lesson runs into jargon instead of plain signposts.",
+            "location": {
+              "detail": "summary labels",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Introduces V(x) = 0 and the wave function ψ before the pinned guitar string analogy on screen 2, and never introduces or explains the terms 'boundary condition' or 'quantized', breaking the written expectation.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner encounters abstract notation before the string comparison and finishes the lesson without two core terms used across quantum mechanics.",
+            "location": {
+              "detail": "screen 2 and whole lesson",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 asserts that ψ meets the walls at zero without explaining why (continuity of the wave function), and squeezes the definition of ψ into a clause between commas.",
+            "criterion": "clarity",
+            "learnerCost": "An advanced learner is not given the reason ψ cannot jump at the walls and has to pause on the compressed definition clause.",
+            "location": {
+              "detail": "It meets the walls at zero, like a pinned guitar string",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3 ends with a tacked-on sentence stating the values of sine and cosine at x = 0 right before screen 4 asks which term survives at x = 0.",
+            "criterion": "checks",
+            "learnerCost": "The learner is handed the decisive algebraic fact immediately before the check instead of having to apply it themselves.",
+            "location": {
+              "detail": "At $x=0$, sine is zero and cosine is one.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The term 'zero-point energy' appears only in the feedback for the correct option of screen 6, so learners who pick a wrong option never see it.",
+            "criterion": "checks",
+            "learnerCost": "A learner who misses screen 6 never learns the standard name for the nonzero ground-state energy.",
+            "location": {
+              "detail": "That’s its zero-point energy.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 8 labels n as 'Wave number index n' instead of the standard 'quantum number n', and screen 5 combines substituting k_n and converting ħ to h into a single step without showing the ħ = h/(2π) substitution.",
+            "criterion": "clarity",
+            "learnerCost": "Nonstandard terminology for n can confuse physics learners, and combining two algebraic moves in the final step forces a small mental jump.",
+            "location": {
+              "detail": "Wave number index n",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The image and alt text on screen 11 show more widely spaced levels and a longer blue photon arrow for the 3 nm box, partially giving away the answer to the check.",
+            "criterion": "checks",
+            "learnerCost": "A learner can spot the blue shift directly from the illustration or alt text rather than working it out from the scaling law.",
+            "location": {
+              "detail": "The 3 nm box has more widely spaced levels and a longer blue photon arrow than the red arrow for the 6 nm box.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 returns to the lab vials from the hook instead of naming a concrete real-world place where quantum dots are used.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner does not see a concrete everyday application of particle-in-a-box sizing.",
+            "location": {
+              "detail": "Back at the glowing vials, you model a 6 nm crystal and a 3 nm crystal as boxes.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both lessons miss parts of the expectation on ordering the string analogy and naming all three terms, but B serves an advanced learner better overall with a more rigorous derivation (checking E = 0 and E < 0), consistent calculations across screens 9 and 10, accurate quantum-dot physics, and self-contained explanations of ψ, probability density, eV, photons, and the energy-to-color link."
+        },
+        "pairId": "37c5d6fa-efc8-470a-9f82-aaf289d76823"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is completely accurate throughout. B contains a mathematically garbled claim on screen 6 ('the operation is closed under addition') and states a decomposition Δ − |T₀| without the condition Δ > |T₀|.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A speaks directly in warm, everyday language ('Up is up, even below zero', 'Zero is a stop, not a wall'). B turns screens 2 and 6 into dense academic textbook prose with abstract definitions and formulas.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses plain words a 12-year-old follows on one read. B floods screens 2 and 6 with unexplained jargon like 'scalar quantity', 'interval scale', 'boundary condition', and 'Decompose Δ into |T₀| and Δ − |T₀|'.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "A",
+            "reason": "Both share the same check questions, but B's rewrite of screen 2 breaks the basis quotes on screens 5 and 8, which still quote sentences that no longer exist on screen 2.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "A fits the beginner level and follows every screen brief. B breaks the beginner expectation on screens 2 and 6 by introducing advanced math notation and jargon instead of everyday thermometer intuition.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 2 uses unexplained academic terms and symbolic notation ('scalar quantity', 'interval scale', 'standard atmospheric pressure', 'increment Δ', 'T₀ + Δ') that a beginner or 12-year-old cannot follow, breaking the written expectation.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner learner gets lost on the very first explanation screen and cannot use it to understand rising temperatures below zero.",
+            "location": {
+              "detail": "Temperature is a scalar quantity expressed on the Celsius scale, an interval scale whose zero point is defined by the freezing point of water at standard atmospheric pressure. An increment Δ applied to an initial value T₀ yields T₀ + Δ irrespective of the sign of T₀.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 6 relies on unexplained university-level jargon and absolute-value notation ('origin of the scale', 'boundary condition', 'closed under addition', 'Decompose Δ into |T₀| and Δ − |T₀|').",
+            "criterion": "clarity",
+            "learnerCost": "A beginner trying to count across zero on a thermometer is shut out by abstract algebraic phrasing.",
+            "location": {
+              "detail": "The origin of the scale is not a boundary condition, since the operation is closed under addition across the sign change. Decompose Δ into |T₀| and Δ − |T₀| and sum the components sequentially.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 2 and 6 read like a formal physics and algebra textbook, opening with abstract definitions and symbolic rules instead of concrete thermometer examples.",
+            "criterion": "teacher",
+            "learnerCost": "The sudden wall of dry textbook prose breaks the lesson's voice and causes a beginner to stop reading.",
+            "location": {
+              "detail": "screens 2 and 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 2 and 6 violate the beginner level by introducing formulas (T₀ + Δ, Δ − |T₀|) before intuition and ignore the plan's plain-language briefs for those screens.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The core explanation screens are pitched far above the beginner audience the lesson is meant to teach.",
+            "location": {
+              "detail": "screens 2 and 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The basis quotes on screen 5 ('A rise always moves **up** the thermometer.') and screen 8 ('From −3 °C, going up 3 degrees takes you to zero.') refer to screen 2, where neither sentence exists.",
+            "criterion": "checks",
+            "learnerCost": "After a wrong answer on screen 5 or screen 8, the app cannot highlight the supporting sentence on screen 2 for review.",
+            "location": {
+              "detail": "basis fields of screens 5 and 8",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Mathematically imprecise: a set (not an operation) is closed under addition, and decomposing Δ into |T₀| and Δ − |T₀| only produces a positive second step above zero when Δ > |T₀|, which screen 6 never states.",
+            "criterion": "accuracy",
+            "learnerCost": "A careful reader gets a garbled math statement and a splitting rule that gives a negative second piece whenever the temperature stays below zero.",
+            "location": {
+              "detail": "the operation is closed under addition across the sign change. Decompose Δ into |T₀| and Δ − |T₀|",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A teaches rising temperatures across zero in warm, plain language a beginner can follow effortlessly, whereas B replaces both explanation screens with impenetrable academic jargon and formulas that also break the review basis quotes on two checks."
+        },
+        "pairId": "4f3db8a8-96c9-4bcd-9685-fe4be54d5ff0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Introduces V(x) = 0 and the wave function ψ before the pinned guitar string analogy on screen 2, and never introduces or explains the terms 'boundary condition' or 'quantized', breaking the written expectation.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner encounters abstract notation before the string comparison and finishes the lesson without two core terms used across quantum mechanics.",
+            "location": {
+              "detail": "screen 2 and whole lesson",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Introduces V(x) = 0 and the wave function ψ before the pinned guitar string analogy on screen 2, and never introduces or explains the terms 'boundary condition' or 'quantized', breaking the written expectation.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner encounters abstract notation before the string comparison and finishes the lesson without two core terms used across quantum mechanics.",
+            "location": {
+              "detail": "screen 2 and whole lesson",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 asserts that ψ meets the walls at zero without explaining why (continuity of the wave function), and squeezes the definition of ψ into a clause between commas.",
+            "criterion": "clarity",
+            "learnerCost": "An advanced learner is not given the reason ψ cannot jump at the walls and has to pause on the compressed definition clause.",
+            "location": {
+              "detail": "It meets the walls at zero, like a pinned guitar string",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 asserts that ψ meets the walls at zero without explaining why (continuity of the wave function), and squeezes the definition of ψ into a clause between commas.",
+            "criterion": "clarity",
+            "learnerCost": "An advanced learner is not given the reason ψ cannot jump at the walls and has to pause on the compressed definition clause.",
+            "location": {
+              "detail": "It meets the walls at zero, like a pinned guitar string",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3 ends with a tacked-on sentence stating the values of sine and cosine at x = 0 right before screen 4 asks which term survives at x = 0.",
+            "criterion": "checks",
+            "learnerCost": "The learner is handed the decisive algebraic fact immediately before the check instead of having to apply it themselves.",
+            "location": {
+              "detail": "At $x=0$, sine is zero and cosine is one.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3 ends with a tacked-on sentence stating the values of sine and cosine at x = 0 right before screen 4 asks which term survives at x = 0.",
+            "criterion": "checks",
+            "learnerCost": "The learner is handed the decisive algebraic fact immediately before the check instead of having to apply it themselves.",
+            "location": {
+              "detail": "At $x=0$, sine is zero and cosine is one.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The term 'zero-point energy' appears only in the feedback for the correct option of screen 6, so learners who pick a wrong option never see it.",
+            "criterion": "checks",
+            "learnerCost": "A learner who misses screen 6 never learns the standard name for the nonzero ground-state energy.",
+            "location": {
+              "detail": "That’s its zero-point energy.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The term 'zero-point energy' appears only in the feedback for the correct option of screen 6, so learners who pick a wrong option never see it.",
+            "criterion": "checks",
+            "learnerCost": "A learner who misses screen 6 never learns the standard name for the nonzero ground-state energy.",
+            "location": {
+              "detail": "That’s its zero-point energy.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 8 labels n as 'Wave number index n' instead of the standard 'quantum number n', and screen 5 combines substituting k_n and converting ħ to h into a single step without showing the ħ = h/(2π) substitution.",
+            "criterion": "clarity",
+            "learnerCost": "Nonstandard terminology for n can confuse physics learners, and combining two algebraic moves in the final step forces a small mental jump.",
+            "location": {
+              "detail": "Wave number index n",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 8 labels n as 'Wave number index n' instead of the standard 'quantum number n', and screen 5 combines substituting k_n and converting ħ to h into a single step without showing the ħ = h/(2π) substitution.",
+            "criterion": "clarity",
+            "learnerCost": "Nonstandard terminology for n can confuse physics learners, and combining two algebraic moves in the final step forces a small mental jump.",
+            "location": {
+              "detail": "Wave number index n",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The image and alt text on screen 11 show more widely spaced levels and a longer blue photon arrow for the 3 nm box, partially giving away the answer to the check.",
+            "criterion": "checks",
+            "learnerCost": "A learner can spot the blue shift directly from the illustration or alt text rather than working it out from the scaling law.",
+            "location": {
+              "detail": "The 3 nm box has more widely spaced levels and a longer blue photon arrow than the red arrow for the 6 nm box.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The image and alt text on screen 11 show more widely spaced levels and a longer blue photon arrow for the 3 nm box, partially giving away the answer to the check.",
+            "criterion": "checks",
+            "learnerCost": "A learner can spot the blue shift directly from the illustration or alt text rather than working it out from the scaling law.",
+            "location": {
+              "detail": "The 3 nm box has more widely spaced levels and a longer blue photon arrow than the red arrow for the 6 nm box.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 returns to the lab vials from the hook instead of naming a concrete real-world place where quantum dots are used.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner does not see a concrete everyday application of particle-in-a-box sizing.",
+            "location": {
+              "detail": "Back at the glowing vials, you model a 6 nm crystal and a 3 nm crystal as boxes.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 returns to the lab vials from the hook instead of naming a concrete real-world place where quantum dots are used.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner does not see a concrete everyday application of particle-in-a-box sizing.",
+            "location": {
+              "detail": "Back at the glowing vials, you model a 6 nm crystal and a 3 nm crystal as boxes.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical, so neither serves the learner better."
+        },
+        "pairId": "fef4a2f0-7513-434c-ac4c-f2f603c50b2c"
+      }
+    ]
+  }
+}

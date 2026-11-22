@@ -157,11 +157,11 @@ export function PlanReceipt({
             className="col-span-2 grid grid-cols-subgrid items-baseline gap-3 py-2.5 text-sm"
             key={fact.id}
           >
-            <dt className="text-muted-foreground text-compact text-pretty">{fact.label}</dt>
+            <dt className="text-muted-foreground text-compact">{fact.label}</dt>
             <dd className="flex min-w-0 flex-col gap-0.5">
               <span
                 className={cn(
-                  "text-pretty wrap-break-word",
+                  "wrap-break-word",
                   (fact.id === "time" || (fact.id === "date" && fact.count)) &&
                     "font-mono tabular-nums",
                 )}

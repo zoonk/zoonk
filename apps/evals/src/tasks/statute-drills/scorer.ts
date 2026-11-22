@@ -1,12 +1,12 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   STATUTE_DRILL_OPTION_COUNT,
   type StatuteDrill,
   type StatuteDrillParams,
   type generateStatuteDrills,
 } from "@zoonk/ai/tasks/items/statute-drills";
-import { checkItem } from "@zoonk/core/library/items/checks";
+import { toCheckedItem } from "@zoonk/core/library/items/checks";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 
 type StatuteDrillsOutput = Awaited<ReturnType<typeof generateStatuteDrills>>["data"];
@@ -45,18 +45,22 @@ function formatProblem(drill: StatuteDrill, problem: string): string {
   return `${drill.reference} (${drill.format}): ${problem}`;
 }
 
-function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): CodeCheckResult {
+export const checkStatuteDrillsOutput: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as StatuteDrillsCase;
   const { drills, dropped } = JSON.parse(output) as StatuteDrillsOutput;
 
-  const checked = drills.map((drill, index) => ({
-    drill,
-    itemLocator: `drills[${index}] (${drill.reference})`,
-    problems: checkItem({
+  const checked = drills.map((drill, index) => {
+    const { item, problems } = toCheckedItem({
+      answerFormat: {},
+      format: drill.format,
+      index,
       item: drill,
       language: input.language,
-      optionCount: STATUTE_DRILL_OPTION_COUNT,
-    }),
-  }));
+      optionCount: drill.format === "multipleChoice" ? STATUTE_DRILL_OPTION_COUNT : null,
+    });
+
+    return { drill: item, itemLocator: `drills[${index}] (${drill.reference})`, problems };
+  });
 
   const passing = checked.filter((entry) => entry.problems.length === 0);
   const all = [...dropped, ...checked];
@@ -67,6 +71,7 @@ function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): Cod
   ].filter((problem) => typeof problem === "string");
 
   return {
+    blockingProblems: passing.length === 0 ? ["No statute drill passed the save checks."] : [],
     judgedOutput: JSON.stringify(
       { drills: passing.map(({ drill, itemLocator }) => ({ ...drill, itemLocator })) },
       null,
@@ -82,11 +87,11 @@ function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): Cod
     ],
     total: all.length + SET_CHECKS,
   };
-}
+};
 
 export const scoreStatuteDrills: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkStatuteDrillsOutput(value, testCase.userInput as StatuteDrillsCase),
+    check: (value) => checkStatuteDrillsOutput({ output: value, testCase }),
     output,
     scoreCategories: STATUTE_DRILLS_SCORE_CATEGORIES,
     testCase,

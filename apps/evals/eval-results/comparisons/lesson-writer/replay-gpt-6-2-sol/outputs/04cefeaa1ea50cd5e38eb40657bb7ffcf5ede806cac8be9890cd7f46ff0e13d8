@@ -1,0 +1,136 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Uma célula gasta algumas moedas de energia para começar a quebrar uma molécula de açúcar e depois fabrica quatro. Quantas moedas sobram dessa primeira etapa?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "O gasto inicial",
+      "text": "A célula começa a quebrar a glicose no líquido do citoplasma, o primeiro C do macete CMC. Essa etapa se chama **glicólise**. Como num empréstimo, a célula investe 2 moedas de energia, chamadas ATP, para preparar a glicose.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Quanto a célula ganha",
+      "text": "Na fase de rendimento, a célula produz 4 ATP. Ela também produz 2 moléculas que levam elétrons até a etapa final da respiração celular. Elas se chamam **NADH**. Para achar o saldo de ATP, subtraia o que a célula gastou do que ela produziu.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "Na glicólise de uma molécula de glicose, a célula gasta {gasto} ATP e produz {producao} ATP.",
+      "question": "Qual é o saldo de ATP por molécula de glicose?",
+      "math": {
+        "variables": [
+          {
+            "name": "gasto",
+            "value": 2,
+            "min": 2,
+            "max": 2,
+            "step": 1,
+            "unit": null
+          },
+          {
+            "name": "producao",
+            "value": 4,
+            "min": 4,
+            "max": 4,
+            "step": 1,
+            "unit": null
+          }
+        ],
+        "solution": "producao - gasto",
+        "answer": 2,
+        "unit": "ATP",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0
+        },
+        "steps": [
+          {
+            "text": "Comece pelos {producao} ATP que a célula produziu.",
+            "expression": null
+          },
+          {
+            "text": "Tire os {gasto} ATP que a célula gastou. Sobram {result} ATP.",
+            "expression": "producao - gasto"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "producao",
+            "misconception": "Contar só o que foi produzido",
+            "reason": "Você contou tudo o que a célula produziu, mas ainda precisa descontar o que ela gastou no começo."
+          },
+          {
+            "expression": "producao + gasto",
+            "misconception": "Somar o gasto à produção",
+            "reason": "Você somou o gasto como se ele fosse um ganho. O ATP gasto diminui o saldo."
+          }
+        ]
+      },
+      "correctReason": "Dos {producao} ATP produzidos, você desconta os {gasto} ATP gastos para saber quanto sobrou.",
+      "image": null,
+      "basis": {
+        "screen": 3,
+        "quote": "Para achar o saldo de ATP, subtraia o que a célula gastou do que ela produziu."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "Ao estudar para uma prova de biologia, você lê que todas as etapas da respiração celular ocorrem nas mitocôndrias, estruturas que ajudam a célula a obter energia.",
+      "question": "Que local você anotaria para a glicólise?",
+      "options": [
+        {
+          "text": "Ela ocorre no líquido do citoplasma.",
+          "isCorrect": true,
+          "reason": "A quebra da glicose começa no líquido do citoplasma, sem precisar entrar na mitocôndria.",
+          "picture": null
+        },
+        {
+          "text": "Ela ocorre dentro da mitocôndria.",
+          "isCorrect": false,
+          "reason": "Outras etapas da respiração ocorrem na mitocôndria, mas a glicólise acontece no líquido do citoplasma.",
+          "picture": null
+        },
+        {
+          "text": "Ela começa no líquido do citoplasma e termina dentro da mitocôndria.",
+          "isCorrect": false,
+          "reason": "O local muda entre as etapas da respiração, mas não no meio da glicólise: ela começa e termina no líquido do citoplasma.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "A célula começa a quebrar a glicose no líquido do citoplasma, o primeiro C do macete CMC."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Onde a glicose quebra",
+        "text": "A glicólise começa a quebrar a glicose no líquido do citoplasma."
+      },
+      {
+        "label": "Gasto inicial",
+        "text": "A célula gasta 2 ATP para preparar uma molécula de glicose."
+      },
+      {
+        "label": "Ganho e saldo",
+        "text": "Na fase de rendimento, a célula produz 4 ATP e, quando você desconta os 2 gastos, sobram 2 ATP por glicose."
+      }
+    ],
+    "shape": "hub"
+  }
+}

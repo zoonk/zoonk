@@ -33,7 +33,7 @@ import {
 import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import { SessionQueueSection, useSessionQueueAside } from "./session-queue";
+import { useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
@@ -279,15 +279,13 @@ export function NextStop({
           <div className="flex flex-col gap-2">
             <Eyebrow className="mb-1">{t("Up next")}</Eyebrow>
             <h2 className="text-title">{title(block)}</h2>
-            {line && <p className="text-muted-foreground text-sm text-pretty">{line}</p>}
+            {line && <p className="text-muted-foreground text-sm">{line}</p>}
             <TaskMeta facts={facts} />
           </div>
 
           <ReviewIntro block={block} />
 
-          <StatusRegion className="text-sm text-pretty">
-            {written && t("Your lesson is ready.")}
-          </StatusRegion>
+          <StatusRegion className="text-sm">{written && t("Your lesson is ready.")}</StatusRegion>
 
           {!isReady && notWritten && (
             <NotWritten actions={actions} block={block} reason={notWritten} />
@@ -304,7 +302,6 @@ export function NextStop({
               lesson={lesson}
             />
           )}
-          <SessionQueueSection aside={aside} />
         </TaskBody>
 
         <NextStopActionBar

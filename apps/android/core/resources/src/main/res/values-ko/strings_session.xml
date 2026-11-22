@@ -2,9 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_belt_step": "0543f6e3ab9b408327dbfe078f29f690d50072261ab79560fb17472a42c58ea8",
-  "session_block_bonus_practice": "8e383e8c1bf854e22fb0e4349c2c4c29555355105675ab8ebec1c6b86e38e96b",
-  "session_block_bonus_practice_areas": "dd7d39d98d9ec0c0e81e6f81fd716131e8f4b52441e1b54fbcf8bbdcfbd3a589",
-  "session_block_bonus_practice_topic": "8bfdc627c1f509cc743dcd62bb0ad62768f9dc9ecf6b128bc339623a615267a5",
   "session_block_call": "7d00940da9d0a472dca137d102f64b7b667e518cf769fac984dd45dfdeebb4e4",
   "session_block_full_review_questions": "c8d6a72f6ebb16724b9bdc167ef883cfb53698d5843ecaad9c69fa0fda797080",
   "session_block_mixed_practice": "2d286e8c58747b942d78450048a1ded1e1aa421532554835732b50be00951702",
@@ -102,16 +99,11 @@
     <string name="session_block_new_lesson">새 레슨</string>
     <string name="session_block_writing_practice">쓰기 연습</string>
     <string name="session_block_practice_mistakes">틀린 문제 연습</string>
-    <string name="session_block_bonus_practice">추가 연습</string>
     <string name="session_block_mixed_practice">섞어서 연습하기</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_practice_areas">연습: %1$s</string>
-    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_bonus_practice_areas">추가 연습: %1$s</string>
     <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
     <string name="session_block_practice_topic">연습: %1$s</string>
-    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_bonus_practice_topic">추가 연습: %1$s</string>
     <string name="session_block_rematch_lesson">재도전 전 짧은 레슨</string>
     <plurals name="session_block_questions">
         <item quantity="other">%d문제</item>

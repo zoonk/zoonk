@@ -51,13 +51,16 @@ data class DayPart(
     enum class State { Done, Current, Ahead }
 }
 
-/** Main's `getSessionQueue` and `getDayMeterParts`: the blocks in order, skipped ones left out as core counts them. */
+/**
+ * Main's `getSessionQueue` and `getDayMeterParts`: the day's blocks in order, as core counts them:
+ * skipped ones and extra work left out.
+ */
 fun dayParts(
     steps: List<DayStep>,
     isNext: (DayStep) -> Boolean,
     nextShare: Float = 0f,
 ): List<DayPart> =
-    steps.filter { it.status != StudyBlock.Status.SKIPPED }.map { step ->
+    steps.filter { it.status != StudyBlock.Status.SKIPPED && !it.extra }.map { step ->
         when {
             step.status == StudyBlock.Status.COMPLETED -> DayPart(step, DayPart.State.Done)
             isNext(step) -> DayPart(step, DayPart.State.Current, nextShare)

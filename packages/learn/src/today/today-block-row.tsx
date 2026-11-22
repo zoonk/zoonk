@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ListChecksIcon, Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -152,6 +153,21 @@ function RowTarget({
   );
 }
 
+/** Work past the day's list: it never counts toward the day's progress. */
+function ExtraTag() {
+  const t = useExtracted();
+
+  return (
+    <Badge className="font-sans" variant="outline">
+      {t({
+        description:
+          "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.",
+        message: "Extra",
+      })}
+    </Badge>
+  );
+}
+
 /**
  * A finished row shows no minutes: they were the plan's estimate, and "✓ Reviews 8 min" above "2
  * min studied" read as time studied.
@@ -191,8 +207,9 @@ export function BlockRow({
           <RowLines block={block} isNext={isNext} showSubject={showSubject} />
         </div>
 
-        {!finished && (
+        {(block.extra || !finished) && (
           <span className="text-muted-foreground flex h-5 shrink-0 items-center gap-1.5 font-mono text-xs tabular-nums">
+            {block.extra && <ExtraTag />}
             {countsTowardMission && (
               <ListChecksIcon
                 aria-hidden="true"
@@ -200,7 +217,7 @@ export function BlockRow({
                 data-slot="mission-row-mark"
               />
             )}
-            <RowTime minutes={block.estimatedMinutes} />
+            {!finished && <RowTime minutes={block.estimatedMinutes} />}
           </span>
         )}
       </div>

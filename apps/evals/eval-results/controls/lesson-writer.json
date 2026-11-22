@@ -1,0 +1,460 @@
+{
+  "pairs": [
+    {
+      "clean": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\",\n        \"prompt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"A cold morning where the learner lives.\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"A thermometer with an arrow going up past zero.\",\n        \"prompt\": \"A thermometer from −5 °C to 5 °C with an arrow going up past zero.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.\",\n      \"title\": \"Up is up, even below zero\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"text\": \"2 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"8 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"−8 °C\"\n        }\n      ],\n      \"question\": \"It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?\",\n      \"reveal\": \"It shows 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"workedExample\",\n      \"problem\": \"It's −3 °C and the temperature rises 5 degrees. What's the new temperature?\",\n      \"result\": \"It's 2 °C: two degrees above zero.\",\n      \"steps\": [\n        {\n          \"math\": \"-3 + 3 = 0\",\n          \"text\": \"First climb to zero: that takes 3 degrees.\"\n        },\n        {\n          \"math\": \"0 + 2 = 2\",\n          \"text\": \"Two degrees of the rise are left, so keep going up.\"\n        }\n      ],\n      \"title\": \"From −3 °C, up 5 degrees\",\n      \"visual\": null\n    },\n    {\n      \"basis\": {\n        \"quote\": \"A rise always moves **up** the thermometer.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"correctReason\": \"You start at {start} °C and move {rise} degrees up.\",\n      \"image\": null,\n      \"kind\": \"mathCheck\",\n      \"math\": {\n        \"answer\": 3,\n        \"commonMistakes\": [\n          {\n            \"expression\": \"rise - start\",\n            \"misconception\": \"Subtracts the negative start\",\n            \"reason\": \"You took the start away instead of adding the rise to it.\"\n          },\n          {\n            \"expression\": \"start - rise\",\n            \"misconception\": \"Moves down instead of up\",\n            \"reason\": \"A rise moves up the thermometer, not down.\"\n          }\n        ],\n        \"solution\": \"start + rise\",\n        \"steps\": [\n          {\n            \"expression\": \"start + rise\",\n            \"text\": \"Move {rise} degrees up from {start} °C: {result} °C.\"\n          }\n        ],\n        \"tolerance\": {\n          \"kind\": \"absolute\",\n          \"value\": 0\n        },\n        \"unit\": \"°C\",\n        \"variables\": [\n          {\n            \"max\": -1,\n            \"min\": -10,\n            \"name\": \"start\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": -4\n          },\n          {\n            \"max\": 15,\n            \"min\": 2,\n            \"name\": \"rise\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": 7\n          }\n        ]\n      },\n      \"question\": \"At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?\"\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.\",\n      \"title\": \"Zero is a stop, not a wall\",\n      \"visual\": null\n    },\n    {\n      \"content\": \"{\\\"check\\\": {\\\"answer\\\": 5, \\\"explanation\\\": \\\"−3 + 8 = 5, so it's 5 °C at noon.\\\", \\\"kind\\\": \\\"numeric\\\", \\\"question\\\": \\\"What's the temperature at noon?\\\", \\\"tolerance\\\": {\\\"kind\\\": \\\"absolute\\\", \\\"value\\\": 0.01}, \\\"unit\\\": \\\"°C\\\"}, \\\"fields\\\": {\\\"label\\\": \\\"Temperature\\\", \\\"max\\\": 7, \\\"min\\\": -5, \\\"moves\\\": [{\\\"by\\\": 3}, {\\\"by\\\": 5}], \\\"start\\\": -3, \\\"step\\\": 1, \\\"unit\\\": \\\"°C\\\"}, \\\"prompt\\\": \\\"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\\\"}\",\n      \"kind\": \"activity\",\n      \"template\": \"numberLine\"\n    },\n    {\n      \"acceptedAnswers\": [],\n      \"basis\": {\n        \"quote\": \"From −3 °C, going up 3 degrees takes you to zero.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"keyPoints\": [\n        \"Going up 3 degrees reaches zero\",\n        \"The last 2 degrees go above zero\"\n      ],\n      \"kind\": \"typedAnswer\",\n      \"question\": \"Explain in your own words why −3 °C plus 5 degrees is 2 °C.\",\n      \"sampleAnswer\": \"Three degrees get you to zero, and the other two take you to 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Six degrees reach zero and three more go above it.\",\n          \"text\": \"3 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"That's what you get by moving down 9 degrees instead of up.\",\n          \"text\": \"−15 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"You added the numbers without their signs: the start is below zero.\",\n          \"text\": \"15 °C\"\n        }\n      ],\n      \"question\": \"What will the thermometer show?\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Rising below zero\",\n        \"text\": \"A rise moves up the thermometer, even below zero.\"\n      },\n      {\n        \"label\": \"Count up to zero\",\n        \"text\": \"Count up to zero first, then the degrees above it.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "criterion": "accuracy",
+      "defect": "Screen 4 is a second worked example of the same problem that concludes −3 °C plus a 5-degree rise is 3 °C; the right answer is 2 °C, which screen 3 gives.",
+      "expectations": "Every number and calculation is correct. The lesson teaches adding a rise to a temperature below zero.",
+      "falseAllegation": "The worked example on screen 3 concludes that −3 °C plus a 5-degree rise is 8 °C instead of 2 °C.",
+      "flawed": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\",\n        \"prompt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"A cold morning where the learner lives.\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"A thermometer with an arrow going up past zero.\",\n        \"prompt\": \"A thermometer from −5 °C to 5 °C with an arrow going up past zero.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.\",\n      \"title\": \"Up is up, even below zero\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"text\": \"2 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"8 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"−8 °C\"\n        }\n      ],\n      \"question\": \"It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?\",\n      \"reveal\": \"It shows 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"workedExample\",\n      \"problem\": \"It's −3 °C and the temperature rises 5 degrees. What's the new temperature?\",\n      \"result\": \"It's 3 °C: three degrees above zero.\",\n      \"steps\": [\n        {\n          \"math\": null,\n          \"text\": \"First climb to zero: that takes 3 degrees.\"\n        },\n        {\n          \"math\": null,\n          \"text\": \"The rest of the rise, 3 degrees, takes you above zero.\"\n        }\n      ],\n      \"title\": \"From −3 °C, up 5 degrees\",\n      \"visual\": null\n    },\n    {\n      \"basis\": {\n        \"quote\": \"A rise always moves **up** the thermometer.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"correctReason\": \"You start at {start} °C and move {rise} degrees up.\",\n      \"image\": null,\n      \"kind\": \"mathCheck\",\n      \"math\": {\n        \"answer\": 3,\n        \"commonMistakes\": [\n          {\n            \"expression\": \"rise - start\",\n            \"misconception\": \"Subtracts the negative start\",\n            \"reason\": \"You took the start away instead of adding the rise to it.\"\n          },\n          {\n            \"expression\": \"start - rise\",\n            \"misconception\": \"Moves down instead of up\",\n            \"reason\": \"A rise moves up the thermometer, not down.\"\n          }\n        ],\n        \"solution\": \"start + rise\",\n        \"steps\": [\n          {\n            \"expression\": \"start + rise\",\n            \"text\": \"Move {rise} degrees up from {start} °C: {result} °C.\"\n          }\n        ],\n        \"tolerance\": {\n          \"kind\": \"absolute\",\n          \"value\": 0\n        },\n        \"unit\": \"°C\",\n        \"variables\": [\n          {\n            \"max\": -1,\n            \"min\": -10,\n            \"name\": \"start\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": -4\n          },\n          {\n            \"max\": 15,\n            \"min\": 2,\n            \"name\": \"rise\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": 7\n          }\n        ]\n      },\n      \"question\": \"At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?\"\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.\",\n      \"title\": \"Zero is a stop, not a wall\",\n      \"visual\": null\n    },\n    {\n      \"content\": \"{\\\"check\\\": {\\\"answer\\\": 5, \\\"explanation\\\": \\\"−3 + 8 = 5, so it's 5 °C at noon.\\\", \\\"kind\\\": \\\"numeric\\\", \\\"question\\\": \\\"What's the temperature at noon?\\\", \\\"tolerance\\\": {\\\"kind\\\": \\\"absolute\\\", \\\"value\\\": 0.01}, \\\"unit\\\": \\\"°C\\\"}, \\\"fields\\\": {\\\"label\\\": \\\"Temperature\\\", \\\"max\\\": 7, \\\"min\\\": -5, \\\"moves\\\": [{\\\"by\\\": 3}, {\\\"by\\\": 5}], \\\"start\\\": -3, \\\"step\\\": 1, \\\"unit\\\": \\\"°C\\\"}, \\\"prompt\\\": \\\"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\\\"}\",\n      \"kind\": \"activity\",\n      \"template\": \"numberLine\"\n    },\n    {\n      \"acceptedAnswers\": [],\n      \"basis\": {\n        \"quote\": \"From −3 °C, going up 3 degrees takes you to zero.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"keyPoints\": [\n        \"Going up 3 degrees reaches zero\",\n        \"The last 2 degrees go above zero\"\n      ],\n      \"kind\": \"typedAnswer\",\n      \"question\": \"Explain in your own words why −3 °C plus 5 degrees is 2 °C.\",\n      \"sampleAnswer\": \"Three degrees get you to zero, and the other two take you to 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Six degrees reach zero and three more go above it.\",\n          \"text\": \"3 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"That's what you get by moving down 9 degrees instead of up.\",\n          \"text\": \"−15 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"You added the numbers without their signs: the start is below zero.\",\n          \"text\": \"15 °C\"\n        }\n      ],\n      \"question\": \"What will the thermometer show?\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Rising below zero\",\n        \"text\": \"A rise moves up the thermometer, even below zero.\"\n      },\n      {\n        \"label\": \"Count up to zero\",\n        \"text\": \"Count up to zero first, then the degrees above it.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "input": {
+        "chapterTitle": "Negative numbers",
+        "courseTitle": "Everyday math",
+        "language": "en",
+        "level": "beginner",
+        "shortAnswers": true,
+        "spec": {
+          "canDo": "Work out a temperature after it rises across zero",
+          "description": "Add a rise to a temperature below zero, the way thermometers do.",
+          "estimatedMinutes": 4,
+          "screens": [
+            {
+              "activityTemplate": null,
+              "brief": "At dawn the thermometer outside Maya's window reads −3 °C, and the forecast says 5 degrees warmer by noon, so she leaves her coat at home. End on the open question: was that a good call?",
+              "kind": "hook",
+              "skills": [],
+              "visual": "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": "A thermometer from −5 °C to 5 °C with an arrow going up.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+              "kind": "guess",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+              "kind": "workedExample",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": "numberLine",
+              "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+              "kind": "activity",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "template"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Explain in your own words why −3 + 5 is 2.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+              "kind": "application",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            }
+          ],
+          "skills": [
+            {
+              "description": "A rise adds to the temperature, even when it starts below zero.",
+              "example": "−3 °C plus a 5 degree rise is 2 °C.",
+              "hard": true,
+              "name": "Add a rise to a temperature below zero",
+              "topic": "Temperature changes",
+              "useCase": "Reading a weather forecast."
+            }
+          ],
+          "title": "Temperature changes across zero"
+        }
+      },
+      "provenance": "Repository planted error lesson-quality-check en-temperature-wrong-math on its clean base en-temperature-clean. Checked: −3 + 5 = 2; the planted screen says 3 °C."
+    },
+    {
+      "clean": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"Ana recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega sorridente.\",\n        \"prompt\": \"Ana, adulta, recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"Ana passou num concurso e tomou posse na prefeitura. No primeiro dia, uma colega diz: “Agora você está garantida para sempre.” Será que é isso mesmo?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem é nomeado por concurso para cargo efetivo ganha essa garantia depois de **três anos** de efetivo exercício, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.\",\n      \"title\": \"Três anos e uma avaliação\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": false,\n          \"text\": \"Não, nunca mais\"\n        },\n        {\n          \"isCorrect\": true,\n          \"text\": \"Sim, nos casos que a Constituição prevê\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"Só se ela pedir para sair\"\n        }\n      ],\n      \"question\": \"Depois de estável, Ana ainda pode perder o cargo?\",\n      \"reveal\": \"Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"Estabilidade não é para sempre. Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.\",\n      \"title\": \"Estável também pode sair\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": null,\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Os três anos são só uma parte: sem a aprovação na avaliação, ele ainda não é estável.\",\n          \"text\": \"Não, falta ser aprovado na avaliação\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"É a pegadinha mais comum: o tempo sozinho não dá estabilidade, a avaliação é obrigatória.\",\n          \"text\": \"Sim, três anos bastam\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"A posse não dá estabilidade. Os três anos são de efetivo exercício, contados a partir do início do exercício.\",\n          \"text\": \"Sim, desde a posse\"\n        }\n      ],\n      \"question\": \"Pedro completou três anos de efetivo exercício em cargo efetivo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"Lúcia é servidora estável da prefeitura de Recife. O chefe dela acha que ela cometeu uma falta grave.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Uma servidora estável só perde o cargo depois de um processo em que possa se defender.\",\n          \"text\": \"Não, antes vem um processo com direito a defesa\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"O chefe pode abrir o processo, mas não decide sozinho nem na hora.\",\n          \"text\": \"Sim, falta grave permite demitir na hora\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Pagar indenização não substitui o processo: acusada de falta grave, ela só perde o cargo depois de um processo em que possa se defender.\",\n          \"text\": \"Sim, se a prefeitura pagar uma indenização\"\n        }\n      ],\n      \"question\": \"O chefe pode demiti-la no mesmo dia, sem processo?\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Estabilidade em três anos\",\n        \"text\": \"Quem é nomeado por concurso para cargo efetivo fica estável depois de três anos de efetivo exercício, se for aprovado na avaliação do seu trabalho feita por uma comissão.\"\n      },\n      {\n        \"label\": \"Perda do cargo\",\n        \"text\": \"Por falta ou mau desempenho, o servidor estável pode perder o cargo por decisão judicial definitiva, por processo administrativo ou por avaliação periódica, sempre com direito a defesa.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "criterion": "accuracy",
+      "defect": "Screen 2 says a civil servant becomes stable after two years (24 months); the source (Constituição, art. 41) and the rest of the lesson say three years of effective exercise.",
+      "expectations": "Facts match the official sources in the input exactly: stability after three years of effective exercise and approval in a special performance evaluation.",
+      "falseAllegation": "A tela 2 diz que a estabilidade vem depois de três anos, mas a fonte do input fala em dois anos de exercício.",
+      "flawed": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"Ana recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega sorridente.\",\n        \"prompt\": \"Ana, adulta, recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"Ana passou num concurso e tomou posse na prefeitura. No primeiro dia, uma colega diz: “Agora você está garantida para sempre.” Será que é isso mesmo?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.\",\n      \"title\": \"Dois anos e uma avaliação\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": false,\n          \"text\": \"Não, nunca mais\"\n        },\n        {\n          \"isCorrect\": true,\n          \"text\": \"Sim, nos casos que a Constituição prevê\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"Só se ela pedir para sair\"\n        }\n      ],\n      \"question\": \"Depois de estável, Ana ainda pode perder o cargo?\",\n      \"reveal\": \"Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"Estabilidade não é para sempre. Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.\",\n      \"title\": \"Estável também pode sair\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": null,\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Os três anos são só uma parte: sem a aprovação na avaliação, ele ainda não é estável.\",\n          \"text\": \"Não, falta ser aprovado na avaliação\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"É a pegadinha mais comum: o tempo sozinho não dá estabilidade, a avaliação é obrigatória.\",\n          \"text\": \"Sim, três anos bastam\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"A posse não dá estabilidade. Os três anos são de efetivo exercício, contados a partir do início do exercício.\",\n          \"text\": \"Sim, desde a posse\"\n        }\n      ],\n      \"question\": \"Pedro completou três anos de efetivo exercício em cargo efetivo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"Lúcia é servidora estável da prefeitura de Recife. O chefe dela acha que ela cometeu uma falta grave.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Uma servidora estável só perde o cargo depois de um processo em que possa se defender.\",\n          \"text\": \"Não, antes vem um processo com direito a defesa\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"O chefe pode abrir o processo, mas não decide sozinho nem na hora.\",\n          \"text\": \"Sim, falta grave permite demitir na hora\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Pagar indenização não substitui o processo: acusada de falta grave, ela só perde o cargo depois de um processo em que possa se defender.\",\n          \"text\": \"Sim, se a prefeitura pagar uma indenização\"\n        }\n      ],\n      \"question\": \"O chefe pode demiti-la no mesmo dia, sem processo?\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Estabilidade em três anos\",\n        \"text\": \"Quem é nomeado por concurso para cargo efetivo fica estável depois de três anos de efetivo exercício, se for aprovado na avaliação do seu trabalho feita por uma comissão.\"\n      },\n      {\n        \"label\": \"Perda do cargo\",\n        \"text\": \"Por falta ou mau desempenho, o servidor estável pode perder o cargo por decisão judicial definitiva, por processo administrativo ou por avaliação periódica, sempre com direito a defesa.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "input": {
+        "chapterTitle": "Agentes públicos",
+        "courseTitle": "Direito Administrativo",
+        "language": "pt",
+        "level": "beginner",
+        "sources": "<page ref=\"S1:1\" of=\"Constituição da República Federativa do Brasil de 1988, Art. 41\">\nArt. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.\n§ 1º O servidor público estável só perderá o cargo:\nI - em virtude de sentença judicial transitada em julgado;\nII - mediante processo administrativo em que lhe seja assegurada ampla defesa;\nIII - mediante procedimento de avaliação periódica de desempenho, na forma de lei complementar, assegurada ampla defesa.\n§ 4º Como condição para a aquisição da estabilidade, é obrigatória a avaliação especial de desempenho por comissão instituída para essa finalidade.\n</page>",
+        "spec": {
+          "canDo": "Dizer quando um servidor fica estável e como pode perder o cargo",
+          "description": "Quando o servidor concursado adquire estabilidade e em que casos o servidor estável perde o cargo.",
+          "estimatedMinutes": 3,
+          "screens": [
+            {
+              "activityTemplate": null,
+              "brief": "Ana passou num concurso e tomou posse na prefeitura, e uma colega diz que agora ela está garantida para sempre. Termine na pergunta aberta: é isso mesmo?",
+              "kind": "hook",
+              "skills": [],
+              "visual": "Ana, adulta, recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "O servidor nomeado por concurso para cargo efetivo fica estável após três anos de efetivo exercício, e só se for aprovado na avaliação especial de desempenho feita por uma comissão.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Pergunte, sem valer ponto, se depois de estável Ana ainda pode perder o cargo: nunca mais; sim, nos casos que a Constituição prevê; só se ela pedir para sair. A resposta é a segunda; a próxima tela mostra os casos.",
+              "kind": "guess",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Estável não quer dizer que nunca perde o cargo: por falta ou mau desempenho, perde por sentença judicial transitada em julgado, processo administrativo com ampla defesa ou avaliação periódica de desempenho.",
+              "kind": "explanation",
+              "skills": [
+                1
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Pedro completou três anos no cargo, mas a comissão ainda não fez a avaliação especial: ele já é estável? Pegadinha: achar que o tempo basta.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Uma servidora estável da prefeitura de Recife é acusada de uma falta grave: o chefe pode demiti-la no mesmo dia, sem processo? Pegadinha: achar que o chefe decide sozinho.",
+              "kind": "application",
+              "skills": [
+                1
+              ],
+              "visual": null,
+              "visualKind": "none"
+            }
+          ],
+          "skills": [
+            {
+              "description": "O servidor concursado fica estável após três anos de efetivo exercício e aprovação na avaliação especial de desempenho.",
+              "example": "Quem tomou posse em 2023 pode ficar estável em 2026, se for aprovado na avaliação.",
+              "hard": false,
+              "name": "Identificar quando o servidor adquire estabilidade",
+              "topic": "Estabilidade do servidor",
+              "useCase": "Entender os primeiros anos de quem passa num concurso."
+            },
+            {
+              "description": "Por falta ou mau desempenho, o servidor estável perde o cargo por sentença judicial, processo administrativo ou avaliação periódica, sempre com ampla defesa.",
+              "example": "Uma falta grave leva a um processo administrativo com direito a defesa.",
+              "hard": false,
+              "name": "Reconhecer como o servidor estável pode perder o cargo",
+              "topic": "Perda do cargo",
+              "useCase": "Questões de concurso sobre direitos do servidor."
+            }
+          ],
+          "title": "Estabilidade do servidor público"
+        }
+      },
+      "provenance": "Repository planted error lesson-quality-check pt-estabilidade-contradicts-source on its clean base pt-estabilidade-sourced-clean. Checked against the source excerpt in the input: três anos de efetivo exercício."
+    },
+    {
+      "clean": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\",\n        \"prompt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"A cold morning where the learner lives.\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"A thermometer with an arrow going up past zero.\",\n        \"prompt\": \"A thermometer from −5 °C to 5 °C with an arrow going up past zero.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.\",\n      \"title\": \"Up is up, even below zero\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"text\": \"2 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"8 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"−8 °C\"\n        }\n      ],\n      \"question\": \"It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?\",\n      \"reveal\": \"It shows 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"workedExample\",\n      \"problem\": \"It's −3 °C and the temperature rises 5 degrees. What's the new temperature?\",\n      \"result\": \"It's 2 °C: two degrees above zero.\",\n      \"steps\": [\n        {\n          \"math\": \"-3 + 3 = 0\",\n          \"text\": \"First climb to zero: that takes 3 degrees.\"\n        },\n        {\n          \"math\": \"0 + 2 = 2\",\n          \"text\": \"Two degrees of the rise are left, so keep going up.\"\n        }\n      ],\n      \"title\": \"From −3 °C, up 5 degrees\",\n      \"visual\": null\n    },\n    {\n      \"basis\": {\n        \"quote\": \"A rise always moves **up** the thermometer.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"correctReason\": \"You start at {start} °C and move {rise} degrees up.\",\n      \"image\": null,\n      \"kind\": \"mathCheck\",\n      \"math\": {\n        \"answer\": 3,\n        \"commonMistakes\": [\n          {\n            \"expression\": \"rise - start\",\n            \"misconception\": \"Subtracts the negative start\",\n            \"reason\": \"You took the start away instead of adding the rise to it.\"\n          },\n          {\n            \"expression\": \"start - rise\",\n            \"misconception\": \"Moves down instead of up\",\n            \"reason\": \"A rise moves up the thermometer, not down.\"\n          }\n        ],\n        \"solution\": \"start + rise\",\n        \"steps\": [\n          {\n            \"expression\": \"start + rise\",\n            \"text\": \"Move {rise} degrees up from {start} °C: {result} °C.\"\n          }\n        ],\n        \"tolerance\": {\n          \"kind\": \"absolute\",\n          \"value\": 0\n        },\n        \"unit\": \"°C\",\n        \"variables\": [\n          {\n            \"max\": -1,\n            \"min\": -10,\n            \"name\": \"start\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": -4\n          },\n          {\n            \"max\": 15,\n            \"min\": 2,\n            \"name\": \"rise\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": 7\n          }\n        ]\n      },\n      \"question\": \"At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?\"\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.\",\n      \"title\": \"Zero is a stop, not a wall\",\n      \"visual\": null\n    },\n    {\n      \"content\": \"{\\\"check\\\": {\\\"answer\\\": 5, \\\"explanation\\\": \\\"−3 + 8 = 5, so it's 5 °C at noon.\\\", \\\"kind\\\": \\\"numeric\\\", \\\"question\\\": \\\"What's the temperature at noon?\\\", \\\"tolerance\\\": {\\\"kind\\\": \\\"absolute\\\", \\\"value\\\": 0.01}, \\\"unit\\\": \\\"°C\\\"}, \\\"fields\\\": {\\\"label\\\": \\\"Temperature\\\", \\\"max\\\": 7, \\\"min\\\": -5, \\\"moves\\\": [{\\\"by\\\": 3}, {\\\"by\\\": 5}], \\\"start\\\": -3, \\\"step\\\": 1, \\\"unit\\\": \\\"°C\\\"}, \\\"prompt\\\": \\\"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\\\"}\",\n      \"kind\": \"activity\",\n      \"template\": \"numberLine\"\n    },\n    {\n      \"acceptedAnswers\": [],\n      \"basis\": {\n        \"quote\": \"From −3 °C, going up 3 degrees takes you to zero.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"keyPoints\": [\n        \"Going up 3 degrees reaches zero\",\n        \"The last 2 degrees go above zero\"\n      ],\n      \"kind\": \"typedAnswer\",\n      \"question\": \"Explain in your own words why −3 °C plus 5 degrees is 2 °C.\",\n      \"sampleAnswer\": \"Three degrees get you to zero, and the other two take you to 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Six degrees reach zero and three more go above it.\",\n          \"text\": \"3 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"That's what you get by moving down 9 degrees instead of up.\",\n          \"text\": \"−15 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"You added the numbers without their signs: the start is below zero.\",\n          \"text\": \"15 °C\"\n        }\n      ],\n      \"question\": \"What will the thermometer show?\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Rising below zero\",\n        \"text\": \"A rise moves up the thermometer, even below zero.\"\n      },\n      {\n        \"label\": \"Count up to zero\",\n        \"text\": \"Count up to zero first, then the degrees above it.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "criterion": "clarity",
+      "defect": "Screens 2 and 5, the lesson's two explanations for a beginner, are rewritten in textbook register: 'scalar quantity', 'interval scale', 'closed under addition', Δ and |T₀|, none explained, before any everyday case.",
+      "expectations": "Beginner: everyday words a 12-year-old follows, every term explained before it's used, one idea per screen.",
+      "falseAllegation": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+      "flawed": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\",\n        \"prompt\": \"A frosty window at dawn with an outdoor thermometer reading −3 °C.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"A cold morning where the learner lives.\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"A thermometer with an arrow going up past zero.\",\n        \"prompt\": \"A thermometer from −5 °C to 5 °C with an arrow going up past zero.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"Temperature is a scalar quantity expressed on the Celsius scale, an interval scale whose zero point is defined by the freezing point of water at standard atmospheric pressure. An increment Δ applied to an initial value T₀ yields T₀ + Δ irrespective of the sign of T₀.\",\n      \"title\": \"Additive increments on an interval scale\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"text\": \"2 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"8 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"−8 °C\"\n        }\n      ],\n      \"question\": \"It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?\",\n      \"reveal\": \"It shows 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"image\": null,\n      \"kind\": \"workedExample\",\n      \"problem\": \"It's −3 °C and the temperature rises 5 degrees. What's the new temperature?\",\n      \"result\": \"It's 2 °C: two degrees above zero.\",\n      \"steps\": [\n        {\n          \"math\": \"-3 + 3 = 0\",\n          \"text\": \"First climb to zero: that takes 3 degrees.\"\n        },\n        {\n          \"math\": \"0 + 2 = 2\",\n          \"text\": \"Two degrees of the rise are left, so keep going up.\"\n        }\n      ],\n      \"title\": \"From −3 °C, up 5 degrees\",\n      \"visual\": null\n    },\n    {\n      \"basis\": {\n        \"quote\": \"A rise always moves **up** the thermometer.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"correctReason\": \"You start at {start} °C and move {rise} degrees up.\",\n      \"image\": null,\n      \"kind\": \"mathCheck\",\n      \"math\": {\n        \"answer\": 3,\n        \"commonMistakes\": [\n          {\n            \"expression\": \"rise - start\",\n            \"misconception\": \"Subtracts the negative start\",\n            \"reason\": \"You took the start away instead of adding the rise to it.\"\n          },\n          {\n            \"expression\": \"start - rise\",\n            \"misconception\": \"Moves down instead of up\",\n            \"reason\": \"A rise moves up the thermometer, not down.\"\n          }\n        ],\n        \"solution\": \"start + rise\",\n        \"steps\": [\n          {\n            \"expression\": \"start + rise\",\n            \"text\": \"Move {rise} degrees up from {start} °C: {result} °C.\"\n          }\n        ],\n        \"tolerance\": {\n          \"kind\": \"absolute\",\n          \"value\": 0\n        },\n        \"unit\": \"°C\",\n        \"variables\": [\n          {\n            \"max\": -1,\n            \"min\": -10,\n            \"name\": \"start\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": -4\n          },\n          {\n            \"max\": 15,\n            \"min\": 2,\n            \"name\": \"rise\",\n            \"step\": 1,\n            \"unit\": \"°C\",\n            \"value\": 7\n          }\n        ]\n      },\n      \"question\": \"At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?\"\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"The origin of the scale is not a boundary condition, since the operation is closed under addition across the sign change. Decompose Δ into |T₀| and Δ − |T₀| and sum the components sequentially.\",\n      \"title\": \"Decomposing the increment\",\n      \"visual\": null\n    },\n    {\n      \"content\": \"{\\\"check\\\": {\\\"answer\\\": 5, \\\"explanation\\\": \\\"−3 + 8 = 5, so it's 5 °C at noon.\\\", \\\"kind\\\": \\\"numeric\\\", \\\"question\\\": \\\"What's the temperature at noon?\\\", \\\"tolerance\\\": {\\\"kind\\\": \\\"absolute\\\", \\\"value\\\": 0.01}, \\\"unit\\\": \\\"°C\\\"}, \\\"fields\\\": {\\\"label\\\": \\\"Temperature\\\", \\\"max\\\": 7, \\\"min\\\": -5, \\\"moves\\\": [{\\\"by\\\": 3}, {\\\"by\\\": 5}], \\\"start\\\": -3, \\\"step\\\": 1, \\\"unit\\\": \\\"°C\\\"}, \\\"prompt\\\": \\\"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\\\"}\",\n      \"kind\": \"activity\",\n      \"template\": \"numberLine\"\n    },\n    {\n      \"acceptedAnswers\": [],\n      \"basis\": {\n        \"quote\": \"From −3 °C, going up 3 degrees takes you to zero.\",\n        \"screen\": 2\n      },\n      \"context\": null,\n      \"keyPoints\": [\n        \"Going up 3 degrees reaches zero\",\n        \"The last 2 degrees go above zero\"\n      ],\n      \"kind\": \"typedAnswer\",\n      \"question\": \"Explain in your own words why −3 °C plus 5 degrees is 2 °C.\",\n      \"sampleAnswer\": \"Three degrees get you to zero, and the other two take you to 2 °C.\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Six degrees reach zero and three more go above it.\",\n          \"text\": \"3 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"That's what you get by moving down 9 degrees instead of up.\",\n          \"text\": \"−15 °C\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"You added the numbers without their signs: the start is below zero.\",\n          \"text\": \"15 °C\"\n        }\n      ],\n      \"question\": \"What will the thermometer show?\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Rising below zero\",\n        \"text\": \"A rise moves up the thermometer, even below zero.\"\n      },\n      {\n        \"label\": \"Count up to zero\",\n        \"text\": \"Count up to zero first, then the degrees above it.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "input": {
+        "chapterTitle": "Negative numbers",
+        "courseTitle": "Everyday math",
+        "language": "en",
+        "level": "beginner",
+        "shortAnswers": true,
+        "spec": {
+          "canDo": "Work out a temperature after it rises across zero",
+          "description": "Add a rise to a temperature below zero, the way thermometers do.",
+          "estimatedMinutes": 4,
+          "screens": [
+            {
+              "activityTemplate": null,
+              "brief": "At dawn the thermometer outside Maya's window reads −3 °C, and the forecast says 5 degrees warmer by noon, so she leaves her coat at home. End on the open question: was that a good call?",
+              "kind": "hook",
+              "skills": [],
+              "visual": "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": "A thermometer from −5 °C to 5 °C with an arrow going up.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+              "kind": "guess",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+              "kind": "workedExample",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": "numberLine",
+              "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+              "kind": "activity",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "template"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Explain in your own words why −3 + 5 is 2.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+              "kind": "application",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            }
+          ],
+          "skills": [
+            {
+              "description": "A rise adds to the temperature, even when it starts below zero.",
+              "example": "−3 °C plus a 5 degree rise is 2 °C.",
+              "hard": true,
+              "name": "Add a rise to a temperature below zero",
+              "topic": "Temperature changes",
+              "useCase": "Reading a weather forecast."
+            }
+          ],
+          "title": "Temperature changes across zero"
+        }
+      },
+      "provenance": "Planted by the calibration on the repository's clean en-temperature-clean lesson (beginner). Checked: the two rewritten screens use undefined technical terms and symbols and drop the everyday framing; nothing else changes."
+    },
+    {
+      "clean": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"Bianca olha no celular o desenho de um átomo com elétrons em trilhas ao redor do núcleo.\",\n        \"prompt\": \"Bianca, adulta, assiste no celular a um vídeo com o desenho clássico de um átomo: núcleo no centro e elétrons em trilhas, como planetas.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"Bianca vê num vídeo o átomo desenhado como um sistema solar, com elétrons girando em trilhas. Um comentário diz que esse desenho está errado. Onde está o erro?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"a imagem de um elétron desenhado como bolinha em uma aula ou vídeo\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"Uma órbita de bolinha aparece riscada ao lado de uma região difusa chamada nuvem eletrônica.\",\n        \"prompt\": \"Comparação lado a lado: à esquerda, bolinha em órbita desenhada como trilha ao redor de um núcleo, com um X sobre a trilha; à direita, região difusa ao redor do núcleo com o rótulo «nuvem eletrônica».\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"Imagine procurar o elétron ao redor do núcleo. Em vez de uma bolinha seguindo uma trilha, você encontra uma região onde ele pode aparecer. Essa região se chama **nuvem eletrônica**. Ela não é uma trilha nem uma nuvem de matéria comum.\",\n      \"title\": \"Não é uma órbita\",\n      \"visual\": null\n    },\n    {\n      \"image\": {\n        \"alt\": \"Uma seta aponta para o núcleo, cercado pela região onde o elétron pode ser encontrado.\",\n        \"prompt\": \"Ilustração didática simples: núcleo no centro, região difusa ao redor indicando onde o elétron pode ser encontrado e seta apontando para o núcleo com o rótulo «atração». Sem desenhar uma órbita.\"\n      },\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": false,\n          \"text\": \"Porque gira rápido como um planeta.\"\n        },\n        {\n          \"isCorrect\": true,\n          \"text\": \"Porque concentrá-lo tanto exige energia.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"Porque o núcleo o empurra para longe.\"\n        }\n      ],\n      \"question\": \"O núcleo atrai o elétron. Sem valer ponto: por que ele não termina espremido no núcleo?\",\n      \"reveal\": \"O núcleo atrai o elétron, mas espremê-lo num espaço minúsculo exige energia. A atração não decide tudo sozinha.\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"A nuvem espalhada é comparada a uma nuvem comprimida, cuja compressão exige energia.\",\n        \"prompt\": \"Duas versões do mesmo átomo: à esquerda, nuvem eletrônica espalhada ao redor do núcleo; à direita, nuvem muito comprimida junto ao núcleo, com seta e rótulo «comprimir exige energia». Sem mola.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.\",\n      \"title\": \"Apertar exige energia\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"O núcleo atrai o elétron para perto.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Essa imagem parece explicar por que ele não cai, mas trata o elétron como uma bolinha em órbita. Ela não descreve sua nuvem.\",\n          \"text\": \"Porque ele gira rápido como um planeta.\"\n        },\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Você precisa considerar tanto a atração pelo núcleo quanto a energia necessária para confinar o elétron.\",\n          \"text\": \"Porque concentrar sua nuvem demais exige energia.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Pode parecer que a atração precisa parar, mas ela continua. O custo de concentrar o elétron é que impede essa explicação simples.\",\n          \"text\": \"Porque o núcleo deixa de atraí-lo quando chega perto.\"\n        }\n      ],\n      \"question\": \"Por que essa atração não basta para deixá-lo espremido no núcleo?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"os átomos que formam a tela de um celular\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"Uma nuvem ocupa uma região ao redor do núcleo, em vez de se concentrar num ponto central.\",\n        \"prompt\": \"Núcleo cercado por uma nuvem eletrônica de tamanho definido. Ao lado, um ponto minúsculo sobre o núcleo marcado «concentração excessiva», em contraste com a nuvem ao redor.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"O arranjo mais estável leva em conta duas coisas: o núcleo atrai o elétron, e confiná-lo demais custa energia. Por isso, mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo. O elétron não fica espremido num ponto.\",\n      \"title\": \"O arranjo mais estável\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"Alguém diz: «O elétron não cai porque o núcleo o empurra para longe».\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Você corrige o sentido da atração e considera o custo de confinar o elétron.\",\n          \"text\": \"O núcleo atrai o elétron, mas concentrá-lo demais exige energia.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Você acerta que há atração, mas volta à imagem de uma bolinha em órbita. O elétron ocupa uma nuvem, não uma trilha.\",\n          \"text\": \"O núcleo atrai o elétron, que escapa por girar como um planeta.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"A frase erra ao dizer que o núcleo empurra. Isso não significa que não exista atração.\",\n          \"text\": \"O núcleo não atrai nem empurra o elétron.\"\n        }\n      ],\n      \"question\": \"Qual é o erro nessa frase?\",\n      \"visual\": null\n    },\n    {\n      \"acceptedAnswers\": [],\n      \"basis\": null,\n      \"context\": \"Um celular é feito de átomos que não desabam sobre seus núcleos. Uma pessoa imagina os elétrons como bolinhas prestes a cair.\",\n      \"keyPoints\": [\n        \"O núcleo atrai o elétron.\",\n        \"O elétron ocupa uma nuvem, não uma órbita de bolinha.\",\n        \"Concentrar o elétron num espaço minúsculo exige energia.\",\n        \"No arranjo mais estável, a nuvem ocupa uma região ao redor do núcleo.\"\n      ],\n      \"kind\": \"typedAnswer\",\n      \"question\": \"Como você explicaria a essa pessoa por que os elétrons não ficam espremidos nos núcleos?\",\n      \"sampleAnswer\": \"O núcleo atrai o elétron, mas ele não é uma bolinha em órbita: ocupa uma nuvem. Espremer essa nuvem no núcleo exige energia. Por isso, no arranjo mais estável, ela ocupa uma região ao redor dele.\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Nuvem eletrônica\",\n        \"text\": \"O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.\"\n      },\n      {\n        \"label\": \"Atração do núcleo\",\n        \"text\": \"O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.\"\n      },\n      {\n        \"label\": \"Menor energia\",\n        \"text\": \"Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "criterion": "fitAndApplication",
+      "defect": "Screen 6 of an overview lesson is replaced by an energy formula with ħ, ε₀ and a derivative to reach the Bohr radius: formulas and notation in an overview lose its reader.",
+      "expectations": "Overview: plain words and stories, no formulas, equations or notation.",
+      "falseAllegation": "A tela 3 usa a fórmula E = mc² para explicar por que o elétron não cai no núcleo.",
+      "flawed": "{\n  \"screens\": [\n    {\n      \"image\": {\n        \"alt\": \"Bianca olha no celular o desenho de um átomo com elétrons em trilhas ao redor do núcleo.\",\n        \"prompt\": \"Bianca, adulta, assiste no celular a um vídeo com o desenho clássico de um átomo: núcleo no centro e elétrons em trilhas, como planetas.\"\n      },\n      \"kind\": \"hookText\",\n      \"text\": \"Bianca vê num vídeo o átomo desenhado como um sistema solar, com elétrons girando em trilhas. Um comentário diz que esse desenho está errado. Onde está o erro?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": \"a imagem de um elétron desenhado como bolinha em uma aula ou vídeo\",\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"Uma órbita de bolinha aparece riscada ao lado de uma região difusa chamada nuvem eletrônica.\",\n        \"prompt\": \"Comparação lado a lado: à esquerda, bolinha em órbita desenhada como trilha ao redor de um núcleo, com um X sobre a trilha; à direita, região difusa ao redor do núcleo com o rótulo «nuvem eletrônica».\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"Imagine procurar o elétron ao redor do núcleo. Em vez de uma bolinha seguindo uma trilha, você encontra uma região onde ele pode aparecer. Essa região se chama **nuvem eletrônica**. Ela não é uma trilha nem uma nuvem de matéria comum.\",\n      \"title\": \"Não é uma órbita\",\n      \"visual\": null\n    },\n    {\n      \"image\": {\n        \"alt\": \"Uma seta aponta para o núcleo, cercado pela região onde o elétron pode ser encontrado.\",\n        \"prompt\": \"Ilustração didática simples: núcleo no centro, região difusa ao redor indicando onde o elétron pode ser encontrado e seta apontando para o núcleo com o rótulo «atração». Sem desenhar uma órbita.\"\n      },\n      \"kind\": \"hookGuess\",\n      \"options\": [\n        {\n          \"isCorrect\": false,\n          \"text\": \"Porque gira rápido como um planeta.\"\n        },\n        {\n          \"isCorrect\": true,\n          \"text\": \"Porque concentrá-lo tanto exige energia.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"text\": \"Porque o núcleo o empurra para longe.\"\n        }\n      ],\n      \"question\": \"O núcleo atrai o elétron. Sem valer ponto: por que ele não termina espremido no núcleo?\",\n      \"reveal\": \"O núcleo atrai o elétron, mas espremê-lo num espaço minúsculo exige energia. A atração não decide tudo sozinha.\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": {\n        \"alt\": \"A nuvem espalhada é comparada a uma nuvem comprimida, cuja compressão exige energia.\",\n        \"prompt\": \"Duas versões do mesmo átomo: à esquerda, nuvem eletrônica espalhada ao redor do núcleo; à direita, nuvem muito comprimida junto ao núcleo, com seta e rótulo «comprimir exige energia». Sem mola.\"\n      },\n      \"kind\": \"explanation\",\n      \"text\": \"O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.\",\n      \"title\": \"Apertar exige energia\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"O núcleo atrai o elétron para perto.\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Essa imagem parece explicar por que ele não cai, mas trata o elétron como uma bolinha em órbita. Ela não descreve sua nuvem.\",\n          \"text\": \"Porque ele gira rápido como um planeta.\"\n        },\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Você precisa considerar tanto a atração pelo núcleo quanto a energia necessária para confinar o elétron.\",\n          \"text\": \"Porque concentrar sua nuvem demais exige energia.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Pode parecer que a atração precisa parar, mas ela continua. O custo de concentrar o elétron é que impede essa explicação simples.\",\n          \"text\": \"Porque o núcleo deixa de atraí-lo quando chega perto.\"\n        }\n      ],\n      \"question\": \"Por que essa atração não basta para deixá-lo espremido no núcleo?\",\n      \"visual\": null\n    },\n    {\n      \"exampleLineIdea\": null,\n      \"explore\": null,\n      \"image\": null,\n      \"kind\": \"explanation\",\n      \"text\": \"Num modelo simplificado do átomo de hidrogênio, o estado de menor energia minimiza $E = \\\\frac{\\\\hbar^2}{2 m r^2} - \\\\frac{e^2}{4 \\\\pi \\\\varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \\\\approx 0{,}53$ Å.\",\n      \"title\": \"O arranjo mais estável\",\n      \"visual\": null\n    },\n    {\n      \"basis\": null,\n      \"context\": \"Alguém diz: «O elétron não cai porque o núcleo o empurra para longe».\",\n      \"image\": null,\n      \"kind\": \"check\",\n      \"options\": [\n        {\n          \"isCorrect\": true,\n          \"picture\": null,\n          \"reason\": \"Você corrige o sentido da atração e considera o custo de confinar o elétron.\",\n          \"text\": \"O núcleo atrai o elétron, mas concentrá-lo demais exige energia.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"Você acerta que há atração, mas volta à imagem de uma bolinha em órbita. O elétron ocupa uma nuvem, não uma trilha.\",\n          \"text\": \"O núcleo atrai o elétron, que escapa por girar como um planeta.\"\n        },\n        {\n          \"isCorrect\": false,\n          \"picture\": null,\n          \"reason\": \"A frase erra ao dizer que o núcleo empurra. Isso não significa que não exista atração.\",\n          \"text\": \"O núcleo não atrai nem empurra o elétron.\"\n        }\n      ],\n      \"question\": \"Qual é o erro nessa frase?\",\n      \"visual\": null\n    },\n    {\n      \"acceptedAnswers\": [],\n      \"basis\": null,\n      \"context\": \"Um celular é feito de átomos que não desabam sobre seus núcleos. Uma pessoa imagina os elétrons como bolinhas prestes a cair.\",\n      \"keyPoints\": [\n        \"O núcleo atrai o elétron.\",\n        \"O elétron ocupa uma nuvem, não uma órbita de bolinha.\",\n        \"Concentrar o elétron num espaço minúsculo exige energia.\",\n        \"No arranjo mais estável, a nuvem ocupa uma região ao redor do núcleo.\"\n      ],\n      \"kind\": \"typedAnswer\",\n      \"question\": \"Como você explicaria a essa pessoa por que os elétrons não ficam espremidos nos núcleos?\",\n      \"sampleAnswer\": \"O núcleo atrai o elétron, mas ele não é uma bolinha em órbita: ocupa uma nuvem. Espremer essa nuvem no núcleo exige energia. Por isso, no arranjo mais estável, ela ocupa uma região ao redor dele.\",\n      \"visual\": null\n    }\n  ],\n  \"summary\": {\n    \"ideas\": [\n      {\n        \"label\": \"Nuvem eletrônica\",\n        \"text\": \"O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.\"\n      },\n      {\n        \"label\": \"Atração do núcleo\",\n        \"text\": \"O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.\"\n      },\n      {\n        \"label\": \"Menor energia\",\n        \"text\": \"Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele.\"\n      }\n    ],\n    \"shape\": \"hub\"\n  }\n}",
+      "input": {
+        "chapterTitle": "O átomo por dentro",
+        "courseTitle": "Física quântica",
+        "language": "pt",
+        "level": "overview",
+        "shortAnswers": true,
+        "spec": {
+          "canDo": "Explicar por que o elétron não cai no núcleo",
+          "description": "Mostra por que a atração pelo núcleo não concentra o elétron ali e como isso permite que os átomos permaneçam estáveis.",
+          "estimatedMinutes": 3,
+          "screens": [
+            {
+              "activityTemplate": null,
+              "brief": "Bianca vê num vídeo o átomo desenhado como um sistema solar, com elétrons girando em trilhas, e um comentário diz que o desenho está errado. Termine na pergunta aberta: onde está o erro?",
+              "kind": "hook",
+              "skills": [],
+              "visual": "Bianca, adulta, assiste no celular a um vídeo com o desenho clássico de um átomo: núcleo no centro e elétrons em trilhas, como planetas.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "O núcleo atrai o elétron. Peça um palpite, sem valer ponto: por que o elétron não termina espremido no núcleo?",
+              "kind": "guess",
+              "skills": [
+                0
+              ],
+              "visual": "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
+              "kind": "explanation",
+              "skills": [
+                0
+              ],
+              "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva.",
+              "visualKind": "picture"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
+              "kind": "check",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            },
+            {
+              "activityTemplate": null,
+              "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
+              "kind": "application",
+              "skills": [
+                0
+              ],
+              "visual": null,
+              "visualKind": "none"
+            }
+          ],
+          "skills": [
+            {
+              "description": "O elétron é atraído pelo núcleo, mas concentrá-lo demais exige energia; por isso, seu arranjo mais estável ocupa uma região ao redor do núcleo.",
+              "example": "Mesmo no estado de menor energia de um átomo, o elétron não fica espremido num ponto no núcleo.",
+              "hard": false,
+              "name": "Explicar por que o elétron não cai no núcleo",
+              "topic": "Estabilidade do átomo",
+              "useCase": "Entender por que os átomos que formam objetos cotidianos, como um celular, permanecem estáveis."
+            }
+          ],
+          "title": "Por que o elétron não cai no núcleo"
+        }
+      },
+      "provenance": "Repository planted error lesson-quality-check pt-eletron-formula-in-overview on the clean eletron base lesson (overview). Checked: the base lesson has no formula; the plant adds the energy function and its derivative."
+    }
+  ]
+}

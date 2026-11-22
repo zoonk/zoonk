@@ -50,6 +50,13 @@ export const imageCheckTask: Task<ImageCheckCaseInput, ImageCheckVerdict, ImageC
   generate,
   id: TASK_ID,
   name: "Image check",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "Code decides whether a picture is usable or redrawn",
+    reason: "Same result as a pricier model, and faster",
+    waits: "Nobody: it checks a stored picture before it's shown",
+  },
   score: scoreImageCheck,
   testCases: TEST_CASES,
 };

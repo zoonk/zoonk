@@ -5,7 +5,11 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { trackOnboardingProgress } from "../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
-import { insertGoalWithPlan, setActiveGoal } from "../goals/_utils/create-goal-records";
+import {
+  getCardPlace,
+  insertGoalWithPlan,
+  setActiveGoal,
+} from "../goals/_utils/create-goal-records";
 import { loadGoalViews } from "../goals/_utils/goal-view";
 import { type GoalView } from "../goals/goal-contract";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -39,6 +43,7 @@ async function replaceWithExamGoal({
   await tx.goal.update({ data: { status: "archived" }, where: { id: goal.id } });
 
   await insertGoalWithPlan(tx, {
+    card: getCardPlace(goal),
     dailyMinutes: goal.dailyMinutes,
     draft: {
       details: { ...details, examName, examTarget: "score" },

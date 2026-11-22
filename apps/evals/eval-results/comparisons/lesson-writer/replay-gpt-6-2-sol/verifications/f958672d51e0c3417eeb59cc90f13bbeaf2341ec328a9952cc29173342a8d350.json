@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-patrimonio-liquido-dense-brief",
+        "claimId": "4ebacd7a2f413d0c",
+        "criterion": "fitAndApplication",
+        "observationId": "6a848a3c357d62acdf81e6b42a8e9a17ebfd4a76155d0a0aea2d23e64987106a.first.ac2a3336-d93d-4d38-ae51-0aadc5e939e2.2",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0036311499999999997,
+    "id": "f958672d51e0c3417eeb59cc90f13bbeaf2341ec328a9952cc29173342a8d350",
+    "packet": [
+      {
+        "A": {
+          "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5d2e63c7789074e4bfb70fc72cd5e4d2c7e54e90ca9c1fff366a30e70406df44",
+          "format": "text"
+        },
+        "claim": "Screen 2 breaks the written expectation that the first explanation be two or three short sentences recalling bens, direitos, and obrigações in plain words without defining them again: it uses six sentences and explicitly redefines all three terms in separate sentences.",
+        "claimId": "4ebacd7a2f413d0c",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
+          "format": "text"
+        },
+        "input": {
+          "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
+          "format": "json"
+        },
+        "location": {
+          "detail": "As ferramentas e o dinheiro de Davi são os bens da oficina. O que clientes ainda vão pagar a ele são os direitos. As dívidas são as obrigações. Somando bens e direitos e tirando as obrigações, você chega ao **patrimônio líquido**. Ele é um valor dos registros, não o preço de venda da oficina. Suba as obrigações e veja o resultado cair.",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
+          "format": "text"
+        },
+        "B": {
+          "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
+          "format": "text"
+        },
+        "claim": "A tela 3 usa a fórmula E = mc² para explicar por que o elétron não cai no núcleo.",
+        "claimId": "e2866f3f2403768a",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
+          "format": "text"
+        },
+        "input": {
+          "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "4ebacd7a2f413d0c",
+          "finding": "holds",
+          "reason": "Output B's screen 2 explanation has six sentences, and three of them each define one term: \"são os bens\", \"são os direitos\", \"são as obrigações\". That breaks the two-or-three-sentence, no-redefinition expectation. Output A's screen 2 has three sentences and defines the terms only once, in parentheses, so the problem is not shared."
+        },
+        {
+          "claimId": "e2866f3f2403768a",
+          "finding": "doesn't hold",
+          "reason": "Output A contains no formula at all, and E = mc² appears nowhere in either output. Screen 3 of A (\"Apertar exige energia\") is a plain comparison with no equation. The only formula in B is a Bohr-style energy expression on a later screen, not E = mc², and it is not on screen 3 either."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

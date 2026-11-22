@@ -130,6 +130,25 @@ class TodayScreenshots {
         capture("book-font200", fold = true)
     }
 
+    /** The longest and a CJK translation of the extra rows' tag. */
+    @Test
+    @Config(qualifiers = "pl-w411dp-h891dp-xxhdpi")
+    fun extrasInPolish() = captureDay("today-done-extras-pl", "done-extras")
+
+    @Test
+    @Config(qualifiers = "ja-w411dp-h891dp-xxhdpi")
+    fun extrasInJapanese() = captureDay("today-done-extras-ja", "done-extras")
+
+    private fun captureDay(
+        name: String,
+        day: String,
+    ) {
+        val read = DAYS.first { it.first == day }.second
+        compose.setContent { ZoonkTheme { Screen(read) } }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     /** Beside the day, as a phone's sheet shows it. */
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
@@ -519,6 +538,7 @@ class TodayScreenshots {
                             ),
                     ),
                 "done-up-next" to doneWithUpNext(),
+                "done-extras" to doneWithExtras(),
                 "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0, extra = mapOf("state" to "rest")),
                 "exam-over" to
                     day(
@@ -581,7 +601,12 @@ class TodayScreenshots {
             unopened: Boolean = false,
             extra: Map<String, Any?> = emptyMap(),
             today: Map<String, Any?> = emptyMap(),
+            studiedToday: Int = 22,
         ): TodayRead.Day {
+            // Core's count: day blocks only, skipped ones in neither number.
+            val dayBlocks = blocks.filter { it["extra"]?.toString() != "true" && it["status"]?.toString() != "\"skipped\"" }
+            val bar = dayBlocks.count { it["status"]?.toString() == "\"completed\"" } to dayBlocks.size
+            val todayDone = extra["state"] == "done"
             val minutes =
                 buildJsonObject {
                     put("dailyGoal", dailyGoal)
@@ -594,24 +619,27 @@ class TodayScreenshots {
                     put(
                         "days",
                         buildJsonArray {
+                            // Monday done, Tuesday not studied, today as far as its blocks go.
                             listOf(
-                                Triple("2026-10-26", "study", 45),
-                                Triple("2026-10-27", "study", 0),
-                                Triple("2026-10-28", "study", 22),
-                                Triple("2026-10-29", "study", 0),
-                                Triple("2026-10-30", "study", 0),
-                                Triple("2026-10-31", "study", 0),
-                                Triple("2026-11-01", "rest", 0),
-                            ).forEach { (date, kind, minutes) ->
+                                WeekFixture("2026-10-26", "study", 45, 3, 3),
+                                WeekFixture("2026-10-27", "study", 0, 0, 0),
+                                WeekFixture("2026-10-28", "study", studiedToday, bar.first, bar.second, todayDone),
+                                WeekFixture("2026-10-29", "study", 0, 0, 0),
+                                WeekFixture("2026-10-30", "study", 0, 0, 0),
+                                WeekFixture("2026-10-31", "study", 0, 0, 0),
+                                WeekFixture("2026-11-01", "rest", 0, 0, 0),
+                            ).forEach { day ->
                                 add(
                                     buildJsonObject {
-                                        put("date", date)
-                                        put("goalMinutes", if (kind == "rest") 0 else dailyGoal)
-                                        put("hitGoal", minutes >= dailyGoal && dailyGoal > 0)
-                                        put("isToday", date == "2026-10-28")
-                                        put("kind", kind)
-                                        put("minutes", minutes)
-                                        put("studied", minutes > 0)
+                                        put("completed", day.completed)
+                                        put("date", day.date)
+                                        put("goalMinutes", if (day.kind == "rest") 0 else dailyGoal)
+                                        put("hitGoal", day.done || (day.total > 0 && day.completed == day.total))
+                                        put("isToday", day.date == "2026-10-28")
+                                        put("kind", day.kind)
+                                        put("minutes", day.minutes)
+                                        put("studied", day.minutes > 0)
+                                        put("total", day.total)
                                     },
                                 )
                             }
@@ -627,6 +655,11 @@ class TodayScreenshots {
                     "blocks" to JsonArray(sessionBlocks),
                     "nextPosition" to next,
                     "minutes" to minutes,
+                    "sessionBar" to
+                        buildJsonObject {
+                            put("completed", bar.first)
+                            put("total", bar.second)
+                        },
                     "week" to week,
                     "goalId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01",
                     "state" to "underway",
@@ -789,6 +822,35 @@ class TodayScreenshots {
                 put("ready", false)
             }
 
+        /**
+         * The day's three lessons done, then Keep learning: one extra lesson done, an extra practice and
+         * an extra lesson still to go. The day stays done.
+         */
+        fun doneWithExtras(): TodayRead.Day {
+            val extra = mapOf("extra" to true)
+            return day(
+                blocks =
+                    lessons(3, done = 3) +
+                        block(3, title = "Meiosis", status = "completed", minutes = 7, extra = extra) +
+                        block(4, kind = "practice", title = null, minutes = 10, extra = extra + ("questions" to 10)) +
+                        block(5, title = "Genetic code", minutes = 6, extra = extra),
+                next = 4,
+                extra =
+                    mapOf(
+                        "state" to "done",
+                        "status" to "active",
+                        "minutes" to
+                            buildJsonObject {
+                                put("dailyGoal", 45)
+                                put("done", 45)
+                                put("left", 0)
+                                put("planned", 45)
+                            },
+                    ),
+                studiedToday = 53,
+            )
+        }
+
         fun doneWithUpNext(): TodayRead.Day {
             val extraTime =
                 buildJsonObject {
@@ -813,3 +875,12 @@ class TodayScreenshots {
         }
     }
 }
+
+private data class WeekFixture(
+    val date: String,
+    val kind: String,
+    val minutes: Int,
+    val completed: Int,
+    val total: Int,
+    val done: Boolean = false,
+)

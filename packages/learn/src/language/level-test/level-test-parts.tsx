@@ -95,10 +95,7 @@ export function ListeningMessage({
           <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
           <span className="sr-only">{label}</span>
         </Button>
-        <p
-          aria-live="polite"
-          className="text-muted-foreground flex items-start gap-2 text-sm text-pretty"
-        >
+        <p aria-live="polite" className="text-muted-foreground flex items-start gap-2 text-sm">
           <LineMarker aria-hidden="true">
             <HeadphonesIcon className="size-4" />
           </LineMarker>

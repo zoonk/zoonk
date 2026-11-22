@@ -38,12 +38,12 @@ export function WaitNote({ kind, state }: { kind: LessonKind; state: WaitState }
     <div className="flex flex-col gap-2">
       <h1 className="text-title">{title}</h1>
       {state === "notReady" && (
-        <p className="text-muted-foreground text-base leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-base leading-relaxed">
           {t("Getting it ready takes a few minutes.")}
         </p>
       )}
       {state === "gettingReady" && (
-        <p className="text-muted-foreground text-base leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-base leading-relaxed">
           {t("It takes a few minutes, and keeps going if you leave.")}
         </p>
       )}
