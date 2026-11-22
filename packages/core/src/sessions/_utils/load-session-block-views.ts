@@ -72,6 +72,11 @@ export async function loadSessionBlockViews({
 
   const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
   const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
+  const savedWritingTasks = new Map(
+    answers.flatMap(({ itemId, writingTask }) =>
+      itemId && writingTask !== undefined ? [[itemId, writingTask] as const] : [],
+    ),
+  );
   const current = isCurrentSession({ now, session, timeZone });
 
   const { blocks } = await readLessonScreens(
@@ -84,6 +89,7 @@ export async function loadSessionBlockViews({
           blockedTestOutChapters: blockedChapters,
           blocks: session.blocks,
           oftenTestedSkillIds,
+          savedWritingTasks,
           subject: subjects.get(block.position) ?? null,
           writingTasks,
         }),

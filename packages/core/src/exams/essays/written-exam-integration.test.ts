@@ -15,6 +15,7 @@ import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { getStudyBlock } from "../../sessions/get-study-block";
 import { getStudySession } from "../../sessions/get-study-session";
+import { getStudySessionSummary } from "../../sessions/get-study-session-summary";
 import { openStudyBlock } from "../../sessions/open-block";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { getTodayView } from "../../view-models/today/get-today-view";
@@ -638,6 +639,100 @@ describe("CGU written exam preparation", () => {
     const other = await userFixture();
     mockSession(other.id);
     await expect(getEssay({ blockId: block.id })).resolves.toStrictEqual({ status: "notFound" });
+  });
+
+  it("keeps completed writing in Today and session summaries after content changes", async () => {
+    const { blueprint, goal, writing } = await setup();
+    useModelFixtures(writing.id);
+    const { block, sessionId } = await openWritingDay(goal.id);
+    const request = await startWriting({ blockId: block.id });
+
+    if (request.status !== "needsPrompt") {
+      throw new Error(request.status);
+    }
+
+    const { itemId, write } = await writingPromptRunFixture(request.input);
+    await write();
+    const started = await startWriting({ blockId: block.id });
+
+    if (started.status !== "ready") {
+      throw new Error(started.status);
+    }
+
+    await expect(
+      submitEssay({
+        blockId: block.id,
+        input: { admissionId: started.admissionId, durationMs: 1000, text: TEXT, timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "writingGraded" });
+
+    await expect(
+      finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    async function readCompletion() {
+      const [session, today, summary] = await Promise.all([
+        getStudySession({ input: {}, sessionId }),
+        getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+        getStudySessionSummary({ input: { timeZone: "UTC" }, sessionId }),
+      ]);
+      const saved =
+        session.status === "ready" && session.session.blocks.find(({ id }) => id === block.id);
+      const day =
+        today.status === "ready" &&
+        today.today.session?.blocks.find(
+          (candidate) => "id" in candidate && candidate.id === block.id,
+        );
+
+      return {
+        day: day && { answered: day.answered, status: day.status, writingTask: day.writingTask },
+        saved: saved && {
+          answered: saved.answered,
+          status: saved.status,
+          writingTask: saved.writingTask,
+        },
+        summary: summary.status === "ready" && {
+          brainPower: summary.summary.brainPower,
+          correct: summary.summary.correct,
+          questions: summary.summary.questions,
+        },
+      };
+    }
+
+    const before = await readCompletion();
+    const completed = {
+      answered: 1,
+      status: "completed",
+      writingTask: { lines: 30, number: 1, total: 2 },
+    };
+    expect(before).toMatchObject({ day: completed, saved: completed, summary: { questions: 1 } });
+
+    const item = await prisma.item.findUniqueOrThrow({ where: { id: itemId } });
+    const content = readEssayContent(item);
+
+    if (!content) {
+      throw new Error("Expected the completed writing prompt");
+    }
+
+    await prisma.item.update({
+      data: { content: { ...content, question: "Revised question" } },
+      where: { id: itemId },
+    });
+    expect(await readCompletion()).toStrictEqual(before);
+
+    await prisma.item.delete({ where: { id: itemId } });
+    expect.soft(await readCompletion()).toStrictEqual(before);
+
+    const structure = structuredClone(CGU);
+    const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
+
+    if (!task) {
+      throw new Error("Expected the original task");
+    }
+
+    task.key = "corrected";
+    await prisma.examBlueprint.update({ data: { structure }, where: { id: blueprint.id } });
+    expect(await readCompletion()).toStrictEqual(before);
   });
 
   it("drops an unissued task from the day and Continue after the notice is read again", async () => {

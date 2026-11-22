@@ -54,11 +54,13 @@ function getWritingFields({
   answeredAttemptIds,
   block,
   payload,
+  savedWritingTasks,
   writingTasks,
 }: {
   answeredAttemptIds?: ReadonlySet<string>;
   block: DayBlockInput;
   payload: ReturnType<typeof readBlockPayload>;
+  savedWritingTasks?: ReadonlyMap<string, DayBlockView["writingTask"] | null>;
   writingTasks?: ReturnType<typeof indexWritingTasks>;
 }): Pick<DayBlockView, "hasWritingDraft" | "writingAvailability" | "writingTask" | "writingUnit"> {
   const { writing } = payload;
@@ -70,8 +72,9 @@ function getWritingFields({
   const continuing =
     writing.admissionId && (block.status === "active" || block.status === "pending");
 
-  const writingTask = writingTasks?.get(writing.taskKey);
   const [itemId] = payload.itemIds;
+  const saved = itemId ? savedWritingTasks?.get(itemId) : undefined;
+  const writingTask = saved === undefined ? writingTasks?.get(writing.taskKey) : saved;
   const hasDraftText = block.status !== "skipped" && Boolean(writing.draft?.text.trim());
 
   const hasWritingDraft =
@@ -95,6 +98,7 @@ export function toDayBlockView({
   blocks = [block],
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
+  savedWritingTasks,
   subject = null,
   writingTasks,
 }: {
@@ -105,6 +109,7 @@ export function toDayBlockView({
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
+  savedWritingTasks?: ReadonlyMap<string, DayBlockView["writingTask"] | null>;
   subject?: string | null;
   writingTasks?: ReturnType<typeof indexWritingTasks>;
 }): DayBlockView {
@@ -164,6 +169,6 @@ export function toDayBlockView({
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
-    ...getWritingFields({ answeredAttemptIds, block, payload, writingTasks }),
+    ...getWritingFields({ answeredAttemptIds, block, payload, savedWritingTasks, writingTasks }),
   };
 }
