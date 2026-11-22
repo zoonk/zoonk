@@ -251,6 +251,7 @@ export function getPlotLayout({
 
   const plan = planReferences({ left, measured, references: visual.references, width, y });
   const plotRight = Math.max(width - plan.width, left + 1);
+
   const xLabels = formatTicks({
     axis: "x",
     locale,
