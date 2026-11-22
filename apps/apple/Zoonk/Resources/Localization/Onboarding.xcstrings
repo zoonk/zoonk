@@ -24372,7 +24372,65 @@
         }
       }
     },
-    "Your plan and lessons follow this material" : {},
+    "Your plan and lessons follow this material" : {
+      "comment" : "Under the material on the card of what we understood about a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan und deine Lektionen richten sich nach diesem Material"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y tus lecciones se basan en este material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et tes leçons suivent ces documents"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano e le lezioni si basano su questo materiale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この資料に沿って学習計画とレッスンを作成します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 자료에 맞춰 계획과 레슨을 만들어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan i lekcje opierają się na tych materiałach"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e suas aulas seguem este material"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın ve derslerin bu materyale göre hazırlanır"
+          }
+        }
+      }
+    },
     "Your plan and lessons will use it." : {
       "comment" : "Over the ways to add material to a goal, in their menu",
       "localizations" : {
