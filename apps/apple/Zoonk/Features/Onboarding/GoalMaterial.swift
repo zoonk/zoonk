@@ -236,7 +236,9 @@ private struct MaterialRow: View {
       .buttonStyle(.borderless)
       .foregroundStyle(isUnavailable ? .destructiveText : .mutedForeground)
     }
-    .listRowBackground(isUnavailable ? Color.destructiveSoft : nil)
+    // Always a background, so a row marked after it first showed still takes the fill: a list
+    // doesn't apply one that replaces none on a row it already drew.
+    .listRowBackground(Color.destructiveSoft.opacity(isUnavailable ? 1 : 0))
   }
 }
 
