@@ -8684,6 +8684,9 @@
         }
       }
     },
+    "It can't be read anymore, so your plan won't follow it." : {
+      "comment" : "On the goal's card, under \"Your material\": all the material the goal was sent with is gone"
+    },
     "Join waitlist" : {
       "comment" : "Joins the waitlist for lessons that teach playing an instrument",
       "localizations" : {
@@ -24327,9 +24330,6 @@
           }
         }
       }
-    },
-    "Your material can't be read anymore, so your plan won't follow it." : {
-      "comment" : "On the goal's card: all the material the goal was sent with is gone"
     },
     "Your plan" : {
       "comment" : "Title of a new plan",
