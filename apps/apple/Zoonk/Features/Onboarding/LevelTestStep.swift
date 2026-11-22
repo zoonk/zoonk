@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// When the language pair's questions don't exist yet, only the learner's Start asks for them.
+/// Onboarding's level test: its length choice, then the same test the plan opens. When the
+/// language pair's questions don't exist yet, only the learner's Start asks for them.
 struct LevelTestStep: View {
   let goalID: String
   let language: String
@@ -10,27 +11,17 @@ struct LevelTestStep: View {
 
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(PlanStore.self) private var plans
-  @State private var undoRequest = VisitRequest<Bool>()
   @State private var phase = Phase.loading
-  @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
-  /// The test's finish: a step left while it saves doesn't go on when it answers.
   @State private var finishing = ScreenTasks()
-  @State private var isStarting = false
   @State private var saveFailures = 0
-  @State private var showsSaveReport = false
-  @State private var failedAnswer: SentAnswer?
 
   private enum Phase {
     case loading
     case loadFailed
     case intro(showAlphabetNote: Bool)
-    case assessment(LevelTest, generationId: String? = nil)
+    case test(LevelTest, generationId: String? = nil)
     case topics(GoalPlacement)
-    case preparing(generationID: String)
-    case question(LevelTest.Question, selectsAll: Bool, number: Int, progress: Double)
-    case done
-    case result(PlacementTestResult?)
   }
 
   var body: some View {
@@ -47,12 +38,12 @@ struct LevelTestStep: View {
           wholeCourseMinutes: wholeCourseMinutes,
           languageNotes: LevelTestLanguageNotes(
             language: language, showAlphabetNote: showAlphabetNote),
-          isSaving: isSaving || isStarting, failed: saveFailures > 0, onSkip: skip,
+          isSaving: isSaving, failed: saveFailures > 0, onSkip: skip,
           onStart: { choice in
             guard case .length(let length) = choice else { return }
-            finishing.run { await begin(length) }
+            save { try await begin(length) }
           })
-      case .assessment(let test, let generationId):
+      case .test(let test, let generationId):
         LevelTestFlow(
           goalID: goalID, targetLanguage: targetLanguage, wholeCourseMinutes: wholeCourseMinutes,
           testOutLevel: nil, subject: subject, nextTopic: { nil }, initialTest: test,
@@ -69,114 +60,19 @@ struct LevelTestStep: View {
         ) {
           try await onDone(nil)
         }
-      case .preparing(let generationID):
-        preparing(generationID)
-          .onboardingColumn()
-      case .question(let question, let selectsAll, let number, let progress):
-        LevelTestQuestionScreen(
-          question: question, selectsAll: selectsAll, number: number, progress: progress,
-          targetLanguage: targetLanguage, isSaving: isSaving, failures: saveFailures,
-          onReport: { showsSaveReport = true },
-          onAnswer: { answer(question, with: $0, skips: $1) }, onStop: stop
-        )
-        .id(question.id)
-        .task(id: question.id) { await waitForAudio(question) }
-      case .done:
-        TestOutcome(
-          title: Text("Your answers are saved", tableName: "Onboarding"),
-          isSaving: isSaving, failed: saveFailures > 0, onContinue: stop)
-      case .result(let result):
-        LanguageTestResultView(
-          length: .quick, result: result, targetLanguage: targetLanguage, testOutLevel: nil,
-          pressed: isSaving || undoRequest.isRunning ? .main : nil, failed: saveFailures > 0,
-          undo: PlacementResultUndo(
-            goalId: goalID, changeId: result?.changeId, lessons: result?.lessonsSkipped ?? 0,
-            request: undoRequest, plans: plans, disabled: isSaving),
-          onboarding: true, onContinue: continueOnboarding, onTestOut: {}
-        )
       }
     }
     .task { await resume() }
     .loads(plan, refreshable: false)
-    .onDisappear {
-      finishing.cancel()
-      undoRequest.leave()
-    }
-    .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "level-test", reportType: .saveFailure), isReport: true)
+    .onDisappear { finishing.cancel() }
   }
 
   private var plan: Resource<PlanRead> { plans.plan(goalId: goalID) }
 
   private var wholeCourseMinutes: Int { plan.value?.plan.placementTest?.estimatedMinutes ?? 0 }
 
-  private func preparing(_ generationID: String) -> some View {
-    GenerationWaitView(
-      title: LocalizedStringResource(
-        "Preparing your level test", table: "Onboarding",
-        comment: "Title while a language's level test questions are written"),
-      description: LocalizedStringResource(
-        "Getting the \(Locale.current.languageName(targetLanguage)) test ready takes a minute or two, and only this once.",
-        table: "Onboarding", comment: "Why the level test waits: the language's name"),
-      generationID: generationID,
-      kind: .levelTestBank,
-      restart: { try await onboarding.prepareLevelTest(goalID: goalID) },
-      readResult: {
-        guard let test = try? await onboarding.levelTest(goalID: goalID), test.status == .ready
-        else {
-          return false
-        }
-
-        show(test)
-        return true
-      },
-      trailing: {
-        // The bar holds the way out; what skipping does is said at the end of the wait.
-        Section {
-          Text(
-            "Your plan starts from the level you gave, and your first days fine-tune it.",
-            tableName: "Onboarding", comment: "What skipping the level test does"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .listRowBackground(Color.clear)
-        }
-      }
-    )
-    .bottomBar(
-      note: saveFailures > 0 && !isSaving
-        ? BarNote(
-          LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Onboarding",
-            comment: "Starting or skipping the level test failed"))
-        : nil
-    ) {
-      BusyButton(isBusy: isSaving, icon: .skip, action: skip) {
-        Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
-      }
-      .buttonStyle(.outline)
-      .buttonSizing(.flexible)
-    }
-  }
-
-  private func waitForAudio(_ question: LevelTest.Question) async {
-    guard question.audioPending,
-      let shown = try? await question.waitingForAudio(read: {
-        try await onboarding.levelTest(goalID: goalID)
-      }),
-      case .question(let current, let selectsAll, let number, let progress) = phase,
-      current.id == shown.id
-    else {
-      return
-    }
-
-    phase = .question(shown, selectsAll: selectsAll, number: number, progress: progress)
-  }
-
-  /// Without answers it starts from its intro, unless it was ended, and only the learner's Start
-  /// asks for questions.
+  /// An open test goes on; otherwise the learner chooses one, and only their Start asks for
+  /// questions.
   private func resume() async {
     switch phase {
     case .loading, .loadFailed: phase = .loading
@@ -193,12 +89,8 @@ struct LevelTestStep: View {
 
       let test = try await onboarding.languageTest(goalID: goalID)
 
-      if test.length == .wholeCourse {
-        phase = .assessment(test)
-      } else if test.status == .ready,
-        (test.answered ?? 0) > 0 || test.next?.kind == "done"
-      {
-        show(test)
+      if test.attemptId != nil, test.length != nil {
+        phase = .test(test)
       } else {
         phase = .intro(showAlphabetNote: test.showAlphabetNote)
       }
@@ -208,84 +100,12 @@ struct LevelTestStep: View {
     }
   }
 
-  private func begin(_ length: PlacementLength) async {
-    guard !isSaving, !isStarting else {
-      return
-    }
-
-    isStarting = true
-    defer { isStarting = false }
-
-    do {
-      if length == .wholeCourse {
-        let test = try await onboarding.startLanguageTest(goalID: goalID, length: length)
-        guard test.attemptId != nil else { throw APIError.unavailable }
-        let generationId =
-          test.status == .preparing
-          ? try? await onboarding.prepareLevelTest(goalID: goalID) : nil
-        phase = .assessment(test, generationId: generationId)
-      } else if let generationID = try await onboarding.prepareLevelTest(goalID: goalID) {
-        phase = .preparing(generationID: generationID)
-      } else {
-        show(try await onboarding.levelTest(goalID: goalID))
-      }
-      saveFailures = 0
-    } catch is CancellationError {
-    } catch {
-      saveFailures += 1
-    }
-  }
-
-  private func show(_ test: LevelTest) {
-    guard test.status == .ready, let next = test.next else {
-      return
-    }
-
-    let answered = test.answered ?? 0
-    let progress = Double(answered) / Double(max(1, test.total ?? 1))
-
-    switch next.kind {
-    case "question", "confirmation":
-      if let question = next.question {
-        shownAt = .now
-        phase = .question(
-          question, selectsAll: next.kind == "confirmation", number: answered + 1,
-          progress: progress)
-      }
-    default:
-      phase = .done
-    }
-  }
-
-  private func answer(_ question: LevelTest.Question, with answer: PracticeAnswer, skips: Bool) {
-    guard !isSaving else {
-      return
-    }
-
-    isSaving = true
-    let sent = SentAnswer(
-      answer: answer, sender: answer.isDontKnow ? .notSure : .check,
-      measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
-
-    finishing.run {
-      defer { isSaving = false }
-
-      do {
-        let skipped = if skips, case .dontKnow = answer { true } else { false }
-
-        show(
-          try await onboarding.answerLevelTest(
-            goalID: goalID, questionID: question.id, answerIndex: answer.levelTestIndex,
-            answerIndices: answer.levelTestIndices, skipped: skipped,
-            duration: .milliseconds(sent.durationMs)))
-        saveFailures = 0
-        failedAnswer = nil
-      } catch is CancellationError {
-      } catch {
-        failedAnswer = sent
-        saveFailures += 1
-      }
-    }
+  private func begin(_ length: PlacementLength) async throws {
+    let test = try await onboarding.startLanguageTest(goalID: goalID, length: length)
+    guard test.attemptId != nil else { throw APIError.unavailable }
+    let generationId =
+      test.status == .preparing ? try? await onboarding.prepareLevelTest(goalID: goalID) : nil
+    phase = .test(test, generationId: generationId)
   }
 
   private func skip() {
@@ -295,19 +115,8 @@ struct LevelTestStep: View {
     }
   }
 
-  private func stop() {
-    save {
-      let result = try await onboarding.finishLanguageTest(goalID: goalID, attemptID: nil)
-      phase = .result(result)
-    }
-  }
-
-  private func continueOnboarding() {
-    save { try await goOnUnlessLeft { try await onDone(nil) } }
-  }
-
   private func save(_ action: @escaping () async throws -> Void) {
-    guard !isSaving, !isStarting, !undoRequest.isRunning else {
+    guard !isSaving else {
       return
     }
 

@@ -16,13 +16,7 @@ import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { getFocusTestActions } from "./focus-test-client-actions";
-import {
-  answerLevelTestAction,
-  finishLevelTestAction,
-  getLevelTestAction,
-  speakLevelTestAction,
-  startLevelTestBankAction,
-} from "./language-level-test-actions";
+import { finishLevelTestAction } from "./language-level-test-actions";
 import { getLanguagePlanTestActions } from "./language-plan-test-client-actions";
 import {
   answerOnboardingAction,
@@ -75,15 +69,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   getTimeAdvice: getGoalTimeAdvice,
   joinWaitlist: joinWaitlistAction,
   languageLevelTest: (goalId) => ({
-    answer: (input) => answerLevelTestAction(goalId, input),
     finish: () => finishLevelTestAction(goalId),
-    get: () => getLevelTestAction(goalId),
-    prepare: () => startLevelTestBankAction(goalId),
-    speak: (audio) => {
-      const form = new FormData();
-      form.set("audio", audio);
-      return speakLevelTestAction(goalId, form);
-    },
     switchLanguage: (language) => {
       if (isValidLocale(language)) {
         void switchLanguage({ href: `/start/${goalId}`, locale: language });

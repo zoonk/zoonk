@@ -496,6 +496,9 @@ class FakeOnboardingApi : OnboardingApi {
 
     val levelTestLengths = mutableListOf<StartLanguageLevelTestInput.Length>()
 
+    /** What a start answers: the test it opened. */
+    var startedLevelTest: () -> LanguageLevelTest = { levelTest }
+
     override suspend fun startLevelTest(
         session: AuthenticatedSession,
         goalId: String,
@@ -503,7 +506,7 @@ class FakeOnboardingApi : OnboardingApi {
     ): LanguageLevelTest {
         levelTestLengths += length
         writeFailure?.let { throw it }
-        return levelTest
+        return startedLevelTest()
     }
 
     var levelTestResult = LanguageLevelTestResult(levels = emptyList())

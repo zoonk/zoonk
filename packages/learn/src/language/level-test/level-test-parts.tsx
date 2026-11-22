@@ -186,21 +186,6 @@ function LevelRow({
   );
 }
 
-export function LevelBars({ levels }: { levels: LevelView[] }) {
-  return (
-    <LevelRows>
-      {levels.map((level) => (
-        <LevelRow
-          bar={<LevelBar score={level.score} />}
-          key={level.skill}
-          label={level.label}
-          skill={level.skill}
-        />
-      ))}
-    </LevelRows>
-  );
-}
-
 /** "B1–B2": the levels a skill's answers place it between, never one level it can't promise. */
 export function formatLevelRange(range: { high: string; low: string }): string {
   return range.low === range.high ? range.low : `${range.low}–${range.high}`;

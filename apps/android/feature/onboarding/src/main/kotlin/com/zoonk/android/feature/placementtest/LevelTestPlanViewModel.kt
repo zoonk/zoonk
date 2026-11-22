@@ -106,6 +106,16 @@ internal class LevelTestPlanViewModel(
         }
     }
 
+    /** Onboarding's Skip before a test opened: ends the one that never opened, then [saveStep] goes on. */
+    fun skip(saveStep: suspend () -> WriteOutcome<*>) =
+        save(Pressed.Other) {
+            when (store.finishLevelTest(goalId)) {
+                is WriteOutcome.Done -> saveStep().let { it is WriteOutcome.Done || it == WriteOutcome.Obsolete }
+                WriteOutcome.Obsolete -> true
+                else -> false
+            }
+        }
+
     /** After a whole-course level test, opens its walk through the course's topics. */
     fun walkTopics() =
         save(Pressed.Main) { asked ->

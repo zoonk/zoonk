@@ -222,13 +222,32 @@ struct LevelTestFlow: View {
       kind: .levelTestBank,
       restart: { try await store.prepareLevelTest(goalID: goalID) },
       readResult: { await read(attemptID: attemptID) },
-      trailing: { EmptyView() }
+      trailing: {
+        if onOnboardingDone != nil {
+          // The bar holds the way out; what skipping does is said at the end of the wait.
+          Section {
+            Text(
+              "Your plan starts from the level you gave, and your first days fine-tune it.",
+              tableName: "Onboarding", comment: "What skipping the level test does"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .listRowBackground(Color.clear)
+          }
+        }
+      }
     )
     .bottomBar(note: failed && pressed == nil ? BarNote(saveFailureMessage) : nil) {
-      BusyButton(isBusy: pressed == .other) {
+      BusyButton(isBusy: pressed == .other, icon: onOnboardingDone != nil ? .skip : nil) {
         save(.other) { try await goOnUnlessLeft(onDone) }
       } label: {
-        Text(PlacementTestCopy.notNow)
+        if onOnboardingDone != nil {
+          Text(
+            "Skip the test", tableName: "Onboarding",
+            comment: "Skips a language goal's level test")
+        } else {
+          Text(PlacementTestCopy.notNow)
+        }
       }
       .buttonStyle(.outline)
       .buttonSizing(.flexible)

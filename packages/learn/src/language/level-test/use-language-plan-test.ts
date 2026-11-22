@@ -2,7 +2,6 @@
 
 import {
   type LanguageLevelTestView,
-  type LevelTestAnswerInput,
   type LevelTestLength,
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
@@ -21,7 +20,7 @@ import {
   toBankRun,
   updateBankWait,
 } from "./level-test-bank";
-import { type LanguageLevelTestActions } from "./level-test-step";
+import { type LevelTestQuestionActions } from "./level-test-step";
 
 const POLL_MS = 3000;
 
@@ -33,14 +32,15 @@ type TestOutQuestion = NonNullable<TestOutView["next"]>;
 
 type TestOutAnswer = PlacementAnswer;
 
-export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" | "speak"> & {
-  answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
+export type LanguagePlanTestActions = LevelTestQuestionActions & {
   /** Null when it wasn't saved. */
   finish: (
     attemptId: string,
   ) => Promise<{ nextTestOutLevel: string | null; result: LevelTestResult | null } | null>;
   /** Read-only: the test as it stands, an open attempt included. */
   get: () => Promise<LanguageLevelTestView | null>;
+  /** Only from the learner's tap, never when the screen opens; false when it couldn't start. */
+  prepare: () => Promise<boolean>;
   start: (length: LevelTestLength) => Promise<LanguageLevelTestView | null>;
   testOut: {
     answer: (input: {
@@ -60,7 +60,8 @@ export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" |
 };
 
 type Phase =
-  | { kind: "choose" | "loadFailed" | "loading" }
+  | { kind: "loadFailed" | "loading" }
+  | { kind: "choose"; showAlphabetNote: boolean }
   | { attemptId: string; kind: "waiting" }
   | { attemptId: string; kind: "finish"; length: LevelTestLength }
   | { attemptId: string; kind: "test"; test: ReadyTest }
@@ -94,7 +95,7 @@ function toOpenedPhase(view: LanguageLevelTestView | null, onboarding: boolean):
   }
 
   if (!view.attemptId || view.length === undefined || ownResult) {
-    return { kind: "choose" };
+    return { kind: "choose", showAlphabetNote: view.showAlphabetNote };
   }
 
   if (view.status === "preparing") {
@@ -263,6 +264,7 @@ export function useLanguagePlanTest({
     isPending,
     onDone: () => save("main", () => onDone().catch(() => false)),
     onLeave: () => save("other", () => onDone().catch(() => false)),
+    onSkip: (skip: () => Promise<boolean>) => save("other", skip),
     onStart: (length: LevelTestLength) =>
       save("main", async () => {
         const view = await actions.start(length);

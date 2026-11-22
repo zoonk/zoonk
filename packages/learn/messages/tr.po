@@ -4860,7 +4860,6 @@ msgstr "{language} seviyesi"
 
 #: src/journey/journey-hero.tsx
 #: src/language/level-test/level-test-results.tsx
-#: src/language/level-test/level-test-screens.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
@@ -6455,12 +6454,6 @@ msgstr "Uygulamayı {language} dilinde kullan"
 msgctxt "4Itq02"
 msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 msgstr "Alfabesini henüz bilmiyor musun? Testi atla. İlk dersinde harfleri okumayı öğrenirsin."
-
-#: src/language/level-test/level-test-screens.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "Seviye tespit testi"
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -10635,6 +10628,11 @@ msgstr "Seviyeni öğren ve bildiklerini atla"
 msgctxt "42QSqg"
 msgid "Skip lessons you already know"
 msgstr "Zaten bildiğin dersleri atla"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "Seviye tespit testi"
 
 #: src/plan/plan-placement-test.tsx
 msgctxt "QZI9sA"

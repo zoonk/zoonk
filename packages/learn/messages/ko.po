@@ -4860,7 +4860,6 @@ msgstr "{language} 레벨"
 
 #: src/journey/journey-hero.tsx
 #: src/language/level-test/level-test-results.tsx
-#: src/language/level-test/level-test-screens.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
@@ -6455,12 +6454,6 @@ msgstr "{language}로 앱 사용하기"
 msgctxt "4Itq02"
 msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 msgstr "이 언어의 글자가 낯선가요? 테스트를 건너뛰세요. 첫 레슨에서 글자를 읽는 법을 배워요."
-
-#: src/language/level-test/level-test-screens.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "레벨 테스트"
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -10635,6 +10628,11 @@ msgstr "레벨을 확인하고 아는 내용 건너뛰기"
 msgctxt "42QSqg"
 msgid "Skip lessons you already know"
 msgstr "이미 아는 레슨 건너뛰기"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "레벨 테스트"
 
 #: src/plan/plan-placement-test.tsx
 msgctxt "QZI9sA"

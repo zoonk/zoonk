@@ -111,10 +111,7 @@
   "onboarding_intent_understand_description": "b0a2f883176f461ca6e935289a9224cd26d6c25dce66e9bcf2193391fbf86a99",
   "onboarding_join_waitlist": "97e9a5c8bcf70df6efd557addf1d2d2ea9ad1ea7de7740478b401bca8d0695bd",
   "onboarding_language_test_audio_on_its_way": "b405a9197781dc28cd49bb00de7072f00999d745ddbb3882e467f4077cd86e9a",
-  "onboarding_language_test_build_plan": "5874df8b03bd785b750eed777d02d47fec65180add707ded7fdaed7ff70f8815",
   "onboarding_language_test_did_not_understand": "1467cc74ee174a5a41618f4587d97c0bc48238198c53bcc3404d2fd5f358c938",
-  "onboarding_language_test_done_description": "ca523070a6d250286cb7d7eae83d1fa5b708700d75d1aa36f5b9181a62f8742c",
-  "onboarding_language_test_done_title": "318c0917fb2727a27160600a4f74eab8d87f788412a2dab1b6134970765bbed1",
   "onboarding_language_test_listening": "8c173973cf75a19d43376b352b678cbf74861f6bde1eba20be083a5226468604",
   "onboarding_language_test_message": "b9e3bec202f11611f810a650ad726b9f05d1a6513462a9f63a332ce360d19000",
   "onboarding_language_test_message_loading": "942cf532073b87a2a04723b8844531b63bf8044d9170f8c5eb2d2a1a441e5c43",
@@ -328,18 +325,6 @@
   "onboarding_subjects_label": "c75d66640adaba93ae0fdc1044a6f39aa0e36cc806d52cf8e0fc4a79df475a4d",
   "onboarding_subjects_title": "664d38a4f8e5d4688af7bf6baea5ac527e5f530b05b4d9fce7b02087f198d2bd",
   "onboarding_target_label": "3443005e32ec7e183f854d10b00083093d83cd053c7966d471f04bae6e37c2ff",
-  "onboarding_test_level_a1": "e3c56c6583da02015463d70b278239617197e5544f359fd711e7162a2d116413",
-  "onboarding_test_level_a1_plus": "0da5595583f19e55d6ef84cb8fc8dae6a9025dbd7d0d21975717f1e43f958363",
-  "onboarding_test_level_a2": "3800451d1518a11cf4a89cc90faf5b71d801a364c0b112b585d7fee74e502a11",
-  "onboarding_test_level_a2_plus": "a51098500f70560d2d9769a4256815464ddff048a7a6c8778b99a5672be70963",
-  "onboarding_test_level_b1": "ad38399b852eb11cfedd82fbb08e5ce1d541e7ace5b7f2a0a5ad0776dcabef15",
-  "onboarding_test_level_b1_plus": "b3a36e5c31cc57c687bc3e5e80c3727b54c7337974591a1d8ee364bc9e79f618",
-  "onboarding_test_level_b2": "1d9eb7e53c2362cf579c2bf0a721e013270bd332b88520c01a9f9658250d1a29",
-  "onboarding_test_level_b2_plus": "abda9f16609b2a3981f4d3f284162f4596830442b2d7db7f8f7b3dd97689ada4",
-  "onboarding_test_level_c1": "83ee1085d04918eb3d06a4bfa126d7ee781d0b2475f66021cbec44ed79d12914",
-  "onboarding_test_level_c1_plus": "c0c59cade7f745019bd6c9100d404264a304ba79741bea8e0ce11b1fdc341dbe",
-  "onboarding_test_level_c2": "ba2037f4303fe807cd0a918ff5eb018bd2786b2e39d10d5c10131f06dd5baf9d",
-  "onboarding_test_level_c2_plus": "4786e71d1079e3e9f219b3dd91e03ea76e9a008df10db2b98bcb0560be9018cc",
   "onboarding_test_question_progress": "427c0d39a0211dc670c3693ff94a777548640d4de867bd620b934effb871c3ee",
   "onboarding_time_a_day": "42261d68142c9abd92611d6fbf6d634231e9ba7bab374fdbbf43aef66779d381",
   "onboarding_try_another_goal": "bbfcd5192b993aed7a7dfc6e3373180842f47a798e9acd76173e2f6dd932f3bf",
@@ -604,9 +589,6 @@
     <string name="onboarding_language_test_play_again">Volver a reproducir el mensaje</string>
     <string name="onboarding_language_test_message_loading">Preparando el mensaje. La primera vez puede tardar unos segundos.</string>
     <string name="onboarding_language_test_message">Recibiste un mensaje de voz. Escucha y responde.</string>
-    <string name="onboarding_language_test_done_title">Tu nivel de %1$s</string>
-    <string name="onboarding_language_test_done_description">Basado en la prueba. Cada semana lo estimamos con más precisión.</string>
-    <string name="onboarding_language_test_build_plan">Crear mi plan</string>
     <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lectura</string>
     <string name="onboarding_language_test_listening">Escucha</string>
@@ -862,16 +844,4 @@
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">donde vives</string>
     <string name="onboarding_test_question_progress">Pregunta %1$d de %2$d</string>
-    <string name="onboarding_test_level_a1">A1</string>
-    <string name="onboarding_test_level_a1_plus">A1+</string>
-    <string name="onboarding_test_level_a2">A2</string>
-    <string name="onboarding_test_level_a2_plus">A2+</string>
-    <string name="onboarding_test_level_b1">B1</string>
-    <string name="onboarding_test_level_b1_plus">B1+</string>
-    <string name="onboarding_test_level_b2">B2</string>
-    <string name="onboarding_test_level_b2_plus">B2+</string>
-    <string name="onboarding_test_level_c1">C1</string>
-    <string name="onboarding_test_level_c1_plus">C1+</string>
-    <string name="onboarding_test_level_c2">C2</string>
-    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

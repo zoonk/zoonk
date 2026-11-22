@@ -18,6 +18,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
+import com.zoonk.android.feature.placementtest.LevelTestPlanViewModel
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
@@ -48,6 +49,7 @@ import java.util.UUID
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class SetupOutcomesTest {
+    private val attempt = UUID.fromString("6f1c2e2a-6d1b-4c8e-9a51-2f4b8f0c7a11")
     private val gate = CompletableDeferred<Unit>()
     private val models = ViewModelStore()
 
@@ -194,7 +196,7 @@ class SetupOutcomesTest {
     @Test
     fun aLevelTestFinishThatFailsAfterTheSetupWasLeftSaysNothingOnReturn() =
         check(fails = true) { store, _ ->
-            val vm = LevelTestViewModel(GOAL_ID, store, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
+            val vm = LevelTestViewModel(GOAL_ID, store, attempt).kept()
             vm.finish()
             runCurrent()
             vm.visit.end()
@@ -207,7 +209,7 @@ class SetupOutcomesTest {
     @Test
     fun aLevelTestFinishThatFailsWhileTheSetupIsRecreatedSaysSo() =
         check(fails = true) { store, _ ->
-            val vm = LevelTestViewModel(GOAL_ID, store, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
+            val vm = LevelTestViewModel(GOAL_ID, store, attempt).kept()
             vm.finish()
             gate.complete(Unit)
             runCurrent()
@@ -216,20 +218,19 @@ class SetupOutcomesTest {
         }
 
     @Test
-    fun aLevelTestFinishSavesTheSetupsStepItWasGiven() =
+    fun aLevelTestSkipSavesTheSetupsStepItWasGiven() =
         check { store, _ ->
             var saved = 0
-            val vm =
-                LevelTestViewModel(GOAL_ID, store, SavedStateHandle()) {
-                    saved++
-                    WriteOutcome.Done(Unit)
-                }.kept()
-            vm.finish()
+            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
+            vm.skip {
+                saved++
+                WriteOutcome.Done(Unit)
+            }
             gate.complete(Unit)
             runCurrent()
 
             assertEquals(1, saved)
-            assertFalse(vm.finishFailed)
+            assertFalse(vm.failed)
         }
 
     @Test

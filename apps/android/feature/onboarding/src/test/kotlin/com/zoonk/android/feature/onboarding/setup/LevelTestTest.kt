@@ -9,7 +9,6 @@ import com.zoonk.android.feature.onboarding.DONE_NEXT
 import com.zoonk.android.feature.onboarding.SPEAKING_NEXT
 import com.zoonk.android.feature.onboarding.levelTestOf
 import com.zoonk.android.feature.onboarding.preparingTestOf
-import com.zoonk.android.feature.onboarding.skillLevelOf
 import com.zoonk.api.models.LanguageLevelTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -68,66 +67,33 @@ class LevelTestTest {
     }
 
     @Test
-    fun openingTheStepShowsItsIntroUntilTheLearnersStart() {
+    fun anOpenTestGoesOnAtItsNextStep() {
         assertEquals(LevelTestPhase.Loading, phase(LoadState.Loading))
-        assertEquals(LevelTestPhase.Intro, phase(LoadState.Loaded(levelTestOf())))
-        assertEquals(LevelTestPhase.Intro, phase(LoadState.Failed(ApiError.Network)))
-    }
 
-    @Test
-    fun aTestWithAnswersOrAStartGoesOnAtItsNextStep() {
         val question = phase(LoadState.Loaded(levelTestOf(answered = 3, total = 12)))
         assertEquals(3f / 12, (question as LevelTestPhase.Question).progress)
         assertEquals("reading-1", question.question.id)
 
-        val sentence = phase(LoadState.Loaded(levelTestOf(next = SPEAKING_NEXT)), started = true)
-        assertTrue(sentence is LevelTestPhase.Done)
-
-        val reading = skillLevelOf("reading", "B1", 2.0)
-        assertEquals(
-            1,
-            (
-                phase(
-                    LoadState.Loaded(levelTestOf(next = DONE_NEXT, levels = listOf(reading))),
-                    started = true,
-                ) as LevelTestPhase.Done
-            ).levels.size,
-        )
+        assertEquals(LevelTestPhase.Done, phase(LoadState.Loaded(levelTestOf(next = SPEAKING_NEXT))))
+        assertEquals(LevelTestPhase.Done, phase(LoadState.Loaded(levelTestOf(next = DONE_NEXT))))
     }
 
     @Test
-    fun aTestEndedBeforeAnyAnswerReopensOnItsResult() {
-        assertTrue(phase(LoadState.Loaded(levelTestOf(next = DONE_NEXT))) is LevelTestPhase.Done)
+    fun anOpenTestWaitsUntilItsQuestionsArrive() {
+        assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf())))
+        assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf("2026-09-28T10:00:03Z"))))
+        assertEquals(LevelTestPhase.Waiting, phase(LoadState.Failed(ApiError.Network)))
     }
 
     @Test
-    fun aStartedTestWaitsOnlyWhileARunWritesItsQuestions() {
-        assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf("2026-09-28T10:00:03Z")), started = true))
-        assertEquals(LevelTestPhase.Intro, phase(LoadState.Loaded(preparingTestOf()), started = true))
-        assertEquals(LevelTestPhase.Intro, phase(LoadState.Loaded(preparingTestOf("2026-09-28T10:00:03Z"))))
-    }
-
-    @Test
-    fun theWaitThisScreensStartBeganStaysUntilTheQuestionsArrive() {
-        assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf()), started = true, begun = true))
-        assertEquals(LevelTestPhase.Waiting, phase(LoadState.Failed(ApiError.Network), started = true, begun = true))
-        assertTrue(phase(LoadState.Loaded(levelTestOf()), started = true, begun = true) is LevelTestPhase.Question)
-    }
-
-    @Test
-    fun stoppingShowsTheLevelsSoFar() {
-        val levels = listOf(skillLevelOf("reading", "A2+", 1.5), skillLevelOf("listening", "A2", 1.0))
-        val done = phase(LoadState.Loaded(levelTestOf(answered = 4, levels = levels)), started = true, stopped = true)
-
-        assertEquals(listOf("A2+", "A2"), (done as LevelTestPhase.Done).levels.map { it.label })
+    fun stoppingEndsTheTest() {
+        assertEquals(LevelTestPhase.Done, phase(LoadState.Loaded(levelTestOf(answered = 4)), stopped = true))
     }
 
     private fun phase(
         test: LoadState<LanguageLevelTest>,
-        started: Boolean = false,
-        begun: Boolean = false,
         stopped: Boolean = false,
-    ) = levelTestPhase(test, started, begun, stopped, BankWait())
+    ) = levelTestPhase(test, stopped)
 
     private fun LanguageLevelTest.preparing() = (this as LanguageLevelTest.LanguageLevelTestOneOfValue).value
 

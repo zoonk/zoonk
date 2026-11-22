@@ -4,9 +4,7 @@ import android.os.SystemClock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
@@ -30,39 +28,28 @@ private data class SentTestAnswer(
 )
 
 /**
- * Opening it only reads; only the learner's Start asks for a language pair's questions, and
- * answering and finishing are POSTs from their taps. [saveStep] saves the setup's placement step
- * once the test is finished. With an [attemptId], it's a test the plan's Start already opened: its
- * questions show at once, and the test closes itself once it asks nothing more, leaving its [result].
+ * A level test the learner's Start opened ([attemptId]), whose start asked for any questions still
+ * to write. Opening it only reads; answering and finishing are POSTs from their taps, and the test
+ * closes itself once it asks nothing more, leaving its [result].
  */
 internal class LevelTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
-    handle: SavedStateHandle,
-    private val attemptId: UUID? = null,
-    private val saveStep: suspend () -> WriteOutcome<*>,
+    private val attemptId: UUID,
 ) : ViewModel() {
     /** This visit to the test: a save that fails says so only on it. */
     val visit = Visit()
 
-    private var savedStarted by handle.saved { attemptId != null }
-
-    private var started by mutableStateOf(savedStarted)
-
-    /** The wait shows from this screen's Start until the questions arrive or writing them stops. */
-    private var begun by mutableStateOf(attemptId != null)
-
     private var stopped by mutableStateOf(false)
 
-    var bank by mutableStateOf(if (attemptId != null) BankWait(askedAt = now()) else BankWait())
+    var bank by mutableStateOf(BankWait(askedAt = now()))
         private set
 
-    /** A plan's test, once closed: its ranges and what it skipped. */
+    /** The test, once closed: its ranges and what it skipped. */
     var result by mutableStateOf<LanguageLevelTestResult?>(null)
         private set
 
-    var isStarting by mutableStateOf(false)
-        private set
+    private var isRetrying = false
 
     var isSaving by mutableStateOf(false)
         private set
@@ -78,22 +65,16 @@ internal class LevelTestViewModel(
     private val test get() = store.levelTest(goalId, attemptId)
     private var sent: SentTestAnswer? = null
 
-    fun phase(state: LoadState<LanguageLevelTest>) = levelTestPhase(state, started, begun, stopped, bank)
+    fun phase(state: LoadState<LanguageLevelTest>) = levelTestPhase(state, stopped)
 
-    /** Reads first, so ready questions open at once instead of flashing the wait for questions still to write. */
-    fun begin() {
-        if (isStarting) return
+    /** After writing the questions failed, the learner's Try again; it reads first, so questions written meanwhile open at once. */
+    fun retry() {
+        if (isRetrying) return
         finishFailure.clear()
-        isStarting = true
+        isRetrying = true
         bank = BankWait()
         viewModelScope.launch {
             val read = test.refreshed()
-            begun = true
-            // Left unstarted, a test whose read failed says so even over questions read before.
-            if (read) {
-                started = true
-                savedStarted = true
-            }
             val preparing = test.preparing()
             when {
                 !read -> {
@@ -112,7 +93,7 @@ internal class LevelTestViewModel(
                     if ((prepared as? WriteOutcome.Done)?.value?.status == LanguageLevelTestGeneration.Status.READY) test.refresh()
                 }
             }
-            isStarting = false
+            isRetrying = false
         }
     }
 
@@ -178,8 +159,8 @@ internal class LevelTestViewModel(
                     sent = null
                     saveFailure.clear()
                     finishFailure.clear()
-                    // A plan's test that asks nothing more closes in the same save; if that fails, its levels hold the retry.
-                    if (attemptId != null && phase(test.state.value) is LevelTestPhase.Done) {
+                    // A test that asks nothing more closes in the same save; if that fails, its end holds the retry.
+                    if (phase(test.state.value) is LevelTestPhase.Done) {
                         isSaving = false
                         finish()
                         return@launch
@@ -196,33 +177,29 @@ internal class LevelTestViewModel(
         }
     }
 
-    /** The learner leaves the questions for the levels they have so far, saved so reopening the test shows them too. */
+    /** The learner leaves the questions for what the test found so far, saved so reopening the test shows it too. */
     fun stop() {
         if (isSaving) return
-        finish(fromQuestion = true) {
-            stopped = true
-            WriteOutcome.Done(Unit)
-        }
+        finish(fromQuestion = true)
     }
 
-    /** "Continue" from the levels, or a skip: finishes the test, then saves the setup's step. */
-    fun finish() = finish(fromQuestion = false, then = saveStep)
+    /** Closes the test, the end's Continue when closing it after the last answer didn't save. */
+    fun finish() = finish(fromQuestion = false)
 
-    private fun finish(
-        fromQuestion: Boolean,
-        then: suspend () -> WriteOutcome<*>,
-    ) {
+    private fun finish(fromQuestion: Boolean) {
         if (isSaving) return
         isSaving = true
         finishFailure.clear()
         val started = visit.number
         viewModelScope.launch {
             val outcome = store.finishLevelTest(goalId, attemptId)
-            if (outcome is WriteOutcome.Done && attemptId != null) result = outcome.value
-            val completed = if (outcome is WriteOutcome.Done) then() else outcome
-            when (completed) {
+            if (outcome is WriteOutcome.Done) result = outcome.value
+            when (outcome) {
                 is WriteOutcome.Done -> {
-                    if (fromQuestion) saveFailure.clear()
+                    if (fromQuestion) {
+                        saveFailure.clear()
+                        stopped = true
+                    }
                 }
 
                 WriteOutcome.Obsolete -> {}

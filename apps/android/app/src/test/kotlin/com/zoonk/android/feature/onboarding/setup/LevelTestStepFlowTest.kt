@@ -1,15 +1,7 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -31,7 +23,6 @@ import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.levelTestOf
 import com.zoonk.android.feature.onboarding.listeningQuestion
 import com.zoonk.android.feature.onboarding.preparingTestOf
@@ -41,7 +32,9 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
-import kotlinx.coroutines.CompletableDeferred
+import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
+import com.zoonk.api.models.StartLanguageLevelTestInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -50,7 +43,6 @@ import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -67,7 +59,11 @@ class LevelTestStepFlowTest {
     @get:Rule
     val folder = TemporaryFolder()
 
-    private val api = FakeOnboardingApi()
+    private val api =
+        FakeOnboardingApi().apply {
+            setup = { setupView(steps = listOf("placement", "plan"), kind = "language", targetLanguage = "it") }
+            levelTest = levelTestOf()
+        }
     private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
     private val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
     private val store =
@@ -76,40 +72,23 @@ class LevelTestStepFlowTest {
             cache,
             session,
         ) { SignInResult.SignedIn }
-    private var done = 0
-    private var progress: Float? = null
 
+    /** The language goal's setup at its level test, whose Start opens [opened]. */
     private fun show(
+        opened: LanguageLevelTest = levelTestOf(attemptId = ATTEMPT),
         speech: SpeechPlayer? = null,
-        inSetup: Boolean = false,
     ) {
+        api.startedLevelTest = { opened }
         rule.setContent {
             ZoonkTheme {
                 CompositionLocalProvider(LocalSetupSpeech provides speech) {
-                    if (inSetup) {
-                        GoalSetupScreen(
-                            AppRoute.GoalSetup(GOAL_ID),
-                            store,
-                            PlanStore(FakePlanApi(), cache),
-                            false,
-                            rememberAppNavigator(),
-                        )
-                    } else {
-                        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                            LanguageLevelTestStep(
-                                goalId = GOAL_ID,
-                                language = "en",
-                                targetLanguage = "it",
-                                store = store,
-                                navigator = rememberAppNavigator(),
-                                onProgress = { progress = it },
-                                onDone = {
-                                    done++
-                                    WriteOutcome.Done(Unit)
-                                },
-                            )
-                        }
-                    }
+                    GoalSetupScreen(
+                        AppRoute.GoalSetup(GOAL_ID),
+                        store,
+                        PlanStore(FakePlanApi(), cache),
+                        false,
+                        rememberAppNavigator(),
+                    )
                 }
             }
         }
@@ -121,6 +100,8 @@ class LevelTestStepFlowTest {
         node.performClick()
     }
 
+    private val placementAnswers get() = api.answers.count { (_, input) -> input is OnboardingAnswerInputOneOf10Value }
+
     @Test
     fun openingItOnlyReads() {
         show()
@@ -128,10 +109,31 @@ class LevelTestStepFlowTest {
         rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
         rule.onNodeWithText("New to its alphabet?", substring = true).assertDoesNotExist()
         assertEquals(1, api.levelTestReads)
+        assertEquals(emptyList<Any>(), api.levelTestLengths)
         assertEquals(0, api.prepared)
         assertEquals(emptyList<Any>(), api.levelTestAnswers)
         assertEquals(0, api.finishedLevelTests)
-        assertNull(progress)
+    }
+
+    @Test
+    fun quickOpensTheSameTestThePlanOpens() {
+        show()
+        tap("Start")
+
+        assertEquals(listOf(StartLanguageLevelTestInput.Length.QUICK), api.levelTestLengths)
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
+        tap("Every Saturday")
+        tap("Confirm")
+
+        assertEquals(listOf(ATTEMPT), api.levelTestAnswers.map { it.attemptId?.toString() })
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
+        rule.onNodeWithText("Your lessons keep adjusting as you answer.").assertIsDisplayed()
+        assertEquals(1, api.finishedLevelTests)
+        assertEquals(0, placementAnswers)
+
+        tap("Continue")
+
+        assertEquals(1, placementAnswers)
     }
 
     @Test
@@ -140,109 +142,76 @@ class LevelTestStepFlowTest {
         show()
         tap("Skip")
 
-        assertEquals(1, done)
+        assertEquals(1, placementAnswers)
     }
 
     @Test
-    fun aFinishThatFailedKeepsTheLearnerHere() {
+    fun aSkipThatFailedKeepsTheLearnerHere() {
         api.writeFailure = ApiException(ApiError.Network)
         show()
         tap("Skip")
 
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        assertEquals(0, done)
+        assertEquals(0, placementAnswers)
     }
 
     @Test
     fun theFirstLearnerOfALanguagePairWaitsWhileItsQuestionsAreWritten() {
         api.levelTest = preparingTestOf()
-        show()
+        show(opened = preparingTestOf(attemptId = ATTEMPT))
         tap("Start")
 
-        assertEquals(1, api.prepared)
         rule.onNodeWithText("Preparing your level test").assertIsDisplayed()
         rule.onNodeWithText("Getting the Italian test ready", substring = true).assertIsDisplayed()
         rule.onNodeWithText("Skip the test").assertIsDisplayed()
 
-        api.levelTest = levelTestOf()
+        api.levelTest = levelTestOf(attemptId = ATTEMPT)
         rule.mainClock.advanceTimeBy(POLL_MS)
 
         rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
-        assertEquals(1, api.prepared)
-    }
-
-    @Test
-    fun startReadsTheTestFirstSoQuestionsWrittenMeanwhileOpenWithoutTheWait() {
-        api.levelTest = preparingTestOf()
-        show()
-        api.levelTest = levelTestOf()
-        val read = CompletableDeferred<Unit>()
-        api.levelTestGate = read
-        tap("Start")
-
-        rule.onNodeWithText("Preparing your level test").assertDoesNotExist()
-        rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
-        rule.onNodeWithText("Start").assertIsNotEnabled()
-        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
-
-        read.complete(Unit)
-
-        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
         assertEquals(0, api.prepared)
     }
 
     @Test
-    fun aStartWhoseReadFailedSaysItDidNotStartAndTriesAgain() {
+    fun skippingTheWaitMovesOnWithTheSetup() {
         api.levelTest = preparingTestOf()
-        show()
-        api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
+        show(opened = preparingTestOf(attemptId = ATTEMPT))
         tap("Start")
+        tap("Skip the test")
 
-        rule.onNodeWithText("Something went wrong on our side").assertIsDisplayed()
-        assertEquals(0, api.prepared)
+        assertEquals(1, placementAnswers)
+    }
 
-        api.levelTestGate = null
+    @Test
+    fun aRunThatStoppedWritingTheQuestionsOffersToTryAgain() {
+        api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z")
+        show(opened = preparingTestOf(startedAt = "2026-10-29T10:00:03Z", attemptId = ATTEMPT))
+        tap("Start")
+        rule.mainClock.advanceTimeBy(POLL_MS)
+        api.levelTest = preparingTestOf()
+        rule.mainClock.advanceTimeBy(POLL_MS)
+
         tap("Try again")
 
         assertEquals(1, api.prepared)
-        rule.onNodeWithText("Preparing your level test").assertIsDisplayed()
     }
 
     @Test
-    fun aStartWhoseReadFailedSaysItDidNotStartEvenOverQuestionsReadBefore() {
-        show()
-        api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
-        tap("Start")
-
-        rule.onNodeWithText("Something went wrong on our side").assertIsDisplayed()
-        rule.onNodeWithText("When does Marco go to the market?").assertDoesNotExist()
-
-        api.levelTestGate = null
-        tap("Try again")
-
-        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
-    }
-
-    @Test
-    fun aStartThatCouldNotAskForTheQuestionsOffersToTryAgain() {
-        api.levelTest = preparingTestOf()
+    fun aStartThatFailedSaysSoAndStays() {
         api.writeFailure = ApiException(ApiError.Network)
         show()
         tap("Start")
 
-        rule.onNodeWithText("Try again").assertIsDisplayed()
-        api.writeFailure = null
-        tap("Try again")
-
-        assertEquals(2, api.prepared)
+        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
+        rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
     }
 
     @Test
     fun aRetryAfterALostReplyReadsTheTestInsteadOfSendingTheAnswerAgain() {
-        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1) }
-        api.replyLost = true
+        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1, attemptId = ATTEMPT) }
         show()
         tap("Start")
+        api.replyLost = true
         tap("Every Saturday")
         tap("Confirm")
 
@@ -285,8 +254,8 @@ class LevelTestStepFlowTest {
 
     @Test
     fun aStoredRecordingPlaysWithoutAskingForAClip() {
-        api.levelTest = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1)
-        show(speech = speech())
+        show(opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1, attemptId = ATTEMPT), speech = speech())
+        tap("Start")
         rule.onNodeWithContentDescription("Play the message").performClick()
 
         assertEquals(listOf(CLIP_URL), downloads)
@@ -295,8 +264,8 @@ class LevelTestStepFlowTest {
     }
 
     @Test
-    fun aListeningMessageOnItsWayShowsUntilARereadBringsIt() {
-        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1)
+    fun aTestLeftOpenGoesOnAndItsListeningMessageShowsOnceARereadBringsIt() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1, attemptId = ATTEMPT)
         show(speech = speech())
 
         rule.onNodeWithText("The voice message is on its way…").assertIsDisplayed()
@@ -304,7 +273,7 @@ class LevelTestStepFlowTest {
         rule.onNodeWithText("Skip this question").assertIsDisplayed()
         val reads = api.levelTestReads
 
-        api.levelTest = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1)
+        api.levelTest = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1, attemptId = ATTEMPT)
         rule.mainClock.advanceTimeBy(POLL_MS)
 
         assertEquals(reads + 1, api.levelTestReads)
@@ -315,8 +284,8 @@ class LevelTestStepFlowTest {
 
     @Test
     fun skippingAListeningQuestionWhoseMessageIsOnItsWayDoesNotScoreIt() {
-        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1)
-        show(speech = speech())
+        show(opened = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1, attemptId = ATTEMPT), speech = speech())
+        tap("Start")
         tap("Skip this question")
 
         assertEquals(
@@ -327,9 +296,9 @@ class LevelTestStepFlowTest {
 
     @Test
     fun anAnswerThatDidNotGoThroughIsSentAgainAsItWas() {
-        api.writeFailure = ApiException(ApiError.Network)
         show()
         tap("Start")
+        api.writeFailure = ApiException(ApiError.Network)
         tap("Every Sunday")
         tap("Confirm")
 
@@ -343,23 +312,14 @@ class LevelTestStepFlowTest {
     }
 
     @Test
-    fun aFailedIntroSkipDoesNotCountAsAQuestionFailure() {
-        api.writeFailure = ApiException(ApiError.Network)
+    fun stoppingThatFailedSaysSoOnTheQuestionThenShowsTheRanges() {
         show()
-        tap("Skip")
-        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        api.writeFailure = null
         tap("Start")
-
-        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         api.writeFailure = ApiException(ApiError.Network)
         tap("Every Saturday")
         tap("Confirm")
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         tap("Stop and use my answers")
 
         rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
@@ -368,30 +328,6 @@ class LevelTestStepFlowTest {
         tap("Stop and use my answers")
 
         rule.onNodeWithText("Your Italian level").assertIsDisplayed()
-    }
-
-    @Test
-    fun aLateSkipFailureClearsWhenTheLevelTestAnswerStarts() {
-        api.setup = { setupView(steps = listOf("placement"), kind = "language", targetLanguage = "it") }
-        api.levelTest = preparingTestOf()
-        val save = CompletableDeferred<Unit>()
-        api.answerGate = save
-        show(inSetup = true)
-        tap("Start")
-        tap("Skip the test")
-        api.levelTest = levelTestOf()
-        rule.mainClock.advanceTimeBy(POLL_MS)
-        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
-        save.completeExceptionally(ApiException(ApiError.Network))
-
-        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        api.writeFailure = ApiException(ApiError.Network)
-        tap("Every Saturday")
-        tap("Confirm")
-
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
     }
 
     private object SilentOutput : AudioOutput {
@@ -405,6 +341,7 @@ class LevelTestStepFlowTest {
     }
 
     private companion object {
+        const val ATTEMPT = "6f1c2e2a-6d1b-4c8e-9a51-2f4b8f0c7a11"
         const val POLL_MS = 3_500L
         const val CLIP_URL = "https://clips.test/level-test/stazione.mp3"
     }

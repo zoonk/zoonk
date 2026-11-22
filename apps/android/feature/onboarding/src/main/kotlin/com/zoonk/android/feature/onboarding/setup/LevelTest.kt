@@ -7,17 +7,13 @@ import com.zoonk.android.data.StepState
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf
 import com.zoonk.api.models.LanguageLevelTestOneOf1
-import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1Next
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
 
 internal typealias LevelTestQuestion = LanguageLevelTestOneOf1NextOneOfQuestion
-internal typealias SkillLevel = LanguageLevelTestOneOf1LevelsInner
 
 internal sealed interface LevelTestPhase {
     data object Loading : LevelTestPhase
-
-    data object Intro : LevelTestPhase
 
     data object Waiting : LevelTestPhase
 
@@ -31,40 +27,22 @@ internal sealed interface LevelTestPhase {
         val confirmation: Boolean = false,
     ) : LevelTestPhase
 
-    data class Done(
-        val levels: List<SkillLevel>,
-    ) : LevelTestPhase
+    data object Done : LevelTestPhase
 }
 
-/**
- * The test resumes once the learner tapped Start ([started]), answered or ended it, and waits for its
- * questions after this screen's Start ([begun]) or while a run it started writes them. [stopped] is
- * the learner leaving the questions for their levels.
- */
+/** An open test waits for its questions until they're written; [stopped] is the learner leaving them for what the test found. */
 internal fun levelTestPhase(
     test: LoadState<LanguageLevelTest>,
-    started: Boolean,
-    begun: Boolean,
     stopped: Boolean,
-    bank: BankWait,
 ): LevelTestPhase {
     if (test == LoadState.Idle || test == LoadState.Loading) return LevelTestPhase.Loading
 
-    val value = (test as? LoadState.Loaded)?.value
-    val ready = (value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
-    val preparing = (value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value
-    val ended =
-        ready?.next.let {
-            it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value ||
-                it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value
-        }
+    val ready = ((test as? LoadState.Loaded)?.value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
 
     return when {
-        stopped -> LevelTestPhase.Done(ready?.levels.orEmpty())
-        ready != null && (started || ready.answered > 0 || ended) -> ready.phase()
-        begun -> LevelTestPhase.Waiting
-        preparing != null && started && (preparing.startedAt != null || bank.sawWriter) -> LevelTestPhase.Waiting
-        else -> LevelTestPhase.Intro
+        stopped -> LevelTestPhase.Done
+        ready != null -> ready.phase()
+        else -> LevelTestPhase.Waiting
     }
 }
 
@@ -90,7 +68,7 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value,
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value,
         -> {
-            LevelTestPhase.Done(levels)
+            LevelTestPhase.Done
         }
     }
 }

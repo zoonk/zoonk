@@ -23,7 +23,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.LevelTestAttempt
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.LevelRow
 import com.zoonk.android.feature.onboarding.setup.LevelRows
 import com.zoonk.android.feature.onboarding.setup.LevelTestSteps
@@ -112,12 +111,10 @@ private fun ColumnScope.LevelTestPlanFlow(
         attempt != null -> {
             LevelTestSteps(
                 goalId = goalId,
-                language = goal.language,
                 targetLanguage = targetLanguage,
                 store = store,
                 navigator = navigator,
                 onProgress = onProgress,
-                onDone = { WriteOutcome.Done(Unit) },
                 plan =
                     PlanAttempt(attempt, onLeave = navigator::closeTask, leaving = false) { result ->
                         val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
@@ -173,6 +170,7 @@ internal fun ColumnScope.LevelResult(
     onWalkTopics: () -> Unit,
     onTestOut: (String) -> Unit,
     undo: PlacementUndoViewModel? = null,
+    onboarding: Boolean = false,
 ) {
     val skipped =
         result.result
@@ -189,7 +187,14 @@ internal fun ColumnScope.LevelResult(
             } else {
                 stringResource(R.string.placementtest_keeps_adjusting)
             },
-        action = stringResource(if (walks) R.string.placementtest_keep_going else R.string.placementtest_done),
+        action =
+            stringResource(
+                when {
+                    walks -> R.string.placementtest_keep_going
+                    onboarding -> R.string.onboarding_continue
+                    else -> R.string.placementtest_done
+                },
+            ),
         onAction = if (walks) onWalkTopics else onDone,
         busy = pressed == Pressed.Main,
         enabled = pressed != Pressed.Other,

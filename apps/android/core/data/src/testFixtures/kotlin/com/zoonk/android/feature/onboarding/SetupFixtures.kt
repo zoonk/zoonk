@@ -268,25 +268,32 @@ fun skillLevelOf(
     score: Double,
 ) = """{"label":"$label","score":$score,"skill":"$skill"}"""
 
+/** [attemptId] is an open test's: a start answers with it, and a read of a test left open. */
 fun levelTestOf(
     next: String = readingQuestion(),
     answered: Int = 0,
     total: Int = 12,
     levels: List<String> = emptyList(),
+    attemptId: String? = null,
 ): LanguageLevelTest =
     ApiJson.decodeFromString(
         """
         {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
-         "showAlphabetNote":false,"targetLanguage":"it","total":$total}
+         "showAlphabetNote":false,"targetLanguage":"it","total":$total${attemptJson(attemptId)}}
         """.trimIndent(),
     )
 
-fun preparingTestOf(startedAt: String? = null): LanguageLevelTest =
+fun preparingTestOf(
+    startedAt: String? = null,
+    attemptId: String? = null,
+): LanguageLevelTest =
     ApiJson.decodeFromString(
         """{"expectedSeconds":120,"showAlphabetNote":false,"startedAt":${startedAt?.let {
             "\"$it\""
-        } ?: "null"},"status":"preparing"}""",
+        } ?: "null"},"status":"preparing"${attemptJson(attemptId)}}""",
     )
+
+private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it","length":"quick"""" }.orEmpty()
 
 /** CGU 2026's specialty choice, with [subject] the option the plan follows or null until the learner picks. */
 fun specialtyChoice(subject: String? = null) =
