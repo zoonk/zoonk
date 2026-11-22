@@ -10110,14 +10110,19 @@ msgid "Reason"
 msgstr "이유"
 
 #: src/onboarding/understood/use-understood-rows.ts
+msgctxt "d68iA8"
+msgid "Your plan and lessons follow this material"
+msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "quZfVt"
 msgid "Some of your material can't be read anymore, so your plan won't follow it."
 msgstr ""
 
 #: src/onboarding/understood/use-understood-rows.ts
-msgctxt "d68iA8"
-msgid "Your plan and lessons follow this material"
-msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
+msgctxt "8Fx9VN"
+msgid "Your material can't be read anymore, so your plan won't follow it."
+msgstr ""
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
