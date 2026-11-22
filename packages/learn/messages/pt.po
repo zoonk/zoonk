@@ -891,6 +891,18 @@ msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "A gente não conseguiu calcular quando você terminaria."
 
+#. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "u1mVPL"
+msgid "{dateKind, select, month {That's enough to be ready for your exam by {date}.} other {That's enough to be ready for your exam by {date}.}}"
+msgstr ""
+
+#. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "UaCprI"
+msgid "{dateKind, select, month {That's enough to reach your goal by {date}.} other {That's enough to reach your goal by {date}.}}"
+msgstr ""
+
 #: src/_components/time-answer-texts.ts
 msgctxt "HK8AHe"
 msgid "Your plan starts with what matters most for your exam."
@@ -10333,11 +10345,6 @@ msgid "New country: {country}. We'll make a new plan for it. Finished lessons st
 msgstr "Novo país: {country}. A gente vai criar um novo plano para ele. Você mantém as aulas já concluídas."
 
 #: src/plan/plan-coverage-suggestion.tsx
-msgctxt "_uwFdV"
-msgid "You already study as long as we suggest."
-msgstr ""
-
-#: src/plan/plan-coverage-suggestion.tsx
 #: src/today/today-focus-test.tsx
 msgctxt "KYliMN"
 msgid "The Focus test shows what to study most."
@@ -10471,11 +10478,6 @@ msgstr "{days, plural, one {Estude {minutes, number} min a mais por dia durante 
 msgctxt "VNHyd8"
 msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
 msgstr "{dateKind, select, month {Você tem tempo para estudar tudo até {date}} other {Você tem tempo para estudar tudo até {date}}}"
-
-#: src/plan/plan-offer-preview.tsx
-msgctxt "ni6NP4"
-msgid "{time} a day covers everything"
-msgstr "Com {time} por dia, você estuda tudo"
 
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/study-everything.tsx
@@ -11372,11 +11374,6 @@ msgstr "Seu plano ainda está sendo criado. Tente de novo em instantes."
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "A gente não conseguiu calcular o tempo necessário."
-
-#: src/plan/use-time-to-cover.ts
-msgctxt "sshiAK"
-msgid "Finding the time that covers everything…"
-msgstr "Calculando o tempo necessário para estudar tudo…"
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "wo_0PK"
