@@ -4,6 +4,7 @@
   "placementtest_about": "33a3f038bd0b92a5645386a7a7eb23055ee2c87f7b0d78972c8f48a7f695da2f",
   "placementtest_about_in_parts": "07a0fa735e574394f06f7fb6489a9ee10b7175fc7d6d0746da0eb1de111120c7",
   "placementtest_check_my_level": "50c7ded6c0b7649dda06594438e7195f7bbc77c0418d7ba272fc508d7e7842b6",
+  "placementtest_choose_description": "4a8fce2d8b9045471712ed3c83c8004d6427c6cffe9056695657415753711cc9",
   "placementtest_choose_title": "424cb1d4acfe3ab2be06c12a258d7f0a524dd941a8c4da5d2691baa56e34ffa6",
   "placementtest_continue_from_plan": "4891caf98462642109e3e6ee95cedff69346757e523b1237cf3bc8237828dc9f",
   "placementtest_continue_title": "a4e294e1a0eba1b5907b91f53a7442e5f3f9477a94287b5ebf3609e73a19d3d4",
@@ -30,8 +31,10 @@
   "placementtest_plan_stays": "f68b8e9234f11cb68c67ebd31f1d049be5edb9f079cc875fde1565ee54e341df",
   "placementtest_quick": "d74991a9576d404b4f1e5c07a379dbd7492e7673f8c456c2ca458b5d72908e86",
   "placementtest_reading_range": "01755a61edf1cea8929366ff848bde3305170af5751f2b02cc34e36df94f99ee",
+  "placementtest_retake_tomorrow": "588eda29eee573a3c59bbb133d42cbc5ed3ac9cf0d318947a7670ed9f12fbf79",
   "placementtest_skip_lessons": "cbf7a53c7ca3d57471fabab7a86d67170cb0d493b57af5a6937969eb2388a451",
   "placementtest_start": "3fa981ba5c86163cc534fd4fb3f1d74009066d4775f44eea317f3a0e4497f66c",
+  "placementtest_start_title": "12dd3e425e77fcdee48cbb5c0adbd8ecdf414e0c5794ec7d7567df4eef54c6a7",
   "placementtest_test_out": "d2251381e8fedb25af9b9c4944e79f106d4fab3c126a489f87272def30dac367",
   "placementtest_test_out_description": "d2fdda710997421d57fa9e0cd86f76e4fa6a3fb1cf9dea42de1d00e7cbe9d1e8",
   "placementtest_test_out_unavailable": "648c9616af1695202237fd3aedc0e956cb3f2647db42dec835bd7953f8894ce9",
@@ -64,6 +67,8 @@
     <string name="placementtest_reading_range">Lettura %1$s</string>
     <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
     <string name="placementtest_listening_range">Ascolto %1$s</string>
+    <string name="placementtest_start_title">Salta ciò che sai già</string>
+    <string name="placementtest_choose_description">Un test individua le lezioni che puoi saltare.</string>
     <string name="placementtest_choose_title">Quanto vuoi verificare?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">Veloce</string>
@@ -91,6 +96,7 @@
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_other">Le conosci già. Restano nei tuoi ripassi.</string>
     <string name="placementtest_plan_stays">Il tuo piano resta com’è.</string>
+    <string name="placementtest_retake_tomorrow">Oggi hai annullato queste lezioni. Rispondi di nuovo domani per saltarle.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">A seguire</string>
     <string name="placementtest_whole_course_skips_more">Il test sull’intero corso può saltare più lezioni.</string>

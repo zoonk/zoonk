@@ -4,6 +4,7 @@
   "placementtest_about": "a33def34a986cc523a5a18bd27a69e8075b3b3c92998075adaba2e1147a189c7",
   "placementtest_about_in_parts": "2cbeeb803ffbd7a39c858367d52b1e84db3cbebc6d0ee712601f95b7074a0a55",
   "placementtest_check_my_level": "37d48c394fe9eb1a6b61d6e3877458fcc8c1746886a9b3869de988a26c8de886",
+  "placementtest_choose_description": "20d54ad0d6ebf608311e7fd3d3316f9cd90ce885bedded26fd514f8d995a2e24",
   "placementtest_choose_title": "ecafbc4cdd851499a2d9aa124745a3a789813de40995262d0db93ee4812c9234",
   "placementtest_continue_from_plan": "9b367e2313e5cce5a3f9c613389ba3e96ef23ac7d2a8216c2b2d888728e82f0f",
   "placementtest_continue_title": "9a54694baeaae0b5e87aa8f1553c27c5a7f197bbef67a6a86bad696978f5bf20",
@@ -30,8 +31,10 @@
   "placementtest_plan_stays": "fd46adbf5da9537784cb773d76714906a3912f5d3acfe47cb5c921758af01834",
   "placementtest_quick": "b60146e32bbc97fb6fc70d2a4df9f3ecd662f8df482dc57449f198451b0e3327",
   "placementtest_reading_range": "5a945afbf7993dff4ccec6cc2867be8ba0566b2bd45251b2f186caf7de056a7f",
+  "placementtest_retake_tomorrow": "c3ef339a399424fff9247a0afaa62ee6edf7990a97fb43c5dc99b2dbdc760b34",
   "placementtest_skip_lessons": "8a3b218982b8595902330f291f877f87ff733e16b04e955eb660e5084b36c5b1",
   "placementtest_start": "b036a3b90ca49331f9b254c8f0d6af76b4fb5dcaf6625f144b813f9ef17760f1",
+  "placementtest_start_title": "80f0d546e2586db0e7b7f04ea7d2ebf2ac77c05adb0c2b95285b4863bbcd593a",
   "placementtest_test_out": "af198f4465b7e60ae4aa7db1fb2710ceb491cdd461822592d511725ab837aba3",
   "placementtest_test_out_description": "225152815c136c9b23b953ad394ff6cd45ae93bf20b0965a977e72192e8da4bc",
   "placementtest_test_out_unavailable": "c7784dc86eb8fbf7f040ba51aa8b4cc26d988c626368ca398fe1d49eea7f209f",
@@ -62,6 +65,8 @@
     <string name="placementtest_reading_range">읽기 %1$s</string>
     <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
     <string name="placementtest_listening_range">듣기 %1$s</string>
+    <string name="placementtest_start_title">이미 아는 내용 건너뛰기</string>
+    <string name="placementtest_choose_description">테스트로 건너뛸 수 있는 레슨을 찾아요.</string>
     <string name="placementtest_choose_title">어디까지 확인할까요?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">짧게</string>
@@ -89,6 +94,7 @@
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_other">이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.</string>
     <string name="placementtest_plan_stays">계획은 그대로 유지돼요.</string>
+    <string name="placementtest_retake_tomorrow">오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">다음</string>
     <string name="placementtest_whole_course_skips_more">코스 전체 테스트를 보면 더 많이 건너뛸 수 있어요.</string>

@@ -4,6 +4,7 @@
   "placementtest_about": "4de182050ca7549f490dd96b3147f6065b8b1db79da22fe4986c633fb8941ce0",
   "placementtest_about_in_parts": "4506bef35562ff2f62a1f47bd3c13d4396e93d47fc263a82f50733934a9f189b",
   "placementtest_check_my_level": "1e6779a0e87e23560bea8c8307aef279d85e04b2ee89e4a3155f16acd244498f",
+  "placementtest_choose_description": "0d42db1ed7baf56827bc620a3835304e8cb53792b1f15d836beeebc606646d8e",
   "placementtest_choose_title": "54b81919350881c5b71eb7cf24c1913830288a8c52127d277481615405f30c53",
   "placementtest_continue_from_plan": "13a555237e0814bc62deee5503c1fd302694651a80e574c81ba89bc008482303",
   "placementtest_continue_title": "aefe82a353d5f4a71b8216aca10b349ac76377ff07206b4881eb4f34a53e13a3",
@@ -30,8 +31,10 @@
   "placementtest_plan_stays": "8bc66607d64b9cb4f8517d3aeb1a438fe145bbc087d34f191831a7becc7eaecc",
   "placementtest_quick": "429a3778c3d94d1b740e637b1cb5e4657eee88a0222709f17f8162b81e96958a",
   "placementtest_reading_range": "2a63ca2ee5df865029c9f04f2f4e523c7b41fe40b742d88b21b106de23f6d520",
+  "placementtest_retake_tomorrow": "b4713662b36caf074a2123f826e2799b85613f448fd7cb86333d57151bb4c933",
   "placementtest_skip_lessons": "21174e6c5fa74fcfc1ce6d297f94128490798627190689c4360626a5d2222050",
   "placementtest_start": "0c2fba4668e52fa99855ced034a4457c367fee704dfb47907192e289b163c891",
+  "placementtest_start_title": "410d5a77c37111f26ad35e5853f08d0ae13fabb8c3f9dcf215fc057c81511ff3",
   "placementtest_test_out": "9b1fca8f8662f2f9fcbf4bf8b9d497b2caff51425f037a37280050225cb9a3f4",
   "placementtest_test_out_description": "5d9072489ba4a4c16dccce8f2db3cab81e2c8dac81e778c2644c63f173280122",
   "placementtest_test_out_unavailable": "2cc1005e042280908c8e8bf9527201f3e4c8e09451e9d52508f054f41f34aa41",
@@ -64,6 +67,8 @@
     <string name="placementtest_reading_range">Lecture %1$s</string>
     <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
     <string name="placementtest_listening_range">Écoute %1$s</string>
+    <string name="placementtest_start_title">Saute ce que tu connais déjà</string>
+    <string name="placementtest_choose_description">Un test trouve les leçons que tu peux sauter.</string>
     <string name="placementtest_choose_title">Qu’est-ce que tu veux vérifier ?</string>
     <!-- The short placement test: about four minutes of questions. -->
     <string name="placementtest_quick">Rapide</string>
@@ -91,6 +96,7 @@
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_other">Tu les connais déjà. Elles restent dans tes révisions.</string>
     <string name="placementtest_plan_stays">Ton plan reste tel qu’il est.</string>
+    <string name="placementtest_retake_tomorrow">Tu as annulé ces sauts aujourd’hui. Réponds à nouveau demain pour les sauter.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">À suivre</string>
     <string name="placementtest_whole_course_skips_more">Le test sur tout le cours peut te faire sauter plus de leçons.</string>

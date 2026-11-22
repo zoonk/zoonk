@@ -1254,12 +1254,6 @@
         }
       }
     },
-    "A test finds the lessons you can skip." : {
-
-    },
-    "You undid these today. Answer again tomorrow to skip them." : {
-
-    },
     "a day" : {
       "comment" : "Under the plan's time a day, as in \"15 min a day\"",
       "localizations" : {
@@ -1492,6 +1486,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir test, ihtiyacın olmayan dersleri belirler."
+          }
+        }
+      }
+    },
+    "A test finds the lessons you can skip." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Test findet heraus, welche Lektionen du überspringen kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una prueba identifica las lecciones que puedes saltarte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test trouve les leçons que tu peux sauter."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test individua le lezioni che puoi saltare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストで、スキップできるレッスンがわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트로 건너뛸 수 있는 레슨을 찾아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test wskaże lekcje, które możesz pominąć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um teste identifica as aulas que você pode pular."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seviye tespit testi, atlayabileceğin dersleri bulur."
           }
         }
       }
@@ -25390,6 +25442,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuştuğun dil"
+          }
+        }
+      }
+    },
+    "You undid these today. Answer again tomorrow to skip them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast diese heute wieder in den Test aufgenommen. Beantworte sie morgen noch einmal, um sie zu überspringen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy decidiste volver a hacer estas lecciones. Respóndelas de nuevo mañana para saltártelas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as annulé ces sauts aujourd’hui. Réponds à nouveau demain pour les sauter."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oggi hai annullato queste lezioni. Rispondi di nuovo domani per saltarle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日スキップを取り消したレッスンは、明日もう一度答えるとスキップできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś cofnięto te odpowiedzi. Odpowiedz na nie ponownie jutro, żeby pominąć te lekcje."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você desfez isso hoje. Responda de novo amanhã para pular essas aulas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün bunları geri aldın. Atlamak için yarın yeniden cevapla."
           }
         }
       }
