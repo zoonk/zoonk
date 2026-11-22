@@ -6779,7 +6779,62 @@
       }
     },
     "This answer is too short to grade. Add more and send it again." : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Antwort ist zu kurz, um sie zu bewerten. Schreib mehr dazu und schick sie noch einmal ab."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta respuesta es demasiado corta para calificarla. Agrega más y vuelve a enviarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette réponse est trop courte pour être évaluée. Complète-la et envoie-la de nouveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa risposta è troppo breve per essere valutata. Aggiungi altro e inviala di nuovo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この回答は短すぎて採点できません。書き足してから、もう一度送信してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 답안은 너무 짧아서 채점할 수 없어요. 내용을 더 쓰고 다시 제출해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta odpowiedź jest za krótka, żeby ją ocenić. Dopisz więcej i wyślij ją ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta resposta é curta demais para ser corrigida. Escreva mais e envie de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu cevap değerlendirilemeyecek kadar kısa. Biraz daha ekleyip tekrar gönder."
+          }
+        }
+      }
     },
     "This grade is for the version you sent first. Your changes are kept for your rewrite." : {
       "localizations" : {
@@ -7901,7 +7956,62 @@
       }
     },
     "Write a longer answer" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreib eine längere Antwort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe una respuesta más larga"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rédige une réponse plus longue"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi una risposta più lunga"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もっと長い回答を書く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답안을 더 길게 쓰기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napisz dłuższą odpowiedź"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escreva uma resposta mais longa"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha uzun bir cevap yaz"
+          }
+        }
+      }
     },
     "Write an answer" : {
       "localizations" : {
