@@ -9,7 +9,6 @@ import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
 import { TimeAnswer } from "../_components/time-answer";
 import { WeekdayGrid, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime, getMissingDays } from "../_components/weekend-time";
-import { useGoalDateValues } from "../_utils/iso-date";
 import { getSuggestedMinutes, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
@@ -57,7 +56,6 @@ function DailyCoverage({
   planChange: PlanChange;
 }) {
   const t = useExtracted();
-  const goalDate = useGoalDateValues();
   const { goal, plan } = usePlanScreen();
   const pending = planChange.isPending;
   const canChooseFocus = useCanChooseFocus();
@@ -98,28 +96,14 @@ function DailyCoverage({
           pending && "invisible",
         )}
       >
-        {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it
-            says so. */}
-        {plan.fitOffer?.fits ? (
-          <p className="text-muted-foreground">
-            {t({
-              description:
-                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-              message:
-                "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-              values: goalDate(date),
-            })}
-          </p>
-        ) : (
-          <TimeAnswer
-            date={date}
-            exam={goal.kind === "exam"}
-            line={line}
-            minutes={minutes}
-            onRetry={answer.retry}
-            onUseOffer={onUseTime}
-          />
-        )}
+        <TimeAnswer
+          date={date}
+          exam={goal.kind === "exam"}
+          line={line}
+          minutes={minutes}
+          onRetry={answer.retry}
+          onUseOffer={onUseTime}
+        />
 
         <div className="flex flex-wrap items-center gap-2 empty:hidden">
           {canMoveDate && <MoveDateSwitch onMoving={onMoving} planChange={planChange} />}

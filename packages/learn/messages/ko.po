@@ -10474,7 +10474,6 @@ msgstr "{days, plural, other {하루에 {minutes, number}분씩 #일 동안 더 
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-schedule.tsx
 msgctxt "VNHyd8"
 msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
 msgstr "{dateKind, select, month {정해 둔 시간으로 {date}까지 모두 공부할 수 있어요} other {정해 둔 시간으로 {date}까지 모두 공부할 수 있어요}}"

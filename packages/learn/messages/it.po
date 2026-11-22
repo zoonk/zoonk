@@ -10474,7 +10474,6 @@ msgstr "{days, plural, one {Per tornare al passo, studia {minutes, number} min i
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-schedule.tsx
 msgctxt "VNHyd8"
 msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
 msgstr "{dateKind, select, month {Hai abbastanza tempo per studiare tutto entro {date}} other {Hai abbastanza tempo per studiare tutto entro il {date}}}"
