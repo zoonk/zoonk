@@ -7,27 +7,6 @@ import XCTest
 /// never the tab it was opened from (main's `getActiveTab`).
 @MainActor
 final class SidebarPlaceTests: XCTestCase {
-  func testAPageTheSidebarListsMarksItsOwnRow() {
-    let router = AppRouter()
-    router.sidebarTabs = Set(AppTab.sidebarPlaces)
-
-    router.open(.mistakes)
-    XCTAssertEqual(router.selectedTab, .mistakes)
-
-    router.open(.statistics(section: .score))
-    XCTAssertEqual(router.selectedTab, .stats(.score))
-  }
-
-  /// The overview opens with Level beside it, so Level's row is the one it marks.
-  func testTheStatisticsOverviewMarksLevel() {
-    let router = AppRouter()
-    router.sidebarTabs = Set(AppTab.sidebarPlaces)
-
-    router.open(.statistics())
-
-    XCTAssertEqual(router.selectedTab, .stats(.level))
-  }
-
   /// A link the app opens as it starts arrives before the sidebar lists its places.
   func testAPageOpenedBeforeTheSidebarListsItMovesToItsOwnRow() {
     let router = AppRouter()

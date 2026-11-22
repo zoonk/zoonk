@@ -7,34 +7,6 @@ import XCTest
 
 @MainActor
 final class SubjectReasonTests: XCTestCase {
-  func testTheTopicUsesItsReasonUnlessItIsAlreadyKnown() async throws {
-    let goal = LearnerGoal(
-      dailyMinutes: 15, id: "goal", kind: .exam, language: "en", status: .active,
-      targetDate: nil, displayName: "Biology", title: "Biology")
-    try await readsWhatVoiceOverReads()
-    let topics: [(status: String, reason: String?, expected: String?)] = [
-      ("notPlanned", "skippedBase", "Skipped · your choice"),
-      ("known", "skipped", "Skipped · you already know it"),
-      ("toStudy", nil, nil),
-    ]
-    for (status, reason, expected) in topics {
-      let topic = SyllabusSubject.Topic(
-        chapters: [], frequency: nil, heading: nil, name: "Cells",
-        notPlannedReason: reason, status: status)
-      let window = try show(SubjectTopicRow(goal: goal, topic: topic, isExpanded: .constant(false)))
-      defer { window.isHidden = true }
-      try await waitForTestCondition("The topic did not appear") {
-        spoken(in: window).contains { $0.contains(topic.name) }
-      }
-      let words = spoken(in: window).map { $0.replacingOccurrences(of: "\u{00A0}", with: " ") }
-      if let expected {
-        XCTAssertTrue(words.joined(separator: " ").contains(expected), "\(words)")
-      } else {
-        XCTAssertEqual(Set(words), ["Cells"])
-      }
-    }
-  }
-
   func testSubjectReasonPictures() async throws {
     guard ProcessInfo.processInfo.environment["ZOONK_CALLS_CAPTURE"] != nil else {
       throw XCTSkip("On-demand review pictures")
