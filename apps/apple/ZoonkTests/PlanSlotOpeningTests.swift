@@ -33,10 +33,12 @@ final class PlanSlotOpeningTests: XCTestCase {
     await api.setChanged(true)
     await plans.plan(goalId: "goal").refresh()
     try await waitForTestCondition("Expected state did not arrive") {
-      spoken(in: window).contains(String(localized: "More lessons than days left", table: "Plan"))
+      spoken(in: window).contains(
+        String(localized: "Let's fit your plan to the time left", table: "Plan"))
     }
     XCTAssertTrue(
-      spoken(in: window).contains(String(localized: "More lessons than days left", table: "Plan")),
+      spoken(in: window).contains(
+        String(localized: "Let's fit your plan to the time left", table: "Plan")),
       "Another suggestion shows: \(spoken(in: window))")
     try await answer(api)
 
