@@ -2128,26 +2128,6 @@ msgid "{correct, plural, =0 {# of {total} goals} one {# of {total} goals} other 
 msgstr "{correct, plural, =0 {# su {total} obiettivi} one {# obiettivo su {total}} other {# obiettivi su {total}}}"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "O274f-"
-msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
-msgstr "{count, plural, one {Si apre domani} other {Si apre tra <mono>#</mono> giorni}}"
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "rnxGr1"
-msgid "Opens when you finish the lessons before it"
-msgstr "Si sblocca quando completi le lezioni precedenti"
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "aAHI1T"
-msgid "This challenge isn't ready yet."
-msgstr "Questa sfida non è ancora pronta."
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "a-rJRp"
-msgid "Next time you study"
-msgstr "La prossima volta che studi"
-
-#: src/challenge/challenge-footer.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -2180,6 +2160,12 @@ msgstr "Continua a studiare"
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
 msgstr "Per le simulazioni serve un abbonamento"
+
+#: src/challenge/challenge-footer.tsx
+#: src/writing/writing-choice.tsx
+msgctxt "C3wT9_"
+msgid "Choose on Today"
+msgstr "Scegli in Oggi"
 
 #: src/challenge/challenge-footer.tsx
 #: src/missions/mission-copy.tsx
@@ -2390,6 +2376,26 @@ msgstr "Stiamo preparando la tua sfida"
 msgctxt "V7vxze"
 msgid "It starts here when it's ready."
 msgstr "Avviamo la sfida qui appena è pronta."
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "O274f-"
+msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
+msgstr "{count, plural, one {Si apre domani} other {Si apre tra <mono>#</mono> giorni}}"
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "rnxGr1"
+msgid "Opens when you finish the lessons before it"
+msgstr "Si sblocca quando completi le lezioni precedenti"
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "aAHI1T"
+msgid "This challenge isn't ready yet."
+msgstr "Questa sfida non è ancora pronta."
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "a-rJRp"
+msgid "Next time you study"
+msgstr "La prossima volta che studi"
 
 #: src/challenge/challenge-topics.tsx
 msgctxt "uhq6kw"
@@ -13706,11 +13712,6 @@ msgstr "Dipende dalla scelta di {groups}"
 msgctxt "dwIEAG"
 msgid "{task} depends on your choice of {groups}"
 msgstr "{task} dipende dalla scelta di {groups}"
-
-#: src/writing/writing-choice.tsx
-msgctxt "C3wT9_"
-msgid "Choose on Today"
-msgstr "Scegli in Oggi"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "7O580c"

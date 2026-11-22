@@ -2128,26 +2128,6 @@ msgid "{correct, plural, =0 {# of {total} goals} one {# of {total} goals} other 
 msgstr "{correct, plural, =0 {達成した目標は#個（全{total}個）} other {目標を#個達成（全{total}個）}}"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "O274f-"
-msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
-msgstr "{count, plural, other {あと<mono>#</mono>日で挑戦できます}}"
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "rnxGr1"
-msgid "Opens when you finish the lessons before it"
-msgstr "前のレッスンを終えると挑戦できます"
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "aAHI1T"
-msgid "This challenge isn't ready yet."
-msgstr "このチャレンジはまだ準備中です。"
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "a-rJRp"
-msgid "Next time you study"
-msgstr "次に学習するとき"
-
-#: src/challenge/challenge-footer.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -2180,6 +2160,12 @@ msgstr "学習を続ける"
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
 msgstr "模試にはサブスクリプションへの登録が必要です"
+
+#: src/challenge/challenge-footer.tsx
+#: src/writing/writing-choice.tsx
+msgctxt "C3wT9_"
+msgid "Choose on Today"
+msgstr "今日の学習で選ぶ"
 
 #: src/challenge/challenge-footer.tsx
 #: src/missions/mission-copy.tsx
@@ -2390,6 +2376,26 @@ msgstr "チャレンジを準備しています"
 msgctxt "V7vxze"
 msgid "It starts here when it's ready."
 msgstr "準備ができたら、ここで始まります。"
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "O274f-"
+msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
+msgstr "{count, plural, other {あと<mono>#</mono>日で挑戦できます}}"
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "rnxGr1"
+msgid "Opens when you finish the lessons before it"
+msgstr "前のレッスンを終えると挑戦できます"
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "aAHI1T"
+msgid "This challenge isn't ready yet."
+msgstr "このチャレンジはまだ準備中です。"
+
+#: src/challenge/challenge-status-line.tsx
+msgctxt "a-rJRp"
+msgid "Next time you study"
+msgstr "次に学習するとき"
 
 #: src/challenge/challenge-topics.tsx
 msgctxt "uhq6kw"
@@ -13706,11 +13712,6 @@ msgstr "{groups}の選択によって異なります"
 msgctxt "dwIEAG"
 msgid "{task} depends on your choice of {groups}"
 msgstr "{task}は{groups}の選択によって変わります"
-
-#: src/writing/writing-choice.tsx
-msgctxt "C3wT9_"
-msgid "Choose on Today"
-msgstr "今日の学習で選ぶ"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "7O580c"
