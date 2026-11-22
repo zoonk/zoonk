@@ -15,6 +15,7 @@ import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getOnboardingDraft } from "../../view-models/onboarding/get-onboarding-draft";
+import { linkGoalToResearchSources } from "../exams/exam-learners";
 import { getSource } from "./get-source";
 import { loadSourceDocuments } from "./load-source-documents";
 import { hashDocument } from "./parse-document";
@@ -392,6 +393,24 @@ describe(shareSourceUpload, () => {
     await expect(loadSourceDocuments([upload.id], { preferText: true })).resolves.toMatchObject([
       { id: shared.id, text },
     ]);
+  });
+
+  it("links a run's upload to its goal as the shared copy once the upload merged", async () => {
+    const [first, learner] = await Promise.all([userFixture(), userFixture()]);
+    const goal = await goalFixture({ userId: learner.id });
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+    const upload = await privateUploadFixture({ text, userId: learner.id });
+    await shareNotice(upload.id);
+
+    await linkGoalToResearchSources({ goalId: goal.id, sourceIds: [upload.id] });
+
+    await expect(
+      prisma.goalSource.findMany({ select: { sourceId: true }, where: { goalId: goal.id } }),
+    ).resolves.toStrictEqual([{ sourceId: shared.id }]);
   });
 
   it("ignores sources that aren't private uploads", async () => {
