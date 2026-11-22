@@ -31,9 +31,12 @@ final class PlacementTestContractTests: XCTestCase {
       """#)
 
     XCTAssertEqual(test.nextTestOutLevel, "B2")
+    let result = try XCTUnwrap(test.languageResult)
+    let standing = LanguageStanding(
+      goal: .init(targetLanguage: "en"), level: .init(label: "B2+", target: "C1"), levels: [])
     XCTAssertEqual(
-      test.result?.skillRanges.map { "\($0.skill.rawValue) \($0.range.shown)" },
-      ["reading B1–B2", "listening A2–B1"])
+      standing.levelText(ranges: PlacementTestCopy.rangeFacts(result.skillRanges)),
+      "Reading B1–B2 · Listening A2–B1")
   }
 
   func testALevelTestWhoseQuestionsAreBeingWrittenReads() throws {

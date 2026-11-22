@@ -43,6 +43,7 @@ internal sealed interface PlacementTestPhase {
         val attempt: PlacementAttempt,
         val lessonsSkipped: Int?,
         val changeId: UUID? = null,
+        val heldUntilTomorrow: Boolean = false,
     ) : PlacementTestPhase
 
     data class Result(
@@ -50,6 +51,7 @@ internal sealed interface PlacementTestPhase {
         val lessonsSkipped: Int,
         val changeId: UUID? = null,
         val attemptId: UUID? = null,
+        val heldUntilTomorrow: Boolean = false,
     ) : PlacementTestPhase
 }
 

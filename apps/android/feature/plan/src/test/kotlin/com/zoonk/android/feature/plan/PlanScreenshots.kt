@@ -29,6 +29,8 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.conversation.callStarter
+import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
@@ -1001,7 +1003,12 @@ class PlanScreenshots {
                 Surface {
                     PlanContent(
                         page = page,
-                        standing = Standing.Progress(progress(), done = 13, known = 0, total = 46),
+                        standing =
+                            if (placementTest == LANGUAGE_TEST_RESULT) {
+                                Standing.Language(languageProgress(level = "B2+"), callStarter { error("The capture opens no call") })
+                            } else {
+                                Standing.Progress(progress(), done = 13, known = 0, total = 46)
+                            },
                         structure = null,
                         links = PlanLinks(navigator, page),
                         resume = Resume.Plain,

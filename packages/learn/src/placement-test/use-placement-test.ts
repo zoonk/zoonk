@@ -111,6 +111,7 @@ export function usePlacementTest({
         setPhase({
           attemptId: outcome.result.attemptId,
           changeId: null,
+          heldUntilTomorrow: outcome.result.heldUntilTomorrow,
           kind: "result",
           length: "wholeCourse",
           lessonsSkipped: outcome.result.lessonsSkipped,

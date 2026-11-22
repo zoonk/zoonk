@@ -15,6 +15,7 @@ export type PlacementPartOutcome =
   | {
       attempt: PlacementAttemptView | null;
       changeId: string | null;
+      heldUntilTomorrow?: true;
       lessonsSkipped: number;
       /** The topic the plan goes on with; null when none is left. */
       nextTopic: string | null;

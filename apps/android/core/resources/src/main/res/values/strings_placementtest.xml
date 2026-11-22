@@ -50,6 +50,7 @@
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_other">You already know them. They stay in your practice.</string>
     <string name="placementtest_plan_stays">Your plan stays as it is.</string>
+    <string name="placementtest_retake_tomorrow">You undid these today. Answer again tomorrow to skip them.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Up next</string>
     <string name="placementtest_whole_course_skips_more">The whole-course test can skip more.</string>

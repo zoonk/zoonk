@@ -26,6 +26,13 @@ enum PlacementTestCopy {
     kind == .language ? languageName : learnName
   }
 
+  static let retakeTomorrow = LocalizedStringResource(
+    "You undid these today. Answer again tomorrow to skip them.", table: "Onboarding")
+
+  static func rangeFacts(_ ranges: [PlacementTestResult.SkillRange]) -> [String] {
+    ranges.map { skillRange($0.skill, $0.range) }
+  }
+
   static let notNow = LocalizedStringResource(
     "Not now", table: "Onboarding",
     comment: "Leaves the test taken from the plan, or a lesson's offer to check the level, for now")
@@ -88,7 +95,7 @@ enum PlacementTestCopy {
 
     let found =
       test.kind == .language
-      ? result.skillRanges.map { skillRange($0.skill, $0.range) }
+      ? rangeFacts(result.skillRanges)
       : [lessonsSkipped(result.lessonsSkipped)]
 
     return found + [PlanDate.moment(result.finishedAt)]

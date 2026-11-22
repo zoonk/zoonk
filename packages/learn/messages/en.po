@@ -9673,14 +9673,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "Question {number, number}"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Stop and use my answers"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "Question {number, number}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -10221,6 +10221,11 @@ msgstr "Part {part, number}"
 msgctxt "d-Y4Kd"
 msgid "About {time} left. Your answers are saved."
 msgstr "About {time} left. Your answers are saved."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr "You undid these today. Answer again tomorrow to skip them."
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"

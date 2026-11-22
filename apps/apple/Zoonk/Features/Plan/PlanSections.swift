@@ -383,14 +383,21 @@ struct PlanNumbersSection: View {
     Button(action: open) {
       StatTile(
         label: Text(number.label),
-        value: number.value,
+        value: Group {
+          if number.rangeFacts.isEmpty {
+            number.value
+          } else {
+            FactSegments(number.rangeFacts)
+          }
+        },
         icon: { EmptyView() },
         detail: number.detail.map {
           Text($0).foregroundStyle(
             number.detailIsGain ? AnyShapeStyle(.successText) : AnyShapeStyle(.mutedForeground))
         },
         meter: number.share,
-        meterFill: .success
+        meterFill: .success,
+        spokenValue: number.value
       )
       .contentShape(.rect)
     }
@@ -424,6 +431,14 @@ struct PlanNumbersSection: View {
     if context.goal.kind == .language {
       guard let language = store.languageStanding(goalId: context.goal.id).value else {
         return nil
+      }
+
+      if let assessment = context.plan.placementTest?.languageResult {
+        let facts = PlacementTestCopy.rangeFacts(assessment.skillRanges)
+        return PlanNumber(
+          label: language.levelTitle,
+          value: Text(verbatim: language.levelText(ranges: facts)),
+          rangeFacts: facts)
       }
 
       return PlanNumber(
@@ -487,6 +502,7 @@ private struct PlanNumber {
   var detailIsGain = false
   /// From 0 to 1.
   var share: Double?
+  var rangeFacts: [String] = []
 }
 
 /// A paused goal rests unless its plan is already over or its date passed.

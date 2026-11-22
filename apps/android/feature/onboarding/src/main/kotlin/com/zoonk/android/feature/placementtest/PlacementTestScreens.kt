@@ -140,6 +140,7 @@ internal fun ColumnScope.BetweenParts(
     onKeepGoing: () -> Unit,
     undo: PlacementUndoViewModel? = null,
     inSetup: Boolean = false,
+    heldUntilTomorrow: Boolean = false,
 ) {
     val shownLessons = if (undo?.restoredLessons != null) 0 else lessonsSkipped
     SetupContent {
@@ -147,6 +148,7 @@ internal fun ColumnScope.BetweenParts(
             shownLessons?.let { lessonsSkippedLine(it) } ?: stringResource(R.string.placementtest_continue_title),
             stringResource(R.string.placementtest_left_saved, formatMinutes(minutesLeft, currentLocale())),
         )
+        if (heldUntilTomorrow) Note(stringResource(R.string.placementtest_retake_tomorrow))
         PlacementUndoStatus(undo)
         if (inSetup) Note(stringResource(R.string.placementtest_continue_from_plan))
         PlacementResultActions(
@@ -185,14 +187,15 @@ internal fun ColumnScope.PlacementResult(
     undo: PlacementUndoViewModel? = null,
     inSetup: Boolean = false,
     saving: Boolean = false,
+    heldUntilTomorrow: Boolean = false,
 ) {
     TestOutcome(
         title = lessonsSkippedLine(lessonsSkipped),
         lead =
-            if (lessonsSkipped > 0) {
-                placementKnownLine(lessonsSkipped)
-            } else {
-                stringResource(R.string.placementtest_plan_stays)
+            when {
+                heldUntilTomorrow -> stringResource(R.string.placementtest_retake_tomorrow)
+                lessonsSkipped > 0 -> placementKnownLine(lessonsSkipped)
+                else -> stringResource(R.string.placementtest_plan_stays)
             },
         action = stringResource(if (inSetup) R.string.onboarding_continue else R.string.placementtest_done),
         onAction = onDone,

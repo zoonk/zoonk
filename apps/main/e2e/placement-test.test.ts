@@ -150,11 +150,29 @@ test.describe("Testing what you know from the plan", () => {
 
     await prisma.goal.update({
       data: {
-        details: { answered: [...ANSWERED, "placement"], level: "B1" },
+        details: {
+          answered: [...ANSWERED, "placement"],
+          level: "B1",
+          levelTest: {
+            lastResult: {
+              attemptId: null,
+              finishedAt: new Date().toISOString(),
+              lessonsSkipped: 0,
+              levelsSkipped: [],
+              ranges: { listening: { high: "B1", low: "A2" }, reading: { high: "B2", low: "B1" } },
+            },
+          },
+        },
         planRevealedAt: new Date(),
       },
       where: { id: goal.id },
     });
+
+    await page.goto("/plan");
+
+    await expect(
+      page.getByRole("button", { name: /English level Reading B1–B2 · Listening A2–B1/u }),
+    ).toBeVisible();
 
     await page.goto("/level-test");
 
@@ -194,12 +212,14 @@ test.describe("Testing what you know from the plan", () => {
 
     await page.getByRole("button", { exact: true, name: "Finish for today" }).click();
 
-    await expect(
-      page.getByRole("link", { name: /Test what you know.*In progress/u }),
-    ).toBeVisible();
+    const row = page.getByRole("link", { name: /Test what you know.*In progress/u });
+    await expect(row).toBeVisible();
+    const rowTime = await row.getByText(/left$/u).innerText();
+    const timeLeft = rowTime.replace(/^·\s*/u, "");
 
     await page.goto("/placement-test");
     await expect(page.getByRole("heading", { name: "Continue your test" })).toBeVisible();
+    await expect(page.getByText(`About ${timeLeft}. Your answers are saved.`)).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Keep going" }).click();
     await expect(page.getByText("Part 2", { exact: true })).toBeVisible();
   });
@@ -259,4 +279,38 @@ test("onboarding finishes after part one and the whole course continues from Pla
   await page.getByRole("link", { name: /Test what you know.*In progress/u }).click();
   await page.getByRole("button", { name: "Keep going" }).click();
   await expect(page.getByText("Part 2", { exact: true })).toBeVisible();
+});
+
+test("a saved retake result explains why it skipped nothing after Undo", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createLearnGoal(noProgressUser.id, { onboarding: true });
+
+  await prisma.goal.update({
+    data: {
+      details: {
+        answered: ANSWERED,
+        placementTest: {
+          attempt: null,
+          result: {
+            attemptId: crypto.randomUUID(),
+            finishedAt: new Date().toISOString(),
+            heldUntilTomorrow: true,
+            lessonsSkipped: 0,
+          },
+        },
+        subject: "algebra",
+      },
+    },
+    where: { id: goal.id },
+  });
+
+  await page.goto(`/start/${goal.id}`);
+
+  await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
+
+  await expect(
+    page.getByText("You undid these today. Answer again tomorrow to skip them."),
+  ).toBeVisible();
 });

@@ -11,10 +11,12 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatProgressShare, useFormatShare } from "../_utils/percent";
 import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
+import { useLevelRangeFacts } from "../language/level-test/level-test-parts";
 import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
@@ -66,6 +68,8 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const formatShare = useFormatShare();
   const formatProgressShare = useFormatProgressShare();
   const languageName = useLanguageNameInSentence();
+  const formatRanges = useLevelRangeFacts();
+  const { placementTest } = usePlanScreen().plan;
 
   if (standing.kind === "preparation" && standing.forExam) {
     const points = Math.round(standing.preparation.weekGain * PERCENT);
@@ -105,12 +109,18 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   }
 
   const { goal, level } = standing.language;
+  const result = placementTest?.kind === "language" ? placementTest.result : null;
+  const ranges = result ? formatRanges(result.ranges) : [];
 
   return {
     detail: null,
     label: t("{language} level", { language: languageName(goal.targetLanguage) }),
-    numeric: level !== null,
-    value: <LevelValue label={level?.label ?? t("Not yet")} target={level?.target ?? null} />,
+    numeric: !result && level !== null,
+    value: result ? (
+      (ranges.length > 0 && <FactSegments facts={ranges} />) || t("Not yet")
+    ) : (
+      <LevelValue label={level?.label ?? t("Not yet")} target={level?.target ?? null} />
+    ),
   };
 }
 

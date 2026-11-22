@@ -52,7 +52,13 @@ final class PlacementTestRenderTests: XCTestCase {
     {
       spoken(in: window).contains { $0.contains("Your English level") }
     }
-    try await activate("Back", in: window)
+    let back = try XCTUnwrap(
+      requestViews(UIView.self, in: window)
+        .filter { $0.accessibilityLabel == "Back" }
+        .lazy.compactMap { self.requestViews(UIControl.self, in: $0).first }.first)
+    back.sendActions(
+      for: back.allControlEvents.contains(.primaryActionTriggered)
+        ? .primaryActionTriggered : .touchUpInside)
     try await waitForTestCondition(
       "Back did not return to the previous question: \(spoken(in: window))"
     ) {
@@ -111,6 +117,49 @@ final class PlacementTestRenderTests: XCTestCase {
         isLocked: false, draft: .constant(.order([0, 1]))
       )
       .padding()
+    }
+  }
+
+  func testRetakeHeldUntilTomorrow() async throws {
+    try await capture(
+      "placement-retake-tomorrow", title: "No lessons skipped",
+      detail: "You undid these today. Answer again tomorrow to skip them.",
+      absent: ["Your plan stays as it is."]
+    ) {
+      PlacementTestResultView(
+        length: .quick, lessonsSkipped: 0, nextTopic: "Fractions", isSaving: false, failed: false,
+        heldUntilTomorrow: true, onDone: {})
+    }
+  }
+
+  func testPlanShowsTheTestedSkillRanges() async throws {
+    let standing = LanguageStanding(
+      goal: .init(targetLanguage: "en"), level: .init(label: "B2+", target: "C1"), levels: [])
+    let api = PlanAPIStub()
+    await api.setLanguageStanding(standing)
+    let store = PlanStore(api: api, cache: AppCache(session: .preview(account: .planTestAccount)))
+    await store.languageStanding(goalId: goalID).load()
+
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.ranges = [
+      "reading": LevelRange(high: "B2", low: "B1"),
+      "listening": LevelRange(high: "B1", low: "A2"),
+    ]
+    var plan = try goalPlanFixture()
+    plan.placementTest = PlanPlacementTest(
+      attempt: nil, estimatedMinutes: 20, kind: .language, result: result, state: .result)
+    let goal = LearnerGoal(
+      dailyMinutes: 30, id: goalID, kind: .language, language: "en", status: .active,
+      targetDate: nil, displayName: "English", title: "English")
+    let context = PlanContext(goal: goal, plan: plan, adjust: { _ in }, show: { _ in })
+    try await capture(
+      "plan-skill-ranges", title: "English level", detail: "Reading B1–B2 · Listening A2–B1",
+      absent: ["B2+ → C1"]
+    ) {
+      ZoonkList {
+        PlanNumbersSection(context: context, syllabus: nil)
+      }
+      .environment(store)
     }
   }
 
@@ -203,11 +252,14 @@ final class PlacementTestRenderTests: XCTestCase {
           .zoonkStyles()
           .preferredColorScheme(scheme))
 
-      try await waitForTestCondition("Missing \(title) or \(detail): \(spoken(in: window))") {
-        let words = spoken(in: window)
+      try await waitForTestCondition(
+        "Missing \(title) or \(detail): \(spoken(in: window) + spokenValues(in: window))"
+      ) {
+        let words = spoken(in: window) + spokenValues(in: window)
         return words.contains { $0.contains(title) } && words.contains { $0.contains(detail) }
       }
-      XCTAssertFalse(spoken(in: window).contains { word in absent.contains { word.contains($0) } })
+      let words = spoken(in: window) + spokenValues(in: window)
+      XCTAssertFalse(words.contains { word in absent.contains { word.contains($0) } })
 
       let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
         window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)

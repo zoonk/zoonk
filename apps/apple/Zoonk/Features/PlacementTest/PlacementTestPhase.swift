@@ -22,10 +22,12 @@ enum PlacementTestPhase: Equatable {
   case partOver(PlacementAttempt)
   /// A whole-course test between two parts. `lessonsSkipped` is the part that just closed, or nil
   /// when the learner came back to a test whose part closed earlier.
-  case between(PlacementAttempt, lessonsSkipped: Int?, changeId: String? = nil)
+  case between(
+    PlacementAttempt, lessonsSkipped: Int?, changeId: String? = nil, heldUntilTomorrow: Bool = false
+  )
   case result(
     length: PlacementLength, lessonsSkipped: Int, attemptId: String? = nil,
-    changeId: String? = nil, changeLessons: Int = 0)
+    changeId: String? = nil, changeLessons: Int = 0, heldUntilTomorrow: Bool = false)
 
   var isWaiting: Bool { self == .waiting }
 
@@ -36,7 +38,8 @@ enum PlacementTestPhase: Equatable {
       let attemptId = result.attemptId
     {
       self = .result(
-        length: .wholeCourse, lessonsSkipped: result.lessonsSkipped, attemptId: attemptId)
+        length: .wholeCourse, lessonsSkipped: result.lessonsSkipped, attemptId: attemptId,
+        heldUntilTomorrow: result.heldUntilTomorrow == true)
       return
     }
 
@@ -81,12 +84,14 @@ enum PlacementTestPhase: Equatable {
   init(finished: PlacementPartEnd, length: PlacementLength, attemptId: String? = nil) {
     if let attempt = finished.attempt {
       self = .between(
-        attempt, lessonsSkipped: finished.lessonsSkipped, changeId: finished.changeId)
+        attempt, lessonsSkipped: finished.lessonsSkipped, changeId: finished.changeId,
+        heldUntilTomorrow: finished.heldUntilTomorrow)
     } else {
       self = .result(
         length: length, lessonsSkipped: finished.result?.lessonsSkipped ?? finished.lessonsSkipped,
         attemptId: attemptId, changeId: finished.changeId,
-        changeLessons: finished.changeId == nil ? 0 : finished.lessonsSkipped)
+        changeLessons: finished.changeId == nil ? 0 : finished.lessonsSkipped,
+        heldUntilTomorrow: finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow)
     }
   }
 }

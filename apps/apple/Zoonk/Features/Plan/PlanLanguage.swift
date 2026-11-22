@@ -21,21 +21,22 @@ extension LanguageStanding {
       localized: "Your \(Locale.current.languageName(goal.targetLanguage)) level", table: "Plan")
   }
 
-  var levelText: String {
-    guard let level else {
-      return String(
-        localized: "Not yet", table: "Plan", comment: "A language level not measured yet")
+  func levelText(ranges: [String]? = nil) -> String {
+    if let ranges {
+      return ranges.isEmpty ? noLevelYet : ranges.joined(separator: " · ")
     }
+
+    guard let level else { return noLevelYet }
 
     return level.target.map { "\(level.label) → \($0)" } ?? level.label
   }
 
   /// Main's `LevelValue`, for a readout: the level reached, then the one aimed for, smaller and
   /// muted.
-  func levelValue(dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?) -> Text {
-    guard let level, let target = level.target else {
-      return Text(verbatim: levelText)
-    }
+  func levelValue(
+    dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?
+  ) -> Text {
+    guard let level, let target = level.target else { return Text(verbatim: levelText()) }
 
     var environment = EnvironmentValues()
     environment.dynamicTypeSize = dynamicTypeSize
@@ -45,6 +46,10 @@ extension LanguageStanding {
       .foregroundStyle(.mutedForeground)
 
     return Text("\(Text(verbatim: level.label))\(aim)")
+  }
+
+  private var noLevelYet: String {
+    String(localized: "Not yet", table: "Plan", comment: "A language level not measured yet")
   }
 }
 
@@ -76,12 +81,14 @@ extension LanguageStanding.Level {
 struct LanguageLevelSheet: View {
   @Environment(\.dismiss) private var dismiss
   let standing: LanguageStanding
+  let assessment: PlacementTestResult?
 
   var body: some View {
+    let ranges = assessment.map { PlacementTestCopy.rangeFacts($0.skillRanges) }
     ZoonkList {
       Section {
         LabeledContent {
-          Text(standing.levelText)
+          Text(standing.levelText(ranges: ranges))
         } label: {
           Text(standing.levelTitle)
         }

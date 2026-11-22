@@ -149,8 +149,7 @@ struct PlanFact: Identifiable, Equatable {
 
       return PlanFact(
         id: "level", label: PlacementTestCopy.languageName,
-        value: ranges.map { PlacementTestCopy.skillRange($0.skill, $0.range) }
-          .joined(separator: " · "))
+        value: PlacementTestCopy.rangeFacts(ranges).joined(separator: " · "))
     }
 
     let own = details.level.flatMap(OwnLevel.init(rawValue:))

@@ -9673,14 +9673,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "Resmî belgeleri okumayı bitirene kadar bu plan sınavın her zamanki yapısını temel alır. Belgeler planında değişiklik gerektirirse kararı Bugün sayfasında sen verirsin."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "Soru {number, number}"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Durdur ve cevaplarımı kullan"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "Soru {number, number}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -10223,6 +10223,11 @@ msgid "About {time} left. Your answers are saved."
 msgstr "Yaklaşık {time} kaldı. Cevapların kaydedildi."
 
 #: src/placement-test/placement-test-screens.tsx
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr ""
+
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "Ne kadarını kontrol etmek istiyorsun?"
@@ -10230,7 +10235,7 @@ msgstr "Ne kadarını kontrol etmek istiyorsun?"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "LW1Em4"
 msgid "Skip what you already know"
-msgstr ""
+msgstr "Zaten bildiklerini atla"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"

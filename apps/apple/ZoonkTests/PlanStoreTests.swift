@@ -849,6 +849,7 @@ actor PlanAPIStub: PlanAPIClient {
   private var fittingDate: String?
   private var end = PlanEnd(certificates: nil, next: nil)
   private var languageUnitsRead: LanguageUnitsOverview?
+  private var languageStandingRead: LanguageStanding?
   private var heldCall: TestContinuation<Void>?
 
   private var heldKind: HeldCall?
@@ -872,6 +873,7 @@ actor PlanAPIStub: PlanAPIClient {
   /// The later end date the time to cover finds for a passed one.
   func setFittingDate(_ date: String) { fittingDate = date }
   func setLanguageUnits(_ units: LanguageUnitsOverview) { languageUnitsRead = units }
+  func setLanguageStanding(_ standing: LanguageStanding) { languageStandingRead = standing }
   /// Every read answers the same plan, as a read after progress that changed nothing it plans does.
   func setPlanId(_ id: String) { planId = id }
   func setToday(_ day: String) { today = day }
@@ -997,7 +999,8 @@ actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func languageStanding(token: String, goalId: String) async throws -> LanguageStanding {
-    throw APIError.notFound
+    guard let languageStandingRead else { throw APIError.notFound }
+    return languageStandingRead
   }
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview {
     guard let languageUnitsRead else {

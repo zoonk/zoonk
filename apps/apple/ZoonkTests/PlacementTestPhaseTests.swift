@@ -42,14 +42,17 @@ final class PlacementTestPhaseTests: XCTestCase {
 
   func testAWholeCoursePartWithMoreToCheckSaysWhatItSkippedAndWhatsLeft() {
     let next = attempt(part: 2)
-    let end = PlacementPartEnd(attempt: next, lessonsSkipped: 20, result: nil)
+    let end = PlacementPartEnd(
+      attempt: next, lessonsSkipped: 20, heldUntilTomorrow: true, result: nil)
 
     XCTAssertEqual(
-      PlacementTestPhase(finished: end, length: .wholeCourse), .between(next, lessonsSkipped: 20))
+      PlacementTestPhase(finished: end, length: .wholeCourse),
+      .between(next, lessonsSkipped: 20, heldUntilTomorrow: true))
   }
 
   func testTheLastPartShowsTheWholeTestsResult() {
-    let result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 40)
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 40)
+    result.heldUntilTomorrow = true
     let end = PlacementPartEnd(
       attempt: nil, lessonsSkipped: 12, changeId: "change-2", result: result)
 
@@ -57,7 +60,7 @@ final class PlacementTestPhaseTests: XCTestCase {
       PlacementTestPhase(finished: end, length: .wholeCourse, attemptId: "a1"),
       .result(
         length: .wholeCourse, lessonsSkipped: 40, attemptId: "a1",
-        changeId: "change-2", changeLessons: 12))
+        changeId: "change-2", changeLessons: 12, heldUntilTomorrow: true))
   }
 
   private func attempt(part: Int = 1, partComplete: Bool = false) -> PlacementAttempt {

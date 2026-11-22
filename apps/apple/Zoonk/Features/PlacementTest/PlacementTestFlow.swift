@@ -115,13 +115,13 @@ struct PlacementTestFlow: View {
       ) {
         save(.main) { try await close(attempt) }
       }
-    case .between(let attempt, let lessonsSkipped, let changeId):
+    case .between(let attempt, let lessonsSkipped, let changeId, let heldUntilTomorrow):
       let onboarding = onOnboardingDone != nil
       let undo = undo(changeId: changeId, lessons: lessonsSkipped ?? 0)
       PlacementBetweenParts(
         lessonsSkipped: lessonsSkipped, minutesLeft: attempt.estimatedMinutes,
         pressed: undoRequest.isRunning ? .other : pressed,
-        failed: failed,
+        failed: failed, heldUntilTomorrow: heldUntilTomorrow,
         onKeepGoing: {
           save(.main) {
             if let onOnboardingDone {
@@ -132,12 +132,14 @@ struct PlacementTestFlow: View {
           }
         }, undo: undo, onboarding: onboarding,
         onFinishForToday: onboarding ? nil : { save(.other) { try await goOnUnlessLeft(onDone) } })
-    case .result(let length, let lessonsSkipped, let attemptId, let changeId, let changeLessons):
+    case .result(
+      let length, let lessonsSkipped, let attemptId, let changeId, let changeLessons,
+      let heldUntilTomorrow):
       let undo = undo(changeId: changeId, lessons: changeLessons)
       PlacementTestResultView(
         length: length, lessonsSkipped: lessonsSkipped, nextTopic: nextTopic(),
         isSaving: pressed != nil || undoRequest.isRunning, failed: failed,
-        undo: undo, onboarding: onOnboardingDone != nil
+        heldUntilTomorrow: heldUntilTomorrow, undo: undo, onboarding: onOnboardingDone != nil
       ) {
         save(.main) {
           if let onOnboardingDone, let attemptId {

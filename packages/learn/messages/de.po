@@ -9673,14 +9673,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "Dieser Plan folgt dem üblichen Aufbau der Prüfung, während wir die offiziellen Unterlagen fertig lesen. Falls sich dadurch Änderungen an deinem Plan ergeben, entscheidest du unter „Heute“ darüber."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "Frage {number, number}"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Beenden und meine Antworten verwenden"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "Frage {number, number}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -10223,6 +10223,11 @@ msgid "About {time} left. Your answers are saved."
 msgstr "Noch etwa {time}. Deine Antworten sind gespeichert."
 
 #: src/placement-test/placement-test-screens.tsx
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr ""
+
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "Wie viel möchtest du testen?"
@@ -10230,7 +10235,7 @@ msgstr "Wie viel möchtest du testen?"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "LW1Em4"
 msgid "Skip what you already know"
-msgstr ""
+msgstr "Überspringen, was du schon weißt"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"

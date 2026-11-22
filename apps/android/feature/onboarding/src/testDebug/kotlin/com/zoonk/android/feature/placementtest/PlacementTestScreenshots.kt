@@ -187,6 +187,18 @@ class PlacementTestScreenshots(
         ) { PlacementResult(PlacementLength.WHOLE_COURSE, lessonsSkipped = 0, nextTopic = "Torts", onDone = {}) }
 
     @Test
+    fun resultHeldUntilTomorrow() =
+        shoot("result-retake-tomorrow") {
+            PlacementResult(
+                PlacementLength.QUICK,
+                lessonsSkipped = 0,
+                nextTopic = "Contracts",
+                onDone = {},
+                heldUntilTomorrow = true,
+            )
+        }
+
+    @Test
     fun levelResult() =
         shoot("level-result", captureUndo = true) {
             LevelResult(

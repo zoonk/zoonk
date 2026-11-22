@@ -32,6 +32,7 @@ struct LevelRange: Decodable, Hashable, Sendable {
 struct PlacementTestResult: Decodable, Equatable, Sendable {
   var attemptId: String?
   var changeId: String?
+  var heldUntilTomorrow: Bool?
   let finishedAt: Date
   let lessonsSkipped: Int
   var levelsSkipped: [String]?
@@ -48,6 +49,7 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     attemptId = try container.decodeIfPresent(String.self, forKey: .attemptId)
     changeId = try container.decodeIfPresent(String.self, forKey: .changeId)
+    heldUntilTomorrow = try container.decodeIfPresent(Bool.self, forKey: .heldUntilTomorrow)
     finishedAt = try container.decode(Date.self, forKey: .finishedAt)
     lessonsSkipped = try container.decodeIfPresent(Int.self, forKey: .lessonsSkipped) ?? 0
     levelsSkipped = try container.decodeIfPresent([String].self, forKey: .levelsSkipped)
@@ -56,7 +58,8 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
   }
 
   private enum CodingKeys: String, CodingKey {
-    case attemptId, changeId, finishedAt, lessonsSkipped, levelsSkipped, ranges, wholeCourseReady
+    case attemptId, changeId, finishedAt, heldUntilTomorrow, lessonsSkipped, levelsSkipped, ranges,
+      wholeCourseReady
   }
 
   struct SkillRange: Hashable, Sendable {
@@ -98,6 +101,8 @@ struct PlanPlacementTest: Decodable, Equatable, Sendable {
   var nextTestOutLevel: String?
   let result: PlacementTestResult?
   let state: State
+
+  var languageResult: PlacementTestResult? { kind == .language ? result : nil }
 
   /// Nothing is left ahead to check and nothing was checked yet.
   var isShown: Bool { !(state == .start && estimatedMinutes == 0) }

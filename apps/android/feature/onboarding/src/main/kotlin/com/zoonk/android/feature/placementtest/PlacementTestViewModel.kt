@@ -57,7 +57,12 @@ internal class PlacementTestViewModel(
         val phase = phase(placement)
         if (phase != PlacementTestPhase.Choose) return phase
         val result = placement.value?.result ?: return phase
-        return PlacementTestPhase.Result(PlacementLength.WHOLE_COURSE, result.lessonsSkipped.toInt(), attemptId = result.attemptId)
+        return PlacementTestPhase.Result(
+            PlacementLength.WHOLE_COURSE,
+            result.lessonsSkipped.toInt(),
+            attemptId = result.attemptId,
+            heldUntilTomorrow = result.heldUntilTomorrow == true,
+        )
     }
 
     /** One of the wait's reads: true when it came back. */
@@ -132,12 +137,15 @@ internal class PlacementTestViewModel(
             val skipped = completion.lessonsSkipped.toInt()
             val changeId = completion.changeId.takeIf { skipped > 0 }
             closed =
-                completion.attempt?.let { PlacementTestPhase.Between(it, skipped, changeId) }
+                completion.attempt?.let {
+                    PlacementTestPhase.Between(it, skipped, changeId, heldUntilTomorrow = completion.heldUntilTomorrow == true)
+                }
                     ?: PlacementTestPhase.Result(
                         attempt.length,
                         completion.result?.lessonsSkipped?.toInt() ?: skipped,
                         changeId = changeId,
                         attemptId = attempt.id,
+                        heldUntilTomorrow = (completion.result?.heldUntilTomorrow ?: completion.heldUntilTomorrow) == true,
                     )
             return true
         }

@@ -6,6 +6,7 @@ struct PlacementPartEnd: Equatable, Sendable {
   let attempt: PlacementAttempt?
   let lessonsSkipped: Int
   var changeId: String?
+  var heldUntilTomorrow = false
   let result: PlacementTestResult?
 }
 
@@ -63,6 +64,7 @@ private struct PlacementPartBody: Encodable {
 private struct PlacementPartCompletion: Decodable {
   let attempt: PlacementAttempt?
   let changeId: String?
+  let heldUntilTomorrow: Bool?
   let lessonsSkipped: Int
   let result: PlacementTestResult?
 }
@@ -115,7 +117,7 @@ extension OnboardingAPI {
       return .finished(
         PlacementPartEnd(
           attempt: completion.attempt, lessonsSkipped: completion.lessonsSkipped,
-          changeId: completion.changeId,
+          changeId: completion.changeId, heldUntilTomorrow: completion.heldUntilTomorrow == true,
           result: completion.result))
     case .conflict:
       return .stale

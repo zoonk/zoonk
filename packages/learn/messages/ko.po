@@ -9673,14 +9673,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "공식 문서를 다 읽기 전까지는 시험의 일반적인 구성에 맞춘 계획이에요. 문서 내용에 따라 계획을 바꿀 필요가 생기면 오늘 화면에서 변경 여부를 결정할 수 있어요."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "{number, number}번 문제"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "그만 풀고 내 답변 반영하기"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "{number, number}번 문제"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -10223,6 +10223,11 @@ msgid "About {time} left. Your answers are saved."
 msgstr "약 {time} 남았어요. 답변은 저장돼요."
 
 #: src/placement-test/placement-test-screens.tsx
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr ""
+
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "2-7vLr"
 msgid "How much do you want to check?"
 msgstr "어디까지 확인할까요?"
@@ -10230,7 +10235,7 @@ msgstr "어디까지 확인할까요?"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "LW1Em4"
 msgid "Skip what you already know"
-msgstr ""
+msgstr "이미 아는 내용 건너뛰기"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "ym8dgr"

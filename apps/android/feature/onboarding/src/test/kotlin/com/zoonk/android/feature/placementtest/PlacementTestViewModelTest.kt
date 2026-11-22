@@ -89,7 +89,7 @@ class PlacementTestViewModelTest {
                 FakeOnboardingApi().apply {
                     placement = placement(PART_ONE)
                     answered = { placement(PART_ONE, next = null) }
-                    completion = completion(attempt = PART_TWO, skipped = 6)
+                    completion = completion(attempt = PART_TWO, skipped = 6, heldUntilTomorrow = true)
                 }
             val (vm, store) = viewModel(api)
             val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
@@ -102,6 +102,7 @@ class PlacementTestViewModelTest {
             val between = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Between
             assertEquals(6, between.lessonsSkipped)
             assertEquals(2L, between.attempt.part)
+            assertTrue(between.heldUntilTomorrow)
             assertFalse(vm.failed)
         }
 
@@ -148,7 +149,7 @@ class PlacementTestViewModelTest {
                 FakeOnboardingApi().apply {
                     placement = placement(attempt = null)
                     sitting = { placement(QUICK, next = null) }
-                    completion = completion(attempt = null, skipped = 3, result = true)
+                    completion = completion(attempt = null, skipped = 3, result = true, heldUntilTomorrow = true)
                 }
             val (vm, store) = viewModel(api)
             store.placements[GOAL_ID].load()
@@ -159,7 +160,7 @@ class PlacementTestViewModelTest {
 
             assertEquals(listOf<PlacementLength?>(PlacementLength.QUICK), api.sittingLengths)
             assertEquals(
-                PlacementTestPhase.Result(PlacementLength.QUICK, 3, attemptId = ATTEMPT),
+                PlacementTestPhase.Result(PlacementLength.QUICK, 3, attemptId = ATTEMPT, heldUntilTomorrow = true),
                 vm.phase(store.placements[GOAL_ID].state.value),
             )
         }
@@ -196,13 +197,20 @@ class PlacementTestViewModelTest {
             attempt: String?,
             skipped: Int,
             result: Boolean = false,
+            heldUntilTomorrow: Boolean = false,
         ): PlacementCompletion =
             ApiJson.decodeFromString(
                 PlacementCompletion.serializer(),
                 """
                 {"areas":[],"complete":true,"knownSkillIds":[],"phases":[],"testedOutPlanItemIds":[],"focusTest":null,
                  "attempt":${attempt ?: "null"},"lessonsSkipped":$skipped,"partLessonsSkipped":$skipped,
-                 "result":${if (result) """{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":$skipped}""" else "null"}}
+                 ${if (heldUntilTomorrow && !result) """"heldUntilTomorrow":true,""" else ""}
+                 "result":${if (result) {
+                    val held = if (heldUntilTomorrow) ""","heldUntilTomorrow":true""" else ""
+                    """{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":$skipped$held}"""
+                } else {
+                    "null"
+                }}}
                 """.trimIndent(),
             )
     }

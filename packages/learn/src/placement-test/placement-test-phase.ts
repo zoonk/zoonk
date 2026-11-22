@@ -32,12 +32,14 @@ export type PlacementTestPhase =
   | {
       attempt: PlacementAttemptView;
       changeId: string | null;
+      heldUntilTomorrow?: true;
       kind: "between";
       lessonsSkipped: number | null;
     }
   | {
       attemptId: string;
       changeId: string | null;
+      heldUntilTomorrow?: true;
       kind: "result";
       length: PlacementAttemptView["length"];
       lessonsSkipped: number;
@@ -102,14 +104,18 @@ export function toFinishedPhase({
     return {
       attempt: finished.attempt,
       changeId: finished.changeId,
+      ...(finished.heldUntilTomorrow && { heldUntilTomorrow: finished.heldUntilTomorrow }),
       kind: "between",
       lessonsSkipped: finished.lessonsSkipped,
     };
   }
 
+  const heldUntilTomorrow = finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow;
+
   return {
     attemptId,
     changeId: finished.changeId,
+    ...(heldUntilTomorrow && { heldUntilTomorrow }),
     kind: "result",
     length,
     lessonsSkipped: finished.result?.lessonsSkipped ?? finished.lessonsSkipped,

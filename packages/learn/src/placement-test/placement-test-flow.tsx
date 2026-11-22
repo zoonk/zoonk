@@ -101,6 +101,7 @@ export function PlacementTestFlow({
       return (
         <PlacementBetweenParts
           failed={failed}
+          heldUntilTomorrow={phase.heldUntilTomorrow}
           lessonsSkipped={phase.lessonsSkipped}
           minutesLeft={phase.attempt.estimatedMinutes}
           onFinishForToday={test.onLeave}
@@ -114,6 +115,7 @@ export function PlacementTestFlow({
       return (
         <PlacementResult
           failed={failed}
+          heldUntilTomorrow={phase.heldUntilTomorrow}
           length={phase.length}
           lessonsSkipped={phase.lessonsSkipped}
           nextTopic={phase.nextTopic}

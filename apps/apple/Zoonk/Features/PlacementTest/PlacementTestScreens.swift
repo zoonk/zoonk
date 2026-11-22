@@ -116,6 +116,7 @@ struct PlacementBetweenParts: View {
   let minutesLeft: Int
   let pressed: FocusTestPress?
   let failed: Bool
+  var heldUntilTomorrow = false
   let onKeepGoing: () -> Void
   var undo: PlacementResultUndo?
   var onboarding = false
@@ -136,6 +137,13 @@ struct PlacementBetweenParts: View {
           comment:
             "Between the whole-course test's parts: how long the rest takes, such as \"15 min\""
         ))
+
+      if heldUntilTomorrow {
+        Text(PlacementTestCopy.retakeTomorrow)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowBackground(Color.clear)
+      }
 
       if let restored = undo?.restored {
         Section {
@@ -181,6 +189,7 @@ struct PlacementTestResultView: View {
   let nextTopic: String?
   let isSaving: Bool
   let failed: Bool
+  var heldUntilTomorrow = false
   var undo: PlacementResultUndo?
   var onboarding = false
   let onDone: () -> Void
@@ -188,12 +197,7 @@ struct PlacementTestResultView: View {
   var body: some View {
     TestOutcome(
       title: Text(PlacementTestCopy.lessonsSkipped(undo?.restored == nil ? lessonsSkipped : 0)),
-      description: undo?.restored
-        ?? (lessonsSkipped > 0
-          ? Text(PlacementTestCopy.knownLessons(lessonsSkipped))
-          : Text(
-            "Your plan stays as it is.", tableName: "Onboarding",
-            comment: "Under \"No lessons skipped\" after a test")),
+      description: undo?.restored ?? description,
       continueLabel: onboarding
         ? nil : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
       undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
@@ -228,6 +232,20 @@ struct PlacementTestResultView: View {
       }
     }
     .announcesStatus(undo?.announcement)
+  }
+
+  private var description: Text {
+    if heldUntilTomorrow {
+      return Text(PlacementTestCopy.retakeTomorrow)
+    }
+
+    if lessonsSkipped > 0 {
+      return Text(PlacementTestCopy.knownLessons(lessonsSkipped))
+    }
+
+    return Text(
+      "Your plan stays as it is.", tableName: "Onboarding",
+      comment: "Under \"No lessons skipped\" after a test")
   }
 }
 

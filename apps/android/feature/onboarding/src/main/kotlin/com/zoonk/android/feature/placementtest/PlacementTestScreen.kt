@@ -265,6 +265,7 @@ internal fun ColumnScope.PlacementTestFlow(
             BetweenParts(
                 lessonsSkipped = shown.lessonsSkipped,
                 minutesLeft = shown.attempt.estimatedMinutes.toInt(),
+                heldUntilTomorrow = shown.heldUntilTomorrow,
                 pressed = if (onboarding?.saving == true) Pressed.Main else vm.pressed,
                 failed = vm.failed,
                 onFinishForToday = onLeave,
@@ -281,6 +282,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 shown.length,
                 shown.lessonsSkipped,
                 plan.value?.plan?.nextTopic(),
+                heldUntilTomorrow = shown.heldUntilTomorrow,
                 onDone = { if (onboarding == null) onLeave() else onboarding.continueWith(checkNotNull(shown.attemptId)) },
                 undo = rememberPlacementUndo(plans, goalId, shown.changeId),
                 inSetup = onboarding != null,

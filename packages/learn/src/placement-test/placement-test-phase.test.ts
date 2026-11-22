@@ -96,6 +96,7 @@ describe(toFinishedPhase, () => {
         finished: {
           attempt: next,
           changeId: QUESTION.skillId,
+          heldUntilTomorrow: true,
           lessonsSkipped: 6,
           nextTopic: null,
           result: null,
@@ -106,6 +107,7 @@ describe(toFinishedPhase, () => {
     ).toStrictEqual({
       attempt: next,
       changeId: QUESTION.skillId,
+      heldUntilTomorrow: true,
       kind: "between",
       lessonsSkipped: 6,
     });
@@ -123,6 +125,7 @@ describe(toFinishedPhase, () => {
           result: {
             attemptId: ATTEMPT.id,
             finishedAt: "2026-11-21T12:00:00.000Z",
+            heldUntilTomorrow: true,
             lessonsSkipped: 9,
           },
           status: "finished",
@@ -132,6 +135,7 @@ describe(toFinishedPhase, () => {
     ).toStrictEqual({
       attemptId: ATTEMPT.id,
       changeId: QUESTION.skillId,
+      heldUntilTomorrow: true,
       kind: "result",
       length: "wholeCourse",
       lessonsSkipped: 9,

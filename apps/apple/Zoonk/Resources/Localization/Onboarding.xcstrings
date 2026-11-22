@@ -1257,6 +1257,9 @@
     "A test finds the lessons you can skip." : {
 
     },
+    "You undid these today. Answer again tomorrow to skip them." : {
+
+    },
     "a day" : {
       "comment" : "Under the plan's time a day, as in \"15 min a day\"",
       "localizations" : {

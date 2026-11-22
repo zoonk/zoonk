@@ -35,6 +35,11 @@ function useMinutesLeft() {
     });
 }
 
+function useRetakeTomorrow() {
+  const t = useExtracted();
+  return t("You undid these today. Answer again tomorrow to skip them.");
+}
+
 type TestChoice = PlacementLength | "testOut";
 
 export function PlacementLengthChoice({
@@ -158,6 +163,7 @@ export function PlacementLengthChoice({
 /** A whole-course test between two parts: what the last one skipped, and the rest to do. */
 export function PlacementBetweenParts({
   failed,
+  heldUntilTomorrow = false,
   lessonsSkipped,
   minutesLeft,
   onContinueOnboarding,
@@ -167,6 +173,7 @@ export function PlacementBetweenParts({
   undo,
 }: {
   failed: boolean;
+  heldUntilTomorrow?: boolean;
   /** Null when the learner came back to a test whose part closed earlier. */
   lessonsSkipped: number | null;
   minutesLeft: number;
@@ -179,6 +186,7 @@ export function PlacementBetweenParts({
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
   const left = useMinutesLeft();
+  const retakeTomorrow = useRetakeTomorrow();
   const { button, pending, undone } = useResultUndo(undo);
 
   return (
@@ -213,6 +221,7 @@ export function PlacementBetweenParts({
             : sentences.skipped(undone ? 0 : lessonsSkipped)}
         </OnboardingTitle>
         <OnboardingDescription>{left(minutesLeft)}</OnboardingDescription>
+        {heldUntilTomorrow && <OnboardingDescription>{retakeTomorrow}</OnboardingDescription>}
       </OnboardingHeading>
       {undone && <p role="status">{sentences.back(lessonsSkipped ?? 0)}</p>}
       {onContinueOnboarding && (
@@ -226,6 +235,7 @@ export function PlacementBetweenParts({
 
 export function PlacementResult({
   failed,
+  heldUntilTomorrow = false,
   length,
   lessonsSkipped,
   nextTopic,
@@ -235,6 +245,7 @@ export function PlacementResult({
   undo,
 }: {
   failed: boolean;
+  heldUntilTomorrow?: boolean;
   length: PlacementLength;
   lessonsSkipped: number;
   nextTopic: string | null;
@@ -246,6 +257,12 @@ export function PlacementResult({
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
   const { button, pending, undone } = useResultUndo(undo);
+  const retakeTomorrow = useRetakeTomorrow();
+
+  const unchangedPlan = heldUntilTomorrow ? retakeTomorrow : t("Your plan stays as it is.");
+
+  const description =
+    lessonsSkipped > 0 && !heldUntilTomorrow ? sentences.known(lessonsSkipped) : unchangedPlan;
 
   return (
     <TestOutcome
@@ -255,9 +272,7 @@ export function PlacementResult({
       failed={failed}
       lead={
         <OnboardingDescription role="status">
-          {undone && sentences.back(lessonsSkipped)}
-          {!undone &&
-            (lessonsSkipped > 0 ? sentences.known(lessonsSkipped) : t("Your plan stays as it is."))}
+          {undone ? sentences.back(lessonsSkipped) : description}
         </OnboardingDescription>
       }
       onContinue={onDone}

@@ -239,6 +239,7 @@ export async function finishPlacementPartAction({
   return {
     attempt: completion.attempt ?? null,
     changeId: completion.changeId,
+    ...(completion.heldUntilTomorrow && { heldUntilTomorrow: completion.heldUntilTomorrow }),
     lessonsSkipped: completion.lessonsSkipped,
     nextTopic: plan.status === "ready" ? findNextTopic(plan.plan) : null,
     result: completion.result ?? null,
