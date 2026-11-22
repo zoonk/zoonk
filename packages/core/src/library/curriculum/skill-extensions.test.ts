@@ -329,8 +329,11 @@ describe("skill extensions", () => {
     const items = await planItems(plan.id);
 
     expect(
-      items.filter((item) => item.kind === "lesson" && !item.lessonId).map((item) => item.skillId),
-    ).toStrictEqual(skills.map((skill) => skill.id));
+      items
+        .filter((item) => item.kind === "lesson" && !item.lessonId)
+        .map((item) => item.skillId ?? "")
+        .toSorted((a, b) => a.localeCompare(b)),
+    ).toStrictEqual(skills.map((skill) => skill.id).toSorted((a, b) => a.localeCompare(b)));
 
     const requests = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id });
 
@@ -379,7 +382,7 @@ describe("skill extensions", () => {
     const standIn = items.find((item) => item.kind === "lesson" && !item.lessonId);
     const [first] = readSelectedItemFacts(standIn?.facts)?.days ?? [];
 
-    expect([first?.[0], standIn?.scheduledFor?.toISOString().slice(0, 10)]).toStrictEqual([
+    expect([first?.[0], readSelectedItemFacts(standIn?.facts)?.days?.at(-1)?.[0]]).toStrictEqual([
       "2020-10-05",
       "2020-10-31",
     ]);

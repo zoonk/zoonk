@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "f348daa975ab5fe3",
+        "criterion": "screenPlan",
+        "observationId": "25a0dd2931114d388678d6544c8a2599767f5a6a2affa8639f150bdca2f9dfbc.first.2417c9e8-92b6-4fba-8512-2f3d2b8f7d0b.5",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0035924499999999996,
+    "id": "042cb313d4e623f037271e895e90e6a314831240f84403086d557b87408e2582",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "a3f00011901ef1ea",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "3c0d5a3afdb0cb611443adf614134972757537c64c5cc6e63cceb9f27adb13b7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "36ab87a1edd9a8f8061b5f49d55299b898ecccdc5ee6038e9f698156c8704cc0",
+          "format": "text"
+        },
+        "claim": "Lesson 2's application asks which of proposal A (administrative process for misconduct) and proposal B (budget-limit dismissal) does not depend on a court ruling, even though neither route requires a judicial sentence under the Constitution.",
+        "claimId": "f348daa975ab5fe3",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "2df26708f99c6cf844beb70278074a302b7865b4498818795ff8b193307b09f0",
+          "format": "text"
+        },
+        "input": {
+          "blob": "2fefb83f7488625d09823870008001a7a8e0f24d6ed44fad41c6cc0197cfc226",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Pedir qual não depende de sentença judicial e o que impede a outra: A pode seguir pela via administrativa; B ainda não cumpriu as medidas prévias.",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "a3f00011901ef1ea",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear in output A's explanation or anywhere else in it (its explanations discuss only custos fixos and variáveis), so the claim misquotes the output. Output B does not contain it either."
+        },
+        {
+          "claimId": "f348daa975ab5fe3",
+          "finding": "holds",
+          "reason": "The quoted application line in output B does say 'Pedir qual não depende de sentença judicial' and 'B ainda não cumpriu as medidas prévias'. Neither route needs a judicial sentence: the administrative process falls under art. 41 §1º II, and the budget-limit route under art. 169 §4 of the Constitution, which is not in the provided sources. So the question as worded does not single out A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

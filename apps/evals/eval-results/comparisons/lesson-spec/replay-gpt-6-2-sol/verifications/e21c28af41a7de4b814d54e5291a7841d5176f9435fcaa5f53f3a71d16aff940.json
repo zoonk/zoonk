@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "1846b105d31f847e",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "fb924d52187fc372acc12e4222aca7e413fa9097b685e56f9ee81277c71345f2.first.c7bf8d7c-c7d8-44ac-bd1d-3876e264fde1.3",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00312965,
+    "id": "e21c28af41a7de4b814d54e5291a7841d5176f9435fcaa5f53f3a71d16aff940",
+    "packet": [
+      {
+        "A": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "B": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "claim": "The plan never shows or compares a 4-4-2, despite the requirement for a 4-3-3 and 4-4-2 comparison in one picture labeled 1 and 2.",
+        "claimId": "1846b105d31f847e",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Whole lesson: no screen includes a 4-4-2 formation or a comparison labeled 1 and 2.",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "7d7fbe2b2e2ebac4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "1846b105d31f847e",
+          "finding": "doesn't hold",
+          "reason": "It's true that output B has no 4-4-2 screen, but the expectation asks for a 4-4-2 comparison only when the lesson compares formations, and this lesson makes no such comparison, so no requirement is broken. The 'despite the requirement' part is overstated."
+        },
+        {
+          "claimId": "7d7fbe2b2e2ebac4",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A divides by the starting wage: $3 ÷ $20 = 0.15, so 15%, not 13%. It never divides by $23, and 13% does not appear in it."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

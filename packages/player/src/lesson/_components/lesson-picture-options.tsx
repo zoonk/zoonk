@@ -1,6 +1,7 @@
 "use client";
 
 import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
 import {
@@ -9,7 +10,6 @@ import {
 } from "../../components/player-choice-scene";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { LessonPicturePending, useOptionPicture } from "./lesson-pictures";
-import { LessonRichText } from "./lesson-rich-text";
 import { LessonStepImage, PICTURE_FRAME_CLASS } from "./lesson-step-image";
 
 type PictureOption = {

@@ -23,6 +23,13 @@ export const goalSpecificityTask: Task<
   generate: classifyGoalSpecificity,
   id: "goal-specificity",
   name: "Goal specificity",
+  priorities: {
+    distribution: "private",
+    first: "latency",
+    reads: "Code decides whether a course is shared and its general form",
+    reason: "Onboarding waits on it; code checks the label",
+    waits: "A learner waits in onboarding",
+  },
   score: scoreGoalSpecificity,
   testCases: TEST_CASES,
 };

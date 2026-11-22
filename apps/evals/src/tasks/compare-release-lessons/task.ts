@@ -114,6 +114,13 @@ export const compareReleaseLessonsTask: Task<
   generate: compareReleaseLessons,
   id: "compare-release-lessons",
   name: "Compare release lessons",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code decides which lessons a product release changes",
+    reason: "Code checks the answer; several models score the same, so the cheapest",
+    waits: "Nobody: background work",
+  },
   score: scoreComparison,
   testCases: TEST_CASES,
 };

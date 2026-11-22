@@ -1,0 +1,164 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005017639999999999,
+  "failures": [],
+  "packetId": "f5c8ec0699fef3bc7f38e1520d8692b230622e14f9fe830d9a4450e1e54da2e2",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A dá mais detalhes de uma situação de enfermaria, com antibiótico, pressão de horário e participação da farmácia. B também é plausível, mas a cena é mais genérica.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "B",
+            "reason": "Em B, caminhos diferentes podem terminar com a dose suspensa ou administrada após confirmação, e as decisões têm consequências claras. Em A, as primeiras escolhas acabam levando quase todas ao mesmo percurso de correção.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois incluem colegas com papéis distintos e um assistente de IA, e oferecem formas de pedir ajuda. As respostas dos colegas ajudam a conferir ou corrigir a dose.",
+            "criterion": "team"
+          },
+          {
+            "preference": "B",
+            "reason": "As notas de B costumam apontar uma estratégia concreta e sugerir o próximo passo, inclusive com uma frase para falar com o médico. A traz algumas notas úteis, mas também uma afirmação clínica não sustentada sobre o efeito de uma dose menor.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "As contas de B são consistentes e ele orienta a suspender a administração até esclarecer a divergência. A contém uma afirmação sem base de que uma diferença de 20 mg reduz a eficácia em cerca de 7,4%.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B explica a sequência de conferir, consultar o médico e só então prosseguir, com linguagem apropriada ao nível. A usa expressões como “teto pediátrico padrão” sem explicar a base dessa afirmação.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "B",
+            "reason": "B apresenta a conta e as ações com frases mais diretas. A usa mais termos clínicos sem explicação, como “nível sérico” e “teto pediátrico padrão”.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A afirma que deixar de administrar 20 mg “reduz a eficácia do tratamento em cerca de 7,4%”. A diferença corresponde a cerca de 7,4% da dose calculada, mas não permite concluir que a eficácia clínica caia nessa proporção.",
+            "criterion": "accuracy",
+            "learnerCost": "O aprendiz pode confundir uma diferença aritmética com uma previsão do efeito clínico e levar essa falsa precisão para decisões de dose.",
+            "location": {
+              "detail": "“Arredondar a dose de antimicrobiano por conta própria reduz a eficácia do tratamento em cerca de 7,4%.”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B mantém o foco em conferir os valores, comunicar a divergência e aguardar a prescrição corrigida antes de administrar. A tem uma afirmação clínica sem suporte sobre a redução da eficácia de uma dose menor."
+        },
+        "pairId": "321021b7-9972-433d-884f-653642587b25"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois textos são idênticos e descrevem a mesma decisão de preço em uma loja fictícia.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois têm escolhas que levam a preços e consequências diferentes, incluindo uma oferta que fica abaixo da margem mínima; são o mesmo texto.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois apresentam as mesmas funções de preços e salão e permitem pedir à IA que confira as contas.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "As mesmas notas explicam o que foi bem feito ou o que corrigir, com orientações específicas e respeitosas.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "As contas e os valores em reais são consistentes nos dois textos; eles são idênticos.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois textos usam exemplos concretos e explicam as bases do aumento, do desconto e da margem de forma adequada ao nível iniciante.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois usam linguagem cotidiana e mostram as etapas com valores do produto; são idênticos.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os textos são idênticos e ambos oferecem uma situação de loja com cálculos consistentes, decisões com consequências e explicações acessíveis."
+        },
+        "pairId": "b6f82f2f-6918-48ea-93cd-1634fd2281fe"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois textos são idênticos e descrevem a mesma decisão de preço em uma loja fictícia.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois têm escolhas que levam a preços e consequências diferentes, incluindo uma oferta que fica abaixo da margem mínima; são o mesmo texto.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois apresentam as mesmas funções de preços e salão e permitem pedir à IA que confira as contas.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "As mesmas notas explicam o que foi bem feito ou o que corrigir, com orientações específicas e respeitosas.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "As contas e os valores em reais são consistentes nos dois textos; eles são idênticos.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois textos usam exemplos concretos e explicam as bases do aumento, do desconto e da margem de forma adequada ao nível iniciante.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois usam linguagem cotidiana e mostram as etapas com valores do produto; são idênticos.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os textos são idênticos e ambos oferecem uma situação de loja com cálculos consistentes, decisões com consequências e explicações acessíveis."
+        },
+        "pairId": "d0df4330-9b18-4d3b-a6ec-1abf7446b743"
+      }
+    ]
+  }
+}

@@ -52,6 +52,7 @@ describe("only the control that sent a request spins", () => {
       today: {
         progress: null,
         session: {
+          blocks: [],
           extraTime: {
             available: true,
             lessons: [
@@ -60,6 +61,7 @@ describe("only the control that sent a request spins", () => {
             ],
             minutes: 5,
           },
+          nextPosition: null,
           state: "done",
         },
       },

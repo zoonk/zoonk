@@ -160,22 +160,9 @@ private struct CodeTracerCanvas: View {
       variables
 
       GroupBox {
-        let lines = CodeHighlight.lines(of: fields.code, language: fields.language.highlight)
-        let current =
-          step >= 0 && fields.trace.indices.contains(step) ? fields.trace[step].line : nil
-
-        ActivityCodeBlock {
-          ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
-            CodeLine(
-              number: index + 1, digits: String(lines.count).count,
-              tone: current == index + 1 ? .current : .plain
-            ) {
-              Text(line)
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(current == index + 1 ? .isSelected : [])
-          }
-        }
+        CodeListing(
+          code: fields.code, language: fields.language.rawValue,
+          current: step >= 0 && fields.trace.indices.contains(step) ? fields.trace[step].line : nil)
       } label: {
         controls
       }

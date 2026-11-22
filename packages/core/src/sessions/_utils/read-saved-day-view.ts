@@ -1,5 +1,5 @@
-import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
+import "server-only";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
 import { readLessonStates } from "../../learner/facts/lesson-states";
@@ -8,6 +8,7 @@ import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
+import { getNextBlock } from "../day-blocks";
 import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
@@ -16,7 +17,6 @@ import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { type DayBlockInput, toDayBlockView } from "./day-block-view";
 import { inDayOrder } from "./day-order";
-import { getNextDayBlock } from "./day-view-fields";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
 import { planSavedMockReview } from "./saved-mock-review";
@@ -136,7 +136,7 @@ export async function readSavedDayView({
     }),
   );
 
-  const next = getNextDayBlock(blocks);
+  const next = getNextBlock(blocks);
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
@@ -175,7 +175,7 @@ export async function readSavedDayView({
       return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
     }),
     nextPosition: next?.position ?? null,
-    sessionBar: getSessionBar(blocks),
+    sessionBar: getSessionBar(refill.blocks),
     status: "unstarted",
   });
 }

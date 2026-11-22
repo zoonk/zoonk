@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "ba00f0b36da172a4",
+        "criterion": "screenPlan",
+        "observationId": "61cec216f2746773073b769edffce2377e902c61bcd88d37c0f126a1df81c81d.first.ffde6430-c21e-4d9f-912f-aebe4064b059.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0035328499999999997,
+    "id": "d3f15123a4503296046149913171212c4baba4a99a5a6efb906399d8665f4066",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "442a3d0e1caefb86",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "3c0d5a3afdb0cb611443adf614134972757537c64c5cc6e63cceb9f27adb13b7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "36ab87a1edd9a8f8061b5f49d55299b898ecccdc5ee6038e9f698156c8704cc0",
+          "format": "text"
+        },
+        "claim": "A lição de aquisição inclui um guess sobre completar três anos de exercício, mas nenhum check testa diretamente se três anos sem aprovação na avaliação especial por comissão bastam para adquirir estabilidade.",
+        "claimId": "ba00f0b36da172a4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "2df26708f99c6cf844beb70278074a302b7865b4498818795ff8b193307b09f0",
+          "format": "text"
+        },
+        "input": {
+          "blob": "2fefb83f7488625d09823870008001a7a8e0f24d6ed44fad41c6cc0197cfc226",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Na lição de aquisição da estabilidade, o guess contrasta o tempo sozinho com a avaliação; o check pergunta sobre um servidor que tem apenas dois anos de exercício apesar de avaliação favorável.",
+          "kind": "whole"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "442a3d0e1caefb86",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: the guess answers \"O valor inteiro\" for a month without production, and the explanation says the monthly rent \"continua devido mesmo sem fazer nenhum bolo\". Output B has the same text, so the claim is false of both and not only of the named output."
+        },
+        {
+          "claimId": "ba00f0b36da172a4",
+          "finding": "holds for both",
+          "reason": "Both outputs have a guess about Lorena who completed three years, contrasting \"O tempo sozinho já garante\" with the need for commission evaluation. Neither has a check on three years without approval; the checks use two years, with favorable evaluation in B and about 2 years 10 months with approval in A. The claim is true of B and equally true of A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

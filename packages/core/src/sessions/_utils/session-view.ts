@@ -2,13 +2,14 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type studyBlockSchema } from "../block-view-contract";
+import { getNextBlock, isDayBlock } from "../day-blocks";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
 import { toDayBlockView } from "./day-block-view";
 import { inDayOrder } from "./day-order";
-import { type DayViewFieldsInput, getNextDayBlock, toDayViewFields } from "./day-view-fields";
+import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -106,10 +107,10 @@ export type SessionWeek = Pick<StudyWeek, "days" | "nextStudyDate">;
 /** For a session whose goal was deleted, and for summaries, which show no week. */
 export const EMPTY_WEEK: SessionWeek = { days: [], nextStudyDate: null };
 
-export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">[]) {
+export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status" | "payload">[]) {
   return {
-    completed: blocks.filter((block) => block.status === "completed").length,
-    total: blocks.filter((block) => block.status !== "skipped").length,
+    completed: blocks.filter((block) => isDayBlock(block) && block.status === "completed").length,
+    total: blocks.filter((block) => isDayBlock(block) && block.status !== "skipped").length,
   };
 }
 
@@ -123,16 +124,17 @@ export function toStudySessionView({
   session: StudySessionRow;
 }): StudySessionView {
   const { session } = input;
-  const next = getNextDayBlock(blocks);
   const preparing = new Set(blocks.flatMap((block) => (block.preparing ? [block.position] : [])));
 
-  return withDayState({
-    ...toDayViewFields({ ...input, preparing, sessionBar: getSessionBar(session.blocks) }),
-    blocks,
-    id: session.id,
-    missions: input.missions,
-    nextBlockId: next?.id ?? null,
-    nextPosition: next?.position ?? null,
-    status: session.status,
-  });
+  return withDayState(
+    {
+      ...toDayViewFields({ ...input, preparing, sessionBar: getSessionBar(session.blocks) }),
+      blocks,
+      id: session.id,
+      missions: input.missions,
+      nextBlockId: getNextBlock(blocks)?.id ?? null,
+      status: session.status,
+    },
+    session.endedAt,
+  );
 }

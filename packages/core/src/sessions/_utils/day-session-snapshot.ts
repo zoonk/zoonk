@@ -184,7 +184,6 @@ function planRestore({
             (block.status === "completed" || block.completedAt !== null))
         );
       }),
-    since,
     unskipped: blocks.flatMap((block) => {
       const shown = before.get(block.id);
 
@@ -238,7 +237,7 @@ export async function restoreDaySession({
   snapshot: DaySessionSnapshot;
   tx: TransactionClient;
 }): Promise<boolean> {
-  const { back, dropped, leaving, progressed, since, unskipped } = planRestore({
+  const { back, dropped, leaving, progressed, unskipped } = planRestore({
     blocks: session.blocks,
     snapshot,
   });
@@ -271,10 +270,7 @@ export async function restoreDaySession({
   await tx.studySession.update({
     data: {
       planVersion: plan?.version ?? null,
-      plannedMinutes:
-        snapshot.plannedMinutes +
-        sumMinutes(since.filter((block) => readBlockPayload(block).extra)) -
-        sumMinutes(dropped),
+      plannedMinutes: snapshot.plannedMinutes - sumMinutes(dropped),
       status,
     },
     where: { id: session.id },

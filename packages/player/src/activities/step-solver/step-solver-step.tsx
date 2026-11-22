@@ -2,12 +2,12 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { NotQuiteLead } from "../../components/not-quite-lead";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { type ActivityRendererProps } from "../activity-renderer";
 

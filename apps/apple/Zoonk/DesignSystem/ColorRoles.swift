@@ -30,8 +30,11 @@ extension ShapeStyle where Self == Color {
   static var selectedTint: Color { Color(.selectedTint) }
 
   static var vizAccent: Color { Color(.vizAccent) }
+  static var vizAccentText: Color { Color(.vizAccentText) }
   static var vizHighlight: Color { Color(.vizHighlight) }
+  static var vizHighlightText: Color { Color(.vizHighlightText) }
   static var vizSecondary: Color { Color(.vizSecondary) }
+  static var vizSecondaryText: Color { Color(.vizSecondaryText) }
   static var vizSeries4: Color { Color(.vizSeries4) }
   static var vizSeries5: Color { Color(.vizSeries5) }
   static var vizSeries6: Color { Color(.vizSeries6) }

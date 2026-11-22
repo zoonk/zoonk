@@ -1,0 +1,264 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005374739999999999,
+  "failures": [],
+  "packetId": "97d65dda3ce751bc486b8123807086a342f96bee518e879178617ccabeef1500",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Ambos mantêm uma única habilidade estreitamente ligada: distinguir custos fixos de variáveis.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A começa com uma situação cotidiana e explica a ideia com exemplos claros; B abre com uma classificação técnica e uma fórmula, sem uma cena que faça a pergunta da aula.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois usam a atividade de classificação para praticar justamente a distinção ensinada e não acrescentam imagens decorativas.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A usa linguagem acessível e exemplos concretos. B coloca uma fórmula e termos técnicos já na abertura, inadequados para iniciantes.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A abertura não é uma cena: instrui o escritor a apresentar uma classificação técnica e uma fórmula, em vez de mostrar um momento cotidiano que termine na pergunta da aula.",
+            "criterion": "screenPlan",
+            "learnerCost": "A pessoa iniciante começa diante de uma abstração, sem contexto que ajude a entender por que a distinção importa.",
+            "location": {
+              "detail": "Apresente a classificação dos custos segundo seu comportamento em relação ao volume de atividade: custos fixos (CF) e custos variáveis (CV), com CT = CF + CVu · q.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A abertura inclui notação e uma fórmula, apesar de o público ser iniciante e precisar primeiro da intuição.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A fórmula pode afastar ou confundir quem ainda não conhece os conceitos de custo fixo e variável.",
+            "location": {
+              "detail": "CT = CF + CVu · q",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A ensina a distinção com situações concretas e linguagem simples; B começa com uma fórmula e definições técnicas que não servem a iniciantes."
+        },
+        "pairId": "6169be7a-6223-4bce-8e7c-3b8bc7aa2526"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam as mesmas duas habilidades, que são ligadas: reconhecer partes da flor e relacioná-las às funções.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os planos são idênticos, inclusive na sequência e nos tipos de perguntas.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões têm as mesmas imagens e atividades; ambas deixam de mostrar a anatomia exigida em detalhes e deixam uma pergunta sobre produção de pólen sem diagrama numerado.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam o mesmo português brasileiro e mantêm o mesmo escopo e nível.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As imagens planejadas não mostram e identificam todas as partes exigidas: faltam antera e filamento nos estames, e estigma e estilete no pistilo; não há o diagrama completo em corte com essas partes rotuladas.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa não consegue aprender ou localizar as partes internas exigidas usando os desenhos planejados.",
+            "location": {
+              "detail": "Explicações e atividade visual ao longo da lição; nenhuma imagem identifica antera, filamento, estigma e estilete.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A pergunta sobre onde a flor produz pólen não mostra a flor com partes numeradas e, além disso, já indica a resposta ao mandar procurar nos estames.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "O aprendiz não pratica identificar a localização na flor e pode responder apenas repetindo a pista do enunciado.",
+            "location": {
+              "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A pergunta de checagem praticamente entrega a resposta em vez de pedir que o aprendiz a descubra.",
+            "criterion": "screenPlan",
+            "learnerCost": "A pergunta pouco testa se o aprendiz consegue aplicar a ideia por conta própria.",
+            "location": {
+              "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "As imagens planejadas não mostram e identificam todas as partes exigidas: faltam antera e filamento nos estames, e estigma e estilete no pistilo; não há o diagrama completo em corte com essas partes rotuladas.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa não consegue aprender ou localizar as partes internas exigidas usando os desenhos planejados.",
+            "location": {
+              "detail": "Explicações e atividade visual ao longo da lição; nenhuma imagem identifica antera, filamento, estigma e estilete.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A pergunta sobre onde a flor produz pólen não mostra a flor com partes numeradas e, além disso, já indica a resposta ao mandar procurar nos estames.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "O aprendiz não pratica identificar a localização na flor e pode responder apenas repetindo a pista do enunciado.",
+            "location": {
+              "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A pergunta de checagem praticamente entrega a resposta em vez de pedir que o aprendiz a descubra.",
+            "criterion": "screenPlan",
+            "learnerCost": "A pergunta pouco testa se o aprendiz consegue aplicar a ideia por conta própria.",
+            "location": {
+              "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e compartilham as mesmas falhas de anatomia visual e de checagem."
+        },
+        "pairId": "8bfa6012-775c-406c-88c2-6c4a04f68229"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões se concentram em partes da flor e suas funções; B acrescenta sementes, mas esse conteúdo continua ligado à reprodução e à formação do fruto.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B tem perguntas e explicações mais concretas e variadas, enquanto A inclui uma checagem que já dá a resposta no enunciado.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B mantém um corte numerado da flor em várias telas e inclui uma atividade de identificação; A alterna entre flores e representações diferentes e deixa a pergunta sobre a localização do pólen sem diagrama numerado. Ainda assim, B não rotula todas as partes internas exigidas.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A fica mais perto do escopo pedido e evita a explicação adicional sobre óvulos e sementes. B acrescenta conteúdo reprodutivo e termos mais difíceis para iniciantes, além de inserir nomes em inglês nas instruções.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As imagens não identificam todas as partes exigidas: faltam antera e filamento nos estames, e estigma e estilete no pistilo.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa não consegue aprender ou localizar as partes internas pedidas nos desenhos planejados.",
+            "location": {
+              "detail": "Explicações e atividade visual ao longo da lição; nenhuma imagem identifica antera, filamento, estigma e estilete.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A pergunta sobre onde a flor produz pólen não mostra a flor com partes numeradas e ainda dá a resposta ao indicar os estames.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "O aprendiz não precisa identificar a parte na imagem e não pratica localizar a resposta na flor.",
+            "location": {
+              "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A checagem dá sua resposta no próprio enunciado, em vez de pedir que o aprendiz a encontre.",
+            "criterion": "screenPlan",
+            "learnerCost": "A pergunta não testa se o aprendiz consegue aplicar a ideia sozinho.",
+            "location": {
+              "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "As imagens não identificam todas as partes exigidas: faltam antera e filamento nos estames, e estigma e estilete no pistilo.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A pessoa não consegue aprender ou localizar as partes internas pedidas nos desenhos planejados.",
+            "location": {
+              "detail": "As imagens repetidas da flor em corte e a atividade de diagrama não identificam antera, filamento, estigma e estilete.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "O plano amplia a lição para a formação de sementes e células reprodutivas, conteúdo que não faz parte do escopo pedido sobre partes da flor e suas funções.",
+            "criterion": "levelAndScope",
+            "learnerCost": "O aprendiz iniciante recebe conteúdo extra e termos mais difíceis, sem necessidade para o objetivo original.",
+            "location": {
+              "detail": "Explicações sobre óvulos, sementes e células reprodutivas, além da descrição e do canDo ampliados.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "As instruções incluem nomes em inglês apesar de o plano precisar estar em português brasileiro.",
+            "criterion": "levelAndScope",
+            "learnerCost": "O escritor pode reproduzir termos em inglês numa lição destinada a leitores brasileiros.",
+            "location": {
+              "detail": "petal, sepal, stamen, pistil",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B oferece um plano mais concreto e visualmente consistente, com uma atividade de identificação melhor definida. Ainda deixa de mostrar todas as partes internas pedidas e amplia o escopo, mas A também falha nas imagens e tem uma checagem que revela a resposta."
+        },
+        "pairId": "a8b2e4d0-9ca5-4d4c-bf89-ca5c8b620ec8"
+      }
+    ]
+  }
+}

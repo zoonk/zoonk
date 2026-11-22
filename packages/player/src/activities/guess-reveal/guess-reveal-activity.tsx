@@ -3,8 +3,8 @@
 import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { ActivityGuessReveal } from "../_components/activity-guess-reveal";
 import { ActivityTip } from "../_components/activity-tip";

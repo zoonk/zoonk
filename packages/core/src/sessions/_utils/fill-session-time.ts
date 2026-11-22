@@ -15,6 +15,34 @@ import {
   isSessionReviewDay,
   toLessonBlock,
 } from "./session-lessons";
+import { holdUnwrittenTime } from "./unwritten-time";
+
+/** The minutes the day's unwritten lessons hold once the lessons before them in the plan take theirs. */
+export function getWritingMinutes({
+  input,
+  room,
+}: {
+  input: SessionBuildInput;
+  room: number;
+}): number {
+  const lessons = getNewLessons({
+    ...input,
+    lessons: [...input.lessons, ...(input.fillLessons ?? [])],
+  });
+
+  const position = (lesson: PlannedLesson) =>
+    input.planItems?.find(
+      (item) =>
+        (lesson.planItemId && item.id === lesson.planItemId) ||
+        (lesson.planItemKey && item.key === lesson.planItemKey),
+    )?.position ?? -1;
+
+  return holdUnwrittenTime({
+    lessons: lessons.map((lesson) => ({ minutes: lesson.minutes, position: position(lesson) })),
+    room,
+    unwritten: input.unwritten ?? [],
+  }).reduce((sum, hold) => sum + hold.held, 0);
+}
 
 function getPlannedSessionTotal({
   budget,
@@ -44,6 +72,7 @@ export function fillRemainingLessonTime({
   lessons,
   leading,
   produceMinutes,
+  writingMinutes,
 }: {
   available: PlannedCheckpoint[];
   blocks: PlannedBlock[];
@@ -54,6 +83,7 @@ export function fillRemainingLessonTime({
   lessons: PlannedLesson[];
   leading: PlannedCheckpoint[];
   produceMinutes: number;
+  writingMinutes: number;
 }) {
   const fixed = blocks
     .filter((block) => block.kind !== "learn" || block.payload.reinforcement)
@@ -71,10 +101,7 @@ export function fillRemainingLessonTime({
   ];
 
   const stretch = listDayStretch({
-    budget:
-      budget -
-      fixed.reduce((sum, block) => sum + block.estimatedMinutes, 0) -
-      (input.writingMinutes ?? 0),
+    budget: budget - fixed.reduce((sum, block) => sum + block.estimatedMinutes, 0) - writingMinutes,
     checkpoints: available,
     items: input.planItems ?? [],
     leading,
@@ -103,8 +130,7 @@ export function fillRemainingLessonTime({
   const sum = filled.reduce((total, block) => total + block.estimatedMinutes, 0);
   const newLessonsAllowed = canAddSessionLessons({ reviewDay: isSessionReviewDay(input) });
 
-  const holdsMore =
-    newLessonsAllowed && ((input.writingMinutes ?? 0) > 0 || candidates.length > fill.length);
+  const holdsMore = newLessonsAllowed && (writingMinutes > 0 || candidates.length > fill.length);
 
   const deliberateOverflow =
     isFullReviewDay(input) ||

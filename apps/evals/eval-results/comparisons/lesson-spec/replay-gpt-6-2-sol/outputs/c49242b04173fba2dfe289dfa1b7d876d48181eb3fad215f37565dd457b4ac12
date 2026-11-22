@@ -1,0 +1,122 @@
+{
+  "lessons": [
+    {
+      "canDo": "Distinguir custos fixos de variáveis para prever gastos do negócio",
+      "description": "A diferença entre custos fixos e variáveis ajuda a prever quais gastos mudam quando a produção aumenta ou diminui.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Cauê recebeu metade das encomendas de bolos neste mês, mas as contas da confeitaria não caíram pela metade. Por que alguns gastos diminuem e outros continuam?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O custo variável acompanha a quantidade produzida: mantendo a receita e os preços dos ingredientes, fazer mais bolos exige gastar mais com ingredientes.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Se a confeitaria passar um mês sem produzir, mas continuar com o imóvel alugado, quanto deverá pagar de aluguel? Opções: “O valor inteiro”, “Metade do valor” e “Nada”; resposta: “O valor inteiro”.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Custo fixo não acompanha a quantidade produzida, dentro do período e da estrutura considerados: o aluguel mensal contratado continua devido mesmo sem fazer nenhum bolo.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma oficina de costura fará menos camisetas, mantendo o tecido e os preços: o custo total do tecido usado vai diminuir, ficar igual ou aumentar? Resposta: ficar igual, porque o preço do tecido não muda; incluir “diminuir” como a resposta tentadora.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Pagar todo mês não torna um custo fixo: embalagens cobradas por unidade usada continuam sendo custo variável, mesmo com uma única cobrança mensal.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Fixo não significa congelado para sempre: um aluguel com reajuste anual continua sendo custo fixo, pois o aumento não depende de produzir mais.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "categorize",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Separar em “Fixos” e “Variáveis”: aluguel com reajuste anual e plano de internet de mensalidade única sem cobrança por uso são fixos; caixas cobradas por unidade usada no fechamento mensal e tecido consumido por camiseta são variáveis. Perguntar qual critério guiou a separação: relação com a quantidade produzida, não frequência de pagamento nem mudança de preço.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Sem produção, não há consumo de ingredientes para produzir: esse custo variável fica em zero, embora os ingredientes comprados antes possam continuar no estoque.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma confeitaria vai pausar a produção por um mês, mantendo os contratos: aluguel de R$ 900,00, internet de R$ 120,00 sem cobrança por uso e ingredientes consumidos de R$ 5,00 por bolo. Escolher quais custos ainda precisam entrar na reserva desse mês e justificar: aluguel e internet; incluir “só aluguel” e “os três” como alternativas.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Distinguir os custos que acompanham a quantidade produzida daqueles que permanecem independentemente dela no período considerado.",
+          "example": "O aluguel mensal de R$ 900,00 é fixo; os ingredientes consumidos de R$ 5,00 por bolo são variáveis.",
+          "hard": false,
+          "name": "Distinguir custos fixos de variáveis",
+          "topic": "Custos fixos e variáveis",
+          "useCase": "Prever quais gastos do pequeno negócio diminuem quando a produção cai e quais continuam exigindo dinheiro."
+        }
+      ],
+      "title": "Custos fixos e variáveis"
+    }
+  ]
+}

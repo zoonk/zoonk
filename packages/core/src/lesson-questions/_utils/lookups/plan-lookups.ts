@@ -2,14 +2,15 @@ import {
   type GoalTutorLookUpRequest,
   type GoalTutorLookUpResult,
 } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
-import "server-only";
 import { type PlanLookUp } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup-plan";
+import "server-only";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { WEEKLY_CHALLENGE_KINDS } from "../../../checkpoints/_utils/load-weekly-challenge";
 import { isPastPlusOnlyMock } from "../../../checkpoints/plus-only-mock";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
+import { projectItemOnDay } from "../../../plans/_utils/item-day";
 import {
   type SkillAreas,
   getSkillAreas,
@@ -92,7 +93,7 @@ function toScheduledItem({
   return {
     kind: item.kind,
     link: toChallengeLink(item),
-    minutes: minutes.get(item.id) ?? null,
+    minutes: item.minutes ?? minutes.get(item.id) ?? null,
     ...toPlusMark({ kind: item.kind, requiresPlus: plan.access.mocksRequirePlus }),
     status: item.status,
     title: writing ? getWritingTitle({ item, skillAreas }) : item.titleSnapshot,
@@ -129,18 +130,12 @@ async function lookUpSchedule({
   const [plan, saved] = await Promise.all([
     readPlanView(goal.id),
     prisma.plan.findUnique({
-      select: {
-        graph: true,
-        items: {
-          orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
-          where: { scheduledFor: { gte: from, lte: to } },
-        },
-      },
+      select: { graph: true, items: { orderBy: [{ scheduledFor: "asc" }, { position: "asc" }] } },
       where: { goalId: goal.id },
     }),
   ]);
 
-  if (!plan || !saved || saved.items.length === 0) {
+  if (!plan || !saved) {
     return { status: "notFound", what };
   }
 
@@ -158,14 +153,29 @@ async function lookUpSchedule({
     }),
   };
 
-  const days = Map.groupBy(saved.items, (item) =>
-    item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
-  );
+  const timeZone = getAnswerTimeZone({ goal });
+
+  const days = Array.from({ length: SCHEDULE_DAYS }, (_, offset) => {
+    const date = addDays(from, offset);
+
+    return {
+      date: toIsoDate(date),
+      items: saved.items.flatMap((item) => {
+        const projected = projectItemOnDay({ date, item, timeZone });
+
+        return projected
+          ? [{ ...item, minutes: projected.minutes ?? null, scheduledFor: projected.scheduledFor }]
+          : [];
+      }),
+    };
+  }).filter((day) => day.items.length > 0);
+
+  if (days.length === 0) {
+    return { status: "notFound", what };
+  }
 
   return {
-    days: [...days].flatMap(([date, items]) =>
-      date ? [toScheduleDay({ ...sources, date, items })] : [],
-    ),
+    days: days.map(({ date, items }) => toScheduleDay({ ...sources, date, items })),
     from: toIsoDate(from),
     status: "found",
     to: toIsoDate(to),

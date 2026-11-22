@@ -1,4 +1,5 @@
 import { type WrittenItemSet } from "@zoonk/ai/tasks/items/write-set";
+import { type writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { WRITE_LISTENING_SET_SCORE_CATEGORIES } from "../write-listening-set/score-categories";
@@ -50,13 +51,14 @@ function itemOutput(items: WrittenItemSet["questions"]): string {
 
 function listeningOutput(items: WrittenItemSet["questions"]): string {
   return JSON.stringify({
+    problems: [],
     set: {
       questions: items.map((question) => ({ ...question, context: null })),
       speakers: [{ accent: "American English", gender: "female", name: "Librarian" }],
       title: "Sunday hours",
       turns: [{ speaker: "Librarian", text: PASSAGE }],
     },
-  });
+  } satisfies Awaited<ReturnType<typeof writeListeningSet>>["data"]);
 }
 
 describe.each([

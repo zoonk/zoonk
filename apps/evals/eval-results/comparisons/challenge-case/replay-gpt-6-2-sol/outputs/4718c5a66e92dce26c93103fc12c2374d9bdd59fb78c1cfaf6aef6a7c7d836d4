@@ -1,0 +1,461 @@
+{
+  "deadline": "Get the counts to {{floor}} before the staging cart leaves at 2:00 p.m.",
+  "endings": [
+    {
+      "id": "ready",
+      "outcome": "The scheduled cart takes 2 kits to East and 3 kits to West. The edit note shows which MAPLE repeat came out of the copy and where the bay fixes came from."
+    },
+    {
+      "id": "partial-run",
+      "outcome": "The scheduled cart takes 2 kits to East and 2 kits to West. The 1 kit for BIRCH stays at packing until dispatch confirms its bay."
+    },
+    {
+      "id": "loading-rework",
+      "outcome": "The total matches at 5 kits, but the order slips show West needs 1 more kit and East has 1 extra kit. The crew moves a kit to West before the cart leaves."
+    },
+    {
+      "id": "late-run",
+      "outcome": "The fresh export arrives at 2:10 p.m. with 2 kits for East and 3 kits for West. The scheduled cart has already left, so the batch goes on a separate trip."
+    }
+  ],
+  "meters": [
+    {
+      "id": "risk",
+      "label": "Risk of a wrong bay count",
+      "start": 58,
+      "goodWhen": "low"
+    },
+    {
+      "id": "capacity",
+      "label": "Crew capacity for other work",
+      "start": 65,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Turn the pickup export into **a kit count for each bay**. Keep the original file and leave a note that explains any changes.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -14
+            },
+            {
+              "meter": "capacity",
+              "change": -9
+            }
+          ],
+          "id": "flag-rows",
+          "next": "clean",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "You checked the order IDs as well as the bay labels. That caught the repeated MAPLE even though East looked fine on both rows.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "MAPLE shows up in rows A and C with East on both. Row B has E for PINE, and row D has no bay for BIRCH."
+            },
+            {
+              "from": "dispatch",
+              "text": "I took a minute to check those flags against the file. Both MAPLE labels look fine, but counting both rows would give that order an extra kit."
+            }
+          ],
+          "text": "Ask {{ai}} to flag row letters for repeated IDs, blank bays, and odd labels without editing.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -7
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "scan-bays",
+          "next": "clean",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "Scanning the bay column quickly surfaced PINE’s short label and BIRCH’s blank.",
+              "example": null
+            },
+            {
+              "skill": "spot",
+              "kind": "improve",
+              "text": "Scan the order IDs for repeats too. A bay label can look right even when the same order appears again.",
+              "example": "Mark any ID that appears on more than one row, even if its bay label looks right."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "floor",
+              "text": "Quick scan: PINE says E, and BIRCH has no bay. That tells me which labels need attention, but not whether any order is listed twice."
+            }
+          ],
+          "text": "Scan the bay column and mark the rows with blanks or labels the crew might not recognize.",
+          "timeJump": null
+        }
+      ],
+      "id": "spot",
+      "messages": [
+        {
+          "from": "dispatch",
+          "text": "The pickup file is up. Please leave that original on its own so I have something to check against."
+        },
+        {
+          "from": "floor",
+          "text": "Can you run down the bay column? I need labels my crew can read at a glance while we load."
+        }
+      ],
+      "prompt": "How do you check the pickup file?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -11
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "stage-known",
+          "next": "partial-run",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You used the bay key to confirm PINE’s label and made BIRCH’s hold visible instead of guessing its bay.",
+              "example": null
+            },
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "To get BIRCH onto the cart too, ask dispatch to check that order’s record and note where the bay came from.",
+              "example": "“Can you check which bay is on BIRCH’s order record? I’ll note it in the copy.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "dispatch",
+              "text": "The bay key says E is short for East. For the cleaned copy, let’s keep the original untouched, write down that label fix, and leave BIRCH’s bay blank."
+            },
+            {
+              "from": "floor",
+              "text": "I can stage East: 2 kits and West: 2 kits. I’ve marked 1 kit for BIRCH as unassigned at packing so we know to follow up."
+            }
+          ],
+          "text": "Use the dispatch bay key, count each order ID once, and send the tally with the unlabeled kit on hold.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "resolve-and-log",
+          "next": "verify",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You kept the original, counted MAPLE once, and logged what backed up the bay fixes: the bay key for PINE and BIRCH’s own order record for West.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "dispatch",
+              "text": "I paused my other work to check: the bay key says E is short for East, and BIRCH’s order record says West. The next export is due at 2:10 p.m."
+            },
+            {
+              "from": "ai",
+              "text": "The cleaned copy, with the fixes kept separate from the original, has 5 distinct orders: MAPLE and PINE under East, BIRCH, CEDAR, and ASH under West. My draft says East: 3 kits; West: 2 kits."
+            },
+            {
+              "from": "floor",
+              "text": "I’ll hold off on staging for now. Send me the edit note with the counts so I can see where the changes came from."
+            }
+          ],
+          "text": "Confirm the label and missing bay with {{dispatch}}, log the fixes in a copy, and ask {{ai}} for counts.",
+          "timeJump": null
+        }
+      ],
+      "id": "clean",
+      "messages": [
+        {
+          "from": "dispatch",
+          "text": "I can look up what E stands for and pull the order record for BIRCH. I don’t need to send a whole new file for that."
+        },
+        {
+          "from": "floor",
+          "text": "I can start staging the kits with a confirmed bay. Anything without a spot can stay at packing."
+        }
+      ],
+      "prompt": "What do you do with the flagged rows?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 15
+            },
+            {
+              "meter": "capacity",
+              "change": 4
+            }
+          ],
+          "id": "match-total",
+          "next": "loading-rework",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "improve",
+              "text": "The total matched even though East had West’s kit. Count each bay from the saved rows and compare it with the matching line in the draft.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "East: 3 kits plus West: 2 kits adds up to 5 kits. That matches the 5 distinct orders in the copy."
+            },
+            {
+              "from": "floor",
+              "text": "I got the counts in time to load, but the order slips show West needs 1 more kit and East has 1 extra kit. We moved a kit to West."
+            }
+          ],
+          "text": "Add up the draft counts, compare the sum with the order count, and send the draft if they match.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -8
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "wait-export",
+          "next": "late-run",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "You got both bay counts from a single dispatch file, so the crew could trace them without looking up the edits.",
+              "example": null
+            },
+            {
+              "skill": "verify",
+              "kind": "improve",
+              "text": "Dispatch had already confirmed the bay fixes. Recounting the saved rows by bay would have tested the draft’s split without waiting past the cart’s departure.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "dispatch",
+              "text": "The fresh file’s in. Both counts are in that file, so there’s no edit note to look up."
+            },
+            {
+              "from": "floor",
+              "text": "I’ve got the counts now, but the cart’s already gone."
+            }
+          ],
+          "text": "Wait for the fresh dispatch file, count the kits for each bay from it, and send those counts.",
+          "timeJump": {
+            "label": "At 2:10 p.m.",
+            "panel": {
+              "title": "Fresh dispatch export",
+              "metrics": [
+                {
+                  "label": "Arrived",
+                  "value": "2:10 p.m.",
+                  "note": null
+                },
+                {
+                  "label": "East",
+                  "value": "2 kits",
+                  "note": null
+                },
+                {
+                  "label": "West",
+                  "value": "3 kits",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -8
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "recount-bays",
+          "next": "ready",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "You counted from the saved rows and checked the draft bay by bay. That caught the swapped counts while the crew still had time to load.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "floor",
+              "text": "Got the recount: East: 2 kits; West: 3 kits. The draft had those counts the other way around, but I’ve still got time to load."
+            },
+            {
+              "from": "dispatch",
+              "text": "Thanks for sending the note with the counts. I’ll keep it with the copy so we can trace the fixes later."
+            }
+          ],
+          "text": "Count each bay from the saved rows, fix the draft where it differs, and send it with the edit note.",
+          "timeJump": null
+        }
+      ],
+      "id": "verify",
+      "messages": [
+        {
+          "from": "floor",
+          "text": "Can we check that the draft adds up to 5 kits and get loading? The cart leaves at 2:00 p.m."
+        },
+        {
+          "from": "dispatch",
+          "text": "The fresh file is due at 2:10 p.m. If we use that, the crew only needs to look at one file."
+        }
+      ],
+      "prompt": "How do you decide which counts to send to the floor?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Pickup export",
+      "metrics": [
+        {
+          "label": "Row A",
+          "value": "MAPLE · East",
+          "note": null
+        },
+        {
+          "label": "Row B",
+          "value": "PINE · E",
+          "note": null
+        },
+        {
+          "label": "Row C",
+          "value": "MAPLE · East",
+          "note": null
+        },
+        {
+          "label": "Row D",
+          "value": "BIRCH · (blank)",
+          "note": null
+        }
+      ],
+      "note": "Each order ID needs 1 kit and belongs to a single pickup bay."
+    },
+    {
+      "title": "Pickup export, continued",
+      "metrics": [
+        {
+          "label": "Row E",
+          "value": "CEDAR · West",
+          "note": null
+        },
+        {
+          "label": "Row F",
+          "value": "ASH · West",
+          "note": null
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Afternoon at Larkspur Kit Works",
+  "skills": [
+    {
+      "id": "spot",
+      "name": "Spot messy entries",
+      "practice": "Mark a repeated ID, a blank cell, and a label that doesn't match the rest in a short export."
+    },
+    {
+      "id": "clean",
+      "name": "Clean data safely",
+      "practice": "Fix a row in a copy of a sheet and write what you changed and what source you used."
+    },
+    {
+      "id": "verify",
+      "name": "Check an AI result",
+      "practice": "Recount a short list by category and compare each count with the matching line in an AI summary."
+    }
+  ],
+  "startNodeId": "spot",
+  "summary": [
+    "Check the IDs you count for repeats, even when their labels look right.",
+    "Use a record for the specific order to fill in a missing value.",
+    "Check a draft count by group because a matching total can hide errors in the split."
+  ],
+  "team": [
+    {
+      "id": "dispatch",
+      "role": "Dispatch coordinator",
+      "expertise": "She maintains the order records and bay labels and wants any changes to be easy to trace.",
+      "ai": false
+    },
+    {
+      "id": "floor",
+      "role": "Floor lead",
+      "expertise": "He loads the staging cart and would rather get a usable partial count than miss the scheduled run.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Can flag unusual rows and draft kit totals; you decide what changes are justified and what to release.",
+      "ai": true
+    }
+  ],
+  "title": "How many kits go to each pickup bay?"
+}

@@ -1,0 +1,17 @@
+{
+  "caseId": "en-ux-goals-spot-ai",
+  "challenger": {
+    "costUsd": 0.048093500000000004,
+    "durationMs": 22666.776375,
+    "hash": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
+    "userPromptHash": "96b1efeb6742eb0fd90cc35cc8034e38600d504745a4fb5d405a7731b0b05613"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.156783,
+    "durationMs": 33086.367959,
+    "hash": "de9179ec49b3ce87d921766705ebd3072b3c7c8668d88d346b27d642b8b15cc2",
+    "userPromptHash": "96b1efeb6742eb0fd90cc35cc8034e38600d504745a4fb5d405a7731b0b05613"
+  },
+  "run": 1
+}

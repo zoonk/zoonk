@@ -2,59 +2,29 @@
   "modelId": "bytedance/seedream-5.0-pro",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "All parts are present and well placed: the title in a central cloud, the central idea at the top, four colored numbered branches with sentences, bullets and sketches, the comparison table and the summary. Connecting lines are clear and nothing overlaps or is cut off. The score is held down because the text does not match the structure: 'electricidade' recurs, and 'telado' and 'Instalaação prirdial' are misspelled.",
-          "score": 5,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a friendly hand-drawn study sheet with marker lettering, one soft color per branch, colored-pencil sketches and a clean white background. Minor flaw: the branch 1 sketch duplicates the panel look.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "The text is large, high-contrast and well spaced. The garbled words ('prirdial', 'Instalaação') slow reading, and the meter and inverter sketches carry faint marks that look like text.",
-          "score": 7,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'electricidade', 'élétricas', 'telado', 'lâmbada', 'instalaçāo', 'prirdial' words of the map's text the picture leaves out: 'eletricidade', 'elétricas', 'lâmpada', 'instalação', 'predial', 'telhado'",
-          "score": 1,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3695,
-          "outputTokens": 1106,
-          "reasoningTokens": 422
+          "inputTokens": 4040,
+          "outputTokens": 1182,
+          "reasoningTokens": 455
         }
       },
       "steps": [
         {
-          "conclusion": "Several words are misspelled compared with the scene. 'eletricidade' is written 'electricidade' in the title cloud, the central idea, branch 2, branch 4 and the comparison table. In branch 4, 'telhado' appears as 'telado'. In branch 3, 'Instalação predial' appears as 'Instalaação prirdial'.",
+          "conclusion": "Many words are misspelled against the scene text. The title reads 'DA LUZ À ELECTRICIDADE' instead of 'Da luz à eletricidade'. 'electricidade' replaces 'eletricidade' in the central idea, the branch 2 sentence, the branch 4 bullet and the comparison bullet. Branch 4 shows 'telado' instead of 'telhado'. Branch 3 shows the garbled 'Instalaação prirdial' instead of 'Instalação predial'. The labels 'Ideia central' and 'Resumo' were also added without being in the scene.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The branch 1 sketch shows a small panel rather than a single solar cell, so it looks too much like branch 2. The meter dial and the inverter box carry tiny scribbled marks that look like text. The unrequested labels 'Ideia central' and 'Resumo:' were added.",
+          "conclusion": "The paper has a faint off-white, textured tint rather than pure white. The meter and inverter sketches carry tiny dial marks that read like numbers. The branch 1 'solar cell' sketch looks like a small panel, much like the branch 2 panel sketch.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Letter every word exactly as the scene gives it, using Brazilian spelling throughout. Draw a single distinct cell for branch 1, and keep the sketches free of marks.",
+          "conclusion": "Correct every spelling to the exact Brazilian Portuguese text and use a pure white background. Draw branch 1 as a single cell, distinct from the panel, and remove the marks from the sketches.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -70,13 +40,19 @@
               {
                 "drawing": "a solar cell",
                 "explanation": "A luz solar movimenta cargas elétricas e gera corrente contínua.",
-                "points": ["A luz põe cargas em movimento", "Corrente elétrica acende uma lâmpada"],
+                "points": [
+                  "A luz põe cargas em movimento",
+                  "Corrente elétrica acende uma lâmpada"
+                ],
                 "title": "Células fotovoltaicas"
               },
               {
                 "drawing": "a solar panel",
                 "explanation": "Reúne células para gerarem eletricidade juntas, sob proteção.",
-                "points": ["Reúne células como ladrilhos", "Protege contra chuva e sujeira"],
+                "points": [
+                  "Reúne células como ladrilhos",
+                  "Protege contra chuva e sujeira"
+                ],
                 "title": "Painel fotovoltaico"
               },
               {
@@ -91,7 +67,10 @@
               {
                 "drawing": "an electric meter",
                 "explanation": "Sustentam, conduzem, protegem e medem a energia do sistema.",
-                "points": ["Estrutura fixa painéis no telhado", "Medidor registra a eletricidade"],
+                "points": [
+                  "Estrutura fixa painéis no telhado",
+                  "Medidor registra a eletricidade"
+                ],
                 "title": "Componentes do sistema"
               }
             ],
@@ -100,11 +79,17 @@
               "columns": [
                 {
                   "name": "Painel fotovoltaico",
-                  "points": ["Recebe luz do sol", "Fornece eletricidade"]
+                  "points": [
+                    "Recebe luz do sol",
+                    "Fornece eletricidade"
+                  ]
                 },
                 {
                   "name": "Aquecedor solar",
-                  "points": ["Recebe calor do sol", "Entrega água quente"]
+                  "points": [
+                    "Recebe calor do sol",
+                    "Entrega água quente"
+                  ]
                 }
               ],
               "title": "Uso da energia solar"
@@ -113,62 +98,69 @@
             "title": "Da luz à eletricidade"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "Every part is present and well placed: the title cloud in the center, the central idea at the top, five numbered colored branches each with a sentence, bullets and a sketch, then the comparison table and the summary. Lines connect the branches to the center and nothing overlaps or is cut off. Several branch texts are garbled or wrong, though, so the content does not match the structure.",
-          "score": 7,
+          "reasoning": "All parts are present and in place: the title cloud, central idea, four numbered branches with sentences, bullets and sketches, the comparison and the summary. Lines join the branches to the center and branch order is fine. However, the title and several branch, bullet and comparison texts are misspelled or garbled, so the learner reviews wrong content.",
+          "score": 4,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a friendly hand-drawn study sheet with marker lettering, one soft color per branch and colored-pencil sketches. The paper is very slightly off-white with a faint texture.",
-          "score": 8,
+          "reasoning": "This is a friendly hand-drawn mind map with one soft color per branch and colored-pencil sketches. The paper looks very slightly off-white and textured.",
+          "score": 7,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "The text is large and has good contrast. However, many misspelled or garbled words ('variávles', 'revélla', 'crese', 'quelquer', 'inical', 'uso, uso') hurt clean reading. One sketch carries small letter-like marks.",
-          "score": 5,
+          "reasoning": "The lettering is clear and large enough to read at full size. However, multiple words are misspelled or garbled ('electricidade', 'telado', 'Instalaação prirdial'), and the sketches carry small numeric marks.",
+          "score": 3,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'positiva', 'variávles', 'inical' words of the map's text the picture leaves out: 'variáveis', 'positivo', 'cima'",
-          "score": 4,
+          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'electricidade', 'élétricas', 'telado', 'lâmbada', 'instalaçāo', 'prirdial' words of the map's text the picture leaves out: 'eletricidade', 'elétricas', 'lâmpada', 'instalação', 'predial', 'telhado'",
+          "score": 1,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3825,
-          "outputTokens": 1119,
-          "reasoningTokens": 397
+          "inputTokens": 4170,
+          "outputTokens": 908,
+          "reasoningTokens": 226
         }
       },
       "steps": [
         {
-          "conclusion": "The lettering has many errors. The title reads 'variávles' instead of 'variáveis', and the central idea has 'revélla' instead of 'revela'. Branch 3 has 'crese' and 'par unidade' instead of 'cresce' and 'por unidade'. Its rate point uses a dash where '÷' belongs, which makes the formula mathematically wrong. Branch 4 has 'quelquer', 'inical' and a duplicated 'uso, uso'. Branch 5 says 'a positiva abre para mais' instead of 'a positivo abre para cima', which changes the meaning.",
+          "conclusion": "Many words are wrong or garbled. The title reads \"variávles\" instead of \"variáveis\". The central idea has \"revélla\". Branch 3 has \"crese\" and \"par unidade\", and its \"÷\" became a dash. Branch 4 has \"quelquer\", \"Assinatura R$ 12,00· uso, uso R$ 3,00\" and \"inical\". Branch 5 reads \"a positiva abre para mais\" instead of \"a positivo abre para cima\". The summary swaps the semicolon for a comma. The unrequested labels \"Ideia central\" and \"Resumo:\" were added. The paper is a slightly off-white, textured sheet rather than pure white.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Branch 1 has a stray dot before 'a saída'. The summary's semicolon became a comma. The box sketch in branch 2 carries small marks that look like letters. The background is slightly off-white and faintly textured.",
+          "conclusion": "The box sketch for branch 2 carries small marks that look like symbols. The bullet text is fairly small. The branch numbering runs around the map rather than in an obvious reading order.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Correct every word exactly against the structure, restoring the '÷' symbol and the parabola point. Keep the sketches free of marks.",
+          "conclusion": "Correct every misspelled word and the altered bullet. Remove the extra labels. Use a pure white background. Keep the sketches free of marks.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -184,13 +176,19 @@
               {
                 "drawing": "a vending machine",
                 "explanation": "A entrada é o que você informa; a saída é a resposta.",
-                "points": ["Tamanho do lanche leva ao preço", "Cada entrada, uma única saída"],
+                "points": [
+                  "Tamanho do lanche leva ao preço",
+                  "Cada entrada, uma única saída"
+                ],
                 "title": "Entrada e saída"
               },
               {
                 "drawing": "a box with an arrow in and an arrow out",
                 "explanation": "f(x) indica a saída quando a entrada é x.",
-                "points": ["f(4) é a saída para entrada 4", "Coloque a entrada no lugar de x"],
+                "points": [
+                  "f(4) é a saída para entrada 4",
+                  "Coloque a entrada no lugar de x"
+                ],
                 "title": "Notação f(x)"
               },
               {
@@ -205,13 +203,19 @@
               {
                 "drawing": "a membership card",
                 "explanation": "O preço quando a entrada é zero, antes de qualquer uso.",
-                "points": ["Assinatura R$ 12,00; uso R$ 3,00", "O valor inicial muda o preço"],
+                "points": [
+                  "Assinatura R$ 12,00; uso R$ 3,00",
+                  "O valor inicial muda o preço"
+                ],
                 "title": "Valor inicial"
               },
               {
                 "drawing": "an arc of water from a fountain",
                 "explanation": "Uma altura que sobe e desce muda de forma curva.",
-                "points": ["x² na regra: função quadrática", "a positivo abre para cima"],
+                "points": [
+                  "x² na regra: função quadrática",
+                  "a positivo abre para cima"
+                ],
                 "title": "Parábola"
               }
             ],
@@ -220,11 +224,17 @@
               "columns": [
                 {
                   "name": "Função linear",
-                  "points": ["Mesma mudança a cada unidade", "Gráfico é uma reta"]
+                  "points": [
+                    "Mesma mudança a cada unidade",
+                    "Gráfico é uma reta"
+                  ]
                 },
                 {
                   "name": "Função quadrática",
-                  "points": ["Mudança não é sempre igual", "Gráfico é uma parábola"]
+                  "points": [
+                    "Mudança não é sempre igual",
+                    "Gráfico é uma parábola"
+                  ]
                 }
               ],
               "title": "Variação constante ou quadrática"
@@ -233,62 +243,69 @@
             "title": "Funções e relações entre variáveis"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "Every required part is present and placed well: the title cloud, the central idea at the top, four numbered colored branches with their sentences, bullets and sketches, the comparison table and the summary at the bottom. Lines join the branches to the center, and nothing overlaps or is cut off. The score is lowered by many misspelled words and the extra 'Ideia central' and 'Resumo' labels.",
+          "reasoning": "All parts are present and placed well, with lines joining each branch to the center and sketches that match their branches. However, the branch 5 bullet says something different from the scene (\"a positiva abre para mais\"), and the branch 4 bullet is garbled, so the content of two branches is wrong.",
           "score": 6,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a friendly hand-drawn study sheet: one soft color per branch, colored-pencil sketches and a clean light background. The background is very slightly off-white rather than pure white.",
-          "score": 9,
+          "reasoning": "It is a pleasant hand-drawn mind map with one color per branch, but the paper is off-white and textured rather than pure white, which caps this category.",
+          "score": 5,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "The text is high-contrast and mostly readable, but the branch text is small. Numerous garbled spellings ('descodbir', 'ovivir', 'Inllua tantativas', 'suposiíões', 'episódido', 'desoccessários', 'acceso', 'Trés') hurt reading. The sketches carry no words.",
-          "score": 5,
+          "reasoning": "The lettering is mostly readable, but many words are misspelled or garbled, including the title. The bullet text is small, and the box sketch carries marks.",
+          "score": 4,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (30 texts).",
-          "score": 10,
+          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'positiva', 'variávles', 'inical' words of the map's text the picture leaves out: 'variáveis', 'positivo', 'cima'",
+          "score": 1,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3780,
-          "outputTokens": 1322,
-          "reasoningTokens": 607
+          "inputTokens": 4125,
+          "outputTokens": 1006,
+          "reasoningTokens": 306
         }
       },
       "steps": [
         {
-          "conclusion": "Many words are misspelled, which a learner would notice in a study sheet: 'descodbir' for 'descobrir', 'do ovivir' for 'de ouvir', 'Inllua tantativas' for 'Inclua tentativas', 'suposiíões' for 'suposições', 'episódido' for 'episódio', 'desoccessários' for 'desnecessários', 'acceso' for 'acesso', and 'Trés' for 'Três'.",
+          "conclusion": "Many words are garbled or misspelled: 'descodbir' (descobrir), 'do ovivir' (de ouvir), 'conclui-la' (concluí-la), 'Inllua tantativas' (Inclua tentativas), 'suposiões' (suposições), 'episódido' (episódio), 'desoccessários' (desnecessários), 'acceso' (acesso) and 'Trés' (Três). The labels 'Ideia central' and 'Resumo:' are unrequested extra text. The paper also looks faintly grey and textured rather than pure white.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The unrequested labels 'Ideia central' and 'Resumo:' and the extra lightbulb sketch were added. The bullet and explanation text is fairly small next to the large title cloud.",
+          "conclusion": "An extra lightbulb sketch beside the summary was not requested. The bullet text in the dashed boxes is fairly small. The badge sketch is drawn as a clip-on badge, which is acceptable but slightly busy.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Correct every misspelled word to match the structure exactly. Drop the extra labels and the lightbulb. Enlarge the branch text a little by reclaiming space around the central cloud.",
+          "conclusion": "Re-letter every word exactly as the structure gives it. Drop the extra labels. Use a pure white background. Enlarge the bullet text slightly.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -313,19 +330,28 @@
               {
                 "drawing": "a blank name badge",
                 "explanation": "Convide quem viveu a tarefa, mesmo sem concluí-la.",
-                "points": ["Critério é o que a pessoa viveu", "Inclua tentativas interrompidas"],
+                "points": [
+                  "Critério é o que a pessoa viveu",
+                  "Inclua tentativas interrompidas"
+                ],
                 "title": "Participantes"
               },
               {
                 "drawing": "a trail of footprints",
                 "explanation": "Um caminho curto de perguntas abertas, sem suposições.",
-                "points": ["Comece por um episódio real", "Evite presumir dificuldade ou etapa"],
+                "points": [
+                  "Comece por um episódio real",
+                  "Evite presumir dificuldade ou etapa"
+                ],
                 "title": "Roteiro de entrevista"
               },
               {
                 "drawing": "a locked filing cabinet",
                 "explanation": "Anote ações e falas com permissão e sem dados desnecessários.",
-                "points": ["Use código no lugar do nome", "Combine acesso e data de exclusão"],
+                "points": [
+                  "Use código no lugar do nome",
+                  "Combine acesso e data de exclusão"
+                ],
                 "title": "Registro responsável"
               }
             ],
@@ -334,15 +360,24 @@
               "columns": [
                 {
                   "name": "Observação",
-                  "points": ["Mostra o que a pessoa faz", "Vê a ação na rotina"]
+                  "points": [
+                    "Mostra o que a pessoa faz",
+                    "Vê a ação na rotina"
+                  ]
                 },
                 {
                   "name": "Entrevista",
-                  "points": ["Ouve a versão da pessoa", "Não substitui ver a ação"]
+                  "points": [
+                    "Ouve a versão da pessoa",
+                    "Não substitui ver a ação"
+                  ]
                 },
                 {
                   "name": "Teste de usabilidade",
-                  "points": ["Verifica se conclui a tarefa", "Mostra onde avança ou trava"]
+                  "points": [
+                    "Verifica se conclui a tarefa",
+                    "Mostra onde avança ou trava"
+                  ]
                 }
               ],
               "title": "Três métodos de pesquisa"
@@ -351,62 +386,69 @@
             "title": "Planejamento de pesquisa com usuários"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "All parts are present and well placed. The title sits in the central cloud, the central idea is at the top, and six numbered colored branches each have their sentence, bullets and sketch, all joined by lines. The comparison table and summary sit at the bottom. Nothing is cut off; the only crowding is a minor near-touch between two sketches and text.",
-          "score": 9,
+          "reasoning": "All parts are present and in order: the title cloud, the central idea, four numbered branches with sentences, bullets and fitting sketches, the comparison table and the summary. Lines join the branches to the center and nothing overlaps or is cut off. Many content words are garbled, which weakens what the learner reviews.",
+          "score": 5,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "The sheet has a clean white background, one soft color per branch, neat marker-style lettering and small colored-pencil sketches. It is friendly and uncluttered.",
-          "score": 9,
+          "reasoning": "The image has a friendly hand-drawn marker look with one color per branch and colored-pencil sketches. The paper appears faintly grey and textured rather than pure white, which caps this category.",
+          "score": 5,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "The headings are clear. The body text is legible but small, thin and light gray, so contrast is low. The sketches carry no words. The summary punctuation deviates from the specified wording.",
-          "score": 7,
+          "reasoning": "The lettering is large and has good contrast, and the sketches carry no words. Numerous misspelled and garbled words ('descodbir', 'ovivir', 'Inllua tantativas', 'desoccessários') make parts hard to read correctly.",
+          "score": 4,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (35 texts).",
-          "score": 10,
+          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'investige', 'ouvivir', 'inllua', 'suposiões', 'desaccessários' words of the map's text the picture leaves out: 'investigue', 'ouvir', 'concluí', 'inclua', 'suposições', 'desnecessários'",
+          "score": 1,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3865,
-          "outputTokens": 878,
-          "reasoningTokens": 262
+          "inputTokens": 4210,
+          "outputTokens": 1089,
+          "reasoningTokens": 433
         }
       },
       "steps": [
         {
-          "conclusion": "The summary line replaces the required semicolon with a comma (\"...identify cells, a scale bar shows...\"), which creates a comma splice and departs from the specified wording. The labels \"Central idea\" and \"Summary:\" were also added beyond the structure, though they read as section headers.",
+          "conclusion": "Unrequested words appear: a 'Central idea' heading above the central idea and a 'Summary:' label before the summary line. The summary's semicolon is also changed to a comma ('identify cells, a scale bar'), so the line is not lettered exactly as given.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "The bullet and explanation text is thin, small and light gray, which weakens contrast. The leaf sketch crowds the end of \"Chloroplasts capture sunlight for sugar\", and the bullet box \"Lysosomes break down worn-out parts\" runs right up to the recycling bin.",
+          "conclusion": "Several pieces of text sit too close to other elements. 'Lysosomes break down worn-out parts' presses against the right edge of its bullet box. The line '...capture sunlight for sugar' runs into the leaf sketch. Some bullet text is fairly small and light for its size. The paper also reads as very faintly grey rather than crisp pure white.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Restore the semicolon in the summary. Darken and enlarge the body lettering slightly. Give the leaf and bin sketches a little more clearance from the text boxes.",
+          "conclusion": "Remove the 'Central idea' and 'Summary:' labels and restore the semicolon in the summary. Add padding inside the bullet boxes and keep sketches clear of the text. Darken the small bullet lettering for stronger contrast.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -422,7 +464,10 @@
               {
                 "drawing": "a round cell",
                 "explanation": "The smallest unit that can carry out life's work.",
-                "points": ["A pond organism is one cell", "You are made of many cells"],
+                "points": [
+                  "A pond organism is one cell",
+                  "You are made of many cells"
+                ],
                 "title": "Cell as unit"
               },
               {
@@ -437,7 +482,10 @@
               {
                 "drawing": "a small conveyor belt",
                 "explanation": "Parts that build proteins and prepare them for delivery.",
-                "points": ["The nucleus keeps the recipe", "Ribosomes build; Golgi packages"],
+                "points": [
+                  "The nucleus keeps the recipe",
+                  "Ribosomes build; Golgi packages"
+                ],
                 "title": "Protein builders"
               },
               {
@@ -473,9 +521,18 @@
               "columns": [
                 {
                   "name": "Bacterial cell",
-                  "points": ["Prokaryotic cell", "DNA sits in cytoplasm"]
+                  "points": [
+                    "Prokaryotic cell",
+                    "DNA sits in cytoplasm"
+                  ]
                 },
-                { "name": "Animal cell", "points": ["Eukaryotic cell", "DNA sits in a nucleus"] }
+                {
+                  "name": "Animal cell",
+                  "points": [
+                    "Eukaryotic cell",
+                    "DNA sits in a nucleus"
+                  ]
+                }
               ],
               "title": "Bacterial and animal cells"
             },
@@ -483,7 +540,44 @@
             "title": "Cell structure and work"
           }
         }
-      }
+      },
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "Every part is present and in order: the title cloud, the central idea, six numbered branches each with its sentence, bullets and a sketch that matches it, the comparison table and the summary. Lines join each branch to the center. However, the unrequested 'Central idea' and 'Summary:' labels and the altered summary punctuation are text errors.",
+          "score": 7,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "This is a friendly hand-drawn study sheet with one soft color per branch and small colored-pencil sketches, and there is no frame. The background looks near-white, possibly with a very faint grey tint.",
+          "score": 8,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "The text is mostly readable and the sketches carry no words. Some bullet text is small and light, one bullet is crammed against its box edge, and another touches the leaf sketch.",
+          "score": 7,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "Every word matches the structure.",
+          "score": 10,
+          "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
+        }
+      ]
     }
   ],
   "taskId": "mind-map-image"

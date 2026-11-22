@@ -5,12 +5,11 @@ export const DAY_STATES = ["ahead", "done", "prepare", "rest", "underway", "wait
 export type DayState = (typeof DAY_STATES)[number];
 
 type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPosition"> & {
+  endedAt?: Date | null;
   lessonsComing?: boolean;
   lessonsToPrepare?: boolean;
   blocks: readonly (Pick<StudyBlockView, "position" | "status"> & { preparing?: boolean })[];
 };
-
-type DayStatus = { state: DayState };
 
 /**
  * A day with no blocks is a rest day, one still being outlined (`waiting`), one whose lessons wait
@@ -18,42 +17,49 @@ type DayStatus = { state: DayState };
  * session. A started day whose time holds lessons not written yet waits only while someone is
  * outlining them; otherwise it asks, so it never waits on nobody.
  */
-function getDayState(day: DayStateInput): DayStatus {
+function getDayState(day: DayStateInput): DayState {
+  if (day.endedAt) {
+    return "done";
+  }
+
   const empty = day.blocks.length === 0;
   const studyDay = empty && day.minutes.dailyGoal > 0;
   const hasNext = day.blocks.some((block) => block.position === day.nextPosition);
 
   if (studyDay && day.emptyDay === "lessonsComing") {
-    return { state: "waiting" };
+    return "waiting";
   }
 
   if (studyDay && day.emptyDay === "lessonsToPrepare") {
-    return { state: "prepare" };
+    return "prepare";
   }
 
   if (hasNext) {
-    return { state: "underway" };
+    return "underway";
   }
 
   if (day.blocks.some((block) => block.status === "pending" && block.preparing)) {
-    return { state: "waiting" };
+    return "waiting";
   }
 
   if (day.lessonsComing) {
-    return { state: "waiting" };
+    return "waiting";
   }
 
   if (day.lessonsToPrepare) {
-    return { state: "prepare" };
+    return "prepare";
   }
 
   if (studyDay) {
-    return { state: "ahead" };
+    return "ahead";
   }
 
-  return { state: empty && day.minutes.dailyGoal === 0 ? "rest" : "done" };
+  return empty && day.minutes.dailyGoal === 0 ? "rest" : "done";
 }
 
-export function withDayState<Day extends DayStateInput>(day: Day): Day & DayStatus {
-  return { ...day, ...getDayState(day) };
+export function withDayState<Day extends DayStateInput>(
+  day: Day,
+  endedAt?: Date | null,
+): Day & { state: DayState } {
+  return { ...day, state: getDayState({ ...day, endedAt: endedAt ?? day.endedAt }) };
 }

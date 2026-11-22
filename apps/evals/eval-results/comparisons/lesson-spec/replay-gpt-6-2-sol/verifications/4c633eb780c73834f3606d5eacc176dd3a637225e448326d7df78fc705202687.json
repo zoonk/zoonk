@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "881b82af0d319166",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "fb924d52187fc372acc12e4222aca7e413fa9097b685e56f9ee81277c71345f2.first.c7bf8d7c-c7d8-44ac-bd1d-3876e264fde1.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00288665,
+    "id": "4c633eb780c73834f3606d5eacc176dd3a637225e448326d7df78fc705202687",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "29aab059e90c985e",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "B": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "claim": "The first explanation’s planned picture shows shaded bands with counts but explicitly has no individual player markers, so it does not show the players’ positions in the formation.",
+        "claimId": "881b82af0d319166",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "A top-down soccer field with the bottom goal labeled “Own goal,” the top goal labeled “Opponent's goal,” an upward attacking arrow, and three shaded horizontal bands labeled 4, 3 and 3 from bottom to top; no individual player markers.",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "29aab059e90c985e",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen asks the learner to check Malik's pay (original $4,000, cut to $2,000, raised to $3,000) and find the overall change, which is 25% lower. It never mentions compound annual growth rate or any compounding over years."
+        },
+        {
+          "claimId": "881b82af0d319166",
+          "finding": "holds",
+          "reason": "Output A's first explanation planned picture is three shaded bands labeled 4, 3 and 3 with explicitly no individual player markers, so it does not show player positions. Output B's first explanation instead shows ten individual dots, so the problem is not shared."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

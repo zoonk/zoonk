@@ -5,13 +5,13 @@ import { type getActivityRoundedAnswer } from "@zoonk/core/library/activities/an
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { VerdictLabel } from "@zoonk/learn/verdict-label";
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { countDecimalPlaces } from "@zoonk/utils/rounded-answer";
 import { useExtracted } from "next-intl";
 import { use } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   HyperdriveStreak,
   LessonResultNote,

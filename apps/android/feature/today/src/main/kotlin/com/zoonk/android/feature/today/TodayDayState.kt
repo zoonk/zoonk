@@ -30,8 +30,9 @@ val DayView.queue: TodayQueue
         )
     }
 
+/** The day's time left past [shown]'s rows; extra work isn't in the day's time. */
 internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
-    (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
+    (minutes.left - shown.filter { !it.isFinished && !it.extra }.sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
 
 internal val DayView.heldMinutes: Double
     get() = if (lessonsComing || lessonsToPrepare) minutesAfter(steps) else 0.0

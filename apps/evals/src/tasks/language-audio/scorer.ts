@@ -8,13 +8,13 @@ import {
 } from "@zoonk/ai/tasks/language/check-word-pronunciation";
 import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { matchSpokenAnswer } from "@zoonk/core/library/language/spoken-answer-match";
+import { listeningVerdict } from "./listening-verdict";
 import { type LanguageAudioInput, type LookAlike } from "./test-cases";
 
 export type LanguageAudioOutput = { audioPath: string; costUsd: number | null; durationMs: number };
 
 const PRONUNCIATION_MODEL = "google/gemini-3.8-flash";
-const MAX_SCORE = 10;
-const MIN_SCORE = 1;
+const TRANSCRIPTION_MODEL = "openai/gpt-transcribe";
 
 async function judgeLookAlike({
   audio,
@@ -57,7 +57,7 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
   const audio = await readEvalAudio(audioPath);
 
   const [transcript, pronunciation, lookAlike] = await Promise.all([
-    transcribeSpeech({ audio, language: input.language, model: "openai/gpt-transcribe" }),
+    transcribeSpeech({ audio, language: input.language, model: TRANSCRIPTION_MODEL }),
     assessPronunciation({
       audio,
       expectedText: input.text,
@@ -87,26 +87,41 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
     .filter((word) => word.status !== "correct")
     .map((word) => word.text);
 
-  const flagged = new Set([...misheard, ...unclear]);
-  const total = match.words.length;
-  const heardRight = total === 0 ? 0 : (total - Math.min(flagged.size, total)) / total;
-  const soundsNative = !lookAlike || lookAlike.verdict.soundsNative;
-  const wordsScore = Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
-  const score = soundsNative ? wordsScore : MIN_SCORE;
-  const readRight = flagged.size === 0 && total > 0 && soundsNative;
+  const { readRight, score, status, unconfirmed } = listeningVerdict({
+    flags: [
+      { model: TRANSCRIPTION_MODEL, words: misheard },
+      { model: PRONUNCIATION_MODEL, words: unclear },
+      {
+        model: PRONUNCIATION_MODEL,
+        words: lookAlike?.verdict.soundsNative === false ? [input.text] : [],
+      },
+    ],
+    language: input.language,
+    wordCount: match.words.length,
+  });
+
+  const listening = `${status}: eval-results/audio/${audioPath}.${
+    unconfirmed.length > 0 ? ` Single-provider flags: ${unconfirmed.join(", ")}.` : ""
+  }`;
 
   const lookAlikeConclusion = lookAlike
     ? ` As a look-alike it sounded ${lookAlike.verdict.soundsNative ? "native" : "english"} (called ${lookAlike.verdict.pronunciation}, /${lookAlike.verdict.heard}/).`
     : "";
 
-  const conclusion = `Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}).${lookAlikeConclusion}`;
+  const conclusion = `${listening} Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}).${lookAlikeConclusion}`;
+
+  const judge = {
+    modelId: PRONUNCIATION_MODEL,
+    usage: addUsage(toTokenUsage(pronunciation.usage), lookAlike?.usage),
+  };
+
+  if (score === null) {
+    return { judge, listeningReview: { audioPath, conclusion }, score, steps: [] };
+  }
 
   return {
     ...createFixedScore({ conclusion, score }),
     classification: { expected: "read right", predicted: readRight ? "read right" : "misread" },
-    judge: {
-      modelId: PRONUNCIATION_MODEL,
-      usage: addUsage(toTokenUsage(pronunciation.usage), lookAlike?.usage),
-    },
+    judge,
   };
 };

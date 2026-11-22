@@ -2,7 +2,12 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import {
+  arePhaseChallengesRequired,
+  withoutLockedPhaseChallenges,
+} from "../../checkpoints/_utils/phase-challenge-access";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import {
@@ -12,6 +17,7 @@ import {
   getWeekDays,
   toStudiedMinutes,
 } from "../../sessions/daily-goal";
+import { DAY_BLOCK_WHERE } from "../../sessions/day-block-where";
 import { type WeeklyStudyTime } from "../weekly-study-time-contract";
 
 export type StudyWeek = {
@@ -47,7 +53,7 @@ async function loadWeekFacts({
 }) {
   const where = { goalId: goal.id, localDate: { gte: from, lt: until }, userId: goal.userId };
 
-  const [days, sessions, settings] = await Promise.all([
+  const [days, sessions, settings, blocks, required] = await Promise.all([
     // Session rows repeat their blocks' seconds and answers.
     prisma.learningEvent.groupBy({
       _sum: { correctAnswers: true, incorrectAnswers: true, seconds: true },
@@ -55,13 +61,23 @@ async function loadWeekFacts({
       where: { ...where, kind: { not: "session" } },
     }),
     prisma.studySession.findMany({
-      select: { endedAt: true, localDate: true, plannedMinutes: true },
+      select: { endedAt: true, id: true, localDate: true, plannedMinutes: true },
       where,
     }),
     planSettings === undefined ? loadSavedSettings(goal.id) : Promise.resolve(planSettings),
+    prisma.studySessionBlock.findMany({
+      select: { kind: true, payload: true, sessionId: true, status: true },
+      where: { ...DAY_BLOCK_WHERE, session: where, status: { not: "skipped" } },
+    }),
+    arePhaseChallengesRequired({
+      goalKind: goal.kind,
+      readSubscription: readActiveSubscription,
+      userId: goal.userId,
+    }),
   ]);
 
-  return { days, sessions, settings };
+  const counts = withoutLockedPhaseChallenges({ blocks, phaseChallengesRequired: required });
+  return { counts, days, sessions, settings };
 }
 
 function buildStudyWeek({
@@ -105,6 +121,15 @@ function buildStudyWeek({
   const studied = days.map((day) => ({ date: day.localDate, seconds: day._sum.seconds ?? 0 }));
 
   const week = getWeekDays({
+    counts: sessions.map((session) => {
+      const counts = facts.counts.filter((count) => count.sessionId === session.id);
+
+      return {
+        completed: counts.filter((count) => count.status === "completed").length,
+        date: session.localDate,
+        total: counts.length,
+      };
+    }),
     days: studied,
     finishedDates,
     getPlanDay: (date) => ({

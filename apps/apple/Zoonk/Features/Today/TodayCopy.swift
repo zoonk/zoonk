@@ -7,7 +7,6 @@ import Foundation
 protocol NamedBlock {
   var areas: [String] { get }
   var challenge: BlockChallenge? { get }
-  var extra: Bool { get }
   var fullReview: Bool { get }
   /// A review's questions come in capsules, except the first week's warm-up, which is placement's
   /// questions only.
@@ -98,38 +97,24 @@ extension NamedBlock {
     }
 
     if let topic = topics.first {
-      return extra
-        ? String(
-          localized: "bonusPracticeTopic", defaultValue: "Bonus practice: \(topic)", table: "Today",
-          comment:
-            "Extra practice the learner added. {topic} names the topic most of its questions are on, like \"Calculating discounts\"."
-        )
-        : String(
-          localized: "practiceTopic", defaultValue: "Practice: \(topic)", table: "Today",
-          comment:
-            "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\"."
-        )
+      return String(
+        localized: "practiceTopic", defaultValue: "Practice: \(topic)", table: "Today",
+        comment:
+          "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\"."
+      )
     }
 
     if !areas.isEmpty {
       let areas = areas.formatted(.list(type: .and))
 
-      return extra
-        ? String(
-          localized: "Bonus practice: \(areas)", table: "Today",
-          comment:
-            "Extra practice the learner added, and the one or two subjects most of its questions are on, like \"Math and Languages\""
-        )
-        : String(
-          localized: "Practice: \(areas)", table: "Today",
-          comment:
-            "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\""
-        )
+      return String(
+        localized: "Practice: \(areas)", table: "Today",
+        comment:
+          "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\""
+      )
     }
 
-    return extra
-      ? String(localized: "Bonus practice", table: "Today", comment: "An extra practice block")
-      : String(localized: "Mixed practice", table: "Today", comment: "A practice block")
+    return String(localized: "Mixed practice", table: "Today", comment: "A practice block")
   }
 }
 

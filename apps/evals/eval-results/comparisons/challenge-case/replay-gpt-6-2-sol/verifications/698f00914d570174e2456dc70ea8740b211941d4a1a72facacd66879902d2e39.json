@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-porcentagem-field-retail",
+        "claimId": "d53405bb9de72850",
+        "criterion": "depth",
+        "observationId": "a9597dcd118a0d275af621afaaa62caa724bbe249b013ec6d4c8fbf58abb9fa9.first.b9ebf4f1-98ee-4d97-a820-e21923a9cd20.0",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0035331499999999997,
+    "id": "698f00914d570174e2456dc70ea8740b211941d4a1a72facacd66879902d2e39",
+    "packet": [
+      {
+        "A": {
+          "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
+          "format": "text"
+        },
+        "B": {
+          "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
+          "format": "text"
+        },
+        "claim": "The analyst calls the p-value the probability that the new dressing works no better than the old one.",
+        "claimId": "0897cf0186abdabc",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "bc31519bfbea5609ee563404cbd97fb6704f7e77dc8cffbec98e063ab1c9db92",
+          "format": "text"
+        },
+        "claim": "A resposta usa uma fórmula e expressões técnicas sem explicá-las, embora o caso seja para iniciantes.",
+        "claimId": "d53405bb9de72850",
+        "criterion": "depth",
+        "expectations": {
+          "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
+          "format": "text"
+        },
+        "input": {
+          "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
+          "format": "json"
+        },
+        "location": {
+          "detail": "“Trata-se de variações percentuais compostas: o fator multiplicativo resultante é (1 + i₁)(1 − i₂) = 1,2 × 0,8 = 0,96, logo não há reversibilidade simétrica entre acréscimo e decréscimo.”",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "0897cf0186abdabc",
+          "finding": "doesn't hold",
+          "reason": "The claim is about the dressing trial and an analyst's p-value, but the named output A is the handoff training case and contains neither. The dressing content is in output B, so the problem is not in the named output. The correct reading of a p-value is also not the 'works no better' probability the claim describes."
+        },
+        {
+          "claimId": "d53405bb9de72850",
+          "finding": "doesn't hold",
+          "reason": "The quoted text, with the formula (1 + i₁)(1 − i₂) = 1,2 × 0,8 = 0,96, does not appear in output B, so the claim misquotes it. B explains its terms: it shows each step of the successive percentages with values (R$ 250,00 and R$ 200,00), and it explains margin as the amount left after cost divided by the sale price. The claim that a formula is used without explanation is therefore not supported."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

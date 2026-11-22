@@ -92,7 +92,8 @@ struct TodaySessionSection: View {
 
     ForEach(Array(upcoming.prefix(shownUpcoming)), id: \.position) { block in
       if next == nil {
-        BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+        BlockRow(
+          block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
       } else {
         blockButton(block, isNext: false)
       }
@@ -126,7 +127,8 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position), failed: failed == .block(block.position))
+      tagsExtra: true, isBusy: busy == .block(block.position),
+      failed: failed == .block(block.position))
 
     if block.waitReason == nil && !block.preparing {
       Button {
@@ -144,7 +146,8 @@ struct TodaySessionSection: View {
 
   @ViewBuilder
   private func doneRow(_ block: StudyBlock) -> some View {
-    let row = BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
+    let row = BlockRow(
+      block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
 
     if let lessonId = block.lessonToReopen {
       Button {
@@ -260,7 +263,16 @@ struct TodaySessionAction: View {
       ) {
         open(next, true)
       }
+    // A finished day stays done while its extras play.
     case .done:
+      if let next = session.nextBlock {
+        return TodayMainAction(
+          kind: .continueSession, isBusy: busy == .main, failed: failed == .main
+        ) {
+          open(next, true)
+        }
+      }
+
       guard let sessionID = session.id else {
         return nil
       }
@@ -407,6 +419,8 @@ struct BlockRow: View {
   let view: TodayView?
   let isNext: Bool
   let countsTowardMission: Bool
+  /// Today's list tags work past the day's own, which never counts toward it.
+  var tagsExtra = false
   var isBusy = false
   var failed = false
   var showsDetail = false
@@ -458,8 +472,14 @@ struct BlockRow: View {
 
   @ViewBuilder
   private var trailing: some View {
-    if !block.isFinished {
+    if tagsExtra && block.extra && block.isFinished {
+      extraTag
+    } else if !block.isFinished {
       HStack(spacing: 6) {
+        if tagsExtra && block.extra {
+          extraTag
+        }
+
         if countsTowardMission {
           Image(systemName: "checklist")
             .foregroundStyle(.brain)
@@ -476,6 +496,15 @@ struct BlockRow: View {
       }
       .coveredBySpinner(isBusy, alignment: .trailing)
     }
+  }
+
+  private var extraTag: some View {
+    Text(
+      "Extra", tableName: "Today",
+      comment:
+        "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress."
+    )
+    .chip()
   }
 
   @ViewBuilder
@@ -700,7 +729,9 @@ struct TodayDayStatus: View {
         : String(
           localized: "You're done for today.", table: "Today", comment: "Day done")
       clause = nil
-      link = keepLearning ? session.id.map { .summary(sessionID: $0) } : nil
+      // The summary has its link here while the main action is another.
+      link =
+        keepLearning || session.nextBlock != nil ? session.id.map { .summary(sessionID: $0) } : nil
     case .waiting where listHolds, .prepare where listHolds:
       return nil
     case .waiting:

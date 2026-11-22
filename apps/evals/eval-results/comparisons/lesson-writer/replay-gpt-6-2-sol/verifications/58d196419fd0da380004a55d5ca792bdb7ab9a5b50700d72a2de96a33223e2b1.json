@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-particle-in-a-box-advanced",
+        "claimId": "a4337075b5a9573c",
+        "criterion": "clarity",
+        "observationId": "076a0872b2091427522eaad32e3a22b591effe35337654ca21b0f85d200ad713.first.c8326f0b-df95-4161-b118-41ba6ec6d81e.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0037281499999999995,
+    "id": "58d196419fd0da380004a55d5ca792bdb7ab9a5b50700d72a2de96a33223e2b1",
+    "packet": [
+      {
+        "A": {
+          "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c0460e6737b7b59cbc992e2edac270e8780f697d45e221275bce7ad07c66286b",
+          "format": "text"
+        },
+        "claim": "Screen 2 introduces the mathematical notation (ψ, 0 < x < L, ψ = 0, ψ(0) = ψ(L) = 0) before comparing the setup to a guitar string pinned at both ends at the end of the screen, breaking the expectation that standing waves on a string come before the notation.",
+        "claimId": "a4337075b5a9573c",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screen 2",
+          "kind": "range"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "ec97139b82202c64",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "a4337075b5a9573c",
+          "finding": "holds for both",
+          "reason": "Screen 2 of both outputs introduces ψ, 0 < x < L, ψ = 0 outside the box, and ψ(0) = ψ(L) = 0 before the guitar-string comparison at the end of the screen. The shared pattern is the problem the claim describes, so it doesn't favor either output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

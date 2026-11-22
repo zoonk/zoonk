@@ -1,0 +1,106 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "You run some Python code to print 1 through 5, but it only prints 1, 2, 3, and 4. Where did 5 go?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Start here, stop before",
+      "text": "`range(1, 5)` starts at 1 and counts up by ones to 4. The stop number is never included, so use 6 as the stop to reach 5. When you count up by ones, subtract the start from the stop to find how many numbers you get.",
+      "exampleLineIdea": "Choosing the start and stop numbers to print every page number in a section.",
+      "image": {
+        "prompt": "A clean horizontal number line with evenly spaced ticks labeled 1 through 6. Highlight the ticks at 1, 2, 3, and 4 with filled blue dots. Put a hollow blue circle at 5 to show the stop is excluded and leave 6 unhighlighted. No other text.",
+        "alt": "On a number line from 1 to 6, 1 through 4 have filled dots, 5 has a hollow circle, and 6 is unmarked."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": null,
+      "question": "What numbers does `for n in range(2, 6): print(n)` print?",
+      "options": [
+        {
+          "text": "2, 3, 4, 5",
+          "isCorrect": true,
+          "reason": "You start at 2 and leave out the stop number, 6. That makes 5 the last number printed.",
+          "picture": null
+        },
+        {
+          "text": "2, 3, 4, 5, 6",
+          "isCorrect": false,
+          "reason": "You start at 2, but 6 tells Python where to stop, not what to print last.",
+          "picture": null
+        },
+        {
+          "text": "3, 4, 5",
+          "isCorrect": false,
+          "reason": "Only the stop is left out. The first number printed is 2, not 3.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "The stop number is never included, so use 6 as the stop to reach 5."
+      }
+    },
+    {
+      "kind": "activity",
+      "template": "codeRunner",
+      "content": "{\"prompt\":\"Fix the first line so the code prints 1 through 5, one number per line.\",\"fields\":{\"language\":\"python\",\"starterCode\":\"for n in range(1, 5):\\n    print(n)\",\"editableLines\":[1],\"solution\":\"for n in range(1, 6):\\n    print(n)\",\"expectedOutput\":\"1\\n2\\n3\\n4\\n5\\n\",\"mistakes\":[{\"output\":\"0\\n1\\n2\\n3\\n4\\n\",\"feedback\":\"Starting at 0 adds an extra number at the beginning. Keep the start at 1 and change the stop to 6.\"},{\"output\":\"1\\n2\\n3\\n4\\n\",\"feedback\":\"A stop of 5 leaves 5 out. Set the stop to 6 so the code prints 5 before it stops.\"}]},\"check\":{\"kind\":\"interaction\",\"explanation\":\"The start of 1 gives you the first number you want. The stop of 6 leaves 6 out, so 5 is the last number printed.\"}}"
+    },
+    {
+      "kind": "check",
+      "context": "You’re coding a workout timer: `for n in range(10, 0, -1): print(n)`. The `-1` means each number is one less than the last.",
+      "question": "What’s the last number the timer prints?",
+      "options": [
+        {
+          "text": "1",
+          "isCorrect": true,
+          "reason": "The stop is left out even when you count down. With 0 as the stop, Python prints 1 and then stops.",
+          "picture": null
+        },
+        {
+          "text": "0",
+          "isCorrect": false,
+          "reason": "A timer might usually show 0, but this code uses 0 as the stop, so it never prints it.",
+          "picture": null
+        },
+        {
+          "text": "−1",
+          "isCorrect": false,
+          "reason": "The −1 tells Python to go down by one each time. It doesn't tell Python what number to end on.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "The stop number is never included, so use 6 as the stop to reach 5."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Start number",
+        "text": "`range(1, 5)` starts at 1 and counts up by ones."
+      },
+      {
+        "label": "Leave out the stop",
+        "text": "`range()` leaves out the stop number, so use 6 as the stop to reach 5 when counting up."
+      },
+      {
+        "label": "How many numbers",
+        "text": "When you count up by ones, subtract the start from the stop to find how many numbers you get."
+      }
+    ],
+    "shape": "hub"
+  }
+}

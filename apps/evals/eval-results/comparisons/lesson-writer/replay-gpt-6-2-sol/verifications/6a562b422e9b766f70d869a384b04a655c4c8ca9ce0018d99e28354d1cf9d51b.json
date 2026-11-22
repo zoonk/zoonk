@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "ee5c2d25712e1b50",
+        "criterion": "accuracy",
+        "observationId": "75077874121734f81383f44d148fe5aa8598870663da78027bd9e0f23daf31f1.first.a84478dd-c25e-4964-a1e9-15dcc0794451.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00257005,
+    "id": "6a562b422e9b766f70d869a384b04a655c4c8ca9ce0018d99e28354d1cf9d51b",
+    "packet": [
+      {
+        "A": {
+          "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
+          "format": "text"
+        },
+        "B": {
+          "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
+          "format": "text"
+        },
+        "claim": "A tela 3 usa a fórmula E = mc² para explicar por que o elétron não cai no núcleo.",
+        "claimId": "2a8dc90c81679ded",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
+          "format": "text"
+        },
+        "input": {
+          "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "claim": "O resumo apresenta os três caminhos listados como se fossem todos os jeitos de perder o cargo, mas há também a possibilidade constitucional de redução de cargos quando os limites de gasto com pessoal são excedidos.",
+        "claimId": "ee5c2d25712e1b50",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Três jeitos de perder o cargo",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2a8dc90c81679ded",
+          "finding": "doesn't hold",
+          "reason": "Output A, the named output, has no formula at all, and its screen 3 is a hookGuess with no equation. The only formula in either output is in B's explanation screen about the hydrogen atom's lowest energy, which uses a Bohr-type expression and never mentions E = mc². The claim is false of A and misquotes B."
+        },
+        {
+          "claimId": "ee5c2d25712e1b50",
+          "finding": "holds",
+          "reason": "B's summary card is titled \"Três jeitos de perder o cargo\" and lists only the three routes (Justiça, processo administrativo, avaliação periódica), so it presents them as the full set. The point about cuts for excess personnel spending is true under CF art. 169 §4, though it is not in the provided sources. A's summary does not frame the three routes as a complete count, so the claim holds for B only."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

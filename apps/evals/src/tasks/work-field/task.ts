@@ -13,6 +13,13 @@ export const workFieldTask: Task<WorkFieldParams, WorkFieldResult, WorkFieldExpe
   generate: classifyWorkField,
   id: "work-field",
   name: "Work field",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code stores the work field that picks the item set",
+    reason: "Background: both models were right, so the cheaper",
+    waits: "Nobody: background work",
+  },
   score: scoreWorkField,
   testCases: TEST_CASES,
 };

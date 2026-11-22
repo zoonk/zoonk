@@ -1,5 +1,6 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { type SpokenAudioState } from "@zoonk/learn/speech";
 import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
@@ -11,7 +12,6 @@ import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
 } from "../../components/player-choice-scene";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivitySpeakButton } from "../_components/activity-speak-button";
 import { expectedInteraction } from "../_utils/activity-expected";

@@ -9,10 +9,6 @@ import {
   toTokenUsage,
 } from "./types";
 
-/**
- * The image models under test are OpenAI's, so a judge from another family
- * reads the images: it shouldn't share their blind spots.
- */
 const IMAGE_JUDGE_MODEL_ID = "anthropic/claude-opus-5.5";
 
 export async function judgeImage({

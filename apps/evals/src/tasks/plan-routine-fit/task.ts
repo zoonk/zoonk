@@ -22,6 +22,13 @@ export const planRoutineFitTask: Task<
     }),
   id: "plan-routine-fit",
   name: "Plan routine fit",
+  priorities: {
+    distribution: "private",
+    first: "latency",
+    reads: "Code applies plan edits",
+    reason: "The learner waits on it, so the faster model",
+    waits: "A learner waits in the goal workflow",
+  },
   score: scorePlanEditIntent,
   testCases: TEST_CASES,
 };

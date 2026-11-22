@@ -140,7 +140,11 @@ export const scoreMockItems: TaskScorer<GenerateMockItemsExpected> = async ({
     throw new Error(`Test case ${testCase.id} needs released questions to compare.`);
   }
 
-  const checked = checkGeneratedItems(output, input);
+  const checked = await checkGeneratedItems({
+    output,
+    testCase: { id: testCase.id, userInput: testCase.userInput },
+  });
+
   const { items } = JSON.parse(checked.judgedOutput) as { items: GeneratedItem[] };
   const written = items.flatMap((item) => toBlindQuestion(item, command) ?? []);
 

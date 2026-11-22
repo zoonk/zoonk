@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "1aa6ec4448bd8be6",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "27efbd52e7a6d6ee7c202502001cf71c0e64b44c1fe2c2fa279f814fc1c4ba5e.first.0ecce033-7add-44f4-bceb-5fe700c9bf00.3",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0029641499999999996,
+    "id": "5175742fda676d27f732240593484c94b9db7597920ca1825f67ee89ebbe0d31",
+    "packet": [
+      {
+        "A": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "B": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "claim": "The guess asks the learner to choose a brain location but has no diagram or marked spot.",
+        "claimId": "1aa6ec4448bd8be6",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The guess screen",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "86ac3d8475ef75e4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "1aa6ec4448bd8be6",
+          "finding": "holds",
+          "reason": "The guess screen in output B has visual set to null and visualKind set to none, and its brief asks where the brain first processes eye signals with three verbal options and no diagram or marked spot. Output A's guess screen does include a labeled brain picture with regions A and B, so the problem is in B alone."
+        },
+        {
+          "claimId": "86ac3d8475ef75e4",
+          "finding": "doesn't hold",
+          "reason": "The worked example divides by the starting wage, not the new one: $23 − $20 = $3, then 3 ÷ 20 = 0.15, then 15%. It reports a 15% increase, not 13%, and it does not divide by $23. The 13% figure is the wrong answer for this example, and output A contains exactly this correct worked example."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

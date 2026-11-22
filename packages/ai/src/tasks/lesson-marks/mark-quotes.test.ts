@@ -16,7 +16,40 @@ describe(isUnderlineQuote, () => {
   });
 });
 
+const code = [
+  "O `.then()` espera a vez.",
+  "Neste código, o valor já existe:",
+  "```javascript",
+  "if (pronto) {",
+  "  console.log('fim');",
+  "}",
+  "```",
+  "Mesmo assim, o console mostra fim primeiro.",
+].join("\n");
+
+describe(isUnderlineQuote, () => {
+  it("never points inside code, which the app never marks", () => {
+    expect(isUnderlineQuote({ quote: "console.log('fim');", text: code })).toBe(false);
+    expect(isUnderlineQuote({ quote: "o console mostra fim primeiro", text: code })).toBe(true);
+  });
+});
+
 describe(isExampleQuote, () => {
+  it("takes a code block whole, from the sentence before it to its closing fence", () => {
+    const example = code.split("\n").slice(1, 7).join("\n");
+
+    expect(isExampleQuote({ quote: example, text: code })).toBe(true);
+    expect(isExampleQuote({ quote: code.split("\n").slice(1).join("\n"), text: code })).toBe(true);
+  });
+
+  it("never splits a code block", () => {
+    const halfCode = code.split("\n").slice(1, 5).join("\n");
+    const fromInside = code.split("\n").slice(5).join("\n");
+
+    expect(isExampleQuote({ quote: halfCode, text: code })).toBe(false);
+    expect(isExampleQuote({ quote: fromInside, text: code })).toBe(false);
+  });
+
   it("takes whole sentences with their markup, from a sentence's start to its end", () => {
     expect(isExampleQuote({ quote: "Ana ganha **R$ 3.000** por mês.", text })).toBe(true);
 
@@ -33,6 +66,15 @@ describe(isExampleQuote, () => {
     expect(isExampleQuote({ quote: "Ana ganha **R$ 3.000** por mês", text })).toBe(false);
     expect(isExampleQuote({ quote: "Ana ganha **R$ 3.000", text })).toBe(false);
     expect(isExampleQuote({ quote: "Ana ganha R$ 3.000 por mês.", text })).toBe(false);
+  });
+
+  it("takes a numbered item with its number, so the frame never leaves the number behind", () => {
+    const steps =
+      "Para fazer chá:\n\n1. Ferva a água.\n2. Coloque o saquinho.\n3. Espere 3 minutos.";
+
+    expect(isExampleQuote({ quote: "2. Coloque o saquinho.", text: steps })).toBe(true);
+    expect(isExampleQuote({ quote: "Coloque o saquinho.", text: steps })).toBe(false);
+    expect(isExampleQuote({ quote: "Ferva a água.", text: steps })).toBe(false);
   });
 
   it("doesn't take a sentence that goes on after a quotation for two", () => {

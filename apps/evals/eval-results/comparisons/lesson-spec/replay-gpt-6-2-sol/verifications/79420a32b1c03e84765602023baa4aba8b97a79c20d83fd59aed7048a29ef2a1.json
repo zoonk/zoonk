@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "b25273d3923a90b4",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "48f11ea37aa840764709abc0ee74009f727c27b640af3dd8abd27a5dfd6afa9c.first.bf376485-f1ce-460a-bed4-acfbd6a5999c.3",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00330485,
+    "id": "79420a32b1c03e84765602023baa4aba8b97a79c20d83fd59aed7048a29ef2a1",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "5e7a8cb32de42265",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "claim": "The location/function explanations do not consistently show all lobes labeled or highlight the lobe being taught; the diagrams describe colored regions, with only some of the lobe names included.",
+        "claimId": "b25273d3923a90b4",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "the explanation screens using diagrams with only some lobe names",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "5e7a8cb32de42265",
+          "finding": "doesn't hold",
+          "reason": "The application screen in A is Malik's pay example, which asks the learner to check whether a 50% cut and a 50% raise cancel out, with an overall change of 25% lower. It never asks for a compound annual growth rate, and B's application is the same Malik screen, so the claim is false for both."
+        },
+        {
+          "claimId": "b25273d3923a90b4",
+          "finding": "holds",
+          "reason": "In B, the explanation diagrams describe four colored lobe regions that are unnamed, and only the occipital lobe is named on one screen, with frontal and occipital on another and frontal, parietal and occipital on a third. So B's diagrams show only some lobe names and do not consistently label the lobe being taught. A's explanation diagrams have no lobe names at all, so the 'only some of the lobe names' part does not describe A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

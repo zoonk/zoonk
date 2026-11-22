@@ -3,7 +3,7 @@ import { type SessionMinutes } from "@zoonk/core/sessions/session-minutes";
 import { type DayStep } from "../session/session-types";
 import { isFinished } from "./today-queue";
 
-type TimedStep = Pick<DayStep, "estimatedMinutes" | "status">;
+type TimedStep = Pick<DayStep, "estimatedMinutes" | "extra" | "status">;
 
 type TimedDay = {
   blocks: readonly TimedStep[];
@@ -32,7 +32,7 @@ export function getDayTime({
   return day.minutes.left > 0 ? { kind: "left", minutes: day.minutes.left } : null;
 }
 
-/** Time the day holds for lessons not on its list yet. */
+/** Time the day holds for lessons not on its list yet; extra work isn't part of the day's time. */
 export function getHeldMinutes(day: Omit<TimedDay, "state">): number {
   if (!day.lessonsComing && !day.lessonsToPrepare) {
     return 0;
@@ -40,6 +40,6 @@ export function getHeldMinutes(day: Omit<TimedDay, "state">): number {
 
   return Math.max(
     0,
-    day.minutes.left - sumMinutes(day.blocks.filter((block) => !isFinished(block))),
+    day.minutes.left - sumMinutes(day.blocks.filter((block) => !block.extra && !isFinished(block))),
   );
 }

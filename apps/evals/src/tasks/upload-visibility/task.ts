@@ -19,6 +19,13 @@ export const uploadVisibilityTask: Task<
   generate: classifyUploadVisibility,
   id: "upload-visibility",
   name: "Upload visibility",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code decides whether an upload is shared and labels it",
+    reason: "Code checks the answer; every model was right, so the cheapest",
+    waits: "Nobody: background work",
+  },
   score: createDeterministicStringFieldScorer<UploadVisibilityExpected>({
     expectedLabel: "Expected visibility",
     field: "visibility",

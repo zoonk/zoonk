@@ -138,9 +138,8 @@ struct MindMapRow: View {
     }
   }
 
-  /// The list's small mark, so the title starts where the rows beside it start (a chapter's
-  /// summary, a lesson end's "Up next"). A map's picture leads only on the Mind maps page, where
-  /// every row is a map.
+  /// The list's small mark, so the title starts where the rows beside it start on a chapter's
+  /// summary. A map's picture leads only on the Mind maps page, where every row is a map.
   @ViewBuilder
   private var slot: some View {
     if place.isMindMapsPage {

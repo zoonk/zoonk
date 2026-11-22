@@ -7,7 +7,7 @@ import {
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
 import { isCurrentSession } from "./_utils/current-session";
-import { getNextDayBlock } from "./_utils/day-view-fields";
+import { getNextBlock } from "./day-blocks";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
@@ -77,7 +77,7 @@ async function openSavedSession({
 
   const preparing = await loadPreparingMockPositions({ ...refilled, blocks: visible });
 
-  const next = getNextDayBlock(
+  const next = getNextBlock(
     visible.map((block) => ({ ...block, preparing: preparing.has(block.position) })),
   );
 
@@ -113,7 +113,7 @@ async function openSavedSession({
     blocks: views,
     current,
     id: selected.id,
-    nextBlockId: getNextDayBlock(views)?.id ?? null,
+    nextBlockId: getNextBlock(views)?.id ?? null,
   });
 
   return { session: view, status: "ready", userId };

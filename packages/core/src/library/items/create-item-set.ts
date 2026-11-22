@@ -2,7 +2,8 @@ import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schem
 import { type Item, type ItemSet, type ItemSetKind, prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { type KeyCheckedItem, type KeyedFormat } from "./check-item-keys";
-import { type RejectedItem, toCheckedItem } from "./create-items";
+import { type RejectedItem } from "./create-items";
+import { toCheckedItem } from "./item-checks";
 import { toStoredItem } from "./item-content";
 import { parseItemSetContent } from "./item-set-content";
 

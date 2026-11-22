@@ -320,8 +320,7 @@ private struct CheckStepView: View {
       StepMedia(step: step, visual: nil, asks: true)
 
       if let context = content.context {
-        LessonTextBlocks(context)
-          .foregroundStyle(.mutedForeground)
+        LessonContextText(context)
       }
 
       if let visual = content.visual {
@@ -355,8 +354,7 @@ private struct TypedAnswerStepView: View {
     switch part {
     case .screen:
       if let context = content.context {
-        LessonTextBlocks(context)
-          .foregroundStyle(.mutedForeground)
+        LessonContextText(context)
       }
 
       if content.isOwnWords {
@@ -602,16 +600,7 @@ private struct SummaryStepView: View {
       .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
-    VStack(alignment: .leading, spacing: 12) {
-      ForEach(Array(content.ideas.enumerated()), id: \.offset) { _, idea in
-        Label {
-          LessonRichText(idea.text)
-        } icon: {
-          Image(systemName: "lightbulb")
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-    }
+    LessonSummaryIdeas(ideas: content.ideas.map(\.text))
   }
 }
 

@@ -288,7 +288,7 @@ private fun PatternQuestion(
         asideTitle = stringResource(R.string.pattern_rule),
     ) { part, _, ruleShown ->
         key(index) {
-            if (part.showsScreen) QuestionTitle(question.sentence, graded = checked != null)
+            if (part.showsScreen) QuestionTitle(question.sentence, graded = checked != null, translation = question.translation)
             if (part.showsTurn) PatternChoices(question, checked, viewModel)
         }
         if (ruleOpen && !ruleShown) RuleSheet(pattern) { ruleOpen = false }

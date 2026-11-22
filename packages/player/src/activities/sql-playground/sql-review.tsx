@@ -3,11 +3,11 @@
 import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { type ActivityExpectedAnswer } from "@zoonk/core/library/activities/expected-answer";
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { CodeListing } from "@zoonk/learn/code";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_CARD_CLASS, ActivityCanvasLabel } from "../_components/activity-canvas";
-import { ActivityCodeListing } from "../_components/activity-code";
 import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type QueryResult, runQuery } from "../_sandbox/run-query";
 import { compareRows } from "./sql-rows";
@@ -98,7 +98,7 @@ export function SqlReview({
             {t("A query that works")}
           </ActivityCanvasLabel>
           <div className={ACTIVITY_CARD_CLASS}>
-            <ActivityCodeListing code={solution} label={t("A query that works")} language="sql" />
+            <CodeListing code={solution} label={t("A query that works")} language="sql" />
           </div>
         </div>
       )}

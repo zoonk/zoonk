@@ -1,0 +1,150 @@
+{
+  "lessons": [
+    {
+      "canDo": "Explain how a lever lets a small force lift a load",
+      "description": "See how the distances from a lever’s support determine how hard you have to push and how far your hand has to move.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": "Side view of a nearly horizontal bar with its left tip under the edge of a heavy crate, a small support block just to the right of the crate, and Andre’s hand pressing down on the far right end.",
+          "visualKind": "picture",
+          "brief": "Andre can’t lift the edge of a heavy crate by hand, but pressing down on a bar resting on a block raises it. How can a small push lift something so heavy?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a nearly horizontal bar with its left tip under the edge of a heavy crate, a small support block just to the right of the crate, and Andre’s hand pressing down on the far right end.",
+          "visualKind": "picture",
+          "brief": "The point a lever turns around is its fulcrum: the bar turns where it rests on the block.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Side view of a horizontal bar with a crate at the left end and a hand at the right end; three identical dotted support positions beneath the bar are labeled Near the crate, At the midpoint, and Near your hand.",
+          "visualKind": "picture",
+          "brief": "With the crate and your hand staying at opposite ends of the same bar, where would you put the support to lift with the lightest push? Options: Near the crate (right), At the midpoint (tempting: a centered bar looks easiest to balance), Near your hand.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a horizontal bar with a crate pressing on its left end, a hand pressing down on its right end, and a support block near the crate; label the contact point above the block Fulcrum and bracket the Load arm and Push arm from that point to their respective force locations.",
+          "visualKind": "picture",
+          "brief": "The distance from the fulcrum to where the crate presses on the bar is the load arm. Putting the support near the crate shortens that arm, so the crate is easier to lift than with the support in the middle.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a horizontal bar with a crate pressing on its left end, a hand pressing down on its right end, and a support block near the crate; label the contact point above the block Fulcrum and bracket the Load arm and Push arm from that point to their respective force locations.",
+          "visualKind": "picture",
+          "brief": "The distance from the fulcrum to your hand is the push arm. A push at the far end of the bar turns it more strongly than the same push closer to the block.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Side view of a level test lever on a fixed support, with a hand at a marked point on the right and an exercise weight on the left; a horizontal arrow points from the weight’s starting spot to a marked spot farther left.",
+          "visualKind": "picture",
+          "brief": "An exercise weight sits on one side of a test lever; it slides farther from the support while your grip stays put. Ask how the push needed to lift it changes: it takes more force, not the same force just because the weight hasn’t changed.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a light horizontal bar on a support; a downward arrow labeled 30 newtons is 20 cm to the left of the support, and a downward arrow labeled 10 newtons is 60 cm to its right, with both distances marked from the support.",
+          "visualKind": "picture",
+          "brief": "On a light, level bar with both forces straight down, the two sides balance when each force times its arm length gives the same number. A push of 10 newtons (units of force) at 60 cm balances a load of 30 newtons at 20 cm.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "Side view of a level bar on a support, with a 48-newton downward load arrow 15 cm to the left and an unknown downward push arrow 45 cm to the right; mark both distances from the support.",
+          "visualKind": "picture",
+          "brief": "Find the push that balances a 48-newton load 15 cm from the support when your hand is 45 cm away. Show the steps separately: multiply 48 by 15 to get 720, divide by 45 to get 16 newtons, then note that a little more starts the lift.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Side view of a level bar with a 75-newton planter pressing down 12 cm to the left of the support and a hand pressing down 60 cm to the right; mark both distances from the support.",
+          "visualKind": "picture",
+          "brief": "Ask what push balances a 75-newton planter on a 12 cm load arm with a 60 cm push arm. Include 15 newtons as the answer and 75 newtons as the tempting choice if you match forces instead of comparing the arms.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Making both arms twice as long leaves the same push needed for the same load. Arms of 8 cm and 24 cm give the same advantage as 16 cm and 48 cm because the push arm is still three times as long.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "formulaModel",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Set up a 160-newton load with push-arm and load-arm sliders from 5 to 60 cm in 5 cm steps, plotting balancing push (160 × load arm ÷ push arm, in newtons) against push-arm length. Start at a 5 cm load arm and 20 cm push arm; have the learner triple both lengths and report the new push: still 40 newtons.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of a rigid bar rotating about a fixed support, shown tilted with a dashed horizontal starting reference; the load point on the short side rises 2 cm while the hand point on the three-times-longer side drops 6 cm, with vertical arrows marking both changes.",
+          "visualKind": "picture",
+          "brief": "A longer push arm saves force, but your hand has to travel farther for the same lift. When the push arm is three times the load arm, your hand drops 6 cm to raise the load 2 cm.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "table",
+          "brief": "You need to lift a 120-newton machine edge by 2 cm with an ideal lever, but you can push with at most 35 newtons and your hand has only 10 cm of downward room. Compare three bar setups in a table (load arm: 10 cm in every row; push arms: 20, 40, and 60 cm) and choose the one that fits both limits: 40 cm needs just over 30 newtons and 8 cm of travel.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Use the distances from the fulcrum to the push and the load to predict or calculate how much force a lever needs.",
+          "example": "A 20-newton push 60 cm from the fulcrum balances a 120-newton load 10 cm away.",
+          "hard": true,
+          "name": "Relate lever arm lengths to lifting force",
+          "topic": "Lever mechanical advantage",
+          "useCase": "Choose where to place a support block and where to push when lifting a heavy object with a bar."
+        }
+      ],
+      "title": "How a lever multiplies force"
+    }
+  ]
+}

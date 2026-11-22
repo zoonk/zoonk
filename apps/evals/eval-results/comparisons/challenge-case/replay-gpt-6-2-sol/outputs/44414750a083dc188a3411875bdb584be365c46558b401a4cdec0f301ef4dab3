@@ -1,0 +1,407 @@
+{
+  "deadline": "Dose programada para as 14h30.",
+  "endings": [
+    {
+      "id": "resolved",
+      "outcome": "{{med}} substituiu a ordem anterior por uma prescrição assinada de cefazolina 450 mg por via intravenosa. Você conferiu dose, unidade e via na nova ordem e liberou o preparo sem alterar a prescrição por conta própria."
+    },
+    {
+      "id": "pending-written",
+      "outcome": "Às 14h30, a mensagem com a divergência ainda estava sem resposta. Sem nova prescrição, o preparo ficou em espera."
+    },
+    {
+      "id": "pending-callback",
+      "outcome": "{{med}} manteve o preparo em espera e pediu que você ligasse de novo com a dose calculada pelo peso registrado. A dúvida ficou sinalizada, mas a conferência ainda não foi concluída."
+    }
+  ],
+  "meters": [
+    {
+      "id": "clarity",
+      "label": "Clareza sobre a dose",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Fôlego do plantão",
+      "start": 60,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Antes do horário das 14h30, faça a **conferência da dose de cefazolina por peso** e defina se a prescrição pode seguir para o preparo ou se precisa voltar a {{med}}.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 30
+            },
+            {
+              "meter": "capacity",
+              "change": -12
+            }
+          ],
+          "id": "calculate",
+          "next": "contact-with-delta",
+          "notes": [
+            {
+              "skill": "dose",
+              "kind": "good",
+              "text": "Você conferiu o cancelamento dos kg e chegou a 450 mg por dose, na mesma unidade dos 400 mg prescritos.",
+              "example": null
+            },
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "Você usou os 50 mg de diferença pra sinalizar o que precisava ser esclarecido, sem tratar a conta como uma nova prescrição.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "25 mg/kg por dose × 18 kg = 450 mg por dose; os kg se cancelam. Os 400 mg prescritos ficam 50 mg abaixo da dose calculada."
+            },
+            {
+              "from": "pharm",
+              "text": "Deixo o preparo em pausa enquanto você compara as contas. A diferença já tem um valor, mas a conta não muda a ordem."
+            }
+          ],
+          "text": "Calculo a dose pelo peso e peço a {{ai}} pra conferir a conta e a diferença, só com valores e unidades.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 13
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "open-order",
+          "next": "frame-question",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "Você foi à ordem assinada e confirmou medicamento, dose e via na fonte, em vez de depender só do resumo.",
+              "example": null
+            },
+            {
+              "skill": "dose",
+              "kind": "improve",
+              "text": "A ordem assinada confirmou os 400 mg. Pra saber se esse valor bate com o plano, ainda faltava multiplicar os 25 mg/kg por dose pelo peso de 18 kg.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "pharm",
+              "text": "Na assinada consta cefazolina 400 mg por via intravenosa, sem observação que explique o valor. Dá pra confirmar isso sem chamar ninguém, mas ainda falta saber quanto o plano dá em mg por dose."
+            }
+          ],
+          "text": "Abro a prescrição assinada e confiro o medicamento, o valor em mg, a via e o campo de observações.",
+          "timeJump": null
+        }
+      ],
+      "id": "first-pass",
+      "messages": [
+        {
+          "from": "pharm",
+          "text": "A cefazolina acabou de entrar na fila de preparo."
+        },
+        {
+          "from": "pharm",
+          "text": "Dá pra abrir a ordem assinada sem chamar ninguém. Se tiver alguma observação, ela não aparece nesse resumo."
+        }
+      ],
+      "prompt": "Por onde você começa a conferência?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 8
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "written-review",
+          "next": "pending-written",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "Você confirmou a ordem assinada e manteve o preparo em espera enquanto a divergência seguia sem resposta.",
+              "example": null
+            },
+            {
+              "skill": "contact",
+              "kind": "improve",
+              "text": "O prontuário guardou a comparação completa, mas a fila não deu retorno até as 14h30. Com o horário próximo, vale ligar com os mesmos valores.",
+              "example": "“O peso é 18 kg. Pelo plano, são 450 mg por dose; a ordem tem 400 mg IV. Pode confirmar qual dose deve ficar na prescrição?”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "pharm",
+              "text": "Os valores ficaram juntos na mensagem, sem interromper o atendimento. Mas ela segue na fila, sem resposta no horário da dose."
+            }
+          ],
+          "text": "Confiro a ordem assinada, mando os valores pelo prontuário e deixo o preparo em espera até ter resposta.",
+          "timeJump": {
+            "label": "Chegam as 14h30.",
+            "panel": {
+              "title": "Prescrição e mensagem no prontuário",
+              "metrics": [
+                {
+                  "label": "Cefazolina na ordem assinada",
+                  "value": "400 mg",
+                  "note": "Via intravenosa, sem observação que explique o valor."
+                },
+                {
+                  "label": "Horário da dose",
+                  "value": "14h30",
+                  "note": "Mensagem sem resposta e sem nova prescrição."
+                }
+              ],
+              "note": "Preparo em espera."
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 24
+            },
+            {
+              "meter": "capacity",
+              "change": -9
+            }
+          ],
+          "id": "call-with-delta",
+          "next": "resolved",
+          "notes": [
+            {
+              "skill": "contact",
+              "kind": "good",
+              "text": "Você levou o peso, as duas doses e a via na ligação. Com a diferença já quantificada, {{med}} pôde decidir sem precisar pedir os valores depois.",
+              "example": null
+            },
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "Você esperou pela nova prescrição assinada e conferiu dose, unidade e via nela. A ligação esclareceu a dúvida, mas não fez as vezes da ordem.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "pharm",
+              "text": "A ordem assinada confirma cefazolina 400 mg por via intravenosa, sem observação que explique o valor. Seguro o preparo até a conferência da nova ordem."
+            },
+            {
+              "from": "med",
+              "text": "Com o peso e as doses lado a lado, deu pra resolver na ligação. Já substituí a ordem e assinei cefazolina 450 mg por via intravenosa."
+            }
+          ],
+          "text": "Confiro a ordem, ligo com peso, doses e via, e checo a nova prescrição assinada pra liberar o preparo.",
+          "timeJump": null
+        }
+      ],
+      "id": "contact-with-delta",
+      "messages": [
+        {
+          "from": "pharm",
+          "text": "Temos 450 mg pela conta e 400 mg na tela, com a dose marcada pras 14h30."
+        },
+        {
+          "from": "pharm",
+          "text": "Eu mandaria pelo prontuário. Os valores ficam juntos por escrito, sem ter que passar a dúvida numa conversa de corredor."
+        }
+      ],
+      "prompt": "Como você leva essa diferença a {{med}}?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 6
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "request-review",
+          "next": "pending-callback",
+          "notes": [
+            {
+              "skill": "contact",
+              "kind": "good",
+              "text": "Você aproveitou a brecha pra sinalizar que a dose precisava de revisão e não liberou o preparo enquanto a dúvida estava aberta.",
+              "example": null
+            },
+            {
+              "skill": "dose",
+              "kind": "improve",
+              "text": "Na ligação, faltou dizer quanto o plano indicava em mg por dose. Fechar a conta pelo peso dá a {{med}} um valor pra comparar com os 400 mg da ordem.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "med",
+              "text": "Mantém a dose em espera. Me liga de novo com o valor que dá pelo plano e pelo peso registrado, pra eu comparar com o que está na ordem."
+            }
+          ],
+          "text": "Ligo agora, peço uma revisão da dose com base no peso registrado e deixo o preparo em espera.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 38
+            },
+            {
+              "meter": "capacity",
+              "change": -12
+            }
+          ],
+          "id": "calculate-and-call",
+          "next": "resolved",
+          "notes": [
+            {
+              "skill": "dose",
+              "kind": "good",
+              "text": "Você fez a conta pelo peso e levou os 450 mg por dose já na unidade que permitia comparar com os 400 mg da ordem.",
+              "example": null
+            },
+            {
+              "skill": "contact",
+              "kind": "good",
+              "text": "Você usou a brecha pra levar uma diferença concreta a {{med}}, em vez de pedir uma revisão sem dizer o que não batia.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "pharm",
+              "text": "Pelo plano e pelo peso registrado, são 450 mg por dose: a ordem ficou 50 mg abaixo. Seguro o preparo até a conferência da ordem atualizada."
+            },
+            {
+              "from": "med",
+              "text": "Ainda deu tempo de falar, e com os valores lado a lado deu pra decidir. Substituí a ordem anterior por uma prescrição assinada de cefazolina 450 mg por via intravenosa."
+            }
+          ],
+          "text": "Calculo pelo peso, ligo com as doses lado a lado e confiro dose, unidade e via na nova ordem.",
+          "timeJump": null
+        }
+      ],
+      "id": "frame-question",
+      "messages": [
+        {
+          "from": "pharm",
+          "text": "A ordem assinada bate com a tela: cefazolina 400 mg por via intravenosa. Não tem observação explicando o valor."
+        },
+        {
+          "from": "med",
+          "text": "Tenho uma brecha agora. Se quiser que eu olhe a cefazolina, pode me ligar."
+        }
+      ],
+      "prompt": "Como você formula a dúvida pra {{med}}?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Prontuário e prescrição vigente",
+      "metrics": [
+        {
+          "label": "Peso aferido",
+          "value": "18 kg",
+          "note": "Registro da internação."
+        },
+        {
+          "label": "Cefazolina no plano",
+          "value": "25 mg/kg por dose",
+          "note": "Plano terapêutico deste caso."
+        },
+        {
+          "label": "Cefazolina prescrita",
+          "value": "400 mg",
+          "note": "Resumo da prescrição eletrônica vigente."
+        },
+        {
+          "label": "Via",
+          "value": "Intravenosa (IV)",
+          "note": "Campo de via no plano e na prescrição."
+        }
+      ],
+      "note": "Horário programado: 14h30."
+    }
+  ],
+  "setting": "Plantão no Hospital Vale de Cedro",
+  "skills": [
+    {
+      "id": "dose",
+      "name": "Calcular dose por peso",
+      "practice": "Pegue um exemplo de dose por peso, escreva as unidades da conta e compare o resultado em mg por dose com o valor prescrito."
+    },
+    {
+      "id": "verify",
+      "name": "Conferir a prescrição",
+      "practice": "Em uma prescrição de treino, aponte onde estão o medicamento, a dose, a unidade e a via, e marque o que exigiria esclarecimento antes do preparo."
+    },
+    {
+      "id": "contact",
+      "name": "Comunicar uma dúvida ao médico",
+      "practice": "Em voz alta, simule uma ligação curta que informe o peso, a dose calculada, a dose prescrita e o que precisa ser confirmado."
+    }
+  ],
+  "startNodeId": "first-pass",
+  "summary": [
+    "Multiplique o peso em kg pela dose indicada em mg/kg por dose para obter um valor em mg por dose.",
+    "Ao pedir esclarecimento sobre uma divergência, apresente a dose calculada e a prescrita na mesma unidade.",
+    "A dose calculada não substitui a prescrição assinada na hora de liberar o preparo."
+  ],
+  "team": [
+    {
+      "id": "pharm",
+      "role": "Farmacêutica clínica",
+      "expertise": "Conhece os pontos de conferência da prescrição e quer deixar um registro que o próximo plantão consiga entender.",
+      "ai": false
+    },
+    {
+      "id": "med",
+      "role": "Médico plantonista",
+      "expertise": "Pode esclarecer a intenção da prescrição e corrigi-la; prefere receber a dúvida com os valores lado a lado.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Apoio de cálculo",
+      "expertise": "Refaz a conta e confere as unidades com os valores informados, sem acessar o prontuário nem autorizar a dose.",
+      "ai": true
+    }
+  ],
+  "title": "A dose de cefazolina confere com o peso?"
+}

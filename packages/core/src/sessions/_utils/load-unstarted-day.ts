@@ -11,7 +11,7 @@ import { asDayMission, loadMissionDayViews } from "../missions/mission-day-views
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
-import { getNextDayBlock, toDayViewFields } from "./day-view-fields";
+import { toDayViewFields } from "./day-view-fields";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { type PlannedStudyDay, toUnstartedBlocks } from "./plan-study-day";
@@ -62,7 +62,7 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
-  const reservation = getSessionLessonReservation({
+  const { unwrittenRoom, ...reservation } = getSessionLessonReservation({
     access: examAccess,
     plan: day.plan,
     prerequisites: day.plan.prerequisites,
@@ -83,7 +83,7 @@ export async function loadUnstartedDayView({
     examAccess,
     ...reservation,
     missions,
-    outlines: reservation.lessonRoom ? (day.plan.outlines ?? "idle") : null,
+    outlines: unwrittenRoom ? (day.plan.outlines ?? "idle") : null,
     preparing: day.preparing,
     session: {
       blocks,
@@ -136,7 +136,6 @@ export async function loadUnstartedDayView({
     catchUp: previewCatchUp,
     extraTime,
     missions,
-    nextPosition: getNextDayBlock(views)?.position ?? null,
     status: "unstarted",
   });
 }

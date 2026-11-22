@@ -33,6 +33,14 @@ export function useSessionState() {
   };
 }
 
+/** A block to play next, an extra one included: a done day can still have one. */
+export function useHasNextBlock(): boolean {
+  const { today } = useTodayScreen();
+  const { blocks, nextPosition } = today.session;
+
+  return blocks.some((block) => block.position === nextPosition);
+}
+
 /** A wait for the day's lessons that ran out asks for them, as a day nobody is preparing does. */
 export function useDayState(): DayState {
   const { today, writingStalled } = useTodayScreen();

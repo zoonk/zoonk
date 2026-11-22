@@ -14,7 +14,7 @@ import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadCarriedItemIds } from "./catch-up";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getDayCatchUp, getDayProgress } from "./day-progress";
-import { getNextDayBlock } from "./day-view-fields";
+import { getNextBlock } from "../day-blocks";
 import { loadExamPrepAccess } from "./load-exam-access";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { getDayOutlines } from "./outlining-stand-ins";
@@ -77,6 +77,7 @@ export async function loadSessionTime({
           planSettings: plan?.settings,
         })
       : 0,
+    endedAt: session.endedAt,
     planned: getVisibleSessionTotal({
       blocks: stored.blocks,
       planned: stored.plannedMinutes,
@@ -140,7 +141,7 @@ export async function loadCompletionQueue({
     areLessonsComing({ plan, reserved, session }),
   ]);
 
-  const nextBlock = getNextDayBlock(projection.blocks);
+  const nextBlock = getNextBlock(projection.blocks);
   const nextBlockId = nextBlock?.id ?? null;
   const sessionBar = getSessionBar(session.blocks);
   const sessionCompleted = session.status === "completed" && nextBlockId === null;
@@ -157,7 +158,7 @@ export async function loadCompletionQueue({
         freshStart: session.freshStart,
         items: plan?.items ?? [],
       }),
-      complete: sessionCompleted,
+      complete: session.endedAt !== null,
       lessonsComing,
       reserved,
       sessionBar,
