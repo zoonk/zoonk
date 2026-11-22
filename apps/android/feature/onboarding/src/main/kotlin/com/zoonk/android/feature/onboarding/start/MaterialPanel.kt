@@ -339,13 +339,18 @@ private fun AttachedChip(
 ) {
     val title = materialTitle(item)
     val state = stringResource(R.string.onboarding_material_unreadable_state)
-    Surface(shape = RoundedCornerShape(ZoonkRadius.xxl), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+    val colors = MaterialTheme.colorScheme
+    Surface(
+        shape = RoundedCornerShape(ZoonkRadius.xxl),
+        color = if (unreadable) colors.errorContainer else colors.surfaceContainerHigh,
+        contentColor = if (unreadable) colors.onErrorContainer else colors.onSurface,
+    ) {
         Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
-                tint = if (unreadable) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                tint = LocalContentColor.current,
             )
             Text(
                 title,
