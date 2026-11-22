@@ -75,6 +75,10 @@ jobs:
           xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-mac-units.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Check String Catalogs
+        if: github.event_name == 'pull_request'
+        run: make -C apps/apple strings-check
+
       # Each main commit saves the Mac test build, so pull requests recompile only what changed since.
       - name: Build Mac unit tests
         if: github.event_name == 'push' && steps.last.outputs.build-hit != 'true'
@@ -96,14 +100,10 @@ jobs:
 
   build:
     needs: changes
-    if: needs.changes.outputs.changed == 'true'
+    # Pull requests compile the same app in the Mac unit test job; main also builds it for iPhone.
+    if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
     timeout-minutes: 30
-    concurrency:
-      group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.run_id }}
-      # A newer push waits for the running build instead of cancelling it, so a busy PR's build still
-      # finishes.
-      cancel-in-progress: false
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -126,11 +126,11 @@ jobs:
         run: make -C apps/apple build
 
       - name: Trim unused Swift package binaries
-        if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
+        if: steps.last.outputs.packages-hit != 'true'
         run: sh apps/apple/scripts/prune-swift-packages.sh "${{ runner.temp }}/apple-source-packages"
 
       - name: Save Swift packages
-        if: github.ref == 'refs/heads/main' && steps.last.outputs.packages-hit != 'true'
+        if: steps.last.outputs.packages-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
@@ -140,7 +140,7 @@ jobs:
         run: make -C apps/apple strings-check
 
       - name: Save this build
-        if: github.ref == 'refs/heads/main' && steps.last.outputs.build-hit != 'true'
+        if: steps.last.outputs.build-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/apple/DerivedData/Make
