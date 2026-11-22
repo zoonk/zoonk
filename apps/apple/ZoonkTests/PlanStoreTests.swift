@@ -805,7 +805,6 @@ actor PlanAPIStub: PlanAPIClient {
   private var shownPlan: GoalPlan?
   private var fittingDate: String?
   private var end = PlanEnd(certificates: nil, next: nil)
-  private var languageUnitsRead: LanguageUnitsOverview?
   private var heldCall: TestContinuation<Void>?
 
   private var heldKind: HeldCall?
@@ -828,7 +827,6 @@ actor PlanAPIStub: PlanAPIClient {
   func setPlanEnd(_ end: PlanEnd) { self.end = end }
   /// The later end date the time to cover finds for a passed one.
   func setFittingDate(_ date: String) { fittingDate = date }
-  func setLanguageUnits(_ units: LanguageUnitsOverview) { languageUnitsRead = units }
   /// Every read answers the same plan, as a read after progress that changed nothing it plans does.
   func setPlanId(_ id: String) { planId = id }
   func setToday(_ day: String) { today = day }
@@ -868,14 +866,6 @@ actor PlanAPIStub: PlanAPIClient {
       "The released plan operation did not finish", file: file, line: line
     ) {
       await self.completionCount(kind) > before
-    }
-  }
-
-  func waitForCompleted(
-    _ kind: HeldCall, count: Int = 1, file: StaticString = #filePath, line: UInt = #line
-  ) async throws {
-    try await waitForTestCondition("The plan operation did not complete", file: file, line: line) {
-      await self.completionCount(kind) >= count
     }
   }
 
@@ -957,11 +947,7 @@ actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview {
-    guard let languageUnitsRead else {
-      throw APIError.notFound
-    }
-
-    return languageUnitsRead
+    throw APIError.notFound
   }
   func planEnd(token: String, goalId: String) async throws -> PlanEnd {
     end

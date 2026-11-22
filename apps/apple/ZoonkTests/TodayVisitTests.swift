@@ -134,11 +134,6 @@ private struct PausedToday {
     tabs.selected = 0
     try await waitForTestCondition("Returned to Today") { tabs.pageVisible && !says("Elsewhere") }
   }
-
-  func leaveAndComeBack() async throws {
-    try await leave()
-    try await comeBack()
-  }
 }
 
 @MainActor

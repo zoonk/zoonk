@@ -862,11 +862,11 @@ extension TutorMemoryChange {
 extension TutorTurn {
   fileprivate static func fixture(
     id: String, question: String = "Question", status: Status = .completed, about: About = .plan,
-    step: Step? = nil, planChange: Components.Schemas.PlanChange? = nil
+    planChange: Components.Schemas.PlanChange? = nil
   ) -> TutorTurn {
     TutorTurn(
       id: id, question: question, answer: status == .completed ? "Answer" : nil, status: status,
-      createdAt: .now, about: about, step: step, planChange: planChange, toolOffer: nil)
+      createdAt: .now, about: about, step: nil, planChange: planChange, toolOffer: nil)
   }
 }
 

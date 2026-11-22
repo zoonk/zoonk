@@ -3,12 +3,6 @@ import Synchronization
 import XCTest
 
 extension XCTestCase {
-  func requireIPhoneUI() throws {
-    try XCTSkipIf(
-      ProcessInfo.processInfo.isMacCatalystApp,
-      "Exercises native iOS layout or accessibility in the iPhone suite.")
-  }
-
   /// Shows a view in a real window on the app's scene, taken down when the test ends.
   @MainActor @discardableResult
   func show(_ view: some View) throws -> UIWindow {
@@ -29,7 +23,9 @@ extension XCTestCase {
   /// nothing, so this returns once it has loaded.
   @MainActor
   func readsWhatVoiceOverReads() async throws {
-    try requireIPhoneUI()
+    try XCTSkipIf(
+      ProcessInfo.processInfo.isMacCatalystApp,
+      "Exercises native iOS layout or accessibility in the iPhone suite.")
     typealias Enabled = @convention(c) () -> Bool
     typealias SetEnabled = @convention(c) (Bool) -> Void
     let library = try XCTUnwrap(dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW))
@@ -51,16 +47,6 @@ extension XCTestCase {
   @MainActor
   func spoken(in element: Any) -> [String] {
     accessibilityElements(in: element).compactMap(\.accessibilityLabel).filter { !$0.isEmpty }
-  }
-
-  @MainActor
-  func spokenValues(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityValue).filter { !$0.isEmpty }
-  }
-
-  @MainActor
-  func spokenHints(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityHint).filter { !$0.isEmpty }
   }
 
   /// Taps what VoiceOver reads as `label`, as a double tap with VoiceOver does.
@@ -226,7 +212,6 @@ extension TestContinuation where Value == Void {
 }
 
 func withTestContinuation<Value: Sendable>(
-  timeout: Duration = .seconds(10),
   isolation: isolated (any Actor)? = #isolation,
   file: StaticString = #filePath, line: UInt = #line,
   _ register: (TestContinuation<Value>) -> Void
@@ -236,7 +221,7 @@ func withTestContinuation<Value: Sendable>(
   // Held responses model a sent request that still answers after its caller is canceled.
   let response = Task { @MainActor in
     try await waitForTestCondition(
-      "Fixture continuation was never resumed", timeout: timeout, file: file, line: line
+      "Fixture continuation was never resumed", file: file, line: line
     ) { continuation.result != nil }
   }
   _ = try await response.value
