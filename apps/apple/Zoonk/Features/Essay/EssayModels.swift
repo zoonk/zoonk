@@ -97,12 +97,12 @@ struct WritingResult: Hashable, Decodable, Sendable {
     var start: Int
   }
 
-  /// `limit` and `zero` carry no grader's words: the app words them from the task and `zeroKind`.
   /// Older saved answers have no `kind` or `title`.
   struct NextStep: Hashable, Decodable, Sendable {
     enum Kind: String, Decodable, Sendable {
       case criterion
       case limit
+      case short
       case zero
     }
 
@@ -201,6 +201,7 @@ struct WritingResult: Hashable, Decodable, Sendable {
 enum WritingNextStep: Equatable {
   case done
   case limit
+  case short
   /// `text` is the server's, used only when `zeroKind` is unknown.
   case zero(text: String, zeroKind: WritingResult.ZeroKind?)
   case criterion(title: String?, text: String, quote: String?, example: String?)
@@ -210,6 +211,8 @@ enum WritingNextStep: Equatable {
 
     if step?.kind == .zero || grade.points?.zeroReason != nil {
       self = .zero(text: step?.text ?? "", zeroKind: grade.points?.zeroKind)
+    } else if step?.kind == .short {
+      self = .short
     } else if step?.kind == .limit || (grade.ignoredFrom != nil && grade.isComplete) {
       self = .limit
     } else if let step {

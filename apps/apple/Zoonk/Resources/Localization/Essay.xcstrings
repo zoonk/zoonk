@@ -6778,6 +6778,9 @@
         }
       }
     },
+    "This answer is too short to grade. Add more and send it again." : {
+
+    },
     "This grade is for the version you sent first. Your changes are kept for your rewrite." : {
       "localizations" : {
         "de" : {
@@ -7896,6 +7899,9 @@
           }
         }
       }
+    },
+    "Write a longer answer" : {
+
     },
     "Write an answer" : {
       "localizations" : {

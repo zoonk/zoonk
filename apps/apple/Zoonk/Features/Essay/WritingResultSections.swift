@@ -197,6 +197,12 @@ private struct WritingNextStepSection: View {
             .foregroundStyle(.mutedForeground)
         case .limit:
           card(title: limitTitle, text: limitText)
+        case .short:
+          card(
+            title: String(localized: "Write a longer answer", table: "Essay"),
+            text: String(
+              localized: "This answer is too short to grade. Add more and send it again.",
+              table: "Essay"))
         case .zero(let text, let zeroKind):
           let copy = zeroKind.map(Self.zeroCopy)
           card(

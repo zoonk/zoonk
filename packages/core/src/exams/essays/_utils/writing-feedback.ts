@@ -247,7 +247,10 @@ export function applyWritingArithmetic({
   const levels = (): WritingResult => ({
     ...feedback,
     kind: "levels",
-    nextStep: selectNextStep(feedback, evidence),
+    nextStep:
+      belowWordFloor && feedback.ignoredFrom === null
+        ? writingRuleNextStep("short")
+        : selectNextStep(feedback, evidence),
   });
 
   const { grading, points } = basis;

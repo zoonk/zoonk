@@ -46,22 +46,11 @@ export async function gradeWriting({
   const eligible = ignoredFrom === null ? text : text.slice(0, ignoredFrom);
 
   if (countWords(eligible) < basis.minimumWords || eligible.trim().length === 0) {
-    const [criterion] = basis.criteria;
-
     const evidence: WritingEvidence = {
       aspects: [],
       criteria: [],
       errors: [],
-      nextStep:
-        criterion && ignoredFrom === null
-          ? {
-              criterionId: criterion.id,
-              example: null,
-              quote: null,
-              text: "Expand your answer so there is enough writing to assess.",
-              title: "Write a longer answer",
-            }
-          : null,
+      nextStep: null,
       onTopicQuote: null,
       zeroKind: null,
       zeroQuote: null,

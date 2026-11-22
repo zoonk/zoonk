@@ -45,11 +45,12 @@ data class WritingPoints(
     val decimals: Int,
 )
 
-/** `Limit` and `Zero` have no grader's words: the app words them from the task and the zero's kind. */
 sealed interface NextStep {
     data object Done : NextStep
 
     data object Limit : NextStep
+
+    data object Short : NextStep
 
     data class Zero(
         val text: String,
@@ -84,6 +85,7 @@ fun WritingGrade.nextStep(text: String): NextStep {
     if (zeroed) {
         return NextStep.Zero(step?.text.orEmpty(), points?.zeroKind)
     }
+    if (step?.kind == WritingResultOutputOneOfNextStep.Kind.SHORT) return NextStep.Short
     if (step?.kind == WritingResultOutputOneOfNextStep.Kind.LIMIT || (ignoredFrom != null && isComplete())) return NextStep.Limit
     if (step == null) {
         if (isComplete()) return NextStep.Done

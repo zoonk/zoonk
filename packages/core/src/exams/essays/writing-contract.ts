@@ -186,7 +186,7 @@ const feedback = z.object({
     .object({
       criterionId: z.string(),
       example: z.string().nullable(),
-      kind: z.enum(["criterion", "limit", "zero"]).optional(),
+      kind: z.enum(["criterion", "limit", "short", "zero"]).optional(),
       quote: z.string().nullable(),
       text: z.string(),
       title: z.string().nullable().optional(),

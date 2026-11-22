@@ -34069,6 +34069,7 @@
                     "enum": [
                       "criterion",
                       "limit",
+                      "short",
                       "zero"
                     ]
                   },
@@ -34228,6 +34229,7 @@
                     "enum": [
                       "criterion",
                       "limit",
+                      "short",
                       "zero"
                     ]
                   },
@@ -102919,6 +102921,7 @@
                     "enum": [
                       "criterion",
                       "limit",
+                      "short",
                       "zero"
                     ]
                   },
@@ -103083,6 +103086,7 @@
                     "enum": [
                       "criterion",
                       "limit",
+                      "short",
                       "zero"
                     ]
                   },

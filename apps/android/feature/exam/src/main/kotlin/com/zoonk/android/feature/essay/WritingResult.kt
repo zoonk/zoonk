@@ -250,6 +250,10 @@ private fun WritingNextStep(
                 }
             }
 
+            NextStep.Short -> {
+                stringResource(R.string.essay_short_title) to stringResource(R.string.essay_short_text)
+            }
+
             is NextStep.Zero -> {
                 zeroStep(step.zeroKind) ?: (
                     stringResource(R.string.essay_zero_title) to step.text.ifEmpty { stringResource(R.string.essay_zero_text) }

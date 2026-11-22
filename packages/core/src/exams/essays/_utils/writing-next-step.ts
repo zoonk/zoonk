@@ -5,7 +5,7 @@ type Feedback = Extract<WritingResult, { kind: "levels" }>;
 type PointRow = Extract<WritingResult, { kind: "points" }>["rows"][number];
 const LEVEL_GAP = { complete: 0, missing: 3, partial: 2, strong: 1 };
 
-export function writingRuleNextStep(kind: "limit" | "zero") {
+export function writingRuleNextStep(kind: "limit" | "short" | "zero") {
   return { criterionId: "", example: null, kind, quote: null, text: "", title: null };
 }
 

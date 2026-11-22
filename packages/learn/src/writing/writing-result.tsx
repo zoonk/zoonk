@@ -40,6 +40,17 @@ function WritingNextStep({
     return <NothingLeftComment />;
   }
 
+  if (step.kind === "short") {
+    return (
+      <NextStepCard
+        example={null}
+        quote={null}
+        text={t("This answer is too short to grade. Add more and send it again.")}
+        title={t("Write a longer answer")}
+      />
+    );
+  }
+
   if (step.kind === "limit") {
     return (
       <NextStepCard

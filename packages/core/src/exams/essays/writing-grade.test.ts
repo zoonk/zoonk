@@ -595,7 +595,9 @@ describe("writing grades", () => {
     mockEvidence();
     vi.mocked(gradeWritingEvidence).mockClear();
 
-    await gradeWriting({ content, language: "en", previousNextSteps: [], text: "Claim" });
+    await expect(
+      gradeWriting({ content, language: "pt", previousNextSteps: [], text: "Claim" }),
+    ).resolves.toMatchObject({ nextStep: { kind: "short", text: "", title: null } });
 
     expect(gradeWritingEvidence).not.toHaveBeenCalled();
 

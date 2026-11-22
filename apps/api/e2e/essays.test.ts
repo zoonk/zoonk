@@ -268,7 +268,7 @@ test.describe("Essays API", () => {
         criteria: [{ id: CRITERION.id, level: "missing" }],
         estimatedLines: 1,
         kind: "levels",
-        nextStep: { criterionId: CRITERION.id, kind: "criterion", title: "Write a longer answer" },
+        nextStep: { criterionId: "", kind: "short", text: "", title: null },
       });
 
       await expect(submit()).resolves.toStrictEqual(grade);

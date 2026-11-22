@@ -2,10 +2,10 @@ import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 
 type ZeroKind = Extract<WritingResult, { kind: "points" }>["zeroKind"];
 
-/** `limit` and `zero` have no grader's words: the app words them from the task and `zeroKind`. */
 export type NextStep =
   | { kind: "done" }
   | { kind: "limit" }
+  | { kind: "short" }
   | { kind: "zero"; text: string; zeroKind: ZeroKind }
   | {
       example: string | null;
@@ -48,8 +48,9 @@ function weakestCriterion(grade: WritingResult): NextStep {
  */
 export function getNextStep({ grade, text }: { grade: WritingResult; text: string }): NextStep {
   const step = grade.nextStep;
+  const kind = step?.kind;
 
-  if (step?.kind === "zero" || (grade.kind === "points" && grade.zeroReason !== null)) {
+  if (kind === "zero" || (grade.kind === "points" && grade.zeroReason !== null)) {
     return {
       kind: "zero",
       text: step?.text ?? "",
@@ -57,7 +58,11 @@ export function getNextStep({ grade, text }: { grade: WritingResult; text: strin
     };
   }
 
-  if (step?.kind === "limit" || (grade.ignoredFrom !== null && isComplete(grade))) {
+  if (kind === "short" || kind === "limit") {
+    return { kind };
+  }
+
+  if (grade.ignoredFrom !== null && isComplete(grade)) {
     return { kind: "limit" };
   }
 

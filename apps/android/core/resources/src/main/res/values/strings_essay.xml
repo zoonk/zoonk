@@ -131,6 +131,8 @@
     <string name="essay_limit_title_any">Fit it in the line limit</string>
     <string name="essay_limit_text">Graders stop at line %1$d, so the rest isn\'t read.</string>
     <string name="essay_limit_text_any">Graders stop at the line limit, so the rest isn\'t read.</string>
+    <string name="essay_short_title">Write a longer answer</string>
+    <string name="essay_short_text">This answer is too short to grade. Add more and send it again.</string>
     <string name="essay_zero_title">Answer the question asked</string>
     <string name="essay_zero_text">Rewrite it following the rule above.</string>
     <string name="essay_zero_blank_title">Write an answer</string>
