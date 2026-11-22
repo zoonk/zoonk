@@ -64,6 +64,7 @@ async function findSpokenStep({ stepId, userId }: { stepId: string; userId: stri
     level: row.lesson.level,
     replay,
     retiredAt: row.retiredAt,
+    romanization: content.romanization,
     sentenceId: row.sentenceId,
     skillId: getAnswerSkillId({
       lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),

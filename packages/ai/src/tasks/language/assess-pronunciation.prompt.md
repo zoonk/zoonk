@@ -20,10 +20,11 @@ The goal is to be understood, not to sound native. Flag only what a native liste
    - `different`: no. They would understand another word or another form, or couldn't tell which word it was. Set `heard` to what it sounded like, spelled in `LANGUAGE` ("pan"), and `issue`:
      - `sound`: a vowel or consonant turned it into another word that also makes sense there ("pen" said as "pan" in "Can I borrow your pen?") or left it unclear.
      - `stress`: the stress turned it into another word that also makes sense there ("secretária" said as "secretaria" in "Liguei para a secretária") or left it hard to recognize. Write `heard` with the stressed syllable in capitals ("se-cre-ta-RI-a").
-     - null: another word or form rather than a pronunciation slip ("live" instead of "lived"). A wrong form is `different` even when the meaning stays clear.
+     - null: another word or form rather than a pronunciation slip ("live" instead of "lived"). A different form counts as a mistake when you can hear the difference.
    - `missed`: the word wasn't said. `heard` and `issue` are null.
-3. When `EXPECTED_SENTENCE` is a single word, nothing around it helps: judge whether a listener would recognize it on its own.
-4. When the learner said something else entirely or spoke another language, mark the words they didn't say as `missed`.
+3. If two spellings sound the same in this sentence, mark the word `correct` whichever spelling appears in your transcript. Listen for distinctions the language uses, including lexical tone, vowel length and word endings. When one of these changes a name or word, mark it `different`.
+4. When `EXPECTED_SENTENCE` is a single word, nothing around it helps: judge whether a listener would recognize it on its own.
+5. When the learner said something else entirely or spoke another language, mark the words they didn't say as `missed`.
 
 Flagging a word a listener would understand pushes the learner to change an accent that doesn't stand in their way, and discourages them. Missing a word a listener would get wrong hides what they need to fix. When you're unsure whether a listener would understand it, mark it `correct`.
 

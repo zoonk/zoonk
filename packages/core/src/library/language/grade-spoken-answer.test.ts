@@ -122,6 +122,38 @@ describe(gradeSpokenAnswer, () => {
     ).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
+  it("grades the recording with the pinyin stored on the lesson step", async () => {
+    const [step, user] = await Promise.all([
+      createSpokenStep({ targetLanguage: "zh" }),
+      userFixture(),
+    ]);
+
+    await prisma.step.update({
+      data: {
+        content: {
+          language: "zh",
+          prompt: "Say the name.",
+          romanization: "Wǒ jiào Lín Fāng",
+          targetText: "我叫林芳",
+        },
+      },
+      where: { id: step.id },
+    });
+
+    mockSession(user.id);
+    mockTranscript("我叫林方。");
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: { isCorrect: true, score: 1, transcript: "我叫林方。", wordsToPractice: [] },
+      status: "graded",
+    });
+
+    expect(assessPronunciation).not.toHaveBeenCalled();
+    await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("rejects audio it can't grade before calling any model", async () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);
