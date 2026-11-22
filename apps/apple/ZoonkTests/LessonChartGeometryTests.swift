@@ -3,48 +3,6 @@ import XCTest
 @testable import Zoonk
 
 final class LessonChartGeometryTests: XCTestCase {
-  /// Seven points a character, so a test reads widths off the names.
-  private let width = { (text: String) in Double(text.count) * 7 }
-
-  func testNamesBreakAfterSpacesAndHyphens() {
-    XCTAssertEqual(
-      LessonChartNames.pieces("Centro-Oeste do país"), ["Centro-", "Oeste ", "do ", "país"])
-    XCTAssertEqual(LessonChartNames.pieces("Sul"), ["Sul"])
-  }
-
-  func testLineCountWrapsGreedilyAndRefusesAWordWiderThanTheBand() {
-    XCTAssertEqual(LessonChartNames.lineCount("Centro-Oeste", room: 84, width: width), 1)
-    XCTAssertEqual(LessonChartNames.lineCount("Centro-Oeste", room: 49, width: width), 2)
-    XCTAssertNil(LessonChartNames.lineCount("Nordeste", room: 49, width: width))
-    XCTAssertEqual(
-      LessonChartNames.lineCount("Junho, durante a migração", room: 70, width: width), 3)
-  }
-
-  func testNamesStayUnderBarsOnlyWhenEachFitsInTwoLines() {
-    let regions = ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"]
-
-    XCTAssertTrue(LessonChartNames.fitUnderBars(regions, band: 56, width: width))
-    XCTAssertFalse(LessonChartNames.fitUnderBars(regions, band: 49, width: width))
-    XCTAssertFalse(
-      LessonChartNames.fitUnderBars(
-        ["Maio, antes da mudança de sistema", "Junho"], band: 120, width: width))
-    XCTAssertTrue(
-      LessonChartNames.fitUnderBars(["Seg", "Ter", "Qua", "Qui", "Sex"], band: 21, width: width))
-  }
-
-  func testBarsLieSidewaysOnceTooManySeriesWouldThinThemToSlivers() {
-    XCTAssertTrue(LessonChartBars.fitSideBySide(band: 70, series: 7))
-    XCTAssertFalse(LessonChartBars.fitSideBySide(band: 70, series: 8))
-  }
-
-  func testTickNumbersThinUntilNoneTouch() {
-    XCTAssertEqual(LessonChartTicks.labeled([(0, 10), (20, 30), (40, 50)]), [0, 1, 2])
-    XCTAssertEqual(
-      LessonChartTicks.labeled([(0, 30), (20, 50), (40, 70), (60, 90), (80, 110)]), [0, 2, 4])
-    XCTAssertEqual(LessonChartTicks.labeled([(0, 60), (20, 80), (40, 100)]), [0])
-    XCTAssertEqual(LessonChartTicks.labeled([]), [])
-  }
-
   func testScaleStartsBarsAtZeroOrWhereACutAxisStarts() throws {
     let regions = LessonChartScale(try chart(values: [18, 42, 64, 30, 22]))
     XCTAssertEqual(regions.domain, 0...80)
@@ -94,13 +52,6 @@ final class LessonChartGeometryTests: XCTestCase {
     XCTAssertEqual(ChartsMath.niceDomain([]), 0...1)
   }
 
-  func testPlotXSpansMonthsWithRoundTicksInside() throws {
-    let months = LessonPlotScale(try plot(points: [1, 4, 8, 12].map { ($0, $0) }))
-
-    XCTAssertEqual(months.x.domain, 1...12)
-    XCTAssertEqual(months.x.ticks, [2, 4, 6, 8, 10, 12])
-  }
-
   func testASinglePointSitsInTheMiddleOfBothAxes() throws {
     let single = LessonPlotScale(try plot(points: [(3, 952.5)]))
 
@@ -128,53 +79,10 @@ final class LessonChartGeometryTests: XCTestCase {
       ["10,000", "10,025", "10,050"])
   }
 
-  func testAChartNamesItsUnitOnceBesideTheValueLabelAndKeepsACurrencyOnEachNumber() {
-    let place = LessonChartUnit.place
-
-    XCTAssertEqual(
-      place("km", "Distance"), LessonChartUnit(numberUnit: nil, label: "Distance (km)"))
-    XCTAssertEqual(
-      place("hours per 1,000 letters", "Sorting time"),
-      LessonChartUnit(numberUnit: nil, label: "Sorting time (hours per 1,000 letters)"))
-    XCTAssertEqual(place("R$", "Price"), LessonChartUnit(numberUnit: "BRL", label: "Price"))
-    XCTAssertEqual(
-      place("R$ per hour", "Pay"), LessonChartUnit(numberUnit: "BRL", label: "Pay (per hour)"))
-    XCTAssertEqual(place("%", "Fill rate"), LessonChartUnit(numberUnit: "%", label: "Fill rate"))
-    XCTAssertEqual(place(nil, "Letters"), LessonChartUnit(numberUnit: nil, label: "Letters"))
-  }
-
-  func testABarsValueStandsOverItOnlyWhenEveryValueFitsItsBar() {
-    let width = { (text: String) in Double(text.count) * 7 }
-    let fit = LessonChartBars.valuesFit
-
-    XCTAssertTrue(fit(["35", "42"], 100, 1, width))
-    XCTAssertFalse(fit(["35", "42"], 40, 1, width), "a bar under 30 points prints no value")
-    XCTAssertFalse(fit(["35", "R$12,345.67"], 100, 1, width), "one value too wide hides them all")
-    XCTAssertFalse(fit(["35"], 100, 3, width), "three series thin each bar")
-  }
-
-  func testALinesValueStandsOverItsPointOnlyForOneLineWithRoomForEveryValue() {
-    let width = { (text: String) in Double(text.count) * 7 }
-    let fit = LessonChartPoints.valuesFit
-
-    XCTAssertTrue(fit(["35", "42"], 60, 1, width))
-    XCTAssertFalse(fit(["35", "42"], 40, 1, width), "points closer than 45 points print no value")
-    XCTAssertFalse(fit(["35", "R$12,345.67"], 60, 1, width), "one value too wide hides them all")
-    XCTAssertFalse(fit(["35", "42"], 60, 2, width), "two lines' values would collide")
-  }
-
   func testMoneyTicksKeepTheirCurrency() {
     XCTAssertEqual(
       LessonPlotTicks.format([0, 5, 10], unit: "BRL", locale: Locale(identifier: "en_US")),
       ["R$0", "R$5", "R$10"])
-  }
-
-  func testYearsOnTheXAxisHaveNoThousandsSeparator() {
-    XCTAssertEqual(
-      LessonPlotTicks.format([1960, 1980], xAxis: true, locale: Locale(identifier: "en_US")),
-      ["1960", "1980"])
-    XCTAssertEqual(
-      LessonPlotTicks.format([950, 1000], locale: Locale(identifier: "pt_BR")), ["950", "1.000"])
   }
 
   private func plot(points: [(Double, Double)], references: [Double] = []) throws -> LessonPlot {

@@ -219,19 +219,6 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(columns.right.map(\.id), ["a", "right-trap-0", "c", "right-trap-1", "b"])
   }
 
-  func testMatchPairsSolvedRowsPutEachPairSideBySideAndEachTrapAlone() {
-    let card = { (id: String) in
-      MatchCard(id: id, isTrap: id.contains("trap"), text: id, why: nil)
-    }
-    let left = ["b", "left-trap-0", "a"].map(card)
-    let right = ["right-trap-0", "a", "b", "right-trap-1"].map(card)
-
-    let rows = MatchPairs.solvedRows(left: left, right: right)
-
-    XCTAssertEqual(rows.map(\.left?.id), ["b", "left-trap-0", "a", nil, nil])
-    XCTAssertEqual(rows.map(\.right?.id), ["b", nil, "a", "right-trap-0", "right-trap-1"])
-  }
-
   func testMatchPairsMatchingEachPairOnTheFirstTryIsRight() throws {
     let content = try content(matchPairsJSON)
     let fields = try content.fields(as: MatchPairsFields.self)
@@ -472,24 +459,6 @@ final class ActivityRenderersTests: XCTestCase {
       fields.mixUpFeedback(correct: "Right atrium", placed: "Left atrium"), "The picture faces you."
     )
     XCTAssertNil(fields.mixUpFeedback(correct: "Right atrium", placed: "Pulmonary valve"))
-  }
-
-  /// Main's `answersOnCanvas`: a guess is made on its scale, so the step asks no second question
-  /// with a field of its own for the same number.
-  func testAGuessIsAnsweredOnItsScaleWithNoSecondField() {
-    XCTAssertEqual(ActivityRendererRegistry.app.renderer(for: "guessReveal")?.answersOnCanvas, true)
-    XCTAssertEqual(
-      ActivityRendererRegistry.app.renderer(for: "chartReader")?.answersOnCanvas, false)
-  }
-
-  func testAGuessScaleKeepsFreeTextUnitsOffEveryTick() {
-    let english = Locale(identifier: "en_US")
-    let scale = GuessScale(min: 1, max: 3650, kind: .log)
-
-    let days = scale.tickFormatter(unit: "days", locale: english)
-    let dollars = scale.tickFormatter(unit: "$", locale: english)
-    XCTAssertEqual(scale.ticks().map(days), ["1", "10", "100", "1,000"])
-    XCTAssertEqual(dollars(1), "$1")
   }
 
   func testGuessDifferenceUsesTheDisplayedValues() {

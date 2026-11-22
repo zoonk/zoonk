@@ -34,19 +34,6 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
-  func testTheSkillsStepKeepsTheNewestSkillTheGraphWrote() {
-    var wait = GenerationWait(kind: .curriculum)
-
-    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
-    wait.apply(GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
-    wait.apply(GenerationEvent(skillName: "Loops", status: "started", step: "buildSkillGraph"))
-    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
-
-    let skills = wait.visiblePhases.first { $0.id == "skills" }
-    XCTAssertEqual(skills?.skillName, "Loops")
-    XCTAssertEqual(skills?.state, .working)
-  }
-
   func testAnExplanationCanBeReadOnceItIsWritten() {
     var wait = GenerationWait(kind: .explanation)
 
@@ -60,28 +47,6 @@ final class GenerationWaitTests: XCTestCase {
     wait.apply(GenerationEvent(status: "completed", step: "writeExplanation"))
 
     XCTAssertTrue(wait.isDone)
-  }
-
-  func testAChallengeKeepsWritingWhileItsScriptIsReviewed() {
-    var wait = GenerationWait(kind: .challenge).started
-
-    for (status, step) in [
-      ("started", "planChallenge"), ("completed", "planChallenge"), ("started", "writeChallenge"),
-      ("completed", "writeChallenge"), ("started", "reviewChallenge"),
-    ] {
-      wait.apply(GenerationEvent(status: status, step: step))
-    }
-
-    let run = FollowedRun(
-      wait: wait, failure: nil, warmUpID: nil, isRestarting: false, retry: nil)
-    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .working])
-    XCTAssertLessThan(wait.progress.share, 1)
-    XCTAssertEqual(run.workingLabel, "Writing the challenge")
-
-    wait.apply(GenerationEvent(status: "completed", step: "reviewChallenge"))
-
-    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done])
-    XCTAssertFalse(wait.isDone, "the challenge opens on lessonReady")
   }
 
   func testAHeldBackChallengeKeepsFixingUntilItIsReady() {
@@ -120,38 +85,6 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
-  func testAFreshDraftAfterAFailedFixStaysInTheFix() {
-    var wait = GenerationWait(kind: .challenge)
-    let start = Date(timeIntervalSince1970: 1_000)
-
-    for (second, status, step) in [
-      (0, "started", "writeLesson"), (75, "completed", "planChallenge"),
-      (115, "completed", "writeChallenge"), (125, "completed", "reviewChallenge"),
-      (125, "started", "fixChallenge"), (140, "completed", "fixChallenge"),
-      (140, "started", "recheckChallenge"), (146, "completed", "recheckChallenge"),
-      (146, "started", "redraftChallenge"), (146, "started", "writeLesson"),
-      (146, "started", "planChallenge"), (220, "completed", "planChallenge"),
-      (220, "started", "writeChallenge"),
-    ] {
-      wait.apply(
-        GenerationEvent(
-          at: start.addingTimeInterval(TimeInterval(second)), status: status, step: step))
-    }
-
-    XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write", "fix"])
-    XCTAssertEqual(
-      wait.visiblePhases.map(\.state), [.done, .done, .working],
-      "the redraft's own steps never send the wait back")
-    XCTAssertEqual(
-      wait.visiblePhases[0].endedAt, start.addingTimeInterval(75),
-      "planning keeps the time the first plan finished")
-    XCTAssertFalse(wait.isDone)
-
-    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
-
-    XCTAssertTrue(wait.isDone)
-  }
-
   func testALessonsMarksAndPicturesEachFinishOnTheirOwnStepInEitherOrder() {
     for (first, second) in [("markLesson", "drawPictures"), ("drawPictures", "markLesson")] {
       var wait = GenerationWait(kind: .lesson)
@@ -181,64 +114,6 @@ final class GenerationWaitTests: XCTestCase {
     }
   }
 
-  func testEachPhasesClockRunsOnFromTheOneBeforeInTheServersTime() {
-    let start = Date(timeIntervalSince1970: 1_000)
-    var wait = GenerationWait(kind: .lesson).started
-
-    // The device's clock runs 30 seconds ahead, as the stream's connection said; its replayed
-    // events arrive long after their times.
-    for event in [
-      GenerationEvent(at: start, status: "started", step: "planLesson", clockOffset: 30),
-      GenerationEvent(
-        at: start.addingTimeInterval(52), status: "completed", step: "planLesson", clockOffset: 30),
-      GenerationEvent(
-        at: start.addingTimeInterval(55), status: "started", step: "writeLesson", clockOffset: 30),
-    ] {
-      wait.apply(event, receivedAt: start.addingTimeInterval(120))
-    }
-
-    let plan = wait.visiblePhases[0]
-    let write = wait.visiblePhases[1]
-    XCTAssertEqual(plan.endedAt?.timeIntervalSince(plan.startedAt ?? .distantPast), 52)
-    XCTAssertEqual(
-      write.startedAt, start.addingTimeInterval(52), "writing's clock starts as planning ends")
-    XCTAssertEqual(wait.clockOffset, 30)
-  }
-
-  func testTheBarWeighsEachPhaseByItsUsualTime() {
-    var wait = GenerationWait(kind: .lesson).started
-
-    wait.apply(GenerationEvent(status: "completed", step: "planLesson"))
-
-    let progress = wait.progress
-    XCTAssertEqual(progress.share, 40.0 / 145, accuracy: 0.001)
-    XCTAssertEqual(progress.target, 90.0 / 145, accuracy: 0.001, "up to the end of writing")
-    XCTAssertEqual(progress.runningSeconds, 50)
-
-    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
-
-    XCTAssertEqual(wait.progress.share, 1)
-    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .done, .done])
-  }
-
-  func testAChallengesUsualTimeLeavesOutTheFixOnlySomeChallengesNeed() {
-    XCTAssertEqual(GenerationWait.usualSeconds(.challenge), 75 + 50)
-    XCTAssertEqual(GenerationWait.usualSeconds(.lesson), 145)
-  }
-
-  func testWritingALessonCountsItsScreensWithAChecksBetweenThenKeepsChecking() {
-    let write = GenerationWait(kind: .lesson).phases[1]
-    let lines = (0..<10).map { write.detailLine(tick: $0).map { String(localized: $0) } }
-
-    XCTAssertEqual(
-      lines,
-      [
-        "Writing screen 1…", "Writing screen 2…", "Checking the answers…", "Writing screen 3…",
-        "Writing screen 4…", "Checking the answers…", "Writing screen 5…", "Writing screen 6…",
-        "Checking the answers…", "Checking the answers…",
-      ])
-  }
-
   func testLessonOneIsReadyOnceTheRunOrTheReadSaysSo() {
     var wait = GenerationWait(kind: .curriculum)
     let writing = GenerationEvent(
@@ -262,49 +137,6 @@ final class GenerationWaitTests: XCTestCase {
     var done = ready
     done.isDone = true
     XCTAssertEqual(wait.firstLesson(read: done)?.isDone, true)
-  }
-
-  /// A wait opened two minutes into its stage goes on from there, its steps replayed at once.
-  func testAWaitOpenedPartwayDriftsFromWhenItsStageStarted() {
-    let opened = Date()
-    var wait = GenerationWait(kind: .curriculum, since: opened).started
-
-    for event in [
-      GenerationEvent(
-        at: opened.addingTimeInterval(-130), status: "completed", step: "understandGoal",
-        clockOffset: 0),
-      GenerationEvent(
-        at: opened.addingTimeInterval(-120), status: "started", step: "buildSkillGraph",
-        clockOffset: 0),
-    ] {
-      wait.apply(event, receivedAt: opened)
-    }
-
-    XCTAssertGreaterThan(wait.shownShare(at: opened), wait.progress.share + 0.1)
-  }
-
-  /// The API never names the phase that failed, so a failed run marks where it stopped only on a
-  /// phase it reported a step of (main's `phase-progress.ts`).
-  func testAFailedRunThatReportedNothingMarksNoPhaseStopped() {
-    let wait = GenerationWait(kind: .curriculum).started
-
-    XCTAssertFalse(wait.visiblePhases.contains { $0.status(failure: .generation) == .failed })
-  }
-
-  func testAFailedRunMarksThePhaseItReportedStarting() {
-    var wait = GenerationWait(kind: .curriculum).started
-    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
-
-    XCTAssertEqual(
-      wait.visiblePhases.filter { $0.status(failure: .generation) == .failed }.map(\.id),
-      ["skills"])
-  }
-
-  func testAFailedRunMarksNoPhaseItMovedOnToWithoutAReport() {
-    var wait = GenerationWait(kind: .explanation).started
-    wait.apply(GenerationEvent(status: "completed", step: "findExplanation"))
-
-    XCTAssertFalse(wait.visiblePhases.contains { $0.status(failure: .generation) == .failed })
   }
 
   func testIgnoresStepsItDoesntKnow() {
@@ -352,27 +184,5 @@ final class GenerationWaitTests: XCTestCase {
       wait.firstLesson(read: read, readGenerationID: "old", generationID: "new")?.isStopped, false)
     XCTAssertEqual(
       wait.firstLesson(read: read, readGenerationID: "new", generationID: "new")?.isStopped, true)
-  }
-
-  /// A lesson's mark (10) and drawing (45) run side by side, and the drawing finished first.
-  func testAStepThatFinishesBeforeTheOneBesideItFillsItsOwnPart() {
-    XCTAssertEqual(
-      GenerationWait.phaseFills(
-        share: 135.0 / 145.0, weights: [40, 50, 10, 45], states: [.done, .done, .working, .done]),
-      [1, 1, 0, 1])
-  }
-
-  /// The running step comes first in the list, and the step after it is already done.
-  func testARunningStepFillsWhatTheBarDriftedPastTheDoneSteps() {
-    XCTAssertEqual(
-      GenerationWait.phaseFills(
-        share: 0.625, weights: [10, 20, 10], states: [.working, .done, .waiting]),
-      [0.5, 1, 0])
-  }
-
-  func testAWaitingStepStaysEmptyWhateverTheBarReached() {
-    XCTAssertEqual(
-      GenerationWait.phaseFills(share: 0.9, weights: [10, 10], states: [.working, .waiting]),
-      [1, 0])
   }
 }

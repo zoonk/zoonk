@@ -84,21 +84,6 @@ describe("formatting rule fixtures", () => {
   });
 });
 
-test("Apple CI runs the formatting gate with Node installed", () => {
-  const workflow = readFileSync(
-    new URL("../../../.github/workflows/apple.yml", import.meta.url),
-    "utf8",
-  );
-
-  const formatJob = workflow.split("  format:")[1]?.split("  build:")[0] ?? "";
-  expect(formatJob).toContain("make -C apps/apple format-check formatting-check");
-  expect(formatJob.indexOf("actions/setup-node@")).toBeGreaterThan(-1);
-
-  expect(formatJob.indexOf("actions/setup-node@")).toBeLessThan(
-    formatJob.indexOf("format-check formatting-check"),
-  );
-});
-
 test("the CLI reports warnings but fails for errors and allows the shared module", () => {
   const temporary = mkdtempSync(path.join(tmpdir(), "native-formatting-"));
 

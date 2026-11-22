@@ -5,13 +5,17 @@ import Testing
 
 @MainActor
 struct CodeActivityRunnerTests {
-  @Test func javascriptPrintsLikeNodeAndPointsAtTheErrorLine() async {
+  @Test func javascriptPrintsLikeNodeWithoutTheNetworkAndPointsAtTheErrorLine() async {
     let runner = CodeProgramRunner(language: .javascript)
 
     let success = await runner.run("console.log([1, 2], {a: 1}); console.error('warning');")
     #expect(success.stop == .done)
     #expect(success.output == "[ 1, 2 ] { a: 1 }\n")
     #expect(success.errorOutput == "warning\n")
+
+    let network = await runner.run(
+      "console.log(typeof fetch, typeof XMLHttpRequest, typeof WebSocket, typeof importScripts)")
+    #expect(network.output == "undefined undefined undefined undefined\n")
 
     let failure = await runner.run("console.log('before');\nthrow new Error('bad');")
     #expect(failure.stop == .error)
@@ -21,7 +25,7 @@ struct CodeActivityRunnerTests {
   }
 
   @Test func endlessLoopsStopAndTheNextRunWorks() async {
-    let runner = CodeProgramRunner(language: .javascript, timeLimit: 1)
+    let runner = CodeProgramRunner(language: .javascript, timeLimit: 0.25)
 
     #expect(await runner.run("while (true) {}").stop == .timeout)
 
@@ -31,13 +35,6 @@ struct CodeActivityRunnerTests {
 
     let next = await runner.run("console.log(42)")
     #expect(next == CodeProgramRun(stop: .done, output: "42\n"))
-  }
-
-  @Test func programsCantReachTheNetwork() async {
-    let result = await CodeProgramRunner(language: .javascript).run(
-      "console.log(typeof fetch, typeof XMLHttpRequest, typeof WebSocket, typeof importScripts)")
-
-    #expect(result.output == "undefined undefined undefined undefined\n")
   }
 
   private func regexFields(shouldMatch: [String], shouldNotMatch: [String]) throws
@@ -58,11 +55,11 @@ struct CodeActivityRunnerTests {
     return regex
   }
 
-  @Test func regexesMatchLikeCore() async throws {
+  @Test func regexesMatchLikeCoreAndARunawayOneStopsBeforeTheNext() async throws {
     let regex = try #require(
       try regexFields(
         shouldMatch: ["94103", "94103-1234"], shouldNotMatch: ["9410", "941031", "94103-12"]))
-    let preview = PatternRegexPreview()
+    let preview = PatternRegexPreview(timeLimit: 0.25)
 
     let solved = try #require(await preview.test("^\\d{5}(-\\d{4})?$", regex: regex))
     #expect((solved.shouldMatch + solved.shouldNotMatch).allSatisfy { $0.passes })
@@ -72,20 +69,16 @@ struct CodeActivityRunnerTests {
     let results = try #require(await preview.test("\\d{5}", regex: regex))
     #expect(results.shouldMatch.map(\.match) == [0..<5, 0..<5])
     #expect(results.shouldNotMatch.map(\.passes) == [true, false, false])
-  }
 
-  @Test func aPatternThatBacktracksWithoutEndStopsAndTheNextOneIsTestedAtOnce() async throws {
-    let regex = try #require(
+    let runaway = try #require(
       try regexFields(shouldMatch: ["aab"], shouldNotMatch: [String(repeating: "a", count: 32)]))
-    let preview = PatternRegexPreview()
-    _ = await preview.test("a", regex: regex)
     let started = ContinuousClock.now
 
-    #expect(await preview.test(String(repeating: "a*", count: 12) + "b", regex: regex) == nil)
+    #expect(await preview.test(String(repeating: "a*", count: 12) + "b", regex: runaway) == nil)
     let stopped = ContinuousClock.now
     #expect(stopped - started < .seconds(3))
 
-    let next = try #require(await preview.test("^a+b$", regex: regex))
+    let next = try #require(await preview.test("^a+b$", regex: runaway))
     #expect((next.shouldMatch + next.shouldNotMatch).allSatisfy { $0.passes })
     #expect(ContinuousClock.now - stopped < .seconds(2))
   }
