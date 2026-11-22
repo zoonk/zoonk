@@ -279,12 +279,13 @@ enum UnderstoodRows {
       ? String(
         localized: "Some of your material can't be read anymore, so your plan won't follow it.",
         table: "Onboarding",
-        comment: "On the goal's card: some of the material the goal was sent with is gone")
+        comment:
+          "Under the learner's material on the goal card, when some of it can't be read anymore.")
       : String(
         localized: "It can't be read anymore, so your plan won't follow it.",
         table: "Onboarding",
         comment:
-          "On the goal's card, under \"Your material\": all the material the goal was sent with is gone"
+          "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material."
       )
   }
 
