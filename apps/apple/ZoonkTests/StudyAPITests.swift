@@ -25,7 +25,7 @@ final class StudyAPITests: XCTestCase {
       let block = try JSONDecoder().decode(
         StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
 
-      XCTAssertEqual(block.label, expectedLine)
+      XCTAssertEqual(block.label(document: .notice), expectedLine)
       XCTAssertEqual(block.detail, expectedLine)
     }
   }
