@@ -1,7 +1,7 @@
 package com.zoonk.android.feature.onboarding
 
 import android.view.KeyEvent
-import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,13 +85,16 @@ fun <T> ChoiceList(
         choices.forEachIndexed { index, choice ->
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val selected = choice.value == value
+            val interaction = remember { MutableInteractionSource() }
             ListRow(
                 headline = { Text(choice.label) },
                 busy = busyValue != null && choice.value == busyValue,
                 meta = choice.meta?.let { { Text(it) } },
+                interactionSource = interaction,
+                highlighted = selected,
+                highlightColor = MaterialTheme.zoonk.selectedTint,
                 modifier =
                     Modifier
-                        .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
                         .onPreviewKeyEvent { event ->
                             val number = event.nativeKeyEvent.keyCode - KeyEvent.KEYCODE_1
                             val numbered = choices.getOrNull(number)
@@ -100,7 +104,13 @@ fun <T> ChoiceList(
                             } else {
                                 false
                             }
-                        }.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
+                        }.selectable(
+                            selected = selected,
+                            interactionSource = interaction,
+                            indication = null,
+                            enabled = !readOnly,
+                            role = Role.RadioButton,
+                        ) { choose(choice) },
                 supporting = listRowDescription(choice.description),
                 trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
             )
@@ -132,16 +142,24 @@ fun <T> CheckList(
         choices.forEachIndexed { index, choice ->
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val checked = choice.value in value
+            val interaction = remember { MutableInteractionSource() }
             val open = checked || !full
             // Past the limit an option is dimmed in its words' own colors (Material's disabled emphasis), so what it
             // draws stays its words' color, and the box takes Material's disabled look.
             val dim = { color: Color -> if (open) Color.Unspecified else color.copy(alpha = color.alpha * DISABLED_ALPHA) }
             ListRow(
                 headline = { Text(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
+                interactionSource = interaction,
+                highlighted = checked,
+                highlightColor = MaterialTheme.zoonk.selectedTint,
                 modifier =
-                    Modifier
-                        .background(if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent)
-                        .toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
+                    Modifier.toggleable(
+                        value = checked,
+                        interactionSource = interaction,
+                        indication = null,
+                        enabled = open && !readOnly,
+                        role = Role.Checkbox,
+                    ) { onToggle(choice.value) },
                 supporting = listRowDescription(choice.description, dim(MaterialTheme.colorScheme.onSurfaceVariant)),
                 trailing = { Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk(), enabled = open) },
             )

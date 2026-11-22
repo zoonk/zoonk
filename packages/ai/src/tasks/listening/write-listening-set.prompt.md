@@ -16,7 +16,7 @@ Write one recording for `TASK` of `EXAM`, in `SCRIPT_LANGUAGE`, at `LEVEL`, and 
 - Fit `LEVEL`: vocabulary, speed of ideas and how directly things are said match what candidates at that level are tested on.
 - Use the money, places, dates, spelling and formats of the country `EXAM` is set in, unless `TASK` names another, and give speakers accents that fit it. Take first names from `CAST` when they fit that country, and its places only when they're in it; never use real public figures.
 - `speakers`: everyone who speaks, each with a short `name` (a first name, or a role such as "Receptionist" or "Lecturer" when the recording never names them), a `gender` so each gets a fitting voice, and an `accent` from `ACCENTS`, named as a variety of the language ("British English", "Mexican Spanish"). When `ACCENTS` has several, mix them across speakers as the exam does.
-- `turns`: what each speaker says, in order, each with the speaker's exact `name`. Only spoken words: no stage directions, sound effects, brackets, Markdown or narrator lines, unless `TASK` has a narrator. A monologue is one speaker with several turns, each a paragraph.
+- `turns`: what each speaker says, in order, each with the speaker's exact `name`. Use only spoken words. Write formulas and commands as the speaker would say them ("one half", "type L S"), and make any aside part of the sentence. Leave out stage directions, sound effects, brackets, parentheses and Markdown. Include a narrator only if `TASK` has one. A monologue is one speaker with several turns, each a paragraph.
 - `title`: a short name of the situation in `SCRIPT_LANGUAGE` ("Booking a table for a birthday dinner"), without the exam's or the part's name.
 
 # The questions

@@ -3418,6 +3418,12 @@ msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "Noch nicht ganz. Schau noch einmal hin und korrigier es selbst. Prüf dann deine Antwort."
 
+#. Opens the figures shown at the start of a challenge.
+#: src/lesson/steps/challenge/challenge-conversation.tsx
+msgctxt "sMBshP"
+msgid "Starting figures"
+msgstr "Startwerte"
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"

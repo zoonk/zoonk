@@ -324,7 +324,7 @@
   "onboarding_start_over_confirm": "a5b9590e7085988657cb1b447548111c3630e6158a2c03c897bec84462bbe9f8",
   "onboarding_start_over_description": "09dd2cb34889bad37e65b4dc6c2430f45720448b3f667d29199c13386fc99a4c",
   "onboarding_start_over_title": "f2a6d68362814def95ad4a5702cf334a3923a28b4e956f359f4d85443d086079",
-  "onboarding_start_title": "14ab4270aceedb7f2b4f0e1b96ec4bd8bc28f7fae3fc1d18256f01813e055b17",
+  "onboarding_start_title": "ec3059ff08605e1db768aaec6b8ef89d7f38b017680b016579ea80dd2c17269f",
   "onboarding_step_of": "b340b1d37e87b1cf405e07c35af6321c64f1e03b2c1f07c42cdac4f56c5dcf69",
   "onboarding_study_days": "05407950d9c8390e6598ef67c58d6ffb6e61d44e898f9942cd6670630f554cae",
   "onboarding_study_material": "a431b480b0dd9b74f485b9bf6f7d9b8259701b44e07a24d8a7879b101265e808",
@@ -349,7 +349,7 @@
   "onboarding_try_another_goal": "dd62984eb51eba5953599d3b473d10dfdddbe982719ec376db0ceabfdff1cb06",
   "onboarding_unclear_description": "adba79e14f9d39e59ea943311f7e0be7b303c0836c947b80ff62acb4f4740182",
   "onboarding_unclear_title": "da8289b63c95ce99009438a48f427342299a2d6a797f83569a4cdd177ea09c85",
-  "onboarding_understanding_description": "e863661de120fc070f6979e4d513dad2a2dc5b7c76b8b7e8cea52b2e76834dfb",
+  "onboarding_understanding_description": "ceb2533573a9bdfc535a44f4f392a97811bdbd93b1586c5b3adf9ec0ac0e2823",
   "onboarding_understanding_title": "79e393f8d450a926dfa7341b48a92c0ebcfe8b18a995a5f52607115b06b5ad63",
   "onboarding_understood_description": "1e46c5f0c3159604f95781af70b30a52f70d65b8386f913c492e2d1289ea0a5b",
   "onboarding_understood_description_shared": "36428c2968b9d9a968d098ecdcce53732b5ad57ea7656b7204acbb85cb9eab9f",
@@ -377,8 +377,7 @@
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Title of the screen where a learner writes their goal. -->
-    <string name="onboarding_start_title">Ne başarmak istiyorsun?</string>
+    <string name="onboarding_start_title">Hedefin ne?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description">Kendi sözlerinle anlat. Planını biz hazırlayacağız.</string>
     <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -425,7 +424,7 @@
     <string name="onboarding_back_to_today">Bugün</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Hedefini anlamaya çalışıyoruz</string>
-    <string name="onboarding_understanding_description">Sonra ne anladığımızı kontrol edeceksin.</string>
+    <string name="onboarding_understanding_description">Ardından ne anladığımızı sana göstereceğiz.</string>
     <string name="onboarding_understood_title">Anladıklarımız şöyle</string>
     <string name="onboarding_understood_description">Tüm bunları daha sonra değiştirebilirsin.</string>
     <!-- When the learner's words became more than one goal. -->
@@ -439,7 +438,6 @@
     <string name="onboarding_understood_locked_line_more">Bu hedeflere başlamak için başka bir hedefe ara ver.</string>
     <string name="onboarding_looks_right">Onayla</string>
     <string name="onboarding_fix_something">Düzeltme yap</string>
-    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">Yazdıkların</string>
     <string name="onboarding_rewrite_hint">Yazdıklarını tekrar okuyacağız. Bir ayrıntıyı düzeltmek için aşağıdaki ilgili kalem simgesini kullan.</string>
     <string name="onboarding_read_again">Tekrar oku</string>

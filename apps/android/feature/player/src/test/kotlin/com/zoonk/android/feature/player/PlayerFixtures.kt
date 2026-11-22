@@ -252,7 +252,7 @@ private val CHART_CHALLENGE =
        {"id":"postdoc","ai":false,"expertise":"Set up the detector","role":"Postdoc"},
        {"id":"ai","ai":true,"expertise":"Runs scans when asked","role":"AI assistant"}],
      "meters":[{"id":"beam","goodWhen":"high","label":"Beam time left","start":90},{"id":"signal","goodWhen":"high","label":"Signal quality","start":50}],
-     "panels":[],
+     "panels":[{"title":"Previous run","metrics":[{"label":"Run length","value":"8 hours"}]}],
      "skills":[{"id":"reading","name":"Reading a scan","practice":"Before trusting the highest point, ask what happens between the points."}],
      "startNodeId":"start",
      "nodes":[

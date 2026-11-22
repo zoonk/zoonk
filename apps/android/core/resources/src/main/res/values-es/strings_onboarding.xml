@@ -324,7 +324,7 @@
   "onboarding_start_over_confirm": "05753077779e4b81eda876d658bd6e0880d9d72638967a960d803a4555f3fec5",
   "onboarding_start_over_description": "0f1802a92ba34d0c8a7f0b5a8cbb813801f0afbf7117fd3fa6c9f2e41f78fb59",
   "onboarding_start_over_title": "f8749f8c11012767b8da3a7ac17935745ad75d245452f9b78a6c5cc0bf4c971b",
-  "onboarding_start_title": "35afe6175bfa3f435064d7bde691e0767accb20a92b5a68640bad963a0e5f0db",
+  "onboarding_start_title": "ec53ad7e1e53cceeb8b2ee6d751ffbac15fb1fa9f0f0063bd112c2eb15aa68d8",
   "onboarding_step_of": "b9b5932abcf969b93fc09d1c01a6ae71bd78028f93aeb58b8b4fd14ca4bd4989",
   "onboarding_study_days": "026e7b8db10836437112ab77820218656c615e83ce1795004d9f1e635e953b05",
   "onboarding_study_material": "fff6f3e1bbcc831315ca5d60ee14f9154569f97f165a60d947d0f14560ca5a5b",
@@ -349,7 +349,7 @@
   "onboarding_try_another_goal": "bbfcd5192b993aed7a7dfc6e3373180842f47a798e9acd76173e2f6dd932f3bf",
   "onboarding_unclear_description": "8f6d63354a1a0e25505e93edfb012a7ab13f86fc6d240d56aeb8cc9ad0d15512",
   "onboarding_unclear_title": "904f2e416debdd25f94d86334e31a8c42c1454f1930b2df778bafbbfc75e13c8",
-  "onboarding_understanding_description": "a8506c860e66902847ef0f8f00724b6968b954d100f5b6551fe3820ad5f736e6",
+  "onboarding_understanding_description": "5d72f5f70e22d62bdd7a58a8c841bf999ec6e3218f67dd8525ae91430e766678",
   "onboarding_understanding_title": "8649cae50c669b02f9528e6b4e3b69d9d2e022015d690055bb602adcfe93045c",
   "onboarding_understood_description": "2032b76914a8eba329ae73ab40f8c15a9a73c9ababe693e4596ae06f64b9d396",
   "onboarding_understood_description_shared": "ef5d5e993c3bf2bbd264b1c4c1b0aed830074d6cc6a679aa460e614d5c394965",
@@ -377,8 +377,7 @@
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Title of the screen where a learner writes their goal. -->
-    <string name="onboarding_start_title">¿Qué quieres lograr?</string>
+    <string name="onboarding_start_title">¿Cuál es tu objetivo?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description">Cuéntanos con tus propias palabras. Prepararemos el plan.</string>
     <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -426,7 +425,7 @@
     <string name="onboarding_back_to_today">Hoy</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Analizando tu objetivo</string>
-    <string name="onboarding_understanding_description">Después, revisarás lo que entendimos.</string>
+    <string name="onboarding_understanding_description">Después, te mostraremos lo que entendimos.</string>
     <string name="onboarding_understood_title">Esto es lo que entendimos</string>
     <string name="onboarding_understood_description">Puedes cambiar todo esto después.</string>
     <!-- When the learner's words became more than one goal. -->
@@ -440,7 +439,6 @@
     <string name="onboarding_understood_locked_line_more">Pausa otro objetivo para crear estos.</string>
     <string name="onboarding_looks_right">Confirmar</string>
     <string name="onboarding_fix_something">Corregir algo</string>
-    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">Lo que escribiste</string>
     <string name="onboarding_rewrite_hint">Lo leeremos de nuevo. Para corregir un detalle, usa el lápiz correspondiente más abajo.</string>
     <string name="onboarding_read_again">Leerlo de nuevo</string>

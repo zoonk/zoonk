@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutModifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
@@ -65,7 +66,7 @@ fun TaskActions(
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val roomy = isRoomyBar(maxWidth)
-        val singleAction = maxWidth < MAIN_ACTION_WIDTH * 2 * LocalDensity.current.fontScale
+        val singleAction = stacksActions(maxWidth, LocalDensity.current.fontScale)
 
         CompositionLocalProvider(LocalRoomyBar provides roomy, LocalStackedBar provides singleAction) {
             FlowRow(
@@ -80,6 +81,40 @@ fun TaskActions(
                 }
                 content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f).wrapsWhole())
             }
+        }
+    }
+}
+
+/** Two labeled actions share a line when their words fit. On separate lines, both fill the bar. */
+@Composable
+fun TaskActions(
+    secondary: @Composable () -> Unit,
+    primary: @Composable () -> Unit,
+) {
+    Layout(contents = listOf(secondary, primary), modifier = Modifier.fillMaxWidth()) { (others, mains), constraints ->
+        val other = others.single()
+        val main = mains.single()
+        val width = constraints.maxWidth
+        val gap = BAR_GAP.roundToPx()
+        val roomy = isRoomyBar(width.toDp())
+        val otherWidth = other.maxIntrinsicWidth(Constraints.Infinity)
+        val mainWidth = maxOf(main.maxIntrinsicWidth(Constraints.Infinity), if (roomy) MAIN_ACTION_WIDTH.roundToPx() else 0)
+        val stacked = stacksActions(width.toDp(), fontScale) || otherWidth + gap + mainWidth > width
+        val secondaryWidth = if (stacked) width else otherWidth
+        val primaryWidth =
+            when {
+                stacked -> width
+                roomy -> mainWidth
+                else -> width - secondaryWidth - gap
+            }
+        val first = other.measure(Constraints.fixedWidth(secondaryWidth))
+        val second = main.measure(Constraints.fixedWidth(primaryWidth))
+        val height = if (stacked) first.height + gap + second.height else maxOf(first.height, second.height)
+
+        layout(width, height) {
+            val start = if (stacked) 0 else width - first.width - gap - second.width
+            first.placeRelative(start, if (stacked) 0 else (height - first.height) / 2)
+            second.placeRelative(width - second.width, if (stacked) first.height + gap else (height - second.height) / 2)
         }
     }
 }
@@ -144,6 +179,11 @@ fun Modifier.taskBarColumn(): Modifier = widthIn(max = TASK_COLUMN_WIDTH - TASK_
 internal val TASK_COLUMN_WIDTH = 640.dp
 internal val TASK_MARGIN = 16.dp
 private val MAIN_ACTION_WIDTH = 160.dp
+
+private fun stacksActions(
+    width: Dp,
+    fontScale: Float,
+) = width < MAIN_ACTION_WIDTH * 2 * fontScale
 
 /** Whether a bar [width] wide has room for its main action at its end at its own width: wider than any phone's or book page's bar (about 400dp), narrower than a tablet's page in a spread. */
 internal fun isRoomyBar(width: Dp): Boolean = width >= ROOMY_BAR_WIDTH

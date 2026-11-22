@@ -5,12 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -29,6 +32,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -106,7 +110,23 @@ class OnboardingBarTest {
         showUnderstood()
         write("understood-tall-phone")
         assertPinned("Here's what we understood", "Looks right")
+        assertEquals(confirmationAction("Fix something").top, confirmationAction("Looks right").top)
     }
+
+    @Test
+    @Config(qualifiers = "w360dp-h640dp-xxhdpi", fontScale = 1.3f)
+    fun largeTextStacksFullWidthConfirmationActions() {
+        showUnderstood()
+        write("understood-tall-phone-large-text")
+
+        val fix = confirmationAction("Fix something")
+        val confirm = confirmationAction("Looks right")
+        assertTrue(fix.bottom < confirm.top)
+        assertEquals(fix.right - fix.left, confirm.right - confirm.left)
+        assertEquals(328.dp, confirm.right - confirm.left)
+    }
+
+    private fun confirmationAction(label: String) = rule.onNodeWithText(label).assertIsDisplayed().getUnclippedBoundsInRoot()
 
     @Test
     @Config(qualifiers = "w1280dp-h600dp-land-xhdpi")
