@@ -1,9 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import {
-  keepOpenSessionSelection,
-  skipTestedOutBlocks,
-} from "../sessions/_utils/skip-tested-out-blocks";
+import { keepOpenSessionSelection } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { followPlanToday } from "./_utils/follow-plan-today";
@@ -46,7 +43,6 @@ export async function announceTestedOutItems({
   livingPlanDay,
   now,
   planItemIds,
-  skipBlocks = false,
   timeZone,
 }: {
   extraWrites?: (tx: TransactionClient, changeId: string | null) => Promise<unknown>;
@@ -59,8 +55,6 @@ export async function announceTestedOutItems({
   livingPlanDay?: string;
   now: Date;
   planItemIds: readonly string[];
-  /** Shared notices save every goal's undo snapshot before pending blocks are skipped. */
-  skipBlocks?: boolean;
   timeZone: string;
 }): Promise<{ changeId: string | null; lessonsSkipped: number; planVersion: number } | null> {
   if (planItemIds.length === 0) {
@@ -85,10 +79,6 @@ export async function announceTestedOutItems({
       !extraWrites &&
       planItemIds.every((id) => unseen.payload.planItemIds.includes(id))
     ) {
-      if (skipBlocks) {
-        await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
-      }
-
       if (followToday) {
         await followPlanToday({ changeId: unseen.change.id, context });
       }
@@ -96,7 +86,7 @@ export async function announceTestedOutItems({
       return { changeId: unseen.change.id, lessonsSkipped, planVersion: context.plan.version };
     }
 
-    const keepSession = !followToday && !skipBlocks;
+    const keepSession = !followToday;
 
     const save = async (tx: TransactionClient, changeId: string | null) => {
       await extraWrites?.(tx, changeId);
@@ -158,10 +148,6 @@ export async function announceTestedOutItems({
           computed,
           context,
         });
-
-    if (skipBlocks) {
-      await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
-    }
 
     if (followToday) {
       await followPlanToday({ changeId, context });

@@ -38,7 +38,6 @@ export async function announceSharedTestOuts({
           goalId: plan.goalId,
           now,
           planItemIds: plan.items.map((item) => item.id),
-          skipBlocks: false,
           timeZone: getAnswerTimeZone({ goal: plan.goal }),
         }),
       ),

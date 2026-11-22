@@ -7,10 +7,14 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { setupPlayableLesson } from "../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
-import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { toBlockPayload } from "./block-payload";
 import { startStudyBlock } from "./start-study-block";
 
@@ -29,7 +33,7 @@ async function setup() {
     goalFixture({ timezone: "UTC", userId: stranger.id }),
   ]);
 
-  const plans = await Promise.all(
+  await Promise.all(
     goals.map((goal) => planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id }] })),
   );
 
@@ -117,7 +121,6 @@ async function setup() {
     other,
     pausedPending,
     pending,
-    plans,
     reinforcement,
     replay,
     source,
@@ -176,9 +179,32 @@ describe("shared lessons in saved days", () => {
         lessonId: fixture.lesson.id,
       });
 
-    const outcomes = await Promise.all([complete(), complete()]);
-    expect(outcomes).toMatchObject([{ status: "completed" }, { status: "completed" }]);
+    const lock = holdLearnerLock({
+      beforeCommit: (tx) =>
+        tx.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${fixture.pending.id}::uuid FOR UPDATE`,
+      userId: fixture.user.id,
+    });
+
+    const pid = await lock.pid;
+    const outcomes = Promise.all([complete(), complete()]);
+
+    try {
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
+    } finally {
+      lock.release();
+      await Promise.all([lock.done, outcomes]);
+    }
+
+    await expect(outcomes).resolves.toMatchObject([
+      { status: "completed" },
+      { status: "completed" },
+    ]);
+
     await expectCarryover(fixture);
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: fixture.current.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
 
     await expect(
       prisma.planItem.findFirstOrThrow({
@@ -199,31 +225,5 @@ describe("shared lessons in saved days", () => {
     await expect(
       prisma.dailyProgress.findFirstOrThrow({ where: { userId: fixture.user.id } }),
     ).resolves.toMatchObject({ lessonsCompleted: 1 });
-  });
-
-  it("shares a test-out with pending teaching in other goals while retaining the source goal's active skip", async () => {
-    const fixture = await setup();
-    const planItemIds = fixture.plans[0]?.items.map((item) => item.id) ?? [];
-
-    await prisma.planItem.updateMany({
-      data: { completedAt: NOW, status: "testedOut" },
-      where: { lessonId: fixture.lesson.id, plan: { goal: { userId: fixture.user.id } } },
-    });
-
-    await skipTestedOutBlocks({
-      goalId: fixture.source.goalId ?? "",
-      notStarted: true,
-      planItemIds,
-    });
-
-    await expectCarryover(fixture);
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: fixture.current.id } }),
-    ).resolves.toMatchObject({ status: "skipped" });
-
-    await expect(prisma.dailyProgress.count({ where: { userId: fixture.user.id } })).resolves.toBe(
-      0,
-    );
   });
 });

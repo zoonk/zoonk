@@ -9,11 +9,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
+import { completeLessonPlanItems } from "./_utils/plan-items";
 import { refitSessionLessons } from "./_utils/refit-session-lessons";
-import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { addExtraStudyBlock } from "./add-extra-study-block";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
 import { getStudySession } from "./get-study-session";
@@ -861,33 +862,38 @@ describe("completion refits today's lessons", () => {
     expect(completion.deferredLessonsCount).toBe(1);
   });
 
-  it("replaces a tested-out lesson before ending the day, without debiting skipped minutes", async () => {
-    const fixture = await setup({ minutes: 10, queued: 1 });
-    const item = fixture.plan.items[0]!;
+  it.each([1, 2])(
+    "refills a %i-lesson queue after a lesson is completed elsewhere",
+    async (queued) => {
+      const minutes = queued * 10;
+      const fixture = await setup({ lessons: 3, minutes, queued });
+      const lessonId = fixture.playable[0]!.lesson.id;
 
-    await prisma.planItem.update({
-      data: { completedAt: NOW, status: "testedOut" },
-      where: { id: item.id },
-    });
+      await writeLearnerChange({ planInputs: true, userId: fixture.user.id }, (tx) =>
+        completeLessonPlanItems(tx, { lessonId, now: NOW, userId: fixture.user.id }),
+      );
 
-    await skipTestedOutBlocks({
-      goalId: fixture.goal.id,
-      notStarted: true,
-      planItemIds: [item.id],
-    });
+      await runOwedSettlements(fixture.user.id);
 
-    await runOwedSettlements(fixture.user.id);
+      const day = await getStudySession({
+        input: { timeZone: "UTC" },
+        sessionId: fixture.session.id,
+      });
 
-    const saved = await prisma.studySession.findUniqueOrThrow({
-      include: { blocks: true },
-      where: { id: fixture.session.id },
-    });
+      expect(day).toMatchObject({
+        session: { minutes: { left: minutes, planned: minutes }, status: "active" },
+        status: "ready",
+      });
 
-    expect(saved.status).toBe("active");
-    expect(saved.plannedMinutes).toBe(10);
+      if (day.status !== "ready") {
+        throw new Error(day.status);
+      }
 
-    expect(saved.blocks.find((block) => block.status === "pending")?.lessonId).toBe(
-      fixture.playable[1]?.lesson.id,
-    );
-  });
+      expect(
+        day.session.blocks
+          .filter((block) => block.status === "pending")
+          .map((block) => block.lessonId),
+      ).toStrictEqual(fixture.playable.slice(1, queued + 1).map(({ lesson }) => lesson.id));
+    },
+  );
 });

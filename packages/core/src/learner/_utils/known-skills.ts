@@ -170,7 +170,6 @@ export async function markPlanItemsTestedOut({
       livingPlanDay,
       now: now ?? testedOutAt,
       planItemIds: announced,
-      skipBlocks: false,
       timeZone,
     });
 
