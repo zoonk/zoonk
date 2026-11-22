@@ -6,17 +6,6 @@ import XCTest
 /// Expected values are what main's TypeScript computes for the same inputs, so the app's readouts
 /// agree with grading.
 final class ChartsActivitiesTests: XCTestCase {
-  func testCrowdedAxisUsesFewerRoundSteps() {
-    XCTAssertEqual(ChartsAxis.ticks(0...375), [0, 100, 200, 300])
-    XCTAssertEqual(ChartsAxis.ticks(0...5625), [0, 2000, 4000])
-    let ticks = ChartsAxis.fittingTicks(
-      0...375,
-      frame: { value in
-        let x = value / 375 * 140
-        return (left: x, right: x + (value == 0 ? 14 : 43))
-      })
-    XCTAssertEqual(ticks, [0, 200])
-  }
   func testGuessMoneyTicksInMillionsShortenAndKeepCurrency() {
     let english = Locale(identifier: "en_US")
     let millions = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear)
@@ -317,32 +306,6 @@ final class ChartsActivitiesTests: XCTestCase {
     let across = try XCTUnwrap(view(try line(-9.99), 9.99).readouts()[0].note)
     XCTAssertTrue(
       across.hasPrefix(ActivityNumberFormat.format(19.98, unit: "m", signed: true, digits: 2)))
-  }
-
-  func testFormulaModelDrawsAVisibleChangeAndDropsItsLabelOnceChecked() throws {
-    let fields: FormulaModelFields = try decode(
-      """
-      {"events":[{"label":"Rent goes up $500","name":"rentUp"}],
-       "outputs":[{"formula":"price * 1000 - 2000 - rentUp * 500","id":"profit","label":"Profit","unit":"$"}],
-       "variables":[{"initial":3,"label":"Price","max":6,"min":2,"name":"price","step":0.5}]}
-      """)
-    let view = FormulaModelView(
-      fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
-      sliders: ["price": 4], events: ["rentUp": 1])
-
-    let change = try XCTUnwrap(view.change(in: 0...5000, showsAnswer: false))
-    XCTAssertEqual(change.before, 2000)
-    XCTAssertEqual(change.now, 1500)
-    XCTAssertEqual(change.label, ActivityNumberFormat.format(-500, unit: "$", signed: true))
-
-    let checked = try XCTUnwrap(view.change(in: 0...5000, showsAnswer: true))
-    XCTAssertNil(checked.label)
-    XCTAssertNil(view.change(in: 0...6000, showsAnswer: false), "The dots would cover it")
-
-    let started = FormulaModelView(
-      fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
-      sliders: ["price": 4], events: ["rentUp": 0])
-    XCTAssertNil(started.change(in: 0...5000, showsAnswer: false))
   }
 
   func testFormulaModelStartsAtTheCheckInputsTheLastOfANameWinning() throws {

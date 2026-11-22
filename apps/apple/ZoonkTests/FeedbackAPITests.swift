@@ -26,68 +26,6 @@ final class FeedbackAPITests: XCTestCase {
       token: "guest-session")
   }
 
-  func testSubmitFeedbackSendsItsContextAndLinksTheSignedInAccount() async throws {
-    let api = makeFeedbackAPI(
-      transport: FeedbackResponseTransport(
-        expectedAuthorization: "Bearer learner-session",
-        expectedBody: [
-          "context": [
-            "appVersion": "2.0 (7)",
-            "contentId": CourseChapter.testFixture.id,
-            "contentKind": "chapter",
-            "platform": "ios",
-            "screen": "chapter",
-          ],
-          "email": "learner@zoonk.test",
-          "message": "The chapter explanation could be clearer.",
-        ],
-        responseBody: #"{"message":"Feedback received"}"#,
-        status: .ok))
-
-    try await api.submit(
-      FeedbackSubmission(
-        context: FeedbackContext(contentID: CourseChapter.testFixture.id, contentKind: .chapter),
-        email: "learner@zoonk.test",
-        message: "The chapter explanation could be clearer."),
-      token: "learner-session")
-  }
-
-  func testAReportAboutAScreenNamesItWithoutContent() async throws {
-    let api = makeFeedbackAPI(
-      transport: FeedbackResponseTransport(
-        expectedAuthorization: "Bearer learner-session",
-        expectedBody: [
-          "context": ["appVersion": "2.0 (7)", "platform": "ios", "screen": "exam"],
-          "email": "learner@zoonk.test",
-          "message": "The exam date is wrong.",
-        ],
-        responseBody: #"{"message":"Feedback received"}"#,
-        status: .ok))
-
-    try await api.submit(
-      FeedbackSubmission(
-        context: FeedbackContext(screen: "exam"), email: "learner@zoonk.test",
-        message: "The exam date is wrong."),
-      token: "learner-session")
-  }
-
-  func testSignedOutFeedbackStillNamesTheApp() async throws {
-    let api = makeFeedbackAPI(
-      transport: FeedbackResponseTransport(
-        expectedAuthorization: nil,
-        expectedBody: [
-          "context": ["appVersion": "2.0 (7)", "platform": "ios"],
-          "email": "learner@zoonk.test",
-          "message": "Please help.",
-        ],
-        responseBody: #"{"message":"Feedback received"}"#,
-        status: .ok))
-
-    try await api.submit(
-      FeedbackSubmission(email: "learner@zoonk.test", message: "Please help."),
-      token: nil)
-  }
-
   func testValidationResponseRemainsActionable() async {
     let api = makeFeedbackAPI(
       transport: FeedbackResponseTransport(

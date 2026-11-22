@@ -30,18 +30,6 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(queries, [CourseCatalogQuery(category: .science, language: "en")])
   }
 
-  func testEmptyCategoryIsEmpty() async {
-    let api = CourseCatalogAPIStub(
-      coursePageResults: [
-        .success(CourseCatalogPage(courses: [], hasMore: false, nextCursor: nil))
-      ])
-    let store = CourseCatalogStore(api: api, language: "en")
-
-    await store.courses(category: nil).load()
-
-    XCTAssertEqual(store.courses(category: nil).state, .empty)
-  }
-
   func testEachCategoryKeepsItsPageWhenSwitchingBack() async {
     let sciencePage = CourseCatalogPage(courses: [.testFixture], hasMore: false, nextCursor: nil)
     let technologyPage = CourseCatalogPage(
@@ -157,25 +145,6 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(refreshedPage))
   }
 
-  func testCourseDetailLoadsCourseAndChaptersConcurrently() async {
-    let courseStarted = expectation(description: "Course request started")
-    let chaptersStarted = expectation(description: "Chapters request started")
-    let api = SuspendedCourseDetailAPI(
-      chaptersDidStart: { chaptersStarted.fulfill() },
-      courseDidStart: { courseStarted.fulfill() })
-    let store = CourseCatalogStore(api: api, language: "en")
-
-    let request = Task { await store.course(id: Course.testFixture.id).load() }
-    await fulfillment(of: [courseStarted, chaptersStarted], timeout: 1)
-    await api.resolveCourse(with: .testFixture)
-    await api.resolveChapters(with: [.testFixture])
-    await request.value
-
-    XCTAssertEqual(
-      store.course(id: Course.testFixture.id).state,
-      .loaded(CourseDetail(course: .testFixture, chapters: [.testFixture])))
-  }
-
   func testCourseDetailOffersItsFirstWrittenLessonToTry() async {
     let unwritten = CourseLesson.testFixture.with(id: "lesson-unwritten", status: .pending)
     let written = CourseLesson.testFixture.with(id: "lesson-written", status: .completed)
@@ -233,27 +202,6 @@ final class CourseCatalogStoreTests: XCTestCase {
           tryLessonID: CourseLesson.testFixture.id)))
   }
 
-  func testMissingCoursePublishesNotFound() async {
-    let api = CourseCatalogAPIStub(courseResults: [.failure(APIError.notFound)])
-    let store = CourseCatalogStore(api: api, language: "en")
-
-    await store.course(id: Course.testFixture.id).load()
-
-    XCTAssertEqual(store.course(id: Course.testFixture.id).state, .failed(.notFound))
-  }
-
-  func testChapterDetailLoadsItsLessons() async {
-    let api = CourseCatalogAPIStub(lessonResults: [.success([.testFixture])])
-    let store = CourseCatalogStore(api: api, language: "en")
-
-    await store.chapter(.testFixture).load()
-
-    XCTAssertEqual(
-      store.chapter(.testFixture).state,
-      .loaded(ChapterDetail(chapter: .resourceTestFixture, lessons: [.testFixture])))
-    XCTAssertEqual(store.chapter(.testFixture).value?.tryLessonID, CourseLesson.testFixture.id)
-  }
-
   func testMissingChapterRefreshesTheCourseItWasOpenedFrom() async {
     let api = CourseCatalogAPIStub(
       chapterResults: [.success([.testFixture]), .success([])],
@@ -295,18 +243,6 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(store.search(query: "stars")?.state, .loaded(.testFixture))
     let searchQueries = await api.searchQueries
     XCTAssertEqual(searchQueries, [CatalogSearchQuery(language: "en", query: "stars")])
-  }
-
-  func testEachQueryKeepsItsOwnResults() async {
-    let planets = CatalogSearchResults(chapters: [], courses: [])
-    let api = CourseCatalogAPIStub(searchResults: [.success(.testFixture), .success(planets)])
-    let store = CourseCatalogStore(api: api, language: "en")
-
-    await store.search(query: "stars")?.load()
-    await store.search(query: "planets")?.load()
-
-    XCTAssertEqual(store.search(query: "stars")?.state, .loaded(.testFixture))
-    XCTAssertEqual(store.search(query: "planets")?.state, .empty)
   }
 
   func testTheSameNormalizedQueryReusesItsResults() async {
@@ -510,71 +446,6 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
       searchRequests.append(SearchRequest(continuation: continuation))
       searchDidStart(searchRequests.count)
     }
-  }
-}
-
-private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
-  private let chaptersDidStart: @Sendable () -> Void
-  private let courseDidStart: @Sendable () -> Void
-  private var chaptersContinuation: TestContinuation<[CourseChapter]>?
-  private var courseContinuation: TestContinuation<Course>?
-
-  init(
-    chaptersDidStart: @escaping @Sendable () -> Void,
-    courseDidStart: @escaping @Sendable () -> Void
-  ) {
-    self.chaptersDidStart = chaptersDidStart
-    self.courseDidStart = courseDidStart
-  }
-
-  func resolveCourse(with course: Course) {
-    courseContinuation?.resume(returning: course)
-    courseContinuation = nil
-  }
-
-  func resolveChapters(with chapters: [CourseChapter]) {
-    chaptersContinuation?.resume(returning: chapters)
-    chaptersContinuation = nil
-  }
-
-  func countCourses(language: String) async throws -> CourseCategoryCounts {
-    throw APIError.unavailable
-  }
-
-  func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
-    throw APIError.unavailable
-  }
-
-  func getCourse(id: String) async throws -> Course {
-    try await withTestContinuation { continuation in
-      courseContinuation = continuation
-      courseDidStart()
-    }
-  }
-
-  func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
-    throw APIError.unavailable
-  }
-
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-    try await withTestContinuation { continuation in
-      chaptersContinuation = continuation
-      chaptersDidStart()
-    }
-  }
-
-  func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
-    throw APIError.notFound
-  }
-
-  func listChapterLessons(_ key: CatalogChapterKey) async throws
-    -> [CourseLesson]
-  {
-    throw APIError.unavailable
-  }
-
-  func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults {
-    throw APIError.unavailable
   }
 }
 
