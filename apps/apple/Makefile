@@ -1,5 +1,6 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
+UNIT_TEST_SCHEME := ZoonkUnitTests
 SWIFT_SOURCES := Zoonk ZoonkAPI/Package.swift ZoonkAPI/Sources ZoonkTests ZoonkUITests
 CONFIGURATION ?= Debug
 XCODEBUILD_ARGUMENTS ?=
@@ -20,16 +21,18 @@ build: build-ios
 build-ios:
 	$(XCODEBUILD) -scheme "$(APP_SCHEME)" $(BUILD_FLAGS) -destination "generic/platform=iOS" build
 
+test: SCHEME := $(UNIT_TEST_SCHEME)
 test: ONLY_TESTING ?= ZoonkTests
+ui-test: SCHEME := $(APP_SCHEME)
 ui-test: ONLY_TESTING ?= ZoonkUITests
 test ui-test:
-	$(TEST_ON_DESTINATION) -scheme "$(APP_SCHEME)" CODE_SIGNING_ALLOWED=NO -parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" test
+	$(TEST_ON_DESTINATION) -scheme "$(SCHEME)" CODE_SIGNING_ALLOWED=NO -parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" test
 
 test-mac: MAC_TEST_ACTION := test
 build-mac-tests: MAC_TEST_ACTION := build-for-testing
 test-mac build-mac-tests: ONLY_TESTING ?= ZoonkTests
 test-mac build-mac-tests:
-	$(XCODEBUILD) -scheme "$(APP_SCHEME)" -destination "platform=macOS,variant=Mac Catalyst" \
+	$(XCODEBUILD) -scheme "$(UNIT_TEST_SCHEME)" -destination "platform=macOS,variant=Mac Catalyst" \
 		CODE_SIGN_IDENTITY=- CODE_SIGN_ENTITLEMENTS= DEVELOPMENT_TEAM= MACOSX_DEPLOYMENT_TARGET=26.0 \
 		-parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" $(MAC_TEST_ACTION)
 

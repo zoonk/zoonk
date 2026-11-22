@@ -266,8 +266,6 @@
         "SDKROOT": "iphoneos",
         "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
         "SUPPORTED_PLATFORMS": "iphoneos iphonesimulator",
-        "SUPPORTED_PLATFORMS[config=Debug]": "iphoneos iphonesimulator macosx",
-        "SUPPORTS_MACCATALYST[config=Debug]": "YES",
         "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
         "SWIFT_EMIT_LOC_STRINGS": "NO",
         "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
