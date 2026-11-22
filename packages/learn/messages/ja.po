@@ -9989,6 +9989,12 @@ msgctxt "oxqgs5"
 msgid "You pick this test's day when you book it. Booked already? Set it here."
 msgstr "この試験は予約時に受験日を選びます。もう予約しましたか？ここで設定できます。"
 
+#. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
+#: src/onboarding/understood/understood-date-row.ts
+msgctxt "KuZTTr"
+msgid "Know the date? Set it here."
+msgstr "日付がわかりますか？ここで設定できます。"
+
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "dnMNKB"
 msgid "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}"
