@@ -394,6 +394,17 @@ extension EnvironmentValues {
   @Entry var wordBankAdded: WordBankAdded?
 }
 
+extension View {
+  /// Puts what a check adds into this turn's word bank, where `place` has it with the bank.
+  func wordBankAdded(_ added: some View, at place: CheckAddedPlace) -> some View {
+    environment(
+      \.wordBankAdded,
+      place == .underScreen
+        ? nil : WordBankAdded(view: AnyView(added), isAbove: place == .aboveBank)
+    )
+  }
+}
+
 /// Where the stage gives the turn spare height (one column), the bank sits at its bottom, so it
 /// stays put while the answer grows.
 struct LessonWordBank<Tiles: View>: View {

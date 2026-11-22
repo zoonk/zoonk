@@ -111,7 +111,10 @@ struct MistakeLessonQuestionView: View {
   var body: some View {
     let promptURL = shownPrompt
 
-    PracticeTaskLayout(segments: segments, index: index, note: recordInBar.note) {
+    PracticeTaskLayout(
+      segments: segments, index: index, note: recordInBar.note,
+      fillsHeight: !showsIdea && replay.step.checkAddedPlace(isOneColumn: true) == .aboveBank
+    ) {
       if showsIdea, let lesson = entry.drill.lesson {
         DrillIdeaView(drill: entry.drill, lesson: lesson)
       } else {
@@ -126,13 +129,12 @@ struct MistakeLessonQuestionView: View {
         content(.screen)
       }
     } response: {
-      if !showsIdea { content(.turn) }
-      if let result = state.currentResult {
-        LessonVerdictView(
-          step: replay.step, answer: state.currentAnswer, result: result, willReturn: false)
-        DrillAnswerNotes(
-          drill: entry.drill, notSure: grade?.notSure == true,
-          timedOut: sentTimedOut, trap: grade?.trap)
+      if !showsIdea {
+        ReplayTurn(step: replay.step) {
+          content(.turn)
+        } added: {
+          checkAdded
+        }
       }
     } actions: {
       PracticeActionRow {
@@ -240,6 +242,20 @@ struct MistakeLessonQuestionView: View {
     .onDisappear { sounds.stop() }
   }
 
+  @ViewBuilder private var checkAdded: some View {
+    if let result = state.currentResult {
+      LessonVerdictView(
+        step: replay.step, answer: state.currentAnswer, result: result, willReturn: false,
+        notes: AnyView(
+          Group {
+            DrillAnswerNotes(
+              drill: entry.drill, notSure: grade?.notSure == true,
+              timedOut: sentTimedOut, trap: grade?.trap)
+            FixedMistakesNote(count: grade?.fixedMistakeIds.count ?? 0)
+          }))
+    }
+  }
+
   private func content(_ part: LessonStepPart) -> some View {
     LessonQuestionStepView(
       step: replay.step, state: state, context: context, part: part,
@@ -321,6 +337,27 @@ struct MistakeLessonQuestionView: View {
       if let pressedWithFocus { focuses?.move(to: pressedWithFocus) }
       failed()
     case .obsolete: break
+    }
+  }
+}
+
+/// What a check adds goes where the lesson puts it: above a word bank that waits at the bottom of
+/// one column, under the bank on a spread, and under the turn on a step without a bank.
+private struct ReplayTurn<Turn: View, Added: View>: View {
+  @Environment(\.isPaneSplit) private var isPaneSplit
+
+  let step: LessonStep
+  @ViewBuilder let turn: Turn
+  @ViewBuilder let added: Added
+
+  var body: some View {
+    let place = step.checkAddedPlace(isOneColumn: !isPaneSplit)
+
+    turn
+      .wordBankAdded(added, at: place)
+
+    if place == .underScreen {
+      added
     }
   }
 }

@@ -1,9 +1,19 @@
 package com.zoonk.android.feature.mistakes
 
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.Resource
@@ -14,6 +24,7 @@ import com.zoonk.android.feature.player.LessonStepResultView
 import com.zoonk.android.feature.player.LocalLessonSpeech
 import com.zoonk.android.feature.player.ResultNext
 import com.zoonk.android.feature.player.engine.LessonPhase
+import com.zoonk.android.feature.player.engine.canSelfCorrect
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.engine.shownStep
 import com.zoonk.android.feature.player.language.PromptAudioBarButton
@@ -21,12 +32,17 @@ import com.zoonk.android.feature.player.language.PromptAudioEffect
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toApi
+import com.zoonk.android.feature.player.steps.FillingColumn
+import com.zoonk.android.feature.player.steps.LocalStepViewHeight
+import com.zoonk.android.feature.player.steps.LocalWordBankCheck
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.practice.DrillStage
+import com.zoonk.android.feature.practice.PAGE_PADDING
+import com.zoonk.android.feature.practice.PAGE_SPACING
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunMeter
 import com.zoonk.android.feature.practice.RunPhase
@@ -37,6 +53,7 @@ import com.zoonk.android.feature.questions.DrillCountdown
 import com.zoonk.android.feature.questions.DrillIdeas
 import com.zoonk.android.feature.questions.DrillNote
 import com.zoonk.android.feature.questions.DrillStartButton
+import com.zoonk.android.feature.questions.MistakeNote
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
@@ -189,29 +206,49 @@ internal fun MistakeLessonQuestion(
                 if (part.showsScreen) DrillIdeas(task.drill, onOpenLesson = null)
                 return@CompositionLocalProvider
             }
-            if (part.showsScreen &&
-                !checked
-            ) {
-                task.drill.timeLimitSeconds?.let { seconds ->
-                    DrillCountdown(seconds, { viewModel.checkLesson(dontKnow = true, timedOut = true) })
-                }
-            }
-            if (part.showsScreen && !task.drill.isIdeaFirst) {
-                DrillNote(task.drill, onOpenLesson = null, answered = checked)
-            }
-            StepView(task.step, lesson, screen, actions, navigator, language, part, writingOptions = false)
-            if (part.showsTurn) {
+            val result: @Composable () -> Unit = {
                 lesson.results[task.step.id]?.let {
-                    val shown = lesson.shownStep(task.step, viewModel.cantTalk, viewModel.cantListen)
-                    LessonStepResultView(shown, it, ResultNext(savedMistake = false, willReturn = false), null)
-                    DrillAnswerNotes(
-                        task.drill,
-                        notSure = state.run.answers[state.run.index]?.blank == true,
-                        timedOut = state.run.timedOut,
-                        trap = state.lessonGrade?.trap,
+                    LessonStepResultView(
+                        lesson.shownStep(task.step, viewModel.cantTalk, viewModel.cantListen),
+                        it,
+                        ResultNext(savedMistake = false, willReturn = false),
+                        null,
+                        notes = {
+                            DrillAnswerNotes(
+                                task.drill,
+                                notSure = state.run.answers[state.run.index]?.blank == true,
+                                timedOut = state.run.timedOut,
+                                trap = state.lessonGrade?.trap,
+                            )
+                            (state.run.phase as? RunPhase.Checked)?.let { graded -> MistakeNote(graded.feedback) }
+                        },
                     )
                 }
+            }
+            // As in the lesson, a word bank places the verdict itself and the screen's column reaches the actions.
+            val inBank = part.showsTurn && task.step.canSelfCorrect
+            FillingColumn(
+                Modifier
+                    .heightIn(min = LocalStepViewHeight.current ?: 0.dp)
+                    .padding(bottom = LESSON_BANK_GAP - PAGE_PADDING),
+                PAGE_SPACING,
+            ) {
+                if (part.showsScreen && !checked) {
+                    task.drill.timeLimitSeconds?.let { seconds ->
+                        DrillCountdown(seconds, { viewModel.checkLesson(dontKnow = true, timedOut = true) })
+                    }
+                }
+                if (part.showsScreen && !task.drill.isIdeaFirst) {
+                    DrillNote(task.drill, onOpenLesson = null, answered = checked)
+                }
+                CompositionLocalProvider(LocalWordBankCheck provides if (inBank) result else null) {
+                    StepView(task.step, lesson, screen, actions, navigator, language, part, writingOptions = false)
+                }
+                if (part.showsTurn && !inBank) result()
             }
         }
     }
 }
+
+/** The lesson's gap between a word bank and the actions under it. */
+private val LESSON_BANK_GAP = 16.dp

@@ -56,6 +56,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
+import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
@@ -237,15 +238,17 @@ internal fun RunFrame(
 
                 Column(Modifier.padding(padding).fillMaxSize()) {
                     Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
-                    Box(Modifier.weight(1f).fillMaxWidth()) {
+                    BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
                         // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
                         val turnPage =
                             if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
-                        ScrollingPage(
-                            Modifier.fillMaxSize().then(turnPage),
-                            if (fold == null) scroll else turnScroll,
-                            if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
-                        ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - PAGE_PADDING * 2 else null) {
+                            ScrollingPage(
+                                Modifier.fillMaxSize().then(turnPage),
+                                if (fold == null) scroll else turnScroll,
+                                if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                            ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                        }
 
                         if (fold != null) {
                             ScrollingPage(
@@ -283,10 +286,16 @@ private fun ScrollingPage(
     align: Alignment.Horizontal,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.verticalScroll(scroll).padding(vertical = 8.dp), horizontalAlignment = align) {
-        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
+    Column(modifier.verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
+        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
     }
 }
+
+/** The space above and below a run's page. */
+internal val PAGE_PADDING = 8.dp
+
+/** The gap between a run's parts on its page. */
+internal val PAGE_SPACING = 16.dp
 
 @Composable
 internal fun RunSegments(

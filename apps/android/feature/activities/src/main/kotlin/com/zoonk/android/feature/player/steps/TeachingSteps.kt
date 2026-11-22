@@ -147,6 +147,39 @@ private val MIN_YIELDED_PICTURE = 140.dp
 /** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
 object FillsView
 
+/**
+ * A screen's parts, [spacing] apart, in a column as tall as its minimum height at least: the part with the [FillsView]
+ * id stretches over the height the other parts leave, never shorter than its own content. An empty part takes no gap,
+ * so a page whose screen draws nothing on it starts level with the page beside it.
+ */
+@Composable
+fun FillingColumn(
+    modifier: Modifier,
+    spacing: Dp,
+    content: @Composable () -> Unit,
+) {
+    Layout(content, modifier) { measurables, constraints ->
+        val gap = spacing.roundToPx()
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val filling = measurables.indexOfFirst { it.layoutId == FillsView }
+        val others = measurables.mapIndexed { index, part -> if (index == filling) null else part.measure(loose) }
+        val gaps = gap * (others.count { it == null || it.height > 0 } - 1).coerceAtLeast(0)
+        val left = (constraints.minHeight - gaps - others.sumOf { it?.height ?: 0 }).coerceAtLeast(0)
+        val parts = others.mapIndexed { index, part -> part ?: measurables[index].measure(loose.copy(minHeight = left)) }
+
+        layout(
+            constraints.constrainWidth(parts.maxOfOrNull { it.width } ?: 0),
+            constraints.constrainHeight(parts.sumOf { it.height } + gaps),
+        ) {
+            var y = 0
+            parts.forEach {
+                it.placeRelative(0, y)
+                if (it.height > 0) y += it.height + gap
+            }
+        }
+    }
+}
+
 /** What a check adds to a word bank's screen (its feedback, or "fix it yourself"), which the bank places itself. */
 val LocalWordBankCheck = compositionLocalOf<(@Composable () -> Unit)?> { null }
 
