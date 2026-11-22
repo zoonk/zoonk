@@ -91,7 +91,9 @@ test.describe("A goal sent with the learner's material", () => {
     expect(goal.details).toMatchObject({ materialIntent: "exam" });
 
     await expect(
-      prisma.learnerSource.findUniqueOrThrow({ where: { id: upload.id } }),
-    ).resolves.toMatchObject({ goalId: goal.id });
+      prisma.goalSource.findUnique({
+        where: { goalId_sourceId: { goalId: goal.id, sourceId: upload.sourceId } },
+      }),
+    ).resolves.toMatchObject({ origin: "upload" });
   });
 });
