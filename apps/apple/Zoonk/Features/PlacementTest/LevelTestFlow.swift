@@ -470,14 +470,14 @@ struct LevelTestFlow: View {
         let answered = try await store.answerLevelTestOut(
           goalID: goalID, attemptID: view.attemptId, itemID: question.itemId, answer: answer,
           duration: .milliseconds(sent.durationMs))
-        answerFailures = 0
-        failedAnswer = nil
-        // A test-out that asks nothing more closes in the same save.
+        // A test-out that asks nothing more closes in the same save. If closing fails, the
+        // question stays with its save error, and sending it again closes the test.
         let shown =
           answered.next == nil
-          ? (try? await store.finishLevelTestOut(goalID: goalID, attemptID: view.attemptId))
-            ?? answered
+          ? try await store.finishLevelTestOut(goalID: goalID, attemptID: view.attemptId)
           : answered
+        answerFailures = 0
+        failedAnswer = nil
         phase = LanguageTestPhase(testOut: shown)
       } catch is CancellationError {
       } catch {

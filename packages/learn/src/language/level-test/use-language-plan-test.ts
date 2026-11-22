@@ -286,7 +286,14 @@ export function useLanguagePlanTest({
             }),
           );
 
-          if (!view) {
+          // A test-out that asks nothing more closes in the same save. If closing fails, the
+          // question stays with its save error, and sending it again closes the test.
+          const shown =
+            view && !view.next
+              ? await actions.testOut.finish(view.attemptId).catch(() => null)
+              : view;
+
+          if (!shown) {
             setPhase((current) =>
               current.kind === "testOut" ? { ...current, failures: current.failures + 1 } : current,
             );
@@ -294,11 +301,7 @@ export function useLanguagePlanTest({
             return;
           }
 
-          const closed = view.next
-            ? view
-            : await actions.testOut.finish(view.attemptId).catch(() => null);
-
-          setPhase(toTestOutPhase(closed ?? view));
+          setPhase(toTestOutPhase(shown));
         }),
     onTestOutStop: (attemptId: string) =>
       save("other", async () => showTestOut(await actions.testOut.finish(attemptId))),
