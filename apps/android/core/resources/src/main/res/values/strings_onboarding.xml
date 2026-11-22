@@ -106,6 +106,8 @@
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
     <!-- In place of the note above when some material the goal was sent with can't be read anymore. -->
     <string name="onboarding_row_material_missing_note">Some of your material can\'t be read anymore, so your plan won\'t follow it.</string>
+    <!-- In place of the note above when none of the material the goal was sent with can be read anymore. -->
+    <string name="onboarding_row_material_all_missing_note">Your material can\'t be read anymore, so your plan won\'t follow it.</string>
     <string name="onboarding_row_exam_date">Exam date</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Exam dates</string>
