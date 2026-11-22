@@ -9,6 +9,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftHandle
 import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.writing.WritingTaskName
@@ -373,12 +374,35 @@ class EssayStore(
     suspend fun saveDraft(
         blockId: UUID,
         draft: SaveWritingDraft,
-    ): MutationResult<DraftSave> =
-        cache.mutate { session -> api.saveDraft(session, blockId, draft) }.also { if (it is MutationResult.Done) dayChanged(blockId) }
+    ): MutationResult<DraftSave> {
+        val essay = essays[blockId]
+        val before = (essay.state.value as? LoadState.Loaded)?.value
+        return cache
+            .mutate(
+                replacing = { result ->
+                    val saved =
+                        when (result) {
+                            is DraftSave.Saved -> result.draft
+                            is DraftSave.Conflict -> result.draft
+                            DraftSave.Closed -> return@mutate emptyList()
+                        }
+                    val current = (essay.state.value as? LoadState.Loaded)?.value ?: return@mutate emptyList()
+                    val currentDraft = current.draft
+                    val changedAdmission = current.admissionId != saved.admissionId && current.admissionId != before?.admissionId
+                    val newerDraft = currentDraft?.admissionId == saved.admissionId && currentDraft.revision >= saved.revision
+                    if (current.status != Essay.Status.ACTIVE || changedAdmission || current.drafts != before?.drafts || newerDraft) {
+                        emptyList()
+                    } else {
+                        listOf(essay.replacing(current.copy(admissionId = saved.admissionId, draft = saved)))
+                    }
+                },
+            ) { session -> api.saveDraft(session, blockId, draft) }
+            .also { if (it is MutationResult.Done) dayChanged(blockId) }
+    }
 
     /**
      * A start or a saved draft changes the block's row on Today ("Your draft is saved"), so the day
-     * reads again when shown; the open essay keeps what it shows rather than reading itself again.
+     * reads again when shown. The save response updates the essay cache before the device copy is cleared.
      */
     private fun dayChanged(blockId: UUID) = cache.invalidate(setOf(DataDomain.UserSession), except = setOf(essays[blockId]))
 

@@ -79,7 +79,7 @@ class EssayViewModelTest {
         suspend fun TestScope.open(): EssayViewModel {
             advanceUntilIdle()
             val viewModel = EssayViewModel(ESSAY_BLOCK, ESSAY_SESSION, store, kept, UnusedSessionSteps, app, network, clock)
-            viewModel.essay.refresh()
+            viewModel.essay.prepare()
             viewModel.arrive((viewModel.essay.state.value as LoadState.Loaded<*>).value as Essay)
             advanceUntilIdle()
             return viewModel
@@ -347,6 +347,35 @@ class EssayViewModelTest {
             val viewModel = opened(FakeEssayApi(essay(draft = "Half an answer.", graded = listOf(LEVELS_RESULT))))
             assertEquals(WritingMode.Question, viewModel.ui.value.mode)
             assertEquals("Half an answer.", viewModel.ui.value.text)
+        }
+
+    @Test
+    fun aDraftSavedOnLeavingOpensAgainInTheSameApp() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi()
+            val device = Device(this, api)
+            val first = with(device) { open() }
+            val text = "Public money must be spent lawfully.\nEach branch checks its own acts.\nCongress exercises external control."
+            first.startWriting()
+            first.write(text)
+            first.onStop()
+            advanceUntilIdle()
+
+            assertEquals(text, api.saved.single().text)
+            assertNull(device.keptOnDisk())
+            api.read = essay(draft = text, draftRevision = 1)
+            first.essay.invalidate()
+
+            val reopened = with(device) { open() }
+            reopened.essay.load()
+            reopened.arrive((reopened.essay.state.value as LoadState.Loaded).value)
+            reopened.startWriting()
+            assertEquals(text, reopened.ui.value.text)
+
+            reopened.write("$text\nThe two controls complement each other.")
+            reopened.onStop()
+            advanceUntilIdle()
+            assertEquals(1L, api.saved.last().revision)
         }
 
     @Test
