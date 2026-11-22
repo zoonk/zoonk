@@ -805,7 +805,10 @@ describe("CGU written exam preparation", () => {
         },
         itemId,
         text: TEXT,
-        writing: writtenAnswerSchema.shape.writing.parse(readEssayContent(item)?.writing),
+        writing: writtenAnswerSchema.shape.writing.parse({
+          ...readEssayContent(item)?.writing,
+          part: null,
+        }),
       },
       answeredAt: new Date(today.getTime() - DAY_MS),
       itemId,

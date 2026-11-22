@@ -352,7 +352,7 @@ describe("written mock sittings", () => {
   });
 
   it("reuses the running sitting and admits both prompts once, then keeps an opened blank prompt out of the next sitting", async () => {
-    const { goal, prompt, short, user } = await setup({ shortOnly: true });
+    const { blueprint, goal, prompt, short, user } = await setup({ shortOnly: true });
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
@@ -593,6 +593,32 @@ describe("written mock sittings", () => {
     });
 
     expect([afterEdit, await readHistory()]).toStrictEqual([before, before]);
+
+    const corrected = structuredClone(CGU);
+    const section = corrected.mock?.sections.find(({ kind }) => kind === "written");
+    const task = section?.tasks?.[0];
+
+    if (!section || !task) {
+      throw new Error("Expected the original task");
+    }
+
+    task.key = "corrected";
+    await prisma.examBlueprint.update({
+      data: { structure: corrected },
+      where: { id: blueprint.id },
+    });
+
+    const afterCorrection = await readHistory();
+    expect(afterCorrection.history).toStrictEqual(before.history);
+    section.name = "Replacement written part";
+    await prisma.examBlueprint.update({
+      data: { structure: corrected },
+      where: { id: blueprint.id },
+    });
+
+    const afterPartRemoval = await readHistory();
+    expect(afterPartRemoval.history).toStrictEqual([{ answers: [], trend: [] }]);
+    expect(afterPartRemoval.detail).toMatchObject({ status: "ready" });
   });
 
   it("starts a full mock with both assigned essays, and retries a failed answer without regrading the saved answer", async () => {

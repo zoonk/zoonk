@@ -193,12 +193,12 @@ export async function loadWrittenPracticeView({
   ]);
 
   const points = projectWrittenParts({ samples, structure: chosen });
-  const byTask = new Map(tasks.map((task) => [task.key, task.section]));
+  const byPart = Map.groupBy(samples, (sample) => sample.prompt.part);
 
   return {
     ...base,
     subjects: points.map((part) => {
-      const own = samples.filter((sample) => byTask.get(sample.prompt.taskKey) === part.name);
+      const own = byPart.get(part.name) ?? [];
       const ownTasks = tasks.filter((task) => task.section === part.name);
 
       const share =

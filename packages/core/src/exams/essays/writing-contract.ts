@@ -52,6 +52,7 @@ export const writtenItemSchema = writingPromptSchema.extend({
   /** The learner's options it was written for; only learners with the same options get it. */
   chosenSubjects: z.array(z.string()).optional(),
   grading: writtenGradingSchema,
+  part: z.string().min(1).optional(),
   /** The subject its question is on, so the next prompt of the task can take another. */
   subject: z.string().optional(),
   taskBasis: z.string().optional(),
@@ -226,7 +227,9 @@ export const writtenAnswerSchema = z.object({
   grade: writingResultSchema.transform(withSavedNextStep),
   itemId: uuidSchema(),
   text: z.string(),
-  writing: writtenItemSchema.omit({ aspects: true, chosenSubjects: true, subject: true }),
+  writing: writtenItemSchema
+    .omit({ aspects: true, chosenSubjects: true, subject: true })
+    .extend({ part: z.string().min(1).nullable() }),
 });
 
 export type WritingDraft = z.infer<typeof writingDraftSchema>;

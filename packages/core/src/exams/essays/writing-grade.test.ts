@@ -553,7 +553,7 @@ describe("writing grades", () => {
       grade: { ...grade, nextStep },
       itemId: randomUUID(),
       text: original,
-      writing: basis,
+      writing: { ...basis, part: null },
     });
 
     expect(saved.grade.nextStep).toStrictEqual({ ...nextStep, kind: "criterion" });

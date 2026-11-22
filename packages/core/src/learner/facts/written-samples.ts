@@ -11,6 +11,7 @@ const samplePrompt = writtenAnswerSchema.shape.writing.pick({
   criteria: true,
   grading: true,
   lines: true,
+  part: true,
   points: true,
   taskBasis: true,
   taskKey: true,

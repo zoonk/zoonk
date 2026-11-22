@@ -250,7 +250,10 @@ describe("writing receipts and drafts", () => {
             },
             itemId: item.id,
             text: "My first attempt",
-            writing: writtenAnswerSchema.shape.writing.parse(readEssayContent(item)?.writing),
+            writing: writtenAnswerSchema.shape.writing.parse({
+              ...readEssayContent(item)?.writing,
+              part: null,
+            }),
           },
           durationMs: 5000,
           hour: 12,

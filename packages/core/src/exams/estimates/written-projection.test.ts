@@ -79,6 +79,7 @@ function sample({
       criteria: [],
       grading: CGU_WRITTEN_GRADING,
       lines,
+      part: "Written test",
       points,
       taskKey: key,
       title: "Topic",

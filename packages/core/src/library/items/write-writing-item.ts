@@ -130,6 +130,7 @@ export function promptContent({
           classTest: !task.minutes && task.key === "class-short-answer",
           lines: task.lines,
         }),
+    part: task.section,
     ...(!drill && partMinimum && { partMinimum }),
     points: drill ? null : issuedTask.points,
     ...placement,

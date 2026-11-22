@@ -7,7 +7,7 @@ import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { readBlockPayload } from "../block-payload";
 import { type StudySessionRow } from "./study-session-access";
 
-function listBlueprintWritingTasks(blueprint?: ExamBlueprint | null) {
+export function listBlueprintWritingTasks(blueprint?: ExamBlueprint | null) {
   return blueprint
     ? listPracticeWritingTasks({
         classTest: Boolean(blueprint.ownerId),

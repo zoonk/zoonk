@@ -1,6 +1,6 @@
 import "server-only";
 import { type WritingEvidence, gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
-import { type Item, type TransactionClient } from "@zoonk/db";
+import { type Item, type TransactionClient, prisma } from "@zoonk/db";
 import { countWords } from "@zoonk/utils/string";
 import {
   type RecordedOutcome,
@@ -8,6 +8,7 @@ import {
   recordAnswerOnce,
 } from "../../../learner/_utils/answer-once";
 import { creditWrittenSkills } from "../../../learner/written-evidence";
+import { listBlueprintWritingTasks } from "../../../sessions/_utils/writing-block-tasks";
 import {
   type WritingConditions,
   type WritingResult,
@@ -176,7 +177,15 @@ async function confirmAdmission(
   return false;
 }
 
-export function recordEssayGrade(
+async function loadPromptPart(item: Item, taskKey: string) {
+  const blueprint = item.examBlueprintId
+    ? await prisma.examBlueprint.findUnique({ where: { id: item.examBlueprintId } })
+    : null;
+
+  return listBlueprintWritingTasks(blueprint).find(({ key }) => key === taskKey)?.section ?? null;
+}
+
+export async function recordEssayGrade(
   input: AdmittedGrade,
 ): Promise<RecordedOutcome | RefusedOutcome<"blockNotActive">> {
   const {
@@ -198,6 +207,7 @@ export function recordEssayGrade(
     throw new Error("The writing grade is incompatible with its scoring basis.");
   }
 
+  const part = basis.part ?? (await loadPromptPart(item, basis.taskKey));
   const writtenConditions = { ...conditions, estimatedLines: grade.estimatedLines };
 
   const share =
@@ -211,7 +221,7 @@ export function recordEssayGrade(
         grade,
         itemId: item.id,
         text,
-        writing: writtenAnswerSchema.shape.writing.parse(basis),
+        writing: writtenAnswerSchema.shape.writing.parse({ ...basis, part }),
       },
       attemptId,
       graded: { durationMs, isCorrect: share !== null && share >= GOOD_SHARE, score: share },
