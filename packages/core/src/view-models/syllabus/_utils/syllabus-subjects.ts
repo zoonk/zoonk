@@ -1,9 +1,9 @@
 import { toSlug } from "@zoonk/utils/string";
+import { followsNotice, matchNoticeAreas } from "../../../exams/_utils/match-areas";
 import { namesMatch } from "../../../exams/_utils/name-match";
 import { orderByQuestions } from "../../../library/exams/subject-questions";
 import { type TopicFrequencySource } from "../../../library/exams/topic-frequency";
 import { type SyllabusSubject, type SyllabusView } from "../syllabus-contract";
-import { followsNotice, matchAreasToSubjects } from "./match-areas";
 import {
   type AreaCourse,
   type NoticeSubject,
@@ -41,31 +41,6 @@ function toModule(area: string): SubjectDraft {
     source: "plan",
     topics: [],
   };
-}
-
-/** Assign a written-task area only when exactly one subject's test asks it. */
-function matchWrittenTasks({
-  areas,
-  matches,
-  subjects,
-}: {
-  areas: readonly string[];
-  matches: ReadonlyMap<string, number>;
-  subjects: NonNullable<SyllabusInput["notice"]>["subjects"];
-}): Map<string, number> {
-  return new Map(
-    areas.flatMap((area) => {
-      if (matches.has(area)) {
-        return [];
-      }
-
-      const asking = subjects.flatMap((subject, index) =>
-        subject.writtenTasks.some((task) => namesMatch(area, task)) ? [index] : [],
-      );
-
-      return asking.length === 1 ? [[area, asking[0] ?? 0] as const] : [];
-    }),
-  );
 }
 
 function addCounts(first: number | null, second: number | null): number | null {
@@ -125,10 +100,7 @@ export function draftSubjects({
 }): { drafts: SubjectDraft[]; kind: SyllabusView["kind"] } {
   const subjects = notice?.subjects ?? [];
 
-  const named = matchAreasToSubjects({ areas, subjects });
-
-  const parts = matchWrittenTasks({ areas, matches: named, subjects });
-  const matches = new Map([...named, ...parts]);
+  const { matches, parts } = matchNoticeAreas({ areas, subjects });
 
   if (subjects.length === 0 || !followsNotice({ areas, matches })) {
     return { drafts: areas.map((area) => toModule(area)), kind: "modules" };

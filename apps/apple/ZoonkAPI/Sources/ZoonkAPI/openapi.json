@@ -2002,6 +2002,28 @@
               }
             }
           },
+          "202": {
+            "description": "The mock needs questions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "preparing"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "400": {
             "description": "Validation error",
             "content": {
@@ -5228,6 +5250,17 @@
             },
             "required": true,
             "description": "Generation ID"
+          },
+          {
+            "in": "query",
+            "name": "namespace",
+            "schema": {
+              "description": "Mock paper stream namespace returned by the mock writing lookup",
+              "type": "string",
+              "format": "starts_with",
+              "pattern": "^mock-paper:.*"
+            },
+            "description": "Mock paper stream namespace returned by the mock writing lookup"
           },
           {
             "in": "query",
@@ -16451,7 +16484,7 @@
     },
     "/goals/{goalId}/plan/changes": {
       "post": {
-        "description": "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone, and the server prepares the lessons it brings in soon. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
+        "description": "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, optional exam strategy, or steering. It re-plans from today and can be undone, and the server prepares the lessons it brings in soon. A change that wouldn't do what it asks isn't saved and answers `unchanged` with the reason: exam strategy the plan already holds (`setExtras`), focusing on subjects that would move nothing, or more or less of some subjects (`focusAreas`, `reduceAreas`) that would do the opposite in the plan the learner sees.",
         "operationId": "createPlanChange",
         "security": [
           {
@@ -20046,9 +20079,104 @@
         }
       }
     },
+    "/goals/{goalId}/mock-writing": {
+      "get": {
+        "description": "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A supply run can write several papers. Each paper has its own stream namespace, whether supply started in the background or after a learner asked to start. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
+        "operationId": "getMockWriting",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get the run writing a mock's questions",
+        "tags": [
+          "Exams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "planItemId",
+            "schema": {
+              "description": "A scheduled mock's plan item, for its paper; without it, the mock the learner last asked to take any time",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "A scheduled mock's plan item, for its paper; without it, the mock the learner last asked to take any time"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whether a run is writing the paper",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockWriting"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/mocks": {
       "get": {
-        "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
+        "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; the last requested option and whether it is ready to start; and the diagnostic mock offered during onboarding.",
         "operationId": "listMocks",
         "security": [
           {
@@ -20140,7 +20268,7 @@
         }
       },
       "post": {
-        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`); `acceptFewer` starts it with those once the learner agreed, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "description": "Starts the full requested option or resumes the running sitting. While a part needs questions, the request is saved and the clock stays stopped. The first ten on-demand sittings in a rolling 30 days use unseen questions. Later sittings may include questions last seen in earlier mocks, oldest first.",
         "operationId": "startAnytimeMock",
         "security": [
           {
@@ -20260,161 +20388,7 @@
             }
           },
           "422": {
-            "description": "Not an exam, not one of its mocks, or too few questions for one",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/goals/{goalId}/mocks/generations": {
-      "post": {
-        "description": "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
-        "operationId": "createMockQuestionsGeneration",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Write a mock's questions",
-        "tags": [
-          "Exams"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MockQuestionsInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The mock can start (the bank holds its questions, or fair use for new ones is used for now), or the skill map isn't ready yet",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MockQuestionsGeneration"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "A run is writing the questions",
-            "headers": {
-              "Location": {
-                "required": true,
-                "description": "The run's status URL: GET /generations/{generationId}",
-                "schema": {
-                  "type": "string",
-                  "description": "The run's status URL: GET /generations/{generationId}"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MockQuestionsGeneration"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Mock exams come with Plus",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request is valid but cannot be applied to the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests",
+            "description": "The goal is not an exam or does not offer the requested option",
             "content": {
               "application/json": {
                 "schema": {
@@ -20821,103 +20795,6 @@
           },
           "409": {
             "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/mocks/{blockId}/starts": {
-      "post": {
-        "description": "Starts the mock when the learner takes it on (or resumes it): its session block starts, the sections are fixed and the first section's clock starts. The plan's mock whose time ran out while the learner was away starts again in a new sitting; one taken any time stays expired (`MOCK_EXPIRED`): start a new one from the goal's mocks.",
-        "operationId": "startMock",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Start a mock exam",
-        "tags": [
-          "Exams"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "blockId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "The id the mock opens by: its study session block's for a mock the plan scheduled, its own for one taken any time"
-            },
-            "required": true,
-            "description": "The id the mock opens by: its study session block's for a mock the plan scheduled, its own for one taken any time"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MockTimeZoneInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Running"
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "The mock or its block already finished, or the mock expired",
             "content": {
               "application/json": {
                 "schema": {
@@ -21499,7 +21376,7 @@
     },
     "/goal-understandings": {
       "post": {
-        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
+        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. The same words in the same language sent again before their draft is understood answer with that draft (202): its run still reading them at no cost, or, when that run ended without finishing, a new run counted like a retry, so a retry after a lost response or a second tab reads them once. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
         "operationId": "createGoalUnderstanding",
         "security": [
           {
@@ -21825,7 +21702,7 @@
     },
     "/goal-understandings/{understandingId}/generations": {
       "post": {
-        "description": "Starts reading a saved typed goal, or reads it again after its run failed or couldn't start. A run still reading it is followed instead (202 with its `generationId`), and a goal already understood needs none (200). Reading it again is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` (403 for a guest, 402 for a free learner, 429 for Plus).",
+        "description": "Starts reading a saved typed goal, or reads it again after its run failed or couldn't start. A run still reading it is followed instead (202 with its `generationId`), and a goal already understood needs none (200). Reading it again is one of the learner's small AI calls, counted once for retries of the same run sent together: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` (403 for a guest, 402 for a free learner, 429 for Plus).",
         "operationId": "createGoalUnderstandingGeneration",
         "security": [
           {
@@ -24041,6 +23918,9 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mockPreparationReview": {
+                                    "type": "boolean"
+                                  },
                                   "refresh": {
                                     "type": "boolean"
                                   },
@@ -24238,6 +24118,9 @@
                                     "type": "boolean"
                                   },
                                   "mistakesOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "mockPreparationReview": {
                                     "type": "boolean"
                                   },
                                   "refresh": {
@@ -25083,6 +24966,28 @@
               }
             }
           },
+          "202": {
+            "description": "The scheduled mock needs questions before it can start",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "preparing"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "400": {
             "description": "Validation error",
             "content": {
@@ -25114,7 +25019,7 @@
             }
           },
           "409": {
-            "description": "The block is finished (error code BLOCK_FINISHED), a phase challenge waits for earlier work in the same session (error code EARLIER_FIRST, with details.reason `lessons` or `challenge`; complete or skip that work, then start again), or it's a challenge whose questions aren't written yet (error code QUESTIONS_NEEDED: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with `afterWriting`).",
+            "description": "The block is finished (error code BLOCK_FINISHED), a phase challenge waits for earlier work in the same session (error code EARLIER_FIRST, with details.reason `lessons` or `challenge`; complete or skip that work, then start again), or a non-mock challenge needs questions (error code QUESTIONS_NEEDED: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with `afterWriting`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -27965,6 +27870,9 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mockPreparationReview": {
+                                    "type": "boolean"
+                                  },
                                   "refresh": {
                                     "type": "boolean"
                                   },
@@ -28162,6 +28070,9 @@
                                     "type": "boolean"
                                   },
                                   "mistakesOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "mockPreparationReview": {
                                     "type": "boolean"
                                   },
                                   "refresh": {
@@ -30536,6 +30447,31 @@
               "start"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setExtras"
+                ]
+              },
+              "skillIds": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "skillIds"
+            ],
+            "additionalProperties": false,
+            "description": "Sets the optional exam skills the learner chose. New skills must be offered by the current plan."
           }
         ],
         "type": "object"
@@ -31204,14 +31140,6 @@
                 "$ref": "#/components/schemas/MockShape"
               }
             ]
-          },
-          "acceptFewer": {
-            "description": "Start with the questions there are when the bank holds fewer than the option asks; send it only after the learner agreed to the `short` answer's numbers",
-            "type": "boolean"
-          },
-          "afterWriting": {
-            "description": "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
-            "type": "boolean"
           }
         },
         "required": [
@@ -31249,23 +31177,6 @@
           "area",
           "day",
           "kind"
-        ],
-        "additionalProperties": false
-      },
-      "MockQuestionsInput": {
-        "type": "object",
-        "properties": {
-          "shape": {
-            "description": "The option picked from GET /v1/goals/{goalId}/mocks",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MockShape"
-              }
-            ]
-          }
-        },
-        "required": [
-          "shape"
         ],
         "additionalProperties": false
       },
@@ -36600,6 +36511,15 @@
       "Challenge": {
         "type": "object",
         "properties": {
+          "access": {
+            "type": "string",
+            "enum": [
+              "open",
+              "plusRequired",
+              "preparing"
+            ],
+            "description": "A scheduled mock is preparing until every question is available."
+          },
           "blockId": {
             "nullable": true,
             "description": "Today's block for it, or the last one it was played in; null before its day",
@@ -36936,6 +36856,7 @@
           }
         },
         "required": [
+          "access",
           "blockId",
           "call",
           "canMove",
@@ -37355,6 +37276,13 @@
               "before"
             ],
             "additionalProperties": false
+          },
+          "noticeRemoved": {
+            "description": "Areas and skills removed when the plan followed the official exam notice",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "outcomesAdded": {
             "description": "For moving the phase dates (fitPhaseDates): the goal's outcome skills (a career's job search) keeping the dates leaves out by the goal's date and moving them fits in, by name",
@@ -38471,6 +38399,129 @@
                   "events"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "plot"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  },
+                  "xLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "xUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "yLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "yUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "series": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "mark": {
+                          "type": "string",
+                          "enum": [
+                            "points",
+                            "line",
+                            "lineWithPoints"
+                          ]
+                        },
+                        "points": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "x": {
+                                "type": "number"
+                              },
+                              "y": {
+                                "type": "number"
+                              },
+                              "label": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "x",
+                              "y",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "mark",
+                        "points"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "y": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "y"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "source": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  }
+                },
+                "required": [
+                  "kind",
+                  "title",
+                  "xLabel",
+                  "xUnit",
+                  "yLabel",
+                  "yUnit",
+                  "series",
+                  "references",
+                  "source"
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -38628,9 +38679,132 @@
               "events"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "plot"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "description": "Aim for 120 characters or fewer."
+              },
+              "xLabel": {
+                "type": "string",
+                "description": "Aim for 40 characters or fewer."
+              },
+              "xUnit": {
+                "nullable": true,
+                "type": "string",
+                "description": "Aim for 12 characters or fewer."
+              },
+              "yLabel": {
+                "type": "string",
+                "description": "Aim for 40 characters or fewer."
+              },
+              "yUnit": {
+                "nullable": true,
+                "type": "string",
+                "description": "Aim for 12 characters or fewer."
+              },
+              "series": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Aim for 40 characters or fewer."
+                    },
+                    "mark": {
+                      "type": "string",
+                      "enum": [
+                        "points",
+                        "line",
+                        "lineWithPoints"
+                      ]
+                    },
+                    "points": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          },
+                          "label": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "mark",
+                    "points"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Aim for 40 characters or fewer."
+                    },
+                    "y": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "y"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "source": {
+                "nullable": true,
+                "type": "string",
+                "description": "Aim for 120 characters or fewer."
+              }
+            },
+            "required": [
+              "kind",
+              "title",
+              "xLabel",
+              "xUnit",
+              "yLabel",
+              "yUnit",
+              "series",
+              "references",
+              "source"
+            ],
+            "additionalProperties": false
           }
         ],
-        "description": "A bar or line chart (categories with one or more series of values) or a timeline of dated events, drawn from its data"
+        "description": "A category chart, numeric plot, or timeline of dated events, drawn from its data"
       },
       "TrueFalseLabels": {
         "type": "string",
@@ -42011,7 +42185,7 @@
             ]
           },
           "reason": {
-            "description": "Why a change of focus changed nothing (`unchanged`): `alreadyIn` (the subjects it focuses on already have every lesson in the plan) or `cantMove` (they already start as early as what they build on allows, and more of them doesn't fit)",
+            "description": "Why the change changed nothing (`unchanged`): `alreadyIn` (the plan already holds what it asks: the exam strategy it adds, or every lesson of the subjects it focuses on) or `cantMove` (the subjects it focuses on already start as early as what they build on allows, and more of them doesn't fit)",
             "nullable": true,
             "type": "string",
             "enum": [
@@ -42026,7 +42200,7 @@
               "proposed",
               "unchanged"
             ],
-            "description": "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: a change of focus alone wouldn't do what it asks (focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved"
+            "description": "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: the change wouldn't do what it asks (the plan already holds the exam strategy it adds, focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved"
           }
         },
         "required": [
@@ -42120,7 +42294,7 @@
           },
           "kind": {
             "type": "string",
-            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
+            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
           },
           "lessonsSkipped": {
             "type": "integer",
@@ -47088,8 +47262,7 @@
               "conversation",
               "assist",
               "mindMap",
-              "outline",
-              "mockQuestions"
+              "outline"
             ]
           },
           "rollingLimit": {
@@ -62645,6 +62818,223 @@
                           "type": "string",
                           "minLength": 1,
                           "description": "Aim for 240 characters or fewer."
+                        },
+                        "visual": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "chart"
+                                  ]
+                                },
+                                "chart": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bar",
+                                    "line"
+                                  ]
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                },
+                                "categoryLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "valueLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "unit": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 12 characters or fewer."
+                                },
+                                "axisStart": {
+                                  "nullable": true,
+                                  "type": "number"
+                                },
+                                "categories": {
+                                  "minItems": 2,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "description": "Aim for 40 characters or fewer."
+                                  }
+                                },
+                                "series": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      },
+                                      "values": {
+                                        "minItems": 2,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "number"
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "values"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "source": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "chart",
+                                "title",
+                                "categoryLabel",
+                                "valueLabel",
+                                "unit",
+                                "axisStart",
+                                "categories",
+                                "series",
+                                "source"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "plot"
+                                  ]
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                },
+                                "xLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "xUnit": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 12 characters or fewer."
+                                },
+                                "yLabel": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "yUnit": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 12 characters or fewer."
+                                },
+                                "series": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      },
+                                      "mark": {
+                                        "type": "string",
+                                        "enum": [
+                                          "points",
+                                          "line",
+                                          "lineWithPoints"
+                                        ]
+                                      },
+                                      "points": {
+                                        "minItems": 1,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "x": {
+                                              "type": "number"
+                                            },
+                                            "y": {
+                                              "type": "number"
+                                            },
+                                            "label": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "description": "Aim for 40 characters or fewer."
+                                            }
+                                          },
+                                          "required": [
+                                            "x",
+                                            "y",
+                                            "label"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "mark",
+                                      "points"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "references": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "label": {
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "label",
+                                      "y"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "source": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "description": "Aim for 120 characters or fewer."
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "title",
+                                "xLabel",
+                                "xUnit",
+                                "yLabel",
+                                "yUnit",
+                                "series",
+                                "references",
+                                "source"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -63297,6 +63687,129 @@
                           "kind",
                           "title",
                           "events"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
                         ],
                         "additionalProperties": false
                       }
@@ -68222,6 +68735,129 @@
                           "events"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
+                        ],
+                        "additionalProperties": false
                       }
                     ]
                   }
@@ -68708,6 +69344,129 @@
                               "events"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "plot"
+                                ]
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              },
+                              "xLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "xUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "yLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "yUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "series": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "mark": {
+                                      "type": "string",
+                                      "enum": [
+                                        "points",
+                                        "line",
+                                        "lineWithPoints"
+                                      ]
+                                    },
+                                    "points": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "x": {
+                                            "type": "number"
+                                          },
+                                          "y": {
+                                            "type": "number"
+                                          },
+                                          "label": {
+                                            "nullable": true,
+                                            "type": "string",
+                                            "description": "Aim for 40 characters or fewer."
+                                          }
+                                        },
+                                        "required": [
+                                          "x",
+                                          "y",
+                                          "label"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "mark",
+                                    "points"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "references": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "label": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "label",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "source": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "title",
+                              "xLabel",
+                              "xUnit",
+                              "yLabel",
+                              "yUnit",
+                              "series",
+                              "references",
+                              "source"
+                            ],
+                            "additionalProperties": false
                           }
                         ]
                       }
@@ -68901,6 +69660,129 @@
                               "kind",
                               "title",
                               "events"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "plot"
+                                ]
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              },
+                              "xLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "xUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "yLabel": {
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              },
+                              "yUnit": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 12 characters or fewer."
+                              },
+                              "series": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "mark": {
+                                      "type": "string",
+                                      "enum": [
+                                        "points",
+                                        "line",
+                                        "lineWithPoints"
+                                      ]
+                                    },
+                                    "points": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "x": {
+                                            "type": "number"
+                                          },
+                                          "y": {
+                                            "type": "number"
+                                          },
+                                          "label": {
+                                            "nullable": true,
+                                            "type": "string",
+                                            "description": "Aim for 40 characters or fewer."
+                                          }
+                                        },
+                                        "required": [
+                                          "x",
+                                          "y",
+                                          "label"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "mark",
+                                    "points"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "references": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "label": {
+                                      "type": "string",
+                                      "description": "Aim for 40 characters or fewer."
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "label",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "source": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 120 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "title",
+                              "xLabel",
+                              "xUnit",
+                              "yLabel",
+                              "yUnit",
+                              "series",
+                              "references",
+                              "source"
                             ],
                             "additionalProperties": false
                           }
@@ -69402,6 +70284,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -69427,6 +70312,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -69797,6 +70683,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -69822,6 +70711,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70184,6 +71074,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70209,6 +71102,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70535,6 +71429,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70560,6 +71457,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70913,6 +71811,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70938,6 +71839,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71317,6 +72219,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71342,6 +72247,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71668,6 +72574,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71693,6 +72602,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -72019,6 +72929,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -72044,6 +72957,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -72846,6 +73760,129 @@
                           "events"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
+                        ],
+                        "additionalProperties": false
                       }
                     ]
                   }
@@ -73300,6 +74337,129 @@
                           "events"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "plot"
+                            ]
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          },
+                          "xLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "xUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "yLabel": {
+                            "type": "string",
+                            "description": "Aim for 40 characters or fewer."
+                          },
+                          "yUnit": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 12 characters or fewer."
+                          },
+                          "series": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "mark": {
+                                  "type": "string",
+                                  "enum": [
+                                    "points",
+                                    "line",
+                                    "lineWithPoints"
+                                  ]
+                                },
+                                "points": {
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      },
+                                      "label": {
+                                        "nullable": true,
+                                        "type": "string",
+                                        "description": "Aim for 40 characters or fewer."
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y",
+                                      "label"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "mark",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Aim for 40 characters or fewer."
+                                },
+                                "y": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "y"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "source": {
+                            "nullable": true,
+                            "type": "string",
+                            "description": "Aim for 120 characters or fewer."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "title",
+                          "xLabel",
+                          "xUnit",
+                          "yLabel",
+                          "yUnit",
+                          "series",
+                          "references",
+                          "source"
+                        ],
+                        "additionalProperties": false
                       }
                     ]
                   }
@@ -73563,6 +74723,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -73588,6 +74751,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -73958,6 +75122,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -73983,6 +75150,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -74345,6 +75513,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -74370,6 +75541,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -74696,6 +75868,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -74721,6 +75896,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75074,6 +76250,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75099,6 +76278,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75478,6 +76658,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75503,6 +76686,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75829,6 +77013,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75854,6 +77041,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -76180,6 +77368,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -76205,6 +77396,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -77553,6 +78745,10 @@
             "type": "boolean",
             "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice"
           },
+          "mockPreparationReview": {
+            "description": "Whether this review is offered while the scheduled mock is preparing. Include the flag in its work reference when opening the review.",
+            "type": "boolean"
+          },
           "netScored": {
             "type": "boolean",
             "description": "Practice scored net (a wrong answer cancels a right one, as in Cebraspe exams): statements can be answered with dontKnow to leave them blank. Swipe capsules are scored net on their own"
@@ -77581,6 +78777,10 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
+          },
+          "preparing": {
+            "type": "boolean",
+            "description": "True when a scheduled mock cannot start because some questions are unavailable."
           },
           "questions": {
             "type": "integer",
@@ -77619,6 +78819,14 @@
             "nullable": true,
             "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
             "type": "string"
+          },
+          "subjectExtra": {
+            "description": "The optional exam study a lesson belongs to, with or without an official guide respectively.",
+            "type": "string",
+            "enum": [
+              "notice",
+              "optional"
+            ]
           },
           "title": {
             "nullable": true,
@@ -77669,6 +78877,7 @@
           "planItemId",
           "planItemKey",
           "position",
+          "preparing",
           "questions",
           "refresh",
           "reinforcement",
@@ -84573,6 +85782,10 @@
             ],
             "additionalProperties": false
           },
+          "hasNotice": {
+            "description": "Whether the exam has a source guide or the learner supplied test material.",
+            "type": "boolean"
+          },
           "kind": {
             "type": "string",
             "enum": [
@@ -84679,6 +85892,12 @@
             },
             "description": "For an exam goal: the learner's other active or paused exam goals whose plans teach some of the same skills with the same lessons, in the order they were started. A lesson on a shared skill counts in each, so a topic is studied once for all of them; practice and mocks stay in each exam's style. Each subject's `sharedWith` names which. Empty for other goals, and when nothing is shared"
           },
+          "subjectCount": {
+            "description": "The number of subjects excluding optional exam study.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "subjects": {
             "type": "array",
             "items": {
@@ -84770,6 +85989,10 @@
               "share"
             ],
             "additionalProperties": false
+          },
+          "extra": {
+            "description": "Whether the subject is optional exam study outside the tested subjects.",
+            "type": "boolean"
           },
           "group": {
             "nullable": true,
@@ -85348,6 +86571,47 @@
           "examDocument": {
             "$ref": "#/components/schemas/ExamDocument"
           },
+          "extraOffer": {
+            "description": "The optional exam strategy lessons that all fit before the exam, when the notice selection fits and no fit offer takes priority.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "effect": {
+                "$ref": "#/components/schemas/PlanEffect"
+              },
+              "fits": {
+                "type": "boolean",
+                "description": "True when the plan with the change covers everything in depth by its date, as the change plans it"
+              },
+              "operations": {
+                "minItems": 1,
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PlanOperationOutput"
+                }
+              },
+              "canApply": {
+                "type": "boolean",
+                "description": "Whether the offer was calculated for the current study day."
+              },
+              "lessons": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991,
+                "description": "The number of optional lessons added by the change."
+              }
+            },
+            "required": [
+              "effect",
+              "fits",
+              "operations",
+              "canApply",
+              "lessons"
+            ],
+            "additionalProperties": false
+          },
           "feasibility": {
             "nullable": true,
             "type": "object",
@@ -85540,6 +86804,10 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "hasNotice": {
+            "description": "Whether the exam has a source guide or the learner supplied test material.",
+            "type": "boolean"
           },
           "languageAim": {
             "nullable": true,
@@ -89681,6 +90949,129 @@
                   "events"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "plot"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  },
+                  "xLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "xUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "yLabel": {
+                    "type": "string",
+                    "description": "Aim for 40 characters or fewer."
+                  },
+                  "yUnit": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 12 characters or fewer."
+                  },
+                  "series": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "mark": {
+                          "type": "string",
+                          "enum": [
+                            "points",
+                            "line",
+                            "lineWithPoints"
+                          ]
+                        },
+                        "points": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "x": {
+                                "type": "number"
+                              },
+                              "y": {
+                                "type": "number"
+                              },
+                              "label": {
+                                "nullable": true,
+                                "type": "string",
+                                "description": "Aim for 40 characters or fewer."
+                              }
+                            },
+                            "required": [
+                              "x",
+                              "y",
+                              "label"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "mark",
+                        "points"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Aim for 40 characters or fewer."
+                        },
+                        "y": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "y"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "source": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Aim for 120 characters or fewer."
+                  }
+                },
+                "required": [
+                  "kind",
+                  "title",
+                  "xLabel",
+                  "xUnit",
+                  "yLabel",
+                  "yUnit",
+                  "series",
+                  "references",
+                  "source"
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -90032,6 +91423,38 @@
           "fixed"
         ]
       },
+      "MockWriting": {
+        "type": "object",
+        "properties": {
+          "generationId": {
+            "nullable": true,
+            "description": "The run writing the paper. GET /generations/{generationId}/events with the paper namespace streams the `mockPaper` steps `writeMockTexts` (only when it writes texts that several questions share), `writeMockQuestions`, `recordMockListening` (only for a paper with recordings), then `mockPaperReady`, or `workflowError` when the paper is still short. Null unless `status` is `writing`",
+            "type": "string",
+            "minLength": 1
+          },
+          "namespace": {
+            "nullable": true,
+            "description": "The paper's stream namespace within this run. Null unless `status` is `writing`",
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "writing",
+              "starting",
+              "none"
+            ],
+            "description": "`writing`: the paper has a generation ID and stream namespace. `starting`: its run starts in a few seconds; ask again. `none`: nothing is writing it now (the mock is ready, or what was written fell short and the daily preparation goes on with it)"
+          }
+        },
+        "required": [
+          "generationId",
+          "namespace",
+          "status"
+        ],
+        "additionalProperties": false
+      },
       "MockOptions": {
         "type": "object",
         "properties": {
@@ -90069,6 +91492,28 @@
               "$ref": "#/components/schemas/MockOption"
             },
             "description": "Each exam day in full, then half of each exam day, then each objective subject, biggest first"
+          },
+          "requested": {
+            "nullable": true,
+            "description": "The saved request and whether enough questions are available to start it",
+            "type": "object",
+            "properties": {
+              "shape": {
+                "$ref": "#/components/schemas/MockShape"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "preparing",
+                  "ready"
+                ]
+              }
+            },
+            "required": [
+              "shape",
+              "status"
+            ],
+            "additionalProperties": false
           },
           "running": {
             "nullable": true,
@@ -90116,6 +91561,7 @@
           "goalId",
           "lastMock",
           "options",
+          "requested",
           "running",
           "sizeSource"
         ],
@@ -90295,85 +91741,24 @@
       "AnytimeMock": {
         "type": "object",
         "properties": {
-          "availableAt": {
-            "description": "For `short` when the rolling question-writing cap stopped it: when the full mock's questions can be written; absent otherwise",
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "examQuestions": {
-            "description": "For `short`: the questions of what was picked, in the real exam",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
           "id": {
             "nullable": true,
-            "description": "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
+            "description": "The sitting ID, or null while questions are being prepared",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "limit": {
-            "description": "For `short`: the fair use for new mock questions that is used up, so new ones can be written once it renews; null when there's nothing more to write now",
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "day",
-              "rolling30Days",
-              "total"
-            ]
-          },
-          "minutes": {
-            "description": "For `short`: the mock's time for the questions it can ask",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "questions": {
-            "description": "For `short`: the questions the mock can ask now",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
           },
           "status": {
             "type": "string",
             "enum": [
               "started",
               "running",
-              "needsQuestions",
-              "short"
-            ],
-            "description": "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): it can ask `questions` of `examQuestions`, in `minutes`, and `acceptFewer` starts it with those once the learner agreed"
+              "preparing"
+            ]
           }
         },
         "required": [
           "id",
-          "status"
-        ],
-        "additionalProperties": false
-      },
-      "MockQuestionsGeneration": {
-        "type": "object",
-        "properties": {
-          "generationId": {
-            "nullable": true,
-            "description": "The run writing the questions: stream GET /generations/{generationId}/events",
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ready",
-              "preparing",
-              "generating"
-            ],
-            "description": "`ready`: start the mock now with `afterWriting`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has or answers `short` (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `afterWriting`"
-          }
-        },
-        "required": [
-          "generationId",
           "status"
         ],
         "additionalProperties": false
@@ -93779,7 +95164,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93879,7 +95264,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available"
+            "description": "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done), when it isn't available, and on a day with lessons of its own still to come (`lessonsComing`, `lessonsToPrepare`, `emptyDay`) or with nothing new"
           },
           "minutes": {
             "type": "integer",
@@ -93888,7 +95273,7 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished",
+            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished (a scheduled mock still being prepared doesn't count)",
             "type": "string",
             "enum": [
               "dayOver",
@@ -94079,7 +95464,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -94252,6 +95637,10 @@
                   "type": "boolean",
                   "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice"
                 },
+                "mockPreparationReview": {
+                  "description": "Whether this review is offered while the scheduled mock is preparing. Include the flag in its work reference when opening the review.",
+                  "type": "boolean"
+                },
                 "netScored": {
                   "type": "boolean",
                   "description": "Practice scored net (a wrong answer cancels a right one, as in Cebraspe exams): statements can be answered with dontKnow to leave them blank. Swipe capsules are scored net on their own"
@@ -94280,6 +95669,10 @@
                   "type": "integer",
                   "minimum": 0,
                   "maximum": 9007199254740991
+                },
+                "preparing": {
+                  "type": "boolean",
+                  "description": "True when a scheduled mock cannot start because some questions are unavailable."
                 },
                 "questions": {
                   "type": "integer",
@@ -94318,6 +95711,14 @@
                   "nullable": true,
                   "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
                   "type": "string"
+                },
+                "subjectExtra": {
+                  "description": "The optional exam study a lesson belongs to, with or without an official guide respectively.",
+                  "type": "string",
+                  "enum": [
+                    "notice",
+                    "optional"
+                  ]
                 },
                 "title": {
                   "nullable": true,
@@ -94367,6 +95768,7 @@
                 "planItemId",
                 "planItemKey",
                 "position",
+                "preparing",
                 "questions",
                 "refresh",
                 "reinforcement",
@@ -94629,6 +96031,9 @@
                                   "type": "boolean"
                                 },
                                 "mistakesOnly": {
+                                  "type": "boolean"
+                                },
+                                "mockPreparationReview": {
                                   "type": "boolean"
                                 },
                                 "refresh": {
@@ -97001,7 +98406,8 @@
                 "type": "string",
                 "enum": [
                   "open",
-                  "plusRequired"
+                  "plusRequired",
+                  "preparing"
                 ]
               },
               "brainPower": {
@@ -97857,7 +99263,7 @@
           },
           "finished": {
             "type": "boolean",
-            "description": "The session has finished at least once, or every block is done or skipped. Remains true while extra blocks wait. False after \"Stop for today\" if the session has never finished and blocks remain"
+            "description": "The session has finished at least once, or no block can be played next: every block is done or skipped, or the only work left is a mock exam still being prepared. Remains true while extra blocks wait. False after \"Stop for today\" if the session has never finished and playable blocks remain"
           },
           "fullMeal": {
             "type": "boolean"
@@ -98191,6 +99597,13 @@
               },
               "displayName": {
                 "type": "string"
+              },
+              "examDocument": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExamDocument"
+                  }
+                ]
               },
               "id": {
                 "type": "string",
@@ -98530,7 +99943,8 @@
                 "type": "string",
                 "enum": [
                   "open",
-                  "plusRequired"
+                  "plusRequired",
+                  "preparing"
                 ]
               },
               "date": {
@@ -99344,6 +100758,31 @@
               "start"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setExtras"
+                ]
+              },
+              "skillIds": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "skillIds"
+            ],
+            "additionalProperties": false,
+            "description": "Sets the optional exam skills the learner chose. New skills must be offered by the current plan."
           }
         ],
         "type": "object"

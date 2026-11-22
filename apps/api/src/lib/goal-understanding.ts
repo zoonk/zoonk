@@ -7,9 +7,17 @@ import {
 } from "@/workflows/onboarding/goal-understanding-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
+import {
+  type GoalUnderstandingRunResult,
+  prepareGoalUnderstandingRun,
+} from "@zoonk/core/view-models/onboarding/prepare-understanding-run";
 import { recordUnderstandingRun } from "@zoonk/core/view-models/onboarding/understanding-run";
 
-export async function isUnderstandingRunning(draft: OnboardingDraftView): Promise<boolean> {
+type DraftRun =
+  | Exclude<GoalUnderstandingRunResult, { draft: OnboardingDraftView }>
+  | { draft: OnboardingDraftView; status: "reading" | "understood" };
+
+async function isUnderstandingRunning(draft: OnboardingDraftView): Promise<boolean> {
   return (
     draft.status === "understanding" &&
     draft.generationId !== null &&
@@ -30,6 +38,25 @@ export async function startUnderstandingRun(
   await recordUnderstandingRun({ draftId: draft.id, runId });
 
   return { ...draft, generationId: runId };
+}
+
+/** Follows the run still reading a saved draft, or reads it again as a retry does. */
+export async function runSavedDraft(draft: OnboardingDraftView): Promise<DraftRun> {
+  if (await isUnderstandingRunning(draft)) {
+    return { draft, status: "reading" };
+  }
+
+  const prepared = await prepareGoalUnderstandingRun({ draftId: draft.id });
+
+  if (!("draft" in prepared)) {
+    return prepared;
+  }
+
+  if (prepared.status === "understood") {
+    return { draft: prepared.draft, status: "understood" };
+  }
+
+  return { draft: await startUnderstandingRun(prepared.draft), status: "reading" };
 }
 
 export function getUnderstandingLocation(draftId: string): string {

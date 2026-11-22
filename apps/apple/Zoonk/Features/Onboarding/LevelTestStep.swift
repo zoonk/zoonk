@@ -618,23 +618,19 @@ private struct LevelTestSpeaking: View {
   let progress: Double
   let onTest: (LevelTest) -> Void
   let onSkip: () -> Void
-  /// Record and Stop are the step's main action, where the other questions put Confirm.
+  /// Record and Stop are the step's main action, where the other questions put Confirm, with the
+  /// line about them right over the bar.
   @State private var recordInBar = RecordInBar()
 
   var body: some View {
-    PracticeTaskLayout {
+    PracticeTaskLayout(note: recordInBar.note) {
       Meter(value: progress, fill: .success)
         .accessibilityHidden(true)
-
-      Text(
-        "Say it out loud", tableName: "Onboarding", comment: "Title of the level test's sentence"
-      )
-      .typeStyle(.section)
-      .accessibilityAddTraits(.isHeader)
 
       VStack(alignment: .leading, spacing: 4) {
         Text(sentence.sentence)
           .typeStyle(.section)
+          .accessibilityAddTraits(.isHeader)
         Text(sentence.translation)
           .foregroundStyle(.mutedForeground)
       }
@@ -650,8 +646,7 @@ private struct LevelTestSpeaking: View {
         })
     } actions: {
       recordInBar.button
-        .controlSize(.large)
-        .buttonSizing(.flexible)
+        .practiceMainAction()
 
       PracticeSecondaryButton(
         title: LocalizedStringResource(

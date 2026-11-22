@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -55,6 +56,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
+import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
@@ -82,9 +84,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskBarKey
+import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
@@ -132,7 +137,8 @@ interface RunControls {
 }
 
 /**
- * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player. On a wide window
+ * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player; Enter presses a Record in [actions] instead,
+ * and P its sound ([TaskBarKeys]). On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
  * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
  * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
@@ -151,9 +157,11 @@ internal fun RunFrame(
     closeLabel: String? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     asideTitle: String? = null,
+    note: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
+    val barKeys = remember { TaskBarKeys() }
     val set = question?.set?.takeIf { it.listening == null }
     val hasAside = set == null && aside != null
     // The one column and the screen's page across a fold share their scroll, so a reading place keeps as the book opens
@@ -183,16 +191,40 @@ internal fun RunFrame(
                 modifier =
                     Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
                         when {
-                            event.type != KeyEventType.KeyDown -> false
-                            event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
-                            event.key == Key.Escape -> true.also { onClose() }
-                            else -> false
+                            event.type != KeyEventType.KeyDown -> {
+                                false
+                            }
+
+                            event.key == Key.Enter || event.key == Key.NumPadEnter -> {
+                                // A held Enter acts once, as main's shortcuts do, so it never stops the take it started.
+                                event.nativeKeyEvent.repeatCount > 0 || barKeys.press(TaskBarKey.Main) || mainAction?.invoke() != null
+                            }
+
+                            event.key == Key.P -> {
+                                event.nativeKeyEvent.repeatCount == 0 && barKeys.press(TaskBarKey.Sound)
+                            }
+
+                            event.key == Key.Escape -> {
+                                true.also { onClose() }
+                            }
+
+                            else -> {
+                                false
+                            }
                         }
                     },
                 title = { LessonTitle(title) },
                 actions = { report?.let { ReportProblemMenu(app, it) } },
                 closeLabel = closeLabel,
-                bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
+                bottomBar =
+                    actions?.let {
+                        {
+                            TaskActionBar {
+                                CompositionLocalProvider(LocalTaskBarKeys provides barKeys) { it(asideShown(hasAside, fold)) }
+                            }
+                        }
+                    },
+                note = note,
                 // A passage takes the rail over the run's own pane, as main's aside; across a fold both go on the page before it.
                 aside =
                     when {
@@ -206,15 +238,17 @@ internal fun RunFrame(
 
                 Column(Modifier.padding(padding).fillMaxSize()) {
                     Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
-                    Box(Modifier.weight(1f).fillMaxWidth()) {
+                    BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
                         // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
                         val turnPage =
                             if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
-                        ScrollingPage(
-                            Modifier.fillMaxSize().then(turnPage),
-                            if (fold == null) scroll else turnScroll,
-                            if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
-                        ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - PAGE_PADDING * 2 else null) {
+                            ScrollingPage(
+                                Modifier.fillMaxSize().then(turnPage),
+                                if (fold == null) scroll else turnScroll,
+                                if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                            ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                        }
 
                         if (fold != null) {
                             ScrollingPage(
@@ -252,10 +286,16 @@ private fun ScrollingPage(
     align: Alignment.Horizontal,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.verticalScroll(scroll).padding(vertical = 8.dp), horizontalAlignment = align) {
-        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
+    Column(modifier.verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
+        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
     }
 }
+
+/** The space above and below a run's page. */
+internal val PAGE_PADDING = 8.dp
+
+/** The gap between a run's parts on its page. */
+internal val PAGE_SPACING = 16.dp
 
 @Composable
 internal fun RunSegments(

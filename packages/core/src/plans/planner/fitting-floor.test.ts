@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { findFittingMinutes, withDailyMinutes } from "./daily-time-plans";
 import { fromIsoDate } from "./plan-calendar";
+import { getSelectedCoverage } from "./plan-coverage";
 import { getPlanFeasibility } from "./plan-feasibility";
 import { parsePlanSettings } from "./plan-state";
-import { getSelectedCoverage } from "./selected-plan-summary";
 
 function repeatedTitleInput(): BuildPlanInput {
   const repeated = Array.from({ length: 10 }, (_, index) => `repeated-${index}`);

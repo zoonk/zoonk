@@ -2,6 +2,9 @@ package com.zoonk.android.feature.player.language
 
 import androidx.compose.runtime.Immutable
 import com.zoonk.android.feature.player.model.LanguageExercise
+import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOf1Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOf3ContentPairsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5ListeningOneOf4Content
@@ -181,4 +184,14 @@ fun LanguageExercise.toExercise(): Exercise =
                 )
             }
         }
+    }
+
+/** A listening screen whose sentence is its own answer, as in a lesson in the learner's own language: showing it gives the answer away. */
+val LessonStep.isDictation: Boolean
+    get() {
+        val language = content as? StepContent.Language ?: return false
+        return language.kind == StepKind.Listening && language.exercise
+            .toExercise()
+            .sentence
+            ?.readsItself == true
     }

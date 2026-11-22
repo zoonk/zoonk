@@ -5,7 +5,6 @@
   "goalcontent_adjust_plan": "db6013bb3d3cf8fe22e249938e6911ae04887ebe70330079deb93cb899e3f7c6",
   "goalcontent_also_in_exam_count": "766f7a1d63d1d796b324c05a74f318ed5caf031bbef95fb56698ce9f880c96c0",
   "goalcontent_also_in_exams": "c9cbe500ed3aac58c109401763a07807c8162086585902f3c0e781df1f23a02a",
-  "goalcontent_also_in_plan": "55d5c2936f025723288b341c1d7764918faa742a0a0ea3fbb959b84c4dccee38",
   "goalcontent_asked_a_lot": "1e624477335a1f4cb46db144121721d07b8d3f63ec4c972d2e2c4f2709b99f3d",
   "goalcontent_chapter_number": "af5af3da7b5dcafef5ee19957b63cc672fd61795a7c5d21adacbde49bfb1af51",
   "goalcontent_chapter_summary": "273a65f62b31d75447510d02126dafb98c12eae899eb33d16af99a2f546a4b0b",
@@ -42,7 +41,10 @@
   "goalcontent_more_chapters": "f27ee266241ecf73e2f9d07068532b0bba7fc2f3351b18ac22033a8185497375",
   "goalcontent_new": "a1077b29b1a3654de119a652c00766cd9214768d99cbed015af0c2ea3da2f898",
   "goalcontent_next_date": "8ec082deaa789e4f31b1a33662fe260237bf915e729b0141e50e49b37ef4125d",
+  "goalcontent_not_in_guide": "0f6835c4fa76bd3121a3b27375fca9599c1a24d5b9c2b76c3931046e60dc8ba2",
+  "goalcontent_not_in_notice": "dfbe827f7642bd5216e20d46eebfdaffb144e96e9e12790a913632ca8745f7c7",
   "goalcontent_not_in_plan": "0be63d04aee19a3bd8baa587c773742711ec19fd71196a096d29ece7a88f9bd4",
+  "goalcontent_optional_study": "63ab4b34b1b1416a86d4e35492a21cfe96a5edf0c0c076800848e7f303f9393f",
   "goalcontent_percent_done": "1e03727052d726fa2324a3e9cd906365016a0bb1f59564c4d350e1e8353579e5",
   "goalcontent_practice": "9f623b586788014f46cc07fa870ede082545f678444c7665c5b674dd0a221afb",
   "goalcontent_practice_chapter": "5216b7c2acf39bb89e6d4427d3ed9052de213825df9afafc23647cce0783c694",
@@ -133,8 +135,11 @@
     <string name="goalcontent_preparation">準備状況</string>
     <string name="goalcontent_coverage">学習状況</string>
     <string name="goalcontent_not_in_plan">学習計画に含まれていません</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">学習計画の追加項目</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">公式要項に含まれていない</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">公式ガイドに含まれていない</string>
+    <string name="goalcontent_optional_study">省略可能</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">%1$sの科目別問題数は、%2$sの集計に基づいています。</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

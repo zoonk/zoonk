@@ -1,11 +1,10 @@
 import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { useFormatNumber } from "../_utils/use-format-number";
-import { clampLabelCenter } from "./_utils/category-labels";
 import { BAR_THICKNESS, LABEL_LINE_HEIGHT, type RowLayout, VALUE_GAP } from "./_utils/chart-layout";
 import { getSeriesMark } from "./_utils/series-marks";
 import { SeriesBar } from "./series-marks";
 
-function ValueTicks({ layout, width }: { layout: RowLayout; width: number }) {
+function ValueTicks({ layout }: { layout: RowLayout }) {
   return layout.xTicks.map((tick) => {
     const x = layout.x.toPixel(tick.value);
 
@@ -22,7 +21,7 @@ function ValueTicks({ layout, width }: { layout: RowLayout; width: number }) {
           className="fill-muted-foreground"
           dominantBaseline="middle"
           textAnchor="middle"
-          x={clampLabelCenter({ lines: [tick.label], width, x })}
+          x={tick.center}
           y={layout.tickY}
         >
           {tick.label}
@@ -78,16 +77,14 @@ export function BarRows({
   layout,
   unit,
   visual,
-  width,
 }: {
   layout: RowLayout;
   unit: string | null;
   visual: ChartVisual;
-  width: number;
 }) {
   return (
     <>
-      <ValueTicks layout={layout} width={width} />
+      <ValueTicks layout={layout} />
       {layout.rows.map((row, index) => (
         <g key={row.name}>
           <text className="fill-muted-foreground" dominantBaseline="middle" x={0}>

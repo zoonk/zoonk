@@ -39,7 +39,22 @@ export type ChallengeCall = {
   title: string | null;
 };
 
+export function getChallengeAccess({
+  plusRequired,
+  preparing,
+}: {
+  plusRequired: boolean;
+  preparing?: boolean;
+}) {
+  if (plusRequired) {
+    return "plusRequired";
+  }
+
+  return preparing ? "preparing" : "open";
+}
+
 export type ChallengeView = {
+  access: "open" | "preparing" | "plusRequired";
   /** Today's block for it, or the last one it was played in; null before its day. */
   blockId: string | null;
   call: ChallengeCall | null;

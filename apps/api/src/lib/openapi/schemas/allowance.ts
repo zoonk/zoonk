@@ -1,5 +1,5 @@
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
-import { UsageKind } from "@zoonk/db";
+import { USAGE_KINDS } from "@zoonk/db";
 import { z } from "zod";
 
 const limitSchema = z.int().nullable();
@@ -28,7 +28,7 @@ const allowanceItemSchema = allowanceItemBaseSchema
         description:
           "Earliest instant another use is admitted against this item's recorded caps, assuming no intervening use. Null below all rolling caps or when waiting alone cannot admit a use. Calls require positive seconds and positive call money capacity and then run whole. Includes a currently blocking UTC-day reset.",
       }),
-    kind: z.enum(UsageKind),
+    kind: z.enum(USAGE_KINDS),
     rollingLimit: limitSchema.meta({
       description:
         "Cap in the preceding 30 times 24 hours; conversation amounts are seconds, other kinds count claims. Null when uncapped.",

@@ -1,8 +1,17 @@
+import { prepareNoticeGraphRepair } from "@zoonk/core/library/curriculum/exam-graph-repair";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
-import { listNoticeGoals, proposeNoticeChange } from "@zoonk/core/plans/notice-change";
+import {
+  listNoticeGoals,
+  listNoticeRepairBlueprints,
+  proposeNoticeChange,
+  repairNoticePlan,
+} from "@zoonk/core/plans/notice-change";
+import { applyNoticeGraph } from "@zoonk/core/plans/notice-graph";
 import { claimNoticeLanding, endNoticeWait } from "@zoonk/core/plans/notice-wait";
 import { logError } from "@zoonk/utils/logger";
+import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
+import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 export async function claimNoticeLandingStep(goalId: string): Promise<boolean> {
   "use step";
@@ -29,26 +38,37 @@ export async function endNoticeWaitStep(goalId: string): Promise<void> {
   await endNoticeWait(goalId);
 }
 
-export async function proposeNoticeChangeStep({
+export async function applyNoticeGraphStep({
+  blueprintId,
   courseIdsByKey,
+  droppedSkillIds,
   goalId,
-  graph = null,
+  graph,
   idsByKey,
 }: {
-  courseIdsByKey?: Record<string, string>;
+  blueprintId: string;
+  courseIdsByKey: Record<string, string>;
+  droppedSkillIds: string[];
   goalId: string;
-  graph?: GoalSkillGraph | null;
-  idsByKey?: Record<string, string>;
-}): Promise<void> {
+  graph: GoalSkillGraph;
+  idsByKey: Record<string, string>;
+}): Promise<PlanStepOutcome<boolean>> {
   "use step";
 
-  await proposeNoticeChange({
-    goalId,
-    graph:
-      graph && idsByKey && courseIdsByKey
-        ? toGoalPlanGraph({ courseIdsByKey, graph, idsByKey })
-        : null,
-  });
+  return catchPlanConflict(() =>
+    applyNoticeGraph({
+      blueprintId,
+      droppedSkillIds,
+      goalId,
+      graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
+    }),
+  );
+}
+
+export async function proposeNoticeChangeStep({ goalId }: { goalId: string }): Promise<void> {
+  "use step";
+
+  await proposeNoticeChange({ goalId });
 }
 
 export async function listNoticeGoalsStep(input: {
@@ -61,17 +81,32 @@ export async function listNoticeGoalsStep(input: {
   return listNoticeGoals(input);
 }
 
-export async function proposeNoticeDatesStep({
-  goalIds,
-  noticeId,
-}: {
-  goalIds: string[];
-  noticeId: string | null;
+export async function repairNoticePlanStep(
+  input: Parameters<typeof repairNoticePlan>[0],
+): Promise<void> {
+  "use step";
+
+  await repairNoticePlan(input);
+}
+
+export async function logNoticeRepairFailureStep(failure: {
+  blueprintId: string;
+  error: string;
+  goalId: string;
 }): Promise<void> {
   "use step";
 
-  for (const goalId of goalIds) {
-    // oxlint-disable-next-line no-await-in-loop -- Each re-plans a goal; one at a time spares the database.
-    await proposeNoticeChange({ goalId, noticeId });
-  }
+  logError("[notice] Could not repair an exam graph:", failure);
+}
+
+export async function listNoticeRepairBlueprintsStep(after: string | null): Promise<string[]> {
+  "use step";
+
+  return listNoticeRepairBlueprints(after);
+}
+
+export async function prepareNoticeGraphRepairStep(blueprintId: string) {
+  "use step";
+
+  return prepareNoticeGraphRepair(blueprintId);
 }

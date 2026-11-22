@@ -33,6 +33,7 @@ function afterStart({
   switch (started.status) {
     case "ready":
     case "plusRequired":
+    case "preparing":
     case "questionsNeeded":
       return openingResult(opening);
     case "blockFinished":
@@ -71,7 +72,10 @@ async function openChallenge({
     const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
 
     return afterStart({
-      opening: resumed.status === "plusRequired" && intro ? intro : screen,
+      opening:
+        (resumed.status === "plusRequired" || resumed.status === "preparing") && intro
+          ? intro
+          : screen,
       sessionId,
       started: resumed,
     });

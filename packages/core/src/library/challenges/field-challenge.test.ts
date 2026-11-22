@@ -26,7 +26,7 @@ async function step() {
 function scripted(): ScriptedChallenge {
   const plan = challengePlanFixture();
   const { written } = assembleChallengeCase({ plan, script: draftEmptyScript(plan) });
-  const { content } = checkWrittenChallenge({ variant: "work", written });
+  const { content } = checkWrittenChallenge({ language: "en", variant: "work", written });
 
   if (!content) {
     throw new Error("The plan fixture's empty script should pass the content check");

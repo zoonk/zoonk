@@ -72,7 +72,9 @@ export async function replaceProfileFacts({
 
   for (const fact of created.filter((item) => item.sensitive)) {
     // oxlint-disable-next-line no-await-in-loop -- Each claim must see the preceding claim in this transaction.
-    if (viewer && (await claimAssistInWrite({ transaction: tx, viewer }))) {
+    const check = viewer ? await claimAssistInWrite({ transaction: tx, viewer }) : null;
+
+    if (check?.status === "allowed") {
       checked.push(fact);
     }
   }

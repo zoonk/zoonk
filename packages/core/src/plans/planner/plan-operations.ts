@@ -4,13 +4,14 @@ import { type UnfundedMove } from "../plan-error-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
 import { moveWeeklyEvent } from "./move-weekly-event";
 import { addDays, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
-import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
+import { DAYS_PER_WEEK, type PlanState } from "./plan-state";
 import { setTools } from "./plan-tools";
 import { applyStudyOperation, isStudyOperation } from "./study-operations";
 
 export type PlanOperationError =
   | "badMove"
   | "baseChoiceClosed"
+  | "extraUnavailable"
   | "mockCollision"
   | "moveBeforeNextMonday"
   | "noStudyDays"
@@ -100,7 +101,9 @@ function addSkills({
   skills: readonly AddedSkill[];
   state: PlanState;
 }): PlanState {
-  const present = new Set(state.graph.skills.map((skill) => skill.skillId));
+  const present = new Set(
+    [...state.graph.skills, ...(state.graph.extraSkills ?? [])].map((skill) => skill.skillId),
+  );
 
   const graphSkills = skills
     .filter((added) => !present.has(added.skillId))
@@ -119,6 +122,7 @@ function addSkills({
         name: added.name,
         phase: anchor?.phase ?? 0,
         skillId: added.skillId,
+        topics: [],
         weight: anchor?.weight ?? null,
       };
 
@@ -126,33 +130,6 @@ function addSkills({
     }, state.graph.skills);
 
   return { ...state, graph: { ...state.graph, skills: graphSkills } };
-}
-
-function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanState }): PlanState {
-  if (!graph) {
-    return state;
-  }
-
-  const noticeIds = new Set(graph.skills.map((skill) => skill.skillId));
-  const current = state.graph.skills;
-  const skills = [...graph.skills];
-
-  current.forEach((skill, index) => {
-    if (noticeIds.has(skill.skillId)) {
-      return;
-    }
-
-    const next = current.slice(index + 1).find((later) => noticeIds.has(later.skillId));
-    const at = next ? skills.findIndex((item) => item.skillId === next.skillId) : -1;
-
-    if (at === -1) {
-      skills.push(skill);
-    } else {
-      skills.splice(at, 0, skill);
-    }
-  });
-
-  return { ...state, graph: { phases: graph.phases, skills } };
 }
 
 function withTargetDate({
@@ -205,13 +182,11 @@ function setExamChoice({
 
 function applyOperation({
   goalKind,
-  noticeGraph,
   operation,
   state,
   today,
 }: {
   goalKind: GoalKind;
-  noticeGraph: PlanGraph | null;
   operation: PlanOperation;
   state: PlanState;
   today: string;
@@ -279,7 +254,7 @@ function applyOperation({
     case "setTools":
       return { state: setTools({ state, tools: operation.tools }) };
     case "followNotice":
-      return { state: followNotice({ graph: noticeGraph, state }) };
+      return { state };
     case "setNoticeDate":
       return withTargetDate({
         noticeDate: operation.targetDate,
@@ -311,13 +286,11 @@ function applyOperation({
 /** The first operation that can't apply stops the change, so none of it applies. */
 export function applyPlanOperations({
   goalKind,
-  noticeGraph = null,
   operations,
   state,
   today,
 }: {
   goalKind: GoalKind;
-  noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
   state: PlanState;
   today: Date;
@@ -328,7 +301,7 @@ export function applyPlanOperations({
     (result, operation) =>
       "error" in result
         ? result
-        : applyOperation({ goalKind, noticeGraph, operation, state: result.state, today: day }),
+        : applyOperation({ goalKind, operation, state: result.state, today: day }),
     { state },
   );
 }

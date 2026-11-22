@@ -51,24 +51,38 @@ internal data class SubjectGroup(
     val subjects: List<SyllabusSubject>,
 )
 
-/** The notice's groups in its order, then the areas the plan adds outside it; a plan's modules are one group. */
+/**
+ * Subjects with no group of their own first, so none reads as part of the group above it; then the notice's groups in
+ * its order, or one run of modules; then the optional study the learner added.
+ */
 internal fun groupSubjects(
     subjects: List<SyllabusSubject>,
     modules: Boolean,
 ): List<SubjectGroup> {
-    if (modules) return listOf(SubjectGroup(extra = false, name = null, subjects = subjects))
-
-    fun key(subject: SyllabusSubject) = if (subject.source == SyllabusSubject.Source.PLAN) null else subject.group.orEmpty()
+    fun key(subject: SyllabusSubject) =
+        when {
+            subject.isExtra -> null
+            modules -> ""
+            else -> subject.group.orEmpty()
+        }
 
     return subjects
         .map(::key)
         .distinct()
-        .sortedBy { it == null }
-        .map { key ->
-            val inGroup = subjects.filter { key(it) == key }
-            SubjectGroup(extra = key == null, name = if (key == null) null else inGroup.first().group, subjects = inGroup)
+        .sortedBy {
+            when {
+                it == null -> 2
+                it.isEmpty() -> 0
+                else -> 1
+            }
+        }.map { key ->
+            SubjectGroup(extra = key == null, name = key?.ifEmpty { null }, subjects = subjects.filter { key(it) == key })
         }
 }
+
+/** Optional study beyond what the exam tests, such as exam strategy: it counts lessons, never readiness. */
+internal val SyllabusSubject.isExtra: Boolean
+    get() = extra == true
 
 /** "Asked a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
 internal fun setsApart(frequencies: List<SyllabusTopic.Frequency?>): Boolean {

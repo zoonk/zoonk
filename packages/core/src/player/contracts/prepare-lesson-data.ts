@@ -85,6 +85,8 @@ type SerializedSentence = {
   romanization: string | null;
   explanation: string | null;
   audioUrl: string | null;
+  /** Its translation is the sentence itself, as in a lesson in the learner's own language, so showing it gives the answer away. */
+  readsItself: boolean;
 };
 
 /** romanization is null for Latin-script words; never include respelling hints. */
@@ -129,6 +131,10 @@ function serializeWords(words: WordDataInput[]): SerializedWord[] {
   return words.map((word) => serializeWord(word));
 }
 
+export function readsItself(sentence: { sentence: string; translation: string }): boolean {
+  return normalizeDistractorKey(sentence.translation) === normalizeDistractorKey(sentence.sentence);
+}
+
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
     audioUrl: sentence.audioUrl,
@@ -140,6 +146,7 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
     otherTranslationOrders: sentence.otherTranslationOrders.map((order) =>
       segmentLearnerWords(order),
     ),
+    readsItself: readsItself(sentence),
     romanization: sentence.romanization,
     sentence: sentence.sentence,
     translation: sentence.translation,

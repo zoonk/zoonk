@@ -2,12 +2,12 @@ package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
-import com.zoonk.api.models.LessonVisual
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementQuestion
 import com.zoonk.api.models.PlacementStatus
 import com.zoonk.api.models.QuestionImage
 import com.zoonk.api.models.TrueFalseLabels
+import kotlinx.serialization.json.JsonElement
 
 internal sealed interface PlacementFormat {
     data class Choice(
@@ -24,7 +24,7 @@ internal data class PlacementItem(
     val question: String,
     val context: String?,
     val image: QuestionImage?,
-    val visual: LessonVisual?,
+    val visual: JsonElement?,
     val format: PlacementFormat,
 )
 

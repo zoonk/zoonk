@@ -11,7 +11,6 @@ import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 type Vector = { x: number; y: number };
 type TrigValues = Partial<Record<TrigName, number | null>>;
 
-const FALLBACK_WIDTH = 318;
 const MAX_SIZE = 300;
 const RADIUS_SHARE = 0.34;
 const HIT_RADIUS = 22;
@@ -129,7 +128,7 @@ export function UnitCircleDial({
   valueText: string;
 }) {
   const names = useTrigNames();
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>();
   const size = Math.min(width, MAX_SIZE);
   const radius = size * RADIUS_SHARE;
   const center = { x: width / 2, y: size / 2 };

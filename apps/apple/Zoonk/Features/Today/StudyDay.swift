@@ -234,11 +234,7 @@ enum ComingLessons {
         localized: "Not ready yet", table: "Today",
         comment: "The day's next lessons, which nobody has asked for yet")
     case .beingWritten:
-      String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+      String(localized: "Getting ready…", table: "Today")
     }
   }
 }
@@ -284,6 +280,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case unknown
   }
 
+  /// Whether the exam that leaves the optional study out has an official guide.
+  enum SubjectExtra: String, Decodable, Hashable, Sendable {
+    case notice
+    case optional
+  }
+
   struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
@@ -321,17 +323,22 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let kind: Kind
   let lessonId: String?
   let mistakesOnly: Bool
+  let mockPreparationReview: Bool?
   let opensInPlayer: Bool
   let oftenTested: Bool
   let planItemId: String?
   let planItemKey: String?
   let position: Int
+  let preparing: Bool
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
   let screen: Screen
   var status: Status
   let subject: String?
+  /// Set on a lesson of the exam's optional study, such as its strategy, which the row names
+  /// instead of a subject.
+  let subjectExtra: SubjectExtra?
   let title: String?
   let topics: [String]
   let waitReason: WaitReason?
@@ -414,6 +421,7 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     let extra: Bool
     let fullReview: Bool
     let mistakesOnly: Bool
+    let mockPreparationReview: Bool?
     let refresh: Bool
     let reinforcement: Bool
     let weakest: Bool
@@ -461,7 +469,8 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     }
     flags = Flags(
       extra: block.extra, fullReview: block.fullReview, mistakesOnly: block.mistakesOnly,
-      refresh: block.refresh, reinforcement: block.reinforcement, weakest: block.weakest)
+      mockPreparationReview: block.mockPreparationReview, refresh: block.refresh,
+      reinforcement: block.reinforcement, weakest: block.weakest)
     kind = block.kind
     lessonId = block.lessonId
     planItemKey = block.planItemKey

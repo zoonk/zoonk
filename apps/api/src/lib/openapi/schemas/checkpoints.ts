@@ -105,6 +105,9 @@ export const checkpointMoveResponseSchema = z
 
 export const challengeResponseSchema = z
   .object({
+    access: z
+      .enum(["open", "plusRequired", "preparing"])
+      .describe("A scheduled mock is preparing until every question is available."),
     blockId: uuidSchema()
       .nullable()
       .meta({

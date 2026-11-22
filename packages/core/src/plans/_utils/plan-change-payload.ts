@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { anyPlanOperationSchema } from "../plan-contract";
 import { type PlanEffect } from "../planner/plan-effect";
-import { planGraphSchema } from "../planner/plan-state";
 import { planPreviewBasisSchema } from "./plan-preview-basis";
 
 const PLAN_CHANGE_KINDS = [
@@ -9,6 +8,7 @@ const PLAN_CHANGE_KINDS = [
   "edited",
   "estimateUpdated",
   "missedDays",
+  "noticeChanged",
   "relearn",
   "resumed",
   "testedOut",
@@ -52,6 +52,7 @@ export const planEffectSchema = z.object({
   lessonsRemoved: z.int(),
   listeningPastBasics: z.array(z.string()).optional(),
   nextMock: z.object({ after: z.string(), before: z.string() }).optional(),
+  noticeRemoved: z.array(z.string()).optional(),
   outcomesAdded: z.array(z.string()).optional(),
   phaseEnds: z
     .array(
@@ -90,8 +91,6 @@ const planChangePayloadSchema = z.object({
   fromProposal: z.boolean().default(false),
   lessonHoldKey: z.string().optional(),
   lessonsSkipped: z.int().min(0).nullable().default(null),
-  noticeEdition: z.string().nullable().default(null),
-  noticeGraph: planGraphSchema.nullable().default(null),
   noticeId: z.string().nullable().default(null),
   officialDate: z
     .object({ date: z.iso.date(), source: z.string().nullable() })

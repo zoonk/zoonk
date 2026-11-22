@@ -3,14 +3,14 @@ import { type ExamStructure, type SectionNavigation } from "../../library/exams/
 import { listSectionParts } from "./exam-parts";
 import { fitToClock } from "./mock-clock-fit";
 import {
-  DEFAULT_SECTION_QUESTIONS,
   getDaySections,
   getObjectiveSections,
   sectionMinutes,
+  sectionQuotas,
   toSectionRules,
 } from "./mock-day-sections";
 import { getFormatQuotas, getSectionMix } from "./mock-format-mix";
-import { planOralSection, planSpeakingSection } from "./mock-oral-sections";
+import { planListeningSection, planSpeakingSection } from "./mock-oral-sections";
 import { countReused } from "./mock-reuse";
 import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
 import { mapAreasToSections } from "./mock-section-areas";
@@ -29,6 +29,7 @@ const DEFAULT_MINUTES_PER_QUESTION = 3;
 
 export type MockCandidate = {
   answered: boolean;
+  lastMockUse?: number;
   area: string | null;
   difficulty: number | null;
   format?: string | null;
@@ -83,7 +84,7 @@ export function getPace(structure: ExamStructure | null): number {
 export function planMock({
   adaptive,
   candidates,
-  clock,
+  scheduledOutline,
   essays = [],
   fullLength,
   listening = new Map(),
@@ -95,7 +96,7 @@ export function planMock({
 }: {
   adaptive: boolean;
   candidates: readonly MockCandidate[];
-  clock?: number;
+  scheduledOutline?: MockPlan;
   essays?: readonly MockEssayCandidate[];
   fullLength: boolean;
   listening?: ReadonlyMap<string, readonly MockCandidate[]>;
@@ -125,17 +126,23 @@ export function planMock({
 
   const byArea = areaSections !== null;
 
+  const quotasBySection = sectionQuotas(sections, share);
+
   const formatsWanted: Record<string, number> = {};
   const planned: MockSectionPlan[] = [];
   const used = new Set([...listening.values()].flat().map((candidate) => candidate.itemId));
-  const fixedClock = clock !== undefined;
 
   sections.forEach((section, index) => {
-    const wanted = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
-    const oral = planOralSection({ fixedClock, listening, pace, section, wanted });
+    const wanted = quotasBySection[index] ?? 0;
+    const recordings = section.kind === "listening" ? listening.get(section.name ?? "") : null;
 
-    if (oral) {
-      planned.push(oral);
+    if (recordings) {
+      planned.push(planListeningSection({ pace, pool: recordings, section, wanted }));
+      return;
+    }
+
+    if (section.kind === "speaking") {
+      planned.push(planSpeakingSection(section));
       return;
     }
 
@@ -164,21 +171,19 @@ export function planMock({
       ? Math.min(wanted, routing.easier.length, routing.harder.length)
       : picked.length;
 
-    const plan: MockSectionPlan = {
+    planned.push({
       ...toSectionRules(section),
       essays: [],
       itemIds: picked,
-      minutes: sectionMinutes({ pace, picked: fixedClock ? wanted : questions, section }),
+      minutes: sectionMinutes({ pace, picked: questions, section }),
       name: getSectionName({ allSections, byArea, section }),
       questions,
       routing,
-    };
+    });
 
     for (const [key, count] of quotas) {
       formatsWanted[key] = (formatsWanted[key] ?? 0) + count;
     }
-
-    planned.push(plan);
 
     for (const itemId of reserved) {
       used.add(itemId);
@@ -188,7 +193,14 @@ export function planMock({
   const written = withWrittenParts({ day, essays, fullLength, sections: planned, structure });
 
   const asked = written.sections.filter((plan) => asksAnything(plan));
-  const plans = clock === undefined ? asked : fitToClock({ clock, sections: asked });
+  const count = asked.reduce((sum, section) => sum + section.questions, 0);
+
+  const clock =
+    scheduledOutline && count === countPlannedQuestions(scheduledOutline)
+      ? scheduledOutline.minutes
+      : undefined;
+
+  const plans = fitToClock({ clock, sections: asked });
 
   return {
     day,
@@ -229,12 +241,14 @@ export function outlineMock({
     structure,
   });
 
-  const asked = daySections.map((section): MockSectionPlan => {
+  const quotasBySection = sectionQuotas(daySections, share);
+
+  const asked = daySections.map((section, index): MockSectionPlan => {
     if (section.kind === "speaking") {
       return planSpeakingSection(section);
     }
 
-    const questions = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
+    const questions = quotasBySection[index] ?? 0;
 
     return {
       ...toSectionRules(section),
@@ -248,13 +262,9 @@ export function outlineMock({
     };
   });
 
-  const { sections, written } = withWrittenParts({
-    day,
-    essays,
-    fullLength,
-    sections: asked,
-    structure,
-  });
+  const result = withWrittenParts({ day, essays, fullLength, sections: asked, structure });
+
+  const sections = fitToClock({ clock, sections: result.sections });
 
   return {
     day,
@@ -262,7 +272,7 @@ export function outlineMock({
     minutes: clock ?? sections.reduce((sum, section) => sum + section.minutes, 0),
     reused: 0,
     sections,
-    written,
+    written: result.written,
   };
 }
 

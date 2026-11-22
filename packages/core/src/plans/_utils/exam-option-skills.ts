@@ -1,11 +1,13 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { getWrittenTasks } from "../../exams/_utils/written-tasks";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import {
   type ExamPicks,
   findSubjectAreas,
   listUnchosenSubjects,
 } from "../../exams/choices/exam-choices";
+import { prunePlanNoticeGraph } from "../../library/curriculum/prune-plan-notice-graph";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import {
@@ -59,7 +61,15 @@ async function addTakenFromSharedGraph({
     where: { examBlueprintId },
   });
 
-  const shared = joinOptionSkills(parsePlanGraph(stored?.graph));
+  const { graph: source } = await prunePlanNoticeGraph({
+    graph: parsePlanGraph(stored?.graph),
+    subjects: structure.subjects.map((subject) => ({
+      ...subject,
+      writtenTasks: getWrittenTasks({ structure, subject }),
+    })),
+  });
+
+  const shared = joinOptionSkills(source);
   const sharedAreas = findSubjectAreas({ areas: listAreas(shared), names: taken, structure });
 
   const areas = new Set(

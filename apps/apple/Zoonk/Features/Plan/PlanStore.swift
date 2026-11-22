@@ -262,15 +262,16 @@ final class PlanStore {
     }
   }
 
-  /// A change the learner made saves even when its screen closes first (`LearnerSaves`).
+  /// A change the learner made saves even when its screen closes first (`LearnerSaves`). A refused
+  /// one reads the plan again too: it no longer fits the plan the learner saw.
   func change(
     _ request: @escaping (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> MutationResult<PlanChangeOutcome> {
     await saves.save {
       await self.write(request) { outcome in
         switch outcome {
-        case .applied, .saved, .undone: true
-        case .invalid, .unchanged: false
+        case .applied, .saved, .undone, .invalid: true
+        case .unchanged: false
         }
       }
     }

@@ -321,7 +321,14 @@ describe("honest course estimates", () => {
     expect(estimate).not.toBeNull();
     const inputs = await loadCourseEstimateData(course.id, "2020-09-28");
     expect(inputs).not.toBeNull();
-    expect(findBeyondNoticeSkillIds(inputs!.graph).has(rows[3]!.skill.id)).toBe(false);
+    const writtenMathId = rows.find(({ area }) => area === "Matemática")?.skill.id;
+
+    expect(inputs?.graph.skills.find(({ skillId }) => skillId === writtenMathId)).toMatchObject({
+      outlined: true,
+      topics: [],
+    });
+
+    expect(findBeyondNoticeSkillIds({ graph: inputs!.graph })).toContain(writtenMathId);
 
     if (!estimate || !("areas" in estimate)) {
       throw new Error("Expected a dated exam estimate");

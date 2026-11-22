@@ -212,6 +212,7 @@ export async function loadPracticeItems({
   claims = NO_PRACTICE_CLAIMS,
   difficultyBias,
   everySkill = false,
+  includeUnstudied = everySkill,
   examBlueprintId,
   firstSkillIds = new Set(),
   focusSkillIds = new Set(),
@@ -231,6 +232,7 @@ export async function loadPracticeItems({
   difficultyBias: DifficultyBias;
   /** Include every goal topic, even unstudied ones, in full reviews. */
   everySkill?: boolean;
+  includeUnstudied?: boolean;
   /** Reserve priority practice for subjects whose written lessons are not ready. */
   firstSkillIds?: ReadonlySet<string>;
   /** Focused topics get two turns for every other topic's one on review days. */
@@ -268,7 +270,7 @@ export async function loadPracticeItems({
 
   const unstudied = pool.filter(
     (skillId) =>
-      (everySkill || claimed.has(skillId) || firstSkillIds.has(skillId)) &&
+      (includeUnstudied || claimed.has(skillId) || firstSkillIds.has(skillId)) &&
       !studiedBySkill.has(skillId),
   );
 
@@ -281,7 +283,7 @@ export async function loadPracticeItems({
       where: {
         ...getPracticeItemFilter({ typed }),
         skillId: { in: candidates.filter((skillId) => !listeningSkillIds.has(skillId)) },
-        ...getItemAudienceFilter({ examBlueprintId, field }),
+        ...getItemAudienceFilter({ examBlueprintId, field, userId }),
       },
     }),
     listItemSetsForSkills({ examBlueprintId, skillIds: candidates, userId }),

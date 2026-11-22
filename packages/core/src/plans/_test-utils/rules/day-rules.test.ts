@@ -48,11 +48,11 @@ describe("R22 day one opens with what the learner doesn't know", () => {
     );
   });
 
-  it("passes when an area beyond the notice comes after a known one", () => {
+  it("keeps optional strategy after the notice lessons", () => {
     const notice = [
       ruleSkill({ area: "Linguística", skillId: "texto", topics: ["Interpretação"] }),
       ruleSkill({ area: "TI", skillId: "redes", topics: ["Redes"] }),
-      ruleSkill({ area: "Estratégia", skillId: "prova" }),
+      ruleSkill({ area: "Estratégia", extra: true, skillId: "prova" }),
     ];
 
     const after = rulePlan({
@@ -67,6 +67,12 @@ describe("R22 day one opens with what the learner doesn't know", () => {
     expect(checkDayOneOpensWithGaps(ruleContext({ after, event: created, learner }))).toStrictEqual(
       [],
     );
+
+    const early = { ...after, items: after.items.toReversed() };
+
+    expect(checkDayOneOpensWithGaps(ruleContext({ after: early, event: created }))).toMatchObject([
+      { details: { extraBeforeNotice: true }, rule: "R22" },
+    ]);
   });
 
   it("flags a day one without the weak area (Rafaela's TI)", () => {

@@ -45,7 +45,9 @@ function mapEditableTexts({
     return Object.fromEntries(
       Object.entries(value).map(([key, item]) => [
         key,
-        mapEditableTexts({ change, editable: EDITABLE_FIELDS.has(key), value: item }),
+        key === "visual"
+          ? item
+          : mapEditableTexts({ change, editable: EDITABLE_FIELDS.has(key), value: item }),
       ]),
     );
   }
@@ -64,19 +66,21 @@ function listEditableTexts({ editable, value }: { editable: boolean; value: unkn
 
   if (value && typeof value === "object") {
     return Object.entries(value).flatMap(([key, item]) =>
-      listEditableTexts({ editable: EDITABLE_FIELDS.has(key), value: item }),
+      key === "visual"
+        ? []
+        : listEditableTexts({ editable: EDITABLE_FIELDS.has(key), value: item }),
     );
   }
 
   return [];
 }
 
+export function getChallengeEditableTexts(written: WrittenChallengeCase): string[] {
+  return listEditableTexts({ editable: false, value: written });
+}
+
 function countMatches({ find, written }: { find: string; written: WrittenChallengeCase }) {
-  return sumOf(
-    listEditableTexts({ editable: false, value: written }).map(
-      (text) => text.split(find).length - 1,
-    ),
-  );
+  return sumOf(getChallengeEditableTexts(written).map((text) => text.split(find).length - 1));
 }
 
 function applyEdit({

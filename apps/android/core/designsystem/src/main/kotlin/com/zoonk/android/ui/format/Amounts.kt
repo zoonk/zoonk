@@ -30,6 +30,7 @@ fun formatAmount(
     compact: Boolean = false,
     maximumFractionDigits: Int? = null,
     signed: Boolean = false,
+    grouping: Boolean = true,
 ): String {
     val money = moneyUnit(unit)
     if (money != null) {
@@ -38,7 +39,7 @@ fun formatAmount(
     }
 
     val digits = maximumFractionDigits ?: fractionDigitsFor(value)
-    val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits, signed = signed)
+    val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits, signed, grouping)
     return withUnit(number, unit)
 }
 
@@ -112,13 +113,16 @@ fun currencyFor(unit: String?): String? {
     return CURRENCY_SYMBOLS[unit] ?: unit.takeIf { ISO_CODE.matches(it) }
 }
 
+/** A sign written against the digits, with no space: "45%", "90°". */
+fun isAttachedUnit(unit: String?): Boolean = unit in ATTACHED_UNITS
+
 fun withUnit(
     formatted: String,
     unit: String?,
 ): String =
     when {
         unit.isNullOrEmpty() -> formatted
-        unit in ATTACHED_UNITS -> "$formatted$unit"
+        isAttachedUnit(unit) -> "$formatted$unit"
         else -> "$formatted$NO_BREAK_SPACE$unit"
     }
 

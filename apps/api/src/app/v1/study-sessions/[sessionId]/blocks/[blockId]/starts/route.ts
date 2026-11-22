@@ -17,6 +17,10 @@ async function createStart(
 
   const result = await startStudyBlock({ ...path, input: body });
 
+  if (result.status === "preparing") {
+    return NextResponse.json({ status: result.status }, { status: 202 });
+  }
+
   if (result.status !== "ready") {
     return studySessionError(result);
   }

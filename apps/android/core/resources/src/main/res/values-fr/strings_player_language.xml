@@ -15,14 +15,12 @@
   "player_language_move_later": "7d8878b03bae00f60b41db348d4e4f1e31d2d471ac14cdfcff7ba869d00b9312",
   "player_language_not_a_pair": "c4e9099dc8919f224b916723865c2550de65e16ae8fce3576d96f0b0d945dd83",
   "player_language_pick_words": "d1eb3c96b57148a88e84512068fdf4301d4135ee8c3296aea73bd21846a7d797",
-  "player_language_play": "e4d3efdc4fe52e8d6e1ea1188f191b37923a31bd078e55637735ceb159f49f61",
   "player_language_play_pronunciation": "678617babd0263e1242ab1f64831c19e63838ceb97cfadb9ca21faa8027a3247",
   "player_language_position": "c9d89575286f38bd3052f52393b6ada3a6bb26514108a3680bf64d9539e47972",
   "player_language_pronunciation_tip": "239414c64b1ab7b094c3276bad71a0180bb3e74eef670db951198a47d960da48",
   "player_language_remove": "321a1b70479f4ad6c0ebd7f36566b6d6373c306e9fe920b62f357ec202163d5b",
   "player_language_selected": "9b7f61784941a47f9a9c1496c2c8ef22bd1d8426025033ddcc4dad0f05abdbf5",
   "player_language_show_translation": "2a85538e30ce395f6b3d34b99b82d995ead2d201d42a496621063e7c301d80d8",
-  "player_language_stop": "42bc3f5f0b5fadfc0c38ca286b7df9b1e901d4a191a3df9f05e5c0c42f37ee6c",
   "player_language_translate": "c7b0960695d9915a38f3ace3bccce2bcb93c9da22bb9b32adfa628a224fd8ba2",
   "player_language_usage": "48d423f64f0972038f28901512cac7ccb652fe21869285db1d00144fe58e1b7b",
   "player_language_vocabulary": "94bddf34884340b9d41278c2b0f46cd8659ff04b5f32d5aefe4240c870e966e3",
@@ -37,9 +35,6 @@
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">Lequel veut dire ça ?</string>
     <string name="player_language_what_do_you_hear">Qu’entends-tu ?</string>
-    <string name="player_language_play">Écouter</string>
-    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">Arrêter</string>
     <string name="player_language_play_pronunciation">Écouter la prononciation</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Vocabulaire : %1$s</string>

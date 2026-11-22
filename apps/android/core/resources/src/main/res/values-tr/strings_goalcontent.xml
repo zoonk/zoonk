@@ -5,7 +5,6 @@
   "goalcontent_adjust_plan": "d9aa3e27c9d36f31f6d2815ee42d18338bf7c49e0925a4888f2aae70a3fec3ce",
   "goalcontent_also_in_exam_count": "b319c8bf446c2cc25408ce4e98195208b09d93ae55c0001b45ee8f50d1b8e8d2",
   "goalcontent_also_in_exams": "b893196db94fd4cf59e1de9ab211f8f56509d1e5834f8eee6959ea936319c773",
-  "goalcontent_also_in_plan": "f06b362de814c0f403dfc4cf0f63457b5519ae4088da6cbb6bf2cb1792e98749",
   "goalcontent_asked_a_lot": "d86f0fc3be1c1058005d7138c4655856f166cbb3c0bd3f6a9a80fdac5e574aff",
   "goalcontent_chapter_number": "b6b348989a6bf77bf906cf671fed9e8bf7b828116d05c72319c4a023774a6634",
   "goalcontent_chapter_summary": "3b6fe51dbe80a012e8548101ba312ff4cfd58cfb3780ed2336a24ab822f53c49",
@@ -42,7 +41,10 @@
   "goalcontent_more_chapters": "0fba75557ce1fb2a6344b53c3726fe490235a05e05d9fa41605e5a1d02a5c510",
   "goalcontent_new": "9c48b296cfa5ebbdb66fcee7ab400e08f79c0e72778bf4a5b4db343c617cd389",
   "goalcontent_next_date": "7dc0031da4630c6c367a8e0194962940496203fbc40fca739e1356f0eab07738",
+  "goalcontent_not_in_guide": "1671f358e80c3039473692589ee35b81a1123c65dc12c5b6f42f964ba1e0b858",
+  "goalcontent_not_in_notice": "39651a845a9e10181ed34e4f7fea5ec78692c5b4f845f6b04476e2354e2269e0",
   "goalcontent_not_in_plan": "2b6bc017200119929a583870ff96a64b513fe2d87a919be054c00d3f5de9398a",
+  "goalcontent_optional_study": "7f987d369475fc6129e30e86c22a929ca278c3ec3edc7df7d716a222e032ffd9",
   "goalcontent_percent_done": "c0c3df557cf0d6a59dee7ea4af650f725b9df4a872a15b5ca95ab667f295b871",
   "goalcontent_practice": "78a8a56d9f591a19c1d46ce03353fb0b9db299185b28b7392697c4a57f072f72",
   "goalcontent_practice_chapter": "f89519e0918ebf4f2bb5abfb217a7d177bd083ba7012eb8d93278e7b51e1d030",
@@ -142,8 +144,11 @@
     <string name="goalcontent_preparation">Hazırlık</string>
     <string name="goalcontent_coverage">Kapsam</string>
     <string name="goalcontent_not_in_plan">Planında yok</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">Planında da var</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">Resmi ilanda yok</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">Resmi kılavuzda yok</string>
+    <string name="goalcontent_optional_study">İsteğe bağlı</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">%1$s için branş başına soru sayısı, %2$s sayımına dayanır.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

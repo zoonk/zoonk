@@ -57,6 +57,7 @@ describe(toGoalPlanGraph, () => {
           name: "Skill algebra",
           phase: 0,
           skillId: "skill-a",
+          topics: [],
           weight: null,
         },
         {
@@ -66,6 +67,7 @@ describe(toGoalPlanGraph, () => {
           name: "Skill vectors",
           phase: 0,
           skillId: "skill-v",
+          topics: [],
           weight: 4,
         },
         {
@@ -75,10 +77,24 @@ describe(toGoalPlanGraph, () => {
           name: "Skill forces",
           phase: 1,
           skillId: "skill-f",
+          topics: [],
           weight: null,
         },
       ],
     });
+  });
+
+  it("stores strategy beside the graph and keeps known empty topics distinct", () => {
+    const extra = graphSkill({ area: "Exam strategy", key: "strategy" });
+
+    const result = toGoalPlanGraph({
+      courseIdsByKey: { math: "course-math" },
+      graph: { ...graph, extraSkills: [extra] },
+      idsByKey: { algebra: "required", strategy: "strategy" },
+    });
+
+    expect(result.skills).toMatchObject([{ skillId: "required", topics: [] }]);
+    expect(result.extraSkills).toMatchObject([{ skillId: "strategy", topics: [] }]);
   });
 
   it("keeps one entry, at the first place, for graph skills the Library resolved to the same skill", () => {
@@ -187,7 +203,7 @@ describe(toGoalPlanGraph, () => {
       ["skill-u", undefined],
       ["skill-l", ["Funções"]],
       ["skill-m", undefined],
-      ["skill-a", undefined],
+      ["skill-a", []],
     ]);
   });
 });

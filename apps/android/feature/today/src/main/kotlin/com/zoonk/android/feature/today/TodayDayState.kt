@@ -50,8 +50,6 @@ fun DayView.isWaitingForLessons(lessonStatus: Map<String, LessonGenerationStatus
             (step.status == StudyBlock.Status.PENDING || step.status == StudyBlock.Status.ACTIVE) && step.isBeingWritten(lessonStatus)
         }
 
-/** Being done for the day, or resting, never hides what comes next. */
-fun DayView.upNextLessons(pastDate: Boolean): List<com.zoonk.api.models.StudyExtraTimeLessonsInner> {
-    val dayEnded = state == StudySession.State.DONE || state == StudySession.State.REST
-    return if (pastDate || !dayEnded || !extraTime.available) emptyList() else extraTime.lessons
-}
+/** Being done for the day, resting, or waiting on a mock never hides what comes next; core lists them only then. */
+fun DayView.upNextLessons(pastDate: Boolean): List<com.zoonk.api.models.StudyExtraTimeLessonsInner> =
+    if (pastDate || !extraTime.available) emptyList() else extraTime.lessons

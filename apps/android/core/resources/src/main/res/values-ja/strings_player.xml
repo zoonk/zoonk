@@ -21,7 +21,9 @@
   "player_back_to_chapter": "e42f1bc9d787999f980711b92845b5df766c8a04b0ebd269d2429d44ed5303e7",
   "player_back_to_unit": "bf95351079063f4273fee41fec9c3fd0409699c5fe977b6ce001fa4d2f4ef08f",
   "player_build_my_plan": "b6897b51372a56f2b24f6f9452de5c9a4ba3bb86ffa354aefa200e004bcf8e98",
+  "player_can_listen_now": "2125df4649cdef3d052b79d5f83b7b55cf9920144986d8d4f0be95d3a7e8ce61",
   "player_can_talk_now": "e68e360b23136ebacedd8a083997354198b86b11875012be1c6a974a287a5b32",
+  "player_cant_listen_now": "db7df75eb175df08dbccb17e8aac14ee6907ee38e489ffdde0fa74e008bca0e7",
   "player_cant_talk_now": "631ee704ae2dac0964f71d581c46947b11abe6721435d3d19f1355b6c53a8573",
   "player_cant_write_now": "067579726077b4f46f493d361374aea07d3651e7e6ea34da7e746120875ecbf2",
   "player_challenge_bit_higher": "09f5f7172b8156ee76d343d468b854de422c77a71eb2351dcb2a32baa150665b",
@@ -55,7 +57,6 @@
   "player_challenge_what_if": "048e1d23ccf365baef6e892ca6755f55a4a7e8f53f82333ca1489c00863184c3",
   "player_challenge_you": "efb9ee1c0404ae6052232f7a1ec08d79080f6027f031b58a30575acff8d58567",
   "player_challenge_your_options": "89b516ac2b05244f061f0d4d5d0ac3d2523530f434d8e49e03f753b69b768483",
-  "player_check_failed": "d3c80a4f3a483d344ae107ef583663501d64894de7332993a0b416bc8a3825b7",
   "player_citation_from_material": "38fd0eaa320f1fd1915f890d3b01a7cc89428f6e771966a9e366359dd6e70944",
   "player_citation_not_in_material": "9dead427f8a8aee46f317c94b4118a33ab6d8a7f0b2fbeadb70d225519fe609b",
   "player_comes_back_at_end": "9d993efbf3e7b9cc3c40b76d979ec124e9604ae15762d5a55bf0c98ede4b0903",
@@ -158,7 +159,6 @@
   "player_start_the_lesson": "04a6d309b12c122f9ab5ac6a9c32c6bbff89211b98764cf8679305e04351b32b",
   "player_start_this_challenge": "8c1b6cbe5ee8b8a70dd2d65f6c92e8d54646cb932c8c019d417006403707ffa6",
   "player_start_this_lesson": "8a06e1ebf5cfd00eb1a14fc0d9421a303548fce39806e1a2f2d267142102afca",
-  "player_still_checking": "148cccc6548151d5599617bbca4c6281fec412b78fc18b350e81a02ec731b4c1",
   "player_stop_failed": "63865b30383fc1d7e6ba798dde382a8e91b31875bf4a5615d98e2029da2a6da1",
   "player_stop_for_today": "472db717c3a08fd47b72a37c56badedffcba72e84ed5e09cd34798d3e1f5ed32",
   "player_summary": "662e443f1c50af361c3b3a3ef31819590792d7092b92938e7d2e658db059be66",
@@ -287,8 +287,6 @@
     <string name="player_dont_know_yet">まだわからない</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">先に解説を見る</string>
-    <string name="player_check_failed">今回は答え合わせができませんでした。もう一度試してください。</string>
-    <string name="player_still_checking">答え合わせを続けています。いつもより時間がかかっています。</string>
     <string name="player_enter_hint">Enterで答え合わせ、Shift+Enterで改行できます。</string>
     <string name="player_your_answer">選んだ答え</string>
     <string name="player_write_your_answer">答えを書いてください</string>
@@ -346,6 +344,8 @@
     <string name="player_not_found_title">このレッスンは利用できません</string>
     <string name="player_cant_talk_now">今は話せない</string>
     <string name="player_can_talk_now">今は話せる</string>
+    <string name="player_cant_listen_now">今は音を聞けない</string>
+    <string name="player_can_listen_now">今は音を聞ける</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">声に出して答える</string>
     <string name="player_microphone_is_blocked">マイクの使用が許可されていません。</string>

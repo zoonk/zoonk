@@ -69,6 +69,30 @@ describe("exact lesson mistake practice", () => {
     });
   });
 
+  it("puts a word bank's feedback above the bank, which holds still, on a phone", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      openPractice(languageStep("reading"));
+
+      const bank = page.getByRole("group", { name: "Word bank" });
+      await expect.element(bank).toBeVisible();
+      const before = bank.element().getBoundingClientRect();
+
+      await page.getByRole("button", { exact: true, name: "I don't know yet" }).click();
+      const verdict = page.getByRole("region", { name: "Answer feedback" });
+      await expect.element(verdict).toBeVisible();
+
+      await expect
+        .element(verdict.getByText("Mistake fixed. It leaves your notebook."))
+        .toBeVisible();
+
+      const after = bank.element().getBoundingClientRect();
+      const bar = document.querySelector("[data-slot=bottom-bar]")!.getBoundingClientRect();
+      expect(verdict.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(after.top);
+      expect(after.bottom).toBe(before.bottom);
+      expect(bar.top - after.bottom).toBe(24);
+    });
+  });
+
   it("keeps a typed draft and resends the same attempt after a lost response", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
@@ -194,7 +218,7 @@ describe("exact lesson mistake practice", () => {
     await audio.close();
   });
 
-  it("keeps a spoken recording for a network retry and sends its original step", async () => {
+  it("keeps a spoken recording for a network retry, still offering Record in the bar, and sends its original step", async () => {
     const audio = new AudioContext();
 
     vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
@@ -221,6 +245,11 @@ describe("exact lesson mistake practice", () => {
     await page.getByRole("button", { exact: true, name: "Record" }).click();
     await page.getByRole("button", { name: /^Stop/u }).click();
     await expect.element(page.getByRole("alert")).toBeVisible();
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+
+    const recordButton = page.getByRole("button", { exact: true, name: "Record" });
+    await expect.element(recordButton).toBeVisible();
+    expect(recordButton.element().closest("[data-slot=bottom-bar]")).not.toBeNull();
     await page.getByRole("button", { name: "Try again" }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
     expect(record.mock.calls[0]?.[0]).toStrictEqual(record.mock.calls[1]?.[0]);

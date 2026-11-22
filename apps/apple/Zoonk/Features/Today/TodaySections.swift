@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Being done for the day, or resting, never hides what comes next. Its first lesson and Keep
+/// Being done for the day, resting, or waiting on a mock never hides what comes next. Its first lesson and Keep
 /// learning add the same lessons, each as its own tap, so only the one pressed spins.
 struct TodayUpNextSection: View {
   let view: TodayView
@@ -244,6 +244,8 @@ struct TodayPlanChangeSection: View {
           .controlSize(.small)
         }
         .listRowSeparator(.hidden)
+      } else if change.kind == "noticeChanged" {
+        followsGuide
       } else if isBehind, let behind = change.behind {
         missedDays(behind)
       } else {
@@ -381,33 +383,26 @@ struct TodayPlanChangeSection: View {
       : Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
   }
 
-  // MARK: Missed days
-
-  @ViewBuilder
-  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
+  /// A change the plan made that the learner answers on Today itself: its title, one sentence and
+  /// its answers under them, small, as main's suggestion panel draws them.
+  private func statement<Answers: View>(
+    title: Text, sentence: String?, @ViewBuilder answers: () -> Answers
+  ) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("You missed a few days", tableName: "Today", comment: "Title after missed study days")
+        title
           .typeStyle(.body.weight(.semibold))
 
-        Text(behindSentence(behind))
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        if let sentence {
+          Text(sentence)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
       }
 
       ButtonRow(wraps: true) {
-        // On a return after a break, nothing that asks for more hours leads.
-        if view.session.freshStart == .welcomeBack {
-          keepTimeButton
-          addTimeButton
-        } else {
-          addTimeButton
-          keepTimeButton
-        }
-
-        missedDaysMenu(behind)
+        answers()
       }
-      // A notice's answers beside its words, as main's suggestion panel draws them.
       .controlSize(.small)
       .disabled(isSaving)
     }
@@ -415,6 +410,56 @@ struct TodayPlanChangeSection: View {
     .padding(14)
     .panel()
     .listRowSeparator(.hidden)
+  }
+
+  // MARK: The official guide
+
+  /// Done without a tap, so it says what left and only takes "Got it".
+  private var followsGuide: some View {
+    statement(
+      title: change.examDocument == .notice
+        ? Text(
+          LocalizedStringResource(
+            "planFollowsNotice", defaultValue: "Your plan now follows the official guide",
+            table: "Today",
+            comment:
+              "Title once the plan changed by itself to follow the exam's public notice, the document that lists its subjects"
+          ))
+        : Text(
+          "Your plan now follows the official guide", tableName: "Today",
+          comment:
+            "Title once the plan changed by itself to follow the official guide of a language certificate"
+        ),
+      sentence: noticeRemovedSentence(change.effect?.noticeRemoved ?? [])
+    ) {
+      BusyButton(isBusy: isSaving) {
+        answer(.seen)
+      } label: {
+        Text("Got it", tableName: "Today")
+      }
+      .buttonStyle(.outline)
+    }
+  }
+
+  // MARK: Missed days
+
+  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
+    statement(
+      title: Text(
+        "You missed a few days", tableName: "Today", comment: "Title after missed study days"),
+      sentence: behindSentence(behind)
+    ) {
+      // On a return after a break, nothing that asks for more hours leads.
+      if view.session.freshStart == .welcomeBack {
+        keepTimeButton
+        addTimeButton
+      } else {
+        addTimeButton
+        keepTimeButton
+      }
+
+      missedDaysMenu(behind)
+    }
   }
 
   private func missedDaysMenu(_ behind: TodayView.PlanChange.Behind) -> some View {
@@ -765,7 +810,8 @@ private struct WeekDayMark: View {
     .accessibilityLabel(label(weekday: weekday))
     .popover(isPresented: $isShown, arrowEdge: .top) {
       TodayFactsPopover(
-        title: weekday.labelCased(), facts: time.map { [$0] }, factsStyle: Color(.foreground),
+        title: weekday.labelCased(), facts: time.map { [.init(text: $0)] },
+        factsStyle: Color(.foreground),
         note: note,
         challenge: challengeLine)
     }
@@ -1157,4 +1203,19 @@ private struct TodayMockRow: View {
         "Whenever you want: a full exam day or half a day", tableName: "Today",
         comment: "When and how long the learner's mock exams can be")
   }
+}
+
+/// "Out of your plan: Língua Portuguesa, Raciocínio Lógico and Língua Inglesa": every name, since
+/// nothing else says what left the plan. Nil when nothing left.
+private func noticeRemovedSentence(_ names: [String]) -> String? {
+  guard !names.isEmpty else {
+    return nil
+  }
+
+  return String(
+    localized: "Out of your plan: \(names.formatted(.list(type: .and)))",
+    table: "Today",
+    comment:
+      "Lists every subject or topic the plan no longer holds, like \"Portuguese, Logic and English\"."
+  )
 }

@@ -11,8 +11,10 @@ import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { pinPlanGraphToCourse } from "./course-start-graph";
 import { type CurriculumScope } from "./curriculum-scope";
+import { toExamOutline } from "./exam-curriculum-outline";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
+import { prunePlanNoticeGraph } from "./prune-plan-notice-graph";
 import { isSharedExamGraph } from "./shared-graph-prompt";
 
 export type ReusableCurriculum = PlanSkillGraph & { primaryCourseId: string | null };
@@ -103,13 +105,24 @@ export async function saveExamSkillGraph({
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 
+    const blueprint = await tx.examBlueprint.findUniqueOrThrow({ where: { id: examBlueprintId } });
+
+    const pruned = await prunePlanNoticeGraph({
+      db: tx,
+      graph,
+      subjects: toExamOutline(blueprint).subjects,
+    });
+
     const { count } = await tx.examSkillGraph.createMany({
-      data: [{ ...kept, examBlueprintId, graph }],
+      data: [{ ...kept, examBlueprintId, graph: pruned.graph }],
       skipDuplicates: true,
     });
 
     if (count === 0) {
-      await tx.examSkillGraph.updateMany({ data: { ...kept, graph }, where: current });
+      await tx.examSkillGraph.updateMany({
+        data: { ...kept, graph: pruned.graph },
+        where: current,
+      });
     }
   });
 }
@@ -192,7 +205,10 @@ async function toReusableCurriculum({
 }): Promise<ReusableCurriculum | null> {
   const { startedCourse } = inputs;
   const graph = parsePlanGraph(stored.graph);
-  const courseIds = joinOptionSkills(graph).skills.flatMap((skill) => skill.courseIds ?? []);
+
+  const courseIds = [...joinOptionSkills(graph).skills, ...(graph.extraSkills ?? [])].flatMap(
+    (skill) => skill.courseIds ?? [],
+  );
 
   const course = startedCourse && {
     ...startedCourse,
@@ -208,14 +224,21 @@ async function toReusableCurriculum({
     return null;
   }
 
+  const pinned = course
+    ? pinPlanGraphToCourse({
+        chapters: await loadCourseOutline({ courseId: course.id, userId: null }),
+        course,
+        graph,
+      })
+    : graph;
+
+  const pruned = await prunePlanNoticeGraph({
+    graph: pinned,
+    subjects: inputs.graphPrompt.examBlueprint?.subjects ?? [],
+  });
+
   const curriculum = await buildPlanSkillGraph({
-    graph: course
-      ? pinPlanGraphToCourse({
-          chapters: await loadCourseOutline({ courseId: course.id, userId: null }),
-          course,
-          graph,
-        })
-      : graph,
+    graph: pruned.graph,
     plannedAt: stored.generatedAt,
     provenance: {
       generatedAt: stored.generatedAt.toISOString(),

@@ -31,7 +31,7 @@ async function startMock(request: NextRequest, context: MocksContext) {
 
   const result = await startAnytimeMock({ goalId: path.goalId, input: body });
 
-  if (result.status === "needsQuestions" || result.status === "short") {
+  if (result.status === "preparing") {
     return NextResponse.json({ ...result, id: null });
   }
 

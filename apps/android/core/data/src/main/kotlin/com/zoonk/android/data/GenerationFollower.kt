@@ -181,7 +181,12 @@ class GenerationFollower(
 
     private suspend fun awaitId(): String? {
         state.update { it.copy(status = GenerationRun.Status.Waiting) }
-        val id = withTimeoutOrNull(NOT_STARTED_AFTER) { pollId() }
+        val id =
+            if (kind == GenerationKind.MockPaper) {
+                pollId()
+            } else {
+                withTimeoutOrNull(NOT_STARTED_AFTER) { pollId() }
+            }
         if (id == null) fail(GenerationFailure.NotStarted)
         return id
     }

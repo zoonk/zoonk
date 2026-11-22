@@ -1,9 +1,15 @@
 import { type PlanGraph, type PlanGraphSkill } from "../../plans/planner/plan-state";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
-export type PlannedSkillGraph = Omit<GoalSkillGraph, "skills"> & {
+export type PlannedSkillGraph = Omit<GoalSkillGraph, "extraSkills" | "skills"> & {
   courseOutline?: PlanGraph["courseOutline"];
-  skills: (GoalSkillGraph["skills"][number] & { outlined?: boolean; topicsUnknown?: boolean })[];
+  extraSkills?: PlannedSkill[];
+  skills: PlannedSkill[];
+};
+
+type PlannedSkill = GoalSkillGraph["skills"][number] & {
+  outlined?: boolean;
+  topicsUnknown?: boolean;
 };
 
 export function getSinglePlanCourseId({ skills, optionSkills = [] }: PlanGraph): string | null {
@@ -42,7 +48,7 @@ function mergeDuplicateSkills(skills: readonly PlanGraphSkill[]): PlanGraphSkill
         courseIds: [...new Set(courseIds)],
         ...(outcome ? { outcome } : {}),
         ...(outlined ? { outlined } : {}),
-        ...(topics && (topics.length > 0 || outlined) ? { topics } : {}),
+        ...(topics ? { topics } : {}),
       };
     });
 }
@@ -58,33 +64,42 @@ export function toGoalPlanGraph({
 }): PlanGraph {
   const courseTitles = new Map(graph.courses.map((course) => [course.key, course.title]));
 
-  const skills = graph.skills.flatMap((skill) => {
-    const skillId = idsByKey[skill.key];
-    const courseId = courseIdsByKey[skill.course];
+  const toPlanSkills = (skills: readonly PlannedSkill[]) =>
+    skills.flatMap((skill) => {
+      const skillId = idsByKey[skill.key];
+      const courseId = courseIdsByKey[skill.course];
 
-    if (!skillId) {
-      return [];
-    }
+      if (!skillId) {
+        return [];
+      }
 
-    return [
-      {
-        area: skill.area || (courseTitles.get(skill.course) ?? null),
-        courseIds: courseId ? [courseId] : [],
-        lessons: skill.estimatedLessons,
-        name: skill.name,
-        ...(skill.outcome ? { outcome: true } : {}),
-        ...(skill.outlined ? { outlined: true } : {}),
-        phase: Math.max(0, skill.phase - 1),
-        skillId,
-        topics: skill.topicsUnknown ? undefined : skill.topics,
-        weight: skill.examWeight,
-      },
-    ];
-  });
+      return [
+        {
+          area: skill.area || (courseTitles.get(skill.course) ?? null),
+          courseIds: courseId ? [courseId] : [],
+          lessons: skill.estimatedLessons,
+          name: skill.name,
+          ...(skill.outcome ? { outcome: true } : {}),
+          ...(skill.outlined ? { outlined: true } : {}),
+          phase: Math.max(0, skill.phase - 1),
+          skillId,
+          topics: skill.topicsUnknown && skill.topics.length === 0 ? undefined : skill.topics,
+          weight: skill.examWeight,
+        },
+      ];
+    });
+
+  const skills = mergeDuplicateSkills(toPlanSkills(graph.skills));
+  const ids = new Set(skills.map((skill) => skill.skillId));
+
+  const extras = mergeDuplicateSkills(toPlanSkills(graph.extraSkills ?? [])).filter(
+    (skill) => !ids.has(skill.skillId),
+  );
 
   return {
     ...(graph.courseOutline && { courseOutline: graph.courseOutline }),
+    ...(extras.length > 0 && { extraSkills: extras }),
     phases: graph.phases.map((phase) => ({ milestone: phase.milestone, name: phase.title })),
-    skills: mergeDuplicateSkills(skills),
+    skills,
   };
 }

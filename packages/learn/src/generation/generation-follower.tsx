@@ -9,7 +9,7 @@ export type FollowedRunProps = {
   generationId: string | null;
   kind: GenerationKind;
   onReady?: () => void;
-  readGenerationId?: () => Promise<string | null>;
+  readGenerationId?: () => Promise<string | { id: string; namespace: string } | null>;
   restart: () => Promise<unknown>;
 };
 

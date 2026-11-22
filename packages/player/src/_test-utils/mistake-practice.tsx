@@ -111,14 +111,16 @@ export function openPractice(
     >
       <DrawnMath content={practice}>
         <SpeechPlayerProvider voice={speechClips().voice}>
-          <MistakePracticeRun
-            actions={actions}
-            backHref="/mistakes"
-            lessonHref={null}
-            practice={practice}
-            renderLesson={(props) => <LessonPracticeStep {...props} />}
-            trueFalseLabels="trueFalse"
-          />
+          <main className="flex min-h-dvh flex-col">
+            <MistakePracticeRun
+              actions={actions}
+              backHref="/mistakes"
+              lessonHref={null}
+              practice={practice}
+              renderLesson={(props) => <LessonPracticeStep {...props} />}
+              trueFalseLabels="trueFalse"
+            />
+          </main>
         </SpeechPlayerProvider>
       </DrawnMath>
     </LearnProvider>,

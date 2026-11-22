@@ -9,7 +9,7 @@ const TYPED_PARTS: Partial<Record<ItemFormat, MockTypedPart>> = {
 };
 
 async function listTypedParts(
-  where: { examBlueprintId: string } | { id: { in: string[] } },
+  where: { examBlueprintId: string; mockOnly: true; retiredAt: null } | { id: { in: string[] } },
 ): Promise<MockTypedPart[]> {
   const rows = await prisma.item.findMany({
     distinct: ["format"],
@@ -21,7 +21,9 @@ async function listTypedParts(
 }
 
 export function loadBankTypedParts(examBlueprintId: string | null): Promise<MockTypedPart[]> {
-  return examBlueprintId ? listTypedParts({ examBlueprintId }) : Promise.resolve([]);
+  return examBlueprintId
+    ? listTypedParts({ examBlueprintId, mockOnly: true, retiredAt: null })
+    : Promise.resolve([]);
 }
 
 /** Cached for GET readers; use `loadBankTypedParts` for a fresh write precondition. */

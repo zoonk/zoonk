@@ -147,6 +147,8 @@ struct MistakePracticeScreen: View {
           DrillAnswerNotes(
             drill: drill, notSure: graded.answer.isDontKnow, timedOut: graded.sender == .timer,
             trap: graded.grade.trap)
+
+          FixedMistakesNote(count: graded.grade.fixedMistakeIds.count)
         }
       }
     }

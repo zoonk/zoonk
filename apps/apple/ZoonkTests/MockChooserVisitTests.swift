@@ -22,21 +22,6 @@ final class MockChooserVisitTests: XCTestCase {
       String(localized: "We couldn't start the mock exam. Try again.", table: "Mock"))
   }
 
-  func testANotEnoughQuestionsDecisionEndsWithTheVisit() async throws {
-    let visit = try await PageVisit(in: self, goal: .exam) { MockChooserScreen() }
-    await visit.server.setMockStartResult(
-      #"{"error":{"code":"NOT_ENOUGH_QUESTIONS","message":"Not enough questions"}}"#)
-    try await activate(
-      where: { $0.hasPrefix(String(localized: "The full exam", table: "Mock")) },
-      in: visit.window)
-    try await visit.activate(String(localized: "Start", table: "Mock"))
-    let failure = String(
-      localized: "Not enough questions for this one yet. Pick another.", table: "Mock")
-    try await visit.assertSays(failure)
-    try await visit.leaveAndComeBack()
-    visit.assertSaysNothingOf(failure)
-  }
-
   func testAMockStartFailureEndsWithTheVisit() async throws {
     let visit = try await PageVisit(in: self, goal: .exam) { MockChooserScreen() }
     try await activate(

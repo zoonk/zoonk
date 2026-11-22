@@ -1,36 +1,42 @@
 "use client";
 
-import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
 import { QuestionTitle } from "@zoonk/learn/question-title";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
+import { LessonVisual } from "@zoonk/learn/visual";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef } from "react";
+import { type Ref, useEffect, useRef } from "react";
 import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
 } from "../../../components/player-choice-scene";
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
+import { LESSON_CONTENT_ID } from "../../_utils/lesson-focus";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeEffectsView, ChallengeMeters } from "./challenge-meters";
 import { ChallengeMessageView, ChallengePickView, ChallengeTimeJump } from "./challenge-parts";
 import { type ChallengeNames } from "./use-challenge-names";
 
 type ChallengeContent = StepOf<"challenge">["content"];
+type ChallengeNode = ChallengeContent["nodes"][number];
+type ChallengeChoice = ChallengeNode["choices"][number];
 type PlayingProgress = Exclude<ChallengeProgress, { stage: "intro" }>;
 
 function ChallengeTurn({
+  choice,
   content,
   names,
-  step,
+  node,
+  visualRef,
 }: {
+  choice: ChallengeChoice | null;
   content: ChallengeContent;
   names: ChallengeNames;
-  step: ChallengeStep;
+  node: ChallengeNode;
+  visualRef?: Ref<HTMLLIElement>;
 }) {
-  const { choice, node } = step;
   const slots = content.team;
 
   return (
@@ -43,17 +49,26 @@ function ChallengeTurn({
           slots={slots}
         />
       ))}
-      <ChallengePickView text={names.fill(choice.text)} />
-      <ChallengeEffectsView choice={choice} fill={names.fill} meters={content.meters} />
-      {choice.replies.map((reply, index) => (
-        <ChallengeMessageView
-          key={`${node.id}-reply-${String(index)}`}
-          message={reply}
-          names={names}
-          slots={slots}
-        />
-      ))}
-      {choice.timeJump && <ChallengeTimeJump fill={names.fill} jump={choice.timeJump} />}
+      {node.visual && (
+        <li className="scroll-mt-4" data-slot="challenge-visual" ref={visualRef}>
+          <LessonVisual visual={node.visual} />
+        </li>
+      )}
+      {choice && (
+        <>
+          <ChallengePickView text={names.fill(choice.text)} />
+          <ChallengeEffectsView choice={choice} fill={names.fill} meters={content.meters} />
+          {choice.replies.map((reply, index) => (
+            <ChallengeMessageView
+              key={`${node.id}-reply-${String(index)}`}
+              message={reply}
+              names={names}
+              slots={slots}
+            />
+          ))}
+          {choice.timeJump && <ChallengeTimeJump fill={names.fill} jump={choice.timeJump} />}
+        </>
+      )}
     </>
   );
 }
@@ -97,18 +112,61 @@ function ChallengeDecision({
   );
 }
 
+function pixels(value: string): number {
+  return Number(value.replace("px", ""));
+}
+
+/**
+ * `scrollIntoView({ block: "nearest" })` on the lesson's own scroller only: the browser's version
+ * also scrolls every ancestor sideways, which slides the whole player when anything in it is wider
+ * than the screen.
+ */
+function scrollNearest(element: HTMLElement): void {
+  const scroller = element.closest(`#${LESSON_CONTENT_ID}`);
+
+  if (!scroller) {
+    return;
+  }
+
+  const style = getComputedStyle(element);
+  const box = element.getBoundingClientRect();
+  const view = scroller.getBoundingClientRect();
+  const top = box.top - pixels(style.scrollMarginTop) - view.top;
+  const bottom = box.bottom + pixels(style.scrollMarginBottom) - view.top - scroller.clientHeight;
+
+  if ((top >= 0 && bottom <= 0) || (top < 0 && bottom > 0)) {
+    return;
+  }
+
+  scroller.scrollBy({
+    behavior: getScrollBehavior(),
+    top: top < 0 ? Math.max(top, bottom) : Math.min(top, bottom),
+  });
+}
+
+/** A decision's chart comes into view with the decision when both fit, and from its top when not. */
 function useNewestInView(count: number) {
-  const ref = useRef<HTMLDivElement>(null);
+  const decisionRef = useRef<HTMLDivElement>(null);
+  const visualRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
-    if (count === 0) {
+    const decision = decisionRef.current;
+    const visual = visualRef.current;
+
+    if (count === 0 || !decision) {
       return;
     }
 
-    ref.current?.scrollIntoView({ behavior: getScrollBehavior(), block: "nearest" });
+    if (visual) {
+      const below = decision.getBoundingClientRect().bottom - visual.getBoundingClientRect().bottom;
+      const margin = getComputedStyle(decision).scrollMarginBottom;
+      visual.style.scrollMarginBottom = `calc(${String(below)}px + ${margin})`;
+    }
+
+    scrollNearest(visual ?? decision);
   }, [count]);
 
-  return ref;
+  return { decisionRef, visualRef };
 }
 
 export function ChallengeConversation({
@@ -126,7 +184,12 @@ export function ChallengeConversation({
 }) {
   const t = useExtracted();
   const { steps } = progress.walk;
-  const newest = useNewestInView(steps.length);
+  const { decisionRef, visualRef } = useNewestInView(steps.length);
+
+  const turns = [
+    ...steps,
+    ...(progress.stage === "deciding" ? [{ choice: null, node: progress.walk.node }] : []),
+  ];
 
   return (
     <PlayerReadScene className="items-stretch gap-5 sm:gap-5">
@@ -138,23 +201,20 @@ export function ChallengeConversation({
 
       <div aria-label={t("Conversation")} role="log">
         <ol className="flex flex-col gap-4">
-          {steps.map((step) => (
-            <ChallengeTurn content={content} key={step.node.id} names={names} step={step} />
+          {turns.map((turn) => (
+            <ChallengeTurn
+              choice={turn.choice}
+              content={content}
+              key={turn.node.id}
+              names={names}
+              node={turn.node}
+              visualRef={turn.choice ? undefined : visualRef}
+            />
           ))}
-
-          {progress.stage === "deciding" &&
-            progress.walk.node.messages.map((message, index) => (
-              <ChallengeMessageView
-                key={`${progress.walk.node.id}-message-${String(index)}`}
-                message={message}
-                names={names}
-                slots={content.team}
-              />
-            ))}
         </ol>
       </div>
 
-      <div className="scroll-mb-32" ref={newest}>
+      <div className="scroll-mb-32" ref={decisionRef}>
         {progress.stage === "deciding" ? (
           <ChallengeDecision
             isLocked={isLocked}

@@ -55,8 +55,11 @@
     <string name="goalcontent_preparation">Preparation</string>
     <string name="goalcontent_coverage">Coverage</string>
     <string name="goalcontent_not_in_plan">Not in your plan</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">Also in your plan</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">Not in the official guide</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">Not in the official guide</string>
+    <string name="goalcontent_optional_study">Optional</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">Questions per subject in the %1$s, as counted by %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

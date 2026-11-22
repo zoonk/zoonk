@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.LessonVisual.Chart
+import com.zoonk.android.ui.components.LessonVisual.Plot
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -46,12 +47,12 @@ class LessonVisualScreenshots {
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
     @Test
-    @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
-    fun narrowPhone() = capture("320-light", CHARTS)
+    @Config(qualifiers = "w360dp-h1600dp-xxhdpi")
+    fun narrowPhone() = capture("360-light", CHARTS)
 
     @Test
-    @Config(qualifiers = "w320dp-h1600dp-night-xxhdpi")
-    fun narrowPhoneDark() = capture("320-dark", CHARTS, dark = true)
+    @Config(qualifiers = "w360dp-h1600dp-night-xxhdpi")
+    fun narrowPhoneDark() = capture("360-dark", CHARTS, dark = true)
 
     @Test
     @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
@@ -62,22 +63,29 @@ class LessonVisualScreenshots {
     fun phoneDark() = capture("390-dark", CHARTS, dark = true)
 
     @Test
-    @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
+    @Config(qualifiers = "w360dp-h1600dp-xxhdpi")
     fun narrowPhoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        capture("320-light-font200", CHARTS.filterKeys { it == "regions" })
+        capture("360-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
+    fun smallPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("320-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
     }
 
     @Test
     @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
     fun phoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        capture("390-light-font200", CHARTS.filterKeys { it == "regions" })
+        capture("390-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
     }
 
     private fun capture(
         suffix: String,
-        charts: Map<String, Chart>,
+        charts: Map<String, LessonVisual>,
         dark: Boolean = false,
     ) {
         var shown by mutableStateOf(charts.values.first())
@@ -106,10 +114,196 @@ class LessonVisualScreenshots {
     private companion object {
         const val TAG = "chart"
 
+        val LARGE_FONT =
+            setOf(
+                "regions",
+                "unit-km",
+                "unit-percent",
+                "unit-long",
+                "money-brl",
+                "plot-scatter",
+                "plot-control",
+                "plot-fine-scan",
+                "plot-german",
+                "plot-close-lines",
+            )
+
         private val REGIONS = listOf("Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste")
 
-        val CHARTS =
+        val CHARTS: Map<String, LessonVisual> =
             linkedMapOf(
+                "plot-scatter" to
+                    plot(
+                        "Detector scan",
+                        "Detector position",
+                        "mm",
+                        "Count rate",
+                        "counts/s",
+                        Plot.Series(
+                            "Scan",
+                            Plot.Mark.Points,
+                            listOf(0.5 to 810.0, 1.5 to 880.0, 3.0 to 952.0, 4.5 to 890.0, 5.5 to 820.0).mapIndexed { index, (x, y) ->
+                                Plot.Point(x, y, "ABCDE"[index].toString())
+                            },
+                        ),
+                    ),
+                "plot-control" to
+                    plot(
+                        "Bottle fill weight, last 10 days",
+                        "Day",
+                        null,
+                        "Fill weight",
+                        "ml",
+                        Plot.Series(
+                            "Fill weight",
+                            Plot.Mark.LineWithPoints,
+                            listOf(499.8, 500.6, 499.3, 501.0, 500.4, 501.6, 502.3, 503.8, 502.9, 502.1).mapIndexed { day, weight ->
+                                Plot.Point(day + 1.0, weight)
+                            },
+                        ),
+                    ).copy(
+                        references =
+                            listOf(
+                                Plot.Reference("Upper limit", 503.0),
+                                Plot.Reference("Target", 500.0),
+                                Plot.Reference("Lower limit", 497.0),
+                            ),
+                    ),
+                "plot-fine-scan" to
+                    plot(
+                        "Finer scan, B to D",
+                        "Detector position",
+                        "mm",
+                        "Count rate",
+                        "counts/s",
+                        Plot.Series(
+                            "Fine scan",
+                            Plot.Mark.LineWithPoints,
+                            listOf(
+                                1.5 to 880.0,
+                                2.0 to 930.0,
+                                2.25 to 968.0,
+                                2.5 to 992.0,
+                                2.75 to 975.0,
+                                3.0 to 952.0,
+                                3.25 to 925.0,
+                                3.5 to 905.0,
+                                4.0 to 893.0,
+                                4.5 to 890.0,
+                            ).map { (x, y) -> Plot.Point(x, y) },
+                        ),
+                    ).copy(references = listOf(Plot.Reference("Needed tonight", 960.0))),
+                "plot-german" to
+                    plot(
+                        "Temperatur im Kühlraum",
+                        "Tag",
+                        null,
+                        "Temperatur",
+                        "°C",
+                        Plot.Series(
+                            "Temperatur",
+                            Plot.Mark.LineWithPoints,
+                            listOf(3.1, 3.4, 3.0, 3.8, 4.2, 4.6, 4.1).mapIndexed { day, value -> Plot.Point(day + 1.0, value) },
+                        ),
+                    ).copy(references = listOf(Plot.Reference("Temperaturgrenze", 4.5))),
+                "plot-close-lines" to
+                    plot(
+                        "Bottle fill weight, last 10 days",
+                        "Day",
+                        null,
+                        "Fill weight",
+                        "ml",
+                        Plot.Series(
+                            "Fill weight",
+                            Plot.Mark.LineWithPoints,
+                            listOf(499.8, 500.6, 499.3, 501.0, 500.4, 501.6, 502.3, 503.8, 502.9, 502.1).mapIndexed { day, weight ->
+                                Plot.Point(day + 1.0, weight)
+                            },
+                        ),
+                    ).copy(
+                        references =
+                            listOf(
+                                Plot.Reference("Upper limit", 501.0),
+                                Plot.Reference("Upper warning limit", 500.6),
+                                Plot.Reference("Target", 500.0),
+                            ),
+                    ),
+                "plot-single-point" to
+                    plot(
+                        "Detector scan",
+                        "Detector position",
+                        "mm",
+                        "Count rate",
+                        "counts/s",
+                        Plot.Series("Scan", Plot.Mark.Points, listOf(Plot.Point(3.0, 952.0, "Peak"))),
+                    ),
+                "plot-ten-thousand" to
+                    plot(
+                        "Visitors by price",
+                        "Price",
+                        null,
+                        "Visitors",
+                        null,
+                        Plot.Series("Visitors", Plot.Mark.LineWithPoints, listOf(10_000.0, 10_150.0, 10_400.0).map { Plot.Point(it, it) }),
+                    ),
+                "plot-named-countries" to
+                    plot(
+                        "Spending on health and life expectancy, 2021",
+                        "Health spending per person",
+                        "US$",
+                        "Life expectancy",
+                        "years",
+                        Plot.Series(
+                            "Countries",
+                            Plot.Mark.Points,
+                            listOf(
+                                Plot.Point(12_318.0, 76.4, "United States"),
+                                Plot.Point(8_011.0, 82.9, "Switzerland"),
+                                Plot.Point(6_166.0, 80.8, "Germany"),
+                                Plot.Point(4_666.0, 84.5, "Japan"),
+                                Plot.Point(1_514.0, 72.8, "Brazil"),
+                                Plot.Point(1_265.0, 74.4, "Mexico"),
+                                Plot.Point(57.0, 67.2, "India"),
+                            ),
+                        ),
+                    ).copy(source = "World Bank"),
+                "plot-two-lines" to
+                    plot(
+                        "Average temperature by month",
+                        "Month",
+                        null,
+                        "Temperature",
+                        "°C",
+                        Plot.Series(
+                            "Recife",
+                            Plot.Mark.Line,
+                            listOf(27.6, 27.7, 27.5, 27.0, 26.2, 25.4, 24.9, 25.0, 25.6, 26.4, 26.9, 27.3).mapIndexed { month, value ->
+                                Plot.Point(month + 1.0, value)
+                            },
+                        ),
+                        Plot.Series(
+                            "Porto Alegre",
+                            Plot.Mark.Line,
+                            listOf(24.6, 24.4, 23.1, 19.9, 16.6, 14.1, 13.9, 15.1, 16.4, 19.1, 21.2, 23.4).mapIndexed { month, value ->
+                                Plot.Point(month + 1.0, value)
+                            },
+                        ),
+                    ),
+                "plot-years" to
+                    plot(
+                        "World population",
+                        "Year",
+                        null,
+                        "People",
+                        "billion",
+                        Plot.Series(
+                            "Population",
+                            Plot.Mark.LineWithPoints,
+                            listOf(1950.0 to 2.5, 1970.0 to 3.7, 1990.0 to 5.3, 2010.0 to 6.9, 2023.0 to 8.0).map { (x, y) ->
+                                Plot.Point(x, y)
+                            },
+                        ),
+                    ),
                 "regions" to bars("Participação no total, por região", "Região", "Participação", REGIONS, "%", 18, 42, 64, 30, 22),
                 "long-names" to
                     bars(
@@ -164,6 +358,38 @@ class LessonVisualScreenshots {
                         30,
                         22,
                     ).copy(chart = Chart.Kind.Line),
+                "cropped-line-ten-thousand" to
+                    bars("Visitors per day", "Day", "Visitors", listOf("Mon", "Tue", "Wed"), null, 10_050, 10_200, 10_380)
+                        .copy(chart = Chart.Kind.Line, axisStart = 10_000.0),
+                "unit-km" to bars("Distance run this week", "Runner", "Distance", listOf("Ana", "Bruno", "Carla"), "km", 35, 42, 28),
+                "unit-percent" to bars("Fill rate by line", "Line", "Fill rate", listOf("North", "South", "East"), "%", 45, 62, 38),
+                "plot-percent" to
+                    plot(
+                        "Yield by batch",
+                        "Batch",
+                        null,
+                        "Yield",
+                        "%",
+                        Plot.Series(
+                            "Yield",
+                            Plot.Mark.LineWithPoints,
+                            listOf(41.0, 47.0, 52.0, 58.0).mapIndexed { index, y ->
+                                Plot.Point(index + 1.0, y)
+                            },
+                        ),
+                    ),
+                "unit-long" to
+                    amounts("Time to sort mail", "Desk", "Sorting time", "hours per 1,000 letters", 3.5, 2.8, 4.1)
+                        .copy(categories = listOf("Desk A", "Desk B", "Desk C")),
+                "money-brl" to amounts("Hourly pay", "Month", "Pay", "R$ per hour", 12.5, 14.0, 15.75),
+                "money-usd" to
+                    amounts("Monthly price by plan", "Plan", "Price", "USD", 4.99, 9.99, 24.0)
+                        .copy(categories = listOf("Basic", "Plus", "Team")),
+                "cropped-line-visits" to
+                    bars("Visitors per day", "Day", "Visitors", listOf("Mon", "Tue", "Wed"), "visits", 10_050, 10_200, 10_380)
+                        .copy(chart = Chart.Kind.Line, axisStart = 10_000.0),
+                "japanese-names" to
+                    bars("地方別の割合", "地方", "割合", listOf("北海道地方", "東北地方", "関東地方", "中部地方", "近畿地方"), "%", 18, 42, 64, 30, 22),
                 "five-series" to months(5),
                 "five-series-line" to months(5).copy(chart = Chart.Kind.Line),
                 "eight-series" to months(8),
@@ -189,6 +415,31 @@ class LessonVisualScreenshots {
                         Chart.Series("Litoral", listOf(24.0, 31.0, 35.0, 40.0)),
                     ).take(series),
             )
+
+        private fun amounts(
+            title: String,
+            categoryLabel: String,
+            valueLabel: String,
+            unit: String,
+            vararg values: Double,
+        ) = Chart(
+            chart = Chart.Kind.Bar,
+            title = title,
+            categoryLabel = categoryLabel,
+            valueLabel = valueLabel,
+            categories = listOf("Jan", "Feb", "Mar"),
+            series = listOf(Chart.Series(valueLabel, values.toList())),
+            unit = unit,
+        )
+
+        private fun plot(
+            title: String,
+            xLabel: String,
+            xUnit: String?,
+            yLabel: String,
+            yUnit: String?,
+            vararg series: Plot.Series,
+        ) = Plot(title = title, xLabel = xLabel, yLabel = yLabel, series = series.toList(), xUnit = xUnit, yUnit = yUnit)
 
         private fun bars(
             title: String,

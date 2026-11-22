@@ -3,7 +3,7 @@
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
-import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
+import { PHONE_CONTENT_WIDTH, useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
@@ -24,7 +24,6 @@ import { useBaseMapLabels, useBaseMapName, useBaseMapNote } from "./use-base-map
 type MapExplorerProps = ActivityRendererProps<"mapExplorer">;
 type Place = MapExplorerProps["content"]["fields"]["places"][number];
 
-const FALLBACK_WIDTH = 318;
 const PIN_SPACING = 40;
 const MAX_MAP_HEIGHT = 440;
 
@@ -155,7 +154,7 @@ function MapCanvas({
     places: fields.places,
     selectedId,
     visited,
-    width: width || FALLBACK_WIDTH,
+    width: width || PHONE_CONTENT_WIDTH,
   });
 
   const selectedIndex = fields.places.findIndex((place) => place.id === selectedId);

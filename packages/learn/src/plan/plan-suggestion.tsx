@@ -21,7 +21,7 @@ import { usePlanScreen } from "./plan-context";
 import { usePlanCoverage, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
 import { ExamChoiceSuggestion } from "./plan-exam-choices";
-import { FitLessonsSuggestion } from "./plan-fit-suggestion";
+import { ExtraLessonsSuggestion, FitLessonsSuggestion } from "./plan-fit-suggestion";
 import { PastDateSuggestion } from "./plan-past-date-suggestion";
 import {
   PlanSuggestionContext,
@@ -49,11 +49,17 @@ function useTimeItems(): SlotItem[] {
   const coverage = usePlanCoverage();
   const timeEnough = useTimeEnough();
   const open = plan.status?.kind !== "pastDate";
+  const { extraOffer, fitOffer } = plan;
 
-  return [
-    open && plan.fitOffer !== null && { key: "fitLessons", kind: "fitLessons" as const },
-    open && coverage !== null && !timeEnough && { key: "coverage", kind: "coverage" as const },
-  ].filter((item) => item !== false);
+  const items: (SlotItem | false)[] = [
+    open && fitOffer !== null && { key: "fitLessons", kind: "fitLessons", offer: fitOffer },
+    open && fitOffer === null && extraOffer
+      ? { key: "extraLessons", kind: "extraLessons", offer: extraOffer }
+      : false,
+    open && coverage !== null && !timeEnough && { key: "coverage", kind: "coverage" },
+  ];
+
+  return items.filter((item) => item !== false);
 }
 
 function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
@@ -210,6 +216,8 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
       );
     case "fitLessons":
       return <FitLessonsSuggestion item={item} />;
+    case "extraLessons":
+      return <ExtraLessonsSuggestion item={item} />;
     case "paused":
       return host.goalStatus && <GoalPausedSuggestion control={host.goalStatus} />;
     case "pastDate":

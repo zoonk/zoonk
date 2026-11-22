@@ -363,7 +363,7 @@ class AppContainer private constructor(
     // Exams and mocks (L7).
     val exams = ExamStore(LiveExamApi(api), cache, timeZone)
     val mocks = MockStore(LiveMockApi(api), cache)
-    val mockStarter = MockStarter(LiveMockStartApi(api), cache)
+    val mockStarter = MockStarter(LiveMockStartApi(api), cache, mocks)
     val mockRuns = MockRunStore(LiveMockRunApi(api), cache, drafts, timeZone)
     val listeningPlays = ListeningPlays(drafts, scope)
 

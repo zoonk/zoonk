@@ -282,6 +282,7 @@ function TestStep({
   if (next.kind === "speaking") {
     return (
       <SpeakingStep
+        language={targetLanguage}
         onSkip={onStop}
         onView={onView}
         progress={progress}

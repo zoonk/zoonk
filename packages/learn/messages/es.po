@@ -88,6 +88,16 @@ msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Listo"
 
+#: src/_components/check-note.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "No pudimos comprobar tu respuesta esta vez. Inténtalo de nuevo."
+
+#: src/_components/check-note.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "Aún estamos comprobando tu respuesta. Está tardando más de lo habitual."
+
 #: src/_components/checklist.tsx
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
@@ -283,7 +293,6 @@ msgstr "Continuar"
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
 #: src/mock/mock-chooser-page.tsx
-#: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/steps/plan-wait.tsx
@@ -369,6 +378,7 @@ msgid "Take a short break, then try again."
 msgstr "Descansa un momento y vuelve a intentarlo."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "Necesitas una cuenta gratis para esto"
@@ -397,16 +407,6 @@ msgstr "No te quedan explicaciones hoy"
 msgctxt "uycXLZ"
 msgid "You've used your explanations"
 msgstr "Alcanzaste tu límite de explicaciones"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "uFNRuq"
-msgid "No more mock exams today"
-msgstr "No hay más simulacros por hoy"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "oTW-15"
-msgid "You've used your mock exams"
-msgstr "Alcanzaste tu límite de simulacros"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "TPgNQb"
@@ -2165,6 +2165,14 @@ msgid "Move to Monday"
 msgstr "Mover al lunes"
 
 #: src/challenge/challenge-footer.tsx
+#: src/mock/mock-chooser-page.tsx
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Seguir estudiando"
+
+#: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-tool-offer.tsx
 #: src/mock/mock-chooser-page.tsx
 msgctxt "JUvBan"
@@ -2182,6 +2190,12 @@ msgstr "Después de las lecciones de hoy"
 msgctxt "X_k-eo"
 msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
 msgstr "{lessons, plural, =0 {Revancha mañana.} one {Revancha mañana, después de # lección corta.} other {Revancha mañana, después de # lecciones cortas.}}"
+
+#: src/challenge/challenge-footer.tsx
+#: src/generation/use-generation-copy.ts
+msgctxt "k2oGSw"
+msgid "Getting your mock exam ready"
+msgstr "Preparando tu simulacro de examen"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -2400,6 +2414,7 @@ msgstr "Capítulo {number, number}"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -3391,8 +3406,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento."
 
 #: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "Crea tu cuenta gratis para seguir."
@@ -4719,19 +4732,20 @@ msgid "Writing questions on what you studied"
 msgstr "Preparando preguntas sobre lo que estudiaste"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "HxlS5i"
-msgid "Writing your mock exam"
-msgstr "Preparando tu simulacro"
+msgctxt "UEvuXg"
+msgid "Recording the listening"
+msgstr "Grabando la sección de Escucha"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "M1AYoH"
-msgid "Writing questions like the exam's"
-msgstr "Preparando preguntas como las del examen"
+msgctxt "EIEV6g"
+msgid "Writing the questions"
+msgstr "Preparando las preguntas"
 
+#. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
 #: src/generation/use-generation-copy.ts
-msgctxt "bLGs-q"
-msgid "Picking what to ask in each subject…"
-msgstr "Eligiendo qué preguntar en cada materia…"
+msgctxt "kO-7vs"
+msgid "Writing the texts"
+msgstr "Preparando los textos"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -6386,29 +6400,6 @@ msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "Recibiste un mensaje de voz. Escucha y responde."
 
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "El micrófono no está disponible aquí. Puedes saltarte esta parte."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "2IdQrb"
-msgid "Listening to what you said…"
-msgstr "Escuchando lo que dijiste…"
-
-#. "Stop" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "Vi6bgi"
-msgid "Recording… Press Stop when you're done."
-msgstr "Grabando… Presiona Detener cuando termines."
-
-#. "Record" is the label of the record button.
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "_lLAdM"
-msgid "Press Record and say it out loud"
-msgstr "Presiona Grabar y dilo en voz alta"
-
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
 msgid "Your plan starts from the level you gave, and your first days fine-tune it."
@@ -6435,19 +6426,14 @@ msgid "I didn't understand the audio"
 msgstr "No entendí el audio"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "No pudimos comprobarlo. Inténtalo de nuevo."
+msgctxt "TEizt2"
+msgid "The microphone isn't available here. You can skip this part."
+msgstr "El micrófono no está disponible aquí. Puedes saltarte esta parte."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Saltar esta parte"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "Dilo en voz alta"
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
@@ -6658,6 +6644,11 @@ msgid "Nothing said this time"
 msgstr "Esta vez no dijiste nada"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "y1aleL"
+msgid "The microphone isn't available here. You can skip this word."
+msgstr "El micrófono no está disponible aquí. Puedes saltar esta palabra."
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "Dilo de nuevo"
@@ -6696,32 +6687,6 @@ msgstr "La palabra que vas a decir"
 msgctxt "O1LlS-"
 msgid "Say it like"
 msgstr "Se pronuncia así"
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "l4x7Td"
-msgid "We couldn't hear the word. Try again a little closer."
-msgstr "No pudimos oír la palabra. Acércate un poco e inténtalo de nuevo."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "75OFKI"
-msgid "That didn't go through. Try again."
-msgstr "Algo falló. Inténtalo de nuevo."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "El micrófono no está disponible aquí. Puedes saltar esta palabra."
-
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "VcLERf"
-msgid "Listening to how it sounded…"
-msgstr "Escuchando cómo sonó…"
-
-#. "Record" is the label of the record button.
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "we8m4p"
-msgid "Press Record and say the word out loud"
-msgstr "Presiona Grabar y di la palabra en voz alta"
 
 #: src/language/today/language-today-section.tsx
 msgctxt "VR3SAU"
@@ -7913,25 +7878,16 @@ msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Tu último simulacro de examen"
 
+#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.
 #: src/mock/mock-chooser-page.tsx
-msgctxt "St9t1x"
-msgid "Not enough questions for this one yet. Pick another."
-msgstr "Aún no hay suficientes preguntas para este simulacro. Elige otro."
+msgctxt "qsDQE3"
+msgid "Getting this mock exam ready"
+msgstr "Preparando este simulacro de examen"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
 msgid "We couldn't start the mock exam. Try again."
 msgstr "No pudimos empezar el simulacro. Inténtalo de nuevo."
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "qFtRJW"
-msgid "Getting your mock exam ready…"
-msgstr "Preparando tu simulacro…"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "4FZiEz"
-msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
-msgstr "Estamos preparando para ti preguntas como las del examen. El simulacro empieza aquí en cuanto estén listas."
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -8252,6 +8208,17 @@ msgstr "normalmente {time}"
 msgctxt "-IhwDy"
 msgid "Leave blank"
 msgstr "Dejar en blanco"
+
+#. Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.
+#: src/mock/mock-preparing.tsx
+msgctxt "UaRfLh"
+msgid "Come back to this page to start it."
+msgstr "Vuelve a esta página para empezarlo."
+
+#: src/mock/mock-preparing.tsx
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "Quedan aproximadamente {time}"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -8711,38 +8678,6 @@ msgstr "Tus respuestas están guardadas."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Entregada"
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "HwbZRQ"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
-msgstr "Hoy este simulacro incluye {count, number} de sus {total, number} preguntas y dura aproximadamente {time}. Puedes hacerlo completo mañana."
-
-#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
-#: src/mock/mock-short-dialog.tsx
-msgctxt "3-UMw5"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
-msgstr "Hoy este simulacro tiene {count, number} de sus {total, number} preguntas y dura aproximadamente {time}. Puedes hacerlo completo hoy más tarde."
-
-#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
-#: src/mock/mock-short-dialog.tsx
-msgctxt "mZQ7Qe"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
-msgstr "Hoy este simulacro tiene {count, number} de sus {total, number} preguntas y dura aproximadamente {time}. Puedes hacerlo completo el {date}."
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "Rr2HWA"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}."
-msgstr "Hoy este simulacro incluye {count, number} de sus {total, number} preguntas y dura aproximadamente {time}."
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "hLpiWW"
-msgid "Start a shorter mock exam?"
-msgstr "¿Empezar un simulacro más corto?"
-
-#: src/mock/mock-short-dialog.tsx
-msgctxt "ggPo6m"
-msgid "Pick another"
-msgstr "Elegir otro"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -10092,7 +10027,7 @@ msgid "You can change all of this later."
 msgstr "Puedes cambiar todo esto después."
 
 #: src/onboarding/understood/understood-source-link.tsx
-#: src/visuals/chart-visual.tsx
+#: src/visuals/chart-frame.tsx
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Fuente: {source}"
@@ -10322,12 +10257,6 @@ msgctxt "gDpw0U"
 msgid "{group}: which one will you take?"
 msgstr "{group}: ¿cuál vas a presentar?"
 
-#: src/plan/exam-over-actions.tsx
-#: src/plan/study-everything.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Seguir estudiando"
-
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
 msgid "The exam's likely date is now {date}."
@@ -10483,11 +10412,6 @@ msgid "Adjust your plan"
 msgstr "Ajustar tu plan"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, one {Tienes tiempo para # lección más} other {Tienes tiempo para # lecciones más}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10497,6 +10421,17 @@ msgstr "Tu plan se actualizó."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "Agregar al plan"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, one {Tienes tiempo para # lección más} other {Tienes tiempo para # lecciones más}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr "¿Estudiar también estrategias para el examen?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10843,6 +10778,7 @@ msgid "Needed to practice"
 msgstr "Se necesita para practicar"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "Opcional"
@@ -10913,34 +10849,10 @@ msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
 msgstr "{count, plural, one {# requisito previo} other {# requisitos previos}} · solo las primeras lecciones · {time}"
 
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "U_KFTb"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr "{document, select, notice {¿Seguir la convocatoria oficial del examen, que será alrededor del {date}?} other {¿Seguir la guía oficial del examen, que será alrededor del {date}?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "vRjVI1"
-msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr "{document, select, notice {¿Seguir la convocatoria oficial del examen, que será el {date}?} other {¿Seguir la guía oficial del examen, que será el {date}?}}"
-
-#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
-#: src/plan/use-change-sentence.ts
-msgctxt "fZ_NjG"
-msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr "{document, select, notice {¿Seguir la convocatoria oficial del examen?} other {¿Seguir la guía oficial del examen?}}"
-
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
 msgstr "¿Cambiar la fecha de tu examen por una cercana al {date}?"
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-operation-question.ts
-msgctxt "7WE3xg"
-msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr "{dateKind, select, exam {¿Cambiar la fecha de tu examen al {date}?} goal {¿Cambiar tu fecha de finalización al {date}?} other {¿Cambiar tu fecha al {date}?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
@@ -11051,6 +10963,11 @@ msgid "Move this week's challenge to {date}?"
 msgstr "¿Mover el desafío de esta semana al {date}?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {¿Cambiar la fecha de tu examen al {date}?} goal {¿Cambiar tu fecha de finalización al {date}?} other {¿Cambiar tu fecha al {date}?}}"
+
+#: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "¿Estudiar sin fecha de finalización?"
@@ -11109,6 +11026,11 @@ msgstr "¿Cambiar tus requisitos previos?"
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
 msgstr "¿Estudiar hasta {level}?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr "¿Quitar la estrategia para el examen de tu plan?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11282,6 +11204,16 @@ msgstr "Lecciones agregadas a tu plan."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "Las fechas de tus fases cambiaron."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr "La estrategia para el examen se agregó a tu plan."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr "La estrategia para el examen no está en tu plan."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12844,6 +12776,18 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Grabar"
 
+#. “Stop” is the label of the button that ends the recording.
+#: src/speech/record-note.tsx
+msgctxt "CzQFwa"
+msgid "Listening… Tap Stop to check."
+msgstr "Escuchando… Toca Detener para comprobar."
+
+#. “Record” is the label of the button that starts the recording.
+#: src/speech/record-note.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Toca Grabar y dilo en voz alta"
+
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"
 msgid "Getting the audio ready…"
@@ -12977,12 +12921,6 @@ msgid "From your material"
 msgstr "De tu material"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "También en tu plan"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Temas de tu material"
@@ -13111,6 +13049,12 @@ msgstr "No está en tu plan · no te alcanza el tiempo"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "Aún no está listo"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr "{document, select, notice {No está en la convocatoria} other {No está en la guía oficial}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13308,6 +13252,7 @@ msgid "Okay. Your time stays the same."
 msgstr "De acuerdo. Tu tiempo sigue igual."
 
 #: src/today/today-falling-behind.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Cambio en el plan"
@@ -13353,6 +13298,7 @@ msgid "Move it"
 msgstr "Cambiar el horario"
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Entendido"
@@ -13370,6 +13316,7 @@ msgid "Your study time stays the same."
 msgstr "Tu hora de estudio sigue igual."
 
 #: src/today/today-insight.tsx
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "zzKKt8"
 msgid "Noted."
@@ -13401,15 +13348,28 @@ msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "Practicar con {name}"
 
-#: src/today/today-plan-change.tsx
-msgctxt "BxNBZP"
-msgid "Keep mine"
-msgstr "Mantener mi elección"
+#. Lists every subject or topic the plan no longer holds, like "Portuguese, Logic and English".
+#: src/today/today-notice-followed.tsx
+msgctxt "YQdum0"
+msgid "Out of your plan: {names}"
+msgstr "Fuera de tu plan: {names}"
 
+#: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "Ver la siguiente sugerencia"
+
+#. Says the plan already changed by itself. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/today/today-notice-followed.tsx
+msgctxt "J2u8IN"
+msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
+msgstr "{document, select, notice {Tu plan ahora sigue la convocatoria} other {Tu plan ahora sigue la guía oficial}}"
+
+#: src/today/today-plan-change.tsx
+msgctxt "BxNBZP"
+msgid "Keep mine"
+msgstr "Mantener mi elección"
 
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"
@@ -13589,6 +13549,31 @@ msgstr "{dateKind, select, month {Empieza en {start}} other {Empieza el {start}}
 msgctxt "83fmM5"
 msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
 msgstr "{dateKind, select, month {{count} · empieza en {start}} other {{count} · empieza el {start}}}"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "VlX3Tz"
+msgid "Horizontal axis: {label}, from {min} to {max}"
+msgstr "Eje horizontal: {label}, de {min} a {max}"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "8Zy2Zw"
+msgid "Vertical axis: {label}, from {min} to {max}"
+msgstr "Eje vertical: {label}, de {min} a {max}"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "QcdIBf"
+msgid "Point"
+msgstr "Punto"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "bhsStc"
+msgid "Reference lines"
+msgstr "Líneas de referencia"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "NNFAc_"
+msgid "{label}: {value}"
+msgstr "{label}: {value}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"

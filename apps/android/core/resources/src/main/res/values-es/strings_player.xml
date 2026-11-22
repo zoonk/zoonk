@@ -21,7 +21,9 @@
   "player_back_to_chapter": "ec9f48a5b38c6a34925fe89567ba0721e152eeb13f29433e6a7657d9b4e8873a",
   "player_back_to_unit": "ebac770e2f0714d112888393ab4b442ab07f74ba9cf27303fcf9b99a05508737",
   "player_build_my_plan": "ad4d4b904d1a8e4f1f326475a4ef8ee46a1839aaff6af55aaebd76f4248cb106",
+  "player_can_listen_now": "dd2a11e673de0395cfc834f542410009b379f9b5b3762bd6bc2cdb6200d2ce62",
   "player_can_talk_now": "8cc1670232c87805e42fb7afe88799271c69612826a4d3c7432eab3d7e99985f",
+  "player_cant_listen_now": "e42f6b302e9de6cf5ff6095fd295df0fcf1c8c720b2a0a08c617b6d82c4b2466",
   "player_cant_talk_now": "1315d3765f3ca05f7a65d0028e4e1ced3cfcf26e04b324312b68f361ad7bff22",
   "player_cant_write_now": "981a8b4f5998146782bc6731f14e98c0ecc9f947fdc66478f875df238b8883fb",
   "player_challenge_bit_higher": "2876ffd7498e9d07302bbac2032f2822c2d5d8ea900d81cd7f23ec6b71dd3cf4",
@@ -55,7 +57,6 @@
   "player_challenge_what_if": "05a2209e8989884dc34314d265c79de3a2a15586f1eddb4d47632ee765a4521d",
   "player_challenge_you": "922338af2d832190c3d71ce68852f8c064b497ef1aa03203d91c17effd33c7c2",
   "player_challenge_your_options": "5ddfc7b8cd2e3cd639707fb80e8203d52416086cbf4dfae820003a28ebd7bee2",
-  "player_check_failed": "0a4e41baef2645a05abc70ca30e1d55c684e9e050343aa756702bf2fc18f81e1",
   "player_citation_from_material": "dd93d4005a210ecacfd2fb52329f2d6b7d85861a2a3789121ac7d4f9593ac5ad",
   "player_citation_not_in_material": "3ef4823a70593e25697dfdb659d00943545f1afba87958ed0eacdc10b05780b9",
   "player_comes_back_at_end": "59182d83cdb24541f7e2e2d89e7209f08db57192b43ecfc688bfad122a3f87a6",
@@ -158,7 +159,6 @@
   "player_start_the_lesson": "ac43c58dfc432d750b8e09d14a13873685d0d14cd3d83d662d8307f196fab6de",
   "player_start_this_challenge": "81f3d9fd669448ff342e3b2af8f08466e28f30fa2347141aed0ae1d8fb0420a8",
   "player_start_this_lesson": "20e72528ba6034d8655a428dd0979edddd08acd1f27f22fcbd5348caca640adc",
-  "player_still_checking": "5d83cfddec9b65417780eff208a73fa1cb14521da21c4cdfd6682270bf673d5e",
   "player_stop_failed": "1f21d9008a2a4584379f7824c95951d1d2b278332d2f0a3917ecd8c2d920f60e",
   "player_stop_for_today": "76cc27f5b5f997d093c954dde1edb734235049b1b5bf6e654bca2a87d0f9af30",
   "player_summary": "c19889e42e7b2bb93a74ebd4138a7b21f36e5e7e698bd55beb6a807c2a294c6d",
@@ -291,8 +291,6 @@
     <string name="player_dont_know_yet">Aún no lo sé</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Ver la explicación primero</string>
-    <string name="player_check_failed">No pudimos comprobar tu respuesta esta vez. Inténtalo de nuevo.</string>
-    <string name="player_still_checking">Aún estamos comprobando tu respuesta. Está tardando más de lo habitual.</string>
     <string name="player_enter_hint">Presiona Enter para comprobar y Shift+Enter para una nueva línea.</string>
     <string name="player_your_answer">Tu respuesta</string>
     <string name="player_write_your_answer">Escribe tu respuesta</string>
@@ -352,6 +350,8 @@
     <string name="player_not_found_title">Esta lección no está disponible</string>
     <string name="player_cant_talk_now">No puedo hablar ahora</string>
     <string name="player_can_talk_now">Ya puedo hablar</string>
+    <string name="player_cant_listen_now">Ahora no puedo escuchar</string>
+    <string name="player_can_listen_now">Ahora puedo escuchar</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Responder en voz alta</string>
     <string name="player_microphone_is_blocked">El micrófono está bloqueado.</string>

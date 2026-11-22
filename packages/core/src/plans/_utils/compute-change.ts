@@ -227,6 +227,7 @@ async function planWithAndWithout({
     const baseline = suppliedBaseline ?? (await computePlan({ context, mode: "automatic" }));
 
     const computed = await planPhaseDatesMove({
+      bringBackExtras: true,
       context,
       kept: baseline.built,
       mode: "automatic",

@@ -10,6 +10,8 @@ typeOverrides:
     LessonMap: LessonSummary
     LessonStepAnswer: LessonAnswer
     LessonStepAnswerOutput: LessonAnswer
+    # A visual of a kind this build doesn't know draws nothing instead of failing the response.
+    LessonVisual: ZoonkAPI.LessonVisual
     PlayableLibraryStep: LessonStep
     # A new reason keeps the row outside the plan, with the plain label.
     NotPlannedReason: Swift.String
@@ -66,7 +68,6 @@ filter:
     - createMistakePracticeAnswer
     - createMistakePracticeCompletion
     - createMockQuestion
-    - createMockQuestionsGeneration
     - createPlacementAnswer
     - createPlacementSitting
     - createPlanBasesAdvice
@@ -165,6 +166,7 @@ filter:
     - getMistakePattern
     - getMock
     - getMockQuestionThread
+    - getMockWriting
     - getOnboarding
     - getPlanRevealToday
     - getOnboardingResume
@@ -228,7 +230,6 @@ filter:
     - startChallenge
     - startCourseGoal
     - startLanguageConversation
-    - startMock
     - startMockSpeaking
     - streamGenerationEvents
     - submitChapterTestOut
