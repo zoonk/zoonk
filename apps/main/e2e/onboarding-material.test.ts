@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
 
@@ -34,7 +35,9 @@ test.describe("A goal sent with the learner's material", () => {
     const resumeReads = await stopRuns({ page });
 
     await page.goto("/start");
-    await page.getByRole("button", { name: "Study your own material" }).click();
+    const attach = page.getByRole("button", { name: "Study your own material" });
+    await expectHydrated(attach);
+    await attach.click();
     await page.getByRole("button", { name: "Paste text" }).click();
 
     await page
