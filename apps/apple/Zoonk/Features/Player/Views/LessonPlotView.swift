@@ -47,7 +47,7 @@ struct LessonPlotView: View {
       }
 
       VStack(alignment: .leading, spacing: 4) {
-        LessonChartCaption(text: Self.caption(plot.yLabel, unit: plot.yUnit))
+        LessonChartCaption(text: LessonChartUnit.place(plot.yUnit, label: plot.yLabel).label)
         drawing(layout, scale: scale)
           .frame(maxWidth: .infinity)
           .frame(height: LessonPlotLayout.height * scale)
@@ -56,7 +56,7 @@ struct LessonPlotView: View {
           } action: {
             width = $0
           }
-        LessonChartCaption(text: Self.caption(plot.xLabel, unit: plot.xUnit))
+        LessonChartCaption(text: LessonChartUnit.place(plot.xUnit, label: plot.xLabel).label)
       }
       .accessibilityRepresentation { spoken(layout) }
       .accessibilityChartDescriptor(LessonPlotDescriptor(plot: plot))
@@ -195,10 +195,6 @@ struct LessonPlotView: View {
       }
     }
     .accessibilityHidden(true)
-  }
-
-  private static func caption(_ label: String, unit: String?) -> String {
-    unit.map { "\(label) (\($0))" } ?? label
   }
 
   @ViewBuilder

@@ -170,7 +170,10 @@ struct LessonPlotLayout {
     // Each number sits centered under its value. The first or last one is left out when it would
     // reach the y axis's numbers or past the drawing's edge, and the rest thin out evenly when they
     // would touch.
-    let xLabels = LessonPlotTicks.format(scale.x.ticks, xAxis: true, locale: locale)
+    let xLabels = LessonPlotTicks.format(
+      scale.x.ticks, xAxis: true,
+      unit: LessonChartUnit.place(plot.xUnit, label: plot.xLabel).numberUnit,
+      locale: locale)
     let xPlaced = zip(scale.x.ticks, xLabels).map { value, label in
       PlacedTick(label: label, value: value, center: toX(value))
     }.filter { tick in
@@ -227,9 +230,11 @@ struct LessonPlotLayout {
     init(_ plot: LessonPlot, scale: LessonPlotScale, measure: Measure, locale: Locale) {
       let names = plot.references.map(\.label)
 
-      yTicks = zip(scale.y.ticks, LessonPlotTicks.format(scale.y.ticks, locale: locale)).map {
-        Tick(label: $1, value: $0)
-      }
+      let yUnit = LessonChartUnit.place(plot.yUnit, label: plot.yLabel).numberUnit
+      yTicks = zip(
+        scale.y.ticks, LessonPlotTicks.format(scale.y.ticks, unit: yUnit, locale: locale)
+      )
+      .map { Tick(label: $1, value: $0) }
       left = max(LessonPlotLayout.minLeft, yTicks.map { measure.labelWidth($0.label) }.max() ?? 0)
       longest = names.map(measure.labelWidth).max() ?? 0
       widestWord = LessonPlotLayout.widestWord(names, labelWidth: measure.labelWidth)

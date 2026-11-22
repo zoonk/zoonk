@@ -89,20 +89,22 @@ struct LessonPlotScale {
   }
 }
 
-/// Core's `placeChartUnit`: money keeps its currency on each number, since only the currency's own
-/// format shows cents. Any other unit, and the rest of a money unit ("per hour"), is shown once
-/// beside the value label.
+/// Core's `placeChartUnit`: a unit that is part of how the number is written stays on each tick and
+/// value label, a currency since only its own format shows cents ("$3.50") and a sign written
+/// against the digits ("45%"). Any other unit, and the rest of a money unit ("per hour"), is shown
+/// once beside the axis label. Category charts and plots share it.
 struct LessonChartUnit: Equatable {
-  let currency: String?
-  let valueLabel: String
+  let numberUnit: String?
+  let label: String
 
-  static func place(_ unit: String?, valueLabel: String) -> LessonChartUnit {
+  static func place(_ unit: String?, label: String) -> LessonChartUnit {
     let money = ActivityNumberFormat.money(unit)
-    let labelUnit = money?.rest ?? unit ?? ""
+    let attached = ActivityNumberFormat.isAttached(unit) ? unit : nil
+    let labelUnit = money?.rest ?? (attached == nil ? unit : nil) ?? ""
 
     return LessonChartUnit(
-      currency: money?.currency,
-      valueLabel: labelUnit.isEmpty ? valueLabel : "\(valueLabel) (\(labelUnit))")
+      numberUnit: money?.currency ?? attached,
+      label: labelUnit.isEmpty ? label : "\(label) (\(labelUnit))")
   }
 }
 
@@ -184,8 +186,31 @@ enum LessonChartBars {
   static let inset = 1.0
   static let minWidth = 4.0
 
+  /// Main's: narrower bars print no values, so neighbors' values never touch.
+  static let minValueWidth = 30.0
+
   static func fitSideBySide(band: Double, series: Int) -> Bool {
     band * groupShare / Double(max(series, 1)) - inset * 2 >= minWidth
+  }
+
+  /// Main's rule: each bar's value stands over it only when every value fits the bar's width.
+  static func valuesFit(
+    _ values: [String], band: Double, series: Int, width: (String) -> Double
+  ) -> Bool {
+    let bar = band * groupShare / Double(max(series, 1))
+    return bar >= minValueWidth && values.allSatisfy { width($0) <= bar }
+  }
+}
+
+/// A line's points print their values over them only for a single line whose points stand far
+/// enough apart that every value fits between its neighbors, as main's.
+enum LessonChartPoints {
+  static let minValueBand = 45.0
+
+  static func valuesFit(
+    _ values: [String], band: Double, series: Int, width: (String) -> Double
+  ) -> Bool {
+    series == 1 && band >= minValueBand && values.allSatisfy { width($0) <= band }
   }
 }
 

@@ -43,11 +43,15 @@ struct LessonChartView: View {
     let scale = LessonChartScale(chart)
 
     if chart.chart == .line {
-      UprightChart(chart: chart, format: format, scale: scale, nameRoom: nil)
+      UprightChart(
+        chart: chart, format: format, scale: scale, nameRoom: nil,
+        showsValues: nameRoom.map(format.valuesFit) == true)
     } else if let width, let nameRoom, !format.barsFitUpright(nameRoom) {
       SidewaysBars(chart: chart, format: format, scale: scale, width: width)
     } else {
-      UprightChart(chart: chart, format: format, scale: scale, nameRoom: nameRoom)
+      UprightChart(
+        chart: chart, format: format, scale: scale, nameRoom: nameRoom,
+        showsValues: nameRoom.map(format.valuesFit) == true)
     }
   }
 
@@ -170,32 +174,34 @@ private struct LessonChartFormat {
   static let nameGap = 4.0
   /// Main's bars' corners.
   static let barRadius = 3.0
+  /// Between a bar's end and the value printed past it.
+  static let valueGap = 6.0
 
   let chart: LessonChart
   let width: (TypeStyle, String) -> Double
   let valueCaption: String
-  private let currency: String?
+  private let numberUnit: String?
   private let tickLabels: [Double: String]
 
   init(chart: LessonChart, width: @escaping (TypeStyle, String) -> Double) {
     let ticks = LessonChartScale(chart).ticks
-    let unit = LessonChartUnit.place(chart.unit, valueLabel: chart.valueLabel)
+    let unit = LessonChartUnit.place(chart.unit, label: chart.valueLabel)
 
     self.chart = chart
     self.width = width
-    valueCaption = unit.valueLabel
-    currency = unit.currency
+    valueCaption = unit.label
+    numberUnit = unit.numberUnit
     tickLabels = Dictionary(
-      zip(ticks, LessonPlotTicks.format(ticks, unit: unit.currency, locale: .courseLanguage)),
+      zip(ticks, LessonPlotTicks.format(ticks, unit: unit.numberUnit, locale: .courseLanguage)),
       uniquingKeysWith: { first, _ in first })
   }
 
   func tick(_ value: Double) -> String {
-    tickLabels[value] ?? ActivityNumberFormat.format(value, unit: currency)
+    tickLabels[value] ?? ActivityNumberFormat.format(value, unit: numberUnit)
   }
 
   func value(_ value: Double) -> String {
-    ActivityNumberFormat.format(value, unit: currency)
+    ActivityNumberFormat.format(value, unit: numberUnit)
   }
 
   func spoken(_ value: Double) -> String {
@@ -209,6 +215,17 @@ private struct LessonChartFormat {
     let plot = width - (ticks.max() ?? 0) - Self.valueAxisRoom
 
     return plot / Double(max(chart.categories.count, 1)) - Self.nameGap
+  }
+
+  /// Whether each bar's or point's value prints over it, by main's rules for each kind of chart.
+  func valuesFit(_ nameRoom: Double) -> Bool {
+    let values = chart.series.flatMap(\.values).map(value)
+    let band = nameRoom + Self.nameGap
+    let measure = { self.width(Self.value, $0) }
+
+    return chart.chart == .bar
+      ? LessonChartBars.valuesFit(values, band: band, series: chart.series.count, width: measure)
+      : LessonChartPoints.valuesFit(values, band: band, series: chart.series.count, width: measure)
   }
 
   func barsFitUpright(_ nameRoom: Double) -> Bool {
@@ -234,6 +251,7 @@ private struct UprightChart: View {
   let scale: LessonChartScale
   /// Swift Charts lets a name run past its bar's band, so upright bars wrap each name to it.
   let nameRoom: Double?
+  let showsValues: Bool
 
   @Environment(\.dynamicTypeSize) private var textSize
   @Environment(\.legibilityWeight) private var legibility
@@ -261,12 +279,21 @@ private struct UprightChart: View {
     }
   }
 
+  /// The top tick's label is centered on the plot's top edge, so half of it rises above it; a
+  /// value over a bar or point that reaches the top rises a whole line and its gap.
+  private var roomAbove: Double {
+    let tick = LessonChartFormat.label.uiFont(textSize, legibility: legibility).lineHeight / 2
+    let value =
+      LessonChartFormat.value.uiFont(textSize, legibility: legibility).lineHeight
+      + LessonChartFormat.valueGap + (chart.chart == .line ? LessonSeriesMark.pointSize / 2 : 0)
+
+    return showsValues ? max(tick, value) : tick
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      // The top tick's label is centered on the plot's top edge, so half of it rises above it.
       LessonChartCaption(text: format.valueCaption)
-        .padding(
-          .bottom, LessonChartFormat.label.uiFont(textSize, legibility: legibility).lineHeight / 2)
+        .padding(.bottom, roomAbove)
 
       plot
         .chartForegroundStyleScale(domain: chart.series.map(\.name), range: tones)
@@ -300,6 +327,17 @@ private struct UprightChart: View {
       Chart(points) { point in
         bar(point)
           .foregroundStyle(by: .value(verbatim: "Series", point.series))
+          .annotation(
+            position: .top, spacing: LessonChartFormat.valueGap,
+            overflowResolution: .init(x: .disabled, y: .disabled)
+          ) {
+            if showsValues {
+              Text(verbatim: format.value(point.value))
+                .typeStyle(LessonChartFormat.value)
+                .fixedSize()
+                .accessibilityHidden(true)
+            }
+          }
           .accessibilityLabel(
             chart.series.count > 1 ? "\(point.category), \(point.series)" : point.category
           )
@@ -324,6 +362,23 @@ private struct UprightChart: View {
           line.symbol(point.mark.shape.strokeBorder(lineWidth: LessonSeriesMark.openStroke))
         } else {
           line.symbol { point.mark.point }
+        }
+
+        if showsValues {
+          PointMark(
+            x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
+          )
+          .symbolSize(0)
+          .annotation(
+            position: .top, spacing: LessonChartFormat.valueGap + LessonSeriesMark.pointSize / 2,
+            overflowResolution: .init(x: .disabled, y: .disabled)
+          ) {
+            Text(verbatim: format.value(point.value))
+              .typeStyle(LessonChartFormat.value)
+              .fixedSize()
+              .accessibilityHidden(true)
+          }
+          .accessibilityHidden(true)
         }
       }
     }

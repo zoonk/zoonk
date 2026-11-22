@@ -187,6 +187,18 @@ final class LessonPlotRenderTests: XCTestCase {
         value: "Sorting time", unit: "hours per 1,000 letters", values: [3.5, 2.8, 4.1])
     ),
     (
+      "chart-percent",
+      chart(
+        title: "Fill rate by line", category: "Line", categories: ["North", "South", "East"],
+        value: "Fill rate", unit: "%", values: [45, 62, 38])
+    ),
+    (
+      "plot-percent",
+      plot(
+        title: "Yield by batch", x: "Batch", xUnit: nil, y: "Yield", yUnit: "%",
+        mark: "lineWithPoints", points: [(1, 41, nil), (2, 47, nil), (3, 52, nil), (4, 58, nil)])
+    ),
+    (
       "chart-money-brl",
       chart(
         title: "Hourly pay", category: "Month", categories: ["Jan", "Feb", "Mar"], value: "Pay",

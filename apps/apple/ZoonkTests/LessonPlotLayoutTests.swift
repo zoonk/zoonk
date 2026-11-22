@@ -11,6 +11,17 @@ final class LessonPlotLayoutTests: XCTestCase {
 
   private func labelWidth(_ text: String) -> Double { textWidth(text) + LessonPlotLayout.labelGap }
 
+  func testAPlotKeepsAPercentOnEachTickTheWayACategoryChartDoes() throws {
+    let points = series("lineWithPoints", (1, 40, nil), (2, 55, nil), (3, 62, nil))
+    let labels = layout(try plot(series: [points], yUnit: "%")).yTicks.map(\.label)
+
+    XCTAssertFalse(labels.isEmpty)
+    XCTAssertTrue(labels.allSatisfy { $0.hasSuffix("%") }, "\(labels)")
+    XCTAssertTrue(
+      layout(try plot(series: [points], yUnit: "ml")).yTicks.allSatisfy { !$0.label.contains("ml") }
+    )
+  }
+
   func testPointsSpaceByTheirXValueAndKeepRepeatedX() throws {
     let line = layout(
       try plot(series: [series("line", (0, 0, nil), (1, 1, nil), (10, 10, nil))]))
@@ -299,11 +310,12 @@ final class LessonPlotLayoutTests: XCTestCase {
       references: references ?? [("Upper limit", 503), ("Target", 500), ("Lower limit", 497)])
   }
 
-  private func plot(series: [[String: Any]], references: [(String, Double)] = []) throws
-    -> LessonPlot
-  {
+  private func plot(
+    series: [[String: Any]], references: [(String, Double)] = [], yUnit: String? = nil
+  ) throws -> LessonPlot {
     let json: [String: Any] = [
-      "title": "Title", "xLabel": "X", "xUnit": NSNull(), "yLabel": "Y", "yUnit": NSNull(),
+      "title": "Title", "xLabel": "X", "xUnit": NSNull(), "yLabel": "Y",
+      "yUnit": yUnit.map { $0 as Any } ?? NSNull(),
       "source": NSNull(), "series": series,
       "references": references.map { ["label": $0.0, "y": $0.1] },
     ]

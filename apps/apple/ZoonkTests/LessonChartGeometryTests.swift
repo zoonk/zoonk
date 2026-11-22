@@ -132,14 +132,35 @@ final class LessonChartGeometryTests: XCTestCase {
     let place = LessonChartUnit.place
 
     XCTAssertEqual(
-      place("km", "Distance"), LessonChartUnit(currency: nil, valueLabel: "Distance (km)"))
+      place("km", "Distance"), LessonChartUnit(numberUnit: nil, label: "Distance (km)"))
     XCTAssertEqual(
       place("hours per 1,000 letters", "Sorting time"),
-      LessonChartUnit(currency: nil, valueLabel: "Sorting time (hours per 1,000 letters)"))
-    XCTAssertEqual(place("R$", "Price"), LessonChartUnit(currency: "BRL", valueLabel: "Price"))
+      LessonChartUnit(numberUnit: nil, label: "Sorting time (hours per 1,000 letters)"))
+    XCTAssertEqual(place("R$", "Price"), LessonChartUnit(numberUnit: "BRL", label: "Price"))
     XCTAssertEqual(
-      place("R$ per hour", "Pay"), LessonChartUnit(currency: "BRL", valueLabel: "Pay (per hour)"))
-    XCTAssertEqual(place(nil, "Letters"), LessonChartUnit(currency: nil, valueLabel: "Letters"))
+      place("R$ per hour", "Pay"), LessonChartUnit(numberUnit: "BRL", label: "Pay (per hour)"))
+    XCTAssertEqual(place("%", "Fill rate"), LessonChartUnit(numberUnit: "%", label: "Fill rate"))
+    XCTAssertEqual(place(nil, "Letters"), LessonChartUnit(numberUnit: nil, label: "Letters"))
+  }
+
+  func testABarsValueStandsOverItOnlyWhenEveryValueFitsItsBar() {
+    let width = { (text: String) in Double(text.count) * 7 }
+    let fit = LessonChartBars.valuesFit
+
+    XCTAssertTrue(fit(["35", "42"], 100, 1, width))
+    XCTAssertFalse(fit(["35", "42"], 40, 1, width), "a bar under 30 points prints no value")
+    XCTAssertFalse(fit(["35", "R$12,345.67"], 100, 1, width), "one value too wide hides them all")
+    XCTAssertFalse(fit(["35"], 100, 3, width), "three series thin each bar")
+  }
+
+  func testALinesValueStandsOverItsPointOnlyForOneLineWithRoomForEveryValue() {
+    let width = { (text: String) in Double(text.count) * 7 }
+    let fit = LessonChartPoints.valuesFit
+
+    XCTAssertTrue(fit(["35", "42"], 60, 1, width))
+    XCTAssertFalse(fit(["35", "42"], 40, 1, width), "points closer than 45 points print no value")
+    XCTAssertFalse(fit(["35", "R$12,345.67"], 60, 1, width), "one value too wide hides them all")
+    XCTAssertFalse(fit(["35", "42"], 60, 2, width), "two lines' values would collide")
   }
 
   func testMoneyTicksKeepTheirCurrency() {

@@ -16,6 +16,9 @@ enum ActivityNumberFormat {
 
   private static let attachedUnits: Set<String> = ["%", "°", "‰"]
 
+  /// A sign written against the digits, with no space: "45%", "90°".
+  static func isAttached(_ unit: String?) -> Bool { unit.map(attachedUnits.contains) ?? false }
+
   /// Unless the caller asks for digits, a short number keeps the ones that tell it from its
   /// neighbors on an axis: 2.5K and 1.25M, not 2K and 1M.
   private static let compactDigits = NumberFormatStyleConfiguration.Precision.significantDigits(
@@ -59,7 +62,7 @@ enum ActivityNumberFormat {
       return number
     }
 
-    return attachedUnits.contains(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
+    return isAttached(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
   }
 
   /// Main's `formatLocalizedNumber` with `percent`.
