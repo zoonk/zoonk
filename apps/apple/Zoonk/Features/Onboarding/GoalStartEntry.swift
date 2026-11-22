@@ -164,7 +164,7 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
 
   var body: some View {
     Section {
-      VStack(spacing: 0) {
+      VStack(spacing: 8) {
         // Tops rather than first baselines: a vertical `TextField` reports its baseline above its
         // first line, which dropped the hint under "I want to". Both are the lead role, so their
         // first lines still share a baseline.

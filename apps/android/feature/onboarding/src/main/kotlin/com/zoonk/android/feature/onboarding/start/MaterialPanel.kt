@@ -40,7 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -61,6 +60,7 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.materialCitationLabel
@@ -353,7 +353,7 @@ private fun AttachedChip(
     val state = stringResource(R.string.onboarding_material_unreadable_state)
     val colors = MaterialTheme.colorScheme
     Surface(
-        shape = RoundedCornerShape(ZoonkRadius.xxl),
+        shape = RoundedCornerShape(ZoonkRadius.md),
         color = if (unreadable) colors.errorContainer else colors.surfaceContainerHigh,
         contentColor = if (unreadable) colors.onErrorContainer else colors.onSurface,
     ) {
@@ -392,14 +392,7 @@ internal fun MaterialIntentChoice(
     onChange: (MaterialIntent) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.onboarding_intent_title),
-            modifier =
-                Modifier.semantics {
-                    heading()
-                },
-            style = MaterialTheme.typography.titleMedium,
-        )
+        SectionHeader(stringResource(R.string.onboarding_intent_title))
         ChoiceList(
             choices =
                 listOf(

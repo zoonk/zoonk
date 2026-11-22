@@ -97,7 +97,7 @@ export const onboardingPaths = {
     },
     patch: {
       description:
-        "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
+        "One fix on the \"Here's what we understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
       operationId: "reviseGoalUnderstanding",
       requestBody: {
         content: { "application/json": { schema: onboardingDraftEditSchema } },

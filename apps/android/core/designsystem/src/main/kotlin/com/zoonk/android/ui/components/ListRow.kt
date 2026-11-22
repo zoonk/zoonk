@@ -85,6 +85,7 @@ fun ListRow(
     busy: Boolean = false,
     highlighted: Boolean = false,
     highlightColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    interactionSource: MutableInteractionSource? = null,
     indent: Dp = 0.dp,
     expanded: Boolean? = null,
     stateDescription: String? = null,
@@ -106,7 +107,7 @@ fun ListRow(
     val endSlot = END_SLOT * glyphScale()
     val ink = MaterialTheme.colorScheme.onSurface
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    val interaction = remember { MutableInteractionSource() }
+    val interaction = interactionSource ?: remember { MutableInteractionSource() }
 
     Row(
         modifier =

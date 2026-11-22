@@ -707,6 +707,65 @@
         }
       }
     },
+    "%lld files is the most for one goal. Remove one to add another." : {
+      "comment" : "Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für ein Ziel sind höchstens %lld Dateien möglich. Entferne eine, um eine weitere hinzuzufügen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un objetivo puede tener como máximo %lld archivos. Quita uno para agregar otro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum de %lld fichiers par objectif. Supprime-en un pour en ajouter un autre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per ogni obiettivo puoi aggiungere al massimo %lld file. Rimuovine uno per aggiungerne un altro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1つの目標に添付できる資料は最大%lld件です。1件削除すると、別の資料を追加できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 하나에는 파일을 최대 %lld개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do jednego celu możesz dodać maksymalnie %lld plików. Usuń jeden, aby dodać kolejny."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você pode anexar no máximo %lld arquivos a um objetivo. Remova um para adicionar outro."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir hedefe en fazla %lld dosya ekleyebilirsin. Bir tane daha eklemek için bir dosyayı kaldır."
+          }
+        }
+      }
+    },
     "A course on this is ready now" : {
       "comment" : "Under a Library course offered while the learner's plan is built",
       "localizations" : {
@@ -7737,37 +7796,36 @@
         }
       }
     },
-    "Here's what I understood" : {
-      "comment" : "Title of the card that confirms what was read from the learner's words",
+    "Here's what we understood" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das habe ich verstanden"
+            "value" : "So haben wir dich verstanden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto es lo que entendí"
+            "value" : "Esto es lo que entendimos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voici ce que j’ai compris"
+            "value" : "Voici ce qu’on a compris"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ecco cosa ho capito"
+            "value" : "Ecco cosa abbiamo capito"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "読み取った内容"
+            "value" : "このように理解しました"
           }
         },
         "ko" : {
@@ -7779,19 +7837,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oto, jak to rozumiem"
+            "value" : "Tak rozumiemy twój cel"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Foi isso que entendi"
+            "value" : "Foi isso que a gente entendeu"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anladıklarım şöyle"
+            "value" : "Anladıklarımız şöyle"
           }
         }
       }
@@ -10156,61 +10214,60 @@
         }
       }
     },
-    "Next, you check what we understood." : {
-      "comment" : "Shown while a typed goal is read",
+    "Next, we'll show you what we understood." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Als Nächstes prüfst du, was wir verstanden haben."
+            "value" : "Als Nächstes zeigen wir dir, was wir verstanden haben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después, revisarás lo que entendimos."
+            "value" : "Después, te mostraremos lo que entendimos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ensuite, tu vérifieras ce que nous avons compris."
+            "value" : "Ensuite, nous te montrerons ce que nous avons compris."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poi controlli cosa abbiamo capito."
+            "value" : "Poi ti mostreremo cosa abbiamo capito."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次に、読み取った内容を確認します。"
+            "value" : "次に、入力内容から読み取ったことをお見せします。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다음에는 저희가 이해한 내용이 맞는지 확인해 주세요."
+            "value" : "다음에는 이해한 내용을 보여 드릴게요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Potem sprawdzisz, jak rozumiemy twój cel."
+            "value" : "Następnie pokażemy ci, jak rozumiemy twój cel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em seguida, você confere o que a gente entendeu."
+            "value" : "A seguir, a gente vai mostrar o que entendeu."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sonra ne anladığımızı kontrol edeceksin."
+            "value" : "Ardından ne anladığımızı sana göstereceğiz."
           }
         }
       }
@@ -14234,7 +14291,6 @@
       }
     },
     "Remove %@" : {
-      "comment" : "Removes a file, text or link from the goal's material; names it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -14251,7 +14307,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer %@"
+            "value" : "Retirer %@"
           }
         },
         "it" : {
@@ -14263,13 +14319,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を削除"
+            "value" : "%@を取り除く"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 삭제"
+            "value" : "%@ 삭제하기"
           }
         },
         "pl" : {
@@ -20827,65 +20883,6 @@
         }
       }
     },
-    "What do you want to achieve?" : {
-      "comment" : "Title of the start flow's first screen",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was möchtest du erreichen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Qué quieres lograr?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Que veux-tu accomplir ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cosa vuoi ottenere?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "何を達成したいですか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무엇을 이루고 싶어요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Co chcesz osiągnąć?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você quer alcançar?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neyi başarmak istiyorsun?"
-          }
-        }
-      }
-    },
     "What do you want to do?" : {
       "comment" : "Header over what to do with attached material",
       "localizations" : {
@@ -21241,7 +21238,6 @@
       }
     },
     "What you wrote" : {
-      "comment" : "Header over the learner's typed goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -21276,13 +21272,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "입력한 내용"
+            "value" : "작성한 내용"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój opis"
+            "value" : "Twój tekst"
           }
         },
         "pt" : {
@@ -21354,6 +21350,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ne için kullanacağın"
+          }
+        }
+      }
+    },
+    "What's your goal?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was ist dein Ziel?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cuál es tu objetivo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quel est ton objectif ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qual è il tuo obiettivo?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標は何ですか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어떤 목표를 이루고 싶나요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jaki masz cel?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qual é o seu objetivo?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefin ne?"
           }
         }
       }

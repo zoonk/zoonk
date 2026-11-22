@@ -73,18 +73,33 @@ struct GoalMaterialSections: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   var body: some View {
-    Section {
-      ForEach(material) { source in
-        MaterialRow(title: title(of: source), isUnavailable: source.isUnavailable) {
-          material.removeAll { $0.id == source.id }
+    if !material.isEmpty {
+      Section {
+        FlowLayout {
+          ForEach(material) { source in
+            MaterialChip(title: title(of: source), isUnavailable: source.isUnavailable) {
+              material.removeAll { $0.id == source.id }
+            }
+          }
+        }
+        .listRowSeparator(.hidden)
+        .announcesStatus(fullLine)
+
+        if let unavailableLine {
+          FailureLine(message: unavailableLine)
+            .listRowSeparator(.hidden)
+        }
+
+        if let fullLine {
+          Text(fullLine)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
         }
       }
-      .onDelete { material.remove(atOffsets: $0) }
+    }
 
-      if let unavailableLine {
-        FailureLine(message: unavailableLine)
-      }
-
+    Section {
       if learner.canAttachMaterial {
         MaterialAttachProgress(draft: $draft) { source in
           material.attach(source)
@@ -111,13 +126,6 @@ struct GoalMaterialSections: View {
               comment: "Opens sign-up to add material")
           }
         }
-      }
-    } header: {
-      if !material.isEmpty {
-        SectionTitle(
-          Text(
-            "Your material", tableName: "Onboarding",
-            comment: "Header over the material attached to a goal"))
       }
     }
 
@@ -168,6 +176,19 @@ struct GoalMaterialSections: View {
   }
 
   /// Names the one file a goal found gone; several are said together.
+  /// Why the paperclip is off once the goal holds all the material it can use.
+  private var fullLine: String? {
+    material.hasRoom
+      ? nil
+      : String(
+        localized: LocalizedStringResource(
+          "\(AttachedSource.maxPerGoal) files is the most for one goal. Remove one to add another.",
+          table: "Onboarding",
+          comment:
+            "Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5."
+        ))
+  }
+
   private var unavailableLine: LocalizedStringResource? {
     let unavailable = material.filter(\.isUnavailable)
 
@@ -193,52 +214,39 @@ struct GoalMaterialSections: View {
 
 /// One attached source, removed with its ✕ as main's chip is, or by swiping. One a goal found gone
 /// takes main's soft error look.
-private struct MaterialRow: View {
+private struct MaterialChip: View {
   let title: String
   let isUnavailable: Bool
   let remove: () -> Void
 
   var body: some View {
-    HStack(spacing: 8) {
-      Label {
-        Text(title)
-          .lineLimit(1)
-          .foregroundStyle(isUnavailable ? .destructiveText : Color(.foreground))
-      } icon: {
-        if isUnavailable {
-          Image(systemName: "exclamationmark.circle")
-            .foregroundStyle(.destructive)
-        } else {
-          Image(systemName: "doc.text")
-        }
-      }
-      .accessibilityValue(
-        Text(
-          "Can't be read", tableName: "Onboarding",
-          comment:
-            "Read by screen readers after the name of an attached file that can't be read anymore."),
-        isEnabled: isUnavailable)
+    HStack(spacing: 6) {
+      Image(systemName: isUnavailable ? "exclamationmark.circle" : "doc.text")
+        .accessibilityHidden(true)
 
-      Spacer(minLength: 0)
+      Text(title)
+        .lineLimit(1)
+        .accessibilityValue(
+          Text(
+            "Can't be read", tableName: "Onboarding",
+            comment:
+              "Read by screen readers after the name of an attached file that can't be read anymore."
+          ),
+          isEnabled: isUnavailable)
 
       Button(action: remove) {
-        Label {
-          Text(
-            "Remove \(title)", tableName: "Onboarding",
-            comment: "Removes a file, text or link from the goal's material; names it")
-        } icon: {
-          Image(systemName: "xmark")
-        }
-        .labelStyle(.iconOnly)
-        .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
-        .contentShape(.rect)
+        Image(systemName: "xmark")
+          .frame(minWidth: 44, minHeight: 44)
+          .contentShape(.rect)
+          .accessibilityLabel(Text("Remove \(title)", tableName: "Onboarding"))
       }
-      .buttonStyle(.borderless)
-      .foregroundStyle(isUnavailable ? .destructiveText : .mutedForeground)
+      .buttonStyle(.plain)
     }
-    // Always a background, so a row marked after it first showed still takes the fill: a list
-    // doesn't apply one that replaces none on a row it already drew.
-    .listRowBackground(Color.destructiveSoft.opacity(isUnavailable ? 1 : 0))
+    .typeStyle(.body)
+    .foregroundStyle(isUnavailable ? .destructiveText : Color(.foreground))
+    .padding(.leading, 12)
+    .background(
+      isUnavailable ? Color.destructiveSoft : Color(.muted), in: .rect(cornerRadius: Radius.md))
   }
 }
 

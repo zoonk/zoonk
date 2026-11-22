@@ -188,7 +188,7 @@ class StartGoalFlowTest {
 
         sessionKey = "local-b"
 
-        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+        rule.onNodeWithText("What's your goal?").assertIsDisplayed()
         rule.onNodeWithText("pass the bar exam").assertDoesNotExist()
     }
 
@@ -224,7 +224,7 @@ class StartGoalFlowTest {
 
         rule.onNodeWithContentDescription("Back").performClick()
 
-        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+        rule.onNodeWithText("What's your goal?").assertIsDisplayed()
         assertFalse(store.wasSentHere(DRAFT_ID))
     }
 
@@ -238,7 +238,7 @@ class StartGoalFlowTest {
 
         rule.onNodeWithContentDescription("Back").assertIsNotEnabled()
         rule.runOnUiThread { backDispatcher.onBackPressed() }
-        rule.onNodeWithText("What do you want to achieve?").assertDoesNotExist()
+        rule.onNodeWithText("What's your goal?").assertDoesNotExist()
         create.complete(Unit)
         rule.waitForIdle()
 
@@ -338,7 +338,7 @@ class StartGoalFlowTest {
 
         rule.onNodeWithContentDescription("Back").assertIsEnabled()
         rule.runOnUiThread { backDispatcher.onBackPressed() }
-        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+        rule.onNodeWithText("What's your goal?").assertIsDisplayed()
     }
 
     @Test

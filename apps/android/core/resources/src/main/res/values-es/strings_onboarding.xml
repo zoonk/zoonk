@@ -157,7 +157,7 @@
   "onboarding_material_description": "278927647e65bb7d6ab0299deec595a4c63c4dea52bf1d5ca1c616fb2a63770d",
   "onboarding_material_goal_exam": "3bcf5e5a787da48ec0acabdf50bad5fa12a286edf18cf321d621abe32941790d",
   "onboarding_material_goal_understand": "6b8d28f106bf0a445e2ecd47c67d0b5a275a8a9696fce1098c448f3f0d199f59",
-  "onboarding_material_limit": "d4c06ef93a8da4baf51ab0f212af4d2c357f3d0222ba4710f14b8a5f8f91ff31",
+  "onboarding_material_limit": "afb11a5137e8a1069b94a3922a706be95fe057335a9cdcc0862af13a3983015e",
   "onboarding_material_sign_up": "12584e9b86d44cdebc91b83ac12638b7b6cf8ea7b7eb00e6c3397a3fa98711d1",
   "onboarding_material_unreadable_one": "e2782e1198b18d6852e16c7ee9649d7c50c422ff4deb819e5d43a37ee309c221",
   "onboarding_material_unreadable_some": "60e9b9821a6d06f1a0affa10959be21ef590a4d61fdcbe9591326183230b0fc1",
@@ -331,7 +331,7 @@
   "onboarding_start_over_confirm": "05753077779e4b81eda876d658bd6e0880d9d72638967a960d803a4555f3fec5",
   "onboarding_start_over_description": "0f1802a92ba34d0c8a7f0b5a8cbb813801f0afbf7117fd3fa6c9f2e41f78fb59",
   "onboarding_start_over_title": "f8749f8c11012767b8da3a7ac17935745ad75d245452f9b78a6c5cc0bf4c971b",
-  "onboarding_start_title": "35afe6175bfa3f435064d7bde691e0767accb20a92b5a68640bad963a0e5f0db",
+  "onboarding_start_title": "ec53ad7e1e53cceeb8b2ee6d751ffbac15fb1fa9f0f0063bd112c2eb15aa68d8",
   "onboarding_step_of": "b9b5932abcf969b93fc09d1c01a6ae71bd78028f93aeb58b8b4fd14ca4bd4989",
   "onboarding_study_days": "026e7b8db10836437112ab77820218656c615e83ce1795004d9f1e635e953b05",
   "onboarding_study_material": "fff6f3e1bbcc831315ca5d60ee14f9154569f97f165a60d947d0f14560ca5a5b",
@@ -356,7 +356,7 @@
   "onboarding_try_another_goal": "bbfcd5192b993aed7a7dfc6e3373180842f47a798e9acd76173e2f6dd932f3bf",
   "onboarding_unclear_description": "8f6d63354a1a0e25505e93edfb012a7ab13f86fc6d240d56aeb8cc9ad0d15512",
   "onboarding_unclear_title": "904f2e416debdd25f94d86334e31a8c42c1454f1930b2df778bafbbfc75e13c8",
-  "onboarding_understanding_description": "a8506c860e66902847ef0f8f00724b6968b954d100f5b6551fe3820ad5f736e6",
+  "onboarding_understanding_description": "5d72f5f70e22d62bdd7a58a8c841bf999ec6e3218f67dd8525ae91430e766678",
   "onboarding_understanding_title": "8649cae50c669b02f9528e6b4e3b69d9d2e022015d690055bb602adcfe93045c",
   "onboarding_understood_description": "2032b76914a8eba329ae73ab40f8c15a9a73c9ababe693e4596ae06f64b9d396",
   "onboarding_understood_description_shared": "ef5d5e993c3bf2bbd264b1c4c1b0aed830074d6cc6a679aa460e614d5c394965",
@@ -384,8 +384,7 @@
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Title of the screen where a learner writes their goal. -->
-    <string name="onboarding_start_title">¿Qué quieres lograr?</string>
+    <string name="onboarding_start_title">¿Cuál es tu objetivo?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description">Cuéntanos con tus propias palabras. Prepararemos el plan.</string>
     <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -433,7 +432,7 @@
     <string name="onboarding_back_to_today">Hoy</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Analizando tu objetivo</string>
-    <string name="onboarding_understanding_description">Después, revisarás lo que entendimos.</string>
+    <string name="onboarding_understanding_description">Después, te mostraremos lo que entendimos.</string>
     <string name="onboarding_understood_title">Esto es lo que entendimos</string>
     <string name="onboarding_understood_description">Puedes cambiar todo esto después.</string>
     <!-- When the learner's words became more than one goal. -->
@@ -447,7 +446,6 @@
     <string name="onboarding_understood_locked_line_more">Pausa otro objetivo para crear estos.</string>
     <string name="onboarding_looks_right">Confirmar</string>
     <string name="onboarding_fix_something">Corregir algo</string>
-    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">Lo que escribiste</string>
     <string name="onboarding_rewrite_hint">Lo leeremos de nuevo. Para corregir un detalle, usa el lápiz correspondiente más abajo.</string>
     <string name="onboarding_read_again">Leerlo de nuevo</string>
@@ -561,7 +559,7 @@
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">Ya no se puede leer</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
-    <string name="onboarding_material_limit">El máximo es de %1$d archivos por objetivo. Elimina uno para agregar otro.</string>
+    <string name="onboarding_material_limit">Un objetivo puede tener como máximo %1$d archivos. Quita uno para agregar otro.</string>
     <string name="onboarding_intent_title">¿Qué quieres hacer?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Prepararme para un examen</string>

@@ -42,7 +42,7 @@ function AttachedChip({
   return (
     <li
       className={cn(
-        "flex max-w-full items-center gap-1.5 rounded-full py-1 pr-1 pl-3 text-sm",
+        "flex max-w-full items-center gap-1.5 rounded-md py-1 pr-1 pl-3 text-sm",
         unreadable ? "bg-destructive/10 text-destructive-text dark:bg-destructive/20" : "bg-muted",
       )}
     >
@@ -60,7 +60,7 @@ function AttachedChip({
       <Button
         aria-label={t("Remove {title}", { title })}
         className={cn(
-          "size-7 rounded-full",
+          "size-7",
           unreadable && "hover:bg-destructive/20 hover:text-destructive-text",
         )}
         onClick={() => onRemove(item.id)}

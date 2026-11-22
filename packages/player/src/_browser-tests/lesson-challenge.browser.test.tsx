@@ -10,6 +10,35 @@ import { teachingStep } from "../preview/preview-steps";
 const TEAM = { language: "en", members: [{ name: "Priya" }, { name: "Tom" }] };
 
 describe("challenge lesson", () => {
+  it("keeps the starting figures available beside the choices at each decision", async () => {
+    await atViewport({ height: 640, width: 375 }, async () => {
+      renderLessonPlayer({ challengeTeam: TEAM, lesson: buildLesson([teachingStep("challenge")]) });
+
+      const figures = page.getByText("Conversion · 1,200 visits per version · live for 1 day");
+      const reference = page.getByRole("button", { name: "Starting figures" });
+      await expect.element(figures).toBeVisible();
+      await press("Enter");
+
+      await expect.element(reference).toBeInViewport({ ratio: 1 });
+      reference.element().focus();
+      await press("Enter");
+      await expect.element(reference).toHaveFocus();
+      await expect.element(figures).toBeVisible();
+      await page.getByRole("radio", { name: "Go ahead and launch" }).click();
+      await expect.element(figures).toBeVisible();
+      await page.getByRole("button", { name: /^Check/u }).click();
+
+      await expect
+        .element(page.getByRole("heading", { name: "Priya has doubts. What now?" }))
+        .toBeVisible();
+
+      await expect.element(reference).toHaveAttribute("aria-expanded", "false");
+      await expect.element(reference).toBeInViewport({ ratio: 1 });
+      await reference.click();
+      await expect.element(figures).toBeVisible();
+    });
+  });
+
   it("finishes a rushed case with one thing to improve and a practice", async () => {
     renderLessonPlayer({
       challengeTeam: TEAM,
