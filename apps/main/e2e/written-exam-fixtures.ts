@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { writtenAnswerSchema } from "@zoonk/core/exams/essays/writing-contract";
+import { type WritingResult, writtenAnswerSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -211,21 +211,27 @@ export const POINTS_GRADE = {
   rows: CRITERIA.map(({ id, points }) => ({ earned: points / 2, id, max: points })),
   total: { high: 18.7, low: 16.6 },
   zeroReason: null,
-};
+} satisfies WritingResult;
 
 /** The day's first answer, graded with points, admitted and saved as the grader would. */
 export async function addGradedAnswer({
+  admissionId: existingAdmissionId,
   blockId,
+  grade = POINTS_GRADE,
   itemId,
   sessionId,
+  text = GRADED_TEXT,
   userId,
 }: {
+  admissionId?: string;
   blockId: string;
+  grade?: WritingResult;
   itemId: string;
   sessionId: string;
+  text?: string;
   userId: string;
 }) {
-  const admissionId = randomUUID();
+  const admissionId = existingAdmissionId ?? randomUUID();
   const today = toUTCMidnight(new Date());
   const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
 
@@ -240,14 +246,15 @@ export async function addGradedAnswer({
       data: { payload, startedAt: new Date(), status: "active" },
       where: { id: blockId },
     }),
-    prisma.writingAdmission.create({
-      data: { extra: false, id: admissionId, itemIds: [itemId], localDate: today, userId },
-    }),
+    !existingAdmissionId &&
+      prisma.writingAdmission.create({
+        data: { extra: false, id: admissionId, itemIds: [itemId], localDate: today, userId },
+      }),
   ]);
 
   const item = await prisma.item.findUniqueOrThrow({ where: { id: itemId } });
 
-  await prisma.attempt.create({
+  const attempt = await prisma.attempt.create({
     data: {
       answer: {
         conditions: {
@@ -258,9 +265,9 @@ export async function addGradedAnswer({
           version: "firstDraft",
         },
         examBlueprintId: item.examBlueprintId,
-        grade: POINTS_GRADE,
+        grade,
         itemId,
-        text: GRADED_TEXT,
+        text,
         writing: writtenAnswerSchema.shape.writing.parse(
           isJsonObject(item.content) ? item.content.writing : undefined,
         ),
@@ -278,7 +285,7 @@ export async function addGradedAnswer({
     },
   });
 
-  return { text: GRADED_TEXT };
+  return { attemptId: attempt.id, grade, submittedAt: attempt.answeredAt, text };
 }
 
 /** A drill on the same task after the answer, as a lesson of a written skill leaves one. */

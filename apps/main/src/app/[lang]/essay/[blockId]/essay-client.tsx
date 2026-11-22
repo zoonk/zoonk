@@ -27,10 +27,16 @@ export function EssayClient({ essay }: { essay: EssayView }) {
   const ids = { blockId: essay.blockId, sessionId: essay.sessionId };
 
   const actions: WritingActions = {
-    finish: async () => {
+    finish: async (onFinished) => {
       await grading.current;
       const outcome = await finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() });
-      return outcome.status === "finished" && (await navigation.continueSession());
+
+      if (outcome.status !== "finished") {
+        return false;
+      }
+
+      onFinished();
+      return navigation.continueSession();
     },
     saveDraft: (draft, { keepalive }) =>
       saveWritingDraftFromBrowser({ blockId: essay.blockId, draft, keepalive }),

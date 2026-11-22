@@ -284,11 +284,13 @@ class EssayViewModel(
         viewModelScope.launch {
             sending.values.toList().awaitAll()
             val finished = mutableUi.value.finished || store.finish(sessionId, blockId) is MutationResult.Done
+            if (finished) replaceKept(null).join()
             mutableUi.update {
                 it.copy(
                     finishing = false,
                     finishFailures = if (finished) 0 else it.finishFailures + 1,
                     finished = finished,
+                    unsent = if (finished) null else it.unsent,
                 )
             }
             if (finished) mover.continueSession()
@@ -376,7 +378,7 @@ class EssayViewModel(
 
     /** The device's copy of what's on screen, with the draft it was typed over; none once the server has it. */
     private fun currentDraft(): KeptWriting? {
-        val admissionId = admission ?: return null
+        val admissionId = admission ?: return keptText?.takeIf { it.replayed }
         val ui = mutableUi.value
         if (ui.results == null || (ui.text == savedText && sendingText == null && ui.conflict == null)) return null
         return KeptWriting(
@@ -409,12 +411,13 @@ class EssayViewModel(
             while (true) {
                 val ui = mutableUi.value
                 val text = ui.text
-                if (ui.results == null || ui.conflict != null) return
+                if (ui.results == null || ui.conflict != null || ui.closed || ui.finished || keptText?.replayed == true) return
                 if (text == savedText) return mutableUi.update { it.copy(saveFailed = false) }
                 val admissionId = (admit() as? Admitted.Ready)?.admissionId ?: return
                 sendingText = text
                 replaceKept(currentDraft()).join()
                 val result = store.saveDraft(blockId, SaveWritingDraft(admissionId, revision, text))
+                if (admission != admissionId) return
                 sendingText = null
                 mutableUi.update { it.copy(saveFailed = result is MutationResult.Failed) }
                 when (val saved = (result as? MutationResult.Done)?.value) {
@@ -523,6 +526,7 @@ class EssayViewModel(
 
     private fun closeAdmission() {
         admission = null
+        sendingText = null
         writingMs = 0
         writingSince = null
         revision = 0

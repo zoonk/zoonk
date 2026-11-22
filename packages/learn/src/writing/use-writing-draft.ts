@@ -129,9 +129,11 @@ function useKeptDraft(blockId: string, openedRaw: () => string | null) {
 export function useWritingDraft({
   actions,
   essay,
+  showingGrade,
 }: {
   actions: WritingActions;
   essay: WrittenEssay;
+  showingGrade: boolean;
 }) {
   const { blockId } = essay;
   const opened = useOpenedDraft(essay);
@@ -146,6 +148,7 @@ export function useWritingDraft({
   const kept = useKeptDraft(blockId, () => live.current.opened.raw);
   const position = useRef<DraftPosition | null>(null);
   const sending = useRef<Promise<boolean>>(Promise.resolve(true));
+  const gradedAdmission = useRef(showingGrade);
   const locked = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clock = useWritingClock();
@@ -189,15 +192,11 @@ export function useWritingDraft({
   async function save(keepalive: boolean): Promise<boolean> {
     const sent = live.current.text;
 
-    if (live.current.conflict) {
-      return false;
-    }
-
-    if (sent === at().text) {
+    if (gradedAdmission.current || (!live.current.conflict && sent === at().text)) {
       return true;
     }
 
-    if (sent.length > MAX_ESSAY_CHARACTERS) {
+    if (live.current.conflict || sent.length > MAX_ESSAY_CHARACTERS) {
       return false;
     }
 
@@ -277,6 +276,7 @@ export function useWritingDraft({
   }
 
   function restart({ admissionId, from }: { admissionId: string; from: string }) {
+    gradedAdmission.current = false;
     locked.current = false;
     position.current = { admissionId, revision: 0, text: "" };
     clock.reset();
@@ -289,6 +289,7 @@ export function useWritingDraft({
     admissionId: ensureAdmission,
     conflict,
     conflicted: () => Boolean(live.current.conflict),
+    discard: () => kept.replace(null),
     durationMs: clock.durationMs,
     flush,
     /**
@@ -296,12 +297,15 @@ export function useWritingDraft({
      * typed here since stays on this device for the rewrite: the server stops offering its draft once
      * the admission is graded.
      */
-    graded: (gradedText: string) =>
+    graded: (gradedText: string) => {
+      gradedAdmission.current = true;
+
       kept.replace(
         gradedText === live.current.text
           ? null
           : { admissionId: at().admissionId, base: at().revision, text: live.current.text },
-      ),
+      );
+    },
     keepMine: () => answerConflict(true),
     /** While an answer is out for grading, the field takes no edits. */
     lock: (value: boolean) => {

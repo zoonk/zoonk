@@ -53,6 +53,7 @@ final class EssayWriter {
   @ObservationIgnored private var admissionId: String?
   @ObservationIgnored private var revision: Int
   @ObservationIgnored private var savedText: String
+  @ObservationIgnored private var admissionGraded = false
   @ObservationIgnored private var keptByEditor: KeptWriting.Kept?
   /// A save sent over `revision` without an answer yet: it may have landed.
   @ObservationIgnored private var sending: String?
@@ -105,10 +106,12 @@ final class EssayWriter {
 
   var canSend: Bool { hasDraft && status != .grading && conflict == nil }
 
+  private var isEditing: Bool { !admissionGraded && (mode == .question || mode == .write) }
+
   /// What this device typed and the server doesn't have yet goes as soon as the screen opens,
   /// without another keystroke.
   func resumeSaving() {
-    if mode != .result, text != savedText { scheduleSave(after: .zero) }
+    if isEditing, text != savedText { scheduleSave(after: .zero) }
   }
 
   func write(_ next: String) {
@@ -194,6 +197,7 @@ final class EssayWriter {
   }
 
   private func save() async -> Bool {
+    guard isEditing else { return true }
     guard conflict == nil else { return false }
 
     let current = text
@@ -213,7 +217,10 @@ final class EssayWriter {
 
     let draft = WritingDraft(admissionId: admissionId, revision: revision, text: current)
 
-    switch await store.saveWritingDraft(blockId: blockId, draft: draft) {
+    let result = await store.saveWritingDraft(blockId: blockId, draft: draft)
+    guard isEditing, self.admissionId == admissionId else { return true }
+
+    switch result {
     case .done(.saved(let saved)):
       acknowledge(saved)
       return true
@@ -289,6 +296,11 @@ final class EssayWriter {
     keptByEditor = next
   }
 
+  func discardKeptDraft() {
+    replaceKept(nil)
+    editsAfterGrading = nil
+  }
+
   /// The admission its start issued; a block opened without one replays its start.
   private func admission() async -> String? {
     if let admissionId { return admissionId }
@@ -341,20 +353,14 @@ final class EssayWriter {
 
     switch result {
     case .done(.graded(let grade)):
-      status = .idle
-      failures = 0
-      sentForGrading = nil
-      writingTime = .zero
-      writingSince = nil
-      answers.insert(.init(attemptId: "", grade: grade, submittedAt: .now, text: text), at: 0)
-      mode = .result
-      // The grade shows at once; the block read again names the saved answer a rewrite starts from.
+      admissionGraded = true
       let read = await readAnswers()
 
-      // A grade whose answer was lost comes back for the text sent then: what's typed since waits
-      // for the rewrite, never dropped.
-      let recorded = read ? latest?.text : earlier
-      if let recorded, recorded != text {
+      let recorded = (read ? latest?.text : earlier) ?? text
+      if !read {
+        answers.insert(.init(attemptId: "", grade: grade, submittedAt: .now, text: recorded), at: 0)
+      }
+      if recorded != text {
         editsAfterGrading = text
         replaceKept(
           .init(
@@ -363,6 +369,12 @@ final class EssayWriter {
       } else {
         replaceKept(nil)
       }
+      status = .idle
+      failures = 0
+      sentForGrading = nil
+      writingTime = .zero
+      writingSince = nil
+      mode = .result
     case .done(.blockNotActive):
       fail()
       // The block was finished or skipped elsewhere; a fresh read shows it closed.
@@ -413,6 +425,7 @@ final class EssayWriter {
     switch await store.startWriting(blockId: blockId, previousAttemptId: latest.attemptId) {
     case .done(.ready(let id)):
       admissionId = id
+      admissionGraded = false
       revision = 0
       savedText = ""
       sending = nil

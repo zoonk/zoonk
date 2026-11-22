@@ -461,6 +461,8 @@ class EssayViewModelTest {
 
             val kept = checkNotNull(device.keptOnDisk())
             assertEquals(ADMISSION.toString(), kept.admissionId)
+            viewModel.onStop()
+            advanceUntilIdle()
             val restored = with(device) { open() }
             assertEquals(WritingMode.Result, restored.ui.value.mode)
             assertEquals(kept.text, restored.ui.value.unsent)

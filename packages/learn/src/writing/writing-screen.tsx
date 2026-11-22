@@ -52,7 +52,7 @@ function ResultScreen({
   const t = useExtracted();
   const finishing = useFinishTask(finish);
   const label = useHeaderLabel(writing);
-  const done = getNextStep({ grade: graded.grade, text: graded.text }).kind === "done";
+  const done = !unsent && getNextStep({ grade: graded.grade, text: graded.text }).kind === "done";
 
   useEffect(() => focusStepTitle(document.body), []);
 
@@ -150,10 +150,12 @@ export function WritingScreen({
   const [results, setResults] = useState(essay.drafts);
   const [mode, setMode] = useState<Mode>(() => initialMode(essay, results));
   const [rewriting, setRewriting] = useState(false);
-  const draft = useWritingDraft({ actions, essay });
+  const draft = useWritingDraft({ actions, essay, showingGrade: mode === "result" });
   const latest = results[0];
   const closed = essay.status === "completed" || essay.status === "skipped";
   const unsent = latest !== undefined && draft.text.trim() !== "" && draft.text !== latest.text;
+
+  const finish = () => actions.finish(draft.discard);
 
   async function rewrite() {
     if (!latest) {
@@ -177,7 +179,7 @@ export function WritingScreen({
       return (
         <WritingRefused
           hrefs={hrefs}
-          onContinue={actions.finish}
+          onContinue={finish}
           task={{
             minutes: essay.pacing?.minutes ?? null,
             title: essay.writing.title,
@@ -192,7 +194,7 @@ export function WritingScreen({
       return (
         <ResultScreen
           closed={closed}
-          finish={actions.finish}
+          finish={finish}
           graded={latest}
           hrefs={hrefs}
           onRewrite={() => void rewrite()}

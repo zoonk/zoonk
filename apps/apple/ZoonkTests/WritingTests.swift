@@ -688,6 +688,13 @@ final class WritingDraftTests: XCTestCase {
     await first.send()
     XCTAssertEqual(first.editsAfterGrading, "A, improved")
 
+    // The editor disappears on results and can flush again as the app goes inactive.
+    let savesBeforeLeaving = await server.saves.count
+    await first.flush()
+    let savesAfterLeaving = await server.saves.count
+    XCTAssertEqual(savesAfterLeaving, savesBeforeLeaving)
+    XCTAssertEqual(KeptWriting.read(blockId)?.afterGrading, true)
+
     // The app is killed: the next launch reads the block again and has only this device's copy.
     let store = Self.store(server)
     let essay = store.essay(blockId: blockId)

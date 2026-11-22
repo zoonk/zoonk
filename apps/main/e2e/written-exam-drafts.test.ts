@@ -2,7 +2,7 @@ import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
-import { POINTS_GRADE, createWrittenExamDay } from "./written-exam-fixtures";
+import { POINTS_GRADE, addGradedAnswer, createWrittenExamDay } from "./written-exam-fixtures";
 
 const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -292,55 +292,124 @@ test.describe("Written answer drafts", () => {
     }
   });
 
-  test("a grade replayed for the text sent first says so, and keeps the edits made since", async ({
+  test("a complete grade replayed for the first answer keeps the edits through leaving and rewriting", async ({
     browser,
   }) => {
     const day = await createWrittenExamDay();
     const page = await openAs(browser, day.user);
+    const first = "The version sent first";
+    const changed = "The version sent first, then edited";
 
     try {
       const field = await openEditor(page);
-      await field.fill("The version sent first");
-      let sends = 0;
+      await field.fill(first);
+      const admissionId = await admissionOf(day.blockId);
 
-      // The first send's answer is lost. Grading it for real costs a model call, so the second
-      // send gets what the server replays for an admission it already graded: the first text's.
+      const admission = await prisma.writingAdmission.findUniqueOrThrow({
+        where: { id: admissionId },
+      });
+
+      let graded: Awaited<ReturnType<typeof addGradedAnswer>> | undefined;
+
+      // Record the first grade without a model call, then lose its response.
       await page.route("**/submissions", async (route) => {
-        sends += 1;
-
-        if (sends === 1) {
-          await route.abort();
+        if (graded) {
+          await route.fulfill({ json: graded });
           return;
         }
 
-        await route.fulfill({
-          json: {
-            attemptId: crypto.randomUUID(),
-            grade: POINTS_GRADE,
-            submittedAt: new Date().toISOString(),
-            text: "The version sent first",
+        graded = await addGradedAnswer({
+          admissionId,
+          blockId: day.blockId,
+          grade: {
+            ...POINTS_GRADE,
+            content: { high: 30, low: 30 },
+            deduction: { high: 0, low: 0 },
+            errors: [],
+            nextStep: null,
+            rows: POINTS_GRADE.rows.map((row) => ({ ...row, earned: row.max })),
+            total: { high: 30, low: 30 },
           },
+          itemId: admission.itemIds[0]!,
+          sessionId: day.sessionId,
+          text: first,
+          userId: day.user.id,
         });
+
+        await route.abort();
       });
 
       await page.getByRole("button", { name: "Grade answer" }).click();
       await expect(page.getByText(/That didn't go through/u)).toBeVisible();
 
-      await field.fill("The version sent first, then edited");
+      let lateSaves = 0;
+
+      await page.route("**/draft", async (route) => {
+        lateSaves += 1;
+        await route.fulfill({ status: 409 });
+      });
+
+      await field.fill(changed);
       await page.getByRole("button", { name: "Grade answer" }).click();
 
-      await expect(
-        page.getByText(
-          "This grade is for the version you sent first. Your changes are kept for your rewrite.",
-        ),
-      ).toBeVisible();
-
-      const kept = await page.evaluate(
-        (key) => localStorage.getItem(key),
-        `writing:${day.blockId}`,
+      const note = page.getByText(
+        "This grade is for the version you sent first. Your changes are kept for your rewrite.",
       );
 
-      expect(kept).toContain("The version sent first, then edited");
+      const rewrite = page.getByRole("button", { exact: true, name: "Rewrite" });
+      await expect(note).toBeVisible();
+      await expect(rewrite).toBeVisible();
+      await expect(page.getByRole("button", { exact: true, name: "Skip" })).toBeVisible();
+
+      const savesBeforeLeaving = lateSaves;
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
+      await page.goto(`/essay/${day.blockId}`);
+      await page.reload();
+      await expect(note).toBeVisible();
+      expect(lateSaves).toBe(savesBeforeLeaving);
+
+      await page.unroute("**/draft");
+      await rewrite.click();
+      await expect(page.getByLabel("Rewrite what needs work")).toHaveValue(changed);
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("finishing a graded task discards the edits kept for a rewrite", async ({ browser }) => {
+    const day = await createWrittenExamDay();
+    const page = await openAs(browser, day.user);
+    const key = `writing:${day.blockId}`;
+
+    await addGradedAnswer({
+      blockId: day.blockId,
+      itemId: day.items[0]!.id,
+      sessionId: day.sessionId,
+      userId: day.user.id,
+    });
+
+    const admissionId = await admissionOf(day.blockId);
+
+    try {
+      await page.goto(`/essay/${day.blockId}`);
+
+      await page.evaluate(
+        ({ id, storageKey }) =>
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({ admissionId: id, base: 1, text: "Kept for a rewrite" }),
+          ),
+        { id: admissionId, storageKey: key },
+      );
+
+      await page.reload();
+      await expect(page.getByText(/Your changes are kept for your rewrite/u)).toBeVisible();
+      await page.getByRole("button", { exact: true, name: "Skip" }).click();
+
+      await expect
+        .poll(() => page.evaluate((entry) => localStorage.getItem(entry), key))
+        .toBeNull();
     } finally {
       await page.context().close();
     }

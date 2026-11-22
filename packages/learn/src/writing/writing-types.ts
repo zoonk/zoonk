@@ -19,8 +19,8 @@ export type WritingDraftAnswer =
 type WritingSubmitAnswer = EssayDraft | null;
 
 export type WritingActions = {
-  /** False when it didn't go through. */
-  finish: () => Promise<boolean>;
+  /** Calls onFinished when completion is recorded, then says whether the learner moved on. */
+  finish: (onFinished: () => void) => Promise<boolean>;
   /** `keepalive`: the page is going away, so the request must outlive it. */
   saveDraft: (draft: WritingDraft, options: { keepalive: boolean }) => Promise<WritingDraftAnswer>;
   /** A rewrite names the graded answer it starts from; anything else replays the block's start. */

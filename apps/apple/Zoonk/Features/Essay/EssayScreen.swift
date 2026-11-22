@@ -431,7 +431,9 @@ private struct EssayContent: View {
         })
 
       switch result {
-      case .done: return true
+      case .done:
+        writer.discardKeptDraft()
+        return true
       case .failed: return false
       case .obsolete: return nil
       }
