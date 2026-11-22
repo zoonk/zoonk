@@ -142,7 +142,7 @@ class LevelTestStepFlowTest {
         show()
         tap("Skip")
 
-        assertEquals(1, placementAnswers)
+        rule.runOnIdle { assertEquals(1, placementAnswers) }
     }
 
     @Test

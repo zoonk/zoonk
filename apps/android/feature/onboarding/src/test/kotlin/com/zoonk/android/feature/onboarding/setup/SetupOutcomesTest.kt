@@ -11,6 +11,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.VisitOutcome
+import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
@@ -218,19 +219,74 @@ class SetupOutcomesTest {
         }
 
     @Test
-    fun aLevelTestSkipSavesTheSetupsStepItWasGiven() =
+    fun aLevelTestSkipContinuesOnceAndStaysPressedUntilTheStepSaves() =
         check { store, _ ->
-            var saved = 0
             val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
-            vm.skip {
-                saved++
-                WriteOutcome.Done(Unit)
+            val answer = CompletableDeferred<WriteOutcome<Unit>>()
+            var saves = 0
+
+            vm.skip()
+            runCurrent()
+            assertEquals(Pressed.Other, vm.pressed)
+            assertNull(vm.skipped.value)
+
+            gate.complete(Unit)
+            runCurrent()
+            assertEquals(Pressed.Other, vm.pressed)
+            repeat(2) {
+                vm.skipped.act {
+                    saves++
+                    vm.completeSkip(answer)
+                }
             }
+            runCurrent()
+            assertEquals(1, saves)
+            assertEquals(Pressed.Other, vm.pressed)
+
+            answer.complete(WriteOutcome.Done(Unit))
+            runCurrent()
+            assertNull(vm.pressed)
+            assertFalse(vm.failed)
+        }
+
+    @Test
+    fun aLevelTestSkipThatFailsToFinishDoesNotContinue() =
+        check(fails = true) { store, _ ->
+            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
+            vm.skip()
             gate.complete(Unit)
             runCurrent()
 
-            assertEquals(1, saved)
-            assertFalse(vm.failed)
+            assertNull(vm.skipped.value)
+            assertNull(vm.pressed)
+            assertTrue(vm.failed)
+        }
+
+    @Test
+    fun aLevelTestSkipThatFailsToSaveTheStepShowsTheSkipFailure() =
+        check { store, _ ->
+            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
+            vm.skip()
+            gate.complete(Unit)
+            runCurrent()
+            vm.skipped.act { vm.completeSkip(CompletableDeferred(WriteOutcome.Failed)) }
+            runCurrent()
+
+            assertNull(vm.pressed)
+            assertTrue(vm.failed)
+        }
+
+    @Test
+    fun aLevelTestSkipThatFinishesAfterLeavingDoesNotContinue() =
+        check { store, _ ->
+            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
+            vm.skip()
+            runCurrent()
+            vm.visit.end()
+            gate.complete(Unit)
+            runCurrent()
+
+            assertNull(vm.skipped.value)
         }
 
     @Test

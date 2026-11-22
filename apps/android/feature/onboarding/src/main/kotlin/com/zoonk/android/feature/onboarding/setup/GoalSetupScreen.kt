@@ -511,8 +511,8 @@ private fun ColumnScope.QuestionStep(
         OnboardingStep.PLACEMENT -> {
             fun placementAnswer(attemptId: UUID? = null) =
                 OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT, attemptId))
-            val placed: suspend () -> WriteOutcome<*> = {
-                vm.answer(placementAnswer(), from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
+            val placed = {
+                vm.answer(placementAnswer(), from = OnboardingStep.PLACEMENT, showFailure = false)
             }
             if (view.goal.kind == Goal.Kind.EXAM) {
                 FocusTestFlow(
@@ -524,7 +524,7 @@ private fun ColumnScope.QuestionStep(
                     onRetryRun = onRetryRun,
                     onProgress = { vm.placementProgress = it },
                     onProgressLabel = { vm.placementProgressLabel = it },
-                    handBack = placed,
+                    handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {

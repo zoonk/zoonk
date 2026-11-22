@@ -21,6 +21,7 @@ import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TapAnswer
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -34,11 +35,12 @@ internal class LevelTestPlanViewModel(
     private val store: OnboardingStore,
     handle: SavedStateHandle,
 ) : ViewModel() {
-    /** This visit to the test: a save that fails, and the topic walk opening, show only on it. */
     val visit = Visit()
 
     /** The whole-course test's walk through the course's topics opened: the frame goes on to it. */
     val walking = visit.outcome<Unit>()
+
+    val skipped = visit.outcome<Unit>()
 
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
@@ -54,8 +56,9 @@ internal class LevelTestPlanViewModel(
     var testOutId by mutableStateOf(savedTestOut.toUuid())
         private set
 
-    var pressed by mutableStateOf<Pressed?>(null)
-        private set
+    private var saving by mutableStateOf<Pressed?>(null)
+
+    val pressed get() = saving ?: Pressed.Other.takeIf { skipped.value != null }
 
     var answering by mutableStateOf(false)
         private set
@@ -106,15 +109,21 @@ internal class LevelTestPlanViewModel(
         }
     }
 
-    /** Onboarding's Skip before a test opened: ends the one that never opened, then [saveStep] goes on. */
-    fun skip(saveStep: suspend () -> WriteOutcome<*>) =
-        save(Pressed.Other) {
-            when (store.finishLevelTest(goalId)) {
-                is WriteOutcome.Done -> saveStep().let { it is WriteOutcome.Done || it == WriteOutcome.Obsolete }
-                WriteOutcome.Obsolete -> true
-                else -> false
-            }
+    fun skip() =
+        save(Pressed.Other) { asked ->
+            val finished = store.finishLevelTest(goalId)
+            if (finished is WriteOutcome.Done) skipped.send(asked, Unit)
+            finished is WriteOutcome.Done || finished == WriteOutcome.Obsolete
         }
+
+    fun completeSkip(answer: Deferred<WriteOutcome<*>>?) {
+        skipped.clear()
+        if (answer == null) return
+        save(Pressed.Other) {
+            val saved = answer.await()
+            saved is WriteOutcome.Done || saved == WriteOutcome.Obsolete
+        }
+    }
 
     /** After a whole-course level test, opens its walk through the course's topics. */
     fun walkTopics() =
@@ -185,12 +194,12 @@ internal class LevelTestPlanViewModel(
         action: suspend (asked: Int) -> Boolean,
     ) {
         if (busy) return
-        pressed = button
+        saving = button
         failure.clear()
         val asked = visit.number
         viewModelScope.launch {
             if (!action(asked)) failure.send(asked, Unit)
-            pressed = null
+            saving = null
         }
     }
 }
