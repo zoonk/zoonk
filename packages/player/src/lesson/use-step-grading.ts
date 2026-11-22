@@ -2,6 +2,7 @@
 
 import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
+import { CHECK_SLOW_MS } from "@zoonk/learn/check-note";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { type Dispatch, useCallback, useRef } from "react";
 import { fromServerCheck, fromSpokenGrade } from "./_utils/lesson-results";
@@ -15,8 +16,9 @@ type RecordContext = CheckContext & { attemptId: string; isCorrect: boolean };
 
 type PendingAttempt = { attemptId: string; text: string };
 
+/** @internal */
 export const CHECK_BOUNDS = {
-  slowMs: 15_000,
+  slowMs: CHECK_SLOW_MS,
   timeoutMs: { spoken: 60_000, typed: 45_000 },
 } as const;
 

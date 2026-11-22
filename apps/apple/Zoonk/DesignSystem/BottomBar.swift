@@ -189,6 +189,9 @@ struct BarNote: View {
     /// A failure the screen is still working through, such as an answer being sent again: drawn as
     /// a failure, read as a status.
     case waiting
+    /// Drawn as a status but not read as it shows, such as the line while the learner records:
+    /// VoiceOver's speech would end up in the recording.
+    case hint
   }
 
   struct Action {
@@ -236,7 +239,7 @@ struct BarNote: View {
 
   /// What the bar reads politely as this note shows or changes; a failure reads itself at once.
   var politeLine: String? {
-    guard tone != .failure, content == nil else { return nil }
+    guard [.status, .waiting].contains(tone), content == nil else { return nil }
     return [heading, message].compactMap { $0.map { String($0.characters) } }.joinedSentences()
   }
 
@@ -255,7 +258,7 @@ struct BarNote: View {
       switch tone {
       case .failure:
         FailureLine(message: message)
-      case .status:
+      case .status, .hint:
         Text(message)
           .foregroundStyle(.mutedForeground)
       case .waiting:

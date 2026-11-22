@@ -30,6 +30,7 @@ import com.zoonk.api.models.MistakePracticeFeedback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -262,6 +263,50 @@ class MistakePracticeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonListening() = show("original-lesson-listening", entry = listeningReplay())
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonCantListen() =
+        show("original-lesson-cant-listen", entry = listeningReplay(), play = { rule.onNodeWithText("I can't listen now").performClick() })
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-xhdpi")
+    fun originalLessonListeningExpanded() = show("original-lesson-listening-expanded", entry = listeningReplay())
+
+    private fun listeningReplay(): JsonObject {
+        val entry = fixture("mistake-practice-lesson-entry")
+        val lesson = entry.getValue("lesson").jsonObject
+        val step = lesson.getValue("step").jsonObject
+        val bank =
+            listOf("Quanto", "é", "o", "aluguel?", "custa", "renda").joinToString(",") {
+                """{"audioUrl":null,"romanization":null,"translation":null,"word":"$it"}"""
+            }
+        val listening =
+            Json.parseToJsonElement(
+                """
+                {"id":${step.getValue("id")},"kind":"listening","position":2,"skillId":${step.getValue("skillId")},"wordHints":null,
+                 "exercise":{"content":{},"fillBlankOptions":[],"id":"00000000-0000-4000-8000-000000000001","kind":"listening",
+                  "matchColumnsRightItems":[],"position":0,"readingPromptWords":[],"sentenceWordOptions":[],"translationOptions":[],
+                  "vocabularyOptions":[],"word":null,"wordBankOptions":[$bank],
+                  "sentence":{"audioUrl":"https://blob.test/s.mp3","distractors":[],"explanation":null,"id":"s-1","ordersPending":false,
+                   "otherSentenceOrders":[],"otherTranslationOrders":[],"readsItself":false,"romanization":null,"sentence":"How much is the rent?",
+                   "translation":"Quanto é o aluguel?","translationDistractors":[]}}}
+                """.trimIndent(),
+            )
+        return JsonObject(
+            entry +
+                (
+                    "lesson" to
+                        JsonObject(
+                            lesson + mapOf("step" to listening, "language" to JsonPrimitive("pt"), "targetLanguage" to JsonPrimitive("en")),
+                        )
+                ),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun wordBankReplayWrong() =
         show(
             "word-bank-replay-wrong",
@@ -333,6 +378,7 @@ class MistakePracticeScreenshots {
                     "ordersPending" to JsonPrimitive(false),
                     "otherSentenceOrders" to JsonArray(emptyList()),
                     "otherTranslationOrders" to JsonArray(emptyList()),
+                    "readsItself" to JsonPrimitive(false),
                     "romanization" to JsonNull,
                     "sentence" to JsonPrimitive("Yo veo un gato."),
                     "translation" to JsonPrimitive("I see a cat."),

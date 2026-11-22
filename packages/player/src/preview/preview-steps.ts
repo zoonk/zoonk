@@ -133,6 +133,7 @@ export function teachingStep<TKind extends ScreenKind>(
   return contentStep(kind, { content: playableStepContent[kind], ...options });
 }
 
+/** @internal */
 export function spokenAnswerStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
   return {
     ...contentStep("spokenAnswer", { content: playableStepContent.spokenAnswer, ...options }),
@@ -240,6 +241,19 @@ export function languageStep(
     position: 0,
     skillId: null,
     wordHints: WORD_KINDS.has(kind) ? RENT_HINTS : null,
+  };
+}
+
+export function spokenSentenceStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
+  return {
+    ...spokenAnswerStep(options),
+    content: parseStepContent("spokenAnswer", {
+      language: "en",
+      prompt: "Pergunte quanto é o aluguel.",
+      targetText: "How much is the rent?",
+      translation: "Quanto é o aluguel?",
+    }),
+    listening: languageStep("listening").exercise,
   };
 }
 

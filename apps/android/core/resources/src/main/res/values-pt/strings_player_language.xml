@@ -15,14 +15,12 @@
   "player_language_move_later": "9c854455b90b7004d23758761255ea7fc7fb3a5afd2d474a5e51df2ea7d7282c",
   "player_language_not_a_pair": "5acfdf43a00676c026aea589341424d4d0ba301274af75d692202f0b29d0b83e",
   "player_language_pick_words": "d1188ced69b8a30beeedb53edbc449f346bd57d1bf6afb128472479eafb6f641",
-  "player_language_play": "b08998a1c52a4186bef71b25d55b53460ca88164d4ae820c33cabed3658b0570",
   "player_language_play_pronunciation": "28b5ab81ea11edc02ffd1338e75f78738b9a6ab8568b7d2d01bcc53ef4b255a9",
   "player_language_position": "f7b6ca01e7dafa2a304edc6a47314d4369ea5393edd1e3e97e844425ecd680fb",
   "player_language_pronunciation_tip": "3e585b139f8a1297dd5d84491870d9444af32b621b8342be60ef52f3901ebd6b",
   "player_language_remove": "30032ab536c44c33fcc3905e0549ed60537fce9782a9d92c920f39230e564931",
   "player_language_selected": "26120ee8b56e0602e6563273f420053de00960ee72bf72573ab6dc3cc21d6983",
   "player_language_show_translation": "4d23175614710461c127a5d03aa10ddb3a2f3b65cd2afe552b177b2ceb1d73e4",
-  "player_language_stop": "6ba3879cad0bec77ab2eaa3536b80152daba1bfecba19c57f6480a9185a09fc9",
   "player_language_translate": "2f7bbdfdc824b4da1dd5d09489acda8e9a73fb189eaab05bd88d66f067d20584",
   "player_language_usage": "56a91713474bd7e2ef8fbd6a7d19e7a6b1f2e32b9795f0d616124771b9fd6570",
   "player_language_vocabulary": "3cde074fdc078a7fa0773f9f45ee8a38a66af7044dbed6a54e8dabc9ef09122b",
@@ -37,9 +35,6 @@
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">Qual tem esse significado?</string>
     <string name="player_language_what_do_you_hear">O que você ouve?</string>
-    <string name="player_language_play">Reproduzir</string>
-    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">Parar</string>
     <string name="player_language_play_pronunciation">Ouvir pronúncia</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Vocabulário: %1$s</string>

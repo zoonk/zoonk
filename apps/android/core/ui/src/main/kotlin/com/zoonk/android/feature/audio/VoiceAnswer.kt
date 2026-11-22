@@ -56,6 +56,8 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TakeTaskBarKey
+import com.zoonk.android.ui.components.TaskBarKey
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.theme.GeistMono
 import kotlinx.coroutines.delay
@@ -76,7 +78,7 @@ class VoiceAnswerModel(
     var checking by mutableStateOf(false)
         private set
 
-    /** The recorder on its screen, until it goes for real; [VoiceAnswerLine] stands for it. */
+    /** The recorder on its screen, until it goes for real; [VoiceAnswerLimit] and [recordNote] stand for it. */
     internal val visit = Visit()
 
     internal val issue = visit.outcome<VoiceIssue>()
@@ -126,7 +128,7 @@ sealed interface VoiceIssue {
 }
 
 /**
- * The take for [key], graded by [grade], shared by its [VoiceAnswerButton] and its [VoiceAnswerLine] wherever each is drawn,
+ * The take for [key], graded by [grade], shared by its [VoiceAnswerButton] and its [recordNote] wherever each is drawn,
  * so each place that makes it grades it the same way. Wherever the take shows, even only as "The microphone is off",
  * coming back with the microphone allowed gives it back.
  */
@@ -145,31 +147,10 @@ fun voiceAnswerModel(
 }
 
 /**
- * Record, then grade with [model]'s grading in its own scope, so a take still checking through a
- * rotation is graded the same. With [onBlocked], a denied microphone hands over to the screen's
- * other way to answer instead of showing how to turn it on. A take still running when the screen
- * leaves or the app goes to the background is thrown away.
+ * The take's Record and Stop, in its screen's bottom bar, with [recordNote] over it saying how it went. With [onBlocked], a denied
+ * microphone hands over to the screen's other way to answer instead of showing how to turn it on. A take still running when the
+ * screen leaves or the app goes to the background is thrown away.
  */
-@Composable
-fun VoiceAnswerRecorder(
-    model: VoiceAnswerModel,
-    navigator: AppNavigator,
-    modifier: Modifier = Modifier,
-    asksToSpeak: Boolean = true,
-    onBlocked: (() -> Unit)? = null,
-) {
-    if (model.microphoneOff && onBlocked == null) {
-        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), modifier)
-        return
-    }
-
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        VoiceAnswerButton(model, onBlocked = onBlocked)
-        VoiceAnswerLine(model, navigator, asksToSpeak = asksToSpeak)
-    }
-}
-
-/** The take's Record and Stop, for a screen that puts it in its bottom bar; [VoiceAnswerLine] says how it went. */
 @Composable
 fun VoiceAnswerButton(
     model: VoiceAnswerModel,
@@ -189,63 +170,32 @@ fun VoiceAnswerButton(
         )
     val status by model.recorder.state.collectAsStateWithLifecycle()
 
-    RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = modifier, enabled = !model.checking)
+    RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = modifier, busy = model.checking)
 }
 
 /**
- * What [model]'s take is doing: listening, checking, what went wrong, or a limit with its way on. The line is
- * the take's visit, as the one piece shown from Record through the grading to what went wrong (a lesson's bar
- * drops Record while the take is checked), so the take's visit ends only when the line goes for real.
+ * The take's limit with its way on, once it hits one. It is the take's visit, as the one piece shown from Record through the
+ * grading to what went wrong (a lesson's bar drops Record while the take is checked), so the take's visit ends only when it goes
+ * for real.
  */
 @Composable
-fun VoiceAnswerLine(
+fun VoiceAnswerLimit(
     model: VoiceAnswerModel,
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
-    asksToSpeak: Boolean = true,
 ) {
     VisitOf(model.visit)
     val status by model.recorder.state.collectAsStateWithLifecycle()
-    val recording = status is VoiceRecorder.Status.Recording
-    val slow by produceState(false, model.checking) {
-        value = false
-        if (model.checking) {
-            delay(SLOW_CHECK_MS)
-            value = true
-        }
-    }
-    val issue = model.issue.value.takeUnless { recording }
-    val hint =
-        when {
-            recording -> stringResource(R.string.audio_listening)
-            model.checking && slow -> stringResource(R.string.audio_checking_slow)
-            model.checking -> stringResource(R.string.audio_checking)
-            issue is VoiceIssue.Limited -> null
-            issue == VoiceIssue.NoSpeech -> stringResource(R.string.audio_no_speech)
-            issue == VoiceIssue.Failed -> stringResource(R.string.audio_check_failed)
-            asksToSpeak -> stringResource(R.string.audio_say_it)
-            else -> null
-        }
+    val issue = model.issue.value.takeUnless { status is VoiceRecorder.Status.Recording }
+    if (issue !is VoiceIssue.Limited) return
 
-    if (issue is VoiceIssue.Limited) {
-        LimitNotice(
-            issue.limit,
-            LimitSubject.Help,
-            onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSubscribe = { navigator.open(AppRoute.Subscription) },
-            modifier = modifier,
-        )
-        return
-    }
-    hint?.let {
-        Text(
-            text = it,
-            // Announcing the take's start would speak into the microphone.
-            modifier = modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
-            color = if (issue == VoiceIssue.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    LimitNotice(
+        issue.limit,
+        LimitSubject.Help,
+        onCreateAccount = { navigator.open(AppRoute.Login) },
+        onSubscribe = { navigator.open(AppRoute.Subscription) },
+        modifier = modifier,
+    )
 }
 
 /**
@@ -284,8 +234,8 @@ fun rememberRecordTap(
 }
 
 /**
- * Record while idle; Stop with the take's clock while recording, in the same filled button. It
- * stays one button through both, so TalkBack keeps its focus.
+ * Record while idle; Stop with the take's clock while recording, in the same filled button; [busy] while the take is checked. It
+ * stays one button through all three, so TalkBack keeps its focus. In a frame's bar it's the main action, so Enter presses it.
  */
 @Composable
 fun RecordButton(
@@ -293,13 +243,16 @@ fun RecordButton(
     onStart: () -> Unit,
     onStop: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    busy: Boolean = false,
 ) {
     val recording = status as? VoiceRecorder.Status.Recording
+    val held = busy && recording == null
+    val press = if (recording != null) onStop else onStart
+    TakeTaskBarKey(TaskBarKey.Main, press.takeUnless { held })
     Button(
-        onClick = if (recording != null) onStop else onStart,
+        onClick = press,
         modifier = modifier,
-        enabled = enabled || recording != null,
+        busy = held,
     ) {
         if (recording == null) {
             Text(stringResource(R.string.audio_record))
@@ -329,9 +282,6 @@ private fun RecordingClock(startedAt: Long) {
 }
 
 private const val CLOCK_TICK_MS = 250L
-
-/** Main's spoken answers say so after 15 seconds. */
-private const val SLOW_CHECK_MS = 15_000L
 
 private const val CLOCK_ALPHA = 0.7f
 

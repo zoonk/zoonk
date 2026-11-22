@@ -6,11 +6,9 @@ import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { SnailIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
-import { CreateAccountLink } from "../../_components/create-account-link";
 import { ItemLine } from "../../questions/item-text";
 import { SpeechFailedNote, SpeechStatusIcon, withoutFailure } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
-import { type PronunciationNotice } from "./use-pronunciation-round";
 
 type ReviewWord = PronunciationReviewsView["words"][number];
 
@@ -109,20 +107,6 @@ export function PronunciationWord({ language, word }: { language: string; word: 
   );
 }
 
-function useNoticeMessage(notice: PronunciationNotice | null): string | null {
-  const t = useExtracted();
-
-  if (notice === "noSpeech") {
-    return t("We couldn't hear the word. Try again a little closer.");
-  }
-
-  if (notice === "signUpRequired") {
-    return t("Create your free account to continue.");
-  }
-
-  return notice === "failed" ? t("That didn't go through. Try again.") : null;
-}
-
 export function useWordRecorder(
   onRecorded: (recording: { audio: Blob; durationMs: number }) => void,
 ) {
@@ -130,50 +114,4 @@ export function useWordRecorder(
   const recorder = useVoiceRecorder({ onRecorded });
 
   return { available: canRecord && recorder.status !== "denied", recorder };
-}
-
-export function RecorderStatus({
-  available,
-  notice,
-  pending,
-  recording,
-}: {
-  available: boolean;
-  notice: PronunciationNotice | null;
-  pending: boolean;
-  recording: boolean;
-}) {
-  const t = useExtracted();
-  const message = useNoticeMessage(notice);
-
-  if (!available) {
-    return (
-      <p className="text-muted-foreground text-sm" role="status">
-        {t("The microphone isn't available here. You can skip this word.")}
-      </p>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-start gap-3">
-      <p aria-live="polite" className="text-muted-foreground text-sm">
-        {pending && t("Listening to how it sounded…")}
-        {!pending &&
-          recording &&
-          t({
-            description: '"Stop" is the label of the record button.',
-            message: "Recording… Press Stop when you're done.",
-          })}
-        {!pending &&
-          !recording &&
-          (message ??
-            t({
-              description: '"Record" is the label of the record button.',
-              message: "Press Record and say the word out loud",
-            }))}
-      </p>
-
-      {notice === "signUpRequired" && <CreateAccountLink />}
-    </div>
-  );
 }

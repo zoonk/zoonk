@@ -15,14 +15,12 @@
   "player_language_move_later": "f916a48fb4ba560a02031f3d66d285536b3f4445c96696d71396a0ae9a578850",
   "player_language_not_a_pair": "95bfd1c4a931b3b110ac288bade9722e3635180bc53436d4fdfc0961afb566fe",
   "player_language_pick_words": "27241c79c4c6b19a0feaf1f326d7d083d659283e1ae1df36e0207047c17b991c",
-  "player_language_play": "7d3ae87f92a53bd0353ed0b21087540540b72895eeb7c1441ea5ff6e26ac3887",
   "player_language_play_pronunciation": "d0e5aa73fe74536b15521d45183570d9b67148a9de75ea21adba00823cd2fd82",
   "player_language_position": "53be05b3f546962c21f3f538785e02329d5e5bddea47db3d07aee084b387b785",
   "player_language_pronunciation_tip": "3774bed6789c3489e454de8d6a50b5d778d5e43be5ed528d0cddea3068589b3d",
   "player_language_remove": "6023582fd97f79ebe7ee821b057bb50f53e752101f12692c2d7724405dd7aef6",
   "player_language_selected": "e57cc644de7f75b51b0752c39fe7428f4f4a67cd403682cefa05023a40bdfef7",
   "player_language_show_translation": "64bf1166cfd16cb0d558fc92814bc068ea160def48b12a805215a7e81a2d5dce",
-  "player_language_stop": "39384a67f7ceff696783ee13a339d83f4559316da05e351dccaddb9b4a3d3519",
   "player_language_translate": "8a127ac14d8dd565ac09fc272f44248fbaec8112733b062481665294ef0198bd",
   "player_language_usage": "316d589b51836c8fe37412350330dc5fe21321cf1783a36ad82b3c1963ca0373",
   "player_language_vocabulary": "c51ab5d310158807edfc9400f4a277ebd4990a9af90643ffb1e04e8fca61d2f8",
@@ -37,9 +35,6 @@
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">Was bedeutet das?</string>
     <string name="player_language_what_do_you_hear">Was hörst du?</string>
-    <string name="player_language_play">Abspielen</string>
-    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">Stopp</string>
     <string name="player_language_play_pronunciation">Aussprache abspielen</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Wortschatz: %1$s</string>

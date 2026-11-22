@@ -14,9 +14,14 @@ struct MistakeLessonQuestionView: View {
 
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceFocus) private var focuses
+  @Environment(\.lessonAudio) private var audio
+  @Environment(\.spokenAnswerRecording) private var recording
   @State private var state: LessonPlayerState
   @State private var work = ActivityWork()
+  @State private var prompt = LessonPromptAudio()
+  @State private var soundOwner = UUID().uuidString
   @State private var cantTalk = LessonTodayChoices.standard.isChosenToday(.cantTalk)
+  @State private var cantListen = LessonTodayChoices.standard.isChosenToday(.cantListen)
   @State private var micBlocked = false
   @State private var attemptId = UUID().uuidString.lowercased()
   @State private var sent: LessonAnswer?
@@ -25,6 +30,8 @@ struct MistakeLessonQuestionView: View {
   @State private var sentDontKnow = false
   @State private var sentTimedOut = false
   @State private var speechChecking = false
+  /// A spoken question's Record takes Check's place in the bar, as in the lesson.
+  @State private var recordInBar = RecordInBar()
   @State private var showsSaveReport = false
   @State private var pressedWithFocus: PracticeFocus?
   @State private var grade: MistakePracticeGrade?
@@ -65,6 +72,19 @@ struct MistakeLessonQuestionView: View {
       .compactMap { $0 }.joinedSentences()
   }
 
+  private var sounds: LessonAudio {
+    audio.owned(by: soundOwner)
+  }
+
+  private var shownPrompt: URL? {
+    guard !showsIdea else { return nil }
+    let mode = replay.step.spokenAnswerMode(
+      canSpeak: recording.input != nil, cantTalk: cantTalk, cantListen: cantListen,
+      micBlocked: micBlocked, lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
+      heard: state.currentResult?.heard)
+    return replay.step.shownPromptAudio(spokenMode: mode, cantListen: cantListen)
+  }
+
   private func press(_ control: PracticeFocus) {
     pressedWithFocus = focuses?.has(control) == true ? control : nil
   }
@@ -89,8 +109,10 @@ struct MistakeLessonQuestionView: View {
   }
 
   var body: some View {
+    let promptURL = shownPrompt
+
     PracticeTaskLayout(
-      segments: segments, index: index,
+      segments: segments, index: index, note: recordInBar.note,
       fillsHeight: !showsIdea && replay.step.checkAddedPlace(isOneColumn: true) == .aboveBank
     ) {
       if showsIdea, let lesson = entry.drill.lesson {
@@ -125,34 +147,39 @@ struct MistakeLessonQuestionView: View {
             showsIdea = false
             shownAt = .now
           }
-        } else if grade != nil {
-          PracticeMainButton(
-            title: LocalizedStringResource(
-              "Continue", table: "Practice", comment: "Moves on after a grade."),
-            icon: .forward, action: next
-          )
-          .practiceFocus(.next)
         } else {
-          PracticeSecondaryButton(
-            title: entry.drill.kind == .noGuessing
-              ? LocalizedStringResource(
-                "I'm not sure", table: "Practice",
-                comment: "Honest way out of a guess in a no-guessing drill.")
-              : LocalizedStringResource(
-                "I don't know yet", table: "Practice",
-                comment: "Answers a question as not known yet."),
-            icon: .notSure, isDisabled: speechChecking || state.phase != .playing
-          ) {
-            press(.notSure)
-            Task { await send(dontKnow: true) }
+          if grade == nil {
+            PracticeSecondaryButton(
+              title: entry.drill.kind == .noGuessing
+                ? LocalizedStringResource(
+                  "I'm not sure", table: "Practice",
+                  comment: "Honest way out of a guess in a no-guessing drill.")
+                : LocalizedStringResource(
+                  "I don't know yet", table: "Practice",
+                  comment: "Answers a question as not known yet."),
+              icon: .notSure, isDisabled: speechChecking || state.phase != .playing
+            ) {
+              press(.notSure)
+              Task { await send(dontKnow: true) }
+            }
+            .practiceFocus(.notSure)
+            if failures > 0 {
+              PracticeSaveError(
+                failures: failures, onReport: { showsSaveReport = true },
+                retry: { Task { await send(retry: true) } })
+            }
           }
-          .practiceFocus(.notSure)
-          if failures > 0 {
-            PracticeSaveError(
-              failures: failures, onReport: { showsSaveReport = true },
-              retry: { Task { await send(retry: true) } })
+          if let promptURL {
+            LessonAudioButton(url: promptURL, style: .bar)
           }
-          if case .challenge(let challenge) = replay.step.content,
+          if grade != nil {
+            PracticeMainButton(
+              title: LocalizedStringResource(
+                "Continue", table: "Practice", comment: "Moves on after a grade."),
+              icon: .forward, action: next
+            )
+            .practiceFocus(.next)
+          } else if case .challenge(let challenge) = replay.step.content,
             !isChallengeEnded(challenge)
           {
             PracticeMainButton(
@@ -160,11 +187,15 @@ struct MistakeLessonQuestionView: View {
                 "Continue", table: "Practice", comment: "Moves on after a grade."),
               icon: .forward, isDisabled: !challengeCanContinue(challenge)
             ) { state.continueLesson() }
+          } else if let record = recordInBar.button, !speechChecking {
+            record
+              .practiceMainAction()
           } else {
             PracticeMainButton(
               title: LocalizedStringResource(
                 "Check", table: "Practice", comment: "Sends the answer to be graded."),
-              icon: .check, isBusy: state.phase == .checking, isDisabled: !canCheck
+              icon: .check, isBusy: state.phase == .checking || speechChecking,
+              isDisabled: !canCheck
             ) {
               press(.check)
               Task { await send() }
@@ -185,6 +216,9 @@ struct MistakeLessonQuestionView: View {
       }
     }
     .environment(work)
+    .environment(recordInBar)
+    .environment(prompt)
+    .environment(\.lessonAudio, sounds)
     .announcesStatus(announcement)
     .onChange(of: grade) { _, grade in
       if grade != nil, pressedWithFocus != nil {
@@ -199,6 +233,13 @@ struct MistakeLessonQuestionView: View {
     .onChange(of: cantTalk) { _, value in
       LessonTodayChoices.standard.setChosenToday(.cantTalk, value)
     }
+    .onChange(of: cantListen) { _, value in
+      LessonTodayChoices.standard.setChosenToday(.cantListen, value)
+    }
+    .onChange(of: promptURL, initial: true) { _, url in
+      prompt.enter(prompt: url, audio: sounds)
+    }
+    .onDisappear { sounds.stop() }
   }
 
   @ViewBuilder private var checkAdded: some View {
@@ -218,7 +259,7 @@ struct MistakeLessonQuestionView: View {
   private func content(_ part: LessonStepPart) -> some View {
     LessonQuestionStepView(
       step: replay.step, state: state, context: context, part: part,
-      cantTalk: $cantTalk, micBlocked: $micBlocked,
+      cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
       mistake: SpokenMistakeTarget(
         mistakeId: entry.mistakeId, attemptId: attemptId,
         goalId: goalId, answerIds: answerIds, questionStartedAt: shownAt),
