@@ -1,6 +1,7 @@
 import { findBareLatexText } from "@zoonk/utils/bare-latex";
+import { findMath } from "@zoonk/utils/math-spans";
 import { countWords, replaceEmDashes } from "@zoonk/utils/string";
-import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
+import { findPlaceholderText } from "@zoonk/utils/text-flaws";
 import { countListeningVoices } from "../audio/listening-voices";
 import { normalizeTypedAnswer } from "../grading/typed-answer-match";
 import { fitsTypedQuestion } from "./listening-answer-fit";
@@ -19,11 +20,9 @@ import {
 const MIN_SCRIPT_WORDS = 40;
 const MAX_SCRIPT_WORDS = 1000;
 
-/** Stage directions and sound cues a voice would read aloud: "[laughs]", "(pause)". */
-const STAGE_DIRECTIONS = /\[[^\]]*\]|\([^)]*\)/gu;
-
-/** Emphasis marks a voice can't say; the words inside them stay. */
-const EMPHASIS_MARKS = /[*_]+/gu;
+const TITLE_ASIDES = /\[[^\]]*\]|\([^)]*\)/gu;
+const TITLE_EMPHASIS = /[*_]+/gu;
+const WRITTEN_NOTATION = /[`\\[\](){}*_~|<>#［］（）]/u;
 const SPACES = /\s+/gu;
 
 export type ListeningSetRequest = {
@@ -35,9 +34,7 @@ export type ListeningSetRequest = {
 };
 
 function cleanLine(text: string): string {
-  return replaceEmDashes(text.replaceAll(STAGE_DIRECTIONS, " ").replaceAll(EMPHASIS_MARKS, ""))
-    .replaceAll(SPACES, " ")
-    .trim();
+  return replaceEmDashes(text).replaceAll(SPACES, " ").trim();
 }
 
 /**
@@ -145,7 +142,10 @@ export function repairListeningSet(set: ListeningSet, request: ListeningSetReque
     speakers: set.speakers
       .map((speaker) => ({ ...speaker, name: speaker.name.trim() }))
       .filter((speaker) => speaking.has(speaker.name)),
-    title: toTitle({ questions: set.questions, title: cleanLine(set.title) }),
+    title: toTitle({
+      questions: set.questions,
+      title: cleanLine(set.title.replaceAll(TITLE_ASIDES, " ").replaceAll(TITLE_EMPHASIS, "")),
+    }),
     turns,
   };
 }
@@ -202,6 +202,16 @@ function findSharedVoices(speakers: ListeningSet["speakers"]): string[] {
   });
 }
 
+function findSpokenNotation(text: string): string[] {
+  const bare = findBareLatexText({ layout: "inline", text });
+
+  if (bare.length > 0) {
+    return bare;
+  }
+
+  return WRITTEN_NOTATION.test(text) || findMath(text) ? [text] : [];
+}
+
 function findScriptProblems(set: ListeningSet): string[] {
   const names = new Set(set.speakers.map((speaker) => speaker.name));
   const words = countScriptWords(set.turns);
@@ -219,8 +229,7 @@ function findScriptProblems(set: ListeningSet): string[] {
     words > MAX_SCRIPT_WORDS && `The script has ${words} words; at most 1000.`,
     ...set.turns.flatMap((turn) => [
       ...findPlaceholderText(turn.text),
-      ...findUnrenderedMarkdown({ layout: "inline", text: turn.text }),
-      ...findBareLatexText({ layout: "inline", text: turn.text }).map(
+      ...findSpokenNotation(turn.text).map(
         (written) =>
           `A spoken line has written notation a voice can't say: "${written}". Write it as the words a speaker would say.`,
       ),
