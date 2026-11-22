@@ -294,7 +294,7 @@
   "onboarding_row_level": "6ae6c24be1eb08fe2c72b015d6aead347bc96ead90945707dd9a373140dbdc68",
   "onboarding_row_material": "5115e0ca3274d96cdc10937e4c24a50fedcd7abd7ea743c9902044484a491a17",
   "onboarding_row_material_all_missing_note": "92ef8314ba3f68ef78a20a055c05ebc621216d85aa21895ec30cccd40e9c423f",
-  "onboarding_row_material_missing_note": "c5e0bd0099e6cdf797a8980928b8ce6a95c10e56dbd47a7fe2b46e414398b62f",
+  "onboarding_row_material_missing_note": "19a13175853eaf95d7bbc068106df6519f6e601b65927ccf33da0a8d9b7689ee",
   "onboarding_row_material_note": "876b8fa4f94d9f7b7aaffd003f882c9f056186b45d22d8c328972bd21f905ac5",
   "onboarding_row_minutes_a_day": "8e0b47a6718989766fba7ed290a75afebe7e287e470d7b9f7f51b81bcf71a35a",
   "onboarding_row_notice_says": "c99adbdc9f43f0963bb95f18151aa83ef25745f037972cb040d9db7994fb4cee",
@@ -482,8 +482,8 @@
     <string name="onboarding_row_minutes_a_day">Günde %1$s</string>
     <string name="onboarding_row_material">Materyalin</string>
     <string name="onboarding_row_material_note">Planın ve derslerin bu materyale göre hazırlanır</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
-    <string name="onboarding_row_material_missing_note">Materyallerinin bir kısmı artık okunamıyor, bu yüzden planın bunları temel almayacak.</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Planın ve derslerin yalnızca bu materyale göre ilerliyor. Geri kalanı artık okunamıyor.</string>
     <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
     <string name="onboarding_row_material_all_missing_note">Artık okunamıyor, bu yüzden planın bu materyali temel almayacak.</string>
     <string name="onboarding_row_exam_date">Sınav tarihi</string>

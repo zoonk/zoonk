@@ -294,7 +294,7 @@
   "onboarding_row_level": "4e9dfe12385a8026960d647f89fcc275d9d0bf334aeef0a06a3df7296de3890c",
   "onboarding_row_material": "48661f6d7db2428168981919916489e70e02fa581b88de513d645f7ae5b7e97d",
   "onboarding_row_material_all_missing_note": "9357ba6367f643d58ef097f0d262e97628ee9e84cf318011cefdd1f036e112cb",
-  "onboarding_row_material_missing_note": "c20e4e098fb856fe85c79bd906bef638d75d21a9b66beb6d54a1a374016570ef",
+  "onboarding_row_material_missing_note": "26ed41f4bd516392f5e441bf0ea5abb798e3cd15644f69214afe440ddee7e9e5",
   "onboarding_row_material_note": "87cc1d5fd05caf17de60c87328258fd3a3fae49350dbd27b08e2f8ca7de6aa51",
   "onboarding_row_minutes_a_day": "68e274bd787730fcbd6674cc3cb1088b5a0e28be292310484f82767f1326533e",
   "onboarding_row_notice_says": "bba5c3f06965991519b880478fa3053ffae5dc91666005245e70cac597755545",
@@ -481,8 +481,8 @@
     <string name="onboarding_row_minutes_a_day">1日%1$s</string>
     <string name="onboarding_row_material">資料</string>
     <string name="onboarding_row_material_note">この資料に沿って学習計画とレッスンを作成します</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
-    <string name="onboarding_row_material_missing_note">資料の一部を読み取れなくなったため、学習計画に反映されません。</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">学習計画とレッスンはこの資料だけに基づいています。残りは読み取れなくなりました。</string>
     <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
     <string name="onboarding_row_material_all_missing_note">読み取れなくなったため、学習計画に反映されません。</string>
     <string name="onboarding_row_exam_date">試験日</string>

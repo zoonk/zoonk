@@ -294,7 +294,7 @@
   "onboarding_row_level": "1615c224767c8f4fb52438aea5cfadc421400a3b3d9741610d9bca42b7a40e42",
   "onboarding_row_material": "1646e8f11b3f1d150be03e0b2bcd177e6e2e5fb63a1fc82ac31235e3a72cdac6",
   "onboarding_row_material_all_missing_note": "0655cb4c5fed71bd267ff5a57600203ed9462a68d80aa09cbd87a7d336d30a4b",
-  "onboarding_row_material_missing_note": "0b523e091cb78a849554e91e8d127a0c9f60589c8ec7f79cbdc189240f9dab4e",
+  "onboarding_row_material_missing_note": "b1263a348997d8f98eb0219314b405f4f450d8e5a4389059008600f410e92054",
   "onboarding_row_material_note": "063e584a90bc127b7b77b42d1ab4149023de7e95e9d2ced35cb635de38a37546",
   "onboarding_row_minutes_a_day": "1fc429e09904fd162c8db767b02d748a86b6a28a80a187594a1303ba622cc85c",
   "onboarding_row_notice_says": "d32f8b4a8b87e0569ae067db7ada2791c29663e83342eb1d0af2560449e2a276",
@@ -481,8 +481,8 @@
     <string name="onboarding_row_minutes_a_day">하루 %1$s</string>
     <string name="onboarding_row_material">내 자료</string>
     <string name="onboarding_row_material_note">이 자료에 맞춰 계획과 레슨을 만들어요</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
-    <string name="onboarding_row_material_missing_note">자료 일부를 더 이상 읽을 수 없어 계획에 반영되지 않아요.</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">계획과 레슨은 이 자료만 바탕으로 진행돼요. 나머지는 더 이상 읽을 수 없어요.</string>
     <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
     <string name="onboarding_row_material_all_missing_note">더 이상 읽을 수 없어 계획에 반영되지 않아요.</string>
     <string name="onboarding_row_exam_date">시험일</string>

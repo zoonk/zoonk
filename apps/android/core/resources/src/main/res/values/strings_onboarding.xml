@@ -104,8 +104,8 @@
     <string name="onboarding_row_minutes_a_day">%1$s a day</string>
     <string name="onboarding_row_material">Your material</string>
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
-    <string name="onboarding_row_material_missing_note">Some of your material can\'t be read anymore, so your plan won\'t follow it.</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Your plan and lessons follow only this material. The rest can\'t be read anymore.</string>
     <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
     <string name="onboarding_row_material_all_missing_note">It can\'t be read anymore, so your plan won\'t follow it.</string>
     <string name="onboarding_row_exam_date">Exam date</string>

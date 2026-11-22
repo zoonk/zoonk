@@ -294,7 +294,7 @@
   "onboarding_row_level": "073f12fbb10541d214aacb3f9fbe901b53293ed2407358616477fcd5a2f43e75",
   "onboarding_row_material": "ff51052151f49962abebee7c9083bc20dcd9ceb6224cf88fc86ae05cd16ca2b2",
   "onboarding_row_material_all_missing_note": "ade57de84e6cd36b61da12d69ace334422bde136580dd8784b5578023754e030",
-  "onboarding_row_material_missing_note": "94c5704b8f3435e6425ac990c79a913a7e8da6ca9cf632374c31d2df71b992cc",
+  "onboarding_row_material_missing_note": "de1d011a885bf07d3319bc65d435bc92eb801475c20f086a72edb9a832040647",
   "onboarding_row_material_note": "6b97dcad282ca232d17ca84436c8ea28b348c2ac1c50cd43c824c9cd477465bd",
   "onboarding_row_minutes_a_day": "2355fcb7b285f271debd6edce0c0496b376f823b116d5d428851f69f7f1a3cd6",
   "onboarding_row_notice_says": "9efe86f70681ddddd189e621d097dc1735021da9cdc57fa6d6b9245f2d49948a",
@@ -482,8 +482,8 @@
     <string name="onboarding_row_minutes_a_day">%1$s pro Tag</string>
     <string name="onboarding_row_material">Dein Material</string>
     <string name="onboarding_row_material_note">Dein Plan und deine Lektionen richten sich nach diesem Material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
-    <string name="onboarding_row_material_missing_note">Einige deiner Materialien können nicht mehr gelesen werden, deshalb kann dein Plan sie nicht berücksichtigen.</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Dein Plan und deine Lektionen richten sich nur nach diesem Material. Der Rest lässt sich nicht mehr lesen.</string>
     <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
     <string name="onboarding_row_material_all_missing_note">Dein Material kann nicht mehr gelesen werden, deshalb kann dein Plan es nicht berücksichtigen.</string>
     <string name="onboarding_row_exam_date">Prüfungstermin</string>

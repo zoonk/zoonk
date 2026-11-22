@@ -294,7 +294,7 @@
   "onboarding_row_level": "e39e1663c59ab9ddfe48e503e1fa8b58642feebcae753682eea3a7b0a1af3601",
   "onboarding_row_material": "2d4bc7c0d839a031714f3a7cf9e1ff93e220287b029b67d2fbf666e1bd9e3041",
   "onboarding_row_material_all_missing_note": "6ae64e2aaa5310d7a1bbc9b1d53dab66b244509c3e4ecc695649d87a8a063932",
-  "onboarding_row_material_missing_note": "5da7821bb528c3efbc96429a11f9309285aa0a48fb70b48b51665c4a6ae72ce9",
+  "onboarding_row_material_missing_note": "d740014d3041138b15e1c215d88c4763bc6159834ece94a0653ac28dc57a02dd",
   "onboarding_row_material_note": "68af367aa433b4354e8be40e3bf9d23ded27d04195bf1e0ab7b31580fb94b4e1",
   "onboarding_row_minutes_a_day": "2bac9e995f7bb4c7cd136533b976c448be4cefc8b81c40215b2683b178c99306",
   "onboarding_row_notice_says": "34109a21a6a2b4590ee4c9ae9ccb0fb177269b8fa70c6a3c1e28f865742f635a",
@@ -483,8 +483,8 @@
     <string name="onboarding_row_minutes_a_day">%1$s por dia</string>
     <string name="onboarding_row_material">Seu material</string>
     <string name="onboarding_row_material_note">Seu plano e suas aulas seguem este material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. -->
-    <string name="onboarding_row_material_missing_note">Parte do seu material não dá mais para ler, então seu plano não vai levar isso em conta.</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Seu plano e suas aulas seguem apenas este material. O restante não pode mais ser lido.</string>
     <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
     <string name="onboarding_row_material_all_missing_note">Não dá mais para ler esse material, então seu plano não vai levá-lo em conta.</string>
     <string name="onboarding_row_exam_date">Data da prova</string>
