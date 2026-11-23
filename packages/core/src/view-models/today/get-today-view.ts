@@ -248,7 +248,7 @@ async function readAdmittedToday({
   const mockFunding = await loadDayMockFunding({
     goal: owned.goal,
     localDate: day.session.localDate,
-    selectedSettings: day.selection?.state.settings,
+    selection: day.selection,
   });
 
   const [

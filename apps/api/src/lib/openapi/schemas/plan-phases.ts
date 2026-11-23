@@ -138,6 +138,7 @@ export const planPhaseSchema = z
         nextDate: isoDateSchema
           .nullable()
           .meta({ description: "The day of the phase's next mock still to take" }),
+        nextPlanItemId: uuidSchema().optional(),
       })
       .meta({ description: "The phase's mock exams" }),
     name: z.string(),

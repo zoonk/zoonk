@@ -24,7 +24,7 @@ import { getStudySessionSummary } from "./get-study-session-summary";
 import { openStudyBlock } from "./open-block";
 import { openStudyDay } from "./open-study-day";
 
-async function savedDay() {
+async function savedDay(upcomingLessons = 0) {
   const [user, blueprint] = await Promise.all([
     userFixture(),
     examBlueprintFixture({
@@ -47,7 +47,7 @@ async function savedDay() {
 
   const { goal, lessons, plan, skills } = await sessionGoalFixture({
     goal: { examBlueprintId: blueprint.id, kind: "exam" },
-    lessons: 1,
+    lessons: 1 + upcomingLessons,
     userId: user.id,
   });
 
@@ -55,7 +55,7 @@ async function savedDay() {
 
   await prisma.planItem.updateMany({
     data: { status: "done" },
-    where: { kind: "lesson", planId: plan.id },
+    where: { kind: "lesson", lessonId: lessons[0]!.id, planId: plan.id },
   });
 
   const [session, reserve] = await Promise.all([
@@ -103,7 +103,7 @@ async function savedDay() {
   ]);
 
   mockSession(user.id);
-  return { finished, goal, mock, reserve, session, user };
+  return { finished, goal, lessons, mock, reserve, session, user };
 }
 
 describe("a saved day whose last scheduled mock becomes unavailable", () => {
@@ -113,6 +113,49 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("opens one optional lesson while the mock is ready and keeps the mock scheduled", async () => {
+    const { goal, lessons, mock, session } = await savedDay(3);
+    const read = () => getSessionPageView({ goalId: goal.id, timeZone: "UTC" });
+    const before = await read();
+
+    if (before.status !== "ready") {
+      throw new Error(before.status);
+    }
+
+    const { sessionBar } = before.session;
+
+    expect(before.session.nextBlockId).toBe(mock.id);
+
+    expect(before.session.extraTime.lessons.map(({ title }) => title)).toStrictEqual(
+      lessons.slice(1).map(({ title }) => title),
+    );
+
+    const add = () => addExtraStudyBlock({ input: {}, sessionId: session.id });
+    const attempts = await Promise.all([add(), add()]);
+    expect(attempts.filter((result) => result.status === "ready")).toHaveLength(1);
+    const added = attempts.find((result) => result.status === "ready");
+
+    if (!added) {
+      throw new Error("Expected one extra lesson");
+    }
+
+    expect(added.block.lessonId).toBe(lessons[1]!.id);
+    await expect(read()).resolves.toMatchObject({ session: { nextBlockId: mock.id, sessionBar } });
+
+    await prisma.studySessionBlock.update({
+      data: { status: "completed" },
+      where: { id: added.block.id },
+    });
+
+    await expect(read()).resolves.toMatchObject({
+      session: {
+        extraTime: { lessons: lessons.slice(2).map(({ title }) => ({ title })) },
+        nextBlockId: mock.id,
+        sessionBar,
+      },
+    });
+  });
 
   it("previews the review without writing and two opens share it", async () => {
     const { finished, goal, reserve, session } = await savedDay();

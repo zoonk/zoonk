@@ -623,7 +623,7 @@ describe("a phase's mock exams", () => {
 
     expect(views.map((view) => view.mocks)).toStrictEqual([
       { count: 0, nextDate: null },
-      { count: 3, nextDate: "2026-11-09" },
+      { count: 3, nextDate: "2026-11-09", nextPlanItemId: "item-3" },
     ]);
   });
 });

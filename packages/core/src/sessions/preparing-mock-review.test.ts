@@ -100,6 +100,8 @@ describe("Today on a preparing mock day", () => {
       throw new Error(before.status);
     }
 
+    expect(before.today.session.extraTime.lessons).toHaveLength(3);
+
     const review = before.today.session.blocks.find(
       (block) => block.position === before.today.session.nextPosition,
     );
@@ -136,10 +138,14 @@ describe("Today on a preparing mock day", () => {
     );
 
     expect(day.extraTime.available).toBe(true);
-    expect(day.extraTime.lessons.length).toBeGreaterThan(0);
+    expect(day.extraTime.lessons).toStrictEqual(before.today.session.extraTime.lessons);
 
     const added = await addExtraStudyBlock({ input: {}, sessionId });
     expect(added).toMatchObject({ block: { kind: "learn" }, status: "ready" });
+
+    await expect(
+      prisma.studySessionBlock.count({ where: { kind: "learn", sessionId } }),
+    ).resolves.toBe(1);
 
     const next = await getTodayView({ goalId });
 

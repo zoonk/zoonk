@@ -141,6 +141,7 @@ export async function readSavedDayView({
   );
 
   const next = getNextBlock(blocks);
+  const extraTime = getExtraTime({ blocks: refill.blocks, current: view.current });
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
@@ -152,13 +153,7 @@ export async function readSavedDayView({
         ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
         : null,
       emptyDay: null,
-      extraTime: getExtraTime({
-        blocks: refill.blocks.map((block) => ({
-          preparing: preparing.has(block.position),
-          status: block.status,
-        })),
-        current: view.current,
-      }),
+      extraTime: extraTime.available ? view.extraTime : extraTime,
       minutes: getSessionMinutes({
         blocks: refill.blocks,
         dailyGoal: view.minutes.dailyGoal,

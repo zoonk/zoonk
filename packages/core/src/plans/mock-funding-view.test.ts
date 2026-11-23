@@ -114,7 +114,12 @@ describe("public mock funding views", () => {
     }
 
     expect(today.today).toMatchObject({
-      mockFunding: { mockDate: MOCK_DATE, mockMinutes: 165, setAsideMinutes: 30 },
+      mockFunding: {
+        mockDate: MOCK_DATE,
+        mockMinutes: 165,
+        planItemId: mock.id,
+        setAsideMinutes: 30,
+      },
       session: { minutes: { dailyGoal: 15, planned: 12 } },
     });
 
@@ -159,6 +164,7 @@ describe("public mock funding views", () => {
     expect(today.today.mockFunding).toStrictEqual({
       mockDate: MOCK_DATE,
       mockMinutes: 165,
+      planItemId: mock.id,
       setAsideMinutes: 30,
     });
 
