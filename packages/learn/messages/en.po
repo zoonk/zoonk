@@ -5387,6 +5387,12 @@ msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "You finished your plan"
 
+#. Leads to what to study next
+#: src/journey/study-next.tsx
+msgctxt "vzHrGX"
+msgid "Here's what to study next."
+msgstr "Here's what to study next."
+
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
 msgid "Phase {number, number} of {total, number}"

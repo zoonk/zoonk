@@ -2,7 +2,7 @@
 
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { LibraryIcon, PlayIcon } from "lucide-react";
+import { CircleAlertIcon, LibraryIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
 import {
@@ -18,6 +18,7 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
+  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -27,11 +28,17 @@ import {
 import { useLevelName } from "../course/use-level-name";
 import { useSharedRequest, useSharedState } from "../plan/layout-shared";
 import { SlotContent } from "../plan/plan-suggestion-context";
-import { CertificateAction, type PlanCertificates } from "./course-certificate";
+import {
+  CertificateAction,
+  type PlanCertificates,
+  useCertificateClaimFailed,
+} from "./course-certificate";
 
 type CourseLink = StudyNextView["related"][number];
 
 export type StudyNext = { onContinue: () => Promise<boolean>; view: StudyNextView };
+
+const CONTINUE_FAILED = "continueFailed";
 
 function ContinueAtNextLevel({
   next,
@@ -42,7 +49,7 @@ function ContinueAtNextLevel({
 }) {
   const t = useExtracted();
   const levelName = useLevelName();
-  const [failed, setFailed] = useSharedState("continueFailed", false);
+  const [, setFailed] = useSharedState(CONTINUE_FAILED, false);
   const [ownPending, startTransition] = useTransition();
   const request = useSharedRequest("continue", ownPending);
   const isPending = request.busy;
@@ -56,12 +63,9 @@ function ContinueAtNextLevel({
   };
 
   return (
-    <>
-      <SuggestionAction action={start} busy={isPending} icon={<PlayIcon aria-hidden="true" />}>
-        {t("Continue at {level}", { level: levelName(next.level) })}
-      </SuggestionAction>
-      {failed && <SuggestionSaveError />}
-    </>
+    <SuggestionAction action={start} busy={isPending} icon={<PlayIcon aria-hidden="true" />}>
+      {t("Continue at {level}", { level: levelName(next.level) })}
+    </SuggestionAction>
   );
 }
 
@@ -109,21 +113,36 @@ export function StudyNextSuggestion({
 }) {
   const t = useExtracted();
   const title = t("You finished your plan");
+  const claimFailed = useCertificateClaimFailed();
+  const [continueFailed] = useSharedState(CONTINUE_FAILED, false);
+  const more = Boolean(next.nextLevel) || next.related.length > 0;
 
   return (
-    <Suggestion label={title} mark={<DoneMark />}>
+    <Suggestion label={title} mark={claimFailed ? <CircleAlertIcon /> : <DoneMark />}>
       <SuggestionLine>
-        <SuggestionSummary>{title}</SuggestionSummary>
+        {claimFailed ? (
+          <SuggestionSaveError className="min-w-0 flex-1" />
+        ) : (
+          <SuggestionSummary>{title}</SuggestionSummary>
+        )}
         {certificates ? (
           <CertificateAction certificates={certificates} primary={false} />
         ) : (
           <SuggestionOpen />
         )}
-        {certificates && (next.nextLevel || next.related.length > 0) && <SuggestionOpen />}
+        {certificates && more && <SuggestionOpen />}
       </SuggestionLine>
 
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
+        {more && (
+          <SuggestionDescription>
+            {t({
+              description: "Leads to what to study next",
+              message: "Here's what to study next.",
+            })}
+          </SuggestionDescription>
+        )}
         {(next.nextLevel || certificates) && (
           <SuggestionActions
             main={
@@ -139,6 +158,7 @@ export function StudyNextSuggestion({
             )}
           </SuggestionActions>
         )}
+        {(claimFailed || continueFailed) && <SuggestionSaveError />}
 
         <RelatedCourses courseHref={courseHref} related={next.related} />
       </SlotContent>
