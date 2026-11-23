@@ -427,7 +427,7 @@ describe("writing grades", () => {
         { earned: 40, id: "c2", max: 200, range: { high: 160, low: 40 } },
         { earned: 160, id: "c3", max: 200, range: { high: 200, low: 160 } },
         { earned: 160, id: "c4", max: 200, range: { high: 200, low: 160 } },
-        { earned: 40, id: "c5", max: 200, range: { high: 80, low: 40 } },
+        { earned: 60, id: "c5", max: 200, range: { high: 80, low: 60 } },
       ],
       total: { high: 840, low: 720 },
     });
