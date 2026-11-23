@@ -43,11 +43,15 @@ const TodayContinueContext = createContext<TodayContinue | null>(null);
  */
 export function TodayContinueProvider({ children }: { children: React.ReactNode }) {
   const { actions } = useTodayScreen();
-  const keepLearning = useUpNextLessons().length > 0;
   const kind = useTodayActionKind();
   const session = useContinueSession({ enterKey: kind === "continue" });
   const wait = useSlowWait(session.isPending);
-  const keep = useSessionAction({ action: actions.addExtraTime, enterKey: keepLearning });
+
+  const keep = useSessionAction({
+    action: actions.addExtraTime,
+    enterKey: kind === "keepLearning",
+  });
+
   const keepWait = useSlowWait(keep.isPending);
   const [keepSender, setKeepSender] = usePendingSender<"row">(keep.isPending);
 
@@ -271,7 +275,7 @@ function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
     return today.goal.kind === "exam" ? "examOver" : "seePlan";
   }
 
-  if (keepLearning) {
+  if (keepLearning && !hasNext) {
     return "keepLearning";
   }
 

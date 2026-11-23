@@ -535,6 +535,7 @@ msgstr "{done, number}/{total, number}"
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
 #: src/mock/mock-frame.tsx
+#: src/mock/mock-schedule.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -2350,6 +2351,7 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-screen.tsx
 #: src/memory/memory-updated.tsx
+#: src/mock/mock-schedule.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
@@ -2362,6 +2364,7 @@ msgid "Undo"
 msgstr "실행 취소"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/mock/mock-schedule.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "{date}로 옮겼어요"
@@ -8530,6 +8533,31 @@ msgstr "답한 내용은 저장되어 있어요. 나가 있는 동안에도 남�
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
 msgstr "모의고사에서 나갈까요?"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "pY9LbF"
+msgid "Mock exam skipped"
+msgstr "모의고사를 건너뛰었어요"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "U7EcaD"
+msgid "Change schedule"
+msgstr "일정 변경"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "LChkTg"
+msgid "Change mock exam date"
+msgstr "모의고사 날짜 변경"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "iFsDVR"
+msgid "Loading"
+msgstr "불러오는 중"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "TaWtjb"
+msgid "Skip this mock exam"
+msgstr "이번 모의고사 건너뛰기"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"

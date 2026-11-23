@@ -11,6 +11,7 @@ import { ListRowChevronSpace } from "../_components/list-group";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
+import { MockSchedule } from "../mock/mock-schedule";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
@@ -158,30 +159,36 @@ export function MockRow({
   challengeHref,
   date,
   examHref,
+  planItemId,
 }: {
   challengeHref: (planItemId: string) => string;
   date: string;
   examHref: string | null;
+  planItemId: string | null;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const funded = plan.fundedMocks.find((mock) => mock.scheduledFor === date);
-  const href = funded ? challengeHref(funded.id) : examHref;
+  const id = planItemId ?? funded?.id;
+  const href = id ? challengeHref(id) : examHref;
 
   return (
-    <EventRow href={href}>
-      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-        <KindDot kind="mock" />
-      </span>
-      <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>
-        <span className="font-medium">{t("Mock exam")}</span>
-        {funded?.minutes ? (
-          <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {formatDuration(funded.minutes)}
-          </span>
-        ) : null}
-      </PathRowBody>
-    </EventRow>
+    <div>
+      <EventRow href={href}>
+        <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
+          <KindDot kind="mock" />
+        </span>
+        <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>
+          <span className="font-medium">{t("Mock exam")}</span>
+          {funded?.minutes ? (
+            <span className="text-muted-foreground font-mono text-xs tabular-nums">
+              {formatDuration(funded.minutes)}
+            </span>
+          ) : null}
+        </PathRowBody>
+      </EventRow>
+      {id && (!funded || funded.status === "todo") && <MockSchedule planItemId={id} />}
+    </div>
   );
 }

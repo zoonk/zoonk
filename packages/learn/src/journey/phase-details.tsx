@@ -76,7 +76,12 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
     <ul className="flex flex-col">
       {mocks.nextDate && (
         <li>
-          <MockRow challengeHref={links.challenge} date={mocks.nextDate} examHref={links.exam} />
+          <MockRow
+            challengeHref={links.challenge}
+            date={mocks.nextDate}
+            planItemId={mocks.nextPlanItemId ?? null}
+            examHref={links.exam}
+          />
         </li>
       )}
 
