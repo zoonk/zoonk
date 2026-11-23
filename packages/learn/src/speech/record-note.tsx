@@ -13,11 +13,13 @@ export type RecordProblem = "failed" | "noSpeech" | "signUpRequired";
  * main action says it. `unavailable` is the screen's own line for a microphone it can't use.
  */
 export function useRecordNote({
+  acquiring,
   checking = false,
   problem = null,
   recording,
   unavailable = null,
 }: {
+  acquiring: boolean;
   checking?: boolean;
   problem?: RecordProblem | null;
   recording: boolean;
@@ -29,6 +31,10 @@ export function useRecordNote({
 
   if (unavailable) {
     return <p className="text-muted-foreground">{unavailable}</p>;
+  }
+
+  if (acquiring) {
+    return <p className="text-muted-foreground">{t("Getting ready…")}</p>;
   }
 
   if (recording) {

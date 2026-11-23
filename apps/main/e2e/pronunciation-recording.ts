@@ -14,6 +14,7 @@ export async function allowPronunciationRecording(page: Page) {
 
         start() {
           this.state = "recording";
+          queueMicrotask(() => this.dispatchEvent(new Event("start")));
         }
 
         stop() {

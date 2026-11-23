@@ -113,6 +113,7 @@ export function PronunciationReviewScreen({
   const ready = step.kind === "word" && step.word.kind === "ready" ? step.word : null;
 
   const note = useRecordNote({
+    acquiring: mic.recorder.status === "acquiring",
     checking: round.isPending,
     problem: ready?.notice,
     recording,
@@ -248,6 +249,7 @@ function WordActions({
         elapsedMs={mic.elapsedMs}
         onStart={() => void mic.start()}
         onStop={mic.stop}
+        preparation={mic}
         recording={mic.status === "recording"}
       />
     </TaskActions>
