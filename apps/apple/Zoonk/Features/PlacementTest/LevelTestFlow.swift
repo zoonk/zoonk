@@ -180,7 +180,8 @@ struct LevelTestFlow: View {
         subject: PlacementTestCopy.testOut(view.level), number: view.answered + 1,
         total: view.total,
         progress: view.total > 0 ? Double(view.answered) / Double(view.total) : 0,
-        question: question, labels: .trueFalse, isSaving: isAnswering, failures: answerFailures,
+        question: question, askedIn: "\(view.attemptId):\(question.itemId)", labels: .trueFalse,
+        isSaving: isAnswering, failures: answerFailures,
         onReport: { showsSaveReport = true },
         onAnswer: { answerTestOut($0, view: view, question: question) },
         onStop: { stopTestOut(view) }

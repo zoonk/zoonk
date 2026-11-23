@@ -437,6 +437,7 @@ struct PlacementQuestionScreen<Media: View>: View {
   /// From 0 to 1.
   let progress: Double
   let question: PracticeQuestion
+  var askedIn: String?
   var labels = PracticeTrueFalseLabels.trueFalse
   var dontKnowLabel = LocalizedStringResource(
     "I don't know yet", table: "Onboarding",
@@ -537,7 +538,8 @@ struct PlacementQuestionScreen<Media: View>: View {
   }
 
   private var asked: PracticeQuestionView {
-    PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+    PracticeQuestionView(question: question, labels: labels, askedIn: askedIn, draft: $draft) {
+      answer in
       guard !isSaving else { return }
       submission = .confirm
       onAnswer(answer)
@@ -553,6 +555,7 @@ extension PlacementQuestionScreen where Media == EmptyView {
     position: Text? = nil,
     progress: Double,
     question: PracticeQuestion,
+    askedIn: String? = nil,
     labels: PracticeTrueFalseLabels,
     isSaving: Bool,
     failures: Int,
@@ -564,7 +567,7 @@ extension PlacementQuestionScreen where Media == EmptyView {
   ) {
     self.init(
       subject: subject, number: number, total: total, position: position, progress: progress,
-      question: question, labels: labels, isSaving: isSaving, failures: failures,
+      question: question, askedIn: askedIn, labels: labels, isSaving: isSaving, failures: failures,
       saveFailure: saveFailure,
       stopHint: stopHint, onReport: onReport, onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
