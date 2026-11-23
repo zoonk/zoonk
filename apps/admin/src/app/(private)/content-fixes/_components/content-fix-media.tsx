@@ -136,7 +136,10 @@ const MEDIA_WORDS: Record<MediaItem["need"]["kind"], { one: string; many: string
 /** "draw 1 picture and 1 icon, record 2 clips": the media still owed, said once per verb. */
 function mediaInWords(items: readonly MediaItem[], verb: (base: string) => string): string {
   const counted = (["picture", "ideaIcon", "clip", "marks"] as const).flatMap((kind) => {
-    const count = items.filter((item) => item.need.kind === kind).length;
+    const count = items
+      .filter((item) => item.need.kind === kind)
+      .reduce((sum, item) => sum + (item.need.kind === "marks" ? item.need.screens.length : 1), 0);
+
     const words = MEDIA_WORDS[kind];
 
     return count > 0

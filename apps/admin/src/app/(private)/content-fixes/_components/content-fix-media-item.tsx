@@ -1,7 +1,13 @@
+import { textOf } from "@/components/content-words";
 import { StateMark } from "@/components/state-mark";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
+import { LINK_CLASS } from "@/lib/link-class";
+import { cn } from "@zoonk/ui/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 import { CheckAgainButton } from "./check-again-button";
+import { type ScreenContext } from "./content-fix-screen-row";
+import { type SnapshotScreen } from "./screen-list";
 
 export type MediaItem = ContentFixDetail["media"][number];
 
@@ -111,5 +117,47 @@ export function IdeaIcon({ item }: { item: MediaItem }) {
       />
       New icon for this idea
     </span>
+  );
+}
+
+/** A proposed screen's own picture and alphabet clip, or a link to the picture it keeps. */
+export function ScreenAttachments({
+  context,
+  proposed,
+  screen,
+}: {
+  context: ScreenContext;
+  proposed?: boolean;
+  screen: SnapshotScreen;
+}) {
+  const links = proposed ? context.change.mediaLinks : undefined;
+
+  const picture = links?.find(
+    (link) => link.target === "picture" && link.position === screen.position,
+  );
+
+  const clip = links?.find(
+    (link) => link.target === "alphabet" && link.position === screen.position,
+  );
+
+  const pictureItem = picture ? context.media.get(picture.key) : undefined;
+  const clipItem = clip ? context.media.get(clip.key) : undefined;
+
+  return (
+    <>
+      {pictureItem ? <ScreenPicture item={pictureItem} /> : null}
+      {!pictureItem && screen.mediaAssetId ? (
+        <Link className={cn(LINK_CLASS, "w-fit text-xs")} href={`/media/${screen.mediaAssetId}`}>
+          See the picture
+        </Link>
+      ) : null}
+      {screen.kind === "alphabet" && (
+        <ReviewClip
+          audioUrl={textOf(screen.content.audioUrl)}
+          item={clipItem}
+          text={textOf(screen.content.audioText) ?? ""}
+        />
+      )}
+    </>
   );
 }

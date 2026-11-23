@@ -2,19 +2,18 @@ import { textOf } from "@/components/content-words";
 import { ScreenWords, screenKindLabel } from "@/components/screen-words";
 import { StateMark } from "@/components/state-mark";
 import { formatCount, toWords } from "@/lib/format";
-import { LINK_CLASS } from "@/lib/link-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
-import Link from "next/link";
 import { type readMapIdeas } from "./content-fix-map";
-import { ScreenMarks } from "./content-fix-marks";
-import { type MediaItem, ReviewClip, ScreenPicture } from "./content-fix-media-item";
+import { IdeaLine, ScreenQuoteLines, marksLinkOf } from "./content-fix-marks";
+import { type MediaItem, ScreenAttachments } from "./content-fix-media-item";
 import {
   type ScreenRow,
   type ScreenSnapshot,
   type SnapshotScreen,
   type StoredScreens,
+  changedLabel,
 } from "./screen-list";
 
 export type ScreenMedia = ReadonlyMap<string, MediaItem>;
@@ -79,51 +78,11 @@ export function screenHeadline({
   );
 }
 
-function ScreenAttachments({
-  context,
-  proposed,
-  screen,
-}: {
-  context: ScreenContext;
-  proposed?: boolean;
-  screen: SnapshotScreen;
-}) {
-  const links = proposed ? context.change.mediaLinks : undefined;
-
-  const picture = links?.find(
-    (link) => link.target === "picture" && link.position === screen.position,
-  );
-
-  const clip = links?.find(
-    (link) => link.target === "alphabet" && link.position === screen.position,
-  );
-
-  const pictureItem = picture ? context.media.get(picture.key) : undefined;
-  const clipItem = clip ? context.media.get(clip.key) : undefined;
-
-  return (
-    <>
-      {pictureItem ? <ScreenPicture item={pictureItem} /> : null}
-      {!pictureItem && screen.mediaAssetId ? (
-        <Link className={cn(LINK_CLASS, "w-fit text-xs")} href={`/media/${screen.mediaAssetId}`}>
-          See the picture
-        </Link>
-      ) : null}
-      {screen.kind === "alphabet" && (
-        <ReviewClip
-          audioUrl={textOf(screen.content.audioUrl)}
-          item={clipItem}
-          text={textOf(screen.content.audioText) ?? ""}
-        />
-      )}
-    </>
-  );
-}
-
 function ScreenBody({
   className = "max-w-prose",
   context,
   proposed,
+  quotes,
   screen,
   snapshot,
   variant,
@@ -131,6 +90,8 @@ function ScreenBody({
   className?: string;
   context: ScreenContext;
   proposed?: boolean;
+  /** Show the example box and underline the screen shows. */
+  quotes?: boolean;
   screen: SnapshotScreen;
   snapshot: ScreenSnapshot;
   variant?: SnapshotScreen["variants"][number];
@@ -144,6 +105,9 @@ function ScreenBody({
         {...vocabularyOf(snapshot, screen)}
       />
       {!variant && <ScreenAttachments context={context} proposed={proposed} screen={screen} />}
+      {!variant && quotes && (
+        <ScreenQuoteLines context={context} proposed={proposed} screen={screen} />
+      )}
     </div>
   );
 }
@@ -187,10 +151,17 @@ function ScreenComparison({
   const { after, before } = context.change;
 
   const sides = [
-    { label: "Before", screen: row.before, snapshot: before, variant: variant?.before },
+    {
+      label: "Before",
+      quotes: row.quotes,
+      screen: row.before,
+      snapshot: before,
+      variant: variant?.before,
+    },
     {
       label: "After",
       proposed: true,
+      quotes: row.quotes,
       screen: row.screen,
       snapshot: after,
       variant: variant?.after,
@@ -207,12 +178,6 @@ function ScreenComparison({
       ))}
     </div>
   );
-}
-
-/** A screen the fix only marks again keeps its words, so its row says so instead of "Changed". */
-function changedStatus(row: ChangedRow): string {
-  const label = row.baseChanged || row.variants.length > 0 ? "Changed" : "Marked again";
-  return row.was === null ? label : `${label}, was ${String(row.was)}`;
 }
 
 function RowFrame({
@@ -252,8 +217,14 @@ export function ShownRow({
     case "new":
       return (
         <RowFrame position={row.position} screen={row.screen} status="New" tone="added">
-          <ScreenBody context={context} proposed screen={row.screen} snapshot={after} />
-          <ScreenMarks context={context} screen={row.screen} />
+          <ScreenBody
+            context={context}
+            proposed
+            quotes={Boolean(marksLinkOf(context, row.screen))}
+            screen={row.screen}
+            snapshot={after}
+          />
+          <IdeaLine context={context} screen={row.screen} />
         </RowFrame>
       );
     case "removed":
@@ -290,7 +261,7 @@ export function ShownRow({
         <RowFrame
           position={row.position}
           screen={row.screen}
-          status={changedStatus(row)}
+          status={changedLabel(row)}
           tone="plain"
         >
           {row.answerKey && (
@@ -298,10 +269,7 @@ export function ShownRow({
               Changes the right answer
             </StateMark>
           )}
-          {row.baseChanged && <ScreenComparison context={context} row={row} />}
-          {!row.baseChanged && row.variants.length === 0 && (
-            <ScreenBody context={context} proposed screen={row.screen} snapshot={after} />
-          )}
+          {(row.baseChanged || row.quotes) && <ScreenComparison context={context} row={row} />}
           {row.variants.map((edit) => (
             <div className="flex flex-col gap-1" key={edit.after.id}>
               <p className="text-muted-foreground text-xs leading-5 font-medium">
@@ -310,7 +278,7 @@ export function ShownRow({
               <ScreenComparison context={context} row={row} variant={edit} />
             </div>
           ))}
-          <ScreenMarks context={context} screen={row.screen} />
+          <IdeaLine context={context} screen={row.screen} />
         </RowFrame>
       );
     default:

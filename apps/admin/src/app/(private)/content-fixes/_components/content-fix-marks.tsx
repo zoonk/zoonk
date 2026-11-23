@@ -1,7 +1,7 @@
 import { StateMark } from "@/components/state-mark";
 import { type MediaItem } from "./content-fix-media-item";
 import { type ScreenContext } from "./content-fix-screen-row";
-import { type SnapshotScreen, ideaIndexOf } from "./screen-list";
+import { type SnapshotScreen, ideaIndexOf, quotesOf } from "./screen-list";
 
 function QuoteLine({ label, lang, quote }: { label: string; lang?: string; quote: string | null }) {
   return (
@@ -56,7 +56,7 @@ export function FixMarks({
   );
 }
 
-function IdeaLine({ context, screen }: { context: ScreenContext; screen: SnapshotScreen }) {
+export function IdeaLine({ context, screen }: { context: ScreenContext; screen: SnapshotScreen }) {
   const index = ideaIndexOf(screen);
   const idea = index === null ? undefined : context.ideas[index];
 
@@ -72,28 +72,50 @@ function IdeaLine({ context, screen }: { context: ScreenContext; screen: Snapsho
   );
 }
 
-/** A proposed screen's marks: the idea it teaches, and its example box and underline. */
-export function ScreenMarks({
-  context,
-  screen,
-}: {
-  context: ScreenContext;
-  screen: SnapshotScreen;
-}) {
+/** The marks a fix prepares for this screen of its new list, if any. */
+export function marksLinkOf(context: ScreenContext, screen: SnapshotScreen) {
   const link = context.change.mediaLinks?.find(
     (entry) => entry.target === "marks" && entry.positions.includes(screen.position),
   );
 
+  return link?.target === "marks" ? link : undefined;
+}
+
+/**
+ * The example box and underline a screen shows: on a fix's side, what marking leaves it with;
+ * otherwise its saved quotes. Only a screen with marked text has them.
+ */
+export function ScreenQuoteLines({
+  context,
+  proposed,
+  screen,
+}: {
+  context: ScreenContext;
+  proposed?: boolean;
+  screen: SnapshotScreen;
+}) {
+  const link = proposed ? marksLinkOf(context, screen) : undefined;
+
+  if (link) {
+    return (
+      <FixMarks
+        index={link.positions.indexOf(screen.position)}
+        item={context.media.get(link.key)}
+        lang={context.lang}
+      />
+    );
+  }
+
+  if (screen.kind !== "explanation" && screen.kind !== "workedExample") {
+    return null;
+  }
+
+  const { example, underline } = quotesOf(screen);
+
   return (
-    <>
-      <IdeaLine context={context} screen={screen} />
-      {link?.target === "marks" && (
-        <FixMarks
-          index={link.positions.indexOf(screen.position)}
-          item={context.media.get(link.key)}
-          lang={context.lang}
-        />
-      )}
-    </>
+    <div className="flex flex-col gap-1">
+      <QuoteLine label="Example box" lang={context.lang} quote={example} />
+      <QuoteLine label="Underlined" lang={context.lang} quote={underline} />
+    </div>
   );
 }
