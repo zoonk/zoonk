@@ -1,12 +1,19 @@
 import { generatePlacementItems } from "@zoonk/ai/tasks/items/placement-items";
+import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
+import { submitChapterTestOut } from "@zoonk/core/learner/test-out/submit";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../../../../packages/core/src/_test-utils/mock-session";
+import { learnerGoalFixture } from "../../../../../packages/core/src/learner/_test-utils/learner-goal";
+import { lowGuessTapItems } from "../../../../../packages/core/src/learner/_test-utils/placement-tap-items";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { testOutQuestionsWorkflow } from "./test-out-questions-workflow";
+
+vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 
 const writtenItem = {
   context: null,
@@ -66,7 +73,6 @@ describe(testOutQuestionsWorkflow, () => {
       testOutQuestionsWorkflow({
         chapterId: "chapter-id",
         goalId: goal.id,
-        questionsPerSkill: 1,
         skillIds: [withoutItems.id, withItem.id],
       }),
     ).resolves.toStrictEqual({ status: "written" });
@@ -78,7 +84,7 @@ describe(testOutQuestionsWorkflow, () => {
           params.skills.map((skill) => [skill.name, skill.quickCount, skill.tapCount]),
         ),
     ).toStrictEqual([
-      [["Rectangle area", 3, 0]],
+      [["Rectangle area", 1, 0]],
       [["Rectangle area", 0, 3]],
       [["Triangle area", 0, 3]],
     ]);
@@ -93,25 +99,69 @@ describe(testOutQuestionsWorkflow, () => {
     ]);
   });
 
-  it("writes a skill's whole share when the test asks it several times", async () => {
-    const { goal, withItem } = await goalWithSkills();
+  it("replaces consumed taps after a failed chapter test and keeps the unused quick question", async () => {
+    const user = await userFixture();
 
-    vi.mocked(generatePlacementItems).mockResolvedValue(
-      taskResult({ skills: [{ quick: [writtenItem], taps: [] }] }),
-    );
-
-    await testOutQuestionsWorkflow({
-      chapterId: "chapter-id",
-      goalId: goal.id,
-      questionsPerSkill: 6,
-      skillIds: [withItem.id],
+    const { chapters, goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 2,
+      phases: [1],
+      userId: user.id,
     });
 
-    expect(generatePlacementItems).toHaveBeenCalledWith(
-      expect.objectContaining({
-        skills: [expect.objectContaining({ quickCount: 6, tapCount: 0 })],
+    mockSession(user.id);
+    const path = { chapterId: chapters[0]!.id, goalId: goal.id };
+    const skillId = skills[0]!.id;
+    await lowGuessTapItems(skillId);
+    const first = await getChapterTestOut(path);
+
+    if (first.status !== "ready") {
+      throw new Error("Expected the chapter test");
+    }
+
+    const used = first.testOut.questions.map(({ itemId }) => itemId);
+    expect(used).toHaveLength(4);
+
+    await expect(
+      submitChapterTestOut({
+        ...path,
+        input: {
+          answers: used.map((itemId) => ({ answer: { dontKnow: true }, durationMs: 1000, itemId })),
+          requestId: crypto.randomUUID(),
+        },
+      }),
+    ).resolves.toMatchObject({ outcome: { passed: false }, status: "ready" });
+
+    await expect(getChapterTestOut(path)).resolves.toMatchObject({
+      testOut: { needsItems: [skillId], questions: [] },
+    });
+
+    vi.mocked(generatePlacementItems).mockImplementation(async ({ skills: picks }) =>
+      taskResult({
+        skills: picks.map(({ tapCount }) => ({
+          quick: [],
+          taps: Array.from({ length: tapCount }, (_, index) => ({
+            difficulty: "medium" as const,
+            format: "order" as const,
+            question: `Order the steps for example ${index + 1}.`,
+            reason: "Each step builds on the previous one.",
+            steps: ["First", "Second", "Third", "Fourth"],
+          })),
+        })),
       }),
     );
+
+    const request = { ...path, skillIds: [skillId] };
+    await testOutQuestionsWorkflow(request);
+    const retake = await getChapterTestOut(path);
+    expect(retake).toMatchObject({ testOut: { needsItems: [] } });
+    const fresh = retake.status === "ready" ? retake.testOut.questions : [];
+    expect(fresh).toHaveLength(4);
+    expect(fresh.every(({ itemId }) => !used.includes(itemId))).toBe(true);
+    await testOutQuestionsWorkflow(request);
+
+    expect(
+      vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.skills),
+    ).toMatchObject([[{ quickCount: 0, tapCount: 3 }]]);
   });
 
   it("fails on its stream when no question could be written", async () => {
@@ -122,7 +172,6 @@ describe(testOutQuestionsWorkflow, () => {
       testOutQuestionsWorkflow({
         chapterId: "chapter-id",
         goalId: goal.id,
-        questionsPerSkill: 1,
         skillIds: [withoutItems.id],
       }),
     ).resolves.toStrictEqual({ status: "failed" });

@@ -11,14 +11,10 @@ export type TestOutQuestionsInput = {
   analytics?: ContentAnalytics;
   chapterId: string;
   goalId: string;
-  questionsPerSkill: number;
   skillIds: string[];
 };
 
 const TEST_OUT_FORMATS = ["multipleChoice", "tap"] as const;
-
-/** At least a few per skill, so a retake has questions the learner hasn't seen. */
-const TEST_OUT_QUESTIONS_PER_SKILL = 3;
 
 export function getTestOutQuestionsToken({
   chapterId,
@@ -32,7 +28,7 @@ export async function testOutQuestionsWorkflow(
 ): Promise<QuestionWritingResult> {
   "use workflow";
 
-  const { analytics, goalId, questionsPerSkill, skillIds } = input;
+  const { analytics, goalId, skillIds } = input;
   const { workflowRunId } = getWorkflowMetadata();
 
   return runQuestionWriting<TestOutQuestionsStepName>({
@@ -40,10 +36,9 @@ export async function testOutQuestionsWorkflow(
     write: async () => {
       const { failed, written } = await preparePlacementItems({
         analytics,
+        exceptAnswered: true,
         formats: TEST_OUT_FORMATS,
         goalId,
-        quickCount: Math.max(TEST_OUT_QUESTIONS_PER_SKILL, questionsPerSkill),
-        quickNeeded: questionsPerSkill,
         skillIds,
         workflowRunId,
       });

@@ -43,14 +43,7 @@ async function createTestOutGeneration(
 
   const generationId = await startOnce(
     testOutQuestionsWorkflow,
-    [
-      {
-        analytics: result.analytics,
-        questionsPerSkill: result.questionsPerSkill,
-        skillIds: result.skillIds,
-        ...path,
-      },
-    ],
+    [{ analytics: result.analytics, skillIds: result.skillIds, ...path }],
     getTestOutQuestionsToken(path),
   );
 

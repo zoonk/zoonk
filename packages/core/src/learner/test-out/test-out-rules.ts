@@ -1,7 +1,8 @@
+import { LOW_GUESS_ANSWERS_TO_SKIP } from "../_utils/placement-guess-rate";
 import { type OwnAnswer, isSkillConfirmed } from "../_utils/skill-claims";
 
 export const TEST_OUT_PASS_MARK = 1;
-export const TEST_OUT_QUESTIONS_PER_SKILL = 4;
+export const TEST_OUT_QUESTIONS_PER_SKILL = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
 
 const MAX_SAMPLED_SKILLS = 8;
 
