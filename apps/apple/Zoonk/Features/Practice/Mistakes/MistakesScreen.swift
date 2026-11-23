@@ -72,7 +72,7 @@ struct MistakesScreen: View {
     )
     .modifier(LoadsPattern(pattern: pattern))
     .environment(lesson)
-    .onDisappear { lesson.request.leave() }
+    .onDisappear { lesson.leave() }
   }
 
   private var title: Text {
@@ -151,8 +151,16 @@ struct MistakesScreen: View {
 private final class NotebookLesson {
   let request = VisitRequest<MutationResult<String>>()
   private(set) var mistakeId: String?
+  private(set) var failed: Set<String> = []
+
+  func leave() {
+    request.leave()
+    failed.removeAll()
+    mistakeId = nil
+  }
 
   func open(_ mistake: Components.Schemas.Mistake, practice: PracticeStore, hooks: PracticeHooks) {
+    failed.remove(mistake.id)
     if let lesson = mistake.lesson {
       request.leave()
       hooks.navigate(.lesson(lessonId: lesson.id))
@@ -163,7 +171,11 @@ private final class NotebookLesson {
     request.run {
       await practice.openLesson(mistakeId: mistake.id)
     } then: { result in
-      if case .done(let id) = result { hooks.navigate(.lesson(lessonId: id)) }
+      switch result {
+      case .done(let id): hooks.navigate(.lesson(lessonId: id))
+      case .failed: self.failed.insert(mistake.id)
+      case .obsolete, nil: break
+      }
     }
   }
 }
@@ -393,7 +405,7 @@ private struct MistakeEntryView: View {
         .leading, skillId == nil && !tomorrow ? -ZoonkButtonStyle.horizontalPadding(.small) : 0)
     }
     .controlSize(.small)
-    if lesson.mistakeId == mistake.id, case .failed = lesson.request.outcome {
+    if lesson.failed.contains(mistake.id) {
       FailureLine(
         message: LocalizedStringResource(
           "We couldn't open this step. Try again.", table: "Today",

@@ -246,18 +246,21 @@ private class NotebookLessonViewModel(
     var busy by mutableStateOf<UUID?>(null)
         private set
 
+    var failed by mutableStateOf(emptySet<UUID>())
+        private set
+
     val visit =
         Visit {
             request?.cancel()
+            failed = emptySet()
             busy = null
         }
     val opened = visit.outcome<UUID>()
-    val failed = visit.outcome<UUID>()
 
     fun open(mistake: Mistake) {
         if (busy == mistake.id) return
         request?.cancel()
-        failed.clear()
+        failed -= mistake.id
         opened.clear()
         val started = visit.number
         val lesson = mistake.lesson
@@ -278,7 +281,7 @@ private class NotebookLessonViewModel(
                     }
 
                     is MutationResult.Failed -> {
-                        failed.send(started, mistake.id)
+                        failed += mistake.id
                     }
 
                     MutationResult.Obsolete -> {}
@@ -730,7 +733,7 @@ private fun MistakeEntry(
                 edge = if (skillId == null && !tomorrow) ButtonEdge.Start else null,
             ) { Text(stringResource(R.string.mistakes_open_lesson)) }
         }
-        if (actions.lesson.failed.value == mistake.id) {
+        if (mistake.id in actions.lesson.failed) {
             StepOpenFailed()
         }
     }

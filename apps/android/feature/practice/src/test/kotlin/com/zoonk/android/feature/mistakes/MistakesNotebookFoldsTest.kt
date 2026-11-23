@@ -2,6 +2,7 @@ package com.zoonk.android.feature.mistakes
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -34,6 +35,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.io.IOException
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -61,7 +63,7 @@ class MistakesNotebookFoldsTest {
         "snapshot":{"answer":"R$55","correctAnswer":"R$60","question":"$question"},"status":"open"}"""
     }
 
-    private val page: MistakeList =
+    private var page: MistakeList =
         ApiJson.decodeFromString(
             MistakeList.serializer(),
             """{"availability":{"ready":3,"tomorrow":0},"counts":{"byCause":{"gap":0,"guess":0,"misread":0,"time":0,"trap":3,"unsorted":0},
@@ -118,6 +120,25 @@ class MistakesNotebookFoldsTest {
 
         assertEquals(listOf(unlinked.id), requestedLessons)
         assertEquals(AppRoute.Lesson(direct.id.toString()), navigator.currentRoute)
+    }
+
+    @Test
+    fun openingAnotherQuestionKeepsTheFirstQuestionsFailure() {
+        page = page.copy(`data` = page.`data`.map { it.copy(lesson = null) })
+        openedLesson.completeExceptionally(IOException("Offline"))
+        val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
+        val store = MistakesNotebookStore(api, AppCache(session, scope), session) { "UTC" }
+        compose.setContent { ZoonkTheme { Surface { Notebook(goalId, store, rememberAppNavigator()) } } }
+        compose.waitForIdle()
+
+        val buttons = compose.onAllNodesWithText("Open the lesson")
+        val failures = compose.onAllNodesWithText("We couldn't open this step. Try again.")
+        buttons[0].performScrollTo().performClick()
+        compose.waitForIdle()
+        failures.assertCountEquals(1)
+        buttons[1].performScrollTo().performClick()
+        compose.waitForIdle()
+        failures.assertCountEquals(2)
     }
 
     /** On a phone a skill opens where it's tapped: the one above stays open, so nothing moves the row under the finger. */
