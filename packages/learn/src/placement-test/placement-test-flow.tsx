@@ -116,7 +116,6 @@ export function PlacementTestFlow({
         <PlacementResult
           failed={failed}
           heldUntilTomorrow={phase.heldUntilTomorrow}
-          length={phase.length}
           lessonsSkipped={phase.lessonsSkipped}
           nextTopic={phase.nextTopic}
           onDone={() => test.onDone(phase.attemptId)}

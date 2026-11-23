@@ -4,7 +4,7 @@
   "placementtest_about": "4de182050ca7549f490dd96b3147f6065b8b1db79da22fe4986c633fb8941ce0",
   "placementtest_about_in_parts": "4506bef35562ff2f62a1f47bd3c13d4396e93d47fc263a82f50733934a9f189b",
   "placementtest_choose_description": "0d42db1ed7baf56827bc620a3835304e8cb53792b1f15d836beeebc606646d8e",
-  "placementtest_choose_title": "54b81919350881c5b71eb7cf24c1913830288a8c52127d277481615405f30c53",
+  "placementtest_choose_title": "c5b26036540ef60ffd3587e4d415bd683c729f9598837b3778ad550e0ed3f7bb",
   "placementtest_continue_from_plan": "13a555237e0814bc62deee5503c1fd302694651a80e574c81ba89bc008482303",
   "placementtest_continue_title": "aefe82a353d5f4a71b8216aca10b349ac76377ff07206b4881eb4f34a53e13a3",
   "placementtest_done": "3f6e3991979e915292684f799765940681297bba80d01e9c30dd13817f33f5dd",
@@ -24,11 +24,11 @@
   "placementtest_no_lessons_skipped": "01236d1209f8e08d9f85291fbb4f1df0059c0755dac1373f18038665775da58b",
   "placementtest_not_now": "4b1444588801d825e79d1cf9eeed0a59cc6f1f9eac5a906398c4d42564613a9f",
   "placementtest_offer_level": "c33bf857c2f2df14fbc9a748910b2547a66adcbba2ac407619e80f56600e06b7",
-  "placementtest_offer_quick": "de39c15b75ce6cdfa2fb4b03617038502e78cc30946fafb6d365640a08cb33d8",
+  "placementtest_offer_quick": "f56627bc57e44231e50985b8f0820131c5bb6830ad54afa4f0672729df6106b1",
   "placementtest_offer_title": "30318da6f857ff556a2d158fcdfc5d31763dda1c173a2ee81739967e5094cfd4",
   "placementtest_part": "0e1298b466ad3852d8966b8a7e355c364d6935466fed01d5b37a5acfdd29b1b5",
   "placementtest_plan_stays": "8bc66607d64b9cb4f8517d3aeb1a438fe145bbc087d34f191831a7becc7eaecc",
-  "placementtest_quick": "429a3778c3d94d1b740e637b1cb5e4657eee88a0222709f17f8162b81e96958a",
+  "placementtest_quick": "92fac59d22c97f486b6a89c2417bae6c78665862d1cb5b172fa58c8e7dfd0ebf",
   "placementtest_quick_only_description": "ae9e9433166f3edcef9e5414be0578ce8a2aaff321910abfe9047eb49b7e7e33",
   "placementtest_reading_range": "2a63ca2ee5df865029c9f04f2f4e523c7b41fe40b742d88b21b106de23f6d520",
   "placementtest_retake_tomorrow": "b4713662b36caf074a2123f826e2799b85613f448fd7cb86333d57151bb4c933",
@@ -42,7 +42,6 @@
   "placementtest_title": "e570042b7fe7e929d2468cfa00acb962fd3a1f6789a5dc2d11ee90f46ce41cb0",
   "placementtest_up_next": "087e4de1bfaedf1fca75747c98e1c485ada0accaf6c2c22b43e8a5eb3e668169",
   "placementtest_whole_course": "753f7e6bdf29c47b41d32f86b492317c91cbd9f13970bcda0e61d3e7bce13f29",
-  "placementtest_whole_course_skips_more": "e8717131787d4a4cec002be41cb6dbe2c84e666e083ec3953eb47bb8bec63086",
   "placementtest_your_level": "d091a164c2522a1ef2acbe1ec944249fbb26633167ac6ced9f737173e5253b1e"
 }
 -->
@@ -70,9 +69,9 @@
     <string name="placementtest_start_title">Saute ce que tu connais déjà</string>
     <string name="placementtest_choose_description">Un test trouve les leçons que tu peux sauter.</string>
     <string name="placementtest_quick_only_description">Un test rapide trouve les leçons que tu peux sauter. Il dure environ %1$s.</string>
-    <string name="placementtest_choose_title">Qu’est-ce que tu veux vérifier ?</string>
+    <string name="placementtest_choose_title">Choisis un test</string>
     <!-- The short placement test: about four minutes of questions. -->
-    <string name="placementtest_quick">Rapide</string>
+    <string name="placementtest_quick">Test rapide</string>
     <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">Environ %1$s</string>
     <!-- The long placement test: it checks every topic still ahead in the course. -->
@@ -100,7 +99,6 @@
     <string name="placementtest_retake_tomorrow">Tu as annulé ces sauts aujourd’hui. Réponds à nouveau demain pour les sauter.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">À suivre</string>
-    <string name="placementtest_whole_course_skips_more">Le test sur tout le cours peut te faire sauter plus de leçons.</string>
     <string name="placementtest_done">Terminé</string>
     <string name="placementtest_not_now">Pas maintenant</string>
     <!-- %1$s is a language's name, such as "Italian". -->

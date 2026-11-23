@@ -1372,7 +1372,7 @@
         }
       }
     },
-    "A quick check can skip lessons you already know." : {
+    "A quick test can skip lessons you already know." : {
       "comment" : "A lesson end's offer to take the quick test of what the learner knows",
       "localizations" : {
         "de" : {
@@ -4082,6 +4082,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir tarih seç"
+          }
+        }
+      }
+    },
+    "Choose a test" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle einen Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis un test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli un test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストを選ぶ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트 선택"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz test"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha um teste"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir test seç"
           }
         }
       }
@@ -7576,7 +7634,7 @@
       }
     },
     "Find your level and skip what you know" : {
-      "comment" : "The level test's line on a language plan before it's taken",
+      "comment" : "The level test's line on a language plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9104,65 +9162,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şu an ne kadar bilgin var?"
-          }
-        }
-      }
-    },
-    "How much do you want to check?" : {
-      "comment" : "Title of the choice between the quick test and the whole-course test",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wie viel möchtest du testen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Qué tanto quieres comprobar?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qu’est-ce que tu veux vérifier ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quanto vuoi verificare?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どこまで診断しますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "어디까지 확인할까요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jak dużą część chcesz sprawdzić?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você quer avaliar?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ne kadarını kontrol etmek istiyorsun?"
           }
         }
       }
@@ -14599,65 +14598,6 @@
         }
       }
     },
-    "Quick" : {
-      "comment" : "The short placement test: about four minutes of questions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurz"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rápida"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rapide"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Veloce"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "クイック"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짧게"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Szybki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rápido"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa"
-          }
-        }
-      }
-    },
     "Quick explanation · %@" : {
       "comment" : "The kind of an example goal: a short explanation of one question, and its length",
       "localizations" : {
@@ -14713,6 +14653,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa açıklama · %@"
+          }
+        }
+      }
+    },
+    "Quick test" : {
+      "comment" : "The short placement test: about four minutes of questions.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurzer Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test rapide"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test breve"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "簡単なテスト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "간단한 테스트"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybki test"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teste rápido"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa test"
           }
         }
       }
@@ -19688,65 +19687,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sesli mesajı hazırlıyoruz…"
-          }
-        }
-      }
-    },
-    "The whole-course test can skip more." : {
-      "comment" : "Under the quick test's result: the longer test checks every topic ahead",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit dem Test für den ganzen Kurs kannst du mehr Lektionen überspringen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La prueba del curso completo puede saltar más."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le test sur tout le cours peut te faire sauter plus de leçons."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il test sull’intero corso può saltare più lezioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コース全体のテストなら、さらに多くのレッスンをスキップできます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "코스 전체 테스트를 보면 더 많이 건너뛸 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test z całego kursu pozwala pominąć więcej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O teste do curso inteiro pode pular mais aulas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tüm kurs testi daha fazla dersi atlayabilir."
           }
         }
       }

@@ -4,7 +4,7 @@
   "placementtest_about": "158cfe4af5d3a2b8987f13ebaef3052b83f0ae42acd194f5114c35a6437e8d4c",
   "placementtest_about_in_parts": "d4cde685f0e8e69249dd7c85ddd85a7c431e66f74b093f78f40f7b89ae9060e2",
   "placementtest_choose_description": "15a2ae85d029921024638f9a2f4f05ece53f6b17f3f09707fc95c1200b22066c",
-  "placementtest_choose_title": "a57159d94b6f209c00f4b3d139f1e26691df67807beb9db2bb7fe8873468f27d",
+  "placementtest_choose_title": "b71c5751177c1ab5f4673be1d52bdc8eac480262543c718e4fc480f136b5dd9b",
   "placementtest_continue_from_plan": "8ab619f0ac35108da708aff7e893b76a2507b2021e8ca84be7fd0cedd448e62f",
   "placementtest_continue_title": "21eed9ba4e3907a13d0b57b512fc122283a125e981b4b395e3cbed1431b5417a",
   "placementtest_done": "df41fce386fe5e1ec91c134c9c4bc07d9f065b8a570cf29b9fd21c9cba4ff501",
@@ -24,11 +24,11 @@
   "placementtest_no_lessons_skipped": "96dc7d0a4954b9b401b1f22b3e9ea0cc2abaf7dd00348e731c8867c5d6a7fc39",
   "placementtest_not_now": "7e542b9ca1da91ab228460d8c67bd47d654f5552c77e3ce92ee4018e7f9e0b56",
   "placementtest_offer_level": "4fa68222c8fab1921b8cbc33e3ad3cfc94b29856b6aa1dde02cbac68b163e02a",
-  "placementtest_offer_quick": "2672ee99bab0ee7b723d871d4ad9cce1e76d99855e713dac8dfb215b8e7eddb9",
+  "placementtest_offer_quick": "1668796683abe67579ce766103203477e28c90d5e61c9adbeb2baf949b98c4c3",
   "placementtest_offer_title": "6d29d8350455dd0e6a838f21c5186d3158872e4f6e02b5235392d5be106f0cb3",
   "placementtest_part": "a015041bf0cefb5ec39c0c10853f4daa580c53696d9d6345f45126705821f96e",
   "placementtest_plan_stays": "37f7fc246ea539dd871b1feb812985ee428d9c1c04f5dcb448be83d6308e79c1",
-  "placementtest_quick": "ed4e745fe5eb3d9e2bcc34124ae22ba83fb67f5fc93e72a19003ef3e780876c2",
+  "placementtest_quick": "1d493cbc393a7961059febf3155c2c17312d148520158c48d04b3bf9ca148b41",
   "placementtest_quick_only_description": "4bd734da80f66dbb2dfdef8e43091a52f2ae71acfd1c7f1a547276f24d3181d0",
   "placementtest_reading_range": "132b0e7371c3f918f4d517c14f96052983f899eb1b16d62469f3ba1a51c1c289",
   "placementtest_retake_tomorrow": "4dbab84de6cbcaef22a50ae7d877de28ccfd1dc0f65b69f3fba482dc1283c2e3",
@@ -42,7 +42,6 @@
   "placementtest_title": "17db165ceda770c13ecd933455c0d75886a5dab6cf4cece91999e820c72ac5cb",
   "placementtest_up_next": "93da1716da984a71aec8d04b6afa02dd7f1443156aa6ecb003d9afa3427ecf6d",
   "placementtest_whole_course": "3daa4a068f9d0ff3916bd706de28e2cf84184fb8d59c4714d8dc44dbd9531f63",
-  "placementtest_whole_course_skips_more": "accbc6b406440d17cd901fe347d79889af2efe28bc28e7297c07151bdf87c14b",
   "placementtest_your_level": "dbf6f8bcdd29802acff768a7bcd0378c5195353cb97acec081bf8d9af4461f24"
 }
 -->
@@ -71,9 +70,9 @@
     <string name="placementtest_start_title">Pomiń to, co już znasz</string>
     <string name="placementtest_choose_description">Test wskaże lekcje, które możesz pominąć.</string>
     <string name="placementtest_quick_only_description">Szybki test wskaże lekcje, które możesz pominąć. Zajmie około %1$s.</string>
-    <string name="placementtest_choose_title">Jak dużą część chcesz sprawdzić?</string>
+    <string name="placementtest_choose_title">Wybierz test</string>
     <!-- The short placement test: about four minutes of questions. -->
-    <string name="placementtest_quick">Szybki</string>
+    <string name="placementtest_quick">Szybki test</string>
     <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">Około %1$s</string>
     <!-- The long placement test: it checks every topic still ahead in the course. -->
@@ -101,7 +100,6 @@
     <string name="placementtest_retake_tomorrow">Dziś cofnięto te odpowiedzi. Odpowiedz na nie ponownie jutro, żeby pominąć te lekcje.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Następne</string>
-    <string name="placementtest_whole_course_skips_more">Test z całego kursu pozwala pominąć więcej.</string>
     <string name="placementtest_done">Gotowe</string>
     <string name="placementtest_not_now">Nie teraz</string>
     <!-- %1$s is a language's name, such as "Italian". -->

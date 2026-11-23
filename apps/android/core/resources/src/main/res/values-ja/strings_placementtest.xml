@@ -4,7 +4,7 @@
   "placementtest_about": "2537a58356f43ff269ad32e19a45cb447e49c13bcf622b8b36f1b69960c7b35e",
   "placementtest_about_in_parts": "29ec1e13a1306c296c7c2c3f7141f3ee032a47ec284dc06e1e635b3ba916a46e",
   "placementtest_choose_description": "326ac519773dedfcd53eb085a49c18a1d5f7e125d83f1fabfd6024b1ded9124e",
-  "placementtest_choose_title": "f84b053679d018ff922feae3df3815d32886305b014d05f6ce02fb961ec8c3ba",
+  "placementtest_choose_title": "9d8cf4fa143bcb279729ded0e5f0c186f6f73e8694abf8da096c35c2b1845923",
   "placementtest_continue_from_plan": "2aa9f7d827d38352efe57f2569d61d83e05ed8f6fb33d19ad5152ebb13ce91f5",
   "placementtest_continue_title": "ede215a00acb1b5ad8c9fed1103da58e7ce94eb9e1875bb8be7bae8170019f53",
   "placementtest_done": "345e9b8bb499382a12c8b3339547b5134ab50681a1d8431b7f9647c319728ed4",
@@ -24,11 +24,11 @@
   "placementtest_no_lessons_skipped": "d7a3ff8f972afd0923c9757763ebf15e70fce9aea8330a9443b04d2ba6c8e529",
   "placementtest_not_now": "d7ce7a3bf9ee2a4a66c5da0164e4149471932c7f63b8766ca2571fe6fc030045",
   "placementtest_offer_level": "10b0b7b7fe69cf3536f8d4536ec897153aa3cdfe20de9970b23f8260b9d51ade",
-  "placementtest_offer_quick": "df7b64491420112553a6dc41896e1212752f7471aa7a1a86e51d80f91634db34",
+  "placementtest_offer_quick": "f32b817b9c79e19f437b9744336e6a220419cc8251cbdc2911ef758dc284561c",
   "placementtest_offer_title": "5b83715559c9f79653534c63ec7861f2e56d547826b3cbc87eda5ec8c527749b",
   "placementtest_part": "934e21a88bd33bbd2b8bd2120de7f50fdbb077de0d993975a604459c2eb76d80",
   "placementtest_plan_stays": "899a9544875a2fceaff76c79ad74bec1d1976502c35dfdae45e57519025a2adc",
-  "placementtest_quick": "9d02a4bbbee01de286b94eb6056e0a501e6042eba42201041e6c6e5e3bb9d1f9",
+  "placementtest_quick": "6f8aabdbc9033b3920d122574842bdf03e5b50a7c24ef591262b6d5709d84334",
   "placementtest_quick_only_description": "ef402d1c566c67905cef313c909e1118c5fc16b9d1382392164e99d240b87681",
   "placementtest_reading_range": "46926aa07af8f417594bb0c32737e9fb24e9e9f93c208077e6b8b3bdca3ae489",
   "placementtest_retake_tomorrow": "e9243b5a572d038d48d3358c3e80d20cee8aec8a06d4827337f4913c2b493ec5",
@@ -42,7 +42,6 @@
   "placementtest_title": "7de03d824e836683f6c48b228a1fd6bd2d167dfce400039c7f705493ee7cf186",
   "placementtest_up_next": "080e102fad6e336c7bf87743b3a8d011c813c20287f6ab380fa500f6e162f249",
   "placementtest_whole_course": "702a59a80a15ddda61c5c64e578fb3e50ae5c1857be86db4029aeb9e7e2618f7",
-  "placementtest_whole_course_skips_more": "0eae39d546850617a8e2047231934877d403c474f18ef6e7e91865c008584694",
   "placementtest_your_level": "42b86d084486717d65a28fbb7f590f410143d8f5a291dc6896f42555c1bb80d5"
 }
 -->
@@ -68,9 +67,9 @@
     <string name="placementtest_start_title">すでに知っている内容をスキップする</string>
     <string name="placementtest_choose_description">テストで、スキップできるレッスンがわかります。</string>
     <string name="placementtest_quick_only_description">クイックテストで、スキップできるレッスンがわかります。所要時間は約%1$sです。</string>
-    <string name="placementtest_choose_title">どこまで診断しますか？</string>
+    <string name="placementtest_choose_title">テストを選ぶ</string>
     <!-- The short placement test: about four minutes of questions. -->
-    <string name="placementtest_quick">クイック</string>
+    <string name="placementtest_quick">簡単なテスト</string>
     <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">約%1$s</string>
     <!-- The long placement test: it checks every topic still ahead in the course. -->
@@ -98,7 +97,6 @@
     <string name="placementtest_retake_tomorrow">今日スキップを取り消したレッスンは、明日もう一度答えるとスキップできます。</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">次の学習</string>
-    <string name="placementtest_whole_course_skips_more">コース全体のテストなら、さらに多くのレッスンをスキップできます。</string>
     <string name="placementtest_done">完了</string>
     <string name="placementtest_not_now">今はしない</string>
     <!-- %1$s is a language's name, such as "Italian". -->

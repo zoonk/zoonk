@@ -53,7 +53,7 @@ struct PlacementLengthChoice: View {
       if choices.count > 1 {
         ChoiceRows(
           choices: choices, picked: choice,
-          header: Text("How much do you want to check?", tableName: "Onboarding")
+          header: Text("Choose a test", tableName: "Onboarding")
         ) { choice = $0 }
         .locksWhileSaving()
       }
@@ -84,7 +84,7 @@ struct PlacementLengthChoice: View {
       .init(
         value: .length(.quick),
         label: String(
-          localized: "Quick", table: "Onboarding",
+          localized: "Quick test", table: "Onboarding",
           comment: "The short placement test: about four minutes of questions"),
         detail: Text(
           "About \(studyDuration(minutes: quickTestMinutes))", tableName: "Onboarding",
@@ -196,7 +196,6 @@ struct PlacementBetweenParts: View {
 
 /// Main's `PlacementResult`: what the test skipped, and where the plan goes on.
 struct PlacementTestResultView: View {
-  let length: PlacementLength
   let lessonsSkipped: Int
   /// The topic the plan goes on with; nil when none is left.
   let nextTopic: String?
@@ -230,17 +229,6 @@ struct PlacementTestResultView: View {
         .listRowBackground(Color.clear)
       }
 
-      if length == .quick, !onboarding, undo?.restored == nil {
-        Section {
-          Text(
-            "The whole-course test can skip more.", tableName: "Onboarding",
-            comment: "Under the quick test's result: the longer test checks every topic ahead"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .listRowBackground(Color.clear)
-        }
-      }
     }
     .announcesStatus(undo?.announcement)
   }

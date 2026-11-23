@@ -24,9 +24,9 @@
     <string name="placementtest_start_title">Skip what you already know</string>
     <string name="placementtest_choose_description">A test finds the lessons you can skip.</string>
     <string name="placementtest_quick_only_description">A quick test finds the lessons you can skip. It takes about %1$s.</string>
-    <string name="placementtest_choose_title">How much do you want to check?</string>
+    <string name="placementtest_choose_title">Choose a test</string>
     <!-- The short placement test: about four minutes of questions. -->
-    <string name="placementtest_quick">Quick</string>
+    <string name="placementtest_quick">Quick test</string>
     <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">About %1$s</string>
     <!-- The long placement test: it checks every topic still ahead in the course. -->
@@ -54,7 +54,6 @@
     <string name="placementtest_retake_tomorrow">You undid these today. Answer again tomorrow to skip them.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Up next</string>
-    <string name="placementtest_whole_course_skips_more">The whole-course test can skip more.</string>
     <string name="placementtest_done">Done</string>
     <string name="placementtest_not_now">Not now</string>
     <!-- %1$s is a language's name, such as "Italian". -->
@@ -71,7 +70,7 @@
     <string name="placementtest_test_out_unavailable">There aren\'t enough questions for %1$s yet.</string>
     <!-- A lesson's end, after a run of easy lessons. -->
     <string name="placementtest_offer_title">This looks easy for you</string>
-    <string name="placementtest_offer_quick">A quick check can skip lessons you already know.</string>
+    <string name="placementtest_offer_quick">A quick test can skip lessons you already know.</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">A short test can skip %1$s if you already know it.</string>
 </resources>

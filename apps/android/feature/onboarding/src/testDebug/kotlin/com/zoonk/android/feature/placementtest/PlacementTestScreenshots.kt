@@ -38,7 +38,6 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTestOut
 import com.zoonk.api.models.LanguageLevelTestResult
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -181,20 +180,19 @@ class PlacementTestScreenshots(
     @Test
     fun resultQuick() =
         shoot("result-quick", captureUndo = true) {
-            PlacementResult(PlacementLength.QUICK, lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = undo())
+            PlacementResult(lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = undo())
         }
 
     @Test
     fun resultNothingSkipped() =
         shoot(
             "result-nothing-skipped",
-        ) { PlacementResult(PlacementLength.WHOLE_COURSE, lessonsSkipped = 0, nextTopic = "Torts", onDone = {}) }
+        ) { PlacementResult(lessonsSkipped = 0, nextTopic = "Torts", onDone = {}) }
 
     @Test
     fun resultHeldUntilTomorrow() =
         shoot("result-retake-tomorrow") {
             PlacementResult(
-                PlacementLength.QUICK,
                 lessonsSkipped = 0,
                 nextTopic = "Contracts",
                 onDone = {},

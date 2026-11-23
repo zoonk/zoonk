@@ -822,6 +822,7 @@ msgstr "Bu üniteyi zaten biliyor musun?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Testi çöz"
@@ -10084,15 +10085,15 @@ msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "Bugün bunları geri aldın. Atlamak için yarın yeniden cevapla."
 
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "2-7vLr"
-msgid "How much do you want to check?"
-msgstr "Ne kadarını kontrol etmek istiyorsun?"
+msgctxt "IyIhhL"
+msgid "Choose a test"
+msgstr "Bir test seç"
 
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "Ggk7AI"
-msgid "Quick"
-msgstr "Kısa"
+msgctxt "mleMdh"
+msgid "Quick test"
+msgstr "Kısa test"
 
 #. {time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.
 #: src/placement-test/placement-test-screens.tsx
@@ -10136,11 +10137,6 @@ msgstr "Bugünlük bitir"
 msgctxt "NWfVeb"
 msgid "You can finish the test from Plan."
 msgstr "Testi Plan bölümünden bitirebilirsin."
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "DHGBiL"
-msgid "The whole-course test can skip more."
-msgstr "Tüm kurs testi daha fazla dersi atlayabilir."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
@@ -10594,7 +10590,6 @@ msgid "Skip lessons you already know"
 msgstr "Zaten bildiğin dersleri atla"
 
 #: src/plan/plan-placement-test.tsx
-#: src/session/level-check-offer.tsx
 msgctxt "QZI9sA"
 msgid "Test what you know"
 msgstr "Bildiklerini test et"
@@ -12299,8 +12294,8 @@ msgid "A short test can skip {level} if you already know it."
 msgstr "Zaten biliyorsan kısa bir testle {level} düzeyini atlayabilirsin."
 
 #: src/session/level-check-offer.tsx
-msgctxt "bj7N9e"
-msgid "A quick check can skip lessons you already know."
+msgctxt "gAcanw"
+msgid "A quick test can skip lessons you already know."
 msgstr "Kısa bir testle zaten bildiğin dersleri atlayabilirsin."
 
 #: src/session/moment-header.tsx

@@ -822,6 +822,7 @@ msgstr "Tu connais déjà ce chapitre ?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Passer le test"
@@ -10084,15 +10085,15 @@ msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "Tu as annulé ces sauts aujourd’hui. Réponds à nouveau demain pour les sauter."
 
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "2-7vLr"
-msgid "How much do you want to check?"
-msgstr "Qu’est-ce que tu veux vérifier ?"
+msgctxt "IyIhhL"
+msgid "Choose a test"
+msgstr "Choisis un test"
 
 #. The short placement test: about four minutes of questions.
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "Ggk7AI"
-msgid "Quick"
-msgstr "Rapide"
+msgctxt "mleMdh"
+msgid "Quick test"
+msgstr "Test rapide"
 
 #. {time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.
 #: src/placement-test/placement-test-screens.tsx
@@ -10136,11 +10137,6 @@ msgstr "Terminer pour aujourd’hui"
 msgctxt "NWfVeb"
 msgid "You can finish the test from Plan."
 msgstr "Tu peux terminer le test depuis Plan."
-
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "DHGBiL"
-msgid "The whole-course test can skip more."
-msgstr "Le test sur tout le cours peut te faire sauter plus de leçons."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
@@ -10594,7 +10590,6 @@ msgid "Skip lessons you already know"
 msgstr "Sauter les leçons que tu connais déjà"
 
 #: src/plan/plan-placement-test.tsx
-#: src/session/level-check-offer.tsx
 msgctxt "QZI9sA"
 msgid "Test what you know"
 msgstr "Tester tes connaissances"
@@ -12299,8 +12294,8 @@ msgid "A short test can skip {level} if you already know it."
 msgstr "Un petit test peut te faire sauter le niveau {level} si tu le connais déjà."
 
 #: src/session/level-check-offer.tsx
-msgctxt "bj7N9e"
-msgid "A quick check can skip lessons you already know."
+msgctxt "gAcanw"
+msgid "A quick test can skip lessons you already know."
 msgstr "Un petit test peut te faire sauter les leçons que tu connais déjà."
 
 #: src/session/moment-header.tsx

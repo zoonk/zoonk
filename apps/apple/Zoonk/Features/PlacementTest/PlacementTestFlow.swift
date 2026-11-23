@@ -133,11 +133,11 @@ struct PlacementTestFlow: View {
         }, undo: undo, onboarding: onboarding,
         onFinishForToday: onboarding ? nil : { save(.other) { try await goOnUnlessLeft(onDone) } })
     case .result(
-      let length, let lessonsSkipped, let attemptId, let changeId, let changeLessons,
+      _, let lessonsSkipped, let attemptId, let changeId, let changeLessons,
       let heldUntilTomorrow):
       let undo = undo(changeId: changeId, lessons: changeLessons)
       PlacementTestResultView(
-        length: length, lessonsSkipped: lessonsSkipped, nextTopic: nextTopic(),
+        lessonsSkipped: lessonsSkipped, nextTopic: nextTopic(),
         isSaving: pressed != nil || undoRequest.isRunning, failed: failed,
         heldUntilTomorrow: heldUntilTomorrow, undo: undo, onboarding: onOnboardingDone != nil
       ) {

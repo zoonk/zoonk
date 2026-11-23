@@ -69,16 +69,16 @@ export function LevelCheckOfferCard({
         <p className="text-muted-foreground text-sm text-pretty">
           {level
             ? t("A short test can skip {level} if you already know it.", { level })
-            : t("A quick check can skip lessons you already know.")}
+            : t("A quick test can skip lessons you already know.")}
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Link
           className={cn(buttonVariants({ variant: "outline" }), TASK_WRAPPING_ACTION_CLASS)}
           href={href}
         >
-          {level ? t("Test out of {level}", { level }) : t("Test what you know")}
+          {level ? t("Test out of {level}", { level }) : t("Take the test")}
         </Link>
         <Button busy={isPending} onClick={dismiss} variant="ghost">
           {t("Not now")}

@@ -290,7 +290,6 @@ internal fun ColumnScope.PlacementTestFlow(
 
         is PlacementTestPhase.Result -> {
             PlacementResult(
-                shown.length,
                 shown.lessonsSkipped,
                 plan.value?.plan?.nextTopic(),
                 heldUntilTomorrow = shown.heldUntilTomorrow,

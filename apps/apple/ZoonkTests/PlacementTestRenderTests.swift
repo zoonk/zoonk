@@ -71,7 +71,7 @@ final class PlacementTestRenderTests: XCTestCase {
   func testLengthChoiceAndResult() async throws {
     try await capture(
       "placement-length", title: "Skip what you already know",
-      detail: "How much do you want to check?"
+      detail: "Choose a test"
     ) {
       PlacementLengthChoice(
         wholeCourseMinutes: 25, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
@@ -80,7 +80,7 @@ final class PlacementTestRenderTests: XCTestCase {
     try await capture(
       "placement-length-quick-only", title: "Skip what you already know",
       detail: "A quick test finds the lessons you can skip.",
-      absent: ["How much do you want to check?"]
+      absent: ["Choose a test"]
     ) {
       PlacementLengthChoice(
         wholeCourseMinutes: 0, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
@@ -92,7 +92,7 @@ final class PlacementTestRenderTests: XCTestCase {
       goalId: goalID, changeId: goalID, lessons: 6, request: request, plans: store, disabled: false)
     try await capture("placement-result", title: "6 lessons skipped", detail: "Fractions") {
       PlacementTestResultView(
-        length: .quick, lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
+        lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
         undo: undo, onDone: {})
     }
   }
@@ -130,14 +130,33 @@ final class PlacementTestRenderTests: XCTestCase {
   }
 
   func testLessonEndOfferAndPlanRow() async throws {
+    let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
+    let learner = LearnerSummaryStore(
+      api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: .preview()))
+    let mission = StudyMission(
+      detail: nil, done: 1, kind: .practice, minutes: nil, opens: nil, status: "done",
+      total: 1, waitReason: nil)
+    let nextMission = StudyMission(
+      detail: nil, done: 0, kind: .review, minutes: nil, opens: nil, status: "ready",
+      total: 1, waitReason: nil)
+    let moment = DayResult(
+      ceremony: nil, certificates: [],
+      missionMoment: .init(
+        completed: [.practice], fullMeal: .init(bonus: 50, paid: false),
+        missions: [mission, nextMission]),
+      reached: nil)
     try await capture(
-      "level-check-offer", title: "This looks easy for you", detail: "Test what you know"
+      "level-check-offer", title: "Mission done!", detail: "Take the test"
     ) {
-      LevelCheckOfferCard(
-        offer: LevelCheckOffer(goalId: goalID, kind: .quick), isDismissing: false,
-        dismissFailed: false, onCheck: {}, onDismiss: {}
-      )
-      .padding()
+      ZoonkList {
+        DayMomentSections(result: moment)
+        Section {
+          LevelCheckOfferCard(
+            offer: LevelCheckOffer(goalId: goalID, kind: .quick), isDismissing: false,
+            dismissFailed: false, onCheck: {}, onDismiss: {})
+        }
+      }
+      .environment(learner)
     }
 
     var plan = try goalPlanFixture()
@@ -157,7 +176,7 @@ final class PlacementTestRenderTests: XCTestCase {
       absent: ["Your plan stays as it is."]
     ) {
       PlacementTestResultView(
-        length: .quick, lessonsSkipped: 0, nextTopic: "Fractions", isSaving: false, failed: false,
+        lessonsSkipped: 0, nextTopic: "Fractions", isSaving: false, failed: false,
         heldUntilTomorrow: true, onDone: {})
     }
   }
@@ -169,7 +188,7 @@ final class PlacementTestRenderTests: XCTestCase {
       absent: ["You undid these today. Answer again tomorrow to skip them."]
     ) {
       PlacementTestResultView(
-        length: .quick, lessonsSkipped: 23, nextTopic: "Fractions", isSaving: false,
+        lessonsSkipped: 23, nextTopic: "Fractions", isSaving: false,
         failed: false, heldUntilTomorrow: true, onDone: {})
     }
   }
@@ -214,7 +233,7 @@ final class PlacementTestRenderTests: XCTestCase {
 
     try await capture("placement-undo", title: "No lessons skipped", detail: "back in your plan") {
       PlacementTestResultView(
-        length: .quick, lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
+        lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
         undo: undo, onDone: {})
     }
     try await capture(

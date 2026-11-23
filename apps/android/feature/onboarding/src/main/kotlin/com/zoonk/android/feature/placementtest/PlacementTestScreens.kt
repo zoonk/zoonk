@@ -182,7 +182,6 @@ internal fun placementKnownLine(lessons: Int): String =
 /** Main's `PlacementResult`: what the test skipped, and where the plan goes on. */
 @Composable
 internal fun ColumnScope.PlacementResult(
-    length: PlacementLength,
     lessonsSkipped: Int,
     nextTopic: String?,
     onDone: () -> Unit,
@@ -213,8 +212,6 @@ internal fun ColumnScope.PlacementResult(
                 }
             }
         }
-        val undone = undo?.restoredLessons != null
-        if (length == PlacementLength.QUICK && !inSetup && !undone) Note(stringResource(R.string.placementtest_whole_course_skips_more))
     }
 }
 

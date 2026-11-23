@@ -27,7 +27,7 @@ struct LevelCheckOfferCard: View {
               comment: "A lesson end's offer to test out of a language level, such as B2")
           } else {
             Text(
-              "A quick check can skip lessons you already know.", tableName: "Onboarding",
+              "A quick test can skip lessons you already know.", tableName: "Onboarding",
               comment: "A lesson end's offer to take the quick test of what the learner knows")
           }
         }
@@ -40,7 +40,7 @@ struct LevelCheckOfferCard: View {
           if let level = offer.level {
             Text(verbatim: PlacementTestCopy.testOut(level))
           } else {
-            Text(PlacementTestCopy.learnName)
+            Text("Take the test", tableName: "Today")
           }
         }
         .buttonStyle(.outline)

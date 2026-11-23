@@ -67,14 +67,14 @@ export function PlacementLengthChoice({
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const [choice, setChoice] = useState<TestChoice>(initialChoice);
-  const lengthLabel = t("How much do you want to check?");
+  const lengthLabel = t("Choose a test");
 
   const choices: Choice<TestChoice>[] = [
     {
       description: t("About {time}", { time: formatDuration(QUICK_TEST_MINUTES) }),
       label: t({
         description: "The short placement test: about four minutes of questions.",
-        message: "Quick",
+        message: "Quick test",
       }),
       value: "quick",
     },
@@ -245,7 +245,6 @@ export function PlacementBetweenParts({
 export function PlacementResult({
   failed,
   heldUntilTomorrow = false,
-  length,
   lessonsSkipped,
   nextTopic,
   onDone,
@@ -255,7 +254,6 @@ export function PlacementResult({
 }: {
   failed: boolean;
   heldUntilTomorrow?: boolean;
-  length: PlacementLength;
   lessonsSkipped: number;
   nextTopic: string | null;
   onDone: () => void;
@@ -292,12 +290,6 @@ export function PlacementResult({
           <Eyebrow className="self-start">{t("Up next")}</Eyebrow>
           <p className="font-medium">{nextTopic}</p>
         </Surface>
-      )}
-
-      {length === "quick" && !onboarding && !undone && (
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("The whole-course test can skip more.")}
-        </p>
       )}
     </TestOutcome>
   );

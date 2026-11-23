@@ -76,7 +76,7 @@ internal fun LevelCheckOffer(
                         if (level != null) {
                             stringResource(R.string.placementtest_test_out, level)
                         } else {
-                            stringResource(R.string.placementtest_title)
+                            stringResource(R.string.tutor_offer_take_test)
                         },
                     )
                 }
