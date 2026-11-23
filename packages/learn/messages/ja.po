@@ -13874,6 +13874,11 @@ msgid "For example: {example}"
 msgstr "例：{example}"
 
 #: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "筆記試験の合格に必要な最低点：合計{max}点中{minimum}点"
+
+#: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
 msgstr "筆記試験の合格に必要な点数：全体の{share}"

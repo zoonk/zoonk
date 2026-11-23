@@ -63,6 +63,7 @@
   "essay_nothing_lost": "380245cb164314fcc171e459746bf0c43171fc37cc68079d5f1de533426c08b5",
   "essay_of_max": "d910ff559a049b14d493f2e352c02b9f8b0366360f7b3886c7f72bec398c616c",
   "essay_part_minimum": "b10d94d1b077e521ddce1089b30c29ab2931ef1591dbe5fe9ecda1f2b18a2752",
+  "essay_part_minimum_total": "3f574753150d883716f3ddcff4ce18ea042895990ad6874274232952b325a814",
   "essay_past_limit": "d76ba0a6e51903982f91c9110dd1955d4885e3cba33f2bc724041adb1ba0e2f9",
   "essay_past_line": "fd4de7b5c47d6f9d67e3b2c4d252192177e679c770a969fe1f4f5f1565927036",
   "essay_points": "0e05cf280912f501ec271fc4a3586b1be863c74165bb49702be8a07659db356a",
@@ -233,6 +234,7 @@
     <string name="essay_more_tomorrow">Domani potrai farne altri.</string>
     <string name="essay_left_for_tomorrow">Da fare domani</string>
     <string name="essay_part_minimum">Per superare la prova scritta servono almeno %1$s dei punti</string>
+    <string name="essay_part_minimum_total">Punteggio minimo totale per superare la prova scritta: %1$s su %2$s punti</string>
     <string name="essay_content">Contenuto</string>
     <string name="essay_language_errors">Errori linguistici</string>
     <plurals name="essay_errors">

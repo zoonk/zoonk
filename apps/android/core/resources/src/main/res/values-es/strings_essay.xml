@@ -63,6 +63,7 @@
   "essay_nothing_lost": "9d78ff4b8a9ff04ffebf4d9ccebd4d007450fd41dfa76ae97605489583f1a1be",
   "essay_of_max": "92193b3cd4e900c5f8a476c32cc29489e229f4843e9cb354c39051229d6da329",
   "essay_part_minimum": "b02a42d6a0b0ea2aca2056318de4bbf9ac063403c8a8d9cf19618a5a4e34fc6e",
+  "essay_part_minimum_total": "3062809e249666d459760d23975c44ee91729efa8c7d86b5193d3f9bcbae3228",
   "essay_past_limit": "5f38544c91946c49e811906ac0e2d978444cdd12479e92b8eec8e730455bcb13",
   "essay_past_line": "5f801cdb4fc91f785f3861fb49af0f384c762cd5be914798234a9591d7a6873a",
   "essay_points": "9faa8116587638ad9d161d4270d27d968d05d03ed7e051c9b07159af63c4033f",
@@ -233,6 +234,7 @@
     <string name="essay_more_tomorrow">Mañana tendrás más.</string>
     <string name="essay_left_for_tomorrow">Pendiente para mañana</string>
     <string name="essay_part_minimum">Puntaje mínimo para aprobar la prueba escrita: %1$s de los puntos</string>
+    <string name="essay_part_minimum_total">Puntaje mínimo para aprobar la prueba escrita: %1$s de %2$s puntos en total</string>
     <string name="essay_content">Contenido</string>
     <string name="essay_language_errors">Errores de lenguaje</string>
     <plurals name="essay_errors">

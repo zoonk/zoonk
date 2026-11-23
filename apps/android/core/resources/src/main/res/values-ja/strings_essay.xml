@@ -63,6 +63,7 @@
   "essay_nothing_lost": "9ef20ed93530071dc6e5f480449ec1558c473c3e07025ade473ed16301e43f28",
   "essay_of_max": "f12d1ad2e06e683720fac4a585b0c9473e33c4334e80e4f9d81a55b278d992d8",
   "essay_part_minimum": "c279833844589540a056daf24c00515a0cb482fca20f802b57e2262054f9d87a",
+  "essay_part_minimum_total": "2738ef03704cdd87c24c6eea373b48aa48524d11a5d513315ab646b07a535022",
   "essay_past_limit": "1bb26200aaeda46329f06f8189f0e295e20399f018335abbd1e70ea8e49accf6",
   "essay_past_line": "0517999fe475de47931f7571e5cada5d091b015d6de2c9b8f7e96181a49fa349",
   "essay_points": "cfd52f8436b365cd72fa2ee86a3d2fabd8057984a383ca1751d708d1a74d1372",
@@ -223,6 +224,7 @@
     <string name="essay_more_tomorrow">明日また採点できます。</string>
     <string name="essay_left_for_tomorrow">明日に残したタスク</string>
     <string name="essay_part_minimum">筆記試験の合格に必要な点数：全体の%1$s</string>
+    <string name="essay_part_minimum_total">筆記試験の合格に必要な最低点：合計%2$s点中%1$s点</string>
     <string name="essay_content">内容</string>
     <string name="essay_language_errors">言語の誤り</string>
     <plurals name="essay_errors">
