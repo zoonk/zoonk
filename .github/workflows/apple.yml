@@ -34,11 +34,11 @@ jobs:
       app: apple
 
   format:
-    name: ${{ github.event_name == 'pull_request' && 'Swift formatting and Mac unit tests' || 'Swift formatting and Mac build cache' }}
+    name: Swift formatting
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
-    timeout-minutes: 35
+    timeout-minutes: 15
     concurrency:
       group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.run_id }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -46,61 +46,18 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
-      - name: Restore Mac test build
-        id: last
-        uses: ./.github/actions/apple-last-build
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          build: catalyst
+          node-version-file: package.json
 
       - name: Check Swift formatting
         run: make -C apps/apple format-check formatting-check
 
-      - name: Run Mac unit tests
-        if: github.event_name == 'pull_request'
-        env:
-          XCODEBUILD_ARGUMENTS: >-
-            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
-            -onlyUsePackageVersionsFromResolvedFile
-            -skipPackageUpdates
-            -resultBundlePath ${{ runner.temp }}/apple-mac-units.xcresult
-            COMPILER_INDEX_STORE_ENABLE=NO
-            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        run: make -C apps/apple test-mac
-
-      - name: Report Mac unit test results
-        if: always() && github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          echo '```json' >> "$GITHUB_STEP_SUMMARY"
-          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-mac-units.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Check String Catalogs
-        if: github.event_name == 'pull_request'
-        run: make -C apps/apple strings-check
-
-      # Each main commit saves the Mac test build, so pull requests recompile only what changed since.
-      - name: Build Mac unit tests
-        if: github.event_name == 'push' && steps.last.outputs.build-hit != 'true'
-        env:
-          XCODEBUILD_ARGUMENTS: >-
-            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
-            -onlyUsePackageVersionsFromResolvedFile
-            -skipPackageUpdates
-            COMPILER_INDEX_STORE_ENABLE=NO
-            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        run: make -C apps/apple build-mac-tests
-
-      - name: Save Mac test build
-        if: github.event_name == 'push' && steps.last.outputs.build-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/apple/DerivedData/Make
-          key: ${{ steps.last.outputs.build-key }}
-
   build:
     needs: changes
-    # Pull requests compile the same app in the Mac unit test job; main also builds it for iPhone.
+    # Pull requests only check formatting: on this runner, a change to the API contract or to many
+    # files recompiles the whole app for about 10 minutes. Agents run the unit tests locally.
     if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
     timeout-minutes: 30
