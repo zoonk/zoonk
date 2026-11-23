@@ -151,7 +151,7 @@
   "onboarding_material_description": "8629fd508fb6a15df27da950db6773822d391ce27dff79626dfb576b6c65ba52",
   "onboarding_material_goal_exam": "9c58321f44fb9140c98aa1663a3b3e5f50ec1862adace34efd83dead0c6e0e84",
   "onboarding_material_goal_understand": "7d51644357f858fd423a8cfcadb3c082edae0b006fe61477b9a20e4fa88626d7",
-  "onboarding_material_limit": "12126ed13fad114a77cadf8455091ca9b95db7d380ea57f29403afbeac708058",
+  "onboarding_material_limit": "a824e05bbdc3465313b798d52eaf138c9bd266292d08c85b64ddef12db0158cf",
   "onboarding_material_sign_up": "424cef4594e325bf3a401f4de56c3fe72ebc06c4676c89cfec827e3fbeeb8823",
   "onboarding_material_unreadable_one": "f6a5517fd476ea6a2bae0ce51dca8503bcfb846d28f5b56e015a473e6a564c1a",
   "onboarding_material_unreadable_some": "c3e72582a19c6475f3ff3ebf1ef6fd828f56d62b17cec2cbe3f976837f2dc052",
@@ -530,7 +530,7 @@
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">読み取れません</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
-    <string name="onboarding_material_limit">1つの目標に添付できる資料は最大%1$d件です。1件削除すると、別の資料を追加できます。</string>
+    <string name="onboarding_material_limit">1つの目標に添付できる資料は最大%1$s件です。1件削除すると、別の資料を追加できます。</string>
     <string name="onboarding_intent_title">何をしたいですか？</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">試験に備える</string>

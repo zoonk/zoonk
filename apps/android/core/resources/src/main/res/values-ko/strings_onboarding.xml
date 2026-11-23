@@ -151,7 +151,7 @@
   "onboarding_material_description": "fda211790dbf70b9e42cd9e846a5f1e9a3098b30a2c08a9d36b2620242a4b658",
   "onboarding_material_goal_exam": "d1de9ea4f7007ece2dcbd119af0bef11184344c2b807ea2ba36203e9325933cf",
   "onboarding_material_goal_understand": "d32bcb9ab2a44f4484ff0d1a42fd9a9ea13576e3641f8d3538148d90112c2404",
-  "onboarding_material_limit": "9fe1418f45f37147ca5978deeec6f02a6377ba102ada26401f12353514530636",
+  "onboarding_material_limit": "1cd93f414b0c1d1fe379557402075fce3e4586594d2d4cfc96e103c9cbcb1e87",
   "onboarding_material_sign_up": "64cc7f00339ae455522222d56dd0f44508dec23a2867fcfb4999a4ca701fd0b8",
   "onboarding_material_unreadable_one": "e68fcff90ec7278655a3f8e31aeb989dbceb7f5d487904f1c22e79bc9c5bf614",
   "onboarding_material_unreadable_some": "6e1ee75af1afea9d2c047e2fa6f7bfba879b48b840a3ce861484eb46da6b0d4a",
@@ -530,7 +530,7 @@
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">읽을 수 없음</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
-    <string name="onboarding_material_limit">목표 하나에는 파일을 최대 %1$d개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요.</string>
+    <string name="onboarding_material_limit">목표 하나에는 파일을 최대 %1$s개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요.</string>
     <string name="onboarding_intent_title">무엇을 하고 싶으세요?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">시험을 준비하고 싶어요</string>

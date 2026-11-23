@@ -151,7 +151,7 @@
   "onboarding_material_description": "c4722df3d6e62d643f3ba3a69d23ebe8522d87abe0dd48e3263c242ede08b1e6",
   "onboarding_material_goal_exam": "0bea8d99330a2088da1f0f92729292e71c57b01a64737b0d6513ba53dafaab63",
   "onboarding_material_goal_understand": "b887a98ac58e16bc3870eb86d8a4e30fa2085a0c9fa85904bdbd3ef2c6d75684",
-  "onboarding_material_limit": "fc67ef022f5dab353846a64ba38a7c372054b172b9e76eb6ca216e48142afca3",
+  "onboarding_material_limit": "93439094fa0937d02f7881c91444efa972470c73c12d473b6118b964a5e57ecf",
   "onboarding_material_sign_up": "904e5cdcd5f9ee5f48e4c8476ab7416c6d565cd6243292a185e68dec61433772",
   "onboarding_material_unreadable_one": "d8117037b2e5cbd1628fb937506cc1063ab5a54fae9b40593a03430714d5238e",
   "onboarding_material_unreadable_some": "13150cb651480b4f80893b72003208856c4d58b77cdcbd23a58122fbe90d4dbd",
@@ -532,7 +532,7 @@
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">Artık okunamıyor</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
-    <string name="onboarding_material_limit">Bir hedefe en fazla %1$d dosya ekleyebilirsin. Bir tane daha eklemek için bir dosyayı kaldır.</string>
+    <string name="onboarding_material_limit">Bir hedefe en fazla %1$s dosya ekleyebilirsin. Bir tane daha eklemek için bir dosyayı kaldır.</string>
     <string name="onboarding_intent_title">Ne yapmak istiyorsun?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Sınava hazırlan</string>
