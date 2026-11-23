@@ -5,23 +5,17 @@ import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
-import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
-import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { type FinishedChapter } from "../../sessions/completion-contract";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
-import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
-import { getCompletionEnergyContext } from "../../stats/completion-energy";
-import { markPlanItemsTestedOut } from "../_utils/known-skills";
-import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
+import { findOwnedGoal } from "../_utils/owned-goal";
 import { withTestSubmissionClaim } from "../_utils/test-submission-claim";
-import { writeLearnerChange } from "../_utils/write-learner-change";
-import { getChapterTestOutSkills } from "./_utils/chapter-items";
-import { type GradedAnswer, scoreChapter } from "./_utils/score-chapter";
-import { loadTestOutPlan } from "./_utils/test-out-plan";
+import { publishLearnerAnswer } from "../record-learner-answer";
+import { finishTestOutPlans } from "./_utils/finish-test-out-plans";
+import { recordTestOut } from "./_utils/record-test-out";
 import {
   type TestOutReceipt,
   findTestOutReceipt,
-  toTestOutContentIds,
+  readTestOutReceipt,
 } from "./_utils/test-out-receipt";
 import { type ChapterTestOutInput } from "./test-out-contract";
 
@@ -42,41 +36,6 @@ export type SubmitChapterTestOutResult =
   | { status: "notFound" }
   | { status: "nothingToSkip" }
   | { status: "unauthorized" };
-
-function countTestOut({
-  chapterId,
-  goalId,
-  graded,
-  requestId,
-  said,
-  timeZone,
-  userId,
-}: {
-  chapterId: string;
-  goalId: string;
-  graded: readonly GradedAnswer[];
-  requestId: string;
-  said: TestOutReceipt;
-  timeZone: string;
-  userId: string;
-}): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
-  return writeLearnerChange({ userId }, async (tx) => {
-    const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
-
-    return settleAnsweredActivity(tx, {
-      answers: graded.map(({ answer, isCorrect }) => ({
-        durationMs: answer.durationMs,
-        isCorrect,
-      })),
-      contentIds: toTestOutContentIds({ ...said, chapterId, requestId }),
-      goalId,
-      lessonKind: "testOut",
-      lock,
-      timeZone,
-      userId,
-    });
-  });
-}
 
 function toReadyResult({
   celebration,
@@ -125,110 +84,47 @@ async function submitOwnedTestOut({
   chapterId,
   goal,
   input,
-  userId,
 }: {
   chapterId: string;
   goal: Goal;
   input: ChapterTestOutInput;
-  userId: string;
 }): Promise<SubmitChapterTestOutResult> {
-  const goalId = goal.id;
+  const { id: goalId, userId } = goal;
 
-  const replayed = await replaySavedReceipt({
-    chapterId,
-    goalId,
-    requestId: input.requestId,
-    userId,
-  });
+  const saved = await recordTestOut({ chapterId, goal, input });
 
-  if (replayed) {
-    return replayed;
+  if (saved.status !== "ready") {
+    return saved;
   }
 
-  const plan = await loadTestOutPlan(goalId);
-  const eligible = getChapterTestOutSkills({ chapterId, plan });
+  const { events, progress } = saved;
 
-  if (eligible.status !== "ready") {
-    return eligible;
+  if (progress) {
+    publishLearnerAnswer({ events, userId });
   }
 
-  const answeredAt = new Date();
-  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
-
-  const taken = await scoreChapter({
-    answeredAt,
-    chapterSkills: eligible.skills,
-    goal,
-    input,
-    timeZone,
-    userId,
-  });
-
-  if (!taken) {
-    return { status: "invalidItem" };
-  }
-
-  const { graded, knownSkillIds, score } = taken;
-
-  const testedOut =
-    knownSkillIds.size > 0
-      ? await markPlanItemsTestedOut({
-          finishesChapters: true,
-          goalId,
-          items: plan.items,
-          knownSkillIds,
-          testedOutAt: answeredAt,
-          timeZone,
-        })
-      : await refreshGoalPlan({ goalId }).then(() => ({
-          changeId: null,
-          finishedChapters: [],
-          lessonsSkipped: 0,
-          planVersion: null,
-        }));
-
-  const said = {
-    changeId: testedOut.changeId,
-    correct: score.correct,
-    finishedChapter:
-      testedOut.finishedChapters.find(
-        (chapter) => chapter.chapterId === chapterId && chapter.goalId === goalId,
-      ) ?? null,
-    lessonsSkipped: testedOut.lessonsSkipped,
-    passed: score.passed && knownSkillIds.size === score.knownSkillIds.length,
-    planVersion: testedOut.planVersion,
-    total: score.total,
-  };
-
-  const progress = await countTestOut({
-    chapterId,
-    goalId,
-    graded,
-    requestId: input.requestId,
-    said,
-    timeZone,
-    userId,
-  });
-
+  const said = await readTestOutReceipt(await finishTestOutPlans(saved.event));
   const celebration = await celebrateProgress({ progress, userId });
   revalidateCacheTags([getLearnerModelCacheTag(userId), getUserProgressCacheTag(userId)]);
 
-  after(() =>
-    trackLearnerEvents({
-      events: [
-        {
-          name: "Test-out Taken",
-          properties: {
-            chapter_id: chapterId,
-            passed: score.passed && knownSkillIds.size === score.knownSkillIds.length,
-            score: score.total > 0 ? Math.round((score.correct / score.total) * PERCENT) : 0,
+  if (progress) {
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Test-out Taken",
+            properties: {
+              chapter_id: chapterId,
+              passed: said.passed,
+              score: said.total > 0 ? Math.round((said.correct / said.total) * PERCENT) : 0,
+            },
           },
-        },
-      ],
-      goalId,
-      userId,
-    }),
-  );
+        ],
+        goalId,
+        userId,
+      }),
+    );
+  }
 
   return toReadyResult({ celebration, said });
 }
@@ -254,7 +150,7 @@ export async function submitChapterTestOut({
   return withTestSubmissionClaim({
     key: `chapter-test-out:${userId}`,
     replay: () => replaySavedReceipt({ chapterId, goalId, requestId: input.requestId, userId }),
-    submit: () => submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId }),
+    submit: () => submitOwnedTestOut({ chapterId, goal: owned.goal, input }),
     userId,
   });
 }

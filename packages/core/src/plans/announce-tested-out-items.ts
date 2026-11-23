@@ -43,9 +43,14 @@ export async function announceTestedOutItems({
   livingPlanDay,
   now,
   planItemIds,
+  testedOutAt,
   timeZone,
 }: {
-  extraWrites?: (tx: TransactionClient, changeId: string | null) => Promise<unknown>;
+  extraWrites?: (
+    tx: TransactionClient,
+    changeId: string | null,
+    outcome: { lessonsSkipped: number; planVersion: number },
+  ) => Promise<unknown>;
   /**
    * True for a test the learner took on its own; an answer inside today's session keeps the rest of
    * the day as shown.
@@ -55,29 +60,43 @@ export async function announceTestedOutItems({
   livingPlanDay?: string;
   now: Date;
   planItemIds: readonly string[];
+  /** A resumed submission only announces item transitions it still owns. */
+  testedOutAt?: Date;
   timeZone: string;
 }): Promise<{ changeId: string | null; lessonsSkipped: number; planVersion: number } | null> {
   if (planItemIds.length === 0) {
     return null;
   }
 
-  const skipped = new Set(planItemIds);
+  const requested = new Set(planItemIds);
 
   return withPlanRetry(async () => {
     const context = await loadPlanAtToken(goalId, { now, timeZone });
 
-    if (!context || !isPlanReady(context)) {
+    if (!context || context.goal.status === "archived" || !isPlanReady(context)) {
       return null;
     }
 
-    const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
+    const items = context.items.filter(
+      (item) =>
+        requested.has(item.id) &&
+        item.status === "testedOut" &&
+        (!testedOutAt || item.completedAt?.getTime() === testedOutAt.getTime()),
+    );
+
+    if (items.length === 0) {
+      return null;
+    }
+
+    const skipped = new Set(items.map((item) => item.id));
+    const lessonsSkipped = countLessons(items);
 
     const unseen = await readSkipBatch({ context, livingPlanDay, now });
 
     if (
       unseen &&
       !extraWrites &&
-      planItemIds.every((id) => unseen.payload.planItemIds.includes(id))
+      items.every(({ id }) => unseen.payload.planItemIds.includes(id))
     ) {
       if (followToday) {
         await followPlanToday({ changeId: unseen.change.id, context });
@@ -89,7 +108,7 @@ export async function announceTestedOutItems({
     const keepSession = !followToday;
 
     const save = async (tx: TransactionClient, changeId: string | null) => {
-      await extraWrites?.(tx, changeId);
+      await extraWrites?.(tx, changeId, { lessonsSkipped, planVersion: context.plan.version + 1 });
 
       if (keepSession) {
         await keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 });

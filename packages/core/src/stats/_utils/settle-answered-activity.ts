@@ -1,9 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
-import {
-  type ProgressChange,
-  type ProgressLock,
-  applySessionProgress,
-} from "../../sessions/_utils/session-progress";
+import { type JsonObject } from "@zoonk/utils/json";
+import { type ProgressLock, applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta } from "../../sessions/brain-power";
 import { recordLearningEvent } from "../record-learning-event";
 
@@ -15,7 +12,7 @@ const MAX_QUESTION_SECONDS = 300;
 export type AnsweredActivity = {
   /** `isCorrect` is null for a question taken out of its test after it was answered: it counts as neither right nor wrong. */
   answers: readonly { durationMs: number; isCorrect: boolean | null }[];
-  contentIds: Record<string, string>;
+  contentIds: JsonObject;
   goalId: string;
   lessonKind: "focusTest" | "levelTest" | "testOut";
   timeZone: string;
@@ -34,7 +31,7 @@ export async function settleAnsweredActivity(
     timeZone,
     userId,
   }: AnsweredActivity & { lock: ProgressLock },
-): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
+) {
   const correct = answers.filter((answer) => answer.isCorrect === true).length;
   const incorrect = answers.filter((answer) => answer.isCorrect === false).length;
 
@@ -60,7 +57,7 @@ export async function settleAnsweredActivity(
     userId,
   });
 
-  await recordLearningEvent(transaction, {
+  const event = await recordLearningEvent(transaction, {
     brainPower: 0,
     contentIds,
     correctAnswers: correct,
@@ -77,5 +74,5 @@ export async function settleAnsweredActivity(
     userId,
   });
 
-  return progress;
+  return { event, progress };
 }

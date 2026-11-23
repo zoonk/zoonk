@@ -5,9 +5,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import * as announcements from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { NOTHING_REACHED } from "../../sessions/reached";
+import * as settlement from "../../stats/_utils/settle-answered-activity";
 import { placementItemBank } from "../_test-utils/placement-tap-items";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { getRecordedTestOut } from "./get-recorded-test-out";
@@ -134,6 +136,118 @@ describe("a chapter test-out sent and read back", () => {
 
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
     await expect(countRecorded(user.id)).resolves.toStrictEqual(counted);
+  });
+
+  it.each(["activity", "plan"] as const)(
+    "recovers a pass interrupted while saving its %s",
+    async (stage) => {
+      const { goal, library, send, user } = await setup();
+      const requestId = randomUUID();
+      const shared = await plannedGoal({ graph: library.graph, userId: user.id });
+
+      const readShared = () =>
+        prisma.plan.findUniqueOrThrow({ select: { version: true }, where: { goalId: shared.id } });
+
+      const announce = announcements.announceTestedOutItems;
+      const interrupted = new Error("Test-out write interrupted");
+
+      const fault =
+        stage === "activity"
+          ? vi.spyOn(settlement, "settleAnsweredActivity").mockRejectedValueOnce(interrupted)
+          : vi.spyOn(announcements, "announceTestedOutItems").mockImplementation((input) => {
+              if (input.goalId !== goal.id) {
+                return announce(input);
+              }
+
+              return announce({
+                ...input,
+                extraWrites: async (...args) => {
+                  await input.extraWrites?.(...args);
+                  throw interrupted;
+                },
+              });
+            });
+
+      try {
+        await expect(send({ requestId })).rejects.toThrow(interrupted);
+      } finally {
+        fault.mockRestore();
+      }
+
+      const sharedBeforeRetry = await readShared();
+
+      await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(
+        stage === "activity" ? 0 : 4,
+      );
+
+      const first = await send({ requestId, wrong: stage === "plan" ? 4 : 0 });
+
+      await expect(readShared()).resolves.toStrictEqual({
+        version: sharedBeforeRetry.version + (stage === "activity" ? 1 : 0),
+      });
+
+      expect(first).toMatchObject({
+        outcome: {
+          changeId: expect.any(String),
+          correct: 4,
+          lessonsSkipped: 6,
+          passed: true,
+          total: 4,
+        },
+        status: "ready",
+      });
+
+      await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
+
+      await expect(countRecorded(user.id)).resolves.toStrictEqual({
+        attempts: 4,
+        correctAnswers: 4,
+        events: 1,
+      });
+
+      await expect(
+        prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } }),
+      ).resolves.toMatchObject({ interactiveCompleted: 1, timeSpentSeconds: 20 });
+
+      await expect(
+        prisma.planChange.count({ where: { kind: "testedOut", plan: { goalId: goal.id } } }),
+      ).resolves.toBe(1);
+    },
+  );
+
+  it("keeps the score but offers no undo for lessons returned before the plan retry", async () => {
+    const { goal, send, user } = await setup();
+    const requestId = randomUUID();
+
+    const fault = vi
+      .spyOn(announcements, "announceTestedOutItems")
+      .mockRejectedValueOnce(new Error("Plan interrupted"));
+
+    try {
+      await expect(send({ requestId })).rejects.toThrow("Plan interrupted");
+    } finally {
+      fault.mockRestore();
+    }
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: null, status: "todo" },
+      where: { plan: { goalId: goal.id }, status: "testedOut" },
+    });
+
+    await expect(send({ requestId, wrong: 4 })).resolves.toMatchObject({
+      outcome: { changeId: null, correct: 4, passed: true, total: 4 },
+      status: "ready",
+    });
+
+    await expect(countRecorded(user.id)).resolves.toStrictEqual({
+      attempts: 4,
+      correctAnswers: 4,
+      events: 1,
+    });
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "testedOut", plan: { goalId: goal.id } } }),
+    ).resolves.toBe(0);
   });
 
   it("replays the recorded result after source questions change, including for an older exam goal", async () => {

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAskedItemFilter } from "../../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
@@ -10,14 +10,14 @@ import {
   gradePlacementAnswer,
   parsePlacementItem,
 } from "../../placement/_utils/placement-items";
-import { recordLearnerAnswer } from "../../record-learner-answer";
+import { persistLearnerAnswer } from "../../record-learner-answer";
 import { type ChapterTestOutInput } from "../test-out-contract";
 import { pickTestOutSkills, scoreTestOut } from "../test-out-rules";
 import { type getChapterSkills } from "./chapter-items";
 
 type TestOutAnswer = ChapterTestOutInput["answers"][number];
 
-export type GradedAnswer = { answer: TestOutAnswer; item: PlacementItem } & ReturnType<
+type GradedAnswer = { answer: TestOutAnswer; item: PlacementItem } & ReturnType<
   typeof gradePlacementAnswer
 >;
 
@@ -31,12 +31,14 @@ async function gradeAnswers({
   answers,
   examBlueprintId,
   sampled,
+  tx,
 }: {
   answers: readonly TestOutAnswer[];
   examBlueprintId: string | null;
   sampled: readonly string[];
+  tx: TransactionClient;
 }): Promise<GradedAnswer[] | null> {
-  const rows = await prisma.item.findMany({
+  const rows = await tx.item.findMany({
     include: ITEM_IMAGE_INCLUDE,
     where: {
       id: { in: answers.map((answer) => answer.itemId) },
@@ -55,40 +57,43 @@ async function gradeAnswers({
   return graded.every((entry) => entry !== null) ? graded : null;
 }
 
-/** Record answers on the same skill sequentially so their memory updates cannot race. */
 async function recordAnswers({
   answeredAt,
   graded,
   timeZone,
+  tx,
   userId,
 }: {
   answeredAt: Date;
   graded: readonly GradedAnswer[];
   timeZone: string;
+  tx: TransactionClient;
   userId: string;
-}): Promise<void> {
-  const record = ({ answer, isCorrect, item, snapshot }: GradedAnswer) =>
-    recordLearnerAnswer({
-      answer: answer.answer,
-      answeredAt,
-      graded: { durationMs: answer.durationMs, isCorrect },
-      itemId: item.id,
-      language: item.language,
-      mistake: { questionText: snapshot.question, snapshot },
-      purpose: "diagnostic",
-      skillId: item.skillId,
-      timeZone,
-      userId,
+}) {
+  const events = [];
+
+  for (const { answer, isCorrect, item, snapshot } of graded) {
+    // oxlint-disable-next-line no-await-in-loop -- Each answer reads memory updated by the previous one.
+    const recorded = await persistLearnerAnswer({
+      input: {
+        answer: answer.answer,
+        answeredAt,
+        graded: { durationMs: answer.durationMs, isCorrect },
+        itemId: item.id,
+        language: item.language,
+        mistake: { questionText: snapshot.question, snapshot },
+        purpose: "diagnostic",
+        skillId: item.skillId,
+        timeZone,
+        userId,
+      },
+      transaction: tx,
     });
 
-  await Promise.all(
-    [...Map.groupBy(graded, (entry) => entry.item.skillId).values()].map((answers) =>
-      answers.reduce<Promise<unknown>>(
-        (previous, entry) => previous.then(() => record(entry)),
-        Promise.resolve(),
-      ),
-    ),
-  );
+    events.push(...recorded.events);
+  }
+
+  return events;
 }
 
 export async function scoreChapter({
@@ -97,6 +102,7 @@ export async function scoreChapter({
   goal,
   input,
   timeZone,
+  tx,
   userId,
 }: {
   answeredAt: Date;
@@ -104,6 +110,7 @@ export async function scoreChapter({
   goal: Goal;
   input: ChapterTestOutInput;
   timeZone: string;
+  tx: TransactionClient;
   userId: string;
 }) {
   const goalId = goal.id;
@@ -111,19 +118,28 @@ export async function scoreChapter({
 
   const submitted = firstAnswerPerItem(input.answers);
 
-  const [graded, seen] = await Promise.all([
-    gradeAnswers({ answers: submitted, examBlueprintId: goal.examBlueprintId, sampled }),
-    loadSeenPlacementItems({ itemIds: submitted.map((answer) => answer.itemId), userId }),
-  ]);
+  const graded = await gradeAnswers({
+    answers: submitted,
+    examBlueprintId: goal.examBlueprintId,
+    sampled,
+    tx,
+  });
 
   if (!graded) {
     return null;
   }
 
   const localDate = getDateInTimeZone({ date: answeredAt, timeZone });
+
+  const seen = await loadSeenPlacementItems({
+    itemIds: submitted.map((answer) => answer.itemId),
+    tx,
+    userId,
+  });
+
   const fresh = graded.filter(({ item }) => !seen.has(item.id));
 
-  await recordAnswers({ answeredAt, graded: fresh, timeZone, userId });
+  const events = await recordAnswers({ answeredAt, graded: fresh, timeZone, tx, userId });
 
   const score = scoreTestOut({
     chapterSkillIds: chapterSkills.map((skill) => skill.id),
@@ -141,8 +157,9 @@ export async function scoreChapter({
     goalId,
     skillIds: score.knownSkillIds,
     timeZone,
+    tx,
     userId,
   });
 
-  return { graded: fresh, knownSkillIds, score };
+  return { events, graded: fresh, knownSkillIds, score };
 }
