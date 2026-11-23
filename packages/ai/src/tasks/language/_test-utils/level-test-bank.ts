@@ -35,7 +35,7 @@ function taskResult<Data>(data: Data) {
   };
 }
 
-/** Two reading and two listening questions keyed on their first option, and a select-all confirmation per skill, all on "<passage> <level>". */
+/** @internal Shared by core and workflow tests. Two questions per skill are keyed on their first option. */
 export function writtenLevel({
   level,
   passage,
@@ -65,6 +65,7 @@ export function writtenLevel({
   });
 }
 
+/** @internal Shared by core and workflow tests. */
 export function writtenPart({
   level,
   part,
@@ -97,7 +98,7 @@ function answerAsKeyed(
   return { leaks: [], literal: false, picks: [answerIndex], work: "Reaches the key." };
 }
 
-/** A check that passes every question, as it does for a writer that got them right. */
+/** @internal Shared by core and workflow tests. Passes every question as keyed. */
 export async function checkLikeTheKeys({ questions }: CheckLevelTestQuestionsParams) {
   return taskResult({ checks: questions.map((question) => answerAsKeyed(question)) });
 }
