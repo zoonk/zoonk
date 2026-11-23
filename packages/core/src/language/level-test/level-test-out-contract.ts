@@ -1,6 +1,7 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { studyAnswerInputSchema, tapAnswerSchema } from "../../sessions/contract";
+import { studyAnswerInputSchema } from "../../sessions/contract";
+import { tapAnswerSchema } from "../../sessions/tap-answer-contract";
 import { levelTestOutLevelSchema } from "./level-test-contract";
 
 export const levelTestOutAnswerSchema = studyAnswerInputSchema

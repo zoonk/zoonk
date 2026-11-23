@@ -4,7 +4,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { readCourseStart } from "../../goals/course-start-details";
-import { tapAnswerSchema } from "../../sessions/contract";
+import { tapAnswerSchema } from "../../sessions/tap-answer-contract";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../contract";
 import { type OwnLevel } from "./placement-steps";
 

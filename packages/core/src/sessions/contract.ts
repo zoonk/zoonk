@@ -4,6 +4,7 @@ import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract
 import { type ListeningSetView } from "../library/listening/listening-set-view";
 import { MAX_SESSION_TYPED_ANSWER_LENGTH } from "./answer-limits";
 import { areaIdSchema } from "./day-block";
+import { matchAnswerSchema, orderAnswerSchema } from "./tap-answer-contract";
 
 export const todayStudySessionInputSchema = z
   .object({
@@ -55,15 +56,6 @@ export const areaPracticeInputSchema = z
 
 export type AreaPracticeInput = z.infer<typeof areaPracticeInputSchema>;
 
-const matchAnswerSchema = z
-  .object({
-    matches: z
-      .array(z.number().int().min(0))
-      .meta({ description: "For each left entry, the index of the right entry it was matched to" }),
-  })
-  .strict()
-  .meta({ id: "MatchAnswer" });
-
 const numberAnswerSchema = z
   .object({
     number: z
@@ -82,22 +74,6 @@ const typedAnswerSchema = z
   })
   .strict()
   .meta({ id: "TypedAnswer" });
-
-const orderAnswerSchema = z
-  .object({
-    order: z
-      .array(z.number().int().min(0))
-      .meta({
-        description:
-          "An ordering question's answer: the indexes of its shown steps (`options`), in the order the learner put them",
-      }),
-  })
-  .strict()
-  .meta({ id: "OrderAnswer" });
-
-export const tapAnswerSchema = z
-  .union([itemAnswerInputSchema.shape.answer, matchAnswerSchema, orderAnswerSchema])
-  .meta({ id: "TapAnswer" });
 
 export const studyAnswerInputSchema = z
   .object({
