@@ -224,7 +224,7 @@ struct TodayPlanChangeSection: View {
         SuggestionLine {
           StatusMark(status: .done)
         } summary: {
-          Text(result(decision))
+          SuggestionResult(text: result(decision))
             .accessibilityFocused($isResultFocused)
         } action: {
           Group {
@@ -386,7 +386,7 @@ struct TodayPlanChangeSection: View {
   private func statement<Answers: View>(
     title: Text, sentence: String?, @ViewBuilder answers: () -> Answers
   ) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
+    TodaySuggestionCard {
       VStack(alignment: .leading, spacing: 4) {
         SuggestionHeader(title)
 
@@ -401,10 +401,6 @@ struct TodayPlanChangeSection: View {
       .controlSize(.small)
       .disabled(isSaving)
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(14)
-    .panel()
-    .listRowSeparator(.hidden)
   }
 
   // MARK: Missed days
@@ -416,24 +412,14 @@ struct TodayPlanChangeSection: View {
   /// Main's card: what happened and why, with what changes and the choices in its sheet.
   @ViewBuilder
   private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
-    HStack(alignment: .firstTextBaseline, spacing: 10) {
-      SuggestionMark(kind: .symbol("calendar.badge.clock"))
-        .accessibilityHidden(true)
-
-      VStack(alignment: .leading, spacing: 12) {
-        VStack(alignment: .leading, spacing: 4) {
-          SuggestionHeader(missedDaysTitle)
-
-          SuggestionDescription(Text(behindSentence))
-        }
-
-        missedDaysOpen(behind)
+    TodaySuggestionCard(mark: .symbol("calendar.badge.clock")) {
+      VStack(alignment: .leading, spacing: 4) {
+        SuggestionHeader(missedDaysTitle)
+        SuggestionDescription(Text(behindSentence))
       }
+
+      missedDaysOpen(behind)
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(14)
-    .panel()
-    .listRowSeparator(.hidden)
   }
 
   // MARK: The official guide

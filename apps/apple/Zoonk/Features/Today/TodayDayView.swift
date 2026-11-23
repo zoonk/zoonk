@@ -317,7 +317,8 @@ struct TodayDayView: View {
       if let insight = view.insight ?? answeredInsight {
         Section {
           MemoryInsightCard(
-            insight: insight,
+            insight: insight, today: view.session.localDate,
+            dateKind: GoalDateKind(isExam: view.goal.kind == .exam),
             answer: Binding(
               get: { insightAnswers[insight.id] }, set: { insightAnswers[insight.id] = $0 }),
             repriced: Binding(

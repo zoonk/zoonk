@@ -3,17 +3,28 @@ import SwiftUI
 /// Main's `TodayChangeNotice`: a correction to the source material the goal follows.
 struct TodaySourceChangeSection: View {
   let message: String
+  @Environment(\.isPaneSplit) private var isBeside
 
   var body: some View {
     Section {
-      Text(message)
-    } header: {
-      Label {
-        Text("What changed", tableName: "Today", comment: "A change to the goal's sources")
-      } icon: {
-        Image(systemName: "doc.badge.clock")
+      if isBeside {
+        TodaySuggestionCard {
+          SuggestionHeader(
+            Text("What changed", tableName: "Today", comment: "A change to the goal's sources"))
+          SuggestionDescription(Text(message), color: Color(.foreground))
+        }
+      } else {
+        SuggestionLine {
+          SuggestionMark(kind: .symbol("doc.badge.clock"))
+        } summary: {
+          Text(message)
+            .typeWeight(.medium)
+            .lineLimit(nil)
+        } action: {
+          EmptyView()
+        }
+        .listRowSeparator(.hidden)
       }
-      .sectionTitleStyle()
     }
   }
 }
@@ -27,7 +38,7 @@ struct SuggestedGoalSection: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 12) {
+      TodaySuggestionCard {
         VStack(alignment: .leading, spacing: 4) {
           SuggestionHeader(
             Text(
@@ -50,10 +61,6 @@ struct SuggestedGoalSection: View {
           FailureLine(message: SuggestedGoalAnswer.failure)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(14)
-      .panel()
-      .listRowSeparator(.hidden)
     }
   }
 }
@@ -162,7 +169,7 @@ struct TodayExamChoiceSection: View {
   var body: some View {
     if let editor, case .applied(let change, let sentence) = editor.latest {
       Section {
-        Text(sentence)
+        SuggestionResult(text: sentence)
 
         if change.canUndo {
           BusyButton(isBusy: editor.isSaving, icon: .undo) {
@@ -178,26 +185,12 @@ struct TodayExamChoiceSection: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            Group {
-              if choice.take > 1 {
-                Text(
-                  "\(choice.group): which ones will you take?", tableName: "Plan",
-                  comment:
-                    "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-                )
-              } else {
-                Text(
-                  "\(choice.group): which one will you take?", tableName: "Plan",
-                  comment: "Asks which option of an exam's choice the learner takes")
-              }
-            }
-            .typeStyle(.body.weight(.semibold))
+            SuggestionHeader(Text.examChoiceQuestion(group: choice.group, take: choice.take))
 
             SuggestionDescription(Text(choice.leftOut.line))
 
             if choice.take > 1 {
-              Text.examPickLimit(choice.take)
-                .foregroundStyle(.mutedForeground)
+              ExamPickLimit(take: choice.take)
             }
           }
         } icon: {
@@ -254,6 +247,7 @@ struct TodayExamChoiceSection: View {
       }
     }
   }
+
 }
 
 /// Main sends a learner who fell behind to the Plan with its editor open; here it opens over Today.
@@ -473,9 +467,7 @@ struct TodayFocusTestSection: View {
           SuggestionLine {
             StatusMark(status: .done)
           } summary: {
-            Text(Self.noted)
-              .typeWeight(.medium)
-              .foregroundStyle(Color(.foreground))
+            SuggestionResult(text: String(localized: Self.noted))
           } action: {
             EmptyView()
           }

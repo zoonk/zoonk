@@ -266,7 +266,7 @@ struct PlanSuggestionSection: View {
   ) -> some View {
     // An exam choice keeps its question, as main's does.
     if case .choice(let choice) = answer.item {
-      SuggestionHeader(choiceTitle(choice))
+      SuggestionHeader(Text.examChoiceQuestion(group: choice.group, take: choice.take))
         .accessibilityFocused($focus, equals: .item)
     } else {
       SuggestionHeader(
@@ -275,8 +275,7 @@ struct PlanSuggestionSection: View {
       .accessibilityFocused($focus, equals: .item)
     }
 
-    Text(sentence)
-      .typeStyle(.body.weight(.medium))
+    SuggestionResult(text: sentence)
       .accessibilityFocused($focus, equals: .result)
 
     if change.canUndo {
@@ -299,9 +298,7 @@ struct PlanSuggestionSection: View {
     SuggestionLine {
       StatusMark(status: .done)
     } summary: {
-      Text(sentence)
-        .typeWeight(.medium)
-        .foregroundStyle(Color(.foreground))
+      SuggestionResult(text: sentence)
         .accessibilityFocused($focus, equals: .result)
     } action: {
       if change.canUndo {
@@ -470,12 +467,10 @@ struct PlanSuggestionSection: View {
       PlanPausedSlot(context: context, isLine: !isInline)
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
-        title: choiceTitle(choice),
+        title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
         description: Text(choice.leftOut.line)
       ) {
-        Text.examPickLimit(choice.take)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        ExamPickLimit(take: choice.take)
 
         ExamOptionToggles(
           options: choice.options, take: choice.take,
@@ -498,7 +493,7 @@ struct PlanSuggestionSection: View {
       }
     case .choice(let choice):
       PlanSlotCard(
-        title: choiceTitle(choice),
+        title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
         description: Text(choice.leftOut.line)
       ) {
         // Equal picks: one under the other in their order, none drawn as the main answer.
@@ -613,7 +608,7 @@ struct PlanSuggestionSection: View {
           comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
       )
     case .choice(let choice):
-      (choiceTitle(choice), .symbol("signpost.right"))
+      (Text.examChoiceQuestion(group: choice.group, take: choice.take), .symbol("signpost.right"))
     case .pastDate:
       (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
@@ -636,19 +631,6 @@ struct PlanSuggestionSection: View {
     case .tooTight:
       (Text(tooTightTitle), .symbol("calendar.badge.clock"))
     }
-  }
-
-  private func choiceTitle(_ choice: GoalPlan.ExamChoice) -> Text {
-    choice.take > 1
-      ? Text(
-        "\(choice.group): which ones will you take?", tableName: "Plan",
-        comment:
-          "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-      )
-      : Text(
-        "\(choice.group): which one will you take?", tableName: "Plan",
-        comment:
-          "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
 
   private func fitTitle(_ offer: GoalPlan.Offer, today: PlanEffect?) -> Text {

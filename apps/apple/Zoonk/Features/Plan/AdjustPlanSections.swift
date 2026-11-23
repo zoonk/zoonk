@@ -81,11 +81,7 @@ private struct PlanExamChoiceSection: View {
         Text(choice.group)
       }
     } header: {
-      SectionTitle(
-        Text(
-          "\(choice.group): which one will you take?", tableName: "Plan",
-          comment:
-            "Asks which option of an exam's choice, like its foreign language, the learner takes"))
+      SectionTitle(Text.examChoiceQuestion(group: choice.group, take: choice.take))
     }
   }
 
@@ -96,9 +92,7 @@ private struct PlanExamChoiceSection: View {
 
     return Section {
       // Main's quiet line over the options, not a second header line.
-      Text.examPickLimit(choice.take)
-        .typeStyle(.body)
-        .foregroundStyle(.mutedForeground)
+      ExamPickLimit(take: choice.take)
         .listRowSeparator(.hidden)
 
       ExamOptionToggles(
@@ -116,12 +110,7 @@ private struct PlanExamChoiceSection: View {
       }
       .disabled(!picks.canSave(over: choice.subjects))
     } header: {
-      SectionTitle(
-        Text(
-          "\(choice.group): which ones will you take?", tableName: "Plan",
-          comment:
-            "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-        ))
+      SectionTitle(Text.examChoiceQuestion(group: choice.group, take: choice.take))
     }
     .tint(.success)
     .onChange(of: choice.subjects) { draft = nil }

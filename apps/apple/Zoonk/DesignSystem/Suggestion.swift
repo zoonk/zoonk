@@ -44,9 +44,43 @@ struct SuggestionHeader: View {
 
   var body: some View {
     title
-      .typeStyle(isInSheet ? .sheetTitle : .body.weight(.semibold))
+      .typeStyle(isInSheet ? .sheetTitle : .note.weight(.semibold))
       .foregroundStyle(Color(.foreground))
       .accessibilityAddTraits(.isHeader)
+  }
+}
+
+struct SuggestionResult: View {
+  @Environment(\.isInSuggestionSheet) private var isInSheet
+
+  let text: String
+
+  var body: some View {
+    Text(text)
+      .typeStyle((isInSheet ? TypeStyle.sheetText : .note).weight(.medium))
+      .foregroundStyle(Color(.foreground))
+  }
+}
+
+struct TodaySuggestionCard<Content: View>: View {
+  var mark: SuggestionMark.Kind? = nil
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 10) {
+      if let mark {
+        SuggestionMark(kind: mark)
+          .accessibilityHidden(true)
+      }
+
+      VStack(alignment: .leading, spacing: 12) {
+        content
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(14)
+    .panel()
+    .listRowSeparator(.hidden)
   }
 }
 
