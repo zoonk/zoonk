@@ -39,10 +39,8 @@ struct PlanTestRow: View {
             ? .levelTest(goalId: goalId) : .placementTest(goalId: goalId))
       }
     } label: {
-      ListRow(Text(name), descriptionFacts: facts) {
-        Image(systemName: "scope")
-      }
-      .disclosureChevron()
+      ListRow(Text(name), descriptionFacts: facts)
+        .disclosureChevron()
     }
   }
 

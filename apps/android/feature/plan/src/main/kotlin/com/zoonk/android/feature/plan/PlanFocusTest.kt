@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -68,7 +67,6 @@ internal fun PlanFocusTestRow(
         headline = { Text(stringResource(R.string.focustest_title)) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onOpen,
-        leading = { MarkIcon(R.drawable.ic_my_location) },
         supporting = { Text(focusTestLine(summary)) },
     )
 }
@@ -180,7 +178,6 @@ internal fun PlanPlacementTestRow(
         headline = { Text(stringResource(if (test.isLanguage) R.string.placementtest_level_title else R.string.placementtest_title)) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onOpen,
-        leading = { MarkIcon(R.drawable.ic_my_location) },
         supporting = { Text(placementTestLine(test)) },
     )
 }

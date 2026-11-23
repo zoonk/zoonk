@@ -129,6 +129,27 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testLessonEndOfferAndPlanRow() async throws {
+    try await capture(
+      "level-check-offer", title: "This looks easy for you", detail: "Test what you know"
+    ) {
+      LevelCheckOfferCard(
+        offer: LevelCheckOffer(goalId: goalID, kind: .quick), isDismissing: false,
+        dismissFailed: false, onCheck: {}, onDismiss: {}
+      )
+      .padding()
+    }
+
+    var plan = try goalPlanFixture()
+    plan.placementTest = PlanPlacementTest(
+      attempt: nil, estimatedMinutes: 20, kind: .learn,
+      result: PlacementTestResult(finishedAt: .now, lessonsSkipped: 1127), state: .result)
+    let row = try XCTUnwrap(PlanTestRow(goalId: goalID, plan: plan))
+    try await capture("plan-test-row", title: "Test what you know", detail: "1,127") {
+      ZoonkList { row }
+    }
+  }
+
   func testRetakeHeldUntilTomorrow() async throws {
     try await capture(
       "placement-retake-tomorrow", title: "No lessons skipped",
