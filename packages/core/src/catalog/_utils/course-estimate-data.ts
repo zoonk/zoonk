@@ -146,14 +146,16 @@ export async function loadCourseEstimateData(courseId: string, today: string) {
     return null;
   }
 
-  const pace = choosePace(
-    await loadPaceSamples({
-      family: getPaceFamily(course.targetLanguage),
-      lessonIds: lessons.slice(0, PACE_LESSON_LIMIT).map((lesson) => lesson.lessonId),
-      now: fromIsoDate(today),
-      userId: null,
-    }),
-  );
+  const family = getPaceFamily(course.targetLanguage);
+
+  const samples = await loadPaceSamples({
+    family,
+    lessonIds: lessons.slice(0, PACE_LESSON_LIMIT).map((lesson) => lesson.lessonId),
+    now: fromIsoDate(today),
+    userId: null,
+  });
+
+  const pace = choosePace({ ...samples, family });
 
   const bands = new Map(
     skills.flatMap((skill) => (skill.level ? [[skill.id, skill.level] as const] : [])),

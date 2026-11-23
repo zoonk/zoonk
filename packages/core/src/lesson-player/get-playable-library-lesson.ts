@@ -8,6 +8,7 @@ import { loadSkippedActivities } from "../language/activities/skipped-activities
 import { readActiveGoal } from "../learner/facts/learning-profile";
 import { getLearnerLessonPlanCacheTags } from "../library/_utils/learner-lesson-plan";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
+import { getDefaultLessonMinutes } from "../library/lessons/lesson-minutes";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
 import { getSession } from "../users/get-session";
 import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
@@ -54,7 +55,7 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
 
   const outline = {
     description: lesson.description,
-    estimatedMinutes: lesson.estimatedMinutes,
+    estimatedMinutes: getDefaultLessonMinutes(lesson),
     id: lesson.id,
     language: lesson.language,
     title: lesson.title,

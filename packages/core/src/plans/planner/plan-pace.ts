@@ -48,7 +48,15 @@ function blendOwn({ own, prior }: { own: PaceSample; prior: number }): number {
   return (own.count * own.ratio + PRIOR_LESSONS * prior) / (own.count + PRIOR_LESSONS);
 }
 
-export function choosePace({ course, own, typical }: Record<PaceSource, PaceSample | null>): Pace {
+/** Median ratio of recorded to authored minutes, giving each language learner equal weight. */
+export const LANGUAGE_LESSON_TIME_FACTOR = 0.84;
+
+export function choosePace({
+  course,
+  family = "subject",
+  own,
+  typical,
+}: Record<PaceSource, PaceSample | null> & { family?: PaceFamily }): Pace {
   const others = findTrusted([
     ["course", course],
     ["typical", typical],
@@ -56,6 +64,10 @@ export function choosePace({ course, own, typical }: Record<PaceSource, PaceSamp
 
   const prior = others?.[1].ratio ?? 1;
   const ownTrusted = own && isTrusted({ sample: own, source: "own" }) ? own : null;
+
+  if (!ownTrusted && !others && family === "language") {
+    return { factor: LANGUAGE_LESSON_TIME_FACTOR, source: "typical" };
+  }
 
   const [source, ratio]: [PaceSource, number] = ownTrusted
     ? ["own", blendOwn({ own: ownTrusted, prior })]

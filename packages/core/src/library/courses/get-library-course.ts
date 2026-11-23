@@ -5,6 +5,7 @@ import { cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../../cache/tags";
 import { toContentCountryView } from "../../goals/_utils/content-country-view";
 import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-visibility";
+import { getDefaultLessonMinutes } from "../lessons/lesson-minutes";
 
 const LEVEL_ORDER = Object.values(CourseLevel);
 
@@ -13,9 +14,11 @@ const outlineLessonSelect = {
   estimatedMinutes: true,
   homeChapterId: true,
   id: true,
+  identityKey: true,
   level: true,
   ownerId: true,
   slug: true,
+  targetLanguage: true,
   title: true,
   visibility: true,
 } as const;
@@ -51,7 +54,15 @@ async function toOutlineChapter(placement: CachedPlacement) {
   const { lessons, ...chapter } = placement.chapter;
 
   const visibleLessons = await filterVisibleLibraryRows(
-    lessons.map((item) => ({ ...item.lesson, position: item.position })),
+    lessons.map(({ lesson: { identityKey, targetLanguage, ...lesson }, position }) => ({
+      ...lesson,
+      estimatedMinutes: getDefaultLessonMinutes({
+        estimatedMinutes: lesson.estimatedMinutes,
+        identityKey,
+        targetLanguage,
+      }),
+      position,
+    })),
   );
 
   return { ...chapter, lessons: visibleLessons, position: placement.position };

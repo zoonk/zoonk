@@ -41,7 +41,7 @@ async function choosePlanPace({
     userId,
   });
 
-  const sampled = choosePace(samples);
+  const sampled = choosePace({ ...samples, family });
 
   return keepSlowerPace({ family, sampled, saved });
 }

@@ -90,7 +90,10 @@ describe(getPlayableLibraryLesson, () => {
   });
 
   it("sends a written lesson's screens only with a session, a guest's included", async () => {
-    const { lesson } = await playableLessonFixture({ steps: TEACHING_LESSON_STEPS });
+    const { lesson } = await playableLessonFixture({
+      lesson: { estimatedMinutes: 6, targetLanguage: "es" },
+      steps: TEACHING_LESSON_STEPS,
+    });
 
     mockSession(null);
     const visitor = await getPlayableLibraryLesson({ lessonId: lesson.id });
@@ -98,7 +101,7 @@ describe(getPlayableLibraryLesson, () => {
     expect(visitor).toStrictEqual({
       lesson: {
         description: lesson.description,
-        estimatedMinutes: lesson.estimatedMinutes,
+        estimatedMinutes: 5,
         id: lesson.id,
         language: lesson.language,
         title: lesson.title,
@@ -110,6 +113,8 @@ describe(getPlayableLibraryLesson, () => {
 
     mockGuestSession(randomUUID());
     const guest = await getPlayableLibraryLesson({ lessonId: lesson.id });
+
+    expect(guest?.lesson.estimatedMinutes).toBe(5);
 
     expect(guest?.status === "ready" ? guest.lesson.steps.length : 0).toBe(
       TEACHING_LESSON_STEPS.length,

@@ -16,6 +16,7 @@ import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
 import { unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../../plans/create-goal-plan";
+import { daysBetween, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { replanGoalsWaitingOnSkills } from "./replan-waiting-goals";
@@ -380,23 +381,25 @@ describe("skill extensions", () => {
     const { goal, plan, skill } = await setup({ dailyMinutes: 5 });
     const items = await planItems(plan.id);
     const standIn = items.find((item) => item.kind === "lesson" && !item.lessonId);
-    const [first] = readSelectedItemFacts(standIn?.facts)?.days ?? [];
+    const days = readSelectedItemFacts(standIn?.facts)?.days ?? [];
+    expect(days.length).toBeGreaterThan(1);
 
-    expect([first?.[0], readSelectedItemFacts(standIn?.facts)?.days?.at(-1)?.[0]]).toStrictEqual([
-      "2020-10-05",
-      "2020-10-31",
-    ]);
+    const today = fromIsoDate(toIsoDate(NOW));
+    const firstDay = daysBetween(today, fromIsoDate(days[0]![0]));
+    const lastDay = daysBetween(today, fromIsoDate(days.at(-1)![0]));
+    expect(firstDay).toBeGreaterThan(0);
+    expect(lastDay).toBeGreaterThan(firstDay);
 
-    const [soon, later] = await Promise.all([
-      listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
-      listSkillExtensions({ days: 6, goalId: goal.id }),
+    const [soon, beforeStart] = await Promise.all([
+      listSkillExtensions({ days: firstDay, goalId: goal.id }),
+      listSkillExtensions({ days: firstDay - 1, goalId: goal.id }),
     ]);
 
     expect(soon.flatMap((need) => need.bands.flatMap((band) => band.extend ?? []))).toStrictEqual([
       expect.objectContaining({ skill: expect.objectContaining({ id: skill.id }) }),
     ]);
 
-    expect(later).toStrictEqual([]);
+    expect(beforeStart).toStrictEqual([]);
   });
 
   it("sizes the next chapter to the plan's stand-in, capped, after the chapters so far", async () => {

@@ -19,8 +19,8 @@ async function createTwoChapterCourse() {
   ]);
 
   const [firstLesson, laterLesson] = await Promise.all([
-    libraryLessonFixture({ homeChapterId: first.id }),
-    libraryLessonFixture({ homeChapterId: later.id }),
+    libraryLessonFixture({ estimatedMinutes: 6, homeChapterId: first.id, targetLanguage: "en" }),
+    libraryLessonFixture({ estimatedMinutes: 4, homeChapterId: later.id }),
   ]);
 
   await Promise.all([
@@ -38,7 +38,7 @@ describe(getLessonFit, () => {
     const { course, firstLesson } = await createTwoChapterCourse();
 
     await expect(getLessonFit({ lessonId: firstLesson.id })).resolves.toMatchObject({
-      course: { chapterCount: 2, id: course.id, startChapterId: null },
+      course: { chapterCount: 2, id: course.id, minutes: 9, startChapterId: null },
     });
   });
 

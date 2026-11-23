@@ -1,6 +1,7 @@
 import "server-only";
 import { type Lesson, type PlanItem, prisma } from "@zoonk/db";
 import { readLessonMapSentences } from "../../../library/lessons/lesson-map";
+import { getDefaultLessonMinutes } from "../../../library/lessons/lesson-minutes";
 import { isWorkFinished } from "../../../plans/_utils/work-progress";
 import { findUpNextLessonId } from "../../_utils/up-next-lesson";
 import { type ChapterView } from "../chapter-contract";
@@ -25,8 +26,10 @@ export async function loadChapterLessons(chapterId: string): Promise<ChapterLess
           contentStatus: true,
           estimatedMinutes: true,
           id: true,
+          identityKey: true,
           skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } },
           summary: true,
+          targetLanguage: true,
           title: true,
         },
       },
@@ -36,6 +39,7 @@ export async function loadChapterLessons(chapterId: string): Promise<ChapterLess
 
   return rows.map(({ lesson }) => ({
     ...lesson,
+    estimatedMinutes: getDefaultLessonMinutes(lesson),
     skillIds: lesson.skills.map((skill) => skill.skillId),
   }));
 }
