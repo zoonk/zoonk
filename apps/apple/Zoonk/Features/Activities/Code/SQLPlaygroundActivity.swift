@@ -420,6 +420,12 @@ private struct SQLTableViewer: View {
     _isExpanded = ActivityState(wrappedValue: table.rows.count <= 6, "isExpanded-\(table.name)")
   }
 
+  private var rowCount: Text {
+    Text(
+      "\(table.rows.count) rows", tableName: "ActivitiesCode",
+      comment: "How many rows a SQL table has")
+  }
+
   var body: some View {
     VStack(spacing: 0) {
       DisclosureGroup(isExpanded: $isExpanded) {
@@ -455,10 +461,9 @@ private struct SQLTableViewer: View {
         .contentShape(.rect)
       }
       .accessibilityLabel(
-        Text(verbatim: table.name) + Text(verbatim: ", ")
-          + Text(
-            "\(table.rows.count) rows", tableName: "ActivitiesCode",
-            comment: "How many rows a SQL table has")
+        Text(
+          "\(Text(verbatim: table.name)), \(rowCount)", tableName: "ActivitiesCode",
+          comment: "VoiceOver: a SQL table's name, then how many rows it has")
       )
       .tint(.mutedForeground)
       .padding(.trailing, 14)

@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 
+# The reviewed skills in .agents/skills are the repository's source of truth.
+skills:
+  dirs: []
+
 allowBuilds:
   "@nestjs/core": false
   "@parcel/watcher": false
@@ -25,7 +29,7 @@ catalog:
   "@dnd-kit/core": 6.3.1
   "@dnd-kit/sortable": 10.0.0
   "@dnd-kit/utilities": 3.2.2
-  "@eloqnt/cli": 0.7.1
+  "@eloqnt/cli": 0.8.0
   "@eloqnt/format-android-xml": 0.0.11
   "@eloqnt/format-apple-xcstrings": 0.0.10
   "@mdx-js/loader": 3.1.1
@@ -34,7 +38,7 @@ catalog:
   "@next/playwright": 16.4.6
   "@next/third-parties": 16.4.6
   "@playwright/test": 1.65.1
-  "@sentry/nextjs": 11.12.0
+  "@sentry/nextjs": 11.16.0
   "@tailwindcss/turbopack": 4.3.5
   "@tailwindcss/vite": 4.3.5
   "@testing-library/react": 16.3.3
@@ -46,28 +50,28 @@ catalog:
   # 3.11.3's attachDatabasePool reads Date.now() on every pg checkout, which fails every Cache Components prerender that reads the database (https://github.com/vercel/vercel/issues/17830).
   "@vercel/functions": 3.11.2
   "@vitejs/plugin-react": 6.3.0
-  ai: 7.0.173
-  fast-check: 4.10.2
+  ai: 7.0.179
+  fast-check: 4.10.3
   icu-minify: 4.15.2
-  jose: 6.2.17
+  jose: 6.2.18
   jsdom: 31.0.1
   katex: 0.19.1
-  lucide-react: 1.73.0
-  next-intl: 4.15.1
+  lucide-react: 1.77.0
+  next-intl: 4.15.3
   next: 16.4.6
   nuqs: 2.10.3
   playwright: 1.65.1
-  posthog-js: 1.449.2
+  posthog-js: 1.453.2
   raw-loader: 4.0.2
   react-dom: 19.3.1
   react: 19.3.1
-  recharts: 3.10.1
+  recharts: 3.11.0
   server-only: 0.0.1
   sharp: 0.35.5
   translation-resilience: 0.5.0
   tsx: 4.23.15
   typescript: 7.1.0-beta
-  undici: 8.12.4
+  undici: 8.13.1
   vite: 8.3.8
   vitest: 5.1.1
   zod: 4.6.7
@@ -81,13 +85,15 @@ overrides:
   katex: "catalog:"
   # Better Auth's passkey plugin asks for SimpleWebAuthn 13, whose certificate library loads before its Reflect polyfill in a Turbopack build ("tsyringe requires a reflect polyfill") and fails every app that imports auth. 14 loads the polyfill itself, is what the approval check already verifies with, and keeps the four functions the plugin calls.
   "@better-auth/passkey>@simplewebauthn/server": 14.1.0
-  # Audit remediation (Neon CLI 9.5 pins 2.0.4): 2.1.6 covers the serveStatic double-decoding, Windows path traversal, WebSocket handshake leak, upgrade ECONNRESET crash and backslash path advisories in 2.0.x and 2.1.0 to 2.1.5.
+  # Audit remediation (Neon CLI 9.9 pins 2.0.4): 2.1.6 covers the serveStatic double-decoding, Windows path traversal, WebSocket handshake leak, upgrade ECONNRESET crash and backslash path advisories in 2.0.x and 2.1.0 to 2.1.5.
   "@hono/node-server@>=1.19.10 <2.1.6": ^2.1.6
-  # Audit remediation (Neon CLI 9.5 pins 5.2.0): diff 5.2.2 stops parsePatch and applyPatch from looping on crafted patches.
+  # Audit remediation (Neon CLI 9.9 pins 5.2.0): diff 5.2.2 stops parsePatch and applyPatch from looping on crafted patches.
   diff@>=5.0.0 <5.2.2: ^5.2.2
+  # Audit remediation (Prisma 7.10's config loader, @prisma/config, pins 3.20.0): 3.22.1 stops Schema.TemplateLiteral's compiled regex from backtracking on crafted input.
+  effect@<=3.22.0: ^3.22.1
   # Audit remediation (Workflow's queue client (@vercel/queue) and CLI (@oclif/core) ask for ^10.2): only minimatch 11.0.1 fixes the globparts DoS; these callers only use minimatch(), which 11 keeps.
   minimatch@>=7.0.0 <11.0.1: ^11.0.1
   # Audit remediation (@tailwindcss/typography pins 6.0.10): 6.1.5 parses flat selectors in linear time.
   postcss-selector-parser@<6.1.5: ^6.1.5
-  # Audit remediation (Vercel CLI auth and config, through Workflow and Blob's OIDC client, pin 4.1.11): 4.6.6 stops oversized constrained collections from exhausting memory.
+  # Audit remediation (Workflow's CLI pulls @vercel/cli-auth 0.0.1, and Vercel Blob's OIDC client 3.8 pulls @vercel/cli-config 0.3.1; both pin 4.1.11): 4.6.6 stops oversized constrained collections from exhausting memory.
   zod@<4.6.6: ^4.6.6

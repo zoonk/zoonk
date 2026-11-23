@@ -214,18 +214,6 @@ export function getItemFormatKey({
   return keys.includes(CHOICE_KEY) ? CHOICE_KEY : null;
 }
 
-/** Every section's quotas so far, so a format only some sections ask keeps its count. */
-export function addFormatsWanted({
-  quotas,
-  wanted,
-}: {
-  quotas: ReadonlyMap<string, number>;
-  wanted: Readonly<Record<string, number>>;
-}): Record<string, number> {
-  const added = [...quotas].map(([key, count]) => [key, (wanted[key] ?? 0) + count] as const);
-  return { ...wanted, ...Object.fromEntries(added) };
-}
-
 export function getFormatQuotas({
   mix,
   wanted,

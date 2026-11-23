@@ -1,12 +1,15 @@
 import "server-only";
 import { safeAsync } from "@zoonk/utils/error";
-import { POSTHOG_SYSTEM_DISTINCT_ID, getPostHogConfig } from "@zoonk/utils/posthog";
-import { PostHog } from "posthog-node";
+import {
+  POSTHOG_SHUTDOWN_TIMEOUT_MS,
+  POSTHOG_SYSTEM_DISTINCT_ID,
+  getPostHogConfig,
+} from "@zoonk/utils/posthog";
+import { type EventOptions, PostHog } from "posthog-node";
 import { type ServerAnalyticsEvent } from "./events";
 import { type SharedEventProperties } from "./shared-properties";
 
-const POSTHOG_LIMITS = { fetchRetryCount: 1, fetchRetryDelay: 500, requestTimeout: 2000 };
-const SHUTDOWN_TIMEOUT_MS = 5000;
+const POSTHOG_LIMITS = { fetchRetryCount: 1, requestTimeout: 2000 };
 
 type EventProperties = Record<string, boolean | number | string | string[] | null | undefined>;
 
@@ -14,10 +17,12 @@ type EventProperties = Record<string, boolean | number | string | string[] | nul
 async function capture({
   distinctId,
   event,
+  options,
   properties,
 }: {
   distinctId: string;
   event: ServerAnalyticsEvent["name"];
+  options?: EventOptions;
   properties: EventProperties;
 }): Promise<void> {
   const config = getPostHogConfig();
@@ -35,9 +40,9 @@ async function capture({
     });
 
     try {
-      posthog.capture({ distinctId, event, properties });
+      posthog.capture({ distinctId, event, ...(options && { options }), properties });
     } finally {
-      await posthog.shutdown(SHUTDOWN_TIMEOUT_MS);
+      await posthog.shutdown(POSTHOG_SHUTDOWN_TIMEOUT_MS);
     }
   });
 }
@@ -55,6 +60,7 @@ export async function trackSystemEvent({ name, properties }: ServerAnalyticsEven
   await capture({
     distinctId: POSTHOG_SYSTEM_DISTINCT_ID,
     event: name,
-    properties: { ...properties, $process_person_profile: false },
+    options: { process_person_profile: false },
+    properties: properties ?? {},
   });
 }

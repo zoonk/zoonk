@@ -18,6 +18,7 @@ import {
   type ScreenRow,
   type SnapshotScreen,
   type StoredScreens,
+  isMarkedOnly,
   readScreenRows,
 } from "./screen-list";
 
@@ -139,12 +140,22 @@ function ScreenRuns({ context, rows }: { context: Context; rows: readonly Screen
 }
 
 function countsInWords(rows: readonly ScreenRow[], total: number): string {
-  const statuses = ["new", "removed", "moved", "changed", "unchanged"] as const;
+  const groups = [
+    { label: "new", matches: (row: ScreenRow) => row.status === "new" },
+    { label: "removed", matches: (row: ScreenRow) => row.status === "removed" },
+    { label: "moved", matches: (row: ScreenRow) => row.status === "moved" },
+    {
+      label: "changed",
+      matches: (row: ScreenRow) => row.status === "changed" && !isMarkedOnly(row),
+    },
+    { label: "marked again", matches: isMarkedOnly },
+    { label: "unchanged", matches: (row: ScreenRow) => row.status === "unchanged" },
+  ];
 
   return [
-    ...statuses.map((status) => {
-      const count = rows.filter((row) => row.status === status).length;
-      return count > 0 ? `${String(count)} ${status}` : null;
+    ...groups.map(({ label, matches }) => {
+      const count = rows.filter((row) => matches(row)).length;
+      return count > 0 ? `${String(count)} ${label}` : null;
     }),
     `${String(total)} in all`,
   ]

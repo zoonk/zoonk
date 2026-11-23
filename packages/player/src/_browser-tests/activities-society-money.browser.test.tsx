@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it, onTestFinished } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -299,7 +299,28 @@ describe("money and society activities", () => {
     await atViewport({ height: 1100, width: 320 }, async () => {
       document.documentElement.style.fontSize = "200%";
       expect(getComputedStyle(document.documentElement).fontSize).toBe("32px");
+      const mapObservation = Promise.withResolvers<boolean>();
+
+      vi.stubGlobal(
+        "ResizeObserver",
+        class MapResizeObserver extends ResizeObserver {
+          override observe(element: Element, options?: ResizeObserverOptions) {
+            if (element.matches('[data-slot="map-frame"]')) {
+              mapObservation.resolve(true);
+              return;
+            }
+
+            super.observe(element, options);
+          }
+        },
+      );
+
+      onTestFinished(() => {
+        vi.unstubAllGlobals();
+      });
+
       openActivity({ template: "mapExplorer" });
+      await mapObservation.promise;
       await expect.element(page.getByRole("button", { name: "Broad Street pump" })).toBeVisible();
 
       await expect

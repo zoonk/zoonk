@@ -46,7 +46,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@eloqnt/format-po": "0.1.1",
+    "@eloqnt/format-po": "0.1.2",
     "@mdx-js/loader": "catalog:",
     "@mdx-js/react": "catalog:",
     "@next/mdx": "catalog:",

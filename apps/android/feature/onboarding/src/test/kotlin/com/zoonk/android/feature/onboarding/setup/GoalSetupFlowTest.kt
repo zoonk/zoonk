@@ -96,7 +96,12 @@ class GoalSetupFlowTest {
         to: String,
     ) {
         rule.onNodeWithContentDescription("Time a day, $from").performScrollTo().performClick()
-        rule.onNodeWithText(to).performClick()
+        rule
+            .onNodeWithText(to)
+            .performScrollTo()
+            .assertIsDisplayed()
+            .performClick()
+        rule.onNodeWithContentDescription("Time a day, $to").assertExists()
         // A new time asks the plan once the picks settle.
         rule.mainClock.advanceTimeBy(1_000)
     }
@@ -412,9 +417,13 @@ class GoalSetupFlowTest {
         }
         show()
 
-        rule.mainClock.advanceTimeBy(10_000)
+        rule.waitForIdle()
+        repeat(3) {
+            rule.mainClock.advanceTimeBy(3_000)
+            rule.waitForIdle()
+        }
+        rule.runOnIdle { assertEquals(4, reads) }
         rule.onNodeWithText("We couldn't work out when you'd finish.").performScrollTo().assertIsDisplayed()
-        assertEquals(4, reads)
 
         api.advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2027, 3, 15), targetDate = null) }
         rule.onNodeWithText("Try again").performScrollTo().performClick()

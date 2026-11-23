@@ -22,18 +22,17 @@ const BOUNDARY = /[.!?:;\n]/u;
  */
 function countWordsAndNumbers(answer: string): { numbers: number; words: number } {
   const tokens = answer.split(SPACES).filter((token) => LETTER.test(token) || DIGIT.test(token));
+  const count = { numbers: 0, words: 0 };
 
-  return tokens.reduce(
-    (count, token, index) => {
-      if (!DIGIT.test(token)) {
-        return { ...count, words: count.words + 1 };
-      }
+  for (const [index, token] of tokens.entries()) {
+    if (!DIGIT.test(token)) {
+      count.words += 1;
+    } else if (!DIGIT.test(tokens[index - 1] ?? "")) {
+      count.numbers += 1;
+    }
+  }
 
-      const continuesNumber = index > 0 && DIGIT.test(tokens[index - 1] ?? "");
-      return continuesNumber ? count : { ...count, numbers: count.numbers + 1 };
-    },
-    { numbers: 0, words: 0 },
-  );
+  return count;
 }
 
 function fitsLimit(answer: string, limit: AnswerLimit): boolean {
