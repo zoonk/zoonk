@@ -210,9 +210,9 @@ internal fun ColumnScope.PlacementResult(
     ) {
         nextTopic?.takeIf { undo?.restoredLessons == null }?.let {
             OutlinedCard(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Eyebrow(stringResource(R.string.placementtest_up_next))
-                    Text(it, style = MaterialTheme.typography.titleMedium)
+                    Text(it, style = MaterialTheme.typography.titleSmall)
                 }
             }
         }
