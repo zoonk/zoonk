@@ -45,19 +45,34 @@ private struct WritingPointsSection: View {
         }
         .accessibilityElement(children: .combine)
 
-        // The written test's minimum is on the sum of its questions: its tick sits at the same
-        // share of this question's points and says it's the test's, never this question's.
-        if let share = prompt.partMinimum?.share {
-          VStack(alignment: .leading, spacing: 6) {
-            RangeBar(range: points.total, max: points.max, minimum: share * points.max)
-            MinimumLegend(
+        VStack(alignment: .leading, spacing: 6) {
+          let part = prompt.partMinimum
+          let sameScale = part?.max == points.max
+          RangeBar(
+            range: points.total, max: points.max,
+            minimum: sameScale ? part?.share.map { $0 * points.max } : nil)
+
+          if let part, let share = part.share {
+            if let max = part.max, !sameScale {
+              let minimum = WritingLabels.points(
+                part.minimum.unit == .points ? part.minimum.value : share * max)
               Text(
-                "Minimum to pass the written test: \(WritingLabels.share(share)) of the points",
+                "Minimum to pass the written test: \(minimum) of \(WritingLabels.points(max)) points in total",
                 tableName: "Essay"
-              ))
+              )
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+            } else {
+              let label = Text(
+                "Minimum to pass the written test: \(WritingLabels.share(share)) of the points",
+                tableName: "Essay")
+              if sameScale {
+                MinimumLegend(label)
+              } else {
+                label.typeStyle(.note).foregroundStyle(.mutedForeground)
+              }
+            }
           }
-        } else {
-          RangeBar(range: points.total, max: points.max)
         }
       }
       .padding(.vertical, 4)

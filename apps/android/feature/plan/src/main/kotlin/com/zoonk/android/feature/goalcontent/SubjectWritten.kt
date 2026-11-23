@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.writing.MinimumLegend
 import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.PointsValue
 import com.zoonk.android.feature.writing.RangeMeter
@@ -233,9 +234,7 @@ internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
                 Text(stringResource(R.string.essay_not_measured), style = MaterialTheme.typography.titleLarge)
             }
             max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = share) }
-            minimumLine?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-            }
+            minimumLine?.let { MinimumLegend(it) }
         }
         Column {
             points.tasks.forEachIndexed { index, task ->

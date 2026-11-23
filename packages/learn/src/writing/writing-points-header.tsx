@@ -11,28 +11,49 @@ import {
   StepRow,
   StepRows,
 } from "../_components/step-card";
-import { getMinimumShare } from "./minimum-points";
+import { useFormatScore } from "../essay/essay-labels";
+import { getMinimumPoints, getMinimumShare } from "./minimum-points";
 import { MinimumLegend, PointsMeter, PointsReadout } from "./points-readout";
 import { useFormatPointsRange } from "./writing-labels";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
 
-/** The written test's minimum, drawn on this question's scale at the same share of its points. */
-function PartMinimum({ prompt }: { prompt: WritingPrompt }) {
+function PartMinimum({
+  answerMax,
+  part,
+}: {
+  answerMax: number;
+  part: NonNullable<WritingPrompt["partMinimum"]>;
+}) {
   const t = useExtracted();
   const format = useFormatter();
-  const share = prompt.partMinimum && getMinimumShare(prompt.partMinimum);
+  const formatScore = useFormatScore();
+  const share = getMinimumShare(part);
+  const points = getMinimumPoints(part);
 
-  if (share === null || share === undefined) {
+  if (part.max !== null && part.max !== answerMax && points !== null) {
+    return (
+      <p className="text-muted-foreground text-xs">
+        {t("Minimum to pass the written test: {minimum} of {max} points in total", {
+          max: formatScore(part.max),
+          minimum: formatScore(points),
+        })}
+      </p>
+    );
+  }
+
+  if (share === null) {
     return null;
   }
 
-  return (
-    <MinimumLegend>
-      {t("Minimum to pass the written test: {share} of the points", {
-        share: format.number(share, { maximumFractionDigits: 0, style: "percent" }),
-      })}
-    </MinimumLegend>
+  const label = t("Minimum to pass the written test: {share} of the points", {
+    share: format.number(share, { maximumFractionDigits: 0, style: "percent" }),
+  });
+
+  return part.max === answerMax ? (
+    <MinimumLegend>{label}</MinimumLegend>
+  ) : (
+    <p className="text-muted-foreground text-xs">{label}</p>
   );
 }
 
@@ -68,10 +89,10 @@ export function PointsHeader({
       <div className="flex flex-col gap-3">
         <PointsMeter
           max={grade.max}
-          minimumShare={minimum ? getMinimumShare(minimum) : null}
+          minimumShare={minimum?.max === grade.max ? getMinimumShare(minimum) : null}
           range={grade.total}
         />
-        <PartMinimum prompt={prompt} />
+        {minimum && <PartMinimum answerMax={grade.max} part={minimum} />}
       </div>
 
       {grade.zeroReason ? (

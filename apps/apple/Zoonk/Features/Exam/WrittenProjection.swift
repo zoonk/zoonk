@@ -136,8 +136,29 @@ struct WrittenProjectionSections: View {
         ScoreRow(
           name: Text(part.name), range: part.range, max: part.max, decimals: part.decimals,
           levels: part.shownScale == .levels,
-          minimum: part.minimumPoints
+          minimum: part.minimumPoints, written: true
         ) {
+          if part.shownScale == .points, part.tasks.count > 1 {
+            VStack(alignment: .leading, spacing: 4) {
+              ForEach(part.tasks) { task in
+                LabeledContent {
+                  if let range = task.range, let max = task.max {
+                    Text(verbatim: WritingLabels.range(range, of: max, decimals: part.decimals))
+                      .typeStyle(.data)
+                      .foregroundStyle(Color(.foreground))
+                  } else {
+                    Text("Not measured yet", tableName: "Plan")
+                      .typeStyle(.note)
+                      .foregroundStyle(.mutedForeground)
+                  }
+                } label: {
+                  Text(WritingLabels.taskName(task.writingTask, title: task.name))
+                    .typeStyle(.note)
+                    .foregroundStyle(.mutedForeground)
+                }
+              }
+            }
+          }
           PartStanding(part: part)
         }
       }
@@ -197,11 +218,13 @@ private struct ScoreRow<Detail: View>: View {
   /// Graded by level: no points to wait for, so no meter holds their place.
   var levels: Bool
   var minimum: Double?
+  var written: Bool
   @ViewBuilder var detail: Detail
 
   init(
     name: Text, range: WritingRange?, max: Double?, decimals: Int? = nil, levels: Bool = false,
-    minimum: Double? = nil, @ViewBuilder detail: () -> Detail = { EmptyView() }
+    minimum: Double? = nil, written: Bool = false,
+    @ViewBuilder detail: () -> Detail = { EmptyView() }
   ) {
     self.name = name
     self.range = range
@@ -209,6 +232,7 @@ private struct ScoreRow<Detail: View>: View {
     self.decimals = decimals
     self.levels = levels
     self.minimum = minimum
+    self.written = written
     self.detail = detail()
   }
 
@@ -216,7 +240,7 @@ private struct ScoreRow<Detail: View>: View {
     VStack(alignment: .leading, spacing: 8) {
       LabeledContent {
         if let range, let max {
-          Text(verbatim: WritingLabels.range(range, of: max, decimals: decimals))
+          Text(verbatim: WritingLabels.range(range, of: max, decimals: decimals, headline: written))
             .typeStyle(.data)
             .foregroundStyle(Color(.foreground))
         } else if levels {

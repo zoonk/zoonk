@@ -3967,6 +3967,16 @@
         }
       }
     },
+    "Minimum to pass the written test: %@ of %@ points in total" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Minimum to pass the written test: %1$@ of %2$@ points in total"
+          }
+        }
+      }
+    },
     "Minimum to pass the written test: %@ of the points" : {
       "localizations" : {
         "de" : {
