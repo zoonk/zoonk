@@ -50,7 +50,7 @@ internal fun StudyNextSuggestion(
                     onClick = host.onCertificate,
                     busy = host.claimingCertificate,
                     secondary = secondary,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
+                    leadingIcon = if (it.unclaimed.isNotEmpty()) ({ ButtonIcon(R.drawable.ic_workspace_premium) }) else null,
                 ) { Text(it.actionLabel()) }
             }
         }

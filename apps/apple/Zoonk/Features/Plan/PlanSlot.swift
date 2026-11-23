@@ -845,28 +845,18 @@ private struct PlanCertificatesButton: View {
       Button {
         context.show(.certificate(code: only.code))
       } label: {
-        label(
-          Text(
-            "View certificate", tableName: "Plan",
-            comment: "Opens the certificate of the finished plan's course or level"))
+        Text(
+          "View certificate", tableName: "Plan",
+          comment: "Opens the certificate of the finished plan's course or level")
       }
     } else if !earned.isEmpty {
       Button {
         router.present(.account(.certificates))
       } label: {
-        label(
-          Text(
-            "View certificates", tableName: "Plan",
-            comment: "Opens the learner's certificates, from a plan that earned several"))
+        Text(
+          "View certificates", tableName: "Plan",
+          comment: "Opens the learner's certificates, from a plan that earned several")
       }
-    }
-  }
-
-  private func label(_ title: Text) -> some View {
-    Label {
-      title
-    } icon: {
-      Image(systemName: "rosette")
     }
   }
 }
