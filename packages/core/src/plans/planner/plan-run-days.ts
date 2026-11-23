@@ -20,6 +20,7 @@ import { type PlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
 import { type FixedEvent, type PlanDay, listPlanDays } from "./schedule-units";
+import { mockEvent } from "./short-exam-plan";
 import { getTaughtDay } from "./whole-boss";
 import { allocateWriting } from "./writing-allocation";
 
@@ -111,7 +112,7 @@ function describeRunDays({
   settings,
 }: {
   days: Pick<ReturnType<typeof createDays>, "describeDay" | "windows">;
-  settings: Pick<PlanSettings, "movedEvents">;
+  settings: Pick<PlanSettings, "movedEvents" | "mockSchedule">;
 }) {
   const resolveMoved = (event: FixedEvent, date: Date): FixedEvent =>
     event.mock
@@ -124,12 +125,45 @@ function describeRunDays({
         }
       : event;
 
+  const describe = withMovedEvents({
+    describeDay: days.describeDay,
+    moves: settings.movedEvents,
+    resolveMoved,
+  });
+
+  const overrides = settings.mockSchedule ?? [];
+
+  if (overrides.length === 0) {
+    return { describeDay: describe };
+  }
+
   return {
-    describeDay: withMovedEvents({
-      describeDay: days.describeDay,
-      moves: settings.movedEvents,
-      resolveMoved,
-    }),
+    describeDay(date: Date) {
+      const shape = describe(date);
+      const label = toIsoDate(date);
+      const moved = overrides.find((entry) => entry.to === label);
+
+      if (!moved && !overrides.some((entry) => entry.from === label)) {
+        return shape;
+      }
+
+      const events = shape.events.filter(
+        (event) => event.kind !== "mock" && !(moved && event.kind === "review"),
+      );
+
+      if (moved) {
+        events.push(
+          mockEvent({
+            date,
+            fullLength: moved.fullLength,
+            minutes: moved.minutes,
+            replacesDay: true,
+          }),
+        );
+      }
+
+      return { ...shape, events };
+    },
   };
 }
 

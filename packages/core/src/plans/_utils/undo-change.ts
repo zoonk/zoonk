@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
+import { findMockProgress, mockBlocksFor } from "../../checkpoints/_utils/mock-schedule-blocks";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { findOldTestFocus, keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
@@ -7,7 +8,8 @@ import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
 import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
-import { unlessPlanConflict } from "../plan-conflict";
+import { PlanConflictError, unlessPlanConflict } from "../plan-conflict";
+import { fromIsoDate } from "../planner/plan-calendar";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
@@ -97,6 +99,30 @@ export async function undoChange({
 
   const restored = await prisma.$transaction(async (tx) => {
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
+
+    const scheduled = parsePlanChangePayload(change.payload).mockSchedule;
+
+    if (scheduled?.to) {
+      const moved = await tx.planItem.findFirst({
+        select: { id: true, status: true },
+        where: { kind: "mock", planId: change.planId, scheduledFor: fromIsoDate(scheduled.to) },
+      });
+
+      if (
+        !moved ||
+        moved.status !== "todo" ||
+        (await findMockProgress({ client: tx, goalId: context.goal.id, planItemId: moved.id }))
+      ) {
+        throw new PlanConflictError();
+      }
+
+      await tx.studySessionBlock.deleteMany({
+        where: {
+          ...mockBlocksFor({ goalId: context.goal.id, planItemId: moved.id }),
+          status: "pending",
+        },
+      });
+    }
 
     const session =
       snapshot.todaySession &&

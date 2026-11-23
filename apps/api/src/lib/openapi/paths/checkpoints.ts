@@ -35,8 +35,10 @@ import {
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
+import { mockSchedulePaths } from "./mock-schedule";
 
 export const checkpointPaths = {
+  ...mockSchedulePaths,
   "/challenges/{planItemId}": {
     get: {
       description:
