@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -19,7 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,6 +35,7 @@ import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
+import com.zoonk.android.feature.onboarding.setup.TestProgress
 import com.zoonk.android.feature.onboarding.setup.labelCase
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
 import com.zoonk.android.feature.onboarding.setup.withPoll
@@ -48,7 +46,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.LearnerSummary
@@ -147,16 +144,7 @@ internal fun TestTask(
 
     TaskScaffold(
         onClose = navigator::closeTask,
-        title = {
-            progress?.let {
-                Meter(
-                    share = it,
-                    modifier = Modifier.width(METER_WIDTH),
-                    color = MaterialTheme.colorScheme.primary,
-                    contentDescription = stringResource(R.string.onboarding_placement_progress),
-                )
-            }
-        },
+        title = { progress?.let { TestProgress(it) } },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             when {
@@ -329,5 +317,3 @@ internal val PlanPlacementTest.estimatedMinutes: Int
             is PlanPlacementTest.PlanPlacementTestOneOfValue -> value.estimatedMinutes.toInt()
             is PlanPlacementTest.PlanPlacementTestOneOf1Value -> value.estimatedMinutes.toInt()
         }
-
-private val METER_WIDTH = 96.dp

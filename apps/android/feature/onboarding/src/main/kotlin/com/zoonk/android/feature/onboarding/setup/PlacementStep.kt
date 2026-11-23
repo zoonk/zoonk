@@ -93,7 +93,6 @@ internal fun ColumnScope.PlacementStep(
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
-    onProgressLabel: (String?) -> Unit = {},
     lengthChoice: SetupTestChoice? = null,
 ) {
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle(), onDone) }
@@ -107,23 +106,8 @@ internal fun ColumnScope.PlacementStep(
     val shown = if (hold.over) phase else PlacementPhase.Waiting
     val finish = { fromScratch: Boolean -> vm.finish(fromScratch) }
     val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
-    val progressLabel =
-        (shown as? PlacementPhase.Question)?.let {
-            stringResource(
-                R.string.onboarding_placement_question_number,
-                it.number,
-            )
-        }
-    LaunchedEffect(progress, progressLabel) {
-        onProgress(progress)
-        onProgressLabel(progressLabel)
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            onProgress(null)
-            onProgressLabel(null)
-        }
-    }
+    LaunchedEffect(progress) { onProgress(progress) }
+    DisposableEffect(Unit) { onDispose { onProgress(null) } }
 
     when (shown) {
         PlacementPhase.Loading -> {

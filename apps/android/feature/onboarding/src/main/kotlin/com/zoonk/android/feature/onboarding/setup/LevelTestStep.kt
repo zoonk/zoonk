@@ -111,7 +111,6 @@ internal fun ColumnScope.LevelTestSteps(
     onProgress: (Float?) -> Unit,
     plan: PlanAttempt,
     onReportSaveFailure: () -> Unit = {},
-    onProgressLabel: (String?) -> Unit = {},
 ) {
     val vm = viewModel(key = "level-test:$goalId:${plan.attemptId}") { LevelTestViewModel(goalId, store, plan.attemptId) }
     VisitOf(vm.visit)
@@ -129,21 +128,8 @@ internal fun ColumnScope.LevelTestSteps(
             is LevelTestPhase.Question -> phase.progress
             else -> null
         }
-    val progressLabel =
-        when (phase) {
-            is LevelTestPhase.Question -> stringResource(R.string.onboarding_test_question_progress, phase.number, phase.total)
-            else -> null
-        }
-    LaunchedEffect(progress, progressLabel) {
-        onProgress(progress)
-        onProgressLabel(progressLabel)
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            onProgress(null)
-            onProgressLabel(null)
-        }
-    }
+    LaunchedEffect(progress) { onProgress(progress) }
+    DisposableEffect(Unit) { onDispose { onProgress(null) } }
 
     when (shown) {
         LevelTestPhase.Loading -> {

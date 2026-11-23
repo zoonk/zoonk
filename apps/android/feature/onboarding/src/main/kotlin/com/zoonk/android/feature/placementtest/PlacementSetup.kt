@@ -73,7 +73,6 @@ internal fun ColumnScope.PlacementSetup(
     navigator: AppNavigator,
     end: PlacementSetupEnd,
     onProgress: (Float?) -> Unit,
-    onProgressLabel: (String?) -> Unit,
     onReportSaveFailure: () -> Unit,
     onQuickDone: () -> Deferred<WriteOutcome<*>>?,
 ) {
@@ -104,7 +103,6 @@ internal fun ColumnScope.PlacementSetup(
             onProgress,
             { onQuickDone()?.await() ?: WriteOutcome.Obsolete },
             onReportSaveFailure,
-            onProgressLabel,
             lengthChoice = SetupTestChoice(minutes, walk.pressed, walk.failed) { walk.start(PlacementLength.WHOLE_COURSE) },
         )
         return
@@ -139,7 +137,6 @@ internal fun ColumnScope.PlacementSetup(
         navigator = navigator,
         onProgress = onProgress,
         onReportSaveFailure = onReportSaveFailure,
-        onProgressLabel = onProgressLabel,
         plan =
             PlanAttempt(attempt, onLeave = { end.continueWith(null) }, leaving = end.saving, onboarding = true) { result ->
                 val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId

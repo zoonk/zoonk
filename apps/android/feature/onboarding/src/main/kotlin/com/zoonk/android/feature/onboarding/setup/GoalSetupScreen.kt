@@ -210,7 +210,7 @@ fun GoalSetupScreen(
         title = {
             when {
                 testing != null -> {
-                    Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
+                    TestProgress(testing)
                 }
 
                 else -> {
@@ -523,7 +523,6 @@ private fun ColumnScope.QuestionStep(
                     run = run,
                     onRetryRun = onRetryRun,
                     onProgress = { vm.placementProgress = it },
-                    onProgressLabel = { vm.placementProgressLabel = it },
                     handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
                     onReportSaveFailure = onReportPlacement,
                 )
@@ -548,7 +547,6 @@ private fun ColumnScope.QuestionStep(
                             continueWith = { vm.answer(placementAnswer(it), from = OnboardingStep.PLACEMENT) },
                         ),
                     onProgress = { vm.placementProgress = it },
-                    onProgressLabel = { vm.placementProgressLabel = it },
                     onQuickDone = placed,
                     onReportSaveFailure = if (view.goal.kind == Goal.Kind.LANGUAGE) onReportLevelTest else onReportPlacement,
                 )
@@ -590,7 +588,9 @@ private fun StepDots(progress: SetupProgress) {
                     },
                 )
             },
-        modifier = Modifier.width(STEP_DOTS_WIDTH),
+        modifier = Modifier.width(BAR_PROGRESS_WIDTH),
+        height = BAR_PROGRESS_HEIGHT,
+        gap = STEP_DOTS_GAP,
         contentDescription = stringResource(R.string.onboarding_step_of, answered + 1, total),
     )
 }
@@ -687,7 +687,7 @@ private fun Map<String, kotlinx.serialization.json.JsonElement>.texts(key: Strin
 
 private const val DONE_ALPHA = 0.25f
 
-private val STEP_DOTS_WIDTH = 96.dp
+private val STEP_DOTS_GAP = 3.dp
 
 @Composable
 private fun dayTooShortWords(short: Refusal.DayTooShort): String =

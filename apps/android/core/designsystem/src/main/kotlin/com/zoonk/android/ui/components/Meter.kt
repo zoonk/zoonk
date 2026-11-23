@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.layoutEnd
@@ -49,6 +50,7 @@ fun Meter(
     share: Float,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.tertiary,
+    height: Dp = METER_HEIGHT,
     contentDescription: String? = null,
 ) {
     LinearProgressIndicator(
@@ -57,7 +59,7 @@ fun Meter(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(METER_HEIGHT)
+                .height(height)
                 .meterSemantics(contentDescription),
         color = color,
         trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -140,20 +142,22 @@ data class MeterPart(
 fun MeterParts(
     parts: List<MeterPart>,
     modifier: Modifier = Modifier,
+    height: Dp = METER_HEIGHT,
+    gap: Dp = GAP,
     contentDescription: String? = null,
     part: (@Composable (index: Int) -> Unit)? = null,
 ) {
-    val bar = modifier.fillMaxWidth().height(METER_HEIGHT)
+    val bar = modifier.fillMaxWidth().height(height)
 
     if (part == null) {
-        PartsCanvas(parts, bar.meterSemantics(contentDescription))
+        PartsCanvas(parts, gap, bar.meterSemantics(contentDescription))
         return
     }
 
     Box(bar.semantics { contentDescription?.let { this.contentDescription = it } }) {
-        PartsCanvas(parts, Modifier.matchParentSize())
+        PartsCanvas(parts, gap, Modifier.matchParentSize())
         Layout(content = { parts.indices.forEach { part(it) } }, modifier = Modifier.matchParentSize()) { measurables, constraints ->
-            val spans = partSpans(parts, constraints.maxWidth.toFloat(), GAP.toPx(), MINIMUM.toPx())
+            val spans = partSpans(parts, constraints.maxWidth.toFloat(), gap.toPx(), MINIMUM.toPx())
             val placeables =
                 measurables.mapIndexed {
                     index,
@@ -174,6 +178,7 @@ fun MeterParts(
 @Composable
 private fun PartsCanvas(
     parts: List<MeterPart>,
+    gap: Dp,
     modifier: Modifier,
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -183,7 +188,7 @@ private fun PartsCanvas(
     Canvas(modifier) {
         val ring = 1.5.dp.toPx()
         val radius = CornerRadius(size.height / 2)
-        val spans = partSpans(parts, size.width, GAP.toPx(), MINIMUM.toPx())
+        val spans = partSpans(parts, size.width, gap.toPx(), MINIMUM.toPx())
 
         parts.forEachIndexed { index, part ->
             val (start, width) = spans[index]
