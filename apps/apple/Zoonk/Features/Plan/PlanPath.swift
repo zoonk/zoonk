@@ -8,30 +8,51 @@ struct PlanPathSection: View {
   var testRow: PlanTestRow?
 
   var body: some View {
-    PageSection {
-      testRow
-
-      if context.goal.kind == .language,
-        let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
-      {
-        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id, skip: context.alphabetSkip)
+    // Main's order: the test of what the learner knows heads the path in its own group, since a
+    // row without a mark and the path's marked rows don't share one label edge.
+    if let testRow {
+      PageSection {
+        testRow
+      } header: {
+        title
       }
 
-      PlanPathRows(context: context)
+      PageSection {
+        rows
+      } header: {
+        EmptyView()
+      }
+    } else {
+      PageSection {
+        rows
+      } header: {
+        title
+      }
+    }
+  }
 
-      if let course {
-        PageLink(route: .course(courseId: course.courseId, title: course.title)) {
-          PlanPathLink(systemImage: "books.vertical") {
-            Text(
-              "See the full course", tableName: "Plan",
-              comment: "Opens the Library course the plan is built from")
-          }
+  private var title: some View {
+    SectionTitle(
+      Text("Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters"))
+  }
+
+  @ViewBuilder private var rows: some View {
+    if context.goal.kind == .language,
+      let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
+    {
+      PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id, skip: context.alphabetSkip)
+    }
+
+    PlanPathRows(context: context)
+
+    if let course {
+      PageLink(route: .course(courseId: course.courseId, title: course.title)) {
+        PlanPathLink(systemImage: "books.vertical") {
+          Text(
+            "See the full course", tableName: "Plan",
+            comment: "Opens the Library course the plan is built from")
         }
       }
-    } header: {
-      SectionTitle(
-        Text(
-          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters"))
     }
   }
 }
