@@ -1398,12 +1398,6 @@ msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and 
 msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배우고 싶은 걸 알려 주시면 계획을 세워 드릴게요."
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "이전 질문"
-
-#: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"

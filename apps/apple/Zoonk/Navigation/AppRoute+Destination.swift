@@ -25,8 +25,6 @@ extension AppRoute {
     case .speaking:
       LocalizedStringResource(
         "Speaking practice", table: "Voice", comment: "Speaking practice page title")
-    case .earlierQuestions:
-      AppTab.buddy.title
     default:
       studyTab?.title ?? AppTab.plan.title
     }
@@ -100,8 +98,6 @@ extension AppRoute {
       CompletedLessonsScreen()
     case .speaking:
       SpeakingScreen()
-    case .earlierQuestions:
-      EarlierQuestionsScreen()
     case .statistics(let section):
       StatisticsScreen(section: section)
     case .certificates:

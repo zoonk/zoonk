@@ -1398,12 +1398,6 @@ msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and 
 msgstr "Oi! Sou {name}, seu colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "Perguntas anteriores"
-
-#: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"

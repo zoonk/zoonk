@@ -817,41 +817,6 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "サイドバーを展開する"
 
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "以前の質問"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "6hIrBQ"
-msgid "From an earlier version of {course}"
-msgstr "{course}の改訂前の質問"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "TnUbiV"
-msgid "From an earlier version of this course"
-msgstr "このコースの改訂前の質問"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "vgDvJf"
-msgid "No answer was saved."
-msgstr "回答は保存されていません。"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "ttMteQ"
-msgid "Your questions from lessons that were updated, with their answers."
-msgstr "更新されたレッスンでの質問と、その回答です。"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "QKPtX3"
-msgid "No earlier questions"
-msgstr "以前の質問はありません"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O3OEwU"
-msgid "Older questions"
-msgstr "もっと前の質問"
-
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"

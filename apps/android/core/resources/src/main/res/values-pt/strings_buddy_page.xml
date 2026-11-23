@@ -4,7 +4,6 @@
   "buddy_page_change": "885bdb88d76a2b32741c2a9521e1dbaa0c461e6836f1585f8801088c687077ce",
   "buddy_page_choose": "7aaecb955e1a151c61e307feb111eac0da95f7f1e26fd583ee4dfd1ca123f081",
   "buddy_page_count": "92c57da6bd2d12d4e1149291a0fbab60863405692cf119468cffd1af6c49696d",
-  "buddy_page_earlier_questions": "02720fbf9ff48933a6f6a539cbb35e7a8a2d61ed28ee9abe7a2e3d25393cea9c",
   "buddy_page_energy_named": "71d67b8dafd4224afd4703678c01c4d35abb55fbb6d18af4a12056bd29207f23",
   "buddy_page_energy_napping": "76ec29885ee43808a6be8db516b5f42c7bbc5a3868be66eab45650623b4683a0",
   "buddy_page_energy_starts": "0ab543dc1acfd1d0a0fecc4ee5959bb45519f82ebf0b402a1c47eb49a82abca7",
@@ -57,7 +56,6 @@
     <string name="buddy_page_change">Trocar %1$s</string>
     <string name="buddy_page_choose">Escolha seu colega</string>
     <string name="buddy_page_weekly_summary">Resumo semanal</string>
-    <string name="buddy_page_earlier_questions">Perguntas anteriores</string>
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s de %2$s</string>
     <string name="buddy_page_save_failed">Não foi possível salvar. Tente de novo.</string>

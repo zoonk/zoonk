@@ -75,6 +75,7 @@ sealed interface AppRoute : NavKey {
         val task: String? = null,
     ) : AppRoute
 
+    // A Buddy stack saved by an older app can still contain this key.
     @Serializable
     data object EarlierQuestions : AppRoute
 

@@ -51,7 +51,7 @@ enum AppLink: Equatable {
     case (1, "mistakes", _, _): return .route(.mistakes)
     case (1, "completed-lessons", _, _): return .route(.completedLessons)
     case (1, "speaking", _, _): return .route(.speaking)
-    case (2, "buddy", "earlier-questions", _): return .route(.earlierQuestions)
+    case (2, "buddy", "earlier-questions", _): return .tab(.buddy)
     case (2, "mock", "new", _): return .route(.mockChooser)
     case (2, "plan", let subjectKey, _): return .route(.subject(subjectKey: subjectKey))
     case (3, "content", "chapters", let chapterId): return .route(.chapter(chapterId: chapterId))
