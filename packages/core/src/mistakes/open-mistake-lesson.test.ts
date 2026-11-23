@@ -1,8 +1,10 @@
 import { prisma } from "@zoonk/db";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -90,7 +92,10 @@ describe("Opening a notebook lesson", () => {
       question: "Why does one spoon feel colder than the other?",
     };
 
-    const mistake = await mistakeFixture({ snapshot, userId: owner.id });
+    const goal = await goalFixture({ language: "es", userId: owner.id });
+    const studySession = await studySessionFixture({ goalId: goal.id, userId: owner.id });
+    const attempt = await attemptFixture({ studySessionId: studySession.id, userId: owner.id });
+    const mistake = await mistakeFixture({ attemptId: attempt.id, snapshot, userId: owner.id });
     mockSession(other.id);
     await expect(openMistakeLesson(mistake.id)).resolves.toStrictEqual({ status: "notFound" });
     mockSession(owner.id);
@@ -102,7 +107,7 @@ describe("Opening a notebook lesson", () => {
     }
 
     const row = await prisma.lesson.findUniqueOrThrow({ where: { id: result.lesson.id } });
-    expect(row).toMatchObject({ ownerId: owner.id, visibility: "private" });
+    expect(row).toMatchObject({ language: "es", ownerId: owner.id, visibility: "private" });
     expect(row.description).toContain(snapshot.explanation);
     expect(row.description).toContain(snapshot.image.alt);
     nextHeaders.headers.mockResolvedValue(new Headers({ "accept-language": "pt" }));

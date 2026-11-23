@@ -102,7 +102,11 @@ export async function findMistakeLessons({
   places: readonly ReturnType<typeof getMistakeLessonPlace>[];
   userId: string;
 }): Promise<Map<string, MistakeLesson>> {
-  const skillIds = [...new Set(places.flatMap((place) => place.skillId ?? []))];
+  // A snapshot-only lesson teaches a private skill identified by the original mistake.
+  const skillIds = [
+    ...new Set(places.flatMap(({ id, skillId }) => (skillId ? [skillId, id] : [id]))),
+  ];
+
   const lessonIds = [...new Set(places.flatMap((place) => place.lessonId ?? []))];
 
   const [teaching, lessons] = await Promise.all([
@@ -121,7 +125,8 @@ export async function findMistakeLessons({
     places.flatMap((mistake) => {
       const lesson =
         (mistake.lessonId && byId.get(mistake.lessonId)) ||
-        (mistake.skillId && teaching.get(mistake.skillId));
+        (mistake.skillId && teaching.get(mistake.skillId)) ||
+        teaching.get(mistake.id);
 
       return lesson ? [[mistake.id, lesson] as const] : [];
     }),
