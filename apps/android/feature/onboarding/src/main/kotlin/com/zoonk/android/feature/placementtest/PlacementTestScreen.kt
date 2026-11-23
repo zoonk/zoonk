@@ -54,6 +54,7 @@ import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanPlacementTest
+import com.zoonk.api.models.PlanPlacementTestOneOf1
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -70,44 +71,47 @@ fun PlacementTestScreen(
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val goal = summary.value?.goals?.firstOrNull { goal -> route.goalId?.let { goal.id.toString() == it } ?: goal.isActive }
-    val walk = if (goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE) topicWalk(app.plans, goal.id) else null
-    val elsewhere =
-        when (goal?.kind) {
-            LearnerSummaryGoal.Kind.EXAM -> AppRoute.FocusTest(goal.id.toString())
-            LearnerSummaryGoal.Kind.LANGUAGE -> AppRoute.LevelTest(goal.id.toString()).takeIf { walk == false }
-            else -> null
+    val elsewhere = goal?.takeIf { it.kind == LearnerSummaryGoal.Kind.EXAM }?.let { AppRoute.FocusTest(it.id.toString()) }
+    TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator) { goalId, setProgress ->
+        val test = @Composable {
+            val vm =
+                viewModel(
+                    key = "placement-test:$goalId",
+                ) { PlacementTestViewModel(goalId.toString(), app.onboarding, createSavedStateHandle()) }
+            VisitOf(vm.visit)
+            PlacementTestFlow(goalId, goal?.displayName.orEmpty(), app.onboarding, app.plans, setProgress, navigator::closeTask, vm)
         }
-    val deciding = goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE && walk == null
-    TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator, deciding) { goalId, setProgress ->
-        val vm =
-            viewModel(
-                key = "placement-test:$goalId",
-            ) { PlacementTestViewModel(goalId.toString(), app.onboarding, createSavedStateHandle()) }
-        VisitOf(vm.visit)
-        PlacementTestFlow(goalId, goal?.displayName.orEmpty(), app.onboarding, app.plans, setProgress, navigator::closeTask, vm)
+        if (goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
+            LanguageTestEntry(app.plans, goalId) { walking, _ ->
+                if (walking) test() else TestRedirect(AppRoute.LevelTest(goalId.toString()), navigator)
+            }
+        } else {
+            test()
+        }
     }
 }
 
-/**
- * Whether a language plan's test is past its level check, walking the course's topics; null until the plan is read.
- * The walk's last answer closes its attempt, and the walk stays so its result shows.
- */
+/** The walk's last answer closes its attempt, and the walk stays so its result shows. */
 @Composable
-internal fun topicWalk(
+internal fun ColumnScope.LanguageTestEntry(
     plans: PlanStore,
     goalId: UUID,
-): Boolean? {
+    content: @Composable (walking: Boolean, row: PlanPlacementTestOneOf1?) -> Unit,
+) {
     val resource = plans.plan[goalId]
     val read by resource.collectShown()
     val fresh by resource.freshState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
     val walked = rememberSaveable(goalId) { mutableStateOf(false) }
-    val walking =
-        read.value?.plan?.let { plan ->
-            (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null
-        }
+    val row = (read.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value
+    val walking = read.value?.let { row?.attempt != null }
     val shown = topicWalkOf(walking, fresh, walked.value)
     if (shown == true && !walked.value) SideEffect { walked.value = true }
-    return shown
+    when {
+        shown != null -> content(shown, row)
+        read is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } })
+        else -> StepLoading()
+    }
 }
 
 /**
@@ -136,7 +140,6 @@ internal fun TestTask(
     goal: LearnerSummaryGoal?,
     elsewhere: AppRoute?,
     navigator: AppNavigator,
-    deciding: Boolean,
     content: @Composable ColumnScope.(UUID, (Float?) -> Unit) -> Unit,
 ) {
     var progress by remember { mutableStateOf<Float?>(null) }
@@ -148,16 +151,8 @@ internal fun TestTask(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             when {
-                deciding -> {
-                    PageLoading()
-                }
-
                 elsewhere != null -> {
-                    LaunchedEffect(elsewhere) {
-                        navigator.closeTask()
-                        navigator.open(elsewhere)
-                    }
-                    PageLoading()
+                    TestRedirect(elsewhere, navigator)
                 }
 
                 goal != null -> {
@@ -179,6 +174,18 @@ internal fun TestTask(
             }
         }
     }
+}
+
+@Composable
+internal fun TestRedirect(
+    route: AppRoute,
+    navigator: AppNavigator,
+) {
+    LaunchedEffect(route) {
+        navigator.closeTask()
+        navigator.open(route)
+    }
+    PageLoading()
 }
 
 @Composable

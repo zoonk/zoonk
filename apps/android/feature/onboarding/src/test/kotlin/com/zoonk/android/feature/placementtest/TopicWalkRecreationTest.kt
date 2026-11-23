@@ -4,12 +4,16 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -45,17 +49,8 @@ class TopicWalkRecreationTest {
 
     @Test
     fun aFinishedWalkStaysThroughARecreation() {
-        val application = RuntimeEnvironment.getApplication()
-        shadowOf(application.packageManager).addOrUpdateActivity(
-            ActivityInfo().apply {
-                name = TopicWalkActivity::class.java.name
-                packageName = application.packageName
-            },
-        )
         val api = FakePlanApi().apply { shownPlan = plan(""""placementTest":$WALKING""") }
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        TopicWalkHost.plans = PlanStore(api, AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), scope))
-        scenario = ActivityScenario.launch(TopicWalkActivity::class.java)
+        launch(api)
         rule.onNodeWithText(WALK).assertExists()
 
         api.shownPlan = plan(""""placementTest":$FINISHED""")
@@ -67,6 +62,35 @@ class TopicWalkRecreationTest {
         rule.waitForIdle()
 
         rule.onNodeWithText(WALK).assertExists()
+    }
+
+    @Test
+    fun aFailedFirstPlanReadCanBeRetriedIntoAnOngoingWalk() {
+        val api =
+            FakePlanApi().apply {
+                planFailure = ApiException(ApiError.Network)
+                shownPlan = plan(""""placementTest":$WALKING""")
+            }
+        launch(api)
+        rule.onNodeWithText("Try again").assertExists()
+
+        api.planFailure = null
+        rule.onNodeWithText("Try again").performClick()
+        rule.onNodeWithText(WALK).assertExists()
+    }
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    private fun launch(api: FakePlanApi) {
+        val application = RuntimeEnvironment.getApplication()
+        shadowOf(application.packageManager).addOrUpdateActivity(
+            ActivityInfo().apply {
+                name = TopicWalkActivity::class.java.name
+                packageName = application.packageName
+            },
+        )
+        TopicWalkHost.plans = PlanStore(api, AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), scope))
+        scenario = ActivityScenario.launch(TopicWalkActivity::class.java)
     }
 
     private companion object {
@@ -92,8 +116,9 @@ class TopicWalkActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val walk = topicWalk(TopicWalkHost.plans, UUID.fromString(GOAL))
-            Text(if (walk == true) WALK else walk.toString())
+            Column {
+                LanguageTestEntry(TopicWalkHost.plans, UUID.fromString(GOAL)) { walking, _ -> Text(if (walking) WALK else "level") }
+            }
         }
     }
 }

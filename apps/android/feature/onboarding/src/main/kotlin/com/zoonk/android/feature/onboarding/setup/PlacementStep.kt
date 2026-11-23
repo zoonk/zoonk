@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import android.os.SystemClock
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -399,7 +400,6 @@ private fun StatementAnswers(
     }
 }
 
-/** Main's `PlacementDone`: a test that's over and not saved yet; the title says it's done. */
 @Composable
 internal fun ColumnScope.PlacementDone(
     pending: Boolean,
@@ -408,7 +408,7 @@ internal fun ColumnScope.PlacementDone(
 ) {
     PlacementOutcome(
         title = stringResource(R.string.focustest_answers_saved_title),
-        description = null,
+        failureMessage = R.string.mock_step_failed,
         pending = pending,
         failed = failed,
         onContinue = onContinue,
@@ -423,7 +423,7 @@ internal fun ColumnScope.PlacementUnavailable(
 ) {
     PlacementOutcome(
         title = stringResource(R.string.onboarding_placement_unavailable_title),
-        description = null,
+        failureMessage = R.string.onboarding_save_failed,
         pending = pending,
         failed = failed,
         onContinue = onContinue,
@@ -433,15 +433,15 @@ internal fun ColumnScope.PlacementUnavailable(
 @Composable
 private fun ColumnScope.PlacementOutcome(
     title: String,
-    description: String?,
+    @StringRes failureMessage: Int,
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
     SetupContent {
-        OnboardingHeading(title, description)
+        OnboardingHeading(title)
         OnboardingActions {
-            FinishFailed(failed)
+            FinishFailed(failed, failureMessage)
             Button(
                 busy = pending,
                 onClick = onContinue,
@@ -454,10 +454,13 @@ private fun ColumnScope.PlacementOutcome(
 }
 
 @Composable
-internal fun FinishFailed(failed: Boolean) {
+internal fun FinishFailed(
+    failed: Boolean,
+    @StringRes message: Int = R.string.onboarding_save_failed,
+) {
     if (!failed) return
     Text(
-        text = stringResource(R.string.onboarding_save_failed),
+        text = stringResource(message),
         modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,

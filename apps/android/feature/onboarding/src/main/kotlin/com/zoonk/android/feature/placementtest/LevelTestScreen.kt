@@ -81,7 +81,7 @@ fun LevelTestScreen(
     val language = goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE && goal.targetLanguage != null
     val elsewhere = AppRoute.Plan().takeIf { goal != null && !language }
     CompositionLocalProvider(LocalSetupSpeech provides app.speech) {
-        TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator, deciding = false) { _, setProgress ->
+        TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator) { _, setProgress ->
             goal?.takeIf { language }?.let { LevelTestPlanFlow(it, route.testOut, app, navigator, setProgress) }
         }
     }
@@ -104,9 +104,6 @@ private fun ColumnScope.LevelTestPlanFlow(
         navigator.closeTask()
         navigator.open(AppRoute.PlacementTest(goalId))
     }
-    val plan by app.plans.plan[goal.id].collectShown()
-    val row = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value
-    val testOutLevel = row?.nextTestOutLevel?.value
     val attempt = vm.attemptId
     val testOut = vm.testOutId
 
@@ -116,6 +113,9 @@ private fun ColumnScope.LevelTestPlanFlow(
         }
 
         attempt != null -> {
+            val plan by app.plans.plan[goal.id].collectShown()
+            val row = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value
+            val testOutLevel = row?.nextTestOutLevel?.value
             LevelTestSteps(
                 goalId = goalId,
                 targetLanguage = targetLanguage,
@@ -141,20 +141,23 @@ private fun ColumnScope.LevelTestPlanFlow(
             )
         }
 
-        plan == LoadState.Idle || plan == LoadState.Loading -> {
-            StepLoading()
-        }
-
         else -> {
-            LengthChoice(
-                wholeCourseMinutes = row?.estimatedMinutes?.toInt() ?: 0,
-                pressed = vm.pressed,
-                failed = vm.failed,
-                onStart = vm::start,
-                testOutLevel = testOutLevel,
-                initial = if (testOutFirst) TestChoice.TestOut else TestChoice.Quick,
-                onTestOut = { testOutLevel?.let(vm::testOut) },
-            )
+            LanguageTestEntry(app.plans, goal.id) { walking, row ->
+                if (walking) {
+                    TestRedirect(AppRoute.PlacementTest(goalId), navigator)
+                } else {
+                    val testOutLevel = row?.nextTestOutLevel?.value
+                    LengthChoice(
+                        wholeCourseMinutes = row?.estimatedMinutes?.toInt() ?: 0,
+                        pressed = vm.pressed,
+                        failed = vm.failed,
+                        onStart = vm::start,
+                        testOutLevel = testOutLevel,
+                        initial = if (testOutFirst) TestChoice.TestOut else TestChoice.Quick,
+                        onTestOut = { testOutLevel?.let(vm::testOut) },
+                    )
+                }
+            }
         }
     }
 }
