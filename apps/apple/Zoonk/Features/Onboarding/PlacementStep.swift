@@ -489,7 +489,9 @@ struct PlacementQuestionScreen<Media: View>: View {
         } label: {
           Text(
             "Stop and use my answers", tableName: "Onboarding",
-            comment: "Ends a test early; the answers given so far count at once")
+            comment: "Ends a test early; the answers given so far count at once"
+          )
+          .underline()
         }
         .buttonStyle(.borderless)
         .disabled(isSaving && submission != .stop)

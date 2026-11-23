@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -334,7 +335,7 @@ internal fun ColumnScope.PlacementQuestion(
                     focusableWhenDisabled = pending,
                     edge = ButtonEdge.Start,
                 ) {
-                    Text(stopLabel)
+                    Text(stopLabel, textDecoration = TextDecoration.Underline)
                 }
             }
         },
