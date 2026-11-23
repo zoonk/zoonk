@@ -14,7 +14,7 @@ import { getScopeSkillIds } from "./_utils/mistake-scope";
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakeAvailability, type MistakeListInput } from "./contract";
 import { getPracticeTimeZone, loadMistakePracticeAvailability } from "./mistake-availability";
-import { type MistakeLesson, findMistakeLessons } from "./mistake-lessons";
+import { type MistakeLesson, findMistakeLessons, getMistakeLessonPlace } from "./mistake-lessons";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
 type MistakeEntry = Pick<
@@ -136,7 +136,11 @@ export async function listCurrentUserMistakes(
   ]);
 
   const page = rows.slice(0, input.limit);
-  const lessons = await findMistakeLessons({ mistakes: page, userId });
+
+  const lessons = await findMistakeLessons({
+    places: page.map((row) => getMistakeLessonPlace(row)),
+    userId,
+  });
 
   return {
     availability: practiceAvailability.availability,
