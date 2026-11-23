@@ -149,6 +149,10 @@ function saveTestOutAnswer(
     .catch(() => null);
 }
 
+function countQuestionFailure(phase: Phase): Phase {
+  return phase.kind === "testOut" ? { ...phase, failures: phase.failures + 1 } : phase;
+}
+
 export function useLanguagePlanTest({
   actions,
   onDone,
@@ -246,6 +250,7 @@ export function useLanguagePlanTest({
 
   const showTestOut = (view: TestOutView | null) => {
     if (!view) {
+      setPhase(countQuestionFailure);
       return false;
     }
 
@@ -257,7 +262,7 @@ export function useLanguagePlanTest({
     actions.testOut
       .finish(attemptId)
       .then(showTestOut)
-      .catch(() => false);
+      .catch(() => showTestOut(null));
 
   /** Writing the questions again, only from the learner's "Try again". */
   const retry = () =>
@@ -298,10 +303,7 @@ export function useLanguagePlanTest({
           const view = await saveTestOutAnswer(actions.testOut, from, answer, durationMs);
 
           if (!view) {
-            setPhase((current) =>
-              current.kind === "testOut" ? { ...current, failures: current.failures + 1 } : current,
-            );
-
+            setPhase(countQuestionFailure);
             return;
           }
 

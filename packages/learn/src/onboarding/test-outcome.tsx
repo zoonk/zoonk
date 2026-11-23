@@ -19,6 +19,7 @@ export function TestOutcome({
   disabled = false,
   failed = false,
   lead,
+  note,
   onContinue,
   other,
   rail,
@@ -33,6 +34,7 @@ export function TestOutcome({
   failed?: boolean;
   /** Under the title, inside the heading. */
   lead?: ReactNode;
+  note?: ReactNode;
   onContinue: () => void;
   /** A second action, beside the main one. */
   other?: ReactNode;
@@ -46,7 +48,7 @@ export function TestOutcome({
     <OnboardingColumn
       rail={rail}
       bar={
-        <OnboardingActions failed={failed}>
+        <OnboardingActions failed={failed} note={note}>
           {other}
           <OnboardingPrimaryButton autoFocus busy={busy} disabled={disabled} onClick={onContinue}>
             {continueLabel ?? t("Continue")}

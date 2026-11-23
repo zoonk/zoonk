@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../../_components/save-error";
 import { TestOutcome } from "../test-outcome";
 
 /** A test that's over and not saved yet: the learner came back to it, or its last save failed. */
@@ -18,7 +19,11 @@ export function PlacementDone({
   return (
     <TestOutcome
       busy={pending}
-      failed={failed}
+      note={
+        failed && (
+          <ChangeSaveError>{t("That didn't go through. Try again in a moment.")}</ChangeSaveError>
+        )
+      }
       onContinue={onContinue}
       title={t("Your answers are saved")}
     />
