@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -292,6 +291,7 @@ fun SuggestionAction(
     busy: Boolean = false,
     secondary: Boolean = false,
     leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     val presentation = LocalPresentation.current
@@ -306,6 +306,7 @@ fun SuggestionAction(
             busy = busy,
             size = size,
             leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
             content = content,
         )
     } else {
@@ -316,6 +317,7 @@ fun SuggestionAction(
             busy = busy,
             size = size,
             leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
             content = content,
         )
     }
@@ -547,9 +549,6 @@ private val STACKED_ACTION_GAP = 8.dp
 
 private val SHEET_MARK = 24.dp
 
-/** The quiet disclosure's gap from its words to its chevron's ink. */
-private val MENU_CHEVRON_GAP = 8.dp
-
 /** Main's `SuggestionMenu`: "Other options", a quiet button for a suggestion's other ways on; each [SuggestionMenuItem] closes it with done before acting. */
 @Composable
 fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
@@ -560,14 +559,9 @@ fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
             onClick = { open = true },
             modifier = Modifier.semantics { role = Role.DropdownList },
             secondary = true,
+            trailingIcon = { ButtonIcon(R.drawable.ic_expand_more) },
         ) {
             Text(stringResource(R.string.suggestion_other_options))
-            Spacer(Modifier.size(MENU_CHEVRON_GAP))
-            Icon(
-                painterResource(R.drawable.ic_row_fold),
-                contentDescription = null,
-                modifier = Modifier.size(width = 8.dp * glyphScale(), height = 16.dp * glyphScale()),
-            )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
     }

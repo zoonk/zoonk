@@ -325,7 +325,12 @@ struct PlanOtherOptions<Items: View>: View {
     Menu {
       items()
     } label: {
-      Text("Other options", tableName: "Plan", comment: "Opens a suggestion's other answers")
+      Label {
+        Text("Other options", tableName: "Plan", comment: "Opens a suggestion's other answers")
+      } icon: {
+        Image(systemName: "chevron.down")
+      }
+      .labelStyle(.trailingIcon)
     }
   }
 }
