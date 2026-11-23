@@ -466,8 +466,6 @@ internal fun NextStop(
                 ) {
                     {
                         TaskActionBar {
-                            // A failed run waits for nothing: Try again and the way back are its only ways on.
-                            if (!ready && failure == null) WaitQuizAction(quiz, hold)
                             when (viewModel.failed) {
                                 SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
                                 SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
@@ -476,11 +474,9 @@ internal fun NextStop(
                             OpeningWaitLine(opening)
                             TaskActions { main ->
                                 onStop?.let {
-                                    // Main stacks the actions on a narrow layout once an alternative joins them.
                                     OutlinedButton(
                                         busy = viewModel.busy == SessionAction.Stop,
                                         onClick = it,
-                                        modifier = if (instead != null) Modifier.taskOption() else Modifier,
                                         enabled = !busy,
                                         leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
                                     ) { Text(stringResource(R.string.session_next_stop)) }
@@ -507,6 +503,8 @@ internal fun NextStop(
                                         )
                                     }
                                 }
+                                // A failed run waits for nothing: Try again and the way back are its only ways on.
+                                if (!ready && failure == null) WaitQuizAction(quiz, hold, modifier = Modifier.taskOption())
                                 instead?.let { other ->
                                     Button(
                                         busy = viewModel.busy == SessionAction.Start,

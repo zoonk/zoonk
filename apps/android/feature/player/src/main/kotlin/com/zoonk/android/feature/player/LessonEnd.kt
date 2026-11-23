@@ -82,7 +82,6 @@ import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.ResultPages
@@ -561,7 +560,7 @@ fun CompletionActions(
 
     if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.guest) {
         TaskActions { width ->
-            OutlinedButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
+            OutlinedButton(onClick = { exits.replace(AppRoute.Login) }) {
                 Text(stringResource(R.string.player_create_account_to_save))
             }
             Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
@@ -571,7 +570,7 @@ fun CompletionActions(
 
     TaskActions { width ->
         if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.nextLessonId != null) {
-            OutlinedButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
+            OutlinedButton(onClick = exits::close) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
     }

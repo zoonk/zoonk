@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -49,6 +48,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -132,30 +132,29 @@ fun MilestoneCeremony(
                 }
             val actions =
                 @Composable {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        if (canWear) {
-                            OutlinedButton(onClick = { if (steady()) close() }, modifier = Modifier.weight(1f)) {
-                                Text(stringResource(R.string.ceremony_not_now))
+                    Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp)) {
+                        TaskActions { main ->
+                            if (canWear) {
+                                OutlinedButton(onClick = { if (steady()) close() }) {
+                                    Text(stringResource(R.string.ceremony_not_now))
+                                }
                             }
-                        }
-                        Button(
-                            onClick = {
-                                if (!steady()) return@Button
-                                if (glasses != null && onWearGlasses != null) {
-                                    scope.launch {
-                                        onWearGlasses(glasses)
+                            Button(
+                                onClick = {
+                                    if (!steady()) return@Button
+                                    if (glasses != null && onWearGlasses != null) {
+                                        scope.launch {
+                                            onWearGlasses(glasses)
+                                            close()
+                                        }
+                                    } else {
                                         close()
                                     }
-                                } else {
-                                    close()
-                                }
-                            },
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Text(stringResource(if (canWear) R.string.ceremony_wear else R.string.ceremony_continue))
+                                },
+                                modifier = main,
+                            ) {
+                                Text(stringResource(if (canWear) R.string.ceremony_wear else R.string.ceremony_continue))
+                            }
                         }
                     }
                 }

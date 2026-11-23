@@ -44,7 +44,6 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.limitLifted
-import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
@@ -251,9 +250,8 @@ private fun GoalLimitBar(
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
-    TaskActions(back = {
-        OutlinedButton(onClick = onOpenPlan, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_go_to_plan)) }
-    }) { main ->
+    TaskActions { main ->
+        OutlinedButton(onClick = onOpenPlan) { Text(stringResource(R.string.onboarding_go_to_plan)) }
         Button(onClick = onSubscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
     }
 }
@@ -265,13 +263,12 @@ internal fun GoalLimitButtons(
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
-    if (reason == GoalLimitReason.ActiveGoals) {
-        OutlinedButton(
-            onClick = onOpenPlan,
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+    TaskActions { main ->
+        if (reason == GoalLimitReason.ActiveGoals) {
+            OutlinedButton(onClick = onOpenPlan) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+        }
+        Button(onClick = onSubscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
     }
-    Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
 }
 
 /** Right after sending, it opens by itself; coming back later it waits for a tap, since writing it is new work. */
@@ -389,18 +386,17 @@ internal fun ColumnScope.InstrumentGoal(
     }
 
     GoalFooter(error, onCreateAccount, onOpenPlan, onSubscribe) {
-        Button(
-            busy = isStarting,
-            onClick = onStartMusicianship,
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
-        TextButton(
-            busy = isJoining,
-            onClick = onJoinWaitlist,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = waitlist != WaitlistOutcome.Joined,
-            leadingIcon = { ButtonIcon(R.drawable.ic_notifications) },
-        ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
+        TaskActions { main ->
+            OutlinedButton(
+                busy = isJoining,
+                onClick = onJoinWaitlist,
+                enabled = waitlist != WaitlistOutcome.Joined,
+                leadingIcon = { ButtonIcon(R.drawable.ic_notifications) },
+            ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
+            Button(busy = isStarting, onClick = onStartMusicianship, modifier = main) {
+                Text(stringResource(R.string.onboarding_start_musicianship))
+            }
+        }
     }
 }
 
@@ -420,9 +416,8 @@ private fun GuestGoalBar(
     onCreateAccount: () -> Unit,
     onBackToToday: () -> Unit,
 ) {
-    TaskActions(back = {
-        TextButton(onClick = onBackToToday, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_back_to_today)) }
-    }) { main ->
+    TaskActions { main ->
+        OutlinedButton(onClick = onBackToToday) { Text(stringResource(R.string.onboarding_back_to_today)) }
         Button(onClick = onCreateAccount, modifier = main) { Text(stringResource(R.string.onboarding_create_account)) }
     }
 }

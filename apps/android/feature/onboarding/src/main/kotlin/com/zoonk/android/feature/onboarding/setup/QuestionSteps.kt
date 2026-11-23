@@ -56,7 +56,9 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -123,25 +125,26 @@ internal fun ColumnScope.StepForm(
         PlanStartNotice()
         PageActions {
             notice?.invoke()
-            Button(
-                busy = pending && sender == StepSender.Continue,
-                onClick = continueStep,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = canContinue && !pending,
-                focusableWhenDisabled = pending,
-            ) {
-                Text(continueLabel ?: stringResource(R.string.onboarding_continue))
-            }
-            if (onSkip != null) {
-                TextButton(
-                    busy = pending && sender == StepSender.Skip,
-                    onClick = { send(StepSender.Skip, onSkip) },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !pending,
+            TaskActions { main ->
+                if (onSkip != null) {
+                    OutlinedButton(
+                        busy = pending && sender == StepSender.Skip,
+                        onClick = { send(StepSender.Skip, onSkip) },
+                        enabled = !pending,
+                        focusableWhenDisabled = pending,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                    ) {
+                        Text(skipLabel ?: stringResource(R.string.onboarding_skip))
+                    }
+                }
+                Button(
+                    busy = pending && sender == StepSender.Continue,
+                    onClick = continueStep,
+                    modifier = main,
+                    enabled = canContinue && !pending,
                     focusableWhenDisabled = pending,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                 ) {
-                    Text(skipLabel ?: stringResource(R.string.onboarding_skip))
+                    Text(continueLabel ?: stringResource(R.string.onboarding_continue))
                 }
             }
         }

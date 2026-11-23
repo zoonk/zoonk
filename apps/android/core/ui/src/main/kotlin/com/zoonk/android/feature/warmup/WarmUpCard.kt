@@ -361,10 +361,12 @@ private fun WaitStrip(
     }
 }
 
+/** Main's `WaitSlot`: the quiz's way on in the bar, on a line of its own on a phone. */
 @Composable
 fun WaitQuizAction(
     quiz: WaitQuizState,
     hold: ReadyHold,
+    modifier: Modifier = Modifier,
     progressBeside: Boolean = false,
 ) {
     val label =
@@ -376,7 +378,7 @@ fun WaitQuizAction(
         }
     OutlinedButton(onClick = {
         if (quiz.showingProgress && !progressBeside) quiz.showQuiz(hold) else quiz.next()
-    }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(label)) }
+    }, modifier = modifier.fillMaxWidth()) { Text(stringResource(label)) }
 }
 
 @Composable

@@ -24,7 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -33,8 +32,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -71,6 +68,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonkType
@@ -78,7 +76,6 @@ import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 
 /** A language goal with a target language takes its level test instead, which its caller picks before this. */
@@ -215,22 +212,18 @@ private fun ColumnScope.PlacementIntro(
         )
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                busy = starting,
-                onClick = onStart,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !pending,
-            ) {
-                Text(stringResource(R.string.onboarding_placement_start))
-            }
-            TextButton(
-                busy = pending,
-                onClick = onScratch,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !starting,
-                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-            ) {
-                Text(stringResource(R.string.onboarding_placement_skip_basics))
+            TaskActions { main ->
+                OutlinedButton(
+                    busy = pending,
+                    onClick = onScratch,
+                    enabled = !starting,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                ) {
+                    Text(stringResource(R.string.onboarding_placement_skip_basics))
+                }
+                Button(busy = starting, onClick = onStart, modifier = main, enabled = !pending) {
+                    Text(stringResource(R.string.onboarding_placement_start))
+                }
             }
         }
     }
@@ -274,7 +267,7 @@ internal fun ColumnScope.PlacementWaiting(
             if (patient || run.status == GenerationRun.Status.Failed) {
                 {
                     FinishFailed(failed)
-                    TextButton(
+                    OutlinedButton(
                         busy = pending,
                         onClick = onSkip,
                         modifier = Modifier.fillMaxWidth(),
@@ -404,91 +397,24 @@ internal fun ColumnScope.PlacementQuestion(
                 onReport = onReportSaveFailure,
             )
         }
-        BesideOrAbove(
-            start = {
-                OutlinedButton(
-                    onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
-                    busy = pending && sender == PlacementSender.DontKnow,
-                    enabled = !pending,
-                    focusableWhenDisabled = pending,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
-                ) {
-                    Text(dontKnowLabel)
-                }
-            },
-            end = {
-                Button(
-                    onClick = { confirm() },
-                    busy = pending && sender == PlacementSender.Confirm,
-                    enabled = answer != null && !pending,
-                    focusableWhenDisabled = pending,
-                ) {
-                    Text(stringResource(R.string.onboarding_placement_confirm))
-                }
-            },
-        )
-    }
-}
-
-/**
- * [start]'s width beside [end], which keeps the larger of [endMin] and [endLongestWord], since main's action never
- * shrinks below its longest word: its label's, or what's left, where the label wraps (main's
- * `TASK_WRAPPING_ACTION_CLASS`); null only when its [longestWord] wouldn't fit there.
- */
-internal fun besideStartWidth(
-    label: Int,
-    longestWord: Int,
-    endLongestWord: Int,
-    width: Int,
-    gap: Int,
-    endMin: Int,
-): Int? {
-    val room = width - gap - max(endMin, endLongestWord)
-    return if (longestWord <= room) minOf(label, room) else null
-}
-
-/** [start] then [end] on one line, as main keeps them; under each other, [end] still last, only when a word wouldn't fit. */
-@Composable
-private fun BesideOrAbove(
-    start: @Composable () -> Unit,
-    end: @Composable () -> Unit,
-) {
-    Layout(contents = listOf(start, end)) { (starts, ends), constraints ->
-        val gap = ACTION_GAP.roundToPx()
-        val width = constraints.maxWidth
-        val start = starts.first()
-        val besideWidth =
-            besideStartWidth(
-                label = start.maxIntrinsicWidth(constraints.maxHeight),
-                longestWord = start.minIntrinsicWidth(constraints.maxHeight),
-                endLongestWord = ends.first().minIntrinsicWidth(constraints.maxHeight),
-                width = width,
-                gap = gap,
-                endMin = END_MIN_WIDTH.roundToPx(),
-            )
-        val beside = besideWidth != null
-        val startWidth = besideWidth ?: width
-        val endWidth = if (beside) width - gap - startWidth else width
-        val end = ends.first()
-        val rowHeight =
-            if (beside) {
-                maxOf(48.dp.roundToPx(), start.minIntrinsicHeight(startWidth), end.minIntrinsicHeight(endWidth))
-            } else {
-                0
+        TaskActions { main ->
+            OutlinedButton(
+                onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
+                busy = pending && sender == PlacementSender.DontKnow,
+                enabled = !pending,
+                focusableWhenDisabled = pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+            ) {
+                Text(dontKnowLabel)
             }
-        val startPlaceable = start.measure(Constraints(minWidth = startWidth, maxWidth = startWidth, minHeight = rowHeight))
-        val endPlaceable = end.measure(Constraints(minWidth = endWidth, maxWidth = endWidth, minHeight = rowHeight))
-
-        if (beside) {
-            val height = max(startPlaceable.height, endPlaceable.height)
-            layout(width, height) {
-                startPlaceable.placeRelative(0, (height - startPlaceable.height) / 2)
-                endPlaceable.placeRelative(startWidth + gap, (height - endPlaceable.height) / 2)
-            }
-        } else {
-            layout(width, startPlaceable.height + gap + endPlaceable.height) {
-                startPlaceable.placeRelative(0, 0)
-                endPlaceable.placeRelative(0, startPlaceable.height + gap)
+            Button(
+                onClick = { confirm() },
+                busy = pending && sender == PlacementSender.Confirm,
+                modifier = main,
+                enabled = answer != null && !pending,
+                focusableWhenDisabled = pending,
+            ) {
+                Text(stringResource(R.string.onboarding_placement_confirm))
             }
         }
     }
@@ -592,6 +518,3 @@ internal fun String.labelCase() = replaceFirstChar { it.uppercase() }
 
 private val PATIENCE = 20.seconds
 private const val READS_MATERIAL_STEP = "readExamNotice"
-
-private val ACTION_GAP = 8.dp
-private val END_MIN_WIDTH = 160.dp

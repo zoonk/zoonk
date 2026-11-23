@@ -2,7 +2,6 @@ package com.zoonk.android.feature.focustest
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
@@ -37,7 +36,9 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Switch
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.theme.zoonkType
@@ -99,22 +100,14 @@ internal fun ColumnScope.FocusTestCheckpoint(
         if (plan != null) PlanRows(test, plan, changesFocus = focus != null && focus.state != FocusTestFocus.State.IF_TIME_SHORT)
         OnboardingActions {
             FinishFailed(failed || plan?.failed == true)
-            Button(
-                busy = pressed == Pressed.Main,
-                onClick = onDone,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed != Pressed.Other,
-            ) {
-                Text(stringResource(if (plan == null) R.string.focustest_continue else R.string.focustest_done))
-            }
-            if (plan != null && canContinue) {
-                TextButton(
-                    busy = pressed == Pressed.Other,
-                    onClick = onContinueTest,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = pressed != Pressed.Main,
-                ) {
-                    Text(stringResource(R.string.focustest_answer_more))
+            TaskActions { main ->
+                if (plan != null && canContinue) {
+                    OutlinedButton(busy = pressed == Pressed.Other, onClick = onContinueTest, enabled = pressed != Pressed.Main) {
+                        Text(stringResource(R.string.focustest_answer_more))
+                    }
+                }
+                Button(busy = pressed == Pressed.Main, onClick = onDone, modifier = main, enabled = pressed != Pressed.Other) {
+                    Text(stringResource(if (plan == null) R.string.focustest_continue else R.string.focustest_done))
                 }
             }
         }
@@ -171,21 +164,22 @@ private fun ColumnScope.FocusProposal(
         PlanEffectDiff(proposal.effect, dateKind = GoalDateKind.Exam, repriced = plan.repriced != null)
         OnboardingActions {
             FinishFailed(plan.failed)
-            Button(
-                onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.APPLIED) },
-                modifier = Modifier.fillMaxWidth(),
-                busy = plan.deciding == PlanChangeDecisionInput.Status.APPLIED,
-                enabled = !pending,
-            ) {
-                Text(stringResource(R.string.focustest_update_plan))
-            }
-            TextButton(
-                onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.DECLINED) },
-                modifier = Modifier.fillMaxWidth(),
-                busy = plan.deciding == PlanChangeDecisionInput.Status.DECLINED,
-                enabled = !pending,
-            ) {
-                Text(stringResource(R.string.focustest_not_now))
+            TaskActions { main ->
+                OutlinedButton(
+                    onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.DECLINED) },
+                    busy = plan.deciding == PlanChangeDecisionInput.Status.DECLINED,
+                    enabled = !pending,
+                ) {
+                    Text(stringResource(R.string.focustest_not_now))
+                }
+                Button(
+                    onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.APPLIED) },
+                    modifier = main,
+                    busy = plan.deciding == PlanChangeDecisionInput.Status.APPLIED,
+                    enabled = !pending,
+                ) {
+                    Text(stringResource(R.string.focustest_update_plan))
+                }
             }
         }
     }

@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +59,7 @@ fun GateMessage(
     title: String,
     description: String?,
     padding: PaddingValues,
-    action: @Composable FlowRowScope.(main: Modifier) -> Unit,
+    action: @Composable (main: Modifier) -> Unit,
 ) {
     Column(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
         BeforeFold(Modifier.weight(1f)) { beforeFold ->

@@ -71,6 +71,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.MediaPending
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formattingLocale
@@ -253,7 +254,7 @@ private fun ColumnScope.LevelTestWaiting(
         stringResource(R.string.onboarding_continue),
         onRetry,
         skip = {
-            TextButton(
+            OutlinedButton(
                 busy = pending,
                 onClick = onSkip,
                 modifier = Modifier.fillMaxWidth(),

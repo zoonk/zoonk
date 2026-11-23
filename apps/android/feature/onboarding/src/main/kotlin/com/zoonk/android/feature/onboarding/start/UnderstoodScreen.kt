@@ -181,18 +181,14 @@ internal fun ColumnScope.UnderstoodScreen(
         GoalLimitWall(plusLimit, onSubscribe, onOpenPlan)
     } else {
         GoalFooter(shownError, onCreateAccount, onOpenPlan, onSubscribe) {
-            TaskActions(
-                secondary = {
-                    OutlinedButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting) {
-                        Text(stringResource(R.string.onboarding_fix_something))
-                    }
-                },
-                primary = {
-                    Button(busy = isCreating, onClick = onConfirm, enabled = !rewriting) {
-                        Text(stringResource(R.string.onboarding_looks_right))
-                    }
-                },
-            )
+            TaskActions { main ->
+                OutlinedButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting) {
+                    Text(stringResource(R.string.onboarding_fix_something))
+                }
+                Button(busy = isCreating, onClick = onConfirm, modifier = main, enabled = !rewriting) {
+                    Text(stringResource(R.string.onboarding_looks_right))
+                }
+            }
         }
     }
 }

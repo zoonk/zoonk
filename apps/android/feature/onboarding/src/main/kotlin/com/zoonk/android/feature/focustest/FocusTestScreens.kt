@@ -22,7 +22,8 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.FocusTest
@@ -74,22 +75,18 @@ internal fun ColumnScope.FocusTestOffer(
         )
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                busy = pressed == Pressed.Main,
-                onClick = onStart,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed != Pressed.Other,
-            ) {
-                Text(stringResource(R.string.focustest_start))
-            }
-            TextButton(
-                busy = pressed == Pressed.Other,
-                onClick = onSkip,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed != Pressed.Main,
-                leadingIcon = if (onPlan) null else ({ ButtonIcon(R.drawable.ic_skip_next) }),
-            ) {
-                Text(stringResource(if (onPlan) R.string.focustest_not_now else R.string.onboarding_skip))
+            TaskActions { main ->
+                OutlinedButton(
+                    busy = pressed == Pressed.Other,
+                    onClick = onSkip,
+                    enabled = pressed != Pressed.Main,
+                    leadingIcon = if (onPlan) null else ({ ButtonIcon(R.drawable.ic_skip_next) }),
+                ) {
+                    Text(stringResource(if (onPlan) R.string.focustest_not_now else R.string.onboarding_skip))
+                }
+                Button(busy = pressed == Pressed.Main, onClick = onStart, modifier = main, enabled = pressed != Pressed.Other) {
+                    Text(stringResource(R.string.focustest_start))
+                }
             }
         }
     }
@@ -112,15 +109,13 @@ internal fun ColumnScope.FocusTestResume(
         )
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                onClick = onContinue,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed == null,
-            ) {
-                Text(stringResource(R.string.focustest_continue))
-            }
-            TextButton(busy = pressed == Pressed.Other, onClick = onSeeResult, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.focustest_see_my_result))
+            TaskActions { main ->
+                OutlinedButton(busy = pressed == Pressed.Other, onClick = onSeeResult) {
+                    Text(stringResource(R.string.focustest_see_my_result))
+                }
+                Button(onClick = onContinue, modifier = main, enabled = pressed == null) {
+                    Text(stringResource(R.string.focustest_continue))
+                }
             }
         }
     }

@@ -205,11 +205,10 @@ internal fun ColumnScope.LevelResult(
         undo = undo,
         other =
             if (testOutLevel != null && !walks) {
-                { width ->
+                {
                     OutlinedButton(
                         busy = pressed == Pressed.Other,
                         onClick = { onTestOut(testOutLevel) },
-                        modifier = width,
                         enabled = pressed != Pressed.Main && undo?.saving != true,
                     ) {
                         Text(stringResource(R.string.placementtest_test_out, testOutLevel))

@@ -31,7 +31,6 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.BarError
@@ -109,7 +108,6 @@ internal fun ColumnScope.LengthChoice(
                     OutlinedButton(
                         onClick = onSkip,
                         busy = pressed == Pressed.Other,
-                        modifier = Modifier.taskOption(),
                         enabled = pressed == null,
                     ) {
                         Text(stringResource(R.string.onboarding_skip))
@@ -163,11 +161,10 @@ internal fun ColumnScope.BetweenParts(
             enabled = pressed == null,
             failed = failed,
             undo = undo,
-            other = { width ->
+            other = {
                 if (!inSetup) {
                     OutlinedButton(
                         onClick = onFinishForToday,
-                        modifier = width,
                         enabled = pressed == null && undo?.saving != true,
                     ) {
                         Text(stringResource(R.string.placementtest_finish_for_today))
@@ -232,7 +229,7 @@ internal fun ColumnScope.TestOutcome(
     enabled: Boolean = true,
     failed: Boolean = false,
     undo: PlacementUndoViewModel? = null,
-    other: (@Composable (Modifier) -> Unit)? = null,
+    other: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     SetupContent {
@@ -255,14 +252,14 @@ private fun PlacementResultActions(
     enabled: Boolean,
     failed: Boolean,
     undo: PlacementUndoViewModel?,
-    other: (@Composable (Modifier) -> Unit)?,
+    other: (@Composable () -> Unit)?,
 ) {
     val undoFailure = if (undo?.failed == true) stringResource(R.string.plan_undo_failed) else null
     OnboardingActions(note = undoFailure?.let { { BarError(it) } }) {
         FinishFailed(failed)
         TaskActions { main ->
-            other?.invoke(Modifier.taskOption())
             PlacementUndoButton(undo, enabled = enabled && !busy)
+            other?.invoke()
             Button(busy = busy, onClick = onAction, modifier = main, enabled = enabled && undo?.saving != true) { Text(action) }
         }
     }

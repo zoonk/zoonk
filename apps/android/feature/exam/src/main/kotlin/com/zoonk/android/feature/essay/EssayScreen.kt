@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -616,7 +615,7 @@ internal fun EssayGradeSteps(
                     }
                 }
             }
-            val finalActions: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
+            val finalActions: @Composable (Modifier) -> Unit = { main ->
                 if (closed) {
                     Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
                         Text(stringResource(R.string.essay_back_to_today))
