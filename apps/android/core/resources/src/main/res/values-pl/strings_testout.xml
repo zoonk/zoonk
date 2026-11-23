@@ -6,7 +6,8 @@
   "testout_continue": "252ed225e3a947b8962c40f1c02d2098da9d89b2fea0421e72de8a4c18292a50",
   "testout_intro_detail": "89a56f28fceb1406e1b0400f56efc827048bb755f731e8953a3da4d5c7563479",
   "testout_intro_title": "78d9bdb66c0305fe8a9f5e73367e20ed6df26c273319ccb85bbb4a0489281fad",
-  "testout_lessons_back": "8655b0c8e7e29f8e671f302fb230b10c3db3a004bb0903a19f1d31ec05426dd5",
+  "testout_lessons_back_one": "7ad8fdea496dd2f1187b6a3f45ca275adc5d2238f44d298abbd91c6845d3bc49",
+  "testout_lessons_back_other": "a600b08b89c4666a5168f76e6accc3837c1ac13e9831451dad500aaa504a9c11",
   "testout_lessons_left": "603b1ed8f7b18e079430f71ea1a06d4dd5289bb3aacd334be3b68e43d23dc441",
   "testout_lessons_off": "7daf394f3bb7ae5afccaf1c39eb8252d6ad06a3f6387d168984f8ffd5c6b9465",
   "testout_not_passed": "888134274886b6fad6f123a406927a7131ac2ced7a9300845829ba5554944022",
@@ -54,6 +55,7 @@
         <item quantity="many">Twój plan pomija %d lekcji z materiałem, który już znasz.</item>
         <item quantity="other">Twój plan pomija %d lekcji z materiałem, który już znasz.</item>
     </plurals>
-    <string name="testout_lessons_back">Lekcje wróciły do twojego planu.</string>
+    <string name="testout_lessons_back_one">Lekcja wróciła do twojego planu.</string>
+    <string name="testout_lessons_back_other">Lekcje wróciły do twojego planu.</string>
     <string name="testout_continue">Kontynuuj</string>
 </resources>

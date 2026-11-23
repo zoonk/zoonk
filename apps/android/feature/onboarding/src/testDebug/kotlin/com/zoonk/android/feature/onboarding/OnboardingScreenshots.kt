@@ -24,8 +24,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -64,6 +66,7 @@ import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.start.AttachPanel
 import com.zoonk.android.feature.onboarding.start.MaterialAnswer
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.planlink.PlanLinkScreen
@@ -80,16 +83,20 @@ import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.LanguageLevelTestOneOfResult
+import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftSource
-import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.putJsonArray
 import okhttp3.OkHttpClient
+import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -382,18 +389,70 @@ class OnboardingScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun levelTestWaitingTablet() = captureLevelTestWaiting("tablet")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun levelTestResult() = captureLevelTestResult("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun levelTestResultDark() = captureLevelTestResult("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun levelTestResultTablet() = captureLevelTestResult("tablet", saved = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun levelTestResultTabletDark() = captureLevelTestResult("tablet-dark", dark = true, saved = true)
+
+    private fun captureLevelTestResult(
+        name: String,
+        dark: Boolean = false,
+        saved: Boolean = false,
+    ) {
+        val result = ApiJson.parseToJsonElement(LEVEL_RESULT).jsonObject.getValue("result")
+        val api =
+            FakeOnboardingApi().apply {
+                val completed = levelTestOf(next = DONE_NEXT, answered = 10, total = 10, attemptId = ATTEMPT)
+                val ready = (completed as LanguageLevelTest.LanguageLevelTestOneOf1Value).value
+                levelTest =
+                    if (saved) {
+                        LanguageLevelTest.LanguageLevelTestOneOf1Value(
+                            ready.copy(result = ApiJson.decodeFromJsonElement(LanguageLevelTestOneOfResult.serializer(), result)),
+                        )
+                    } else {
+                        completed
+                    }
+                levelTestResult = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), LEVEL_RESULT)
+            }
+        val levelDetails = if (saved) ""","level":"B1+","levelTest":{"lastResult":$result}""" else ""
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { LevelTest(api, levelDetails = levelDetails) } } }
+        compose.waitUntil(WAIT_MS) {
+            compose.onAllNodesWithText("Your Italian level").fetchSemanticsNodes().isNotEmpty() ||
+                compose.onAllNodesWithText("Your answers are saved").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Your Italian level").assertExists()
+        assertEquals(if (saved) 0 else 1, api.finishedLevelTests)
+        if (saved) compose.onNodeWithText("Reading B1–B2 · Listening A2–B1", substring = true).assertExists()
+        write("level-test-result-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun captureLevelTestWaiting(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
     ) {
-        val api = FakeOnboardingApi().apply { levelTest = preparingTestOf() }
+        val api =
+            FakeOnboardingApi().apply {
+                levelTest = preparingTestOf()
+                startedLevelTest = { preparingTestOf(attemptId = ATTEMPT) }
+            }
         compose.setContent { ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { LevelTest(api) } } }
         compose.onNodeWithText("Start").performClick()
-        compose.waitForIdle()
+        compose.onNodeWithText("Preparing your level test").assertIsDisplayed()
         write("level-test-waiting-$name", compose.onRoot().captureRender().asAndroidBitmap())
 
-        api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z")
+        api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z", attemptId = ATTEMPT)
         compose.mainClock.advanceTimeBy(3_500)
         compose.waitForIdle()
         write("level-test-writing-$name", compose.onRoot().captureRender().asAndroidBitmap())
@@ -429,6 +488,13 @@ class OnboardingScreenshots {
     }
 
     private companion object {
+        const val ATTEMPT = "0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"
+        const val WAIT_MS = 5_000L
+
+        const val LEVEL_RESULT =
+            """{"levels":[],"result":{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":12,
+             "levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}}}}"""
+
         val SPECIALTY =
             """
             [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
@@ -523,14 +589,14 @@ class OnboardingScreenshots {
                         AppRoute.StartGoal(draftId = DRAFT_ID),
                     )
                 },
-                "placement-intro" to {
+                "placement-length-choice" to {
                     Placement(FakeOnboardingApi())
                 },
                 "placement-question" to {
                     Placement(FakeOnboardingApi().apply { placement = placementOf(answered = 2, started = true, spent = 0.35) })
                 },
-                "placement-typed" to {
-                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = typedQuestion(), started = true, spent = 0.6) })
+                "placement-order" to {
+                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = orderQuestion(), started = true, spent = 0.6) })
                 },
                 "placement-done" to {
                     Placement(
@@ -712,26 +778,16 @@ class OnboardingScreenshots {
                 "research-notices" to { ResearchNotices(SuggestionLayout.Panel) },
                 "research-notices-line" to { ResearchNotices(SuggestionLayout.Line) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
-                "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
+                "level-test-reading" to
+                    { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3, attemptId = ATTEMPT) }) },
                 "level-test-listening" to {
-                    LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = listeningQuestion(), answered = 6) })
-                },
-                "level-test-speaking" to {
-                    LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = SPEAKING_NEXT, answered = 11) })
-                },
-                "level-test-done" to {
                     LevelTest(
                         FakeOnboardingApi().apply {
                             levelTest =
                                 levelTestOf(
-                                    next = DONE_NEXT,
-                                    answered = 12,
-                                    levels =
-                                        listOf(
-                                            skillLevelOf("reading", "B1", 2.0),
-                                            skillLevelOf("listening", "A2+", 1.5),
-                                            skillLevelOf("speaking", "A2", 1.0),
-                                        ),
+                                    next = listeningQuestion(),
+                                    answered = 6,
+                                    attemptId = ATTEMPT,
                                 )
                         },
                     )
@@ -747,6 +803,7 @@ class OnboardingScreenshots {
             api: FakeOnboardingApi,
             targetLanguage: String = "it",
             native: String = "en",
+            levelDetails: String = "",
         ) {
             val context = LocalContext.current
             val resources = LocalResources.current
@@ -758,7 +815,7 @@ class OnboardingScreenshots {
                         setupView(
                             listOf("placement", "plan"),
                             kind = "language",
-                            details = """{"answered":["level","schedule"],"nativeLanguage":"$native"}""",
+                            details = """{"answered":["level","schedule"],"nativeLanguage":"$native"$levelDetails}""",
                             targetLanguage = targetLanguage,
                         )
                     }
@@ -893,12 +950,12 @@ class OnboardingScreenshots {
                 PlacementStep(
                     GOAL_ID,
                     "bar exam",
-                    areaCount = 4,
                     run,
                     onRetryRun = {},
                     store,
                     onProgress = {},
                     onDone = { WriteOutcome.Done(Unit) },
+                    lengthChoice = SetupTestChoice(0, null, false) {},
                 )
             }
         }

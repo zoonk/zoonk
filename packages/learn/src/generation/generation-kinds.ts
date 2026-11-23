@@ -81,15 +81,20 @@ const curriculum = {
   "goal" | "notice" | "plan" | "skills"
 >;
 
+const placementQuestions = {
+  phases: [{ id: "questions", seconds: 40 }],
+  steps: { preparePlacement: "questions" },
+} as const satisfies GenerationKindDefinition<"preparePlacement", "questions">;
+
 const placement = {
-  phases: [...GOAL_PHASES, { id: "questions", seconds: 40 }],
+  phases: [...GOAL_PHASES, ...placementQuestions.phases],
   steps: {
     ...GOAL_STEPS,
     createPlan: "questions",
     goalReady: "done",
     outlineCourses: "questions",
     prepareFirstLessons: "questions",
-    preparePlacement: "questions",
+    ...placementQuestions.steps,
     saveSkills: "questions",
   },
 } as const satisfies GenerationKindDefinition<
@@ -244,6 +249,7 @@ const GENERATION_KINDS = {
   levelTestBank,
   mockPaper,
   placement,
+  placementQuestions,
   setupLesson,
   speakingMock,
   speakingPaper,

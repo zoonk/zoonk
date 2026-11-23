@@ -111,15 +111,11 @@
   "onboarding_intent_understand_description": "3bc7fc66bf7562d0fd242f3053bf13ad9ce227a1b0092909f9bec079ad0cf06f",
   "onboarding_join_waitlist": "7043456c8c8058459dedb3fabba19b0c4eb6a32598fb2f772c6b2807f0ec3306",
   "onboarding_language_test_audio_on_its_way": "73f8b345a38de840ba7a06b9b8e9543b911bdf15dab3a817dc28cddbc838f14e",
-  "onboarding_language_test_build_plan": "69e464df699419d32db26a92fcae4f246b81f7569ddfb6e5f2cead33e416ee08",
-  "onboarding_language_test_description": "7a25222e329b27aa22691bc2ad4c2b6f697e33e2c444bd4c6c9911d0647dc785",
   "onboarding_language_test_did_not_understand": "4396495bc2cde01b78d90d388df0a250e33df2df94afcde3342cac205c3a798e",
-  "onboarding_language_test_done_description": "69f8a4bd1f07391a5ed096fc28ca9cb5f4d9deeb8f46f7d116f277f2bb3f13cd",
-  "onboarding_language_test_done_title": "a098b56930a387c03fbbd39acdc1614fa830d21a866ba33c35afb2c7ef9e507e",
   "onboarding_language_test_listening": "e4861e8df917772e5c4de09179cc87317baf0aaff513cbc1b44c542bbc5745ac",
   "onboarding_language_test_message": "2439502cc683338a2a02c21ef053e531ba5d25a2cf2a5d3e82e7def28972d33c",
   "onboarding_language_test_message_loading": "d5af2ef0dc8cc76d14e3f11796f08c433f1d8198c93159d7c0240b235eff4116",
-  "onboarding_language_test_new_alphabet": "2adade7ee18abf4b469f4d36063259feac43bb701e99b134ca39ff7f43971fd9",
+  "onboarding_language_test_new_alphabet": "c541e236f267563e8bf585569d2f473a03461ef690a1eb457d6eea8579e86026",
   "onboarding_language_test_play": "bb71f558bdeb475de4ac51cf5eb90b0bae272d616116297bbe907340cb092cb1",
   "onboarding_language_test_play_again": "b68df9f0ed2f48d1a7d68b45502882629e4c58b4ad2957a8efb6d2f9700fa84f",
   "onboarding_language_test_preparing_description": "056191b612797c0f88cf63211c612896bf978e523694d96afb4815be07cc0532",
@@ -127,10 +123,8 @@
   "onboarding_language_test_reading": "447d320b3399e9876cf2071a747b461f051873950c3025047a036f00a26d1d28",
   "onboarding_language_test_skip": "3c65abf71c1829fb7f0cb19f74b632cd50b2531f8fae8c2eed3662d6523df9ee",
   "onboarding_language_test_skip_note": "51cd8d59c58bc08c3d171bca05c2ec864fe367d61ea2f1594d66685fbe1e2922",
-  "onboarding_language_test_skip_part": "113d8a615a19dd3d0cc9fd7c7cd3717d9c58cf4a50d445441b5568dffdddfd9b",
   "onboarding_language_test_skip_question": "fea3eeba110bb347eb9fea75a313ab085af1c1d6ccf088dfb0615fceff451083",
   "onboarding_language_test_speaking": "5bea8f9773d471b13425e1e5a950cfb0842f7cbc92ad0a640eee2b26ce692948",
-  "onboarding_language_test_title": "b12c356361460454d004c85d3b4efa6efa226b7cebcbf39a6bce32cef2df8ca9",
   "onboarding_language_test_use_app_in": "abb80ce31fbf34eff1af4378de9c5a4685f6e4e4ad75b79aae8046e200ced797",
   "onboarding_language_test_writing": "e74362bf304c8b5d26befcc1dfad6092c1c68323011d8df17f7e089269b2caf9",
   "onboarding_level_advanced": "2799bed281f73dc62d47a7a77134b621e092008afb0b0b9ffb1a2620722366dd",
@@ -157,7 +151,7 @@
   "onboarding_material_description": "b94bd182c59a903cd4ba09f9b2d53591dc0a1686c412ba69d4c393f6b15e7588",
   "onboarding_material_goal_exam": "501d3019f8b61ef1604af510e94a772bd37bd6d30e470c4b9cd3d4906e736923",
   "onboarding_material_goal_understand": "484d8aefa13e0d8a4c7d3932bd5996f1de4dbdc83f2f6c6a0183e3c9da8cb8dd",
-  "onboarding_material_limit": "ede722bd6d87dd2b49e84c4fd582de6bdeefb863a95d612f400439c4c478a968",
+  "onboarding_material_limit": "5a8876dc5f108a6442750386d9d3576cf764fd3e7934668908316c0bb03901c3",
   "onboarding_material_sign_up": "8bb9a86cbe25b60b4f01d95bc666dc7e289a614b30ecc947cabfa42ec4b5c1c3",
   "onboarding_material_unreadable_one": "9dcb87dd867c4a825b3e81b5f932e39348bb53f6deaa011b1675f39c5e122b07",
   "onboarding_material_unreadable_some": "1c7ed351f67139a8b4f886f23a88ec9d270d90d8cdaad51957bd865577b5666b",
@@ -173,25 +167,18 @@
   "onboarding_paste_text_placeholder": "30722be362471326bab4b7c1e1dd60c166a97136af2e56858fc6b38717e396ff",
   "onboarding_placement_answer_failed": "4ee848c53083a8a1270763b2fdf61007fdd5b6ad8515283f8d4b10ea689fd484",
   "onboarding_placement_confirm": "7b9197aaf35ce00142023344b6a11dba9b0ffc8166d1b80591bd8c737a3d8f9b",
-  "onboarding_placement_description": "e0ca2dddef845f117742752bd286e1df5c6e32c05f1501b65e0c14b91e60caff",
-  "onboarding_placement_description_areas": "38aee7b185eb75a056f7b8b00218bed9060bafa7a5cf087cbbb8473ad9c5de6e",
   "onboarding_placement_dont_know": "f0bfef432d6c11804e69d9e08fe64a281645c3612524ad85847b48b17d94d94f",
   "onboarding_placement_false": "92957bd76478f3533d6ba71f2ebe2dc88984cc7faf26d48660325c332ea5f406",
   "onboarding_placement_progress": "e4c817fa6eb0551efcb14e77e76ca367c3acb4f1f7c31e57ed271d6223724421",
   "onboarding_placement_question_number": "ce1063a66b5dde601d2911b31a62ebe04c0ab444b6748e7ecf3d4ceedc10f769",
   "onboarding_placement_ready": "83b9ae6f8cf04e16f08af1c59aa649e69153b2f01f7c26b4afbd88237cb2906c",
   "onboarding_placement_right": "86858cf96b72118ba48d61fc3e992f4c736c71cf8308c89b6147628c5c794073",
-  "onboarding_placement_see_plan": "6966e27d222c8f1be9a57afb7a7440cb988472bd1a72f513a679a9dae48b86df",
-  "onboarding_placement_skip_basics": "c83c1244424cc67d08ceb99fd54b5e9827a13289f6a8b9538580e5b702cae811",
-  "onboarding_placement_start": "5be59b31d6937b5e22bff04656fedf3708f2d6e82d61cacb5e9e7f736108a4ea",
   "onboarding_placement_stop": "34c58e402fb137d4d5c4dce1f0ea1532d451a895fe855d9dd9466cad3a142a6e",
-  "onboarding_placement_title": "d34c7e4b612daf13e51675f8490238e3236c9eee04c2ccff0e139575197ee1d3",
   "onboarding_placement_true": "9dcd551141fa2825938903e1b3d91caf0a1cb7f7c40882c7f542b9fa70d55e0b",
   "onboarding_placement_unavailable_title": "b8bc792b47825c6c2893fee1303c927507949e115eb007d015a782a652adf673",
   "onboarding_placement_waiting_material": "f41280dc6eab41ac1409a1a107af17ac2c69cf0d81a75a3532f8cf4fac11fab2",
   "onboarding_placement_waiting_time": "e7b3434431b49efe250cf7dda27bb42a76cdb7a6cdfd1cf730e20de2600a2913",
   "onboarding_placement_wrong": "2e9523ad41eff1c2e2db8b9eb1f453f5ed0e5cc867b399192a5f582060e10f30",
-  "onboarding_placement_your_answer": "764828c6850f733a4494dbcaab2f9ed7c1ed79edb6855bc1b4374b76f116e4ce",
   "onboarding_plan_answers_saved": "b5136b364d836010840a7e98ad9e62ef9eca5b265bd9c84f8e76acd6a17cdc49",
   "onboarding_plan_not_started": "faf30f97ec1489d4f3d7501b0f3e7958806d2a36a1c4abe2d4975210af9edf38",
   "onboarding_plan_ready_goal": "a55f79ff00ccfb3b489136bd9d71eca74ed94840580348099932f05d33f6fed5",
@@ -339,18 +326,6 @@
   "onboarding_subjects_label": "7db80a2c65fbf3bdb4bf9f5fdbff3b6e97b7a6248257be9b3e142ab821e8b7d1",
   "onboarding_subjects_title": "80f7e0693f0153461498e6e468ed42099c9bd4a909b4f173c89b065550874cc2",
   "onboarding_target_label": "fe79b49b1aff02ce96dc8de87efec63e9149fd3868ec1543ac1c04d9620692e9",
-  "onboarding_test_level_a1": "7b71429fbd8f4b2b423ad7f4eae8d692ef235516eb26a891cf17a4501491327b",
-  "onboarding_test_level_a1_plus": "751ba92f4a1c2c1a9f3b99baa20352bcdb11041a142539de0abe432785315005",
-  "onboarding_test_level_a2": "c48d11ec922e52bb232a870d06bf0f56a7e81ec3a1c82ad59c3b4c071a207929",
-  "onboarding_test_level_a2_plus": "35b61aa888c348e2f210810420afe65ab61cb642f31a9fef66fbb6fa88eb272c",
-  "onboarding_test_level_b1": "2bd433d83051d01993a474ad331c96f43687771687f3101a244a827fd116b372",
-  "onboarding_test_level_b1_plus": "6044d89cf26d225981e56910980850395f715af928869fae6f9fe4f9aa67ae02",
-  "onboarding_test_level_b2": "97109faa98294c664958e504696dedcf0f61eb7b85d12441061b8f35e10ba460",
-  "onboarding_test_level_b2_plus": "c7d61b29e5e86638f82be86d43fd94b7a2924ddd8c0d29fc8a6c5d487dfceb95",
-  "onboarding_test_level_c1": "809bb41608c58791a1ab039d89e550c31c9b923dd759eb28245ff07971196e7e",
-  "onboarding_test_level_c1_plus": "e366d22f9dc77e9e7f041755ff44acba0f51fe7411b441d213bac4664f2422e2",
-  "onboarding_test_level_c2": "3fc14f2eb2a054a9a767ecb7621c995f92e4b7436770df15b5f0823504384158",
-  "onboarding_test_level_c2_plus": "5a8090451a53314ef5cd16f5e1de73401ca1259a3922557635ccda6e0b2038bc",
   "onboarding_test_question_progress": "a76059752a9a7aa5ddf17613a156c59c1c00530574c0831611e98565936d7b72",
   "onboarding_time_a_day": "aaec93030512e483125164b045c28e26d11fda0bd123ab09c22cc83b3f041bbe",
   "onboarding_try_another_goal": "cff8660e37607de54111e638a10861e1640e5aca56b6710c90ffa44a742d61b1",
@@ -557,7 +532,7 @@
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">Nicht mehr lesbar</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
-    <string name="onboarding_material_limit">Für ein Ziel sind höchstens %1$d Dateien möglich. Entferne eine, um eine weitere hinzuzufügen.</string>
+    <string name="onboarding_material_limit">Für ein Ziel sind höchstens %1$s Dateien möglich. Entferne eine, um eine weitere hinzuzufügen.</string>
     <string name="onboarding_intent_title">Was möchtest du tun?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Mich auf eine Prüfung vorbereiten</string>
@@ -576,15 +551,6 @@
     <string name="onboarding_question_sign_in">Erstell ein Konto, um Fragen zu deinem Material zu stellen.</string>
     <string name="onboarding_question_slow_down">Du stellst gerade schnell Fragen. Versuch es in ein paar Minuten noch einmal.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
-    <string name="onboarding_placement_title">Schauen wir, was du schon weißt</string>
-    <!-- %d is how many areas of the goal the questions cover. -->
-    <plurals name="onboarding_placement_description_areas">
-        <item quantity="one">Ein paar kurze Fragen zu %d Bereich, damit dein Plan auslässt, was du schon weißt. Es gibt keinen Score und „Ich weiß es noch nicht“ ist eine gute Antwort.</item>
-        <item quantity="other">Ein paar kurze Fragen zu %d Bereichen, damit dein Plan auslässt, was du schon weißt. Es gibt keinen Score und „Ich weiß es noch nicht“ ist eine gute Antwort.</item>
-    </plurals>
-    <string name="onboarding_placement_description">Ein paar kurze Fragen, damit dein Plan überspringt, was du schon weißt. Es gibt keinen Score und „Das weiß ich noch nicht“ ist eine gute Antwort.</string>
-    <string name="onboarding_placement_start">Starten</string>
-    <string name="onboarding_placement_skip_basics">Überspringen und mit den Grundlagen beginnen</string>
     <string name="onboarding_placement_waiting_material">Dein Material zu lesen dauert ein paar Minuten.</string>
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">Das dauert ein bis zwei Minuten.</string>
@@ -592,7 +558,6 @@
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Frage %1$d</string>
     <string name="onboarding_placement_progress">Beantwortete Fragen</string>
-    <string name="onboarding_placement_your_answer">Deine Antwort in eigenen Worten</string>
     <string name="onboarding_placement_dont_know">Das weiß ich noch nicht</string>
     <string name="onboarding_placement_confirm">Bestätigen</string>
     <string name="onboarding_placement_stop">Beenden und meine Antworten verwenden</string>
@@ -604,14 +569,9 @@
     <string name="onboarding_placement_right">Richtig</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Falsch</string>
-    <string name="onboarding_placement_see_plan">Plan ansehen</string>
     <string name="onboarding_placement_unavailable_title">In deinen ersten Tagen sehen wir, was du schon weißt</string>
-    <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
-    <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
-    <string name="onboarding_language_test_title">Finden wir dein Level in %1$s heraus</string>
-    <!-- %1$s is how long the test takes, such as "3 min". -->
-    <string name="onboarding_language_test_description">Etwa %1$s lang liest du, hörst zu und sprichst einen Satz laut, damit dein Plan auf deinem Level startet.</string>
-    <string name="onboarding_language_test_new_alphabet">Ist das Alphabet neu für dich? Überspring den Test. Deine erste Lerneinheit beginnt mit einer kurzen Lektion zum Lesen der Schrift.</string>
+    <!-- The level test: a language goal's placement, in reading and listening. -->
+    <string name="onboarding_language_test_new_alphabet">Ist das Alphabet neu für dich? Überspring den Test. In deiner ersten Lektion lernst du, es zu lesen.</string>
     <string name="onboarding_language_test_skip">Test überspringen</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">App auf %1$s verwenden</string>
@@ -629,10 +589,6 @@
     <string name="onboarding_language_test_play_again">Nachricht noch einmal abspielen</string>
     <string name="onboarding_language_test_message_loading">Wir bereiten die Nachricht vor. Beim ersten Mal kann das ein paar Sekunden dauern.</string>
     <string name="onboarding_language_test_message">Du hast eine Sprachnachricht bekommen. Hör sie dir an und antworte.</string>
-    <string name="onboarding_language_test_skip_part">Diesen Teil überspringen</string>
-    <string name="onboarding_language_test_done_title">Dein Level in %1$s</string>
-    <string name="onboarding_language_test_done_description">Basierend auf dem Test. Die Einschätzung wird jede Woche genauer.</string>
-    <string name="onboarding_language_test_build_plan">Meinen Plan erstellen</string>
     <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lesen</string>
     <string name="onboarding_language_test_listening">Hören</string>
@@ -881,16 +837,4 @@
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">wo du lebst</string>
     <string name="onboarding_test_question_progress">Frage %1$d von %2$d</string>
-    <string name="onboarding_test_level_a1">A1</string>
-    <string name="onboarding_test_level_a1_plus">A1+</string>
-    <string name="onboarding_test_level_a2">A2</string>
-    <string name="onboarding_test_level_a2_plus">A2+</string>
-    <string name="onboarding_test_level_b1">B1</string>
-    <string name="onboarding_test_level_b1_plus">B1+</string>
-    <string name="onboarding_test_level_b2">B2</string>
-    <string name="onboarding_test_level_b2_plus">B2+</string>
-    <string name="onboarding_test_level_c1">C1</string>
-    <string name="onboarding_test_level_c1_plus">C1+</string>
-    <string name="onboarding_test_level_c2">C2</string>
-    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

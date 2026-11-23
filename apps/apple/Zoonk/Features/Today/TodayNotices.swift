@@ -498,7 +498,7 @@ struct TodayFocusTestSection: View {
                 isOpen = false
                 router.open(.focusTest(goalId: goalID, startsTest: true))
               } label: {
-                Text("Start", tableName: "Today", comment: "Starts the Focus test")
+                Text(FocusTestCopy.start)
               }
               .buttonStyle(.mainAction)
               .disabled(dismissal.isRunning)

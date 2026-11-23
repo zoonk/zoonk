@@ -6,22 +6,17 @@ import { claimUsageFor } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { findGoalFor } from "../learner/_utils/owned-goal";
-import { type PlacementQuickFormat } from "../learner/placement/placement-quick-format";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getTestSkillIds } from "../sessions/_utils/review-skills";
 import { pickPlacementItemSkills } from "./placement-item-skills";
 
-const QUESTIONS_PER_TOPIC = 3;
-
 const MAX_TOPICS_PER_RUN = 6;
 
-/** On start, the caller must write questionsPerSkill in format for each skillId. */
+/** On start, the caller must write each skillId's missing low-guess tap questions. */
 export type ClaimQuestionsRequest =
   | { status: "ready" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
-      format: PlacementQuickFormat;
-      questionsPerSkill: number;
       skillIds: string[];
       status: "start";
     }
@@ -29,7 +24,7 @@ export type ClaimQuestionsRequest =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Internal, for a session's preparation: `userId` must come from the learner's own write. Claims AI help before writing questions needed to confirm unstudied claims. */
+/** Internal, for a session's preparation: `userId` must come from the learner's own write. Claims AI help before writing the tap questions needed to confirm unstudied claims. */
 export async function requestClaimQuestionsFor({
   goalId,
   userId,
@@ -60,8 +55,9 @@ export async function requestClaimQuestionsFor({
     return { status: "ready" };
   }
 
-  const { quickFormat, skills } = await pickPlacementItemSkills({
+  const { skills } = await pickPlacementItemSkills({
     exceptAnswered: true,
+    formats: ["tap"],
     goalId,
     skillIds: [...toConfirm],
   });
@@ -84,8 +80,6 @@ export async function requestClaimQuestionsFor({
 
   return {
     analytics: { distinctId: userId, goalId, platform: null },
-    format: quickFormat,
-    questionsPerSkill: QUESTIONS_PER_TOPIC,
     skillIds: missing,
     status: "start",
   };

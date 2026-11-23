@@ -416,7 +416,7 @@ struct ChallengeScreen: View {
         "Opens tomorrow", table: "Practice", comment: "A challenge that opens tomorrow.")
       : LocalizedStringResource(
         "Opens in \(days) days", table: "Practice",
-        comment: "How many days until a challenge opens.")
+        locale: .appLanguage, comment: "How many days until a challenge opens.")
   }
 
   private func isLocked(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -484,7 +484,8 @@ struct ChallengeScreen: View {
   private func title(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
     if challenge.mock, let number = challenge.number {
       return LocalizedStringResource(
-        "Mock exam \(number)", table: "Practice", comment: "Title of a numbered mock exam.")
+        "Mock exam \(number)", table: "Practice", locale: .appLanguage,
+        comment: "Title of a numbered mock exam.")
     }
 
     if challenge.call != nil, isCheckpoint(challenge) {
@@ -548,6 +549,7 @@ struct ChallengeScreen: View {
         localized:
           "\(count) questions on recordings, played as in the exam. Get \(passMark) right to win.",
         table: "Practice",
+        locale: .appLanguage,
         comment: "What a listening Trickster duel asks; then how many right answers win it")
     }
 
@@ -559,7 +561,8 @@ struct ChallengeScreen: View {
 
     return String(
       localized: "\(count) questions on what you just learned. Get \(passMark) right to win.",
-      table: "Practice", comment: "What a Trickster duel asks; then how many right answers win it")
+      table: "Practice", locale: .appLanguage,
+      comment: "What a Trickster duel asks; then how many right answers win it")
   }
 
   /// Main's `TaskMeta`: the facts in mono, then the Brain Power a win brings in its color.
@@ -569,7 +572,7 @@ struct ChallengeScreen: View {
     let reward =
       points > 0 && !challenge.mock
       ? FactSegments.Fact(
-        text: "+\(points.formatted())", color: Color(.brainText),
+        text: "+\(points.formatted(.number.locale(.appLanguage)))", color: Color(.brainText),
         unit: String(
           localized: "BP", table: "Today",
           comment:
@@ -577,7 +580,7 @@ struct ChallengeScreen: View {
         ),
         spoken: String(
           localized: "+\(points) Brain Power", table: "Practice",
-          comment: "A challenge's Brain Power reward."))
+          locale: .appLanguage, comment: "A challenge's Brain Power reward."))
       : nil
 
     guard !facts.isEmpty || reward != nil else {
@@ -605,7 +608,7 @@ struct ChallengeScreen: View {
       facts.append(
         String(
           localized: "\(questions) questions", table: "Practice",
-          comment: "How many questions a test asks."))
+          locale: .appLanguage, comment: "How many questions a test asks."))
     }
 
     // Main says how long only a mock or a call takes; a duel's length is its questions.

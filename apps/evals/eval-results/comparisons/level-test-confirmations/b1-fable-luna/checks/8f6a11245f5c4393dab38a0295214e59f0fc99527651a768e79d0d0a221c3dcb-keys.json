@@ -1,0 +1,12 @@
+{
+  "caseId": "en-pt-b1",
+  "costUsd": 0.024096,
+  "name": "answer keys",
+  "passed": 3,
+  "problems": [
+    "{\"itemLocator\":\"confirmations[2]\",\"keyedAnswer\":\"[2, 4]\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Only option 4 answers why the coach feels confident. “Esse esforço coletivo” refers to everyone continuing to help on defense. The coach also notes better organization after the break (option 2), but does not identify it as a reason for confidence.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 4
+}

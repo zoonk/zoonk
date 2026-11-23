@@ -21,6 +21,7 @@ import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.limitLifted
 
@@ -178,9 +179,9 @@ private fun DroppedActions(
         }
 
         DroppedRetry.CallAgain -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TaskActions { main ->
                 OutlinedButton(onClick = actions.onEnd) { Text(end) }
-                Button(onClick = actions.onRetry, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.conversation_call_again)) }
+                Button(onClick = actions.onRetry, modifier = main) { Text(stringResource(R.string.conversation_call_again)) }
             }
         }
 

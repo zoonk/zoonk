@@ -1,0 +1,139 @@
+{
+  "attempt": "controls-retry",
+  "costUsd": 0.005414225,
+  "failures": [],
+  "packetId": "1778e3a95a184c2d9cbfe2117d4042a25fe98b8905ea047136557d6d7d2c93ae",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's items need more inference, such as linking 'vale cada centavo' to a teacher being money well spent and the coach's 'por isso' to tiredness, while B's items lean more on near-direct word matches.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same correct key on every item, and each option is clearly right or wrong from the passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese with 'você' and Brazilian words, and the English questions and options are clear.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guitar item's correct options can be matched largely by shared words with the passage ('mais divertido', 'funciona melhor'), so a reader who matches words gets it right without inference.",
+            "criterion": "calibration",
+            "learnerCost": "A B1 learner gets little practice at reading for stated opinions beyond word matching.",
+            "location": {
+              "detail": "Opinion options of the guitar item",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both outputs are correct and well built, but A's items ask for slightly more inference at B1, so it trains the reader a bit better."
+        },
+        "pairId": "08cbb1b8-2355-47e7-ad66-c296c7656118"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so they confirm the level equally.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with the same keys.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in language and variant.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guitar item's correct options can be matched largely by shared words with the passage ('mais divertido', 'funciona melhor'), so a reader who matches words gets it right without inference.",
+            "criterion": "calibration",
+            "learnerCost": "A B1 learner gets little practice at reading for stated opinions beyond word matching.",
+            "location": {
+              "detail": "Opinion options of the guitar item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The guitar item's correct options can be matched largely by shared words with the passage ('mais divertido', 'funciona melhor'), so a reader who matches words gets it right without inference.",
+            "criterion": "calibration",
+            "learnerCost": "A B1 learner gets little practice at reading for stated opinions beyond word matching.",
+            "location": {
+              "detail": "Opinion options of the guitar item",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "1b60947c-849d-41aa-87a4-2a0257d5efd5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are A1 items of the same form, decidable by matching words, so neither confirms the level better.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "A keys option (2), 'O ônibus sai às nove', which the message contradicts (the bus leaves at ten), so A's key is wrong while B's key of 1 and 3 is correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same short, plain English message and Portuguese question.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key includes option (2), 'O ônibus sai às nove', but the message says the bus leaves at ten, so option (2) is false and should not be keyed.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine, which is false, and is marked wrong for choosing the correct option (3).",
+            "location": {
+              "detail": "Key line of the item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's key is correct and A's key teaches a false bus time, which is a major problem that outweighs the otherwise identical outputs."
+        },
+        "pairId": "bf682e6c-b872-4b91-8858-eb792f98793c"
+      }
+    ]
+  }
+}

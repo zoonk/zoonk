@@ -126,9 +126,8 @@ async function writeClaimQuestions({
   await preparePlacementItems({
     analytics,
     exceptAnswered: true,
-    formats: [claimQuestions.format],
+    formats: ["tap"],
     goalId: input.goalId,
-    quickCount: claimQuestions.questionsPerSkill,
     skillIds: claimQuestions.skillIds,
     workflowRunId,
   });

@@ -336,13 +336,14 @@ private struct RhythmFeedback: View {
       extraTaps > 0
       ? String(
         localized: "\(extraTaps) extra taps.", table: "ActivitiesMusic",
+        locale: .appLanguage,
         comment: "Rhythm result: the learner's taps on the screen that matched no beat")
       : nil
 
     return [
       String(
         localized: "\(onTime) of \(hits.count) taps on time.", table: "ActivitiesMusic",
-        comment: "How many of the rhythm's taps were on time"),
+        locale: .appLanguage, comment: "How many of the rhythm's taps were on time"),
       Rhythm.worstHit(hits).flatMap { detail($0.hit, tap: $0.index + 1) },
       extra,
     ].compactMap(\.self)
@@ -365,15 +366,15 @@ private struct RhythmFeedback: View {
     case .early:
       return String(
         localized: "Tap \(tap) came \(ms) ms early.", table: "ActivitiesMusic",
-        comment: "The tap furthest off the beat came early")
+        locale: .appLanguage, comment: "The tap furthest off the beat came early")
     case .late:
       return String(
         localized: "Tap \(tap) came \(ms) ms late.", table: "ActivitiesMusic",
-        comment: "The tap furthest off the beat came late")
+        locale: .appLanguage, comment: "The tap furthest off the beat came late")
     case .missed:
       return String(
         localized: "Tap \(tap) was missed.", table: "ActivitiesMusic",
-        comment: "A beat of the rhythm got no tap")
+        locale: .appLanguage, comment: "A beat of the rhythm got no tap")
     case .onTime:
       return nil
     }
@@ -486,7 +487,8 @@ private struct RhythmCalibrationView: View {
       String(
         localized:
           "Tap with each click\u{00A0}· \(min(click, Rhythm.calibrationClicks)) of \(Rhythm.calibrationClicks)",
-        table: "ActivitiesMusic", comment: "The sound check: which click of how many")
+        table: "ActivitiesMusic", locale: .appLanguage,
+        comment: "The sound check: which click of how many")
     case .done(nil):
       String(
         localized:
@@ -500,7 +502,7 @@ private struct RhythmCalibrationView: View {
       String(
         localized:
           "Speakers and headphones can play a little late. Tap along with \(Rhythm.calibrationClicks) clicks so your taps are timed right.",
-        table: "ActivitiesMusic")
+        table: "ActivitiesMusic", locale: .appLanguage)
     }
   }
 }

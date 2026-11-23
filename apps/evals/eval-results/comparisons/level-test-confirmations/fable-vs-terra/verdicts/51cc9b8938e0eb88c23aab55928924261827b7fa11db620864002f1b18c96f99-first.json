@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00397539,
+  "failures": [],
+  "packetId": "51cc9b8938e0eb88c23aab55928924261827b7fa11db620864002f1b18c96f99",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same A1 message and one-fact-per-option matching, so both confirm the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B's key (1 and 3) matches the message; A keys option 2, which says the bus leaves at nine, but the message says ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same message, question and option wording, so neither differs on language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 ('O ônibus sai às nove') as correct, but the message says the bus leaves at ten. The correct key is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "The learner would be taught that the bus leaves at nine and that the wrong option is right, and would get the question wrong.",
+            "location": {
+              "detail": "Answer key at the end of the item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's answer key matches the message, while A's key teaches a false fact about the bus time."
+        },
+        "pairId": "f1eeb236-7d8e-47f8-83ed-8e0f102069eb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets are B1 and their questions test stated opinions, reasons and main points rather than word matching.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct keys that match their passages, with plausible distractors that a careless reader could pick.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use Brazilian Portuguese with 'você' and natural written and spoken forms.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The distractor 'Use the bus instead of walking around the neighborhoods' is a distortion. The guide only says to use the bus when the distance is large, not instead of walking around the neighborhoods, so it is a stretch from the text.",
+            "criterion": "answers",
+            "learnerCost": "A learner could reasonably doubt the item, since the wrong option borders on what the text allows.",
+            "location": {
+              "detail": "Option 3 of the Belo Horizonte question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are correct and at B1; neither serves the learner noticeably better."
+        },
+        "pairId": "f3ee0ea9-cd67-421a-8b71-73dde77fd949"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they confirm the level equally.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same keys.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical."
+        },
+        "pairId": "fa8929e7-65d8-48c1-a862-afef90122e6a"
+      }
+    ]
+  }
+}

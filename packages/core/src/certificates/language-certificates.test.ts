@@ -1298,10 +1298,7 @@ describe("the level test", () => {
 
     await expect(
       prisma.languageSkillLevel.findMany({ orderBy: { skill: "asc" }, where: { userId: user.id } }),
-    ).resolves.toMatchObject([
-      { score: 0.5, skill: "reading", startScore: 0 },
-      { score: 2, skill: "listening", startScore: 2 },
-    ]);
+    ).resolves.toMatchObject([{ score: 0.5, skill: "reading", startScore: 0 }]);
   });
 });
 
@@ -1332,7 +1329,7 @@ describe("a learner the level test placed high", () => {
     await finishLanguageLevelTest(goal.id);
 
     const placed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-    expect(placed.details).toMatchObject({ level: "B1+" });
+    expect(placed.details).toMatchObject({ skillLevels: { listening: "A2", reading: "A2" } });
 
     const knownId = skills[2]?.id ?? "";
     const known = plan.items.filter((item) => item.skillId === knownId);

@@ -188,15 +188,17 @@ enum PlanChangeEffect {
     case .exam:
       String(
         localized: "You'll study \(count) fewer lessons before your exam.", table: "Plan",
+        locale: .appLanguage,
         comment: "A plan change's consequence: lessons that leave a plan with an exam date")
     case .goal:
       String(
         localized: "You'll study \(count) fewer lessons before your end date.", table: "Plan",
+        locale: .appLanguage,
         comment: "A plan change's consequence: lessons that leave a plan with an end date")
     case .unknown:
       String(
         localized: "You'll study \(count) fewer lessons.", table: "Plan",
-        comment: "A plan change's consequence: lessons that leave the plan")
+        locale: .appLanguage, comment: "A plan change's consequence: lessons that leave the plan")
     }
   }
 
@@ -205,15 +207,17 @@ enum PlanChangeEffect {
     case .exam:
       String(
         localized: "You'll study \(count) more lessons before your exam.", table: "Plan",
+        locale: .appLanguage,
         comment: "A plan change's consequence: lessons that join a plan with an exam date")
     case .goal:
       String(
         localized: "You'll study \(count) more lessons before your end date.", table: "Plan",
+        locale: .appLanguage,
         comment: "A plan change's consequence: lessons that join a plan with an end date")
     case .unknown:
       String(
         localized: "You'll study \(count) more lessons.", table: "Plan",
-        comment: "A plan change's consequence: lessons that join the plan")
+        locale: .appLanguage, comment: "A plan change's consequence: lessons that join the plan")
     }
   }
 
@@ -313,10 +317,10 @@ enum PlanChangeEffect {
           after: removed > 0
             ? String(
               localized: "\(removed) fewer", table: "Plan",
-              comment: "A row of a plan change's details: lessons fewer")
+              locale: .appLanguage, comment: "A row of a plan change's details: lessons fewer")
             : String(
               localized: "\(added) more", table: "Plan",
-              comment: "A row of a plan change's details: lessons more"))
+              locale: .appLanguage, comment: "A row of a plan change's details: lessons more"))
       ]
     }
 
@@ -354,7 +358,7 @@ enum PlanChangeEffect {
         key: key, label: label,
         after: String(
           localized: "\(count) lessons", table: "Plan",
-          comment: "A row of a plan change's details: how many lessons"),
+          locale: .appLanguage, comment: "A row of a plan change's details: how many lessons"),
         detail: names.isEmpty ? nil : names)
     }
 
@@ -425,13 +429,15 @@ enum PlanChangeEffect {
     let date = { (iso: String) in PlanDate.text(iso, today: today) }
     let areas = (effect.areaLessons ?? []).map { area in
       PlanChangeRow(
-        key: "lessons:\(area.area)", label: area.area, before: String(area.before),
+        key: "lessons:\(area.area)", label: area.area,
+        before: area.before.formatted(.number.locale(.appLanguage)),
         after: area.after == 0
           ? String(
             localized: "0 lessons to go", table: "Plan",
             comment: "A row of a plan change's details: a subject with no lessons left to do")
           : String(
             localized: "\(area.after) lessons to go", table: "Plan",
+            locale: .appLanguage,
             comment: "A row of a plan change's details: a subject's lessons still to do"))
     }
     let mock = effect.nextMock.map { mock in
@@ -602,7 +608,7 @@ func planTopicList(_ names: [String], named: Int = 3) -> String {
   return String(
     localized:
       "\(words.prefix(named).joined(separator: ", ")) and \(words.count - named) more topics",
-    table: "Plan", comment: "A few topic names and how many more")
+    table: "Plan", locale: .appLanguage, comment: "A few topic names and how many more")
 }
 
 /// Lesson names are examples, since one name can stand for several lessons: the list ends "and

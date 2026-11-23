@@ -8,6 +8,7 @@ import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
 import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
+import { keepOpenSessionSelection } from "../../sessions/_utils/skip-tested-out-blocks";
 import { PlanConflictError, unlessPlanConflict } from "../plan-conflict";
 import { fromIsoDate } from "../planner/plan-calendar";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
@@ -18,6 +19,7 @@ import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-paylo
 import { type PlanContext } from "./plan-context";
 import { revalidatePlanTags } from "./replan";
 import { canRestore, loadPlanSnapshot, restorePlan } from "./restore-plan";
+import { undoTestOutResult } from "./undo-test-out-result";
 
 async function isAskedAgain({
   change,
@@ -82,9 +84,12 @@ export async function undoChange({
     return { status: "conflict" as const };
   }
 
-  const skipped = new Set(
-    change.kind === "testedOut" ? parsePlanChangePayload(change.payload).planItemIds : [],
-  );
+  const payload = parsePlanChangePayload(change.payload);
+
+  const keepSession = payload.todaySession === "unchanged";
+
+  const restoresTestOut = change.kind === "testedOut" || Boolean(payload.livingPlanDay);
+  const skipped = new Set(restoresTestOut ? payload.planItemIds : []);
 
   const skillIds =
     skipped.size > 0
@@ -97,10 +102,17 @@ export async function undoChange({
       : item,
   );
 
+  const returned = new Set(payload.livingPlanDay ? payload.carriedItemIds : []);
+
+  const testedOut = Map.groupBy(
+    items.filter((item) => returned.has(item.id) && item.status === "testedOut"),
+    (item) => item.completedAt?.toISOString(),
+  );
+
   const restored = await prisma.$transaction(async (tx) => {
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
 
-    const scheduled = parsePlanChangePayload(change.payload).mockSchedule;
+    const scheduled = payload.mockSchedule;
 
     if (scheduled?.to) {
       const moved = await tx.planItem.findFirst({
@@ -121,6 +133,7 @@ export async function undoChange({
     }
 
     const session =
+      !keepSession &&
       snapshot.todaySession &&
       (await lockDaySession({
         goalId: context.goal.id,
@@ -130,9 +143,49 @@ export async function undoChange({
         userId: context.goal.userId,
       }));
 
+    for (const [completedAt, group] of testedOut) {
+      // oxlint-disable-next-line no-await-in-loop -- Restore the snapshot dates under the plan lock.
+      await tx.planItem.updateMany({
+        data: { completedAt: completedAt ? new Date(completedAt) : null, status: "testedOut" },
+        where: {
+          id: { in: group.map((item) => item.id) },
+          planId: context.plan.id,
+          status: "todo",
+        },
+      });
+    }
+
     await restorePlan({ context: writeContext, items, snapshot, tx });
+
+    if (keepSession) {
+      await keepOpenSessionSelection(tx, {
+        goalId: context.goal.id,
+        planVersion: context.plan.version + 1,
+      });
+    }
+
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
-    await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
+    const undone = await toUndone({ change, tx });
+
+    await tx.planChange.update({
+      data:
+        restoresTestOut && undone.status === "undone"
+          ? {
+              ...undone,
+              payload: toPlanChangePayload({ ...payload, undoneAt: new Date().toISOString() }),
+            }
+          : undone,
+      where: { id: change.id },
+    });
+
+    if (payload.testReceipt && undone.status === "undone") {
+      await undoTestOutResult({
+        goalId: context.goal.id,
+        lessonsSkipped: payload.lessonsSkipped ?? 0,
+        receipt: payload.testReceipt,
+        tx,
+      });
+    }
 
     if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
       await keepTestFocus({
@@ -156,7 +209,7 @@ export async function undoChange({
       : null;
   });
 
-  if (parsePlanChangePayload(change.payload).replannedSince) {
+  if (payload.replannedSince) {
     await refreshGoalPlan({
       goalId: context.goal.id,
       onConflict: "yield",
@@ -167,9 +220,9 @@ export async function undoChange({
   await unlessPlanConflict(() => refreshSavedGoalPlanAdvice(context.goal.id));
   revalidatePlanTags(context.goal.userId);
 
-  if (!restored) {
+  if (!restored && !keepSession) {
     await followPlanToday({ context });
-  } else if (restored.settle) {
+  } else if (restored?.settle) {
     await settleSessionDay({
       sessionId: restored.sessionId,
       timeZone: context.timeZone,

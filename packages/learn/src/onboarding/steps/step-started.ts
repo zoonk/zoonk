@@ -1,6 +1,6 @@
 import { tabStorage } from "../../_utils/device-storage";
 
-type StartedStep = "levelTest" | "placement";
+type StartedStep = "placement";
 
 const KEY_PREFIX = "zoonk:onboarding-started:";
 

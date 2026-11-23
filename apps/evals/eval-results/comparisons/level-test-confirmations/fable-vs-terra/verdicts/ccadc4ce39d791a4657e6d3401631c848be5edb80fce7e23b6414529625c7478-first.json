@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0018868399999999999,
+  "failures": [],
+  "packetId": "ccadc4ce39d791a4657e6d3401631c848be5edb80fce7e23b6414529625c7478",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and use simple A1 passages with questions about stated facts.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The answer keys match the facts stated in each passage in both identical outputs.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English passages and Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical; neither serves the learner better."
+        },
+        "pairId": "62fd7b84-8b7d-4a9f-b332-570cba5e6d8f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The short, direct fact-checking task is at the same basic level in both versions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marks the café being next to the shop as true; A incorrectly marks the bus leaving at nine instead.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions use the same message, question and Portuguese options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes statement 2, but the message says the bus leaves at ten, not nine; statement 3 is supported but omitted.",
+            "criterion": "answers",
+            "learnerCost": "A learner using this key would be taught to select a false statement and miss a true one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct answer key. A would mark a false statement as correct and leave out a true one."
+        },
+        "pairId": "66242f97-7323-423a-9190-d88e37a145e7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A uses full statements that require checking several details, while B’s single-word options make the answers unusually easy to match directly to the passages.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs’ keys correctly identify the statements supported by their passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English passages and Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Across the set, the one-word options make the questions largely direct word-matching rather than a meaningful A1 check for learners close to skipping a level.",
+            "criterion": "calibration",
+            "learnerCost": "Learners may succeed by spotting a familiar word without showing they can understand the passage well enough for the intended level.",
+            "location": {
+              "detail": "All four questions use single-word or short-phrase options that closely match words in their passages.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both sets have correct keys and fresh scenarios, but A’s sentence-length options provide a more useful check for learners close to skipping a level than B’s very direct word matching."
+        },
+        "pairId": "c05ec0d8-7aa8-4f5c-9dfa-2b37d25d1ae4"
+      }
+    ]
+  }
+}

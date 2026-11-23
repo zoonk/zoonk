@@ -210,21 +210,6 @@ class FocusTestScreenshots(
         }
     }
 
-    /** "How it works", which opens over the offer as a sheet. */
-    @Test
-    fun offerHowItWorks() =
-        sheet("offer-how-it-works") {
-            Text(stringResource(R.string.focustest_how_it_works), style = MaterialTheme.typography.titleLarge)
-            HowItWorksRows(suggestsFocus = true)
-        }
-
-    @Test
-    fun offerStartHowItWorks() =
-        sheet("offer-start-how-it-works") {
-            Text(stringResource(R.string.focustest_how_it_works), style = MaterialTheme.typography.titleLarge)
-            HowItWorksRows(suggestsFocus = false)
-        }
-
     /** Over an exam's test question inside a session; the second one after "Not today" didn't save. */
     @Test
     fun sessionNote() =

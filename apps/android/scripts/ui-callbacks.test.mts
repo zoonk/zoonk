@@ -50,8 +50,8 @@ const REASONS: Record<string, string> = {
   "feature/onboarding FocusTestViewModel.save(action)": "Private: the view model's own save.",
   "feature/onboarding GoalSetupViewModel.reveal(opened)":
     "Private: the view model's own continuation, run only while the visit that asked lasts.",
-  "feature/onboarding LevelTestViewModel.finish(then)":
-    "Private: the view model's own continuation (the setup's save, given at construction).",
+  "feature/onboarding LevelTestPlanViewModel.save(action)": "Private: the view model's own save.",
+  "feature/onboarding PlacementTestViewModel.save(action)": "Private: the view model's own save.",
   "feature/onboarding StartGoalViewModel.attach(add)": "Private: the view model's own attach call.",
   "feature/onboarding StartGoalViewModel.settle(explanation)":
     "Called in the same frame, before anything suspends: it builds the goal's input.",

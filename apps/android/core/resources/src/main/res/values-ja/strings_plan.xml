@@ -146,9 +146,10 @@
   "plan_change_relearn_topics": "6558b0afcc57639ef4bf88cebffdc473be66ef7fbea8c498abef5cba064b8028",
   "plan_change_rest_day": "e31f6e78c5d5f2a5e3734281eb0b34c4faaf579fe52b84c733e5961c13d6bb32",
   "plan_change_sentence": "cb0f831296f3f00f259e08107579ef71931b8ef6285e3ec09cd54cda130b76d2",
+  "plan_change_skipped_and_back": "ab87381434522b9b109242fd557424d32ec757ffcc4a9948aa8fdc68e4fb54dd",
   "plan_change_start_past_basics": "966a4db7eefd24c20e3c288c8868a7f48ebae5d81f2ee70c36306abcbdacdc76",
   "plan_change_such_as": "db8fc71792649d215e8e40c8ec6bee2f7163a1cc64c1f8c18b11b0d92fac117e",
-  "plan_change_tested_out": "4553565c777ab4eecbf89c7a777a58636486920fba3155f8a26b10c8639d5f1a",
+  "plan_change_tested_out": "4dd4dd8a09e93814769d26d78255351d1430d1b3b5d3d87ee4c9bf5969b98c3c",
   "plan_change_today_changed": "b8f5e79220bbfef137a890b344fc0c67498808531c67ec7ea0ce7a5e74890740",
   "plan_change_today_unchanged": "183df3daf23165d4a80c6d055ca1373a1a393b5e1b766918dbb3f756e6e7ed0e",
   "plan_change_tool_have": "11be803371277954e0735599f54eabd62165653837f61a6229a377c439cbc8dc",
@@ -871,8 +872,10 @@
     <string name="plan_system_phone">スマートフォンのみ</string>
     <string name="plan_change_missed_days">休んだ日数を補うため、学習計画を調整しました。</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="other">テストに合格したので、学習計画では%dレッスンをスキップします。</item>
+        <item quantity="other">すでに知っている%dレッスンをスキップしました。</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="other">問題を間違えたため、%1$sが学習計画に戻ります。</item>
     </plurals>

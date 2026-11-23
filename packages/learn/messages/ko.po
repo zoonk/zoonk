@@ -54,6 +54,7 @@ msgstr "두뇌력"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
@@ -79,9 +80,11 @@ msgstr "건너뜀"
 #: src/generation/generation-step-label.ts
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
@@ -263,6 +266,7 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-entry.tsx
@@ -274,6 +278,7 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/questions/test-out-run.tsx
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
@@ -304,6 +309,7 @@ msgstr "계속하기"
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/profile-step.tsx
 #: src/onboarding/steps/reveal-body.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -817,6 +823,7 @@ msgstr "이 챕터 내용을 이미 알고 있나요?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "테스트 보기"
@@ -1523,11 +1530,15 @@ msgstr "Zu"
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
+#: src/language/level-test/level-test-flow.tsx
+#: src/language/level-test/level-test-preparing.tsx
 #: src/mock/mock-result-plan.tsx
+#: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/research/upload-request-card.tsx
+#: src/session/level-check-offer.tsx
 #: src/today/today-focus-test.tsx
 #: src/today/today-insight.tsx
 #: src/today/today-plan-change.tsx
@@ -2114,6 +2125,7 @@ msgstr "{correct, plural, =0 {달성한 목표 #개 (전체 {total}개)} other {
 #: src/challenge/challenge-footer.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
+#: src/onboarding/steps/placement-screens.tsx
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "fEu6ab"
 msgid "That didn't go through. Try again in a moment."
@@ -2333,6 +2345,7 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
+#: src/plan/tested-out-change-card.tsx
 #: src/questions/undo-button.tsx
 #: src/today/today-exam-choice.tsx
 #: src/today/today-insight.tsx
@@ -3143,7 +3156,7 @@ msgstr "내 에세이"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
-#: src/onboarding/test-outcome.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-bases-choices.tsx
 msgctxt "_4tOwT"
 msgid "Skip"
@@ -3821,7 +3834,6 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, other {계획에서 이미 아는 레슨 #개도 건너뛰어요.}}"
 
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/questions/test-out-preparing.tsx
 #: src/today/today-focus-test.tsx
 msgctxt "SKxNcp"
@@ -3829,6 +3841,7 @@ msgid "Start the test"
 msgstr "테스트 시작하기"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "테스트 이어서 풀기"
@@ -3876,7 +3889,6 @@ msgid "Find what to study most"
 msgstr "집중해서 공부할 내용 찾기"
 
 #: src/focus-test/use-focus-test-texts.ts
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "YSXaxI"
 msgid "Already know some of this?"
 msgstr "이미 아는 내용이 있나요?"
@@ -3905,6 +3917,7 @@ msgstr "내 결과 보기"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/generation/indeterminate-wait.tsx
+#: src/plan/plan-placement-test.tsx
 msgctxt "q1WWIr"
 msgid "In progress"
 msgstr "진행 중"
@@ -3951,6 +3964,7 @@ msgstr "선택한 과목에 집중하는 계획을 유지해요."
 
 #: src/focus-test/use-result-line.ts
 #: src/mock/mock-result-plan.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -4705,14 +4719,13 @@ msgid "Progress"
 msgstr "진도"
 
 #: src/journey/journey-hero.tsx
-#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
 msgstr "{language} 레벨"
 
 #: src/journey/journey-hero.tsx
-#: src/language/level-test/level-test-screens.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
@@ -6214,6 +6227,21 @@ msgctxt "h0uuWx"
 msgid "Last result"
 msgstr "이전 결과"
 
+#: src/language/level-test/level-test-flow.tsx
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "{number, number}번 문제 (총 {total, number}문제)"
+
+#. A short test of one language level, such as “Test out of B2”.
+#: src/language/level-test/level-test-flow.tsx
+#: src/language/level-test/level-test-results.tsx
+#: src/placement-test/placement-test-screens.tsx
+#: src/session/level-check-offer.tsx
+msgctxt "h5ZSCC"
+msgid "Test out of {level}"
+msgstr "{level} 건너뛰기 테스트"
+
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
 msgid "Play the message again"
@@ -6238,6 +6266,18 @@ msgstr "메시지를 준비하고 있어요. 처음에는 몇 초 걸릴 수 있
 msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "음성 메시지가 도착했어요. 듣고 답해 보세요."
+
+#. A CEFR level range the test found for reading, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "hSzKEx"
+msgid "Reading {range}"
+msgstr "읽기 {range}"
+
+#. A CEFR level range the test found for listening, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "fFePx9"
+msgid "Listening {range}"
+msgstr "듣기 {range}"
 
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
@@ -6274,30 +6314,43 @@ msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "이 부분 건너뛰기"
 
+#: src/language/level-test/level-test-results.tsx
+#: src/mock/mock-speaking.tsx
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "JiaScE"
+msgid "Keep going"
+msgstr "계속하기"
+
+#. {levels} is a list of language levels, such as “A1 and A2”. The plan no longer has their lessons.
+#: src/language/level-test/level-test-results.tsx
+msgctxt "11l_Sx"
+msgid "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}"
+msgstr "{count, plural, other {{levels}: 레슨 #개 건너뜀}}"
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "pdcoIY"
+msgid "Your lessons keep adjusting as you answer."
+msgstr "답변에 따라 레슨이 계속 조정돼요."
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "Jrp0gH"
+msgid "There aren't enough questions for {level} yet."
+msgstr "아직 {level} 문제는 충분하지 않아요."
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "8CPaDq"
+msgid "{level} stays in your plan"
+msgstr "{level}은 계획에 남아요"
+
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
 msgstr "{language}로 앱 사용하기"
 
 #: src/language/level-test/level-test-screens.tsx
-msgctxt "oLlJZg"
-msgid "Find your level in {language}"
-msgstr "{language} 레벨을 확인해 보세요"
-
-#: src/language/level-test/level-test-screens.tsx
-msgctxt "OAt3qi"
-msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "약 {time} 동안 읽기와 듣기를 하고 문장 하나를 소리 내어 말해 보세요. 실력에 맞는 단계부터 계획을 시작할 수 있어요."
-
-#: src/language/level-test/level-test-screens.tsx
 msgctxt "4Itq02"
 msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 msgstr "이 언어의 글자가 낯선가요? 테스트를 건너뛰세요. 첫 레슨에서 글자를 읽는 법을 배워요."
-
-#: src/language/level-test/level-test-screens.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "레벨 테스트"
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -8587,11 +8640,6 @@ msgid "Every task is done. After this, you can't do them again in this mock exam
 msgstr "모든 과제를 마쳤어요. 제출하면 이번 모의고사에서 과제를 다시 할 수 없어요."
 
 #: src/mock/mock-speaking.tsx
-msgctxt "JiaScE"
-msgid "Keep going"
-msgstr "계속하기"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "i9hrw7"
 msgid "Your speaking paper opens as soon as it's ready."
 msgstr "말하기 시험지가 준비되면 바로 열려요."
@@ -9164,6 +9212,19 @@ msgid "Getting started"
 msgstr "시작하기"
 
 #: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "레벨 테스트"
+
+#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "TdP-3q"
+msgid "What you know"
+msgstr "이미 아는 것"
+
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-properties.tsx
 msgctxt "bpAaId"
@@ -9181,13 +9242,6 @@ msgstr "설정 안 됨"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "목표"
-
-#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "TdP-3q"
-msgid "What you know"
-msgstr "이미 아는 것"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/schedule-step.tsx
@@ -9390,7 +9444,7 @@ msgid "Only what's new or hard"
 msgstr "새롭거나 어려운 내용만"
 
 #: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/writing/writing-start.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
@@ -9465,24 +9519,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "공식 문서를 다 읽기 전까지는 시험의 일반적인 구성에 맞춘 계획이에요. 문서 내용에 따라 계획을 바꿀 필요가 생기면 오늘 화면에서 변경 여부를 결정할 수 있어요."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "{number, number}번 문제"
-
-#: src/onboarding/steps/placement-question.tsx
-msgctxt "HUvYmi"
-msgid "Question {number, number} of {total, number}"
-msgstr "{number, number}번 문제 (총 {total, number}문제)"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "그만 풀고 내 답변 반영하기"
 
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "N7Heuq"
-msgid "A short test finds the lessons you don't need."
-msgstr "짧은 테스트로 건너뛰어도 되는 레슨을 찾아요."
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "{number, number}번 문제"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -9837,11 +9881,6 @@ msgctxt "65ILOx"
 msgid "Subjects you know well"
 msgstr "잘 아는 과목"
 
-#: src/onboarding/steps/typed-answer-field.tsx
-msgctxt "s7LDgm"
-msgid "Your answer, in your own words"
-msgstr "내 말로 쓴 답변"
-
 #: src/onboarding/understood/understood-aim-picker.tsx
 #: src/onboarding/understood/understood-country-picker.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -10029,6 +10068,76 @@ msgstr "계획과 레슨은 이 자료만 바탕으로 진행돼요. 나머지�
 msgctxt "YOP-LJ"
 msgid "It can't be read anymore, so your plan won't follow it."
 msgstr "더 이상 읽을 수 없어 계획에 반영되지 않아요."
+
+#: src/placement-test/placement-test-flow.tsx
+msgctxt "gnlQcT"
+msgid "Part {part, number}"
+msgstr "{part, number}파트"
+
+#. {time} is a duration with its unit, such as “15 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "d-Y4Kd"
+msgid "About {time} left. Your answers are saved."
+msgstr "약 {time} 남았어요. 답변은 저장돼요."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "IyIhhL"
+msgid "Choose a test"
+msgstr "테스트 선택"
+
+#. The short placement test: about four minutes of questions.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "mleMdh"
+msgid "Quick test"
+msgstr "간단한 테스트"
+
+#. {time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "GoojEm"
+msgid "About {time}, in parts"
+msgstr "약 {time}, 여러 파트로 진행"
+
+#. The long placement test: it checks every topic still ahead in the course.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "XuFiV3"
+msgid "Whole course"
+msgstr "코스 전체"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "3NCmfj"
+msgid "Skip {level} if you already know it"
+msgstr "이미 아는 {level} 건너뛰기"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr "이미 아는 내용 건너뛰기"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr "테스트로 건너뛸 수 있는 레슨을 찾아요."
+
+#. {time} is a duration with its unit, such as “4 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "x3lPpe"
+msgid "A quick test finds the lessons you can skip. It takes about {time}."
+msgstr "짧은 테스트로 건너뛸 수 있는 레슨을 찾아요. 약 {time} 걸려요."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "OpomGa"
+msgid "Finish for today"
+msgstr "오늘은 여기까지"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "NWfVeb"
+msgid "You can finish the test from Plan."
+msgstr "계획에서 테스트를 마칠 수 있어요."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
@@ -10460,6 +10569,21 @@ msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "날짜 찾기"
 
+#: src/plan/plan-placement-test.tsx
+msgctxt "Ye4GUJ"
+msgid "Find your level and skip what you know"
+msgstr "레벨을 확인하고 아는 내용 건너뛰기"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "42QSqg"
+msgid "Skip lessons you already know"
+msgstr "이미 아는 레슨 건너뛰기"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "아는 내용 확인하기"
+
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
 msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
@@ -10594,6 +10718,7 @@ msgid "Plan suggestion"
 msgstr "계획 제안"
 
 #: src/plan/plan-suggestion-context.tsx
+#: src/plan/tested-out-change-card.tsx
 msgctxt "cTvbeT"
 msgid "Plan updated"
 msgstr "계획을 바꿨어요"
@@ -11261,6 +11386,23 @@ msgctxt "oqn6dA"
 msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "{first, number}~{last, number}일 차 · 총 {days, number}일"
 
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "KUuKmG"
+msgid "{count, plural, one {The lesson is back in your plan.} other {The lessons are back in your plan.}}"
+msgstr "{count, plural, other {레슨이 계획에 다시 포함됐어요.}}"
+
+#. After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "Ng8L3W"
+msgid "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}"
+msgstr "{count, plural, =1 {이미 알고 있는 레슨이에요. 계속 복습에 포함돼요.} other {이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.}}"
+
+#. The title after a placement test: how many lessons it took out of the plan.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "psTUYu"
+msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
+msgstr "{count, plural, =0 {건너뛴 레슨 없음} other {건너뛴 레슨 #개}}"
+
 #: src/plan/use-study-days-text.ts
 msgctxt "1ooK0d"
 msgid "Every day"
@@ -11272,6 +11414,11 @@ msgid "{first} – {last}"
 msgstr "{first}~{last}"
 
 #: src/plan/use-system-change-sentence.ts
+msgctxt "qd8BIn"
+msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
+msgstr "{lessons, plural, other {이미 아는 레슨 #개 건너뜀}}"
+
+#: src/plan/use-system-change-sentence.ts
 msgctxt "3Qo-pr"
 msgid "Your plan changed to make up for the days you missed."
 msgstr "놓친 날짜를 만회할 수 있도록 계획이 변경됐어요."
@@ -11281,10 +11428,11 @@ msgctxt "gU3R5_"
 msgid "Your plan changed to match the time your lessons take."
 msgstr "레슨에 걸리는 시간에 맞춰 계획을 조정했어요."
 
+#. One day's plan change: {skipped} says the lessons it skipped, {back} the topics that came back.
 #: src/plan/use-system-change-sentence.ts
-msgctxt "BEtnOi"
-msgid "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}"
-msgstr "{lessons, plural, other {테스트를 통과해 계획에서 레슨 #개를 건너뛰어요.}}"
+msgctxt "uMtUNQ"
+msgid "{skipped} {back}"
+msgstr "{skipped} {back}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "KjtC18"
@@ -11842,11 +11990,6 @@ msgctxt "1ovpGI"
 msgid "The chapter stays in your plan, and your answers help it start at the right level."
 msgstr "이 챕터는 계획에 그대로 남고, 답변을 바탕으로 알맞은 수준에서 시작해요."
 
-#: src/questions/test-out-run.tsx
-msgctxt "aBn-KM"
-msgid "The lessons are back in your plan."
-msgstr "레슨을 계획에 다시 넣었어요."
-
 #. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
 msgctxt "ttohgu"
@@ -12120,6 +12263,21 @@ msgstr "{minutes}분 더 연습하기"
 msgctxt "kapQxt"
 msgid "Your lesson isn't saved yet"
 msgstr "레슨이 아직 저장되지 않았어요"
+
+#: src/session/level-check-offer.tsx
+msgctxt "I6gFfo"
+msgid "This looks easy for you"
+msgstr "쉬워 보이네요"
+
+#: src/session/level-check-offer.tsx
+msgctxt "-VTNJ0"
+msgid "A short test can skip {level} if you already know it."
+msgstr "이미 아는 {level}은 짧은 테스트로 건너뛸 수 있어요."
+
+#: src/session/level-check-offer.tsx
+msgctxt "gAcanw"
+msgid "A quick test can skip lessons you already know."
+msgstr "간단한 테스트로 이미 아는 레슨을 건너뛸 수 있어요."
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"

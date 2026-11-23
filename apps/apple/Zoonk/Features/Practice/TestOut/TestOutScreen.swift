@@ -123,7 +123,7 @@ struct TestOutScreen: View {
   private func rule(_ passMark: Double) -> String {
     String(
       localized: "\(Int((passMark * 100).rounded()))% right skips the chapter", table: "Practice",
-      comment: "A chapter test's rule, a label over its first question")
+      locale: .appLanguage, comment: "A chapter test's rule, a label over its first question")
   }
 
   private func resultView(_ result: Components.Schemas.ChapterTestOutResult) -> some View {
@@ -139,7 +139,7 @@ struct TestOutScreen: View {
         facts: [
           String(
             localized: "\(result.correct) of \(result.total) right", table: "Practice",
-            comment: "A test-out's right answers out of its questions.")
+            locale: .appLanguage, comment: "A test-out's right answers out of its questions.")
         ],
         day: DayResult(result))
 
@@ -202,7 +202,7 @@ struct TestOutScreen: View {
         comment: "A passed test-out that skipped nothing new.")
       : LocalizedStringResource(
         "Your plan skips \(result.lessonsSkipped) lessons you already know.", table: "Practice",
-        comment: "How many lessons a passed test-out skipped.")
+        locale: .appLanguage, comment: "How many lessons a passed test-out skipped.")
   }
 
   private func read() async {

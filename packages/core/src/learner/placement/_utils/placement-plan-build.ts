@@ -25,6 +25,8 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
+  partPrepared,
+  requestedSkillIds,
   tx = prisma,
 }: {
   /** When a Focus test started, which owes the questions a plan build skipped. */
@@ -37,6 +39,8 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
+  partPrepared?: boolean;
+  requestedSkillIds?: readonly string[];
   tx?: TransactionClient;
 }): Promise<PlanBuild> {
   const plan = await tx.plan.findUnique({
@@ -61,7 +65,8 @@ export async function loadPlanBuild({
   const writingSince = Math.max(graphWrittenAt.getTime(), askedAt?.getTime() ?? 0);
 
   const writing =
-    plan.placementPreparedAt === null && Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
+    (partPrepared === undefined ? plan.placementPreparedAt === null : !partPrepared) &&
+    Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
 
   const graph = parsePlanGraph(plan.graph);
 
@@ -69,18 +74,19 @@ export async function loadPlanBuild({
     failed: plan.buildFailedAt !== null,
     preparingSkillIds: new Set(
       writing
-        ? pickPlacementItemSkillIds({
-            everySkill,
-            focusAreas,
-            graph,
-            knownAreas,
-            listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(plan.goal), graph }),
-            ownLevel,
-            prerequisites: await loadSkillPrerequisites(
-              graph.skills.map((skill) => skill.skillId),
-              tx,
-            ),
-          })
+        ? (requestedSkillIds ??
+            pickPlacementItemSkillIds({
+              everySkill,
+              focusAreas,
+              graph,
+              knownAreas,
+              listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(plan.goal), graph }),
+              ownLevel,
+              prerequisites: await loadSkillPrerequisites(
+                graph.skills.map((skill) => skill.skillId),
+                tx,
+              ),
+            }))
         : [],
     ),
     waitsForExam: writing && awaitsExamBlueprint(plan.goal),

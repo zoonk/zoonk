@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { skipTestedOutBlocks } from "../sessions/_utils/skip-tested-out-blocks";
 import { announceTestedOutItems } from "./announce-tested-out-items";
 import { unlessPlanConflict } from "./plan-conflict";
 
@@ -39,16 +38,9 @@ export async function announceSharedTestOuts({
           goalId: plan.goalId,
           now,
           planItemIds: plan.items.map((item) => item.id),
-          skipBlocks: false,
           timeZone: getAnswerTimeZone({ goal: plan.goal }),
         }),
       ),
     ),
   );
-
-  await skipTestedOutBlocks({
-    goalId,
-    planItemIds: plans.flatMap((plan) => plan.items.map((item) => item.id)),
-    skipActive: false,
-  });
 }

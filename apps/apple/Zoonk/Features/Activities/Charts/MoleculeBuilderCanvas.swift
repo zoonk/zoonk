@@ -174,6 +174,7 @@ struct MoleculeBuilderCanvas: View {
     return String(
       localized: "\(name(atom)): \(used) of \(MoleculeModel.valence(of: atom.element)) bonds",
       table: "ActivitiesCharts",
+      locale: .appLanguage,
       comment: "An atom with its bonds used out of the bonds it makes, like Carbon 1: 2 of 4 bonds")
   }
 

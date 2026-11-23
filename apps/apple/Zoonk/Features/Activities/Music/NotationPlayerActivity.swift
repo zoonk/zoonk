@@ -296,7 +296,7 @@ private struct NotationPlayerCanvas: View {
         separator: ", ")
       return String(
         localized: "Bar \(bar + 1): \(notes).", table: "ActivitiesMusic",
-        comment: "VoiceOver: the notes of one bar of the melody")
+        locale: .appLanguage, comment: "VoiceOver: the notes of one bar of the melody")
     }
     .joinedSentences()
   }

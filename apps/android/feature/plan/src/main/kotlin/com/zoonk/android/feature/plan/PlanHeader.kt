@@ -38,7 +38,7 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.OptionsButton
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
@@ -136,7 +136,7 @@ internal fun GoalMenu(
     }
 
     Box {
-        OptionsButton(onClick = { expanded = true }, contentDescription = stringResource(R.string.plan_options))
+        MoreButton(onClick = { expanded = true }, contentDescription = stringResource(R.string.plan_options))
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             planItems(closing)
             GoalItems(

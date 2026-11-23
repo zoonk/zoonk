@@ -1003,6 +1003,26 @@ msgctxt "ko7e4v"
 msgid "Quick questions that find where your study time should go"
 msgstr "짧은 문제로 어떤 부분에 학습 시간을 써야 할지 알아봐요"
 
+#: src/app/[lang]/(app)/(onboarding)/level-test/page.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "레벨 테스트"
+
+#: src/app/[lang]/(app)/(onboarding)/level-test/page.tsx
+msgctxt "Ye4GUJ"
+msgid "Find your level and skip what you know"
+msgstr "레벨을 확인하고 이미 아는 내용은 건너뛰기"
+
+#: src/app/[lang]/(app)/(onboarding)/placement-test/page.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "아는 내용 테스트"
+
+#: src/app/[lang]/(app)/(onboarding)/placement-test/page.tsx
+msgctxt "42QSqg"
+msgid "Skip lessons you already know"
+msgstr "이미 아는 레슨은 건너뛰기"
+
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
 msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"

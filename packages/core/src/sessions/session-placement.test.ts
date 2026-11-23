@@ -6,6 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { lowGuessTapItems } from "../learner/_test-utils/placement-tap-items";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
@@ -26,12 +27,32 @@ const TIME_ZONE = "UTC";
 
 const DAY_MS = 86_400_000;
 
-async function setup({ details = {} }: { details?: object } = {}) {
+async function seedLowGuessEvidence({ skillId, userId }: { skillId: string; userId: string }) {
+  const items = await lowGuessTapItems(skillId);
+
+  await Promise.all(
+    items.map(({ answer, item }) =>
+      attemptFixture({
+        answer,
+        answeredAt: new Date(Date.now() - DAY_MS),
+        isPlacement: true,
+        itemId: item.id,
+        skillId,
+        userId,
+      }),
+    ),
+  );
+}
+
+async function setup({
+  confirming = false,
+  details = {},
+}: { confirming?: boolean; details?: object } = {}) {
   const user = await userFixture();
 
   const fixture = await learnerGoalFixture({
     challengesDone: true,
-    itemsPerSkill: 2,
+    itemsPerSkill: confirming ? 1 : 2,
     phases: [1],
     userId: user.id,
   });
@@ -43,17 +64,19 @@ async function setup({ details = {} }: { details?: object } = {}) {
       data: { createdAt: new Date(Date.now() - DAY_MS), details, timezone: TIME_ZONE },
       where: { id: fixture.goal.id },
     }),
-    attemptFixture({
-      answer: { selectedIndex: 0 },
-      isCorrect: true,
-      itemId: first?.id ?? null,
-      skillId: first?.skillId ?? null,
-      userId: user.id,
-    }),
+    confirming
+      ? seedLowGuessEvidence({ skillId: first?.skillId ?? "", userId: user.id })
+      : attemptFixture({
+          answer: { selectedIndex: 0 },
+          isCorrect: true,
+          itemId: first?.id ?? null,
+          skillId: first?.skillId ?? null,
+          userId: user.id,
+        }),
   ]);
 
   mockSession(user.id);
-  return { ...fixture, placementItemId: second?.id ?? "", user };
+  return { ...fixture, placementItemId: (confirming ? first?.id : second?.id) ?? "", user };
 }
 
 async function openPlacementBlock(goalId: string) {
@@ -69,7 +92,7 @@ async function openPlacementBlock(goalId: string) {
   return { blockId: review.id, sessionId: session.id };
 }
 
-async function plannedSetup() {
+async function plannedSetup({ confirming = false }: { confirming?: boolean } = {}) {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
   const skillId = library.skills[0]?.id ?? "";
@@ -88,17 +111,27 @@ async function plannedSetup() {
     itemFixture({ content: choiceItemContent(), skillId }),
   ]);
 
-  await attemptFixture({
-    answeredAt: new Date(Date.now() - DAY_MS),
-    isCorrect: true,
-    isPlacement: true,
-    itemId: answered.id,
-    skillId,
-    userId: user.id,
-  });
+  if (confirming) {
+    await seedLowGuessEvidence({ skillId, userId: user.id });
+  } else {
+    await attemptFixture({
+      answeredAt: new Date(Date.now() - DAY_MS),
+      isCorrect: true,
+      isPlacement: true,
+      itemId: answered.id,
+      skillId,
+      userId: user.id,
+    });
+  }
 
   mockSession(user.id);
-  return { goal, placementItemId: asked.id, plan, skillId };
+
+  return {
+    goal,
+    placementItemId: confirming ? ([answered.id, asked.id].toSorted()[0] ?? "") : asked.id,
+    plan,
+    skillId,
+  };
 }
 
 async function hasReviewBlock({ goal, user }: { goal: { id: string }; user: { id: string } }) {
@@ -314,8 +347,8 @@ describe("placement in the first week's sessions", () => {
     expect(questions[0]).toMatchObject({ itemId: trueFalse.id, placement: true });
   });
 
-  it("settles the start from a right answer and skips what the plan no longer needs", async () => {
-    const { goal, placementItemId, planItems, user } = await setup();
+  it("skips the topic when the right quick check completes its evidence", async () => {
+    const { goal, placementItemId, planItems, user } = await setup({ confirming: true });
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
 
     const result = await answerStudyQuestion({
@@ -397,7 +430,7 @@ describe("placement in the first week's sessions", () => {
   });
 
   it("keeps the rest of the day as shown when a placement answer in it skips lessons", async () => {
-    const { goal, placementItemId, plan, skillId } = await plannedSetup();
+    const { goal, placementItemId, plan, skillId } = await plannedSetup({ confirming: true });
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
 
     const blocks = () =>
@@ -433,7 +466,7 @@ describe("placement in the first week's sessions", () => {
     ).toStrictEqual(
       shown
         .filter((block) => block.lessonId && skippedLessons.has(block.lessonId))
-        .map(() => "skipped"),
+        .map((block) => block.status),
     );
 
     const change = await prisma.planChange.findFirstOrThrow({

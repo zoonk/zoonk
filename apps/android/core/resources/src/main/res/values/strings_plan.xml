@@ -393,9 +393,11 @@
     <string name="plan_system_windows" translatable="false">Windows</string>
     <string name="plan_change_missed_days">Your plan changed to make up for the days you missed.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">You passed the test, so your plan skips %d lesson.</item>
-        <item quantity="other">You passed the test, so your plan skips %d lessons.</item>
+        <item quantity="one">Skipped %d lesson you already know.</item>
+        <item quantity="other">Skipped %d lessons you already know.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">%1$s is back in your plan: you missed a question on it.</item>
         <item quantity="other">%1$s are back in your plan: you missed questions on them.</item>

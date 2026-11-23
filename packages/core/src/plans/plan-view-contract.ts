@@ -1,10 +1,19 @@
 import { type PlanChangeStatus, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
+import { z } from "zod";
 import { type BossTiming } from "../checkpoints/_utils/challenge-reach";
 import { type ExamChoiceView } from "../exams/choices/exam-choice-contract";
 import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";
 import { type LanguageAimView } from "../language/aims/language-aims";
+import {
+  levelTestOutLevelSchema,
+  levelTestResultSchema,
+} from "../language/level-test/level-test-contract";
 import { type FocusTestSummary } from "../learner/placement/focus-test-contract";
+import {
+  placementAttemptViewSchema,
+  placementResultSchema,
+} from "../learner/placement/placement-contract";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
@@ -174,6 +183,29 @@ export type MockScheduleView = {
   weekday: number | null;
 };
 
+const placementRowShape = {
+  estimatedMinutes: z.number().int().nonnegative(),
+  state: z.enum(["start", "continue", "result"]),
+};
+
+export const planPlacementTestSchema = z
+  .discriminatedUnion("kind", [
+    z.object({
+      ...placementRowShape,
+      attempt: placementAttemptViewSchema.nullable(),
+      kind: z.literal("learn"),
+      result: placementResultSchema.nullable(),
+    }),
+    z.object({
+      ...placementRowShape,
+      attempt: placementAttemptViewSchema.nullable(),
+      kind: z.literal("language"),
+      nextTestOutLevel: levelTestOutLevelSchema.nullable(),
+      result: levelTestResultSchema.nullable(),
+    }),
+  ])
+  .meta({ id: "PlanPlacementTest" });
+
 /** everything: the minutes fit the selected curriculum by the goal's date; focus: capped at 4 hours, they prioritize the most important material. */
 export type SuggestedDailyTime = { kind: "everything" | "focus"; minutes: number };
 
@@ -225,6 +257,7 @@ export type PlanView = {
   fitOffer: (PlanOffer & { canApply: boolean }) | null;
   fundedMocks: (PlanItemView & { id: string })[];
   phases: PlanPhaseView[];
+  placementTest?: z.infer<typeof planPlacementTestSchema> | null;
   planId: string;
   ready: boolean;
   shortPlan: { days: number; mockDate: string | null } | null;

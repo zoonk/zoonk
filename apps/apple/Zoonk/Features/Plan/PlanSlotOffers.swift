@@ -260,7 +260,7 @@ struct PlanPastDateSlot: View {
         comment: "No later end date fits the lessons left")
       : String(
         localized: "You have \(lessons) lessons left. A later end date fits them.", table: "Plan",
-        comment: "Lessons left once the goal's end date passed")
+        locale: .appLanguage, comment: "Lessons left once the goal's end date passed")
   }
 
   private func findDate() async {

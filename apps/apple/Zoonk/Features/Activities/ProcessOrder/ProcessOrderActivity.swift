@@ -150,7 +150,7 @@ private struct ProcessOrderCanvas: View {
     announcePolitely(
       String(
         localized: "\(text) is now step \(index + 1).", table: "Activities",
-        comment: "VoiceOver, after a step of a process moves"))
+        locale: .appLanguage, comment: "VoiceOver, after a step of a process moves"))
   }
 
   private func solved(results: [ProcessOrder.StepResult]?) -> some View {

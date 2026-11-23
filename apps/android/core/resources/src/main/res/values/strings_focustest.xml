@@ -2,28 +2,14 @@
 <resources>
     <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Focus test</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_about">About %1$s</string>
-    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
-    <string name="focustest_about_left">About %1$s left</string>
+    <!-- {time} is a duration with its unit, such as “9 min”. -->
+    <string name="focustest_time_left">%1$s left</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Find what to study most</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Already know some of this?</string>
-    <string name="focustest_offer_description_focus">Quick questions on your exam\'s subjects. Your plan skips what you already know, so your time goes where you need it most.</string>
-    <string name="focustest_offer_description">Quick questions on your exam\'s subjects. Your plan skips what you already know.</string>
-    <string name="focustest_how_it_works">How it works</string>
-    <string name="focustest_how_weight_title">What counts most comes first</string>
-    <string name="focustest_how_weight">The test starts with the subjects that weigh most in your exam.</string>
-    <string name="focustest_how_grade_title">There\'s no grade</string>
-    <string name="focustest_how_grade">“I don\'t know yet” is a fine answer.</string>
-    <string name="focustest_how_stop_title">Stop anytime</string>
-    <string name="focustest_how_stop">Each answer is saved.</string>
-    <string name="focustest_how_subjects_title">Focusing never removes a subject</string>
-    <string name="focustest_how_subjects">The ones you need most get more time.</string>
-    <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
-    <string name="focustest_how_sessions_title">A few more in your first week</string>
-    <string name="focustest_how_sessions">Your study sessions ask a few more of these questions. You can pause that.</string>
+    <string name="focustest_offer_line_focus">This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.</string>
+    <string name="focustest_offer_line">This test shows what you already know, so your plan can skip it.</string>
     <string name="focustest_start">Start the test</string>
     <string name="focustest_skip_note">You can take the test later, from your plan.</string>
     <string name="focustest_not_now">Not now</string>

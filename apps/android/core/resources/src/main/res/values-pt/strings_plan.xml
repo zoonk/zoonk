@@ -146,9 +146,10 @@
   "plan_change_relearn_topics": "b8c1c1ca73d2bca91764b4ba80f8ccab5ce18c56a49a9dd65db14448b7fdd84c",
   "plan_change_rest_day": "cf09ae28f22ba0a192540faa63d21e075e512667e82df17abdb49380b32955cd",
   "plan_change_sentence": "dd24e86d7af4263fe04dd93fe20c23e76ddc7510339517c8e062e942a5a9c373",
+  "plan_change_skipped_and_back": "7202aa9b7c30f56f0aa7ea23dc818695624d0362119d7c7989066467f0c09ee2",
   "plan_change_start_past_basics": "16eb07b6ff00c2b011d00e4bc1859d2b713cd7bff1074e99c66b1748f1499407",
   "plan_change_such_as": "2fcd0c534e302f69a62a5d2a589d08be493cf755749355289b2ad30c36a544bc",
-  "plan_change_tested_out": "af999243026ba301dd2eb121c569d288e876adbfe9f4bbf91eb6ddd8bb8c87ef",
+  "plan_change_tested_out": "7de6c35f4c69c867eaa74ca993683a44810468fa4eb1505df28c0364c513b4e9",
   "plan_change_today_changed": "7a0919f098faf84fed056f7c627ea457d600a611877d02117c424575bb6b20bd",
   "plan_change_today_unchanged": "b012bad22a42b98275b0e617f01f08a6ba5163be71fb8d964810bd7c07ad2afa",
   "plan_change_tool_have": "22f99fc7480025d9718457918d35fa97b45a9695c8b6cb1e58b8c37157bca012",
@@ -933,10 +934,12 @@
     <string name="plan_system_phone">Só celular</string>
     <string name="plan_change_missed_days">Seu plano foi ajustado para compensar os dias em que você não estudou.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Você passou no teste, então seu plano pula %d aula.</item>
-        <item quantity="many">Você passou no teste, então seu plano pula %d aulas.</item>
-        <item quantity="other">Você passou no teste, então seu plano pula %d aulas.</item>
+        <item quantity="one">%d aula que você já conhece foi pulada.</item>
+        <item quantity="many">%d aulas que você já conhece foram puladas.</item>
+        <item quantity="other">%d aulas que você já conhece foram puladas.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">%1$s voltou ao seu plano porque você errou uma pergunta sobre esse tópico.</item>
         <item quantity="many">%1$s voltaram ao seu plano porque você errou perguntas sobre esses tópicos.</item>

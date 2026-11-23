@@ -6,6 +6,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
 import { unpinnedCourseSourceId } from "../../goals/course-start-details";
+import { loadGoalLevelDetails } from "../../language/levels/current-language-level";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
 import { isOwnMaterialTest } from "../../learner/placement/placement-material";
 import { usesTools } from "../../plans/_utils/plan-tools";
@@ -201,11 +202,10 @@ export async function loadGoalCurriculumInputs(
     return null;
   }
 
-  const details = isJsonObject(goal.details) ? goal.details : {};
-
-  const [references, material] = await Promise.all([
+  const [references, material, details] = await Promise.all([
     listGoalReferences({ goalId, productId: goal.productId }),
     loadGoalMaterial(goalId),
+    loadGoalLevelDetails(goal),
   ]);
 
   const outline = goal.examBlueprint ? toExamOutline(goal.examBlueprint) : undefined;
@@ -249,7 +249,7 @@ export async function loadGoalCurriculumInputs(
       goalKind: goal.kind,
       language: goal.language,
       lessonBudget: toLessonBudget({ goal, hasMaterial: material.length > 0 }),
-      ownLevel: getOwnLevel({ goal }) ?? undefined,
+      ownLevel: getOwnLevel({ goal: { details } }) ?? undefined,
       product: product && {
         brand: product.brand,
         courseTitle: product.courseTitle,

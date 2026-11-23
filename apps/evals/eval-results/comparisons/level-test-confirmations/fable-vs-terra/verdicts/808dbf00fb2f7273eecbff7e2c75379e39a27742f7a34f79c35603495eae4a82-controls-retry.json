@@ -1,0 +1,116 @@
+{
+  "attempt": "controls-retry",
+  "costUsd": 0.00183564,
+  "failures": [],
+  "packetId": "808dbf00fb2f7273eecbff7e2c75379e39a27742f7a34f79c35603495eae4a82",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use short passages and questions that require connecting stated details or following a simple sequence, which fits A2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The answer keys match the passages, and the options distinguish the relevant details clearly in both outputs.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish passages and English questions and options for the stated learner.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, and their passages, questions, and answer keys fit the case."
+        },
+        "pairId": "2ff6798e-233e-456b-9f1e-968dbf889b83"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask learners to connect stated details or follow event order at an appropriate A2 level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B explicitly tells learners to select all that apply, while A's questions do not make clear that multiple answers may be correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish passages and English questions and options for the stated learner.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The questions do not tell learners to select all that apply, although each answer key marks multiple options as correct.",
+            "criterion": "answers",
+            "learnerCost": "A learner may choose only one answer and be unsure how to respond even when they understand the passages.",
+            "location": {
+              "detail": "All four questions",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B makes the multiple-answer format explicit throughout; A leaves that format unclear despite having multiple correct answers for each question."
+        },
+        "pairId": "33853ace-5335-44a3-bd4c-de4988124e93"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both ask for simple, directly stated A1 facts in Portuguese, the learner's language.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B's key correctly marks the shop opening time and the cafe's location; A incorrectly marks the bus as leaving at nine instead of ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both present a natural English message and Portuguese question and options, as expected for these language settings.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 as correct, but the message says the bus leaves at ten, not nine; option 3, which says the cafe is next to the shop, is also correct.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the message would be marked wrong for choosing the correct cafe statement and right for a false bus statement.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's answer key matches the message, while A teaches an incorrect answer and omits another correct one."
+        },
+        "pairId": "da72c57c-68a0-4712-8bd8-ccf28c6d2e65"
+      }
+    ]
+  }
+}

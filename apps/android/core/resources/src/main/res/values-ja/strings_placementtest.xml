@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "placementtest_about": "2537a58356f43ff269ad32e19a45cb447e49c13bcf622b8b36f1b69960c7b35e",
+  "placementtest_about_in_parts": "29ec1e13a1306c296c7c2c3f7141f3ee032a47ec284dc06e1e635b3ba916a46e",
+  "placementtest_choose_description": "326ac519773dedfcd53eb085a49c18a1d5f7e125d83f1fabfd6024b1ded9124e",
+  "placementtest_choose_title": "9d8cf4fa143bcb279729ded0e5f0c186f6f73e8694abf8da096c35c2b1845923",
+  "placementtest_continue_from_plan": "2aa9f7d827d38352efe57f2569d61d83e05ed8f6fb33d19ad5152ebb13ce91f5",
+  "placementtest_continue_title": "ede215a00acb1b5ad8c9fed1103da58e7ce94eb9e1875bb8be7bae8170019f53",
+  "placementtest_done": "345e9b8bb499382a12c8b3339547b5134ab50681a1d8431b7f9647c319728ed4",
+  "placementtest_find_level": "2b38fa85fe9905144365ea1b82b4e9defe0d4d697b42505bf5752c2cd0b9871b",
+  "placementtest_finish_for_today": "9a05124e2d6c934cd25c3806c33d1f1b9c9bd03def71dc02eb1a1d5a06099b71",
+  "placementtest_in_progress": "043be67d30508fb01883dab65906b95b926149ea022158d8a702b2d014c21f5e",
+  "placementtest_keep_going": "b2d6a98132bb6ac306a254621dea96b673db247eadd7c0727729ad0b88a31268",
+  "placementtest_keeps_adjusting": "e584a031736dddc3cacbadf3bc013cc4a79cecee71944448e0eed5be52f1d3a4",
+  "placementtest_known_one": "1710971fcf95264ad77d7a2a9b106cc2389f9f36d884651382a2071b0ce3ac7f",
+  "placementtest_known_other": "59ab3b474f38e6f0f9c30b403b3dadcd7948da8664c9d50bb74a59b741f5c073",
+  "placementtest_left_saved": "bccb0d5511e19da917071831bffdff0a4f4175cc9a45b6642e0e3cb62e1ca612",
+  "placementtest_lessons_skipped": "08c5ee7e856652695e34e8da537227a9e48ccf94917ca20cf83c359f8cd72494",
+  "placementtest_level_stays": "50e02b4c50590f0bae9d87349b5a26c238b8e880f05de771f2589f0fee5649a7",
+  "placementtest_level_title": "7779b36e988024a3862ac8264dcff889e97e6018c67fb48aac694980a1abe23b",
+  "placementtest_levels_skipped": "49de208280832e589f4621eb4382c2f8ee02ff4ac5ad65d08f5a0dccf6ffa146",
+  "placementtest_listening_range": "b3d49f32655878f9cadf0a0c912dcc9a80f868bc561df30b2781f6cb97770674",
+  "placementtest_no_lessons_skipped": "d7a3ff8f972afd0923c9757763ebf15e70fce9aea8330a9443b04d2ba6c8e529",
+  "placementtest_not_now": "d7ce7a3bf9ee2a4a66c5da0164e4149471932c7f63b8766ca2571fe6fc030045",
+  "placementtest_offer_level": "10b0b7b7fe69cf3536f8d4536ec897153aa3cdfe20de9970b23f8260b9d51ade",
+  "placementtest_offer_quick": "f32b817b9c79e19f437b9744336e6a220419cc8251cbdc2911ef758dc284561c",
+  "placementtest_offer_title": "5b83715559c9f79653534c63ec7861f2e56d547826b3cbc87eda5ec8c527749b",
+  "placementtest_part": "934e21a88bd33bbd2b8bd2120de7f50fdbb077de0d993975a604459c2eb76d80",
+  "placementtest_plan_stays": "899a9544875a2fceaff76c79ad74bec1d1976502c35dfdae45e57519025a2adc",
+  "placementtest_quick": "6f8aabdbc9033b3920d122574842bdf03e5b50a7c24ef591262b6d5709d84334",
+  "placementtest_quick_only_description": "ef402d1c566c67905cef313c909e1118c5fc16b9d1382392164e99d240b87681",
+  "placementtest_reading_range": "46926aa07af8f417594bb0c32737e9fb24e9e9f93c208077e6b8b3bdca3ae489",
+  "placementtest_retake_tomorrow": "e9243b5a572d038d48d3358c3e80d20cee8aec8a06d4827337f4913c2b493ec5",
+  "placementtest_skip_lessons": "7aaaf98dedbe1d43576a8bbef7f1223212b11f00fcd6038001d5d0d5e3559da0",
+  "placementtest_start": "f21bcdce1a282950dd342c211a721aa9ccf1fa8d64b7e0776c8336c00c050ee0",
+  "placementtest_start_title": "43cbd2e118e3c9bc7c58adde415a1325bb05e46b6ccfa7f064c73f07d3a7893b",
+  "placementtest_test_out": "5938c797a204e1ba2dc716cc78c83fad14e1f35ffedfe5e0ba37218126cd4b46",
+  "placementtest_test_out_description": "4f0a2a17138bfb535b1209daa37106cb561b3b8193ae8e76fdfa2c1023da2b6f",
+  "placementtest_test_out_unavailable": "9c78e8b0d4e85833e4dcd3e25d5d604f256eccde2a7f4c2fdbbb998f10509aac",
+  "placementtest_time_left": "c1583d1708e764915e4a85f365e083d0e254d329d30e9249beaeb9d63964c291",
+  "placementtest_title": "7de03d824e836683f6c48b228a1fd6bd2d167dfce400039c7f705493ee7cf186",
+  "placementtest_up_next": "080e102fad6e336c7bf87743b3a8d011c813c20287f6ab380fa500f6e162f249",
+  "placementtest_whole_course": "702a59a80a15ddda61c5c64e578fb3e50ae5c1857be86db4029aeb9e7e2618f7",
+  "placementtest_your_level": "42b86d084486717d65a28fbb7f590f410143d8f5a291dc6896f42555c1bb80d5"
+}
+-->
+<resources>
+    <!-- The plan's row and the screen's name for the test of what the learner already knows in a course. -->
+    <string name="placementtest_title">知っている内容をテストする</string>
+    <string name="placementtest_skip_lessons">すでに知っているレッスンをスキップする</string>
+    <!-- The plan's row and the screen's name for a language course's test. -->
+    <string name="placementtest_level_title">レベル診断テスト</string>
+    <string name="placementtest_find_level">レベルを診断して、知っている内容をスキップする</string>
+    <string name="placementtest_in_progress">進行中</string>
+    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
+    <string name="placementtest_time_left">残り%1$s</string>
+    <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
+    <string name="placementtest_no_lessons_skipped">スキップしたレッスンはありません</string>
+    <plurals name="placementtest_lessons_skipped">
+        <item quantity="other">%dレッスンをスキップ</item>
+    </plurals>
+    <!-- A CEFR level range the test found for reading; %1$s is a range such as "B1–B2". -->
+    <string name="placementtest_reading_range">リーディング %1$s</string>
+    <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
+    <string name="placementtest_listening_range">リスニング %1$s</string>
+    <string name="placementtest_start_title">すでに知っている内容をスキップする</string>
+    <string name="placementtest_choose_description">テストで、スキップできるレッスンがわかります。</string>
+    <string name="placementtest_quick_only_description">クイックテストで、スキップできるレッスンがわかります。所要時間は約%1$sです。</string>
+    <string name="placementtest_choose_title">テストを選ぶ</string>
+    <!-- The short placement test: about four minutes of questions. -->
+    <string name="placementtest_quick">簡単なテスト</string>
+    <!-- %1$s is a duration with its unit, such as "4 min". -->
+    <string name="placementtest_about">約%1$s</string>
+    <!-- The long placement test: it checks every topic still ahead in the course. -->
+    <string name="placementtest_whole_course">コース全体</string>
+    <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
+    <string name="placementtest_about_in_parts">約%1$s、数回に分けて</string>
+    <!-- A short test of one language level, such as "Test out of B2". -->
+    <string name="placementtest_test_out">「%1$s」のレベル診断を受ける</string>
+    <!-- %1$s is a language level, such as "B2". -->
+    <string name="placementtest_test_out_description">すでに知っている%1$sをスキップする</string>
+    <string name="placementtest_start">始める</string>
+    <!-- A whole-course test is split into parts; %1$d is the part's number. -->
+    <string name="placementtest_part">第%1$d部</string>
+    <string name="placementtest_continue_title">テストを続ける</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="placementtest_left_saved">残り約%1$sです。答えは保存されています。</string>
+    <string name="placementtest_continue_from_plan">学習計画からテストを完了できます。</string>
+    <string name="placementtest_finish_for_today">今日はここまで</string>
+    <string name="placementtest_keep_going">続ける</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_one">どれもすでに知っている内容です。練習でも引き続き復習できます。</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">どれもすでに知っている内容です。練習でも引き続き復習できます。</string>
+    <string name="placementtest_plan_stays">学習計画はそのままです。</string>
+    <string name="placementtest_retake_tomorrow">今日スキップを取り消したレッスンは、明日もう一度答えるとスキップできます。</string>
+    <!-- Over the topic the plan goes on with after the test. -->
+    <string name="placementtest_up_next">次の学習</string>
+    <string name="placementtest_done">完了</string>
+    <string name="placementtest_not_now">今はしない</string>
+    <!-- %1$s is a language's name, such as "Italian". -->
+    <string name="placementtest_your_level">%1$sのレベル</string>
+    <!-- %2$s is a list of language levels, such as "A1, A2". The plan no longer has their lessons. -->
+    <plurals name="placementtest_levels_skipped">
+        <item quantity="other">%2$s：%1$dレッスンをスキップしました。</item>
+    </plurals>
+    <string name="placementtest_keeps_adjusting">答えに合わせて、レッスンが調整されていきます。</string>
+    <!-- After a level test-out that skipped nothing; %1$s is a language level, such as "B2". -->
+    <string name="placementtest_level_stays">%1$sは学習計画に残ります</string>
+    <!-- A level test-out whose level has too few questions to test yet; %1$s is a language level, such as "B2". -->
+    <string name="placementtest_test_out_unavailable">%1$sの問題はまだ十分にありません。</string>
+    <!-- A lesson's end, after a run of easy lessons. -->
+    <string name="placementtest_offer_title">簡単そうですね</string>
+    <string name="placementtest_offer_quick">すでに知っているレッスンを、簡単なテストでスキップできます。</string>
+    <!-- %1$s is a language level, such as "B2". -->
+    <string name="placementtest_offer_level">すでに知っていれば、短いテストで%1$sをスキップできます。</string>
+</resources>

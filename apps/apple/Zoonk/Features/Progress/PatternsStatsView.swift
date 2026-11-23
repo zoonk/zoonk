@@ -168,7 +168,7 @@ private struct PatternColumn: Identifiable {
         comment: "A day or part of the day without answers")
       : String(
         localized: "\(performance.totalAnswers) answers", table: "Progress",
-        comment: "A count of answers")
+        locale: .appLanguage, comment: "A count of answers")
 
     switch state {
     case .none:
@@ -179,6 +179,7 @@ private struct PatternColumn: Identifiable {
         note: String(
           localized: "\(performance.totalAnswers) answers, needs \(minimumAnswers) to count",
           table: "Progress",
+          locale: .appLanguage,
           comment:
             "A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”"
         ))

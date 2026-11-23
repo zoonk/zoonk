@@ -3,17 +3,20 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
 import { loadWritingSkillIds } from "../../writing-skills";
 import { getTestQuestionStatuses, listUnaskedAreas } from "../focus-test-progress";
 import { type TestSubject } from "../focus-test-subjects";
+import { type PlacementEvidence } from "../placement-beliefs";
 import { getKnownSubjects, getOwnLevel } from "../placement-contract";
+import { pickPlacementItem } from "../placement-item-choice";
 import { readSkillStatuses } from "../placement-known";
 import { isOwnMaterialTest } from "../placement-material";
-import { type PlacementQuickFormat, compareQuickFormat } from "../placement-quick-format";
+import { type PlacementQuickFormat } from "../placement-quick-format";
 import { type SkillStatuses } from "../placement-status";
 import { type AreaPriority, getUndecidedSkills, rankAreasToAsk } from "../placement-steps";
 import { loadPlacementItems } from "./placement-bank-items";
-import { type TestSkillAnswers, loadAnsweredTestItems, loadEvidence } from "./placement-evidence";
+import { type TestSkillAnswers, loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
 
 type StartSkill = { id: string; phase: number; sectionTitle: string | null };
 
@@ -101,45 +104,71 @@ function orderForTest<TSkill extends StartSkill>({
     : skills.toSorted((a, b) => Number(isUnasked(b)) - Number(isUnasked(a)));
 }
 
+function hasRecentQuickChoice(answers: readonly Pick<PlacementEvidence, "format" | "outcome">[]) {
+  const lastMiss = answers.findLastIndex((answer) => answer.outcome !== "correct");
+
+  return answers
+    .slice(Math.max(lastMiss + 1, answers.length - 3))
+    .some((answer) => isQuickChoice(answer));
+}
+
 /** At most limit unseen quick questions, one per unsettled skill; never selects listening-only skills. */
-export async function pickSessionPlacementItems({
+export async function pickSessionChecks({
   areaShares,
   blueprint: knownBlueprint,
+  easySkillIds = [],
   excludeItemIds,
   focusAreas,
+  followUpSkillIds = new Set(),
   goal,
   limit,
   listeningSkillIds,
   quickFormat,
+  recheckOnly = false,
+  recheckSkillIds = new Set(),
   skills: planSkills,
   test,
   userId,
 }: AreaPriority & {
   /** The goal's exam blueprint when the day's build already read it; without it, it's read fresh. */
   blueprint?: Pick<ExamBlueprint, "ownerId"> | null;
+  easySkillIds?: readonly string[];
   excludeItemIds: ReadonlySet<string>;
+  followUpSkillIds?: ReadonlySet<string>;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   limit: number;
   /** The day plan's listening-only skills; without them, they're read fresh. */
   listeningSkillIds?: ReadonlySet<string>;
   quickFormat: PlacementQuickFormat;
+  recheckOnly?: boolean;
+  recheckSkillIds?: ReadonlySet<string>;
   skills: GoalPlan["skills"];
   test?: SessionTest;
   userId: string;
-}): Promise<string[]> {
+}): Promise<{ placementItemIds: string[]; placementRecheckItemIds: string[] }> {
   const [listening, written] = await Promise.all([
     listeningSkillIds ?? loadListeningSkillIds(goal.id),
     loadWritingSkillIds(goal.id),
   ]);
 
   const skills = planSkills.filter((skill) => !listening.has(skill.id) && !written.has(skill.id));
-  const skillIds = skills.map((skill) => skill.id);
 
-  const [{ evidence, placementAnswers, seenItemIds, testSkills }, bankItems, blueprint] =
+  const easy = new Set(easySkillIds);
+
+  const skillIds = skills
+    .filter(
+      (skill) =>
+        !recheckOnly ||
+        recheckSkillIds.has(skill.id) ||
+        followUpSkillIds.has(skill.id) ||
+        easy.has(skill.id),
+    )
+    .map((skill) => skill.id);
+
+  const [{ confirmationAnswers, evidence, seenItemIds, testSkills }, bankItems, blueprint] =
     await Promise.all([
       loadEvidence({ skillIds, userId }),
-      // Sessions grade immediately; typed confirmation stays in placement.
-      loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds, typed: false }),
+      loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds }),
       knownBlueprint === undefined && goal.examBlueprintId
         ? prisma.examBlueprint.findUnique({
             select: { ownerId: true },
@@ -152,7 +181,7 @@ export async function pickSessionPlacementItems({
 
   const statuses = readSkillStatuses({
     answeredOnly,
-    answers: placementAnswers,
+    answers: confirmationAnswers,
     evidence,
     knownAreas: getKnownSubjects(goal),
     ownLevel: getOwnLevel({ goal }),
@@ -175,17 +204,48 @@ export async function pickSessionPlacementItems({
     statuses: questionStatuses,
   });
 
-  const answeredItems = await loadAnsweredTestItems({
+  const answeredItems = await loadSeenPlacementItems({
     itemIds: bankItems.map((item) => item.id),
     userId,
   });
 
-  const askable = bankItems
-    .filter(
-      (item) =>
-        !seenItemIds.has(item.id) && !answeredItems.has(item.id) && !excludeItemIds.has(item.id),
-    )
-    .toSorted((a, b) => compareQuickFormat({ a: a.format, b: b.format, quickFormat }));
+  const candidates = bankItems.map((item) => ({
+    ...item,
+    seen: seenItemIds.has(item.id) || answeredItems.has(item.id) || excludeItemIds.has(item.id),
+  }));
+
+  const taps = candidates.filter((item) => isQuickChoice(item) || isLowGuessTap(item));
+  const lowGuess = taps.filter((item) => isLowGuessTap(item));
+
+  const rechecks = [...recheckSkillIds].flatMap(
+    (skillId) => pickPlacementItem({ confirming: true, items: taps, quickFormat, skillId }) ?? [],
+  );
+
+  const followUps = [...followUpSkillIds].flatMap((skillId) =>
+    recheckSkillIds.has(skillId) || ["known", "unknown"].includes(statuses.get(skillId) ?? "")
+      ? []
+      : (pickPlacementItem({ confirming: true, items: lowGuess, quickFormat, skillId }) ?? []),
+  );
+
+  const bySkill = Map.groupBy(confirmationAnswers, (answer) => answer.skillId);
+
+  const easyChecks = easySkillIds.flatMap((skillId) =>
+    recheckSkillIds.has(skillId) || followUpSkillIds.has(skillId)
+      ? []
+      : (pickPlacementItem({
+          confirming: hasRecentQuickChoice(bySkill.get(skillId) ?? []),
+          items: taps,
+          quickFormat,
+          skillId,
+        }) ?? []),
+  );
+
+  const priority = [...rechecks, ...followUps, ...easyChecks].map((item) => item.id);
+  const placementRecheckItemIds = rechecks.slice(0, limit).map((item) => item.id);
+
+  if (recheckOnly || priority.length >= limit) {
+    return { placementItemIds: priority.slice(0, limit), placementRecheckItemIds };
+  }
 
   const walk = interleaveByStart({
     evidence,
@@ -194,8 +254,23 @@ export async function pickSessionPlacementItems({
     undecided,
   });
 
-  return orderForTest({ skills: walk, test, testSkills })
-    .flatMap((skill) => askable.find((item) => item.skillId === skill.id) ?? [])
-    .slice(0, limit)
-    .map((item) => item.id);
+  const regular = orderForTest({ skills: walk, test, testSkills }).flatMap(
+    (skill) =>
+      pickPlacementItem({
+        confirming: evidence.some(
+          (answer) => answer.skillId === skill.id && answer.outcome === "correct",
+        ),
+        items: candidates,
+        quickFormat,
+        skillId: skill.id,
+      }) ?? [],
+  );
+
+  return {
+    placementItemIds: [...new Set([...priority, ...regular.map((item) => item.id)])].slice(
+      0,
+      limit,
+    ),
+    placementRecheckItemIds,
+  };
 }

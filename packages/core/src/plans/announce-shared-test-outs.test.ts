@@ -20,7 +20,7 @@ import { decidePlanChange } from "./decide-plan-change";
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 describe("shared test-out notices", () => {
-  it("recovers a committed skip on retry without interrupting active work or deliberate practice", async () => {
+  it("recovers a committed skip on retry while preserving the entire shown day", async () => {
     freezeClock();
     vi.setSystemTime(NOW);
     const user = await userFixture();
@@ -101,17 +101,15 @@ describe("shared test-out notices", () => {
     await retry();
     await expect(notices()).resolves.toStrictEqual(announced);
 
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: pending.id } }),
-    ).resolves.toMatchObject({ status: "skipped" });
+    const shown = [pending, active, replay, reinforcement];
 
-    await expect(
-      Promise.all(
-        [active, replay, reinforcement].map((block) =>
-          prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
-        ),
-      ),
-    ).resolves.toStrictEqual([active, replay, reinforcement]);
+    const blocks = () =>
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: day.id },
+      });
+
+    await expect(blocks()).resolves.toStrictEqual(shown);
 
     mockSession(user.id);
 
@@ -123,9 +121,11 @@ describe("shared test-out notices", () => {
       }),
     ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
 
+    await expect(blocks()).resolves.toStrictEqual(shown);
+
     await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: pending.id } }),
-    ).resolves.toMatchObject({ status: "pending" });
+      prisma.planItem.count({ where: { planId: other.plan.id, status: "testedOut" } }),
+    ).resolves.toBe(0);
   });
 
   it("still announces the test-out goal's own skip while another goal's plan is busy", async () => {

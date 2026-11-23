@@ -1,0 +1,162 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-a1-retake",
+        "claimId": "00ca2de59756aa4a",
+        "criterion": "calibration",
+        "observationId": "86e35fa616989fa1f5308723c27941fa13a1202eab6b94b98bca35c43d927f14.first.78c84fc8-ef3b-4f6c-bc30-e9c94d489d5c.0",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-a1-retake",
+        "claimId": "06cc593efd519bfa",
+        "criterion": "calibration",
+        "observationId": "58ec79f888d0e64c469d6012fdf6d51fc266ea953759666704897f95761f1b59.first.cb40842e-d05c-472f-a985-bceee23f973b.0",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-en-a1-retake",
+        "claimId": "002f98ae3027e673",
+        "criterion": "language",
+        "observationId": "58ec79f888d0e64c469d6012fdf6d51fc266ea953759666704897f95761f1b59.first.cb40842e-d05c-472f-a985-bceee23f973b.4",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.001029,
+    "id": "949e79f5eb7a15ffe5aa4c307c20b153f7a2413026997a78d838af7392e8904d",
+    "packet": [
+      {
+        "A": {
+          "blob": "6458a37d1e896864bc2c70646c6569d7d8cc2f2a63c978b8645f7ce80ccc5b34",
+          "format": "text"
+        },
+        "B": {
+          "blob": "f594d6c37a67656615d006782d11b2b08668242e25fb14ef728ee6323b0cbfec",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The items are labelled A1, but the pool schedule question needs the learner to find the right day in a timetable and check several day-and-time facts at once. This is closer to A2 and may be too hard for an A1 learner.",
+            "claimId": "00ca2de59756aa4a",
+            "criterion": "calibration",
+            "location": {
+              "detail": "O que é verdade sobre o horário da piscina?",
+              "kind": "quote"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "In confirmation 4, all five options ('Ava.', 'Emma.', 'Liam.', 'Noah.', 'Diego.') are identical proper names in English and Portuguese, so a learner below A1 who knows only the word 'box' ('caixa') can pick the answers by matching names rather than understanding an A1 spoken message.",
+            "claimId": "06cc593efd519bfa",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Hi! This box is for Emma and Liam. The bag is for Noah, Ava, and Diego. Have a nice day!",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Confirmation 4 is an in-person exchange at the door asking for payment on the spot (framed by the question 'O que o entregador diz na porta?') rather than a voice message, breaking the written expectation for two voice messages.",
+            "claimId": "002f98ae3027e673",
+            "criterion": "language",
+            "location": {
+              "detail": "Hi, I have a delivery for Liam. It's two pizzas and one salad. That's twenty dollars, please.",
+              "kind": "quote"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "30f3cd2754741eabf03cb74f0e6e32330cbaa1471312073a14456a3fb3f3b8c4",
+          "format": "text"
+        },
+        "input": {
+          "blob": "c9cbb62c26ccb32799581b3d0e03eaf55425c4b4cb0d37b4c0f1efcb70eba630",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "ba778d4fbbf65bdc",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "e74bc92c3f376fa8",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "00ca2de59756aa4a",
+          "finding": "holds",
+          "reason": "B asks learners to evaluate several statements against a multi-day pool-hours timetable, including different opening and closing times. A asks for the activity at one specified day and time, so it does not have the same multi-fact timetable demand."
+        },
+        {
+          "claimId": "06cc593efd519bfa",
+          "finding": "holds",
+          "reason": "In A, all five answer options are proper names that appear in the message in both languages; matching the names associated with “box” can identify Emma and Liam without understanding the whole message. The other output does not have this confirmation."
+        },
+        {
+          "claimId": "002f98ae3027e673",
+          "finding": "holds",
+          "reason": "B frames the delivery text as something said “at the door” and ends with a request for payment, making it an in-person exchange rather than a voice message. That conflicts with the expectation for two voice messages."
+        },
+        {
+          "claimId": "ba778d4fbbf65bdc",
+          "finding": "doesn't hold",
+          "reason": "B's key is 1 and 3, so it excludes option 2, the false statement that the bus leaves at nine. Its key matches the message."
+        },
+        {
+          "claimId": "e74bc92c3f376fa8",
+          "finding": "holds",
+          "reason": "The message says the bus leaves at ten, making option 2 false, and says the cafe is next to the shop, making option 3 true. A's key incorrectly includes 2 and omits 3."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

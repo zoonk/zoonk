@@ -1,12 +1,8 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
-import { settleFinishedChapters } from "../../mind-maps/finished-chapters";
 import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { unlessPlanConflict } from "../../plans/plan-conflict";
-import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
-import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { loadExamWritingSkillIdsForLearner } from "../writing-skills";
@@ -74,13 +70,12 @@ export async function markSkillsKnown({
 export async function markPlanItemsTestedOut({
   announceAlso = [],
   extraWrites,
-  finishesChapters = false,
-  followToday = true,
+  followToday = false,
   goalId,
+  livingPlanDay,
   items,
   knownSkillIds,
   now,
-  pastBasicsAreas = [],
   placedSkills = [],
   testedOutAt,
   timeZone,
@@ -89,46 +84,33 @@ export async function markPlanItemsTestedOut({
   announceAlso?: readonly string[];
   /** Other writes that must land with the announcement (see `announceTestedOutItems`). */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
-  /**
-   * Settles the chapters it finishes and owes their maps. Only a chapter's own test-out does:
-   * placement and a mock's adaptation test out in bulk, which mustn't spend the learner's maps.
-   */
-  finishesChapters?: boolean;
   /** Today's blocks not started follow the re-plan (see `announceTestedOutItems`). */
   followToday?: boolean;
   goalId: string;
+  livingPlanDay?: string;
   items: readonly GoalPlanItem[];
   knownSkillIds: ReadonlySet<string>;
   /** When the plan is planned again from: `testedOutAt`, unless a retry kept an earlier one. */
   now?: Date;
-  pastBasicsAreas?: readonly string[];
   placedSkills?: readonly LeftOutSkill[];
   testedOutAt: Date;
   timeZone: string;
 }): Promise<{
   changeId: string | null;
-  finishedChapters: FinishedChapter[];
   lessonsSkipped: number;
-  pastBasicsAdded: string[];
   planItemIds: string[];
   planVersion: number | null;
 }> {
-  const empty = {
-    changeId: null,
-    finishedChapters: [],
-    lessonsSkipped: 0,
-    planItemIds: [],
-    planVersion: null,
-  };
+  const empty = { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
 
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
-    return { ...empty, pastBasicsAdded: [] };
+    return empty;
   }
 
-  const written =
-    knownSkillIds.size > 0 || pastBasicsAreas.length > 0
+  const planItemIds =
+    knownSkillIds.size > 0
       ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
           const changed = await testOutKnownPlanItems(tx, {
             goalId,
@@ -139,57 +121,16 @@ export async function markPlanItemsTestedOut({
             timeZone,
           });
 
-          const plan =
-            !extraWrites &&
-            (followToday || changed.requestedItemIds.length > 0 || changed.standInIds.length > 0) &&
-            pastBasicsAreas.length > 0
-              ? await tx.plan.findUnique({ where: { goalId } })
-              : null;
-
-          const settings = parsePlanSettings(plan?.settings);
-
-          const pastBasicsAdded = plan
-            ? pastBasicsAreas.filter((area) => !settings.pastBasicsAreas.includes(area))
-            : [];
-
-          if (plan && pastBasicsAdded.length > 0) {
-            await tx.plan.update({
-              data: {
-                settings: {
-                  ...settings,
-                  pastBasicsAreas: [...settings.pastBasicsAreas, ...pastBasicsAdded],
-                },
-              },
-              where: { id: plan.id },
-            });
-          }
-
-          const finished = finishesChapters
-            ? await settleFinishedChapters(tx, {
-                planItemIds: [...changed.itemIds, ...changed.sharedItemIds, ...changed.standInIds],
-                userId: goal.userId,
-              })
-            : [];
-
-          const result = {
-            finishedChapters: finished,
-            ids: changed.requestedItemIds,
-            pastBasicsAdded,
-            standInIds: changed.standInIds,
-          };
+          const result = [...changed.requestedItemIds, ...changed.standInIds];
 
           return changed.itemIds.length === 0 &&
             changed.sharedItemIds.length === 0 &&
-            changed.standInIds.length === 0 &&
-            pastBasicsAdded.length === 0
+            changed.standInIds.length === 0
             ? unchanged(result)
             : result;
         })
-      : { finishedChapters: [], ids: [], pastBasicsAdded: [], standInIds: [] };
+      : [];
 
-  const { finishedChapters, ids, pastBasicsAdded: addedBasics, standInIds } = written;
-
-  const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
 
   await announceSharedTestOuts({
@@ -200,7 +141,7 @@ export async function markPlanItemsTestedOut({
   });
 
   if (announced.length === 0) {
-    return { ...empty, finishedChapters, pastBasicsAdded: addedBasics };
+    return empty;
   }
 
   const announce = () =>
@@ -208,24 +149,17 @@ export async function markPlanItemsTestedOut({
       extraWrites,
       followToday,
       goalId,
+      livingPlanDay,
       now: now ?? testedOutAt,
-      pastBasicsAdded: addedBasics,
-      pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
       planItemIds: announced,
       timeZone,
     });
 
   const announcement = extraWrites ? await announce() : await unlessPlanConflict(announce);
 
-  if (!announcement) {
-    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: announced });
-  }
-
   return {
     changeId: announcement?.changeId ?? null,
-    finishedChapters,
     lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
-    pastBasicsAdded: addedBasics,
     planItemIds,
     planVersion: announcement?.planVersion ?? null,
   };

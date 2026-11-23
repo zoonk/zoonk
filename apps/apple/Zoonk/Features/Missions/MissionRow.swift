@@ -101,7 +101,9 @@ extension StudyMission {
     case .practice:
       String(localized: "Practice", table: "Today", comment: "Mission: practice")
     case .fixMistake:
-      String(localized: "Fix \(total) mistakes", table: "Today", comment: "Mission: fix mistakes")
+      String(
+        localized: "Fix \(total) mistakes", table: "Today", locale: .appLanguage,
+        comment: "Mission: fix mistakes")
     case .pattern:
       String(localized: "Practice a pattern", table: "Today", comment: "Mission: a pattern")
     case .pronunciation:

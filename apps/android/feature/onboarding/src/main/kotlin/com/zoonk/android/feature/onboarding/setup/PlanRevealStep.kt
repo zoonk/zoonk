@@ -3,8 +3,6 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -46,6 +44,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -346,11 +345,11 @@ private fun ColumnScope.RevealBody(
                     modifier = Modifier.semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite },
                 )
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onAdjust, modifier = Modifier.weight(1f)) {
+            TaskActions { main ->
+                OutlinedButton(onClick = onAdjust) {
                     Text(stringResource(R.string.plan_adjust_plan))
                 }
-                Button(busy = starting, onClick = onStart, modifier = Modifier.weight(2f)) {
+                Button(busy = starting, onClick = onStart, modifier = main) {
                     Text(
                         stringResource(if (started) R.string.onboarding_continue else R.string.onboarding_reveal_start),
                     )

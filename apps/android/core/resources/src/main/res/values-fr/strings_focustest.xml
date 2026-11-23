@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "focustest_about": "2091d5757b972582d12e9f8ae33d1687c4c31b8ee0791b602ae01415579c2f0f",
-  "focustest_about_left": "5f661700a4441f9301d0694b0ef73c36a4151cf4d071117bf275c9ed2e3072f8",
   "focustest_also_skips": "3ac8a42baf470db4c99d46cb2dc9e4bd2db701b22c2d76bdba4b09d9a3532823",
   "focustest_answer_more": "60b3a4f40d83d7c39d83652a4eb7ee19b85963322c4cf862688c3300845b2e9a",
   "focustest_answers_saved_line": "8d67786a348190589a7720eee76c548767369c49137eaecb28d0b55665099b8e",
@@ -13,17 +11,6 @@
   "focustest_find_focus": "8d94e67804003fcfa330a184a9b5d479f9d73f303b4544083452b6e55575fcb3",
   "focustest_find_start": "b50f6485135488f3e83a6241fabbbec03b64cee344f2de662c04c41a3091387d",
   "focustest_from_basics": "c8e44072dbbe5aa0072590f1f8d3bf485b41b69e75d37a973147bcc8587de9a6",
-  "focustest_how_grade": "54790a475286e982fbf231a9943d266c1b1cb04e2caca1fa37e520df1ee01984",
-  "focustest_how_grade_title": "63b164299764b2de56c81740b3dc1eed80ccbd2e3d2eaaf8409ae7a371df9d8b",
-  "focustest_how_it_works": "48761a2347f2fb64f146dcd8fe2bc0c612e02e662d3b76d3bcfd8d0cb8bb1481",
-  "focustest_how_sessions": "86072b128aa6ac89715b82137cc5df58fae4b4211c42a7f14d92fa3479685cce",
-  "focustest_how_sessions_title": "2b2897f486bbebcd64392a4dafa3e5ff7db5963ca076b3c1b493cbd782720bdf",
-  "focustest_how_stop": "53f4e25943027008056cdba89c6490e700e2728b4acf8846f7ee9ca89ee2899c",
-  "focustest_how_stop_title": "f0564ace54dd0bba9176746c5a2f7b413112588eb5cd52bbccf604b6e46c7a4d",
-  "focustest_how_subjects": "54096c296af5f09db44b4ce17ba311b22708231f0a2786735cec18b45c351ed4",
-  "focustest_how_subjects_title": "f4d7d29eb6a1397ce7ceb2bf6d207588e69803bdeee760ef55c6bd9bd78c0021",
-  "focustest_how_weight": "2a0fc76ac6ea7e576f91f12743a8afe32ecef6f69dc357e4ac2c76f180efe83c",
-  "focustest_how_weight_title": "c066a0f0c023e80b3fccda3309b8fc12f4ec46f3d0e10f7df18e4e18cb8b1b78",
   "focustest_in_progress": "e29ee4cf02702e58a413e0ba0ee29b2ac3243a5db2755239a4e7979bd73faac9",
   "focustest_lessons_skipped": "ffffa75cb1342a846e7f9207b7ef7100b41b042be9c0dc361deffc9e2ee641ab",
   "focustest_listening_not_checked": "9a2351edc8a4e9814aa2ef602d0e6ff78041d9003edaf6ddec133c00987563dc",
@@ -32,8 +19,8 @@
   "focustest_not_now": "003888cb9ff9d9675fcc399f6cf7001520c245bd7af7e0aeb27ab50636475527",
   "focustest_not_today": "6e72371923c2de4a1dc880af9e56b16c9affe46f8703b6aa6a0f25609e3dac47",
   "focustest_not_today_failed": "f38b25c0abdb6c645cb59d680203e53e4ab2b77d0276408014f8658963290f11",
-  "focustest_offer_description": "51512af9c91906960de13c63cf7a35a81672c33f7f48cef232289ca48aaec8fd",
-  "focustest_offer_description_focus": "b19696ecf8e3e86df30a356eb94b4380a098168d6fd5a217570c73c10a08975d",
+  "focustest_offer_line": "db73b1778ef74ee49547ca5ccca62296b175c4968e37fc71bcd3097e55de8a9a",
+  "focustest_offer_line_focus": "cbf5e09db9e83368a99f4f6711908e3a4c8f7a8a3f9f0a9571237db5f798dd6b",
   "focustest_paused_in_sessions": "14c5987ca8619cc01dc36db27018bbf302322347b4a54d779f9ff24452f4c285",
   "focustest_practical_not_checked": "685b7b5c581a3bfc9b96bc732864030e7b9bedb6d846f671b6e9411d3fa5d297",
   "focustest_proposal_applied": "e14a6843e5228c9923ede90cce64a6520fbe0a0e34e321a2a1e5b0932639c208",
@@ -64,6 +51,7 @@
   "focustest_suggestion_dismissed": "0a12e09df9bac437591d29e0c52d4e18c8834a7242ce302a58ccbd439230aa80",
   "focustest_suggestion_line": "626a1142a5092fe31bd1916b4a85f7e3a6a61a1888680c05e9713c2c1d85634a",
   "focustest_take_test": "cc38c6dacaed5e3bf05b6cf70fe9751b272563d2b37bcb44522aa1af7cbe0cd2",
+  "focustest_time_left": "7eb8dcbe76fced8887045ddc57b47e1e779dc8ee020b85ef7436b3aa72b5a388",
   "focustest_title": "ee5b69aacf00887fbd98e1b7a9e0bfc79e98429ee63bbd7e70cf6a8da77fe798",
   "focustest_undo": "bd2dc11bd7bd0b207dbc2fd68707531ccddc728ffac85317e31fc7404632e80d",
   "focustest_update_plan": "fff25cadbd54a43074b4baf28166f5d0bab6dd1924a63e18ff337f8dfdac6ad3",
@@ -73,28 +61,14 @@
 <resources>
     <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Test de priorités</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_about">Environ %1$s</string>
-    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
-    <string name="focustest_about_left">Encore environ %1$s</string>
+    <!-- {time} is a duration with its unit, such as “9 min”. -->
+    <string name="focustest_time_left">Il reste %1$s</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Découvre les matières à travailler en priorité</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Tu connais déjà une partie du contenu ?</string>
-    <string name="focustest_offer_description_focus">Des questions rapides sur les matières de ton examen. Ton plan saute ce que tu connais déjà pour te laisser plus de temps là où tu en as le plus besoin.</string>
-    <string name="focustest_offer_description">Des questions rapides sur les matières de ton examen. Ton plan saute ce que tu connais déjà.</string>
-    <string name="focustest_how_it_works">Comment ça marche</string>
-    <string name="focustest_how_weight_title">Ce qui compte le plus passe en premier</string>
-    <string name="focustest_how_weight">Le test commence par les matières qui comptent le plus à ton examen.</string>
-    <string name="focustest_how_grade_title">Pas de note</string>
-    <string name="focustest_how_grade">Tu peux répondre « Je ne sais pas encore ».</string>
-    <string name="focustest_how_stop_title">Arrête quand tu veux</string>
-    <string name="focustest_how_stop">Chaque réponse est enregistrée.</string>
-    <string name="focustest_how_subjects_title">Définir des priorités ne supprime aucune matière</string>
-    <string name="focustest_how_subjects">Les matières dont tu as le plus besoin ont plus de temps.</string>
-    <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
-    <string name="focustest_how_sessions_title">Quelques questions de plus pendant ta première semaine</string>
-    <string name="focustest_how_sessions">Tes séances te proposent quelques autres questions du test. Tu peux les mettre en pause.</string>
+    <string name="focustest_offer_line_focus">Ce test repère ce que tu connais déjà pour que tu consacres plus de temps à ce que tu dois travailler en priorité. Il ne supprime jamais de matière.</string>
+    <string name="focustest_offer_line">Ce test repère ce que tu connais déjà pour que ton plan puisse le sauter.</string>
     <string name="focustest_start">Commencer le test</string>
     <string name="focustest_skip_note">Tu peux faire le test plus tard, depuis ton plan.</string>
     <string name="focustest_not_now">Pas maintenant</string>

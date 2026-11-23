@@ -171,7 +171,7 @@ function StepScreen({
   actions: OnboardingActions;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => Promise<boolean>;
-  onPlacementDone: () => Promise<boolean>;
+  onPlacementDone: (attemptId?: string) => Promise<boolean>;
   onPlacementFinishFailed: (failed: boolean) => void;
   /** A change made on a screen without answering it, such as the aim, read back. */
   onViewChange: (view: OnboardingView) => void;

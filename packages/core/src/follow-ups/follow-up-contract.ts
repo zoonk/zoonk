@@ -1,3 +1,4 @@
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -63,10 +64,38 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     input: z.object({ goalId: uuidSchema(), lessonsAskedAt: z.number().nullable() }),
     kind: z.literal("prepareGoalLessons"),
   }),
+  z.object({
+    input: z.object({
+      goalId: uuidSchema(),
+      pair: z.object({ language: z.string(), targetLanguage: z.string() }),
+    }),
+    kind: z.literal("prepareLevelTestBank"),
+  }),
+  z.object({
+    input: z.object({
+      attemptId: uuidSchema(),
+      goalId: uuidSchema(),
+      skillIds: z.array(uuidSchema()),
+    }),
+    kind: z.literal("prepareLevelTestOut"),
+  }),
+  z.object({
+    input: z.object({
+      goalId: uuidSchema(),
+      level: z.enum(CEFR_LEVELS),
+      pair: z.object({ language: z.string(), targetLanguage: z.string() }),
+    }),
+    kind: z.literal("replenishLevelTestChecks"),
+  }),
   z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),
   z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("rebuildGoalCurriculum") }),
   z.object({
-    input: z.object({ goalId: uuidSchema(), waitsForNotice: z.boolean() }),
+    input: z.object({
+      goalId: uuidSchema(),
+      placementPart: z.object({ attemptId: uuidSchema(), part: z.int().positive() }).optional(),
+      skillIds: z.array(uuidSchema()).optional(),
+      waitsForNotice: z.boolean(),
+    }),
     kind: z.literal("preparePlacementItems"),
   }),
   z.object({

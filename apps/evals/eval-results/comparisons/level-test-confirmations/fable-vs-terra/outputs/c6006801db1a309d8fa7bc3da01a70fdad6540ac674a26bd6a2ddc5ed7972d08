@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A1",
+      "options": [
+        "A jaqueta está na biblioteca.",
+        "A jaqueta está na recepção.",
+        "A jaqueta está no escritório.",
+        "A recepção é onde está a jaqueta.",
+        "A jaqueta está com as luvas na biblioteca."
+      ],
+      "passage": "Found: a blue jacket at the front desk, a gray hat in the office, and gloves in the library.",
+      "question": "Quais afirmações indicam onde está a jaqueta?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "A1",
+      "options": [
+        "A piscina abre às 4h da tarde.",
+        "A piscina abre às 5h da tarde.",
+        "A piscina abre às 7h da manhã.",
+        "A piscina começa a funcionar às 7h da manhã.",
+        "A piscina começa a funcionar às 8h da manhã."
+      ],
+      "passage": "Pool hours\nTuesday: 7 a.m. to 5 p.m.\nWednesday: 8 a.m. to 4 p.m.",
+      "question": "Quais afirmações indicam a hora em que a piscina abre na terça-feira?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "O horário de Emma é 2h da tarde.",
+        "O horário de Emma é 2h da manhã.",
+        "A consulta de Emma é às 2h da tarde.",
+        "A consulta de Emma é às 3h da tarde.",
+        "A consulta de Emma é às 3h da manhã."
+      ],
+      "passage": "Hello, Emma. Your appointment is at 2 p.m. on Thursday. Liam's appointment is at 3 p.m. on Friday.",
+      "question": "Quais afirmações indicam a hora da consulta de Emma?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "O pacote está na mesa.",
+        "O pacote está na cadeira.",
+        "A mesa é onde está o pacote.",
+        "A prateleira é onde está o pacote.",
+        "O pacote está com as flores na cadeira."
+      ],
+      "passage": "Hi, Noah. I put your package on the table. Your flowers are on the chair, and your mail is on the shelf.",
+      "question": "Quais afirmações indicam onde está o pacote de Noah?",
+      "skill": "listening"
+    }
+  ]
+}

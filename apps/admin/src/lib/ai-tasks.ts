@@ -71,6 +71,7 @@ const AI_TASK_DESCRIPTIONS: Record<string, string> = {
   "lesson-spec": "Plans a lesson before it's written",
   "lesson-writer": "Writes a lesson from its plan",
   "level-test-bank": "Writes a language's placement test",
+  "level-test-confirmations": "Writes the questions that confirm a language level",
   "library-identity-decision": "Decides whether existing content can be reused",
   "library-search-terms": "Writes search terms to find existing content",
   "listening-audio": "Records a listening exercise's speakers",

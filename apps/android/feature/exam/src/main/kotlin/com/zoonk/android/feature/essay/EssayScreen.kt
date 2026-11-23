@@ -98,7 +98,6 @@ import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.components.taskSideAction
 import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -819,7 +818,6 @@ internal fun WritingResultScreen(
                         OutlinedButton(
                             busy = finishing,
                             onClick = viewModel::finish,
-                            modifier = Modifier.taskSideAction(),
                             leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                         ) {
                             Text(stringResource(R.string.essay_skip_rewrite))

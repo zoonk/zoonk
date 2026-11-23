@@ -79,7 +79,9 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
 import com.zoonk.api.models.GoalProgressStillNeeded
+import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguagePlanLevel
+import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.PreparationComponentsMocks
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
@@ -118,8 +120,9 @@ internal fun PlanNumbers(
     val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
     if (standing == null && pace == null) return
 
+    val assessment = (page.plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.result
     val standingCard: (@Composable (Modifier) -> Unit)? =
-        standing?.let { { cell -> NumberButton(standingNumber(it), variant, cell) { open = NumberSheet.Standing } } }
+        standing?.let { { cell -> NumberButton(standingNumber(it, assessment), variant, cell) { open = NumberSheet.Standing } } }
     val paceCard: (@Composable (Modifier) -> Unit)? =
         pace?.let {
             { cell ->
@@ -211,7 +214,10 @@ internal fun standingTitle(standing: Standing) =
     }
 
 @Composable
-private fun standingNumber(standing: Standing): PlanNumber {
+private fun standingNumber(
+    standing: Standing,
+    assessment: LanguageLevelTestOneOfResult? = null,
+): PlanNumber {
     val locale = currentLocale()
     return when (standing) {
         is Standing.Preparation -> {
@@ -238,10 +244,11 @@ private fun standingNumber(standing: Standing): PlanNumber {
         }
 
         is Standing.Language -> {
-            val level = standing.progress.level
+            val level = standing.progress.level.takeIf { assessment == null }
+            val ranges = assessment?.let { levelRangeFacts(it.ranges).joinToString("\n") }
             PlanNumber(
                 label = stringResource(R.string.plan_level, languageName(standing.progress.goal.targetLanguage, locale)),
-                value = level?.label ?: stringResource(R.string.plan_not_yet),
+                value = ranges?.takeIf(String::isNotEmpty) ?: level?.label ?: stringResource(R.string.plan_not_yet),
                 detail = null,
                 numeric = false,
                 level = level,

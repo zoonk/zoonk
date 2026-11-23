@@ -1,0 +1,99 @@
+{
+  "attempt": "controls-retry",
+  "costUsd": 0.00241414,
+  "failureCodes": [
+    "invalid_response"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs."
+  ],
+  "packetId": "d5f8bf61cb7b62a695ab35d72d59be23c0daf8e87cf51bc5907d1c6f4274022b",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs são idênticos e apresentam textos e opções que exploram inferências e nuances apropriadas ao nível.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs têm as mesmas chaves, que correspondem às opções sustentadas pelas passagens.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois usam passagens naturais em inglês dos EUA e opções em português brasileiro.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os outputs são idênticos e não há um problema verificável que diferencie um do outro."
+        },
+        "pairId": "14289a2d-619e-43ee-b2d1-d86e2bd0ed66"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Ambos trazem textos e opções que pedem interpretação de ironia, estrutura argumentativa e pressupostos, sem depender de vocabulário raro.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "As chaves dos dois outputs correspondem às opções sustentadas pelas passagens, sem uma diferença clara de precisão.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos usam inglês natural dos EUA nas passagens e português brasileiro nas opções.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os dois conjuntos são adequados ao nível e têm chaves coerentes; nenhum serve ao leitor de forma claramente melhor."
+        },
+        "pairId": "97260ec2-b647-4baf-9052-3c25ab526d6d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B marca como corretas as frases 1 e 3, ambas confirmadas pela mensagem; A inclui a frase 2, que contradiz o horário informado para o ônibus.",
+            "criterion": "answers"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A chave inclui a opção 2, mas a mensagem diz que o ônibus sai às dez, não às nove; as opções corretas são 1 e 3.",
+            "criterion": "answers",
+            "learnerCost": "O aprendiz pode aprender uma informação errada e marcar uma frase que contradiz a mensagem.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A chave de A está errada, enquanto a de B identifica exatamente as duas frases apoiadas pela mensagem."
+        },
+        "pairId": "e269efa5-b16a-44f6-b064-85d28d5977b6"
+      }
+    ]
+  }
+}

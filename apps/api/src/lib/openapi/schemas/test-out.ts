@@ -3,7 +3,7 @@ import { finishedChapterSchema } from "@zoonk/core/sessions/completion-contract"
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { bankQuestionSchema, probabilitySchema, skillIdSchema } from "./learner";
+import { placementQuestionSchema, probabilitySchema, skillIdSchema } from "./learner";
 
 export const nothingToSkipSchema = z
   .object({ status: z.literal("nothingToSkip") })
@@ -24,10 +24,10 @@ export const chapterTestOutResponseSchema = z
       }),
     passMark: probabilitySchema,
     questions: z
-      .array(bankQuestionSchema)
+      .array(placementQuestionSchema)
       .meta({
         description:
-          "Four to eight, more the more lessons a pass skips, spread over the sampled skills (a chapter of few skills asks each several times); empty while `needsItems` lists any, so a test-out never runs on part of the chapter",
+          "One quick choice and three low-guess taps for each sampled skill. Empty while needsItems lists any skills",
       }),
     questionsPerSkill: z
       .int()

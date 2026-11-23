@@ -615,7 +615,8 @@ private struct CheckpointRetryView: View {
         ? nil
         : LocalizedStringResource(
           "After \(lessons) short lessons on what tripped you up.", table: "Practice",
-          comment: "Short lessons a learner takes before a Trickster rematch.")
+          locale: .appLanguage, comment: "Short lessons a learner takes before a Trickster rematch."
+        )
     case .won: nil
     }
   }
@@ -719,7 +720,7 @@ enum CheckpointCopy {
         "Rematch tomorrow.", table: "Practice", comment: "A lost Trickster duel comes back.")
       : LocalizedStringResource(
         "Rematch tomorrow, after \(lessons) short lessons.", table: "Practice",
-        comment: "A lost Trickster duel comes back after short lessons.")
+        locale: .appLanguage, comment: "A lost Trickster duel comes back after short lessons.")
   }
 }
 

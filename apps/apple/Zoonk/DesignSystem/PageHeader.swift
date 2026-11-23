@@ -8,6 +8,8 @@ import SwiftUI
 struct PageHeader<Trailing: View>: View {
   let title: Text
   var chip: Chip?
+  /// Where the learner is, at the chip's row's end: a test's time.
+  var position: Text?
   /// A step keeps its chip's room without one, so every step's title sits at one height.
   var keepsChipRoom = false
   var supporting: Text?
@@ -18,11 +20,13 @@ struct PageHeader<Trailing: View>: View {
   @ViewBuilder let trailing: Trailing
 
   init(
-    _ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil,
-    supportingIsFacts: Bool = false, facts: [String] = [], @ViewBuilder trailing: () -> Trailing
+    _ title: Text, chip: Chip? = nil, position: Text? = nil, keepsChipRoom: Bool = false,
+    supporting: Text? = nil, supportingIsFacts: Bool = false, facts: [String] = [],
+    @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
     self.chip = chip
+    self.position = position
     self.keepsChipRoom = keepsChipRoom
     self.supporting = supporting
     self.facts = facts
@@ -33,7 +37,7 @@ struct PageHeader<Trailing: View>: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       if let chip {
-        chip
+        ChipRow(chip: chip, position: position)
           .padding(.bottom, 8)
       } else if keepsChipRoom {
         Chip(Text(verbatim: " "))
@@ -70,12 +74,12 @@ struct PageHeader<Trailing: View>: View {
 
 extension PageHeader where Trailing == EmptyView {
   init(
-    _ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil,
-    supportingIsFacts: Bool = false, facts: [String] = []
+    _ title: Text, chip: Chip? = nil, position: Text? = nil, keepsChipRoom: Bool = false,
+    supporting: Text? = nil, supportingIsFacts: Bool = false, facts: [String] = []
   ) {
     self.init(
-      title, chip: chip, keepsChipRoom: keepsChipRoom, supporting: supporting,
-      supportingIsFacts: supportingIsFacts, facts: facts
+      title, chip: chip, position: position, keepsChipRoom: keepsChipRoom,
+      supporting: supporting, supportingIsFacts: supportingIsFacts, facts: facts
     ) {
       EmptyView()
     }

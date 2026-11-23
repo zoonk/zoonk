@@ -239,7 +239,7 @@ struct TutorMemoryUpdate: View {
     return first + " "
       + String(
         localized: "and \(more) more changes", table: "Tutor",
-        comment: "More memory changes after the first one")
+        locale: .appLanguage, comment: "More memory changes after the first one")
   }
 }
 
@@ -277,6 +277,6 @@ struct TutorMissionMoment: View {
 
     return String(
       localized: "Today's missions: \(done) of \(moment.missions.count)", table: "Tutor",
-      comment: "The day's missions done, after asking the buddy")
+      locale: .appLanguage, comment: "The day's missions done, after asking the buddy")
   }
 }

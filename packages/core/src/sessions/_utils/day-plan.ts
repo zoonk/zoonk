@@ -36,6 +36,7 @@ function loadPreviousSession({
     orderBy: { localDate: "desc" },
     select: {
       blocks: { select: { payload: true, startedAt: true }, where: { kind: "checkpoint" } },
+      localDate: true,
     },
     where: { goalId, localDate: { lt: today }, userId },
   });
@@ -136,6 +137,7 @@ export async function loadDayPlan({
     /** Where the days away count from when the learner hasn't studied since (see `getFreshStart`). */
     planStart: getPlanStart({ goal, settings: plan?.settings, timeZone }),
     prerequisites,
+    previousSessionDate: previousSession?.localDate ?? null,
     settings: plan?.settings ?? null,
     skills,
     structure,

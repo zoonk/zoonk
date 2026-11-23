@@ -35,7 +35,7 @@ class PlacementPhaseTest {
     fun questionsStillBeingWrittenWaitAfterStart() {
         assertEquals(PlacementPhase.Waiting, phase(placementOf(status = "preparing", next = null), started = true))
         assertEquals(PlacementPhase.Waiting, phase(placementOf(status = "failed", next = null), started = true))
-        assertEquals(PlacementPhase.Intro, phase(placementOf(status = "waitingForQuestions", next = null)))
+        assertEquals(PlacementPhase.ChooseLength, phase(placementOf(status = "waitingForQuestions", next = null)))
     }
 
     @Test

@@ -1067,7 +1067,7 @@ private func planChange(
 ) throws -> TodayView.PlanChange {
   try decode(
     """
-    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice","quote":"\(quote)",
+    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice","lessonsSkipped":0,"quote":"\(quote)",
     "id":"\(id)","kind":"\(kind)","officialDate":null,"operations":[],
     "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)

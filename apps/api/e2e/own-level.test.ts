@@ -6,7 +6,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { ownLevelChangeSchema } from "../src/lib/openapi/schemas/plans";
+import { ownLevelChangeSchema } from "../src/lib/openapi/schemas/plan-change-results";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 async function createGoal(userId: string) {

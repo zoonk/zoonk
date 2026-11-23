@@ -7,67 +7,42 @@ import com.zoonk.android.data.StepState
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf
 import com.zoonk.api.models.LanguageLevelTestOneOf1
-import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1Next
-import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOf1Speaking
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
 
 internal typealias LevelTestQuestion = LanguageLevelTestOneOf1NextOneOfQuestion
-internal typealias LevelTestSentence = LanguageLevelTestOneOf1NextOneOf1Speaking
-internal typealias SkillLevel = LanguageLevelTestOneOf1LevelsInner
 
 internal sealed interface LevelTestPhase {
     data object Loading : LevelTestPhase
 
-    data object Intro : LevelTestPhase
-
     data object Waiting : LevelTestPhase
 
+    /** [confirmation]: a level's check, where every right option is picked so a guess rarely passes. */
     data class Question(
         val question: LevelTestQuestion,
         /** 0 to 1. */
         val progress: Float,
         val number: Int = 1,
         val total: Int = 1,
+        val confirmation: Boolean = false,
     ) : LevelTestPhase
 
-    data class Speaking(
-        val sentence: LevelTestSentence,
-        val progress: Float,
-        val number: Int = 1,
-        val total: Int = 1,
-    ) : LevelTestPhase
-
-    data class Done(
-        val levels: List<SkillLevel>,
-    ) : LevelTestPhase
+    data object Done : LevelTestPhase
 }
 
-/**
- * The test resumes once the learner tapped Start ([started]), answered or ended it, and waits for its
- * questions after this screen's Start ([begun]) or while a run it started writes them. [stopped] is
- * the learner leaving the questions for their levels.
- */
+/** An open test waits for its questions until they're written; [stopped] is the learner leaving them for what the test found. */
 internal fun levelTestPhase(
     test: LoadState<LanguageLevelTest>,
-    started: Boolean,
-    begun: Boolean,
     stopped: Boolean,
-    bank: BankWait,
 ): LevelTestPhase {
     if (test == LoadState.Idle || test == LoadState.Loading) return LevelTestPhase.Loading
 
-    val value = (test as? LoadState.Loaded)?.value
-    val ready = (value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
-    val preparing = (value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value
-    val ended = ready?.next is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value
+    val ready = ((test as? LoadState.Loaded)?.value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
 
     return when {
-        stopped -> LevelTestPhase.Done(ready?.levels.orEmpty())
-        ready != null && (started || ready.answered > 0 || ended) -> ready.phase()
-        begun -> LevelTestPhase.Waiting
-        preparing != null && started && (preparing.startedAt != null || bank.sawWriter) -> LevelTestPhase.Waiting
-        else -> LevelTestPhase.Intro
+        stopped -> LevelTestPhase.Done
+        ready != null -> ready.phase()
+        else -> LevelTestPhase.Waiting
     }
 }
 
@@ -82,31 +57,18 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> {
-            LevelTestPhase.Question(
-                next.value.question,
-                progress,
-                (
-                    answered +
-                        1
-                ).toInt(),
-                total.toInt(),
-            )
+            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt())
         }
 
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf1Value -> {
-            LevelTestPhase.Speaking(
-                next.value.speaking,
-                progress,
-                (
-                    answered +
-                        1
-                ).toInt(),
-                total.toInt(),
-            )
+            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt(), confirmation = true)
         }
 
-        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value -> {
-            LevelTestPhase.Done(levels)
+        // An older test's spoken sentence isn't asked anymore: its levels come from reading and listening.
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value,
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value,
+        -> {
+            LevelTestPhase.Done
         }
     }
 }

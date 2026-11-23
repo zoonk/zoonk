@@ -212,7 +212,7 @@ private struct CompletedLessonGroupChips: View {
         everyLessonTitle
       }
 
-      Text((group?.lessons ?? filter.total).formatted())
+      Text((group?.lessons ?? filter.total).formatted(.number.locale(.appLanguage)))
         .typeStyle(.data)
     }
   }
@@ -245,7 +245,7 @@ private struct CompletedLessonGroupsSection: View {
           .lineLimit(1)
           .frame(maxWidth: .infinity, alignment: .leading)
 
-        Text(lessons.formatted())
+        Text(lessons.formatted(.number.locale(.appLanguage)))
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }

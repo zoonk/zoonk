@@ -1003,6 +1003,26 @@ msgctxt "ko7e4v"
 msgid "Quick questions that find where your study time should go"
 msgstr "いくつかの問題に答えるだけで、重点的に学ぶ分野がわかります"
 
+#: src/app/[lang]/(app)/(onboarding)/level-test/page.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "レベル診断テスト"
+
+#: src/app/[lang]/(app)/(onboarding)/level-test/page.tsx
+msgctxt "Ye4GUJ"
+msgid "Find your level and skip what you know"
+msgstr "レベルを診断して、知っている内容をスキップ"
+
+#: src/app/[lang]/(app)/(onboarding)/placement-test/page.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "知っていることをテストする"
+
+#: src/app/[lang]/(app)/(onboarding)/placement-test/page.tsx
+msgctxt "42QSqg"
+msgid "Skip lessons you already know"
+msgstr "すでに知っているレッスンをスキップ"
+
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
 msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"

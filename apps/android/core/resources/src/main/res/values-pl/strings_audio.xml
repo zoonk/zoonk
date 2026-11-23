@@ -7,7 +7,6 @@
   "audio_getting_ready": "fec41db744ca04e6e16e3e3e112ccaa9ff09df363e1bb9bbd54334c127544fc8",
   "audio_here_is_what_it_says": "38fa4ce53cff2e983ca7282512e401ebd563073439f9ae16355d16fbdcd3c90a",
   "audio_listening": "8373e8ba0c1f3d230368f8b9d5580866acb909a9e95c0261c21843ef6c5b6e9f",
-  "audio_microphone_off_answer": "d756b4aecace22aeaf90a26556581124e72fd5b4ef74c4c2d14057f35fb30d66",
   "audio_microphone_off_title": "c9682e144fb4b557c387e784154f9f4e7e399b41e18489b760ffdc42cc25a6f2",
   "audio_no_speech": "bc7a4777dd617d1c7ed962574d0738e21a94681a320f981fcbcea26ad907174c",
   "audio_open_settings": "254d1e1928829c039ff9d74a1077a1b6447f53c19457421aa1e950d51eed3677",
@@ -38,6 +37,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Stuknij „Nagraj” i powiedz to na głos</string>
     <string name="audio_microphone_off_title">Mikrofon jest wyłączony</string>
-    <string name="audio_microphone_off_answer">Włącz dostęp do mikrofonu dla Zoonka w ustawieniach, aby odpowiadać na głos.</string>
     <string name="audio_open_settings">Otwórz ustawienia</string>
 </resources>

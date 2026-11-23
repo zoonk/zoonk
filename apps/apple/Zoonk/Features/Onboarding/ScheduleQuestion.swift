@@ -292,7 +292,7 @@ struct ScheduleQuestion: View {
     return String(
       localized: "Choose at least \(duration(minutes)) a day for your \(goals) goals.",
       table: "Onboarding",
-      comment: "The day's time is shorter than the goals typed together need")
+      locale: .appLanguage, comment: "The day's time is shorter than the goals typed together need")
   }
 
   private func timeMenu(_ shown: Shown) -> some View {

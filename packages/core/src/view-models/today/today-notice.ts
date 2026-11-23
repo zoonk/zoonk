@@ -29,7 +29,7 @@ type NoticeTodayView = {
   insight: Pick<NonNullable<TodayView["insight"]>, "kind" | "planChange"> | null;
   planChange: Pick<
     NonNullable<TodayView["planChange"]>,
-    "behind" | "id" | "kind" | "status"
+    "behind" | "canUndo" | "id" | "kind" | "status"
   > | null;
   session: {
     blocks: Pick<TodaySession["blocks"][number], "status">[];
@@ -77,7 +77,7 @@ export function showsWelcomeBack(
 
 /**
  * One notice at most, the most pressing first. While the day welcomes the learner back, only the
- * exam's own days show: everything else waits until they start.
+ * exam's own days and a test-out they can undo show.
  */
 export function pickTodayNotice({
   host,
@@ -90,7 +90,16 @@ export function pickTodayNotice({
   const insightChange = getInsightChange(insight);
   const planChange = showsPlanChange(today);
 
-  const pressing: [TodayNoticeKind, boolean][] = [["exam", isExamDay(exam)]];
+  const testOut =
+    today.planChange?.kind === "testedOut" &&
+    today.planChange.status === "applied" &&
+    today.planChange.canUndo &&
+    insight?.planChange?.id !== today.planChange.id;
+
+  const pressing: [TodayNoticeKind, boolean][] = [
+    ["exam", isExamDay(exam)],
+    ["planChange", testOut],
+  ];
 
   const candidates: [TodayNoticeKind, boolean][] = showsWelcomeBack(today)
     ? pressing

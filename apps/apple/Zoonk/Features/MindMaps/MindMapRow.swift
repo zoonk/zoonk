@@ -222,6 +222,7 @@ struct MindMapRow: View {
         case .create where map.lessonsToWrite > 0 && (place == .library || !isPlus):
           String(
             localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
+            locale: .appLanguage,
             comment: "A chapter on the mind maps page whose lessons a map would write first")
         case .ready where map.image == nil:
           String(
@@ -236,7 +237,8 @@ struct MindMapRow: View {
       let number =
         place == .library
         ? String(
-          localized: "Chapter \(map.position)", table: "MindMaps", comment: "A chapter's number")
+          localized: "Chapter \(map.position)", table: "MindMaps", locale: .appLanguage,
+          comment: "A chapter's number")
         : nil
 
       return [number, words].compactMap(\.self)
@@ -257,11 +259,13 @@ struct MindMapRow: View {
         ? String(
           localized: "\(map.lessonsToWrite) lessons get written first, so it takes a few minutes.",
           table: "MindMaps",
+          locale: .appLanguage,
           comment: "A Plus learner's map of a chapter whose lessons aren't written yet")
         : String(
           localized:
             "\(map.lessonsToWrite) lessons get written first and count toward your free lessons.",
           table: "MindMaps",
+          locale: .appLanguage,
           comment: "A free learner's map of a chapter whose lessons aren't written yet")
     case .ready:
       if map.image == nil {

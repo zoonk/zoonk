@@ -1,115 +1,86 @@
 import { type LanguageSkill } from "@zoonk/db";
-import { CEFR_LEVELS, type CefrLevel, clampCefrScore, formatCefrScore } from "@zoonk/utils/cefr";
+import {
+  CEFR_LEVELS,
+  type CefrLevel,
+  MAX_CEFR_SCORE,
+  clampCefrScore,
+  formatCefrScore,
+} from "@zoonk/utils/cefr";
 import { LANGUAGE_SKILLS } from "../levels/skill-level-rules";
+import { hasCompleteLevelCheck, listLevelConfirmations } from "./_utils/confirmation-bank";
+import {
+  type Posterior,
+  type ScoredAnswer,
+  getDeviation,
+  getLowerBound,
+  getMean,
+  getPosterior,
+  getUpperBound,
+} from "./_utils/level-test-posterior";
 import {
   type LevelTestBank,
+  type LevelTestConfirmation,
+  type LevelTestLength,
   type LevelTestProgress,
   type LevelTestQuestion,
+  type LevelTestRanges,
 } from "./level-test-contract";
 
-type TestAnswers = {
+type TestAnswers = Pick<LevelTestProgress, "length" | "placement" | "result" | "speaking"> & {
   answers: readonly Pick<
     LevelTestProgress["answers"][number],
     "answerIndex" | "correct" | "id" | "skipped"
   >[];
-  placement?: LevelTestProgress["placement"];
-  speaking: LevelTestProgress["speaking"];
 };
 
-const QUESTIONS_PER_SKILL = 3;
+const QUICK_QUESTIONS_PER_SKILL = 5;
+const WHOLE_QUESTIONS_PER_SKILL = 16;
+const WHOLE_STOP_SD = 0.45;
 const QUESTION_SKILLS = ["reading", "listening"] as const;
-export const LEVEL_TEST_TOTAL = QUESTIONS_PER_SKILL * QUESTION_SKILLS.length + 1;
+const LEVEL_TEST_TOTAL = QUICK_QUESTIONS_PER_SKILL * QUESTION_SKILLS.length;
 
-const GUESS_CHANCE = 0.25;
-const SLOPE = 2.5;
-const AT_LEVEL_OFFSET = 0.5;
-const PRIOR_SPREAD = 1.5;
 const HALF_STEP = 0.5;
-
-const GRID_POINTS = 10;
-const GRID = Array.from({ length: GRID_POINTS }, (_, index) => index * HALF_STEP);
-const HIGHEST_BAND = 4;
-
-const SPOKEN_WELL = 0.9;
-const SPOKEN_MOSTLY = 0.6;
 
 type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
-export type LevelTestScores = Record<QuestionSkill, number> & { speaking?: number };
+export type LevelTestScores = Partial<Record<QuestionSkill | "speaking", number>>;
 
 export function getBand(level: CefrLevel): number {
   return CEFR_LEVELS.indexOf(level);
 }
 
-function logistic(value: number): number {
-  return 1 / (1 + Math.exp(-value));
+export function levelTestTotal(length: LevelTestLength | undefined): number {
+  return length === "wholeCourse"
+    ? WHOLE_QUESTIONS_PER_SKILL * QUESTION_SKILLS.length
+    : LEVEL_TEST_TOTAL;
 }
 
-function knows(theta: number, band: number): number {
-  return logistic(SLOPE * (theta - band + AT_LEVEL_OFFSET));
-}
-
-function getLikelihood({
-  band,
-  correct,
-  theta,
+function getTargetBand({
+  scored,
+  posterior,
+  start,
 }: {
-  band: number;
-  correct: boolean | null;
-  theta: number;
+  scored: ScoredAnswer[];
+  posterior: Posterior;
+  start: number;
 }) {
-  if (correct === null) {
-    return 1 - knows(theta, band);
-  }
-
-  const right = GUESS_CHANCE + (1 - GUESS_CHANCE) * knows(theta, band);
-  return correct ? right : 1 - right;
-}
-
-type ScoredAnswer = { band: number; correct: boolean | null };
-
-function getPosterior({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
-  return GRID.map((theta) => {
-    const prior = Math.exp(-((theta - start) ** 2) / (2 * PRIOR_SPREAD ** 2));
-
-    return answers.reduce((weight, answer) => weight * getLikelihood({ ...answer, theta }), prior);
-  });
-}
-
-function estimateSkillScore({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
-  if (answers.length === 0) {
-    return start;
-  }
-
-  const weights = getPosterior({ answers, start });
-  const total = weights.reduce((sum, weight) => sum + weight, 0);
-  return GRID.reduce((sum, theta, index) => sum + theta * (weights[index] ?? 0), 0) / total;
-}
-
-function getTargetBand({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
-  const weights = getPosterior({ answers, start });
-  const likely = GRID[weights.indexOf(Math.max(...weights))] ?? start;
-  const last = answers.at(-1);
+  const last = scored.at(-1);
 
   if (!last) {
-    return Math.round(likely);
+    return Math.round(start);
+  }
+
+  const likely = posterior.reduce(
+    (best, point) => (point.probability > best.probability ? point : best),
+    { probability: 0, theta: start },
+  ).theta;
+
+  if (scored.every(({ correct }) => correct)) {
+    const rise = scored.length > 1 ? 2 : 1;
+    return Math.min(MAX_CEFR_SCORE, Math.max(last.band + rise, Math.ceil(likely)));
   }
 
   return last.correct ? Math.ceil(likely) : Math.floor(likely);
-}
-
-function countAsked({
-  bank,
-  progress,
-  skill,
-}: {
-  bank: LevelTestBank;
-  progress: TestAnswers;
-  skill: QuestionSkill;
-}): number {
-  return progress.answers.filter((answer) =>
-    bank.questions.some((item) => item.id === answer.id && item.skill === skill),
-  ).length;
 }
 
 export function getAnswerVerdict({
@@ -126,20 +97,27 @@ export function getAnswerVerdict({
   return answer.answerIndex === null ? null : answer.answerIndex === question.answerIndex;
 }
 
-/** A skipped question uses up its turn without moving the level. Without a skill, both count. */
-function scoreAnswers({
+function analyze({
   answers,
   bank,
   skill,
+  start,
 }: {
   answers: TestAnswers["answers"];
   bank: LevelTestBank;
   skill?: QuestionSkill;
-}): ScoredAnswer[] {
-  return answers.flatMap((answer) => {
-    const question = bank.questions.find(
-      (item) => item.id === answer.id && (!skill || item.skill === skill),
-    );
+  start: number;
+}) {
+  const questions = new Map(
+    bank.questions
+      .filter((question) => !skill || question.skill === skill)
+      .map((question) => [question.id, question]),
+  );
+
+  const asked = answers.filter((answer) => questions.has(answer.id));
+
+  const scored = asked.flatMap((answer) => {
+    const question = questions.get(answer.id);
 
     if (!question || answer.skipped) {
       return [];
@@ -147,23 +125,8 @@ function scoreAnswers({
 
     return [{ band: getBand(question.level), correct: getAnswerVerdict({ answer, question }) }];
   });
-}
 
-function getSkillScore({
-  bank,
-  progress,
-  skill,
-  start,
-}: {
-  bank: LevelTestBank;
-  progress: TestAnswers;
-  skill: QuestionSkill;
-  start: number;
-}) {
-  return estimateSkillScore({
-    answers: scoreAnswers({ answers: progress.answers, bank, skill }),
-    start,
-  });
+  return { asked: asked.length, posterior: getPosterior({ answers: scored, start }), scored };
 }
 
 export function estimatePooledScore({
@@ -175,29 +138,27 @@ export function estimatePooledScore({
   bank: LevelTestBank;
   start: number;
 }): { answered: number; score: number } {
-  const scored = scoreAnswers({ answers, bank });
-  return { answered: scored.length, score: estimateSkillScore({ answers: scored, start }) };
+  const { posterior, scored } = analyze({ answers, bank, start });
+  return { answered: scored.length, score: scored.length === 0 ? start : getMean(posterior) };
 }
 
 function pickQuestion({
   bank,
-  progress,
-  score,
+  used,
+  target,
   skill,
 }: {
   bank: LevelTestBank;
-  progress: TestAnswers;
-  score: number;
+  used: ReadonlySet<string>;
+  target: number;
   skill: QuestionSkill;
 }): LevelTestQuestion | null {
-  const used = new Set(progress.answers.map((answer) => answer.id));
-
   return (
     bank.questions
       .filter((question) => question.skill === skill && !used.has(question.id))
       .toSorted(
         (a, b) =>
-          Math.abs(getBand(a.level) - score) - Math.abs(getBand(b.level) - score) ||
+          Math.abs(getBand(a.level) - target) - Math.abs(getBand(b.level) - target) ||
           getBand(a.level) - getBand(b.level),
       )[0] ?? null
   );
@@ -206,100 +167,152 @@ function pickQuestion({
 export type LevelTestStep =
   | { kind: "done" }
   | { kind: "question"; question: LevelTestQuestion }
-  | { kind: "speaking"; speaking: LevelTestBank["speaking"][number] };
+  | { kind: "confirmation"; question: LevelTestConfirmation };
 
-function pickSentence({
+function canContinue({
+  asked,
+  length,
+  posterior,
+  scored,
+}: ReturnType<typeof analyze> & { length: LevelTestLength | undefined }) {
+  if (length !== "wholeCourse") {
+    return asked < QUICK_QUESTIONS_PER_SKILL;
+  }
+
+  return (
+    asked < WHOLE_QUESTIONS_PER_SKILL &&
+    (scored.length < QUICK_QUESTIONS_PER_SKILL || getDeviation(posterior) > WHOLE_STOP_SD)
+  );
+}
+
+function getConfirmations({
   bank,
-  scores,
+  progress,
+  floor,
 }: {
   bank: LevelTestBank;
-  scores: Record<QuestionSkill, number>;
+  progress: TestAnswers;
+  floor: number;
+}): { next: LevelTestConfirmation | null; shortLevels: CefrLevel[]; through: CefrLevel | null } {
+  const answers = new Map(progress.answers.map((answer) => [answer.id, answer]));
+  const levels = CEFR_LEVELS.slice(0, floor + 1).toReversed();
+  const shortLevels: CefrLevel[] = [];
+
+  for (const level of levels) {
+    const items = listLevelConfirmations({ bank, level });
+
+    if (!hasCompleteLevelCheck(items)) {
+      shortLevels.push(level);
+    } else if (items.every(({ id }) => !answers.has(id) || answers.get(id)?.correct === true)) {
+      const next = items.find(({ id }) => !answers.has(id)) ?? null;
+      return { next, shortLevels, through: next ? null : level };
+    }
+  }
+
+  return { next: null, shortLevels, through: null };
+}
+
+function getAssessment({
+  bank,
+  progress,
+  start,
+}: {
+  bank: LevelTestBank;
+  progress: TestAnswers;
+  start: number;
 }) {
-  const band = Math.min(HIGHEST_BAND, Math.floor(Math.min(scores.reading, scores.listening)));
-  return bank.speaking.find((item) => getBand(item.level) === band) ?? bank.speaking[0] ?? null;
+  return QUESTION_SKILLS.map((skill) => ({
+    ...analyze({ answers: progress.answers, bank, skill, start }),
+    skill,
+  }));
+}
+
+function getProposedFloor(assessment: ReturnType<typeof getAssessment>) {
+  if (assessment.some(({ scored }) => scored.length < QUICK_QUESTIONS_PER_SKILL)) {
+    return -1;
+  }
+
+  return Math.floor(
+    Math.min(...assessment.map(({ posterior }) => getLowerBound(posterior))) - HALF_STEP,
+  );
+}
+
+export function getLevelTestConfirmation({
+  bank,
+  progress,
+  start,
+}: Parameters<typeof getAssessment>[0]) {
+  return getConfirmations({
+    bank,
+    floor: getProposedFloor(getAssessment({ bank, progress, start })),
+    progress,
+  });
 }
 
 export function getNextLevelTestStep({
   bank,
   progress,
   start,
-}: {
-  bank: LevelTestBank;
-  progress: TestAnswers;
-  start: number;
-}): LevelTestStep {
-  // A finish records its placement on the test: the learner ended it there.
-  if (progress.placement) {
+}: Parameters<typeof getAssessment>[0]): LevelTestStep {
+  if (progress.placement || progress.result) {
     return { kind: "done" };
   }
 
-  const targets = {
-    listening: getTargetBand({
-      answers: scoreAnswers({ answers: progress.answers, bank, skill: "listening" }),
-      start,
-    }),
-    reading: getTargetBand({
-      answers: scoreAnswers({ answers: progress.answers, bank, skill: "reading" }),
-      start,
-    }),
-  };
+  const assessment = getAssessment({ bank, progress, start });
+  const used = new Set(progress.answers.map((answer) => answer.id));
 
-  const counts = QUESTION_SKILLS.map((skill) => ({
-    count: countAsked({ bank, progress, skill }),
-    skill,
-  }));
-
-  const question =
-    counts
-      .filter((item) => item.count < QUESTIONS_PER_SKILL)
-      .toSorted((a, b) => a.count - b.count)
-      .map(({ skill }) => pickQuestion({ bank, progress, score: targets[skill], skill }))
-      .find((picked) => picked !== null) ?? null;
+  const question = assessment
+    .filter((item) => canContinue({ ...item, length: progress.length }))
+    .toSorted((a, b) => a.asked - b.asked)
+    .map(({ posterior, scored, skill }) =>
+      pickQuestion({ bank, skill, target: getTargetBand({ posterior, scored, start }), used }),
+    )
+    .find((picked) => picked !== null);
 
   if (question) {
     return { kind: "question", question };
   }
 
-  const scores = {
-    listening: getSkillScore({ bank, progress, skill: "listening", start }),
-    reading: getSkillScore({ bank, progress, skill: "reading", start }),
-  };
-
-  const sentence = progress.speaking ? null : pickSentence({ bank, scores });
-  return sentence ? { kind: "speaking", speaking: sentence } : { kind: "done" };
+  const { next } = getConfirmations({ bank, floor: getProposedFloor(assessment), progress });
+  return next ? { kind: "confirmation", question: next } : { kind: "done" };
 }
 
-function getSpeakingScore(progress: TestAnswers): number | null {
-  if (!progress.speaking) {
-    return null;
-  }
-
-  const band = getBand(progress.speaking.level);
-  const { score } = progress.speaking;
-
-  if (score >= SPOKEN_WELL) {
-    return band + HALF_STEP;
-  }
-
-  return score >= SPOKEN_MOSTLY ? band : band - HALF_STEP;
+export function getLevelTestScores(input: Parameters<typeof getAssessment>[0]): LevelTestScores {
+  return Object.fromEntries(
+    getAssessment(input).flatMap(({ posterior, scored, skill }) =>
+      scored.length > 0 ? [[skill, clampCefrScore(getMean(posterior))]] : [],
+    ),
+  );
 }
 
-export function getLevelTestScores({
-  bank,
-  progress,
-  start,
-}: {
-  bank: LevelTestBank;
-  progress: TestAnswers;
-  start: number;
-}): LevelTestScores {
-  const reading = getSkillScore({ bank, progress, skill: "reading", start });
-  const listening = getSkillScore({ bank, progress, skill: "listening", start });
-  const speaking = getSpeakingScore(progress);
+/**
+ * The level each skill's answers say the learner is at least at: the bottom of its range. The
+ * middle of the range overstates a learner's level too often to save, show or plan from.
+ */
+export function getLevelTestFloors(input: Parameters<typeof getAssessment>[0]): LevelTestScores {
+  return Object.fromEntries(
+    getAssessment(input).flatMap(({ posterior, scored, skill }) =>
+      scored.length > 0 ? [[skill, Math.floor(getLowerBound(posterior))]] : [],
+    ),
+  );
+}
 
-  const scores = { listening: clampCefrScore(listening), reading: clampCefrScore(reading) };
-
-  return speaking === null ? scores : { ...scores, speaking: clampCefrScore(speaking) };
+export function getLevelTestRanges(input: Parameters<typeof getAssessment>[0]): LevelTestRanges {
+  return Object.fromEntries(
+    getAssessment(input).flatMap(({ posterior, scored, skill }) =>
+      scored.length > 0
+        ? [
+            [
+              skill,
+              {
+                high: CEFR_LEVELS[Math.ceil(getUpperBound(posterior))],
+                low: CEFR_LEVELS[Math.floor(getLowerBound(posterior))],
+              },
+            ],
+          ]
+        : [],
+    ),
+  );
 }
 
 export function listLevelTestLevels(

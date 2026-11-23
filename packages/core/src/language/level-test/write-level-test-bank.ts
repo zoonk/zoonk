@@ -1,5 +1,7 @@
 import "server-only";
-import { generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
+import { generateLevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank";
+import { type LevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
 import {
   type LanguagePair,
@@ -11,6 +13,7 @@ import {
   releaseClaim,
   storeBank,
 } from "./_utils/level-test-bank";
+import { levelTestConfirmationsInputSchema } from "./level-test-contract";
 
 export type { LevelTestBankLevel } from "./_utils/level-test-bank";
 
@@ -23,35 +26,50 @@ export type LevelTestBankClaim =
  * `claimed` run writes the pair's bank, and it ends with `storeLevelTestBank` or
  * `releaseLevelTestBankClaim`.
  */
-export async function claimLevelTestBank(pair: LanguagePair): Promise<LevelTestBankClaim> {
+export async function claimLevelTestBank(
+  pair: LanguagePair,
+  upgrade = false,
+): Promise<LevelTestBankClaim> {
   const row = await findBankRow(pair);
 
-  if (readBank(row)) {
+  const bank = readBank(row);
+
+  if (bank && (!upgrade || bank.confirmations !== undefined)) {
     return { status: "ready" };
   }
 
-  const claim = await claimBank({ pair, row });
+  const claim = await claimBank({ pair, row, upgrade: Boolean(bank) });
   return claim ? { claimId: claim.claimId, status: "claimed" } : { status: "running" };
 }
 
-/** System workflow capability: one level's questions as written, before their check. */
-export async function writeLevelTestBankLevel({
+/** System workflow capability: one model call from the level's bank. */
+export async function writeLevelTestBankPart({
   analytics = {},
   level,
   pair,
+  part,
+  wait,
 }: {
   analytics?: LevelTestBankAnalytics;
   level: TestLevel;
   pair: LanguagePair;
-}): Promise<LevelTestBankLevel> {
-  const { data, provenance } = await generateLevelTestBankLevel({
+  part: LevelTestBankPart;
+  wait: CallWait;
+}) {
+  const { data, provenance } = await generateLevelTestBankPart({
     analytics: { ...analytics, contentScope: "shared" },
     learnerLanguage: pair.language,
     level,
+    part,
+    serviceTier: chooseServiceTier({ wait }),
     targetLanguage: pair.targetLanguage,
   });
 
-  return { provenance, questions: data.questions, speaking: data.speaking };
+  return {
+    confirmations: levelTestConfirmationsInputSchema.parse(data.confirmations),
+    provenance,
+    questions: data.questions,
+  };
 }
 
 /** System workflow capability: `lost` when a newer run took the claim over, so its bank stays. */

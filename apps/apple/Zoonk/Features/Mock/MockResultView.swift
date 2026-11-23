@@ -519,7 +519,8 @@ private struct MockScoreSections: View {
     if let net = result.net {
       return (
         String(
-          localized: "Score out of \(net.max)", table: "Mock", comment: "A net score's label"),
+          localized: "Score out of \(net.max)", table: "Mock", locale: .appLanguage,
+          comment: "A net score's label"),
         MockLabels.number(net.net)
       )
     }
@@ -528,7 +529,7 @@ private struct MockScoreSections: View {
       String(localized: "Right answers", table: "Mock", comment: "A raw score's label"),
       String(
         localized: "\(MockLabels.number(result.correct)) of \(result.total)", table: "Mock",
-        comment: "Right answers of the questions")
+        locale: .appLanguage, comment: "Right answers of the questions")
     )
   }
 
@@ -545,7 +546,7 @@ private struct MockScoreSections: View {
       ? (
         String(
           localized: "+\(change) since the last one", table: "Mock",
-          comment: "Score went up since the learner's previous mock exam"),
+          locale: .appLanguage, comment: "Score went up since the learner's previous mock exam"),
         true
       )
       : (
@@ -942,7 +943,7 @@ private struct MockSpeakingSection: View {
   }
 
   private func number(_ value: Double) -> String {
-    value.formatted(.number.precision(.fractionLength(0...1)))
+    value.formatted(.number.precision(.fractionLength(0...1)).locale(.appLanguage))
   }
 
   private var estimateDetail: String {
@@ -1028,7 +1029,7 @@ private struct MockPreparationRow: View {
   }
 
   private func percent(_ share: Double) -> String {
-    share.formatted(.percent.precision(.fractionLength(0)))
+    share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))
   }
 }
 
@@ -1189,7 +1190,7 @@ private struct MockPlanSection: View {
         ? String(
           localized:
             "\(topics.prefix(3).formatted(.list(type: .and))) and \(topics.count - 3) more topics",
-          table: "Mock", comment: "Three topics' names and how many more")
+          table: "Mock", locale: .appLanguage, comment: "Three topics' names and how many more")
         : topics.formatted(.list(type: .and))
       return Text(
         "You got everything right in \(names).", tableName: "Mock",
@@ -1215,7 +1216,8 @@ private struct MockPlanSection: View {
       case .outcome(.applied(let skipped)):
         offer == .skip
           ? String(
-            localized: "\(skipped) lessons skipped.", table: "Mock", comment: "Lessons skipped")
+            localized: "\(skipped) lessons skipped.", table: "Mock", locale: .appLanguage,
+            comment: "Lessons skipped")
           : String(
             localized: "Your plan gives \(adapt.focus?.area ?? "") more time.", table: "Mock",
             comment: "Focus applied")
@@ -1324,7 +1326,8 @@ private struct MockReviewSection: View {
     let place =
       item.total.map { String(localized: MockLabels.questionPlace(number: item.number, total: $0)) }
       ?? String(
-        localized: "Question \(item.number)", table: "Mock", comment: "A question by number")
+        localized: "Question \(item.number)", table: "Mock", locale: .appLanguage,
+        comment: "A question by number")
     let section = item.section.flatMap { index in
       sections.count { $0.questions > 0 } > 1 ? sections.first { $0.index == index } : nil
     }
@@ -1368,6 +1371,7 @@ private struct MockNotesSection: View {
     return String(
       localized:
         "This mock exam had \(view.questions) of the exam's \(examQuestions) questions.",
-      table: "Mock", comment: "A mock that asked fewer questions than the exam")
+      table: "Mock", locale: .appLanguage,
+      comment: "A mock that asked fewer questions than the exam")
   }
 }

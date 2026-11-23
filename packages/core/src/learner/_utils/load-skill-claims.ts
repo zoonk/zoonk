@@ -1,5 +1,5 @@
 import "server-only";
-import { type Plan, type PlanItem, prisma } from "@zoonk/db";
+import { type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
@@ -7,6 +7,7 @@ import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadGoalWritingFact } from "../writing-skills";
 import { loadWritingEvidence } from "../written-evidence";
+import { loadAnswerEvents } from "./load-answer-events";
 import {
   type ClaimEvent,
   type DatedClaim,
@@ -14,12 +15,12 @@ import {
   listAnsweredWrong,
   listClaimed,
   listKnownSkills,
+  listSkippedRechecks,
   listTakenToKnow,
   readDatedClaims,
   readSkillClaims,
+  readSkillConfirmations,
 } from "./skill-claims";
-
-const MAX_ANSWERS = 2000;
 
 /** GETs pass the saved plan already read; writes omit it for a fresh read. */
 export type ClaimPlan = Pick<Plan, "createdAt" | "graph" | "id" | "settings"> & {
@@ -104,54 +105,6 @@ async function loadPlanEvents({
   });
 }
 
-async function loadAnswerEvents({
-  skillIds,
-  userId,
-}: {
-  skillIds: readonly string[];
-  userId: string;
-}): Promise<ClaimEvent[]> {
-  const answers = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: {
-      answeredAt: true,
-      isCorrect: true,
-      isPlacement: true,
-      itemId: true,
-      skillId: true,
-      studySessionId: true,
-    },
-    take: MAX_ANSWERS,
-    where: { itemId: { not: null }, skillId: { in: [...skillIds] }, stepId: null, userId },
-  });
-
-  const itemIds = [...new Set(answers.flatMap((answer) => answer.itemId ?? []))];
-
-  const items =
-    itemIds.length > 0
-      ? await prisma.item.findMany({
-          select: { format: true, id: true },
-          where: { id: { in: itemIds } },
-        })
-      : [];
-
-  const formats = new Map(items.map((item) => [item.id, item.format]));
-
-  return answers.flatMap((answer): ClaimEvent[] =>
-    answer.skillId
-      ? [
-          {
-            at: answer.answeredAt,
-            format: formats.get(answer.itemId ?? "") ?? "multipleChoice",
-            isCorrect: answer.isCorrect,
-            kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
-            skillId: answer.skillId,
-          },
-        ]
-      : [],
-  );
-}
-
 /** Includes basics skipped by choice, dated from that choice. */
 export async function loadDatedClaims({
   goalId,
@@ -225,6 +178,46 @@ export async function loadClaimEvents({
     ...answers,
     ...written,
   ];
+}
+
+export async function loadSkillConfirmations({
+  goalId,
+  skillIds,
+  timeZone,
+  today,
+  tx = prisma,
+  userId,
+}: {
+  goalId: string;
+  skillIds: readonly string[];
+  timeZone: string;
+  today?: Date;
+  tx?: TransactionClient;
+  userId: string;
+}) {
+  if (skillIds.length === 0) {
+    return { confirmed: new Set<string>(), heldUntilTomorrow: false };
+  }
+
+  const answers = await loadAnswerEvents({ skillIds, tx, userId });
+  const undone = await loadUndoneTestOuts(goalId, { timeZone, tx });
+  return readSkillConfirmations([...answers, ...undone], today);
+}
+
+export async function loadSkippedRecheckSkills({
+  localDate,
+  ...input
+}: {
+  goalId: string;
+  localDate: Date;
+  skillIds: readonly string[];
+  userId: string;
+}): Promise<Set<string>> {
+  if (input.skillIds.length === 0) {
+    return new Set();
+  }
+
+  return listSkippedRechecks({ events: await loadClaimEvents(input), localDate });
 }
 
 export async function loadSkillEvidence({

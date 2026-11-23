@@ -100,8 +100,8 @@ fun DayProgress(
     MeterParts(
         fills.map { MeterPart(it) } + listOfNotNull(MeterPart(MeterPart.Fill.Track).takeIf { held }),
         modifier,
-        contentDescription,
-        segment,
+        contentDescription = contentDescription,
+        part = segment,
     )
 }
 

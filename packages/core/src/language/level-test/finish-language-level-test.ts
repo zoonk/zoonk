@@ -1,44 +1,55 @@
 import "server-only";
-import { isDeepStrictEqual } from "node:util";
-import { type LanguageSkill, type LanguageSkillLevel, type TransactionClient } from "@zoonk/db";
+import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { isJsonObject } from "@zoonk/utils/json";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
+import {
+  getGoalsCacheTag,
+  getLearnerModelCacheTag,
+  getUserProgressCacheTag,
+} from "../../cache/tags";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { type ProgressLock } from "../../sessions/_utils/session-progress";
-import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
+import { levelTestReceipt } from "../../plans/_utils/test-out-receipt";
+import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
-import { getOverallLevel } from "../levels/skill-level-rules";
-import { announceLevelTestPlacement, placeLevelTestResult } from "./_utils/level-test-placement";
-import { loadLevelTestContext, readLevelTestProgress } from "./_utils/level-test-state";
+import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
+import { withLevelTestChange } from "./_utils/level-test-result-change";
+import {
+  canWriteLevelTest,
+  levelTestDetailsWithProgress,
+  loadLevelTestContext,
+  readLevelTestProgress,
+} from "./_utils/level-test-state";
+import { recordLevelTestActivity } from "./_utils/record-level-test-activity";
 import {
   type LevelTestBank,
   type LevelTestProgress,
-  type LevelTestQuestion,
+  type LevelTestResult,
 } from "./level-test-contract";
 import {
   type LevelTestScores,
-  getAnswerVerdict,
-  getLevelTestScores,
+  getBand,
+  getLevelTestConfirmation,
+  getLevelTestFloors,
+  getLevelTestRanges,
+  getNextLevelTestStep,
   listLevelTestLevels,
   toLevelLabels,
 } from "./level-test-rules";
+import { readLevelTestAttempts } from "./read-level-test-summary";
 
 export type FinishLanguageLevelTestResult =
-  | { levels: { label: string; score: number; skill: LanguageSkill }[]; status: "ready" }
+  | {
+      levels: { label: string; score: number; skill: LanguageSkill }[];
+      result?: LevelTestResult & { changeId: string | null };
+      status: "ready";
+    }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
-
-function isFreshStart({ row, score }: { row?: LanguageSkillLevel; score: number }) {
-  return (
-    row?.score === score &&
-    row.startScore === score &&
-    row.windowCeiling === null &&
-    row.windowCorrect === 0 &&
-    row.windowTotal === 0
-  );
-}
 
 async function saveSkillLevels(
   transaction: TransactionClient,
@@ -46,80 +57,141 @@ async function saveSkillLevels(
 ) {
   const levels = listLevelTestLevels(scores);
 
-  const existing = await transaction.languageSkillLevel.findMany({
-    where: { language, skill: { in: levels.map(({ skill }) => skill) }, userId },
+  await transaction.languageSkillLevel.createMany({
+    data: levels.map(({ score, skill }) => ({ language, score, skill, startScore: score, userId })),
+    skipDuplicates: true,
   });
 
-  // A skill the learner's answers raised moves only by evidence: a seven-question test, or the
-  // typed level a skipped skill falls back to, must not rewrite what lessons measured.
-  const restarted = levels.filter(({ score, skill }) => {
-    const row = existing.find((level) => level.skill === skill);
-    return !row?.raisedAt && !isFreshStart({ row, score });
-  });
-
-  for (const { score, skill } of restarted) {
+  for (const { score, skill } of levels) {
     // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
-    await transaction.languageSkillLevel.upsert({
-      create: { language, score, skill, startScore: score, userId },
-      update: { score, startScore: score, windowCeiling: null, windowCorrect: 0, windowTotal: 0 },
-      where: { userLanguageSkill: { language, skill, userId } },
+    await transaction.languageSkillLevel.updateMany({
+      data: { score, startScore: score },
+      where: {
+        language,
+        raisedAt: null,
+        score: { equals: transaction.languageSkillLevel.fields.startScore },
+        skill,
+        userId,
+      },
     });
   }
 }
 
-function isAnsweredRight({
-  answer,
-  question,
-}: {
-  answer: LevelTestProgress["answers"][number];
-  question?: LevelTestQuestion;
-}): boolean | null {
-  return question ? getAnswerVerdict({ answer, question }) === true : null;
-}
-
-async function recordTestActivity({
+async function recordLevelTestResult({
   bank,
-  goalId,
-  lock,
-  progress,
+  current,
+  currentProgress,
   timeZone,
   transaction,
-  userId,
 }: {
   bank: LevelTestBank;
-  goalId: string;
-  lock: ProgressLock;
-  progress: LevelTestProgress;
+  current: Parameters<typeof levelTestDetailsWithProgress>[0] & {
+    id: string;
+    language: string;
+    targetLanguage: string;
+    userId: string;
+  };
+  currentProgress: LevelTestProgress;
   timeZone: string;
   transaction: TransactionClient;
-  userId: string;
 }) {
-  const asked = new Map(bank.questions.map((question) => [question.id, question]));
-  const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
+  const { id: goalId, userId } = current;
+  const now = new Date();
+  const input = { bank, progress: currentProgress, start: currentProgress.start };
+  const scores = getLevelTestFloors(input);
+  const { shortLevels, through } = getLevelTestConfirmation(input);
+  const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
+  const itemIds = await skipConfirmedLanguageLessons({ goalId, now, through, tx: transaction });
+  const { usedConfirmations } = readLevelTestAttempts(current);
 
-  if (fresh.length === 0) {
-    return;
-  }
+  const result = {
+    attemptId: currentProgress.attemptId ?? null,
+    finishedAt: now.toISOString(),
+    lessonsSkipped: itemIds.length,
+    levelsSkipped: through && itemIds.length > 0 ? CEFR_LEVELS.slice(0, getBand(through) + 1) : [],
+    ranges: getLevelTestRanges(input),
+    ...(currentProgress.length === "wholeCourse" &&
+      getNextLevelTestStep(input).kind === "done" && { wholeCourseReady: true as const }),
+  };
 
-  await settleAnsweredActivity(transaction, {
-    answers: fresh.map((answer) => ({
-      durationMs: answer.durationMs,
-      isCorrect: isAnsweredRight({ answer, question: asked.get(answer.id) }),
-    })),
-    contentIds: {},
+  const saved = { ...currentProgress, counted: currentProgress.answers.length, result, scores };
+
+  const details = levelTestDetailsWithProgress(current, saved);
+
+  const answeredIds = new Set(
+    currentProgress.answers.filter(({ skipped }) => !skipped).map(({ id }) => id),
+  );
+
+  const checksUsed = (bank.confirmations ?? []).filter(({ id }) => answeredIds.has(id));
+  const levelsToRefill = new Set([...shortLevels, ...checksUsed.map(({ level }) => level)]);
+
+  await recordLevelTestActivity({
+    bank,
     goalId,
-    lessonKind: "levelTest",
     lock,
+    progress: currentProgress,
     timeZone,
+    transaction,
     userId,
   });
+
+  await transaction.goal.update({
+    data: {
+      details: {
+        ...details,
+        levelTest: {
+          ...details.levelTest,
+          lastResult: result,
+          usedConfirmations: [...usedConfirmations, ...checksUsed.map(({ id }) => id)],
+        },
+        skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
+      },
+    },
+    where: { id: goalId },
+  });
+
+  await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
+
+  if (currentProgress.attemptId) {
+    await oweFollowUps({
+      db: transaction,
+      followUps: [...levelsToRefill].map((level) => ({
+        input: {
+          goalId,
+          level,
+          pair: { language: current.language, targetLanguage: current.targetLanguage },
+        },
+        kind: "replenishLevelTestChecks",
+      })),
+      userId,
+    });
+  }
+
+  await owePlanStartLessons({ db: transaction, goalId, userId });
+
+  await recordTestOutChange({
+    goalId,
+    itemIds,
+    now,
+    receipt: levelTestReceipt(result.attemptId),
+    timeZone,
+    tx: transaction,
+    userId,
+  });
+
+  return saved;
 }
 
-/** Retrying the same answers preserves levels and completes any unfinished placement. */
+function readPreviousSkillLevels(goal: Parameters<typeof readGoalDetails>[0]) {
+  const { skillLevels } = readGoalDetails(goal);
+  return isJsonObject(skillLevels) ? skillLevels : {};
+}
+
 export async function finishLanguageLevelTest(
   goalId: string,
+  attemptId?: string,
 ): Promise<FinishLanguageLevelTestResult> {
-  const context = await loadLevelTestContext(goalId);
+  const context = await loadLevelTestContext(goalId, attemptId);
 
   if (context.status !== "ready") {
     return context;
@@ -134,107 +206,84 @@ export async function finishLanguageLevelTest(
   const { goal, userId } = owned;
   const timeZone = getAnswerTimeZone({ goal });
 
-  const { newResult, progress, scores } = await writeLearnerChange(
-    { planInputs: true, userId },
-    async (transaction) => {
-      const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
+  const finished = await writeLearnerChange({ planInputs: true, userId }, async (transaction) => {
+    const current = await transaction.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
+    const progress = readLevelTestProgress(current, attemptId);
 
-      /** Re-read the saved answers after serialization so concurrent finishes cannot count twice. */
-      await transaction.$queryRaw`
-      SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE
-    `;
+    if (!progress) {
+      return unchanged(null);
+    }
 
-      const current = await transaction.goal.findUniqueOrThrow({ where: { id: goal.id, userId } });
+    const { placement } = progress;
+    const legacyItemIds = placement?.unannounced;
 
-      const currentProgress = readLevelTestProgress(current);
-
-      const currentScores =
-        currentProgress.scores ??
-        getLevelTestScores({ bank, progress: currentProgress, start: currentProgress.start });
-
-      if (currentProgress.placement) {
-        return unchanged({ newResult: false, progress: currentProgress, scores: currentScores });
-      }
-
-      const settled = currentProgress.counted >= currentProgress.answers.length;
-
-      const details = {
-        ...readGoalDetails(current),
-        level: getOverallLevel(listLevelTestLevels(currentScores).map(({ score }) => score)),
-        levelTest: { ...currentProgress, counted: currentProgress.answers.length },
-        skillLevels: toLevelLabels(currentScores),
-      };
-
-      const result = { progress: currentProgress, scores: currentScores };
-
-      if (settled && isDeepStrictEqual(details, readGoalDetails(current))) {
-        return unchanged({ ...result, newResult: false });
-      }
-
-      await recordTestActivity({
-        bank,
-        goalId: goal.id,
-        lock,
-        progress: currentProgress,
-        timeZone,
-        transaction,
-        userId,
-      });
+    if (!attemptId && placement && legacyItemIds?.length) {
+      const migrated = { ...progress, placement: { placed: placement.placed } };
 
       await transaction.goal.update({
-        data: {
-          details: {
-            ...details,
-            levelTest: {
-              ...details.levelTest,
-              placement: { pastBasicsAreas: [], placed: false, unannounced: [] },
-              scores: currentScores,
-            },
-          },
-        },
-        where: { id: goal.id },
+        data: { details: levelTestDetailsWithProgress(current, migrated) },
+        where: { id: goalId },
       });
 
-      await saveSkillLevels(transaction, {
-        language: goal.targetLanguage,
-        scores: currentScores,
+      await recordTestOutChange({
+        goalId,
+        itemIds: legacyItemIds,
+        now: new Date(),
+        receipt: levelTestReceipt(null),
+        timeZone,
+        tx: transaction,
         userId,
       });
 
-      return { ...result, newResult: true };
-    },
-  );
+      return { newResult: false, progress: migrated };
+    }
 
-  if (newResult) {
-    revalidateCacheTags([getGoalsCacheTag(userId), getUserProgressCacheTag(userId)]);
+    if (progress.result || progress.placement || !canWriteLevelTest(current, progress)) {
+      return unchanged({ newResult: false, progress });
+    }
+
+    return {
+      newResult: true,
+      progress: await recordLevelTestResult({
+        bank,
+        current: { ...current, targetLanguage: goal.targetLanguage },
+        currentProgress: progress,
+        timeZone,
+        transaction,
+      }),
+    };
+  });
+
+  if (!finished) {
+    return { status: "notFound" };
   }
 
-  const placing = await placeLevelTestResult({ goalId: goal.id, timeZone, userId });
+  const { newResult, progress } = finished;
 
-  if (placing?.placedNow) {
+  if (newResult) {
+    revalidateCacheTags([
+      getGoalsCacheTag(userId),
+      getLearnerModelCacheTag(userId),
+      getUserProgressCacheTag(userId),
+    ]);
+
     await trackLearnerEvents({
       events: [
         {
           name: "Level Test Finished",
-          properties: {
-            answered: progress.answers.length + (progress.speaking ? 1 : 0),
-            target_language: goal.targetLanguage,
-          },
+          properties: { answered: progress.answers.length, target_language: goal.targetLanguage },
         },
       ],
-      goalId: goal.id,
+      goalId,
       userId,
     });
   }
 
-  if (placing) {
-    await announceLevelTestPlacement({
-      goalId: goal.id,
-      placement: placing.placement,
-      timeZone,
-      userId,
-    });
-  }
+  const { result } = progress;
 
-  return { levels: listLevelTestLevels(scores), status: "ready" };
+  return {
+    levels: listLevelTestLevels(progress.scores ?? {}),
+    ...(result && { result: await withLevelTestChange(goalId, result) }),
+    status: "ready",
+  };
 }

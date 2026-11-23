@@ -23,11 +23,7 @@ export type SessionPreparationRequest = { platform?: AnalyticsPlatform | null; u
   | { goalId: string; lessonsAskedAt: number | null }
 );
 
-export type ClaimQuestions = {
-  format: "multipleChoice" | "trueFalse";
-  questionsPerSkill: number;
-  skillIds: string[];
-};
+export type ClaimQuestions = { skillIds: string[] };
 
 type ChallengeQuestions = Extract<UpcomingChallengeQuestionsRequest, { status: "start" }>;
 
@@ -56,9 +52,7 @@ async function readClaimQuestions(access: ReadyAccess): Promise<ClaimQuestions |
     return null;
   }
 
-  return data.status === "start"
-    ? { format: data.format, questionsPerSkill: data.questionsPerSkill, skillIds: data.skillIds }
-    : null;
+  return data.status === "start" ? { skillIds: data.skillIds } : null;
 }
 
 async function readChallengeQuestions(access: ReadyAccess): Promise<ChallengeQuestions | null> {

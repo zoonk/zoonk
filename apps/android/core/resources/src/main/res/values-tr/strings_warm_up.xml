@@ -13,7 +13,6 @@
   "warm_up_plan_ready_whenever": "ff7f4907ecc4d89abcc91f11995f07fbefaa8fea83519e6e9e3adec05cce750e",
   "warm_up_plan_waiting": "aa80dfdd0d7d52c739886454261a3b025bddb00ddcb671a1adf12f7a0100799d",
   "warm_up_play_quiz": "8db098fbc4d7cecbfa0a638a52efd992704976601cd4559452f6aab2971c1035",
-  "warm_up_questions_ready": "80d27f79fd20716358b60a96ef3ff0c95bf0a248c70f08c70adfcc2054fc9b6f",
   "warm_up_ready_to_start": "4d143375a0a56066db3c6eeb701a611b02ed34c8dca03a981336e1637dca1ca1",
   "warm_up_start_first_lesson": "beaa8cfe832455402ff338e6ecb173f327d5ed16351fbe3d76a54ab58895ded2",
   "warm_up_title": "d38f89a062deeb279ecec4bb1c632d228c727bfcf358992e46ee6daf06880b81",
@@ -37,7 +36,6 @@
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">Hazır olduğunda planına bakabilirsin.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
-    <string name="warm_up_questions_ready">Soruların hazır</string>
     <string name="warm_up_back_to_quiz">Kısa teste dön</string>
     <string name="warm_up_play_quiz">Kısa test çöz</string>
     <string name="warm_up_first_lesson_writing">İlk dersini hazırlıyoruz: %1$s</string>

@@ -50,9 +50,9 @@ enum PlanChangeWords {
 
   static func words(
     kind: String, source: String, status: String, operations: [PlanChangeOperation],
-    reason: String?, effect: PlanEffect?, dateKind: GoalDateKind
+    reason: String?, effect: PlanEffect?, dateKind: GoalDateKind, lessonsSkipped: Int = 0
   ) -> Words {
-    if let system = systemSentence(kind: kind, effect: effect) {
+    if let system = systemSentence(kind: kind, effect: effect, lessonsSkipped: lessonsSkipped) {
       return Words(title: system, why: nil)
     }
 
@@ -112,8 +112,16 @@ enum PlanChangeWords {
   }
 
   /// A change the plan made by itself says why in one sentence.
-  private static func systemSentence(kind: String, effect: PlanEffect?) -> String? {
+  private static func systemSentence(kind: String, effect: PlanEffect?, lessonsSkipped: Int)
+    -> String?
+  {
     switch kind {
+    case "testedOut":
+      skippedSentence(lessonsSkipped)
+    case "relearn":
+      lessonsSkipped > 0
+        ? [skippedSentence(lessonsSkipped), relearnSentence(effect)].joinedSentences()
+        : relearnSentence(effect)
     case "missedDays":
       String(
         localized: "Your plan changed to make up for the days you missed.", table: "Plan",
@@ -134,6 +142,57 @@ enum PlanChangeWords {
     default:
       nil
     }
+  }
+
+  /// What a test or a day's checks took out of the plan.
+  static func skippedSentence(_ lessons: Int) -> String {
+    String(
+      localized: "Skipped \(lessons) lessons you already know.", table: "Plan",
+      locale: .appLanguage,
+      comment: "One day's plan change: how many lessons the learner's answers took out of the plan")
+  }
+
+  /// Main's `useRelearnSentence`: the topics a missed question brought back, by name while they're
+  /// few, else counted by subject.
+  private static func relearnSentence(_ effect: PlanEffect?) -> String {
+    let areas = effect?.topicsAdded ?? []
+    let topics = areas.flatMap { $0.topics.map(planTopicWords) }
+
+    guard topics.count > 3 else {
+      let names = topics.formatted(.list(type: .and))
+
+      return topics.count == 1
+        ? String(
+          localized: "\(names) is back in your plan: you missed a question on it.", table: "Plan",
+          comment: "A plan change: a topic came back after a missed question; the topic's name")
+        : String(
+          localized: "\(names) are back in your plan: you missed questions on them.", table: "Plan",
+          comment: "A plan change: topics came back after missed questions; their names")
+    }
+
+    let named = areas.prefix(3).map(\.area)
+    let more = areas.count - named.count
+    let others =
+      more > 0
+      ? [
+        String(
+          localized: "\(more) other subjects", table: "Plan",
+          locale: .appLanguage,
+          comment: "The rest of the subjects a plan change names, such as \"2 other subjects\"")
+      ] : []
+    let subjects = (named + others).formatted(.list(type: .and))
+
+    let count = String(
+      localized: "\(topics.count) topics", table: "Plan",
+      locale: .appLanguage,
+      comment: "How many topics a plan change brought back, such as \"5 topics\"")
+
+    return String(
+      localized: "\(count) from \(subjects) are back in your plan: you missed questions on them.",
+      table: "Plan",
+      comment:
+        "A plan change: how many topics came back after missed questions, such as \"5 topics\", then their subjects"
+    )
   }
 
   // MARK: Questions
@@ -358,6 +417,7 @@ enum PlanChangeWords {
       return Words(
         title: String(
           localized: "Move the end of \(first.name) \(days) days later?", table: "Plan",
+          locale: .appLanguage,
           comment: "Asks to move a phase's end later; the first argument is the phase's name"),
         why: String(
           localized: "That gives you time to finish its lessons.", table: "Plan",
@@ -591,23 +651,26 @@ func planBaseChoicesStatement(_ choices: [BaseChoice]) -> String {
     deep > 0
       ? String(
         localized: "\(deep) with every lesson", table: "Plan",
+        locale: .appLanguage,
         comment: "Part of the prerequisites statement: how many are studied with every lesson")
       : nil,
     essential > 0
       ? String(
         localized: "\(essential) with the first lessons only", table: "Plan",
+        locale: .appLanguage,
         comment:
           "Part of the prerequisites statement: how many are studied with their first lessons only")
       : nil,
     quick > 0
       ? String(
         localized: "\(quick) with one short lesson", table: "Plan",
+        locale: .appLanguage,
         comment: "Part of the prerequisites statement: how many are studied with one short lesson")
       : nil,
     skip > 0
       ? String(
         localized: "\(skip) skipped", table: "Plan",
-        comment: "Part of the prerequisites statement: how many are skipped")
+        locale: .appLanguage, comment: "Part of the prerequisites statement: how many are skipped")
       : nil,
   ].compactMap(\.self)
 

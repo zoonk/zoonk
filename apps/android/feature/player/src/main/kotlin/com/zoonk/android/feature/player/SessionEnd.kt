@@ -18,7 +18,6 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.taskOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -99,7 +98,6 @@ fun SessionEndActions(
             OutlinedButton(
                 busy = move.pending == SessionStep.Stop,
                 onClick = onStop,
-                modifier = Modifier.taskOption(),
                 enabled = !move.busy,
                 leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
             ) {

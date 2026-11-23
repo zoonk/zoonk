@@ -141,7 +141,8 @@ struct AreaModelCanvas: View {
     let parts = String(
       localized:
         "Split into \(pieces.count) parts: \(pieces.map { ActivityNumberFormat.format($0) }.joined(separator: ", ")).",
-      table: "ActivitiesCharts", comment: "An area or bar model's parts, for VoiceOver")
+      table: "ActivitiesCharts", locale: .appLanguage,
+      comment: "An area or bar model's parts, for VoiceOver")
 
     guard !hidesTotal else {
       return parts

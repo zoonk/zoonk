@@ -1,0 +1,76 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        2,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "É uma mochila preta.",
+        "É um guarda-chuva preto.",
+        "Foi encontrado na biblioteca.",
+        "Foi encontrado na recepção.",
+        "Foi encontrado na sexta-feira.",
+        "Foi encontrado na segunda-feira."
+      ],
+      "passage": "FOUND: a black umbrella in the library on Monday. Ask Emma at the front desk before Friday.",
+      "question": "O que o bilhete diz sobre o objeto encontrado?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "No domingo, a piscina fica fechada.",
+        "No sábado, a piscina fecha às 9 da noite.",
+        "No sábado, a piscina abre às 8 da manhã.",
+        "Na sexta-feira, a piscina abre às 8 da manhã.",
+        "No sábado, a aula de natação é às 5 da tarde."
+      ],
+      "passage": "POOL HOURS\nMonday to Friday: 6:00 a.m. to 9:00 p.m.\nSaturday: 8:00 a.m. to 5:00 p.m.\nSunday: closed\nSwim class: Saturday at 10:00 a.m.",
+      "question": "O que é verdade sobre a piscina, de acordo com o quadro de horários?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A1",
+      "options": [
+        "A consulta é com Ava.",
+        "A consulta é às 2 da tarde.",
+        "A consulta é às 10 da manhã.",
+        "A consulta é na quinta-feira.",
+        "A consulta é na terça-feira."
+      ],
+      "passage": "Hello, Liam. This is Ava from the doctor's office. Your appointment with Dr. Lee is on Thursday at two p.m. Thank you!",
+      "question": "O que é verdade sobre a consulta de Liam, de acordo com a mensagem?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        3,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "A entrega é para Noah.",
+        "A entrega tem um refrigerante.",
+        "A entrega custa doze dólares.",
+        "A entrega tem uma pizza grande.",
+        "A entrega custa vinte dólares.",
+        "A entrega tem duas pizzas grandes."
+      ],
+      "passage": "Hello! I have a delivery for Noah: one large pizza and two sodas. That's twenty dollars, please.",
+      "question": "O que é verdade sobre a entrega, de acordo com o entregador?",
+      "skill": "listening"
+    }
+  ]
+}

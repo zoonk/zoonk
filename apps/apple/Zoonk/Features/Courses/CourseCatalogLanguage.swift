@@ -8,18 +8,6 @@ func currentCourseCatalogLanguage() -> String {
   courseCatalogLanguage(preferredLocalizations: Bundle.main.preferredLocalizations)
 }
 
-extension Locale {
-  /// Lessons write and read numbers the course language's way, as main does, so a readout never
-  /// says "12.000" beside lesson text saying "12,000". Durations take it too, as main's. The app's
-  /// other screens keep the device region.
-  static let courseLanguage = formattingLocale(currentCourseCatalogLanguage())
-}
-
-/// Zoonk writes Spanish the Mexican way (1,234.56), as main does.
-func formattingLocale(_ language: String) -> Locale {
-  Locale(identifier: language == "es" ? "es_MX" : language)
-}
-
 func courseCatalogLanguage(preferredLocalizations: [String]) -> String {
   preferredLocalizations
     .lazy

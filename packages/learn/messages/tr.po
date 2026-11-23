@@ -54,6 +54,7 @@ msgstr "BG"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
@@ -79,9 +80,11 @@ msgstr "Atlandı"
 #: src/generation/generation-step-label.ts
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
@@ -263,6 +266,7 @@ msgstr "{days, plural, other {Yaklaşık # gün kaldı}}"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-entry.tsx
@@ -274,6 +278,7 @@ msgstr "{days, plural, other {Yaklaşık # gün kaldı}}"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/questions/test-out-run.tsx
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
@@ -304,6 +309,7 @@ msgstr "Devam et"
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/profile-step.tsx
 #: src/onboarding/steps/reveal-body.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -817,6 +823,7 @@ msgstr "Bu üniteyi zaten biliyor musun?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
+#: src/session/level-check-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Testi çöz"
@@ -1523,11 +1530,15 @@ msgstr "Zu"
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
+#: src/language/level-test/level-test-flow.tsx
+#: src/language/level-test/level-test-preparing.tsx
 #: src/mock/mock-result-plan.tsx
+#: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/research/upload-request-card.tsx
+#: src/session/level-check-offer.tsx
 #: src/today/today-focus-test.tsx
 #: src/today/today-insight.tsx
 #: src/today/today-plan-change.tsx
@@ -2114,6 +2125,7 @@ msgstr "{correct, plural, =0 {# / {total} hedef} other {# / {total} hedef}}"
 #: src/challenge/challenge-footer.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
+#: src/onboarding/steps/placement-screens.tsx
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "fEu6ab"
 msgid "That didn't go through. Try again in a moment."
@@ -2333,6 +2345,7 @@ msgstr "Planında {duration} süren bu deneme sınavı için {date} tarihinde ye
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
+#: src/plan/tested-out-change-card.tsx
 #: src/questions/undo-button.tsx
 #: src/today/today-exam-choice.tsx
 #: src/today/today-insight.tsx
@@ -3143,7 +3156,7 @@ msgstr "Kompozisyonun"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
-#: src/onboarding/test-outcome.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-bases-choices.tsx
 msgctxt "_4tOwT"
 msgid "Skip"
@@ -3821,7 +3834,6 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, other {Planın ayrıca zaten bildiğin # dersi atlar.}}"
 
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/questions/test-out-preparing.tsx
 #: src/today/today-focus-test.tsx
 msgctxt "SKxNcp"
@@ -3829,6 +3841,7 @@ msgid "Start the test"
 msgstr "Testi başlat"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "Testine devam et"
@@ -3876,7 +3889,6 @@ msgid "Find what to study most"
 msgstr "En çok çalışman gerekenleri bul"
 
 #: src/focus-test/use-focus-test-texts.ts
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "YSXaxI"
 msgid "Already know some of this?"
 msgstr "Bunların bir kısmını zaten biliyor musun?"
@@ -3905,6 +3917,7 @@ msgstr "Sonucumu gör"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/generation/indeterminate-wait.tsx
+#: src/plan/plan-placement-test.tsx
 msgctxt "q1WWIr"
 msgid "In progress"
 msgstr "Devam ediliyor"
@@ -3951,6 +3964,7 @@ msgstr "Planın seçtiğin odağı koruyor."
 
 #: src/focus-test/use-result-line.ts
 #: src/mock/mock-result-plan.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -4705,14 +4719,13 @@ msgid "Progress"
 msgstr "İlerleme"
 
 #: src/journey/journey-hero.tsx
-#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
 msgstr "{language} seviyesi"
 
 #: src/journey/journey-hero.tsx
-#: src/language/level-test/level-test-screens.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
@@ -6214,6 +6227,21 @@ msgctxt "h0uuWx"
 msgid "Last result"
 msgstr "Son sonucu gör"
 
+#: src/language/level-test/level-test-flow.tsx
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "Soru {number, number} / {total, number}"
+
+#. A short test of one language level, such as “Test out of B2”.
+#: src/language/level-test/level-test-flow.tsx
+#: src/language/level-test/level-test-results.tsx
+#: src/placement-test/placement-test-screens.tsx
+#: src/session/level-check-offer.tsx
+msgctxt "h5ZSCC"
+msgid "Test out of {level}"
+msgstr "{level} düzeyini atlamak için teste gir"
+
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
 msgid "Play the message again"
@@ -6238,6 +6266,18 @@ msgstr "Mesajı hazırlıyoruz. İlk seferde birkaç saniye sürebilir."
 msgctxt "yFzzBV"
 msgid "You got a voice message. Listen and answer."
 msgstr "Sesli mesajın var. Dinle ve cevapla."
+
+#. A CEFR level range the test found for reading, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "hSzKEx"
+msgid "Reading {range}"
+msgstr "Okuma {range}"
+
+#. A CEFR level range the test found for listening, such as “B1–B2”.
+#: src/language/level-test/level-test-parts.tsx
+msgctxt "fFePx9"
+msgid "Listening {range}"
+msgstr "Dinleme {range}"
 
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "C1ojLU"
@@ -6274,30 +6314,43 @@ msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Bu bölümü atla"
 
+#: src/language/level-test/level-test-results.tsx
+#: src/mock/mock-speaking.tsx
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "JiaScE"
+msgid "Keep going"
+msgstr "Devam et"
+
+#. {levels} is a list of language levels, such as “A1 and A2”. The plan no longer has their lessons.
+#: src/language/level-test/level-test-results.tsx
+msgctxt "11l_Sx"
+msgid "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}"
+msgstr "{count, plural, one {Atladığımız düzeyler: {levels} · # ders.} other {Atladığımız düzeyler: {levels} · # ders.}}"
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "pdcoIY"
+msgid "Your lessons keep adjusting as you answer."
+msgstr "Cevap verdikçe derslerin ayarlanmaya devam ediyor."
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "Jrp0gH"
+msgid "There aren't enough questions for {level} yet."
+msgstr "Henüz {level} düzeyi için yeterli soru yok."
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "8CPaDq"
+msgid "{level} stays in your plan"
+msgstr "{level} planında kalıyor"
+
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
 msgstr "Uygulamayı {language} dilinde kullan"
 
 #: src/language/level-test/level-test-screens.tsx
-msgctxt "oLlJZg"
-msgid "Find your level in {language}"
-msgstr "{language} seviyeni öğren"
-
-#: src/language/level-test/level-test-screens.tsx
-msgctxt "OAt3qi"
-msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "Okuma, dinleme ve bir cümleyi sesli söyleme alıştırmaları yaklaşık {time} sürer. Böylece planın seviyene uygun başlar."
-
-#: src/language/level-test/level-test-screens.tsx
 msgctxt "4Itq02"
 msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 msgstr "Alfabesini henüz bilmiyor musun? Testi atla. İlk dersinde harfleri okumayı öğrenirsin."
-
-#: src/language/level-test/level-test-screens.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "Seviye tespit testi"
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -8587,11 +8640,6 @@ msgid "Every task is done. After this, you can't do them again in this mock exam
 msgstr "Tüm bölümler tamamlandı. Bundan sonra bu deneme sınavında bu bölümleri tekrar yapamazsın."
 
 #: src/mock/mock-speaking.tsx
-msgctxt "JiaScE"
-msgid "Keep going"
-msgstr "Devam et"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "i9hrw7"
 msgid "Your speaking paper opens as soon as it's ready."
 msgstr "Konuşma sınavı kâğıdın hazır olur olmaz açılır."
@@ -9164,6 +9212,19 @@ msgid "Getting started"
 msgstr "Başlarken"
 
 #: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-placement-test.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "Seviye tespit testi"
+
+#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "TdP-3q"
+msgid "What you know"
+msgstr "Bildiklerin"
+
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-properties.tsx
 msgctxt "bpAaId"
@@ -9181,13 +9242,6 @@ msgstr "Belirlenmedi"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Hedef"
-
-#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "TdP-3q"
-msgid "What you know"
-msgstr "Bildiklerin"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/schedule-step.tsx
@@ -9390,7 +9444,7 @@ msgid "Only what's new or hard"
 msgstr "Sadece yeni ya da zor konular"
 
 #: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/writing/writing-start.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
@@ -9465,24 +9519,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "Resmî belgeleri okumayı bitirene kadar bu plan sınavın her zamanki yapısını temel alır. Belgeler planında değişiklik gerektirirse kararı Bugün sayfasında sen verirsin."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "Soru {number, number}"
-
-#: src/onboarding/steps/placement-question.tsx
-msgctxt "HUvYmi"
-msgid "Question {number, number} of {total, number}"
-msgstr "Soru {number, number} / {total, number}"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Durdur ve cevaplarımı kullan"
 
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "N7Heuq"
-msgid "A short test finds the lessons you don't need."
-msgstr "Kısa bir seviye tespit testiyle ihtiyacın olmayan dersleri belirleriz."
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "Soru {number, number}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -9837,11 +9881,6 @@ msgctxt "65ILOx"
 msgid "Subjects you know well"
 msgstr "İyi bildiğin branşlar"
 
-#: src/onboarding/steps/typed-answer-field.tsx
-msgctxt "s7LDgm"
-msgid "Your answer, in your own words"
-msgstr "Cevabını kendi cümlelerinle yaz"
-
 #: src/onboarding/understood/understood-aim-picker.tsx
 #: src/onboarding/understood/understood-country-picker.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -10029,6 +10068,76 @@ msgstr "Planın ve derslerin yalnızca bu materyale göre ilerliyor. Geri kalan�
 msgctxt "YOP-LJ"
 msgid "It can't be read anymore, so your plan won't follow it."
 msgstr "Artık okunamıyor, bu yüzden planın bu materyali temel almayacak."
+
+#: src/placement-test/placement-test-flow.tsx
+msgctxt "gnlQcT"
+msgid "Part {part, number}"
+msgstr "Bölüm {part, number}"
+
+#. {time} is a duration with its unit, such as “15 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "d-Y4Kd"
+msgid "About {time} left. Your answers are saved."
+msgstr "Yaklaşık {time} kaldı. Cevapların kaydedildi."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr "Bugün bunları geri aldın. Atlamak için yarın yeniden cevapla."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "IyIhhL"
+msgid "Choose a test"
+msgstr "Bir test seç"
+
+#. The short placement test: about four minutes of questions.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "mleMdh"
+msgid "Quick test"
+msgstr "Kısa test"
+
+#. {time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "GoojEm"
+msgid "About {time}, in parts"
+msgstr "Yaklaşık {time}, parçalara bölünmüş"
+
+#. The long placement test: it checks every topic still ahead in the course.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "XuFiV3"
+msgid "Whole course"
+msgstr "Tüm kurs"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "3NCmfj"
+msgid "Skip {level} if you already know it"
+msgstr "Zaten biliyorsan {level} düzeyini atla"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "LW1Em4"
+msgid "Skip what you already know"
+msgstr "Zaten bildiklerini atla"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "ym8dgr"
+msgid "A test finds the lessons you can skip."
+msgstr "Seviye tespit testi, atlayabileceğin dersleri bulur."
+
+#. {time} is a duration with its unit, such as “4 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "x3lPpe"
+msgid "A quick test finds the lessons you can skip. It takes about {time}."
+msgstr "Kısa bir test, atlayabileceğin dersleri bulur. Yaklaşık {time} sürer."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "OpomGa"
+msgid "Finish for today"
+msgstr "Bugünlük bitir"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "NWfVeb"
+msgid "You can finish the test from Plan."
+msgstr "Testi Plan bölümünden bitirebilirsin."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
@@ -10460,6 +10569,21 @@ msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Tarih bul"
 
+#: src/plan/plan-placement-test.tsx
+msgctxt "Ye4GUJ"
+msgid "Find your level and skip what you know"
+msgstr "Seviyeni öğren ve bildiklerini atla"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "42QSqg"
+msgid "Skip lessons you already know"
+msgstr "Zaten bildiğin dersleri atla"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "Bildiklerini test et"
+
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
 msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
@@ -10594,6 +10718,7 @@ msgid "Plan suggestion"
 msgstr "Plan önerisi"
 
 #: src/plan/plan-suggestion-context.tsx
+#: src/plan/tested-out-change-card.tsx
 msgctxt "cTvbeT"
 msgid "Plan updated"
 msgstr "Plan güncellendi"
@@ -11261,6 +11386,23 @@ msgctxt "oqn6dA"
 msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "{first, number}–{last, number}. günler (toplam {days, number} gün)"
 
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "KUuKmG"
+msgid "{count, plural, one {The lesson is back in your plan.} other {The lessons are back in your plan.}}"
+msgstr "{count, plural, one {Ders planına geri döndü.} other {Dersler planına geri döndü.}}"
+
+#. After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "Ng8L3W"
+msgid "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}"
+msgstr "{count, plural, one {Bunu zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.} other {Bunları zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.}}"
+
+#. The title after a placement test: how many lessons it took out of the plan.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "psTUYu"
+msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
+msgstr "{count, plural, =0 {Atlanan ders yok} one {# ders atlandı} other {# ders atlandı}}"
+
 #: src/plan/use-study-days-text.ts
 msgctxt "1ooK0d"
 msgid "Every day"
@@ -11272,6 +11414,11 @@ msgid "{first} – {last}"
 msgstr "{first} – {last}"
 
 #: src/plan/use-system-change-sentence.ts
+msgctxt "qd8BIn"
+msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
+msgstr "{lessons, plural, one {Zaten bildiğin # ders atlandı.} other {Zaten bildiğin # ders atlandı.}}"
+
+#: src/plan/use-system-change-sentence.ts
 msgctxt "3Qo-pr"
 msgid "Your plan changed to make up for the days you missed."
 msgstr "Kaçırdığın günleri telafi etmek için planın değiştirildi."
@@ -11281,10 +11428,11 @@ msgctxt "gU3R5_"
 msgid "Your plan changed to match the time your lessons take."
 msgstr "Planın derslerinin süresine göre değiştirildi."
 
+#. One day's plan change: {skipped} says the lessons it skipped, {back} the topics that came back.
 #: src/plan/use-system-change-sentence.ts
-msgctxt "BEtnOi"
-msgid "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}"
-msgstr "{lessons, plural, other {Testi geçtin, bu yüzden planında # ders atlanıyor.}}"
+msgctxt "uMtUNQ"
+msgid "{skipped} {back}"
+msgstr "{skipped} {back}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "KjtC18"
@@ -11842,11 +11990,6 @@ msgctxt "1ovpGI"
 msgid "The chapter stays in your plan, and your answers help it start at the right level."
 msgstr "Ünite planında kalıyor ve cevapların doğru seviyeden başlamasına yardımcı oluyor."
 
-#: src/questions/test-out-run.tsx
-msgctxt "aBn-KM"
-msgid "The lessons are back in your plan."
-msgstr "Dersler yeniden planında."
-
 #. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
 msgctxt "ttohgu"
@@ -12120,6 +12263,21 @@ msgstr "{minutes} dk. daha çalış"
 msgctxt "kapQxt"
 msgid "Your lesson isn't saved yet"
 msgstr "Dersin henüz kaydedilmedi"
+
+#: src/session/level-check-offer.tsx
+msgctxt "I6gFfo"
+msgid "This looks easy for you"
+msgstr "Bu sana kolay görünüyor"
+
+#: src/session/level-check-offer.tsx
+msgctxt "-VTNJ0"
+msgid "A short test can skip {level} if you already know it."
+msgstr "Zaten biliyorsan kısa bir testle {level} düzeyini atlayabilirsin."
+
+#: src/session/level-check-offer.tsx
+msgctxt "gAcanw"
+msgid "A quick test can skip lessons you already know."
+msgstr "Kısa bir testle zaten bildiğin dersleri atlayabilirsin."
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"

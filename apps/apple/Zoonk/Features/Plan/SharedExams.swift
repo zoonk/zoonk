@@ -32,6 +32,7 @@ struct SharedExamsNote: View {
         localized:
           "Topics shared with your \(exams.count) other exams count for every exam that has them, so you study them once.",
         table: "Plan",
+        locale: .appLanguage,
         comment:
           "On one exam's plan, when the learner has several other exams that test some of the same topics"
       )

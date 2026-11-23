@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   type ClaimEvent,
+  type OwnAnswer,
+  isSkillConfirmed,
   listAnsweredWrong,
   listKnownSkills,
+  listPassedOverToRelearn,
+  listSkippedRechecks,
   listTakenToKnow,
-  meetsKnownBar,
   readSkillClaims,
 } from "./skill-claims";
 
@@ -64,9 +67,29 @@ describe(readSkillClaims, () => {
     expect(claims.get("organelles")).toBe("gap");
   });
 
-  it("makes a confirmed claim a gap when practice misses it before the learner studied it", () => {
-    const claims = readSkillClaims([claim(1), practice(2, true), practice(3, false)]);
-    expect(claims.get("organelles")).toBe("gap");
+  it("opens a gap immediately after a practice miss on basics passed over by choice", () => {
+    const choice = { ...claim(1), kind: "passedOver" as const };
+    const missed = [choice, { ...practice(2, false), localDate: day(0) }];
+
+    expect(listPassedOverToRelearn([choice])).toStrictEqual(new Set(["organelles"]));
+    expect(readSkillClaims(missed).get("organelles")).toBe("gap");
+    expect(listKnownSkills({ events: missed })).toStrictEqual(new Set());
+    expect(listSkippedRechecks({ events: missed, localDate: day(1) })).toStrictEqual(new Set());
+  });
+
+  it("keeps a skipped topic through a practice miss until its later tap recheck fails", () => {
+    const events = [claim(1), practice(2, true), { ...practice(3, false), localDate: day(0) }];
+    expect(listKnownSkills({ events })).toStrictEqual(new Set(["organelles"]));
+    expect(listSkippedRechecks({ events, localDate: day(0) })).toStrictEqual(new Set());
+
+    expect(listSkippedRechecks({ events, localDate: day(1) })).toStrictEqual(
+      new Set(["organelles"]),
+    );
+
+    const rechecked = { ...test(4, false), localDate: day(1), recheck: true };
+    const checked = [...events, rechecked];
+    expect(listKnownSkills({ events: checked })).toStrictEqual(new Set());
+    expect(listSkippedRechecks({ events: checked, localDate: day(1) })).toStrictEqual(new Set());
   });
 
   it("keeps a missed test answer a gap until a right test answer claims the skill again", () => {
@@ -114,7 +137,7 @@ describe(listTakenToKnow, () => {
       test(2, true),
     ];
 
-    expect(listTakenToKnow(events)).toStrictEqual(new Set(["membrane", "nucleus"]));
+    expect(listTakenToKnow(events)).toStrictEqual(new Set(["membrane"]));
   });
 });
 
@@ -132,29 +155,72 @@ describe(listAnsweredWrong, () => {
   });
 });
 
-describe(meetsKnownBar, () => {
-  const right = { format: "multipleChoice" as const, isCorrect: true };
-  const rightTrueFalse = { format: "trueFalse" as const, isCorrect: true };
-  const wrong = { format: "multipleChoice" as const, isCorrect: false };
+const day = (offset: number) => new Date(Date.UTC(2026, 9, 8 + offset));
 
-  it("requires two right multiple-choice answers even outside a focus", () => {
-    expect(meetsKnownBar({ answers: [right] })).toBe(false);
-    expect(meetsKnownBar({ answers: [right, right] })).toBe(true);
+const quick: OwnAnswer = { format: "multipleChoice", isCorrect: true, itemId: "quick" };
+
+const match: OwnAnswer = {
+  content: { pairs: ["a", "b", "c", "d"] },
+  format: "matchPairs",
+  isCorrect: true,
+  itemId: "match",
+};
+
+const order: OwnAnswer = {
+  content: { steps: ["a", "b", "c", "d"] },
+  format: "order",
+  isCorrect: true,
+  itemId: "order",
+};
+
+const selectAll: OwnAnswer = {
+  content: { options: ["a", "b", "c", "d", "e"], select: "all" },
+  format: "multipleChoice",
+  isCorrect: true,
+  itemId: "select",
+};
+
+const confirmed = [quick, match, order, selectAll];
+
+describe(isSkillConfirmed, () => {
+  it.each([
+    ["no answers", [], false],
+    [
+      "only quick items",
+      [quick, ...[1, 2, 3].map((id) => ({ ...quick, itemId: String(id) }))],
+      false,
+    ],
+    ["one quick and three low-guess taps", confirmed, true],
+    ["legacy typed evidence", [quick, match, order, { ...selectAll, format: "typed" }], true],
+    ["true or false", [quick, match, order, { ...selectAll, format: "trueFalse" }], false],
+    ["one low-guess item answered twice", [quick, match, order, match], false],
+    [
+      "a three-pair match",
+      [quick, order, selectAll, { ...match, content: { pairs: [1, 2, 3] } }],
+      false,
+    ],
+    ["a miss", [...confirmed, { ...quick, isCorrect: false, itemId: "miss" }], false],
+  ] as const)("reads %s", (_label, answers, expected) => {
+    expect(isSkillConfirmed({ answers })).toBe(expected);
   });
 
-  it("takes true-or-false answers as known only three right at a time", () => {
-    expect(meetsKnownBar({ answers: [rightTrueFalse, rightTrueFalse] })).toBe(false);
+  it.each([
+    { undoneOn: day(0) },
+    { ...quick, isCorrect: false, itemId: "miss", localDate: day(0) },
+  ])("requires fresh items and a later study day after %j", (reset) => {
+    const attempts = confirmed.map((answer) => ({ ...answer, localDate: day(0) }));
+    const fresh = attempts.map((answer) => ({ ...answer, itemId: `new-${answer.itemId}` }));
+    const last = { ...selectAll, itemId: "later", localDate: day(1) };
 
-    expect(meetsKnownBar({ answers: [rightTrueFalse, rightTrueFalse, rightTrueFalse] })).toBe(true);
-  });
+    expect(isSkillConfirmed({ answers: [...attempts, reset, ...fresh] })).toBe(false);
 
-  it("accepts one typed answer and combines evidence from different formats", () => {
-    expect(meetsKnownBar({ answers: [{ format: "typed", isCorrect: true }] })).toBe(true);
-    expect(meetsKnownBar({ answers: [right, rightTrueFalse] })).toBe(true);
-  });
+    expect(isSkillConfirmed({ answers: [...attempts, reset, ...fresh.slice(0, 3), last] })).toBe(
+      true,
+    );
 
-  it("never takes a skill with a miss as known", () => {
-    expect(meetsKnownBar({ answers: [wrong, right, right] })).toBe(false);
+    expect(isSkillConfirmed({ answers: [...attempts, reset, ...attempts.slice(0, 3), last] })).toBe(
+      false,
+    );
   });
 });
 
@@ -166,9 +232,9 @@ describe(listKnownSkills, () => {
     expect(listKnownSkills({ events })).toStrictEqual(new Set());
   });
 
-  it("knows a skill from three right true-or-false answers of its own", () => {
+  it("keeps a skill in the plan after three right true-or-false answers", () => {
     expect(listKnownSkills({ events: [trueFalse(1), trueFalse(2), trueFalse(3)] })).toStrictEqual(
-      new Set(["organelles"]),
+      new Set(),
     );
   });
 
@@ -176,7 +242,7 @@ describe(listKnownSkills, () => {
     expect(listKnownSkills({ events: [test(1, true)] })).toStrictEqual(new Set());
 
     expect(listKnownSkills({ events: [test(1, true), practice(2, true)] })).toStrictEqual(
-      new Set(["organelles"]),
+      new Set(),
     );
   });
 
@@ -192,16 +258,9 @@ describe(listKnownSkills, () => {
     expect(listKnownSkills({ events })).toStrictEqual(new Set(["studied", "tested"]));
   });
 
-  it("doesn't know a skill whose test-out the learner undid until a later answer of its own", () => {
-    expect(listKnownSkills({ events: [test(1, true), claim(2), undone(2)] })).toStrictEqual(
-      new Set(),
-    );
-
-    expect(
-      listKnownSkills({
-        events: [test(1, true), claim(2), undone(2), test(3, true), test(4, true)],
-      }),
-    ).toStrictEqual(new Set(["organelles"]));
+  it("keeps an undone claim in the plan until fresh evidence passes", () => {
+    const events = [test(1, true), claim(2), undone(3)];
+    expect(listKnownSkills({ events })).toStrictEqual(new Set());
   });
 
   it("doesn't know a skill passed over by choice that practice hasn't confirmed", () => {

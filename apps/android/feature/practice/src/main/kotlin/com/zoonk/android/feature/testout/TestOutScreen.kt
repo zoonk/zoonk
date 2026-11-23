@@ -41,6 +41,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
+import com.zoonk.android.feature.plan.restoredLessonsLine
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunFinished
@@ -381,7 +382,7 @@ internal fun TestOutResult(
     val detail =
         when {
             !outcome.passed -> stringResource(R.string.testout_not_passed_detail)
-            undone -> stringResource(R.string.testout_lessons_back)
+            undone -> restoredLessonsLine(outcome.skippedLessons)
             outcome.skippedLessons == 0 -> stringResource(R.string.testout_already_skipped)
             else -> pluralStringResource(R.plurals.testout_lessons_off, outcome.skippedLessons, outcome.skippedLessons)
         }

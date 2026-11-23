@@ -12,17 +12,24 @@ import { type SittingOffer } from "../focus-test-view";
 import { type AreaStart, type PhaseStart } from "../placement-steps";
 import { applyPlacement } from "./apply-placement";
 import { type PlacementState } from "./load-placement-state";
+import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { settleFocusTest } from "./settle-focus-test";
 import { type ClosedSitting, closeTestSitting } from "./test-sitting";
 
 export type PlacementCompletion = {
   areas: AreaStart[];
+  attempt?: PlacementAttemptView | null;
+  changeId: string | null;
   /** False when the plan has no skills. */
   complete: boolean;
   /** An exam goal's test after this finish, with its result; null for other goals. */
   focusTest: FocusTestView | null;
+  heldUntilTomorrow?: true;
   knownSkillIds: string[];
+  lessonsSkipped: number;
+  partLessonsSkipped?: number;
   phases: PhaseStart[];
+  result?: PlacementResult | null;
   testedOutPlanItemIds: string[];
 };
 
@@ -81,8 +88,8 @@ export async function completePlacement({
 
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });
 
-  if (!applied.changeId) {
-    await replanAfterPlacement({ goalId, now, pastBasicsAreas: applied.pastBasicsAreas, timeZone });
+  if (!applied.changeId && (!goal.planRevealedAt || tested)) {
+    await replanAfterPlacement({ goalId, now, timeZone });
   }
 
   await owePlanStartLessons({ goalId, userId });
@@ -99,9 +106,11 @@ export async function completePlacement({
   return {
     completion: {
       areas: state.areas,
+      changeId: applied.changeId,
       complete: state.complete,
       focusTest: state.focusTest,
       knownSkillIds: state.knownSkillIds,
+      lessonsSkipped: applied.lessonsSkipped,
       phases: state.phases,
       testedOutPlanItemIds: applied.testedOutPlanItemIds,
     },

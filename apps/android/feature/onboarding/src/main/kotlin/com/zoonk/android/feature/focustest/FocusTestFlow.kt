@@ -16,7 +16,6 @@ import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.android.feature.onboarding.setup.LocalSetupDrafts
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementUnavailable
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
@@ -24,15 +23,12 @@ import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
 import com.zoonk.android.feature.onboarding.setup.isStopped
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
-import com.zoonk.android.feature.onboarding.setup.rememberUnsentWords
-import com.zoonk.android.feature.onboarding.setup.typedDraftStep
 import com.zoonk.android.feature.onboarding.setup.withPoll
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.api.models.FocusTestSitting
 import kotlinx.coroutines.launch
 
@@ -61,10 +57,8 @@ internal fun ColumnScope.FocusTestFlow(
     plan: OnPlan? = null,
     onReportSaveFailure: () -> Unit = {},
     onLeft: () -> Unit = {},
-    onProgressLabel: (String?) -> Unit = {},
 ) {
-    val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle(), handBack) }
+    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, createSavedStateHandle(), handBack) }
     VisitOf(vm.visit)
     ActOn(vm.left) { onLeft() }
     val resource = store.placements[goalId]
@@ -77,17 +71,8 @@ internal fun ColumnScope.FocusTestFlow(
     val shown = if (hold.over) phase else FocusTestPhase.Waiting(answered = (phase as? FocusTestPhase.Waiting)?.answered ?: false)
     val question = shown as? FocusTestPhase.Question
     val progress = question?.sitting?.let { if (it.questions > 0) it.answered.toFloat() / it.questions else 0f }
-    val progressLabel = question?.sitting?.let { stringResource(R.string.onboarding_test_question_progress, it.answered + 1, it.questions) }
-    LaunchedEffect(progress, progressLabel) {
-        onProgress(progress)
-        onProgressLabel(progressLabel)
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            onProgress(null)
-            onProgressLabel(null)
-        }
-    }
+    LaunchedEffect(progress) { onProgress(progress) }
+    DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val onboarding = plan == null
     // Today's "Start the test" already made the offer; until the start answers, the offer waits behind a spinner.
     // A start the app was closed during runs again when the test comes back: the API answers it with the open sitting.
@@ -111,6 +96,7 @@ internal fun ColumnScope.FocusTestFlow(
                     else -> stringResource(R.string.focustest_not_now)
                 }
             PlacementWaiting(
+                existingPlan = !onboarding,
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else onRetryRun,
                 hold = hold,
@@ -202,18 +188,15 @@ private fun ColumnScope.TestQuestion(
         key(question.item.itemId) {
             PlacementQuestion(
                 item = question.item,
-                eyebrow =
-                    factsLine(
-                        name,
-                        stringResource(R.string.focustest_question_number, sitting.answered.toInt() + 1, sitting.questions.toInt()),
-                    ),
+                subject = name,
+                position = stringResource(R.string.focustest_question_number, sitting.answered.toInt() + 1, sitting.questions.toInt()),
                 labels = question.labels,
-                typedWords = rememberUnsentWords(goalId, typedDraftStep(question.item.itemId), count = 1),
                 pending = vm.answering,
                 saveFailures = vm.saveFailures,
                 onReportSaveFailure = onReportSaveFailure,
                 onAnswer = { answer, durationMs -> vm.answer(question, answer, durationMs) },
                 onStop = vm::stop,
+                canStop = sitting.answered > 0,
                 stopLabel = stringResource(R.string.focustest_stop),
                 stopHint = stringResource(R.string.focustest_many_unknown).takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN },
             )

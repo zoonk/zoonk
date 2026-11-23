@@ -5,13 +5,14 @@ enum MockLabels {
   static func answered(_ count: Int) -> LocalizedStringResource {
     count == 0
       ? LocalizedStringResource("0 answered", table: "Mock")
-      : LocalizedStringResource("\(count) answered", table: "Mock")
+      : LocalizedStringResource("\(count) answered", table: "Mock", locale: .appLanguage)
   }
 
   /// Never 0: the answer sheet says it only once the learner marked one.
   static func unsure(_ count: Int) -> LocalizedStringResource {
     LocalizedStringResource(
       "\(count) not sure", table: "Mock",
+      locale: .appLanguage,
       comment:
         "On the mock exam's answer sheet, after \"34 answered ·\": how many answers the learner marked with the \"Not sure\" button, as in \"34 answered · 3 not sure\". Keep it as short as the English. The number is 1 or more."
     )
@@ -19,14 +20,15 @@ enum MockLabels {
 
   static func title(number: Int) -> String {
     String(
-      localized: "Mock exam \(number)", table: "Mock", comment: "A mock exam's name, by its number")
+      localized: "Mock exam \(number)", table: "Mock", locale: .appLanguage,
+      comment: "A mock exam's name, by its number")
   }
 
   static func sectionTitle(_ section: MockSection) -> String {
     section.name
       ?? String(
         localized: "Section \(section.index + 1)", table: "Mock",
-        comment: "A section without a name")
+        locale: .appLanguage, comment: "A section without a name")
   }
 
   static func questionPlace(number: Int, total: Int, area: String? = nil) -> LocalizedStringResource
@@ -34,11 +36,12 @@ enum MockLabels {
     if let area {
       return LocalizedStringResource(
         "Question \(number) of \(total)\u{00A0}· \(area)", table: "Mock",
-        comment: "A question's place in the mock, with its subject")
+        locale: .appLanguage, comment: "A question's place in the mock, with its subject")
     }
 
     return LocalizedStringResource(
-      "Question \(number) of \(total)", table: "Mock", comment: "A question's place in the mock")
+      "Question \(number) of \(total)", table: "Mock", locale: .appLanguage,
+      comment: "A question's place in the mock")
   }
 
   static func daySize(fullLength: Bool, day: Int?) -> String {
@@ -46,10 +49,12 @@ enum MockLabels {
     case (true, let day?):
       String(
         localized: "Day \(day)", table: "Mock",
+        locale: .appLanguage,
         comment: "A mock exam of one whole day of an exam held over several days")
     case (false, let day?):
       String(
         localized: "Half of day \(day)", table: "Mock",
+        locale: .appLanguage,
         comment: "A mock exam of half of one day of an exam held over several days")
     case (true, nil):
       String(localized: "The full exam", table: "Mock", comment: "A mock exam of the whole exam")
@@ -99,6 +104,7 @@ enum MockLabels {
       return severalDays
         ? String(
           localized: "Day \(option.day ?? 1), without \(names)", table: "Mock",
+          locale: .appLanguage,
           comment:
             "A mock exam of one whole day, of an exam held over several days, without the tests the learner hasn't picked an option for yet"
         )
@@ -164,7 +170,7 @@ enum MockLabels {
     return option.estimatedMinutes < option.minutes && rounded < option.minutes ? rounded : nil
   }
 
-  static func number(_ value: Double, locale: Locale = .autoupdatingCurrent) -> String {
+  static func number(_ value: Double, locale: Locale = .appLanguage) -> String {
     ActivityNumberFormat.format(value, digits: 2, locale: locale)
   }
 
@@ -172,7 +178,9 @@ enum MockLabels {
     let rounded = (value * 100).rounded() / 100
 
     return rounded == rounded.rounded()
-      ? String(localized: "\(Int(rounded)) points", table: "Mock", comment: "A number of points")
+      ? String(
+        localized: "\(Int(rounded)) points", table: "Mock", locale: .appLanguage,
+        comment: "A number of points")
       : String(
         localized: "\(number(rounded)) points", table: "Mock",
         comment: "A number of points with decimals, like 2.5 points")
@@ -184,7 +192,7 @@ enum MockLabels {
       comment: "Points of a total, like '182 of 260'")
   }
 
-  static func percent(_ value: Double, locale: Locale = .autoupdatingCurrent) -> String {
+  static func percent(_ value: Double, locale: Locale = .appLanguage) -> String {
     ActivityNumberFormat.percent(value / 100, digits: 1, locale: locale)
   }
 
@@ -230,6 +238,7 @@ struct MockSizeNote: View {
           localized:
             "Your material doesn't say the test's size, so this mock exam used \(questions) questions in \(time).",
           table: "Mock",
+          locale: .appLanguage,
           comment:
             "A mock exam's size when the learner's material for a class test doesn't state it")
       ]
@@ -239,7 +248,8 @@ struct MockSizeNote: View {
       String(
         localized:
           "The official guide doesn't say the exam's size, so this mock exam used \(questions) questions in \(time).",
-        table: "Mock", comment: "A mock exam's size when the exam's official guide doesn't state it"
+        table: "Mock", locale: .appLanguage,
+        comment: "A mock exam's size when the exam's official guide doesn't state it"
       )
     ]
   }

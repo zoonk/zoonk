@@ -1,3 +1,4 @@
+import { startLevelTestBank } from "@/lib/level-test-bank";
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
 import { createHook } from "workflow";
@@ -10,6 +11,8 @@ import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
 import { startMockSupply } from "../goals/mock-questions-workflow";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
+import { levelTestOutPreparationWorkflow } from "../language/level-test-out-preparation-workflow";
+import { replenishLevelTestChecksWorkflow } from "../language/replenish-level-test-checks";
 import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
@@ -30,6 +33,7 @@ import {
 } from "./steps/follow-up-steps";
 import { refreshPlanSuggestionStep } from "./steps/refresh-plan-suggestion-step";
 import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
+import { refreshTestedOutPlanStep } from "./steps/refresh-tested-out-plan-step";
 import { settleSessionPlanStep } from "./steps/settle-session-plan-step";
 
 const MAX_PASSES = 20;
@@ -46,6 +50,15 @@ function startSentenceOrders(lessonId: string) {
     [{ lessonId, wait: "soon" }],
     getSentenceOrdersToken(lessonId),
   );
+}
+
+async function startPlacementPreparation(
+  followUp: Extract<OwedFollowUp, { kind: "preparePlacementItems" }>,
+) {
+  const { input, userId } = followUp;
+  const ask = `placement-items:${input.goalId}:${followUp.id}:${followUp.revision}`;
+
+  await startOnce(placementItemsWorkflow, [{ ...input, analytics: { distinctId: userId } }], ask);
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
@@ -70,7 +83,36 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;
     case "prepareGoalLessons":
+      await refreshTestedOutPlanStep({ goalId: followUp.input.goalId, userId });
       await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
+      return;
+    case "prepareLevelTestBank":
+      await startLevelTestBank({
+        analytics: { distinctId: userId, goalId: followUp.input.goalId },
+        pair: followUp.input.pair,
+        upgrade: true,
+        wait: "learner",
+      });
+
+      return;
+    case "replenishLevelTestChecks": {
+      const batchId = `${followUp.id}:${followUp.revision}`;
+
+      await startOnce(
+        replenishLevelTestChecksWorkflow,
+        [{ ...followUp.input, batchId, userId }],
+        `replenish-level-test-checks:${batchId}`,
+      );
+
+      return;
+    }
+    case "prepareLevelTestOut":
+      await startOnce(
+        levelTestOutPreparationWorkflow,
+        [{ ...followUp.input, userId }],
+        `prepare-level-test-out:${followUp.id}:${followUp.revision}`,
+      );
+
       return;
     case "rebuildGoalCurriculum": {
       const ask = getGoalRebuildAsk({ followUp, goalId: followUp.input.goalId });
@@ -83,17 +125,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       return;
     }
-    case "preparePlacementItems": {
-      const ask = `placement-items:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
+    case "preparePlacementItems":
+      return startPlacementPreparation(followUp);
 
-      await startOnce(
-        placementItemsWorkflow,
-        [{ ...followUp.input, analytics: { distinctId: userId } }],
-        ask,
-      );
-
-      return;
-    }
     case "writeLesson": {
       const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
 

@@ -75,6 +75,7 @@ internal fun PathSection(
     alphabet: (@Composable () -> Unit)? = null,
     brief: Boolean = false,
     course: PlanCourse? = null,
+    test: (@Composable () -> Unit)? = null,
 ) {
     val phases = page.plan.phases
     val roadmap = page.plan.roadmapPhases
@@ -86,6 +87,7 @@ internal fun PathSection(
         SectionHeader(stringResource(R.string.plan_your_path))
 
         alphabet?.invoke()
+        test?.invoke()
 
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             beforeFinish.forEachIndexed { position, phase ->

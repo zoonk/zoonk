@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "placementtest_about": "e2cf1ba4741ab77c1789031fcf82658ec47b79632c0d5a25a1bc1b0c5468feb7",
+  "placementtest_about_in_parts": "2556889725085100223ebe3499f881de279bda966af03052ab4b8d8f2b0a2bea",
+  "placementtest_choose_description": "46cd6ced1ce5b6af4d22fdd651eb7991b7649b158890ef0cde259a059f0b41eb",
+  "placementtest_choose_title": "6f98877b71e8f20a27d0822ec6e11f3e7f8608c29543d2adf6fb70e74b09d591",
+  "placementtest_continue_from_plan": "e450e089979d465fbc9b195008ee7d84582235b6e725e56a90b191914d49e3b8",
+  "placementtest_continue_title": "159ef35fa6ad93189dc8bc92852098ac68795a5134de2264c545f26919e586f4",
+  "placementtest_done": "cb1323ed87695e1fb296328cf95696dbf22d81ce56d045089410ce09c44c15e3",
+  "placementtest_find_level": "1d29b2f3fcd4031c007a557b45ad47d9c51a4038fe65b5a6293a2a230624f645",
+  "placementtest_finish_for_today": "52a87a5cdaa56a1c084b926d2baf1ecd809af091e3744cff899be3edafc462e0",
+  "placementtest_in_progress": "9c8ce250eb86a254686f41b6060806dbb8c0b4b3447c30683ae0394eaf5bb66a",
+  "placementtest_keep_going": "ffba700e24be0bd4e19463ba16974298d9fdc49f98775948fa1698193e16473f",
+  "placementtest_keeps_adjusting": "a3e620fb3087b0cd8d99bb4362cd7e04d97981c74e40a76502c039bcd2864189",
+  "placementtest_known_one": "2266ba70420963867bef5e75e8c14f7f66b7807bc33261d537f64e2510df26e1",
+  "placementtest_known_other": "77f01258e7ef152acaa3669739f59754ac5232abb048a20f8d1966f70f0ae9b3",
+  "placementtest_left_saved": "61c554682678f01207dff792c3f064caf6a65089820fa4558fe04163d5263ba6",
+  "placementtest_lessons_skipped": "e9910e6d564e61e012d073baa8c5bad70ae9596a33b407c770fb871f2f2aca7d",
+  "placementtest_level_stays": "d6eda51f18be37751548dcba13d65ae337fdc928ec2eb4416c5df1f76fd5a9a4",
+  "placementtest_level_title": "c3c9b6d7d26941e8d3c537f0b1acc9c06719299630655fdef861a13e6eacb8b0",
+  "placementtest_levels_skipped": "15c648535f8e6a30a238a0a3b57a6c959b738ccecedb455b3e61abe5e7bb003b",
+  "placementtest_listening_range": "a181b1263290aa62941dabf8266bd35e77a2657520d2fa8f69b7ebf26338f117",
+  "placementtest_no_lessons_skipped": "e6ffe69770cd92565cd67936c05677c45a740f8e5f900ed92e1b28bb35339c20",
+  "placementtest_not_now": "27357d4bb691260236622cbb28d932c5c6c6c791f5f93be515aea826fdb730f5",
+  "placementtest_offer_level": "ffb509824a51a1be017c8b7ffff885e6652fe4b6903bceffc519443377e1d7a0",
+  "placementtest_offer_quick": "16596abfa171887218c7c0d6fbf03f9c33867d173bcd901d31ac432226e4ec32",
+  "placementtest_offer_title": "d55d63178e4388b1f33e42bf4f6e5f9ff5d61de9c5cddf213691c4e868a15c2d",
+  "placementtest_part": "52ec35a307454df7bcaa0aefa719cafe58d636585b0f404848bdf0cf64a49b29",
+  "placementtest_plan_stays": "06ffaffa1fe251545b939357a4a2127af706225ac97f589a6ba3766e8b987749",
+  "placementtest_quick": "e04d7fb357a53a3fb50185c90e7a04fa74033c861257582fc618b671c8b05d94",
+  "placementtest_quick_only_description": "2ccfa625d1707c2cea7b0004b738416e19636ff4aaa1370d8d8b6ecfb6de238b",
+  "placementtest_reading_range": "720e57a1e6b0e80b117eeb4c8801ac7c7807f1e1ed6630690b08c5a2e6e36557",
+  "placementtest_retake_tomorrow": "b79e7a9f3dd22ae19f1849323f1f979195cc0f233554b217b36979b791f6241f",
+  "placementtest_skip_lessons": "448d8a99437d53a9172ced117943dcff38dff80bc2e004ac1d267ef9acf948cf",
+  "placementtest_start": "2b53df7129f78ca4d5c8571a94be42ae623975b3c82e311f90168d7a4e4270d6",
+  "placementtest_start_title": "27ac4448c089aa7eebcff6547aac076aceee254fd5090717a1741c60e46fdab7",
+  "placementtest_test_out": "b7d39d9b2aa9ee6364a998a761b113e6be611badd132435548bed7e390486278",
+  "placementtest_test_out_description": "8d36a874b0bb57c785ec8982c79155466d0130820de1029ca8a584f5695e284c",
+  "placementtest_test_out_unavailable": "64b1d108553f6341dc76561c1033bf2a8655edca82da633feb6b0e38f72ce57e",
+  "placementtest_time_left": "69e38b560db7a90cf0d4e1c5e774714cac7ba0252e003d9780b8f9be153727ef",
+  "placementtest_title": "6b9565f72ab097bc91ed0b3de292b9056249128d8cd31880a9f9abf491e157ed",
+  "placementtest_up_next": "fd500bc5da44eace258e4d04ae9e2565d4e332422603803b955bdfb09dff385f",
+  "placementtest_whole_course": "0d53412c04649cc3a3fcf97397e85acc59e971f2ae23c4a12622f4305ac44fca",
+  "placementtest_your_level": "07adfc6bdbc8d4bf2c275d9a7687a94fbe31300409f3c17df5439be8a7dd94f8"
+}
+-->
+<resources>
+    <!-- The plan's row and the screen's name for the test of what the learner already knows in a course. -->
+    <string name="placementtest_title">Bildiklerini test et</string>
+    <string name="placementtest_skip_lessons">Zaten bildiğin dersleri atla</string>
+    <!-- The plan's row and the screen's name for a language course's test. -->
+    <string name="placementtest_level_title">Seviye tespit testi</string>
+    <string name="placementtest_find_level">Seviyeni öğren ve bildiklerini atla</string>
+    <string name="placementtest_in_progress">Devam ediliyor</string>
+    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
+    <string name="placementtest_time_left">%1$s kaldı</string>
+    <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
+    <string name="placementtest_no_lessons_skipped">Atlanan ders yok</string>
+    <plurals name="placementtest_lessons_skipped">
+        <item quantity="one">%d ders atlandı</item>
+        <item quantity="other">%d ders atlandı</item>
+    </plurals>
+    <!-- A CEFR level range the test found for reading; %1$s is a range such as "B1–B2". -->
+    <string name="placementtest_reading_range">Okuma %1$s</string>
+    <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
+    <string name="placementtest_listening_range">Dinleme %1$s</string>
+    <string name="placementtest_start_title">Zaten bildiklerini atla</string>
+    <string name="placementtest_choose_description">Seviye tespit testi, atlayabileceğin dersleri bulur.</string>
+    <string name="placementtest_quick_only_description">Kısa bir test, atlayabileceğin dersleri bulur. Yaklaşık %1$s sürer.</string>
+    <string name="placementtest_choose_title">Bir test seç</string>
+    <!-- The short placement test: about four minutes of questions. -->
+    <string name="placementtest_quick">Kısa test</string>
+    <!-- %1$s is a duration with its unit, such as "4 min". -->
+    <string name="placementtest_about">Yaklaşık %1$s</string>
+    <!-- The long placement test: it checks every topic still ahead in the course. -->
+    <string name="placementtest_whole_course">Tüm kurs</string>
+    <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
+    <string name="placementtest_about_in_parts">Yaklaşık %1$s, parçalara bölünmüş</string>
+    <!-- A short test of one language level, such as "Test out of B2". -->
+    <string name="placementtest_test_out">%1$s düzeyini atlamak için teste gir</string>
+    <!-- %1$s is a language level, such as "B2". -->
+    <string name="placementtest_test_out_description">Zaten biliyorsan %1$s düzeyini atla</string>
+    <string name="placementtest_start">Başla</string>
+    <!-- A whole-course test is split into parts; %1$d is the part's number. -->
+    <string name="placementtest_part">Bölüm %1$d</string>
+    <string name="placementtest_continue_title">Testine devam et</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="placementtest_left_saved">Yaklaşık %1$s kaldı. Cevapların kaydedildi.</string>
+    <string name="placementtest_continue_from_plan">Testi Plan bölümünden bitirebilirsin.</string>
+    <string name="placementtest_finish_for_today">Bugünlük bitir</string>
+    <string name="placementtest_keep_going">Devam et</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_one">Bunu zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">Bunları zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.</string>
+    <string name="placementtest_plan_stays">Planın olduğu gibi kalıyor.</string>
+    <string name="placementtest_retake_tomorrow">Bugün bunları geri aldın. Atlamak için yarın yeniden cevapla.</string>
+    <!-- Over the topic the plan goes on with after the test. -->
+    <string name="placementtest_up_next">Sıradaki</string>
+    <string name="placementtest_done">Tamamlandı</string>
+    <string name="placementtest_not_now">Sonraya bırak</string>
+    <!-- %1$s is a language's name, such as "Italian". -->
+    <string name="placementtest_your_level">%1$s seviyen</string>
+    <!-- %2$s is a list of language levels, such as "A1, A2". The plan no longer has their lessons. -->
+    <plurals name="placementtest_levels_skipped">
+        <item quantity="one">Atladığımız düzeyler: %2$s · %1$d ders.</item>
+        <item quantity="other">Atladığımız düzeyler: %2$s · %1$d ders.</item>
+    </plurals>
+    <string name="placementtest_keeps_adjusting">Cevap verdikçe derslerin ayarlanmaya devam ediyor.</string>
+    <!-- After a level test-out that skipped nothing; %1$s is a language level, such as "B2". -->
+    <string name="placementtest_level_stays">%1$s planında kalıyor</string>
+    <!-- A level test-out whose level has too few questions to test yet; %1$s is a language level, such as "B2". -->
+    <string name="placementtest_test_out_unavailable">Henüz %1$s düzeyi için yeterli soru yok.</string>
+    <!-- A lesson's end, after a run of easy lessons. -->
+    <string name="placementtest_offer_title">Bu sana kolay görünüyor</string>
+    <string name="placementtest_offer_quick">Kısa bir testle zaten bildiğin dersleri atlayabilirsin.</string>
+    <!-- %1$s is a language level, such as "B2". -->
+    <string name="placementtest_offer_level">Zaten biliyorsan kısa bir testle %1$s düzeyini atlayabilirsin.</string>
+</resources>

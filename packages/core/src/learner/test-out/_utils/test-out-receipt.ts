@@ -1,7 +1,7 @@
 import "server-only";
-import { type LearningEvent, prisma } from "@zoonk/db";
+import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { readFinishedChapter, toFinishedChapterIds } from "../../../mind-maps/finished-chapters";
+import { readFinishedChapter } from "../../../mind-maps/finished-chapters";
 import { type FinishedChapter } from "../../../sessions/completion-contract";
 
 export type TestOutReceipt = {
@@ -16,41 +16,14 @@ export type TestOutReceipt = {
   total: number;
 };
 
-export function toTestOutContentIds({
-  changeId,
-  chapterId,
-  finishedChapter,
-  lessonsSkipped,
-  passed,
-  planVersion,
-  requestId,
-}: {
-  changeId: string | null;
-  chapterId: string;
-  finishedChapter: FinishedChapter | null;
-  lessonsSkipped: number;
-  passed: boolean;
-  planVersion: number | null;
-  requestId: string;
-}): Record<string, string> {
-  return {
-    ...toFinishedChapterIds(finishedChapter),
-    chapterId,
-    lessonsSkipped: String(lessonsSkipped),
-    ...(changeId ? { planChangeId: changeId } : {}),
-    ...(planVersion === null ? {} : { planVersion: String(planVersion) }),
-    testOutId: requestId,
-    testOutPassed: String(passed),
-  };
-}
-
-function readTestOutReceipt(event: LearningEvent): Omit<TestOutReceipt, "finishedChapter"> {
+export async function readTestOutReceipt(event: LearningEvent): Promise<TestOutReceipt> {
   const content = isJsonObject(event.contentIds) ? event.contentIds : {};
   const planVersion = Number(content.planVersion);
 
   return {
     changeId: typeof content.planChangeId === "string" ? content.planChangeId : null,
     correct: event.correctAnswers,
+    finishedChapter: await readFinishedChapter(content),
     lessonsSkipped: Number(content.lessonsSkipped) || 0,
     passed: content.testOutPassed === "true",
     planVersion: Number.isInteger(planVersion) ? planVersion : null,
@@ -59,18 +32,20 @@ function readTestOutReceipt(event: LearningEvent): Omit<TestOutReceipt, "finishe
 }
 
 /** A requestId is scoped to learner, goal, and chapter; another chapter's receipt is not reusable. */
-export async function findTestOutReceipt({
+export function findTestOutEvent({
   chapterId,
   goalId,
   requestId,
+  tx = prisma,
   userId,
 }: {
   chapterId: string;
   goalId: string;
   requestId: string;
+  tx?: TransactionClient;
   userId: string;
-}): Promise<TestOutReceipt | null> {
-  const event = await prisma.learningEvent.findFirst({
+}) {
+  return tx.learningEvent.findFirst({
     where: {
       AND: [
         { contentIds: { equals: requestId, path: ["testOutId"] } },
@@ -81,13 +56,12 @@ export async function findTestOutReceipt({
       userId,
     },
   });
+}
 
-  if (!event) {
-    return null;
-  }
+export async function findTestOutReceipt(input: Parameters<typeof findTestOutEvent>[0]) {
+  const event = await findTestOutEvent(input);
 
-  return {
-    ...readTestOutReceipt(event),
-    finishedChapter: await readFinishedChapter(event.contentIds),
-  };
+  return event && !(isJsonObject(event.contentIds) && event.contentIds.pendingPlans)
+    ? readTestOutReceipt(event)
+    : null;
 }

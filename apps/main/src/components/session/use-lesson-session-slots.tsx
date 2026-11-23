@@ -3,11 +3,13 @@
 import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useRouter } from "@/i18n/navigation";
+import { getLevelCheckHref } from "@/lib/placement-test/level-check-href";
 import { getCompletionLessonHref } from "@/lib/session/lesson-opening";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { LessonMoment, LessonMomentHeader } from "@zoonk/learn/session/lesson-moment";
+import { LevelCheckOfferCard } from "@zoonk/learn/session/level-check-offer";
 import { type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { useEffect, useMemo } from "react";
 
@@ -36,10 +38,15 @@ export function useLessonSessionSlots({
 
     return {
       // The player sits outside the learning tabs, so the moment brings main's adapters along.
-      completion: ({ completion, onRetry }) => (
+      completion: ({ completion, onDismissOffer, onRetry }) => (
         <MainLearnProvider>
           <MainFinishedChapterMaps>
-            <SessionLessonMoment buddy={buddy} completion={completion} onRetry={onRetry} />
+            <SessionLessonMoment
+              buddy={buddy}
+              completion={completion}
+              onDismissOffer={onDismissOffer}
+              onRetry={onRetry}
+            />
           </MainFinishedChapterMaps>
         </MainLearnProvider>
       ),
@@ -56,12 +63,16 @@ export function useLessonSessionSlots({
 function SessionLessonMoment({
   buddy,
   completion,
+  onDismissOffer,
   onRetry,
 }: {
   buddy: LearnBuddy | null;
   completion: Parameters<NonNullable<LessonPlayerSlots["completion"]>>[0]["completion"];
+  onDismissOffer: () => Promise<boolean>;
   onRetry: () => void;
 }) {
+  const offer = completion.status === "saved" ? completion.result?.placementOffer : null;
+
   const moment = completion.result?.studyBlock;
   const navigation = useStudyNavigation(moment?.sessionId ?? "");
   const startTestOut = useStartTestOut();
@@ -71,6 +82,15 @@ function SessionLessonMoment({
       buddy={buddy}
       completion={completion}
       continueHref={moment ? getCompletionLessonHref(moment) : null}
+      offer={
+        offer && (
+          <LevelCheckOfferCard
+            href={getLevelCheckHref(offer)}
+            offer={offer}
+            onDismiss={onDismissOffer}
+          />
+        )
+      }
       onContinue={navigation.continueSession}
       onRetry={onRetry}
       onStartTestOut={(chapterId) =>

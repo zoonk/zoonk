@@ -6,7 +6,13 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { toCefrLevel } from "@zoonk/utils/cefr";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import {
+  type LessonWindowAnswer,
+  readLivingPlanWindow,
+  recordLivingPlanAnswers,
+} from "../../sessions/_utils/living-plan-window";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
 import { isPatternCheckDue } from "../patterns/find-mistake-pattern";
 import {
@@ -149,4 +155,68 @@ export async function writeLanguageStepEvidence(
       userId,
     });
   }
+}
+
+export async function recordLanguageLessonWindow(
+  tx: TransactionClient,
+  {
+    answers,
+    at,
+    details,
+    language,
+    sessionDay,
+    skill,
+    userId,
+  }: {
+    answers: readonly LessonWindowAnswer[];
+    at: Date;
+    details: Record<string, unknown>;
+    language: string;
+    sessionDay?: string;
+    skill: LanguageSkill;
+    userId: string;
+  },
+) {
+  const where = { userLanguageSkill: { language, skill, userId } };
+
+  const current = await tx.languageSkillLevel.findUnique({
+    select: { livingPlanWindow: true, score: true, startScore: true },
+    where,
+  });
+
+  const livingPlanWindow = recordLivingPlanAnswers({
+    answers,
+    at,
+    sessionDay,
+    stored: current?.livingPlanWindow,
+  });
+
+  const startScore = getStartScore({ details, skill });
+
+  const closed = livingPlanWindow.total === 0 ? livingPlanWindow.closed : null;
+
+  if (closed && current && (skill === "reading" || skill === "listening")) {
+    const previous = readLivingPlanWindow(current.livingPlanWindow).closed;
+    const from = previous?.score ?? current.startScore;
+    const level = toCefrLevel(current.score);
+    const transition = current.score > from && level !== toCefrLevel(from) ? level : undefined;
+
+    closed.score = current.score;
+
+    const levelTestOut =
+      transition ??
+      (previous?.streak === 1 && previous.result === "easy" ? previous.levelTestOut : undefined);
+
+    if (closed.result === "easy" && levelTestOut) {
+      closed.levelTestOut = levelTestOut;
+    }
+  }
+
+  await tx.languageSkillLevel.upsert({
+    create: { language, livingPlanWindow, score: startScore, skill, startScore, userId },
+    update: { livingPlanWindow },
+    where,
+  });
+
+  return closed;
 }

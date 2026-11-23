@@ -1,0 +1,71 @@
+"use client";
+
+import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { useExtracted } from "next-intl";
+import {
+  ListRowContent,
+  ListRowDescription,
+  ListRowLink,
+  ListRowTitle,
+} from "../_components/list-group";
+import { FactSegments } from "../_components/task-meta";
+import { useFormatMomentDate } from "../_utils/iso-date";
+import { useTestTime } from "../focus-test/use-focus-test-texts";
+import { usePlanScreen } from "./plan-context";
+import { useSkippedLessonsSentences } from "./use-skipped-lessons-sentences";
+
+type PlacementTestRow = NonNullable<PlanView["placementTest"]>;
+
+function useRowFacts() {
+  const t = useExtracted();
+  const time = useTestTime();
+  const formatDate = useFormatMomentDate();
+  const { skipped } = useSkippedLessonsSentences();
+
+  return (test: PlacementTestRow): string[] => {
+    if (test.state === "continue") {
+      return [t("In progress"), time.left(test.estimatedMinutes)];
+    }
+
+    if (test.state === "start" || !test.result) {
+      return [
+        test.kind === "language"
+          ? t("Find your level and skip what you know")
+          : t("Skip lessons you already know"),
+      ];
+    }
+
+    return [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)];
+  };
+}
+
+/** The Plan's way into the test of what the learner already knows, and its last result. */
+export function PlanPlacementTest({
+  levelTestHref,
+  placementTestHref,
+}: {
+  levelTestHref: string;
+  placementTestHref: string;
+}) {
+  const t = useExtracted();
+  const { plan } = usePlanScreen();
+  const rowFacts = useRowFacts();
+  const test = plan.placementTest;
+
+  if (!test || (test.state === "start" && test.estimatedMinutes === 0)) {
+    return null;
+  }
+
+  return (
+    <ListRowLink href={test.kind === "language" ? levelTestHref : placementTestHref}>
+      <ListRowContent>
+        <ListRowTitle>
+          {test.kind === "language" ? t("Level test") : t("Test what you know")}
+        </ListRowTitle>
+        <ListRowDescription>
+          <FactSegments facts={rowFacts(test)} />
+        </ListRowDescription>
+      </ListRowContent>
+    </ListRowLink>
+  );
+}

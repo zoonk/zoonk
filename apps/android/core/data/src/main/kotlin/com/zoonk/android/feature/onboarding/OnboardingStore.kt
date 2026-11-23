@@ -31,7 +31,9 @@ import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
-import com.zoonk.api.models.LanguageLevelTestSpokenResult
+import com.zoonk.api.models.LanguageLevelTestOut
+import com.zoonk.api.models.LanguageLevelTestOutAnswerInput
+import com.zoonk.api.models.LanguageLevelTestOutAnswerInputAnswer
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.Onboarding
@@ -41,15 +43,18 @@ import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.OnboardingResumeResume
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Placement
-import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import com.zoonk.api.models.StartLanguageLevelTestInput
+import com.zoonk.api.models.StartLanguageLevelTestOutInput
+import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -485,11 +490,13 @@ class OnboardingStore(
             session?.let { api.placement(it, goalId) }
         }
 
+    /** [attempt] is the part of the test taken from the plan the answer belongs to; onboarding's and the Focus test's have none. */
     suspend fun answerPlacement(
         goalId: String,
         itemId: String,
-        answer: PlacementAnswer,
+        answer: TapAnswer,
         durationMs: Long,
+        attempt: PlacementPart? = null,
     ): WriteOutcome<PlacementAnswerResult> =
         write(
             setOf(DataDomain.LearnerModel),
@@ -500,65 +507,167 @@ class OnboardingStore(
                     answer = answer,
                     durationMs = durationMs,
                     itemId = UUID.fromString(itemId),
+                    attemptId = attempt?.attemptId,
+                    part = attempt?.part,
                     timeZone = TimeZone.getDefault().id,
                 )
             api.answerPlacement(session, goalId, input)
         }
 
-    /** Starting the test turns its questions on in sessions, which the plan and Today say. */
-    suspend fun startPlacementSitting(goalId: String): WriteOutcome<Placement> =
-        write(setOf(DataDomain.Goals), replacing = { listOf(placements[goalId].replacing(it)) }) { api.startPlacementSitting(it, goalId) }
+    /**
+     * An exam's Focus test sitting turns its questions on in sessions, which the plan and Today say. With a [length],
+     * the test taken from the plan, or its next part.
+     */
+    suspend fun startPlacementSitting(
+        goalId: String,
+        length: PlacementLength? = null,
+    ): WriteOutcome<Placement> =
+        write(setOf(DataDomain.Goals), replacing = { listOf(placements[goalId].replacing(it)) }) {
+            api.startPlacementSitting(it, goalId, length)
+        }
 
-    /** The API starts writing the lessons the plan now opens with, so nothing else prepares them. */
+    /**
+     * The API starts writing the lessons the plan now opens with, so nothing else prepares them. A part of the test
+     * taken from the plan ([attempt]) that another device closed first fails; the placement read then says where it is.
+     */
     suspend fun finishPlacement(
         goalId: String,
         fromScratch: Boolean,
+        attempt: PlacementPart? = null,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) {
-        api.finishPlacement(it, goalId, fromScratch)
+        api.finishPlacement(it, goalId, fromScratch, attempt)
     }
 
-    /** A language goal's level test; each answer replies with its next step. */
+    /** A language goal's onboarding level test; each answer replies with its next step. */
     val levelTests =
         cache.keyed<String, LanguageLevelTest>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
             session?.let { api.levelTest(it, goalId) }
         }
 
+    /** A level test taken from the plan, by its attempt. */
+    val levelTestAttempts =
+        cache.keyed<LevelTestAttempt, LanguageLevelTest>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, key ->
+            session?.let { api.levelTest(it, key.goalId, key.attemptId) }
+        }
+
+    /** The test a step reads: the plan's [attemptId], or onboarding's. */
+    fun levelTest(
+        goalId: String,
+        attemptId: UUID?,
+    ) = attemptId?.let { levelTestAttempts[LevelTestAttempt(goalId, it)] } ?: levelTests[goalId]
+
     suspend fun prepareLevelTest(goalId: String) = write { api.prepareLevelTest(it, goalId) }
 
+    /** Opens a level test from the plan, or answers with the one already open. */
+    suspend fun startLevelTest(
+        goalId: String,
+        length: StartLanguageLevelTestInput.Length,
+    ) = write(
+        invalidating = setOf(DataDomain.Goals),
+        replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() },
+    ) { api.startLevelTest(it, goalId, length) }
+
+    /** [answerIndices] answers a level's confirmation, where every right option is picked. */
     suspend fun answerLevelTest(
         goalId: String,
         questionId: String,
         answerIndex: Long?,
         durationMs: Long,
         skipped: Boolean,
-    ) = write(replacing = { listOf(levelTests[goalId].replacing(it)) }) {
+        attemptId: UUID? = null,
+        answerIndices: List<Long>? = null,
+    ) = write(replacing = { listOf(levelTest(goalId, attemptId).replacing(it)) }) {
         api.answerLevelTest(
             it,
             goalId,
-            LanguageLevelTestAnswerInput(questionId, answerIndex, durationMs, skipped = true.takeIf { skipped }),
+            LanguageLevelTestAnswerInput(
+                questionId = questionId,
+                answerIndex = answerIndex.takeIf { answerIndices == null },
+                answerIndices = answerIndices,
+                attemptId = attemptId,
+                durationMs = durationMs,
+                skipped = true.takeIf { skipped },
+            ),
         )
     }
 
-    /** The recorder's grading write; its reply is the test's next step. */
-    suspend fun speakLevelTest(
+    /**
+     * Saves the test's levels as the plan's start, and with an [attemptId] the plan's skips; null when the test's
+     * questions were never written, so it has none to save.
+     */
+    suspend fun finishLevelTest(
         goalId: String,
-        recording: VoiceRecording,
-    ): GradeOutcome<LanguageLevelTestSpokenResult> =
-        cache
-            .mutate(setOf(DataDomain.Allowance), replacing = { listOf(levelTests[goalId].replacing(it.test)) }) {
-                api.speakLevelTest(it, goalId, recording)
-            }.toGradeOutcome()
-
-    /** Saves the test's levels as the plan's start; a test whose questions were never written has none to save. */
-    suspend fun finishLevelTest(goalId: String) =
-        write(setOf(DataDomain.Goals, DataDomain.UserProgress)) { session ->
-            try {
-                api.finishLevelTest(session, goalId)
-            } catch (e: ApiException) {
-                if (e.code != "LEVEL_TEST_PREPARING") throw e
-            }
+        attemptId: UUID? = null,
+    ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) { session ->
+        try {
+            api.finishLevelTest(session, goalId, attemptId)
+        } catch (e: ApiException) {
+            if (e.code != "LEVEL_TEST_PREPARING") throw e
+            null
         }
+    }
+
+    /** A level test-out from the plan, by its attempt; `preparing` while its questions are written. */
+    val levelTestOuts =
+        cache.keyed<LevelTestAttempt, LanguageLevelTestOut>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, key ->
+            session?.let { api.levelTestOut(it, key.goalId, key.attemptId) }
+        }
+
+    suspend fun startLevelTestOut(
+        goalId: String,
+        level: StartLanguageLevelTestOutInput.Level,
+    ) = write(replacing = { test: LanguageLevelTestOut ->
+        listOf(levelTestOuts[LevelTestAttempt(goalId, test.attemptId)].replacing(test))
+    }) {
+        api.startLevelTestOut(it, goalId, level)
+    }
+
+    suspend fun answerLevelTestOut(
+        goalId: String,
+        attemptId: UUID,
+        itemId: String,
+        answer: LanguageLevelTestOutAnswerInputAnswer,
+        durationMs: Long,
+    ) = write(
+        setOf(DataDomain.LearnerModel),
+        replacing = { test: LanguageLevelTestOut -> listOf(levelTestOuts[LevelTestAttempt(goalId, attemptId)].replacing(test)) },
+    ) {
+        api.answerLevelTestOut(
+            it,
+            goalId,
+            LanguageLevelTestOutAnswerInput(
+                answer = answer,
+                durationMs = durationMs,
+                itemId = UUID.fromString(itemId),
+                attemptId = attemptId,
+                timeZone = TimeZone.getDefault().id,
+            ),
+        )
+    }
+
+    /** Skips the level's lessons whose topics the answers confirmed. */
+    suspend fun finishLevelTestOut(
+        goalId: String,
+        attemptId: UUID,
+    ) = write(
+        setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress),
+        replacing = { test: LanguageLevelTestOut -> listOf(levelTestOuts[LevelTestAttempt(goalId, attemptId)].replacing(test)) },
+    ) { api.finishLevelTestOut(it, goalId, attemptId) }
 }
+
+/** The attempt a level test taken from the plan reads by; null for onboarding's. */
+val LanguageLevelTest.attemptId: UUID?
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId
+        }
+
+/** A language goal's level test or level test-out taken from the plan. */
+data class LevelTestAttempt(
+    val goalId: String,
+    val attemptId: UUID,
+)
 
 /**
  * [period] is `day`, `rolling30Days` or `total`; [resource] what ran out (`goal`, `activeGoals`, `upload`); [tier] `guest`,

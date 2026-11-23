@@ -513,7 +513,7 @@ struct QuestionBlockView: View {
 extension NetTally {
   fileprivate var spokenScore: String {
     let label = String(localized: "Score after wrong answers cancel right ones", table: "Practice")
-    return "\(label): \(net.formatted())"
+    return "\(label): \(net.formatted(.number.locale(.appLanguage)))"
   }
 
   fileprivate var line: [String] {
@@ -524,14 +524,14 @@ extension NetTally {
           comment: "A net-scored block with no right answers yet.")
         : String(
           localized: "\(right) right", table: "Practice",
-          comment: "A net-scored block's right answers so far."),
+          locale: .appLanguage, comment: "A net-scored block's right answers so far."),
       wrong == 0
         ? String(
           localized: "0 wrong", table: "Practice",
           comment: "A net-scored block with no wrong answers yet.")
         : String(
           localized: "\(wrong) wrong", table: "Practice",
-          comment: "A net-scored block's wrong answers so far."),
+          locale: .appLanguage, comment: "A net-scored block's wrong answers so far."),
 
     ]
   }

@@ -6,19 +6,36 @@ import {
 } from "@zoonk/ai/tasks/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { checkItem, findOwnEmDashes, toCheckedItem } from "@zoonk/core/library/items/checks";
+import { isTapWorthStoring } from "@zoonk/core/lookahead/placement-item-skills";
 import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";
 
 type PlacementItemsCase = Pick<
   PlacementItemsParams,
-  | "examFormat"
-  | "language"
-  | "quickCount"
-  | "quickFormat"
-  | "skills"
-  | "targetLanguage"
-  | "typedCount"
+  "examFormat" | "language" | "quickFormat" | "skills" | "targetLanguage"
 >;
+
+const TAP_FORMATS = new Set<GeneratedItem["format"]>(["matchPairs", "multipleChoice", "order"]);
+
+/** A tap question passes the checks the pipeline runs before storing it. */
+function checkTap({
+  item,
+  language,
+  optionLanguage,
+}: {
+  item: GeneratedItem;
+  language: string;
+  optionLanguage?: string | null;
+}): string[] {
+  if (!TAP_FORMATS.has(item.format)) {
+    return [`Is ${item.format}, not a tap question.`];
+  }
+
+  return [
+    ...checkItem({ item, language, optionLanguage, select: "all" }),
+    ...(isTapWorthStoring(item) ? [] : ["A blind guess passes it more than 1 time in 20."]),
+  ];
+}
 
 type RoleCheck = {
   saveChecks: string[][];
@@ -28,29 +45,27 @@ type RoleCheck = {
 };
 
 function checkRole({
-  format,
+  check,
   items,
   itemPath,
   label,
   language,
-  optionCount,
-  optionLanguage,
+  saveCheck,
   wanted,
 }: {
-  format: GeneratedItem["format"];
+  check: (item: GeneratedItem) => string[];
   items: GeneratedItem[];
   itemPath: string;
   label: string;
   language: string;
-  optionCount: number | null;
-  optionLanguage: string | null | undefined;
+  saveCheck: (item: GeneratedItem, index: number) => string[];
   wanted: number;
 }): RoleCheck {
   const checked = items.map((item, index) => ({
     item,
     itemLocator: `${itemPath}[${index}]`,
     problems: [
-      ...checkItem({ expectedFormat: format, item, language, optionCount }),
+      ...check(item),
       ...findOwnEmDashes(item),
       ...findNumberFormatFlaws({ language, value: item }),
     ].map((problem) => `${label} ${index + 1}: ${problem}`),
@@ -65,15 +80,7 @@ function checkRole({
       ...checked.flatMap((entry) => entry.problems),
     ],
     saveChecks: items.map((item, index) =>
-      toCheckedItem({
-        answerFormat: {},
-        format,
-        index,
-        item,
-        language,
-        optionCount,
-        optionLanguage,
-      }).problems.map((problem) => `${label} ${index + 1}: ${problem}`),
+      saveCheck(item, index).map((problem) => `${label} ${index + 1}: ${problem}`),
     ),
     wanted,
   };
@@ -87,28 +94,55 @@ export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
     input.quickFormat === "multipleChoice" ? (input.examFormat?.optionCount ?? null) : null;
 
   const perSkill = input.skills.map((skill, index) => {
-    const written = skills[index] ?? { quick: [], typed: [] };
+    const written = skills[index] ?? { quick: [], taps: [] };
+    const shared = { language: input.language };
 
     const roles = [
       checkRole({
-        format: input.quickFormat,
+        ...shared,
+        check: (item) =>
+          checkItem({
+            expectedFormat: input.quickFormat,
+            item,
+            language: input.language,
+            optionCount,
+            optionLanguage: input.targetLanguage,
+          }),
         itemPath: `skills[${index}].quick`,
         items: written.quick,
         label: `${skill.name}, quick`,
-        language: input.language,
-        optionCount,
-        optionLanguage: input.targetLanguage,
-        wanted: input.quickCount,
+        saveCheck: (item, itemIndex) =>
+          toCheckedItem({
+            answerFormat: {},
+            format: input.quickFormat,
+            index: itemIndex,
+            item,
+            language: input.language,
+            optionCount,
+            optionLanguage: input.targetLanguage,
+          }).problems,
+        wanted: skill.quickCount,
       }),
       checkRole({
-        format: "typed",
-        itemPath: `skills[${index}].typed`,
-        items: written.typed,
-        label: `${skill.name}, typed`,
-        language: input.language,
-        optionCount: null,
-        optionLanguage: input.targetLanguage,
-        wanted: input.typedCount,
+        ...shared,
+        check: (item) =>
+          checkTap({ item, language: input.language, optionLanguage: input.targetLanguage }),
+        itemPath: `skills[${index}].taps`,
+        items: written.taps,
+        label: `${skill.name}, tap`,
+        saveCheck: (item, itemIndex) =>
+          TAP_FORMATS.has(item.format) && isTapWorthStoring(item)
+            ? toCheckedItem({
+                answerFormat: item.format === "multipleChoice" ? { select: "all" } : {},
+                format: item.format,
+                index: itemIndex,
+                item,
+                language: input.language,
+                optionCount: null,
+                optionLanguage: input.targetLanguage,
+              }).problems
+            : ["Does not qualify as a low-guess tap question."],
+        wanted: skill.tapCount,
       }),
     ];
 
@@ -125,10 +159,10 @@ export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
       : [],
     judgedOutput: JSON.stringify(
       {
-        skills: perSkill.map(({ name, roles: [quick, typed] }) => ({
+        skills: perSkill.map(({ name, roles: [quick, taps] }) => ({
           quick: quick?.passing ?? [],
           skill: name,
-          typed: typed?.passing ?? [],
+          taps: taps?.passing ?? [],
         })),
       },
       null,

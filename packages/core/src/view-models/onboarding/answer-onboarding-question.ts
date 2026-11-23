@@ -179,6 +179,7 @@ export async function answerOnboardingQuestion({
   } else {
     await refreshGoalPlan({
       goalId,
+      keepsOpenUndo: input.question === "placement",
       mode: input.question === "targetDate" ? "forced" : "automatic",
       onConflict: "yield",
     });

@@ -17,6 +17,7 @@ import {
   placementCompletionResponseSchema,
   placementResponseSchema,
 } from "../src/lib/openapi/schemas/learner";
+import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
 import {
   chapterTestOutRecordSchema,
   chapterTestOutResponseSchema,
@@ -28,8 +29,10 @@ import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
 const SKILLS = 4;
+const TAPS_PER_SKILL = 3;
+const ORDER_STEPS = ["First", "Second", "Third", "Fourth"];
 
-async function createGoal(userId: string) {
+async function createGoal(userId: string, testOut = false) {
   const [goal, chapter, skills] = await Promise.all([
     goalFixture({ userId }),
     libraryChapterFixture({ title: "Percentages" }),
@@ -53,6 +56,24 @@ async function createGoal(userId: string) {
   const items = await Promise.all(
     skills.map((skill) => itemFixture({ content: choiceItemContent(), skillId: skill.id })),
   );
+
+  if (testOut) {
+    await Promise.all(
+      skills.flatMap((skill) =>
+        Array.from({ length: TAPS_PER_SKILL }, (_, index) =>
+          itemFixture({
+            content: {
+              question: `Order the steps in example ${index + 1}`,
+              reason: "The steps follow the numbered sequence.",
+              steps: ORDER_STEPS,
+            },
+            format: "order",
+            skillId: skill.id,
+          }),
+        ),
+      ),
+    );
+  }
 
   return { chapter, goal, items, skills };
 }
@@ -212,13 +233,62 @@ test.describe("Learner model API", () => {
     await guestApi.dispose();
   });
 
+  test("completes onboarding at the end of the first whole-course part", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "whole-course-onboarding",
+    });
+
+    const { goal } = await createGoal(user.id);
+    const path = `/v1/goals/${goal.id}`;
+
+    const begin = () =>
+      apiContext.post(`${path}/placement/sittings`, { data: { length: "wholeCourse" } });
+
+    const { attempt } = await readBody({
+      response: await begin(),
+      schema: placementResponseSchema,
+    });
+
+    if (!attempt) {
+      throw new Error("Expected a saved whole-course attempt");
+    }
+
+    const complete = () =>
+      apiContext.post(`${path}/onboarding/answers`, {
+        data: { attemptId: attempt.id, question: "placement" },
+      });
+
+    const premature = await complete();
+    expect(premature.status()).toBe(422);
+
+    const finished = await readBody({
+      response: await apiContext.post(`${path}/placement/completion`, {
+        data: { attemptId: attempt.id, part: 1 },
+      }),
+      schema: placementCompletionResponseSchema,
+    });
+
+    expect(finished).toMatchObject({
+      attempt: { id: attempt.id, partComplete: true },
+      changeId: null,
+      lessonsSkipped: 0,
+    });
+
+    await readBody({ response: await complete(), schema: onboardingResponseSchema });
+    const resumed = await readBody({ response: await begin(), schema: placementResponseSchema });
+    expect(resumed.attempt).toMatchObject({ id: attempt.id, part: 2 });
+
+    await apiContext.dispose();
+  });
+
   test("tests out a chapter the learner already knows", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "learner-test-out",
     });
 
-    const { chapter, goal } = await createGoal(user.id);
+    const { chapter, goal } = await createGoal(user.id, true);
     const path = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out`;
 
     const testOut = await readBody({
@@ -226,7 +296,8 @@ test.describe("Learner model API", () => {
       schema: chapterTestOutResponseSchema,
     });
 
-    expect(testOut.questions).toHaveLength(SKILLS);
+    const count = SKILLS * (1 + TAPS_PER_SKILL);
+    expect(testOut.questions).toHaveLength(count);
 
     const requestId = randomUUID();
 
@@ -234,7 +305,10 @@ test.describe("Learner model API", () => {
       response: await apiContext.post(path, {
         data: {
           answers: testOut.questions.map((question) => ({
-            answer: { selectedIndex: 0 },
+            answer:
+              question.format === "order"
+                ? { order: ORDER_STEPS.map((step) => question.options.indexOf(step)) }
+                : { selectedIndex: 0 },
             durationMs: 6000,
             itemId: question.itemId,
           })),
@@ -244,7 +318,7 @@ test.describe("Learner model API", () => {
       schema: chapterTestOutResultSchema,
     });
 
-    const said = { correct: SKILLS, lessonsSkipped: SKILLS, passed: true, total: SKILLS };
+    const said = { correct: count, lessonsSkipped: SKILLS, passed: true, total: count };
     expect(result).toMatchObject(said);
 
     await expect(
@@ -263,7 +337,7 @@ test.describe("Learner model API", () => {
       createAuthenticatedApiContext({ baseURL, prefix: "learner-test-out-other" }),
     ]);
 
-    const { chapter, goal } = await createGoal(user.id);
+    const { chapter, goal } = await createGoal(user.id, true);
     const path = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out/generations`;
 
     await expect(

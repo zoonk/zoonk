@@ -1,0 +1,184 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "8b9472793298c085",
+        "criterion": "calibration",
+        "observationId": "68ad00ce49fb1cdb3275eb7773abbb153e0250f9df5d9cbcee247b95adf56c86.first.45fb3123-89e2-4202-8c2b-70d4406c2235.0",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "b0b3a85f0948fcfe",
+        "criterion": "answers",
+        "observationId": "68ad00ce49fb1cdb3275eb7773abbb153e0250f9df5d9cbcee247b95adf56c86.first.45fb3123-89e2-4202-8c2b-70d4406c2235.1",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "5c2b81a8a124df2b",
+        "criterion": "calibration",
+        "observationId": "68ad00ce49fb1cdb3275eb7773abbb153e0250f9df5d9cbcee247b95adf56c86.first.45fb3123-89e2-4202-8c2b-70d4406c2235.3",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "c15a986070377a9e",
+        "criterion": "calibration",
+        "observationId": "97158ed7204f393240398a3675a4f857f7b30502709ceb24064f3b19bfd8ce88.first.22e4240e-6a37-4a50-806d-fa975a1fe121.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00275876,
+    "id": "b588a346816594fd21c00e92bbddc7bb576f3cbf9fa4fda3eccfcb6c8a6d1b89",
+    "packet": [
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "61335a5db1160cdd",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "6587503395f01eb4",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "8e796b5ca64e4a5ededf68d0a05bd2f6df8280c79837af086075f65243e3b82a",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e39c910c554e57c756216e77615e4560756c832baff69f965c4190b762e204a6",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "claimId": "8b9472793298c085",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Second confirmation, options 3 and 4.",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The first key selects option 4, which says the closing ceremony especially recognized the residents’ work, although the passage says it mentioned only packages and hours. It omits option 5, which is supported by the passage.",
+            "claimId": "b0b3a85f0948fcfe",
+            "criterion": "answers",
+            "location": {
+              "detail": "First confirmation, answerIndices [0, 3].",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "claimId": "5c2b81a8a124df2b",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Second confirmation, options 3 and 4.",
+              "kind": "range"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Right options in confirmations 2 and 4 restate single sentences and can be spotted via cognates or shared words ('explicó cada paso con tanta precisión' -> 'A precisão das explicações da cozinheira foi um ponto positivo'; 'encontró una pequeña fonda la última noche... sigo recordando con una sonrisa' -> 'A noite na pequena fonda foi uma lembrança especial da viagem'), breaking the expectation that right options are implied rather than stated in one sentence or decided by cognates.",
+            "claimId": "c15a986070377a9e",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 2 and 4, options 2",
+              "kind": "range"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "2a043c5d3fa75c9f145db1eff387384504523574bbff0cb9bce7f86332a04a9d",
+          "format": "text"
+        },
+        "input": {
+          "blob": "5ae7e9ba4bc70ba9742baa36de82b9dfcdc57f9f139817a7f65529fd3f47e44f",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "61335a5db1160cdd",
+          "finding": "doesn't hold",
+          "reason": "The message does say the bus leaves at ten, so option 2 is false and option 3 is true. But output A keys options 1 and 2, so its answer contradicts the reasoning the claim attributes to it, and the key is wrong."
+        },
+        {
+          "claimId": "6587503395f01eb4",
+          "finding": "doesn't hold",
+          "reason": "Output B's key is 1 and 3, which contains no false statement. The false option 2 (bus at nine) is in output A's key, not B's."
+        },
+        {
+          "claimId": "b0b3a85f0948fcfe",
+          "finding": "doesn't hold",
+          "reason": "The ceremony option quoted belongs to output B's first confirmation, not A's. A's first key [0, 3] selects 'A ajuda deveria partir do que a escola de fato precisa' and 'A ação serve mais à imagem da empresa', and its option 5 ('obrigados e de má vontade') is not supported by the passage."
+        },
+        {
+          "claimId": "8b9472793298c085",
+          "finding": "doesn't hold",
+          "reason": "The cooking item with 'con tanta precisión' and 'apenas habían trabajado' is in output B, not A. A's second confirmation is the mole class, whose passage has neither quoted phrase."
+        },
+        {
+          "claimId": "5c2b81a8a124df2b",
+          "finding": "holds",
+          "reason": "In B's cooking item, keyed options 3 and 4 (1-based) restate the explicit details 'con tanta precisión' and 'apenas habían trabajado' almost directly, so they are not the implied understanding the expectations call for. The claim is true of B only, since A has no such item."
+        },
+        {
+          "claimId": "c15a986070377a9e",
+          "finding": "holds",
+          "reason": "In B's confirmations 2 and 4, the keyed options restate single explicit sentences: 'explicó cada paso con tanta precisión' becomes 'A precisão das explicações da cozinheira foi um ponto positivo', and the fonda passage becomes 'A noite na pequena fonda foi uma lembrança especial da viagem'. The cognate 'precisión'/'precisão' also makes the first one easy to spot, which breaks the expectations."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

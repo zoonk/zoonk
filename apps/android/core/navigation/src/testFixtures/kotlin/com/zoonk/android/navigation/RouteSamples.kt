@@ -51,6 +51,8 @@ val routeSamples: List<AppRoute> =
         AppRoute.Pattern("pattern-1"),
         AppRoute.TestOut("chapter-1"),
         AppRoute.FocusTest(),
+        AppRoute.PlacementTest(),
+        AppRoute.LevelTest(),
         AppRoute.Challenge("item-1"),
         AppRoute.Checkpoint("block-1"),
         AppRoute.Essay("block-1"),

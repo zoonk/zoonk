@@ -1,0 +1,261 @@
+{
+  "attempt": "qualification",
+  "costUsd": 0.11111800000000001,
+  "failures": [],
+  "packetId": "c1b707bb40980d6eafff3783962b4b420f128c72c02bc224ef9ae5a1db75ead6",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical. Both sit at B1 in the passages, though several right options closely mirror the Portuguese wording and cognates instead of paraphrasing.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical. Both have overlapping correct options in the Curitiba travel guide and an ambiguous pronoun reference for one keyed option in the coach passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical, using natural Brazilian Portuguese and US English aside from naming a museum after a real person.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "In confirmations 1, 2, and 4, the keyed options closely translate the Portuguese phrases and cognates in order (for example, 'sessões mais curtas... não fico tão frustrado' -> 'Shorter practice sessions make the writer less frustrated', and 'preparar dois exemplos de situações em que resolveu um problema' -> 'Prepare examples of times they solved a problem'), breaking the expectation that ideas be restated in other words so word-matchers fail.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B1 can pick the right options by matching cognates and surface wording without B1 comprehension, risking a false skip.",
+            "location": {
+              "detail": "confirmations 1, 2, and 4 options",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmations 1, 2, and 4, the keyed options closely translate the Portuguese phrases and cognates in order (for example, 'sessões mais curtas... não fico tão frustrado' -> 'Shorter practice sessions make the writer less frustrated', and 'preparar dois exemplos de situações em que resolveu um problema' -> 'Prepare examples of times they solved a problem'), breaking the expectation that ideas be restated in other words so word-matchers fail.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B1 can pick the right options by matching cognates and surface wording without B1 comprehension, risking a false skip.",
+            "location": {
+              "detail": "confirmations 1, 2, and 4 options",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "In the Curitiba travel guide (confirmation 2), correct option 1 ('Plan an outdoor visit and keep an indoor option for rainy weather.') summarizes the same outdoor visit given as a specific route in correct option 3 ('Start in the historic center early, then visit the Botanical Garden.'), breaking the expectation that two correct options express distinct ideas.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader who looks for overall advice may hesitate to select option 3 alongside the broader summary in option 1.",
+            "location": {
+              "detail": "options of confirmation 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In the Curitiba travel guide (confirmation 2), correct option 1 ('Plan an outdoor visit and keep an indoor option for rainy weather.') summarizes the same outdoor visit given as a specific route in correct option 3 ('Start in the historic center early, then visit the Botanical Garden.'), breaking the expectation that two correct options express distinct ideas.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader who looks for overall advice may hesitate to select option 3 alongside the broader summary in option 1.",
+            "location": {
+              "detail": "options of confirmation 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmation 3, 'Esse esforço coletivo me deixa confiante para a próxima partida' immediately follows 'Ainda precisamos finalizar com mais calma, porém ninguém deixou de ajudar na defesa', making it ambiguous whether 'esse esforço coletivo' also covers becoming better organized after the break (keyed option 2).",
+            "criterion": "answers",
+            "learnerCost": "A careful B1 listener can reasonably leave out option 2 because the coach links his confidence directly to everyone helping in defense.",
+            "location": {
+              "detail": "Esse esforço coletivo me deixa confiante para a próxima partida.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmation 3, 'Esse esforço coletivo me deixa confiante para a próxima partida' immediately follows 'Ainda precisamos finalizar com mais calma, porém ninguém deixou de ajudar na defesa', making it ambiguous whether 'esse esforço coletivo' also covers becoming better organized after the break (keyed option 2).",
+            "criterion": "answers",
+            "learnerCost": "A careful B1 listener can reasonably leave out option 2 because the coach links his confidence directly to everyone helping in defense.",
+            "location": {
+              "detail": "Esse esforço coletivo me deixa confiante para a próxima partida.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Confirmation 2 references 'Museu Oscar Niemeyer', incorporating the name of a real person.",
+            "criterion": "language",
+            "learnerCost": "Naming a real historical figure inside a landmark goes against the no-real-people content rule.",
+            "location": {
+              "detail": "Museu Oscar Niemeyer",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Confirmation 2 references 'Museu Oscar Niemeyer', incorporating the name of a real person.",
+            "criterion": "language",
+            "learnerCost": "Naming a real historical figure inside a landmark goes against the no-real-people content rule.",
+            "location": {
+              "detail": "Museu Oscar Niemeyer",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical word for word, so neither serves the learner differently."
+        },
+        "pairId": "00fa4755-0897-4458-b2f1-9fa61e77c02e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 English message and Portuguese options checking simple stated facts.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A keys the two statements supported by the message (1 and 3), whereas Output B keys a false bus time (2) and leaves out the true cafe location (3).",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use identical, natural A1 English and Brazilian Portuguese ('ônibus').",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key marks options 1 and 2, but option 2 ('O ônibus sai às nove.') contradicts 'The bus leaves at ten.', and option 3 ('O café fica ao lado da loja.') is supported by 'The cafe is next to the shop.' yet omitted from the key.",
+            "criterion": "answers",
+            "learnerCost": "A learner who understands the English message gets marked wrong for selecting the right statements.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A has the accurate answer key for the message, while Output B marks a false statement right and omits a supported statement."
+        },
+        "pairId": "28386889-af57-4602-b784-9150e3e2f9c9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A paraphrases every correct option and sets effective word-matching traps (such as tying 'warmer water' to morning instead of afternoon), whereas Output B lets learners match cognates and near-literal translations.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A gives clearly supported, distinct ideas in every answer set, whereas Output B overlaps a summary with a specific step in the travel guide and leaves one coach answer ambiguous.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "A",
+            "reason": "Both read naturally in Brazilian Portuguese and US English, but Output A avoids real people entirely while Output B names a museum after Oscar Niemeyer.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Questions in confirmations 1 through 4 omit an explicit 'Select all that apply.' instruction, and questions 2 and 3 do not grammatically indicate in the text itself that multiple options should be chosen.",
+            "criterion": "answers",
+            "learnerCost": "If the interface does not add a multi-select prompt, a learner may stop after picking one right reason or point.",
+            "location": {
+              "detail": "question fields of confirmations 1 to 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Confirmations 1, 2, and 3 include opposite-meaning option pairs on the same detail (such as 'Several churches stop receiving visitors at noon.' vs. 'Several churches open to visitors only after lunch.'), hinting to a test-wise reader that the detail is mentioned.",
+            "criterion": "answers",
+            "learnerCost": "A test-wise learner gets a small structural clue to focus on those paired options rather than judging each purely independently.",
+            "location": {
+              "detail": "options of confirmations 1, 2, and 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "In confirmations 1, 2, and 4, the keyed options closely translate the Portuguese phrases and cognates in order (for example, 'sessões mais curtas... não fico tão frustrado' -> 'Shorter practice sessions make the writer less frustrated', and 'preparar dois exemplos de situações em que resolveu um problema' -> 'Prepare examples of times they solved a problem'), breaking the expectation that ideas be restated in other words so word-matchers fail.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B1 can pick the right options by matching cognates and surface wording without B1 comprehension, risking a false skip.",
+            "location": {
+              "detail": "confirmations 1, 2, and 4 options",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "In the Curitiba travel guide (confirmation 2), correct option 1 ('Plan an outdoor visit and keep an indoor option for rainy weather.') summarizes the same outdoor visit given as a specific route in correct option 3 ('Start in the historic center early, then visit the Botanical Garden.'), breaking the expectation that two correct options express distinct ideas.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader who looks for overall advice may hesitate to select option 3 alongside the broader summary in option 1.",
+            "location": {
+              "detail": "options of confirmation 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmation 3, 'Esse esforço coletivo me deixa confiante para a próxima partida' immediately follows 'Ainda precisamos finalizar com mais calma, porém ninguém deixou de ajudar na defesa', making it ambiguous whether 'esse esforço coletivo' also covers becoming better organized after the break (keyed option 2).",
+            "criterion": "answers",
+            "learnerCost": "A careful B1 listener can reasonably leave out option 2 because the coach links his confidence directly to everyone helping in defense.",
+            "location": {
+              "detail": "Esse esforço coletivo me deixa confiante para a próxima partida.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Confirmation 2 references 'Museu Oscar Niemeyer', incorporating the name of a real person.",
+            "criterion": "language",
+            "learnerCost": "Naming a real historical figure inside a landmark goes against the no-real-people content rule.",
+            "location": {
+              "detail": "Museu Oscar Niemeyer",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A genuinely confirms B1 comprehension through paraphrased options, effective word-matching traps, and distinct, unambiguous correct answers, whereas Output B allows cognate matching and has overlapping and ambiguous keys."
+        },
+        "pairId": "2cda78be-da2e-4812-9137-41482e9ffddf"
+      }
+    ]
+  }
+}

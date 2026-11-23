@@ -1,67 +1,55 @@
 import { type ItemFormat } from "@zoonk/db";
-import {
-  type BankItem,
-  type ChoiceItem,
-  type QuestionView,
-  isSinglePick,
-  parseChoiceItem,
-  toQuestionView,
-} from "../../_utils/choice-items";
-import {
-  type TypedItem,
-  type TypedQuestionView,
-  parseTypedItem,
-  toTypedQuestionView,
-} from "../../_utils/typed-items";
+import { type MatchItem, toMatchQuestion } from "../../../sessions/_utils/match-items";
+import { type OrderItem, toOrderQuestion } from "../../../sessions/_utils/order-items";
+import { gradeSessionAnswer, parseSessionItem } from "../../../sessions/_utils/session-items";
+import { type BankItem, type ChoiceItem, toQuestionView } from "../../_utils/choice-items";
+import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
+import { type PlacementAnswerInput } from "../placement-contract";
 
 export const PLACEMENT_ITEM_FORMATS = [
   "multipleChoice",
   "trueFalse",
-  "typed",
+  "matchPairs",
+  "order",
 ] as const satisfies ItemFormat[];
 
-export type PlacementItem = ChoiceItem | TypedItem;
+export type PlacementItem = ChoiceItem | MatchItem | OrderItem;
 
-export type PlacementQuestionView = QuestionView | TypedQuestionView;
+export function isPlacementItem(item: { content?: unknown; format: ItemFormat }): boolean {
+  return item.format === "trueFalse" || isQuickChoice(item) || isLowGuessTap(item);
+}
 
-/** Returns null for unsupported formats and multipick questions. */
 export function parsePlacementItem(item: BankItem): PlacementItem | null {
-  const choice = parseChoiceItem(item);
-
-  if (choice) {
-    return isSinglePick(choice) ? choice : null;
+  if (!isPlacementItem(item)) {
+    return null;
   }
 
-  return parseTypedItem(item);
+  const parsed = parseSessionItem(item);
+
+  return parsed?.format === "multipleChoice" ||
+    parsed?.format === "trueFalse" ||
+    parsed?.format === "matchPairs" ||
+    parsed?.format === "order"
+    ? parsed
+    : null;
 }
 
-export function toPlacementQuestionView(item: PlacementItem): PlacementQuestionView {
-  return item.format === "typed" ? toTypedQuestionView(item) : toQuestionView(item);
+export function toPlacementQuestionView(item: PlacementItem) {
+  if (item.format === "matchPairs") {
+    return toMatchQuestion(item);
+  }
+
+  return item.format === "order" ? toOrderQuestion(item) : toQuestionView(item);
 }
 
-type AudienceItem = { examBlueprintId: string | null; skillId: string };
+export type PlacementQuestionView = ReturnType<typeof toPlacementQuestionView>;
 
-/** General questions are a fallback only after matching exam-question generation ends or fails. */
-export function preferExamItems<TItem extends AudienceItem>({
-  examBlueprintId,
-  items,
-  writingSkillIds = new Set(),
+export function gradePlacementAnswer({
+  answer,
+  item,
 }: {
-  examBlueprintId: string | null;
-  items: readonly TItem[];
-  writingSkillIds?: ReadonlySet<string>;
-}): TItem[] {
-  if (!examBlueprintId) {
-    return [...items];
-  }
-
-  const examSkillIds = new Set(
-    items.filter((item) => item.examBlueprintId === examBlueprintId).map((item) => item.skillId),
-  );
-
-  return items.filter(
-    (item) =>
-      item.examBlueprintId === examBlueprintId ||
-      (!examSkillIds.has(item.skillId) && !writingSkillIds.has(item.skillId)),
-  );
+  answer: PlacementAnswerInput["answer"];
+  item: PlacementItem;
+}) {
+  return gradeSessionAnswer({ answer, blockId: item.id, item });
 }

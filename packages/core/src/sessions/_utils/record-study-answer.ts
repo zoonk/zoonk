@@ -3,11 +3,12 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type LearnerAnswer } from "../../learner/record-learner-answer";
 import { type applyDrillRules } from "../../mistakes/drill-answer";
-import { bringBackMissedLessons } from "../../plans/bring-back-missed-lessons";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type StudyAnswerInput } from "../contract";
 import { recordSessionAttempt } from "./record-session-attempt";
 import { refreshAfterPlacementAnswer } from "./refresh-plan";
 import { type GradedSessionAnswer, type SessionItem } from "./session-items";
+import { settleSavedSessionRecheck } from "./settle-saved-session-recheck";
 import { type StudySessionRow } from "./study-session-access";
 
 type StudyAnswerRecord = {
@@ -18,10 +19,10 @@ type StudyAnswerRecord = {
   graded: GradedSessionAnswer;
   input: StudyAnswerInput;
   item: SessionItem;
+  passedOverMiss: boolean;
   /** A placement question of the goal's first week, rather than a learning question. */
   placement: boolean;
-  /** A miss on an unconfirmed known claim restores its lessons. */
-  relearn: boolean;
+  recheck: boolean;
   session: StudySessionRow;
   sessionId: string;
   userId: string;
@@ -35,8 +36,9 @@ export async function recordStudyAnswer({
   graded,
   input,
   item,
+  passedOverMiss,
   placement,
-  relearn,
+  recheck,
   session,
   sessionId,
   userId,
@@ -44,7 +46,11 @@ export async function recordStudyAnswer({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
 
   const learnerAnswer = {
-    answer: graded.recorded,
+    answer: {
+      ...graded.recorded,
+      ...(passedOverMiss && { passedOverMiss: true }),
+      ...(recheck && { placementRecheck: true }),
+    },
     graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
     isPlacement: placement,
     itemId: item.id,
@@ -68,17 +74,19 @@ export async function recordStudyAnswer({
   }
 
   const { recorded } = claimed;
+  const livingPlanDay = toIsoDate(session.localDate);
 
-  if (placement && session.goalId) {
+  if (placement && !recheck && session.goalId) {
     const { changeId } = await applyPlacement({
       followToday: false,
       goalId: session.goalId,
+      livingPlanDay,
       now: new Date(),
       timeZone,
       userId,
     });
 
-    if (!changeId && !relearn && item.skillId) {
+    if (!changeId && item.skillId) {
       refreshAfterPlacementAnswer({
         answeredAt: recorded.attempt.answeredAt,
         goalId: session.goalId,
@@ -88,13 +96,8 @@ export async function recordStudyAnswer({
     }
   }
 
-  if (relearn && session.goalId && item.skillId) {
-    await bringBackMissedLessons({
-      goalId: session.goalId,
-      now: new Date(),
-      skillIds: [item.skillId],
-      timeZone,
-    });
+  if (recheck || passedOverMiss) {
+    await settleSavedSessionRecheck({ attempt: recorded.attempt, session, timeZone });
   }
 
   return { created: true, recorded, status: "ready" as const };

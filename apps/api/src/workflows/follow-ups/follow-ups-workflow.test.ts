@@ -254,13 +254,15 @@ describe(followUpsWorkflow, () => {
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
-  it("starts fresh placement preparation for an answer saved after an earlier run began", async () => {
+  it("starts a fresh placement run for the owed topics", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
 
+    const skillIds = [randomUUID()];
+
     const owed = await prisma.followUp.create({
       data: {
-        input: { goalId: goal.id, waitsForNotice: false },
+        input: { goalId: goal.id, skillIds, waitsForNotice: false },
         key: goal.id,
         kind: "preparePlacementItems",
         revision: 2,
@@ -272,7 +274,7 @@ describe(followUpsWorkflow, () => {
 
     expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
       placementItemsWorkflow,
-      [{ analytics: { distinctId: user.id }, goalId: goal.id, waitsForNotice: false }],
+      [{ analytics: { distinctId: user.id }, goalId: goal.id, skillIds, waitsForNotice: false }],
       { experimental_hook: { token: `placement-items:${goal.id}:${owed.id}:2` } },
     );
 

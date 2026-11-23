@@ -17,24 +17,21 @@ import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { getFocusTestActions } from "./focus-test-client-actions";
-import {
-  answerLevelTestAction,
-  finishLevelTestAction,
-  getLevelTestAction,
-  speakLevelTestAction,
-  startLevelTestBankAction,
-} from "./language-level-test-actions";
+import { finishLevelTestAction } from "./language-level-test-actions";
+import { getLanguagePlanTestActions } from "./language-plan-test-client-actions";
 import {
   answerOnboardingAction,
   answerPlacementAction,
   createOnboardingGoalsAction,
   finishPlacementAction,
   getPlacementAction,
+  getPlacementMinutesAction,
   getPlanAction,
   joinWaitlistAction,
   startOverAction,
 } from "./onboarding-actions";
 import { changeOnboardingAimAction, readFirstLessonAction } from "./onboarding-aim-actions";
+import { getPlacementTestActions } from "./placement-test-client-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { markPlanRevealedAction } from "./plan-reveal-action";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
@@ -67,26 +64,21 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
     (await finishPlacementAction({ ...input, timeZone: getLocalTimeZone() })) !== null,
   focusTest: getFocusTestActions,
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
+  getPlacementMinutes: getPlacementMinutesAction,
   getPlan: getPlanAction,
   getTimeAdvice: getGoalTimeAdvice,
   joinWaitlist: joinWaitlistAction,
   languageLevelTest: (goalId) => ({
-    answer: (input) => answerLevelTestAction(goalId, input),
     finish: () => finishLevelTestAction(goalId),
-    get: () => getLevelTestAction(goalId),
-    prepare: () => startLevelTestBankAction(goalId),
-    speak: (audio) => {
-      const form = new FormData();
-      form.set("audio", audio);
-      return speakLevelTestAction(goalId, form);
-    },
     switchLanguage: (language) => {
       if (isValidLocale(language)) {
         void switchLanguage({ href: `/start/${goalId}`, locale: language });
       }
     },
   }),
+  languagePlanTest: getLanguagePlanTestActions,
   markPlanRevealed: markPlanRevealedAction,
+  placementTest: getPlacementTestActions,
   readFirstLesson: readFirstLessonAction,
   readWarmUp,
   startOver: startOverAction,

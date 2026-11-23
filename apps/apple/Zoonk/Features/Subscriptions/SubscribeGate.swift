@@ -428,9 +428,7 @@ extension HelpLimit {
     case 1: return .tomorrow
     default:
       return .on(
-        PlanDate.moment(
-          availableAt, .sentence, year: .never, timeZone: calendar.timeZone,
-          locale: calendar.locale ?? .current))
+        PlanDate.moment(availableAt, .sentence, year: .never, timeZone: calendar.timeZone))
     }
   }
 

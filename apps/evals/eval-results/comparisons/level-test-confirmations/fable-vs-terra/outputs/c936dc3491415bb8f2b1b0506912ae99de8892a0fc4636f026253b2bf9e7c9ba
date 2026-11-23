@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "C2",
+      "options": [
+        "Dá forma de tarefa a uma tentativa de lidar com a perda.",
+        "Restringe a lembrança de Emma aos objetos que ela poderia levar.",
+        "Aplica a ideia de posse a coisas que Emma já não pode reivindicar.",
+        "Transforma a relação de objetos disponíveis em um pedido ao dono.",
+        "Apresenta a anotação da lista como prova de que Emma superou a perda."
+      ],
+      "passage": "On the morning the diner closed, Emma stood across the street with a notebook she had no intention of opening. The windows had already been papered over, though someone had left the little brass bell on the door. She could have called the owner and asked for it; he had offered her first choice of the things nobody wanted. Instead, she began an inventory of absences: the chipped blue mug, the stool that rocked, the waitress who called every customer sweetheart without quite looking at them. It was an odd word, inventory, for a list of things she could no longer claim. Still, it gave the morning the air of a task, and a task, unlike grief, might conceivably be finished before lunch.",
+      "question": "Que efeitos a escolha da palavra «inventário» produz na abertura da história?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "A objeção inicial apresenta um risco que também decorre do método elogiado.",
+        "A objeção inicial é descartada ao se demonstrar que a repetição não cansa.",
+        "O contraste entre as cadeiras prova que os poemas anunciam suas grandes ocasiões.",
+        "O contraste entre as cadeiras mostra o efeito da repetição em detalhes discretos.",
+        "A análise da mesa sustenta que o poeta apresenta sua vida como exemplar desde o início."
+      ],
+      "passage": "A reviewer might fault this collection for returning so often to the same kitchen table. After a while its scratches, cups, and uneven legs threaten to acquire the status of a private mythology, intelligible chiefly to the person who made it. Yet the repetition is also what allows the poems to register changes that a grander setting might obscure: a chair pulled out for a guest in one poem stands empty in another, without either occasion being announced as momentous. The table is not, then, evidence that the poet mistakes the small for the universal. Rather, its stubborn particularity tests whether the reader can attend to a life that has not been made exemplary in advance. The risk of monotony is real; it is also inseparable from the collection's method.",
+      "question": "Como o argumento da resenha se desenvolve em relação à repetição da mesa?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "As respostas em papel devem ser excluídas para que a consulta seja confiável.",
+        "A falta de objeções na reunião pode ocorrer sem que haja concordância geral.",
+        "O fato de faltarem opiniões é suficiente para concluir que a proposta está errada.",
+        "A falta de objeções na reunião demonstra que a proposta atende aos usuários noturnos.",
+        "Os meios pelos quais as pessoas podem responder influenciam quais opiniões são ouvidas."
+      ],
+      "passage": "Before we close, I want to return to the question of the proposed library hours. We heard no objections tonight, but most of the people who spoke already use the library during the day. The evening survey is still open, and the staff tell me that several regular visitors prefer to respond on paper. So I don't think tonight's silence can bear the weight of a mandate. That doesn't make the proposal wrong; it means we haven't yet heard enough to know whom it would serve. We'll bring the survey results back to the next meeting, along with those paper responses, before deciding what to recommend.",
+      "question": "Que pressupostos sustentam a interpretação que a pessoa que modera a reunião faz do silêncio sobre o horário proposto?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "Uma admissão de que ele inventou a viagem da irmã na tempestade.",
+        "A certeza de que a irmã seguiu a cerca, e não o riacho ou o cachorro.",
+        "Uma importância da história que não depende de garantir o trajeto exato.",
+        "O papel da história para quem partia sozinho, apesar das versões diferentes.",
+        "A intenção de preservar os detalhes da história iguais em cada repetição."
+      ],
+      "passage": "My grandfather used to tell us about the night his sister found her way home through a snowstorm. Depending on who's telling it, she followed a fence, a creek, or a dog that appeared out of nowhere. Grandpa never settled the question. He'd just say the story was useful, which annoyed my aunt, who wanted him to call it true. But he meant something more exact than either a confession that he'd made it up or a guarantee about the route. Whenever someone in the family was setting out alone, he'd tell it again. The details shifted, but the person listening was always expected to make it home.",
+      "question": "O que a escolha de dizer que a história era «útil» permite ao avô enfatizar?",
+      "skill": "listening"
+    }
+  ]
+}

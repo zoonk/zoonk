@@ -8,6 +8,7 @@ struct GenerationWait: Equatable, Sendable {
     case curriculum
     /// The goal's run while placement waits for its questions.
     case placement
+    case placementQuestions
     case explanation
     case levelTestBank
     case lesson
@@ -377,6 +378,8 @@ struct GenerationWait: Equatable, Sendable {
         "outlineCourses": .phase("questions"), "prepareFirstLessons": .phase("questions"),
         "goalReady": .done,
       ]
+    case .placementQuestions:
+      ["preparePlacement": .phase("questions")]
     case .explanation:
       [
         "classifyQuestion": .phase("read"), "findExplanation": .phase("find"),
@@ -530,7 +533,9 @@ struct GenerationWait: Equatable, Sendable {
           ])
       ]
     case .placement:
-      goalPhases + [
+      goalPhases + phases(for: .placementQuestions)
+    case .placementQuestions:
+      [
         Phase(
           id: "questions",
           label: LocalizedStringResource(
@@ -748,10 +753,12 @@ extension GenerationWait.NumberedLines {
     case .lessonScreen:
       LocalizedStringResource(
         "Writing screen \(number)…", table: "Player",
+        locale: .appLanguage,
         comment: "What the wait is doing while a lesson is written: the screen it's on")
     case .explanationScreen:
       LocalizedStringResource(
         "Writing screen \(number)…", table: "Onboarding",
+        locale: .appLanguage,
         comment: "What the wait is doing while a quick explanation is written: the screen it's on")
     }
   }
@@ -1257,7 +1264,7 @@ extension GenerationWait.Kind {
     case .curriculum:
       LocalizedStringResource(
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
-    case .placement:
+    case .placement, .placementQuestions:
       LocalizedStringResource(
         "Getting your test ready", table: "Onboarding",
         comment: "Title while placement questions are written")

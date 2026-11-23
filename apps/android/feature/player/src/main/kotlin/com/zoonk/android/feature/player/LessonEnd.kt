@@ -82,7 +82,6 @@ import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.ResultPages
@@ -319,6 +318,15 @@ internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName
         it.naming
     }
 
+/** The lesson end's offer to check the learner's level, once its "Not now" is in hand. */
+class LevelCheck(
+    val dismissed: Boolean,
+    val dismissing: Boolean,
+    val failed: Boolean,
+    val onOpen: (AppRoute) -> Unit,
+    val onDismiss: () -> Unit,
+)
+
 @Composable
 fun LessonCompletionView(
     state: LessonPlayerState,
@@ -326,6 +334,7 @@ fun LessonCompletionView(
     buddy: LearnerSummaryBuddy? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
+    levelCheck: LevelCheck? = null,
 ) {
     val completion = state.completion ?: return
 
@@ -418,6 +427,10 @@ fun LessonCompletionView(
                         supporting = { Text(reveal.goalTitle) },
                     )
                 }
+            }
+            val offer = completion.result?.placementOffer
+            if (completion.status == CompletionStatus.Saved && offer != null && levelCheck != null && !levelCheck.dismissed) {
+                LevelCheckOffer(offer, levelCheck.dismissing, levelCheck.failed, levelCheck.onOpen, levelCheck.onDismiss)
             }
             if (completion.result?.planReveal == null && completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }
@@ -547,7 +560,7 @@ fun CompletionActions(
 
     if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.guest) {
         TaskActions { width ->
-            OutlinedButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
+            OutlinedButton(onClick = { exits.replace(AppRoute.Login) }) {
                 Text(stringResource(R.string.player_create_account_to_save))
             }
             Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
@@ -557,7 +570,7 @@ fun CompletionActions(
 
     TaskActions { width ->
         if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.nextLessonId != null) {
-            OutlinedButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
+            OutlinedButton(onClick = exits::close) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
     }

@@ -82,8 +82,6 @@ export function toQuestionView(item: ChoiceItem) {
   };
 }
 
-export type QuestionView = ReturnType<typeof toQuestionView>;
-
 export function isSinglePick(item: ChoiceItem): boolean {
   return item.format === "trueFalse" || item.content.select === 1;
 }

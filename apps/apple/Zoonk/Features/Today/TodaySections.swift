@@ -225,6 +225,21 @@ struct TodayPlanChangeSection: View {
   private var answersInSheet: Bool { isOpen && shown.decision == nil }
 
   var body: some View {
+    if change.kind == "testedOut",
+      shown.decision == .undone || (change.status == "applied" && change.canUndo)
+    {
+      TestedOutChangeCard(
+        change: change, today: view.session.localDate, isUndone: shown.decision == .undone,
+        isSaving: isSaving, failed: failed
+      ) {
+        answer(.undone)
+      }
+    } else {
+      standardChange
+    }
+  }
+
+  private var standardChange: some View {
     Section {
       if let decision = shown.decision {
         SuggestionLine {
@@ -291,7 +306,7 @@ struct TodayPlanChangeSection: View {
     PlanChangeWords.words(
       kind: change.kind, source: change.source, status: change.status,
       operations: change.operations, reason: change.reason, effect: change.effect,
-      dateKind: GoalDateKind(isExam: isExam))
+      dateKind: GoalDateKind(isExam: isExam), lessonsSkipped: change.lessonsSkipped)
   }
 
   /// The question; a focus the Focus test proposes keeps the test's own words.
@@ -826,7 +841,7 @@ private struct WeekChallengeRow: View {
       parts.append(
         String(
           localized: "\(questions) questions", table: "Today",
-          comment: "How many questions the week's challenge asks"))
+          locale: .appLanguage, comment: "How many questions the week's challenge asks"))
     }
 
     if let minutes = challenge.timeLimitMinutes {
@@ -1004,7 +1019,9 @@ struct TodayProgressSection: View {
         card(
           title: Text(
             "Preparation", tableName: "Today", comment: "Title of an exam's preparation card"),
-          value: Text(verbatim: progress.value.formatted(.percent.precision(.fractionLength(0)))),
+          value: Text(
+            verbatim: progress.value.formatted(
+              .percent.precision(.fractionLength(0)).locale(.appLanguage))),
           detail: weekGain(progress.weekGain ?? 0)
         ) {
           EmptyView()

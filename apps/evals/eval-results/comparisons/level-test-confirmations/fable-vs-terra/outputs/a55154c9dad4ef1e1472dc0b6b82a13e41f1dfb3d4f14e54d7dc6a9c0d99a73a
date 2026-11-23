@@ -1,0 +1,79 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        2,
+        3
+      ],
+      "level": "C1",
+      "options": [
+        "The reviewer finds the set tasteful but rather lifeless.",
+        "The reviewer left the theater in a worse mood than on arriving.",
+        "The reviewer ended up enjoying the revival more than expected.",
+        "The reviewer stopped being bored once Camille Morel came on stage.",
+        "The reviewer thinks reviving this comedy was a gamble that failed.",
+        "The reviewer found Camille Morel's acting too vague to be convincing."
+      ],
+      "passage": "Reprendre cette comédie trente ans après sa création, il fallait oser. La metteuse en scène a eu la sagesse de ne pas la rajeunir à tout prix : ni écrans ni téléphones, et le texte s'en porte fort bien. On ne criera pas pour autant au miracle. La première partie ronronne, et le décor, d'une élégance irréprochable, finit par ressembler à une vitrine. Mais dès que Camille Morel entre en scène, il se passe quelque chose qu'on aurait du mal à nommer ; disons qu'on cesse de regarder sa montre. Pour un spectacle dont on n'attendait, avouons-le, pas grand-chose, on sort plutôt moins grincheux qu'on n'était entré.",
+      "question": "Which of these does the reviewer convey about the revival?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        2,
+        5
+      ],
+      "level": "C1",
+      "options": [
+        "The writer believes that life really was better in the past.",
+        "The writer admits that memory flatters the past we remember.",
+        "The writer has backed away from making fun of nostalgic people.",
+        "The writer still sees nostalgia as a weakness that deserves mockery.",
+        "The writer trusts people with no regrets more than nostalgic people.",
+        "The writer suspects that people proud of having no regrets lack insight."
+      ],
+      "passage": "Il est de bon ton de railler ceux qui soupirent après les étés d'autrefois, les trains qui arrivaient à l'heure et les voisins qui se saluaient. J'ai longtemps été de ces railleurs. Puis j'ai retrouvé, au fond d'un tiroir, le cahier de recettes de ma grand-mère, et j'ai dû en rabattre. Loin de moi l'idée de prétendre que c'était mieux avant : la mémoire trie, et elle trie en notre faveur. Mais à tout prendre, je me méfie moins de celui qui regrette que de celui qui se flatte de ne rien regretter. Le premier sait au moins qu'il a perdu quelque chose ; le second, je le crains, n'a pas regardé.",
+      "question": "Which of these describe where the writer stands on nostalgia?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "C1",
+      "options": [
+        "The commentator has started to doubt the quality of the stadium.",
+        "The commentator is making fun of the official wording, not the stadium.",
+        "The commentator agrees with the city's grand description of the stadium.",
+        "The commentator finds the stadium too ordinary to deserve any attention.",
+        "The commentator switches to plain talk to show he sincerely liked the stadium.",
+        "The commentator addresses the city's communications staff with genuine respect."
+      ],
+      "passage": "On nous annonce donc un « équipement structurant à rayonnement métropolitain ». Fort bien. Moi, j'y suis allé samedi, au stade, avec mon fiston. Eh bien figurez-vous qu'on voit le terrain, qu'on entend chanter, et que les frites sont chaudes. Voilà. Pas besoin d'en faire des tonnes. Alors, à ces messieurs-dames du service communication de la mairie, un conseil d'ami : rangez les grands mots. Ce stade se défend très bien tout seul, et à force de vouloir nous le vendre, vous allez finir par nous faire douter de la marchandise.",
+      "question": "What does the commentator's way of speaking reveal?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        1,
+        5
+      ],
+      "level": "C1",
+      "options": [
+        "The musician would keep her fame despite what it costs her.",
+        "The musician is grateful for what fame brings to her career.",
+        "The musician would gladly go back to being completely unknown.",
+        "The musician mainly resents being recognized when she goes out.",
+        "The musician believes her audience has moved on from her old songs.",
+        "The musician is troubled most by the fixed expectations of her audience."
+      ],
+      "passage": "La célébrité ? Disons que j'aurais mauvaise grâce à m'en plaindre : c'est elle qui remplit les salles, et je ne crache pas dans la soupe. Mais bon, on ne va pas se mentir, il y a des matins où je donnerais cher pour acheter mon pain sans qu'on me regarde choisir ma baguette. Ce qui me gêne, ce n'est pas tant d'être reconnue que d'être attendue : les gens veulent la chanson d'il y a dix ans, et moi, entre-temps, j'ai changé. Enfin… je ne rendrais pas les clés pour autant.",
+      "question": "Which of these reflect how the musician feels about fame?",
+      "skill": "listening"
+    }
+  ]
+}

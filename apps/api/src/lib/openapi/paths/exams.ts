@@ -8,8 +8,8 @@ import { essayViewResponseSchema } from "../schemas/essays";
 import { examResultResponseSchema, examViewResponseSchema } from "../schemas/exams";
 import { replacementGoalResponseSchema } from "../schemas/goals";
 import { essayPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
+import { planChangeResultSchema } from "../schemas/plan-change-results";
 import { planChangeInvalidResponse, planChangedWhileSavingResponse } from "../schemas/plan-errors";
-import { planChangeResultSchema } from "../schemas/plans";
 import {
   conflictResponse,
   notFoundResponse,

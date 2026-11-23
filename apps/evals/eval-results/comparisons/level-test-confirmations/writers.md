@@ -1,0 +1,29 @@
+# Placement confirmation writers
+
+Keep Claude Fable 5.2 as the primary writer and GPT-6.1 Terra as the cross-provider fallback. Both produced all 64 requested questions with keys that matched the independent solve. Terra cost about 97.5% less per run, but the blind comparison found insufficient evidence to switch the shared bank. The three cheaper writers missed keys or delivered incomplete sets. The earlier Opus and Sonnet fallback routes had no evidence on this task and were removed. [Decision](fable-vs-terra/decision.json)
+
+These questions let a learner skip language lessons by selecting every correct option in a passage or recording. The comparison on November 23, 2026 used four English-speaking and four Portuguese-speaking synthetic learner cases across A1–C2, including an A1 retake. Each writer ran twice on each case, with gateway fallback disabled. Each run requested two reading questions and two listening questions.
+
+| Writer | Runs meeting the count and length checks | Keys accepted by the independent solver | Mean cost per run | Median duration | 95th percentile |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Claude Fable 5.2 | 16/16 | 64/64 | $0.54548 | 101.8 s | 213.9 s |
+| GPT-6.1 Terra | 16/16 | 64/64 | $0.01385 | 34.0 s | 59.9 s |
+| GPT-6 Luna | 9/16 | 61/64 | $0.00184 | 29.6 s | 39.7 s |
+| Claude Haiku 5.5 | 14/16 | 47/64 | $0.00660 | 51.0 s | 85.8 s |
+| Gemini 3.5 Flash Lite | 3/16 | 14/16 | $0.00484 | 5.3 s | 7.7 s |
+
+Flash Lite returned an empty confirmation set in 12 successful calls. These included both fresh and repeat A1 runs. Its other four calls returned four questions each. The saved task output shows what the learner could receive; the raw, unprocessed arrays are unavailable. All five writers completed all 16 calls without a recorded provider or schema failure. [Writer outputs and usage](../../outputs/level-test-confirmations) · [Structural checks and solver findings](writer-screen.json)
+
+Claude Haiku, GPT Luna and Gemini Carbon each passed controls on every one of the 16 matched pairs. Of 72 recorded reader attempts, 63 passed, including 16 reversed-order reads. Nine failed controls or response checks and were excluded. The accepted votes were 30 for Fable, 20 for Terra and 13 ties. Haiku preferred its own family in 8/23 reads and Luna in 10/24. Carbon preferred Fable in 15/16. After combining repeats and directions within families, every case still had a dissenting or split family. No owner vote was recorded. [Blind verdicts](fable-vs-terra/verdicts) · [Case decisions](fable-vs-terra/decision.json)
+
+Two verifier families passed controls on 10 of 22 verification packets covering 25 observations. In Terra’s B2 sets, a Portuguese answer paraphrased the Spanish speaker’s explicit plan to return to a market, and a cooking question could be solved by matching explicit details. In a C2 set, a direct paraphrase let the learner avoid interpreting the speaker’s implication. Fable also had problems, including A1 listening material phrased as an in-person exchange. The comparison counted weighted major problems of 4 for Fable and 7 for Terra in Portuguese-speaking cases, and 0 and 1 respectively in English-speaking cases. The decision still had 25 outstanding observations that could affect the quality comparison. [B2 market](fable-vs-terra/verifications/e40cf40ae4ed6b18e4d62a315d803cf7567d70a44352b00e5a1f1597697b8c36.json) · [B2 cooking class](fable-vs-terra/verifications/d3fac0b13a40e8f3d43dfd682577d0345a12f0bbf25ff87f8350c1737c3c9c6c.json) · [C2 passages](fable-vs-terra/verifications/255051ae57babcb36844f53f01c6cf3c3f6d83140d40237770cc79854d02f057.json)
+
+Some readers treated zero-based answer indices as option numbers and attributed a defect to the wrong output. One verifier also rejected the planted control because its wording described the evidence without saying which option the flawed key included. Future evaluations now spell out the index convention and the error in the control. The archived comparisons preserve their original instructions.
+
+A second reviewer solved two disputed pairs without seeing the identities, keys or allegations. On Luna's B1 coach recording, the key requires improved organization as a reason for the coach's confidence, but only collective defensive effort is explicit. On Haiku's B2 voice message about a trip, the key requires dissatisfaction to outweigh the positive moments and assumes the traveler wants to conceal that frustration. Neither claim follows from the recording. A blind solve of Luna's English C2 allusion also found a scope ambiguity: one keyed answer depends on a later remark about a pause instead of the allusion in the question. The corresponding case expectations now cover these failures. The [B1 cost pilot](b1-pilot.md) is a separate set of three writer calls.
+
+The solver checks available answer sets against the supplied passage. Readers assess whether the questions plausibly test the intended level and whether their options are clear. Estimating placement accuracy requires results from learners whose levels were assessed independently.
+
+Gateway spend for this evaluation was $12.47642 of the $15 budget. The three pilot writers cost $0.01291, the 80 main writer calls $9.16178, and independent key solves $1.19222. Reader attempts, including reader qualification, cost $1.88597. Claim verification cost $0.20558 and three billed reader failures without usable responses cost $0.01796. No subscription seat time was used.
+
+The gateway listed both finalists on November 23. Anthropic lists Fable 5.2 as active with retirement no sooner than November 9, 2027. OpenAI's upcoming shutdown table names Terra as a replacement for earlier models. [Gateway catalog](https://ai-gateway.vercel.sh/v1/models) · [Anthropic lifecycle](https://platform.claude.com/docs/en/about-claude/model-deprecations) · [OpenAI deprecations](https://developers.openai.com/api/docs/deprecations)

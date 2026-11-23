@@ -3,11 +3,13 @@ import SwiftUI
 extension View {
   /// Main's `Surface`: one self-contained thing on the page, on `card` with a hairline and no
   /// shadow. Never inside another panel.
-  func panel(cornerRadius: CGFloat = Radius.xl, fill: Color = .card) -> some View {
+  func panel(
+    cornerRadius: CGFloat = Radius.xl, fill: Color = .card, border: Color = .border
+  ) -> some View {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
     return background(fill, in: shape)
-      .overlay(shape.strokeBorder(.border))
+      .overlay(shape.strokeBorder(border))
   }
 
   func activityBox(cornerRadius: CGFloat = Radius.xl) -> some View {

@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
@@ -97,6 +98,7 @@ export function StudyMoment({
   finishedChapterId = null,
   onContinue,
   onStartTestOut,
+  offer,
   onStop,
   renderCeremony,
   testedOut = false,
@@ -111,6 +113,8 @@ export function StudyMoment({
   next: StudyBlock | null;
   onContinue: () => Promise<boolean>;
   onStartTestOut?: (chapterId: string) => Promise<TestOutStart>;
+  /** An offer to check the learner's level, after a run of easy lessons. */
+  offer?: ReactNode;
   onStop: () => Promise<boolean>;
   renderCeremony?: MomentCeremony;
   testedOut?: boolean;
@@ -163,6 +167,8 @@ export function StudyMoment({
         <MomentToday moment={moment} rows={queue.rows} />
 
         <DayMoment buddy={buddy} {...dayMoment} />
+
+        {offer}
 
         {testChapterId && onStartTestOut && (
           <TestOutStartLink

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
@@ -10,61 +10,17 @@ import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
+import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getChapterTestOut } from "../learner/test-out/get-chapter-test-out";
 import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-out";
 import { moveOnWithoutLesson } from "../library/generation/hold-back-lesson";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import { sessionGoalFixture } from "./_test-utils/session-goal";
-import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
+import { completeLessonPlanItems } from "./_utils/plan-items";
 import { readBlockPayload } from "./block-payload";
-import { getStudySession } from "./get-study-session";
 import { startStudyBlock } from "./start-study-block";
-
-/** A started day with one lesson open and one waiting, which a test-out and a set-aside take. */
-async function startedDayOfTwoLessons() {
-  const user = await userFixture();
-
-  const { goal, lessons, planItems } = await sessionGoalFixture({
-    challengesDone: true,
-    lessons: 2,
-    userId: user.id,
-  });
-
-  const [tested, setAside] = lessons;
-  const testedItemId = planItems[0]?.id ?? "";
-  const now = new Date();
-
-  const session = await studySessionFixture({
-    goalId: goal.id,
-    startedAt: now,
-    status: "active",
-    userId: user.id,
-  });
-
-  await Promise.all([
-    studySessionBlockFixture({
-      lessonId: tested?.id,
-      position: 0,
-      sessionId: session.id,
-      startedAt: now,
-      status: "active",
-    }),
-    studySessionBlockFixture({ lessonId: setAside?.id, position: 1, sessionId: session.id }),
-    prisma.planItem.update({
-      data: { completedAt: now, status: "testedOut" },
-      where: { id: testedItemId },
-    }),
-  ]);
-
-  return {
-    session,
-    setAside: (tx: TransactionClient) => moveOnWithoutLesson(tx, setAside?.id ?? "", randomUUID()),
-    testOut: () => skipTestedOutBlocks({ goalId: goal.id, planItemIds: [testedItemId] }),
-    user,
-  };
-}
 
 const PASSED = { outcome: { lessonsSkipped: 1, passed: true }, status: "ready" };
 
@@ -72,9 +28,9 @@ const PASSED = { outcome: { lessonsSkipped: 1, passed: true }, status: "ready" }
 async function startedDay() {
   const user = await userFixture();
 
-  const { chapters, goal, planItems } = await learnerGoalFixture({
+  const { chapters, goal, planItems, skills } = await learnerGoalFixture({
     challengesDone: true,
-    itemsPerSkill: 4,
+    itemsPerSkill: 0,
     phases: [1, 1],
     userId: user.id,
   });
@@ -114,10 +70,27 @@ async function startedDay() {
     sessionId: session.id,
   });
 
-  return { chapterId: chapters[1]?.id ?? "", goal, last, session, user };
+  const bank = await placementItemBank([skills[1]?.id ?? ""]);
+
+  return {
+    answersById: new Map(bank.flat().map(({ answer, item }) => [item.id, answer])),
+    chapterId: chapters[1]?.id ?? "",
+    goal,
+    last,
+    planItemId: planItems[1]?.id ?? "",
+    session,
+  };
 }
 
-async function passChapterTest({ chapterId, goalId }: { chapterId: string; goalId: string }) {
+async function passChapterTest({
+  answersById,
+  chapterId,
+  goalId,
+}: {
+  answersById: Awaited<ReturnType<typeof startedDay>>["answersById"];
+  chapterId: string;
+  goalId: string;
+}) {
   const testOut = await getChapterTestOut({ chapterId, goalId });
   const questions = testOut.status === "ready" ? testOut.testOut.questions : [];
   const finishDeferredWork = runDeferredWork();
@@ -127,7 +100,7 @@ async function passChapterTest({ chapterId, goalId }: { chapterId: string; goalI
     goalId,
     input: {
       answers: questions.map((question) => ({
-        answer: { selectedIndex: 0 },
+        answer: answersById.get(question.itemId) ?? { dontKnow: true },
         durationMs: 6000,
         itemId: question.itemId,
       })),
@@ -140,162 +113,75 @@ async function passChapterTest({ chapterId, goalId }: { chapterId: string; goalI
   return result;
 }
 
-async function expectCompletedDay({
-  goalId,
-  sessionId,
-  userId,
-}: {
-  goalId: string;
-  sessionId: string;
-  userId: string;
-}) {
-  await runOwedSettlements(userId);
+describe("a chapter test-out during a shown session", () => {
+  it.each(["pending", "active"] as const)(
+    "keeps its %s lesson and leaves the session open",
+    async (status) => {
+      const { answersById, chapterId, goal, last, planItemId, session } = await startedDay();
 
-  const [saved, ledger, followUps, today] = await Promise.all([
-    prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),
-    prisma.learningEvent.findFirstOrThrow({
-      where: { contentIds: { equals: sessionId, path: ["studySessionId"] }, kind: "session" },
-    }),
-    prisma.followUp.findMany({ select: { key: true, kind: true }, where: { userId } }),
-    getTodayView({ goalId, timeZone: "UTC" }),
-  ]);
+      if (status === "active") {
+        await startStudyBlock({ blockId: last.id, input: {}, sessionId: session.id });
+      }
 
-  expect(saved).toMatchObject({ endedAt: expect.any(Date), status: "completed" });
-  expect(ledger.endedAt).toStrictEqual(saved.endedAt);
-  expect(followUps).toContainEqual({ key: sessionId, kind: "prepareSession" });
-  expect(followUps).toContainEqual({ key: sessionId, kind: "rememberSession" });
+      await expect(
+        passChapterTest({ answersById, chapterId, goalId: goal.id }),
+      ).resolves.toMatchObject(PASSED);
 
-  expect(today).toMatchObject({
-    status: "ready",
-    today: { session: { state: "done", status: "completed" } },
-  });
-}
+      const [block, day, item] = await Promise.all([
+        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: last.id } }),
+        prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+        prisma.planItem.findUniqueOrThrow({ where: { id: planItemId } }),
+      ]);
 
-describe("a started day whose last open lesson a test-out takes away", () => {
-  it("completes, with its end ledger, memory and next preparation", async () => {
-    const { chapterId, goal, session, user } = await startedDay();
+      expect(block.status).toBe(status);
+      expect(day).toMatchObject({ endedAt: null, status: "active" });
+      expect(item.status).toBe("testedOut");
+    },
+  );
+});
 
-    await expect(passChapterTest({ chapterId, goalId: goal.id })).resolves.toMatchObject(PASSED);
-    await expectCompletedDay({ goalId: goal.id, sessionId: session.id, userId: user.id });
-  });
+describe("settlement after redundant teaching is removed", () => {
+  it("owes a separate settlement when completion elsewhere removes the last lesson", async () => {
+    const user = await userFixture();
 
-  it("completes when the learner had that lesson open", async () => {
-    const { chapterId, goal, last, session, user } = await startedDay();
+    const {
+      goal,
+      lessons: [learned, setAside],
+    } = await sessionGoalFixture({ challengesDone: true, lessons: 2, userId: user.id });
 
-    await startStudyBlock({ blockId: last.id, input: {}, sessionId: session.id });
-    await expect(passChapterTest({ chapterId, goalId: goal.id })).resolves.toMatchObject(PASSED);
+    const now = new Date();
 
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: last.id } }),
-    ).resolves.toMatchObject({ status: "skipped" });
-
-    await expectCompletedDay({ goalId: goal.id, sessionId: session.id, userId: user.id });
-  });
-
-  it("completes when the day's other lesson is set aside while the test-out skips this one", async () => {
-    const { session, setAside, testOut, user } = await startedDayOfTwoLessons();
-    const holding = Promise.withResolvers<null>();
-    const release = Promise.withResolvers<null>();
-
-    // Each write sees the other's block still open.
-    const settingAside = prisma.$transaction(async (tx) => {
-      await setAside(tx);
-      holding.resolve(null);
-      await release.promise;
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      startedAt: now,
+      status: "active",
+      userId: user.id,
     });
 
-    await holding.promise;
-    await testOut();
-    release.resolve(null);
-    await settingAside;
+    await Promise.all([
+      studySessionBlockFixture({ lessonId: learned!.id, position: 0, sessionId: session.id }),
+      studySessionBlockFixture({ lessonId: setAside!.id, position: 1, sessionId: session.id }),
+    ]);
+
+    await prisma.$transaction((tx) => moveOnWithoutLesson(tx, setAside!.id, randomUUID()));
     await runOwedSettlements(user.id);
 
-    await expect(
-      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
-    ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
-  });
+    const readDay = () => prisma.studySession.findUniqueOrThrow({ where: { id: session.id } });
+    await expect(readDay()).resolves.toMatchObject({ endedAt: null, status: "active" });
 
-  it("owes a settlement for each write that takes the day's blocks", async () => {
-    const { session, setAside, testOut, user } = await startedDayOfTwoLessons();
+    await writeLearnerChange({ planInputs: true, userId: user.id }, (tx) =>
+      completeLessonPlanItems(tx, { lessonId: learned!.id, now, userId: user.id }),
+    );
 
-    await prisma.$transaction((tx) => setAside(tx));
-    await testOut();
-
-    // The API drops a settlement whose key is already running, which may have read the day too early.
     await expect(
       prisma.followUp.count({ where: { kind: "settleSessionDay", userId: user.id } }),
     ).resolves.toBe(2);
 
     await runOwedSettlements(user.id);
 
-    await expect(
-      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
-    ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
-  });
-});
-
-describe("a day refilled after a test-out", () => {
-  it("replaces a tested-out lesson while another lesson is still pending, keeping the day's time", async () => {
-    const user = await userFixture();
-
-    const { goal, lessons, planItems } = await sessionGoalFixture({
-      challengesDone: true,
-      goal: { dailyMinutes: 8 },
-      lessons: 3,
-      userId: user.id,
+    await expect(readDay()).resolves.toMatchObject({
+      endedAt: expect.any(Date),
+      status: "completed",
     });
-
-    const session = await studySessionFixture({
-      goalId: goal.id,
-      plannedMinutes: 8,
-      startedAt: new Date(),
-      status: "active",
-      userId: user.id,
-    });
-
-    await Promise.all([
-      studySessionBlockFixture({
-        estimatedMinutes: 4,
-        lessonId: lessons[0]?.id,
-        position: 0,
-        sessionId: session.id,
-      }),
-      studySessionBlockFixture({
-        estimatedMinutes: 4,
-        lessonId: lessons[1]?.id,
-        position: 1,
-        sessionId: session.id,
-      }),
-      prisma.planItem.update({
-        data: { completedAt: new Date(), status: "testedOut" },
-        where: { id: planItems[0]?.id },
-      }),
-    ]);
-
-    mockSession(user.id);
-
-    await skipTestedOutBlocks({
-      goalId: goal.id,
-      notStarted: true,
-      planItemIds: [planItems[0]?.id ?? ""],
-    });
-
-    await runOwedSettlements(user.id);
-    const day = await getStudySession({ input: { timeZone: "UTC" }, sessionId: session.id });
-
-    expect(day).toMatchObject({
-      session: { minutes: { left: 8, planned: 8 }, status: "active" },
-      status: "ready",
-    });
-
-    if (day.status !== "ready") {
-      throw new Error(day.status);
-    }
-
-    expect(
-      day.session.blocks
-        .filter((block) => block.status === "pending")
-        .map((block) => block.lessonId),
-    ).toStrictEqual([lessons[1]?.id, lessons[2]?.id]);
   });
 });

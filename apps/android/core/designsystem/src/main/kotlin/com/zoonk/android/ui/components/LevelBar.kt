@@ -22,6 +22,20 @@ import androidx.compose.ui.unit.dp
 fun LevelBar(
     score: Double,
     modifier: Modifier = Modifier,
+) = LevelBands(modifier) { band -> bandFill(band, score) }
+
+/** The bands a skill's level lies within, [low] to [high] as indexes of A1 to C2, filled whole. */
+@Composable
+fun LevelRangeBar(
+    low: Int,
+    high: Int,
+    modifier: Modifier = Modifier,
+) = LevelBands(modifier) { band -> if (band in low..high) 1f else 0f }
+
+@Composable
+private fun LevelBands(
+    modifier: Modifier,
+    fillOf: (Int) -> Float,
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
@@ -36,7 +50,7 @@ fun LevelBar(
             val offset = band * (width + gap)
             val left = if (rtl) size.width - offset - width else offset
             drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
-            val filled = width * bandFill(band, score)
+            val filled = width * fillOf(band)
             if (filled > 0f) {
                 drawRoundRect(fill, Offset(if (rtl) left + width - filled else left, 0f), Size(filled, size.height), radius)
             }

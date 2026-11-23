@@ -27,6 +27,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import kotlinx.coroutines.CompletableDeferred
@@ -67,7 +68,7 @@ class FocusTestViewModelTest {
         val session = FakeSession(ana)
         val cache = AppCache(session, backgroundScope)
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), null, handle).also { models.put("$it", it) }
+        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), handle).also { models.put("$it", it) }
     }
 
     /** The proposal the result of [vm] would ask about when the test's latest answers propose [next]. */
@@ -108,6 +109,7 @@ class FocusTestViewModelTest {
                     override suspend fun startPlacementSitting(
                         session: AuthenticatedSession,
                         goalId: String,
+                        length: PlacementLength?,
                     ): Placement {
                         starts++
                         return answer.await()

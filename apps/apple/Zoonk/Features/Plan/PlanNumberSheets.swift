@@ -16,7 +16,8 @@ struct PlanStandingSheet: View {
       {
         readout(
           share: preparation.value,
-          text: preparation.value.formatted(.percent.precision(.fractionLength(0))),
+          text: preparation.value.formatted(
+            .percent.precision(.fractionLength(0)).locale(.appLanguage)),
           line: Text(
             "From what you've studied and how well you answer.", tableName: "Plan",
             comment: "What the exam preparation number is made of"))
@@ -230,6 +231,7 @@ struct PlanScheduleSheet: View {
       return String(
         localized: "Study \(minutes) more min a day for \(days) days to be up to date.",
         table: "Plan",
+        locale: .appLanguage,
         comment:
           "How much more time a day catches up with the plan; the first number is minutes, the second days"
       )
@@ -242,10 +244,10 @@ struct PlanScheduleSheet: View {
       return context.goal.kind == .exam
         ? String(
           localized: "Your exam date has passed with \(lessons) lessons left.", table: "Plan",
-          comment: "Lessons left once the exam's date passed")
+          locale: .appLanguage, comment: "Lessons left once the exam's date passed")
         : String(
           localized: "Your end date has passed with \(lessons) lessons left.", table: "Plan",
-          comment: "Lessons left once the goal's end date passed")
+          locale: .appLanguage, comment: "Lessons left once the goal's end date passed")
     case .challengesLeft:
       return (status.challenges ?? 0) == 1
         ? String(

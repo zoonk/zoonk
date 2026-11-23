@@ -38,6 +38,7 @@ import kotlinx.serialization.json.contentOrNull
 /** The screens one per question, before placement and the plan, that the dots count. */
 internal val QUESTION_SCREENS =
     setOf(
+        OnboardingStep.CONTENT_COUNTRY,
         OnboardingStep.PURPOSE,
         OnboardingStep.ROLE,
         OnboardingStep.REASON,
@@ -278,7 +279,6 @@ internal class GoalSetupViewModel(
         private set
 
     /** How far a placement test is while it asks, which takes the step dots' place and Back's. */
-    var placementProgressLabel by mutableStateOf<String?>(null)
     var placementProgress by mutableStateOf<Float?>(null)
 
     val goalId: String get() = flow.goalId

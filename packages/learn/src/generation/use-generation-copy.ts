@@ -270,6 +270,8 @@ export function useGenerationCopy(kind: GenerationKind): {
   name: string;
   phases: Record<string, PhaseCopy>;
 } {
+  const placement = usePlacementCopy();
+
   const copy = {
     challenge: useChallengeCopy(),
     challengeQuestions: useChallengeQuestionsCopy(),
@@ -282,7 +284,8 @@ export function useGenerationCopy(kind: GenerationKind): {
     lesson: useLessonCopy(),
     levelTestBank: useLevelTestBankCopy(),
     mockPaper: useMockPaperCopy(),
-    placement: usePlacementCopy(),
+    placement,
+    placementQuestions: placement,
     setupLesson: useSetupLessonCopy(),
     speakingMock: useSpeakingMockCopy(),
     speakingPaper: useSpeakingPaperCopy(),

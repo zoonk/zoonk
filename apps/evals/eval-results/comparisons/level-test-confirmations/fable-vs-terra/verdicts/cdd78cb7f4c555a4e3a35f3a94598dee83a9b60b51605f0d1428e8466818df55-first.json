@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0017255399999999998,
+  "failures": [],
+  "packetId": "cdd78cb7f4c555a4e3a35f3a94598dee83a9b60b51605f0d1428e8466818df55",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions use a simple, stated fact suitable for A1; the difference is only in the answer key.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A marks the two supported statements, while B incorrectly marks the bus as leaving at nine instead of ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message and Portuguese question and options, as appropriate for the learner.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 as correct, but the message says the bus leaves at ten, not nine.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the message carefully would be told to select a false statement.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct answer key; B incorrectly includes a statement contradicted by the message."
+        },
+        "pairId": "59442378-a6f8-4764-8b8f-50cb55b3ea55"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions ask learners to connect stated details or follow event order, and include distractors that test those skills.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked options in both versions match the passages, and the unmarked options are contradicted by them.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide Mexican Spanish passages and English questions and options for US English speakers.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and their passages, questions, options, and keys are suitable for the stated task."
+        },
+        "pairId": "793cd117-c533-4e35-91a0-f62e9bd0d3f5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask learners to connect details or follow a short sequence, rather than rely only on recognizing a time or place.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked options in both versions are supported by the passages, and the remaining options are not.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide Mexican Spanish passages and English questions and options for US English speakers.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both versions fit the A2 task and have accurate answer keys; neither offers a noticeable advantage for the learner."
+        },
+        "pairId": "aaf8a9c7-564d-4402-a31f-be2b01f641db"
+      }
+    ]
+  }
+}

@@ -166,7 +166,7 @@ struct StepSender {
 
 struct StepHeader: View {
   var subject: String?
-  var subjectFacts: [String] = []
+  var position: Text?
   let title: Text
   var description: Text?
   /// The plan's reveal ends setup: no step after it has a title to line up with.
@@ -185,8 +185,8 @@ struct StepHeader: View {
     Section {
       PageHeader(
         title,
-        chip: subjectFacts.isEmpty
-          ? subject.map { Chip(Text(verbatim: $0)) } : Chip(facts: subjectFacts),
+        chip: subject.map { Chip(Text(verbatim: $0)) },
+        position: position,
         keepsChipRoom: keepsChipRoom,
         supporting: description
       )

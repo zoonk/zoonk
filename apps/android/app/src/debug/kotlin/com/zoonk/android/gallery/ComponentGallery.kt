@@ -898,7 +898,7 @@ private fun Audio() {
         }
         SpeechFailedNote(language = "it", limit = null, onRetry = {}, navigator = navigator, text = "Vorrei un caffè, per favore.")
         SpeechFailedNote(language = "it", limit = Limit.SignUpRequired, onRetry = {}, navigator = navigator)
-        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
+        MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
     }
 }
 

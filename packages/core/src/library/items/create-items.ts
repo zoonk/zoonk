@@ -50,6 +50,9 @@ async function storeBatch({
         mediaAssetId: pictured ? { not: null } : null,
         runId: provenance.runId,
         skillId,
+        ...(format === "multipleChoice"
+          ? { content: { equals: answerFormat.select ?? 1, path: ["select"] } }
+          : {}),
       },
     });
 

@@ -3,45 +3,60 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
-import { listPlacementListeningAreas } from "../../../plans/_utils/load-listening-starts";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/plan-setup-tasks";
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
+import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
-export async function loadPlacement({
+async function loadPlacement({
   goalId,
   plan,
+  timeZone = "UTC",
   userId,
   tx = prisma,
 }: {
   goalId: string;
   plan?: GoalPlan;
+  timeZone?: string;
   userId: string;
   tx?: TransactionClient;
-}): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
+}): Promise<{ goalPlan: GoalPlan; state: PlacementState }> {
   const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
-  const state = await loadPlacementState({ goalId, plan: goalPlan, tx, userId });
 
-  const pastBasicsAreas = await listPlacementListeningAreas({
+  const loaded = await loadPlacementState({
     goalId,
-    knownSkillIds: state.knownSkillIds,
-    skills: goalPlan.skills,
+    ignoreAttempt: true,
+    plan: goalPlan,
     tx,
     userId,
   });
 
-  return { goalPlan, pastBasicsAreas, state };
+  const { confirmed } = await loadSkillConfirmations({
+    goalId,
+    skillIds: loaded.knownSkillIds,
+    timeZone,
+    tx,
+    userId,
+  });
+
+  const state = {
+    ...loaded,
+    knownSkillIds: loaded.knownSkillIds.filter((skillId) => confirmed.has(skillId)),
+  };
+
+  return { goalPlan, state };
 }
 
 /** Announces skipped items with an undo; changeId is null when nothing can be announced yet. */
 export async function applyPlacement({
   announceAlso,
   extraWrites,
-  followToday = true,
+  followToday = false,
   goalId,
+  livingPlanDay,
   now,
   plan,
   testedOutAt = now,
@@ -54,6 +69,7 @@ export async function applyPlacement({
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   followToday?: boolean;
   goalId: string;
+  livingPlanDay?: string;
   now: Date;
   plan?: GoalPlan;
   /** When the items are tested out: `now`, unless a retry keeps an earlier attempt's time. */
@@ -62,18 +78,18 @@ export async function applyPlacement({
   userId: string;
 }): Promise<{
   changeId: string | null;
-  pastBasicsAreas: string[];
+  lessonsSkipped: number;
   state: PlacementState;
   testedOutPlanItemIds: string[];
 }> {
-  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, plan, userId });
+  const { goalPlan, state } = await loadPlacement({ goalId, plan, timeZone, userId });
 
   await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
   const {
     changeId,
-    pastBasicsAdded,
+    lessonsSkipped,
     planItemIds: testedOutPlanItemIds,
   } = await markPlanItemsTestedOut({
     announceAlso,
@@ -82,8 +98,8 @@ export async function applyPlacement({
     goalId,
     items: goalPlan.items,
     knownSkillIds: new Set(state.knownSkillIds),
+    livingPlanDay,
     now,
-    pastBasicsAreas,
     placedSkills: goalPlan.skills,
     testedOutAt,
     timeZone,
@@ -91,7 +107,7 @@ export async function applyPlacement({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  return { changeId, pastBasicsAreas: pastBasicsAdded, state, testedOutPlanItemIds };
+  return { changeId, lessonsSkipped, state, testedOutPlanItemIds };
 }
 
 /** A learner who declined placement and later started the Focus test has answers to apply. */

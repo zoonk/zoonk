@@ -1,12 +1,12 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
+import { generateLevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank";
+import { writtenLevel, writtenPart } from "@zoonk/ai/tasks/language/level-test-bank-fixture";
 import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
 import { FatalError } from "workflow";
 import { start } from "workflow/api";
-import { writtenLevel } from "../_test-utils/level-test-bank";
 import { readStreamToEnd } from "../_test-utils/read-run-stream";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
@@ -16,13 +16,13 @@ vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/language/check-level-test-questions", async (importOriginal) => {
-  const { checkLikeTheKeys } = await import("../_test-utils/level-test-bank");
+  const { checkLikeTheKeys } = await import("@zoonk/ai/tasks/language/level-test-bank-fixture");
   return { ...(await importOriginal<object>()), checkLevelTestQuestions: vi.fn(checkLikeTheKeys) };
 });
 
 vi.mock("@zoonk/ai/tasks/language/level-test-bank", async (importOriginal) => ({
   ...(await importOriginal<object>()),
-  generateLevelTestBankLevel: vi.fn(),
+  generateLevelTestBankPart: vi.fn(),
 }));
 
 // Steps upload to Vercel Blob, which has no store in tests.
@@ -32,8 +32,8 @@ vi.mock("@vercel/blob", async (importOriginal) => ({
 }));
 
 function mockWriter(passage: string) {
-  vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage }),
+  vi.mocked(generateLevelTestBankPart).mockImplementation(async ({ level, part }) =>
+    writtenPart({ level, part, passage }),
   );
 }
 
@@ -54,13 +54,34 @@ function uniquePair() {
 }
 
 describe(levelTestBankWorkflow, () => {
-  it("ends the run's stream once the bank is ready", async () => {
-    mockWriter(crypto.randomUUID());
+  it("retries only the failed writing call and ends the stream once the bank is ready", async () => {
+    const passage = crypto.randomUUID();
+    const attempts = new Map<string, number>();
+
+    vi.mocked(generateLevelTestBankPart).mockImplementation(async ({ level, part }) => {
+      const key =
+        part === "confirmations"
+          ? `${level}-confirmations`
+          : [level, part.skill, part.offset].join("-");
+
+      const attempt = (attempts.get(key) ?? 0) + 1;
+      attempts.set(key, attempt);
+
+      if (key === "B2-listening-4" && attempt === 1) {
+        throw new Error("Provider temporarily unavailable");
+      }
+
+      return writtenPart({ level, part, passage });
+    });
+
     vi.mocked(generateLanguageAudio).mockResolvedValue(voiced());
 
     const run = await start(levelTestBankWorkflow, [{ pair: uniquePair() }]);
 
     await expect(run.returnValue).resolves.toStrictEqual({ status: "written" });
+
+    expect(attempts.size).toBe(42);
+    expect([...attempts].filter(([, count]) => count !== 1)).toStrictEqual([["B2-listening-4", 2]]);
 
     await expect(readStreamToEnd(run)).resolves.toStrictEqual(
       expect.stringContaining(`"step":"${LEVEL_TEST_BANK_READY_STEP}"`),
@@ -68,7 +89,7 @@ describe(levelTestBankWorkflow, () => {
   });
 
   it("ends the run's stream when the bank can't be written", async () => {
-    vi.mocked(generateLevelTestBankLevel).mockRejectedValue(new FatalError("No model answered"));
+    vi.mocked(generateLevelTestBankPart).mockRejectedValue(new FatalError("No model answered"));
 
     const run = await start(levelTestBankWorkflow, [{ pair: uniquePair() }]);
 
@@ -99,7 +120,7 @@ describe(levelTestBankWorkflow, () => {
     const run = await start(levelTestBankWorkflow, [{ pair }]);
 
     await expect(run.returnValue).resolves.toStrictEqual({ status: "written" });
-    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(5);
+    expect(generateLevelTestBankPart).toHaveBeenCalledTimes(42);
 
     expect(Object.fromEntries(tries)).toStrictEqual({
       [`${passage} A1`]: 1,
@@ -107,6 +128,7 @@ describe(levelTestBankWorkflow, () => {
       [`${passage} B1`]: 4,
       [`${passage} B2`]: 1,
       [`${passage} C1`]: 1,
+      [`${passage} C2`]: 1,
     });
 
     const clips = await prisma.mediaAsset.findMany({
@@ -120,6 +142,7 @@ describe(levelTestBankWorkflow, () => {
       `${passage} A2`,
       `${passage} B2`,
       `${passage} C1`,
+      `${passage} C2`,
     ]);
   });
 });

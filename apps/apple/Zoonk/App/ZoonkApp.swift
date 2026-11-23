@@ -48,6 +48,7 @@ struct ZoonkApp: App {
         }
         .appDependencies(dependencies)
         .zoonkStyles()
+        .environment(\.locale, .appLanguage)
     }
   }
 }

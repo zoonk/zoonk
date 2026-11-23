@@ -67,6 +67,8 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.materialCitationLabel
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.MaterialCitation
 
@@ -334,7 +336,7 @@ internal fun AttachedChips(
         }
         if (limitReached != null) {
             Text(
-                stringResource(R.string.onboarding_material_limit, limitReached),
+                stringResource(R.string.onboarding_material_limit, formatNumber(limitReached.toDouble(), currentLocale())),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,

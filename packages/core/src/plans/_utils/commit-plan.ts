@@ -16,6 +16,7 @@ import {
 import { writePlan } from "./write-plan";
 
 export async function commitPlan({
+  afterChange,
   change,
   changeDay,
   computed,
@@ -25,9 +26,11 @@ export async function commitPlan({
   owe,
   phaseDates,
   restorable = null,
+  snapshotContext = context,
   revalidation = "now",
   replacement,
 }: {
+  afterChange?: (tx: TransactionClient, changeId: string) => Promise<unknown>;
   replacement?: ProposalReplacement;
   change: PlanChangeRecord | null;
   /** Receives the original day in the undo snapshot before updating its blocks. */
@@ -35,9 +38,10 @@ export async function commitPlan({
   computed: ComputedPlan;
   context: PlanContext;
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
-  keepsOpenUndo?: boolean;
+  keepsOpenUndo?: Parameters<typeof writePlan>[0]["keepsOpenUndo"];
   owe?: Parameters<typeof writePlan>[0]["owe"];
   restorable?: string | null;
+  snapshotContext?: PlanContext;
   phaseDates?: Pick<Parameters<typeof preparePhaseDatesProposal>[0], "mode" | "pace" | "planning">;
   revalidation?: PlanTagRevalidation;
 }): Promise<string | null> {
@@ -85,10 +89,14 @@ export async function commitPlan({
         })
       : null;
 
+    if (created) {
+      await afterChange?.(tx, created.id);
+    }
+
     const undoable = created && isUndoableChange(created) ? created.id : restorable;
 
     if (undoable) {
-      await savePlanSnapshot({ changeId: undoable, context, tx });
+      await savePlanSnapshot({ changeId: undoable, context: snapshotContext, tx });
     }
 
     await changeDay?.(tx);

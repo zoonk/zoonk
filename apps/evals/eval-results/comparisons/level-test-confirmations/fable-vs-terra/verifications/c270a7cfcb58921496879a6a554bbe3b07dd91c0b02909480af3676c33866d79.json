@@ -1,0 +1,180 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "1101371f2da53e0d",
+        "criterion": "answers",
+        "observationId": "4aab925a265ec69227e64fb841fc992711ccf4a1c79232ff26e99f3339af4309.first.abb23173-2c9c-4ea7-8c76-9bb527fe1516.0",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "90e9bd68a9f1572b",
+        "criterion": "language",
+        "observationId": "4aab925a265ec69227e64fb841fc992711ccf4a1c79232ff26e99f3339af4309.first.abb23173-2c9c-4ea7-8c76-9bb527fe1516.1",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "c55201f10d86207e",
+        "criterion": "answers",
+        "observationId": "4aab925a265ec69227e64fb841fc992711ccf4a1c79232ff26e99f3339af4309.first.abb23173-2c9c-4ea7-8c76-9bb527fe1516.3",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0011861999999999999,
+    "id": "c270a7cfcb58921496879a6a554bbe3b07dd91c0b02909480af3676c33866d79",
+    "packet": [
+      {
+        "A": {
+          "blob": "412b74bed90f509d794e3224d186ec0f8b1c966f6b8f7557561e4238a53c5e25",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a32e3daf1ebc476e49eee616bcc5fe6d3f69ce79932823870c41f5502e8d45fa",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "None of the wrong options in item 1 ('preta', 'livraria', 'quinta-feira') and 'vinte dólares' in item 4 come from values stated for something else in the passage, breaking the written distractor expectation.",
+            "claimId": "1101371f2da53e0d",
+            "criterion": "answers",
+            "location": {
+              "detail": "confirmations 1 and 4 options",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Item 4 ('It's twelve dollars, please.' with question 'O que o entregador diz na porta?') is an in-person exchange at the door rather than a voice message, breaking the expectation of two voice messages.",
+            "claimId": "90e9bd68a9f1572b",
+            "criterion": "language",
+            "location": {
+              "detail": "O que o entregador diz na porta?",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Options 1 ('Às 3 da tarde.') and 3 ('Às 9 da manhã.') in the third item use times that do not appear anywhere in the passage, breaking the expectation that wrong options be other values of the same kind the text gives for something else.",
+            "claimId": "c55201f10d86207e",
+            "criterion": "answers",
+            "location": {
+              "detail": "\"Às 3 da tarde.\"",
+              "kind": "quote"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "0a5d17ddd43202f9ccdd62a00b8775e2e1740e4293dd670aab02be1a5b1e7533",
+          "format": "text"
+        },
+        "input": {
+          "blob": "befd6f9310301606e2449f203fe1b8342929cc4d3ea2fd4e317e6c30757059f4",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "“Às 9 da manhã” não aparece na mensagem, que cita 10h e 14h hoje e 16h amanhã.",
+            "output": "B"
+          },
+          {
+            "claim": "Vários distratores apresentam valores que não aparecem no respectivo texto, em vez de usar outros valores do mesmo tipo mencionados nele; por exemplo, carteira preta, livraria e quinta-feira no primeiro conjunto.",
+            "output": "A"
+          },
+          {
+            "claim": "The wallet question’s wrong color, place, and day options are not other values supplied by that passage for something else; the passage gives no alternative wallet color, location, or day.",
+            "output": "A"
+          },
+          {
+            "claim": "In the appointment question, 3 p.m. and 9 a.m. are wrong options but are not other times stated in the passage for something else; only 4 p.m. is an alternative time stated for tomorrow.",
+            "output": "B"
+          }
+        ]
+      },
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "7cd03f873a414a60",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "c8ddf7c8d6b54b74",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "1101371f2da53e0d",
+          "finding": "holds",
+          "reason": "In A, the cited wrong options (black, bookstore, Thursday, and twenty dollars) are not values the passage gives for something else. In B, the comparable distractors reuse details from the passage for different items, such as blue from the hat and bag from the red bag."
+        },
+        {
+          "claimId": "90e9bd68a9f1572b",
+          "finding": "holds",
+          "reason": "A frames the delivery as an in-person exchange at the door, not a voice message. B’s corresponding delivery text does not specify an in-person exchange."
+        },
+        {
+          "claimId": "c55201f10d86207e",
+          "finding": "holds for both",
+          "reason": "In B, 3 p.m. and 9 a.m. do not appear in the passage; in A’s corresponding item, 2 p.m. and 4:30 p.m. likewise do not appear as stated times. Both outputs therefore use wrong time options that are not other times supplied by their passages."
+        },
+        {
+          "claimId": "7cd03f873a414a60",
+          "finding": "holds",
+          "reason": "The message says the bus leaves at ten, so option 2 is false, and says the cafe is next to the shop, so option 3 is true. A’s key incorrectly lists 1 and 2; B’s key lists 1 and 3."
+        },
+        {
+          "claimId": "c8ddf7c8d6b54b74",
+          "finding": "doesn't hold",
+          "reason": "B’s key lists options 1 and 3, not option 2 (“O ônibus sai às nove”), so it does not include the false statement that the bus leaves at nine."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

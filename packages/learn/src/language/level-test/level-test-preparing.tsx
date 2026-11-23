@@ -16,11 +16,14 @@ import {
 } from "../../onboarding/onboarding-frame";
 
 export function LevelTestPreparing({
+  fromPlan = false,
   onSkip,
   run,
   skipping,
   targetLanguage,
 }: {
+  /** Taken from the plan, which already starts at a level: leaving just goes back to it. */
+  fromPlan?: boolean;
   onSkip: () => void;
   run: GenerationRun;
   skipping: boolean;
@@ -34,17 +37,19 @@ export function LevelTestPreparing({
       bar={
         <OnboardingActions
           note={
-            <OnboardingActionsNote>
-              {t("Your plan starts from the level you gave, and your first days fine-tune it.")}
-            </OnboardingActionsNote>
+            !fromPlan && (
+              <OnboardingActionsNote>
+                {t("Your plan starts from the level you gave, and your first days fine-tune it.")}
+              </OnboardingActionsNote>
+            )
           }
         >
           <OnboardingSecondaryButton
             busy={skipping}
-            icon={<SkipForwardIcon aria-hidden="true" />}
+            icon={fromPlan ? undefined : <SkipForwardIcon aria-hidden="true" />}
             onClick={onSkip}
           >
-            {t("Skip the test")}
+            {fromPlan ? t("Not now") : t("Skip the test")}
           </OnboardingSecondaryButton>
         </OnboardingActions>
       }

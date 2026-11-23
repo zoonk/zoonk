@@ -27,6 +27,7 @@ import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
 import { loadDayWriting } from "./day-writing";
 import { getExamPrepAccess } from "./exam-access";
+import { loadLivingPlanSignals } from "./living-plan-session";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
@@ -126,6 +127,46 @@ type SessionBuildContext = BuildContext & {
   dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
 };
 
+function toDayPracticeQuery({
+  claims,
+  context: { goal, localDate, now, userId },
+  field,
+  fullReview,
+  heldSkillIds,
+  isReviewDay,
+  lessonsLeft,
+  plan,
+  skillIds,
+}: Pick<DayPracticeQuery, "claims" | "field" | "skillIds"> & {
+  context: SessionBuildContext;
+  fullReview: boolean;
+  heldSkillIds: DayPracticeQuery["firstSkillIds"];
+  isReviewDay: boolean;
+  lessonsLeft: boolean;
+  plan: Awaited<ReturnType<typeof loadDayPlan>>;
+}): DayPracticeQuery {
+  return {
+    claims,
+    difficultyBias: getPracticeDifficulty({
+      daysToExam: getDaysToExam({ targetDate: goal.targetDate, today: localDate }),
+      hasLessonsLeft: lessonsLeft,
+      settings: plan.settings,
+    }),
+    everySkill: fullReview,
+    examBlueprintId: goal.examBlueprintId,
+    field,
+    firstSkillIds: heldSkillIds,
+    ...getPracticeWeights({ ...plan, isReviewDay }),
+    listeningSkillIds: plan.listeningSkillIds,
+    maxMinutes: plan.dayMinutes,
+    now,
+    repeatOnlyMissed: isReviewDay,
+    skillIds,
+    typed: practicesShortAnswers({ goal, structure: plan.structure }),
+    userId,
+  };
+}
+
 /** Loads day inputs without persisting a session; selected plans and supplied facts must remain the caller's chosen state. */
 export async function loadSessionBuildInput(
   context: SessionBuildContext,
@@ -135,7 +176,7 @@ export async function loadSessionBuildInput(
   const plan = await (context.dayPlan ?? loadDayPlan(context));
   const awaitingOutlines = plan.outlines === "awaiting";
 
-  const { dayMinutes, listeningSkillIds, textSkillIds } = plan;
+  const { dayMinutes, textSkillIds } = plan;
   const skillIds = plan.skills.map((skill) => skill.id);
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
@@ -158,7 +199,17 @@ export async function loadSessionBuildInput(
 
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal });
 
-  const review = toReviewInput({ context, field, netScored, plan });
+  const signals = await loadLivingPlanSignals({
+    goal,
+    localDate,
+    plan,
+    timeZone: context.timeZone,
+  });
+
+  const review = {
+    ...toReviewInput({ context, field, netScored, plan }),
+    confirmSkillIds: signals.earlyReviewSkillIds,
+  };
 
   const dayLessons = loadDayPlanLessons({
     dayMinutes,
@@ -225,26 +276,17 @@ export async function loadSessionBuildInput(
   const fullReview = weekly.plusRequired;
   const isReviewDay = fullReview || reviewDay !== null;
 
-  const practiceQuery: DayPracticeQuery = {
+  const practiceQuery = toDayPracticeQuery({
     claims,
-    difficultyBias: getPracticeDifficulty({
-      daysToExam: getDaysToExam({ targetDate: goal.targetDate, today: localDate }),
-      hasLessonsLeft: learnItems.length > 0,
-      settings: plan.settings,
-    }),
-    everySkill: fullReview,
-    examBlueprintId: goal.examBlueprintId,
+    context,
     field,
-    firstSkillIds: heldSkillIds,
-    ...getPracticeWeights({ ...plan, isReviewDay }),
-    listeningSkillIds,
-    maxMinutes: dayMinutes,
-    now,
-    repeatOnlyMissed: isReviewDay,
+    fullReview,
+    heldSkillIds,
+    isReviewDay,
+    lessonsLeft: learnItems.length > 0,
+    plan,
     skillIds: fullReview ? testSkillIds : skillIds,
-    typed: practicesShortAnswers({ goal, structure: plan.structure }),
-    userId,
-  };
+  });
 
   const base: Omit<SessionBuildInput, keyof DayWork> = {
     allowsReviewLessons,
@@ -274,7 +316,7 @@ export async function loadSessionBuildInput(
     unwritten: getDayUnwrittenTime({ reservedItems, today: localDate }),
   };
 
-  const work = { context, dueCapsules, isReviewDay, plan, practiceQuery };
+  const work = { context, dueCapsules, isReviewDay, plan, practiceQuery, signals };
 
   return loadHeldDayInput({
     checkpoints,

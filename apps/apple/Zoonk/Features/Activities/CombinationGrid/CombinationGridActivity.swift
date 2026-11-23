@@ -210,6 +210,7 @@ private struct CombinationGridCanvas: View {
 
       return String(
         localized: "Squares showing \(what): \(counted.count) of \(total)", table: "Activities",
+        locale: .appLanguage,
         comment:
           "How many squares of the grid show one result, such as \"Squares showing 7: 6 of 36\". The first value is that result."
       )
@@ -225,13 +226,15 @@ private struct CombinationGridCanvas: View {
       }.count
       return String(
         localized: "\(rightCount) of \(total) squares right", table: "Activities",
+        locale: .appLanguage,
         comment: "After the check: how many squares of a grid the learner filled right")
     }
 
     guard let traits = fields.traits else {
       return String(
         localized: "\(fill.compactMap(\.self).count) of \(total) squares filled",
-        table: "Activities", comment: "How many squares of a grid the learner filled")
+        table: "Activities", locale: .appLanguage,
+        comment: "How many squares of a grid the learner filled")
     }
 
     let filled = fill.compactMap(\.self)
@@ -240,7 +243,8 @@ private struct CombinationGridCanvas: View {
     return String(
       localized:
         "\(traits.dominant): \(dominant) of \(total)\u{00A0}· \(traits.recessive): \(filled.count - dominant) of \(total)",
-      table: "Activities", comment: "The tally of each trait under a Punnett square")
+      table: "Activities", locale: .appLanguage,
+      comment: "The tally of each trait under a Punnett square")
   }
 
   private var palette: some View {

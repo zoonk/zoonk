@@ -373,16 +373,21 @@ final class OnboardingStore {
     return try await api.placement(goalID: goalID, token: token)
   }
 
+  /// `attempt` is the test taken from the plan the answer counts in; nil for onboarding's and the
+  /// Focus test.
   func answerPlacement(
     goalID: String,
     itemID: String,
     answer: PracticeAnswer,
-    duration: Duration
+    duration: Duration,
+    attempt: PlacementAttempt? = nil
   ) async throws -> Components.Schemas.PlacementAnswerResult {
     let input = Components.Schemas.PlacementAnswerInput(
       answer: try PracticeJSON.recode(answer),
       durationMs: Int(duration.components.seconds * 1000),
       itemId: itemID,
+      attemptId: attempt?.id,
+      part: attempt?.part,
       timeZone: TimeZone.current.identifier)
 
     return try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
@@ -406,6 +411,25 @@ final class OnboardingStore {
   func startPlacementSitting(goalID: String) async throws -> GoalPlacement {
     try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
       try await api.startPlacementSitting(goalID: goalID, token: identity.bearerToken)
+    }
+  }
+
+  /// The test taken from the plan: opens one of this length, or the next part of the open one.
+  func startPlacementTest(goalID: String, length: PlacementLength) async throws -> GoalPlacement {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.startPlacementTest(goalID: goalID, length: length, token: identity.bearerToken)
+    }
+  }
+
+  /// Closing a part applies what it skipped to the plan.
+  func finishPlacementPart(goalID: String, attempt: PlacementAttempt) async throws
+    -> PlacementPartOutcome
+  {
+    try await cache.onboardingWrite(
+      invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
+    ) { [api] identity in
+      try await api.finishPlacementPart(
+        goalID: goalID, attemptID: attempt.id, part: attempt.part, token: identity.bearerToken)
     }
   }
 
@@ -502,14 +526,6 @@ final class OnboardingStore {
     }
   }
 
-  func levelTest(goalID: String) async throws -> LevelTest {
-    guard let token = session.authenticatedSession?.bearerToken else {
-      throw CancellationError()
-    }
-
-    return try await api.levelTest(goalID: goalID, token: token)
-  }
-
   /// Only from the learner's tap; nil once the questions are written.
   func prepareLevelTest(goalID: String) async throws -> String? {
     try await cache.onboardingWrite { [api] identity in
@@ -517,15 +533,18 @@ final class OnboardingStore {
     }
   }
 
+  /// `answerIndices` answers a confirmation, where every right option is picked.
   func answerLevelTest(
     goalID: String,
     questionID: String,
     answerIndex: Int?,
+    answerIndices: [Int]? = nil,
     skipped: Bool,
-    duration: Duration
+    duration: Duration,
+    attemptID: String
   ) async throws -> LevelTest {
     let input = Components.Schemas.LanguageLevelTestAnswerInput(
-      answerIndex: answerIndex,
+      answerIndex: answerIndex, answerIndices: answerIndices, attemptId: attemptID,
       durationMs: Int(duration.components.seconds * 1000), questionId: questionID,
       skipped: skipped ? true : nil)
 
@@ -534,14 +553,64 @@ final class OnboardingStore {
     }
   }
 
-  func finishLevelTest(goalID: String) async throws {
-    try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
-      [api] identity in
-      try await api.finishLevelTest(goalID: goalID, token: identity.bearerToken)
+  func languageTest(goalID: String, attemptID: String? = nil) async throws -> LevelTest {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
     }
 
-    // The finish writes the tested level into the goal, which the plan so far shows beside the result.
+    return try await api.languageTest(goalID: goalID, attemptID: attemptID, token: token)
+  }
+
+  /// The level test taken from the plan, which starts writing its questions when they don't exist.
+  func startLanguageTest(goalID: String, length: PlacementLength) async throws -> LevelTest {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.startLanguageTest(goalID: goalID, length: length, token: identity.bearerToken)
+    }
+  }
+
+  func finishLanguageTest(goalID: String, attemptID: String?) async throws -> PlacementTestResult? {
+    let result = try await cache.onboardingWrite(
+      invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
+    ) { [api] identity in
+      try await api.finishLanguageTest(
+        goalID: goalID, attemptID: attemptID, token: identity.bearerToken)
+    }
+
     onboarding(goalID: goalID).invalidate()
+    return result
+  }
+
+  func levelTestOut(goalID: String, attemptID: String) async throws -> LevelTestOut {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.levelTestOut(goalID: goalID, attemptID: attemptID, token: token)
+  }
+
+  func startLevelTestOut(goalID: String, level: String) async throws -> LevelTestOut {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.startLevelTestOut(goalID: goalID, level: level, token: identity.bearerToken)
+    }
+  }
+
+  func answerLevelTestOut(
+    goalID: String, attemptID: String, itemID: String, answer: PracticeAnswer, duration: Duration
+  ) async throws -> LevelTestOut {
+    try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
+      try await api.answerLevelTestOut(
+        goalID: goalID, attemptID: attemptID, itemID: itemID, answer: answer,
+        durationMs: Int(duration.components.seconds * 1000), token: identity.bearerToken)
+    }
+  }
+
+  func finishLevelTestOut(goalID: String, attemptID: String) async throws -> LevelTestOut {
+    try await cache.onboardingWrite(
+      invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
+    ) { [api] identity in
+      try await api.finishLevelTestOut(
+        goalID: goalID, attemptID: attemptID, token: identity.bearerToken)
+    }
   }
 
   /// A goal made from a draft's card. A create the server answered changes the draft only if it made

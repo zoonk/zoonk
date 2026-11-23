@@ -113,9 +113,10 @@ class OnboardingBarTest {
         assertEquals(confirmationAction("Fix something").top, confirmationAction("Looks right").top)
     }
 
+    /** Twice the font size, so the two labels no longer fit one line. */
     @Test
-    @Config(qualifiers = "w360dp-h640dp-xxhdpi", fontScale = 1.3f)
-    fun largeTextStacksFullWidthConfirmationActions() {
+    @Config(qualifiers = "w360dp-h640dp-xxhdpi", fontScale = 2f)
+    fun labelsTooWideForOneLineStackAtFullWidth() {
         showUnderstood()
         write("understood-tall-phone-large-text")
 

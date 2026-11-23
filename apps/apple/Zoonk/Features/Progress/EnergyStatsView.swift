@@ -30,7 +30,10 @@ private struct EnergyTiles: View {
         label: Text(
           "Days at 100%", tableName: "Progress",
           comment: "Tile: how many days the learner's Energy was full"),
-        value: Text(verbatim: energy.insights.map { $0.fullEnergyDays.formatted() } ?? "–"),
+        value: Text(
+          verbatim: energy.insights.map {
+            $0.fullEnergyDays.formatted(.number.locale(.appLanguage))
+          } ?? "–"),
         systemImage: "battery.100percent", tone: .energy)
     }
   }

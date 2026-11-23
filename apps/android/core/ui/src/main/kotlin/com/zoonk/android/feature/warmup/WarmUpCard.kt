@@ -22,14 +22,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,7 +56,6 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.LocalEventTracker
-import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.progress
 import com.zoonk.android.data.value
@@ -362,10 +358,12 @@ private fun WaitStrip(
     }
 }
 
+/** Main's `WaitSlot`: the quiz's way on in the bar, on a line of its own on a phone. */
 @Composable
 fun WaitQuizAction(
     quiz: WaitQuizState,
     hold: ReadyHold,
+    modifier: Modifier = Modifier,
     progressBeside: Boolean = false,
 ) {
     val label =
@@ -377,7 +375,7 @@ fun WaitQuizAction(
         }
     OutlinedButton(
         onClick = { if (quiz.showingProgress && !progressBeside) quiz.showQuiz(hold) else quiz.next() },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         trailingIcon = ForwardIcon.takeIf { label == R.string.warm_up_next },
     ) { Text(stringResource(label)) }
 }

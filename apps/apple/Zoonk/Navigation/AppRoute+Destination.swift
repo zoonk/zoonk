@@ -131,6 +131,10 @@ extension AppRoute {
       TestOutScreen(chapterId: chapterId, resultId: resultId)
     case .focusTest(let goalId, let startsTest):
       FocusTestScreen(goalId: goalId, startsTest: startsTest)
+    case .placementTest(let goalId):
+      PlacementTestScreen(goalId: goalId)
+    case .levelTest(let goalId, let testOutFirst):
+      LevelTestScreen(goalId: goalId, testOutFirst: testOutFirst)
     case .challenge(let planItemId, let sessionId):
       ChallengeScreen(planItemId: planItemId, sessionId: sessionId)
     case .checkpoint(let blockId, let sessionId):

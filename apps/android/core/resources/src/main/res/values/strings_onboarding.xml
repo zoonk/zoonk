@@ -180,7 +180,7 @@
     <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
     <string name="onboarding_material_unreadable_state">Can\'t be read</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
-    <string name="onboarding_material_limit">%1$d files is the most for one goal. Remove one to add another.</string>
+    <string name="onboarding_material_limit">%1$s files is the most for one goal. Remove one to add another.</string>
     <string name="onboarding_intent_title">What do you want to do?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Prepare for an exam</string>
@@ -201,15 +201,6 @@
     <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
 
     <!-- Placement: a few questions that find where the plan starts. -->
-    <string name="onboarding_placement_title">Let\'s see what you already know</string>
-    <!-- %d is how many areas of the goal the questions cover. -->
-    <plurals name="onboarding_placement_description_areas">
-        <item quantity="one">A few quick questions about %d area, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
-        <item quantity="other">A few quick questions about %d areas, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
-    </plurals>
-    <string name="onboarding_placement_description">A few quick questions, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</string>
-    <string name="onboarding_placement_start">Start</string>
-    <string name="onboarding_placement_skip_basics">Skip and start from the basics</string>
     <string name="onboarding_placement_waiting_material">Reading your material takes a few minutes.</string>
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">This takes a minute or two.</string>
@@ -217,7 +208,6 @@
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Question %1$d</string>
     <string name="onboarding_placement_progress">Questions answered</string>
-    <string name="onboarding_placement_your_answer">Your answer, in your own words</string>
     <string name="onboarding_placement_dont_know">I don\'t know yet</string>
     <string name="onboarding_placement_confirm">Confirm</string>
     <string name="onboarding_placement_stop">Stop and use my answers</string>
@@ -229,15 +219,10 @@
     <string name="onboarding_placement_right">Right</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Wrong</string>
-    <string name="onboarding_placement_see_plan">See plan</string>
     <string name="onboarding_placement_unavailable_title">We\'ll see what you know in your first few days</string>
 
-    <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
-    <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
-    <string name="onboarding_language_test_title">Let\'s see your level in %1$s</string>
-    <!-- %1$s is how long the test takes, such as "3 min". -->
-    <string name="onboarding_language_test_description">About %1$s of reading, listening and one sentence out loud, so your plan starts at your level.</string>
-    <string name="onboarding_language_test_new_alphabet">New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.</string>
+    <!-- The level test: a language goal's placement, in reading and listening. -->
+    <string name="onboarding_language_test_new_alphabet">New to its alphabet? Skip the test. Your first lesson teaches you to read it.</string>
     <string name="onboarding_language_test_skip">Skip the test</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">Use the app in %1$s</string>
@@ -255,10 +240,6 @@
     <string name="onboarding_language_test_play_again">Play the message again</string>
     <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
     <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
-    <string name="onboarding_language_test_skip_part">Skip this part</string>
-    <string name="onboarding_language_test_done_title">Your %1$s level</string>
-    <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>
-    <string name="onboarding_language_test_build_plan">Build my plan</string>
     <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Reading</string>
     <string name="onboarding_language_test_listening">Listening</string>
@@ -508,16 +489,4 @@
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">where you live</string>
     <string name="onboarding_test_question_progress">Question %1$d of %2$d</string>
-    <string name="onboarding_test_level_a1">A1</string>
-    <string name="onboarding_test_level_a1_plus">A1+</string>
-    <string name="onboarding_test_level_a2">A2</string>
-    <string name="onboarding_test_level_a2_plus">A2+</string>
-    <string name="onboarding_test_level_b1">B1</string>
-    <string name="onboarding_test_level_b1_plus">B1+</string>
-    <string name="onboarding_test_level_b2">B2</string>
-    <string name="onboarding_test_level_b2_plus">B2+</string>
-    <string name="onboarding_test_level_c1">C1</string>
-    <string name="onboarding_test_level_c1_plus">C1+</string>
-    <string name="onboarding_test_level_c2">C2</string>
-    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

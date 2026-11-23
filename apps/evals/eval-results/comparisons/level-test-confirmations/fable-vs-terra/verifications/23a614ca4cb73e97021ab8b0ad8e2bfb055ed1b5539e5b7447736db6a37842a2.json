@@ -1,0 +1,138 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-fr-c1",
+        "claimId": "2187883b263a621e",
+        "criterion": "calibration",
+        "observationId": "abf6a4cc8943a9a602072715013b1cbba0654879f18c6b143d8a1c79e429274d.first.9574ad71-2a8c-4149-8146-ddbccaa9ec5c.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-fr-c1",
+        "claimId": "7377dc6a8cd90ab2",
+        "criterion": "calibration",
+        "observationId": "8614dd8730a0a1b1fb7e4ce2ae5d38789a30374216dac42c42f1ae5f73dd89bd.first.204e5856-fd76-4f7f-8a1c-fbb78ee89436.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0018302999999999998,
+    "id": "23a614ca4cb73e97021ab8b0ad8e2bfb055ed1b5539e5b7447736db6a37842a2",
+    "packet": [
+      {
+        "A": {
+          "blob": "a6d545b2524cbaf083dfc860c0b7c732526aaf8dcc6d46ab142d03b4620c5ccb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "29fe0afe6f5f15ddc01823c71220f4620ddf57242efad8399f0bea9a3a66f274",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The options are decided by spotting extreme words such as 'settles', 'exactly', 'impossible', 'should be abandoned' and 'should be set aside', so a learner one level below (B2) can pass without reading for stance or tone. The level check is therefore not reliable.",
+            "claimId": "2187883b263a621e",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Options across all four items, for example 'Its architectural appeal settles the question of its contribution to the city.' and 'It calls for the city to reproduce the neighborhood exactly as the resident remembers it.'",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Across all four items, the passages state their qualified views explicitly and the correct options closely paraphrase those literal statements (for example, 'lui rendent une troublante proximité. Pourtant, le metteur en scène ne cherche pas à faire oublier la distance' paired with 'It makes the play feel close without concealing its distance from today', and 'je plaisante à moitié' explicitly labeling the light opening), breaking the expectation that a reader who understands every sentence literally gets at least one option wrong.",
+            "claimId": "7377dc6a8cd90ab2",
+            "criterion": "calibration",
+            "location": {
+              "detail": "all four confirmations",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "8f936363be701960b5cf704d4311842ad6ecd684c9502018fdaa7f4fadfa6f97",
+          "format": "text"
+        },
+        "input": {
+          "blob": "1fcf5eb52d1874a91e4587af58456edbf69d2fc41f6d17a7f7bffb9fe044a757",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "B": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "85d8a4db0e8094d1",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "b65ce8f5ea4b0529",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2187883b263a621e",
+          "finding": "holds",
+          "reason": "In B, distractors repeatedly use conspicuously absolute claims such as “exactly,” “should be abandoned,” and “settles the question,” while the keyed choices are more qualified. That makes the answers unusually guessable by test-taking strategy, unlike A’s more closely competing stance choices."
+        },
+        {
+          "claimId": "7377dc6a8cd90ab2",
+          "finding": "holds",
+          "reason": "In B, the keyed choices closely restate explicit lines in each passage: the play’s proximity and distance, nostalgia as a conversation starter and genuine loss, judging the stadium beyond its opening, and listening to fans while keeping a boundary. A includes more interpretive distinctions, such as inferring the commentator’s pleasure in returning to the stadium."
+        },
+        {
+          "claimId": "85d8a4db0e8094d1",
+          "finding": "doesn't hold",
+          "reason": "A’s key is 1 and 3, so it does not include option 2, the false statement that the bus leaves at nine."
+        },
+        {
+          "claimId": "b65ce8f5ea4b0529",
+          "finding": "holds for both",
+          "reason": "The message says the bus leaves at ten, making option 2 false, and says the cafe is next to the shop, making option 3 true. Those facts hold for both outputs, regardless of their differing keys."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

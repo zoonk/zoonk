@@ -244,7 +244,7 @@ private struct ChapterStrip: View {
           }, line: line)
 
         Text(
-          "Chapter \(number.formatted()) of \(counted.count.formatted())\u{00A0}· \(group?.label ?? "")",
+          "Chapter \(number.formatted(.number.locale(.appLanguage))) of \(counted.count.formatted(.number.locale(.appLanguage)))\u{00A0}· \(group?.label ?? "")",
           tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
         )
         .typeStyle(.meta)
@@ -353,7 +353,7 @@ private struct ChapterLessonsSection: View {
   private var facts: [String] {
     let lessonsText = String(
       localized: "\(lessons.count) short lessons", table: "Courses",
-      comment: "How many lessons a course or a chapter has")
+      locale: .appLanguage, comment: "How many lessons a course or a chapter has")
     let minutes = catalogDurationText(minutes: lessons.reduce(0) { $0 + $1.estimatedMinutes })
 
     return [lessonsText, minutes]

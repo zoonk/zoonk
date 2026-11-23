@@ -1,11 +1,13 @@
 import { waitForSleep } from "@workflow/vitest";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
+import { generateLevelTestConfirmations } from "@zoonk/ai/tasks/language/level-test-confirmations";
 import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -16,6 +18,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { FatalError } from "workflow";
 import { getHookByToken, getRun } from "workflow/api";
 import { getWorld } from "workflow/runtime";
 import { startOnce } from "../_shared/run-token";
@@ -29,6 +32,14 @@ vi.mock("@zoonk/ai/tasks/language/exam-speaking-card", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/language/mistake-pattern", () => ({ findMistakePattern: vi.fn() }));
+
+vi.mock("@zoonk/ai/tasks/language/level-test-confirmations", () => ({
+  generateLevelTestConfirmations: vi.fn(),
+}));
+
+vi.mock("@zoonk/core/language/level-test/prepare-audio", () => ({
+  voiceLevelTestPassage: vi.fn(),
+}));
 
 const WAIT = { interval: 200, timeout: 10_000 };
 
@@ -148,16 +159,139 @@ async function runFollowUps(userId: string) {
   await getRun(await startFollowUps(userId)).returnValue;
 }
 
+async function owedReplenishment() {
+  const { goal, user } = await languageGoalFixture();
+  const level = "B2" as const;
+  const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "en" };
+
+  const confirmations = (["reading", "listening"] as const).flatMap((skill) =>
+    [0, 1].map((index) => ({
+      answerIndices: [0, 2],
+      id: `existing-${skill}-${index}`,
+      level,
+      options: ["a", "b", "c", "d", "e"],
+      passage: `Prior ${skill} example ${index}`,
+      question: "What does it say?",
+      skill,
+    })),
+  );
+
+  await Promise.all([
+    prisma.goal.update({
+      data: { ...pair, details: { levelTest: { usedConfirmations: ["existing-reading-0"] } } },
+      where: { id: goal.id },
+    }),
+    prisma.languageLevelTest.create({
+      data: {
+        ...pair,
+        content: {
+          confirmations,
+          questions: [{ ...confirmations[0], answerIndex: 0, options: ["a", "b", "c", "d"] }],
+        },
+        model: "fixture",
+        promptVersion: "fixture",
+        runId: "fixture",
+      },
+    }),
+    prisma.followUp.create({
+      data: {
+        input: { goalId: goal.id, level, pair },
+        key: `${goal.id}:${level}`,
+        kind: "replenishLevelTestChecks",
+        userId: user.id,
+      },
+    }),
+  ]);
+
+  return { confirmations, level, pair, user };
+}
+
+function newVersions(
+  confirmations: Awaited<ReturnType<typeof owedReplenishment>>["confirmations"],
+) {
+  return {
+    data: {
+      confirmations: confirmations.map(({ passage, ...question }) => ({
+        ...question,
+        passage: `New version of ${passage}`,
+      })),
+    },
+    provenance: {} as never,
+    systemPrompt: "",
+    usage: {} as never,
+    userPrompt: "",
+  };
+}
+
 describe(followUpsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(classifyMistakeCause).mockReset().mockResolvedValue(classified());
     vi.mocked(findMistakePattern).mockReset().mockResolvedValue(noPattern());
+    vi.mocked(generateLevelTestConfirmations).mockReset();
 
     vi.mocked(gateMemoryFact)
       .mockReset()
       .mockResolvedValue({ decision: "keep", sensitive: true } as Awaited<
         ReturnType<typeof gateMemoryFact>
       >);
+  });
+
+  it("replenishes only the short level", async () => {
+    const { confirmations, level, pair, user } = await owedReplenishment();
+    vi.mocked(generateLevelTestConfirmations).mockResolvedValue(newVersions(confirmations));
+
+    await runFollowUps(user.id);
+
+    await vi.waitFor(async () => {
+      await expect(
+        prisma.languageLevelTest.findUniqueOrThrow({ where: { languagePair: pair } }),
+      ).resolves.toMatchObject({
+        content: {
+          confirmations: expect.arrayContaining([
+            ...confirmations,
+            expect.objectContaining({ passage: "New version of Prior reading example 0" }),
+          ]),
+          questions: [expect.objectContaining({ id: confirmations[0]?.id })],
+        },
+      });
+    }, WAIT);
+
+    expect(generateLevelTestConfirmations).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        level,
+        previousPassages: confirmations.map(({ passage }) => passage),
+        serviceTier: "flex",
+      }),
+    );
+
+    await expect(countOwed(user.id)).resolves.toBe(0);
+  });
+
+  it("runs the learner's other owed work when replenishing the level checks fails", async () => {
+    const { user } = await owedReplenishment();
+    const fact = await memoryFactFixture({ statement: "Has asthma", userId: user.id });
+
+    vi.mocked(generateLevelTestConfirmations).mockRejectedValue(
+      new FatalError("No model answered"),
+    );
+
+    await prisma.followUp.create({
+      data: {
+        input: { factId: fact.id, statement: fact.statement },
+        key: `${fact.id}:wording`,
+        kind: "checkFactSensitivity",
+        userId: user.id,
+      },
+    });
+
+    await runFollowUps(user.id);
+    await expect(countOwed(user.id)).resolves.toBe(0);
+
+    await vi.waitFor(async () => {
+      await expect(
+        prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+      ).resolves.toMatchObject({ sensitive: true });
+    }, WAIT);
   });
 
   it("runs each owed work in its own run and ends its row", async () => {

@@ -113,6 +113,21 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let finishedChapter: Components.Schemas.FinishedChapter?
   /// Set when this was the goal's first lesson, started before the learner saw their plan.
   var planReveal: PlanRevealLead?
+  /// After a run of easy lessons: a check that can skip what the learner already knows.
+  var placementOffer: LevelCheckOffer?
+}
+
+/// Main's `LevelCheckOffer`: the quick test, or a language level's test-out.
+struct LevelCheckOffer: Hashable, Sendable, Decodable {
+  enum Kind: String, Hashable, Sendable, Decodable {
+    case quick
+    case levelTestOut
+  }
+
+  let goalId: String
+  let kind: Kind
+  /// The level a test-out checks, such as B2.
+  var level: String?
 }
 
 /// Where the goal's first lesson leads when the learner hasn't seen their plan yet.

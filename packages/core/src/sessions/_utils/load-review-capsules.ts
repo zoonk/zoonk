@@ -100,11 +100,13 @@ export function getReviewHorizon({
 async function loadDueSkills({
   cap,
   horizon,
+  prioritySkillIds,
   skillIds,
   userId,
 }: {
   cap: number;
   horizon: ReviewHorizon;
+  prioritySkillIds: readonly string[];
   skillIds: readonly string[];
   userId: string;
 }) {
@@ -117,11 +119,17 @@ async function loadDueSkills({
 
   const candidates = rows.filter((row) => !isReviewedSince(row, todayStart));
 
-  return selectDueReviews({
-    candidates: candidates.map((row) => ({ memory: row, skillId: row.skillId })),
-    cap,
+  const reviewable = new Set(candidates.map((row) => row.skillId));
+  const early = prioritySkillIds.filter((id) => reviewable.has(id)).slice(0, cap);
+  const remaining = candidates.filter((row) => !early.includes(row.skillId));
+
+  const due = selectDueReviews({
+    candidates: remaining.map((row) => ({ memory: row, skillId: row.skillId })),
+    cap: cap - early.length,
     until: againstExam ? examStart : until,
-  }).map((candidate) => candidate.skillId);
+  });
+
+  return [...early, ...due.map((candidate) => candidate.skillId)];
 }
 
 function isReviewedSince(row: { lastReviewedAt: Date | null }, since: Date): boolean {
@@ -260,15 +268,10 @@ export async function loadReviewCapsules({
   weakest?: boolean;
 }): Promise<BlockCapsule[]> {
   const cap = getDailyReviewCap({ dailyMinutes });
-  const confirm = confirmSkillIds.filter((skillId) => skillIds.includes(skillId)).slice(0, cap);
-  const others = skillIds.filter((skillId) => !confirm.includes(skillId));
 
   const dueSkillIds = weakest
     ? await loadWeakestSkills({ cap, horizon, skillIds, userId })
-    : [
-        ...confirm,
-        ...(await loadDueSkills({ cap: cap - confirm.length, horizon, skillIds: others, userId })),
-      ];
+    : await loadDueSkills({ cap, horizon, prioritySkillIds: confirmSkillIds, skillIds, userId });
 
   if (dueSkillIds.length === 0) {
     return [];

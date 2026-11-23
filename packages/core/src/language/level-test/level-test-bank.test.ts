@@ -1,13 +1,21 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { checkLevelTestQuestions } from "@zoonk/ai/tasks/language/check-level-test-questions";
-import { generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
+import { generateLevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank";
+import {
+  checkLikeTheKeys,
+  writtenLevel,
+  writtenPart,
+} from "@zoonk/ai/tasks/language/level-test-bank-fixture";
+import {
+  getLevelTestQuestionBatches,
+  writeLevelTestBankParts,
+} from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { LEVEL_TEST_LEVELS } from "@zoonk/ai/tasks/language/level-test-levels";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
-import { checkLikeTheKeys, writtenLevel } from "../../_test-utils/level-test-bank";
 import { mockSession } from "../../_test-utils/mock-session";
 import * as speechClips from "../../audio/_utils/speech-clips";
 import { requestSpeechClip } from "../../audio/request-speech-clip";
@@ -28,10 +36,20 @@ import {
   claimLevelTestBank,
   releaseLevelTestBankClaim,
   storeLevelTestBank,
-  writeLevelTestBankLevel,
+  writeLevelTestBankPart,
 } from "./write-level-test-bank";
 
 const TEST_LEVELS = LEVEL_TEST_LEVELS;
+const PARTS = [...getLevelTestQuestionBatches(), "confirmations" as const];
+const BANK_CALLS = TEST_LEVELS.length * PARTS.length;
+
+function writeLevelTestBankLevel(
+  input: Omit<Parameters<typeof writeLevelTestBankPart>[0], "part" | "wait">,
+) {
+  return writeLevelTestBankParts((part) =>
+    writeLevelTestBankPart({ ...input, part, wait: "soon" }),
+  );
+}
 
 type Pair = { language: string; targetLanguage: string };
 
@@ -55,17 +73,22 @@ function mockAudio() {
   vi.mocked(generateLanguageAudio).mockResolvedValue(voicedAudio());
 }
 
+function modernWrittenPart(input: Parameters<typeof writtenPart>[0]) {
+  const written = writtenPart(input);
+  return { ...written, data: { ...written.data, confirmations: [] } };
+}
+
 function mockWriter(passage: string) {
-  vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage }),
+  vi.mocked(generateLevelTestBankPart).mockImplementation(async ({ level, part }) =>
+    modernWrittenPart({ level, part, passage }),
   );
 }
 
 function pendingWriter() {
   const { promise, resolve } = Promise.withResolvers<string>();
 
-  vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage: await promise }),
+  vi.mocked(generateLevelTestBankPart).mockImplementation(async ({ level, part }) =>
+    modernWrittenPart({ level, part, passage: await promise }),
   );
 
   return { finish: (passage: string) => resolve(passage) };
@@ -116,10 +139,7 @@ function uncheckedBank(passage: string) {
     })),
   );
 
-  return {
-    questions,
-    speaking: TEST_LEVELS.map((level) => writtenLevel({ level, passage }).data.speaking),
-  };
+  return { questions, speaking: [] };
 }
 
 function freshPair() {
@@ -164,7 +184,7 @@ function findRow(pair: Pair) {
 
 describe("the level test's question bank", () => {
   beforeEach(() => {
-    vi.mocked(generateLevelTestBankLevel).mockReset();
+    vi.mocked(generateLevelTestBankPart).mockReset();
   });
 
   it("is never written by showing the test, which says since when a run has been writing it", async () => {
@@ -181,8 +201,8 @@ describe("the level test's question bank", () => {
     const writing = writeLevelTestBank({ pair });
 
     await expect
-      .poll(() => vi.mocked(generateLevelTestBankLevel).mock.calls.length)
-      .toBe(TEST_LEVELS.length);
+      .poll(() => vi.mocked(generateLevelTestBankPart).mock.calls.length)
+      .toBe(BANK_CALLS);
 
     await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
       test: { startedAt: expect.any(String), status: "preparing" },
@@ -201,7 +221,7 @@ describe("the level test's question bank", () => {
       promptVersion: "test-prompt",
     });
 
-    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(TEST_LEVELS.length);
+    expect(generateLevelTestBankPart).toHaveBeenCalledTimes(BANK_CALLS);
   });
 
   it("isn't started by an answer", async () => {
@@ -217,7 +237,7 @@ describe("the level test's question bank", () => {
   it("reads a run that went quiet or failed as nothing writing it, so the app starts one", async () => {
     const { goalId, pair } = await learnerOfFreshPair();
 
-    vi.mocked(generateLevelTestBankLevel).mockRejectedValue(new Error("Provider down"));
+    vi.mocked(generateLevelTestBankPart).mockRejectedValue(new Error("Provider down"));
     await expect(writeLevelTestBank({ pair })).rejects.toThrow("Provider down");
 
     await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
@@ -228,8 +248,8 @@ describe("the level test's question bank", () => {
     void writeLevelTestBank({ pair });
 
     await expect
-      .poll(() => vi.mocked(generateLevelTestBankLevel).mock.calls.length)
-      .toBe(2 * TEST_LEVELS.length);
+      .poll(() => vi.mocked(generateLevelTestBankPart).mock.calls.length)
+      .toBe(2 * BANK_CALLS);
 
     await prisma.languageLevelTest.updateMany({
       data: { generatedAt: new Date(Date.now() - 3_600_000) },
@@ -246,7 +266,7 @@ describe("the level test's question bank", () => {
 
 describe("writing a pair's question bank ahead", () => {
   beforeEach(() => {
-    vi.mocked(generateLevelTestBankLevel).mockReset();
+    vi.mocked(generateLevelTestBankPart).mockReset();
   });
 
   it("writes it before the first learner opens the test, which then starts at once", async () => {
@@ -263,16 +283,60 @@ describe("writing a pair's question bank ahead", () => {
 
     await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
 
-    expect(vi.mocked(generateLevelTestBankLevel).mock.calls).toStrictEqual(
-      TEST_LEVELS.map((level) => [
-        {
-          analytics: { contentScope: "shared", distinctId: "learner-id", goalId },
-          learnerLanguage: pair.language,
-          level,
-          targetLanguage: pair.targetLanguage,
-        },
-      ]),
+    expect(vi.mocked(generateLevelTestBankPart).mock.calls).toStrictEqual(
+      TEST_LEVELS.flatMap((level) =>
+        PARTS.map((part) => [
+          {
+            analytics: { contentScope: "shared", distinctId: "learner-id", goalId },
+            learnerLanguage: pair.language,
+            level,
+            part,
+            serviceTier: undefined,
+            targetLanguage: pair.targetLanguage,
+          },
+        ]),
+      ),
     );
+  });
+
+  it("upgrades a recent legacy bank once while keeping its existing questions readable", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    const legacy = uncheckedBank("Legacy");
+
+    await prisma.languageLevelTest.create({
+      data: { ...pair, content: legacy, model: "test", promptVersion: "test", runId: "legacy" },
+    });
+
+    await expect(claimLevelTestBank(pair)).resolves.toStrictEqual({ status: "ready" });
+
+    const claims = await Promise.all([
+      claimLevelTestBank(pair, true),
+      claimLevelTestBank(pair, true),
+    ]);
+
+    const claimed = claims.find((claim) => claim.status === "claimed");
+
+    if (claimed?.status !== "claimed") {
+      throw new Error("Expected one writer to claim the legacy bank");
+    }
+
+    expect(claims.map(({ status }) => status).toSorted()).toStrictEqual(["claimed", "running"]);
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { next: { question: { passage: expect.stringContaining("Legacy") } }, status: "ready" },
+    });
+
+    mockWriter("Upgrade");
+    const level = await writeLevelTestBankLevel({ level: "C1", pair });
+
+    await expect(
+      storeLevelTestBank({ claimId: claimed.claimId, levels: [level], pair }),
+    ).resolves.toBe("written");
+
+    const row = await findRow(pair);
+    const upgraded = levelTestBankSchema.parse(row.content);
+    expect(upgraded.questions.slice(0, legacy.questions.length)).toStrictEqual(legacy.questions);
+    await expect(claimLevelTestBank(pair, true)).resolves.toStrictEqual({ status: "ready" });
   });
 
   it("leaves the pair to the run already writing it", async () => {
@@ -281,8 +345,8 @@ describe("writing a pair's question bank ahead", () => {
     const first = writeLevelTestBank({ pair });
 
     await expect
-      .poll(() => vi.mocked(generateLevelTestBankLevel).mock.calls.length)
-      .toBe(TEST_LEVELS.length);
+      .poll(() => vi.mocked(generateLevelTestBankPart).mock.calls.length)
+      .toBe(BANK_CALLS);
 
     await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "running" });
 
@@ -290,12 +354,12 @@ describe("writing a pair's question bank ahead", () => {
     await expect(first).resolves.toStrictEqual({ status: "written" });
 
     await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
-    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(TEST_LEVELS.length);
+    expect(generateLevelTestBankPart).toHaveBeenCalledTimes(BANK_CALLS);
   });
 
   it("gives its claim up when the writer fails, so a retry writes it", async () => {
     const pair = freshPair();
-    vi.mocked(generateLevelTestBankLevel).mockRejectedValue(new Error("Provider down"));
+    vi.mocked(generateLevelTestBankPart).mockRejectedValue(new Error("Provider down"));
 
     await expect(writeLevelTestBank({ pair })).rejects.toThrow("Provider down");
 
@@ -310,8 +374,8 @@ describe("writing a pair's question bank ahead", () => {
     const first = writeLevelTestBank({ pair });
 
     await expect
-      .poll(() => vi.mocked(generateLevelTestBankLevel).mock.calls.length)
-      .toBe(TEST_LEVELS.length);
+      .poll(() => vi.mocked(generateLevelTestBankPart).mock.calls.length)
+      .toBe(BANK_CALLS);
 
     await prisma.languageLevelTest.updateMany({
       data: { generatedAt: new Date(Date.now() - 3_600_000) },
@@ -488,7 +552,7 @@ describe("placement listening audio", () => {
     await voiceBank(pair);
     const retriedRow = await findRow(pair);
     expect(retriedRow.content).toStrictEqual(questions);
-    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(TEST_LEVELS.length);
+    expect(generateLevelTestBankPart).toHaveBeenCalledTimes(BANK_CALLS);
     expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length + 1);
   });
 
@@ -513,7 +577,7 @@ describe("placement listening audio", () => {
 
     expect(generateLanguageAudio).not.toHaveBeenCalled();
     await voiceBank(pair);
-    expect(generateLevelTestBankLevel).not.toHaveBeenCalled();
+    expect(generateLevelTestBankPart).not.toHaveBeenCalled();
     const preparedRow = await findRow(pair);
     expect(preparedRow.content).toStrictEqual(content);
     await expect(prepareLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
@@ -540,7 +604,7 @@ describe("placement listening audio", () => {
 
 describe("checking a bank's questions", () => {
   beforeEach(() => {
-    vi.mocked(generateLevelTestBankLevel).mockReset();
+    vi.mocked(generateLevelTestBankPart).mockReset();
   });
 
   it("stores only the questions that pass, each keeping an id by its skill and level", async () => {

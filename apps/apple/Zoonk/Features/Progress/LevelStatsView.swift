@@ -39,7 +39,8 @@ private struct BeltProgression: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text(
-            "\(level.totalBrainPower.formatted()) Brain Power (BP)", tableName: "Progress",
+            "\(level.totalBrainPower.formatted(.number.locale(.appLanguage))) Brain Power (BP)",
+            tableName: "Progress",
             comment:
               "The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out."
           )
@@ -77,7 +78,7 @@ private struct BeltProgression: View {
       if let next = level.nextBelt, level.level < 10 {
         StatsLine(
           text: Text(
-            "\(String(localized: next.belt.localizedTitle)) comes after level \(10), at \(next.startBrainPower.formatted()) Brain Power",
+            "\(String(localized: next.belt.localizedTitle)) comes after level \(10), at \(next.startBrainPower.formatted(.number.locale(.appLanguage))) Brain Power",
             tableName: "Progress",
             comment:
               "{next} is a belt's name, such as \"Yellow belt\". {count} is a belt's last level, 10."
@@ -96,13 +97,13 @@ private struct BeltProgression: View {
       }
     } else if level.level == 10, let next = level.nextBelt {
       Text(
-        "\(level.bpToNextLevel.formatted()) Brain Power to \(String(localized: next.belt.localizedTitle))",
+        "\(level.bpToNextLevel.formatted(.number.locale(.appLanguage))) Brain Power to \(String(localized: next.belt.localizedTitle))",
         tableName: "Progress",
         comment:
           "What the next belt takes, at a belt's tenth number, as in 96 Brain Power to Yellow belt")
     } else {
       Text(
-        "\(level.bpToNextLevel.formatted()) Brain Power to level \(level.level + 1)",
+        "\(level.bpToNextLevel.formatted(.number.locale(.appLanguage))) Brain Power to level \(level.level + 1)",
         tableName: "Progress")
     }
   }
@@ -111,6 +112,7 @@ private struct BeltProgression: View {
     String(
       localized: "\(String(localized: belt.localizedTitle))\u{00A0}· Level \(number)",
       table: "Progress",
+      locale: .appLanguage,
       comment:
         "A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page."
     )

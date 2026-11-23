@@ -11,13 +11,14 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.tap
 import com.zoonk.api.models.Placement
-import com.zoonk.api.models.PlacementAnswer
 import kotlinx.coroutines.launch
 
 private class SentAnswer(
     val question: PlacementPhase.Question,
-    val answer: PlacementAnswer,
+    val answer: Answer,
     val durationMs: Long,
 )
 
@@ -28,7 +29,6 @@ private class SentAnswer(
 internal class PlacementViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
-    private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
     private val saveStep: suspend () -> WriteOutcome<*>,
 ) : ViewModel() {
@@ -92,7 +92,7 @@ internal class PlacementViewModel(
 
     fun answer(
         question: PlacementPhase.Question,
-        answer: PlacementAnswer,
+        answer: Answer,
         durationMs: Long,
     ) {
         if (isSaving) return
@@ -136,18 +136,17 @@ internal class PlacementViewModel(
 
     private fun send() {
         val answer = sent ?: return
-        val draft = drafts?.sending(goalId, typedDraftStep(answer.question.item.itemId))
+        val tap = answer.answer.tap() ?: return
         markStarted()
         isSaving = true
         val asked = visit.number
         viewModelScope.launch {
-            when (store.answerPlacement(goalId, answer.question.item.itemId, answer.answer, answer.durationMs)) {
+            when (store.answerPlacement(goalId, answer.question.item.itemId, tap, answer.durationMs)) {
                 is WriteOutcome.Done -> {
                     saveFailure.clear()
                     finishFailure.clear()
                     shown = shown.copy(answered = maxOf(shown.answered, answer.question.number))
                     sent = null
-                    draft?.remove()
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -160,5 +159,3 @@ internal class PlacementViewModel(
         }
     }
 }
-
-internal fun typedDraftStep(itemId: String) = "placement.$itemId"

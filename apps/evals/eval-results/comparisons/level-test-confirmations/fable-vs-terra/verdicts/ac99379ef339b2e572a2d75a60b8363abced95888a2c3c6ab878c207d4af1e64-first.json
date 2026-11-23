@@ -1,0 +1,173 @@
+{
+  "attempt": "first",
+  "costUsd": 0.059144,
+  "failures": [],
+  "packetId": "ac99379ef339b2e572a2d75a60b8363abced95888a2c3c6ab878c207d4af1e64",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 passage, question, and options, which check single stated facts in simple everyday English.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A marks the two statements supported by the passage (1 and 3), whereas Output B marks an unsupported statement (2) and omits a true one (3).",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs contain identical text in natural English and Brazilian Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key marks option 2 ('O ônibus sai às nove') instead of option 3 ('O café fica ao lado da loja'), contradicting 'The bus leaves at ten' and 'The cafe is next to the shop'.",
+            "criterion": "answers",
+            "learnerCost": "A learner who understands the English sentences gets marked wrong for picking the right facts and is told a false statement is right.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A has the right answer key, while Output B marks a false option as right and leaves out a true one."
+        },
+        "pairId": "1b3b87e5-ce15-4ba2-b92b-8fe705c2c871"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A requires true C2 sensitivity to idiom, irony, fairy-tale allusion, and unspoken assumptions, whereas several keyed options in Output B closely paraphrase interpretations that the speaker or narrator states outright.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Both sets have defensible keys, but Output A's distractors target realistic C1 misreadings of figurative language and irony rather than simple reversals of stated claims.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A differentiates written prose from lively spoken German with natural 'Sie' address and discourse markers, while Output B's listening passages sound scripted and essayistic.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Keyed options frequently restate takeaways already spelled out in the passage—for example, 'It illustrates the father's habit of assigning meaning before others can inquire' nearly translates 'Ihr Vater hatte Dinge gern mit Namen versehen, die ihnen eine Bestimmung gaben, bevor jemand Zeit fand, nach ihrem Inhalt zu fragen'—allowing a C1 reader to answer by paraphrase matching.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below C2 can pass the level-skipping check without grasping implicit nuance, allusion, or unstated assumptions.",
+            "location": {
+              "detail": "confirmations 1, 3, and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The listening passages use formal written syntax (such as 'Sie verrät nur mindestens ebenso viel darüber, wie wir uns erinnern möchten, wie darüber, was damals geschah') with few spoken cues and no natural 'Sie' or 'du' address.",
+            "criterion": "language",
+            "learnerCost": "Learners are tested on written-style prose labeled as listening rather than authentic spoken German.",
+            "location": {
+              "detail": "confirmations 3 and 4 passages",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A delivers authentic C2 reading and listening items built around German idioms, allusions, irony, and unspoken assumptions, while Output B spells out its interpretations in the passages so they can be solved by C1 paraphrase matching."
+        },
+        "pairId": "9dec9acb-32dd-4b82-a71c-c5ddf6adf54f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in every passage, question, and option.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the exact same options and answer keys.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs contain identical German passages and US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Keyed options in confirmations 1, 3, and 4 closely paraphrase explicit statements in the text—such as 'It illustrates the father's habit of assigning meaning before others can inquire' for 'Ihr Vater hatte Dinge gern mit Namen versehen, die ihnen eine Bestimmung gaben, bevor jemand Zeit fand, nach ihrem Inhalt zu fragen'—rather than testing C2 implicit nuance or unstated assumptions.",
+            "criterion": "calibration",
+            "learnerCost": "A learner one level below C2 can get the right answers by matching stated explanations instead of demonstrating C2 comprehension.",
+            "location": {
+              "detail": "confirmations 1, 3, and 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Keyed options in confirmations 1, 3, and 4 closely paraphrase explicit statements in the text—such as 'It illustrates the father's habit of assigning meaning before others can inquire' for 'Ihr Vater hatte Dinge gern mit Namen versehen, die ihnen eine Bestimmung gaben, bevor jemand Zeit fand, nach ihrem Inhalt zu fragen'—rather than testing C2 implicit nuance or unstated assumptions.",
+            "criterion": "calibration",
+            "learnerCost": "A learner one level below C2 can get the right answers by matching stated explanations instead of demonstrating C2 comprehension.",
+            "location": {
+              "detail": "confirmations 1, 3, and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The listening passages read like polished written prose rather than natural spoken German and include no 'Sie' or 'du' address.",
+            "criterion": "language",
+            "learnerCost": "Learners do not get realistic C2 spoken register in the listening items.",
+            "location": {
+              "detail": "confirmations 3 and 4 passages",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The listening passages read like polished written prose rather than natural spoken German and include no 'Sie' or 'du' address.",
+            "criterion": "language",
+            "learnerCost": "Learners do not get realistic C2 spoken register in the listening items.",
+            "location": {
+              "detail": "confirmations 3 and 4 passages",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical word for word."
+        },
+        "pairId": "c5bd7d30-b012-43f2-bf70-77f33ec477f4"
+      }
+    ]
+  }
+}

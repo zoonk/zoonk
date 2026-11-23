@@ -822,7 +822,7 @@
       "lessonsAddedEstimated":null,"lessonsLeftOut":null,"lessonsRemoved":12,"nextMock":null,
       "phaseEnds":null,"topicsAdded":null,"topicsLeftOut":[{"area":"Natural Sciences",
       "topics":["Ecology and Evolution"]}],"unwrittenLeftOut":null,"weeklyEvents":null},
-      "examDocument":"notice",
+      "examDocument":"notice","lessonsSkipped":0,
       "quote":"q1","id":"c1","kind":"missedDays","officialDate":null,"operations":[],"reason":"",
       "source":"memory","status":"proposed","todaySession":null}
       """#)

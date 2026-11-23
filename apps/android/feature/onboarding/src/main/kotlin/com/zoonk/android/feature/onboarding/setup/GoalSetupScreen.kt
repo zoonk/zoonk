@@ -53,6 +53,8 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
+import com.zoonk.android.feature.placementtest.PlacementSetup
+import com.zoonk.android.feature.placementtest.PlacementSetupEnd
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.session.DayStep
@@ -205,10 +207,10 @@ fun GoalSetupScreen(
         onBack = {
             if (backDispatcher?.hasEnabledCallbacks() == true) backDispatcher.onBackPressed() else navigator.back()
         },
-        title = {
+        middle = {
             when {
                 testing != null -> {
-                    Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
+                    TestProgress(testing)
                 }
 
                 else -> {
@@ -507,29 +509,12 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLACEMENT -> {
-            val placementAnswer =
-                OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT))
-            val placed: suspend () -> WriteOutcome<*> = {
-                vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
+            fun placementAnswer(attemptId: UUID? = null) =
+                OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT, attemptId))
+            val placed = {
+                vm.answer(placementAnswer(), from = OnboardingStep.PLACEMENT, showFailure = false)
             }
-            val targetLanguage = view.goal.targetLanguage
-            if (view.goal.kind == Goal.Kind.LANGUAGE && targetLanguage != null) {
-                LanguageLevelTestStep(
-                    goalId = view.goal.id.toString(),
-                    language =
-                        view.goal.details
-                            .text("nativeLanguage")
-                            ?.takeIf(String::isNotBlank) ?: view.goal.language,
-                    targetLanguage = targetLanguage,
-                    testMinutes = view.quickTestMinutes.toInt(),
-                    store = store,
-                    navigator = navigator,
-                    onProgress = { vm.placementProgress = it },
-                    onProgressLabel = { vm.placementProgressLabel = it },
-                    onDone = placed,
-                    onReportSaveFailure = onReportLevelTest,
-                )
-            } else if (view.goal.kind == Goal.Kind.EXAM) {
+            if (view.goal.kind == Goal.Kind.EXAM) {
                 FocusTestFlow(
                     goalId = view.goal.id.toString(),
                     subject = subject,
@@ -538,22 +523,31 @@ private fun ColumnScope.QuestionStep(
                     run = run,
                     onRetryRun = onRetryRun,
                     onProgress = { vm.placementProgress = it },
-                    onProgressLabel = { vm.placementProgressLabel = it },
-                    handBack = placed,
+                    handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
-                PlacementStep(
-                    goalId = view.goal.id.toString(),
+                PlacementSetup(
+                    goalId = view.goal.id,
                     subject = subject,
-                    areaCount = view.examSubjects.size,
+                    language =
+                        view.goal.details
+                            .text("nativeLanguage")
+                            ?.takeIf(String::isNotBlank) ?: view.goal.language,
+                    targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
                     run = run,
                     onRetryRun = onRetryRun,
                     store = store,
+                    plans = plans,
+                    navigator = navigator,
+                    end =
+                        PlacementSetupEnd(
+                            saving = pending,
+                            continueWith = { vm.answer(placementAnswer(it), from = OnboardingStep.PLACEMENT) },
+                        ),
                     onProgress = { vm.placementProgress = it },
-                    onProgressLabel = { vm.placementProgressLabel = it },
-                    onDone = placed,
-                    onReportSaveFailure = onReportPlacement,
+                    onQuickDone = placed,
+                    onReportSaveFailure = if (view.goal.kind == Goal.Kind.LANGUAGE) onReportLevelTest else onReportPlacement,
                 )
             }
         }
@@ -593,7 +587,9 @@ private fun StepDots(progress: SetupProgress) {
                     },
                 )
             },
-        modifier = Modifier.width(STEP_DOTS_WIDTH),
+        modifier = Modifier.width(BAR_PROGRESS_WIDTH),
+        height = BAR_PROGRESS_HEIGHT,
+        gap = STEP_DOTS_GAP,
         contentDescription = stringResource(R.string.onboarding_step_of, answered + 1, total),
     )
 }
@@ -690,7 +686,7 @@ private fun Map<String, kotlinx.serialization.json.JsonElement>.texts(key: Strin
 
 private const val DONE_ALPHA = 0.25f
 
-private val STEP_DOTS_WIDTH = 96.dp
+private val STEP_DOTS_GAP = 3.dp
 
 @Composable
 private fun dayTooShortWords(short: Refusal.DayTooShort): String =

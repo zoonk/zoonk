@@ -1,0 +1,77 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        4,
+        5
+      ],
+      "level": "C2",
+      "options": [
+        "The narrator once shared the family's view of the father but has since given it up.",
+        "The narrator puts the poor harvests down to the father's lack of skill with fruit trees.",
+        "The narrator takes the visitors' praise as real admiration for what the garden had become.",
+        "The narrator nods at the agent's phrase out of politeness while privately finding it untrue.",
+        "The narrator accepts the agent's phrase as accurate, though in a sense the agent did not intend.",
+        "The narrator presents the father's pruning as a way of holding the trees back, not as tenderness."
+      ],
+      "passage": "Dass mein Vater das Haus nie verkauft hat, galt in der Familie als Treue. Ich habe es lange auch so genannt. Er wohnte darin, wie man in einem Wartezimmer sitzt: den Mantel nicht ganz abgelegt, den Blick zur Tür. Die Obstbäume, die meine Mutter gesetzt hatte, schnitt er jedes Frühjahr mit einer Gewissenhaftigkeit zurück, die man für Liebe hätte halten können, wäre nicht jeder Schnitt eine Spur zu tief gegangen. Geerntet wurde wenig. Besuchern zeigte er den Garten trotzdem, und sie lobten ihn, wie man eben lobt, was sichtlich Arbeit gemacht hat. Als der Makler nach der Beerdigung von einem »gepflegten Objekt« sprach, nickte ich. Es stimmte ja. Nur hatte ich mittlerweile gelernt, dass man etwas auch pflegen kann, um es kleinzuhalten.",
+      "question": "What does the narrator's wording convey about the father and the house?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "The reviewer traces the final third's weakness to the author relaxing her habit of cutting.",
+        "The reviewer credits the poems with saying outright what other poets leave merely implied.",
+        "The reviewer concedes the austerity as a weakness that the poems' other qualities make up for.",
+        "The reviewer accepts the charge of austerity as accurate and then recasts it as the poems' method.",
+        "The reviewer faults the final third by the same standard that earns the earlier poems their praise.",
+        "The reviewer dismisses the charge of austerity as baseless before turning to the poems' strengths."
+      ],
+      "passage": "Man hat diesem Band vorgeworfen, er sei spröde, und der Vorwurf ist nicht aus der Luft gegriffen. Wer in den vierzig Gedichten nach dem Bild sucht, das sich einprägt, nach der Zeile, die man auf Postkarten druckt, wird leer ausgehen. Nur verwechselt, wer darin ein Versäumnis sieht, die Abwesenheit von Schmuck mit der Abwesenheit von Kunst. Die Autorin streicht, wo andere polieren; ihre Verse enden oft ein Wort früher, als das Ohr es erwartet, und eben in dieser Lücke geschieht, was anderswo behauptet wird. Dass das Verfahren im letzten Drittel zur Manier gerinnt, sei nicht verschwiegen: Auch die Verweigerung kann gefällig werden, sobald man sich auf sie verlassen darf. Bis dahin aber liest man mit angehaltenem Atem, und nach wie vielen Büchern dieses Frühjahrs ließe sich das sagen?",
+      "question": "Which of these describe how the reviewer builds the argument about the collection?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1,
+        5
+      ],
+      "level": "C2",
+      "options": [
+        "The moderator pokes fun at a personal habit of always having something more to say.",
+        "The moderator implies that the two guests were at odds when they cut each other off.",
+        "The moderator rates the evening as a substantial advance in the debate about downtown.",
+        "The moderator blames the shortage of time for the panel's failure to reach a conclusion.",
+        "The moderator keeps a distance from the audience member's sentence by merely reporting it.",
+        "The moderator implies that the panel never got around to answering the evening's question."
+      ],
+      "passage": "Ja, meine Damen und Herren, die Uhr ist unerbittlicher als ich. Wir wollten heute Abend klären, ob die Innenstadt noch zu retten ist, und ich darf festhalten: Wir sind uns einig, dass man darüber reden müsste. Das ist, gemessen an der letzten Veranstaltung dieser Reihe, durchaus ein Fortschritt. Frau Doktor Albers hat uns Zahlen mitgebracht, Herr Krause Erfahrung, und wenn beide einander gelegentlich ins Wort gefallen sind, dann gewiss nur aus Ungeduld, dem anderen recht zu geben. Mitgenommen habe ich jedenfalls einen Satz aus dem Publikum: Eine Stadt sei kein Problem, das man löst, sondern eines, mit dem man lebt. Dem habe ich nichts hinzuzufügen, was mich, wie Sie wissen, selten überkommt. Kommen Sie gut nach Hause.",
+      "question": "What does the moderator convey in these closing remarks?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "The storyteller assumes that the legend is worth keeping whether or not it is true.",
+        "The storyteller assumes that the legend lost its point once the piano's age came out.",
+        "The storyteller assumes that the children practice on the very piano from the legend.",
+        "The storyteller assumes that the piano tuner was right about when the piano was built.",
+        "The storyteller assumes that the aunt's version is closer to the facts than the father's."
+      ],
+      "passage": "Bei uns heißt es ja, der Urgroßvater habe im Winter sechsundvierzig das Klavier gegen einen Sack Kartoffeln getauscht und es im Frühjahr darauf zurückgeholt, auf einem Handkarren, quer durch halb Dresden. Meine Tante schwört, es seien zwei Säcke gewesen; bei meinem Vater wurde der Weg mit jedem Geburtstag ein paar Kilometer länger. Ich habe das Klavier übrigens stimmen lassen. Der Klavierstimmer meinte, das Instrument sei Baujahr dreiundfünfzig. Ich habe ihm ein gutes Trinkgeld gegeben und es zu Hause nicht erwähnt. Wozu auch? Meine Kinder üben darauf ihre Tonleitern, und wenn sie keine Lust haben, erzähle ich ihnen, was dieses Klavier schon alles durchgemacht hat. Bisher hat es noch jedes Mal geholfen.",
+      "question": "What does the storyteller take for granted without saying so?",
+      "skill": "listening"
+    }
+  ]
+}

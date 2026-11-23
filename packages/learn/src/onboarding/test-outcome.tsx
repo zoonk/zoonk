@@ -1,6 +1,5 @@
 "use client";
 
-import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import {
@@ -8,41 +7,9 @@ import {
   OnboardingColumn,
   OnboardingHeading,
   OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "./onboarding-frame";
-
-/** A test's start: Skip, which plans from what the learner said, then the test's start. */
-export function TestStartActions({
-  onScratch,
-  onStart,
-  pending,
-  starting,
-}: {
-  onScratch: () => void;
-  onStart: () => void;
-  pending: boolean;
-  starting: boolean;
-}) {
-  const t = useExtracted();
-
-  return (
-    <OnboardingActions>
-      <OnboardingSecondaryButton
-        busy={pending}
-        disabled={starting}
-        icon={<SkipForwardIcon aria-hidden="true" />}
-        onClick={onScratch}
-      >
-        {t("Skip")}
-      </OnboardingSecondaryButton>
-      <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
-        {t("Start the test")}
-      </OnboardingPrimaryButton>
-    </OnboardingActions>
-  );
-}
 
 /** The end of a test (the short test, the level test, the Focus test): what it found and the way on. */
 export function TestOutcome({
@@ -52,8 +19,10 @@ export function TestOutcome({
   disabled = false,
   failed = false,
   lead,
+  note,
   onContinue,
   other,
+  rail,
   subject,
   title,
 }: {
@@ -65,9 +34,11 @@ export function TestOutcome({
   failed?: boolean;
   /** Under the title, inside the heading. */
   lead?: ReactNode;
+  note?: ReactNode;
   onContinue: () => void;
   /** A second action, beside the main one. */
   other?: ReactNode;
+  rail?: ReactNode;
   subject?: string;
   title: string;
 }) {
@@ -75,8 +46,9 @@ export function TestOutcome({
 
   return (
     <OnboardingColumn
+      rail={rail}
       bar={
-        <OnboardingActions failed={failed}>
+        <OnboardingActions failed={failed} note={note}>
           {other}
           <OnboardingPrimaryButton autoFocus busy={busy} disabled={disabled} onClick={onContinue}>
             {continueLabel ?? t("Continue")}

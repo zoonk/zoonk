@@ -388,13 +388,17 @@ final class TodayStore {
       await cache.mutate(invalidating: [.goals, .userSession]) { identity in
         let saved = try await api.decidePlanChange(
           token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision,
-          quote: change.quote)
+          quote: change.kind == "testedOut" ? nil : change.quote)
         return (identity, saved)
       }
     }
 
     switch result {
     case .done(let (owner, saved)):
+      if change.kind == "testedOut", saved?.status != "undone" {
+        return .failed(.unavailable)
+      }
+
       let day = OpenedSession.Day(view)
 
       // Out of date, it says nothing: Today reads the day again, as main does.

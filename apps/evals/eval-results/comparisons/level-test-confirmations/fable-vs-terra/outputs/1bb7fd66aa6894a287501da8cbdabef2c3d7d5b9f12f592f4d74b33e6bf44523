@@ -1,0 +1,74 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        2,
+        3,
+        4
+      ],
+      "level": "A2",
+      "options": [
+        "The movie in Theater 1 starts at 6:15 p.m.",
+        "A child's ticket costs 70 pesos on Saturday.",
+        "An adult's ticket costs 45 pesos on Wednesdays.",
+        "The children's movie starts at 6:15 p.m. in Theater 2.",
+        "The movie in Theater 1 is shown two times on Saturday.",
+        "The children's movie is the last one shown on Saturday."
+      ],
+      "passage": "Cine. Programa del sábado\nLa casa azul: 4:00 p.m. y 8:30 p.m. Sala 1.\nMi perro Max: 6:15 p.m. Sala 2. Película para niños.\nBoletos: $70. Niños: $45.\nLos miércoles todos pagan $45.",
+      "question": "What is true according to the movie theater's program?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "A2",
+      "options": [
+        "The package arrived today, while Diego was at work.",
+        "Camila can pick up the package after Diego gets back at 6:00 p.m.",
+        "Camila received the package yesterday and kept it for Diego.",
+        "Diego will take the package to Camila's apartment after work.",
+        "Diego received the package yesterday, when Camila was not home."
+      ],
+      "passage": "Hola, Camila:\nAyer llegó un paquete para ti, pero no estabas. Lo recibí yo y lo guardé en mi departamento. Hoy salgo a trabajar a las 8:00 a.m. y regreso a las 6:00 p.m. Después puedes pasar por él.\nDiego, tu vecino del 4",
+      "question": "What is true according to Diego's note?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "The second graders sing before the sixth graders dance.",
+        "The second graders sing at eleven, when the festival ends.",
+        "The sixth graders dance at nine, when the festival starts.",
+        "The food in the schoolyard comes after the sixth graders dance.",
+        "The sixth graders sing first, and then the second graders dance."
+      ],
+      "passage": "Buenos días, papás. El viernes es el festival de primavera de la primaria. Primero cantan los niños de segundo, a las nueve. Después bailan los de sexto. Al final, a las once, hay comida en el patio. Los esperamos.",
+      "question": "What is true about the spring festival?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "She works late on Saturday, the day she asks for.",
+        "She wants to go to the salon on Saturday at five.",
+        "She wants a haircut and also wants to have her hair dyed.",
+        "She has an appointment on Thursday and wants to change it to Saturday.",
+        "She has an appointment on Saturday and wants to change it to Thursday."
+      ],
+      "passage": "Hola, habla Valentina. Tengo cita para un corte el jueves a las cinco, pero ese día trabajo hasta tarde. ¿Puedo ir el sábado a las diez? También quiero pintarme el pelo. Gracias, espero tu llamada.",
+      "question": "What is true about Valentina's appointment?",
+      "skill": "listening"
+    }
+  ]
+}

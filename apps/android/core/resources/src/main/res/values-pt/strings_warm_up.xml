@@ -13,7 +13,6 @@
   "warm_up_plan_ready_whenever": "e949bb569d065acd9b88efb8f2b1db28eacaf68bd22a487cb2c0bad204dc318c",
   "warm_up_plan_waiting": "acd88368221a7117186b7172754631f0afdba8d7f41dba26746e32426963e88c",
   "warm_up_play_quiz": "8b1640da7cf1a61939472c3900bb7d06fa0266c57e0f612d764fccf4eea2915e",
-  "warm_up_questions_ready": "deca6af652162fa212bbe3467106c7ed578219b1e42f7fe127b6f441b5c0bc67",
   "warm_up_ready_to_start": "72a71cec110d6c8374a60e617c5646e39becdedc793d3d9fecef11e303828e83",
   "warm_up_start_first_lesson": "63c3c7aa6d11fc33e385cbe0a8af1b002e45d39f952179540395c3b5c6107bd0",
   "warm_up_title": "6e76dcaa0eb65a192dc030caa346bdc05d84da8b825aaef34d6d937e8988af29",
@@ -37,7 +36,6 @@
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">Veja quando quiser.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
-    <string name="warm_up_questions_ready">Suas perguntas estão prontas</string>
     <string name="warm_up_back_to_quiz">Voltar ao quiz</string>
     <string name="warm_up_play_quiz">Jogar um quiz</string>
     <string name="warm_up_first_lesson_writing">Criando sua primeira aula: %1$s</string>

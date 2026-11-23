@@ -1,0 +1,92 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0016576400000000002,
+  "failureCodes": [
+    "invalid_response",
+    "failed_controls"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Missed the control bank defect."
+  ],
+  "packetId": "808dbf00fb2f7273eecbff7e2c75379e39a27742f7a34f79c35603495eae4a82",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and use straightforward A2 tasks that ask learners to connect stated details or follow event order.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answer sets match the passages in both outputs.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use Mexican Spanish passages and English questions and options, with no notable language issue.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "2ff6798e-233e-456b-9f1e-968dbf889b83"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions use A2-level tasks that connect stated details and test short sequences; neither is noticeably better calibrated.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answers in both outputs are supported by their passages, and the distractors are contradicted by the text.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish passages with questions and options in English.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both versions provide suitable A2 practice, with no clear difference in accuracy, level, or language quality."
+        },
+        "pairId": "33853ace-5335-44a3-bd4c-de4988124e93"
+      },
+      {
+        "criteria": [],
+        "observations": [
+          {
+            "claim": "The key marks option 2 as correct, but the message says the bus leaves at ten, not nine; it also omits option 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the message accurately would be marked wrong, while a learner who misses its details could be rewarded.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": null,
+        "pairId": "da72c57c-68a0-4712-8bd8-ccf28c6d2e65"
+      }
+    ]
+  }
+}

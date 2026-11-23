@@ -1,1 +1,0 @@
-- When `QUICK_FORMAT` is `trueFalse`, about half of all your statements are true, whichever skills they belong to.

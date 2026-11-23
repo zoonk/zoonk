@@ -1,26 +1,12 @@
 "use client";
 
-import {
-  LEVEL_TEST_MINUTES,
-  type LanguageLevelTestView,
-} from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
-import { useFormatDuration } from "../../_utils/time-format";
-import { useLanguageNameInSentence } from "../../_utils/use-language-name";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingTitle,
-} from "../../onboarding/onboarding-frame";
-import { TestOutcome, TestStartActions } from "../../onboarding/test-outcome";
-import { LevelBars } from "./level-test-parts";
-
-type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
+import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
+import { type PlacementPressed } from "../../placement-test/use-placement-test";
 
 function InterfaceOffer({
   language,
@@ -50,91 +36,43 @@ function InterfaceOffer({
   );
 }
 
+/** The length choice as onboarding opens it: the learner can skip the test or switch the app to their own language. */
 export function TestIntro({
-  goal,
-  onScratch,
+  failed,
+  language,
+  onSkip,
   onStart,
   onSwitch,
-  pending,
+  pressed,
   showAlphabetNote,
-  starting,
+  wholeCourseMinutes,
 }: {
-  goal: { language: string; targetLanguage: string };
-  onScratch: () => void;
-  onStart: () => void;
+  failed: boolean;
+  language: string;
+  onSkip: () => void;
+  onStart: React.ComponentProps<typeof PlacementLengthChoice>["onStart"];
   onSwitch: (language: string) => void;
-  pending: boolean;
+  pressed: PlacementPressed;
   showAlphabetNote: boolean;
-  starting: boolean;
+  wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
-  const locale = useAppLocale();
-  const formatDuration = useFormatDuration();
-
-  const target = getLanguageNameInSentence({
-    targetLanguage: goal.targetLanguage,
-    userLanguage: locale,
-  });
 
   return (
-    <OnboardingColumn
-      bar={
-        <TestStartActions
-          onScratch={onScratch}
-          onStart={onStart}
-          pending={pending}
-          starting={starting}
-        />
-      }
+    <PlacementLengthChoice
+      failed={failed}
+      onSkip={onSkip}
+      onStart={onStart}
+      pressed={pressed}
+      wholeCourseMinutes={wholeCourseMinutes}
     >
-      <OnboardingHeading>
-        <OnboardingTitle>
-          {t("Find your level in {language}", { language: target })}
-        </OnboardingTitle>
-        <OnboardingDescription>
-          {t(
-            "About {time} of reading, listening and one sentence out loud, so your plan starts at your level.",
-            { time: formatDuration(LEVEL_TEST_MINUTES) },
-          )}
-        </OnboardingDescription>
-      </OnboardingHeading>
-
       {showAlphabetNote && (
         <p className="text-muted-foreground text-sm">
           {t("New to its alphabet? Skip the test. Your first lesson teaches you to read it.")}
         </p>
       )}
 
-      <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
-    </OnboardingColumn>
-  );
-}
-
-export function TestDone({
-  failed,
-  levels,
-  onContinue,
-  pending,
-  targetLanguage,
-}: {
-  failed: boolean;
-  levels: ReadyTest["levels"];
-  onContinue: () => void;
-  pending: boolean;
-  targetLanguage: string;
-}) {
-  const t = useExtracted();
-  const languageName = useLanguageNameInSentence();
-
-  return (
-    <TestOutcome
-      busy={pending}
-      failed={failed}
-      onContinue={onContinue}
-      subject={t("Level test")}
-      title={t("Your {language} level", { language: languageName(targetLanguage) })}
-    >
-      <LevelBars levels={levels} />
-    </TestOutcome>
+      <InterfaceOffer language={language} onSwitch={onSwitch} />
+    </PlacementLengthChoice>
   );
 }

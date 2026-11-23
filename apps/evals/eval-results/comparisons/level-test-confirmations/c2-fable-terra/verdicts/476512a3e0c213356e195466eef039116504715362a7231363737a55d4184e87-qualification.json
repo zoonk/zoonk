@@ -1,0 +1,104 @@
+{
+  "attempt": "qualification",
+  "costUsd": 0.00209054,
+  "failures": [],
+  "packetId": "476512a3e0c213356e195466eef039116504715362a7231363737a55d4184e87",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions use very simple, direct statements suited to an A1 fact-checking task.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "The passage supports statements 1 and 3; B’s key incorrectly includes statement 2 and omits statement 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both keep the message in English and the question and options in Brazilian Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct even though the bus leaves at ten, not nine, and fails to mark statement 3, which matches the message.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows this key would be told to select a false statement and leave out a true one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A’s key correctly identifies the two statements supported by the message; B’s key gives the wrong answer set."
+        },
+        "pairId": "0944ed92-afd1-4c8e-9728-de0319a49418"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and both use interpretive questions appropriate to the stated C2 level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and their marked answer sets are supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and use natural German passages with US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and both meet the stated requirements."
+        },
+        "pairId": "120bef56-6c33-4acb-b7ac-1981f779129d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask readers to interpret subtle implications, irony, or argument structure in ways that fit C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answer sets in both versions are supported by their passages, with the distractors clearly contradicted or unsupported.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural German passages and US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs offer sound, nuanced C2 reading and listening tasks, with no noticeable difference in how well they serve the learner."
+        },
+        "pairId": "f525ff99-9dad-49dd-8254-ef7f11ac0810"
+      }
+    ]
+  }
+}

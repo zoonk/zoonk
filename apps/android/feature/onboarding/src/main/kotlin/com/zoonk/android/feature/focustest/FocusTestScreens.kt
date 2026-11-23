@@ -19,38 +19,29 @@ import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestSitting
 
-@Composable
-internal fun aboutMinutes(minutes: Int): String = stringResource(R.string.focustest_about, formatMinutes(minutes, currentLocale()))
-
-@Composable
-internal fun aboutMinutesLeft(minutes: Int): String = stringResource(R.string.focustest_about_left, formatMinutes(minutes, currentLocale()))
-
-/** The line above a test screen's headline: the test's name, and what starting it costs when it does. */
-@Composable
-internal fun TestEyebrow(cost: String? = null) {
-    Eyebrow(listOfNotNull(stringResource(R.string.focustest_title), cost).factsLine())
-}
-
-/** A test screen's one headline, with its line above and at most one line under it, said again when [announced] and it changes. */
+/**
+ * A test screen's one headline, under the test's name with [position] (how long it takes, or what's left) at that row's
+ * end, and at most one line under it, said again when [announced] and it changes.
+ */
 @Composable
 internal fun TestHeader(
     title: String,
     description: String? = null,
-    eyebrow: @Composable () -> Unit = { TestEyebrow() },
+    position: String? = null,
     announced: Boolean = false,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        eyebrow()
+        OnboardingSubject(stringResource(R.string.focustest_title), position)
         OnboardingHeading(title)
         description?.let { Note(it, if (announced) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier) }
     }
@@ -79,27 +70,23 @@ internal fun ColumnScope.FocusTestOffer(
     SetupContent {
         TestHeader(
             title = stringResource(if (focus) R.string.focustest_find_focus else R.string.focustest_find_start),
-            description = stringResource(if (focus) R.string.focustest_offer_description_focus else R.string.focustest_offer_description),
-            eyebrow = { TestEyebrow(aboutMinutes(minutes)) },
+            description = stringResource(if (focus) R.string.focustest_offer_line_focus else R.string.focustest_offer_line),
+            position = formatMinutes(minutes, currentLocale()),
         )
-        HowItWorks(focus)
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                busy = pressed == Pressed.Main,
-                onClick = onStart,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed != Pressed.Other,
-            ) {
-                Text(stringResource(R.string.focustest_start))
-            }
-            TextButton(
-                busy = pressed == Pressed.Other,
-                onClick = onSkip,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed != Pressed.Main,
-            ) {
-                Text(stringResource(if (onPlan) R.string.focustest_not_now else R.string.onboarding_skip))
+            TaskActions { main ->
+                OutlinedButton(
+                    busy = pressed == Pressed.Other,
+                    onClick = onSkip,
+                    enabled = pressed != Pressed.Main,
+                    leadingIcon = if (onPlan) null else ({ ButtonIcon(R.drawable.ic_skip_next) }),
+                ) {
+                    Text(stringResource(if (onPlan) R.string.focustest_not_now else R.string.onboarding_skip))
+                }
+                Button(busy = pressed == Pressed.Main, onClick = onStart, modifier = main, enabled = pressed != Pressed.Other) {
+                    Text(stringResource(R.string.focustest_start))
+                }
             }
         }
     }
@@ -118,19 +105,17 @@ internal fun ColumnScope.FocusTestResume(
         TestHeader(
             title = stringResource(R.string.focustest_resume_title),
             description = pluralStringResource(R.plurals.focustest_answers_saved_line, answered, answered),
-            eyebrow = { TestEyebrow(aboutMinutesLeft(sitting.minutes.toInt())) },
+            position = stringResource(R.string.focustest_time_left, formatMinutes(sitting.minutes.toInt(), currentLocale())),
         )
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                onClick = onContinue,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed == null,
-            ) {
-                Text(stringResource(R.string.focustest_continue))
-            }
-            TextButton(busy = pressed == Pressed.Other, onClick = onSeeResult, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.focustest_see_my_result))
+            TaskActions { main ->
+                OutlinedButton(busy = pressed == Pressed.Other, onClick = onSeeResult) {
+                    Text(stringResource(R.string.focustest_see_my_result))
+                }
+                Button(onClick = onContinue, modifier = main, enabled = pressed == null) {
+                    Text(stringResource(R.string.focustest_continue))
+                }
             }
         }
     }

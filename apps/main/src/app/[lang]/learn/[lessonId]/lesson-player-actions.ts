@@ -17,6 +17,7 @@ export async function completeLibraryLessonAction({
   lessonId,
   ...rawInput
 }: {
+  dismissPlacementOffer?: boolean;
   lessonId: string;
   runId: string;
   skippedWritingStepIds?: string[];

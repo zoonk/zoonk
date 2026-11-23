@@ -259,4 +259,26 @@ export const TEST_CASES: TestCase<unknown, WriteListeningSetInput>[] = [
       task: "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test.",
     },
   },
+  {
+    expectations:
+      "A C1 placement test with one single-answer question and three questions that each put at least four distinct decisions or events in order. The audio alone establishes the order, and each question checks different information. A learner cannot answer by relying on a familiar sequence.",
+    id: "en-c1-test-out-order",
+    userInput: {
+      accents: ["British English"],
+      count: 4,
+      exam: null,
+      formats: ["multipleChoice", "order"],
+      language: "en",
+      level: "C1",
+      plays: 2,
+      scriptLanguage: "en",
+      skills: [
+        {
+          description: "Follow corrections and changes of plan in a conversation.",
+          name: "Follow the order of decisions",
+        },
+      ],
+      task: "A conversation of about three minutes in which two colleagues reconstruct how plans changed before a community event.",
+    },
+  },
 ];

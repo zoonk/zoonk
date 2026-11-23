@@ -1,36 +1,27 @@
 import SwiftUI
 
-/// When the language pair's questions don't exist yet, only the learner's Start asks for them.
+/// Onboarding's level test: its length choice, then the same test the plan opens. When the
+/// language pair's questions don't exist yet, only the learner's Start asks for them.
 struct LevelTestStep: View {
   let goalID: String
-  /// The learner's own language.
   let language: String
   let targetLanguage: String
-  let testMinutes: Int
-  let onDone: () async throws -> Void
+  let subject: String
+  let onDone: (String?) async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  @Environment(VoiceServices.self) private var voice
+  @Environment(PlanStore.self) private var plans
   @State private var phase = Phase.loading
-  /// The player is app-wide, and another window can show the same bank question.
-  @State private var audioOwner = UUID()
-  @State private var levels: [LevelTest.Level] = []
-  @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
-  /// The test's finish: a step left while it saves doesn't go on when it answers.
   @State private var finishing = ScreenTasks()
-  @State private var isStarting = false
   @State private var saveFailures = 0
-  @State private var showsSaveReport = false
-  @State private var failedAnswer: SentAnswer?
 
   private enum Phase {
     case loading
+    case loadFailed
     case intro(showAlphabetNote: Bool)
-    case preparing(generationID: String)
-    case question(LevelTest.Question, number: Int, progress: Double)
-    case speaking(LevelTest.Sentence, progress: Double)
-    case done
+    case test(LevelTest, generationId: String? = nil)
+    case topics(GoalPlacement)
   }
 
   var body: some View {
@@ -38,256 +29,93 @@ struct LevelTestStep: View {
       switch phase {
       case .loading:
         StepLoading()
+      case .loadFailed:
+        PracticeLoadFailureView(error: .unavailable) {
+          finishing.run { await resume() }
+        }
       case .intro(let showAlphabetNote):
-        LevelTestIntro(
-          language: language, targetLanguage: targetLanguage, minutes: testMinutes,
-          showAlphabetNote: showAlphabetNote,
-          isSaving: isSaving, isStarting: isStarting,
-          failed: saveFailures > 0 && !isSaving && !isStarting,
-          onStart: { Task { await begin() } }, onSkip: finish)
-      case .preparing(let generationID):
-        preparing(generationID)
-          .onboardingColumn()
-      case .question(let question, let number, let progress):
-        questionScreen(question, number: number, progress: progress)
-          .id(question.id)
-          .task(id: question.id) { await waitForAudio(question) }
-      case .speaking(let sentence, let progress):
-        LevelTestSpeaking(
-          goalID: goalID, sentence: sentence, progress: progress, onTest: show,
-          onSkip: stop)
-      case .done:
-        LevelTestDone(
-          levels: levels, targetLanguage: targetLanguage, isSaving: isSaving,
-          failed: saveFailures > 0 && !isSaving, onContinue: finish)
+        PlacementLengthChoice(
+          wholeCourseMinutes: wholeCourseMinutes,
+          languageNotes: LevelTestLanguageNotes(
+            language: language, showAlphabetNote: showAlphabetNote),
+          isSaving: isSaving, failed: saveFailures > 0, onSkip: skip,
+          onStart: { choice in
+            guard case .length(let length) = choice else { return }
+            save { try await begin(length) }
+          })
+      case .test(let test, let generationId):
+        LevelTestFlow(
+          goalID: goalID, targetLanguage: targetLanguage, wholeCourseMinutes: wholeCourseMinutes,
+          testOutLevel: nil, subject: subject, nextTopic: { nil }, initialTest: test,
+          generationId: generationId,
+          onOnboardingDone: { try await onDone($0) }
+        ) {
+          try await onDone(nil)
+        }
+      case .topics(let placement):
+        PlacementTestFlow(
+          goalID: goalID, subject: subject,
+          wholeCourseMinutes: wholeCourseMinutes, nextTopic: { nil },
+          initialPlacement: placement, onOnboardingDone: { try await onDone($0) }
+        ) {
+          try await onDone(nil)
+        }
       }
     }
     .task { await resume() }
+    .loads(plan, refreshable: false)
     .onDisappear { finishing.cancel() }
-    .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "level-test", reportType: .saveFailure), isReport: true)
   }
 
-  private func preparing(_ generationID: String) -> some View {
-    GenerationWaitView(
-      title: LocalizedStringResource(
-        "Preparing your level test", table: "Onboarding",
-        comment: "Title while a language's level test questions are written"),
-      description: LocalizedStringResource(
-        "Getting the \(Locale.current.languageName(targetLanguage)) test ready takes a minute or two, and only this once.",
-        table: "Onboarding", comment: "Why the level test waits: the language's name"),
-      generationID: generationID,
-      kind: .levelTestBank,
-      restart: { try await onboarding.prepareLevelTest(goalID: goalID) },
-      readResult: {
-        guard let test = try? await onboarding.levelTest(goalID: goalID), test.status == .ready
-        else {
-          return false
-        }
+  private var plan: Resource<PlanRead> { plans.plan(goalId: goalID) }
 
-        show(test)
-        return true
-      },
-      trailing: {
-        // The bar holds the way out; what skipping does is said at the end of the wait.
-        Section {
-          Text(
-            "Your plan starts from the level you gave, and your first days fine-tune it.",
-            tableName: "Onboarding", comment: "What skipping the level test does"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .listRowBackground(Color.clear)
-        }
-      }
-    )
-    .bottomBar(
-      note: saveFailures > 0 && !isSaving
-        ? BarNote(
-          LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Onboarding",
-            comment: "Starting or skipping the level test failed"))
-        : nil
-    ) {
-      BusyButton(isBusy: isSaving, icon: .skip, action: finish) {
-        Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
-      }
-      .buttonStyle(.outline)
-      .buttonSizing(.flexible)
-    }
-  }
+  private var wholeCourseMinutes: Int { plan.value?.plan.placementTest?.estimatedMinutes ?? 0 }
 
-  private func questionScreen(_ question: LevelTest.Question, number: Int, progress: Double)
-    -> some View
-  {
-    let isListening = question.skill == .listening
-    let owner = AnyHashable([audioOwner.uuidString, question.id])
-    let audioFailed = if case .failed = voice.player.state(for: owner) { true } else { false }
-    // A message the learner can't hear yet is skipped: answering it would move their level.
-    let skips = isListening && (question.audioPending || audioFailed)
-    var shown = PracticeQuestion(
-      itemId: question.id, format: .multipleChoice, question: question.question,
-      options: question.options)
-    shown.context = isListening ? nil : question.passage
-    shown.placement = true
-
-    return PlacementQuestionScreen(
-      number: number, progress: progress, question: shown,
-      dontKnowLabel: skips
-        ? LocalizedStringResource(
-          "Skip this question", table: "Onboarding",
-          comment:
-            "Skips a level test listening question whose message can't play yet; it doesn't count toward the level"
-        )
-        : isListening
-          ? LocalizedStringResource(
-            "I didn't understand the audio", table: "Onboarding",
-            comment: "Answers a listening question of the level test without guessing")
-          : LocalizedStringResource(
-            "I don't know yet", table: "Onboarding",
-            comment: "Answers a placement question without guessing"),
-      isSaving: isSaving, failures: saveFailures,
-      onReport: { showsSaveReport = true },
-      onAnswer: { answer(question, with: $0, skips: skips) },
-      onStop: stop,
-      media: {
-        if isListening {
-          ListeningMessage(question: question, language: targetLanguage, owner: owner)
-        }
-      })
-  }
-
-  private func waitForAudio(_ question: LevelTest.Question) async {
-    guard question.audioPending,
-      let shown = try? await question.waitingForAudio(read: {
-        try await onboarding.levelTest(goalID: goalID)
-      }),
-      case .question(let current, let number, let progress) = phase, current.id == shown.id
-    else {
-      return
-    }
-
-    phase = .question(shown, number: number, progress: progress)
-  }
-
-  /// Without answers it starts from its intro, unless it was ended, and only the learner's Start
-  /// asks for questions.
+  /// An open test goes on; otherwise the learner chooses one, and only their Start asks for
+  /// questions.
   private func resume() async {
-    guard case .loading = phase else {
-      return
+    switch phase {
+    case .loading, .loadFailed: phase = .loading
+    default: return
     }
-
-    let test = try? await onboarding.levelTest(goalID: goalID)
-
-    guard let test, test.status == .ready,
-      (test.answered ?? 0) > 0 || test.next?.kind == "done"
-    else {
-      phase = .intro(showAlphabetNote: test?.showAlphabetNote ?? false)
-      return
-    }
-
-    show(test)
-  }
-
-  private func begin() async {
-    guard !isSaving, !isStarting else {
-      return
-    }
-
-    isStarting = true
-    defer { isStarting = false }
 
     do {
-      if let generationID = try await onboarding.prepareLevelTest(goalID: goalID) {
-        phase = .preparing(generationID: generationID)
-      } else {
-        show(try await onboarding.levelTest(goalID: goalID))
+      let placement = try await onboarding.placement(goalID: goalID)
+
+      if placement.resumesOnboardingTopics {
+        phase = .topics(placement)
+        return
       }
-      saveFailures = 0
+
+      let test = try await onboarding.languageTest(goalID: goalID)
+
+      if test.attemptId != nil, test.length != nil {
+        phase = .test(test)
+      } else {
+        phase = .intro(showAlphabetNote: test.showAlphabetNote)
+      }
     } catch is CancellationError {
     } catch {
-      saveFailures += 1
+      phase = .loadFailed
     }
   }
 
-  private func show(_ test: LevelTest) {
-    guard test.status == .ready, let next = test.next else {
-      return
-    }
+  private func begin(_ length: PlacementLength) async throws {
+    let test = try await onboarding.startLanguageTest(goalID: goalID, length: length)
+    guard test.attemptId != nil else { throw APIError.unavailable }
+    let generationId =
+      test.status == .preparing ? try? await onboarding.prepareLevelTest(goalID: goalID) : nil
+    phase = .test(test, generationId: generationId)
+  }
 
-    levels = test.levels ?? levels
-    let answered = test.answered ?? 0
-    let progress = Double(answered) / Double(max(1, test.total ?? 1))
-
-    switch next.kind {
-    case "question":
-      if let question = next.question {
-        shownAt = .now
-        phase = .question(question, number: answered + 1, progress: progress)
-      }
-    case "speaking":
-      if let sentence = next.speaking {
-        phase = .speaking(sentence, progress: progress)
-      }
-    default:
-      phase = .done
+  private func skip() {
+    save {
+      _ = try await onboarding.finishLanguageTest(goalID: goalID, attemptID: nil)
+      try await goOnUnlessLeft { try await onDone(nil) }
     }
   }
 
-  private func answer(_ question: LevelTest.Question, with answer: PracticeAnswer, skips: Bool) {
-    guard !isSaving else {
-      return
-    }
-
-    isSaving = true
-    let sent = SentAnswer(
-      answer: answer, sender: answer.isDontKnow ? .notSure : .check,
-      measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
-
-    Task {
-      defer { isSaving = false }
-
-      do {
-        let index: Int? =
-          switch answer {
-          case .choice(let index): index
-          default: nil
-          }
-        let skipped = if skips, case .dontKnow = answer { true } else { false }
-
-        show(
-          try await onboarding.answerLevelTest(
-            goalID: goalID, questionID: question.id, answerIndex: index, skipped: skipped,
-            duration: .milliseconds(sent.durationMs)))
-        saveFailures = 0
-        failedAnswer = nil
-      } catch is CancellationError {
-      } catch {
-        failedAnswer = sent
-        saveFailures += 1
-      }
-    }
-  }
-
-  private func finish() {
-    saveFinish(then: onDone)
-  }
-
-  /// Saving the finish ends the test, so a relaunch or another device shows this result too.
-  private func stop() {
-    guard !isSaving else {
-      return
-    }
-
-    if case .speaking = phase {
-      phase = .done
-    }
-    saveFinish { phase = .done }
-  }
-
-  private func saveFinish(then next: @escaping () async throws -> Void) {
+  private func save(_ action: @escaping () async throws -> Void) {
     guard !isSaving else {
       return
     }
@@ -298,9 +126,8 @@ struct LevelTestStep: View {
       defer { isSaving = false }
 
       do {
-        try await onboarding.finishLevelTest(goalID: goalID)
+        try await action()
         saveFailures = 0
-        try await goOnUnlessLeft(next)
       } catch is CancellationError {
       } catch {
         saveFailures += 1
@@ -346,81 +173,119 @@ extension LevelTest.Question {
   }
 }
 
-private func baseLanguage(_ code: String) -> String {
-  String(code.lowercased().prefix { $0 != "-" && $0 != "_" })
+extension PracticeAnswer {
+  /// The one option a level test question's answer picked.
+  var levelTestIndex: Int? {
+    if case .choice(let index) = self { index } else { nil }
+  }
+
+  /// A confirmation's picks: every option the learner thinks is right.
+  var levelTestIndices: [Int]? {
+    if case .choices(let indexes) = self { indexes } else { nil }
+  }
 }
 
-private struct LevelTestIntro: View {
-  let language: String
+/// A level test question: a reading passage or a listening message and its options. A confirmation
+/// asks for every right option, so a guess rarely passes.
+struct LevelTestQuestionScreen: View {
+  let question: LevelTest.Question
+  var selectsAll = false
+  let number: Int
+  /// From 0 to 1.
+  let progress: Double
   let targetLanguage: String
-  let minutes: Int
-  let showAlphabetNote: Bool
   let isSaving: Bool
-  let isStarting: Bool
-  let failed: Bool
-  let onStart: () -> Void
-  let onSkip: () -> Void
+  let failures: Int
+  let onReport: () -> Void
+  /// `skips`: a message the learner can't hear yet, whose "I don't know" doesn't count.
+  let onAnswer: (_ answer: PracticeAnswer, _ skips: Bool) -> Void
+  let onStop: () -> Void
+
+  @Environment(VoiceServices.self) private var voice
+  /// The player is app-wide, and another window can show the same bank question.
+  @State private var audioOwner = UUID()
+
+  var body: some View {
+    let isListening = question.skill == .listening
+    let owner = AnyHashable([audioOwner.uuidString, question.id])
+    let audioFailed = if case .failed = voice.player.state(for: owner) { true } else { false }
+    // A message the learner can't hear yet is skipped: answering it would move their level.
+    let skips = isListening && (question.audioPending || audioFailed)
+    var shown = PracticeQuestion(
+      itemId: question.id, format: .multipleChoice, question: question.question,
+      options: question.options, select: selectsAll ? .all : .one)
+    shown.context = isListening ? nil : question.passage
+
+    return PlacementQuestionScreen(
+      number: number, progress: progress, question: shown,
+      dontKnowLabel: skips
+        ? LocalizedStringResource(
+          "Skip this question", table: "Onboarding",
+          comment:
+            "Skips a level test listening question whose message can't play yet; it doesn't count toward the level"
+        )
+        : isListening
+          ? LocalizedStringResource(
+            "I didn't understand the audio", table: "Onboarding",
+            comment: "Answers a listening question of the level test without guessing")
+          : LocalizedStringResource(
+            "I don't know yet", table: "Onboarding",
+            comment: "Answers a placement question without guessing"),
+      isSaving: isSaving, failures: failures,
+      onReport: onReport,
+      onAnswer: { onAnswer($0, skips) },
+      onStop: onStop,
+      media: {
+        if isListening {
+          ListeningMessage(question: question, language: targetLanguage, owner: owner)
+        }
+      })
+  }
+}
+
+struct LevelTestLanguageNotes: View {
+  let language: String
+  let showAlphabetNote: Bool
 
   @Environment(\.openURL) private var openURL
 
   var body: some View {
-    ZoonkList {
-      StepHeader(
-        title: Text(
-          "Find your level in \(Locale.current.languageName(targetLanguage))",
+    if showAlphabetNote {
+      Section {
+        Text(
+          "New to its alphabet? Skip the test. Your first lesson teaches you to read it.",
           tableName: "Onboarding",
-          comment: "Title of a language goal's level test"),
-        description: Text(
-          "About \(studyDuration(minutes: minutes)) of reading, listening and one sentence out loud, so your plan starts at your level.",
-          tableName: "Onboarding",
-          comment: "What the level test is; %@ is about how long it takes, such as \"3 minutes\""))
+          comment:
+            "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .listRowBackground(Color.clear)
+      }
+    }
 
-      if showAlphabetNote {
-        Section {
+    if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
+      Section {
+        Button {
+          openURL(settings)
+        } label: {
           Text(
-            "New to its alphabet? Skip the test. Your first lesson teaches you to read it.",
+            "Use the app in \(Locale(identifier: language).localizedString(forLanguageCode: language) ?? language)",
             tableName: "Onboarding",
-            comment:
-              "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
-          )
-        }
-      }
-
-      if failed {
-        Section {
-          FailureLine(
-            message: LocalizedStringResource(
-              "That didn't work. Try again in a moment.", table: "Onboarding",
-              comment: "Starting or skipping the level test failed"))
-        }
-      }
-
-      if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
-        Section {
-          Button {
-            openURL(settings)
-          } label: {
-            Text(
-              "Use the app in \(Locale(identifier: language).localizedString(forLanguageCode: language) ?? language)",
-              tableName: "Onboarding",
-              comment: "Opens the app's settings to switch its language: the language's own name")
-          }
+            comment: "Opens the app's settings to switch its language: the language's own name")
         }
       }
     }
-    .bottomBar {
-      StepButtons(
-        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
-        onContinue: onStart, onSkip: onSkip)
-    }
-    .onboardingColumn()
-    .environment(\.isSavingAnswer, isStarting || isSaving)
   }
 
   private var offersOwnLanguage: Bool {
     let base = baseLanguage(language)
     let shown = Bundle.main.preferredLocalizations.first.map(baseLanguage)
     return base != shown && Bundle.main.localizations.contains(base)
+  }
+
+  private func baseLanguage(_ code: String) -> String {
+    String(code.lowercased().prefix { $0 != "-" && $0 != "_" })
   }
 }
 
@@ -456,7 +321,7 @@ private struct ListeningMessage: View {
         ListeningFailedNote(limit: limit, play: play)
       }
     }
-    .padding()
+    .padding(.vertical)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background {
       if isWaiting {
@@ -607,100 +472,6 @@ struct ListeningFailedNote: View {
           .controlSize(.small)
         }
       }
-    }
-  }
-}
-
-/// Like the test's other questions it has no way back; skipping it ends the test.
-private struct LevelTestSpeaking: View {
-  let goalID: String
-  let sentence: LevelTest.Sentence
-  let progress: Double
-  let onTest: (LevelTest) -> Void
-  let onSkip: () -> Void
-  /// Record and Stop are the step's main action, where the other questions put Confirm, with the
-  /// line about them right over the bar.
-  @State private var recordInBar = RecordInBar()
-
-  var body: some View {
-    PracticeTaskLayout(note: recordInBar.note) {
-      Meter(value: progress, fill: .success)
-        .accessibilityHidden(true)
-
-      VStack(alignment: .leading, spacing: 4) {
-        Text(sentence.sentence)
-          .typeStyle(.section)
-          .accessibilityAddTraits(.isHeader)
-        Text(sentence.translation)
-          .foregroundStyle(.mutedForeground)
-      }
-    } response: {
-      VoiceAnswerRecorder(
-        grade: { voice, recording in
-          await voice.gradeLevelTestSentence(goalId: goalID, recording: recording)
-        },
-        onGraded: { result in
-          if let test = try? PracticeJSON.recode(result.test, as: LevelTest.self) {
-            onTest(test)
-          }
-        })
-    } actions: {
-      recordInBar.button
-        .practiceMainAction()
-
-      PracticeSecondaryButton(
-        title: LocalizedStringResource(
-          "Skip this part", table: "Onboarding", comment: "Skips the level test's sentence"),
-        icon: .skip, isDisabled: recordInBar.isChecking, action: onSkip)
-    }
-    .environment(recordInBar)
-  }
-}
-
-private struct LevelTestDone: View {
-  let levels: [LevelTest.Level]
-  let targetLanguage: String
-  let isSaving: Bool
-  let failed: Bool
-  let onContinue: () -> Void
-
-  var body: some View {
-    TestOutcome(
-      subject: String(
-        localized: "Level test", table: "Onboarding", comment: "Over the level test's result"),
-      title: Text(
-        "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
-      isSaving: isSaving, failed: failed, onContinue: onContinue
-    ) {
-      if !levels.isEmpty {
-        Section {
-          ForEach(levels) { level in
-            LabeledContent {
-              Text(level.label)
-                .monospacedDigit()
-            } label: {
-              VStack(alignment: .leading, spacing: 6) {
-                skillName(level.skill)
-                Meter(value: level.score, total: 5)
-                  .accessibilityHidden(true)
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private func skillName(_ skill: LevelTest.Skill) -> Text {
-    switch skill {
-    case .listening:
-      Text("Listening", tableName: "Onboarding", comment: "A language skill")
-    case .reading:
-      Text("Reading", tableName: "Onboarding", comment: "A language skill")
-    case .speaking:
-      Text("Speaking", tableName: "Onboarding", comment: "A language skill")
-    case .writing:
-      Text("Writing", tableName: "Onboarding", comment: "A language skill")
     }
   }
 }

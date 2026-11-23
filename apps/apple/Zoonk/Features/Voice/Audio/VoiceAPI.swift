@@ -108,42 +108,6 @@ struct VoiceAPI: Sendable {
     }
   }
 
-  func answerLevelTestOutLoud(
-    goalId: String,
-    recording: VoiceRecording,
-    token: String
-  ) async throws -> Refusable<Components.Schemas.LanguageLevelTestSpokenResult> {
-    try await clients.perform(token: token) { client in
-      let parts: [Components.Schemas.LanguageLevelTestSpokenAnswerRequest] = [
-        .audio(.init(payload: .init(body: HTTPBody(recording.audio)), filename: "sentence.m4a"))
-      ]
-
-      let output = try await client.answerLanguageLevelTestOutLoud(
-        path: .init(goalId: goalId), body: .multipartForm(.init(parts)))
-
-      switch output {
-      case .ok(let response):
-        return .done(try response.body.json)
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .notFound:
-        throw APIError.notFound
-      case .code402(let response):
-        return .refused(voiceRefusal(status: 402, error: try? response.body.json))
-      case .forbidden(let response):
-        return .refused(voiceRefusal(status: 403, error: try? response.body.json))
-      case .conflict(let response):
-        return .refused(voiceRefusal(status: 409, error: try? response.body.json))
-      case .unprocessableContent(let response):
-        return .refused(voiceRefusal(status: 422, error: try? response.body.json))
-      case .tooManyRequests(let response):
-        return .refused(voiceRefusal(status: 429, error: try? response.body.json))
-      case .badRequest, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
   /// Only ever on a learner's tap.
   func speechClip(
     text: String,

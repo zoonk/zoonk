@@ -15,11 +15,11 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.feature.onboarding.setup.PlacementFormat
-import com.zoonk.android.feature.onboarding.setup.PlacementItem
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.practice.SaveErrorText
+import com.zoonk.android.feature.questions.Question
+import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -82,24 +82,20 @@ class SaveFailureScreenshots {
                             SetupColumn {
                                 PlacementQuestion(
                                     item =
-                                        PlacementItem(
+                                        Question(
                                             itemId = ITEM_ID,
+                                            format = QuestionFormat.MultipleChoice,
                                             question = "Which court hears appeals from state courts?",
-                                            context = null,
-                                            image = null,
-                                            visual = null,
-                                            format =
-                                                PlacementFormat.Choice(
-                                                    listOf("The Supreme Court", "A district court", "A county court"),
-                                                ),
+                                            options = listOf("The Supreme Court", "A district court", "A county court"),
                                         ),
-                                    eyebrow = "Bar exam · Question 3",
+                                    subject = "Bar exam",
+                                    position = "Question 3",
                                     labels = TrueFalseLabels.TRUE_FALSE,
-                                    typedWords = null,
                                     pending = false,
                                     saveFailures = 2,
                                     onAnswer = { _, _ -> },
                                     onStop = {},
+                                    canStop = true,
                                 )
                             }
                         } else {

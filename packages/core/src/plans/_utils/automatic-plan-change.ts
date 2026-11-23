@@ -7,9 +7,10 @@ export function asksAboutAutomaticChange({
   change: { kind: string; payload: unknown };
   dateReached: boolean;
 }): boolean {
+  const payload = parsePlanChangePayload(change.payload);
+
   return (
-    change.kind === "missedDays" &&
-    !dateReached &&
-    parsePlanChangePayload(change.payload).behind !== null
+    Boolean(payload.livingPlanDay) ||
+    (change.kind === "missedDays" && !dateReached && payload.behind !== null)
   );
 }

@@ -78,6 +78,7 @@ const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
   "focusTest",
   "levelTest",
   "noticeFormats",
+  "placementTest",
   "skillLevels",
 ]);
 

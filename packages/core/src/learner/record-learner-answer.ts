@@ -7,6 +7,7 @@ import {
   prisma,
 } from "@zoonk/db";
 import { type JsonObject } from "@zoonk/utils/json";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
@@ -100,6 +101,25 @@ type AnswerContext = {
   transaction: TransactionClient;
 };
 
+function hasUnfinishedDueReview({
+  answeredAt,
+  before,
+  input,
+}: Pick<AnswerContext, "answeredAt" | "before" | "input">) {
+  if (input.purpose !== "diagnostic" || input.studySessionId || !before?.due || before.reps === 0) {
+    return false;
+  }
+
+  const today = getDateInTimeZone({ date: answeredAt, timeZone: input.timeZone });
+  const dueDay = getDateInTimeZone({ date: before.due, timeZone: input.timeZone });
+  const lastReview = before.lastReviewedAt;
+
+  return (
+    dueDay <= today &&
+    (!lastReview || getDateInTimeZone({ date: lastReview, timeZone: input.timeZone }) < today)
+  );
+}
+
 async function updateMemory({
   answeredAt,
   before,
@@ -110,7 +130,7 @@ async function updateMemory({
   const isUnderway = (before?.reps ?? 0) > 0;
   const updates = input.purpose === "learning" || input.graded.isCorrect || isUnderway;
 
-  if (!skillId || !updates) {
+  if (!skillId || !updates || hasUnfinishedDueReview({ answeredAt, before, input })) {
     return null;
   }
 

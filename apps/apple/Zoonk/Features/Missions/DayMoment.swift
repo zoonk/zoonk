@@ -109,6 +109,8 @@ extension DayResult {
 private struct DayMomentContent: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.celebrates) private var celebrates
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var contrast
 
   let result: DayResult
   let chapter: Components.Schemas.FinishedChapter?
@@ -162,6 +164,11 @@ private struct DayMomentContent: View {
         MissionTrack(
           missions: moment.missions, from: celebrates ? moment.before : nil, delay: .beat)
       }
+      .padding(16)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .panel(
+        fill: contrast == .increased ? .card : .brain.opacity(scheme == .dark ? 0.1 : 0.05),
+        border: .brain.opacity(0.25))
     }
   }
 
@@ -242,7 +249,7 @@ struct LevelRow: View {
 func levelName(_ belt: ProgressBelt, _ level: Int) -> String {
   String(
     localized: "\(beltName(belt.rawValue) ?? belt.rawValue), level \(level)", table: "Session",
-    comment: "The belt and level reached")
+    locale: .appLanguage, comment: "The belt and level reached")
 }
 
 extension ProgressBelt {

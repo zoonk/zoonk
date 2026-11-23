@@ -272,7 +272,8 @@ private struct GuitarOnlyBoard: View {
   private var fretWindow: String {
     String(
       localized: "Frets \(firstFret) to \(firstFret + Guitar.fretboardSpan - 1)",
-      table: "ActivitiesMusic", comment: "Which frets of the guitar neck show, like “Frets 1 to 4”")
+      table: "ActivitiesMusic", locale: .appLanguage,
+      comment: "Which frets of the guitar neck show, like “Frets 1 to 4”")
   }
 
   private func markOf(string: Int, state: KeyboardFretboardState) -> NoteMarkKind {

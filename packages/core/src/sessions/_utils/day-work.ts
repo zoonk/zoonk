@@ -12,7 +12,10 @@ import { type SessionDayContext, loadSessionPlacement } from "./session-placemen
 
 export type DayPracticeQuery = Omit<Parameters<typeof loadPracticeItems>[0], "excludeItemIds">;
 
-export type DayWork = Pick<SessionBuildInput, "capsules" | "placementItemIds" | "practice">;
+export type DayWork = Pick<
+  SessionBuildInput,
+  "capsules" | "placementItemIds" | "placementRecheckItemIds" | "practice"
+>;
 
 export async function loadDayWork({
   checkpointItems,
@@ -21,6 +24,7 @@ export async function loadDayWork({
   isReviewDay,
   plan,
   practiceQuery,
+  signals,
 }: {
   checkpointItems: ReadonlySet<string>;
   context: SessionDayContext;
@@ -28,6 +32,7 @@ export async function loadDayWork({
   isReviewDay: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
   practiceQuery: DayPracticeQuery;
+  signals: Parameters<typeof loadSessionPlacement>[0]["signals"];
 }): Promise<DayWork> {
   const reserved = new Set(checkpointItems);
 
@@ -39,14 +44,14 @@ export async function loadDayWork({
   });
 
   const used = new Set([...reserved, ...capsules.flatMap((capsule) => capsule.itemIds)]);
-  const placementItemIds = await loadSessionPlacement({ context, isReviewDay, plan, used });
+  const placement = await loadSessionPlacement({ context, isReviewDay, plan, signals, used });
 
   const practice = await loadPracticeItems({
     ...practiceQuery,
-    excludeItemIds: new Set([...used, ...placementItemIds]),
+    excludeItemIds: new Set([...used, ...placement.placementItemIds]),
   });
 
-  return { capsules, placementItemIds, practice };
+  return { capsules, ...placement, practice };
 }
 
 /** Only a checkpoint the day holds keeps its questions from the rest of the day. */

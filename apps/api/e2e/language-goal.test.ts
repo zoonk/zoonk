@@ -16,7 +16,7 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
-const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
+const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 const FREE_CALL_SECONDS = 120;
 const DAY_MS = 86_400_000;
 
@@ -36,6 +36,7 @@ async function ensureLevelTestBank() {
   );
 
   const content = {
+    confirmations: [],
     questions,
     speaking: LEVELS.map((level) => ({
       level,
@@ -438,7 +439,80 @@ test.describe("Language goal API", () => {
     const finished = await apiContext.post(`${path}/completions`);
 
     expect(finished.status()).toBe(200);
-    expect(Object.keys(await finished.json())).toStrictEqual(["levels"]);
+
+    expect(await finished.json()).toMatchObject({
+      levels: [{ skill: "reading" }],
+      result: { attemptId: null, levelsSkipped: [], ranges: { reading: expect.any(Object) } },
+    });
+
+    const retake = await apiContext.post(`${path}/attempts`, { data: { length: "quick" } });
+    expect(retake.status()).toBe(200);
+
+    const open = await retake.json();
+
+    expect(open).toMatchObject({
+      answered: 0,
+      attemptId: expect.any(String),
+      length: "quick",
+      result: { attemptId: null, ranges: { reading: expect.any(Object) } },
+      status: "ready",
+    });
+
+    const loaded = await apiContext.get(path, { params: { attemptId: open.attemptId } });
+    expect(await loaded.json()).toStrictEqual(open);
+
+    const staleAttempt = await apiContext.post(`${path}/completions`, {
+      data: { attemptId: randomUUID() },
+    });
+
+    expect(staleAttempt.status()).toBe(404);
+
+    const explicit = await apiContext.post(`${path}/completions`, {
+      data: { attemptId: open.attemptId },
+    });
+
+    expect(await explicit.json()).toMatchObject({
+      levels: [],
+      result: { attemptId: open.attemptId, levelsSkipped: [], ranges: {} },
+    });
+
+    await apiContext.dispose();
+  });
+
+  test("opens an empty test-out for a level without topics and rejects stale attempt IDs", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "language-test-out",
+    });
+
+    const { goal } = await languageGoalFixture({ userId: user.id });
+    const path = `/v1/goals/${goal.id}/language-level-test/test-outs`;
+    const attemptId = randomUUID();
+
+    const [opened, missing, staleAnswer, staleFinish] = await Promise.all([
+      apiContext.post(path, { data: { level: "C2" } }),
+      apiContext.get(path, { params: { attemptId } }),
+      apiContext.post(`${path}/answers`, {
+        data: { answer: { dontKnow: true }, attemptId, durationMs: 500, itemId: randomUUID() },
+      }),
+      apiContext.post(`${path}/completions`, { data: { attemptId } }),
+    ]);
+
+    expect(opened.status()).toBe(200);
+
+    expect(await opened.json()).toMatchObject({
+      answered: 0,
+      attemptId: expect.any(String),
+      level: "C2",
+      next: null,
+      preparing: false,
+      result: null,
+      total: 0,
+    });
+
+    expect([missing, staleAnswer, staleFinish].map((response) => response.status())).toStrictEqual([
+      404, 404, 404,
+    ]);
 
     await apiContext.dispose();
   });

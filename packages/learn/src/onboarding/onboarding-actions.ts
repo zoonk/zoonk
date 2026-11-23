@@ -1,6 +1,7 @@
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { type GoalCreateInput } from "@zoonk/core/goals/contract";
 import { type LanguageAim } from "@zoonk/core/language/aims";
+import { type PlacementAnswerInput } from "@zoonk/core/learner/placement/contract";
 import { type FocusTestView } from "@zoonk/core/learner/placement/focus-test-contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
@@ -22,8 +23,10 @@ import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/dra
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type FocusTestActions } from "../focus-test/focus-test-actions";
-import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
+import { type LanguagePlanTestActions } from "../language/level-test/use-language-plan-test";
+import { type PlacementTestActions } from "../placement-test/placement-test-actions";
 import { type ItemPictureData } from "../questions/item-picture";
+import { type OptionSelect } from "../questions/pick-rule";
 
 export type StartUnderstandingOutcome =
   | { draft: OnboardingDraftView; status: "started" }
@@ -118,27 +121,35 @@ export type MaterialQuestionOutcome =
   | ({ status: "limitReached" } & UsageCap)
   | { status: "failed" | "signInRequired" | "slowDown" };
 
-/** Never says which answer is right. */
+/** Never says which answer is right. `left` and `right` are a match's columns; `select` is how many options to pick. */
 export type PlacementQuestion = {
   context: string | null;
-  format: "multipleChoice" | "trueFalse" | "typed";
+  format: "matchPairs" | "multipleChoice" | "order" | "trueFalse";
   image: ItemPictureData | null;
   itemId: string;
+  left?: string[] | null;
   options: string[] | null;
   question: string;
+  right?: string[] | null;
+  select?: OptionSelect | null;
   skillId: string;
   visual: LessonVisual | null;
 };
 
-export type PlacementAnswer =
-  | { dontKnow: true }
-  | { isTrue: boolean }
-  | { selectedIndex: number }
-  | { text: string };
+export type PlacementAnswer = PlacementAnswerInput["answer"];
+
+type LearnPlacementTest = Extract<NonNullable<PlanView["placementTest"]>, { kind: "learn" }>;
+
+/** A test taken from the plan, open or between its parts. */
+export type PlacementAttemptView = NonNullable<LearnPlacementTest["attempt"]>;
+
+export type PlacementResult = NonNullable<LearnPlacementTest["result"]>;
 
 export type PlacementOutcome =
   | {
       answered: number;
+      /** The test taken from the plan, when one is open; null for onboarding's and the Focus test. */
+      attempt: PlacementAttemptView | null;
       complete: boolean;
       /** 0 to 1. */
       dayBudgetSpent: number;
@@ -146,12 +157,14 @@ export type PlacementOutcome =
       /** An exam goal's placement is its Focus test; null for other goals. */
       focusTest: FocusTestView | null;
       next: PlacementQuestion | null;
+      /** The last finished test taken from the plan; it stays readable while another is open. */
+      result: PlacementResult | null;
       started: boolean;
       status: "ready";
       trueFalseLabels: TrueFalseLabels;
     }
   | { status: "failed" }
-  | { focusTest: FocusTestView | null; status: "notReady" }
+  | { attempt?: PlacementAttemptView | null; focusTest: FocusTestView | null; status: "notReady" }
   | { status: "unavailable" }
   | { status: "generationFailed" };
 
@@ -175,6 +188,7 @@ export type OnboardingActions = {
   finishPlacement: (input: { fromScratch: boolean; goalId: string }) => Promise<boolean>;
   focusTest: (goalId: string) => FocusTestActions;
   getPlacement: (goalId: string) => Promise<PlacementOutcome>;
+  getPlacementMinutes: (goalId: string) => Promise<number>;
   getPlan: (goalId: string) => Promise<PlanOutcome>;
   /** `studyDays` count Sunday as 0. Null when it couldn't be read. */
   getTimeAdvice: (
@@ -191,7 +205,16 @@ export type OnboardingActions = {
     goalId: string;
     itemId: string;
   }) => Promise<PlacementOutcome>;
-  languageLevelTest: (goalId: string) => LanguageLevelTestActions;
+  languageLevelTest: (goalId: string) => {
+    /** Ends a test that never opened, so a skip moves on; false when there was nothing to end. */
+    finish: () => Promise<boolean>;
+    switchLanguage: (language: string) => void;
+  };
+  languagePlanTest: (input: {
+    goalId: string;
+    walkTopics: () => Promise<boolean>;
+  }) => LanguagePlanTestActions;
+  placementTest: (goalId: string) => PlacementTestActions;
   askMaterial: (input: {
     language: string;
     question: string;

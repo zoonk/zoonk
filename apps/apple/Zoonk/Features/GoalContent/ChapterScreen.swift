@@ -255,7 +255,7 @@ private struct ChapterContent: View {
     let minutes = lessons.reduce(0) { $0 + $1.minutes }
     let place = String(
       localized: "Chapter \(chapter.chapter.position)", table: "Plan",
-      comment: "A chapter's number")
+      locale: .appLanguage, comment: "A chapter's number")
 
     guard !lessons.isEmpty else {
       return [place]
@@ -265,7 +265,7 @@ private struct ChapterContent: View {
       place,
       String(
         localized: "\(lessons.count) lessons", table: "Plan",
-        comment: "How many lessons a chapter has"),
+        locale: .appLanguage, comment: "How many lessons a chapter has"),
       planDurationText(minutes: Double(minutes)),
     ]
   }

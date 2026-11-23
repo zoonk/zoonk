@@ -1,0 +1,165 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0059242900000000005,
+  "failureCodes": [
+    "invalid_response",
+    "failed_controls"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "465ea19098084a26cca77621e4e20f37b138e91bdf1e21e3970df67bab6446ae",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same text, so they confirm the same level in the same way.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so they share the same keys and the same ambiguity in the moderator passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical in language and variant.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key for the moderator passage is contestable. The option 'The moderator blames the shortage of time for the panel's failure to reach a conclusion' is keyed as wrong, but the opening line 'die Uhr ist unerbittlicher als ich' supports it, so a careful reader could defensibly pick it.",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the passage carefully may be marked wrong for a defensible reading, and a learner who is marked wrong learns the wrong lesson about the text.",
+            "location": {
+              "detail": "The moderator blames the shortage of time for the panel's failure to reach a conclusion.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The key for the moderator passage is contestable. The option 'The moderator rates the evening as a substantial advance in the debate about downtown' is keyed as wrong, but the text says 'durchaus ein Fortschritt', which a careful reader could take as the moderator's real rating.",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the passage carefully may be marked wrong for a defensible reading, and the answer key gives an inaccurate picture of what the text supports.",
+            "location": {
+              "detail": "The moderator rates the evening as a substantial advance in the debate about downtown.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The key for the moderator passage is contestable. The option 'The moderator blames the shortage of time for the panel's failure to reach a conclusion' is keyed as wrong, but the opening line 'die Uhr ist unerbittlicher als ich' supports it, so a careful reader could defensibly pick it.",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the passage carefully may be marked wrong for a defensible reading, and a learner who is marked wrong learns the wrong lesson about the text.",
+            "location": {
+              "detail": "The moderator blames the shortage of time for the panel's failure to reach a conclusion.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The key for the moderator passage is contestable. The option 'The moderator rates the evening as a substantial advance in the debate about downtown' is keyed as wrong, but the text says 'durchaus ein Fortschritt', which a careful reader could take as the moderator's real rating.",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the passage carefully may be marked wrong for a defensible reading, and the answer key gives an inaccurate picture of what the text supports.",
+            "location": {
+              "detail": "The moderator rates the evening as a substantial advance in the debate about downtown.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": null,
+        "pairId": "089d3abd-9150-47de-95cb-eb880faaeb5c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same simple one-fact-per-option format, which a learner at A1 can match to the message by words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's key (1 and 3) matches the message, while output B marks option 2 correct even though the bus leaves at ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The message and questions are in the same language and variant in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key says options 1 and 2 are right, but option 2 says the bus leaves at nine, and the message says the bus leaves at ten. The correct key is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "A learner would be told that the bus leaves at nine and would be marked right for believing it, and would miss that the cafe is next to the shop.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A has a correct answer key, while output B wrongly marks a false statement as right about the bus time."
+        },
+        "pairId": "3132a2ba-d772-472c-9ef3-e0ddb07718b4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs sit at C2 with options that need a close reading of tone, argument or assumption.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's keys hold up to checking against the texts, while output B's moderator key has defensible options left out and a contestable correct set.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same German variant and the same US English option style.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The option 'It suggests that Hannah has accepted the official’s wording as an adequate account of the change.' is not keyed, but the text only says she thanked the neighbour without asking how long, so a reader could defensibly take it as her accepting the wording.",
+            "criterion": "answers",
+            "learnerCost": "A careful learner could be marked wrong for a defensible reading of Hannah's passivity.",
+            "location": {
+              "detail": "It suggests that Hannah has accepted the official’s wording as an adequate account of the change.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A's passages and keys are stronger on answer checking, with fewer contestable options than output B."
+        },
+        "pairId": "ffef8c4b-7540-4877-bd97-cdb5012e7fc3"
+      }
+    ]
+  }
+}

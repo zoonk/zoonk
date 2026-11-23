@@ -15,12 +15,21 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "settleSessionDay":
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;
     case "prepareMockSupply":
-    case "prepareGoalLessons":
-    case "preparePlacementItems":
     case "refreshPlanSuggestion":
     case "rebuildGoalCurriculum":
     case "rememberOnboarding":
       return followUp.input.goalId;
+    case "prepareGoalLessons":
+    case "prepareLevelTestBank":
+      return followUp.input.goalId;
+    case "replenishLevelTestChecks":
+      return `${followUp.input.goalId}:${followUp.input.level}`;
+    case "prepareLevelTestOut":
+      return followUp.input.attemptId;
+    case "preparePlacementItems":
+      return followUp.input.placementPart
+        ? `whole-course:${followUp.input.goalId}`
+        : followUp.input.goalId;
     case "writeLesson":
     case "writeSentenceOrders":
       return followUp.input.lessonId;

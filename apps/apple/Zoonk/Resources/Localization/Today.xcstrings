@@ -10576,7 +10576,7 @@
       }
     },
     "Start" : {
-      "comment" : "Accepts the suggested goal\nStarts the Focus test\nStarts today's session",
+      "comment" : "Accepts the suggested goal\nStarts today's session",
       "localizations" : {
         "de" : {
           "stringUnit" : {

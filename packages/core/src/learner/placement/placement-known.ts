@@ -1,4 +1,4 @@
-import { type OwnAnswer, meetsKnownBar } from "../_utils/skill-claims";
+import { type OwnAnswer, isSkillConfirmed } from "../_utils/skill-claims";
 import {
   type PlacementEvidence,
   getOwnBeliefs,
@@ -24,7 +24,7 @@ function hasMiss({
 }
 
 function toOwnAnswer(answer: PlacementEvidence): OwnAnswer {
-  return { format: answer.format, isCorrect: answer.outcome === "correct" };
+  return { ...answer, isCorrect: answer.outcome === "correct", itemId: answer.itemId ?? null };
 }
 
 /** Only own answers justify skipping; any miss rules it out even if prerequisite inference is confident. */
@@ -38,39 +38,15 @@ export function listKnownSkillIds({
   evidence: readonly PlacementEvidence[];
   skillIds: readonly string[];
 }): string[] {
+  const eligible = new Set(answers);
+
   return skillIds.filter((skillId) =>
-    meetsKnownBar({
-      answers: [
-        ...evidence.filter((answer) => answer.skillId === skillId && answer.outcome !== "correct"),
-        ...answers.filter((answer) => answer.skillId === skillId && answer.outcome === "correct"),
-      ].map((answer) => toOwnAnswer(answer)),
+    isSkillConfirmed({
+      answers: evidence
+        .filter((answer) => answer.skillId === skillId && eligible.has(answer))
+        .map((answer) => toOwnAnswer(answer)),
     }),
   );
-}
-
-/** Use only measured levels, never self-reported ones; a skill's own miss still overrides the level. */
-export function listKnownByMeasuredLevel({
-  evidence,
-  level,
-  skills,
-}: {
-  evidence: readonly PlacementEvidence[];
-  level: OwnLevel | null;
-  skills: readonly PlacementSkill[];
-}): string[] {
-  if (!level) {
-    return [];
-  }
-
-  const priors = getPlacementPriors({ ownLevel: level, skills });
-
-  return skills
-    .filter(
-      (skill) =>
-        getSkillPlacementStatus(priors.get(skill.id)) === "known" &&
-        !hasMiss({ evidence, skillId: skill.id }),
-    )
-    .map((skill) => skill.id);
 }
 
 function listPointedAt({
@@ -115,9 +91,13 @@ export function readSkillStatuses({
   const pointedAt = answeredOnly ? new Set<string>() : listPointedAt({ evidence, skills });
 
   const statusOf = (skillId: string): SkillPlacementStatus => {
+    if (confirmed.has(skillId)) {
+      return "known";
+    }
+
     const decided = [ownBeliefs, beliefs]
       .map((skillBeliefs) => getSkillPlacementStatus(skillBeliefs.get(skillId)))
-      .find((status) => status === "unknown" || (status === "known" && confirmed.has(skillId)));
+      .find((status) => status === "unknown");
 
     if (decided) {
       return decided;

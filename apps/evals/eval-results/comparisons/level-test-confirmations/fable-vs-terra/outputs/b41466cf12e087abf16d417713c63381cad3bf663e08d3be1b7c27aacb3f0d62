@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Um chapéu azul.",
+        "Uma bolsa marrom.",
+        "Um chapéu preto.",
+        "Um cachecol verde.",
+        "Um cachecol vermelho."
+      ],
+      "passage": "Lost and found: We have a blue hat and a red scarf. The black hat, green scarf, and brown bag are not here.",
+      "question": "Quais destes objetos estão nos achados e perdidos?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Sexta-feira.",
+        "Quarta-feira.",
+        "Quinta-feira.",
+        "Terça-feira.",
+        "Segunda-feira."
+      ],
+      "passage": "Pool hours: Monday and Tuesday, 9 a.m. to 5 p.m. Wednesday, Thursday, and Friday, 10 a.m. to 6 p.m.",
+      "question": "Em quais dias a piscina abre às 9 horas da manhã?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Um passaporte.",
+        "Um cartão do banco.",
+        "Um cartão da biblioteca.",
+        "Um cartão do seguro de saúde.",
+        "Um documento de identidade com foto."
+      ],
+      "passage": "Hello, this is Emma at the doctor's office. Please bring your photo ID and insurance card, but not your passport, bank card, or library card.",
+      "question": "Quais documentos Emma pede que você leve?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Azul.",
+        "Verde.",
+        "Marrom.",
+        "Amarela.",
+        "Vermelha."
+      ],
+      "passage": "Hi! I have two boxes for you. The red and blue boxes are yours. The green, yellow, and brown boxes are for your neighbor.",
+      "question": "Quais são as cores das caixas para você?",
+      "skill": "listening"
+    }
+  ]
+}

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "focustest_about": "1d88ba7344186f52159278656ab961658cde6ec2f9f4e9adbc4adcb1a131d0da",
-  "focustest_about_left": "bd43a9da038a5e31126e81a9e75390c478d7067cbc0dbc5dc427187fac334e7d",
   "focustest_also_skips": "a086fc08621a98c8efad36380d5f4fdbcdcb4ca9d46276317d6fb4827bb05ab7",
   "focustest_answer_more": "aa91eeedcd984c06caa4339176e5114d92aad0d781ab4e7aae04b1e2985dcf1d",
   "focustest_answers_saved_line": "2af4a636f5d3762da3c431bac1c8eb04ffd859a3e59afa9609e709e9d3d8bffb",
@@ -13,17 +11,6 @@
   "focustest_find_focus": "c637916e5ed4a9cbf659b262757caa921242490106dd83cb2be41c73f28dc7a0",
   "focustest_find_start": "cd3d593fe6d5d1d221cdc7461d68e4167ede2efefe330c98a1661ac849beec61",
   "focustest_from_basics": "9295bd71e03b50b5eb737fdcfa7656f43e84ba5a2310642af472ea998a41bea8",
-  "focustest_how_grade": "ebbde43ede732cfb1be0ea3d202875032f434b4fc9c797e91be51647361677e8",
-  "focustest_how_grade_title": "8369f2d82dc893192be759778c7e0b88e41093f3e9908015a7db755b5417f2ec",
-  "focustest_how_it_works": "a8d4aa97e402c828ce6f68d96a5e74b5c52f8c27a032033cead3b14b6077d1bd",
-  "focustest_how_sessions": "9dbe908623aa64f955c6f632423ba741a86c141b1e9981eff161664e2d7e8ad3",
-  "focustest_how_sessions_title": "6a6cdc33ec37645c6cdf4dbb1ed23203f47daed0253e7cac8fbc25b57c971b60",
-  "focustest_how_stop": "6c112f313e3c8040064ebbbb354c37fea96fe8ff8175b2490d9cd5fc5286962e",
-  "focustest_how_stop_title": "413b98718f4afff25b6357345f23692f10fdd702d6cfe8163d04b474cd62b51a",
-  "focustest_how_subjects": "5187c9a49d886ac2d295cdbabb9af58352ebf6b11938ada0ade850def3c54341",
-  "focustest_how_subjects_title": "0c4378c700ce5927591613b9384c2a6f23df7cc011591b922baa29e9c0d91a88",
-  "focustest_how_weight": "8228b1beb3d22cc647f64829012a9c50ed1e332206cdce4165c573b68415293a",
-  "focustest_how_weight_title": "c7dd2b6f9bdd304c008f8c2fc8f4885470486578295eda0b845b21456a3703f5",
   "focustest_in_progress": "ee2a6b9fa751dc24f5bb18b254df08bfc7c0750b494bf0b9812af8bed018d47e",
   "focustest_lessons_skipped": "812996985d310e4485d34db77cf4856c549a6779796a20874736574f96f87e6c",
   "focustest_listening_not_checked": "43bb0a2cc06fb426f6a672850a802f68e81b381f92cb0cd134d2efa268d5fc0b",
@@ -32,8 +19,8 @@
   "focustest_not_now": "91fa0367de0893045fff508eb45d230f82a98817c00075bcfcf4cefc5e8b58fa",
   "focustest_not_today": "75a55e618cfe2b96dca8d2b83b713f44c923eb1839562770b4b6cdb9f3127e6b",
   "focustest_not_today_failed": "58d5cd4e4127a3f8a818233fe6c62724cc9fcac9f03194f3affab020b69b42f2",
-  "focustest_offer_description": "30ee7fed07c1084a7ebaefbbb25cdfccb0102028a25fb176c38df01e9b0d9f53",
-  "focustest_offer_description_focus": "3f4f9c6f6a6f962f36045cb5fda211abd1170ba7fac53c4d3a6d13b4c5487228",
+  "focustest_offer_line": "45d6bf9676841fd41446b1dbcda11962b2efb97fc38a2d9e984f62177f8a2969",
+  "focustest_offer_line_focus": "4cf92b278146a6bf9e60d0f1a01a592e67a139f95957935a1d6bdf280212bf75",
   "focustest_paused_in_sessions": "1b6460a1b0d25cab94d48624c969c79567ca20e525f94a6d576e58621f026a47",
   "focustest_practical_not_checked": "1b115796cb95487f946303cc2af9f09f304d3e0310d126ea1e7cc04651b8f60c",
   "focustest_proposal_applied": "a53a08a92d5a86cebdb86897cc75d5f344f5834fc236aa1f98f31c7059fa4209",
@@ -64,6 +51,7 @@
   "focustest_suggestion_dismissed": "96a78b6c56613c2893aed99666ff7e4a75f720c94462568781cea867cdcfda96",
   "focustest_suggestion_line": "2587e1497523100687c1e95f8b274a069b2046701ba0927398532f1ba27adf1a",
   "focustest_take_test": "7482ed96225451fcb20235826af639281e5795364d3fbdb143050bce65e1067b",
+  "focustest_time_left": "f006a3fba2b9187225446d59b3af45913e9fcc62ea050b31a20b163d8f954e6d",
   "focustest_title": "1b4fd48f572eddb9253b2d0d3cd76728287d14f0c970493538b4ddb5bf72c29a",
   "focustest_undo": "95b5e53c00b8f4bd1c197eacd743be53b79eabb08f9c9c8c87b3ea7575b5509c",
   "focustest_update_plan": "380e42dac015e0a561055bee82df7c8b508e0e35e1615fde074aad9cdffe56c3",
@@ -73,28 +61,14 @@
 <resources>
     <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">重点診断</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_about">約%1$s</string>
-    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
-    <string name="focustest_about_left">残り約%1$s</string>
+    <!-- {time} is a duration with its unit, such as “9 min”. -->
+    <string name="focustest_time_left">残り%1$s</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">重点的に学ぶ科目を見つける</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">すでに知っていることはありますか？</string>
-    <string name="focustest_offer_description_focus">試験科目から短い問題が出ます。学習計画では、すでに知っている内容をスキップして、特に学習が必要なところに時間を使えます。</string>
-    <string name="focustest_offer_description">試験科目から短い問題が出ます。学習計画では、すでに知っている内容をスキップします。</string>
-    <string name="focustest_how_it_works">使い方</string>
-    <string name="focustest_how_weight_title">配点の高い科目から</string>
-    <string name="focustest_how_weight">試験で配点の高い科目から出題します。</string>
-    <string name="focustest_how_grade_title">点数はつきません</string>
-    <string name="focustest_how_grade">「まだわかりません」で大丈夫です。</string>
-    <string name="focustest_how_stop_title">いつでも中断できます</string>
-    <string name="focustest_how_stop">回答は1問ごとに保存されます。</string>
-    <string name="focustest_how_subjects_title">重点を置いても、それを理由に科目を学習計画から外すことはありません</string>
-    <string name="focustest_how_subjects">最も必要な科目に、より多くの時間を使います。</string>
-    <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
-    <string name="focustest_how_sessions_title">最初の1週間は追加で数問</string>
-    <string name="focustest_how_sessions">学習中にも、重点診断の問題が追加で数問出ます。出題は一時停止できます。</string>
+    <string name="focustest_offer_line_focus">このテストですでに知っている内容がわかるので、特に学習が必要な内容にもっと時間を使えます。科目が学習計画から外れることはありません。</string>
+    <string name="focustest_offer_line">このテストですでに知っている内容がわかるので、学習計画でその内容をスキップできます。</string>
     <string name="focustest_start">テストを始める</string>
     <string name="focustest_skip_note">あとで学習計画からテストを受けられます。</string>
     <string name="focustest_not_now">今はしない</string>

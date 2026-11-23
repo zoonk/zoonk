@@ -146,9 +146,10 @@
   "plan_change_relearn_topics": "4ec93102836fa8cd8001be25e0529eac2985f9a8beb61e26ce37cdd78db0ae20",
   "plan_change_rest_day": "85e37b3b98704ba50c6f416e8aaab7895b1c2aa2d9ed3c72d4a391a88f08e0b1",
   "plan_change_sentence": "1c655d1c8da6d12518304224ccf0c396986ea149a994e962ac46d46da23b22a7",
+  "plan_change_skipped_and_back": "5f9b450a937389f400ec42968c434b886d15bade557562808680d00d5202ed0c",
   "plan_change_start_past_basics": "2c8e8b9dfcadd62d39e1fba58891fb8e67491f05be6556f7be68a83bb7d1daad",
   "plan_change_such_as": "0bfe68441dd2805ac0c1420b27c3bea546e66263ca24faa863ca74da374a27be",
-  "plan_change_tested_out": "7ca29bb899a33e30e7419bc61b9f53bfa8a60fbf6f3444ac460ce85e364f288c",
+  "plan_change_tested_out": "1a4972602ab078c53c4145413292a2c54cf8a67005ffcb6833a82a1e92cd7802",
   "plan_change_today_changed": "1986878653b7c2ab5215c98beb9f8c63c43f16289bd18e19b4ac96f31d94b17e",
   "plan_change_today_unchanged": "b82d77b77af97fd6493f9789d0b2f54176c83545a23b6593b69dc55d207a790d",
   "plan_change_tool_have": "1136abe9cb53a108a1c334b46b9a4902645a6e55443eeccbc5468fd10b4e6da8",
@@ -933,10 +934,12 @@
     <string name="plan_system_phone">Téléphone uniquement</string>
     <string name="plan_change_missed_days">Ton plan a été ajusté pour compenser les jours où tu n’as pas étudié.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Tu as réussi le test, donc ton plan saute %d leçon.</item>
-        <item quantity="many">Tu as réussi le test, donc ton plan saute %d leçons.</item>
-        <item quantity="other">Tu as réussi le test, donc ton plan saute %d leçons.</item>
+        <item quantity="one">%d leçon que tu connais déjà a été sautée.</item>
+        <item quantity="many">%d leçons que tu connais déjà ont été sautées.</item>
+        <item quantity="other">%d leçons que tu connais déjà ont été sautées.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">%1$s revient dans ton plan : tu as manqué une question à ce sujet.</item>
         <item quantity="many">%1$s reviennent dans ton plan : tu as manqué des questions à leur sujet.</item>

@@ -1,5 +1,9 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
-import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
+import {
+  placementAttemptViewSchema,
+  placementResultSchema,
+  placementStatusSchema,
+} from "@zoonk/core/learner/placement/contract";
 import { focusTestViewSchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { MasteryState } from "@zoonk/db";
@@ -88,7 +92,7 @@ const questionBaseShape = {
   visual: questionVisualSchema,
 };
 
-export const bankQuestionSchema = z
+const bankQuestionSchema = z
   .discriminatedUnion("format", [
     z.object({
       ...questionBaseShape,
@@ -138,14 +142,22 @@ const areaStartSchema = z
   })
   .meta({ id: "AreaStart" });
 
-const placementQuestionSchema = z
+export const placementQuestionSchema = z
   .discriminatedUnion("format", [
     ...bankQuestionSchema.options,
     z.object({
       ...questionBaseShape,
-      format: z.literal("typed"),
+      format: z.literal("matchPairs"),
+      left: z.array(z.string()),
       options: z.null(),
-      question: z.string().meta({ description: "Answer in the learner's own words, as `text`" }),
+      question: z.string(),
+      right: z.array(z.string()),
+    }),
+    z.object({
+      ...questionBaseShape,
+      format: z.literal("order"),
+      options: z.array(z.string()),
+      question: z.string(),
     }),
   ])
   .meta({ description: "A placement question without its answer", id: "PlacementQuestion" });
@@ -158,13 +170,14 @@ export const placementResponseSchema = z
       .min(0)
       .meta({
         description:
-          "This goal's placement answers so far, which number its questions (the next is `answered` + 1). Answers from before the goal, lessons and sessions on the same skills place the learner too but aren't counted. There's no total: placement asks until it's sure or today's few minutes are used",
+          "Answers in the current part for a saved attempt, or this goal's placement answers so far for onboarding",
       }),
     areas: z
       .array(areaStartSchema)
       .meta({
         description: "Where each area starts, in the order the plan reaches them: areas take turns",
       }),
+    attempt: placementAttemptViewSchema.nullable().optional(),
     complete: z
       .boolean()
       .meta({
@@ -197,6 +210,7 @@ export const placementResponseSchema = z
       .meta({ description: "Undecided skills with no question to ask yet" }),
     next: placementQuestionSchema.nullable(),
     phases: z.array(phaseStartSchema),
+    result: placementResultSchema.nullable().optional(),
     started: z
       .boolean()
       .meta({
@@ -215,6 +229,12 @@ export const placementAnswerResponseSchema = z
 export const placementCompletionResponseSchema = z
   .object({
     areas: z.array(areaStartSchema),
+    attempt: placementAttemptViewSchema.nullable().optional(),
+    changeId: uuidSchema()
+      .nullable()
+      .meta({
+        description: "The plan change that recorded the skips, or null when no change was recorded",
+      }),
     complete: z
       .boolean()
       .meta({
@@ -227,8 +247,12 @@ export const placementCompletionResponseSchema = z
         description:
           "An exam goal's Focus test after this finish, with its result (`checkpoint`); null for other goals",
       }),
+    heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
     knownSkillIds: z.array(skillIdSchema),
+    lessonsSkipped: z.number().int().nonnegative(),
+    partLessonsSkipped: z.number().int().nonnegative().optional(),
     phases: z.array(phaseStartSchema),
+    result: placementResultSchema.nullable().optional(),
     testedOutPlanItemIds: z.array(uuidSchema()),
   })
   .meta({ id: "PlacementCompletion" });

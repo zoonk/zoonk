@@ -25,7 +25,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +36,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.ActReaction
@@ -571,31 +569,26 @@ private fun SummaryBar(
     val extraTime = summary.extraTime.takeIf { !facts.stopped && it.available && toRewards == null }
     val seesMistakes = fromRewards == null && summary.mistakesSaved > 0
     val crowded = seesMistakes && facts.stopped
-    val options: @Composable () -> Unit = {
-        if (seesMistakes) {
-            OutlinedButton(onClick = actions.seeMistakes, modifier = Modifier.taskOption()) {
-                Text(stringResource(R.string.session_summary_see_mistakes))
-            }
-        }
-        if (facts.stopped) {
-            OutlinedButton(
-                busy = busy == SessionAction.KeepGoing,
-                onClick = actions.keepGoing,
-                modifier = Modifier.taskOption(),
-                enabled = busy == null,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-            ) { Text(stringResource(R.string.session_summary_keep_going)) }
-        }
-    }
-
     TaskActionBar {
         if (failed == SessionAction.KeepGoing) SummaryError(stringResource(R.string.today_open_failed))
         TaskActions(back = fromRewards?.let { { StepBackButton(onClick = it) } }) { main ->
-            if (crowded) SharedRow(Modifier.taskOption(), options) else options()
+            if (seesMistakes) {
+                OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
+            }
+            if (facts.stopped) {
+                OutlinedButton(
+                    busy = busy == SessionAction.KeepGoing,
+                    onClick = actions.keepGoing,
+                    enabled = busy == null,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                ) { Text(stringResource(R.string.session_summary_keep_going)) }
+            }
+            // With both options, they share the line over the main action, as main's do.
+            val action = if (crowded) main.taskOption() else main
             if (toRewards != null) {
-                Button(onClick = toRewards, modifier = main) { Text(stringResource(R.string.steps_continue)) }
+                Button(onClick = toRewards, modifier = action) { Text(stringResource(R.string.steps_continue)) }
             } else {
-                Button(onClick = actions.finish, modifier = main) { Text(stringResource(R.string.session_summary_finish)) }
+                Button(onClick = actions.finish, modifier = action) { Text(stringResource(R.string.session_summary_finish)) }
             }
         }
         extraTime?.let { extra ->
@@ -633,56 +626,6 @@ private fun SummaryBar(
             }
         }
     }
-}
-
-/** Main's `SHARED_ROW_ACTION_CLASS`: a `FlowRow` weight would split the line evenly and wrap the longer label. */
-@Composable
-private fun SharedRow(
-    modifier: Modifier,
-    content: @Composable () -> Unit,
-) {
-    Layout(content, modifier) { measurables, constraints ->
-        val gap = 8.dp.roundToPx()
-        val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
-        val widths = sharedRowWidths(labels, gap, constraints.minWidth, constraints.maxWidth)
-
-        if (widths != null) {
-            val placeables = measurables.zip(widths) { measurable, width -> measurable.measure(Constraints.fixedWidth(width)) }
-            val height = placeables.maxOf { it.height }
-            layout(widths.sum() + gap * (widths.size - 1), height) {
-                var x = 0
-                placeables.forEach {
-                    it.placeRelative(x, (height - it.height) / 2)
-                    x += it.width + gap
-                }
-            }
-        } else {
-            val placeables = measurables.map { it.measure(Constraints.fixedWidth(constraints.maxWidth)) }
-            layout(constraints.maxWidth, placeables.sumOf { it.height } + gap * (placeables.size - 1)) {
-                var y = 0
-                placeables.forEach {
-                    it.placeRelative(0, y)
-                    y += it.height + gap
-                }
-            }
-        }
-    }
-}
-
-/**
- * Each button's width on one line, [gap] apart: its label's, each grown by an equal share of what [minWidth] leaves (main's
- * `grow` on a phone's bar); null when the labels don't fit in [maxWidth] together and stack.
- */
-internal fun sharedRowWidths(
-    labels: List<Int>,
-    gap: Int,
-    minWidth: Int,
-    maxWidth: Int,
-): List<Int>? {
-    val row = labels.sum() + gap * (labels.size - 1)
-    if (row > maxWidth) return null
-    val share = (max(row, minWidth) - row) / labels.size
-    return labels.map { it + share }
 }
 
 @Composable

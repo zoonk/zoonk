@@ -10,6 +10,12 @@ export function useSystemChangeSentence() {
   const t = useExtracted();
   const relearnSentence = useRelearnSentence();
 
+  const skippedSentence = (lessons: number) =>
+    t(
+      "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}",
+      { lessons },
+    );
+
   return function systemChangeSentence(change: PlanChangeContent): string | null {
     switch (change.kind) {
       case "missedDays":
@@ -19,12 +25,19 @@ export function useSystemChangeSentence() {
           ? t("Your plan changed to match the time your lessons take.")
           : null;
       case "testedOut":
-        return t(
-          "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}",
-          { lessons: change.lessonsSkipped },
-        );
+        return skippedSentence(change.lessonsSkipped);
       case "relearn":
-        return relearnSentence(change);
+        return change.lessonsSkipped > 0
+          ? t({
+              description:
+                "One day's plan change: {skipped} says the lessons it skipped, {back} the topics that came back.",
+              message: "{skipped} {back}",
+              values: {
+                back: relearnSentence(change),
+                skipped: skippedSentence(change.lessonsSkipped),
+              },
+            })
+          : relearnSentence(change);
       case "coverageChanged":
         return change.effect?.fromPlacement
           ? t("Your test answers changed your plan.")

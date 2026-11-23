@@ -1,0 +1,80 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        2,
+        3,
+        5
+      ],
+      "level": "C1",
+      "options": [
+        "The evening falls flat because it brings nothing new.",
+        "The lead actress visibly tires before the final act begins.",
+        "The staging's restraint proves to be a deliberate strength.",
+        "The play's recovered harshness counts in the production's favor.",
+        "The reviewer regrets that the director did not modernize the play.",
+        "The lead actress pushes too hard in an act that calls for restraint."
+      ],
+      "passage": "On redoutait le pire de cette reprise : un classique du boulevard dépoussiéré à grands coups de vidéo et d'anachronismes. Il n'en est rien, et c'est presque dommage, se dit-on d'abord, tant la mise en scène s'efface. Puis l'on comprend que cette discrétion est un parti pris : débarrassé de tout clin d'œil, le texte retrouve une cruauté qu'on ne lui soupçonnait plus. Reste la distribution. On ne saurait reprocher à l'actrice principale de manquer d'énergie ; on aimerait seulement qu'elle la mette en veilleuse au dernier acte, où tout se joue à mi-voix. Ses partenaires, eux, n'ont pas volé leurs rappels. Une soirée qui ne révolutionne rien, et s'en porte fort bien.",
+      "question": "Which of these reflect the reviewer's view of this revival?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        3,
+        5
+      ],
+      "level": "C1",
+      "options": [
+        "She finds mocking them just as fair as she always did.",
+        "She has come around to thinking the past really was better.",
+        "She is ready to listen to them but not to take up their cause.",
+        "She sees their longing as a comment on what the present lacks.",
+        "She thinks they truly want outdated technology brought back.",
+        "She suspects the mockers may be fooling themselves as much as anyone."
+      ],
+      "passage": "Il est de bon ton de railler les nostalgiques, et je ne m'en suis pas privée. Leur âge d'or, on le sait, sentait le tabac froid et l'on y attendait trois semaines une ligne téléphonique. Soit. Mais à force d'entendre les mêmes moqueries, je finis par me demander qui, des deux camps, se raconte le plus d'histoires. Celui qui soupire après la place du village ne réclame pas, que je sache, le retour du téléphone à cadran ; il dit, maladroitement, que quelque chose lui manque aujourd'hui. On peut lui rire au nez. On peut aussi, sans rien céder sur les faits, tendre l'oreille. Je n'irais pas jusqu'à signer sa pétition.",
+      "question": "Where does the columnist stand on nostalgic people by the end of the piece?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3,
+        5
+      ],
+      "level": "C1",
+      "options": [
+        "He has taken to going there for his own pleasure.",
+        "He goes there often mainly because his job demands it.",
+        "He feels the local officials have every reason to celebrate.",
+        "He considers that the project has only partly kept its promises.",
+        "He now concedes that his earlier criticism of its cost was unfair.",
+        "He finds the surrounding district still deserted outside game nights."
+      ],
+      "passage": "On m'a souvent rappelé, ces dernières semaines, ce que j'avais dit du nouveau stade avant son ouverture. Je ne retire pas un mot sur la facture, je vous rassure. Seulement voilà : j'y suis retourné trois fois ce mois-ci, et aucune n'était pour le travail. Tirez-en les conclusions que vous voudrez. Que les élus ne pavoisent pas trop vite pour autant. On nous avait promis un quartier vivant ; passez-y un mardi soir sans match, vous aurez la rue pour vous tout seul. Disons que la moitié du contrat est remplie.",
+      "question": "What does the commentator imply about the new stadium?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        1,
+        3
+      ],
+      "level": "C1",
+      "options": [
+        "The overall tone is weary but free of self-pity.",
+        "The formal opening sounds like a rehearsed line, not a confidence.",
+        "The closing remark is cheerful: posing for photos has become a pleasure.",
+        "The closing remark is wry understatement: the smile always costs something.",
+        "The mention of the empty venues is a boast about how far the musician has come.",
+        "The casual middle part is playful exaggeration with no real feeling behind it."
+      ],
+      "passage": "La notoriété ? Écoutez, c'est un privilège immense, et je mesure chaque jour la chance qui m'est donnée de partager ma musique avec le public. Bon. Entre nous, y a des matins où je descends acheter mon pain et où j'ai juste envie qu'on me fiche la paix, quoi. Mais j'ai galéré dix ans dans des salles vides, alors me plaindre, non, je trouverais ça indécent. Disons que j'ai appris à sourire sur les photos, et que certains jours ce sourire-là me coûte moins que d'autres.",
+      "question": "What does the way the musician speaks about fame show?",
+      "skill": "listening"
+    }
+  ]
+}

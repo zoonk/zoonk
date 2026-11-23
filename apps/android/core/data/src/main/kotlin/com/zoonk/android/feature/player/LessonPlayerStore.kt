@@ -97,6 +97,13 @@ interface LessonPlayerApi {
         skippedWritingStepIds: List<String>,
     ): LibraryLessonCompletion
 
+    /** "Not now" on the lesson end's offer to check the learner's level, sent with the run it ended. */
+    suspend fun dismissPlacementOffer(
+        session: AuthenticatedSession,
+        lessonId: String,
+        runId: String,
+    ): LibraryLessonCompletion
+
     suspend fun readiness(
         session: AuthenticatedSession,
         lessonId: String,
@@ -210,10 +217,21 @@ class LiveLessonPlayerApi(
         api.clients(session).libraryLessons.createLibraryLessonCompletion(
             UUID.fromString(lessonId),
             LibraryLessonCompletionInput(
-                UUID.fromString(runId),
-                skippedWritingStepIds.map(UUID::fromString).takeIf { it.isNotEmpty() },
-                timeZone(),
+                runId = UUID.fromString(runId),
+                skippedWritingStepIds = skippedWritingStepIds.map(UUID::fromString).takeIf { it.isNotEmpty() },
+                timeZone = timeZone(),
             ),
+        )
+    }
+
+    override suspend fun dismissPlacementOffer(
+        session: AuthenticatedSession,
+        lessonId: String,
+        runId: String,
+    ) = perform {
+        api.clients(session).libraryLessons.createLibraryLessonCompletion(
+            UUID.fromString(lessonId),
+            LibraryLessonCompletionInput(runId = UUID.fromString(runId), dismissPlacementOffer = true, timeZone = timeZone()),
         )
     }
 

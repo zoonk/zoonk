@@ -1,11 +1,15 @@
 "use client";
 
-import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
+import {
+  type LanguageLevelTestView,
+  type LevelTestRanges,
+} from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { HeadphonesIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -108,21 +112,86 @@ export function ListeningMessage({
   );
 }
 
-export function LevelBars({ levels }: { levels: LevelView[] }) {
+function LevelRows({ children }: { children: React.ReactNode }) {
+  return <ul className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">{children}</ul>;
+}
+
+function LevelRow({
+  bar,
+  label,
+  skill,
+}: {
+  bar: React.ReactNode;
+  label: string;
+  skill: LevelView["skill"];
+}) {
   const skillName = useSkillName();
 
   return (
-    <ul className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">
-      {levels.map((level) => (
-        <li
-          className="border-border col-span-3 grid min-h-11 grid-cols-subgrid items-center border-t py-2.5 first:border-t-0"
-          key={level.skill}
-        >
-          <span className="text-sm font-medium">{skillName(level.skill)}</span>
-          <LevelBar score={level.score} />
-          <span className="text-end font-mono text-xs font-medium tabular-nums">{level.label}</span>
-        </li>
-      ))}
-    </ul>
+    <li className="border-border col-span-3 grid min-h-11 grid-cols-subgrid items-center border-t py-2.5 first:border-t-0">
+      <span className="text-sm font-medium">{skillName(skill)}</span>
+      {bar}
+      <span className="text-end text-xs font-medium whitespace-nowrap tabular-nums">{label}</span>
+    </li>
+  );
+}
+
+/** "B1–B2": the levels a skill's answers place it between, never one level it can't promise. */
+function formatLevelRange(range: { high: string; low: string }): string {
+  return range.low === range.high ? range.low : `${range.low}–${range.high}`;
+}
+
+export function useLevelRangeFacts() {
+  const t = useExtracted();
+
+  return (ranges: LevelTestRanges): string[] => {
+    const { listening: listeningRange, reading: readingRange } = ranges;
+    const reading = readingRange && formatLevelRange(readingRange);
+    const listening = listeningRange && formatLevelRange(listeningRange);
+
+    return [
+      reading &&
+        t({
+          description: "A CEFR level range the test found for reading, such as “B1–B2”.",
+          message: "Reading {range}",
+          values: { range: reading },
+        }),
+      listening &&
+        t({
+          description: "A CEFR level range the test found for listening, such as “B1–B2”.",
+          message: "Listening {range}",
+          values: { range: listening },
+        }),
+    ].filter((fact) => typeof fact === "string");
+  };
+}
+
+const RANGE_SKILLS = ["reading", "listening"] as const;
+
+export function LevelRanges({ ranges }: { ranges: LevelTestRanges }) {
+  return (
+    <LevelRows>
+      {RANGE_SKILLS.map((skill) => {
+        const range = ranges[skill];
+
+        return (
+          range && (
+            <LevelRow
+              bar={
+                <LevelBar
+                  range={{
+                    high: CEFR_LEVELS.indexOf(range.high),
+                    low: CEFR_LEVELS.indexOf(range.low),
+                  }}
+                />
+              }
+              key={skill}
+              label={formatLevelRange(range)}
+              skill={skill}
+            />
+          )
+        );
+      })}
+    </LevelRows>
   );
 }

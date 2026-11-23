@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { planChangeSchema } from "../../plans/plan-change-contract";
 import { answerTimeZoneSchema } from "../contract";
+import { placementLengthSchema } from "./placement-contract";
 
 /** The `source` of the plan changes the test proposes. */
 export const FOCUS_TEST_SOURCE = "focusTest";
@@ -197,7 +198,7 @@ export const focusTestSummarySchema = z
 export type FocusTestSummary = z.infer<typeof focusTestSummarySchema>;
 
 export const placementSittingInputSchema = z
-  .object({ timeZone: answerTimeZoneSchema })
+  .object({ length: placementLengthSchema.optional(), timeZone: answerTimeZoneSchema })
   .strict()
   .meta({ id: "PlacementSittingInput" });
 

@@ -1,8 +1,10 @@
 import { type ItemFormat } from "@zoonk/db";
+import { isLowGuessTap } from "../_utils/placement-guess-rate";
 import { type PlacementQuickFormat, getQuickFormatOrder } from "./placement-quick-format";
 
 export type PlacementItemCandidate = {
   /** The item bank's difficulty (easy -1, medium 0, hard 1); unknown reads as medium. */
+  content?: unknown;
   difficulty?: number | null;
   format: ItemFormat;
   id: string;
@@ -10,22 +12,24 @@ export type PlacementItemCandidate = {
   skillId: string;
 };
 
-const CONFIRMING_FORMATS: readonly ItemFormat[] = ["typed", "numeric", "spoken"];
-
 function getFormatRank({
   confirming,
-  format,
+  item,
   quickFormat,
 }: {
   confirming: boolean;
-  format: ItemFormat;
+  item: PlacementItemCandidate;
   quickFormat: PlacementQuickFormat;
 }) {
-  const quick = getQuickFormatOrder(quickFormat);
-  const preferred = confirming ? [...CONFIRMING_FORMATS, ...quick] : quick;
-  const index = preferred.indexOf(format);
+  const lowGuess = isLowGuessTap(item);
 
-  return index === -1 ? preferred.length : index;
+  if (lowGuess) {
+    return confirming ? 0 : 3;
+  }
+
+  const quick = getQuickFormatOrder(quickFormat);
+  const index = quick.indexOf(item.format);
+  return index === -1 ? 3 : index + 1;
 }
 
 function getDifficultyGap({ item, target }: { item: PlacementItemCandidate; target: number }) {
@@ -51,8 +55,8 @@ export function pickPlacementItem({
       .filter((item) => item.skillId === skillId && !item.seen)
       .toSorted(
         (a, b) =>
-          getFormatRank({ confirming, format: a.format, quickFormat }) -
-            getFormatRank({ confirming, format: b.format, quickFormat }) ||
+          getFormatRank({ confirming, item: a, quickFormat }) -
+            getFormatRank({ confirming, item: b, quickFormat }) ||
           getDifficultyGap({ item: a, target: targetDifficulty }) -
             getDifficultyGap({ item: b, target: targetDifficulty }),
       )[0] ?? null

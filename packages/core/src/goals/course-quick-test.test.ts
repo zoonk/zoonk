@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it } from "vitest";
-import { LEVEL_TEST_MINUTES } from "../language/level-test/level-test-contract";
+import { getQuickTestMinutes } from "../language/level-test/level-test-contract";
 import { DAY_PLACEMENT_MINUTES } from "../learner/placement/placement-budget";
 import { getCourseQuickTestMinutes } from "./course-quick-test";
 
@@ -21,7 +21,11 @@ describe(getCourseQuickTestMinutes, () => {
 
     await expect(
       Promise.all(courses.map((course) => getCourseQuickTestMinutes(course))),
-    ).resolves.toStrictEqual([LEVEL_TEST_MINUTES, DAY_PLACEMENT_MINUTES, DAY_PLACEMENT_MINUTES]);
+    ).resolves.toStrictEqual([
+      getQuickTestMinutes("language"),
+      DAY_PLACEMENT_MINUTES,
+      DAY_PLACEMENT_MINUTES,
+    ]);
   });
 
   it("times a language course an exam is built on as that exam's placement, the goal starting it makes", async () => {

@@ -364,7 +364,7 @@ private struct BuddyContent: View {
           Label {
             if let current = status.energy.current {
               Text(
-                "\((current / 100).formatted(.percent.precision(.fractionLength(0)))) Energy",
+                "\((current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))) Energy",
                 tableName: "Buddy",
                 comment: "The buddy's Energy beside its bolt, such as \"68% Energy\"")
             } else {

@@ -206,6 +206,7 @@ struct CountryPickerSheet: View {
       )
       : String(
         localized: "\(count) countries", table: "Plan",
+        locale: .appLanguage,
         comment: "VoiceOver, as a country search changes: how many countries it found")
   }
 

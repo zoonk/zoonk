@@ -1,0 +1,150 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00207194,
+  "failures": [],
+  "packetId": "de9744180abd2133363a9dac4d8bd7dc9e96fc2f8a1ebd9c61d3d3cb89fb5a1a",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both ask the learner to identify simple facts explicitly stated in the message, which fits A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marks the café’s location correctly; A incorrectly marks the bus leaving at nine instead of the café being next to the shop.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message and Brazilian Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct, but the message says the bus leaves at ten. Statement 3, which says the café is next to the shop, is supported but is not marked correct.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would learn the wrong answer and miss a fact the message states.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B’s key matches the message, while A’s key marks a false statement and omits a true one."
+        },
+        "pairId": "24be689d-c52c-4591-a325-05b8d1f16e05"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask about straightforward, explicitly stated A1 facts; neither has a clear level advantage.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The keys match the passages, and both sets offer clear right and wrong options. Both also miss the requirement that wrong options be other values given in that same passage for something else.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The wallet question’s wrong color, place, and day options are not other values supplied by that passage for something else; the passage gives no alternative wallet color, location, or day.",
+            "criterion": "answers",
+            "learnerCost": "The distractors do not follow the specified design, so learners cannot use the passage’s other stated values to distinguish the choices.",
+            "location": {
+              "detail": "The wallet confirmation, especially its options and passage.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The wallet question’s wrong color, place, and day options are not other values supplied by that passage for something else; the passage gives no alternative wallet color, location, or day.",
+            "criterion": "answers",
+            "learnerCost": "The distractors do not follow the specified design, so learners cannot use the passage’s other stated values to distinguish the choices.",
+            "location": {
+              "detail": "The wallet confirmation, especially its options and passage.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical: both have correct keys and the same shortcoming in the wallet question’s distractors."
+        },
+        "pairId": "570f0a30-cfcf-439b-9646-2575008e1bfe"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets test simple stated facts appropriate to A1; neither has a clear level advantage.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Both sets have correct keys, but B’s distractors more often draw on details stated in the passages, while A’s distractors are generally made-up alternatives. B still has a few unsupported time distractors.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The wallet question’s wrong color, place, and day options are not other values supplied by that passage for something else; the passage gives no alternative wallet color, location, or day.",
+            "criterion": "answers",
+            "learnerCost": "The distractors do not follow the specified design, so learners cannot use the passage’s other stated values to distinguish the choices.",
+            "location": {
+              "detail": "The wallet confirmation, especially its options and passage.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In the appointment question, 3 p.m. and 9 a.m. are wrong options but are not other times stated in the passage for something else; only 4 p.m. is an alternative time stated for tomorrow.",
+            "criterion": "answers",
+            "learnerCost": "Those distractors do not meet the specified design and cannot be checked against another time stated in the message.",
+            "location": {
+              "detail": "The appointment confirmation’s options and passage.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B’s keys are correct and its distractors are more often based on details in the passages. A has the same correct keys, but its distractors more often introduce values the passages never give."
+        },
+        "pairId": "9f932c04-df32-4d2c-be39-d937517a2fc2"
+      }
+    ]
+  }
+}

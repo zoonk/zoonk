@@ -1,46 +1,32 @@
-import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
-import { freezeClock } from "../../_test-utils/frozen-clock";
-import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
 import {
   LEARNER_LOCK,
   holdLearnerLock,
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
-import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
-import { getUsageRule } from "../../entitlements/limits";
-import * as learnerWrite from "../../learner/_utils/write-learner-change";
+import { mockSession } from "../../_test-utils/mock-session";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
-import { NEW_SKILL_MEMORY } from "../../learner/fsrs-scheduler";
-import * as placement from "../../learner/placement/_utils/apply-placement";
-import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
-import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
-import * as announcement from "../../plans/announce-tested-out-items";
-import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
-import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { readGoalDetails } from "../_utils/language-goal";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
-import { placeLevelTestResult } from "./_utils/level-test-placement";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
-import { gradeLevelTestSpeech } from "./grade-level-test-speech";
-import { type LevelTestBank } from "./level-test-contract";
+import { type LanguageLevelTestView, type LevelTestBank } from "./level-test-contract";
+import { appendLevelTestChecks, readLevelTestCheckShortage } from "./replenish-level-test-checks";
+import { startLanguageLevelTest } from "./start-language-level-test";
 
-const TEST_LEVELS = CEFR_LEVELS.slice(0, 5);
+const TEST_LEVELS = CEFR_LEVELS;
 
 const BANK: LevelTestBank = {
   questions: TEST_LEVELS.flatMap((level) =>
@@ -93,78 +79,6 @@ function readFinishState({ goalId, userId }: { goalId: string; userId: string })
   ]);
 }
 
-function pauseNextFinishAfterSettling() {
-  const writeChange = learnerWrite.writeLearnerChange;
-  const settled = Promise.withResolvers<null>();
-  const resumed = Promise.withResolvers<null>();
-
-  const paused = vi
-    .spyOn(learnerWrite, "writeLearnerChange")
-    .mockImplementationOnce(async (options, write) => {
-      const written = await writeChange(options, write);
-      settled.resolve(null);
-      await resumed.promise;
-      return written;
-    });
-
-  const resume = () => {
-    resumed.resolve(null);
-    paused.mockRestore();
-  };
-
-  return { resume, settled: settled.promise };
-}
-
-const TESTED_UP_TO_B2 = {
-  answers: ["reading", "listening"].flatMap((skill) =>
-    ["A2", "B1", "B2"].map((level) => ({
-      answerIndex: 1,
-      correct: true,
-      id: `${skill}-${level}-0`,
-    })),
-  ),
-  speaking: null,
-};
-
-async function placedLearnerFixture() {
-  await saveBank();
-  const { goal, items, skills, user } = await languageGoalFixture();
-
-  await Promise.all([
-    ...skills.map((skill, index) =>
-      prisma.skill.update({
-        data: { level: index < 2 ? "beginner" : "intermediate" },
-        where: { id: skill.id },
-      }),
-    ),
-    prisma.goal.update({
-      data: { details: { ...(goal.details as object), levelTest: TESTED_UP_TO_B2 } },
-      where: { id: goal.id },
-    }),
-  ]);
-
-  return { goal, itemIds: items.map((item) => item.id), user };
-}
-
-async function bringBackTestedOutUnits({ itemIds, userId }: { itemIds: string[]; userId: string }) {
-  await Promise.all([
-    prisma.planItem.updateMany({
-      data: { completedAt: null, status: "todo" },
-      where: { id: { in: itemIds } },
-    }),
-    prisma.learnerSkill.updateMany({ data: NEW_SKILL_MEMORY, where: { userId } }),
-  ]);
-}
-
-async function readItemStatuses(itemIds: string[]) {
-  const items = await prisma.planItem.findMany({
-    select: { id: true, status: true },
-    where: { id: { in: itemIds } },
-  });
-
-  return itemIds.map((id) => items.find((item) => item.id === id)?.status);
-}
-
 describe("language level test", () => {
   it.each([
     { showAlphabetNote: false, targetLanguage: "hmn" },
@@ -196,33 +110,6 @@ describe("language level test", () => {
       });
     },
   );
-
-  it("finishes a language test without overlapping queries on its transaction connection", async () => {
-    const { goal, user } = await placedLearnerFixture();
-
-    await prisma.goal.update({
-      data: {
-        details: {
-          ...readGoalDetails(goal),
-          levelTest: { ...TESTED_UP_TO_B2, speaking: { level: "B2", score: 1 } },
-        },
-      },
-      where: { id: goal.id },
-    });
-
-    mockSession(user.id);
-
-    const { overlaps, result } = await observeDatabaseQueries(() =>
-      finishLanguageLevelTest(goal.id),
-    );
-
-    expect(result).toMatchObject({ status: "ready" });
-    expect(overlaps).toStrictEqual([]);
-
-    await expect(
-      prisma.languageSkillLevel.findMany({ where: { userId: user.id } }),
-    ).resolves.toHaveLength(3);
-  });
 
   it("asks questions near the learner's level, checks only the current one, and sets levels", async () => {
     await saveBank();
@@ -261,7 +148,7 @@ describe("language level test", () => {
         ? answered.test.levels.map((level) => level.skill)
         : [];
 
-    expect(answeredLevels).toStrictEqual(["reading", "listening"]);
+    expect(answeredLevels).toStrictEqual(["reading"]);
 
     const finished = await finishLanguageLevelTest(goal.id);
 
@@ -269,17 +156,24 @@ describe("language level test", () => {
 
     expect(
       finished.status === "ready" ? finished.levels.map((level) => level.skill) : [],
-    ).toStrictEqual(["reading", "listening"]);
+    ).toStrictEqual(["reading"]);
 
     const [levels, saved] = await Promise.all([
       prisma.languageSkillLevel.findMany({ where: { language: "en", userId: user.id } }),
       prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
     ]);
 
-    expect(levels.map((level) => level.skill).toSorted()).toStrictEqual(["listening", "reading"]);
+    expect(levels.map((level) => level.skill).toSorted()).toStrictEqual(["reading"]);
 
     expect(levels.every((level) => level.score === level.startScore)).toBe(true);
-    expect(saved.details).toMatchObject({ skillLevels: { reading: expect.any(String) } });
+    const readingLevel = CEFR_LEVELS[levels[0]?.score ?? -1];
+
+    expect(saved.details).toMatchObject({
+      levelTest: { lastResult: { ranges: { reading: { low: readingLevel } } } },
+      skillLevels: { reading: readingLevel },
+    });
+
+    expect(saved.details).toHaveProperty("level", "A2");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
   });
@@ -393,7 +287,7 @@ describe("language level test", () => {
       test: {
         answered: 2,
         lastCorrect: null,
-        levels: expect.arrayContaining([{ label: "A2", score: 1, skill: "listening" }]),
+        levels: [{ label: expect.any(String), score: expect.any(Number), skill: "reading" }],
         next: { kind: "question", question: { skill: "reading" } },
       },
     });
@@ -491,88 +385,6 @@ describe("language level test", () => {
     ).resolves.toBe(1);
   });
 
-  it("places the current goal after a concurrent change without reading placement twice", async () => {
-    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
-
-    const reads = vi
-      .spyOn(placement, "loadPlacement")
-      .mockRejectedValueOnce(new Error("Plan busy"));
-
-    await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
-    reads.mockClear();
-    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-
-    const writer = holdLearnerLock({
-      beforeCommit: (tx) =>
-        tx.goal.update({
-          data: { details: { ...readGoalDetails(goal), level: "A1" } },
-          where: { id: goalId },
-        }),
-      userId,
-    });
-
-    const pid = await writer.pid;
-    const placing = placeLevelTestResult({ goalId, timeZone: "UTC", userId });
-
-    try {
-      await waitForBlockedStatement(pid, LEARNER_LOCK);
-    } finally {
-      writer.release();
-      await Promise.all([writer.done, placing]);
-
-      try {
-        expect(reads).toHaveBeenCalledOnce();
-      } finally {
-        reads.mockRestore();
-      }
-    }
-
-    await expect(readPlacement()).resolves.toMatchObject({ items: ["todo", "todo"], reps: 0 });
-  });
-
-  it("keeps what lessons showed when a finish that stalled after settling the test goes on", async () => {
-    await saveBank();
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-    await answerNextQuestion(goal.id);
-
-    const placing = vi
-      .spyOn(placement, "loadPlacement")
-      .mockRejectedValueOnce(new Error("Plan busy"));
-
-    const pause = pauseNextFinishAfterSettling();
-
-    try {
-      const stalled = finishLanguageLevelTest(goal.id);
-      await pause.settled;
-
-      await expect(finishLanguageLevelTest(goal.id)).rejects.toThrow("Plan busy");
-
-      await prisma.languageSkillLevel.update({
-        data: { score: 2, windowCeiling: 1.5, windowCorrect: 2, windowTotal: 3 },
-        where: { userLanguageSkill: { language: "en", skill: "reading", userId: user.id } },
-      });
-
-      const lessons = await prisma.languageSkillLevel.findMany({
-        orderBy: { skill: "asc" },
-        where: { userId: user.id },
-      });
-
-      pause.resume();
-      await stalled;
-
-      await expect(
-        prisma.languageSkillLevel.findMany({
-          orderBy: { skill: "asc" },
-          where: { userId: user.id },
-        }),
-      ).resolves.toStrictEqual(lessons);
-    } finally {
-      pause.resume();
-      placing.mockRestore();
-    }
-  });
-
   it("ends a test finished early, so reading it again shows its result instead of a question", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();
@@ -632,231 +444,6 @@ describe("language level test", () => {
     }
 
     await expect(both).resolves.toHaveLength(2);
-  });
-
-  it("sets the speaking level from the sentence said out loud", async () => {
-    await saveBank();
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1", "B2"].map((level) => `${skill}-${level}-0`),
-    );
-
-    await prisma.goal.update({
-      data: {
-        details: {
-          ...(goal.details as object),
-          levelTest: {
-            answers: answers.map((id) => ({ answerIndex: 1, correct: true, id })),
-            speaking: null,
-          },
-        },
-      },
-      where: { id: goal.id },
-    });
-
-    vi.mocked(assessPronunciation).mockResolvedValue({
-      data: {
-        transcript: "Say B2",
-        words: [
-          { heard: null, issue: null, status: "correct", text: "Say" },
-          { heard: null, issue: null, status: "correct", text: "B2" },
-        ],
-      },
-      provenance: {
-        generatedAt: "",
-        latencyMs: 1,
-        model: "m",
-        promptVersion: "v",
-        provider: "p",
-        requestedModel: "m",
-        runId: "r",
-        usage: {},
-      },
-      systemPrompt: "",
-      usage: undefined as never,
-      userPrompt: "",
-    });
-
-    const result = await gradeLevelTestSpeech({
-      audio: { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" },
-      goalId: goal.id,
-    });
-
-    expect(result).toMatchObject({
-      heard: { score: 1 },
-      status: "ready",
-      test: { next: { kind: "done" } },
-    });
-
-    const speaking = result.status === "ready" ? result.test : null;
-
-    const level =
-      speaking?.status === "ready"
-        ? speaking.levels.find((item) => item.skill === "speaking")
-        : null;
-
-    expect(level?.score).toBeGreaterThan(1);
-  });
-
-  it("places the plan at the level the test measured across skills", async () => {
-    await saveBank();
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1"].map((level) => ({ answerIndex: 1, correct: true, id: `${skill}-${level}-0` })),
-    );
-
-    await prisma.goal.update({
-      data: {
-        details: {
-          ...readGoalDetails(goal),
-          levelTest: { answers, speaking: { level: "A2", score: 0.95 } },
-        },
-      },
-      where: { id: goal.id },
-    });
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
-      levels: [
-        { label: "B1", skill: "reading" },
-        { label: "B1", skill: "listening" },
-        { label: "A2+", skill: "speaking" },
-      ],
-    });
-
-    const placed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-    expect(readGoalDetails(placed).level).toBe("B1");
-  });
-
-  it("asks a guest who used today's help to sign up before checking the sentence", async () => {
-    freezeClock();
-
-    await saveBank();
-    const { goal, user } = await languageGoalFixture();
-
-    const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1", "B2"].map((level) => `${skill}-${level}-0`),
-    );
-
-    await Promise.all([
-      prisma.goal.update({
-        data: {
-          details: {
-            ...(goal.details as object),
-            levelTest: {
-              answers: answers.map((id) => ({ answerIndex: 1, correct: true, id })),
-              speaking: null,
-            },
-          },
-        },
-        where: { id: goal.id },
-      }),
-      usageRecordsFixture({
-        count: getUsageRule({ kind: "assist", tier: "guest" }).day ?? 0,
-        createdAt: new Date(),
-        kind: "assist",
-        userId: user.id,
-      }),
-    ]);
-
-    mockGuestSession(user.id);
-
-    await expect(
-      gradeLevelTestSpeech({
-        audio: { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" },
-        goalId: goal.id,
-      }),
-    ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
-
-    expect(assessPronunciation).not.toHaveBeenCalled();
-  });
-
-  it("starts the plan at the level: units of a band below it are tested out", async () => {
-    const { goal, itemIds, user } = await placedLearnerFixture();
-    mockSession(user.id);
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ status: "ready" });
-
-    await expect(readItemStatuses(itemIds)).resolves.toStrictEqual([
-      "testedOut",
-      "testedOut",
-      "todo",
-      "todo",
-    ]);
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ status: "ready" });
-  });
-
-  it("keeps the units the learner brought back when the test is finished again", async () => {
-    const { goal, itemIds, user } = await placedLearnerFixture();
-    mockSession(user.id);
-    await finishLanguageLevelTest(goal.id);
-
-    await bringBackTestedOutUnits({ itemIds, userId: user.id });
-
-    const before = await readItemStatuses(itemIds);
-
-    await finishLanguageLevelTest(goal.id);
-
-    await expect(readItemStatuses(itemIds)).resolves.toStrictEqual(before);
-  });
-
-  it("places a result whose finish failed before placing it, once", async () => {
-    const { goal, itemIds, user } = await placedLearnerFixture();
-    mockSession(user.id);
-
-    const placing = vi
-      .spyOn(placement, "loadPlacement")
-      .mockRejectedValueOnce(new Error("Plan busy"));
-
-    try {
-      await expect(finishLanguageLevelTest(goal.id)).rejects.toThrow("Plan busy");
-    } finally {
-      placing.mockRestore();
-    }
-
-    await expect(readItemStatuses(itemIds)).resolves.toStrictEqual([
-      "todo",
-      "todo",
-      "todo",
-      "todo",
-    ]);
-
-    await finishLanguageLevelTest(goal.id);
-
-    await expect(readItemStatuses(itemIds)).resolves.toStrictEqual([
-      "testedOut",
-      "testedOut",
-      "todo",
-      "todo",
-    ]);
-
-    await finishLanguageLevelTest(goal.id);
-  });
-
-  it("leaves the units the learner brought back to a finish that stalled before placing", async () => {
-    const { goal, itemIds, user } = await placedLearnerFixture();
-    mockSession(user.id);
-    const pause = pauseNextFinishAfterSettling();
-
-    try {
-      const stalled = finishLanguageLevelTest(goal.id);
-      await pause.settled;
-
-      await finishLanguageLevelTest(goal.id);
-      await bringBackTestedOutUnits({ itemIds, userId: user.id });
-      const before = await readItemStatuses(itemIds);
-
-      pause.resume();
-      await stalled;
-
-      await expect(readItemStatuses(itemIds)).resolves.toStrictEqual(before);
-    } finally {
-      pause.resume();
-    }
   });
 
   it("doesn't test a goal of another kind", async () => {
@@ -923,327 +510,431 @@ describe("level test on a non-Latin script", () => {
   });
 });
 
-async function plannedLearnerFixture() {
-  freezeClock();
-  vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
+describe("a post-start level test", () => {
+  it("opens one attempt, seeds a retake from lessons, and preserves the prior result", async () => {
+    const { goal, user } = await languageGoalFixture();
+    const levels = { level: "none" };
+    const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 
-  const [user, library] = await Promise.all([
-    userFixture(),
-    planLibraryFixture({
-      skills: [
-        { lessons: 2, level: "beginner" },
-        { lessons: 2, level: "intermediate" },
-      ],
-    }),
-    saveBank(),
-  ]);
+    await Promise.all([
+      prisma.goal.update({ data: { ...pair, details: levels }, where: { id: goal.id } }),
+      prisma.languageLevelTest.create({
+        data: {
+          ...pair,
+          content: { ...BANK, confirmations: [] },
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+        },
+      }),
+    ]);
 
-  const { goal, plan } = await unplannedGoalFixture({
-    dailyMinutes: 30,
-    details: { level: "A2", levelTest: TESTED_UP_TO_B2 },
-    kind: "language",
-    language: "pt",
-    settings: { startDate: "2020-09-28" },
-    targetLanguage: "en",
-    timezone: "UTC",
-    userId: user.id,
+    mockSession(user.id);
+
+    const [started, resumed] = await Promise.all([
+      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
+      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
+    ]);
+
+    expect(started).toStrictEqual(resumed);
+
+    if (
+      started.status !== "ready" ||
+      started.test.status !== "ready" ||
+      started.test.next.kind !== "question" ||
+      !started.test.attemptId
+    ) {
+      throw new Error("Expected the first question");
+    }
+
+    const { attemptId, next } = started.test;
+    expect(next.question.level).toBe("A1");
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: 1, attemptId, questionId: next.question.id },
+      }),
+    ).resolves.toMatchObject({ status: "ready", test: { answered: 1 } });
+
+    const previous = await finishLanguageLevelTest(goal.id, attemptId);
+
+    expect(previous).toMatchObject({
+      levels: [{ skill: "reading" }],
+      result: { attemptId, ranges: { reading: expect.any(Object) } },
+      status: "ready",
+    });
+
+    const lessonMoved = await prisma.languageSkillLevel.update({
+      data: { raisedAt: new Date(), score: 4, windowCeiling: 4, windowCorrect: 5, windowTotal: 6 },
+      where: {
+        userLanguageSkill: { language: pair.targetLanguage, skill: "reading", userId: user.id },
+      },
+    });
+
+    const partialWindow = await prisma.languageSkillLevel.create({
+      data: {
+        language: pair.targetLanguage,
+        score: 3,
+        skill: "listening",
+        startScore: 3,
+        userId: user.id,
+        windowCeiling: 4,
+        windowCorrect: 2,
+        windowTotal: 3,
+      },
+    });
+
+    const retake = await startLanguageLevelTest({ goalId: goal.id, length: "wholeCourse" });
+
+    if (
+      retake.status !== "ready" ||
+      retake.test.status !== "ready" ||
+      retake.test.next.kind !== "question" ||
+      !retake.test.attemptId
+    ) {
+      throw new Error("Expected the retake's first question");
+    }
+
+    const nextAttemptId = retake.test.attemptId;
+    expect(nextAttemptId).not.toBe(attemptId);
+
+    expect(retake.test).toMatchObject({
+      length: "wholeCourse",
+      next: { question: { level: "C1" } },
+      result: { attemptId },
+    });
+
+    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toStrictEqual(previous);
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: 1, attemptId, questionId: retake.test.next.question.id },
+      }),
+    ).resolves.toMatchObject({ status: "ready", test: { next: { kind: "done" } } });
+
+    const resumedQuestion = await answerLanguageLevelTest({
+      goalId: goal.id,
+      input: { answerIndex: 0, attemptId: nextAttemptId, questionId: retake.test.next.question.id },
+    });
+
+    if (resumedQuestion.status !== "ready") {
+      throw new Error(`Answer returned ${resumedQuestion.status}`);
+    }
+
+    expect(resumedQuestion.test).toMatchObject({ answered: 1 });
+
+    await completeTapTest({
+      attemptId: nextAttemptId,
+      goalId: goal.id,
+      test: resumedQuestion.test,
+    });
+
+    await expect(finishLanguageLevelTest(goal.id, nextAttemptId)).resolves.toMatchObject({
+      result: { wholeCourseReady: true },
+      status: "ready",
+    });
+
+    await expect(
+      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
+    ).resolves.toMatchObject({
+      status: "ready",
+      test: { attemptId: nextAttemptId, result: { wholeCourseReady: true } },
+    });
+
+    await expect(
+      prisma.languageSkillLevel.findUniqueOrThrow({ where: { id: partialWindow.id } }),
+    ).resolves.toMatchObject({ windowCeiling: 4, windowCorrect: 2, windowTotal: 3 });
+
+    await expect(
+      prisma.languageSkillLevel.findUniqueOrThrow({ where: { id: lessonMoved.id } }),
+    ).resolves.toStrictEqual(lessonMoved);
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
-  mockSession(user.id);
+  it("can confirm a missed level on a later day after its shared bank is replenished", async () => {
+    const { goal, skills, user } = await languageGoalFixture();
+    const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 
-  const [basics] = library.skills;
+    const confirmations = CEFR_LEVELS.flatMap((level) =>
+      (["reading", "listening"] as const).flatMap((skill) =>
+        [0, 1].map((index) => ({
+          answerIndices: [0, 2],
+          id: `confirm-${skill}-${level}-${index}`,
+          level,
+          options: ["a", "b", "c", "d", "e"],
+          passage: `${skill} ${level} ${index}`,
+          question: "What does it say?",
+          skill,
+        })),
+      ),
+    );
 
-  const readPlacement = async () => {
-    const [items, skill, changes] = await Promise.all([
-      prisma.planItem.findMany({
+    await Promise.all([
+      prisma.goal.update({ data: { ...pair, details: { level: "C2" } }, where: { id: goal.id } }),
+      prisma.languageLevelTest.create({
+        data: {
+          ...pair,
+          content: { ...BANK, confirmations },
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+        },
+      }),
+      prisma.skill.updateMany({
+        data: { cefrLevel: "B2" },
+        where: { id: { in: skills.map(({ id }) => id) } },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const start = async () => {
+      const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+
+      if (started.status !== "ready" || !started.test.attemptId) {
+        throw new Error("Expected a Quick test");
+      }
+
+      return { attemptId: started.test.attemptId, goalId: goal.id, test: started.test };
+    };
+
+    const missed: string[] = [];
+    const first = await start();
+
+    await completeTapTest({
+      ...first,
+      confirm: ({ id }) => {
+        if (missed.length === 0) {
+          missed.push(id);
+          return [];
+        }
+
+        return [2, 0];
+      },
+    });
+
+    expect(missed).toStrictEqual(["confirm-reading-B2-0"]);
+
+    await expect(finishLanguageLevelTest(goal.id, first.attemptId)).resolves.toMatchObject({
+      result: { lessonsSkipped: 0, levelsSkipped: [] },
+      status: "ready",
+    });
+
+    const replenishment = { goalId: goal.id, level: "B2" as const, pair, userId: user.id };
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          input: { goalId: goal.id, level: "B2", pair },
+          kind: "replenishLevelTestChecks",
+        }),
+      ]),
+    );
+
+    await expect(readLevelTestCheckShortage(replenishment)).resolves.toHaveLength(4);
+
+    const newQuestions = confirmations
+      .filter(({ level }) => level === "B2")
+      .map(({ passage, ...item }) => ({ ...item, passage: `A new example for ${passage}` }));
+
+    const saved = { batchId: "test-refill", confirmations: newQuestions, pair };
+    const written = await appendLevelTestChecks(saved);
+    expect(written).toHaveLength(2);
+    await expect(appendLevelTestChecks(saved)).resolves.toStrictEqual(written);
+    await expect(readLevelTestCheckShortage(replenishment)).resolves.toBeNull();
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    try {
+      vi.setSystemTime(Date.now() + MS_PER_DAY);
+      const retake = await start();
+      const asked: string[] = [];
+
+      await completeTapTest({
+        ...retake,
+        confirm: ({ id }) => {
+          asked.push(id);
+          return [2, 0];
+        },
+      });
+
+      expect(asked).toHaveLength(4);
+      expect(asked).not.toContain(missed[0]);
+      expect(asked).toContain("confirmation-refill-test-refill-0");
+
+      await expect(finishLanguageLevelTest(goal.id, retake.attemptId)).resolves.toMatchObject({
+        result: {
+          lessonsSkipped: expect.any(Number),
+          levelsSkipped: expect.arrayContaining(["B2"]),
+        },
+        status: "ready",
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("skips only fully tagged lessons and keeps both shown session blocks and Undo", async () => {
+    const { goal, items, lessons, skills, user } = await languageGoalFixture();
+
+    const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
+
+    const confirmations = CEFR_LEVELS.flatMap((level) =>
+      (["reading", "listening"] as const).flatMap((skill) =>
+        [0, 1].map((index) => ({
+          answerIndices: [0, 2],
+          id: `confirm-${skill}-${level}-${index}`,
+          level,
+          options: ["a", "b", "c", "d", "e"],
+          passage: `${skill} ${level}`,
+          question: "What does it say?",
+          skill,
+        })),
+      ),
+    );
+
+    const [low, mixed, high] = skills;
+    const [lowLesson, mixedLesson] = lessons;
+    const [lowItem, mixedItem] = items;
+
+    if (!low || !mixed || !high || !lowItem || !mixedItem || !lowLesson || !mixedLesson) {
+      throw new Error("Expected the plan's lessons and skills");
+    }
+
+    await Promise.all([
+      prisma.goal.update({ data: { ...pair, details: { level: "C2" } }, where: { id: goal.id } }),
+      prisma.languageLevelTest.create({
+        data: {
+          ...pair,
+          content: { ...BANK, confirmations },
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+        },
+      }),
+      prisma.skill.updateMany({
+        data: { cefrLevel: "A1" },
+        where: { id: { in: [low.id, mixed.id] } },
+      }),
+      prisma.skill.update({ data: { cefrLevel: "C2" }, where: { id: high.id } }),
+      lessonSkillFixture({ lessonId: mixedLesson.id, skillId: high.id }),
+    ]);
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    const blocks = await Promise.all(
+      (["active", "pending"] as const).map((status, position) =>
+        studySessionBlockFixture({
+          lessonId: lowLesson.id,
+          position,
+          sessionId: session.id,
+          status,
+        }),
+      ),
+    );
+
+    mockSession(user.id);
+    const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+
+    if (started.status !== "ready" || !started.test.attemptId) {
+      throw new Error("Expected a test attempt");
+    }
+
+    const { attemptId } = started.test;
+    await completeTapTest({ attemptId, goalId: goal.id, test: started.test });
+
+    const finished = await finishLanguageLevelTest(goal.id, attemptId);
+
+    expect(finished).toMatchObject({
+      result: {
+        changeId: expect.any(String),
+        lessonsSkipped: 1,
+        levelsSkipped: expect.arrayContaining(["A1"]),
+      },
+      status: "ready",
+    });
+
+    await expect(prisma.planItem.findUnique({ where: { id: lowItem.id } })).resolves.toMatchObject({
+      status: "testedOut",
+    });
+
+    await expect(
+      prisma.planItem.findUnique({ where: { id: mixedItem.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
+
+    const readBlocks = () =>
+      prisma.studySessionBlock.findMany({
         orderBy: { position: "asc" },
-        select: { status: true },
-        where: { planId: plan.id, skillId: basics?.id },
-      }),
-      prisma.learnerSkill.findFirst({
-        select: { reps: true },
-        where: { skillId: basics?.id, userId: user.id },
-      }),
-      prisma.planChange.findMany({
-        orderBy: { createdAt: "asc" },
-        select: { id: true, status: true },
-        where: { kind: "testedOut", planId: plan.id },
-      }),
-    ]);
+        where: { sessionId: session.id },
+      });
 
-    return { changes, items: items.map((item) => item.status), reps: skill?.reps ?? 0 };
-  };
+    await expect(readBlocks()).resolves.toStrictEqual(blocks);
 
-  const undo = (changeId: string) =>
-    decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } });
-
-  return { goalId: goal.id, readPlacement, undo, userId: user.id };
-}
-
-function holdNextAnnouncement() {
-  const announce = announcement.announceTestedOutItems;
-  const reached = Promise.withResolvers<null>();
-  const released = Promise.withResolvers<null>();
-
-  const held = vi
-    .spyOn(announcement, "announceTestedOutItems")
-    .mockImplementationOnce(async (input) => {
-      reached.resolve(null);
-      await released.promise;
-      return announce(input);
-    });
-
-  const release = () => {
-    released.resolve(null);
-    held.mockRestore();
-  };
-
-  return { reached: reached.promise, release };
-}
-
-describe("placing a level test's result on the planner's plan", () => {
-  it("retries the other goal's notice after a shared placement committed", async () => {
-    const { goalId, userId } = await plannedLearnerFixture();
-    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-    const other = await unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId });
-
-    await createGoalPlan({ goalId: other.goal.id, graph: parsePlanGraph(plan.graph) });
-
-    // Fail the announcement boundary after the real placement transaction has committed.
-    const dropped = vi
-      .spyOn(announcement, "announceTestedOutItems")
-      .mockRejectedValueOnce(new Error("Notice interrupted"));
-
-    try {
-      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Notice interrupted");
-    } finally {
-      dropped.mockRestore();
+    if (finished.status !== "ready" || !finished.result?.changeId) {
+      throw new Error("Expected the finish's Undo ID");
     }
 
-    const unannounced = await prisma.planItem.findMany({
-      where: { planId: other.plan.id, status: "testedOut" },
-    });
+    const { changeId } = finished.result;
 
-    expect(unannounced.length).toBeGreaterThan(0);
+    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toStrictEqual(finished);
 
     await expect(
-      prisma.planChange.count({ where: { kind: "testedOut", planId: other.plan.id } }),
-    ).resolves.toBe(0);
-
-    await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
-
-    const notice = await prisma.planChange.findFirstOrThrow({
-      where: { kind: "testedOut", planId: other.plan.id },
-    });
-
-    expect(notice.payload).toMatchObject({
-      planItemIds: expect.arrayContaining(unannounced.map((item) => item.id)),
-    });
+      prisma.planChange.count({ where: { kind: "testedOut", planId: lowItem.planId } }),
+    ).resolves.toBe(1);
 
     await expect(
-      decidePlanChange({ changeId: notice.id, goalId: other.goal.id, input: { status: "undone" } }),
-    ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+      decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ status: "updated" });
 
-    await expect(
-      prisma.planItem.count({ where: { planId: other.plan.id, status: "testedOut" } }),
-    ).resolves.toBe(0);
-  });
-
-  it("finishes during background input bursts and announces the durable result afterwards", async () => {
-    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
-    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-
-    const item = await prisma.planItem.findFirstOrThrow({
-      orderBy: { position: "asc" },
-      where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+    await expect(prisma.planItem.findUnique({ where: { id: lowItem.id } })).resolves.toMatchObject({
+      status: "todo",
     });
 
-    const session = await studySessionFixture({ goalId, userId });
-
-    const block = await studySessionBlockFixture({
-      lessonId: item.lessonId,
-      sessionId: session.id,
+    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toMatchObject({
+      result: { changeId: null, lessonsSkipped: 0, levelsSkipped: [] },
+      status: "ready",
     });
-
-    const stop = new AbortController();
-    const marking = markPlanInputsUntil({ planId: plan.id, signal: stop.signal });
-
-    try {
-      await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
-    } finally {
-      stop.abort();
-      await expect(marking).resolves.toBeGreaterThan(1);
-    }
-
-    await expect(readPlacement()).resolves.toMatchObject({
-      items: ["testedOut", "testedOut"],
-      reps: 1,
-    });
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
-    ).resolves.toMatchObject({ status: "skipped" });
-
-    await finishLanguageLevelTest(goalId);
-
-    await expect(readPlacement()).resolves.toMatchObject({
-      changes: [{ status: "applied" }],
-      items: ["testedOut", "testedOut"],
-      reps: 1,
-    });
-  });
-
-  it("finishes during input bursts on another goal that shares the skipped lessons", async () => {
-    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
-    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-    const other = await unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId });
-
-    await createGoalPlan({ goalId: other.goal.id, graph: parsePlanGraph(plan.graph) });
-
-    const stop = new AbortController();
-    const marking = markPlanInputsUntil({ planId: other.plan.id, signal: stop.signal });
-
-    try {
-      // The test goal's own notice tolerates bursts; the other goal's must not fail the finish.
-      await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
-    } finally {
-      stop.abort();
-      await expect(marking).resolves.toBeGreaterThan(1);
-    }
-
-    await expect(readPlacement()).resolves.toMatchObject({
-      changes: [{ status: "applied" }],
-      items: ["testedOut", "testedOut"],
-    });
-  });
-
-  it("skips the lessons below the level once, with one undo, when two finishes race", async () => {
-    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
-    const writer = holdLearnerLock({ userId });
-    const pid = await writer.pid;
-    const both = Promise.all([finishLanguageLevelTest(goalId), finishLanguageLevelTest(goalId)]);
-
-    try {
-      await waitForBlockedStatement(pid, /SELECT (?:id FROM users|plan.id FROM plans)/u, 2);
-    } finally {
-      writer.release();
-      await writer.done;
-    }
-
-    const [one, other] = await both;
-    expect(one).toStrictEqual(other);
-
-    const placed = await readPlacement();
-
-    expect(placed).toMatchObject({
-      changes: [{ status: "applied" }],
-      items: ["testedOut", "testedOut"],
-      reps: 1,
-    });
-
-    await finishLanguageLevelTest(goalId);
-    await expect(readPlacement()).resolves.toStrictEqual(placed);
-  });
-
-  it("leaves the skip the learner undid to a finish that stalled before placing", async () => {
-    const { goalId, readPlacement, undo } = await plannedLearnerFixture();
-    const pause = pauseNextFinishAfterSettling();
-
-    try {
-      const stalled = finishLanguageLevelTest(goalId);
-      await pause.settled;
-
-      await finishLanguageLevelTest(goalId);
-      const placed = await readPlacement();
-      const [skip] = placed.changes;
-      await undo(skip?.id ?? "");
-
-      const undone = await readPlacement();
-      expect(undone).toMatchObject({ items: ["todo", "todo"], reps: 0 });
-
-      pause.resume();
-      await stalled;
-
-      await expect(readPlacement()).resolves.toStrictEqual(undone);
-    } finally {
-      pause.resume();
-    }
-  });
-
-  it("leaves the skip the learner undid to a finish that stalled before announcing it", async () => {
-    const { goalId, readPlacement, undo } = await plannedLearnerFixture();
-    const held = holdNextAnnouncement();
-
-    try {
-      const stalled = finishLanguageLevelTest(goalId);
-      await held.reached;
-
-      await finishLanguageLevelTest(goalId);
-      const placed = await readPlacement();
-      const [skip] = placed.changes;
-      await undo(skip?.id ?? "");
-
-      const undone = await readPlacement();
-
-      held.release();
-      await stalled;
-
-      await expect(readPlacement()).resolves.toStrictEqual(undone);
-    } finally {
-      held.release();
-    }
-  });
-
-  it("announces what a finish placed before it failed, once", async () => {
-    const { goalId, readPlacement } = await plannedLearnerFixture();
-
-    const announcing = vi
-      .spyOn(announcement, "announceTestedOutItems")
-      .mockRejectedValueOnce(new Error("Plan busy"));
-
-    try {
-      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
-    } finally {
-      announcing.mockRestore();
-    }
-
-    await expect(readPlacement()).resolves.toMatchObject({
-      changes: [],
-      items: ["testedOut", "testedOut"],
-    });
-
-    await finishLanguageLevelTest(goalId);
-    const announced = await readPlacement();
-    expect(announced.changes).toHaveLength(1);
-
-    await finishLanguageLevelTest(goalId);
-    await expect(readPlacement()).resolves.toStrictEqual(announced);
-  });
-
-  it("owes the lessons the placed plan opens with, even when its finish fails after placing", async () => {
-    const { goalId, userId } = await plannedLearnerFixture();
-
-    const announcing = vi
-      .spyOn(announcement, "announceTestedOutItems")
-      .mockRejectedValueOnce(new Error("Plan busy"));
-
-    try {
-      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
-    } finally {
-      announcing.mockRestore();
-    }
-
-    await finishLanguageLevelTest(goalId);
-
-    const { lessonId } = await prisma.planItem.findFirstOrThrow({
-      orderBy: { position: "asc" },
-      where: { kind: "lesson", plan: { goalId }, status: "todo" },
-    });
-
-    await expect(listOwed(userId)).resolves.toMatchObject([
-      { key: goalId, kind: "prepareGoalLessons" },
-      { input: { lessonId }, key: lessonId, kind: "writeLesson" },
-    ]);
   });
 });
+
+async function completeTapTest({
+  attemptId,
+  confirm = () => [2, 0],
+  goalId,
+  test,
+}: {
+  attemptId: string;
+  confirm?: (question: { id: string }) => number[];
+  goalId: string;
+  test: LanguageLevelTestView;
+}): Promise<void> {
+  if (test.status !== "ready" || test.next.kind === "speaking") {
+    throw new Error("Expected a tap question or a completed test");
+  }
+
+  if (test.next.kind === "done") {
+    return;
+  }
+
+  const input =
+    test.next.kind === "confirmation"
+      ? { answerIndex: null, answerIndices: confirm(test.next.question) }
+      : { answerIndex: 1 };
+
+  const next = await answerLanguageLevelTest({
+    goalId,
+    input: { ...input, attemptId, questionId: test.next.question.id },
+  });
+
+  if (next.status !== "ready") {
+    throw new Error(`Answer returned ${next.status}`);
+  }
+
+  await completeTapTest({ attemptId, confirm, goalId, test: next.test });
+}

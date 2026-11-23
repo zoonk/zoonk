@@ -163,7 +163,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
 
                 else -> {
                     if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
-                    if (!failed) WaitQuizAction(quiz, hold, beside)
+                    if (!failed) WaitQuizAction(quiz, hold, progressBeside = beside)
                 }
             }
             if (!hold.holding) skip?.invoke()

@@ -112,7 +112,6 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -730,10 +729,7 @@ internal fun DuelResult(
                     TaskActionBar {
                         TaskActions { width ->
                             if (answers.isNotEmpty() && !taskAsideBeside()) {
-                                OutlinedButton(
-                                    onClick = { reviewing = true },
-                                    modifier = Modifier.taskOption(),
-                                ) { Text(stringResource(R.string.checkpoint_review)) }
+                                OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
                             }
                             Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                         }

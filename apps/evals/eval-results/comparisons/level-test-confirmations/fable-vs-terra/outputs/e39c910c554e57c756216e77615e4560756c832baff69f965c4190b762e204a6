@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "A participação dos moradores recebe menos atenção do que merece.",
+        "As cifras publicadas pela campanha apresentam uma contagem incorreta.",
+        "O trabalho no refeitório terminou junto com a campanha de voluntariado.",
+        "A cerimônia de encerramento reconheceu especialmente o trabalho dos moradores.",
+        "Os resultados divulgados não mostram todo o trabalho que continua depois da campanha."
+      ],
+      "passage": "Al final de cada jornada de voluntariado se publican fotografías y cifras: cuántos paquetes se repartieron, cuántas horas se reunieron. Esas cuentas tienen su lugar, pero dicen poco de lo que ocurre cuando las cámaras se van. En una colonia de Puebla, los vecinos mantuvieron abierto un comedor mucho después de que terminó una campaña; nadie les preguntó qué recursos necesitaban para sostenerlo. En la ceremonia de cierre, en cambio, solo se mencionaron los paquetes y las horas, como si el comedor hubiera dejado de existir al terminar la campaña.",
+      "question": "O que o autor busca destacar sobre o voluntariado?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "B2",
+      "options": [
+        "As explicações da cozinheira tornaram a receita mais confusa.",
+        "A maior parte da aula permitiu experimentar os passos da receita.",
+        "A precisão das explicações da cozinheira foi um ponto positivo.",
+        "A experiência deixou pouco espaço para a prática da participante.",
+        "A participante conseguiu esclarecer suas dúvidas durante a prática."
+      ],
+      "passage": "La clase de cocina empezó con una demostración de salsas. La cocinera explicó cada paso con tanta precisión que por fin entendí por qué una misma receta puede dar resultados tan distintos. Después pasamos a las mesas, aunque los ingredientes ya estaban medidos y las salsas casi terminadas. Cuando pude tomar el cuchillo, faltaban cinco minutos y mis preguntas tuvieron que esperar a que saliera el siguiente grupo. Regresé a casa con apuntes excelentes; mis manos, en cambio, apenas habían trabajado.",
+      "question": "Que impressões sobre a aula de culinária estão implícitas na avaliação?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "A ligação com a cidade pode influenciar quem se beneficia do aeroporto.",
+        "A previsão de passageiros perdeu importância para avaliar o aeroporto.",
+        "A viagem até a terminal será igualmente rápida para todos os passageiros.",
+        "Os negócios próximos podem atrair clientes sem depender do acesso à terminal.",
+        "A quantidade prevista de passageiros não basta para avaliar seus possíveis benefícios."
+      ],
+      "passage": "Se habla mucho del número de pasajeros que podría recibir el nuevo aeropuerto de Monterrey. Claro, esa cifra importa, pero imaginemos que se cumple y que, al mismo tiempo, llegar a la terminal sigue siendo difícil sin automóvil. Para algunos viajeros el trayecto sería más rápido; para otros, el ahorro en el vuelo se perdería antes de entrar al edificio. Y los negocios que esperan atraer clientes también dependen de cómo se conecte la terminal con la ciudad.",
+      "question": "O que o comentário do convidado sugere sobre o novo aeroporto de Monterrey?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "O hotel foi a principal fonte de decepção durante a viagem.",
+        "A chuva impediu que o grupo seguisse os passeios planejados.",
+        "A noite na pequena fonda foi uma lembrança especial da viagem.",
+        "A visita ao mercado foi a parte mais agradável de toda a viagem.",
+        "A programação apertada dificultou aproveitar descobertas inesperadas."
+      ],
+      "passage": "Hola, Sofía. Ya regresamos de Oaxaca. El hotel estaba bien y casi no llovió, pero cada mañana salíamos con una lista de lugares y acabábamos mirando el reloj. Pasamos frente a un mercado que se veía increíble, aunque el siguiente recorrido empezaba en diez minutos. Por suerte, Diego encontró una pequeña fonda la última noche y nos quedamos platicando ahí hasta tarde. De todo el viaje, es la parte que sigo recordando con una sonrisa.",
+      "question": "O que a mensagem sugere sobre a experiência de quem fala em Oaxaca?",
+      "skill": "listening"
+    }
+  ]
+}

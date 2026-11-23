@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -30,7 +29,7 @@ fun StepPagerActions(
     count: Int,
     index: Int,
     onIndexChange: (Int) -> Unit,
-    finalAction: @Composable FlowRowScope.(main: Modifier) -> Unit,
+    finalAction: @Composable (main: Modifier) -> Unit,
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 

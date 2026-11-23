@@ -2,16 +2,13 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.AppCache
@@ -21,9 +18,9 @@ import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
-import com.zoonk.android.feature.onboarding.typedQuestion
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
@@ -97,14 +94,14 @@ class QuestionSpreadTest {
     }
 
     @Test
-    fun typedWordsStayWithTheirFocusAsTheBookOpensClosesAndOpensAgain() {
-        api.placement = placementOf(next = typedQuestion())
+    fun anOrderStaysPlacedAsTheBookOpensClosesAndOpensAgain() {
+        api.placement = placementOf(next = orderQuestion())
         showQuestion()
-        rule.onNode(hasSetTextAction()).performTextInput("Something said outside court")
+        for (step in listOf("Complaint", "Answer", "Discovery", "Trial")) rule.onNodeWithText(step).performScrollTo().performClick()
 
         for (change in listOf(::open, ::close, ::open, ::recreate, ::open)) {
             change()
-            rule.onNode(hasSetTextAction()).assertTextContains("Something said outside court").assertIsFocused()
+            rule.onNodeWithText("Trial").assertIsOn()
             rule.onNodeWithText("Confirm").assertIsEnabled()
         }
     }

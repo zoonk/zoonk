@@ -590,7 +590,16 @@ private fun systemChangeSentence(change: PlanChange): String? {
         }
 
         "relearn" -> {
-            relearnSentence(effect)
+            val lessons = change.lessonsSkipped.toInt()
+            if (lessons > 0) {
+                stringResource(
+                    R.string.plan_change_skipped_and_back,
+                    pluralStringResource(R.plurals.plan_change_tested_out, lessons, lessons),
+                    relearnSentence(effect),
+                )
+            } else {
+                relearnSentence(effect)
+            }
         }
 
         "coverageChanged" -> {

@@ -1,0 +1,109 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00172154,
+  "failureCodes": [
+    "missing_verdicts",
+    "missing_verdicts"
+  ],
+  "failures": [
+    "Unexpected verdict count.",
+    "Missing or repeated pair."
+  ],
+  "packetId": "c7d72cf47f928cc8254bb47731bfd23ca1cb74ac783e93865aa0debacbfc2440",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions are identical. The questions generally ask for interpretation of stance and tone, though one marked answer overgeneralizes from a single example.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions have the same answer keys and the same issue: one answer claims more than the passage establishes.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural French passages and English questions and options, as required.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The passage gives one example of an empty street on a Tuesday without a match; it does not establish that the surrounding district is deserted generally outside game nights.",
+            "criterion": "answers",
+            "learnerCost": "A careful learner may reject a keyed answer that makes a broader claim than the passage supports.",
+            "location": {
+              "detail": "He finds the surrounding district still deserted outside game nights.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The passage gives one example of an empty street on a Tuesday without a match; it does not establish that the surrounding district is deserted generally outside game nights.",
+            "criterion": "answers",
+            "learnerCost": "A careful learner may reject a keyed answer that makes a broader claim than the passage supports.",
+            "location": {
+              "detail": "He finds the surrounding district still deserted outside game nights.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, including the same answer-key issue."
+        },
+        "pairId": "235f12a9-107d-4281-bc38-6e04a29e5369"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's questions consistently target nuanced implications and tone. B includes a keyed statement that generalizes beyond the single example given in its passage.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's marked sets are supported by their passages. In B, the claim that the district is deserted outside game nights is broader than the passage's one Tuesday-night example.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions use natural French passages and English questions and options, matching the requested languages.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The passage gives one example of an empty street on a Tuesday without a match; it does not establish that the surrounding district is deserted generally outside game nights.",
+            "criterion": "answers",
+            "learnerCost": "A careful learner may reject a keyed answer that makes a broader claim than the passage supports.",
+            "location": {
+              "detail": "He finds the surrounding district still deserted outside game nights.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A offers nuanced, passage-supported answers throughout. B's answer key includes an overgeneralization, which may penalize a careful reader."
+        },
+        "pairId": "dbd94e38-5c48-4168-bc15-1edb8f4cba0b"
+      }
+    ]
+  }
+}

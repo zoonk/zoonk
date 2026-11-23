@@ -94,14 +94,14 @@ describe(sizeLanguageGraph, () => {
     expect(sizeLanguageGraph({ ...sizing, graph: once }).graph).toStrictEqual(once);
   });
 
-  it("sizes only the situations the learner hasn't settled: those below their level stay out", () => {
+  it("keeps settled situations at their size and allocates only the remaining lessons", () => {
     const { planned } = sizeLanguageGraph({
       ...sizing,
       graph: graphOf([8, 14, 12]),
       settledSkillIds: new Set(["s1"]),
     });
 
-    expect(lessonsOf(planned)).toStrictEqual([8, 353, 303]);
+    expect(lessonsOf(planned)).toStrictEqual([8, 349, 299]);
   });
 
   it("keeps other goals, language goals without an aim, and aims already reached, as they are", () => {

@@ -29,7 +29,9 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.goalcontent.examSyllabus
+import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
@@ -45,6 +47,7 @@ import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.PlanSuggestedTime
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
@@ -53,6 +56,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.decodeFromString
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -78,6 +82,62 @@ class PlanScreenshots {
 
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun placementPhone() = capture("plan-placement-phone", placementTest = LEARN_TEST_START)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun placementPhoneDark() = capture("plan-placement-phone-dark", dark = true, placementTest = LEARN_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun testOutUndonePhone() = captureTestOutUndone("plan-testout-undone-phone-light", dark = false)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun testOutUndonePhoneDark() = captureTestOutUndone("plan-testout-undone-phone-dark", dark = true)
+
+    private fun captureTestOutUndone(
+        name: String,
+        dark: Boolean,
+    ) {
+        val change = planChange(status = "undone").copy(kind = "testedOut", lessonsSkipped = 1)
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                Surface {
+                    TestedOutChangeCard(change, GoalDateKind.Goal, undone = false, saving = false, failed = false, onUndo = {})
+                }
+            }
+        }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun placementTablet() = capture("plan-placement-tablet", placementTest = LEARN_TEST_CONTINUE)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun placementTabletDark() = capture("plan-placement-tablet-dark", dark = true, placementTest = LEARN_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun languagePlacementPhone() = capture("plan-language-placement-phone", placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun languagePlacementPhoneDark() = capture("plan-language-placement-phone-dark", dark = true, placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun languagePlacementTablet() = capture("plan-language-placement-tablet", placementTest = LANGUAGE_TEST_RESULT)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun languagePlacementTabletDark() = capture("plan-language-placement-tablet-dark", dark = true, placementTest = LANGUAGE_TEST_RESULT)
 
     @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
@@ -1008,9 +1068,10 @@ class PlanScreenshots {
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
         exam: PlanPageState? = null,
+        placementTest: String? = null,
         structure: Syllabus? = null,
     ) {
-        show(dark, moreContrast, paused, failure, examOver, exam, structure)
+        show(dark, moreContrast, paused, failure, examOver, exam, placementTest, structure)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -1022,10 +1083,33 @@ class PlanScreenshots {
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
         exam: PlanPageState? = null,
+        placementTest: String? = null,
         structure: Syllabus? = null,
     ) {
         val page =
             when {
+                placementTest != null -> {
+                    val summary =
+                        if (placementTest ==
+                            LANGUAGE_TEST_RESULT
+                        ) {
+                            learnerSummary(kind = "language", title = "Italian")
+                        } else {
+                            learnerSummary()
+                        }
+                    val changes =
+                        if (placementTest == LEARN_TEST_RESULT) {
+                            listOf(planChange().copy(kind = "testedOut", lessonsSkipped = 6))
+                        } else {
+                            emptyList()
+                        }
+                    PlanPageState(
+                        summary.goals.first(),
+                        learnPlan().copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(placementTest), changes = changes),
+                        summary,
+                    )
+                }
+
                 exam != null -> {
                     exam
                 }
@@ -1050,12 +1134,18 @@ class PlanScreenshots {
                 Surface {
                     PlanContent(
                         page = page,
-                        standing = Standing.Progress(progress(), done = 13, known = 0, total = 46),
+                        standing =
+                            if (placementTest == LANGUAGE_TEST_RESULT) {
+                                Standing.Language(languageProgress(level = "B2+"), callStarter { error("The capture opens no call") })
+                            } else {
+                                Standing.Progress(progress(), done = 13, known = 0, total = 46)
+                            },
                         structure = structure,
                         links = PlanLinks(navigator, page),
                         resume = Resume.Plain,
                         isSaving = false,
                         onSetStatus = {},
+                        focusTest = page.plan.placementTest?.let { test -> { PlanPlacementTestRow(test, onOpen = {}) } },
                         resumeFailure = failure,
                         onAdjust = {},
                     )
@@ -1075,6 +1165,21 @@ class PlanScreenshots {
     }
 
     private companion object {
+        const val LEARN_TEST_START = """{"kind":"learn","state":"start","estimatedMinutes":40,"attempt":null,"result":null}"""
+
+        const val LEARN_TEST_CONTINUE =
+            """{"kind":"learn","state":"continue","estimatedMinutes":25,"result":null,
+             "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":2,"partComplete":false,"estimatedMinutes":25}}"""
+
+        const val LEARN_TEST_RESULT =
+            """{"kind":"learn","state":"result","estimatedMinutes":30,"attempt":null,
+             "result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-18T14:00:00Z","lessonsSkipped":6}}"""
+
+        const val LANGUAGE_TEST_RESULT =
+            """{"kind":"language","state":"result","estimatedMinutes":30,"attempt":null,"nextTestOutLevel":"B2",
+             "result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-18T14:00:00Z","lessonsSkipped":12,
+              "levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}}}}"""
+
         val WRITTEN_BEFORE =
             """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":null,"max":200,
             "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":null,"standing":"unmeasured","scale":"points",

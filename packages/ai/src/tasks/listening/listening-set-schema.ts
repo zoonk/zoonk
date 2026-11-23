@@ -2,7 +2,9 @@ import { z } from "zod";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "../items/item-schemas";
 import { fitsTypedQuestion } from "./listening-answer-fit";
 
-export const LISTENING_QUESTION_FORMATS = ["multipleChoice", "trueFalse", "typed"] as const;
+export const EXAM_LISTENING_QUESTION_FORMATS = ["multipleChoice", "trueFalse", "typed"] as const;
+export const LISTENING_QUESTION_FORMATS = [...EXAM_LISTENING_QUESTION_FORMATS, "order"] as const;
+export const LEVEL_TEST_OUT_LISTENING_FORMATS = ["multipleChoice", "order"] as const;
 
 export type ListeningQuestionFormat = (typeof LISTENING_QUESTION_FORMATS)[number];
 
@@ -33,6 +35,7 @@ const LISTENING_QUESTION_SCHEMAS = {
     skill,
     ...GENERATED_ITEM_SCHEMAS.multipleChoice.omit(SHUFFLED).shape,
   }),
+  order: z.object({ evidence, skill, ...GENERATED_ITEM_SCHEMAS.order.shape }),
   trueFalse: z.object({
     evidence,
     skill,

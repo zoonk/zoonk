@@ -84,6 +84,7 @@ function levelTestBankContent() {
   );
 
   return {
+    confirmations: [],
     questions,
     speaking: LEVELS.map((level) => ({
       level,
@@ -353,7 +354,7 @@ test.describe("Language calls", () => {
 });
 
 test.describe("Language practice in the plan", () => {
-  test("the level test places each skill during onboarding", async ({
+  test("onboarding's level test shows each skill's range, as from the plan", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -370,7 +371,7 @@ test.describe("Language practice in the plan", () => {
     ]);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
     await page.getByRole("radio", { name: "Right A2" }).click();
@@ -393,13 +394,18 @@ test.describe("Language practice in the plan", () => {
     await page.getByRole("button", { name: "Stop and use my answers" }).click();
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
+    await expect(page.getByText("Your lessons keep adjusting as you answer.")).toBeVisible();
     await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();
 
     await page.reload();
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
-    await expect(page.getByRole("listitem").filter({ hasText: "Reading" })).toBeVisible();
-    await expect(page.getByRole("listitem").filter({ hasText: "Speaking" })).toHaveCount(0);
+
+    await expect(
+      page.getByRole("listitem").filter({ hasText: /^Reading[ABC][12](?:–[ABC][12])?$/u }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("listitem").filter({ hasText: "Listening" })).toHaveCount(0);
 
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
@@ -409,11 +415,16 @@ test.describe("Language practice in the plan", () => {
         return saved.details;
       })
       .toMatchObject({
-        levelTest: { answers: [{ answerIndex: 0, id: "reading-A2-0" }] },
-        skillLevels: { listening: "A2", reading: expect.any(String) },
+        answered: expect.arrayContaining(["placement"]),
+        levelTest: {
+          attempt: { answers: [{ answerIndex: 0, id: "reading-A2-0" }], length: "quick" },
+        },
+        skillLevels: { reading: expect.any(String) },
       });
 
+    // A skill the learner answered nothing in gets no level.
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(saved.details).not.toHaveProperty("skillLevels.listening");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
   });
 });

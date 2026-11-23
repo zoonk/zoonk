@@ -55,6 +55,9 @@ const OWNERS: Record<string, string> = {
     "Placement is the onboarding aside's PaneBeside content, which keeps its identity.",
   "Features/Onboarding/PlanStep.swift: starting":
     "The plan reveal, which holds its onboarding pane column; Start's request is its own.",
+  "Features/PlacementTest/LevelTestFlow.swift: tasks, undoRequest": "The level test has no split.",
+  "Features/PlacementTest/PlacementTestFlow.swift: tasks, undoRequest":
+    "The test taken from the plan has no split.",
   "Features/Plan/AdjustPlanSections.swift: saving":
     "A sheet of the Adjust plan sheet, presented above the Plan's split.",
   "Features/Plan/AdjustPlanSheet.swift: editor":
@@ -63,13 +66,13 @@ const OWNERS: Record<string, string> = {
   "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
   "Features/Plan/PlanBasesView.swift: saving":
     "In the Adjust plan sheet, presented above the Plan's split.",
-  "Features/Plan/PlanScreen.swift: alphabetSkip, rebuildRetry, slotAnswer?.editor, slotChecks":
+  "Features/Plan/PlanScreen.swift: alphabetSkip, rebuildRetry, slotAnswer?.editor, slotChecks, testedOutUndo":
     "The Plan, which holds its PaneSplit.",
   "Features/PlanLink/PlanLinkScreen.swift: startTask": "A shared plan's page has no split.",
+  "Features/Player/Views/LessonEndViews.swift: offerDismissal, stopping":
+    "The lesson's end, which holds its PaneSplit.",
   "Features/Player/Views/LessonEndViews.swift: starting":
     "The guest gate, shown in the lesson's place, not in a split.",
-  "Features/Player/Views/LessonEndViews.swift: stopping":
-    "The lesson's end, which holds its PaneSplit.",
   "Features/Player/Views/LessonPlayerScreen.swift: store":
     "The lesson's screen, above its stage's split.",
   "Features/Player/Views/LessonSpokenWordsView.swift: playing":

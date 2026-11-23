@@ -8,6 +8,7 @@ import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { lowGuessTapItems, placementItemBank } from "../_test-utils/placement-tap-items";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { requestTestOutQuestions } from "./request-test-out-questions";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
@@ -20,11 +21,29 @@ async function setup() {
   const fixture = await learnerGoalFixture({ itemsPerSkill: 1, phases: [4, 2], userId: user.id });
   mockSession(user.id);
 
-  return { ...fixture, user };
+  const bank = await Promise.all(fixture.skills.map((skill) => lowGuessTapItems(skill.id)));
+  const taps = bank.flat();
+
+  return { ...fixture, taps, user };
+}
+
+function chapterAnswers({
+  items,
+  taps,
+}: Pick<Awaited<ReturnType<typeof setup>>, "items" | "taps">) {
+  const quick = items.slice(0, 4);
+  const skillIds = new Set(quick.map((item) => item.skillId));
+
+  return [
+    ...quick.map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+    ...taps
+      .filter(({ item }) => skillIds.has(item.skillId))
+      .map(({ answer, item }) => ({ answer, durationMs: 8000, itemId: item.id })),
+  ];
 }
 
 describe(getChapterTestOut, () => {
-  it("asks one question per chapter skill, without the answers", async () => {
+  it("asks four questions per sampled topic, without the answers", async () => {
     const { chapters, goal, skills } = await setup();
 
     const result = await getChapterTestOut({ chapterId: chapters[0]?.id ?? "", goalId: goal.id });
@@ -33,9 +52,11 @@ describe(getChapterTestOut, () => {
 
     expect(
       result.status === "ready" && result.testOut.questions.map((question) => question.skillId),
-    ).toStrictEqual(skills.slice(0, 4).map((skill) => skill.id));
+    ).toStrictEqual(
+      Array.from({ length: 4 }, () => skills.slice(0, 4).map((skill) => skill.id)).flat(),
+    );
 
-    expect(result.status === "ready" && result.testOut.passMark).toBe(0.8);
+    expect(result.status === "ready" && result.testOut.passMark).toBe(1);
     expect(JSON.stringify(result)).not.toContain("isCorrect");
   });
 
@@ -72,11 +93,11 @@ describe(getChapterTestOut, () => {
       getChapterTestOut({ chapterId: later.id, goalId: goal.id }),
     ).resolves.toMatchObject({
       status: "ready",
-      testOut: { needsItems: [skills[0]?.id], questionsPerSkill: 4 },
+      testOut: { needsItems: [], questionsPerSkill: 4 },
     });
   });
 
-  it("asks a chapter of one skill several times, more when passing skips more lessons", async () => {
+  it("requires fresh quick and low-guess items after a previous pass", async () => {
     const user = await userFixture();
 
     const { chapters, goal, plan, skills } = await learnerGoalFixture({
@@ -88,6 +109,8 @@ describe(getChapterTestOut, () => {
     mockSession(user.id);
     const chapterId = chapters[0]?.id ?? "";
 
+    const taps = await lowGuessTapItems(skills[0]!.id);
+    const correct = new Map(taps.map(({ answer, item }) => [item.id, answer]));
     const small = await getChapterTestOut({ chapterId, goalId: goal.id });
 
     const asked = small.status === "ready" ? small.testOut.questions : [];
@@ -101,7 +124,7 @@ describe(getChapterTestOut, () => {
       goalId: goal.id,
       input: {
         answers: asked.map((question) => ({
-          answer: RIGHT,
+          answer: correct.get(question.itemId) ?? RIGHT,
           durationMs: 6000,
           itemId: question.itemId,
         })),
@@ -128,7 +151,7 @@ describe(getChapterTestOut, () => {
 
     await expect(getChapterTestOut({ chapterId, goalId: goal.id })).resolves.toMatchObject({
       status: "ready",
-      testOut: { needsItems: [skills[0]?.id], questions: [], questionsPerSkill: 8 },
+      testOut: { needsItems: [skills[0]?.id], questions: [], questionsPerSkill: 4 },
     });
   });
 
@@ -260,7 +283,7 @@ describe(submitChapterTestOut, () => {
   });
 
   it("reports the chapter a pass finishes and owes its map once its lessons are written", async () => {
-    const { chapters, goal, items, user } = await setup();
+    const { chapters, goal, items, taps, user } = await setup();
     const chapterId = chapters[0]?.id ?? "";
     const requestId = randomUUID();
 
@@ -273,12 +296,7 @@ describe(submitChapterTestOut, () => {
       submitChapterTestOut({
         chapterId,
         goalId: goal.id,
-        input: {
-          answers: items
-            .slice(0, 4)
-            .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
-          requestId,
-        },
+        input: { answers: chapterAnswers({ items, taps }), requestId },
       });
 
     const finishedChapter = { chapterId, goalId: goal.id, title: chapters[0]?.title };
@@ -302,24 +320,19 @@ describe(submitChapterTestOut, () => {
   });
 
   it("marks the whole chapter known and skips its plan items on a pass", async () => {
-    const { chapters, goal, items, planItems, skills, user } = await setup();
+    const { chapters, goal, items, planItems, skills, taps, user } = await setup();
 
     const result = await submitChapterTestOut({
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
-      input: {
-        answers: items
-          .slice(0, 4)
-          .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
-        requestId: randomUUID(),
-      },
+      input: { answers: chapterAnswers({ items, taps }), requestId: randomUUID() },
     });
 
     expect(result.status === "ready" && result.outcome).toMatchObject({
-      correct: 4,
+      correct: 16,
       lessonsSkipped: 4,
       passed: true,
-      total: 4,
+      total: 16,
     });
 
     const testedOut = await prisma.planItem.findMany({
@@ -346,15 +359,10 @@ describe(submitChapterTestOut, () => {
   });
 
   it("offers nothing after a pass, refuses new submissions, and replays the saved result", async () => {
-    const { chapters, goal, items, user } = await setup();
+    const { chapters, goal, items, taps, user } = await setup();
     const chapterId = chapters[0]?.id ?? "";
 
-    const input = {
-      answers: items
-        .slice(0, 4)
-        .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
-      requestId: randomUUID(),
-    };
+    const input = { answers: chapterAnswers({ items, taps }), requestId: randomUUID() };
 
     const passed = await submitChapterTestOut({ chapterId, goalId: goal.id, input });
     expect(passed).toMatchObject({ outcome: { lessonsSkipped: 4, passed: true }, status: "ready" });
@@ -474,18 +482,20 @@ describe(submitChapterTestOut, () => {
     const user = await userFixture();
 
     const { chapters, goal, planItems, skills } = await learnerGoalFixture({
-      itemsPerSkill: 1,
+      itemsPerSkill: 0,
       phases: [10, 1],
       userId: user.id,
     });
 
+    const bank = await placementItemBank(skills.map((skill) => skill.id));
+    const correct = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));
     mockSession(user.id);
     const chapterId = chapters[0]?.id ?? "";
     const testOut = await getChapterTestOut({ chapterId, goalId: goal.id });
     const questions = testOut.status === "ready" ? testOut.testOut.questions : [];
 
     const unasked = [skills[4]?.id, skills[9]?.id];
-    expect(questions).toHaveLength(8);
+    expect(questions).toHaveLength(32);
     expect(questions.map((question) => question.skillId)).not.toContain(unasked[0]);
 
     const result = await submitChapterTestOut({
@@ -493,7 +503,7 @@ describe(submitChapterTestOut, () => {
       goalId: goal.id,
       input: {
         answers: questions.map((question) => ({
-          answer: RIGHT,
+          answer: correct.get(question.itemId) ?? RIGHT,
           durationMs: 8000,
           itemId: question.itemId,
         })),

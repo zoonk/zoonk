@@ -1,0 +1,162 @@
+{
+  "attempt": "first",
+  "costUsd": 0.148374,
+  "failures": [],
+  "packetId": "8a87f2457ee987feb2a6da8e7bc176beb75a5c246fe1a3b02bb145e43708a996",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B consistently tests C2-level irony, rhetorical structure, and unstated assumptions, whereas A lets a C1 reader answer confirmations 2, 3, and 4 by matching direct paraphrases and explicit negations.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Every option in A is unambiguously right or wrong against its passage, while B has one slightly over-specified right option in confirmation 1 about why the calendar stayed on March.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "B",
+            "reason": "Both use natural Brazilian Portuguese and US English, but B's listening items sound genuinely like unscripted speech, whereas A's third item reads like prepared written prose.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "In confirmations 2, 3, and 4, the keyed options closely paraphrase explicit statements in the passages (for example, 'Distinguir o registro dos desacordos de uma declaração de consenso' for 'The minutes won't be a statement that everyone agreed... Think of them as a map of the disagreements') and the wrong options flatly negate stated phrases, allowing a C1 reader to get every item right.",
+            "criterion": "calibration",
+            "learnerCost": "Learners who have not yet mastered C2 nuance can still pass the check and skip a level they need.",
+            "location": {
+              "detail": "confirmations 2, 3 and 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Marked as a listening passage, confirmation 3 ('The minutes won't be a statement that everyone agreed, or even a list of the proposals with the least opposition... Our job was to leave the disagreements in a form someone else can argue with, rather than reduce them to slogans.') reads like edited written prose rather than natural unscripted speech.",
+            "criterion": "language",
+            "learnerCost": "The learner is assessed on tidy written rhetoric read aloud rather than authentic spoken English.",
+            "location": {
+              "detail": "confirmation 3 passage",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Marked right in confirmation 1 (index 4), this option specifies that the mother had stopped keeping track of the days, even though the passage's references to grief, settling things, and selling the house also allow reading 'seen no reason to leave' March as an ironic euphemism for her dying or leaving the house in March.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who takes the March remark as understated irony about when the mother died may hesitate to select a keyed option.",
+            "location": {
+              "detail": "A ideia de que a mãe não viu motivo para sair de março é um modo irônico de evitar dizer que ela já não acompanhava os dias.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B genuinely confirms C2 comprehension across literary, critical, and unscripted spoken US English, whereas A relies mostly on direct paraphrase and explicit contradiction that a C1 learner could handle."
+        },
+        "pairId": "0a4e2012-abd6-4ff3-9f60-adf6fcc3a1ad"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 message, question, and options checking simple stated facts in common words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the accurate answer key (1 and 3), whereas A marks a false statement (2) right and omits a supported statement (3).",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs contain identical, natural US English and Brazilian Portuguese text.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 ('O ônibus sai às nove.') right even though the message states 'The bus leaves at ten.', and omits option 3 ('O café fica ao lado da loja.'), which directly matches 'The cafe is next to the shop.'",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the message accurately is penalized and told an incorrect statement matches the text.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A and B are identical except for the answer key: B marks the two statements supported by the message (1 and 3), while A's key (1 and 2) is wrong."
+        },
+        "pairId": "a64a2a8a-75d9-4866-972b-ddd5cedc68a9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs and both pitch their passages and questions squarely at C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs with the same option sets and keys, sharing one minor over-specification in the first passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs written in natural US English and idiomatic Brazilian Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Marked right in confirmation 1 (index 4), this option narrows the irony of the unflipped March calendar to the mother losing track of the days while alive, whereas the passage's references to grief, settling things, and selling the house also support reading 'seen no reason to leave' March as understated irony about her dying or leaving the house in March.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who interprets the calendar remark as an ironic reference to the mother's death in March may hesitate to choose this keyed option.",
+            "location": {
+              "detail": "A ideia de que a mãe não viu motivo para sair de março é um modo irônico de evitar dizer que ela já não acompanhava os dias.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Marked right in confirmation 1 (index 4), this option narrows the irony of the unflipped March calendar to the mother losing track of the days while alive, whereas the passage's references to grief, settling things, and selling the house also support reading 'seen no reason to leave' March as understated irony about her dying or leaving the house in March.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who interprets the calendar remark as an ironic reference to the mother's death in March may hesitate to choose this keyed option.",
+            "location": {
+              "detail": "A ideia de que a mãe não viu motivo para sair de março é um modo irônico de evitar dizer que ela já não acompanhava os dias.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical in every respect."
+        },
+        "pairId": "f9e7743d-e1bc-4244-8baf-34bc6e484492"
+      }
+    ]
+  }
+}

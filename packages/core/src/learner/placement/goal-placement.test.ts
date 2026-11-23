@@ -19,9 +19,11 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { askPlacement } from "../_test-utils/exam-test-goal";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
+import { type PlacementAnswerInput } from "./placement-contract";
 
 const DONT_KNOW = { dontKnow: true } as const;
 const RIGHT = { selectedIndex: 0 };
@@ -32,6 +34,18 @@ async function setup(phases = [3, 2]) {
   mockSession(user.id);
 
   return { ...fixture, user };
+}
+
+async function answerConfirmationTaps({ goalId, skillId }: { goalId: string; skillId: string }) {
+  const taps = await lowGuessTapItems(skillId);
+
+  return taps.reduce<Promise<Awaited<ReturnType<typeof answerPlacementQuestion>> | null>>(
+    (previous, { answer, item }) =>
+      previous.then(() =>
+        answerPlacementQuestion({ goalId, input: { answer, durationMs: 5000, itemId: item.id } }),
+      ),
+    Promise.resolve(null),
+  );
 }
 
 const DIFFICULTIES = [-1, 0, 1];
@@ -155,7 +169,7 @@ async function answerNext({
   goalId,
   placement,
 }: {
-  answer: typeof RIGHT | typeof DONT_KNOW;
+  answer: PlacementAnswerInput["answer"];
   goalId: string;
   placement: Placement;
 }): Promise<Placement> {
@@ -674,11 +688,14 @@ describe(answerPlacementQuestion, () => {
 
     expect(first.status === "ready" && first.isCorrect).toBe(true);
 
-    expect(second.status === "ready" && second.placement.knownSkillIds).toStrictEqual([
-      skills[2]?.id,
-    ]);
+    expect(second.status === "ready" && second.placement.knownSkillIds).toStrictEqual([]);
 
-    expect(second.status === "ready" && second.placement.next?.skillId).toBe(skills[3]?.id);
+    const confirmed = await answerConfirmationTaps({ goalId: goal.id, skillId: skills[2]!.id });
+
+    expect(confirmed).toMatchObject({
+      placement: { knownSkillIds: [skills[2]?.id] },
+      status: "ready",
+    });
   });
 
   it("still takes the open question after a re-plan moved its skill out of the plan", async () => {
@@ -693,7 +710,7 @@ describe(answerPlacementQuestion, () => {
     });
 
     expect(result.status === "ready" && result.isCorrect).toBe(true);
-    expect(result.status === "ready" && result.placement.next?.skillId).not.toBe(skills[2]?.id);
+    expect(result.status === "ready" && result.placement.next?.itemId).not.toBe(asked?.id);
 
     await expect(
       prisma.attempt.count({ where: { itemId: asked?.id, userId: user.id } }),
@@ -760,6 +777,8 @@ describe(finishGoalPlacement, () => {
       ),
     );
 
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skills[2]!.id });
+
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
     const knownIds = [skills[2]?.id ?? ""];
 
@@ -792,6 +811,8 @@ describe(finishGoalPlacement, () => {
         }),
       ),
     );
+
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skills[0]!.id });
 
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
     const lessonId = planItems[1]?.lessonId;
@@ -937,6 +958,8 @@ describe(finishGoalPlacement, () => {
       });
     }
 
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skills[0]!.id });
+
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     const standIn = await prisma.planItem.findFirst({
@@ -976,6 +999,8 @@ describe(finishGoalPlacement, () => {
       ),
     );
 
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skills[2]!.id });
+
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     expect(result.status === "ready" && result.completion.knownSkillIds).toStrictEqual([
@@ -983,7 +1008,7 @@ describe(finishGoalPlacement, () => {
     ]);
   });
 
-  it("takes a topic answered right twice as known, never one it missed or a true-or-false guess", async () => {
+  it("confirms a topic with low-guess taps, without crediting a wrong answer or true-false guess", async () => {
     const { goal, items, skills, user } = await graphGoalFixture({
       planSkills: [
         { area: "Ethics", band: "intermediate", builds: null },
@@ -1026,6 +1051,8 @@ describe(finishGoalPlacement, () => {
       answer({ at: 1000, isCorrect: false, skill: 2 }),
     ]);
 
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skillAt(0) });
+
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     expect(result).toMatchObject({ completion: { knownSkillIds: [skillAt(0)] }, status: "ready" });
@@ -1045,7 +1072,7 @@ describe(finishGoalPlacement, () => {
     ]);
   });
 
-  it("requires two right answers for focused and other topics alike", async () => {
+  it("requires low-guess confirmations for focused and other topics alike", async () => {
     const { goal, items, skills, user } = await graphGoalFixture({
       planSkills: [
         { area: "Biology", band: "intermediate", builds: null },
@@ -1090,6 +1117,13 @@ describe(finishGoalPlacement, () => {
       answerRight({ at: 1000, item: 1, skill: 1 }),
     ]);
 
+    await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+      completion: { knownSkillIds: [] },
+    });
+
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skillAt(0) });
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skillAt(1) });
+
     const again = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     expect(again.status === "ready" && sortIds(again.completion.knownSkillIds)).toStrictEqual(
@@ -1125,6 +1159,8 @@ describe(finishGoalPlacement, () => {
         }),
       ),
     );
+
+    await answerConfirmationTaps({ goalId: goal.id, skillId: skills[2]!.id });
 
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
@@ -1172,6 +1208,9 @@ describe(finishGoalPlacement, () => {
       }),
     ]);
 
+    const bank = await Promise.all(skills.map((skill) => lowGuessTapItems(skill.id)));
+    const taps = bank.flat();
+    const tapAnswers = new Map(taps.map(({ answer, item }) => [item.id, answer]));
     const first = await askPlacement(goal.id);
     expect(first?.next?.skillId).toBe(skills[0]?.id);
 
@@ -1181,7 +1220,7 @@ describe(finishGoalPlacement, () => {
     const asked = new Set([first?.next?.skillId]);
     let placement = afterMiss;
 
-    for (let turn = 0; turn < topics * 2; turn += 1) {
+    for (let turn = 0; turn < topics * 4; turn += 1) {
       // A sitting that reached its count gives way to the next one.
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
       const asking = placement?.next ? placement : await askPlacement(goal.id);
@@ -1192,7 +1231,11 @@ describe(finishGoalPlacement, () => {
 
       asked.add(asking.next.skillId);
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: RIGHT, goalId: goal.id, placement: asking });
+      placement = await answerNext({
+        answer: tapAnswers.get(asking.next.itemId) ?? RIGHT,
+        goalId: goal.id,
+        placement: asking,
+      });
     }
 
     expect(sortIds([...asked])).toStrictEqual(sortIds(skills.map((skill) => skill.id)));
@@ -1266,9 +1309,11 @@ describe(finishGoalPlacement, () => {
 
     expect(result.status === "ready" && result.completion).toStrictEqual({
       areas: [{ area: null, confident: true, startSkillId: skills[0]?.id }],
+      changeId: null,
       complete: true,
       focusTest: null,
       knownSkillIds: [],
+      lessonsSkipped: 0,
       phases: [
         { confident: true, phase: 0, startSkillId: skills[0]?.id },
         { confident: true, phase: 1, startSkillId: skills[3]?.id },

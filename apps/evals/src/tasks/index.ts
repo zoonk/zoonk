@@ -65,6 +65,7 @@ import { lessonQuestionTask } from "./lesson-question/task";
 import { lessonSpecTask } from "./lesson-spec/task";
 import { lessonWriterTask } from "./lesson-writer/task";
 import { levelTestBankTask } from "./level-test-bank/task";
+import { levelTestConfirmationsTask } from "./level-test-confirmations/task";
 import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
 import { librarySearchTermsTask } from "./library-search-terms/task";
 import { liveConversationTask } from "./live-conversation/task";
@@ -246,6 +247,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       alphabetLessonTask,
       alphabetLessonFixTask,
       levelTestBankTask,
+      levelTestConfirmationsTask,
       checkLevelTestQuestionsTask,
       mistakePatternTask,
     ],

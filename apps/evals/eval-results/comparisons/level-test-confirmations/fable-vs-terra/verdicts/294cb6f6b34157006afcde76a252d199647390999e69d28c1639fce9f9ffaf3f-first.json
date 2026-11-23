@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0035431249999999994,
+  "failures": [],
+  "packetId": "294cb6f6b34157006afcde76a252d199647390999e69d28c1639fce9f9ffaf3f",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same single-fact message at A1, with the same kind of statements to check, so neither fits the level better.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's answer key marks option 2 (the bus leaves at nine), which the message contradicts (it leaves at ten), and omits option 3 (the cafe is next to the shop), which the message supports. Output B's key of 1 and 3 is correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in Brazilian Portuguese with the same English message, and neither has a language problem.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key says options 1 and 2 are right, but the message says the bus leaves at ten, so 'O ônibus sai às nove' is false. The key also leaves out option 3, 'O café fica ao lado da loja', which the message states directly.",
+            "criterion": "answers",
+            "learnerCost": "The learner would learn that the bus leaves at nine and that the cafe is not next to the shop, and would be marked wrong for choosing the correct cafe statement.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B's answer key matches the message, while Output A teaches a false bus time and marks a true statement wrong; the rest of the format is the same."
+        },
+        "pairId": "24b6e6c2-c108-418c-b5d1-e082990e724e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "Output B's items each test one stated fact (a day, a time, a colour) with matching words, which fits A1 more closely than Output A's pool item, which needs the learner to combine several rows of the schedule.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Every option in both outputs is right or wrong according to its passage, and the keys match the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are natural Brazilian Portuguese questions and options over short English texts, with no language problems.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The pool item asks the learner to combine several rows of the schedule (the Saturday row and the Sunday row) to decide options such as 'fecha às 5 da tarde no sábado' and 'fica fechada o dia todo no domingo'. This is closer to A2 than to a single stated fact.",
+            "criterion": "calibration",
+            "learnerCost": "A learner at A1 may find the schedule hard to read and get some options wrong, which does not show whether they understood the simple facts the level asks for.",
+            "location": {
+              "detail": "Question 2 (pool hours) and its six options",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs have correct keys, clear wording and the same level and format; the only difference is that Output A's pool item is somewhat harder to read, which is a minor issue."
+        },
+        "pairId": "289ecfa7-e99c-4bad-9cb0-8c8e8efe401e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they confirm the level equally.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same correct keys.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same language and variant.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same, so neither serves its reader better."
+        },
+        "pairId": "4dbcde08-4b81-4328-86c9-48766a3e61f1"
+      }
+    ]
+  }
+}

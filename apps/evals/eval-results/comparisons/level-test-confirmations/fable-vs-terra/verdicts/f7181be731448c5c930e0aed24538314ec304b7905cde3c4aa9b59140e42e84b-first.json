@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00218804,
+  "failures": [],
+  "packetId": "f7181be731448c5c930e0aed24538314ec304b7905cde3c4aa9b59140e42e84b",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use a simple A1 fact-checking question based on the message.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A marks statements 1 and 3, the two supported by the message. B incorrectly marks statement 2, since the bus leaves at ten, not nine.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English for the message and Brazilian Portuguese for the question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct, but the message says the bus leaves at ten, not nine.",
+            "criterion": "answers",
+            "learnerCost": "A learner who understands the message would be told to select a false statement.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct answer key; B tells learners that the bus leaves at nine, contradicting the message."
+        },
+        "pairId": "56755c52-115d-4db9-a251-27084c37082b"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and use direct stated-fact questions suitable for A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The keys match the passages: all and only the marked statements are supported.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, and their answer keys and language are appropriate."
+        },
+        "pairId": "8e733e06-7ce7-4e95-9688-1c0353b2b0d7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "Both use simple A1 fact retrieval, but B more consistently tests the requested everyday details such as locations, times, dates, and prices. A spends several questions on colors or document categories instead.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "In both outputs, each marked option is supported by its passage and the unmarked options are contradicted by it.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Three questions focus mainly on identifying objects, document types, or colors rather than the requested everyday details such as times, prices, and places.",
+            "criterion": "calibration",
+            "learnerCost": "The set gives less practice with the kinds of practical facts the learner was meant to practise.",
+            "location": {
+              "detail": "Confirmations 1, 3, and 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B better matches the requested focus on practical facts such as times, prices, and places, while keeping the questions at an accessible level. A shifts several questions to colors or document categories."
+        },
+        "pairId": "aa172abc-d6e8-44b9-81fe-df391caed341"
+      }
+    ]
+  }
+}

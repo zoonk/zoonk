@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00340559,
+  "failures": [],
+  "packetId": "331ec35add2e0f998e1cf7be76e5fd12aea88ce6cfc9900ec48ecf5dc1ccbdc9",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and both items test single stated facts in very common words at A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and every answer key matches its passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and the Portuguese questions and options are in Brazilian Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "0b2090d0-87dd-40fa-a61d-0574e38ff1e8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's items each test one stated fact in everyday words, as A1 asks. B's pool item needs the learner to combine a day with a time, which is closer to A2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have correct answer keys that match their passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use natural Brazilian Portuguese questions and options with correct English passages.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The pool question asks the learner to combine the day and the time for each option, such as Saturday with closing at 5 p.m. This is a stated-facts-put-together task, which is above the A1 level the case asks for.",
+            "criterion": "calibration",
+            "learnerCost": "A1 learners may miss the answer because they must match two facts at once, which makes the item test the wrong skill.",
+            "location": {
+              "detail": "question of the pool item",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both outputs are correct, but A's items stay closer to the single-fact A1 target, while B's pool item needs a combination step."
+        },
+        "pairId": "a19a5df4-c3b1-47dd-afda-22a97dadb637"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same simple A1 item, so the calibration is equal.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key of 1 and 3 is correct, while B's key of 1 and 2 marks a false option as right.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same English message and Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2, that the bus leaves at nine, as right. The message says the bus leaves at ten, so option 2 is false and the key is wrong.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine, which is a false fact about the bus time.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's answer key is correct, while B's key wrongly teaches that the bus leaves at nine, which is a major problem."
+        },
+        "pairId": "d4ec3e57-deb2-44f3-8595-6e8c862fe5c2"
+      }
+    ]
+  }
+}

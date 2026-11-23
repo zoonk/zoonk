@@ -19,11 +19,13 @@ import {
 import { PlanEditor } from "../plan/plan-editor";
 import { type PlanEditorSection } from "../plan/plan-editor-sections";
 import { PlanFocusTest } from "../plan/plan-focus-test";
+import { PlanPlacementTest } from "../plan/plan-placement-test";
 import { PlanProperties } from "../plan/plan-properties";
 import { PlanRebuildNotice } from "../plan/plan-rebuild-notice";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
 import { type PlanEnd } from "../plan/plan-suggestion-context";
+import { PlanTestedOutChange } from "../plan/tested-out-change-card";
 import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import { type SyllabusSectionView } from "../syllabus/syllabus-section-view";
@@ -52,7 +54,9 @@ export type JourneyLinks = JourneyPathLinks & {
   completedLessons: string | null;
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: string;
+  levelTest: string;
   logbook: string | null;
+  placementTest: string;
   mindMaps: string | null;
   subject: (key: string) => string;
 };
@@ -108,7 +112,13 @@ function JourneyBody({
   const course = getPlanLibraryCourse(plan);
   const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
-  const focusTest = <PlanFocusTest />;
+
+  const focusTest = (
+    <>
+      <PlanFocusTest />
+      <PlanPlacementTest levelTestHref={links.levelTest} placementTestHref={links.placementTest} />
+    </>
+  );
 
   const numbers = (variant: "stats" | "tiles", className: string) =>
     standing && (
@@ -160,6 +170,7 @@ function JourneyBody({
           </PlanHeader>
 
           <PlanRebuildNotice />
+          <PlanTestedOutChange />
 
           {!paused && (
             <>

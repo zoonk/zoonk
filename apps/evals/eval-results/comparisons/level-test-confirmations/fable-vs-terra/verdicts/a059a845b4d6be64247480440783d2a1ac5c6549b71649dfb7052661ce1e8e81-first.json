@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0016732399999999999,
+  "failures": [],
+  "packetId": "a059a845b4d6be64247480440783d2a1ac5c6549b71649dfb7052661ce1e8e81",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B more consistently asks learners to interpret a qualified stance or implication, rather than relying on relatively direct paraphrase of the passage.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets of answer keys appear supported by their passages, with the unmarked options clearly contradicted or unsupported.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural French passages and English options appropriate for the stated learner language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "Both sets appear accurate, but B better fits the C1 expectation for interpreting implicit meaning and qualified viewpoints."
+        },
+        "pairId": "8882181c-8fde-416f-a85e-da95d6f183fb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so they offer the same level of challenge.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and their answer keys appear supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and use natural French passages with English options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and neither has a noticeable advantage."
+        },
+        "pairId": "b26af091-3b0a-45d6-b0bf-7c845e148f3e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both present the same simple stated-fact task at A1 level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marks statements 1 and 3, the only ones supported by the message. A incorrectly includes statement 2, which says the bus leaves at nine.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English for the message and Brazilian Portuguese for the question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes statement 2, “O ônibus sai às nove,” although the message says the bus leaves at ten; the supported statements are 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the key would be taught to accept a statement that contradicts the message.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct answer key; A marks a statement that contradicts the message."
+        },
+        "pairId": "f8a1c950-476c-43dd-aa31-78bd868942a0"
+      }
+    ]
+  }
+}

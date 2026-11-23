@@ -20,8 +20,9 @@ import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
-import com.zoonk.api.models.LanguageLevelTestSpokenResult
-import com.zoonk.api.models.LanguageLevelTestSpokenResultHeard
+import com.zoonk.api.models.LanguageLevelTestOut
+import com.zoonk.api.models.LanguageLevelTestOutAnswerInput
+import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.Onboarding
@@ -33,6 +34,7 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -41,6 +43,8 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.StartLanguageLevelTestInput
+import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
@@ -418,12 +422,15 @@ class FakeOnboardingApi : OnboardingApi {
 
     var sitting: () -> Placement = { placement }
     var sittingsStarted = 0
+    val sittingLengths = mutableListOf<PlacementLength?>()
 
     override suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
+        length: PlacementLength?,
     ): Placement {
         sittingsStarted++
+        sittingLengths += length
         writeFailure?.let { throw it }
         placement = sitting()
         return placement
@@ -431,12 +438,15 @@ class FakeOnboardingApi : OnboardingApi {
 
     var placementFinishGate: CompletableDeferred<Unit>? = null
     var completion: PlacementCompletion = completionOf()
+    val finishedParts = mutableListOf<PlacementPart?>()
 
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
+        attempt: PlacementPart?,
     ): PlacementCompletion {
+        finishedParts += attempt
         placementFinishGate?.await()
         writeFailure?.let { throw it }
         return completion
@@ -456,6 +466,7 @@ class FakeOnboardingApi : OnboardingApi {
     override suspend fun levelTest(
         session: AuthenticatedSession,
         goalId: String,
+        attemptId: UUID?,
     ): LanguageLevelTest {
         levelTestReads++
         levelTestGate?.await()
@@ -483,22 +494,68 @@ class FakeOnboardingApi : OnboardingApi {
         return levelTest
     }
 
-    override suspend fun speakLevelTest(
+    val levelTestLengths = mutableListOf<StartLanguageLevelTestInput.Length>()
+
+    /** What a start answers: the test it opened. */
+    var startedLevelTest: () -> LanguageLevelTest = { levelTest }
+
+    override suspend fun startLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-        recording: VoiceRecording,
-    ): LanguageLevelTestSpokenResult {
+        length: StartLanguageLevelTestInput.Length,
+    ): LanguageLevelTest {
+        levelTestLengths += length
         writeFailure?.let { throw it }
-        levelTest = levelTestOf(answered = 1, next = DONE_NEXT)
-        return LanguageLevelTestSpokenResult(LanguageLevelTestSpokenResultHeard(1.0, "Vorrei un caffè", emptyList()), levelTest)
+        return startedLevelTest()
     }
+
+    var levelTestResult = LanguageLevelTestResult(levels = emptyList())
 
     override suspend fun finishLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-    ) {
+        attemptId: UUID?,
+    ): LanguageLevelTestResult {
         writeFailure?.let { throw it }
         finishedLevelTests++
+        return levelTestResult
+    }
+
+    var levelTestOut: LanguageLevelTestOut? = null
+    val levelTestOutAnswers = mutableListOf<LanguageLevelTestOutAnswerInput>()
+
+    override suspend fun levelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        attemptId: UUID,
+    ) = checkNotNull(levelTestOut)
+
+    override suspend fun startLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        level: StartLanguageLevelTestOutInput.Level,
+    ): LanguageLevelTestOut {
+        writeFailure?.let { throw it }
+        return checkNotNull(levelTestOut)
+    }
+
+    override suspend fun answerLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: LanguageLevelTestOutAnswerInput,
+    ): LanguageLevelTestOut {
+        levelTestOutAnswers += input
+        writeFailure?.let { throw it }
+        return checkNotNull(levelTestOut)
+    }
+
+    override suspend fun finishLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        attemptId: UUID,
+    ): LanguageLevelTestOut {
+        writeFailure?.let { throw it }
+        return checkNotNull(levelTestOut)
     }
 }
 

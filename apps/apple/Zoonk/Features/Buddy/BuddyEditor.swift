@@ -81,17 +81,8 @@ struct BuddyPickerSections: View {
 
   var body: some View {
     Section {
-      ForEach(buddyKinds, id: \.self) { option in
-        ChoiceRow(isPicked: kind == option) {
-          kind = option
-        } words: {
-          Label {
-            ChoiceWords(title: Text(buddyName(kind: option, name: nil)), detail: option.tagline)
-          } icon: {
-            BuddyFace(kind: option, glasses: glasses)
-          }
-        }
-      }
+      BuddyCards(kind: $kind, glasses: glasses)
+        .listRowSeparator(.hidden)
     }
 
     Section {
@@ -112,6 +103,83 @@ struct BuddyPickerSections: View {
         }
       }
     }
+  }
+}
+
+/// Main's `BuddyPicker` options: a card per buddy, two to a row and four once the row is 32rem wide,
+/// each the buddy drawn whole over its name and what it is, the pick on the pick's fill.
+private struct BuddyCards: View {
+  @Binding var kind: BuddyKind
+  let glasses: BuddyGlasses
+
+  @State private var columns = 2
+
+  var body: some View {
+    LazyVGrid(
+      columns: Array(
+        repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: columns),
+      spacing: 12
+    ) {
+      ForEach(buddyKinds, id: \.self) { option in
+        BuddyCard(
+          kind: option, glasses: kind == option ? glasses : .round, isPicked: kind == option
+        ) {
+          kind = option
+        }
+      }
+    }
+    .onGeometryChange(for: Int.self) {
+      $0.size.width >= 512 ? 4 : 2
+    } action: {
+      columns = $0
+    }
+  }
+}
+
+private struct BuddyCard: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  let kind: BuddyKind
+  let glasses: BuddyGlasses
+  let isPicked: Bool
+  let action: () -> Void
+
+  private var look: BuddyLook {
+    var look = learner.summary.value?.buddy ?? BuddyLook()
+    look.kind = kind
+    look.glasses = glasses
+    return look
+  }
+
+  var body: some View {
+    Button(action: action) {
+      VStack(spacing: 4) {
+        BuddyCharacter(look: look, expression: .happy)
+          .frame(height: 92)
+          .accessibilityHidden(true)
+
+        Text(buddyName(kind: kind, name: nil))
+          .typeStyle(.rowTitle.weight(.semibold))
+          .foregroundStyle(Color(.foreground))
+
+        kind.tagline
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
+      .multilineTextAlignment(.center)
+      .frame(maxWidth: .infinity)
+      .padding(12)
+      .padding(.top, 4)
+      .overlay(alignment: .topTrailing) {
+        Image(systemName: isPicked ? "checkmark.circle.fill" : "circle")
+          .foregroundStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
+          .padding(12)
+          .accessibilityHidden(true)
+      }
+      .answerSurface(isPicked ? .picked : .idle, cornerRadius: Radius.xl)
+    }
+    .buttonStyle(.plain)
+    .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 }
 

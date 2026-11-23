@@ -5,9 +5,11 @@ import SwiftUI
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
-  let onDone: () async throws -> Void
+  let onDone: (String?) async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(PlanStore.self) private var plans
+  @State private var topics: GoalPlacement?
   @State private var opening: Resource<GoalPlacement>?
   /// Where the learner's taps and the wait took the step; until then it shows the opening read.
   @State private var reached: Phase?
@@ -71,7 +73,15 @@ struct PlacementStep: View {
 
   var body: some View {
     Group {
-      if let opening {
+      if let placement = topics ?? opening?.value, placement.resumesOnboardingTopics {
+        PlacementTestFlow(
+          goalID: view.goal.id, subject: subject,
+          wholeCourseMinutes: wholeCourseMinutes, nextTopic: { nil },
+          initialPlacement: placement, onOnboardingDone: { try await onDone($0) }
+        ) {
+          try await onDone(nil)
+        }
+      } else if let opening {
         steps(opening)
           .loads(opening, refreshable: false)
       } else {
@@ -83,12 +93,17 @@ struct PlacementStep: View {
         opening = onboarding.openingPlacement(goalID: view.goal.id)
       }
     }
+    .loads(plan, refreshable: false)
     .onDisappear { tasks.cancel() }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
       isReport: true)
   }
+
+  private var plan: Resource<PlanRead> { plans.plan(goalId: view.goal.id) }
+
+  private var wholeCourseMinutes: Int { plan.value?.plan.placementTest?.estimatedMinutes ?? 0 }
 
   private var phase: Phase {
     reached ?? opening?.value.map { $0.started ? Phase($0) : .intro } ?? .loading
@@ -159,28 +174,33 @@ struct PlacementStep: View {
   }
 
   private var intro: some View {
-    ZoonkList {
-      StepHeader(
-        subject: subject,
-        title: Text(
-          "Skip what you already know", tableName: "Onboarding",
-          comment: "Title of the short test's start"),
-        description: Text(
-          "A short test finds the lessons you don't need.", tableName: "Onboarding",
-          comment: "What the short test is"))
-    }
-    .bottomBar(note: finishFailed && !isSaving ? BarNote(testSaveFailure) : nil) {
-      StepButtons(
-        continueLabel: Text(
-          "Start", tableName: "Onboarding", comment: "Starts the short test's questions")
-      ) {
-        Task { await start() }
-      } onSkip: {
-        finish(fromScratch: true)
-      }
-    }
-    .onboardingColumn()
-    .environment(\.isSavingAnswer, isStarting || isSaving)
+    PlacementLengthChoice(
+      wholeCourseMinutes: wholeCourseMinutes, isSaving: isStarting || isSaving,
+      failed: finishFailed, onSkip: { finish(fromScratch: true) },
+      onStart: { choice in
+        guard !isStarting, !isSaving, case .length(let length) = choice else { return }
+
+        if length == .quick {
+          tasks.run { await start() }
+        } else {
+          isStarting = true
+          finishFailed = false
+
+          tasks.run {
+            defer { isStarting = false }
+
+            do {
+              let placement = try await onboarding.startPlacementTest(
+                goalID: view.goal.id, length: length)
+              guard placement.resumesOnboardingTopics else { throw APIError.unavailable }
+              topics = placement
+            } catch is CancellationError {
+            } catch {
+              finishFailed = true
+            }
+          }
+        }
+      })
   }
 
   private func waiting(holding: WaitHolding?) -> some View {
@@ -343,7 +363,7 @@ struct PlacementStep: View {
   /// Finishing is one save to the learner: it goes through once the step's save does too.
   private func finishAndGoOn(fromScratch: Bool) async throws {
     try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-    try await goOnUnlessLeft(onDone)
+    try await goOnUnlessLeft { try await onDone(nil) }
   }
 }
 
@@ -354,6 +374,8 @@ struct TestOutcome<Lead: View>: View {
   let title: Text
   var description: Text?
   var continueLabel: Text?
+  var undo: PlacementResultUndo?
+  var failureMessage: LocalizedStringResource?
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
@@ -365,7 +387,11 @@ struct TestOutcome<Lead: View>: View {
 
       lead()
     }
-    .bottomBar(note: failed && !isSaving ? BarNote(testSaveFailure) : nil) {
+    .bottomBar(
+      note: undo?.failure
+        ?? (failed && !isSaving ? BarNote(failureMessage ?? testSaveFailure) : nil)
+    ) {
+      undo?.button
       StepButtons(continueLabel: continueLabel, onContinue: onContinue)
     }
     .onboardingColumn()
@@ -376,11 +402,13 @@ struct TestOutcome<Lead: View>: View {
 extension TestOutcome where Lead == EmptyView {
   init(
     subject: String? = nil, title: Text, description: Text? = nil, continueLabel: Text? = nil,
+    undo: PlacementResultUndo? = nil, failureMessage: LocalizedStringResource? = nil,
     isSaving: Bool, failed: Bool, onContinue: @escaping () -> Void
   ) {
     self.init(
       subject: subject, title: title, description: description, continueLabel: continueLabel,
-      isSaving: isSaving, failed: failed, onContinue: onContinue, lead: { EmptyView() })
+      undo: undo, failureMessage: failureMessage, isSaving: isSaving, failed: failed,
+      onContinue: onContinue, lead: { EmptyView() })
   }
 }
 
@@ -409,9 +437,12 @@ struct PlacementQuestionScreen<Media: View>: View {
   let number: Int
   /// The count promised up front, when the test has one.
   var total: Int?
+  /// Where the question sits, in place of its number, such as a whole-course test's part.
+  var position: Text?
   /// From 0 to 1.
   let progress: Double
   let question: PracticeQuestion
+  var askedIn: String?
   var labels = PracticeTrueFalseLabels.trueFalse
   var dontKnowLabel = LocalizedStringResource(
     "I don't know yet", table: "Onboarding",
@@ -433,29 +464,9 @@ struct PlacementQuestionScreen<Media: View>: View {
 
   var body: some View {
     PracticeTaskLayout {
-      VStack(alignment: .leading, spacing: 4) {
-        if let subject {
-          Text(subject)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-
-        Group {
-          if let total {
-            Text(
-              "Question \(number) of \(total)", tableName: "Onboarding",
-              comment: "Which question of a test with a promised count this is")
-          } else {
-            Text(
-              "Question \(number)", tableName: "Onboarding",
-              comment: "Which placement question this is")
-          }
-        }
-        .typeStyle(.body.weight(.semibold))
+      if let subject {
+        ChipRow(chip: Chip(Text(verbatim: subject)), position: shownPosition)
       }
-
-      Meter(value: progress, fill: .success)
-        .accessibilityHidden(true)
 
       media()
 
@@ -470,49 +481,70 @@ struct PlacementQuestionScreen<Media: View>: View {
       if failures > 0, !isSaving {
         SaveFailureNotice(failures: failures, onReport: onReport)
       }
+
+      if number > 1 {
+        if let stopHint {
+          Text(stopHint)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        BusyButton(isBusy: isSaving && submission == .stop) {
+          submission = .stop
+          onStop()
+        } label: {
+          Text(
+            "Stop and use my answers", tableName: "Onboarding",
+            comment: "Ends a test early; the answers given so far count at once"
+          )
+          .underline()
+        }
+        .buttonStyle(.borderless)
+        .disabled(isSaving && submission != .stop)
+      }
     } actions: {
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        isBusy: isSaving && submission == .confirm,
-        isDisabled: isSaving || draft?.complete == nil
-      ) {
-        if let answer = draft?.complete {
-          submission = .confirm
-          onAnswer(answer)
+      PracticeActionRow {
+        PracticeSecondaryButton(
+          title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+          isDisabled: isSaving
+        ) {
+          submission = .dontKnow
+          onAnswer(.dontKnow)
+        }
+
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
+          isBusy: isSaving && submission == .confirm,
+          isDisabled: isSaving || draft?.complete == nil
+        ) {
+          if let answer = draft?.complete {
+            submission = .confirm
+            onAnswer(answer)
+          }
         }
       }
+    }
+    .preference(key: TestQuestionProgressKey.self, value: progress)
+  }
 
-      PracticeSecondaryButton(
-        title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
-        isDisabled: isSaving
-      ) {
-        submission = .dontKnow
-        onAnswer(.dontKnow)
-      }
-
-      if let stopHint {
-        Text(stopHint)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .multilineTextAlignment(.center)
-          .frame(maxWidth: .infinity)
-      }
-
-      BusyButton(isBusy: isSaving && submission == .stop) {
-        submission = .stop
-        onStop()
-      } label: {
-        Text(
-          "Stop and use my answers", tableName: "Onboarding",
-          comment: "Ends a test early; the answers given so far count at once")
-      }
-      .disabled(isSaving && submission != .stop)
+  private var shownPosition: Text {
+    if let position {
+      position
+    } else if let total {
+      Text(
+        "Question \(number) of \(total)", tableName: "Onboarding",
+        comment: "Which question of a test with a promised count this is")
+    } else {
+      Text(
+        "Question \(number)", tableName: "Onboarding",
+        comment: "Which placement question this is")
     }
   }
 
   private var asked: PracticeQuestionView {
-    PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+    PracticeQuestionView(question: question, labels: labels, askedIn: askedIn, draft: $draft) {
+      answer in
       guard !isSaving else { return }
       submission = .confirm
       onAnswer(answer)
@@ -525,8 +557,10 @@ extension PlacementQuestionScreen where Media == EmptyView {
     subject: String?,
     number: Int,
     total: Int? = nil,
+    position: Text? = nil,
     progress: Double,
     question: PracticeQuestion,
+    askedIn: String? = nil,
     labels: PracticeTrueFalseLabels,
     isSaving: Bool,
     failures: Int,
@@ -537,8 +571,9 @@ extension PlacementQuestionScreen where Media == EmptyView {
     onStop: @escaping () -> Void
   ) {
     self.init(
-      subject: subject, number: number, total: total, progress: progress, question: question,
-      labels: labels, isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      subject: subject, number: number, total: total, position: position, progress: progress,
+      question: question, askedIn: askedIn, labels: labels, isSaving: isSaving, failures: failures,
+      saveFailure: saveFailure,
       stopHint: stopHint, onReport: onReport, onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
     )

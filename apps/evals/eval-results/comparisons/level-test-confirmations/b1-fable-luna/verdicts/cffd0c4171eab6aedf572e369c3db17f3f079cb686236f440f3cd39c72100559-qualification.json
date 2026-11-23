@@ -1,0 +1,116 @@
+{
+  "attempt": "qualification",
+  "costUsd": 0.005026825,
+  "failures": [],
+  "packetId": "cffd0c4171eab6aedf572e369c3db17f3f079cb686236f440f3cd39c72100559",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so both are at B1 and both use the same options, with the same level of understanding asked.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and their keys are correct: the marked options match the passages and the wrong options are clearly wrong.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and use natural Brazilian Portuguese with US English questions.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its learner better."
+        },
+        "pairId": "ab295fc9-d680-45b2-ab50-c62944e08a5c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are A1 matching items that a learner can decide by reading the message, so the level is the same.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's key includes option 2, which contradicts the message (the bus leaves at ten), so its answer set is wrong; Output B's key of 1 and 3 is correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same learner-language questions and options and the same English message.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key says 1 and 2, but option (2) 'O ônibus sai às nove' is false: the message says the bus leaves at ten. The correct key is 1 and 3, since option (3) 'O café fica ao lado da loja' matches 'The cafe is next to the shop.'",
+            "criterion": "answers",
+            "learnerCost": "The learner would learn that the bus leaves at nine and would skip the correct fact that the cafe is next to the shop.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A's answer key is wrong and would teach a false bus time, while Output B's key is correct."
+        },
+        "pairId": "ae97a23b-fb8c-47f0-a02f-c259f484aa53"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are at B1 and their options check the main point, reasons and stated opinions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's keys are correct, but four of its questions have several right options without the 'select all that apply' wording, so a learner may pick only one answer; Output B states the multiple-answer format clearly.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use natural Brazilian Portuguese passages with US English questions.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Four questions have two or three right options but do not say 'select all that apply', which the expectations require: 'Which of these opinions does the writer of the post express?', 'According to the guide, why is it better to visit the historic center of Salvador early in the morning?', 'What is the coach telling the team after the match?' and 'What reasons does the friend give for her advice to Camila?'",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads these as single-answer questions may pick only one option, and would get a wrong result or miss a correct point.",
+            "location": {
+              "detail": "Questions of the four items, which lack the 'select all that apply' instruction while keying two or three options each.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A's keys are right, but its questions do not signal that several options are correct, which breaks the written expectation and risks misleading learners; Output B does not have this problem."
+        },
+        "pairId": "cd647e50-f0ad-4cf2-bbf4-5670d633918b"
+      }
+    ]
+  }
+}

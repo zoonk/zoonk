@@ -61,7 +61,8 @@ private struct PlanSheets: ViewModifier {
               if context.goal.kind == .language,
                 let language = store.languageStanding(goalId: context.goal.id).value
               {
-                LanguageLevelSheet(standing: language)
+                LanguageLevelSheet(
+                  standing: language, assessment: context.plan.placementTest?.languageResult)
               } else {
                 PlanStandingSheet(context: context, syllabus: syllabus)
               }

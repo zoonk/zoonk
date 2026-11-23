@@ -45,7 +45,8 @@ function getSkillGap({ bank, tests }: { bank: LevelTestBank; tests: JudgedLevelT
       start: startScore,
     });
 
-    return [scores.listening - scores.reading];
+    const { listening, reading } = scores;
+    return listening === undefined || reading === undefined ? [] : [listening - reading];
   });
 
   return gaps.length === 0 ? 0 : gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;

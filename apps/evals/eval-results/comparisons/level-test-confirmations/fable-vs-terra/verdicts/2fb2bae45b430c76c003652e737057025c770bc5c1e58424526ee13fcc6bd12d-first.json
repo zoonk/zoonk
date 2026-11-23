@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0013305399999999998,
+  "failures": [],
+  "packetId": "2fb2bae45b430c76c003652e737057025c770bc5c1e58424526ee13fcc6bd12d",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use a short English message and very common stated facts, with Portuguese options that test direct A1 understanding.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "The message supports options 1 and 3; A incorrectly keys option 2, which says the bus leaves at nine instead of ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The message is in the target language, and the question and options are in the learner's language in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes option 2, but the message says the bus leaves at ten, not nine; option 3 is supported instead.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the passage carefully would be marked wrong for choosing the correct facts.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B gives the supported answer set, while A includes a statement contradicted by the message and omits a correct one."
+        },
+        "pairId": "1148c33e-f063-4afd-937b-7a8efde4b0b5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets use B1 paraphrases of opinions, reasons and the coach's message rather than relying only on matching words; neither has a clear calibration advantage.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The keyed options in both outputs are supported by their passages, and the unkeyed options are contradicted or unsupported by the text.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs meet the stated expectations with clear, supported answer keys and suitable B1 tasks; neither serves the learner noticeably better."
+        },
+        "pairId": "1a8e6c4b-822b-4245-82e9-0db9aace2851"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so their B1 calibration is the same.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and their keyed options are supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and use the requested language varieties.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical and meet the expectations equally."
+        },
+        "pairId": "c34e3b2e-cebf-4cdc-bdbd-42141178229e"
+      }
+    ]
+  }
+}

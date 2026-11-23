@@ -90,7 +90,7 @@ test.describe("Waiting for placement's questions", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
 
@@ -160,7 +160,7 @@ test.describe("When a wait can't go on", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();

@@ -146,9 +146,10 @@
   "plan_change_relearn_topics": "bbf8bbe480acd538ee6ba8e5e4cd9aec2351aff8c787efd6cdd2e70d236c846f",
   "plan_change_rest_day": "4d9e745d1b0b4ce06e9ee4dfc4376536a0a66cca86da32967c1d28451f09b13c",
   "plan_change_sentence": "db32f8afe3dddc14f54a096693dd3437e11ba9c35fcf39b70644d806a040cccb",
+  "plan_change_skipped_and_back": "5384742f933ff0aea1c8a108464178a5c2e82242e65c9e04a9a1b2b3cea0169c",
   "plan_change_start_past_basics": "5f27a990169eb5449b7e7bddb1860e5d3a2e06440fa6a9b62799969e9a8637c2",
   "plan_change_such_as": "10093ad88894ff6558854286a0a302f4a8176856408a77e5880903b262dd72b3",
-  "plan_change_tested_out": "b7625404070bff678c2cbc3512d27df59bfa59af11e7824838b3f35a87d908f2",
+  "plan_change_tested_out": "7feabcdf21d498b509570550ddf238765a8eb0f67b6be766893205c3f77ab71a",
   "plan_change_today_changed": "352d511ea49e46c03eb213f353b069ae6f71c4566eb393041be80d1a1d1af678",
   "plan_change_today_unchanged": "7a59916125552edd1e9d3262e3a9688702cae1bf14cca2e7934d988424d78209",
   "plan_change_tool_have": "7a401c6ad70992e0070328d5f669cd65399397b1f66f40c0eefa2cce45bcd861",
@@ -902,9 +903,11 @@
     <string name="plan_system_phone">Yalnızca telefon</string>
     <string name="plan_change_missed_days">Kaçırdığın günleri telafi etmek için planın değiştirildi.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Testi geçtiğin için planında %d ders atlanıyor.</item>
-        <item quantity="other">Testi geçtiğin için planında %d ders atlanıyor.</item>
+        <item quantity="one">Zaten bildiğin %d ders atlandı.</item>
+        <item quantity="other">Zaten bildiğin %d ders atlandı.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">%1$s yeniden planında: bu konuyla ilgili bir soruya yanlış cevap verdin.</item>
         <item quantity="other">%1$s yeniden planında: bu konularla ilgili sorulara yanlış cevap verdin.</item>

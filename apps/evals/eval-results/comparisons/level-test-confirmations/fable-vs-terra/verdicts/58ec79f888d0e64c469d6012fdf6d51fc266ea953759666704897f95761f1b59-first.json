@@ -1,0 +1,261 @@
+{
+  "attempt": "first",
+  "costUsd": 0.140626,
+  "failures": [],
+  "packetId": "58ec79f888d0e64c469d6012fdf6d51fc266ea953759666704897f95761f1b59",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B checks genuine A1 comprehension by asking learners to connect colors, days, places, times, and prices to the right details, though item 3 uses a couple of A2-leaning words. A relies on simple two-bucket lists in every item and drops below A1 in item 4, where the options are identical proper names.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Both outputs have accurate keys, but B builds realistic distractors from misreading traps in the passage (such as a red bottle inside a black backpack, or kept until Friday versus found on Friday), whereas A stuffs artificial negatives into the passage and leaves 'O cartão.' vague.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "B",
+            "reason": "B reads like real signs and natural spoken English with idiomatic Brazilian Portuguese throughout, even though item 4 is an in-person doorway turn rather than a voice message. All four passages in A sound synthetic or contrived, and 'Saltos na água.' is unidiomatic Portuguese for pool diving.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "In confirmation 4, all five options ('Ava.', 'Emma.', 'Liam.', 'Noah.', 'Diego.') are identical proper names in English and Portuguese, so a learner below A1 who knows only the word 'box' ('caixa') can pick the answers by matching names rather than understanding an A1 spoken message.",
+            "criterion": "calibration",
+            "learnerCost": "A pre-A1 learner can pass this skip-level item by matching character names after catching a single noun.",
+            "location": {
+              "detail": "Hi! This box is for Emma and Liam. The bag is for Noah, Ava, and Diego. Have a nice day!",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The speaker tells the patient 'You don't need a pen, paper, or a book' in a doctor's office message solely to plant wrong options, which does not sound like natural speech; option 2 ('O cartão.') also leaves unclear what card is meant.",
+            "criterion": "language",
+            "learnerCost": "The learner listens to an artificial sentence nobody from a clinic would say and sees a vague option in Portuguese.",
+            "location": {
+              "detail": "Hi, Emma. Please bring your card and your medicine to the doctor's office. You don't need a pen, paper, or a book.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Scheduling 'pool cleaning' alongside 'water games' and 'yoga' at 4 p.m. does not read like a real pool schedule, and option 3 translates pool 'diving' unidiomatically as 'Saltos na água.' instead of 'Mergulho.' or 'Saltos ornamentais.'",
+            "criterion": "language",
+            "learnerCost": "The learner reads an implausible schedule and awkward Brazilian Portuguese phrasing in one of the right answers.",
+            "location": {
+              "detail": "Pool schedule: Monday, 3 p.m.: swimming and diving. Tuesday, 4 p.m.: water games, pool cleaning, and yoga.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first reading passage reads like a logic drill rather than a real lost-and-found notice, and the fourth passage uses 'This box' in an audio-only voice message where the listener cannot see which box is meant.",
+            "criterion": "language",
+            "learnerCost": "Both passages feel like contrived test prompts rather than real everyday English.",
+            "location": {
+              "detail": "confirmations 1 and 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Confirmation 4 is an in-person exchange at the door asking for payment on the spot (framed by the question 'O que o entregador diz na porta?') rather than a voice message, breaking the written expectation for two voice messages.",
+            "criterion": "language",
+            "learnerCost": "A learner hears a face-to-face payment request presented as a standalone audio clip without the other speaker.",
+            "location": {
+              "detail": "Hi, I have a delivery for Liam. It's two pizzas and one salad. That's twenty dollars, please.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Words like 'appointment' and 'insurance card' sit closer to A2 than A1, although 'Thursday', 'three o'clock', and 'card' still give late-A1 learners enough support.",
+            "criterion": "calibration",
+            "learnerCost": "An A1 learner may hesitate over higher-level clinic vocabulary before relying on 'card' to choose the right option.",
+            "location": {
+              "detail": "Your appointment is on Thursday at three o'clock. Please bring your insurance card.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Although B's fourth item is spoken at the door rather than a voice message, B gives learners authentic texts, natural spoken English, idiomatic Brazilian Portuguese, and real A1 comprehension checks. A uses contrived distractor lists throughout and lets learners solve its fourth item mainly by matching identical proper names."
+        },
+        "pairId": "cb40842e-d05c-472f-a985-bceee23f973b"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same passage, question, and options, which check stated A1 facts in everyday words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the right answer key (1 and 3), whereas A marks false option 2 ('O ônibus sai às nove.') instead of true option 3 ('O café fica ao lado da loja.').",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The English message and Brazilian Portuguese question and options are identical and natural in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key lists options 1 and 2, but the message says 'The bus leaves at ten' (making option 2, 'O ônibus sai às nove.', false) and 'The cafe is next to the shop' (making option 3, 'O café fica ao lado da loja.', true); the key should be 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the English message accurately is marked wrong and told that 'ten' means nine instead of learning that 'next to' means 'ao lado da'.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "The two outputs are identical except for the answer key: B accurately selects statements 1 and 3, while A selects false statement 2 and omits true statement 3."
+        },
+        "pairId": "da699588-73c7-4081-9ff1-98af3bd7e09c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical; both keep three items at A1 but drop to proper-name matching around a single noun in confirmation 4.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and have the same accurate answer keys and option sets.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in both English and Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "In confirmation 4, all five options ('Ava.', 'Emma.', 'Liam.', 'Noah.', 'Diego.') are identical proper names in English and Portuguese, so a learner below A1 who knows only the word 'box' ('caixa') can pick the answers by matching names rather than understanding an A1 spoken message.",
+            "criterion": "calibration",
+            "learnerCost": "A pre-A1 learner can pass this skip-level item by matching character names after catching a single noun.",
+            "location": {
+              "detail": "Hi! This box is for Emma and Liam. The bag is for Noah, Ava, and Diego. Have a nice day!",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmation 4, all five options ('Ava.', 'Emma.', 'Liam.', 'Noah.', 'Diego.') are identical proper names in English and Portuguese, so a learner below A1 who knows only the word 'box' ('caixa') can pick the answers by matching names rather than understanding an A1 spoken message.",
+            "criterion": "calibration",
+            "learnerCost": "A pre-A1 learner can pass this skip-level item by matching character names after catching a single noun.",
+            "location": {
+              "detail": "Hi! This box is for Emma and Liam. The bag is for Noah, Ava, and Diego. Have a nice day!",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The speaker tells the patient 'You don't need a pen, paper, or a book' in a doctor's office message solely to plant wrong options, which does not sound like natural speech; option 2 ('O cartão.') also leaves unclear what card is meant.",
+            "criterion": "language",
+            "learnerCost": "The learner listens to an artificial sentence nobody from a clinic would say and sees a vague option in Portuguese.",
+            "location": {
+              "detail": "Hi, Emma. Please bring your card and your medicine to the doctor's office. You don't need a pen, paper, or a book.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The speaker tells the patient 'You don't need a pen, paper, or a book' in a doctor's office message solely to plant wrong options, which does not sound like natural speech; option 2 ('O cartão.') also leaves unclear what card is meant.",
+            "criterion": "language",
+            "learnerCost": "The learner listens to an artificial sentence nobody from a clinic would say and sees a vague option in Portuguese.",
+            "location": {
+              "detail": "Hi, Emma. Please bring your card and your medicine to the doctor's office. You don't need a pen, paper, or a book.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Scheduling 'pool cleaning' alongside 'water games' and 'yoga' at 4 p.m. does not read like a real pool schedule, and option 3 translates pool 'diving' unidiomatically as 'Saltos na água.' instead of 'Mergulho.' or 'Saltos ornamentais.'",
+            "criterion": "language",
+            "learnerCost": "The learner reads an implausible schedule and awkward Brazilian Portuguese phrasing in one of the right answers.",
+            "location": {
+              "detail": "Pool schedule: Monday, 3 p.m.: swimming and diving. Tuesday, 4 p.m.: water games, pool cleaning, and yoga.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Scheduling 'pool cleaning' alongside 'water games' and 'yoga' at 4 p.m. does not read like a real pool schedule, and option 3 translates pool 'diving' unidiomatically as 'Saltos na água.' instead of 'Mergulho.' or 'Saltos ornamentais.'",
+            "criterion": "language",
+            "learnerCost": "The learner reads an implausible schedule and awkward Brazilian Portuguese phrasing in one of the right answers.",
+            "location": {
+              "detail": "Pool schedule: Monday, 3 p.m.: swimming and diving. Tuesday, 4 p.m.: water games, pool cleaning, and yoga.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first reading passage reads like a logic drill rather than a real lost-and-found notice, and the fourth passage uses 'This box' in an audio-only voice message where the listener cannot see which box is meant.",
+            "criterion": "language",
+            "learnerCost": "Both passages feel like contrived test prompts rather than real everyday English.",
+            "location": {
+              "detail": "confirmations 1 and 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first reading passage reads like a logic drill rather than a real lost-and-found notice, and the fourth passage uses 'This box' in an audio-only voice message where the listener cannot see which box is meant.",
+            "criterion": "language",
+            "learnerCost": "Both passages feel like contrived test prompts rather than real everyday English.",
+            "location": {
+              "detail": "confirmations 1 and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical word for word."
+        },
+        "pairId": "e0a1517e-7b29-4896-83a4-3c41889342ec"
+      }
+    ]
+  }
+}

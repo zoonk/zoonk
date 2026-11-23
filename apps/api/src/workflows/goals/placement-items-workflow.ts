@@ -18,14 +18,13 @@ import { readShortPlanPracticeStep } from "./steps/short-plan-practice-step";
 export type PlacementItemsInput = {
   analytics?: ContentAnalytics;
   goalId: string;
+  placementPart?: { attemptId: string; part: number };
   skillIds?: string[];
   waitsForNotice?: boolean;
 };
 
-const FORMAT_POLLS = 40;
-const FORMAT_POLL = "3s";
-
 const BLUEPRINT_POLLS = 100;
+const BLUEPRINT_POLL = "3s";
 
 export type PlacementItemsResult = { failed: number; status: "written"; written: number };
 
@@ -38,31 +37,21 @@ export async function placementItemsWorkflow(
 ): Promise<PlacementItemsResult> {
   "use workflow";
 
-  const { analytics, goalId, skillIds, waitsForNotice = false } = input;
+  const { analytics, goalId, placementPart, skillIds, waitsForNotice = false } = input;
   const { workflowRunId } = getWorkflowMetadata();
 
   if (!(await waitForRunToken(`placement-items:${goalId}`))) {
     throw new Error(`Placement items are still being written for ${goalId}`);
   }
 
-  // Questions in another format than the exam's would mislead placement, and a language
-  // certificate's blueprint says which skills only recordings practice.
+  // A language certificate's blueprint says which skills only recordings practice.
   if (waitsForNotice) {
-    const wait = await repeatUntil({
-      done: (pending) => pending !== "formats",
+    await repeatUntil({
+      done: (pending) => pending === null,
       run: () => readPlacementExamWaitStep(goalId),
-      times: FORMAT_POLLS,
-      wait: () => sleep(FORMAT_POLL),
+      times: BLUEPRINT_POLLS,
+      wait: () => sleep(BLUEPRINT_POLL),
     });
-
-    if (wait === "blueprint") {
-      await repeatUntil({
-        done: (pending) => pending === null,
-        run: () => readPlacementExamWaitStep(goalId),
-        times: BLUEPRINT_POLLS,
-        wait: () => sleep(FORMAT_POLL),
-      });
-    }
   }
 
   const planRunId = await readPlacementPlanRunIdStep(goalId);
@@ -76,8 +65,8 @@ export async function placementItemsWorkflow(
   });
 
   const [practice] = await Promise.all([
-    readShortPlanPracticeStep(goalId),
-    recordPlacementPreparedStep({ failed, goalId, planRunId, written }),
+    placementPart ? null : readShortPlanPracticeStep(goalId),
+    recordPlacementPreparedStep({ failed, goalId, placementPart, planRunId, written }),
     failed > 0
       ? trackGenerationFailedStep({
           analytics,

@@ -103,6 +103,8 @@ struct TodayView: Decodable, Equatable, Sendable {
     let examDocument: ExamDocument
     let id: String
     let kind: String
+    /// For `testedOut` and `relearn`: the lessons the learner's answers took out of the plan.
+    let lessonsSkipped: Int
     let officialDate: OfficialDate?
     let operations: [PlanChangeOperation]
     let quote: PlanChangeQuote

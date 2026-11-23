@@ -143,7 +143,7 @@ func shortList(_ names: [String], named: Int) -> String {
 
   return String(
     localized: "\(shown) and \(names.count - named) more", table: "Today",
-    comment: "A short list of topics and how many more")
+    locale: .appLanguage, comment: "A short list of topics and how many more")
 }
 
 extension StudyBlock {
@@ -175,6 +175,7 @@ extension StudyBlock {
     if hasCapsules && weakest {
       return String(
         localized: "\(questions) questions on what's been hardest for you", table: "Today",
+        locale: .appLanguage,
         comment: "A review of the weakest topics, on a day with nothing due to review")
     }
 
@@ -182,7 +183,7 @@ extension StudyBlock {
       return String(
         localized:
           "\(questions) questions\u{00A0}· \(shortList(capsules.compactMap(\.title), named: 2))",
-        table: "Today", comment: "A review's questions and its topics")
+        table: "Today", locale: .appLanguage, comment: "A review's questions and its topics")
     }
 
     if kind == .learn {
@@ -204,17 +205,18 @@ extension StudyBlock {
     if fullReview {
       return String(
         localized: "\(questions) questions on every topic", table: "Today",
-        comment: "A review of every topic: the count is its questions")
+        locale: .appLanguage, comment: "A review of every topic: the count is its questions")
     }
 
     if practisesTopics {
       return String(
         localized: "\(questions) questions\u{00A0}· \(shortList(topics, named: 2))", table: "Today",
-        comment: "A review's questions and its topics")
+        locale: .appLanguage, comment: "A review's questions and its topics")
     }
 
     return String(
-      localized: "\(questions) questions", table: "Today", comment: "A practice block's questions")
+      localized: "\(questions) questions", table: "Today", locale: .appLanguage,
+      comment: "A practice block's questions")
   }
 
   /// The row's one short line on Today's list: the subject, or what a challenge or review is.
@@ -232,7 +234,8 @@ extension StudyBlock {
 
     // The title names a practice's first topic, so the line counts the others.
     if practisesTopics && topics.count > 1 {
-      return String(localized: "\(topics.count - 1) more topics", table: "Today")
+      return String(
+        localized: "\(topics.count - 1) more topics", table: "Today", locale: .appLanguage)
     }
 
     if fullReview {
@@ -245,7 +248,7 @@ extension StudyBlock {
         ? nil
         : String(
           localized: "\(questions) questions", table: "Today",
-          comment: "A practice block's questions")
+          locale: .appLanguage, comment: "A practice block's questions")
     }
 
     if kind == .produce, let writingLine {

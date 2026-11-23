@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.003974124999999999,
+  "failures": [],
+  "packetId": "6003f6b7521c7cf575ee21550d1012e1c5ae0164643a178c81aba7c22f3b4d1e",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A keeps each option to one stated fact in very common words, which fits A1. B's pool and delivery items ask learners to combine a day with a time or count items, which is A2 demand.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Every key in both sets matches its passage, and the wrong options are clearly wrong for a careful A1 reader.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese questions and US English passages with no language errors.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The option combines a day with a time, which is a step above a single stated fact for A1 learners.",
+            "criterion": "calibration",
+            "learnerCost": "Learners at A1 may need to link two facts to get the item right, which is harder than the level asks.",
+            "location": {
+              "detail": "Pool hours item, option 'No sábado, a piscina abre às 8 da manhã.'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both are accurate, but A holds the A1 level more strictly, while B's combined-fact items push some reads above it."
+        },
+        "pairId": "2d9fdd61-65ce-41f6-9e82-f44170db3f45"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use the same A1 message with single-fact options.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key of 1 and 3 matches the message. B's key adds option 2, but the bus leaves at ten, so B's key is wrong.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same Portuguese and English text.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Option (2) says the bus leaves at nine, but the message says the bus leaves at ten. The key should be 1 and 3, not 1 and 2.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine and is told a false statement is correct.",
+            "location": {
+              "detail": "Key line",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's answer key is correct, while B's key marks a false statement about the bus as right."
+        },
+        "pairId": "897b86cc-1a58-4207-b318-2e8ccf0626cc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "b9d22cde-e10a-489c-beec-135e340f02b6"
+      }
+    ]
+  }
+}

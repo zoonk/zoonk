@@ -1,3 +1,5 @@
+import { type CallWait } from "@zoonk/ai/provider-options";
+import { writeLevelTestBankParts } from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { LEVEL_TEST_LEVELS, type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
 import { type LevelTestBankLevel } from "@zoonk/core/language/level-test/write-bank";
 import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
@@ -14,10 +16,15 @@ import {
   releaseLevelTestBankClaimStep,
   storeLevelTestBankStep,
   voiceLevelTestPassageStep,
-  writeLevelTestBankLevelStep,
+  writeLevelTestBankPartStep,
 } from "./steps/level-test-bank-steps";
 
-export type LevelTestBankInput = { analytics?: ContentAnalytics; pair: LanguagePair };
+export type LevelTestBankInput = {
+  analytics?: ContentAnalytics;
+  pair: LanguagePair;
+  upgrade?: true;
+  wait?: CallWait;
+};
 
 export type LevelTestBankResult = { status: "ready" | "unfinished" | "written" };
 
@@ -68,19 +75,21 @@ export async function levelTestBankWorkflow(
 
 /** The learner may be waiting on the bank, so its check runs as soon as its level is written. */
 async function writeLevel(run: WriteRun & { level: TestLevel }): Promise<LevelTestBankLevel> {
-  const written = await writeLevelTestBankLevelStep(run);
+  const written = await writeLevelTestBankParts((part) =>
+    writeLevelTestBankPartStep({ ...run, part }),
+  );
 
   const questions = await checkLevelTestBankQuestionsStep({
     ...run,
     questions: written.questions,
-    wait: "soon",
+    wait: run.wait ?? "soon",
   });
 
   return { ...written, questions };
 }
 
 async function claimAndWrite(run: WriteRun): Promise<WriteStatus> {
-  const claim = await claimLevelTestBankStep(run.pair);
+  const claim = await claimLevelTestBankStep(run.pair, run.upgrade);
 
   if (claim.status !== "claimed") {
     return claim.status;

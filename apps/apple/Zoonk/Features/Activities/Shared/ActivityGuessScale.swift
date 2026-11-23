@@ -47,7 +47,7 @@ struct GuessScale: Hashable, Sendable {
       ? [min, max] : powers.enumerated().filter { $0.offset % every == 0 }.map(\.element)
   }
 
-  func tickFormatter(unit: String?, locale: Locale = .courseLanguage) -> (Double) -> String {
+  func tickFormatter(unit: String?, locale: Locale = .appLanguage) -> (Double) -> String {
     let currency = ActivityNumberFormat.currencyUnit(unit)
     let compact = ChartsAxis.isShort([min, max]) { value, compact in
       ActivityNumberFormat.format(value, unit: currency, compact: compact, locale: locale)

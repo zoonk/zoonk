@@ -5,33 +5,54 @@ struct PlanPathSection: View {
 
   let context: PlanContext
   var course: GoalPlan.Course?
-  var focusTest: PlanFocusTestRow?
+  var testRow: PlanTestRow?
 
   var body: some View {
-    PageSection {
-      focusTest
-
-      if context.goal.kind == .language,
-        let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
-      {
-        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id, skip: context.alphabetSkip)
+    // Main's order: the test of what the learner knows heads the path in its own group, since a
+    // row without a mark and the path's marked rows don't share one label edge.
+    if let testRow {
+      PageSection {
+        testRow
+      } header: {
+        title
       }
 
-      PlanPathRows(context: context)
+      PageSection {
+        rows
+      } header: {
+        EmptyView()
+      }
+    } else {
+      PageSection {
+        rows
+      } header: {
+        title
+      }
+    }
+  }
 
-      if let course {
-        PageLink(route: .course(courseId: course.courseId, title: course.title)) {
-          PlanPathLink(systemImage: "books.vertical") {
-            Text(
-              "See the full course", tableName: "Plan",
-              comment: "Opens the Library course the plan is built from")
-          }
+  private var title: some View {
+    SectionTitle(
+      Text("Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters"))
+  }
+
+  @ViewBuilder private var rows: some View {
+    if context.goal.kind == .language,
+      let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
+    {
+      PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id, skip: context.alphabetSkip)
+    }
+
+    PlanPathRows(context: context)
+
+    if let course {
+      PageLink(route: .course(courseId: course.courseId, title: course.title)) {
+        PlanPathLink(systemImage: "books.vertical") {
+          Text(
+            "See the full course", tableName: "Plan",
+            comment: "Opens the Library course the plan is built from")
         }
       }
-    } header: {
-      SectionTitle(
-        Text(
-          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters"))
     }
   }
 }
@@ -377,7 +398,7 @@ struct PlanChapterRow: View {
     case .todo where chapter.lessonsDone > 0 && chapter.lessonsTotal > 0 && !chapter.writing:
       LocalizedStringResource(
         "\(chapter.lessonsDone) of \(chapter.lessonsTotal) lessons done", table: "Plan",
-        comment: "Spoken on a started chapter, before its title")
+        locale: .appLanguage, comment: "Spoken on a started chapter, before its title")
     case .todo, .currentPhase:
       nil
     }
@@ -528,7 +549,7 @@ struct PlanSyllabusSection: View {
   /// `PlanChoiceLines`; beside the page the plan's settings name them instead.
   var choices: [GoalPlan.ExamChoice] = []
   var change: (_ group: String) -> Void = { _ in }
-  var focusTest: PlanFocusTestRow?
+  var testRow: PlanTestRow?
 
   var body: some View {
     let isExam = goalKind == .exam
@@ -536,9 +557,9 @@ struct PlanSyllabusSection: View {
     // Main's order: the focus test, then the plan's choices, above the subjects and not among them,
     // since neither is a subject with a preparation. Each is its own group: a row with a mark and a
     // sentence don't share one label edge.
-    if let focusTest {
+    if let testRow {
       PageSection {
-        focusTest
+        testRow
       } header: {
         EmptyView()
       }
@@ -619,7 +640,7 @@ struct PlanSyllabusSection: View {
         subjectsText(subjects),
         String(
           localized: "\(syllabus.topicCount) topics", table: "Plan",
-          comment: "How many topics a subject has"),
+          locale: .appLanguage, comment: "How many topics a subject has"),
       ])
     } else if goalKind == .exam {
       Text(
@@ -633,7 +654,9 @@ struct PlanSyllabusSection: View {
   }
 
   private func subjectsText(_ count: Int) -> String {
-    String(localized: "\(count) subjects", table: "Plan", comment: "How many subjects the exam has")
+    String(
+      localized: "\(count) subjects", table: "Plan", locale: .appLanguage,
+      comment: "How many subjects the exam has")
   }
 }
 
@@ -845,7 +868,7 @@ struct SyllabusSubjectRow: View {
           .foregroundStyle(.mutedForeground)
           .frame(
             minWidth: TypeStyle.data.width(
-              of: 1.0.formatted(.percent.precision(.fractionLength(0))),
+              of: 1.0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)),
               dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
             alignment: .trailing)
       }

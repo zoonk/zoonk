@@ -173,6 +173,9 @@ private struct GoalSteps: View {
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
   private var startingOver: VisitRequest<Bool> { failures.startingOver }
   @State private var conditionPicks: [String] = []
+  /// How far a test is while its question shows. Its answer is final, so the bar keeps only ✕,
+  /// as main's `OnboardingTestQuestion` does, with this in the dashes' place.
+  @State private var testProgress: Double?
 
   init(
     view: GoalOnboarding,
@@ -189,6 +192,12 @@ private struct GoalSteps: View {
 
   private var step: Components.Schemas.OnboardingStep {
     revisiting ?? view.steps.first ?? .plan
+  }
+
+  private var previousStepIndex: Int? {
+    history.lastIndex { previous in
+      previous != step && (previous != .followUps || !view.followUps.isEmpty)
+    }
   }
 
   @ViewBuilder private var moreActions: some View {
@@ -246,16 +255,17 @@ private struct GoalSteps: View {
     .environment(\.onboardingAside, .planSoFar(planFacts))
     .id(step)
     .navigationBarBackButtonHidden()
-    // The step counter takes the title's place; without it the bar shows no title.
-    .toolbar(removing: progress == nil ? .title : nil)
+    // The dashes or a test's progress take the title's place; without either, no title shows.
+    .toolbar(removing: progress == nil && testProgress == nil ? .title : nil)
+    .onPreferenceChange(TestQuestionProgressKey.self) { testProgress = $0 }
     .taskOptions(
-      isShown: step != .plan,
+      isShown: step != .plan && testProgress == nil,
       label: Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
     ) {
       moreActions
     }
     .toolbar {
-      if !history.isEmpty, step != .plan {
+      if previousStepIndex != nil, step != .plan, testProgress == nil {
         ToolbarItem(placement: .navigation) {
           Button(action: back) {
             Label {
@@ -286,19 +296,18 @@ private struct GoalSteps: View {
         }
       }
 
-      if let progress {
+      if let testProgress {
         ToolbarItem(placement: .principal) {
-          Text(
-            "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",
-            comment: "Where the learner is among the goal's questions"
-          )
-          .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          TestProgressBar(value: testProgress)
+        }
+      } else if let progress {
+        ToolbarItem(placement: .principal) {
+          StepDashes(progress: progress)
         }
       }
 
       // As on main, Back takes the ✕'s place once there's a step to go back to; "Finish later" stays in the menu.
-      if history.isEmpty || step == .plan {
+      if previousStepIndex == nil || step == .plan || testProgress != nil {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
             router.dismissTask()
@@ -433,11 +442,13 @@ private struct GoalSteps: View {
     return role?.isEmpty == false ? String(role?.prefix(80) ?? "") : nil
   }
 
-  private func finishPlacement() async throws {
+  private func finishPlacement(_ attemptId: String?) async throws {
     isSaving = true
     defer { isSaving = false }
 
-    try await save(["question": "placement"])
+    var answer: [String: Any] = ["question": "placement"]
+    answer["attemptId"] = attemptId
+    try await save(answer)
   }
 
   private func save(_ input: [String: Any]) async throws {
@@ -460,9 +471,11 @@ private struct GoalSteps: View {
   }
 
   private func back() {
-    guard let previous = history.popLast() else {
+    guard let index = previousStepIndex else {
       return
     }
+    let previous = history[index]
+    history.removeSubrange(index...)
 
     // What the time question kept for a date change is stale once the learner leaves it by Back.
     if step == .schedule {
@@ -538,7 +551,7 @@ private struct StepScreen: View {
   let profile: ProfileStepModel?
   let onAnswer: ([String: Any]) -> Void
   let onChangeDate: (ScheduleQuestion.Draft) -> Void
-  let onPlacementDone: () async throws -> Void
+  let onPlacementDone: (String?) async throws -> Void
   let onStartLesson: ([String: Any]?) -> Void
   let onPickConditions: ([String]) -> Void
 
@@ -563,11 +576,12 @@ private struct StepScreen: View {
         if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
           LevelTestStep(
             goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
-            testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
+            subject: subject,
+            onDone: onPlacementDone)
         } else if view.goal.kind == .exam {
           FocusTestFlow(
             goalID: view.goal.id, subject: subject, host: .onboarding, onboarding: view,
-            onDone: onPlacementDone)
+            onDone: { try await onPlacementDone(nil) })
         } else {
           PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
         }

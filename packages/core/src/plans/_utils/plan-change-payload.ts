@@ -16,10 +16,22 @@ const PLAN_CHANGE_KINDS = [
 
 export type PlanChangeKind = (typeof PLAN_CHANGE_KINDS)[number];
 
-export const UNDOABLE_KINDS: ReadonlySet<string> = new Set<PlanChangeKind>(["edited", "testedOut"]);
+export const UNDOABLE_KINDS: ReadonlySet<string> = new Set<PlanChangeKind>([
+  "edited",
+  "relearn",
+  "testedOut",
+]);
 
-export function isUndoableChange(change: { kind: string; status: string }): boolean {
-  return UNDOABLE_KINDS.has(change.kind) && change.status === "applied";
+export function isUndoableChange(change: {
+  kind: string;
+  payload?: unknown;
+  status: string;
+}): boolean {
+  return (
+    UNDOABLE_KINDS.has(change.kind) &&
+    change.status === "applied" &&
+    (change.kind !== "relearn" || Boolean(parsePlanChangePayload(change.payload).livingPlanDay))
+  );
 }
 
 export type PlanChangeSource = string;
@@ -91,6 +103,7 @@ const planChangePayloadSchema = z.object({
   fromProposal: z.boolean().default(false),
   lessonHoldKey: z.string().optional(),
   lessonsSkipped: z.int().min(0).nullable().default(null),
+  livingPlanDay: z.iso.date().optional(),
   mockSchedule: z.object({ from: z.iso.date(), to: z.iso.date().nullable() }).optional(),
   noticeId: z.string().nullable().default(null),
   officialDate: z
@@ -100,12 +113,17 @@ const planChangePayloadSchema = z.object({
   operations: z.array(anyPlanOperationSchema).default([]),
   planItemIds: z.array(z.string()).default([]),
   previewBasis: planPreviewBasisSchema.nullable().default(null),
+  recheckedSkillIds: z.array(z.string()).default([]),
   /** The product release a "What's new" offer is for, so a plan gets one offer per release. */
   releaseId: z.string().nullable().default(null),
   replannedSince: z.literal(true).optional(),
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
+  /** The test's own reschedule is part of its undo, unlike a refresh that lands new lessons. */
+  testOutRescheduled: z.literal(true).optional(),
+  testReceipt: z.string().optional(),
   todaySession: z.enum(["changed", "unchanged"]).nullable().default(null),
+  undoneAt: z.iso.datetime().optional(),
   versionAfter: z.int().nullable().default(null),
 });
 

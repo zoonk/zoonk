@@ -15,20 +15,26 @@ import {
   LEVEL_TEST_PREPARING_SECONDS,
   type LanguageLevelTestView,
   type LevelTestBank,
+  type LevelTestConfirmation,
   type LevelTestProgress,
   type LevelTestQuestion,
   levelTestProgressSchema,
 } from "../level-test-contract";
 import {
-  LEVEL_TEST_TOTAL,
-  getLevelTestScores,
+  getLevelTestFloors,
   getNextLevelTestStep,
+  levelTestTotal,
   listLevelTestLevels,
 } from "../level-test-rules";
+import {
+  readLevelTestAttempts,
+  readLevelTestDetails,
+  readLevelTestSummary,
+} from "../read-level-test-summary";
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
 import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
-
-const DEFAULT_START = 1;
+import { withLevelTestChange } from "./level-test-result-change";
+import { getLevelTestStartScore } from "./level-test-start-score";
 
 /** About how long the bank's run takes to voice its clips, retries included, after the questions. */
 const AUDIO_PENDING_MS = 90_000;
@@ -55,26 +61,85 @@ function readFinishedLabels(skillLevels: unknown): LevelTestProgress["scores"] {
   const reading = parseCefrScore(labels.reading);
   const speaking = parseCefrScore(labels.speaking);
 
-  if (listening === null || reading === null) {
-    return undefined;
-  }
-
-  return { listening, reading, ...(speaking !== null && { speaking }) };
+  return {
+    ...(listening !== null && { listening }),
+    ...(reading !== null && { reading }),
+    ...(speaking !== null && { speaking }),
+  };
 }
 
 /** The starting level must not follow a level previously set by this same test. */
-export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
+export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress;
+export function readLevelTestProgress(
+  goal: Pick<Goal, "details">,
+  attemptId: string | undefined,
+): LevelTestProgress | null;
+export function readLevelTestProgress(
+  goal: Pick<Goal, "details">,
+  attemptId?: string,
+): LevelTestProgress | null {
+  if (attemptId) {
+    const { attempt, completedAttempt } = readLevelTestAttempts(goal);
+
+    const stored = [attempt, completedAttempt].find(
+      (candidate) => candidate?.attemptId === attemptId,
+    );
+
+    return stored ? { ...stored, start: stored.start ?? 1 } : null;
+  }
+
   const details = readGoalDetails(goal);
   const parsed = levelTestProgressSchema.safeParse(details.levelTest);
   const stored = parsed.success ? parsed.data : levelTestProgressSchema.parse({});
 
   const scores =
-    stored.scores ?? (stored.placement ? readFinishedLabels(details.skillLevels) : undefined);
+    stored.scores ??
+    (stored.result || stored.placement ? readFinishedLabels(details.skillLevels) : undefined);
 
   return {
     ...stored,
     ...(scores && { scores }),
-    start: stored.start ?? parseCefrScore(details.level) ?? DEFAULT_START,
+    start: stored.start ?? getLevelTestStartScore({ level: details.level }),
+  };
+}
+
+export function levelTestDetailsWithProgress(
+  goal: Pick<Goal, "details">,
+  progress: LevelTestProgress,
+) {
+  const levelTest = readLevelTestDetails(goal);
+
+  return {
+    ...readGoalDetails(goal),
+    levelTest: progress.attemptId
+      ? { ...levelTest, attempt: progress }
+      : { ...levelTest, ...progress },
+  };
+}
+
+export function canWriteLevelTest(
+  goal: Pick<Goal, "details">,
+  progress: LevelTestProgress,
+): boolean {
+  const { attempt, testOut } = readLevelTestAttempts(goal);
+  return progress.attemptId ? attempt?.attemptId === progress.attemptId : !attempt && !testOut;
+}
+
+function bankForAttempt(
+  bank: LevelTestBank,
+  goal: Pick<Goal, "details">,
+  progress: LevelTestProgress,
+) {
+  const used = new Set(readLevelTestAttempts(goal).usedConfirmations);
+
+  return {
+    ...bank,
+    confirmations: progress.attemptId
+      ? bank.confirmations?.filter(
+          ({ addedAt, id }) =>
+            !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
+        )
+      : [],
   };
 }
 
@@ -93,12 +158,15 @@ export async function saveLevelTestProgress({
   return writeLearnerChange({ userId: goal.userId }, async (tx) => {
     const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
-    if (!isDeepStrictEqual(readLevelTestProgress(current), from)) {
+    if (
+      !canWriteLevelTest(current, from) ||
+      !isDeepStrictEqual(readLevelTestProgress(current, from.attemptId), from)
+    ) {
       return unchanged(false);
     }
 
     await tx.goal.update({
-      data: { details: { ...readGoalDetails(current), levelTest: progress } },
+      data: { details: levelTestDetailsWithProgress(current, progress) },
       where: { id: goal.id },
     });
 
@@ -110,7 +178,10 @@ export async function saveLevelTestProgress({
   });
 }
 
-export async function loadLevelTestContext(goalId: string): Promise<LevelTestContext> {
+export async function loadLevelTestContext(
+  goalId: string,
+  attemptId?: string,
+): Promise<LevelTestContext> {
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
@@ -124,19 +195,25 @@ export async function loadLevelTestContext(goalId: string): Promise<LevelTestCon
     return { status: "notLanguage" };
   }
 
-  const state: LevelTestBankState = await loadLevelTestBank({
-    language: goal.language,
-    targetLanguage,
-  });
+  const progress = readLevelTestProgress(goal, attemptId);
+
+  if (!progress) {
+    return { status: "notFound" };
+  }
+
+  const state: LevelTestBankState = await loadLevelTestBank(
+    { language: goal.language, targetLanguage },
+    Boolean(progress.attemptId && !progress.result),
+  );
 
   return {
-    bank: state.status === "ready" ? state.bank : null,
+    bank: state.status === "ready" ? bankForAttempt(state.bank, goal, progress) : null,
     bankId: state.status === "ready" ? state.id : null,
     bankRunId: state.status === "ready" ? state.runId : null,
     bankStartedAt: state.status === "preparing" ? state.startedAt : null,
     bankWrittenAt: state.status === "ready" ? state.writtenAt : null,
     owned: { goal: { ...goal, targetLanguage }, userId },
-    progress: readLevelTestProgress(goal),
+    progress,
     status: "ready",
   };
 }
@@ -148,7 +225,7 @@ async function findQuestionAudio({
 }: {
   bankWrittenAt: Date | null;
   language: string;
-  question: LevelTestQuestion;
+  question: LevelTestQuestion | LevelTestConfirmation;
 }): Promise<{ audio: SpeechClip | null; audioPending: boolean }> {
   if (question.skill !== "listening" || !isTTSSupportedLanguage(language)) {
     return { audio: null, audioPending: false };
@@ -160,7 +237,11 @@ async function findQuestionAudio({
     return { audio: toSpeechClip(clip), audioPending: false };
   }
 
-  const writtenAt = bankWrittenAt?.getTime() ?? 0;
+  const writtenAt =
+    "addedAt" in question && question.addedAt
+      ? Date.parse(question.addedAt)
+      : (bankWrittenAt?.getTime() ?? 0);
+
   return { audio: null, audioPending: Date.now() - writtenAt < AUDIO_PENDING_MS };
 }
 
@@ -179,8 +260,18 @@ export async function toLevelTestView({
   lastCorrect?: boolean | null;
   progress: LevelTestProgress;
 }): Promise<LanguageLevelTestView> {
+  const result = progress.attemptId && (progress.result ?? readLevelTestSummary(goal).result);
+
+  const attempt = progress.attemptId && {
+    attemptId: progress.attemptId,
+    length: progress.length,
+    result: result ? await withLevelTestChange(goal.id, result) : null,
+    testOutLevel: progress.testOutLevel,
+  };
+
   if (!bank) {
     return {
+      ...attempt,
       expectedSeconds: LEVEL_TEST_PREPARING_SECONDS,
       showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
       startedAt: bankStartedAt?.toISOString() ?? null,
@@ -190,12 +281,12 @@ export async function toLevelTestView({
 
   const { start } = progress;
   const step = getNextLevelTestStep({ bank, progress, start });
-  const scores = progress.scores ?? getLevelTestScores({ bank, progress, start });
+  const scores = progress.scores ?? getLevelTestFloors({ bank, progress, start });
 
   const next =
-    step.kind === "question"
+    step.kind === "question" || step.kind === "confirmation"
       ? {
-          kind: "question" as const,
+          kind: step.kind,
           question: {
             ...(await findQuestionAudio({
               bankWrittenAt,
@@ -213,6 +304,7 @@ export async function toLevelTestView({
       : step;
 
   return {
+    ...attempt,
     answered: progress.answers.length + (progress.speaking ? 1 : 0),
     lastCorrect,
     levels: listLevelTestLevels(scores),
@@ -220,7 +312,7 @@ export async function toLevelTestView({
     showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
     status: "ready",
     targetLanguage: goal.targetLanguage,
-    total: LEVEL_TEST_TOTAL,
+    total: levelTestTotal(progress.length),
   };
 }
 

@@ -1,0 +1,150 @@
+{
+  "attempt": "first",
+  "costUsd": 0.004755189999999999,
+  "failures": [],
+  "packetId": "abf6a4cc8943a9a602072715013b1cbba0654879f18c6b143d8a1c79e429274d",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither is better calibrated.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and their answer keys match the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical French texts and options in English.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The 'listening' passage about the stadium is written newspaper-style prose, not natural speech, so it does not match its skill label.",
+            "criterion": "language",
+            "learnerCost": "The learner practises a written register and is not prepared for how French is actually spoken in listening.",
+            "location": {
+              "detail": "Stadium passage, question 'Which views does the commentator convey about the new stadium in Nantes?', phrase 'Tirez-en les conclusions que vous voudrez'",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The 'listening' passage about the stadium is written newspaper-style prose, not natural speech, so it does not match its skill label.",
+            "criterion": "language",
+            "learnerCost": "The learner practises a written register and is not prepared for how French is actually spoken in listening.",
+            "location": {
+              "detail": "Stadium passage, question 'Which views does the commentator convey about the new stadium in Nantes?', phrase 'Tirez-en les conclusions que vous voudrez'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "5e68606e-6422-4801-9c6a-60306f9b284d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's distractors are subtle and rely on tone and stance, such as 'wry understatement' and 'weary but free of self-pity', so they fit C1. B's wrong options use absolutes like 'settles the question' and 'should be abandoned', which a B2 reader can spot by matching words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same correct answer sets, and each correct set matches its passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are natural French with English options in the same variant and no brands or stereotypes.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The options are decided by spotting extreme words such as 'settles', 'exactly', 'impossible', 'should be abandoned' and 'should be set aside', so a learner one level below (B2) can pass without reading for stance or tone. The level check is therefore not reliable.",
+            "criterion": "calibration",
+            "learnerCost": "A B2 learner would pass this C1 check and be told they are ready for C1 when they are not.",
+            "location": {
+              "detail": "Options across all four items, for example 'Its architectural appeal settles the question of its contribution to the city.' and 'It calls for the city to reproduce the neighborhood exactly as the resident remembers it.'",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The 'listening' passage about the Nantes stadium is written newspaper-style prose, not natural speech.",
+            "criterion": "language",
+            "learnerCost": "The learner practises a written register in a listening task and is not prepared for spoken French.",
+            "location": {
+              "detail": "Stadium passage, question 'Which views does the commentator convey about the new stadium in Nantes?', phrase 'On m'a souvent rappelé, ces dernières semaines'",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both sets of answer keys are correct, but A's options test implied stance and tone at C1 level, while B's wrong options can be eliminated by spotting absolute words, so A checks the level more reliably."
+        },
+        "pairId": "9574ad71-2a8c-4149-8146-ddbccaa9ec5c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same one-fact-per-option structure that can be matched to the message, which suits A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "A's answer key '1 and 2' is wrong because the bus leaves at ten, so option (2) is false; B's key '1 and 3' is correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same message and Portuguese options, which suit the learner's language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key is wrong. The message says 'The bus leaves at ten', so option (2) 'O ônibus sai às nove' is false. The correct key is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that a false statement about the bus is correct, so they learn the wrong fact and fail the check.",
+            "location": {
+              "detail": "Answer key line",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's answer key is correct, while A's key marks a false statement as correct, which teaches the learner a wrong fact."
+        },
+        "pairId": "d71c757d-c22d-4729-ad88-285153a33f9a"
+      }
+    ]
+  }
+}

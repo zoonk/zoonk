@@ -1,0 +1,79 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        1,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "O voluntariado deve partir do que a comunidade realmente precisa.",
+        "A ajuda constante e discreta rende mais do que a visita de um verão.",
+        "As escolas dessas comunidades precisam ser pintadas todos os anos.",
+        "A viagem a Oaxaca vale a pena porque enriquece o currículo dos jovens.",
+        "Os universitários ganham mais com a viagem do que a escola que visitam.",
+        "Os universitários viajam por interesse próprio e sem vontade de ajudar."
+      ],
+      "passage": "Cada verano, cientos de universitarios viajan a comunidades de Oaxaca para pintar una escuela que otro grupo ya había pintado el año anterior. Regresan con fotos conmovedoras y una línea más en el currículum. La escuela, mientras tanto, sigue sin maestro de matemáticas. No dudo de sus buenas intenciones, pero me pregunto quién eligió la pintura. En cambio, conozco a una contadora jubilada que, cada sábado desde hace seis años, ayuda a los comerciantes de su colonia con sus trámites fiscales. Nadie le toma fotos. Sus vecinos, eso sí, ya no pagan multas.",
+      "question": "Quais destas ideias o autor do ensaio defende sem dizê-las diretamente?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "A aula serve mais a quem gosta de ouvir do que a quem quer praticar.",
+        "Os participantes prepararam um prato excelente com a ajuda da chef.",
+        "Quem escreveu admira a chef, mas esperava uma aula bem mais prática.",
+        "A cozinha permaneceu limpa e organizada durante as três horas de aula.",
+        "Os participantes quase não cozinharam durante as três horas de aula.",
+        "A aula é uma boa escolha para quem está começando a aprender a cozinhar."
+      ],
+      "passage": "Tomé la clase de mole poblano el sábado. La chef domina el tema como pocos: explicó el origen de cada chile y nos contó anécdotas de su abuela que valdrían un libro. Eso sí, en tres horas mi delantal quedó tan limpio como cuando me lo dieron. El mole, preparado por ella, estaba espléndido. Por $1,800 por persona, salí sabiendo muchísimo más de historia que de cocina. Se la recomendaría a mi tío, que adora los documentales; a mi hermana, que quiere aprender a cocinar, no tanto.",
+      "question": "O que a pessoa que escreveu a avaliação dá a entender sobre a aula de culinária?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        2
+      ],
+      "level": "B2",
+      "options": [
+        "Ele reclama que os voos desse aeroporto saem cedo demais pela manhã.",
+        "Ele considera que chegar ao aeroporto ainda é demorado e caro demais.",
+        "Ele admite, meio a contragosto, que o aeroporto funciona bem por dentro.",
+        "Ele quer que o apresentador confirme que o aeroporto já é um sucesso.",
+        "Ele mudou de opinião e agora apoia o projeto do aeroporto sem reservas.",
+        "Ele continua achando que o aeroporto foi mal construído e mal equipado."
+      ],
+      "passage": "Mire, yo fui de los que firmaron la carta contra el proyecto, y no me retracto de todo. Pero la semana pasada volé desde ahí: documenté en diez minutos, las salas son amplias y hasta el café era decente. Ahora bien, salí de mi casa a las cuatro de la mañana para un vuelo de las nueve, y el taxi me costó casi lo mismo que el boleto. Usted dígame si a eso ya le podemos llamar un éxito.",
+      "question": "O que o convidado do programa de rádio dá a entender sobre o novo aeroporto?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        3,
+        5
+      ],
+      "level": "B2",
+      "options": [
+        "Levar Diego a considerar o hotel em que a prima dela se hospedou.",
+        "Confirmar a Diego que o hotel fica realmente de frente para o mar.",
+        "Lembrar Diego de que ele precisa pagar a reserva até sexta-feira.",
+        "Fazer Diego pensar duas vezes antes de pagar a reserva que ele fez.",
+        "Contar a Diego que adorou os cinco dias que acabou de passar na praia.",
+        "Mostrar a Diego que o hotel não corresponde ao que o anúncio promete."
+      ],
+      "passage": "Diego, ya regresamos de la playa. Oye, tú todavía no pagas tu reservación, ¿verdad? Mira, el hotel “frente al mar” sí está frente al mar, nada más que con una avenida de seis carriles en medio. La alberca estuvo cerrada por mantenimiento los cinco días, y el desayuno incluido era pan de caja con café soluble. Las fotos de la página han de ser de hace diez años. Márcame antes del viernes: mi prima se quedó en otro hotel y regresó encantada.",
+      "question": "O que a pessoa que deixou a mensagem de voz para Diego pretende com ela?",
+      "skill": "listening"
+    }
+  ]
+}

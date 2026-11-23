@@ -275,7 +275,7 @@ private struct WeeklySummary: View {
   }
 
   private func percent(_ share: Double) -> String {
-    share.formatted(.percent.precision(.fractionLength(0)))
+    share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))
   }
 }
 

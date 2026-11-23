@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00406559,
+  "failures": [],
+  "packetId": "42253f3246ab1bca76fba83620721b568ca0f52784d8940d205091ad131d1834",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's notices and messages need some reading to answer, such as counting two boxes and one letter, while B's answers can mostly be matched by shared words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets have keys that check out against their passages, and the distractors are clearly wrong.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese options and English passages suited to the target language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The passage is a bulleted note fragment rather than a natural text, so it reads less like a real notice than A's passages do.",
+            "criterion": "language",
+            "learnerCost": "The learner gets less practice with the kind of text they will meet, although the answers are still clear.",
+            "location": {
+              "detail": "Found: a blue jacket at the front desk, a gray hat in the office, and gloves in the library.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A gives more varied, real-life texts and listening items where the answer needs a small inference, while B's items are mostly matching and its passages are fragments."
+        },
+        "pairId": "1fbe76eb-c482-474c-94e4-f74d5a5a2085"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use the same short message and the same A1 matching-level questions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B's key (1 and 3) matches the message, while A's key includes the bus statement, which the message contradicts.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The Portuguese question and English message are identical in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key says 1 and 2, but the message says the bus leaves at ten, so option 2 is false. The correct set is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "The learner who trusts the key will mark a false statement as correct and learn that the bus leaves at nine.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct answer key, while A's key teaches a false fact about the bus time, which outweighs any other difference."
+        },
+        "pairId": "4d32cfa3-fed0-4890-b178-1a46cee54ede"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so they are equally calibrated to A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and every key checks out against its passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and use natural Brazilian Portuguese options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are identical in content and quality."
+        },
+        "pairId": "fb237f6b-05ba-406c-a15b-35fa0128184e"
+      }
+    ]
+  }
+}

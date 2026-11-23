@@ -7,7 +7,6 @@
   "audio_getting_ready": "044cbc868ec019a7f5ef24f9a3ac3462ff22af9cb291516af66c3fc8d51734bd",
   "audio_here_is_what_it_says": "70e538659f1065640d548af207c2de0c847da3e21032a3f973d81e9700548709",
   "audio_listening": "c9348d8aefd9969ccd1cba95d7e4e18e9c7ee404a480dd5d5059e68e0ee09aa3",
-  "audio_microphone_off_answer": "90b63a3ed9a858d59cef86352d78c906857061091a380182a81ac2417428293a",
   "audio_microphone_off_title": "12154dd0d90bcd2ddcdca1783c36ccb9fcc359797693643ba2e4e29b42310db2",
   "audio_no_speech": "59688df3e7f3d67a754f719b43161f1cd677629f09fabe4deec27b2dd24a3005",
   "audio_open_settings": "9945fe5c9979a3d245acb4c0ee47b7e75fa99feb86d6a2536dc26cf1d48822e2",
@@ -38,6 +37,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">「録音」をタップして、声に出して言ってください</string>
     <string name="audio_microphone_off_title">マイクがオフになっています</string>
-    <string name="audio_microphone_off_answer">声に出して答えるには、設定でZoonkにマイクの使用を許可してください。</string>
     <string name="audio_open_settings">設定を開く</string>
 </resources>

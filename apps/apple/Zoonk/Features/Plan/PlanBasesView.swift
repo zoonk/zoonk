@@ -283,6 +283,7 @@ func planBasesSummary(_ bases: GoalPlan.Bases) -> String {
   guard picked.count == 1, let choice = picked.first else {
     return String(
       localized: "\(count) prerequisites\u{00A0}· your choices\u{00A0}· \(time)", table: "Plan",
+      locale: .appLanguage,
       comment: "The plan's prerequisites with different choices, and the time they take")
   }
 
@@ -290,20 +291,23 @@ func planBasesSummary(_ bases: GoalPlan.Bases) -> String {
   case .deep:
     return String(
       localized: "\(count) prerequisites\u{00A0}· every lesson\u{00A0}· \(time)", table: "Plan",
+      locale: .appLanguage,
       comment: "The plan's prerequisites, all studied with every lesson, and the time they take")
   case .essential:
     return String(
       localized: "\(count) prerequisites\u{00A0}· first lessons only\u{00A0}· \(time)",
       table: "Plan",
+      locale: .appLanguage,
       comment: "The plan's prerequisites, all studied with their first lessons only, and the time")
   case .quick:
     return String(
       localized: "\(count) prerequisites\u{00A0}· one short lesson each\u{00A0}· \(time)",
       table: "Plan",
+      locale: .appLanguage,
       comment: "The plan's prerequisites, each studied with one short lesson, and the time")
   case .skip:
     return String(
       localized: "\(count) prerequisites\u{00A0}· skipped", table: "Plan",
-      comment: "The plan's prerequisites, all skipped")
+      locale: .appLanguage, comment: "The plan's prerequisites, all skipped")
   }
 }

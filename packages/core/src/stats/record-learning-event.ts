@@ -1,10 +1,11 @@
 import { type LearningEvent, type TransactionClient } from "@zoonk/db";
+import { type JsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
 
 type LedgerIdentity = Pick<LearningEvent, "kind" | "startedAt" | "titleSnapshot" | "userId"> &
   Partial<Pick<LearningEvent, "brainPower" | "goalId" | "lessonKind">> & {
     /** Plain content ids without foreign keys, so the row outlives the content. */
-    contentIds: Record<string, string>;
+    contentIds: JsonObject;
     timeZone: string;
   };
 

@@ -22,12 +22,17 @@ struct LessonCompletionView: View {
   /// A spread shows the lesson's map under what was done; one column keeps it in the menu.
   var lesson: PlayableLesson?
   var ending: LessonEndSlot?
+  /// "Not now" on the offer to check the level; false when it didn't save.
+  var dismissPlacementOffer: () async -> Bool = { false }
   let finish: () -> Void
   let close: () -> Void
 
   private var isStopping: Bool { stopping.isRunning }
   private var stopFailed: Bool { stopping.outcome ?? false }
   @State private var stopping = VisitRequest<Bool>()
+  /// Held above the split, which a resize draws again: true once "Not now" saved, false when it
+  /// failed.
+  @State private var offerDismissal = VisitRequest<Bool>()
 
   var body: some View {
     end
@@ -44,6 +49,7 @@ struct LessonCompletionView: View {
       }
       .onDisappear {
         stopping.leave()
+        offerDismissal.leave()
       }
   }
 
@@ -77,6 +83,7 @@ struct LessonCompletionView: View {
     } secondary: {
       page {
         testOut
+        levelCheckOffer
         planRevealRow
         guestEndingView
       }
@@ -86,6 +93,7 @@ struct LessonCompletionView: View {
         moment
         dayMoment
         testOut
+        levelCheckOffer
         planRevealRow
         guestEndingView
       }
@@ -208,6 +216,26 @@ struct LessonCompletionView: View {
       TestOutLine(isNextChapter: block.testOutOffer == nil) {
         router.dismissTask()
         router.open(.testOut(chapterId: chapterID))
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var levelCheckOffer: some View {
+    if completion.status == .saved, let offer = completion.summary?.placementOffer,
+      offerDismissal.outcome != true
+    {
+      LevelCheckOfferCard(
+        offer: offer, isDismissing: offerDismissal.isRunning,
+        dismissFailed: offerDismissal.outcome == false
+      ) {
+        router.dismissTask()
+        router.open(
+          offer.kind == .quick
+            ? .placementTest(goalId: offer.goalId)
+            : .levelTest(goalId: offer.goalId, testOutFirst: true))
+      } onDismiss: {
+        offerDismissal.run { await dismissPlacementOffer() }
       }
     }
   }
@@ -446,6 +474,7 @@ struct LessonReadouts: View {
   private var score: AttributedString {
     var score = AttributedString(
       localized: "**\(correct)** of \(answered) right", table: "Player",
+      locale: .appLanguage,
       comment:
         "At a lesson's end: the answers the learner got right out of those answered. Keep the ** around the first number: it shows large."
     )

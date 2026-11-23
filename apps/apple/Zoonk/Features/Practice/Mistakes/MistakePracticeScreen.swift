@@ -460,7 +460,7 @@ private struct PracticeDoneView: View {
           ? [
             String(
               localized: "\(fixed) mistakes fixed", table: "Practice",
-              comment: "How many mistakes a run fixed.")
+              locale: .appLanguage, comment: "How many mistakes a run fixed.")
           ] : [],
         day: day)
     } actions: {

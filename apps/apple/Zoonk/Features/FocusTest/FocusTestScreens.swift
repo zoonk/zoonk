@@ -30,7 +30,8 @@ struct FocusTestInvitation: View {
 
     ZoonkList {
       StepHeader(
-        subjectFacts: focusTest.offer.map { FocusTestCopy.offered(minutes: $0.minutes) } ?? [],
+        subject: String(localized: FocusTestCopy.name),
+        position: focusTest.offer.map { Text(verbatim: studyDuration(minutes: $0.minutes)) },
         title: Text(FocusTestCopy.title(findsFocus: findsFocus)),
         description: Text(FocusTestCopy.offerLine(findsFocus: findsFocus)))
 
@@ -43,6 +44,7 @@ struct FocusTestInvitation: View {
           ? Text(
             "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
           : Text(FocusTestCopy.notNow),
+        skipIcon: host == .onboarding ? .skip : nil,
         onContinue: onStart, onSkip: onSkip)
     }
     .onboardingColumn()
@@ -62,7 +64,8 @@ struct FocusTestResume: View {
   var body: some View {
     ZoonkList {
       StepHeader(
-        subjectFacts: FocusTestCopy.left(minutes: sitting.minutes),
+        subject: String(localized: FocusTestCopy.name),
+        position: Text(verbatim: FocusTestCopy.timeLeft(minutes: sitting.minutes)),
         title: Text(
           "Continue your test", tableName: "FocusTest",
           comment: "Title of an open Focus test sitting the learner came back to"),

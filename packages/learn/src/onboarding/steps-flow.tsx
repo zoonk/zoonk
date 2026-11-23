@@ -295,7 +295,9 @@ export function StepsFlow({
             actions={actions}
             isGuest={isGuest}
             onAnswer={answer}
-            onPlacementDone={() => answer({ question: "placement" }, { quiet: true })}
+            onPlacementDone={(attemptId) =>
+              answer({ attemptId, question: "placement" }, { quiet: true })
+            }
             onPlacementFinishFailed={(finishFailed) =>
               setFailed(finishFailed ? { dayTooShort: null, step: "placement" } : null)
             }

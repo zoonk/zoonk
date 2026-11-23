@@ -3,7 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { PLAN_SHOWN, examTestGoalFixture } from "../_test-utils/exam-test-goal";
-import { loadAnsweredTestItems, loadEvidence } from "./_utils/placement-evidence";
+import { loadEvidence, loadSeenPlacementItems } from "./_utils/placement-evidence";
 import { getGoalPlacement } from "./get-goal-placement";
 
 describe("notebook practice outside the Focus test", () => {
@@ -66,7 +66,7 @@ describe("notebook practice outside the Focus test", () => {
     expect(evidence.testSkills).toHaveLength(0);
 
     await expect(
-      loadAnsweredTestItems({ itemIds: [item!.id], userId: user.id }),
-    ).resolves.toStrictEqual(new Set());
+      loadSeenPlacementItems({ itemIds: [item!.id], userId: user.id }),
+    ).resolves.toStrictEqual(new Set([item!.id]));
   });
 });

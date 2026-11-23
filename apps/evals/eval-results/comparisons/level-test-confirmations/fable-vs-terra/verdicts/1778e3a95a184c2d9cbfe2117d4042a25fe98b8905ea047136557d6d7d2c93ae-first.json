@@ -1,0 +1,177 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0054018899999999995,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "1778e3a95a184c2d9cbfe2117d4042a25fe98b8905ea047136557d6d7d2c93ae",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are B1 reading and listening items with stated opinions, reasons and main points, so both sit at the target level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A has a true but non-causal option under a 'why' question in the garden and interview items, and its two keyed guitar options both praise paid teaching, so its key is less clean; Output B's keyed options are distinct and each matches the passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use natural Brazilian Portuguese and US English question wording with no brands or stereotypes.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The option 'The bus stops close to the main gate of the garden' is true according to the passage but does not answer the 'why' question, so it is a true distractor that could be mistaken for a reason.",
+            "criterion": "answers",
+            "learnerCost": "A careful learner may select a true but irrelevant option and lose confidence in the item's logic.",
+            "location": {
+              "detail": "The bus stops close to the main gate of the garden.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The option 'The subway has been having a lot of delays lately' is stated in the passage but is not a reason for avoiding memorized answers, so it is a true distractor under a 'why' question.",
+            "criterion": "answers",
+            "learnerCost": "The learner may be confused about whether the item asks for a reason or any true statement.",
+            "location": {
+              "detail": "The subway has been having a lot of delays lately.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The two keyed options 'Paying a teacher for lessons is money well spent' and 'A beginner is better off with someone fixing mistakes early on' both argue for having a teacher, so they overlap rather than express distinct ideas.",
+            "criterion": "answers",
+            "learnerCost": "The learner may think the question has only one idea, and the item is less useful for checking understanding.",
+            "location": {
+              "detail": "Paying a teacher for lessons is money well spent.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B has cleaner keys with distinct correct ideas and fewer ambiguous distractors, while Output A has overlapping keys and true but non-causal options under 'why' questions."
+        },
+        "pairId": "08cbb1b8-2355-47e7-ad66-c296c7656118"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are B1 reading and listening items with stated opinions, reasons and main points, so both sit at the target level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A has a true but non-causal option under a 'why' question in the garden and interview items, and its two keyed guitar options both praise paid teaching, so its key is less clean; Output B's keyed options are distinct and each matches the passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use natural Brazilian Portuguese and US English question wording with no brands or stereotypes.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The option 'The bus stops close to the main gate of the garden' is true according to the passage but does not answer the 'why' question, so it is a true distractor that could be mistaken for a reason.",
+            "criterion": "answers",
+            "learnerCost": "A careful learner may select a true but irrelevant option and lose confidence in the item's logic.",
+            "location": {
+              "detail": "The bus stops close to the main gate of the garden.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The option 'The subway has been having a lot of delays lately' is stated in the passage but is not a reason for avoiding memorized answers, so it is a true distractor under a 'why' question.",
+            "criterion": "answers",
+            "learnerCost": "The learner may be confused about whether the item asks for a reason or any true statement.",
+            "location": {
+              "detail": "The subway has been having a lot of delays lately.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The two keyed options 'Paying a teacher for lessons is money well spent' and 'A beginner is better off with someone fixing mistakes early on' both argue for having a teacher, so they overlap rather than express distinct ideas.",
+            "criterion": "answers",
+            "learnerCost": "The learner may think the question has only one idea, and the item is less useful for checking understanding.",
+            "location": {
+              "detail": "Paying a teacher for lessons is money well spent.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B has cleaner keys with distinct correct ideas and fewer ambiguous distractors, while Output A has overlapping keys and true but non-causal options under 'why' questions."
+        },
+        "pairId": "1b60947c-849d-41aa-87a4-2a0257d5efd5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are A1 items built on the same short English message, so they sit at the same level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A keys option 2, which says the bus leaves at nine, but the message says it leaves at ten; Output B keys options 1 and 3, which both match the message.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same Portuguese question and English message with no language errors.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key 'Key: 1 and 2' is wrong: option 2 'O ônibus sai às nove' contradicts the message, which says the bus leaves at ten, and the correct key should be 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "The learner would learn that the bus leaves at nine and would miss that the cafe is next to the shop.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A's answer key marks a statement the message contradicts, while Output B's key matches the message exactly."
+        },
+        "pairId": "bf682e6c-b872-4b91-8858-eb792f98793c"
+      }
+    ]
+  }
+}

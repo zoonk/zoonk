@@ -35,6 +35,7 @@ import { MINUTES_PER_HOUR, buildEstimateView, loadPlanWritingWork } from "./plan
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
+import { readPlanPlacementTest } from "./plan-placement-test";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
 import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
@@ -154,11 +155,10 @@ export async function buildPlanView({
   context: savedContext,
   now,
 }: PlanViewInput): Promise<PlanView> {
-  const {
-    catchUp: selectedCatchUp,
-    context,
-    summary,
-  } = await loadPlanReadProjection({ context: savedContext, now });
+  const { catchUp, context, summary } = await loadPlanReadProjection({
+    context: savedContext,
+    now,
+  });
 
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
@@ -185,13 +185,13 @@ export async function buildPlanView({
     studyWeek,
     dateKind,
     noticeDates,
-    catchUp,
     examChoices,
     today,
     partAreas,
     taughtSkillIds,
     challengeResults,
     syllabus,
+    placementTest,
     writing,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
@@ -207,7 +207,6 @@ export async function buildPlanView({
       noticeDate: state.settings.noticeDate,
       today: toIsoDate(context.today),
     }),
-    Promise.resolve(selectedCatchUp),
     loadExamChoiceViews({ examBlueprintId: goal.examBlueprintId, picks: state.settings }),
     readPlanToday({ context }),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
@@ -219,6 +218,7 @@ export async function buildPlanView({
       ),
     ),
     readSyllabusInput(goal.userId, goal.id),
+    readPlanPlacementTest(context, now),
     loadPlanWritingWork(context),
   ]);
 
@@ -295,6 +295,7 @@ export async function buildPlanView({
       taughtSkillIds,
       today,
     }),
+    placementTest,
     planId: context.plan.id,
     ready: isPlanReady(savedContext),
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),

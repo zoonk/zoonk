@@ -34,7 +34,7 @@ function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
 function shapePlannerInputs<
   Loaded extends Pick<
     Awaited<ReturnType<typeof loadPlannerInputs>>,
-    "bands" | "lessons" | "missedSkillIds"
+    "bands" | "currentLanguageLevel" | "lessons" | "missedSkillIds"
   >,
 >({
   context,
@@ -49,6 +49,7 @@ function shapePlannerInputs<
 }) {
   const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
     bands: loaded.bands,
+    currentLevel: loaded.currentLanguageLevel,
     goal: context.goal,
     graph: resolved,
     keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),

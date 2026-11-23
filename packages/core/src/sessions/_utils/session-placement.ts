@@ -2,10 +2,12 @@ import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
-import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
-import { type ClaimEvent } from "../../learner/_utils/skill-claims";
+import { type GoalPlan, type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
+import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
+import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
 import { type readScheduledAnswers } from "../../learner/facts/scheduled-answers";
-import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
+import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
+import { pickSessionChecks } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
 import {
@@ -18,6 +20,7 @@ import { getPlacementQuickFormat } from "../../learner/placement/placement-quick
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAreaShares } from "../../plans/_utils/exam-subject-shares";
 import { type PlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
+import { type loadLivingPlanSignals } from "./living-plan-session";
 
 export type SessionDayContext = {
   /** The goal's exam blueprint when a GET already read it; without it, it's read fresh. */
@@ -79,46 +82,99 @@ function placesNothing({
   );
 }
 
+async function readRechecks({
+  context,
+  skillIds,
+}: {
+  context: BuildContext;
+  skillIds: readonly string[];
+}): Promise<Set<string>> {
+  if (skillIds.length === 0) {
+    return new Set();
+  }
+
+  const { localDate, readClaims } = context;
+
+  return readClaims
+    ? listSkippedRechecks({ events: await readClaims(skillIds), localDate })
+    : loadSkippedRecheckSkills({
+        goalId: context.goal.id,
+        localDate,
+        skillIds,
+        userId: context.userId,
+      });
+}
+
 /** Excludes questions used elsewhere today and days with no remaining lessons to place. */
 export async function loadSessionPlacement({
   context,
   isReviewDay,
   plan,
+  signals,
   used,
 }: {
   context: BuildContext;
   isReviewDay: boolean;
   plan: {
     finalStretchStart: Date | null;
+    goalPlan?: GoalPlan;
     graph: PlanGraph;
     listeningSkillIds: ReadonlySet<string>;
     settings: unknown;
     skills: GoalSkillNode[];
     structure: ExamStructure | null;
   };
+  signals: Awaited<ReturnType<typeof loadLivingPlanSignals>>;
   used: ReadonlySet<string>;
-}): Promise<string[]> {
+}): Promise<{ placementItemIds: string[]; placementRecheckItemIds: string[] }> {
   const { finalStretchStart, graph, skills, structure } = plan;
+  const empty = { placementItemIds: [], placementRecheckItemIds: [] };
+
+  if (skills.length === 0) {
+    return empty;
+  }
+
+  const skipped = new Set(
+    (plan.goalPlan?.items ?? []).flatMap((item) =>
+      item.status === "testedOut" ? item.skillIds : [],
+    ),
+  );
+
+  const skillIds = skills
+    .filter((skill) => !skill.removed && skipped.has(skill.id))
+    .map((skill) => skill.id);
+
+  const recheckOnly =
+    !asksPlacement(context) || placesNothing({ context, finalStretchStart, isReviewDay });
+
+  const practiceRechecks = await readRechecks({ context, skillIds });
+  const recheckSkillIds = new Set([...signals.hardRecheckSkillIds, ...practiceRechecks]);
+  const followUpSkillIds = new Set(readPlacementAttempt(context.goal).quickFollowUpSkillIds);
 
   if (
-    !asksPlacement(context) ||
-    skills.length === 0 ||
-    placesNothing({ context, finalStretchStart, isReviewDay })
+    recheckOnly &&
+    recheckSkillIds.size === 0 &&
+    followUpSkillIds.size === 0 &&
+    signals.easySkillIds.length === 0
   ) {
-    return [];
+    return empty;
   }
 
   const settings = parsePlanSettings(plan.settings);
 
-  return pickSessionPlacementItems({
+  return pickSessionChecks({
     areaShares: structure ? getAreaShares({ graph, structure }) : null,
     blueprint: context.blueprint,
+    easySkillIds: signals.easySkillIds,
     excludeItemIds: used,
     focusAreas: settings.focusAreas,
+    followUpSkillIds,
     goal: context.goal,
     limit: SESSION_PLACEMENT_QUESTIONS,
     listeningSkillIds: plan.listeningSkillIds,
     quickFormat: getPlacementQuickFormat(structure),
+    recheckOnly,
+    recheckSkillIds,
     skills,
     test:
       context.goal.kind === "exam"

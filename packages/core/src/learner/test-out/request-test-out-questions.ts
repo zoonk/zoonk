@@ -6,13 +6,10 @@ import { type RefusedUsage } from "../../entitlements/contract";
 import { findOwnedGoal } from "../_utils/owned-goal";
 import { loadChapterTestOut } from "./get-chapter-test-out";
 
-/** On start, the caller must generate questionsPerSkill for each skillId using the supplied analytics. */
 export type TestOutQuestionsRequest =
   | { status: "ready" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
-      /** How many questions each of those skills needs: several in a chapter of few skills. */
-      questionsPerSkill: number;
       skillIds: string[];
       status: "start";
     }
@@ -59,7 +56,6 @@ export async function requestTestOutQuestions({
 
   return {
     analytics: { distinctId: owned.userId, goalId, platform: await getRequestPlatform() },
-    questionsPerSkill: testOut.questionsPerSkill,
     skillIds: testOut.needsItems,
     status: "start",
   };

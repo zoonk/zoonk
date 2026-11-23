@@ -1,4 +1,5 @@
 import { type CourseLevel, type ItemFormat } from "@zoonk/db";
+import { getPlacementGuessRate } from "../_utils/placement-guess-rate";
 import {
   type PlacementSkill,
   type SkillGraph,
@@ -12,7 +13,14 @@ import { type OwnLevel } from "./placement-steps";
 type PlacementOutcome = "correct" | "dontKnow" | "wrong";
 
 /** Evidence must be in answer order. */
-export type PlacementEvidence = { format: ItemFormat; outcome: PlacementOutcome; skillId: string };
+export type PlacementEvidence = {
+  content?: unknown;
+  format: ItemFormat;
+  itemId?: string | null;
+  localDate?: Date;
+  outcome: PlacementOutcome;
+  skillId: string;
+};
 
 /** Probability from 0 to 1. */
 export type SkillBeliefs = ReadonlyMap<string, number>;
@@ -36,20 +44,9 @@ const DONT_KNOW_WHEN_KNOWN = 0.02;
 
 const GRAPH_TRANSFER = 0.95;
 
-/** Quick formats need confirmation because they can be guessed; typed and numeric answers rarely can. */
-const GUESS_RATES: Readonly<Record<ItemFormat, number>> = {
-  essay: 0.05,
-  matchPairs: 0.1,
-  multipleChoice: 0.25,
-  numeric: 0.02,
-  order: 0.1,
-  spoken: 0.05,
-  trueFalse: 0.5,
-  typed: 0.02,
-};
-
-function getLikelihoods({ format, outcome }: Pick<PlacementEvidence, "format" | "outcome">) {
-  const guess = GUESS_RATES[format];
+function getLikelihoods(evidence: PlacementEvidence) {
+  const { outcome } = evidence;
+  const guess = getPlacementGuessRate(evidence);
 
   if (outcome === "correct") {
     return { known: 1 - SLIP_RATE, unknown: guess };

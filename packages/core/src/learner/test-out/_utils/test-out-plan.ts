@@ -1,5 +1,6 @@
 import "server-only";
-import { type ExamBlueprint, type Goal } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import {
   loadGoalListeningSkillIds,
   loadListeningSkillIds,
@@ -23,6 +24,7 @@ export type TestOutPlan = {
 type SavedSource = GoalPlanSource | null | Promise<GoalPlanSource | null>;
 
 type KnownFacts = {
+  tx?: TransactionClient;
   /** The goal's exam blueprint when the request already read it; without it, it's read fresh. */
   blueprint?: ExamBlueprint | null;
   goal?: Pick<Goal, "examBlueprintId" | "kind" | "targetLanguage"> | null;
@@ -30,7 +32,11 @@ type KnownFacts = {
   source?: SavedSource;
 };
 
-async function loadTestOutItems(goalId: string, known?: SavedSource): Promise<TestOutPlan> {
+async function loadTestOutItems(
+  goalId: string,
+  known?: SavedSource,
+  tx?: TransactionClient,
+): Promise<TestOutPlan> {
   const source = await known;
 
   const loaded =
@@ -40,6 +46,7 @@ async function loadTestOutItems(goalId: string, known?: SavedSource): Promise<Te
           goalId,
           sharedLibrary: source !== undefined,
           source,
+          tx,
           withLeftOut: false,
         });
 
@@ -66,10 +73,10 @@ async function loadTestOutItems(goalId: string, known?: SavedSource): Promise<Te
 /** With the goal and its saved plan known, the plan's graph says which skills are listening-only. */
 async function loadTestOutListening(
   goalId: string,
-  { blueprint, goal, source }: KnownFacts,
+  { blueprint, goal, source, tx }: KnownFacts,
 ): Promise<Set<string>> {
   if (!goal || source === undefined) {
-    return goal && goal.kind !== "exam" ? new Set() : loadListeningSkillIds(goalId);
+    return goal && goal.kind !== "exam" ? new Set() : loadListeningSkillIds(goalId, tx);
   }
 
   const saved = await source;
@@ -81,11 +88,15 @@ export async function loadTestOutPlan(
   goalId: string,
   known: KnownFacts = {},
 ): Promise<TestOutPlan> {
-  const [plan, listening, writtenSkillIds] = await Promise.all([
-    known.plan ?? loadTestOutItems(goalId, known.source),
-    loadTestOutListening(goalId, known),
-    known.goal && known.goal.kind !== "exam" ? new Set<string>() : loadWritingSkillIds(goalId),
-  ]);
+  const [plan, listening, writtenSkillIds] = await readDatabaseFacts(
+    known.tx ?? prisma,
+    () => known.plan ?? loadTestOutItems(goalId, known.source, known.tx),
+    () => loadTestOutListening(goalId, known),
+    () =>
+      known.goal && known.goal.kind !== "exam"
+        ? new Set<string>()
+        : loadWritingSkillIds(goalId, known.tx),
+  );
 
   return {
     items: plan.items,

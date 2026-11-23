@@ -25,7 +25,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.GoalError
@@ -38,33 +37,54 @@ import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.limitLifted
-import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 
-/** [titleLanguage] is the title's own language where it isn't the app's, such as a sentence to say. */
 @Composable
 internal fun OnboardingHeading(
     title: String,
     description: String? = null,
-    titleLanguage: String? = null,
+    announceDescription: Boolean = false,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         // Each step swaps the whole screen: naming it as a pane makes TalkBack say which one arrived.
         Text(
             text = title,
             modifier = Modifier.pageTitle().semantics { paneTitle = title },
-            style = MaterialTheme.typography.headlineMedium.copy(localeList = titleLanguage?.let { LocaleList(it) }),
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (description != null) {
-            Text(text = description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = description,
+                modifier = if (announceDescription) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
+    }
+}
+
+/** Main's `OnboardingSubject`: the chip over a test's title, with where the learner is ([position]) at the row's end, never in the chip. */
+@Composable
+internal fun OnboardingSubject(
+    subject: String,
+    position: String? = null,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.weight(1f)) { Eyebrow(subject) }
+        position?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
     }
 }
 
@@ -230,9 +250,8 @@ private fun GoalLimitBar(
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
-    TaskActions(back = {
-        OutlinedButton(onClick = onOpenPlan, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_go_to_plan)) }
-    }) { main ->
+    TaskActions { main ->
+        OutlinedButton(onClick = onOpenPlan) { Text(stringResource(R.string.onboarding_go_to_plan)) }
         Button(onClick = onSubscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
     }
 }
@@ -244,13 +263,12 @@ internal fun GoalLimitButtons(
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
-    if (reason == GoalLimitReason.ActiveGoals) {
-        OutlinedButton(
-            onClick = onOpenPlan,
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+    TaskActions { main ->
+        if (reason == GoalLimitReason.ActiveGoals) {
+            OutlinedButton(onClick = onOpenPlan) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+        }
+        Button(onClick = onSubscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
     }
-    Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
 }
 
 /** Right after sending, it opens by itself; coming back later it waits for a tap, since writing it is new work. */
@@ -368,18 +386,17 @@ internal fun ColumnScope.InstrumentGoal(
     }
 
     GoalFooter(error, onCreateAccount, onOpenPlan, onSubscribe) {
-        Button(
-            busy = isStarting,
-            onClick = onStartMusicianship,
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
-        TextButton(
-            busy = isJoining,
-            onClick = onJoinWaitlist,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = waitlist != WaitlistOutcome.Joined,
-            leadingIcon = { ButtonIcon(R.drawable.ic_notifications) },
-        ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
+        TaskActions { main ->
+            OutlinedButton(
+                busy = isJoining,
+                onClick = onJoinWaitlist,
+                enabled = waitlist != WaitlistOutcome.Joined,
+                leadingIcon = { ButtonIcon(R.drawable.ic_notifications) },
+            ) { Text(stringResource(R.string.onboarding_join_waitlist)) }
+            Button(busy = isStarting, onClick = onStartMusicianship, modifier = main) {
+                Text(stringResource(R.string.onboarding_start_musicianship))
+            }
+        }
     }
 }
 
@@ -399,9 +416,8 @@ private fun GuestGoalBar(
     onCreateAccount: () -> Unit,
     onBackToToday: () -> Unit,
 ) {
-    TaskActions(back = {
-        TextButton(onClick = onBackToToday, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_back_to_today)) }
-    }) { main ->
+    TaskActions { main ->
+        OutlinedButton(onClick = onBackToToday) { Text(stringResource(R.string.onboarding_back_to_today)) }
         Button(onClick = onCreateAccount, modifier = main) { Text(stringResource(R.string.onboarding_create_account)) }
     }
 }

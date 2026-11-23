@@ -3,6 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { PLAN_SHOWN, examTestGoalFixture } from "../_test-utils/exam-test-goal";
+import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
 import { getGoalPlacement } from "./get-goal-placement";
 
 describe("test questions answered in a session", () => {
@@ -15,13 +16,16 @@ describe("test questions answered in a session", () => {
     const asking = await studySessionFixture({ goalId: goal.id, userId: user.id });
     const start = Date.now() - 60 * 60_000;
 
+    const taps = await lowGuessTapItems(skills[0]!.id);
+    const confirmed = [items[0]!, ...taps.map(({ item }) => item)];
+
     await Promise.all(
-      [0, 1].map((index) =>
+      confirmed.map((item, index) =>
         attemptFixture({
           answeredAt: new Date(start + index),
           isCorrect: true,
           isPlacement: true,
-          itemId: items[index]!.id,
+          itemId: item.id,
           skillId: skills[0]!.id,
           studySessionId: asking.id,
           userId: user.id,

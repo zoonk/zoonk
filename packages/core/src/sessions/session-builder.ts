@@ -77,6 +77,7 @@ export type SessionBuildInput = {
 
   /** First-week placement opens before capsules. */
   placementItemIds: string[];
+  placementRecheckItemIds?: string[];
   freshStart: StudyFreshStart | null;
   lessons: PlannedLesson[];
   fillLessons?: PlannedLesson[];
@@ -111,10 +112,10 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
 
 export function buildReviewBlock({
   capsules,
-  input: { placementItemIds, weakestReview = false },
+  input: { placementItemIds, placementRecheckItemIds, weakestReview = false },
 }: {
   capsules: readonly BlockCapsule[];
-  input: Pick<SessionBuildInput, "placementItemIds" | "weakestReview">;
+  input: Pick<SessionBuildInput, "placementItemIds" | "placementRecheckItemIds" | "weakestReview">;
 }): PlannedBlock | null {
   const questions =
     placementItemIds.length + capsules.reduce((sum, capsule) => sum + capsule.itemIds.length, 0);
@@ -131,6 +132,7 @@ export function buildReviewBlock({
     payload: toBlockPayload({
       capsules: [...capsules],
       placementItemIds: [...placementItemIds],
+      ...(placementRecheckItemIds && { placementRecheckItemIds }),
       skillIds: capsules.flatMap((capsule) => capsule.skillIds),
       weakest: weakestReview,
     }),
@@ -285,11 +287,12 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number) {
 
   const lessonRoom = remaining - getLessonMinutes(reinforcement);
   const writingMinutes = getWritingMinutes({ input, room: lessonRoom });
+  const leadingMinutes = leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0);
 
   const learnBudget = lessonRoom - getPracticeMinutes({ budget, input, remaining, writingMinutes });
 
   const stretch = listDayStretch({
-    budget: learnBudget + leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0),
+    budget: learnBudget + leadingMinutes,
     checkpoints: available,
     items: planItems,
     leading,
@@ -305,10 +308,7 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number) {
     0,
   );
 
-  const learnMinutes =
-    getLessonMinutes(reinforcement) +
-    stretchMinutes -
-    leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0);
+  const learnMinutes = getLessonMinutes(reinforcement) + stretchMinutes - leadingMinutes;
 
   const built = [
     review,

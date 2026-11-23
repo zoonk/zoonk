@@ -11,6 +11,7 @@ import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateResearchRequest
 import com.zoonk.api.models.CreateUploadRequest
+import com.zoonk.api.models.FinishLanguageLevelTestInput
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
@@ -20,7 +21,10 @@ import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
-import com.zoonk.api.models.LanguageLevelTestSpokenResult
+import com.zoonk.api.models.LanguageLevelTestOut
+import com.zoonk.api.models.LanguageLevelTestOutAnswerInput
+import com.zoonk.api.models.LanguageLevelTestOutFinishInput
+import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
@@ -34,6 +38,7 @@ import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.PlacementCompletionInput
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlacementSittingInput
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
@@ -42,6 +47,8 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.StartLanguageLevelTestInput
+import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.UploadTokenRequest
 import com.zoonk.api.models.UploadTokenRequestPayload
 import kotlinx.coroutines.Dispatchers
@@ -214,22 +221,36 @@ interface OnboardingApi {
         input: PlacementAnswerInput,
     ): PlacementAnswerResult
 
-    /** Opens an exam goal's next Focus test sitting; asked again, it answers with the one already open. */
+    /**
+     * Opens an exam goal's next Focus test sitting, or with a [length] the test taken from the plan (its next part once
+     * one closed); asked again, it answers with the one already open.
+     */
     suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
+        length: PlacementLength? = null,
     ): Placement
 
+    /** [attempt] closes that part of the test taken from the plan; without it, onboarding's or the Focus test's. */
     suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
+        attempt: PlacementPart? = null,
     ): PlacementCompletion
 
-    /** Reading it never starts writing the language pair's questions. */
+    /** Reading it never starts writing the language pair's questions. Without [attemptId], onboarding's test. */
     suspend fun levelTest(
         session: AuthenticatedSession,
         goalId: String,
+        attemptId: UUID? = null,
+    ): LanguageLevelTest
+
+    /** Opens a level test of this length from the plan, or answers with the one already open. */
+    suspend fun startLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        length: StartLanguageLevelTestInput.Length,
     ): LanguageLevelTest
 
     /** Starts writing the pair's questions, or joins the run already writing them. */
@@ -244,17 +265,43 @@ interface OnboardingApi {
         input: LanguageLevelTestAnswerInput,
     ): LanguageLevelTest
 
-    suspend fun speakLevelTest(
-        session: AuthenticatedSession,
-        goalId: String,
-        recording: VoiceRecording,
-    ): LanguageLevelTestSpokenResult
-
     suspend fun finishLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-    )
+        attemptId: UUID? = null,
+    ): LanguageLevelTestResult
+
+    /** Reading it writes nothing; `preparing` while the level's questions are written. */
+    suspend fun levelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        attemptId: UUID,
+    ): LanguageLevelTestOut
+
+    suspend fun startLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        level: StartLanguageLevelTestOutInput.Level,
+    ): LanguageLevelTestOut
+
+    suspend fun answerLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: LanguageLevelTestOutAnswerInput,
+    ): LanguageLevelTestOut
+
+    suspend fun finishLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        attemptId: UUID,
+    ): LanguageLevelTestOut
 }
+
+/** A part of the test taken from the plan, which its answers and its close name. */
+data class PlacementPart(
+    val attemptId: UUID,
+    val part: Long,
+)
 
 class LiveOnboardingApi(
     private val api: ApiClients,
@@ -489,25 +536,42 @@ class LiveOnboardingApi(
     override suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
+        length: PlacementLength?,
     ) = perform {
-        api.clients(session).learner.createPlacementSitting(UUID.fromString(goalId), PlacementSittingInput(TimeZone.getDefault().id))
+        api.clients(session).learner.createPlacementSitting(
+            UUID.fromString(goalId),
+            PlacementSittingInput(length = length, timeZone = TimeZone.getDefault().id),
+        )
     }
 
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
+        attempt: PlacementPart?,
     ) = perform {
         api.clients(session).learner.completeGoalPlacement(
             UUID.fromString(goalId),
-            PlacementCompletionInput(fromScratch = fromScratch, timeZone = TimeZone.getDefault().id),
+            PlacementCompletionInput(
+                attemptId = attempt?.attemptId,
+                part = attempt?.part,
+                fromScratch = fromScratch,
+                timeZone = TimeZone.getDefault().id,
+            ),
         )
     }
 
     override suspend fun levelTest(
         session: AuthenticatedSession,
         goalId: String,
-    ) = perform { api.clients(session).language.getLanguageLevelTest(UUID.fromString(goalId)) }
+        attemptId: UUID?,
+    ) = perform { api.clients(session).language.getLanguageLevelTest(UUID.fromString(goalId), attemptId) }
+
+    override suspend fun startLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        length: StartLanguageLevelTestInput.Length,
+    ) = perform { api.clients(session).language.startLanguageLevelTest(UUID.fromString(goalId), StartLanguageLevelTestInput(length)) }
 
     override suspend fun prepareLevelTest(
         session: AuthenticatedSession,
@@ -520,17 +584,36 @@ class LiveOnboardingApi(
         input: LanguageLevelTestAnswerInput,
     ) = perform { api.clients(session).language.answerLanguageLevelTest(UUID.fromString(goalId), input) }
 
-    override suspend fun speakLevelTest(
-        session: AuthenticatedSession,
-        goalId: String,
-        recording: VoiceRecording,
-    ) = perform { api.streamingClients(session).language.answerLanguageLevelTestOutLoud(UUID.fromString(goalId), recording.part()) }
-
     override suspend fun finishLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-    ) {
-        perform { api.clients(session).language.finishLanguageLevelTest(UUID.fromString(goalId)) }
+        attemptId: UUID?,
+    ) = perform { api.clients(session).language.finishLanguageLevelTest(UUID.fromString(goalId), FinishLanguageLevelTestInput(attemptId)) }
+
+    override suspend fun levelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        attemptId: UUID,
+    ) = perform { api.clients(session).language.getLanguageLevelTestOut(UUID.fromString(goalId), attemptId) }
+
+    override suspend fun startLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        level: StartLanguageLevelTestOutInput.Level,
+    ) = perform { api.clients(session).language.startLanguageLevelTestOut(UUID.fromString(goalId), StartLanguageLevelTestOutInput(level)) }
+
+    override suspend fun answerLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: LanguageLevelTestOutAnswerInput,
+    ) = perform { api.clients(session).language.answerLanguageLevelTestOut(UUID.fromString(goalId), input) }
+
+    override suspend fun finishLevelTestOut(
+        session: AuthenticatedSession,
+        goalId: String,
+        attemptId: UUID,
+    ) = perform {
+        api.clients(session).language.finishLanguageLevelTestOut(UUID.fromString(goalId), LanguageLevelTestOutFinishInput(attemptId))
     }
 }
 

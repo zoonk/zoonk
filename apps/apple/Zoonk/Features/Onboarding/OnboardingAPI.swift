@@ -311,15 +311,24 @@ struct LevelTest: Decodable, Equatable, Sendable {
   }
 
   struct Next: Decodable, Equatable, Sendable {
+    /// `question`; `confirmation`, a question at the level the answers propose, where every right
+    /// option is picked; `speaking`; or `done`.
     let kind: String
     let question: Question?
     let speaking: Sentence?
+
+    var isQuestion: Bool { kind == "question" || kind == "confirmation" }
   }
 
+  /// The test taken from the plan; nil for onboarding's.
+  var attemptId: String?
+  var length: PlacementLength?
+  /// The last finished test taken from the plan.
+  var result: PlacementTestResult?
   let status: Status
   let showAlphabetNote: Bool
   /// Set while a run writes the pair's questions.
-  let startedAt: String?
+  let startedAt: Date?
   let answered: Int?
   let total: Int?
   let levels: [Level]?
@@ -823,24 +832,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Read-only: it never starts writing questions.
-  func levelTest(goalID: String, token: String) async throws -> LevelTest {
-    let output = try await clients.perform(token: token) { client in
-      try await client.getLanguageLevelTest(path: .init(goalId: goalID))
-    }
-
-    switch output {
-    case .ok(let response):
-      return try PracticeJSON.recode(try response.body.json)
-    case .unauthorized:
-      throw APIError.unauthorized
-    case .notFound:
-      throw APIError.notFound
-    default:
-      throw APIError.unavailable
-    }
-  }
-
   /// Joins the run already writing the questions; nil when they're written.
   func prepareLevelTest(goalID: String, token: String) async throws -> String? {
     let output = try await clients.perform(token: token) { client in
@@ -877,21 +868,6 @@ struct OnboardingAPI: Sendable {
       throw APIError.unauthorized
     case .notFound:
       throw APIError.notFound
-    default:
-      throw APIError.unavailable
-    }
-  }
-
-  func finishLevelTest(goalID: String, token: String) async throws {
-    let output = try await clients.perform(token: token) { client in
-      try await client.finishLanguageLevelTest(path: .init(goalId: goalID))
-    }
-
-    switch output {
-    case .ok:
-      return
-    case .unauthorized:
-      throw APIError.unauthorized
     default:
       throw APIError.unavailable
     }

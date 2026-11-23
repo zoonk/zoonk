@@ -1,0 +1,79 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        2,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "Paying for a teacher is a good use of money.",
+        "Studying at any hour made it hard to improve.",
+        "Studying alone was enjoyable at the beginning.",
+        "Online videos are enough to keep getting better.",
+        "Lessons with a teacher cost more than they are worth.",
+        "Having nobody to point out mistakes held the writer back."
+      ],
+      "passage": "Comecei a aprender violão há seis meses, só com vídeos na internet. No começo foi ótimo, porque eu escolhia as músicas e estudava a qualquer hora. Porém, depois de um tempo, percebi que não estava melhorando, pois ninguém corrigia meus erros. Hoje faço aula com um professor uma vez por semana. É mais caro, mas acho que vale a pena.",
+      "question": "Which of these opinions does the writer of the post express?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "It is still not very hot at that time.",
+        "Most tourists choose to go at that time.",
+        "The streets are less crowded at that time.",
+        "The water at the beach is warmer at that time.",
+        "Several churches stop receiving visitors at noon.",
+        "Several churches open to visitors only after lunch."
+      ],
+      "passage": "Muitos turistas visitam o centro histórico de Salvador à tarde. No entanto, recomendamos chegar de manhã cedo. Nesse horário, o sol ainda não está forte e há pouca gente nas ruas, então dá para caminhar com calma. Além disso, várias igrejas fecham para visitas ao meio-dia. Deixe a tarde para a praia, pois a água fica mais quente depois do almoço.",
+      "question": "According to the guide, why is it better to visit the historic center of Salvador early in the morning?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "The team won its fourth game in a row.",
+        "The team played well even though it lost.",
+        "The team lost because it did not run enough.",
+        "The team now needs to work on scoring goals.",
+        "The team played worse than in its last games.",
+        "The team will spend Tuesday working on its defense."
+      ],
+      "passage": "Pessoal, eu sei que ninguém gosta de perder, ainda mais por um a zero no último minuto. Mas quero dizer uma coisa: hoje a gente jogou melhor do que nas três vitórias anteriores. O time correu muito, defendeu bem e criou várias chances. Faltou só fazer o gol. Por isso, na terça, o treino vai ser só de chute a gol.",
+      "question": "What is the coach telling the team after the match?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The bus does not run at that hour.",
+        "The subway costs less than the bus does.",
+        "Arriving late would make Camila look bad.",
+        "The roads are very congested at that hour.",
+        "Asking about the company shows genuine interest.",
+        "The manager will ask questions about the company."
+      ],
+      "passage": "Oi, Camila! Sobre a entrevista de amanhã: eu não iria de ônibus, não. Naquele horário o trânsito é horrível, e chegar atrasada passa uma péssima impressão. Vai de metrô, que sempre chega na hora. Ah, e leva algumas perguntas sobre a empresa. Quando eu fiz isso na minha entrevista, a gerente viu que eu estava interessada de verdade. Boa sorte!",
+      "question": "What reasons does the friend give for her advice to Camila?",
+      "skill": "listening"
+    }
+  ]
+}

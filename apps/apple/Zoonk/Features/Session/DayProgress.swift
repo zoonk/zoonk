@@ -66,12 +66,13 @@ struct CatchUpLine: View {
   private var caughtUp: String {
     String(
       localized: "\(catchUp.doneToday) caught up today", table: "Session",
-      comment: "Earlier days' lessons the learner caught up on today")
+      locale: .appLanguage, comment: "Earlier days' lessons the learner caught up on today")
   }
 
   private var toGo: String {
     String(
       localized: "\(catchUp.lessonsLeft) to go", table: "Session",
+      locale: .appLanguage,
       comment: "Earlier days' lessons still to catch up, after how many were caught up today")
   }
 }
@@ -144,6 +145,7 @@ struct DayProgressLead: View {
       return AttributedString(
         localized:
           "**\(bar.completed)** done today", table: "Session",
+        locale: .appLanguage,
         comment:
           "At a block's end on a day still holding time for lessons not listed yet: blocks done today. Keep the ** around the number: it shows in bold."
       )
@@ -152,6 +154,7 @@ struct DayProgressLead: View {
     return AttributedString(
       localized:
         "**\(bar.completed)** of \(bar.total) done today", table: "Session",
+      locale: .appLanguage,
       comment:
         "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
     )
