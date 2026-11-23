@@ -112,13 +112,6 @@ export const thereIsThereAreLesson: SeedLesson = {
           kind: "interaction",
         },
         fields: {
-          distractors: [
-            {
-              side: "right",
-              text: pt("sala de jantar"),
-              why: pt("Living room é onde você senta e relaxa; sala de jantar é dining room."),
-            },
-          ],
           pairs: [
             { id: "bedroom", left: "bedroom", right: pt("quarto") },
             { id: "bathroom", left: "bathroom", right: pt("banheiro") },

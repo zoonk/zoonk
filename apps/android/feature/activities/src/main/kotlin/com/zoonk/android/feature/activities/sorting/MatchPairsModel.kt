@@ -4,11 +4,9 @@ import com.zoonk.android.feature.activities.assignmentAnswer
 import com.zoonk.android.feature.activities.seededShuffle
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27Fields
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27FieldsDistractorsInner.Side
 
 internal data class MatchCard(
     val id: String,
-    val isTrap: Boolean,
     val text: String,
     val why: String?,
 )
@@ -18,15 +16,7 @@ internal enum class MatchSide { Left, Right }
 private fun sideCards(
     fields: PlayableLibraryStepAnyOfContentOneOf27Fields,
     side: MatchSide,
-): List<MatchCard> {
-    val pairs = fields.pairs.map { MatchCard(it.id, false, if (side == MatchSide.Left) it.left else it.right, it.why) }
-    val trapSide = if (side == MatchSide.Left) Side.LEFT else Side.RIGHT
-    val traps =
-        fields.distractors.filter { it.side == trapSide }.mapIndexed { index, trap ->
-            MatchCard("${side.name.lowercase()}-trap-$index", true, trap.text, trap.why)
-        }
-    return pairs + traps
-}
+): List<MatchCard> = fields.pairs.map { MatchCard(it.id, if (side == MatchSide.Left) it.left else it.right, it.why) }
 
 /** Main's `arrangeMatchColumns`: both columns shuffled the same way on every load, no pair side by side. */
 internal fun arrangeMatchColumns(fields: PlayableLibraryStepAnyOfContentOneOf27Fields): Pair<List<MatchCard>, List<MatchCard>> {
@@ -37,47 +27,31 @@ internal fun arrangeMatchColumns(fields: PlayableLibraryStepAnyOfContentOneOf27F
         (0 until MAX_ATTEMPTS)
             .asSequence()
             .map { seededShuffle(rightCards, "right $it $seed") }
-            .firstOrNull { candidate -> left.indices.none { !left[it].isTrap && candidate.getOrNull(it)?.id == left[it].id } }
+            .firstOrNull { candidate -> left.indices.none { candidate[it].id == left[it].id } }
             ?: rightCards
     return left to right
 }
 
-/** The reason a wrong pair gets: the trap's own, else the right card's, else the left one's. */
-internal fun explainMismatch(
-    left: MatchCard,
-    right: MatchCard,
-): Pair<String?, MatchCard?> {
-    val trap = listOf(right, left).firstOrNull { it.isTrap }
-    return (trap?.why ?: right.why ?: left.why) to trap
-}
-
-/** Main's `solvedRows`: each left card beside its partner, in the left column's order, then each right trap on a row of its own. */
 internal fun solvedRows(
     left: List<MatchCard>,
     right: List<MatchCard>,
-): List<Pair<MatchCard?, MatchCard?>> =
-    left.map { card -> card to right.firstOrNull { isMatch(card, it) } } + right.filter { it.isTrap }.map { null to it }
+): List<Pair<MatchCard, MatchCard>> {
+    val partners = right.associateBy { it.id }
+    return left.map { card -> card to partners.getValue(card.id) }
+}
 
 internal data class MatchProgress(
     val firstTries: Map<String, String> = emptyMap(),
     val matched: List<String> = emptyList(),
-    val traps: List<String> = emptyList(),
 )
 
-internal fun isMatch(
-    left: MatchCard,
-    right: MatchCard,
-): Boolean = !left.isTrap && left.id == right.id
-
-/** A pair's first try is what's graded; a match locks in, and a trap that caught the learner stays marked. */
 internal fun MatchProgress.recordTry(
     left: MatchCard,
     right: MatchCard,
 ): MatchProgress =
     MatchProgress(
-        firstTries = if (left.isTrap || left.id in firstTries) firstTries else firstTries + (left.id to right.id),
-        matched = if (isMatch(left, right)) matched + left.id else matched,
-        traps = traps + listOf(left, right).filter { it.isTrap }.map { it.id },
+        firstTries = if (left.id in firstTries) firstTries else firstTries + (left.id to right.id),
+        matched = if (left.id == right.id) matched + left.id else matched,
     )
 
 internal fun matchAnswer(

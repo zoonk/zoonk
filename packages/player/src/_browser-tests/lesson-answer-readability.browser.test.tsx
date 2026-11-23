@@ -311,13 +311,13 @@ describe("checked answer readability", () => {
   it("keeps a formula wider than a match card inside its text column", async () => {
     const fixture = activityContentFixtures.matchPairs;
 
-    const distractor = { side: "right" as const, text: LONG_FORMULA, why: "It has no match." };
+    const pair = { id: "formula", left: "Equation", right: LONG_FORMULA };
 
     const lesson = buildLesson([
       activityStep({
         content: {
           ...fixture,
-          fields: { ...fixture.fields, distractors: [...fixture.fields.distractors, distractor] },
+          fields: { ...fixture.fields, pairs: [...fixture.fields.pairs, pair] },
         },
       }),
     ]);

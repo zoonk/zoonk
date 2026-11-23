@@ -3,33 +3,17 @@ import { matchAnswer, progressFromAnswer, recordTry } from "./match-pairs-progre
 
 const EMPTY = progressFromAnswer(null);
 
-const card = (id: string, isTrap = false) => ({ id, isTrap, text: id, why: null });
+const card = (id: string) => ({ id, text: id, why: null });
 
 describe(recordTry, () => {
   it("keeps each pair's first try and locks in matches", () => {
-    const missed = recordTry(EMPTY, { left: card("a"), right: card("right-trap-0", true) });
+    const missed = recordTry(EMPTY, { left: card("a"), right: card("b") });
 
     const matched = recordTry(missed, { left: card("a"), right: card("a") });
 
-    expect(missed).toStrictEqual({
-      firstTries: { a: "right-trap-0" },
-      matched: [],
-      traps: ["right-trap-0"],
-    });
+    expect(missed).toStrictEqual({ firstTries: { a: "b" }, matched: [] });
 
-    expect(matched).toStrictEqual({
-      firstTries: { a: "right-trap-0" },
-      matched: ["a"],
-      traps: ["right-trap-0"],
-    });
-  });
-
-  it("marks a trap on the left that caught the learner, without counting it as a first try", () => {
-    expect(recordTry(EMPTY, { left: card("left-trap-0", true), right: card("a") })).toStrictEqual({
-      firstTries: {},
-      matched: [],
-      traps: ["left-trap-0"],
-    });
+    expect(matched).toStrictEqual({ firstTries: { a: "b" }, matched: ["a"] });
   });
 });
 

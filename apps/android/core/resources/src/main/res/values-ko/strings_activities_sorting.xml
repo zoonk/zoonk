@@ -11,9 +11,7 @@
   "activities_sorting_badge_sort_groups": "ca92ad29e36bfe9b154eac044511e6d794a5a6893df5987bfba433864eb3ae4e",
   "activities_sorting_belongs_in": "94dead14dedfb5ce95c38482d224c62be54e486db5c41ac9a82ae13fbb65ba4a",
   "activities_sorting_card_matched": "260c03c25dcd57e5f8e1dba690de45b198e3b4485a10f809463df4d675d46355",
-  "activities_sorting_card_no_match": "fbccd52d1c8390bc2f6ec9aa1d24867d30acecb820b1cc188a8e48db6ec3f129",
   "activities_sorting_cards_to_match": "947e573896da6b9ce7a15448feee7cfe223a0e9a40935b398da5069812b42ad2",
-  "activities_sorting_cards_without_match": "5834d1ad8f9f4a300c7158f3079053611e908ff2a61a99e241c464ef809e2f02",
   "activities_sorting_cause": "ce7f3221f97593ccb15a736638552a1bc54dfcae5c1f3a665baa4acb2fd72c77",
   "activities_sorting_cause_picked": "6400b6f47df9ee307a8d6f4bfa5e507747e7a0bcec8aaa2fe90dda7321b52674",
   "activities_sorting_causes_and_effects": "3d87bdee568f257fd015c4ed6d0a2fd656d9bcbe6fe2f36da8a4cc00a9444324",
@@ -32,7 +30,6 @@
   "activities_sorting_led_to": "abdbd1606c5408ff6386f9219426996ae1d7f85317119f64a4eed3ebff541b2f",
   "activities_sorting_linked": "be6d5e2718a585b6ec06901614802be75133f461aa820d3ef816b20ea54bbbb2",
   "activities_sorting_links_count": "ba89b7be2e98938166cb67ff700748d0279c64aaffcfe6d79b83acfb99edb667",
-  "activities_sorting_look_alikes": "041ad7d63081dd0da756b86bf1f31200c0f4f8b19988c4dbadef114ae185df3f",
   "activities_sorting_matched": "966cc48b406c7d9c4968ec73dc49c147759dddf70f808a1757d69e39d618fefe",
   "activities_sorting_missed_first_try": "3205382294f80466f5cb16194022a904b84cd38f0a321e66bcbaf8b2905031e9",
   "activities_sorting_missed_link": "148d5a8690b9dd428edefbc6bf7531625d3f7745743635014f1ab0fdc25b8bbf",
@@ -42,7 +39,6 @@
   "activities_sorting_name_taken_off": "e8001c2f069ae38398c77ad13e4d54d8a45b5470e51c467961b3dd297f81847c",
   "activities_sorting_names": "3df17cec81ce6e51d77d37008c1119cd4b9e349dd7bb837a788ca45f721259e9",
   "activities_sorting_no_cards": "58fb09358ede4cd40f1ee911d149d91dff259cb0e6a083c287037110aaea9df5",
-  "activities_sorting_no_match_note": "9f33b017a69af1cacc20b5d78670f6294d2ad7de9a1060efb45ecde7446bc547",
   "activities_sorting_not_a_link": "3f6aad901b0678010d8d5570aa7530351e7868d81f81086deaa3a3339ad00a45",
   "activities_sorting_not_quite": "d5f574e638396786a70f3b4bf6bdc174164c15a2e5d48428098ef687b81f3618",
   "activities_sorting_not_straight": "c005ec73ada7302fa5dd6fb31899a97a43acb3759100ec84618ae27d51e9ef4f",
@@ -123,20 +119,12 @@
     <plurals name="activities_sorting_pairs_matched">
         <item quantity="other">%1$d쌍 연결 완료(전체 %2$d쌍)</item>
     </plurals>
-    <!-- Cards that look like they match one on the other side but don't. -->
-    <plurals name="activities_sorting_cards_without_match">
-        <item quantity="other">카드 %d장은 짝이 없어요</item>
-    </plurals>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">짝을 맞출 카드</string>
     <!-- A matched card, for TalkBack, like "pregnant, matched". -->
     <string name="activities_sorting_card_matched">%1$s, 짝 맞춤</string>
-    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
-    <string name="activities_sorting_card_no_match">%1$s, 짝 없음</string>
     <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
     <string name="activities_sorting_matched">%1$s와(과) %2$s의 짝을 맞췄어요. 맞춘 짝은 %3$d쌍, 전체는 %4$d쌍이에요.</string>
-    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
-    <string name="activities_sorting_no_match_note">“%1$s”에는 짝이 없어요.</string>
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
     <string name="activities_sorting_dont_go_together">%1$s와(과) %2$s은(는) 서로 짝이 아니에요.</string>
     <string name="activities_sorting_dont_go_together_short">두 카드는 짝이 아니에요.</string>
@@ -146,8 +134,6 @@
     <string name="activities_sorting_missed_first_try">첫 시도에 틀린 짝</string>
     <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
     <string name="activities_sorting_goes_with">%1$s의 짝은 %2$s이고, %3$s은(는) 아니에요.</string>
-    <!-- Above the cards that look like a match but have none. -->
-    <string name="activities_sorting_look_alikes">비슷해 보이지만 짝이 없는 카드</string>
     <string name="activities_sorting_badge_link_causes">원인 연결하기</string>
     <string name="activities_sorting_pick_cause">원인을 고른 다음 그 결과를 고르세요.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

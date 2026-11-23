@@ -6,7 +6,7 @@ import { ActivityCanvasLabel } from "../activities/_components/activity-canvas";
 type Side = "left" | "right";
 type RenderItem<Item> = (side: Side, item: Item, index: number) => ReactNode;
 
-type MatchBoardRow<Item> = { left: Item | null; right: Item | null };
+type MatchBoardRow<Item> = { left: Item; right: Item | null };
 
 type BoardProps<Item> = {
   alignRows?: boolean;
@@ -53,13 +53,9 @@ function BoardLayout<Item extends { id: string }>({
         {solvedRows.map((row, index) => (
           <div
             className="grid grid-cols-1 gap-y-2 @min-[20.5em]:col-span-2 @min-[20.5em]:grid-cols-subgrid"
-            key={row.left?.id ?? row.right?.id}
+            key={row.left.id}
           >
-            {row.left ? (
-              renderItem("left", row.left, index)
-            ) : (
-              <div className="hidden @min-[20.5em]:block" />
-            )}
+            {renderItem("left", row.left, index)}
             {row.right && renderItem("right", row.right, index)}
           </div>
         ))}
@@ -110,15 +106,7 @@ export function MatchBoard<Item extends { id: string }>({
   );
 }
 
-export function MatchBoardCount({
-  matched,
-  total,
-  traps = 0,
-}: {
-  matched: number;
-  total: number;
-  traps?: number;
-}) {
+export function MatchBoardCount({ matched, total }: { matched: number; total: number }) {
   const t = useExtracted();
 
   return (
@@ -127,15 +115,6 @@ export function MatchBoardCount({
         matched,
         total: String(total),
       })}
-
-      {traps > 0 && (
-        <>
-          {" · "}
-          {t("{count, plural, one {# card has no match} other {# cards have no match}}", {
-            count: traps,
-          })}
-        </>
-      )}
     </ActivityCanvasLabel>
   );
 }

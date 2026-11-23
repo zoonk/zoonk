@@ -1677,11 +1677,6 @@ msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs ma
 msgstr "Dopasowano: {left} i {right}. {matched, plural, other {Dopasowano # z {total} par.}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "95nYEN"
-msgid "“{card}” has no match."
-msgstr "„{card}” nie ma pary."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "5sU5Ih"
 msgid "{left} and {right} don't go together."
 msgstr "{left} i {right} nie pasują do siebie."
@@ -1692,19 +1687,14 @@ msgid "{text}, matched"
 msgstr "{text}, dopasowano"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "aj5odZ"
-msgid "{text}, no match"
-msgstr "{text}, bez pary"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Karty do dopasowania"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Dzn88L"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "Dwie kolumny kart. Wybierz kartę po lewej i jedną po prawej, aby połączyć je w parę. {count, plural, =0 {} one {# karta nie ma pary.} few {# karty nie mają pary.} many {# kart nie ma pary.} other {# karty nie ma pary.}} {matched, plural, other {Dopasowano # z {total} par.}}"
+msgctxt "jih4mf"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
+msgstr "Dwie kolumny kart. Wybierz kartę po lewej i jedną po prawej, aby połączyć je w parę. {matched, plural, other {Dopasowano # z {total} par.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
@@ -1715,11 +1705,6 @@ msgstr "<left></left> i <right></right> to para. <guess></guess> tu nie pasuje."
 msgctxt "kzygtu"
 msgid "Missed on the first try"
 msgstr "Błędy przy pierwszej próbie"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "_Hm0lS"
-msgid "Look-alikes with no match"
-msgstr "Podobne karty bez pary"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2879,11 +2864,6 @@ msgstr "Przetłumacz"
 msgctxt "nDkRHw"
 msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
 msgstr "{matched, plural, other {Dopasowano # z {total} par}}"
-
-#: src/components/match-board.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {# karta nie ma pary} few {# karty nie mają pary} many {# kart nie ma pary} other {# karty nie ma pary}}"
 
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"

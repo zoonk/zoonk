@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,7 +47,7 @@ internal fun <T : Any> MatchBoard(
 
 @Composable
 internal fun <T : Any> SolvedMatchBoard(
-    pairs: List<Pair<T?, T?>>,
+    pairs: List<Pair<T, T>>,
     modifier: Modifier = Modifier,
     card: @Composable (side: MatchSide, item: T, modifier: Modifier) -> Unit,
 ) {
@@ -57,8 +56,8 @@ internal fun <T : Any> SolvedMatchBoard(
             Column(verticalArrangement = Arrangement.spacedBy(STACKED_GAP)) {
                 pairs.forEach { (left, right) ->
                     Column(verticalArrangement = Arrangement.spacedBy(CARD_GAP)) {
-                        left?.let { card(MatchSide.Left, it, Modifier.fillMaxWidth()) }
-                        right?.let { card(MatchSide.Right, it, Modifier.fillMaxWidth()) }
+                        card(MatchSide.Left, left, Modifier.fillMaxWidth())
+                        card(MatchSide.Right, right, Modifier.fillMaxWidth())
                     }
                 }
             }
@@ -96,14 +95,14 @@ private fun <T : Any> CardList(
 
 @Composable
 private fun <T : Any> SideBySideRows(
-    rows: List<Pair<T?, T?>>,
+    rows: List<Pair<T, T>>,
     card: @Composable (side: MatchSide, item: T, modifier: Modifier) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(CARD_GAP)) {
         rows.forEach { (left, right) ->
             Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(ACROSS_GAP)) {
                 listOf(MatchSide.Left to left, MatchSide.Right to right).forEach { (side, item) ->
-                    if (item == null) Spacer(Modifier.weight(1f)) else card(side, item, Modifier.weight(1f).fillMaxHeight())
+                    card(side, item, Modifier.weight(1f).fillMaxHeight())
                 }
             }
         }

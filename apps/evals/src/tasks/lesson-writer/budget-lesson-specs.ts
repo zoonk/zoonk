@@ -204,7 +204,7 @@ export const BUDGET_LESSON_SPECS = {
       {
         activityTemplate: "matchPairs",
         brief:
-          "Peça para associar cada necessidade ao registro mais direto: movimentos de uma conta ao extrato; compras no crédito à fatura; confirmação de um Pix específico ao comprovante; compra em dinheiro sem recibo à anotação. Inclua boleto ainda não pago como distrator de comprovante e explique que ele não confirma o pagamento.",
+          "Peça para associar cada necessidade ao registro mais direto: movimentos de uma conta ao extrato; compras no crédito à fatura; confirmação de um Pix específico ao comprovante; compra em dinheiro sem recibo à anotação. Explique por que o comprovante confirma aquele Pix enquanto o extrato reúne os movimentos da conta.",
         kind: "activity",
         skills: [0],
         visual: null,
