@@ -71,7 +71,6 @@ export function getAskedItemFilter({
         {
           OR: [
             { mockOnly: false },
-            { mockOnly: null },
             ...(userId
               ? [
                   {

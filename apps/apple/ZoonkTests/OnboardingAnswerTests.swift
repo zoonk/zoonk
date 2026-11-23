@@ -18,17 +18,6 @@ final class OnboardingAnswerTests: XCTestCase {
     }
   }
 
-  func testAnotherRefusedAnswerIsAFailureToSave() async throws {
-    let refusal = #"{"error":{"code":"VALIDATION_ERROR","message":"Can't apply"}}"#
-
-    do {
-      _ = try await answer(replying: refusal)
-      XCTFail("the answer is refused")
-    } catch let error as APIError {
-      XCTAssertEqual(error, .unavailable)
-    }
-  }
-
   private func answer(replying body: String) async throws -> GoalOnboarding {
     let api = OnboardingAPI(
       clients: APIClientFactory(

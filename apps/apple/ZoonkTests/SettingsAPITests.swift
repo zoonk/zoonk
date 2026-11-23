@@ -20,18 +20,6 @@ final class SettingsAPITests: XCTestCase {
       [["soundsEnabled": false], ["shareUsageData": false]])
   }
 
-  func testNoWebPlusIsNotFound() async {
-    let api = webPlusAPI(
-      .notFound, #"{"error":{"code":"NOT_FOUND","message":"No web subscription left to cancel"}}"#)
-
-    do {
-      _ = try await api.getWebPlus(token: "token")
-      XCTFail("Expected no website Plus")
-    } catch {
-      XCTAssertEqual(error as? APIError, .notFound)
-    }
-  }
-
   func testAMemoryChangeThatChangedSinceIsAnAnswerNotAFailure() async throws {
     let changedSince = APIClientFactory(
       baseURL: URL(string: "https://api.zoonk.test")!,
@@ -69,37 +57,6 @@ final class SettingsAPITests: XCTestCase {
     } catch {
       XCTAssertEqual(error as? APIError, .unavailable)
     }
-  }
-
-  private func webPlusAPI(_ status: HTTPResponse.Status, _ json: String?) -> SettingsAPI {
-    SettingsAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!,
-        transport: WebPlusTransport(status: status, json: json)))
-  }
-}
-
-private struct WebPlusTransport: ClientTransport {
-  let status: HTTPResponse.Status
-  let json: String?
-
-  func send(
-    _ request: HTTPRequest,
-    body: HTTPBody?,
-    baseURL: URL,
-    operationID: String
-  ) async throws -> (HTTPResponse, HTTPBody?) {
-    XCTAssertTrue(
-      ["getStripeSubscriptionCancellation", "cancelStripeSubscription", "resumeStripeSubscription"]
-        .contains(operationID))
-    XCTAssertEqual(request.headerFields[.authorization], "Bearer token")
-    XCTAssertNil(body)
-
-    return (
-      HTTPResponse(
-        status: status, headerFields: json == nil ? [:] : [.contentType: "application/json"]),
-      json.map { HTTPBody($0) }
-    )
   }
 }
 

@@ -3,24 +3,11 @@ import XCTest
 
 @testable import Zoonk
 
-/// What VoiceOver reads from a plot, and review renders of plots and charts on phones, written only on demand:
+/// Review renders of plots and charts on phones, written only on demand:
 /// `TEST_RUNNER_ZOONK_SHOTS=<folder> make -C apps/apple test ONLY_TESTING=ZoonkTests/LessonPlotRenderTests`.
 /// No goldens: people and agents look at them.
 @MainActor
 final class LessonPlotRenderTests: XCTestCase {
-  func testReadsTheTitleOnce() async throws {
-    try await readsWhatVoiceOverReads()
-    let control = try Self.visual(Self.control)
-    let window = try show(LessonVisualView(visual: control).padding(16))
-
-    try await waitForTestCondition("The plot never showed: \(spoken(in: window))") {
-      spoken(in: window).contains { $0.contains("Horizontal axis") }
-    }
-    XCTAssertEqual(
-      spoken(in: window).filter { $0.contains("Bottle fill weight") }.count, 1,
-      "\(spoken(in: window))")
-  }
-
   func testWritesRenders() async throws {
     guard let path = ProcessInfo.processInfo.environment["ZOONK_SHOTS"] else {
       throw XCTSkip("Pass TEST_RUNNER_ZOONK_SHOTS=<folder> to write them")

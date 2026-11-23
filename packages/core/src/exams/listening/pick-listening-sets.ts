@@ -24,7 +24,7 @@ export function getPartSetsFilter({
     examBlueprintId,
     items: { some: { retiredAt: null } },
     kind: "audio" as const,
-    ...(mockOnly ? { mockOnly: true } : { OR: [{ mockOnly: false }, { mockOnly: null }] }),
+    mockOnly,
   };
 }
 
@@ -124,7 +124,6 @@ export async function pickListeningSets({
                   ...(reuse ? [] : [{ attempts: { some: { userId } } }]),
                   { id: { in: [...exclude] } },
                   { mockOnly: false },
-                  { mockOnly: null },
                   { retiredAt: { not: null } },
                 ],
               },

@@ -1,5 +1,6 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
+UNIT_TEST_SCHEME := ZoonkUnitTests
 SWIFT_SOURCES := Zoonk ZoonkAPI/Package.swift ZoonkAPI/Sources ZoonkTests ZoonkUITests
 CONFIGURATION ?= Debug
 XCODEBUILD_ARGUMENTS ?=
@@ -13,17 +14,27 @@ XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts node scripts/swift-pa
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 TEST_ON_DESTINATION := $(if $(TEST_DESTINATION),$(XCODEBUILD) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(XCODEBUILD_COMMAND))
 
-.PHONY: build build-ios test ui-test format format-check strings-check formatting-check check
+.PHONY: build build-ios test test-mac build-mac-tests ui-test format format-check strings-check formatting-check check
 
 build: build-ios
 
 build-ios:
 	$(XCODEBUILD) -scheme "$(APP_SCHEME)" $(BUILD_FLAGS) -destination "generic/platform=iOS" build
 
+test: SCHEME := $(UNIT_TEST_SCHEME)
 test: ONLY_TESTING ?= ZoonkTests
+ui-test: SCHEME := $(APP_SCHEME)
 ui-test: ONLY_TESTING ?= ZoonkUITests
 test ui-test:
-	$(TEST_ON_DESTINATION) -scheme "$(APP_SCHEME)" CODE_SIGNING_ALLOWED=NO -parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" test
+	$(TEST_ON_DESTINATION) -scheme "$(SCHEME)" CODE_SIGNING_ALLOWED=NO -parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" test
+
+test-mac: MAC_TEST_ACTION := test
+build-mac-tests: MAC_TEST_ACTION := build-for-testing
+test-mac build-mac-tests: ONLY_TESTING ?= ZoonkTests
+test-mac build-mac-tests:
+	$(XCODEBUILD) -scheme "$(UNIT_TEST_SCHEME)" -destination "platform=macOS,variant=Mac Catalyst" \
+		CODE_SIGN_IDENTITY=- CODE_SIGN_ENTITLEMENTS= DEVELOPMENT_TEAM= MACOSX_DEPLOYMENT_TARGET=26.0 \
+		-parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" $(MAC_TEST_ACTION)
 
 format:
 	xcrun swift-format format --recursive --in-place $(SWIFT_SOURCES)
@@ -37,5 +48,5 @@ strings-check:
 formatting-check:
 	node scripts/check-formatting.mts
 
-check: format-check formatting-check test
+check: format-check formatting-check test-mac
 	$(MAKE) strings-check

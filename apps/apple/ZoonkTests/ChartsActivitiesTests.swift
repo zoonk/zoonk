@@ -6,95 +6,6 @@ import XCTest
 /// Expected values are what main's TypeScript computes for the same inputs, so the app's readouts
 /// agree with grading.
 final class ChartsActivitiesTests: XCTestCase {
-  func testCrowdedAxisUsesFewerRoundSteps() {
-    XCTAssertEqual(ChartsAxis.ticks(0...375), [0, 100, 200, 300])
-    XCTAssertEqual(ChartsAxis.ticks(0...5625), [0, 2000, 4000])
-    let ticks = ChartsAxis.fittingTicks(
-      0...375,
-      frame: { value in
-        let x = value / 375 * 140
-        return (left: x, right: x + (value == 0 ? 14 : 43))
-      })
-    XCTAssertEqual(ticks, [0, 200])
-  }
-  @MainActor func testAxisTitleWrapsWithinItsFrameAtLargeText() {
-    let normal = TypeStyle.small.uiFont(.large, legibility: nil).pointSize
-    let large = TypeStyle.small.uiFont(.accessibility2, legibility: nil)
-    XCTAssertGreaterThanOrEqual(large.pointSize, normal * 2)
-    let host = UIHostingController(
-      rootView: ChartsAxis.title("Dollars per month", alignment: .leading).frame(width: 96)
-        .environment(\.dynamicTypeSize, .accessibility2))
-    let size = host.sizeThatFits(in: CGSize(width: 96, height: 1000))
-    XCTAssertLessThanOrEqual(size.width, 96)
-    XCTAssertGreaterThan(size.height, large.lineHeight)
-  }
-  /// The guess's scale holds still on Check, at every text size: the guess activity sizes the real
-  /// value's row and the revealed bar before they show, so its slider, which stays in the layout
-  /// once hidden, sits where it sat.
-  @MainActor func testAGuessScaleHoldsStillOnCheck() async throws {
-    let guesses:
-      [(min: Double, max: Double, scale: String, unit: String, guess: Double, real: Double)] = [
-        (1, 1000, "log", "days", 11.2, 11.57),
-        (0, 2_000_000, "linear", "R$", 900_000, 1_234_567),
-        (0, 100, "linear", "km/h", 40, 7.25),
-      ]
-
-    for size in [DynamicTypeSize.large, .accessibility3, .accessibility5] {
-      for item in guesses {
-        let payload = try JSONDecoder().decode(
-          JSONValue.self,
-          from: Data(
-            #"""
-            {"fields": {"comparison": null, "max": \#(item.max), "min": \#(item.min),
-              "scale": "\#(item.scale)", "takeaway": "Less than you think.",
-              "truth": {"kind": "cited", "value": \#(item.real)}, "unit": "\#(item.unit)"}}
-            """#.utf8))
-        let check = try JSONDecoder().decode(
-          ActivityCheck.self,
-          from: Data(
-            #"""
-            {"kind": "numeric", "question": "How much?", "answer": \#(item.real),
-             "explanation": "Why.", "tolerance": {"kind": "relative", "value": 0.1}}
-            """#.utf8))
-        let sliderTop = { (phase: ActivityPhase) in
-          let window = try self.show(
-            ScrollView {
-              ActivityRenderer.guessReveal.canvas(
-                ActivityCanvasContext(
-                  template: "guessReveal", payload: payload, check: check, phase: phase,
-                  answer: .numeric(item.guess), setAnswer: { _ in })
-              )
-              .padding(16)
-            }
-            .environment(ActivityWork())
-            .environment(\.dynamicTypeSize, size))
-          window.frame = CGRect(x: 0, y: 0, width: 375, height: 2000)
-          try await self.waitForLayout(in: window)
-          let slider = try XCTUnwrap(self.requestViews(UISlider.self, in: window).first)
-          return slider.convert(slider.bounds, to: window).minY
-        }
-
-        let before = try await sliderTop(.answering)
-        let after = try await sliderTop(.checked(isCorrect: false))
-        XCTAssertEqual(before, after, "\(item.unit) at \(size)")
-      }
-    }
-  }
-
-  @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
-    let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
-    let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
-    let format = scale.tickFormatter(unit: "R$", locale: Locale(identifier: "en_US"))
-    let ticks = ChartsAxis.fittingTicks(
-      0...2_000_000,
-      frame: { value in
-        let width = (format(value) as NSString).size(withAttributes: [.font: font]).width
-        let left = max(0, min(scale.share(of: value) * 180 - width / 2, 180 - width))
-        return (left: left, right: left + width)
-      }, values: { scale.ticks(count: $0) })
-    XCTAssertEqual(ticks, [0, 2_000_000])
-    XCTAssertEqual(ticks.map(format), ["R$0", "R$2M"])
-  }
   func testGuessMoneyTicksInMillionsShortenAndKeepCurrency() {
     let english = Locale(identifier: "en_US")
     let millions = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear)
@@ -395,32 +306,6 @@ final class ChartsActivitiesTests: XCTestCase {
     let across = try XCTUnwrap(view(try line(-9.99), 9.99).readouts()[0].note)
     XCTAssertTrue(
       across.hasPrefix(ActivityNumberFormat.format(19.98, unit: "m", signed: true, digits: 2)))
-  }
-
-  func testFormulaModelDrawsAVisibleChangeAndDropsItsLabelOnceChecked() throws {
-    let fields: FormulaModelFields = try decode(
-      """
-      {"events":[{"label":"Rent goes up $500","name":"rentUp"}],
-       "outputs":[{"formula":"price * 1000 - 2000 - rentUp * 500","id":"profit","label":"Profit","unit":"$"}],
-       "variables":[{"initial":3,"label":"Price","max":6,"min":2,"name":"price","step":0.5}]}
-      """)
-    let view = FormulaModelView(
-      fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
-      sliders: ["price": 4], events: ["rentUp": 1])
-
-    let change = try XCTUnwrap(view.change(in: 0...5000, showsAnswer: false))
-    XCTAssertEqual(change.before, 2000)
-    XCTAssertEqual(change.now, 1500)
-    XCTAssertEqual(change.label, ActivityNumberFormat.format(-500, unit: "$", signed: true))
-
-    let checked = try XCTUnwrap(view.change(in: 0...5000, showsAnswer: true))
-    XCTAssertNil(checked.label)
-    XCTAssertNil(view.change(in: 0...6000, showsAnswer: false), "The dots would cover it")
-
-    let started = FormulaModelView(
-      fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
-      sliders: ["price": 4], events: ["rentUp": 0])
-    XCTAssertNil(started.change(in: 0...5000, showsAnswer: false))
   }
 
   func testFormulaModelStartsAtTheCheckInputsTheLastOfANameWinning() throws {

@@ -99,8 +99,7 @@ model LessonSkill {
 /// Math items store the solution as data so practice can use new numbers. `field` is null for
 /// general items. A question about a figure is stored only once its picture is drawn and checked.
 model Item {
-  /// Required once released.
-  mockOnly              Boolean?               @default(false) @map("mock_only")
+  mockOnly              Boolean                @default(false) @map("mock_only")
   id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   skillId               String                 @map("skill_id") @db.Uuid
   skill                 Skill                  @relation(fields: [skillId], references: [id], onDelete: Cascade)
@@ -159,8 +158,7 @@ enum ItemSetKind {
 /// Shared Library content: the stimulus never holds a learner's words. `content` follows
 /// `library/items/item-set-content.ts` in core.
 model ItemSet {
-  /// Required once released.
-  mockOnly        Boolean?       @default(false) @map("mock_only")
+  mockOnly        Boolean        @default(false) @map("mock_only")
   id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language        String         @db.VarChar(10)
   kind            ItemSetKind

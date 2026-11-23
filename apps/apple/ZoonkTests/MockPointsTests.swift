@@ -11,9 +11,9 @@ final class MockPointsTests: XCTestCase {
       name: name, qualifying: false)
   }
 
-  private func points(_ parts: [MockPoints.Test], minimum: PointsMinimum? = nil) -> MockPoints {
+  private func points(_ parts: [MockPoints.Test]) -> MockPoints {
     MockPoints(
-      asked: 20, earned: 12, max: 20, met: nil, minimum: minimum, projected: nil, short: nil,
+      asked: 20, earned: 12, max: 20, met: nil, minimum: nil, projected: nil, short: nil,
       parts: parts, unjudged: [])
   }
 
