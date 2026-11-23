@@ -265,9 +265,7 @@ struct ChallengeScreen: View {
         hooks.navigate(.subscription)
       }
     } else if pendingExamChoice != nil {
-      PracticeMainButton(
-        title: LocalizedStringResource("Choose on Today", table: "Mock"), icon: .forward
-      ) {
+      PracticeMainButton(title: LocalizedStringResource("Choose on Today", table: "Mock")) {
         dismiss()
         hooks.navigate(.today)
       }
