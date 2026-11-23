@@ -55,7 +55,7 @@ export type SavedExamBlueprint = {
   noticeId: string | null;
 };
 
-const EMPTY_CONTENT: BlueprintContent = {
+const EMPTY_CONTENT: Pick<BlueprintContent, "edition" | "structure"> = {
   edition: {
     check: null,
     citations: [],
@@ -67,7 +67,6 @@ const EMPTY_CONTENT: BlueprintContent = {
     year: null,
   },
   structure: { formats: [], mock: null, rules: [], subjects: [] },
-  topicFrequency: [],
 };
 
 export function readBlueprintContent(blueprint: ExamBlueprint): BlueprintContent {
