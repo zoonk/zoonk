@@ -96,7 +96,7 @@ export function getFoundationSkillIds({
   );
 }
 
-export function getAreaFoundationIds({
+function getAreaFoundationIds({
   areas,
   graph,
   prerequisites,
