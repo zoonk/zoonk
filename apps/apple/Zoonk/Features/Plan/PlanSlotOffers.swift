@@ -94,11 +94,13 @@ extension PlanSlotCard where Content == EmptyView {
   }
 }
 
-/// A change a suggestion's tap worked out, asked with main's anatomy: the question, its
-/// consequence and "All changes", "Change my plan" and "Not now".
+/// A change a suggestion's tap worked out, asked with main's anatomy: the question (or the
+/// suggestion's own title and `why`), its consequence and "All changes", "Change my plan" and
+/// "Not now".
 struct PlanSlotAskedChange: Equatable {
   let edits: [PlanEdit]
   let question: String
+  var why: String?
   let effect: PlanEffect?
 }
 
@@ -108,7 +110,9 @@ private struct PlanSlotAskedCard: View {
   let actions: PlanSlotActions
 
   var body: some View {
-    PlanSlotCard(title: Text(asked.question), mark: .sparkle, description: nil) {
+    PlanSlotCard(
+      title: Text(asked.question), mark: .sparkle, description: asked.why.map { Text($0) }
+    ) {
       PlanEffectDiff(
         effect: asked.effect, today: context.plan.today, options: context.changeOptions)
     } actions: {
@@ -468,7 +472,10 @@ struct PlanCoverageSlot: View {
       return
     }
 
-    check.asked = asked
+    check.asked = asked.map {
+      PlanSlotAskedChange(
+        edits: $0.edits, question: Self.title(suggested), why: description, effect: $0.effect)
+    }
     check.failed = asked == nil
   }
 
