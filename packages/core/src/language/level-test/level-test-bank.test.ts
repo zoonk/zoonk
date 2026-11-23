@@ -44,9 +44,11 @@ const PARTS = [...getLevelTestQuestionBatches(), "confirmations" as const];
 const BANK_CALLS = TEST_LEVELS.length * PARTS.length;
 
 function writeLevelTestBankLevel(
-  input: Omit<Parameters<typeof writeLevelTestBankPart>[0], "part">,
+  input: Omit<Parameters<typeof writeLevelTestBankPart>[0], "part" | "wait">,
 ) {
-  return writeLevelTestBankParts((part) => writeLevelTestBankPart({ ...input, part }));
+  return writeLevelTestBankParts((part) =>
+    writeLevelTestBankPart({ ...input, part, wait: "soon" }),
+  );
 }
 
 type Pair = { language: string; targetLanguage: string };
@@ -289,6 +291,7 @@ describe("writing a pair's question bank ahead", () => {
             learnerLanguage: pair.language,
             level,
             part,
+            serviceTier: undefined,
             targetLanguage: pair.targetLanguage,
           },
         ]),

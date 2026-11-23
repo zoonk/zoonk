@@ -1,4 +1,5 @@
 import "server-only";
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank";
 import { type LevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
@@ -47,17 +48,20 @@ export async function writeLevelTestBankPart({
   level,
   pair,
   part,
+  wait,
 }: {
   analytics?: LevelTestBankAnalytics;
   level: TestLevel;
   pair: LanguagePair;
   part: LevelTestBankPart;
+  wait: CallWait;
 }) {
   const { data, provenance } = await generateLevelTestBankPart({
     analytics: { ...analytics, contentScope: "shared" },
     learnerLanguage: pair.language,
     level,
     part,
+    serviceTier: chooseServiceTier({ wait }),
     targetLanguage: pair.targetLanguage,
   });
 

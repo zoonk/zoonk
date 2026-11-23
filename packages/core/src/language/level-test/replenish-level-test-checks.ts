@@ -1,4 +1,5 @@
 import "server-only";
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLevelTestConfirmations } from "@zoonk/ai/tasks/language/level-test-confirmations";
 import { type LanguageLevelTest, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -66,6 +67,7 @@ export async function writeLevelTestChecks({
     learnerLanguage: pair.language,
     level,
     previousPassages,
+    serviceTier: chooseServiceTier({ wait: "later" }),
     targetLanguage: pair.targetLanguage,
   });
 

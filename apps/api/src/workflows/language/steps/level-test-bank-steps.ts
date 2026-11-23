@@ -49,11 +49,17 @@ export async function writeLevelTestBankPartStep({
   level,
   pair,
   part,
+  wait = "soon",
   ...analytics
-}: BankAnalytics & { level: TestLevel; pair: LanguagePair; part: LevelTestBankPart }) {
+}: BankAnalytics & {
+  level: TestLevel;
+  pair: LanguagePair;
+  part: LevelTestBankPart;
+  wait?: CallWait;
+}) {
   "use step";
 
-  return writeLevelTestBankPart({ analytics: toBankAnalytics(analytics), level, pair, part });
+  return writeLevelTestBankPart({ analytics: toBankAnalytics(analytics), level, pair, part, wait });
 }
 
 export async function checkLevelTestBankQuestionsStep<

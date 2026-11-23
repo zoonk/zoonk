@@ -32,6 +32,7 @@ async function createLevelTestGeneration(
     analytics: { distinctId: preparation.learnerId, goalId: path.goalId, platform },
     pair: preparation.pair,
     upgrade: preparation.upgrade,
+    wait: "learner",
   });
 
   return NextResponse.json(

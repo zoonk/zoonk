@@ -1,3 +1,4 @@
+import { type CallWait } from "@zoonk/ai/provider-options";
 import { writeLevelTestBankParts } from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { LEVEL_TEST_LEVELS, type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
 import { type LevelTestBankLevel } from "@zoonk/core/language/level-test/write-bank";
@@ -22,6 +23,7 @@ export type LevelTestBankInput = {
   analytics?: ContentAnalytics;
   pair: LanguagePair;
   upgrade?: true;
+  wait?: CallWait;
 };
 
 export type LevelTestBankResult = { status: "ready" | "unfinished" | "written" };
@@ -80,7 +82,7 @@ async function writeLevel(run: WriteRun & { level: TestLevel }): Promise<LevelTe
   const questions = await checkLevelTestBankQuestionsStep({
     ...run,
     questions: written.questions,
-    wait: "soon",
+    wait: run.wait ?? "soon",
   });
 
   return { ...written, questions };

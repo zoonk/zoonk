@@ -260,6 +260,7 @@ describe(followUpsWorkflow, () => {
       expect.objectContaining({
         level,
         previousPassages: confirmations.map(({ passage }) => passage),
+        serviceTier: "flex",
       }),
     );
 

@@ -91,6 +91,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
         analytics: { distinctId: userId, goalId: followUp.input.goalId },
         pair: followUp.input.pair,
         upgrade: true,
+        wait: "learner",
       });
 
       return;

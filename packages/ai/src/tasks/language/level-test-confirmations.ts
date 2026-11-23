@@ -3,7 +3,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import {
   CONFIRMATION_SITUATIONS,
   type LevelTestLanguages,
@@ -68,6 +68,7 @@ export type GenerateLevelTestConfirmationsParams = LevelTestLanguages & {
   useFallback?: boolean;
   previousPassages?: readonly string[];
   reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
@@ -140,7 +141,13 @@ ${situations.join("\n")}${previous}
 export async function generateLevelTestConfirmations(params: GenerateLevelTestConfirmationsParams) {
   const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    serviceTier: params.serviceTier,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

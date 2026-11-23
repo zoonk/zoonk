@@ -59,7 +59,11 @@ describe(levelTestBankWorkflow, () => {
     mockWriter("Bank");
 
     await expect(
-      levelTestBankWorkflow({ analytics: { distinctId: "learner-id", goalId: "goal-id" }, pair }),
+      levelTestBankWorkflow({
+        analytics: { distinctId: "learner-id", goalId: "goal-id" },
+        pair,
+        wait: "learner",
+      }),
     ).resolves.toStrictEqual({ status: "written" });
 
     const writes = vi.mocked(generateLevelTestBankPart).mock.calls.map(([input]) => input);
@@ -70,7 +74,8 @@ describe(levelTestBankWorkflow, () => {
 
     expect(
       writes.every(
-        ({ analytics, learnerLanguage, targetLanguage }) =>
+        ({ analytics, learnerLanguage, serviceTier, targetLanguage }) =>
+          serviceTier === "priority" &&
           analytics?.distinctId === "learner-id" &&
           analytics.goalId === "goal-id" &&
           learnerLanguage === pair.language &&
