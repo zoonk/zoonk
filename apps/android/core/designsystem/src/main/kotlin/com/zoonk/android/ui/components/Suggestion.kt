@@ -203,7 +203,7 @@ fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
 fun SuggestionHeader(text: String) {
     val sheet = LocalPresentation.current == Presentation.Sheet
     val frame = LocalFrame.current
-    val style = if (sheet) MaterialTheme.zoonkType.sheetTitle else MaterialTheme.typography.titleSmall
+    val style = if (sheet) MaterialTheme.zoonkType.sheetTitle else MaterialTheme.zoonkType.compact.copy(fontWeight = FontWeight.SemiBold)
     Text(
         text = text,
         modifier = Modifier.focusRequester(if (sheet) frame.sheetFocus else frame.focus).focusable().semantics { heading() },
@@ -234,7 +234,7 @@ fun SuggestionResult(text: String) {
             Modifier
                 .then(if (card) Modifier.focusRequester(LocalFrame.current.focus).focusable() else Modifier)
                 .semantics { liveRegion = LiveRegionMode.Polite },
-        style = bodyStyle(),
+        style = resultStyle(),
         fontWeight = FontWeight.Medium,
     )
 }
@@ -335,11 +335,12 @@ private fun SuggestionLine(
     val failed = failure != null
     // With nothing to open, the line is all there is to read.
     val whole = answered || action == null
+    val summaryStyle = if (answered) resultStyle() else MaterialTheme.typography.bodyMedium
     Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
-                firstLine = lineHeight(MaterialTheme.typography.bodyMedium),
+                firstLine = lineHeight(summaryStyle),
                 // A line that failed to save shows the alert mark in the done mark's place, as the failure notice does.
                 mark = {
                     if (failed && LocalFrame.current.mark == SuggestionMark.Done) {
@@ -369,7 +370,7 @@ private fun SuggestionLine(
                                             else -> Modifier
                                         },
                                     ),
-                            style = MaterialTheme.typography.bodyMedium.balanced(),
+                            style = summaryStyle.balanced(),
                             fontWeight = FontWeight.Medium,
                             color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         )
@@ -485,8 +486,8 @@ private fun Mark(size: Dp) {
 private fun frameBorder() = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
 @Composable
-private fun bodyStyle() =
-    if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
+private fun resultStyle() =
+    if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.zoonkType.sheetText else MaterialTheme.zoonkType.compact
 
 /** Main's `SuggestionDescription`: a line's size in its line, reading size in its sheet, a row description's on the page. */
 @Composable
