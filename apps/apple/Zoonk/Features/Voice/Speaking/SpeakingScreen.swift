@@ -229,7 +229,7 @@ private struct SpeakingPaperView: View {
             } label: {
               Text("Start", tableName: "Voice", comment: "Starts an exam speaking task")
             }
-            .buttonStyle(.mainAction)
+            .buttonStyle(.outline)
             .disabled(start.isRunning && startingTask != task.key)
           }
 
@@ -242,6 +242,7 @@ private struct SpeakingPaperView: View {
             .buttonStyle(.outline)
           }
         }
+        .controlSize(.small)
         .padding(.top, 4)
       }
 
