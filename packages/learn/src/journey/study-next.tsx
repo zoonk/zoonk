@@ -125,12 +125,14 @@ export function StudyNextSuggestion({
         ) : (
           <SuggestionSummary>{title}</SuggestionSummary>
         )}
-        {certificates ? (
-          <CertificateAction certificates={certificates} primary={false} />
-        ) : (
-          <SuggestionOpen />
-        )}
-        {certificates && more && <SuggestionOpen />}
+        <SuggestionActions>
+          {certificates ? (
+            <CertificateAction certificates={certificates} primary={false} />
+          ) : (
+            <SuggestionOpen />
+          )}
+          {certificates && more && <SuggestionOpen />}
+        </SuggestionActions>
       </SuggestionLine>
 
       <SlotContent>
