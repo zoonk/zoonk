@@ -5,8 +5,9 @@ import SwiftUI
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
 /// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`), and
 /// `.endsRow` on a ghost one is main's `edge="end"`. Glass stays on floating controls and toolbar
-/// items. Each shows its label and the one icon it carries; the main action that Return presses
-/// carries none, as main's `EnterButton` takes none.
+/// items. Each shows its label and the one icon it carries, before its words or, with
+/// `.labelStyle(.trailingIcon)`, after them; the main action that Return presses carries none, as
+/// main's `EnterButton` takes none.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
@@ -56,6 +57,15 @@ struct ZoonkButtonStyle: ButtonStyle {
     }
   }
 
+  /// Main's `gap-1`, `gap-1.5` and `gap-2`, between a button's icon and its words.
+  static func iconGap(_ controlSize: ControlSize) -> CGFloat {
+    switch controlSize {
+    case .mini, .small: 4
+    case .regular: 6
+    default: 8
+    }
+  }
+
   static func horizontalPadding(_ controlSize: ControlSize) -> CGFloat {
     switch controlSize {
     case .mini, .small: 10
@@ -95,7 +105,7 @@ private struct ZoonkButton: View {
     configuration.label
       // A list would set the icon in a column of its own, far from its words.
       .labelReservedIconWidth(16)
-      .labelIconToTitleSpacing(iconGap)
+      .labelIconToTitleSpacing(ZoonkButtonStyle.iconGap(controlSize))
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
@@ -124,15 +134,6 @@ private struct ZoonkButton: View {
       .contentShape(MinimumHitArea())
       .padding(
         .trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
-  }
-
-  /// Main's `gap-1`, `gap-1.5` and `gap-2`.
-  private var iconGap: CGFloat {
-    switch controlSize {
-    case .mini, .small: 4
-    case .regular: 6
-    default: 8
-    }
   }
 
   private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }
@@ -172,6 +173,31 @@ private struct ZoonkButton: View {
       return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
     case .outline, .ghost:
       return isPressed ? .muted : .clear
+    }
+  }
+}
+
+/// Main's `iconPosition="end"`: the words, then the icon, at the button's icon gap, for an icon that
+/// says where the press leads (forward, out to another app, a menu that opens).
+struct TrailingIconLabelStyle: LabelStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    TrailingIconLabel(configuration: configuration)
+  }
+}
+
+extension LabelStyle where Self == TrailingIconLabelStyle {
+  static var trailingIcon: TrailingIconLabelStyle { TrailingIconLabelStyle() }
+}
+
+private struct TrailingIconLabel: View {
+  @Environment(\.controlSize) private var controlSize
+
+  let configuration: LabelStyleConfiguration
+
+  var body: some View {
+    HStack(spacing: ZoonkButtonStyle.iconGap(controlSize)) {
+      configuration.title
+      configuration.icon
     }
   }
 }

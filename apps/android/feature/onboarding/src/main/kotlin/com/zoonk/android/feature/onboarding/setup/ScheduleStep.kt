@@ -49,6 +49,7 @@ import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DailyTimePicker
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
@@ -370,7 +371,7 @@ private fun DateLink(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, enabled = enabled, forward = true, edge = ButtonEdge.Start) {
+    TextButton(onClick = onClick, enabled = enabled, trailingIcon = ForwardIcon, edge = ButtonEdge.Start) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }

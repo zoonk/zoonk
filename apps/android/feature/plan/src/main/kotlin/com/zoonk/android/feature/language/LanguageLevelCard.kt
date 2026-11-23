@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.languageName
@@ -39,6 +40,8 @@ fun LanguageLevelCard(
             style = MaterialTheme.typography.headlineMedium.withTabularFigures(),
         )
         ladder()
-        TextButton(onClick = onOpenPlan, forward = true, edge = ButtonEdge.Start) { Text(stringResource(R.string.language_see_your_plan)) }
+        TextButton(onClick = onOpenPlan, trailingIcon = ForwardIcon, edge = ButtonEdge.Start) {
+            Text(stringResource(R.string.language_see_your_plan))
+        }
     }
 }

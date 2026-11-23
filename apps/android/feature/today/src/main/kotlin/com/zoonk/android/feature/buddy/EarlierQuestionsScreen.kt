@@ -36,6 +36,7 @@ import com.zoonk.android.feature.tutor.AnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TextButton
@@ -198,7 +199,7 @@ private fun OlderQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        TextButton(busy = isLoading, onClick = onLoad, edge = ButtonEdge.Start, forward = true) {
+        TextButton(busy = isLoading, onClick = onLoad, edge = ButtonEdge.Start, trailingIcon = ForwardIcon) {
             Text(stringResource(R.string.earlier_questions_older))
         }
     }

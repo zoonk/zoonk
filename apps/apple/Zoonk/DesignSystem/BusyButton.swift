@@ -35,20 +35,22 @@ private struct BusyButtonLabel<Title: View>: View {
 
   var body: some View {
     if let icon, icon.trails {
-      HStack(alignment: .firstTextBaseline, spacing: 8) {
-        label
-        image(icon)
-      }
+      labeled(icon).labelStyle(.trailingIcon)
     } else if let icon {
-      Label {
-        label
-      } icon: {
-        image(icon)
-      }
+      // A call site's own label style, such as icon-only, applies here.
+      labeled(icon)
     } else if isRow {
       label.spinnerAtEnd(isBusy)
     } else {
       label.coveredBySpinner(isBusy)
+    }
+  }
+
+  private func labeled(_ icon: ActionIcon) -> some View {
+    Label {
+      label
+    } icon: {
+      image(icon)
     }
   }
 

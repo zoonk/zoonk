@@ -650,7 +650,7 @@ private struct UnderstoodRowView: View {
               } icon: {
                 Image(systemName: "arrow.up.right")
               }
-              .labelStyle(TrailingIconLabelStyle())
+              .labelStyle(SourceLinkLabelStyle())
               .typeStyle(.note)
             }
             .foregroundStyle(.mutedForeground)
@@ -691,7 +691,7 @@ private struct UnderstoodRowView: View {
   }
 }
 
-private struct TrailingIconLabelStyle: LabelStyle {
+private struct SourceLinkLabelStyle: LabelStyle {
   func makeBody(configuration: Configuration) -> some View {
     HStack(spacing: 2) {
       configuration.title
