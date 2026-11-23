@@ -40,7 +40,7 @@ import { buildScheduleView } from "./plan-schedule-view";
 import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
-import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
+import { readPlanOffers, readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
@@ -150,17 +150,6 @@ function isPlanReady(context: PlanContext): boolean {
   );
 }
 
-function readExtraOffer({
-  fresh,
-  pastDate,
-}: {
-  fresh: ReturnType<typeof readFreshPlanSummary>;
-  pastDate: boolean;
-}): PlanView["extraOffer"] {
-  const offer = pastDate ? null : fresh?.advice.extraOffer;
-  return offer ? { ...offer, canApply: true } : null;
-}
-
 export async function buildPlanView({
   context: savedContext,
   now,
@@ -255,7 +244,6 @@ export async function buildPlanView({
   });
 
   const pastDate = status?.kind === "pastDate";
-  const fitOffer = pastDate ? null : (summary?.advice.fitOffer ?? null);
   const feasibility = readSavedFeasibility(summary);
 
   return {
@@ -278,12 +266,7 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
-    extraOffer: readExtraOffer({ fresh, pastDate }),
     feasibility,
-    fitOffer: fitOffer && {
-      ...foldChangeAreas({ change: fitOffer, partAreas }),
-      canApply: fresh !== null,
-    },
     focusTest: readPlanFocusTest(context),
     goalId: goal.id,
     hasNotice: hasSyllabusNotice(syllabus?.notice),
@@ -296,6 +279,7 @@ export async function buildPlanView({
       ? buildSavedPlanNumbersView({ context, coverage: feasibility, writing })
       : null,
     ownLevel: getOwnLevel({ goal }),
+    ...readPlanOffers({ fresh, partAreas, pastDate, summary }),
     phases: buildPlanPath({
       access,
       challengeResults,
@@ -317,7 +301,6 @@ export async function buildPlanView({
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,
     steering: buildSteeringView({ items, settings: state.settings }),
-    suggestedTime: pastDate ? null : (fresh?.advice.suggested ?? null),
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studyDays: studyWeek.days }),
     weekTime: studyWeek.time,

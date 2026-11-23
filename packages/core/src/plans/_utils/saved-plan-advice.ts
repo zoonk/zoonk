@@ -1,6 +1,7 @@
 import { type PlanView } from "../plan-view-contract";
 import { daysBetween } from "../planner/plan-calendar";
 import { type PlanSettings } from "../planner/plan-state";
+import { foldChangeAreas } from "./fold-part-areas";
 import { toPlanBasesView } from "./plan-bases-view";
 import { toShownShare } from "./plan-feasibility-view";
 import { type PlanReadContext } from "./plan-read-projection";
@@ -51,4 +52,32 @@ export function readSavedBases({
         settings,
       })
     : null;
+}
+
+/** A date that has passed leaves nothing to offer: no time covers it. */
+export function readPlanOffers({
+  fresh,
+  partAreas,
+  pastDate,
+  summary,
+}: {
+  fresh: PlanSummary | null;
+  partAreas: ReadonlyMap<string, string>;
+  pastDate: boolean;
+  summary: PlanSummary | null;
+}): Pick<PlanView, "extraOffer" | "fitOffer" | "suggestedTime"> {
+  if (pastDate) {
+    return { extraOffer: null, fitOffer: null, suggestedTime: null };
+  }
+
+  const fitOffer = summary?.advice.fitOffer;
+  const extraOffer = fresh?.advice.extraOffer;
+
+  return {
+    extraOffer: extraOffer ? { ...extraOffer, canApply: true } : null,
+    fitOffer: fitOffer
+      ? { ...foldChangeAreas({ change: fitOffer, partAreas }), canApply: fresh !== null }
+      : null,
+    suggestedTime: fresh?.advice.suggested ?? null,
+  };
 }

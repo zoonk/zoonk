@@ -4,8 +4,8 @@ import { addDays, daysBetween, getPlanCalendar } from "../planner/plan-calendar"
 import { getExamDayRules, getPlannedMinutes } from "../planner/plan-days";
 import { LEARN_KINDS, isUnwrittenLesson } from "../planner/plan-item-rules";
 import { type PlanSettings } from "../planner/plan-state";
-import { type ShownFeasibility, toShownShare } from "./plan-feasibility-view";
 import { type WritingWork } from "../planner/writing-schedule";
+import { type ShownFeasibility, toShownShare } from "./plan-feasibility-view";
 
 function roundPlanMinutes(minutes: number): number {
   return Math.round(Math.max(0, minutes) * 10) / 10;

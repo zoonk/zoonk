@@ -295,9 +295,7 @@ export function getCoverage({
     writingFits &&
     skills.every(
       (skill) =>
-        written?.skillIds.has(skill.skillId) ||
-        isInPlan(skill.skillId) ||
-        getSkillValue(skill) > 0,
+        written?.skillIds.has(skill.skillId) || isInPlan(skill.skillId) || getSkillValue(skill) > 0,
     );
 
   return {
