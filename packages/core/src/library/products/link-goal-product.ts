@@ -7,8 +7,8 @@ export type GoalProductLink = { productId: string; productReleaseId: string | nu
 /**
  * Internal workflow bridge for research: the goal must come from the run researching it. Records
  * that research decided, so the skill graph stops waiting; `null` links nothing and keeps an
- * earlier link. A goal reaches its product's pages through `productId`, not `LearnerSource` rows,
- * which hold one row per learner and page whatever the goal.
+ * earlier link. A goal reaches its product's pages through `productId`, not `GoalSource` rows,
+ * so the pages a product adds later reach it too.
  */
 export async function linkGoalToProduct({
   goalId,

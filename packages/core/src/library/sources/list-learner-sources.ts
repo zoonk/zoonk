@@ -16,10 +16,27 @@ export async function listLearnerSources({ goalId }: { goalId?: string | null } 
     return [];
   }
 
-  return prisma.learnerSource.findMany({
-    include: { source: { omit: { extractedText: true } } },
+  const userId = session.user.id;
+  const ownGoals = { goal: { userId } };
+
+  const links = await prisma.learnerSource.findMany({
+    include: {
+      source: {
+        include: { goalSources: { orderBy: { createdAt: "asc" }, where: ownGoals } },
+        omit: { extractedText: true },
+      },
+    },
     orderBy: { createdAt: "desc" },
     take: MAX_LEARNER_SOURCES,
-    where: { userId: session.user.id, ...(goalId ? { goalId } : {}) },
+    where: {
+      userId,
+      ...(goalId ? { source: { goalSources: { some: { ...ownGoals, goalId } } } } : {}),
+    },
   });
+
+  return links.map(({ source: { goalSources, ...source }, ...link }) => ({
+    ...link,
+    goalIds: goalSources.map((goalSource) => goalSource.goalId),
+    source,
+  }));
 }

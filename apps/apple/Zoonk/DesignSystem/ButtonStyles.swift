@@ -105,7 +105,6 @@ private struct ZoonkButton: View {
   @Environment(\.mainActionFillsRow) private var fillsRow
   @Environment(\.mainActionMinWidth) private var mainMinWidth
   @Environment(\.controlsShareHeight) private var sharesHeight
-  @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(\.buttonTone) private var tone
 
@@ -190,8 +189,7 @@ private struct ZoonkButton: View {
 
   private var fill: Color {
     if isDestructive {
-      return variant == .ghost && !isPressed
-        ? .clear : Color.destructive.opacity(colorScheme == .dark ? 0.2 : 0.1)
+      return variant == .ghost && !isPressed ? .clear : .destructiveSoft
     }
 
     switch variant {

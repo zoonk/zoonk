@@ -3,9 +3,15 @@ import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
+import { understandGoalWords } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { prisma } from "@zoonk/db";
+import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -84,6 +90,151 @@ describe(goalUnderstandingWorkflow, () => {
         goals: [{ countryDependent: false, draft: { title: "Pass the bar" }, examDates: [] }],
       },
     });
+  });
+
+  it("reads the words with the learner's material, apart from the words read alone, and looks up no public exam for a test on it", async () => {
+    vi.mocked(classifyCourseIntent).mockResolvedValue(taskResult({ intent: "learn" as const }));
+
+    vi.mocked(understandGoal).mockResolvedValue(
+      taskResult({
+        followUps: [],
+        goals: [
+          {
+            countryDependent: false,
+            examDay: "official",
+            examName: "Biology unit test",
+            kind: "exam",
+            subject: "the cell cycle",
+            title: "Pass the cell cycle test",
+          },
+        ],
+        route: "goals",
+      }),
+    );
+
+    const user = await userFixture();
+    const prompt = `test on Friday ${randomUUID()}`;
+    const notesText = "Interphase: G1, S and G2. Mitosis: prophase, metaphase and anaphase.";
+
+    const notes = await sourceFixture({ extractedText: notesText, kind: "upload", title: "" });
+
+    await Promise.all([
+      learnerSourceFixture({ sourceId: notes.id, userId: user.id }),
+      goalUnderstandingFixture({ goal: prompt, result: { route: "unclear" }, userId: user.id }),
+    ]);
+
+    const draft = await onboardingDraftFixture({
+      materialIntent: "exam",
+      prompt,
+      sourceIds: [notes.id],
+      status: "understanding",
+      userId: user.id,
+    });
+
+    const run = await start(goalUnderstandingWorkflow, [{ draftId: draft.id }]);
+    await expect(run.returnValue).resolves.toMatchObject({ status: "understood" });
+
+    expect(understandGoal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        goal: prompt,
+        material: { intent: "exam", overview: expect.stringContaining(notesText) },
+      }),
+    );
+
+    expect(classifyCourseIntent).toHaveBeenCalledWith(expect.objectContaining({ prompt }));
+    expect(decideExamIdentity).not.toHaveBeenCalled();
+    expect(findExamDate).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.goalUnderstanding.findMany({ select: { result: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ result: { route: "unclear" } }]);
+
+    await expect(
+      prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } }),
+    ).resolves.toMatchObject({
+      status: "understood",
+      understanding: { goals: [{ draft: { title: "Pass the cell cycle test" }, examDates: [] }] },
+    });
+  });
+
+  it("looks up the dates of a public exam the words name, even with the learner's material", async () => {
+    const exam = `ENEM ${randomUUID().slice(0, 8)}`;
+
+    vi.mocked(decideExamIdentity).mockResolvedValue(null);
+    vi.mocked(classifyCourseIntent).mockResolvedValue(taskResult({ intent: "learn" as const }));
+    vi.mocked(findExamDate).mockRejectedValue(new Error("The search is down"));
+
+    vi.mocked(understandGoal).mockResolvedValue(
+      taskResult({
+        followUps: [],
+        goals: [
+          {
+            countryDependent: false,
+            examDay: "official",
+            examName: exam,
+            kind: "exam",
+            subject: "the ENEM",
+            title: `Pass ${exam}`,
+          },
+        ],
+        route: "goals",
+      }),
+    );
+
+    const user = await userFixture();
+    const notes = await sourceFixture({ extractedText: "Funções e logaritmos.", kind: "upload" });
+    await learnerSourceFixture({ sourceId: notes.id, userId: user.id });
+
+    const draft = await onboardingDraftFixture({
+      materialIntent: "exam",
+      prompt: exam,
+      sourceIds: [notes.id],
+      status: "understanding",
+      userId: user.id,
+    });
+
+    const run = await start(goalUnderstandingWorkflow, [{ draftId: draft.id }]);
+    await expect(run.returnValue).resolves.toMatchObject({ status: "understood" });
+
+    expect(findExamDate).toHaveBeenCalledWith(expect.objectContaining({ exam }));
+  });
+
+  it("reads an upload merged into a shared copy after the draft was saved", async () => {
+    vi.mocked(understandGoal).mockResolvedValue(taskResult({ route: "unclear" }));
+
+    const user = await userFixture();
+    const sharedText = `Interphase and mitosis ${randomUUID()}`;
+
+    const [upload, shared] = await Promise.all([
+      sourceFixture({ extractedText: "The private copy", kind: "upload", ownerId: user.id }),
+      sourceFixture({ extractedText: sharedText, kind: "upload" }),
+    ]);
+
+    await learnerSourceFixture({ sourceId: shared.id, userId: user.id });
+
+    await prisma.$transaction([
+      prisma.sourceRedirect.create({
+        data: { fromId: upload.id, toId: shared.id, userId: user.id },
+      }),
+      prisma.source.delete({ where: { id: upload.id } }),
+    ]);
+
+    await understandGoalWords({
+      id: randomUUID(),
+      language: "en",
+      materialIntent: "exam",
+      prompt: "test on Friday",
+      sourceIds: [upload.id],
+      status: "understanding",
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(understandGoal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        material: { intent: "exam", overview: expect.stringContaining(sharedText) },
+      }),
+    );
   });
 
   it("decides each stored candidate in a step of its own, retrying only the decision that failed", async () => {

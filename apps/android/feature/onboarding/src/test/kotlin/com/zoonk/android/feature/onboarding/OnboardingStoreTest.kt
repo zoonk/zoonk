@@ -59,7 +59,7 @@ class OnboardingStoreTest {
 
             assertTrue(outcome is WriteOutcome.Done)
             assertEquals(listOf(ana), api.sessions)
-            assertEquals(listOf("pass the bar exam" to "pt"), api.understandCalls)
+            assertEquals(listOf("pass the bar exam" to "pt"), api.understandCalls.map { it.goal to it.language })
             assertTrue(store.drafts[DRAFT_ID].state.value is LoadState.Loaded)
             assertTrue(store.wasSentHere(DRAFT_ID))
         }

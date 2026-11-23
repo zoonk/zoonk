@@ -1,12 +1,22 @@
 import { randomUUID } from "node:crypto";
 import { del, get } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
-import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
+import {
+  goalSourceFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
+import { getOnboardingDraft } from "../../view-models/onboarding/get-onboarding-draft";
+import { linkGoalToResearchSources } from "../exams/exam-learners";
+import { getSource } from "./get-source";
 import { loadSourceDocuments } from "./load-source-documents";
 import { hashDocument } from "./parse-document";
 import { shareSourceUpload } from "./share-upload";
@@ -203,6 +213,40 @@ describe(shareSourceUpload, () => {
     );
   });
 
+  it("keeps a goal draft's material when the upload joins the copy another learner shared", async () => {
+    const [first, second] = await Promise.all([userFixture(), userFixture()]);
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+
+    const [duplicate, notes] = await Promise.all([
+      privateUploadFixture({ text, userId: second.id }),
+      privateUploadFixture({ text: noticeText(), userId: second.id }),
+    ]);
+
+    const draft = await onboardingDraftFixture({
+      materialIntent: "exam",
+      sourceIds: [duplicate.id, notes.id],
+      userId: second.id,
+    });
+
+    await expect(shareNotice(duplicate.id)).resolves.toMatchObject({ merged: true });
+
+    mockSession(second.id);
+
+    await expect(getOnboardingDraft({ draftId: draft.id })).resolves.toMatchObject({
+      draft: {
+        materialIntent: "exam",
+        sources: [
+          { id: shared.id, title: "Edital nº 1 – TJ-CE 2026" },
+          { id: notes.id, title: "edital" },
+        ],
+      },
+    });
+  });
+
   it("moves what lessons read from the duplicate to the shared copy at the version they read", async () => {
     const [first, second] = await Promise.all([userFixture(), userFixture()]);
     const text = noticeText();
@@ -267,27 +311,106 @@ describe(shareSourceUpload, () => {
     expect(del).not.toHaveBeenCalled();
   });
 
-  it("keeps a learner's upload and the ask it answered when they already followed the shared copy", async () => {
+  it("keeps a learner's upload and the ask it answered when their goal already read the shared copy", async () => {
+    const [first, learner] = await Promise.all([userFixture(), userFixture()]);
+    const goal = await goalFixture({ userId: learner.id });
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+
+    await learnerSourceFixture({
+      goalId: goal.id,
+      origin: "research",
+      sourceId: shared.id,
+      userId: learner.id,
+    });
+
+    const upload = await privateUploadFixture({ text, userId: learner.id });
+    const answeredAt = new Date();
+    await goalSourceFixture({ answeredAt, goalId: goal.id, sourceId: upload.id });
+
+    await expect(shareNotice(upload.id)).resolves.toMatchObject({ merged: true });
+
+    const [links, attached] = await Promise.all([
+      prisma.learnerSource.findMany({
+        select: { origin: true, sourceId: true },
+        where: { userId: learner.id },
+      }),
+      prisma.goalSource.findMany({
+        select: { answeredAt: true, origin: true, sourceId: true },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    expect(links).toStrictEqual([{ origin: "upload", sourceId: shared.id }]);
+    expect(attached).toStrictEqual([{ answeredAt, origin: "upload", sourceId: shared.id }]);
+  });
+
+  it("leads only the upload's owner from its old id to the shared copy, and moves its goals there", async () => {
+    const [first, learner] = await Promise.all([userFixture(), userFixture()]);
+    const goal = await goalFixture({ userId: learner.id });
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+
+    const upload = await privateUploadFixture({ text, userId: learner.id });
+    await goalSourceFixture({ goalId: goal.id, sourceId: upload.id });
+
+    await expect(shareNotice(upload.id)).resolves.toMatchObject({ merged: true });
+
+    await expect(
+      prisma.sourceRedirect.findUniqueOrThrow({ where: { fromId: upload.id } }),
+    ).resolves.toMatchObject({ toId: shared.id, userId: learner.id });
+
+    await expect(
+      prisma.goalSource.findMany({
+        select: { origin: true, sourceId: true },
+        where: { goalId: goal.id },
+      }),
+    ).resolves.toStrictEqual([{ origin: "upload", sourceId: shared.id }]);
+
+    mockSession(learner.id);
+    await expect(getSource({ sourceId: upload.id })).resolves.toMatchObject({ id: shared.id });
+
+    mockSession(first.id);
+    await expect(getSource({ sourceId: upload.id })).resolves.toBeNull();
+  });
+
+  it("lets a run handed the upload before the merge read the shared copy", async () => {
     const [first, learner] = await Promise.all([userFixture(), userFixture()]);
     const text = noticeText();
     servePublisherCopy(text);
 
     const shared = await privateUploadFixture({ text, userId: first.id });
     await shareNotice(shared.id);
-    await learnerSourceFixture({ origin: "research", sourceId: shared.id, userId: learner.id });
-
     const upload = await privateUploadFixture({ text, userId: learner.id });
-    const answeredAt = new Date();
-    await prisma.learnerSource.updateMany({ data: { answeredAt }, where: { sourceId: upload.id } });
+    await shareNotice(upload.id);
 
-    await expect(shareNotice(upload.id)).resolves.toMatchObject({ merged: true });
+    await expect(loadSourceDocuments([upload.id], { preferText: true })).resolves.toMatchObject([
+      { id: shared.id, text },
+    ]);
+  });
+
+  it("links a run's upload to its goal as the shared copy once the upload merged", async () => {
+    const [first, learner] = await Promise.all([userFixture(), userFixture()]);
+    const goal = await goalFixture({ userId: learner.id });
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+    const upload = await privateUploadFixture({ text, userId: learner.id });
+    await shareNotice(upload.id);
+
+    await linkGoalToResearchSources({ goalId: goal.id, sourceIds: [upload.id] });
 
     await expect(
-      prisma.learnerSource.findMany({
-        select: { answeredAt: true, origin: true, sourceId: true },
-        where: { userId: learner.id },
-      }),
-    ).resolves.toStrictEqual([{ answeredAt, origin: "upload", sourceId: shared.id }]);
+      prisma.goalSource.findMany({ select: { sourceId: true }, where: { goalId: goal.id } }),
+    ).resolves.toStrictEqual([{ sourceId: shared.id }]);
   });
 
   it("ignores sources that aren't private uploads", async () => {

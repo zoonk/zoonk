@@ -196,13 +196,26 @@ class UnderstoodRows(
         )
     }
 
-    fun materialRow(material: List<String>): UnderstoodRow? =
-        material.takeIf { it.isNotEmpty() }?.let { titles ->
+    /** A goal whose material can't all be read anymore ([missing]) keeps the row, even with none left, to say its plan won't follow it. */
+    fun materialRow(
+        material: List<String>,
+        missing: Boolean,
+    ): UnderstoodRow? =
+        if (material.isEmpty() && !missing) {
+            null
+        } else {
             UnderstoodRow(
                 id = "material",
                 label = text(R.string.onboarding_row_material),
-                value = titles.joinToString(", ") { it.ifBlank { text(R.string.onboarding_your_text) } },
-                note = text(R.string.onboarding_row_material_note),
+                value = material.joinToString(", ") { it.ifBlank { text(R.string.onboarding_your_text) } },
+                note =
+                    text(
+                        when {
+                            !missing -> R.string.onboarding_row_material_note
+                            material.isEmpty() -> R.string.onboarding_row_material_all_missing_note
+                            else -> R.string.onboarding_row_material_missing_note
+                        },
+                    ),
             )
         }
 
@@ -348,6 +361,7 @@ class UnderstoodRows(
                         text(
                             when {
                                 draft.details.text("examDay") == "booked" -> R.string.onboarding_row_date_booked
+                                draft.details.text("examName").isNullOrEmpty() -> R.string.onboarding_row_date_unknown
                                 isGuide(draft) -> R.string.onboarding_row_date_not_out_guide
                                 else -> R.string.onboarding_row_date_not_out_notice
                             },

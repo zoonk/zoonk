@@ -259,16 +259,35 @@ function normalizeGoal({
   };
 }
 
+type MaterialIntent = "exam" | "understand" | null;
+
+/** The learner chose an exam on their material or to learn it, which models sometimes read the other way. */
+function withChosenKind({
+  goals: [main, ...others],
+  materialIntent,
+}: {
+  goals: RawUnderstoodGoal[];
+  materialIntent: MaterialIntent;
+}): RawUnderstoodGoal[] {
+  if (!main || !materialIntent || main.kind === "language") {
+    return main ? [main, ...others] : others;
+  }
+
+  return [{ ...main, kind: materialIntent === "exam" ? "exam" : "learn" }, ...others];
+}
+
 function normalizeGoals({
+  dailyMinutesLimits,
+  materialIntent,
   raw,
   today,
-  dailyMinutesLimits,
 }: {
+  dailyMinutesLimits: { min: number; max: number };
+  materialIntent: MaterialIntent;
   raw: RawGoalUnderstanding;
   today: string;
-  dailyMinutesLimits: { min: number; max: number };
 }): GoalUnderstanding {
-  const goals = raw.goals
+  const goals = withChosenKind({ goals: raw.goals, materialIntent })
     .slice(0, MAX_GOALS)
     .flatMap((goal) => normalizeGoal({ goal, today }) ?? []);
 
@@ -298,10 +317,13 @@ function normalizeGoals({
  */
 export function normalizeGoalUnderstanding({
   dailyMinutesLimits,
+  materialIntent = null,
   raw,
   today,
 }: {
   dailyMinutesLimits: { min: number; max: number };
+  /** What the learner chose to do with the material they attached, which sets the main goal's kind. */
+  materialIntent?: MaterialIntent;
   raw: RawGoalUnderstanding;
   today: string;
 }): GoalUnderstanding {
@@ -315,7 +337,7 @@ export function normalizeGoalUnderstanding({
       return instrument ? { instrument, route: "instrument" } : { route: "unclear" };
     }
     case "goals":
-      return normalizeGoals({ dailyMinutesLimits, raw, today });
+      return normalizeGoals({ dailyMinutesLimits, materialIntent, raw, today });
     case "unclear":
     case "unsafe":
       return { route: raw.route };

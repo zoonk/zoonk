@@ -13,6 +13,7 @@ import {
 } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { createSourceChangeNotice } from "../sources/content-review-flags";
+import { followSourceRedirects } from "../sources/own-sources";
 import {
   type BlueprintContent,
   type ExamDate,
@@ -43,8 +44,6 @@ export type SaveExamBlueprintInput = {
 };
 
 export type NoticeReading = { problems: ReadingProblem[]; read: boolean };
-
-const UNREAD: NoticeReading = { problems: [], read: false };
 
 export type SavedExamBlueprint = {
   blueprint: ExamBlueprint;
@@ -293,7 +292,7 @@ export async function findNoticeReading({
   const edition = blueprint ? examEditionSchema.safeParse(blueprint.edition).data : undefined;
 
   if (!edition || !source || edition.sourceHash !== source.contentHash) {
-    return UNREAD;
+    return { problems: [], read: false };
   }
 
   return { problems: edition.check?.problems ?? [], read: true };
@@ -316,9 +315,10 @@ async function keepNoticeUntilExam({
   });
 }
 
-export async function saveExamBlueprint(
-  input: SaveExamBlueprintInput,
-): Promise<SavedExamBlueprint> {
+/** A notice read from an upload that was merged into a shared copy meanwhile is saved as that copy. */
+export async function saveExamBlueprint(sent: SaveExamBlueprintInput): Promise<SavedExamBlueprint> {
+  const [sourceId = sent.sourceId] = await followSourceRedirects([sent.sourceId]);
+  const input = { ...sent, sourceId };
   const identityKey = buildExamIdentityKey(input.identity);
   const { identity } = input;
 

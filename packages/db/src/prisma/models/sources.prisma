@@ -49,6 +49,8 @@ model Source {
   examBlueprints     ExamBlueprint[]
   items              Item[]
   learnerSources     LearnerSource[]
+  goalSources        GoalSource[]
+  redirectedFrom     SourceRedirect[]
   changeNotices      SourceChangeNotice[]
   steps              Step[]
   stepSources        StepSource[]
@@ -243,25 +245,58 @@ enum LearnerSourceOrigin {
 }
 
 /// Public uploads are stored once and shared, so this row is how a learner keeps their own material
-/// and how uploads are counted per day.
+/// and how uploads are counted per day. The goals it serves are `GoalSource` rows.
 model LearnerSource {
   id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId     String              @map("user_id") @db.Uuid
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   sourceId   String              @map("source_id") @db.Uuid
   source     Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  goalId     String?             @map("goal_id") @db.Uuid
-  goal       Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  /// Unused.
+  goalId     String?             @map("goal_id") @ignore @db.Uuid
   origin     LearnerSourceOrigin
-  /// When the upload answered a goal's upload request; each upload answers once.
-  answeredAt DateTime?           @map("answered_at")
+  /// Unused.
+  answeredAt DateTime?           @map("answered_at") @ignore
   createdAt  DateTime            @default(now()) @map("created_at")
 
   @@unique([userId, sourceId], name: "learnerSource")
   @@index([userId, createdAt])
   @@index([sourceId])
-  @@index([goalId])
   @@map("learner_sources")
+}
+
+/// A source a goal reads: the learner's own material (`upload`) or what research found for it. The
+/// same source can serve several goals. Written only from the learner's own `LearnerSource` rows.
+model GoalSource {
+  goalId     String              @map("goal_id") @db.Uuid
+  goal       Goal                @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  sourceId   String              @map("source_id") @db.Uuid
+  source     Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  /// `upload` wins over `research`, never the reverse.
+  origin     LearnerSourceOrigin
+  /// When the upload answered this goal's upload request; it answers each goal once.
+  answeredAt DateTime?           @map("answered_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+
+  @@id([goalId, sourceId])
+  @@index([sourceId])
+  @@map("goal_sources")
+}
+
+/// A private upload merged into the public copy it matched, so the id clients kept still finds it.
+/// Only `userId`, the upload's owner, is led to the copy. One hop: only private uploads merge, and
+/// only into public sources.
+model SourceRedirect {
+  fromId    String   @id @map("from_id") @db.Uuid
+  toId      String   @map("to_id") @db.Uuid
+  to        Source   @relation(fields: [toId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([toId])
+  @@index([userId])
+  @@map("source_redirects")
 }
 
 /// One per upload a learner sent: a file by its path, pasted text or a link by its content. `id` is

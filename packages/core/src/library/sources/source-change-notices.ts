@@ -143,7 +143,7 @@ export async function listGoalChangeNotices({
       where: {
         OR: [
           ...(goal.examBlueprintId ? [{ examBlueprintId: goal.examBlueprintId }] : []),
-          { examBlueprintId: null, source: { learnerSources: { some: { goalId: goal.id } } } },
+          { examBlueprintId: null, source: { goalSources: { some: { goalId: goal.id } } } },
         ],
         createdAt: { gte: since },
       },

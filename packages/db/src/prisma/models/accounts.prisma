@@ -37,6 +37,7 @@ model User {
   ownedExamBlueprints   ExamBlueprint[]
   learnerSources        LearnerSource[]
   sourceUploads         SourceUpload[]
+  sourceRedirects       SourceRedirect[]
   goals                 Goal[]
   learnerSkills         LearnerSkill[]
   attempts              Attempt[]

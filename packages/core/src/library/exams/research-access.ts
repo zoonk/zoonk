@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../../users/get-session";
+import { findOwnSources } from "../sources/own-sources";
 
 const MAX_RESEARCH_SOURCES = 5;
 
@@ -18,17 +19,13 @@ async function findOwnUploadIds({
   sourceIds: string[];
   userId: string;
 }): Promise<string[] | null> {
-  const ids = [...new Set(sourceIds)].slice(0, MAX_RESEARCH_SOURCES);
-
-  if (ids.some((id) => !isUuid(id))) {
-    return null;
-  }
-
-  const uploads = await prisma.learnerSource.count({
-    where: { origin: "upload", sourceId: { in: ids }, userId },
+  const uploads = await findOwnSources({
+    origin: "upload",
+    sourceIds: [...new Set(sourceIds)].slice(0, MAX_RESEARCH_SOURCES),
+    userId,
   });
 
-  return uploads === ids.length ? ids : null;
+  return uploads.unresolved.length === 0 ? uploads.resolved : null;
 }
 
 export async function getResearchAccess({

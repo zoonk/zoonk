@@ -63,7 +63,7 @@ describe("source writes", () => {
   });
 
   it.each([false, true])(
-    "marks onboarding source linking only for an unattached source (attached: %s)",
+    "links material sent with a new goal in the goal's own write, even when another goal reads it (attached: %s)",
     async (attached) => {
       const { goal, plan, user } = await setup();
 
@@ -79,20 +79,28 @@ describe("source writes", () => {
         userId: user.id,
       });
 
-      await expect(
-        createOnboardingGoals({
-          dailyMinutes: 15,
-          goals: [{ kind: "learn", language: "en", prompt: "Physics", title: "Physics" }],
-          sourceIds: [source.id],
-        }),
-      ).resolves.toMatchObject({ status: "created" });
+      const created = await createOnboardingGoals({
+        dailyMinutes: 15,
+        goals: [{ kind: "learn", language: "en", prompt: "Physics", title: "Physics" }],
+        sourceIds: [source.id],
+      });
+
+      const physics = created.status === "created" ? created.goals[0]?.id : undefined;
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
       ).resolves.toMatchObject({ inputVersion: plan.inputVersion + 2 });
 
-      const saved = await prisma.learnerSource.findUniqueOrThrow({ where: { id: link.id } });
-      expect(saved.goalId === goal.id).toBe(attached);
+      const linked = await prisma.goalSource.findMany({
+        select: { goalId: true },
+        where: { sourceId: link.sourceId },
+      });
+
+      expect(linked).toHaveLength(attached ? 2 : 1);
+
+      expect(linked).toStrictEqual(
+        expect.arrayContaining([{ goalId: physics }, ...(attached ? [{ goalId: goal.id }] : [])]),
+      );
     },
   );
 
@@ -146,7 +154,7 @@ describe("source writes", () => {
     }
 
     await expect(
-      prisma.learnerSource.count({ where: { answeredAt: { not: null }, userId: user.id } }),
+      prisma.goalSource.count({ where: { answeredAt: { not: null }, goalId: goal.id } }),
     ).resolves.toBe(1);
   });
 

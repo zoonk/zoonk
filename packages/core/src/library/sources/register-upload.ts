@@ -11,6 +11,7 @@ import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
 import { toSourceUrl } from "./fetch-document";
+import { linkGoalSources } from "./link-goal-sources";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { SOURCE_READ_VERSION } from "./source-contract";
 import { deleteUploadedBlob } from "./upload-blob";
@@ -48,21 +49,24 @@ async function linkUpload({
       skipDuplicates: true,
     });
 
-    const { count } = await tx.learnerSource.createMany({
-      data: { goalId, origin: "upload", sourceId, userId },
+    const linked = await tx.learnerSource.createMany({
+      data: { origin: "upload", sourceId, userId },
       skipDuplicates: true,
     });
 
-    if (count > 0) {
-      return null;
-    }
+    const uploaded =
+      linked.count > 0
+        ? linked
+        : await tx.learnerSource.updateMany({
+            data: { origin: "upload" },
+            where: { origin: { not: "upload" }, sourceId, userId },
+          });
 
-    const uploaded = await tx.learnerSource.updateMany({
-      data: { origin: "upload" },
-      where: { origin: { not: "upload" }, sourceId, userId },
-    });
+    const attached = goalId
+      ? await linkGoalSources(tx, { goalId, origin: "upload", sourceIds: [sourceId], userId })
+      : 0;
 
-    return uploaded.count + uploads.count === 0 ? unchanged(null) : null;
+    return uploads.count + uploaded.count + attached === 0 ? unchanged(null) : null;
   });
 }
 

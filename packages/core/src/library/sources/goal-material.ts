@@ -15,23 +15,18 @@ async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[
     return [];
   }
 
-  const links = await prisma.learnerSource.findMany({
+  const sources = await prisma.source.findMany({
     orderBy: { createdAt: "asc" },
-    select: {
-      source: {
-        select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
-      },
-    },
+    select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
     take: MAX_MATERIAL_SOURCES,
     where: {
-      goalId: { in: [...goalIds] },
-      origin: "upload",
-      source: { extractedText: { not: null }, kind: "upload", visibility: "private" },
+      extractedText: { not: null },
+      goalSources: { some: { goalId: { in: [...goalIds] }, origin: "upload" } },
     },
   });
 
-  return links.flatMap(({ source }) =>
-    source.extractedText ? [{ ...source, text: source.extractedText }] : [],
+  return sources.flatMap(({ extractedText, ...source }) =>
+    extractedText ? [{ ...source, text: extractedText }] : [],
   );
 }
 

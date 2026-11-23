@@ -19,7 +19,7 @@ async function loadSources({ goalId, productId }: { goalId: string; productId: s
     });
   }
 
-  return prisma.learnerSource
+  return prisma.goalSource
     .findMany({
       orderBy: { createdAt: "asc" },
       select: { source: { select: REFERENCE_SELECT } },

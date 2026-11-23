@@ -4,11 +4,13 @@ import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal as runUnderstandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
+import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { startGoalUnderstanding } from "./start-goal-understanding";
@@ -20,6 +22,28 @@ function uniqueGoal(text: string) {
 function countAssists(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "assist", userId } });
 }
+
+async function uploadFixture({
+  text = "Mitosis splits one cell into two.",
+  title,
+  userId,
+}: {
+  text?: string | null;
+  title: string;
+  userId: string;
+}) {
+  const source = await sourceFixture({ extractedText: text, kind: "upload", title });
+  await learnerSourceFixture({ sourceId: source.id, userId });
+  return source;
+}
+
+const CACHED_READING = {
+  followUps: [],
+  goals: [
+    { countryDependent: false, kind: "learn" as const, subject: "Biology", title: "Learn biology" },
+  ],
+  route: "goals" as const,
+};
 
 function countDrafts(userId: string) {
   return prisma.onboardingDraft.count({ where: { userId } });
@@ -236,7 +260,10 @@ describe(startGoalUnderstanding, () => {
         generationId: null,
         goalId: null,
         id: expect.any(String),
+        materialIntent: null,
+        materialMissing: false,
         prompt: goal,
+        sources: [],
         status: "understanding",
         timeZone: "Europe/Berlin",
         understanding: null,
@@ -295,6 +322,137 @@ describe(startGoalUnderstanding, () => {
     });
 
     expect(result.status).toBe("understanding");
+  });
+
+  it("keeps the learner's own material with the draft in the order sent, each once", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const [slides, notes] = await Promise.all([
+      uploadFixture({ title: "Cell cycle.pdf", userId: user.id }),
+      uploadFixture({ title: "", userId: user.id }),
+    ]);
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("test on Friday"),
+      language: "en",
+      materialIntent: "exam",
+      sourceIds: [notes.id, slides.id, notes.id],
+    });
+
+    const draft = result.status === "understanding" ? result.draft : null;
+
+    expect(draft).toMatchObject({
+      materialIntent: "exam",
+      materialMissing: false,
+      sources: [
+        { id: notes.id, title: "" },
+        { id: slides.id, title: "Cell cycle.pdf" },
+      ],
+      status: "understanding",
+    });
+
+    await expect(
+      prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft?.id } }),
+    ).resolves.toMatchObject({ materialIntent: "exam", sourceIds: [notes.id, slides.id] });
+
+    await expect(countAssists(user.id)).resolves.toBe(1);
+  });
+
+  it("refuses material that isn't the learner's, naming it, before charging or saving anything", async () => {
+    const [user, other] = await Promise.all([userFixture(), userFixture()]);
+    mockSession(user.id);
+    const unknown = randomUUID();
+
+    const [notes, theirs] = await Promise.all([
+      uploadFixture({ title: "My notes", userId: user.id }),
+      uploadFixture({ title: "Their notes", userId: other.id }),
+    ]);
+
+    await expect(
+      startGoalUnderstanding({
+        goal: uniqueGoal("test on Friday"),
+        language: "en",
+        materialIntent: "understand",
+        sourceIds: [notes.id, theirs.id, unknown],
+      }),
+    ).resolves.toStrictEqual({ sourceIds: [theirs.id, unknown], status: "materialUnavailable" });
+
+    await expect(countAssists(user.id)).resolves.toBe(0);
+    await expect(prisma.onboardingDraft.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("keeps an upload merged into a shared copy before the learner sent it", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const { shared, upload } = await uploadWithSharedCopyFixture(user.id);
+    await mergeIntoSharedCopy(upload);
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("concurso TJ-CE"),
+      language: "pt",
+      materialIntent: "exam",
+      sourceIds: [upload.id],
+    });
+
+    expect(result).toMatchObject({
+      draft: { materialMissing: false, sources: [{ id: shared.id }] },
+      status: "understanding",
+    });
+  });
+
+  it("refuses another learner's merged upload, even when this learner reads the shared copy too", async () => {
+    const [owner, learner] = await Promise.all([userFixture(), userFixture()]);
+    const { shared, upload } = await uploadWithSharedCopyFixture(owner.id);
+    await mergeIntoSharedCopy(upload);
+    await learnerSourceFixture({ sourceId: shared.id, userId: learner.id });
+    mockSession(learner.id);
+
+    await expect(
+      startGoalUnderstanding({
+        goal: uniqueGoal("concurso TJ-CE"),
+        language: "pt",
+        sourceIds: [upload.id],
+      }),
+    ).resolves.toStrictEqual({ sourceIds: [upload.id], status: "materialUnavailable" });
+
+    await expect(countAssists(learner.id)).resolves.toBe(0);
+  });
+
+  it("lists a photo with no text among the material, which the goal is created with", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const [photo, notes] = await Promise.all([
+      uploadFixture({ text: null, title: "board.jpg", userId: user.id }),
+      uploadFixture({ title: "Notes", userId: user.id }),
+    ]);
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("learn biology"),
+      language: "en",
+      sourceIds: [photo.id, notes.id],
+    });
+
+    expect(result).toMatchObject({
+      draft: { materialMissing: false, sources: [{ id: photo.id }, { id: notes.id }] },
+    });
+  });
+
+  it("reads words sent with material in a run, even when the same words alone were read today", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const goal = uniqueGoal("learn biology");
+    const notes = await uploadFixture({ title: "Mitosis notes", userId: user.id });
+    await goalUnderstandingFixture({ goal, result: CACHED_READING, userId: user.id });
+
+    const result = await startGoalUnderstanding({ goal, language: "en", sourceIds: [notes.id] });
+
+    expect(result).toMatchObject({
+      draft: { materialIntent: null, sources: [{ id: notes.id }], status: "understanding" },
+    });
+
+    await expect(countAssists(user.id)).resolves.toBe(1);
   });
 
   it("asks a guest who used today's small AI calls to sign up, and still reads words known today", async () => {
@@ -375,6 +533,37 @@ describe(startGoalUnderstanding, () => {
 
       await expect(startGoalUnderstanding({ goal, language: "en" })).resolves.toStrictEqual(first);
       await expect(countDrafts(user.id)).resolves.toBe(1);
+    });
+
+    it("follows the same words only with the same material and choice", async () => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const goal = uniqueGoal("test on Friday");
+
+      const [notes, slides] = await Promise.all([
+        uploadFixture({ title: "Notes", userId: user.id }),
+        uploadFixture({ title: "Slides", userId: user.id }),
+      ]);
+
+      const sent = { goal, language: "en", materialIntent: "exam" as const, sourceIds: [notes.id] };
+      const first = await startGoalUnderstanding(sent);
+
+      await expect(startGoalUnderstanding(sent)).resolves.toStrictEqual(first);
+
+      const withSlides = await startGoalUnderstanding({
+        ...sent,
+        sourceIds: [notes.id, slides.id],
+      });
+
+      const toUnderstand = await startGoalUnderstanding({ ...sent, materialIntent: "understand" });
+      const wordsAlone = await startGoalUnderstanding({ goal, language: "en" });
+
+      const ids = [first, withSlides, toUnderstand, wordsAlone].map(
+        (result) => "draft" in result && result.draft.id,
+      );
+
+      expect(new Set(ids).size).toBe(4);
+      await expect(countDrafts(user.id)).resolves.toBe(4);
     });
 
     it("reads them again once their reading failed, and apart in another language", async () => {

@@ -26,6 +26,7 @@ import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { withPlannableDate } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
+import { readDraftSources } from "./draft-material";
 import { type FoundExam } from "./exam-facts";
 import { getLearnerToday, getUnderstoodAim, toUnderstandingView } from "./understanding-view";
 
@@ -176,7 +177,12 @@ export async function toDraftView({
   const stored =
     draft.status === "understood" ? parseStoredUnderstanding(draft.understanding) : null;
 
-  const [viewer, now] = await Promise.all([readEntitlementViewer(), getRequestInstant()]);
+  const [viewer, now, material] = await Promise.all([
+    readEntitlementViewer(),
+    getRequestInstant(),
+    readDraftSources(draft),
+  ]);
+
   const today = toIsoDate(getDateInTimeZone({ date: now, timeZone: draft.timeZone }));
 
   const understanding = await withDraftCountries({
@@ -195,7 +201,10 @@ export async function toDraftView({
     generationId: draft.runId,
     goalId,
     id: draft.id,
+    materialIntent: draft.materialIntent,
+    materialMissing: material.materialMissing,
     prompt: draft.prompt,
+    sources: material.sources,
     // An unreadable stored understanding must be retried rather than exposed as understood.
     status: draft.status === "understood" && !understanding ? "failed" : draft.status,
     timeZone: draft.timeZone,

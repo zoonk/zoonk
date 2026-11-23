@@ -2,7 +2,11 @@ import { type GoalCreateInput } from "@zoonk/core/goals/contract";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
+import {
+  type SentMaterial,
+  type StartUnderstandingOutcome,
+  type UnderstandingActions,
+} from "../onboarding-actions";
 import { type OnboardingAttempt, linkOnboardingAttempt } from "./attempt-clock";
 
 const EXPLANATION_MINUTES = 5;
@@ -107,12 +111,14 @@ export async function sendGoal({
   attempt,
   goal,
   language,
+  material,
   signal,
   understanding,
 }: {
   attempt?: OnboardingAttempt;
   goal: string;
   language: string;
+  material?: SentMaterial;
   signal?: AbortSignal;
   understanding: Pick<UnderstandingActions, "start">;
 }): Promise<StartUnderstandingOutcome> {
@@ -122,7 +128,7 @@ export async function sendGoal({
   }
 
   const sentAt = attempt?.submittedAt ?? Date.now();
-  const { data } = await safeAsync(() => understanding.start({ goal, language }));
+  const { data } = await safeAsync(() => understanding.start({ goal, language, ...material }));
   const outcome: StartUnderstandingOutcome = data ?? { status: "failed" };
 
   if (attempt && (outcome.status === "started" || outcome.status === "startFailed")) {
