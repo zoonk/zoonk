@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
@@ -180,6 +180,93 @@ test.describe("Testing what you know from the plan", () => {
 
     await expect(page.getByRole("radio", { name: /Quick/u })).toBeVisible();
     await expect(page.getByRole("radio", { name: /Test out of B2/u })).toBeHidden();
+  });
+
+  test("the last part of a language course test keeps its result until Done", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { goal, items, skills } = await languageGoalFixture({ userId: noProgressUser.id });
+    const [first, , last] = skills;
+    const [firstLesson] = items;
+
+    if (!first || !last || !firstLesson) {
+      throw new Error("Expected topics for both test parts");
+    }
+
+    const now = new Date();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: {
+          details: {
+            answered: [...ANSWERED, "placement"],
+            level: "A2",
+            placementTest: {
+              assessmentId: crypto.randomUUID(),
+              attempt: {
+                estimatedMinutes: 1,
+                id: crypto.randomUUID(),
+                length: "wholeCourse",
+                lessonsSkipped: 1,
+                part: 2,
+                partComplete: false,
+                partPrepared: true,
+                partSkillIds: [last.id],
+                partStartedAt: now.toISOString(),
+                remainingSkillIds: [last.id],
+                skillIds: skills.map(({ id }) => id),
+              },
+              finishedParts: [
+                {
+                  knownSkillIds: [first.id],
+                  lessonsSkipped: 1,
+                  part: 1,
+                  testedOutPlanItemIds: [firstLesson.id],
+                },
+              ],
+              result: null,
+            },
+          },
+          planRevealedAt: now,
+        },
+        where: { id: goal.id },
+      }),
+      prisma.planItem.update({
+        data: { completedAt: now, status: "testedOut" },
+        where: { id: firstLesson.id },
+      }),
+      itemFixture({ content: choiceItemContent("What would you say?"), skillId: last.id }),
+      ...["first", "second", "third"].map((copy) =>
+        itemFixture({
+          content: {
+            question: `Put the ${copy} steps in order.`,
+            reason: "In order.",
+            steps: STEPS,
+          },
+          format: "order",
+          skillId: last.id,
+        }),
+      ),
+    ]);
+
+    await page.goto("/placement-test");
+    await page.getByRole("radio", { name: "Right answer" }).click();
+    await confirm(page);
+
+    for (const _ of [1, 2, 3]) {
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await answerRight(page);
+    }
+
+    const done = page.getByRole("button", { exact: true, name: "Done" });
+    await expect(done).toBeEnabled();
+    await expect(page).toHaveURL(/\/placement-test$/u);
+    await done.click();
+    await expect(page).toHaveURL(/\/plan$/u);
+
+    await page.goto("/placement-test");
+    await expect(page).toHaveURL(/\/level-test$/u);
   });
 
   test("a whole-course test picks up where the learner left and stops between parts", async ({
