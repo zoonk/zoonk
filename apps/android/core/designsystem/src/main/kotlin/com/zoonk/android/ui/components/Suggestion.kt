@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 /** A line that opens its content in a sheet (beside nothing), or its content in full (beside the page). */
 enum class SuggestionLayout { Line, Panel }
@@ -202,7 +203,7 @@ fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
 fun SuggestionHeader(text: String) {
     val sheet = LocalPresentation.current == Presentation.Sheet
     val frame = LocalFrame.current
-    val style = if (sheet) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall
+    val style = if (sheet) MaterialTheme.zoonkType.sheetTitle else MaterialTheme.typography.titleSmall
     Text(
         text = text,
         modifier = Modifier.focusRequester(if (sheet) frame.sheetFocus else frame.focus).focusable().semantics { heading() },
