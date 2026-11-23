@@ -3,8 +3,8 @@ import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
 import { createWritingQuoteLookup } from "@zoonk/core/exams/essays/writing-feedback";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { type GradeWritingOutput } from "./task";
-import { type GradeWritingExpected, type GradeWritingInput } from "./test-cases";
 
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
