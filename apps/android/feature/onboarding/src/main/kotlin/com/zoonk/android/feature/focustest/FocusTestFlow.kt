@@ -29,7 +29,6 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.api.models.FocusTestSitting
 import kotlinx.coroutines.launch
 
@@ -199,11 +198,8 @@ private fun ColumnScope.TestQuestion(
         key(question.item.itemId) {
             PlacementQuestion(
                 item = question.item,
-                eyebrow =
-                    factsLine(
-                        name,
-                        stringResource(R.string.focustest_question_number, sitting.answered.toInt() + 1, sitting.questions.toInt()),
-                    ),
+                subject = name,
+                position = stringResource(R.string.focustest_question_number, sitting.answered.toInt() + 1, sitting.questions.toInt()),
                 labels = question.labels,
                 pending = vm.answering,
                 saveFailures = vm.saveFailures,

@@ -50,7 +50,6 @@ import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -263,15 +262,13 @@ internal fun ColumnScope.PlacementTestFlow(
                 key(shown.item.itemId) {
                     PlacementQuestion(
                         item = shown.item,
-                        eyebrow =
-                            factsLine(
-                                subject.labelCase(),
-                                if (shown.attempt.length == PlacementLength.WHOLE_COURSE) {
-                                    stringResource(R.string.placementtest_part, shown.attempt.part.toInt())
-                                } else {
-                                    stringResource(R.string.onboarding_placement_question_number, shown.answered + 1)
-                                },
-                            ),
+                        subject = subject.labelCase(),
+                        position =
+                            if (shown.attempt.length == PlacementLength.WHOLE_COURSE) {
+                                stringResource(R.string.placementtest_part, shown.attempt.part.toInt())
+                            } else {
+                                stringResource(R.string.onboarding_placement_question_number, shown.answered + 1)
+                            },
                         labels = shown.labels,
                         pending = vm.answering,
                         saveFailures = vm.saveFailures,

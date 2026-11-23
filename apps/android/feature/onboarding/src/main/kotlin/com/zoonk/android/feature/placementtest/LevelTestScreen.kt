@@ -47,9 +47,8 @@ import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LevelRangeBar
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf1
@@ -207,7 +206,7 @@ internal fun ColumnScope.LevelResult(
         other =
             if (testOutLevel != null && !walks) {
                 { width ->
-                    TextButton(
+                    OutlinedButton(
                         busy = pressed == Pressed.Other,
                         onClick = { onTestOut(testOutLevel) },
                         modifier = width,
@@ -287,10 +286,12 @@ private fun ColumnScope.TestOutFlow(
                 key(next.itemId) {
                     PlacementQuestion(
                         item = next.recode<LanguageLevelTestOutNext, Question>(),
-                        eyebrow =
-                            factsLine(
-                                stringResource(R.string.placementtest_test_out, test.level.value),
-                                stringResource(R.string.onboarding_test_question_progress, test.answered.toInt() + 1, test.total.toInt()),
+                        subject = stringResource(R.string.placementtest_test_out, test.level.value),
+                        position =
+                            stringResource(
+                                R.string.onboarding_test_question_progress,
+                                test.answered.toInt() + 1,
+                                test.total.toInt(),
                             ),
                         labels = TrueFalseLabels.TRUE_FALSE,
                         pending = vm.answering,

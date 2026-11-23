@@ -37,6 +37,7 @@ import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
@@ -46,6 +47,7 @@ import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 
 @Composable
 internal fun OnboardingHeading(
@@ -68,6 +70,22 @@ internal fun OnboardingHeading(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+    }
+}
+
+/** Main's `OnboardingSubject`: the chip over a test's title, with where the learner is ([position]) at the row's end, never in the chip. */
+@Composable
+internal fun OnboardingSubject(
+    subject: String,
+    position: String? = null,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.weight(1f)) { Eyebrow(subject) }
+        position?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
     }
 }
 

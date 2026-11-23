@@ -146,7 +146,7 @@ class PlacementStepFlowTest {
 
         read.complete(Unit)
 
-        rule.onNodeWithText("Bar exam ·\u00A0Question 1").assertIsDisplayed()
+        rule.onNodeWithText("Question 1").assertIsDisplayed()
     }
 
     @Test

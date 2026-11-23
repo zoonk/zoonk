@@ -47,6 +47,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.feature.placementtest.SetupLengthChoice
 import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
@@ -61,6 +62,7 @@ import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
@@ -70,7 +72,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.TrueFalseLabels
@@ -181,11 +182,8 @@ internal fun ColumnScope.PlacementStep(
                 key(shown.item.itemId) {
                     PlacementQuestion(
                         item = shown.item,
-                        eyebrow =
-                            factsLine(
-                                subject.labelCase(),
-                                stringResource(R.string.onboarding_placement_question_number, shown.number),
-                            ),
+                        subject = subject.labelCase(),
+                        position = stringResource(R.string.onboarding_placement_question_number, shown.number),
                         labels = shown.labels,
                         pending = vm.isSaving,
                         saveFailures = vm.saveFailures,
@@ -336,7 +334,7 @@ private enum class PlacementSender { Confirm, DontKnow, Stop }
 @Composable
 internal fun ColumnScope.PlacementQuestion(
     item: Question,
-    eyebrow: String?,
+    subject: String?,
     labels: TrueFalseLabels,
     pending: Boolean,
     saveFailures: Int,
@@ -348,6 +346,8 @@ internal fun ColumnScope.PlacementQuestion(
     stopLabel: String = stringResource(R.string.onboarding_placement_stop),
     /** Said right above Stop, when stopping is worth suggesting. */
     stopHint: String? = null,
+    /** Where the question sits, at the end of [subject]'s row, such as "Question 2" or a whole-course test's part. */
+    position: String? = null,
     media: @Composable () -> Unit = {},
 ) {
     var draftJson by rememberSaveable { mutableStateOf<String?>(null) }
@@ -367,7 +367,7 @@ internal fun ColumnScope.PlacementQuestion(
     QuestionPages(
         questionId = item.itemId,
         read = {
-            eyebrow?.let { Eyebrow(it) }
+            subject?.let { OnboardingSubject(it, position) }
             media()
             item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
             item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
@@ -393,9 +393,8 @@ internal fun ColumnScope.PlacementQuestion(
                 stopHint?.let {
                     Text(
                         text = it,
-                        modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -407,7 +406,7 @@ internal fun ColumnScope.PlacementQuestion(
                     busy = pending && sender == PlacementSender.Stop,
                     enabled = !pending,
                     focusableWhenDisabled = pending,
-                    modifier = Modifier.fillMaxWidth(),
+                    edge = ButtonEdge.Start,
                 ) {
                     Text(stopLabel)
                 }

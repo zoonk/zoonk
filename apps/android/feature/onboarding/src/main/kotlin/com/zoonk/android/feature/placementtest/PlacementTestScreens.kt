@@ -31,7 +31,6 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -166,7 +165,7 @@ internal fun ColumnScope.BetweenParts(
             undo = undo,
             other = { width ->
                 if (!inSetup) {
-                    TextButton(
+                    OutlinedButton(
                         onClick = onFinishForToday,
                         modifier = width,
                         enabled = pressed == null && undo?.saving != true,

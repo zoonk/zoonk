@@ -330,7 +330,7 @@ private fun ColumnScope.TestQuestion(
                 select = Select.All.takeIf { shown.confirmation },
                 context = question.passage.takeUnless { listening },
             ),
-        eyebrow = null,
+        subject = null,
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = vm.isSaving,
         saveFailures = vm.saveFailures,

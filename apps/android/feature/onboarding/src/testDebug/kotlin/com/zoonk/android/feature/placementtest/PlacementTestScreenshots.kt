@@ -258,7 +258,8 @@ class PlacementTestScreenshots(
         select: Select? = null,
     ) = PlacementQuestion(
         item = Question("item-1", format, question, options = options, select = select, left = left, right = right),
-        eyebrow = "Contract law · Part 1",
+        subject = "Contract law",
+        position = "Part 1",
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = false,
         saveFailures = 0,
