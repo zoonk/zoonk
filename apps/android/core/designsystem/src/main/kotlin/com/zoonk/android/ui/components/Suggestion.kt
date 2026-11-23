@@ -216,12 +216,12 @@ fun SuggestionDescription(
     text: String,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    Text(text = text, style = bodyStyle(), color = color)
+    Text(text = text, style = descriptionStyle(), color = color)
 }
 
 @Composable
 fun SuggestionDescription(text: AnnotatedString) {
-    Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(text = text, style = descriptionStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 /** On a [SuggestionCard], what focus moves to once the answer replaces the controls. */
@@ -373,13 +373,7 @@ private fun SuggestionLine(
                             fontWeight = FontWeight.Medium,
                             color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         )
-                        description?.let {
-                            Text(
-                                it,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        description?.let { SuggestionDescription(it) }
                     }
                 },
                 // The line's actions are one group, beside the summary or under it together.
@@ -493,6 +487,15 @@ private fun frameBorder() = BorderStroke(1.dp, MaterialTheme.colorScheme.outline
 @Composable
 private fun bodyStyle() =
     if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
+
+/** Main's `SuggestionDescription`: a line's size in its line, reading size in its sheet, a row description's on the page. */
+@Composable
+private fun descriptionStyle() =
+    when (LocalPresentation.current) {
+        Presentation.Line -> MaterialTheme.zoonkType.compact
+        Presentation.Sheet -> MaterialTheme.zoonkType.sheetText
+        Presentation.Panel, Presentation.Card -> MaterialTheme.typography.bodySmall
+    }
 
 private enum class Presentation { Line, Panel, Card, Sheet }
 
