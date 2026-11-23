@@ -126,27 +126,18 @@ private fun placementTestLine(test: PlanPlacementTest): String {
             stringResource(R.string.placementtest_time_left, formatMinutes(minutes.toInt(), locale)),
         )
     }
-    finishedAt ?: return stringResource(if (test.isLanguage) R.string.placementtest_find_level else R.string.placementtest_skip_lessons)
-    val result =
-        when (test) {
-            is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
-                listOf(
-                    lessonsSkippedLine(
-                        test.value.result
-                            ?.lessonsSkipped
-                            ?.toInt() ?: 0,
-                    ),
-                )
-            }
-
-            is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
-                test.value.result
-                    ?.ranges
-                    ?.let { levelRangeFacts(it) }
-                    .orEmpty()
-            }
-        }
-    return (result + formatMomentDay(finishedAt, locale)).factsLine()
+    if (test !is PlanPlacementTest.PlanPlacementTestOneOfValue) {
+        return stringResource(R.string.placementtest_find_level)
+    }
+    finishedAt ?: return stringResource(R.string.placementtest_skip_lessons)
+    return factsLine(
+        lessonsSkippedLine(
+            test.value.result
+                ?.lessonsSkipped
+                ?.toInt() ?: 0,
+        ),
+        formatMomentDay(finishedAt, locale),
+    )
 }
 
 val PlanPlacementTest.isLanguage: Boolean get() = this is PlanPlacementTest.PlanPlacementTestOneOf1Value

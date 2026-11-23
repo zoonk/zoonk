@@ -213,14 +213,23 @@ final class PlacementTestRenderTests: XCTestCase {
       dailyMinutes: 30, id: goalID, kind: .language, language: "en", status: .active,
       targetDate: nil, displayName: "English", title: "English")
     let context = PlanContext(goal: goal, plan: plan, adjust: { _ in }, show: { _ in })
+    let row = try XCTUnwrap(PlanTestRow(goalId: goalID, plan: plan))
     try await capture(
-      "plan-skill-ranges", title: "English level", detail: "Reading B1–B2 · Listening A2–B1",
+      "plan-skill-ranges", title: "English level", detail: "Find your level and skip what you know",
       absent: ["B2+ → C1"]
     ) {
       ZoonkList {
         PlanNumbersSection(context: context, syllabus: nil)
+        row
       }
       .environment(store)
+    }
+    try await capture(
+      "language-result-ranges", title: "Your English level", detail: "Reading B1–B2"
+    ) {
+      LanguageTestResultView(
+        length: .quick, result: result, targetLanguage: "en", testOutLevel: "B2",
+        pressed: nil, failed: false, onContinue: {}, onTestOut: {})
     }
   }
 

@@ -82,23 +82,22 @@ enum PlacementTestCopy {
       ]
     }
 
-    guard test.state == .result, let result = test.result else {
+    if test.kind == .language {
       return [
-        test.kind == .language
-          ? String(
-            localized: "Find your level and skip what you know", table: "Onboarding",
-            comment: "The level test's line on a language plan before it's taken")
-          : String(
-            localized: "Skip lessons you already know", table: "Onboarding",
-            comment: "The test's line on a plan before it's taken")
+        String(
+          localized: "Find your level and skip what you know", table: "Onboarding",
+          comment: "The level test's line on a language plan")
       ]
     }
 
-    let found =
-      test.kind == .language
-      ? rangeFacts(result.skillRanges)
-      : [lessonsSkipped(result.lessonsSkipped)]
+    guard test.state == .result, let result = test.result else {
+      return [
+        String(
+          localized: "Skip lessons you already know", table: "Onboarding",
+          comment: "The test's line on a plan before it's taken")
+      ]
+    }
 
-    return found + [PlanDate.moment(result.finishedAt)]
+    return [lessonsSkipped(result.lessonsSkipped), PlanDate.moment(result.finishedAt)]
   }
 }

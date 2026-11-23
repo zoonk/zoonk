@@ -244,7 +244,7 @@ private fun standingNumber(
 
         is Standing.Language -> {
             val level = standing.progress.level.takeIf { assessment == null }
-            val ranges = assessment?.let { levelRangeFacts(it.ranges).joinToString(" · ") }
+            val ranges = assessment?.let { levelRangeFacts(it.ranges).joinToString("\n") }
             PlanNumber(
                 label = stringResource(R.string.plan_level, languageName(standing.progress.goal.targetLanguage, locale)),
                 value = ranges?.takeIf(String::isNotEmpty) ?: level?.label ?: stringResource(R.string.plan_not_yet),

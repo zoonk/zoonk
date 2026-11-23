@@ -11,7 +11,6 @@ import {
 import { FactSegments } from "../_components/task-meta";
 import { useFormatMomentDate } from "../_utils/iso-date";
 import { useTestTime } from "../focus-test/use-focus-test-texts";
-import { useLevelRangeFacts } from "../language/level-test/level-test-parts";
 import { usePlanScreen } from "./plan-context";
 import { useSkippedLessonsSentences } from "./use-skipped-lessons-sentences";
 
@@ -21,7 +20,6 @@ function useRowFacts() {
   const t = useExtracted();
   const time = useTestTime();
   const formatDate = useFormatMomentDate();
-  const languageFacts = useLevelRangeFacts();
   const { skipped } = useSkippedLessonsSentences();
 
   return (test: PlacementTestRow): string[] => {
@@ -29,21 +27,15 @@ function useRowFacts() {
       return [t("In progress"), time.left(test.estimatedMinutes)];
     }
 
-    if (test.state === "start" || !test.result) {
-      return [
-        test.kind === "language"
-          ? t("Find your level and skip what you know")
-          : t("Skip lessons you already know"),
-      ];
-    }
-
-    const date = formatDate(test.result.finishedAt);
-
     if (test.kind === "language") {
-      return [...languageFacts(test.result.ranges), date];
+      return [t("Find your level and skip what you know")];
     }
 
-    return [skipped(test.result.lessonsSkipped), date];
+    if (test.state === "start" || !test.result) {
+      return [t("Skip lessons you already know")];
+    }
+
+    return [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)];
   };
 }
 

@@ -383,13 +383,7 @@ struct PlanNumbersSection: View {
     Button(action: open) {
       StatTile(
         label: Text(number.label),
-        value: Group {
-          if number.rangeFacts.isEmpty {
-            number.value
-          } else {
-            FactSegments(number.rangeFacts)
-          }
-        },
+        value: number.value,
         icon: { EmptyView() },
         detail: number.detail.map {
           Text($0).foregroundStyle(
@@ -397,7 +391,7 @@ struct PlanNumbersSection: View {
         },
         meter: number.share,
         meterFill: .success,
-        spokenValue: number.value
+        spokenValue: number.spokenValue ?? number.value
       )
       .contentShape(.rect)
     }
@@ -440,7 +434,7 @@ struct PlanNumbersSection: View {
         return PlanNumber(
           label: language.levelTitle,
           value: Text(verbatim: language.levelText(ranges: facts)),
-          rangeFacts: facts)
+          spokenValue: facts.isEmpty ? nil : Text(verbatim: facts.joined(separator: " · ")))
       }
 
       return PlanNumber(
@@ -504,7 +498,7 @@ private struct PlanNumber {
   var detailIsGain = false
   /// From 0 to 1.
   var share: Double?
-  var rangeFacts: [String] = []
+  var spokenValue: Text?
 }
 
 /// A paused goal rests unless its plan is already over or its date passed.

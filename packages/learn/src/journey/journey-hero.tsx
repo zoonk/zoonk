@@ -11,7 +11,6 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
-import { FactSegments } from "../_components/task-meta";
 import { useFormatProgressShare, useFormatShare } from "../_utils/percent";
 import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
@@ -112,14 +111,27 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const result = placementTest?.kind === "language" ? placementTest.result : null;
   const ranges = result ? formatRanges(result.ranges) : [];
 
+  const notYet = t("Not yet");
+
+  const rangeReadout =
+    ranges.length > 0 ? (
+      <span className="grid">
+        {ranges.map((range) => (
+          <span key={range}>{range}</span>
+        ))}
+      </span>
+    ) : (
+      notYet
+    );
+
   return {
     detail: null,
     label: t("{language} level", { language: languageName(goal.targetLanguage) }),
     numeric: !result && level !== null,
     value: result ? (
-      (ranges.length > 0 && <FactSegments facts={ranges} />) || t("Not yet")
+      rangeReadout
     ) : (
-      <LevelValue label={level?.label ?? t("Not yet")} target={level?.target ?? null} />
+      <LevelValue label={level?.label ?? notYet} target={level?.target ?? null} />
     ),
   };
 }

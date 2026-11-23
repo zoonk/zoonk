@@ -23,7 +23,7 @@ extension LanguageStanding {
 
   func levelText(ranges: [String]? = nil) -> String {
     if let ranges {
-      return ranges.isEmpty ? noLevelYet : ranges.joined(separator: " · ")
+      return ranges.isEmpty ? noLevelYet : ranges.joined(separator: "\n")
     }
 
     guard let level else { return noLevelYet }
