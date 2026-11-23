@@ -230,7 +230,10 @@ export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
     ? Object.fromEntries(
         Object.entries(answer).filter(
           ([key]) =>
-            key !== "fixedMistakeIds" && key !== "practiceMistakeId" && key !== "placementRecheck",
+            key !== "fixedMistakeIds" &&
+            key !== "practiceMistakeId" &&
+            key !== "placementRecheck" &&
+            key !== "passedOverMiss",
         ),
       )
     : answer;

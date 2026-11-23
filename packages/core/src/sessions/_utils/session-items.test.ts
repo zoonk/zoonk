@@ -118,6 +118,18 @@ function readNumbers(question: string) {
   return { discount, paid: price * (1 - discount / 100), price, saved: (price * discount) / 100 };
 }
 
+describe(readRecordedAnswer, () => {
+  it("keeps a blank or incorrect answer when a miss reopens passed-over lessons", () => {
+    expect(readRecordedAnswer({ dontKnow: true, passedOverMiss: true })).toStrictEqual({
+      dontKnow: true,
+    });
+
+    expect(readRecordedAnswer({ isTrue: false, passedOverMiss: true })).toStrictEqual({
+      isTrue: false,
+    });
+  });
+});
+
 describe("math problems in a block", () => {
   it("shows the same numbers on every visit to a block and new ones in other blocks", () => {
     const item = parseMath();
