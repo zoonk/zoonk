@@ -104,14 +104,7 @@ export function publishedCase({
   expected: Partial<Omit<GradeWritingExpected, "source">>;
 }): WritingCase {
   return {
-    expected: {
-      earned: [],
-      feedbackLanguage: "pt",
-      languageErrors: [],
-      zero: false,
-      ...expected,
-      source,
-    },
+    expected: { earned: [], feedbackLanguage: "pt", zero: false, ...expected, source },
     id: `${id}-pt`,
     language: "pt",
     userInput,

@@ -669,7 +669,6 @@ function historyCase(
   return publishedCase({
     expected: {
       earned,
-      languageErrors: undefined,
       officialContent: total,
       officialTotal: total,
       passBoundary: passBoundary(otherAnswers),
@@ -904,7 +903,6 @@ function languageCase({
 
   const expected: Partial<GradeWritingExpected> = {
     earned: fullContent ? indexes(baseline + 1) : [baseline],
-    languageErrors: undefined,
     officialContent: content + (essay ? 25 : 15),
     officialErrorCount: errors,
     officialTotal: total,
