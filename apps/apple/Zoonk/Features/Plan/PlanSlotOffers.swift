@@ -8,8 +8,8 @@ struct PlanSlotActions {
 }
 
 /// A suggestion's card: its mark and title, at most one line under it, what it holds, then its
-/// buttons in one row, the main one last. In the suggestion's sheet its buttons are the sheet's
-/// bottom bar.
+/// buttons in one row, ordered by `SuggestionActions`. In the suggestion's sheet its buttons are the
+/// sheet's bottom bar.
 struct PlanSlotCard<Content: View, Actions: View>: View {
   @Environment(\.isInSuggestionSheet) private var isInSheet
   @Environment(\.suggestionSheetNote) private var sheetNote
@@ -116,16 +116,18 @@ private struct PlanSlotAskedCard: View {
       PlanEffectDiff(
         effect: asked.effect, today: context.plan.today, options: context.changeOptions)
     } actions: {
-      Button(action: actions.notNow) {
-        Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
+      SuggestionActions {
+        Button {
+          actions.apply(asked.edits)
+        } label: {
+          Text("Change my plan", tableName: "Plan", comment: "Applies a proposed plan change")
+        }
+        .mainActionUnlessBarHoldsOne()
+      } other: {
+        Button(action: actions.notNow) {
+          Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
+        }
       }
-
-      Button {
-        actions.apply(asked.edits)
-      } label: {
-        Text("Change my plan", tableName: "Plan", comment: "Applies a proposed plan change")
-      }
-      .mainActionUnlessBarHoldsOne()
     }
   }
 }
@@ -226,19 +228,7 @@ struct PlanPastDateSlot: View {
         }
       } actions: {
         if check.noDate {
-          Button(action: actions.notNow) {
-            Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
-          }
-
-          Button {
-            context.adjust(.top)
-          } label: {
-            Text(
-              "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
-          }
-          .mainActionUnlessBarHoldsOne()
-        } else {
-          PlanOtherOptions {
+          SuggestionActions {
             Button {
               context.adjust(.top)
             } label: {
@@ -246,20 +236,37 @@ struct PlanPastDateSlot: View {
                 "Adjust plan", tableName: "Plan",
                 comment: "Opens the plan's settings to change them")
             }
-
+            .mainActionUnlessBarHoldsOne()
+          } other: {
             Button(action: actions.notNow) {
               Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
             }
           }
+        } else {
+          SuggestionActions {
+            BusyButton(isBusy: check.isWorking) {
+              check.run { await findDate() }
+            } label: {
+              Text(
+                "Find a date", tableName: "Plan",
+                comment: "Works out the later end date that fits the lessons left")
+            }
+            .mainActionUnlessBarHoldsOne()
+          } other: {
+            PlanOtherOptions {
+              Button {
+                context.adjust(.top)
+              } label: {
+                Text(
+                  "Adjust plan", tableName: "Plan",
+                  comment: "Opens the plan's settings to change them")
+              }
 
-          BusyButton(isBusy: check.isWorking) {
-            check.run { await findDate() }
-          } label: {
-            Text(
-              "Find a date", tableName: "Plan",
-              comment: "Works out the later end date that fits the lessons left")
+              Button(action: actions.notNow) {
+                Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
+              }
+            }
           }
-          .mainActionUnlessBarHoldsOne()
         }
       }
     }
@@ -360,16 +367,18 @@ struct PlanCoverageSlot: View {
           .typeStyle(.note)
         }
       } actions: {
-        otherOptions
-
-        BusyButton(isBusy: check.isWorking) {
-          check.run { await seeChanges() }
-        } label: {
-          Text(
-            "See what changes", tableName: "Plan",
-            comment: "Shows what the suggested time a day changes in the plan, before it applies")
+        SuggestionActions {
+          BusyButton(isBusy: check.isWorking) {
+            check.run { await seeChanges() }
+          } label: {
+            Text(
+              "See what changes", tableName: "Plan",
+              comment: "Shows what the suggested time a day changes in the plan, before it applies")
+          }
+          .mainActionUnlessBarHoldsOne()
+        } other: {
+          otherOptions
         }
-        .mainActionUnlessBarHoldsOne()
       }
     }
   }
@@ -565,18 +574,20 @@ struct PlanOfferSlot: View {
         SuggestionSaveError()
       }
     } actions: {
-      Button(action: actions.notNow) {
-        Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
+      SuggestionActions {
+        BusyButton(isBusy: check.isWorking) {
+          check.run { await add() }
+        } label: {
+          Text(
+            "Add to plan", tableName: "Plan",
+            comment: "Brings into the plan the lessons the learner's time fits")
+        }
+        .mainActionUnlessBarHoldsOne()
+      } other: {
+        Button(action: actions.notNow) {
+          Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
+        }
       }
-
-      BusyButton(isBusy: check.isWorking) {
-        check.run { await add() }
-      } label: {
-        Text(
-          "Add to plan", tableName: "Plan",
-          comment: "Brings into the plan the lessons the learner's time fits")
-      }
-      .mainActionUnlessBarHoldsOne()
     }
   }
 

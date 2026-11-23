@@ -177,6 +177,26 @@ extension SuggestionOpen where Actions == EmptyView {
   }
 }
 
+/// Main's `SuggestionActions`: a suggestion's answers by role. On the page they start with the main
+/// one, right after the question; its sheet ends with it, as every sheet's bar does.
+struct SuggestionActions<Main: View, Other: View>: View {
+  @Environment(\.isInSuggestionSheet) private var isInSheet
+
+  @ViewBuilder let main: Main
+  /// The other answer, or "Other options".
+  @ViewBuilder let other: Other
+
+  var body: some View {
+    if isInSheet {
+      other
+      main
+    } else {
+      main
+      other
+    }
+  }
+}
+
 extension EnvironmentValues {
   /// Inside a suggestion's sheet, where a suggestion's card draws the whole `SuggestionSheetBody`.
   @Entry var isInSuggestionSheet = false

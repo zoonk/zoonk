@@ -88,17 +88,96 @@ final class PlanSlotCheckTests: XCTestCase {
     XCTAssertEqual(context.slotCheck(.coverage).asked?.edits, [.dailyMinutes(60)])
   }
 
+  /// On the page a suggestion's answers start with its main one, right after the question, as
+  /// web's and Android's do: "See what changes" before "Other options", then "Change my plan"
+  /// before "Not now".
+  func testTheSuggestedTimeCardLeadsWithItsMainAnswer() async throws {
+    let api = PlanAPIStub()
+    await api.setPreview(
+      PlanChangePreview(
+        effect: try fitOffer().effect, feasibility: nil, finishDate: nil, ready: true,
+        unchanged: false))
+    let context = try context(plan: goalPlanFixture(targetDate: "2027-06-01"))
+    try await readsWhatVoiceOverReads()
+    let window = try show(coverageCard(context, api: api))
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+
+    try assertOrder(
+      String(localized: "See what changes", table: "Plan"),
+      before: String(localized: "Other options", table: "Plan"), in: window)
+
+    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await waitForTestCondition("The card did not preview the suggested time") {
+      self.spoken(in: window).contains(String(localized: "Change my plan", table: "Plan"))
+    }
+
+    try assertOrder(
+      String(localized: "Change my plan", table: "Plan"),
+      before: String(localized: "Not now", table: "Plan"), in: window)
+  }
+
+  /// In the suggestion's sheet its answers end with the main one, as every sheet's bar does.
+  func testASuggestionsSheetEndsWithItsMainAnswer() async throws {
+    let api = PlanAPIStub()
+    await api.setPreview(
+      PlanChangePreview(
+        effect: try fitOffer().effect, feasibility: nil, finishDate: nil, ready: true,
+        unchanged: false))
+    let context = try context(plan: goalPlanFixture(targetDate: "2027-06-01"))
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      coverageCard(context, api: api).environment(\.isInSuggestionSheet, true))
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+
+    try assertOrder(
+      String(localized: "Other options", table: "Plan"),
+      before: String(localized: "See what changes", table: "Plan"), in: window)
+  }
+
   // MARK: Helpers
 
   private func context(kind: LearnerGoal.Kind = .exam, plan: GoalPlan? = nil) throws
     -> PlanContext
   {
     PlanContext(
-      goal: LearnerGoal(
-        dailyMinutes: 30, id: "goal", kind: kind, language: "en", status: .active,
-        targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
-      plan: try plan ?? goalPlanFixture(), adjust: { _ in }, show: { _ in },
-      slotChecks: PlanSlotChecks())
+      goal: Self.goal(kind: kind), plan: try plan ?? goalPlanFixture(), adjust: { _ in },
+      show: { _ in }, slotChecks: PlanSlotChecks())
+  }
+
+  private static func goal(kind: LearnerGoal.Kind) -> LearnerGoal {
+    LearnerGoal(
+      dailyMinutes: 30, id: "goal", kind: kind, language: "en", status: .active,
+      targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM")
+  }
+
+  /// The exam's suggested time card, 1 hr a day covering everything by its date.
+  private func coverageCard(_ context: PlanContext, api: PlanAPIStub) -> some View {
+    let session = SessionStore.preview(account: .planTestAccount)
+
+    return List {
+      PlanCoverageSlot(
+        context: context, suggested: .init(kind: .everything, minutes: 60, split: nil),
+        actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+    }
+    .environment(PlanStore(api: api, cache: AppCache(session: session)))
+    .environment(session)
+    .environment(AppRouter())
+    .zoonkStyles()
+  }
+
+  /// `first` comes before `second` in the order VoiceOver reads, which is the row's.
+  private func assertOrder(
+    _ first: String, before second: String, in window: UIWindow,
+    file: StaticString = #filePath, line: UInt = #line
+  ) throws {
+    let spoken = spoken(in: window)
+    let firstIndex = try XCTUnwrap(
+      spoken.firstIndex(of: first), "\(spoken)", file: file, line: line)
+    let secondIndex = try XCTUnwrap(
+      spoken.firstIndex(of: second), "\(spoken)", file: file, line: line)
+    XCTAssertLessThan(firstIndex, secondIndex, "\(spoken)", file: file, line: line)
   }
 
   private func fitOffer() throws -> GoalPlan.Offer {
