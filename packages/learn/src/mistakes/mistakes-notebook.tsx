@@ -145,11 +145,13 @@ function NotebookTabs({
 function MistakesInbox({
   groups,
   hrefs,
+  openLesson,
   tomorrowOnPage,
   trueFalseLabels,
 }: {
   groups: MistakeEntry[][];
   hrefs: MistakesHrefs;
+  openLesson: (mistakeId: string) => Promise<boolean>;
   tomorrowOnPage: boolean;
   trueFalseLabels: Notebook["trueFalseLabels"];
 }) {
@@ -213,6 +215,7 @@ function MistakesInbox({
                     key={mistake.id}
                     links={getMistakeEntryLinks({ hrefs, mistake })}
                     mistake={mistake}
+                    openLesson={openLesson}
                     tomorrowOnPage={tomorrowOnPage}
                     trueFalseLabels={trueFalseLabels}
                   />
@@ -251,11 +254,13 @@ export function MistakesNotebook({
   filters,
   hrefs,
   notebook,
+  openLesson,
   pattern,
 }: {
   filters: MistakesFilters;
   hrefs: MistakesHrefs;
   notebook: Notebook;
+  openLesson: (mistakeId: string) => Promise<boolean>;
   pattern: NoticedPattern | null;
 }) {
   const t = useExtracted();
@@ -288,6 +293,7 @@ export function MistakesNotebook({
               <MistakesInbox
                 groups={groups}
                 hrefs={hrefs}
+                openLesson={openLesson}
                 tomorrowOnPage={notebook.availability.ready === 0}
                 trueFalseLabels={notebook.trueFalseLabels}
               />
