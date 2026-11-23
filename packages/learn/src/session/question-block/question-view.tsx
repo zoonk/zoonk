@@ -52,7 +52,7 @@ function getTrueFalseResult(result: QuestionResult | null): TrueFalseResult | nu
 }
 
 function getOrderResult(result: QuestionResult | null): OrderResult | null {
-  if (!result || !("order" in result.answer)) {
+  if (!result) {
     return null;
   }
 
@@ -60,7 +60,7 @@ function getOrderResult(result: QuestionResult | null): OrderResult | null {
 
   return {
     correctOrder: correct && "order" in correct ? correct.order : [],
-    order: result.answer.order,
+    order: "order" in result.answer ? result.answer.order : null,
   };
 }
 

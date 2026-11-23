@@ -414,8 +414,9 @@ struct OrderItemView: View {
 
   var body: some View {
     let steps = question.options
-    if let result {
-      let placed: [Int] = if case .order(let order) = result.answer { order } else { [] }
+    if result != nil || isLocked {
+      let answer = result?.answer ?? question.answerToSubmit(draft)
+      let placed: [Int] = if case .order(let order) = answer { order } else { [] }
 
       VStack(alignment: .leading, spacing: 8) {
         ForEach(placed.isEmpty ? Array(steps.indices) : placed, id: \.self) { index in
@@ -434,11 +435,8 @@ struct OrderItemView: View {
       OrderSteps(
         order: order, selectedId: $selectedId,
         text: { steps.indices.contains($0) ? steps[$0] : nil },
-        onReorder: { moved in
-          if !isLocked { draft = .order(moved) }
-        }
+        onReorder: { draft = .order($0) }
       )
-      .disabled(isLocked)
     }
   }
 
