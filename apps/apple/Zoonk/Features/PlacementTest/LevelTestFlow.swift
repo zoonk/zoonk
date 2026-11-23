@@ -2,6 +2,8 @@ import SwiftUI
 
 /// What a language course's test taken from the plan shows. Main's `useLanguagePlanTest` phases.
 enum LanguageTestPhase: Equatable {
+  enum Completion { case levelTest, testOut }
+
   case loading
   case loadFailed
   case choose
@@ -9,7 +11,7 @@ enum LanguageTestPhase: Equatable {
   case preparing(attemptID: String, generationID: String?)
   case question(
     attemptID: String, LevelTest.Question, selectsAll: Bool, number: Int, progress: Double)
-  case finish(attemptID: String)
+  case finish(attemptID: String, completion: Completion = .levelTest)
   case result(length: PlacementLength, PlacementTestResult?)
   /// A level's test-out whose questions are still being written.
   case testOutPreparing(LevelTestOut)
@@ -55,6 +57,8 @@ enum LanguageTestPhase: Equatable {
       next.question.format != .numeric
     {
       self = .testOut(testOut, next.question)
+    } else if testOut.next == nil, testOut.result == nil, testOut.total > 0 {
+      self = .finish(attemptID: testOut.attemptId, completion: .testOut)
     } else {
       self = .testOutResult(testOut)
     }
@@ -140,12 +144,15 @@ struct LevelTestFlow: View {
       .id(question.id)
       .onAppear { shownAt = .now }
       .task(id: question.id) { await waitForAudio(question, attemptID: attemptID) }
-    case .finish(let attemptID):
+    case .finish(let attemptID, let completion):
       TestOutcome(
         title: Text("Your answers are saved", tableName: "Onboarding"),
+        failureMessage: completion == .testOut
+          ? LocalizedStringResource("That didn't go through. Try again in a moment.", table: "Plan")
+          : nil,
         isSaving: pressed != nil, failed: failed
       ) {
-        save(.main) { try await finish(attemptID) }
+        save(.main) { try await finish(attemptID, completion: completion) }
       }
     case .result(let length, let result):
       LanguageTestResultView(
@@ -394,10 +401,18 @@ struct LevelTestFlow: View {
     }
   }
 
-  private func finish(_ attemptID: String) async throws {
-    let result = try await store.finishLanguageTest(goalID: goalID, attemptID: attemptID)
-    undoRequest.leave()
-    phase = .result(length: length, result)
+  private func finish(
+    _ attemptID: String, completion: LanguageTestPhase.Completion = .levelTest
+  ) async throws {
+    switch completion {
+    case .levelTest:
+      let result = try await store.finishLanguageTest(goalID: goalID, attemptID: attemptID)
+      undoRequest.leave()
+      phase = .result(length: length, result)
+    case .testOut:
+      phase = LanguageTestPhase(
+        testOut: try await store.finishLevelTestOut(goalID: goalID, attemptID: attemptID))
+    }
   }
 
   /// The whole-course test's walk through the course's topics, from its first part.
@@ -471,15 +486,13 @@ struct LevelTestFlow: View {
         let answered = try await store.answerLevelTestOut(
           goalID: goalID, attemptID: view.attemptId, itemID: question.itemId, answer: answer,
           duration: .milliseconds(sent.durationMs))
-        // A test-out that asks nothing more closes in the same save. If closing fails, the
-        // question stays with its save error, and sending it again closes the test.
-        let shown =
-          answered.next == nil
-          ? try await store.finishLevelTestOut(goalID: goalID, attemptID: view.attemptId)
-          : answered
         answerFailures = 0
         failedAnswer = nil
-        phase = LanguageTestPhase(testOut: shown)
+        phase = LanguageTestPhase(testOut: answered)
+        if case .finish(let attemptID, let completion) = phase {
+          isAnswering = false
+          save(.main) { try await finish(attemptID, completion: completion) }
+        }
       } catch is CancellationError {
       } catch {
         failedAnswer = sent
@@ -499,9 +512,8 @@ struct LevelTestFlow: View {
       defer { isAnswering = false }
 
       do {
-        let finished = try await store.finishLevelTestOut(goalID: goalID, attemptID: view.attemptId)
+        try await finish(view.attemptId, completion: .testOut)
         answerFailures = 0
-        phase = .testOutResult(finished)
       } catch is CancellationError {
       } catch {
         answerFailures += 1

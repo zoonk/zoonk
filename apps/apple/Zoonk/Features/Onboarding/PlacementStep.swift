@@ -375,6 +375,7 @@ struct TestOutcome<Lead: View>: View {
   var description: Text?
   var continueLabel: Text?
   var undo: PlacementResultUndo?
+  var failureMessage: LocalizedStringResource?
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
@@ -386,7 +387,10 @@ struct TestOutcome<Lead: View>: View {
 
       lead()
     }
-    .bottomBar(note: undo?.failure ?? (failed && !isSaving ? BarNote(testSaveFailure) : nil)) {
+    .bottomBar(
+      note: undo?.failure
+        ?? (failed && !isSaving ? BarNote(failureMessage ?? testSaveFailure) : nil)
+    ) {
       undo?.button
       StepButtons(continueLabel: continueLabel, onContinue: onContinue)
     }
@@ -398,12 +402,13 @@ struct TestOutcome<Lead: View>: View {
 extension TestOutcome where Lead == EmptyView {
   init(
     subject: String? = nil, title: Text, description: Text? = nil, continueLabel: Text? = nil,
-    undo: PlacementResultUndo? = nil,
+    undo: PlacementResultUndo? = nil, failureMessage: LocalizedStringResource? = nil,
     isSaving: Bool, failed: Bool, onContinue: @escaping () -> Void
   ) {
     self.init(
       subject: subject, title: title, description: description, continueLabel: continueLabel,
-      undo: undo, isSaving: isSaving, failed: failed, onContinue: onContinue, lead: { EmptyView() })
+      undo: undo, failureMessage: failureMessage, isSaving: isSaving, failed: failed,
+      onContinue: onContinue, lead: { EmptyView() })
   }
 }
 

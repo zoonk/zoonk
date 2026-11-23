@@ -63,6 +63,27 @@ final class PlacementTestPhaseTests: XCTestCase {
         changeId: "change-2", changeLessons: 12, heldUntilTomorrow: true))
   }
 
+  func testAnExhaustedLevelTestOutWaitsForItsResult() {
+    let pending = levelTestOut(total: 8)
+    XCTAssertEqual(
+      LanguageTestPhase(testOut: pending),
+      .finish(attemptID: pending.attemptId, completion: .testOut))
+  }
+
+  func testAnEmptyLevelTestOutAndASavedOutcomeAreTerminal() {
+    let empty = levelTestOut(total: 0)
+    let saved = levelTestOut(
+      total: 8, result: .init(changeId: nil, finishedAt: .now, lessonsSkipped: 0))
+    XCTAssertEqual(LanguageTestPhase(testOut: empty), .testOutResult(empty))
+    XCTAssertEqual(LanguageTestPhase(testOut: saved), .testOutResult(saved))
+  }
+
+  private func levelTestOut(total: Int, result: LevelTestOut.Result? = nil) -> LevelTestOut {
+    LevelTestOut(
+      answered: total, attemptId: "a1", level: "B2", next: nil, preparing: false,
+      result: result, total: total)
+  }
+
   private func attempt(part: Int = 1, partComplete: Bool = false) -> PlacementAttempt {
     PlacementAttempt(
       estimatedMinutes: 12, id: "a1", length: .wholeCourse, part: part, partComplete: partComplete)

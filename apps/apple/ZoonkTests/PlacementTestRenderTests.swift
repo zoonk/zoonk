@@ -310,11 +310,6 @@ final class PlacementTestRenderTests: XCTestCase {
         disabled: false))
   }
 
-  /// What VoiceOver reads as values, such as a meter's level.
-  private func spokenValues(in element: Any) -> [String] {
-    accessibilityElements(in: element).compactMap(\.accessibilityValue).filter { !$0.isEmpty }
-  }
-
   private func capture(
     _ name: String, title: String, detail: String, absent: [String] = [],
     @ViewBuilder content: () -> some View
