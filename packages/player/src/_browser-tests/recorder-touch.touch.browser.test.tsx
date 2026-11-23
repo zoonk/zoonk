@@ -25,6 +25,8 @@ describe("recording by touch", () => {
     });
 
     const record = page.getByRole("button", { exact: true, name: "Record" });
+    // Chromium needs a completed gesture to run the Web Audio microphone fixture.
+    await page.getByRole("heading", { name: "The electron is a cloud" }).click();
     await holdFinger(record);
     await expect.poll(() => microphone.mock.calls.length).toBe(1);
     await liftFinger();
