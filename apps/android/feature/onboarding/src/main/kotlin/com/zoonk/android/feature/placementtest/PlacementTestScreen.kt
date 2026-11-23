@@ -15,11 +15,13 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -81,7 +83,10 @@ fun PlacementTestScreen(
         }
     val deciding = goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE && walk == null
     TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator, deciding) { goalId, setProgress ->
-        val vm = viewModel(key = "placement-test:$goalId") { PlacementTestViewModel(goalId.toString(), app.onboarding) }
+        val vm =
+            viewModel(
+                key = "placement-test:$goalId",
+            ) { PlacementTestViewModel(goalId.toString(), app.onboarding, createSavedStateHandle()) }
         VisitOf(vm.visit)
         PlacementTestFlow(goalId, goal?.displayName.orEmpty(), app.onboarding, app.plans, setProgress, navigator::closeTask, vm)
     }
@@ -92,14 +97,14 @@ fun PlacementTestScreen(
  * The walk's last answer closes its attempt, and the walk stays so its result shows.
  */
 @Composable
-private fun topicWalk(
+internal fun topicWalk(
     plans: PlanStore,
     goalId: UUID,
 ): Boolean? {
     val resource = plans.plan[goalId]
     val read by resource.collectShown()
     val fresh by resource.freshState.collectAsStateWithLifecycle()
-    val walked = remember(goalId) { mutableStateOf(false) }
+    val walked = rememberSaveable(goalId) { mutableStateOf(false) }
     val walking =
         read.value?.plan?.let { plan ->
             (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null

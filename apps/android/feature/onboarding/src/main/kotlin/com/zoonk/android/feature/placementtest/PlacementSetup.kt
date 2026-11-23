@@ -85,7 +85,7 @@ internal fun ColumnScope.PlacementSetup(
             ?.placementTest
             ?.estimatedMinutes ?: 0
     val placement by store.placements[id].collectShown()
-    val walk = viewModel(key = "setup-placement-walk:$id") { PlacementTestViewModel(id, store) }
+    val walk = viewModel(key = "setup-placement-walk:$id") { PlacementTestViewModel(id, store, createSavedStateHandle()) }
     VisitOf(walk.visit)
     val phase = walk.setupPhase(placement)
     if (placement.value?.attempt != null || phase is PlacementTestPhase.Result || phase is PlacementTestPhase.Between) {

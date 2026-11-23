@@ -9,6 +9,8 @@ import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlacementStatus
 import com.zoonk.api.models.TrueFalseLabels
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.util.UUID
 import com.zoonk.android.feature.questions.Question as ItemQuestion
 
@@ -39,18 +41,20 @@ internal sealed interface PlacementTestPhase {
     ) : PlacementTestPhase
 
     /** A whole-course test between two parts; [lessonsSkipped] is the part that just closed, null when it closed earlier. */
+    @Serializable
     data class Between(
         val attempt: PlacementAttempt,
         val lessonsSkipped: Int?,
-        val changeId: UUID? = null,
+        @Contextual val changeId: UUID? = null,
         val heldUntilTomorrow: Boolean = false,
     ) : PlacementTestPhase
 
+    @Serializable
     data class Result(
         val length: PlacementLength,
         val lessonsSkipped: Int,
-        val changeId: UUID? = null,
-        val attemptId: UUID? = null,
+        @Contextual val changeId: UUID? = null,
+        @Contextual val attemptId: UUID? = null,
         val heldUntilTomorrow: Boolean = false,
     ) : PlacementTestPhase
 }

@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.placementtest
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -47,11 +48,14 @@ class PlacementTestViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun TestScope.viewModel(api: OnboardingApi): Pair<PlacementTestViewModel, OnboardingStore> {
+    private fun TestScope.viewModel(
+        api: OnboardingApi,
+        handle: SavedStateHandle = SavedStateHandle(),
+    ): Pair<PlacementTestViewModel, OnboardingStore> {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store = OnboardingStore(api, AppCache(session, backgroundScope), session) { SignInResult.SignedIn }
-        return PlacementTestViewModel(GOAL_ID, store).also { models.put("placement-test", it) } to store
+        return PlacementTestViewModel(GOAL_ID, store, handle).also { models.put("placement-test", it) } to store
     }
 
     private fun TestScope.shown(
@@ -163,6 +167,29 @@ class PlacementTestViewModelTest {
                 PlacementTestPhase.Result(PlacementLength.QUICK, 3, attemptId = ATTEMPT, heldUntilTomorrow = true),
                 vm.phase(store.placements[GOAL_ID].state.value),
             )
+        }
+
+    @Test
+    fun aClosedPartStillShowsWhatItSkippedAfterTheProcessIsReclaimed() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(attempt = null)
+                    sitting = { placement(PART_ONE, next = null) }
+                    completion = completion(attempt = null, skipped = 7, result = true)
+                }
+            val handle = SavedStateHandle()
+            val (vm, store) = viewModel(api, handle)
+            store.placements[GOAL_ID].load()
+            vm.start(PlacementLength.WHOLE_COURSE)
+            runCurrent()
+            val shown = vm.phase(store.placements[GOAL_ID].state.value)
+
+            val restored =
+                PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+
+            assertEquals(PlacementTestPhase.Result(PlacementLength.WHOLE_COURSE, 7, attemptId = ATTEMPT), shown)
+            assertEquals(shown, restored.phase(LoadState.Loaded(placement(attempt = null))))
         }
 
     private companion object {

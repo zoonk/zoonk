@@ -3,7 +3,9 @@ package com.zoonk.android.feature.placementtest
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Visit
@@ -15,10 +17,12 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.refreshed
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.tap
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 /**
  * The test taken from the plan (main's `usePlacementTest`). Opening it only reads; starting a part,
@@ -28,6 +32,7 @@ import kotlinx.coroutines.launch
 internal class PlacementTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
+    handle: SavedStateHandle,
 ) : ViewModel() {
     /** This visit to the test: a save that fails says so only on it. */
     val visit = Visit()
@@ -35,8 +40,15 @@ internal class PlacementTestViewModel(
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
 
-    /** What a part closed in this visit did, shown until the learner moves on. */
-    private var closed by mutableStateOf<PlacementTestPhase?>(null)
+    private var savedClosed by handle.saved { "" }
+
+    /** What a part closed in this visit did, shown until the learner moves on, after a reclaimed process too. */
+    private var closed by mutableStateOf(
+        savedClosed
+            .takeIf {
+                it.isNotEmpty()
+            }?.let { ApiJson.decodeFromString(ClosedPart.serializer(), it).phase },
+    )
 
     var pressed by mutableStateOf<Pressed?>(null)
         private set
@@ -116,7 +128,7 @@ internal class PlacementTestViewModel(
     private suspend fun open(length: PlacementLength): Boolean =
         when (val started = store.startPlacementSitting(goalId, length)) {
             is WriteOutcome.Done -> {
-                closed = null
+                show(null)
                 started.value.partOver()?.let { close(it) } ?: true
             }
 
@@ -136,7 +148,7 @@ internal class PlacementTestViewModel(
             val completion = finished.value
             val skipped = completion.lessonsSkipped.toInt()
             val changeId = completion.changeId.takeIf { skipped > 0 }
-            closed =
+            show(
                 completion.attempt?.let {
                     PlacementTestPhase.Between(it, skipped, changeId, heldUntilTomorrow = completion.heldUntilTomorrow == true)
                 }
@@ -146,7 +158,8 @@ internal class PlacementTestViewModel(
                         changeId = changeId,
                         attemptId = attempt.id,
                         heldUntilTomorrow = (completion.result?.heldUntilTomorrow ?: completion.heldUntilTomorrow) == true,
-                    )
+                    ),
+            )
             return true
         }
         if (finished == WriteOutcome.Obsolete) return true
@@ -156,6 +169,12 @@ internal class PlacementTestViewModel(
             placements.state.value.value
                 ?.attempt
         return now == null || now.id != attempt.id || now.part != attempt.part || now.partComplete
+    }
+
+    private fun show(part: PlacementTestPhase?) {
+        closed = part
+        val saved = part?.let { ClosedPart(between = it as? PlacementTestPhase.Between, result = it as? PlacementTestPhase.Result) }
+        savedClosed = saved?.let { ApiJson.encodeToString(ClosedPart.serializer(), it) }.orEmpty()
     }
 
     private fun save(
@@ -171,6 +190,15 @@ internal class PlacementTestViewModel(
             pressed = null
         }
     }
+}
+
+/** What a closed part shows, as a reclaimed process restores it. */
+@Serializable
+private data class ClosedPart(
+    val between: PlacementTestPhase.Between? = null,
+    val result: PlacementTestPhase.Result? = null,
+) {
+    val phase: PlacementTestPhase? get() = between ?: result
 }
 
 internal fun PlacementAttempt.part() = PlacementPart(id, part)
