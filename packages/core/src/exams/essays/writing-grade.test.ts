@@ -417,18 +417,18 @@ describe("writing grades", () => {
     expect(assess(graded, { gate: null, rubric })).toMatchObject({ kind: "levels" });
 
     expect(assess(graded, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
-      content: { high: 800, low: 760 },
+      content: { high: 840, low: 720 },
       deduction: { high: 0, low: 0 },
       kind: "points",
       max: 1000,
       rows: [
-        { earned: 200, id: "c1", max: 200, range: { high: 200, low: 200 } },
-        { earned: 80, id: "c2", max: 200, range: { high: 120, low: 80 } },
-        { earned: 200, id: "c3", max: 200, range: { high: 200, low: 200 } },
-        { earned: 200, id: "c4", max: 200, range: { high: 200, low: 200 } },
-        { earned: 80, id: "c5", max: 200, range: { high: 80, low: 80 } },
+        { earned: 160, id: "c1", max: 200, range: { high: 200, low: 160 } },
+        { earned: 40, id: "c2", max: 200, range: { high: 160, low: 40 } },
+        { earned: 160, id: "c3", max: 200, range: { high: 200, low: 160 } },
+        { earned: 160, id: "c4", max: 200, range: { high: 200, low: 160 } },
+        { earned: 40, id: "c5", max: 200, range: { high: 80, low: 40 } },
       ],
-      total: { high: 800, low: 760 },
+      total: { high: 840, low: 720 },
     });
 
     const zero = {

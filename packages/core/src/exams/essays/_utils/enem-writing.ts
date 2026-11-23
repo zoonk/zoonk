@@ -1,5 +1,5 @@
 import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
-import { sumRanges } from "../../scoring/written-points";
+import { type WritingRange, sumRanges } from "../../scoring/written-points";
 
 export const ENEM_WRITING_MAX = 1000;
 
@@ -14,7 +14,15 @@ const LEVEL_RANGE = {
   strong: { high: 160, low: 160 },
 } as const;
 
+const ZERO = { high: 0, low: 0 };
 const PROPOSAL_CAP = { conditional: 80, invalid: 0, tangent: 40 } as const;
+
+// Edital 64/2026 §§14.5–14.6: average two accepted examiners. Their totals are
+// multiples of 40, so the largest difference within 100 is 80.
+const COMPETENCE_DISCREPANCY_LIMIT = 80;
+const TOTAL_DISCREPANCY_LIMIT = 100;
+const COMPETENCE_MEAN_DELTA = COMPETENCE_DISCREPANCY_LIMIT / 2;
+const TOTAL_MEAN_DELTA = (Math.floor(TOTAL_DISCREPANCY_LIMIT / STEP) * STEP) / 2;
 
 export function hasEnemCompetences(criteria: readonly { id: string }[]) {
   return (
@@ -23,16 +31,33 @@ export function hasEnemCompetences(criteria: readonly { id: string }[]) {
   );
 }
 
-function proposalPoints(evidence: WritingEvidence) {
-  const { interventionElements, proposalLimit } = evidence;
+function proposalBand({ interventionElements, proposalLimit }: WritingEvidence) {
+  const cap = proposalLimit ? PROPOSAL_CAP[proposalLimit] : COMPETENCE_MAX;
 
-  const elements = interventionElements
-    ? Object.values(interventionElements).filter(Boolean).length
-    : 0;
+  if (!interventionElements || cap === 0) {
+    return { assessed: ZERO, range: ZERO };
+  }
 
-  const points = interventionElements ? STEP * Math.max(elements, 1) : 0;
+  const count = Object.values(interventionElements).filter(Boolean).length;
+  const points = Math.min(cap, STEP * Math.max(count, 1));
 
-  return proposalLimit ? Math.min(points, PROPOSAL_CAP[proposalLimit]) : points;
+  return {
+    assessed: { high: points, low: points },
+    range: {
+      high: Math.min(cap, points + COMPETENCE_MEAN_DELTA),
+      low: Math.max(STEP, points - COMPETENCE_MEAN_DELTA),
+    },
+  };
+}
+
+function competenceBand(assessed: WritingRange) {
+  return {
+    assessed,
+    range: {
+      high: Math.min(COMPETENCE_MAX, assessed.high + COMPETENCE_MEAN_DELTA),
+      low: Math.max(0, assessed.low - COMPETENCE_MEAN_DELTA),
+    },
+  };
 }
 
 export function scoreEnemWriting(evidence: WritingEvidence, zero: boolean) {
@@ -45,18 +70,38 @@ export function scoreEnemWriting(evidence: WritingEvidence, zero: boolean) {
 
   const criteria = new Map(evidence.criteria.map((criterion) => [criterion.id, criterion.level]));
 
-  const proposal = proposalPoints(evidence);
+  const bands = COMPETENCE_IDS.map((id) => {
+    if (zero) {
+      return { assessed: ZERO, id, range: ZERO };
+    }
 
-  const rows = COMPETENCE_IDS.map((id) => {
-    const assessed =
-      id === "c5" ? { high: proposal, low: proposal } : LEVEL_RANGE[criteria.get(id) ?? "missing"];
+    const band =
+      id === "c5"
+        ? proposalBand(evidence)
+        : competenceBand(LEVEL_RANGE[criteria.get(id) ?? "missing"]);
 
-    const range = zero ? { high: 0, low: 0 } : assessed;
-
-    return { earned: range.low, id, max: COMPETENCE_MAX, range };
+    return { ...band, id };
   });
 
-  const content = sumRanges(rows.map(({ range }) => range));
+  const assessed = sumRanges(bands.map((band) => band.assessed));
+  const possible = sumRanges(bands.map((band) => band.range));
 
-  return content && { content, rows };
+  if (!assessed || !possible) {
+    return null;
+  }
+
+  // Each row is marginal. The total must also satisfy the discrepancy limit across all rows.
+  const content = {
+    high: Math.min(possible.high, assessed.high + TOTAL_MEAN_DELTA),
+    low: Math.max(possible.low, assessed.low - TOTAL_MEAN_DELTA),
+  };
+
+  const rows = bands.map(({ id, range }) => ({
+    earned: range.low,
+    id,
+    max: COMPETENCE_MAX,
+    range,
+  }));
+
+  return { content, rows };
 }
