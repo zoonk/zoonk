@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00509379,
+  "failures": [],
+  "packetId": "565dbf574cffb54bdec6c5deea5d588dbd242453ff1c29caea92cf9825a49145",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets are C2 passages with nuance, allusion, argument or unstated-assumption options, so both confirm the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's first item marks option 0 wrong, but the mother 'begnügte sich damit' (accepted it), so that option is arguably right and the key is contestable. Output B's keys hold up on checking.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are natural German at C2 with correct variant usage and English options, with no brands or stereotypes.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 0 wrong, but the mother 'begnügte sich damit' (contented herself with it), which can be read as her accepting the uncle keeping the house. The key is contestable, so the item may have two defensible answers.",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the mother's acceptance as the point gets marked wrong, and the item teaches a contestable reading as settled.",
+            "location": {
+              "detail": "option 0 of the first confirmation item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A has a contestable answer key on its first item, while Output B's keys and passages hold up and serve the same level."
+        },
+        "pairId": "21a201d1-cb3e-442e-b267-59f56877b6a8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are A1 items with simple sentences and short options, so the level fits.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's key says options 1 and 2 are right, but the message says the bus leaves at ten, so option 2 is false. Output B's key of 1 and 3 is correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same Portuguese question and options with the same message, so the language is equally correct.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key lists option 2 as right, but the message says 'The bus leaves at ten', so 'O ônibus sai às nove' (the bus leaves at nine) is false. The correct key is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine and marks a wrong option as correct, which would mislead them on the one fact the item tests.",
+            "location": {
+              "detail": "the key line at the end of the item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B has the correct answer key, while Output A teaches a false bus time through its key."
+        },
+        "pairId": "ae50f41b-1942-4cc7-8cc9-e9af6c163bd1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical C2 sets, so the calibration is the same.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the answer keys are equally right or wrong.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the language is equally correct.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same, so neither serves its reader better."
+        },
+        "pairId": "bf56e675-9ca5-441a-a9ee-2fc1ada8b558"
+      }
+    ]
+  }
+}

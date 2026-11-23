@@ -1,0 +1,115 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-fr-c1",
+        "claimId": "9651e46d2745739f",
+        "criterion": "calibration",
+        "observationId": "419749256a49833027c3df28ca7a47fb118c7ef3ef8652d6b59c15e93c40b2fc.first.6d0ddac2-da95-45fc-a743-7c51cee386b2.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0010424,
+    "id": "abf8664575b9f0e73eec31efac0734cce53036d3253517002130f1420253135c",
+    "packet": [
+      {
+        "A": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "B": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "0f36c6bfac18f494",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "b3b0114f7a0801c9",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "0a6e5850bcb8852627bb8193916230d198a1abfb0db9d1c9a2fc705c09b01ba5",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a55154c9dad4ef1e1472dc0b6b82a13e41f1dfb3d4f14e54d7dc6a9c0d99a73a",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Confirmations 1 to 3 state their qualified views explicitly in the text, and their options paraphrase or invert those explicit statements rather than testing implicit stance or tone where a literal reader would get at least one wrong.",
+            "claimId": "9651e46d2745739f",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 1 to 3",
+              "kind": "range"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "8f936363be701960b5cf704d4311842ad6ecd684c9502018fdaa7f4fadfa6f97",
+          "format": "text"
+        },
+        "input": {
+          "blob": "1fcf5eb52d1874a91e4587af58456edbf69d2fc41f6d17a7f7bffb9fe044a757",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "0f36c6bfac18f494",
+          "finding": "doesn't hold",
+          "reason": "The message supports option 3 and makes option 2 false, but output B gives only the key “1 and 2”; it does not state the claim’s explanation and instead includes the false option 2."
+        },
+        {
+          "claimId": "b3b0114f7a0801c9",
+          "finding": "doesn't hold",
+          "reason": "Output A’s key is “1 and 3,” so it does not include the false statement that the bus leaves at nine."
+        },
+        {
+          "claimId": "9651e46d2745739f",
+          "finding": "doesn't hold",
+          "reason": "Although confirmations 1 and 3 largely use explicit paraphrases, confirmation 2’s option that selective memories need not make shared stories worthless asks readers to infer the writer’s qualified stance. So the claim that confirmations 1 to 3 avoid testing implicit meaning is too broad."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

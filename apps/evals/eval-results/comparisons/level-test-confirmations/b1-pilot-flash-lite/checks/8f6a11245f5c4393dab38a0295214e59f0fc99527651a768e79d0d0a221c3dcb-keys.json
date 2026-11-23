@@ -1,0 +1,12 @@
+{
+  "caseId": "en-pt-b1",
+  "costUsd": 0.020584,
+  "name": "answer keys",
+  "passed": 3,
+  "problems": [
+    "{\"itemLocator\":\"confirmations[2]\",\"keyedAnswer\":\"Options 0 and 3\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Only option 3 is supported. The coach praises the players for fighting until the final whistle. He says defensive mistakes left too much space, but does not say those mistakes determined the result, as option 0 claims.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 4
+}

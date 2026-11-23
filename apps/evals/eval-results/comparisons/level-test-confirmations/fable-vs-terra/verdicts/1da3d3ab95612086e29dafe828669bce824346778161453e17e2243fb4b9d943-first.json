@@ -1,0 +1,162 @@
+{
+  "attempt": "first",
+  "costUsd": 0.10041800000000001,
+  "failures": [],
+  "packetId": "1da3d3ab95612086e29dafe828669bce824346778161453e17e2243fb4b9d943",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A pitches both its texts and its distractors at genuine C2, requiring learners to track irony, rhetorical structure, and unstated assumptions that would trip up a literal-minded C1 reader. B spells out its main points explicitly inside the passages and relies on near-paraphrases and direct lexical negations that a B2 or C1 learner could solve.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's wrong options represent plausible C1 misreadings of irony and argument structure, with only a slight stretch on one metaphor in item 1. B's options mostly reword or directly contradict explicit clauses in the text rather than testing C2 discrimination.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses natural US English across literary, critical, and spoken registers and clean Brazilian Portuguese throughout. B uses European Portuguese guillemets («...») in two questions and a flatter administrative register in its third passage.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "All four items explain their own takeaway directly in the passage (for example, 'a list of things she could no longer claim', 'gave the morning the air of a task, and a task, unlike grief', 'more exact than either a confession that he'd made it up or a guarantee about the route') and pair correct paraphrases against direct negations of stated words, while item 3 reads like a plain B2/C1 municipal update rather than a demanding C2 spoken text.",
+            "criterion": "calibration",
+            "learnerCost": "A C1 or strong B2 learner could pass these items by matching paraphrased clauses without grasping C2 nuance, falsely confirming C2 readiness.",
+            "location": {
+              "detail": "All four confirmations",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Questions 1 and 4 use European Portuguese angular quotation marks («inventário», «útil») instead of Brazilian Portuguese quotation marks.",
+            "criterion": "language",
+            "learnerCost": "Brazilian learners see punctuation norms from European Portuguese rather than their own variant.",
+            "location": {
+              "detail": "Que efeitos a escolha da palavra «inventário» produz na abertura da história?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Saying Priya 'receives' the habit of not asking along with the house slightly stretches the text, which shows she already practices that family habit ('she did not ask. They were, as a family, accomplished at not asking; it was practically an heirloom').",
+            "criterion": "answers",
+            "learnerCost": "A very literal C2 reader might hesitate over whether Priya is newly receiving a habit she already shares with her family.",
+            "location": {
+              "detail": "Ao chamar de herança o hábito de não perguntar, o narrador sugere que Priya o recebe junto com a casa.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A delivers genuine C2 texts and distractors that test irony, argument structure, and unstated assumptions in natural US English and Brazilian Portuguese. B falls short of C2 because its passages state the answers almost explicitly and allow B2/C1 readers to eliminate distractors by word-matching."
+        },
+        "pairId": "25404a49-2876-4a22-bf20-6f61d123bc8c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and both confirm C2 well through irony, rhetorical structure, and unstated assumptions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs have identical passages, options, and answer keys.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs use the exact same US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Saying Priya 'receives' the habit of not asking along with the house slightly stretches the text, which shows she already practices that family habit ('she did not ask. They were, as a family, accomplished at not asking; it was practically an heirloom').",
+            "criterion": "answers",
+            "learnerCost": "A very literal C2 reader might hesitate over whether Priya is newly receiving a habit she already shares with her family.",
+            "location": {
+              "detail": "Ao chamar de herança o hábito de não perguntar, o narrador sugere que Priya o recebe junto com a casa.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Saying Priya 'receives' the habit of not asking along with the house slightly stretches the text, which shows she already practices that family habit ('she did not ask. They were, as a family, accomplished at not asking; it was practically an heirloom').",
+            "criterion": "answers",
+            "learnerCost": "A very literal C2 reader might hesitate over whether Priya is newly receiving a habit she already shares with her family.",
+            "location": {
+              "detail": "Ao chamar de herança o hábito de não perguntar, o narrador sugere que Priya o recebe junto com a casa.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical across all four confirmations."
+        },
+        "pairId": "2928599d-4e53-403a-b48e-27730b649268"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 message and options checking single stated facts in common words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A marks the exact statements supported by the message (1 and 3), whereas B marks 2 ('O ônibus sai às nove'), which contradicts 'The bus leaves at ten', and leaves out 3 ('O café fica ao lado da loja'), which is right.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same natural English message and Brazilian Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key marks 1 and 2 instead of 1 and 3: option (2) says the bus leaves at nine ('O ônibus sai às nove'), contradicting 'The bus leaves at ten', while option (3) accurately translates 'The cafe is next to the shop' ('O café fica ao lado da loja') and is omitted.",
+            "criterion": "answers",
+            "learnerCost": "Learners who understand the A1 message accurately are marked wrong, while a misreading of the bus time is rewarded.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A provides the accurate answer key (1 and 3) matching the message, whereas B gives a wrong answer key (1 and 2) that marks a false statement right and misses a true one."
+        },
+        "pairId": "32f27ded-7aaf-4316-9bcc-b3de2db4e4dc"
+      }
+    ]
+  }
+}

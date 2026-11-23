@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A2",
+      "options": [
+        "The comedy is at 5:00 p.m. in room 2.",
+        "The comedy is at 5:00 p.m. in room 3.",
+        "The comedy is at 7:00 p.m. in room 2.",
+        "The adventure movie is at 5:00 p.m. in room 3.",
+        "The adventure movie is at 7:00 p.m. in room 3."
+      ],
+      "passage": "Programa del cine: La comedia empieza a las cinco de la tarde en la sala dos. La película de aventuras empieza a las siete de la tarde en la sala tres. Las entradas se venden en la taquilla.",
+      "question": "Which movie, time, and room combinations are correct? Select all that apply.",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "She painted the door after leaving the keys.",
+        "She washed the stairs before painting the door.",
+        "She washed the stairs after returning the ladder.",
+        "She will return the ladder after leaving the keys.",
+        "She will return the ladder before painting the door."
+      ],
+      "passage": "Hola, vecino: El lunes lavé las escaleras y hoy martes pinté la puerta. Mañana miércoles voy a dejar las llaves en tu casa. El jueves voy a devolver la escalera a Luis. Gracias. Sofía",
+      "question": "What is the order of Sofía's tasks? Select all that apply.",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "Everyone will eat bread right after the children sing.",
+        "The children will sing right after they show their drawings.",
+        "The children will sing right after the principal greets the families.",
+        "Everyone will eat bread right after the children show their drawings.",
+        "The children will show their drawings right after the principal greets the families."
+      ],
+      "passage": "Buenos días. En la fiesta de la escuela, primero la directora va a saludar a las familias. Después los niños van a cantar. Luego van a mostrar sus dibujos. Al final, todos van a comer pan.",
+      "question": "Which events will happen immediately after one another at the school party? Select all that apply.",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A2",
+      "options": [
+        "Camila will get a haircut on Tuesday.",
+        "Camila will get a haircut on Thursday.",
+        "Valentina will get a haircut on Tuesday.",
+        "Camila will get her hair washed and styled on Thursday.",
+        "Valentina will get her hair washed and styled on Thursday."
+      ],
+      "passage": "Hola, soy Valentina. Mi hermana Camila tiene una cita el martes para cortarse el cabello. Yo voy el jueves para lavarme y peinarme. ¿Me pueden llamar si hay algún cambio? Gracias.",
+      "question": "Which appointment details are correct for Valentina and Camila? Select all that apply.",
+      "skill": "listening"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "attempt": "first",
+  "costUsd": 0.11482,
+  "failures": [],
+  "packetId": "419749256a49833027c3df28ca7a47fb118c7ef3ef8652d6b59c15e93c40b2fc",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B relies on irony, litotes, and pragmatic shifts that trip up a strictly literal reader at C1, whereas A states its qualified views explicitly so literal sentence-by-sentence reading suffices.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Both keys are defensible, but B's distractors target plausible literal misreadings of tone while A's mostly invert explicit statements and use strained pronoun reference in confirmation 2.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "B",
+            "reason": "B pairs natural French critical prose in reading with genuinely conversational spoken French in listening, while A's listening passage on the stadium reads like a written newspaper column.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Confirmations 1 to 3 state their qualified views explicitly in the text, and their options paraphrase or invert those explicit statements rather than testing implicit stance or tone where a literal reader would get at least one wrong.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below C1 who understands each sentence literally can select the right answers without grasping implied meaning or tone, weakening the level-skip check.",
+            "location": {
+              "detail": "confirmations 1 to 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmation 4, the non-literal link to option 4 ('sometimes restrictive') depends on knowing the idiom 'me serre un peu aux entournures' rather than inferring pragmatic attitude.",
+            "criterion": "calibration",
+            "learnerCost": "The item rewards idiom recall rather than C1 pragmatic comprehension.",
+            "location": {
+              "detail": "Parfois, la version que les gens s’en font m’apprend quelque chose ; parfois, elle me serre un peu aux entournures.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Confirmation 3 is labeled as a listening item, but phrasing such as 'fourni de belles images, c’est entendu' and 'tienne lieu de conversation' reads like a formal written editorial rather than natural spoken French.",
+            "criterion": "language",
+            "learnerCost": "Learners are assessed on written-register prose instead of authentic spoken French during a listening check.",
+            "location": {
+              "detail": "simplement, il serait dommage que la photo de famille tienne lieu de conversation entre les habitants.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "In confirmation 2, every option starts with 'Its' referring back to nostalgia, even in option 3 where 'warmth' ('si chaleureuse soit son ambiance') belongs to shared neighborhood memory rather than nostalgia itself.",
+            "criterion": "answers",
+            "learnerCost": "Learners have to parse awkward English pronoun reference instead of focusing on the nuance of the French passage.",
+            "location": {
+              "detail": "Its warmth depends on keeping neighborhood memories among longtime residents.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B fulfills the C1 expectation that literal comprehension alone will miss implied tone and irony, and its listening passages sound genuinely spoken, whereas A states its nuanced conclusions explicitly."
+        },
+        "pairId": "6d0ddac2-da95-45fc-a743-7c51cee386b2"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 English sentences and Brazilian Portuguese options checking simple stated facts.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the accurate answer key (1 and 3), whereas A includes a false statement (2) and omits a true one (3).",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The English message and Brazilian Portuguese question and options are identical and natural in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 ('O ônibus sai às nove.') as right even though the message says 'The bus leaves at ten.', and omits option 3 ('O café fica ao lado da loja.'), which matches 'The cafe is next to the shop.'",
+            "criterion": "answers",
+            "learnerCost": "A learner who reads the English passage accurately will be graded wrong and misled about basic time and location words.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "The two outputs are identical except for the answer key, which B gets right and A gets wrong."
+        },
+        "pairId": "b223c143-7d3e-4d06-b0ac-73e401a44eb9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical and calibrate well to C1 through understatement, irony, and qualified stances.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical, with unambiguous answer keys and plausible distractors aimed at literal misreadings.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical, using natural Metropolitan French across written and spoken registers and clear US English options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical and serve C1 learners equally well."
+        },
+        "pairId": "be65e195-4473-4487-8259-1e5d506fcbf3"
+      }
+    ]
+  }
+}

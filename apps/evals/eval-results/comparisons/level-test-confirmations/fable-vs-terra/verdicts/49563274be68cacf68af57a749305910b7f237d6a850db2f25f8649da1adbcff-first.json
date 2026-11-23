@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0027308399999999996,
+  "failures": [],
+  "packetId": "49563274be68cacf68af57a749305910b7f237d6a850db2f25f8649da1adbcff",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs são idênticos e apresentam perguntas de inferência compatíveis com B2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs têm as mesmas opções e gabaritos, sem diferença na correção das respostas.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos usam espanhol mexicano nas passagens e português brasileiro nas perguntas e opções.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os outputs são idênticos; nenhum serve melhor ao aprendiz."
+        },
+        "pairId": "58f9fcd2-adf9-48f1-a218-3c3ef450657f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Em ambos, a tarefa verifica fatos explícitos simples, adequada ao nível A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marca corretamente as opções 1 e 3; A inclui a opção 2, embora a mensagem diga que o ônibus sai às dez.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "A mensagem está em inglês, e a pergunta e as opções estão em português em ambos.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O gabarito inclui a opção 2, mas a mensagem diz que o ônibus sai às dez, não às nove.",
+            "criterion": "answers",
+            "learnerCost": "O aprendiz pode aprender uma resposta errada e perder a confiança na leitura de horários.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B tem o gabarito correto; A marca como certa uma opção contradita pela mensagem."
+        },
+        "pairId": "9d5c86ef-85be-4636-a5c7-a165dc2ca123"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A mantém as respostas mais apoiadas por inferência; em B, a opção sobre querer voltar ao mercado repete uma informação declarada diretamente na passagem.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os gabaritos parecem corresponder às ideias sustentadas pelas respectivas passagens, sem uma diferença clara de correção entre os conjuntos.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos usam espanhol mexicano nas passagens e português brasileiro nas perguntas e opções.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A opção correta sobre ainda ter interesse em voltar é praticamente a informação explícita de que a pessoa guardou o nome do mercado para voltar, então pode ser decidida pela localização de um fato declarado, não por inferência de nível B2.",
+            "criterion": "calibration",
+            "learnerCost": "Um aprendiz abaixo de B2 pode acertar essa opção sem interpretar atitude ou significado implícito.",
+            "location": {
+              "detail": "Quem fala ainda tem interesse em voltar a lugares visitados na viagem.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A preserva melhor a exigência de que as respostas dependam de inferência; B inclui uma opção correta que é praticamente declarada na passagem."
+        },
+        "pairId": "b4c92a2d-cd28-41d7-92e3-4b902592a359"
+      }
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-pt-b1",
+        "claimId": "38e8ef8399b01571",
+        "criterion": "answers",
+        "observationId": "dcccce0e87411e94c3cad9b7bdf2134de8413221a2d12a96cecbd335b50bfa63.first.2cf9f4a3-9aa6-4aa6-9696-2767078515a6.0",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0007136,
+    "id": "becd55f4d55745d5f0de471333bd18b23c2fb487855b6fd1b7198a77c0332879",
+    "packet": [
+      {
+        "A": {
+          "blob": "d54bb89786963a6b0fb1786da4799929eb78f5ca30049b158dab12792ae519f6",
+          "format": "text"
+        },
+        "B": {
+          "blob": "526b664519c58dc9a1851db6b004cd47bdb2fe855bfaa4bf4aa27c90e38e7ab1",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The distractor 'The friend forgot the memorized answers during the interview' is close to the correct option 'had no answer when an unexpected question came up', and the text supports reading the friend's problem as a failure to answer rather than forgetting. A careful reader could select it, so the key is defensible both ways.",
+            "claimId": "38e8ef8399b01571",
+            "criterion": "answers",
+            "location": {
+              "detail": "The friend forgot the memorized answers during the interview.",
+              "kind": "quote"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "db18e6e35c7875e44c440b42bdf83ba2e034632ba1bcc28631aaf2bb50fd12e4",
+          "format": "text"
+        },
+        "input": {
+          "blob": "f14f7541b195aa94e25f3ad707738479b1a8b13e84d7d46f3f7980efe6451a90",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "41eac328ebe826f9",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "aa2b8faf344a32a4",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "38e8ef8399b01571",
+          "finding": "doesn't hold",
+          "reason": "In B, the friend says they could not answer a different, unexpected question; the text does not say they forgot memorized answers, so option 6 is not supported. A does not describe that situation either."
+        },
+        {
+          "claimId": "41eac328ebe826f9",
+          "finding": "holds for both",
+          "reason": "The message says the bus leaves at ten, making option 2 false, and says the cafe is next to the shop, making option 3 true. Those facts apply to both outputs, although A's key includes option 2 and B's key includes option 3."
+        },
+        {
+          "claimId": "aa2b8faf344a32a4",
+          "finding": "doesn't hold",
+          "reason": "B's key is 1 and 3; it does not include option 2, the false statement that the bus leaves at nine."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

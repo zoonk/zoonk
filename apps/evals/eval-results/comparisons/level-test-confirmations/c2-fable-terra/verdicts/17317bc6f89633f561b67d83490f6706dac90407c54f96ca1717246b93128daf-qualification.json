@@ -1,0 +1,149 @@
+{
+  "attempt": "qualification",
+  "costUsd": 0.00463129,
+  "failures": [],
+  "packetId": "17317bc6f89633f561b67d83490f6706dac90407c54f96ca1717246b93128daf",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs contain the same four German C2 confirmations, so their calibration is identical.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their answer keys are identical.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their language quality is identical.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "83980156-8962-4e7f-a656-5799062ba9c3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs pitch their German items at C2, with similar reading and listening demands.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A has three answer keys that are wrong or contestable, while Output B's keys match the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural German in the target variant with no brands or stereotypes.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 ('The reviewer values the elegy for how its failure changes the reading of the other poems') as wrong, but the passage says the elegy's failure makes the earlier poems read as a decision, which supports that option.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader who reads the passage correctly would pick option 2 and be marked wrong.",
+            "location": {
+              "detail": "Q2 key 1,4,5 omits the option about the elegy's failure changing the reading of the other poems",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The key marks option 1 ('claims the collection passes its own test because the elegy shows it can also master grand themes') as right, but the passage says the elegy is passed by failing, not by mastering grand themes.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the reviewer says the elegy shows mastery, which is the opposite of what the passage says.",
+            "location": {
+              "detail": "Sie ist die Gegenprobe, die der Band sich selbst auferlegt, und er besteht sie, indem er an ihr scheitert.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The key omits option 3 ('The emphatic return to the giant clock shows the storyteller dropping the doubt and siding with the family's account'), which the passage supports; the storyteller retracts the doubt and insists the clock was huge and the grandfather walked.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader who matches the passage would pick option 3 and be marked wrong.",
+            "location": {
+              "detail": "Nein, nein – er ist gelaufen, die Uhr war riesig",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "In Q1, the key omits option 1 ('The furniture comparison shows the word had become so familiar that the family no longer registered it at all'). The passage says the word stood in the room like furniture that people walked around without moving, which supports that option, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader could reasonably pick option 1 and be marked wrong, so the answer set is not clearly right.",
+            "location": {
+              "detail": "Geerbt – das Wort stand im Raum wie ein Möbelstück, um das man herumging, ohne es je zu verrücken.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output A's answer keys contain several errors that would teach learners wrong readings, while Output B's keys are accurate."
+        },
+        "pairId": "8d5706b3-a6ec-426b-a7ab-fc6c9ba01730"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same A1 quiz with the same level and structure.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B's key 1 and 3 is correct, while Output A's key 1 and 2 wrongly counts 'O ônibus sai às nove' as true when the bus leaves at ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The English message and the Portuguese instructions are identical in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key lists option (2) 'O ônibus sai às nove' as correct, but the message says the bus leaves at ten, so the statement is false.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine and is rewarded for selecting a false statement.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B's answer key is correct, while Output A's key rewards a false statement about the bus time."
+        },
+        "pairId": "ddee9330-9bea-4964-ad58-258d08d4be4e"
+      }
+    ]
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "attempt": "controls-retry",
+  "costUsd": 0.00520029,
+  "failures": [],
+  "packetId": "465ea19098084a26cca77621e4e20f37b138e91bdf1e21e3970df67bab6446ae",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither confirms the C2 level better than the other.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they carry the same answer-key problems.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical German texts and options, so neither is better on language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reviewer item key marks options 3 and 4 as right, but option 2 ('concedes the austerity as a weakness that the poems' other qualities make up for') is also supported, since the passage concedes the charge is not baseless. The set is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who reads the concession as a real admission gets a marked-wrong answer and learns the wrong reading of the argument.",
+            "location": {
+              "detail": "option 2 of the reviewer item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The moderator item key (0, 1, 5) is contestable: option 2 ('rates the evening as a substantial advance') matches 'durchaus ein Fortschritt', and option 3 (blaming the shortage of time) matches the joke about the clock. Both can be read from the text.",
+            "criterion": "answers",
+            "learnerCost": "The reader is told that a defensible reading is wrong, which teaches them to distrust a correct inference.",
+            "location": {
+              "detail": "options 2 and 3 of the moderator item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The reviewer item key marks options 3 and 4 as right, but option 2 ('concedes the austerity as a weakness that the poems' other qualities make up for') is also supported, since the passage concedes the charge is not baseless. The set is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who reads the concession as a real admission gets a marked-wrong answer and learns the wrong reading of the argument.",
+            "location": {
+              "detail": "option 2 of the reviewer item",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The moderator item key (0, 1, 5) is contestable: option 2 ('rates the evening as a substantial advance') matches 'durchaus ein Fortschritt', and option 3 (blaming the shortage of time) matches the joke about the clock. Both can be read from the text.",
+            "criterion": "answers",
+            "learnerCost": "The reader is told that a defensible reading is wrong, which teaches them to distrust a correct inference.",
+            "location": {
+              "detail": "options 2 and 3 of the moderator item",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, and both share the same contestable answer keys, so neither serves its reader better."
+        },
+        "pairId": "089d3abd-9150-47de-95cb-eb880faaeb5c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are the same A1 quiz shape with options that can be matched to simple stated facts, so neither is better on level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's key (1 and 3) matches the message, while output B wrongly marks the bus leaving at nine as right.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use a Portuguese question and English options in the same way, so neither is better on language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key says 1 and 2 are right, but option 2 ('O ônibus sai às nove') is false: the message says the bus leaves at ten.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key learns that the bus leaves at nine, a false fact, and gets the question wrong.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A has a correct answer key, while output B teaches a false bus time through its key."
+        },
+        "pairId": "3132a2ba-d772-472c-9ef3-e0ddb07718b4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are C2 German texts whose options test nuance and argument, so neither is clearly better on level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's keys are clearly right on the reviewer and feedback items, while output B's reviewer and moderator keys are contestable.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use German passages with correct Sie and du usage and US English options, so neither is better on language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Option 2 ('accepted the official's wording as an adequate account') is arguably supported by Hannah's failure to ask how long the change lasts, so the key (1, 4) is not the only defensible set.",
+            "criterion": "answers",
+            "learnerCost": "A reader who reads Hannah's silence as acceptance is marked wrong and learns a weaker reading of the passage.",
+            "location": {
+              "detail": "option 2 of the zunächst item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The reviewer item key marks option 2 ('concedes the austerity as a weakness that the poems' other qualities make up for') as wrong, yet the passage concedes the charge is not baseless, so the option is defensible.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who reads the concession as a real admission gets a marked-wrong answer.",
+            "location": {
+              "detail": "option 2 of the reviewer item",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The moderator item key (0, 1, 5) is contestable: option 2 ('rates the evening as a substantial advance') matches 'durchaus ein Fortschritt', and option 3 (blaming the shortage of time) matches the joke about the clock.",
+            "criterion": "answers",
+            "learnerCost": "The reader is told that a defensible reading is wrong, which teaches them to distrust a correct inference.",
+            "location": {
+              "detail": "The moderator rates the evening as a substantial advance in the debate about downtown.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A's answer keys are more clearly right, while output B has two contestable keys that would mislead a C2 reader."
+        },
+        "pairId": "ffef8c4b-7540-4877-bd97-cdb5012e7fc3"
+      }
+    ]
+  }
+}

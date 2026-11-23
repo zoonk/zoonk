@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00406399,
+  "failures": [],
+  "packetId": "7681f7ba8d61e8fbb92d346d44ed4a63b049385ab788e7e91471437e3236b2d0",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither confirms the A2 level better than the other.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and I checked each key against its passage: the right sets are correct and the wrong options are clearly wrong.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and use Mexican Spanish and natural wording in both.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical and both serve an A2 reader well, so neither is better."
+        },
+        "pairId": "6dc24abe-66d4-48dd-9a5a-9bc9b51b7f79"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs pitch the same A2 sequence and fact-connecting items at the right level, with no difference in calibration.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "I checked all four questions in both outputs against their passages and found the same correct sets in each.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish and the same options and passages, with no language difference.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are correct, pitched at A2 and equally clear, so neither serves the reader noticeably better."
+        },
+        "pairId": "c279d5d3-6cb6-4425-a609-652435143af3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same A1 message and simple option structure, so the calibration is equal.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's key (1 and 3) matches the message, while output B's key (1 and 2) marks the bus at nine as correct, although the message says ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same passage and the same Portuguese question and options, so language quality is equal.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key marks option (2) 'O ônibus sai às nove' as correct, but the message says the bus leaves at ten, so option (2) is false and the key is wrong.",
+            "criterion": "answers",
+            "learnerCost": "The learner would be taught that the bus leaves at nine, a false fact, and would see it marked as correct.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output B's answer key is wrong and would teach a false fact, while output A's key matches the message."
+        },
+        "pairId": "fbdb85e3-c2a2-48f5-a040-4d43e6c3a4a9"
+      }
+    ]
+  }
+}

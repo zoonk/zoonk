@@ -1,0 +1,261 @@
+{
+  "attempt": "first",
+  "costUsd": 0.17851400000000003,
+  "failures": [],
+  "packetId": "f03ad61245d90879b10fd62afad9dcca4c2af487b0fabfb258920c2c71033325",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 passage and options, requiring learners to match facts accurately rather than just spotting isolated words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marks the right statements (1 and 3), whereas A marks statement 2 right even though the bus leaves at ten, not nine, and leaves out statement 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The English passage and Brazilian Portuguese question and options are identical in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key lists 1 and 2 instead of 1 and 3; option 2 ('O ônibus sai às nove') contradicts 'The bus leaves at ten', while option 3 ('O café fica ao lado da loja') matches 'The cafe is next to the shop'.",
+            "criterion": "answers",
+            "learnerCost": "A learner who understands the message gets marked wrong for picking the right facts and is told a false statement is true.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both outputs share the same text and options, but B gives the accurate answer key (1 and 3) while A gives a wrong key (1 and 2)."
+        },
+        "pairId": "a613b822-6836-48ff-b310-264ad009211f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Neither output cleanly meets the calibration rules: A tests above-A1 vocabulary ('insurance card') and negates distractors instead of giving values for something else, while B invents four distractors absent from the passages so those specific options can be ruled out by noticing the words never appeared.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Every option in A is parallel and unambiguously right or wrong on its own, whereas B's fourth item marks 'A entrega tem um refrigerante' wrong when the delivery has two sodas, which can trip up a literal reader without 'apenas' or 'só'.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "B",
+            "reason": "B's notices and voice messages read like genuine US English and natural Brazilian Portuguese, while A writes contrived negative lists that no real sign or caller would say and uses the unidiomatic 'cartão do seguro de saúde'.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Confirmations 1 and 3 do not draw wrong options from values the text gives for something else, as required; instead they negate lists of items ('are not here', 'but not your...'), and three of the four items focus on colors, objects, or documents rather than everyday times, prices, and places.",
+            "criterion": "calibration",
+            "learnerCost": "The items miss the intended everyday A1 contexts and test artificial negation lists rather than realistic A1 fact-matching.",
+            "location": {
+              "detail": "confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Confirmation 3 requires understanding 'photo ID and insurance card', where 'insurance card' sits above A1 'very common words' vocabulary.",
+            "criterion": "calibration",
+            "learnerCost": "A learner ready to skip A1 can miss a right option solely because they have not yet learned B1 healthcare vocabulary.",
+            "location": {
+              "detail": "Please bring your photo ID and insurance card, but not your passport, bank card, or library card.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Option 3 in confirmation 3 uses 'cartão do seguro de saúde', a literal calque/European phrasing instead of natural Brazilian Portuguese ('carteirinha/cartão do plano de saúde').",
+            "criterion": "language",
+            "learnerCost": "Brazilian learners face unfamiliar phrasing for an everyday document, adding needless confusion during a level check.",
+            "location": {
+              "detail": "Um cartão do seguro de saúde.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Passages 1 and 3 sound artificial rather than like real written notices or natural speech: a general lost-and-found sign lists three specific items it does not have, and a doctor's office warns a patient not to bring a library card.",
+            "criterion": "language",
+            "learnerCost": "Learners read and hear contrived, unnatural English that does not reflect real-life signs or phone messages.",
+            "location": {
+              "detail": "passages in confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Confirmations 1, 3, and 4 use wrong options whose values never appear in the passage ('É uma mochila preta.', 'A consulta é às 10 da manhã.', 'A consulta é na terça-feira.', 'A entrega custa doze dólares.'), breaking the expectation that wrong options be other values of the same kind the text gives for something else.",
+            "criterion": "calibration",
+            "learnerCost": "A learner can eliminate those four options simply by noticing those words or numbers were never mentioned, weakening the check of sentence comprehension.",
+            "location": {
+              "detail": "options in confirmations 1, 3, and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "In confirmation 4, 'A entrega tem um refrigerante.' is marked wrong when the delivery has 'two sodas'; although 'um' contrasts with 'duas' across the options, without 'apenas' or 'só' a literal reader could judge that a delivery with two sodas does contain a soda.",
+            "criterion": "answers",
+            "learnerCost": "A careful, literal learner could select this option as logically entailed and lose credit.",
+            "location": {
+              "detail": "A entrega tem um refrigerante.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Although both outputs break the distractor rule in different ways, B gives learners natural US English texts and Brazilian Portuguese questions on core A1 topics (times, prices, places), whereas A relies on contrived texts, above-A1 vocabulary ('insurance card'), and unidiomatic Portuguese ('seguro de saúde')."
+        },
+        "pairId": "ba499543-9335-4b53-9390-7a72fa6d10d0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Confirmations 1 and 3 do not draw wrong options from values the text gives for something else, as required; instead they negate lists of items ('are not here', 'but not your...'), and three of the four items focus on colors, objects, or documents rather than everyday times, prices, and places.",
+            "criterion": "calibration",
+            "learnerCost": "The items miss the intended everyday A1 contexts and test artificial negation lists rather than realistic A1 fact-matching.",
+            "location": {
+              "detail": "confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Confirmation 3 requires understanding 'photo ID and insurance card', where 'insurance card' sits above A1 'very common words' vocabulary.",
+            "criterion": "calibration",
+            "learnerCost": "A learner ready to skip A1 can miss a right option solely because they have not yet learned B1 healthcare vocabulary.",
+            "location": {
+              "detail": "Please bring your photo ID and insurance card, but not your passport, bank card, or library card.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Option 3 in confirmation 3 uses 'cartão do seguro de saúde', a literal calque/European phrasing instead of natural Brazilian Portuguese ('carteirinha/cartão do plano de saúde').",
+            "criterion": "language",
+            "learnerCost": "Brazilian learners face unfamiliar phrasing for an everyday document, adding needless confusion during a level check.",
+            "location": {
+              "detail": "Um cartão do seguro de saúde.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Passages 1 and 3 sound artificial rather than like real written notices or natural speech: a general lost-and-found sign lists three specific items it does not have, and a doctor's office warns a patient not to bring a library card.",
+            "criterion": "language",
+            "learnerCost": "Learners read and hear contrived, unnatural English that does not reflect real-life signs or phone messages.",
+            "location": {
+              "detail": "passages in confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Confirmations 1 and 3 do not draw wrong options from values the text gives for something else, as required; instead they negate lists of items ('are not here', 'but not your...'), and three of the four items focus on colors, objects, or documents rather than everyday times, prices, and places.",
+            "criterion": "calibration",
+            "learnerCost": "The items miss the intended everyday A1 contexts and test artificial negation lists rather than realistic A1 fact-matching.",
+            "location": {
+              "detail": "confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Confirmation 3 requires understanding 'photo ID and insurance card', where 'insurance card' sits above A1 'very common words' vocabulary.",
+            "criterion": "calibration",
+            "learnerCost": "A learner ready to skip A1 can miss a right option solely because they have not yet learned B1 healthcare vocabulary.",
+            "location": {
+              "detail": "Please bring your photo ID and insurance card, but not your passport, bank card, or library card.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Option 3 in confirmation 3 uses 'cartão do seguro de saúde', a literal calque/European phrasing instead of natural Brazilian Portuguese ('carteirinha/cartão do plano de saúde').",
+            "criterion": "language",
+            "learnerCost": "Brazilian learners face unfamiliar phrasing for an everyday document, adding needless confusion during a level check.",
+            "location": {
+              "detail": "Um cartão do seguro de saúde.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Passages 1 and 3 sound artificial rather than like real written notices or natural speech: a general lost-and-found sign lists three specific items it does not have, and a doctor's office warns a patient not to bring a library card.",
+            "criterion": "language",
+            "learnerCost": "Learners read and hear contrived, unnatural English that does not reflect real-life signs or phone messages.",
+            "location": {
+              "detail": "passages in confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical in every passage, question, option, and key."
+        },
+        "pairId": "d03988b7-f439-4647-a1a0-1202f75c4ee1"
+      }
+    ]
+  }
+}

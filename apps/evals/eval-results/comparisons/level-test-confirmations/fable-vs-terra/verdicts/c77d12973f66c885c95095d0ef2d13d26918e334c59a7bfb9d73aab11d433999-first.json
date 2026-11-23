@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00209964,
+  "failures": [],
+  "packetId": "c77d12973f66c885c95095d0ef2d13d26918e334c59a7bfb9d73aab11d433999",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use very common words and ask learners to check individual facts stated directly in the message, which fits A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "The message supports statements 1 and 3, but A’s key marks statement 2 instead of 3. B marks the exact supported set.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural English for the message and Brazilian Portuguese for the question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct, but the bus leaves at ten, not nine; it also omits statement 3, which the message supports.",
+            "criterion": "answers",
+            "learnerCost": "Learners who follow the message correctly would be told their answer is wrong, while an unsupported answer is marked right.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct answer key. A marks a false statement as correct and omits a true one, which would mislead learners."
+        },
+        "pairId": "282552db-6303-464a-920d-6de65728d1ec"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask learners to connect stated details or follow a short sequence, matching the A2 expectations.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answer sets are supported by the passages, and the distractors are clearly contradicted by a detail or event order in each passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish passages and English questions and options appropriate for the stated learner language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, and their passages, options, and answer keys meet the stated expectations."
+        },
+        "pairId": "92118e94-81a1-4dd2-a844-026d0ea49d5f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask learners to connect details or follow changes and event order, which suits A2 rather than simple single-fact matching.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answer sets match the passages: each correct detail or event order is supported, and the alternatives are contradicted by the text.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish passages and English questions and options appropriate for the stated learner language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs provide accurate, usable A2 practice with clear answer keys and natural language; neither offers a noticeable advantage for the learner."
+        },
+        "pairId": "baa6ca1f-bf10-4a61-ade5-3cae8fb12e25"
+      }
+    ]
+  }
+}

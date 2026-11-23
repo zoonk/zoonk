@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00397489,
+  "failures": [],
+  "packetId": "ce574a4bb0fda957ac56b7d7a2bc8cc417517cd9e7abcb1054745faf1eb1ae4c",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets sit at B1 and test stated opinions, reasons and main points by rewording, so neither is decidable by word matching alone.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "All four passages in both sets have correct keys that match the text, with distractors that are clearly wrong on a careful read.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese and English questions in the learner's language and variant.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are sound B1 comprehension sets with correct keys, so neither serves the reader noticeably better."
+        },
+        "pairId": "6603cd82-feb5-4ca5-b3c0-0bf7592891c8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are A1 questions with short, plain sentences, so both fit the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A keys 1 and 3, which match the message: the shop opens at nine and the cafe is next to the shop. Output B also keys 2, which says the bus leaves at nine, but the message says ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the learner's Portuguese for the question and options, which is correct for this pair.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key includes option (2), 'O ônibus sai às nove', but the message says 'The bus leaves at ten', so the key is wrong.",
+            "criterion": "answers",
+            "learnerCost": "The learner is told a false statement is correct and learns that the bus leaves at nine.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A has a correct answer key, while Output B's key marks a statement the message contradicts as correct, which would mislead the learner."
+        },
+        "pairId": "9fa4d0ae-7a37-481b-8826-27bad3c05ae9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they both confirm the same B1 level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their keys are equally right or wrong.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their language quality is the same.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the reader better."
+        },
+        "pairId": "dc7989b7-34fa-4f71-9d00-066087b064a7"
+      }
+    ]
+  }
+}

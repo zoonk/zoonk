@@ -1,0 +1,184 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "ed0444f3d91bb0b7",
+        "criterion": "answers",
+        "observationId": "36a56369e08aa2b09be1a6ed527992e2b128bd588cd6131d8ac8f15ac63cdc51.first.63eee40d-a4b6-46c6-a7fb-38040bba28d7.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "08565bbd07a5d8ae",
+        "criterion": "calibration",
+        "observationId": "36a56369e08aa2b09be1a6ed527992e2b128bd588cd6131d8ac8f15ac63cdc51.first.63eee40d-a4b6-46c6-a7fb-38040bba28d7.1",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "e98934c02169d9c9",
+        "criterion": "calibration",
+        "observationId": "1527e1423350a1c071af09997708b8c829ecf0bae12abd14ba112a8c779315d5.first.9fbe4b7e-5edc-4a3f-8d87-da137deb41a1.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "f2c3279cb1467a7c",
+        "criterion": "calibration",
+        "observationId": "1527e1423350a1c071af09997708b8c829ecf0bae12abd14ba112a8c779315d5.first.9fbe4b7e-5edc-4a3f-8d87-da137deb41a1.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00222316,
+    "id": "1ba4523397a0808a8112a980e455ba61e05b78a89830bed5c98d01012c3bf8f8",
+    "packet": [
+      {
+        "A": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "B": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "84346d17d2f2c0d7",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "8564c9dc74684146",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "d00bb0a28dbbae35cf0507b34243b718a9372b311aa36616df7e33c7a3f9b9a1",
+          "format": "text"
+        },
+        "B": {
+          "blob": "6bd3d38f22811d2aab6d939b618fb435de9ed279517f2bb6aa39cf781a9f6ba2",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The key marks this option correct, but the passage presents the group’s monthly visits positively; it does not suggest they matter less than help in December.",
+            "claimId": "ed0444f3d91bb0b7",
+            "criterion": "answers",
+            "location": {
+              "detail": "As opções do primeiro item",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Option 3 in the final item directly restates the speaker’s stated plan to return to the market, rather than requiring an inference.",
+            "claimId": "08565bbd07a5d8ae",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Final item, opção 3: “Quem fala ainda tem interesse em voltar a lugares visitados na viagem.”",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Right option 3 in the fourth item ('Quem fala ainda tem interesse em voltar a lugares visitados na viagem.') is stated in a single sentence ('Los pueblos me encantaron y hasta guardé el nombre de un mercado para volver.') and turns on the Spanish-Portuguese cognate 'volver'/'voltar', breaking the expectation that right options never come from one sentence or a cognate.",
+            "claimId": "e98934c02169d9c9",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Quem fala ainda tem interesse em voltar a lugares visitados na viagem.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Right option 2 in the second item ('As explicações ajudaram o autor a fazer escolhas sobre os ingredientes.') directly paraphrases the clause 'sabía elegir entre los chiles del mercado' in a single sentence instead of testing an implied point.",
+            "claimId": "f2c3279cb1467a7c",
+            "criterion": "calibration",
+            "location": {
+              "detail": "As explicações ajudaram o autor a fazer escolhas sobre os ingredientes.",
+              "kind": "quote"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "2a043c5d3fa75c9f145db1eff387384504523574bbff0cb9bce7f86332a04a9d",
+          "format": "text"
+        },
+        "input": {
+          "blob": "5ae7e9ba4bc70ba9742baa36de82b9dfcdc57f9f139817a7f65529fd3f47e44f",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "84346d17d2f2c0d7",
+          "finding": "doesn't hold",
+          "reason": "Output A's key is 1 and 3, so it does not include the bus-at-nine statement (2). The message says the bus leaves at ten, so the claim is false of A."
+        },
+        {
+          "claimId": "8564c9dc74684146",
+          "finding": "doesn't hold",
+          "reason": "The reasoning in the claim is correct: the bus leaves at ten, so option 2 is false, and the cafe is next to the shop, so option 3 is true. But output B's key still marks option 2 correct, so B does not reflect this reasoning."
+        },
+        {
+          "claimId": "ed0444f3d91bb0b7",
+          "finding": "doesn't hold",
+          "reason": "Output A's key for the first item is indices [3,4]. Index 2, 'As visitas mensais importam menos que a ajuda oferecida em dezembro', is not keyed correct, so the claim misreads the key."
+        },
+        {
+          "claimId": "08565bbd07a5d8ae",
+          "finding": "holds",
+          "reason": "The passage says 'hasta guardé el nombre de un mercado para volver', and option 3 ('ainda tem interesse em voltar a lugares visitados') restates that plan almost directly, so it needs little inference."
+        },
+        {
+          "claimId": "e98934c02169d9c9",
+          "finding": "holds",
+          "reason": "The keyed option 3 rests on the single sentence 'guardé el nombre de un mercado para volver', and its wording 'voltar' is a near-identical Portuguese cognate of 'volver', which goes against the expectation that right options are implied rather than stated in one sentence."
+        },
+        {
+          "claimId": "f2c3279cb1467a7c",
+          "finding": "doesn't hold",
+          "reason": "Keyed option 2 ('As explicações ajudaram o autor a fazer escolhas sobre os ingredientes') is not a direct paraphrase of one clause. It joins the class explanations about chile roasting with the later sentence about choosing chiles at the market, which takes an inference across sentences."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,76 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        3,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "A expressão do corretor de imóveis é aceita por Olivia como um retrato fiel do carinho com que a casa foi cuidada.",
+        "A comparação com o guardanapo sugere que o irmão usa a palavra para limpar de si, sem demora, um assunto que o incomoda.",
+        "O relógio que continua batendo faz Olivia sentir que a casa é hostil à sua presença e a quer longe dali o quanto antes.",
+        "O advérbio que acompanha o gesto de limpar a bancada mostra que Olivia percebe a contradição entre cuidar da casa e vendê-la.",
+        "A ideia de que a mãe não viu motivo para sair de março é um modo irônico de evitar dizer que ela já não acompanhava os dias.",
+        "A frase curta sobre Olivia não chorar indica que ela atravessa a visita com indiferência, como quem cumpre uma tarefa prática."
+      ],
+      "passage": "The house had been, in the realtor's phrase, lovingly maintained, which Olivia took to mean that nobody had dared change anything since her mother's knees stopped being equal to the stairs. She had flown in from Denver to settle things. Settle was her brother's word; he used it the way other people use a napkin. In the kitchen the calendar still said March, a month her mother had evidently found satisfactory and seen no reason to leave. Olivia did not cry. She opened the refrigerator instead and stood inventorying mustard, as though grief were a matter of knowing exactly what remained. Upstairs, a clock she had hated since childhood went on ticking with what she could only call tact. She had come to sell the place. She found herself, absurdly, wiping the counter.",
+      "question": "Na abertura deste conto, o que a escolha das palavras dá a entender?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "C2",
+      "options": [
+        "Descreve o poema que foge à regra com termos de fracasso e faz dele a prova do que falta a todos os demais.",
+        "Contesta os admiradores da poeta ao pôr em dúvida que um controle como o dela seja de fato tão incomum.",
+        "Admite o controle formal da poeta para, em seguida, fazer desse mesmo controle o alvo principal da crítica.",
+        "Pesa o controle formal contra a falta de surpresa e conclui que, no livro, uma coisa acaba compensando a outra.",
+        "Aponta o poema que foge à regra como um tropeço que espera não ver repetido nos próximos trabalhos da poeta."
+      ],
+      "passage": "It would be churlish to deny that Ava Lindqvist's second collection is accomplished. Every poem in Salt Ledger arrives at its last line the way a train arrives at a well-run station: on time, and to no one's surprise. Admirers will say, rightly, that such control is rare, and I am not disposed to quarrel with them; I would only observe that control is what one praises in a driver, not in a destination. The exception is \"Thaw,\" which loses its footing in the third stanza, flails, and ends somewhere it plainly did not set out to go. It is the only poem here I have reread. Whether Lindqvist regards it as a lapse I cannot say. I can only hope she permits herself more of them.",
+      "question": "Como a pessoa que assina a resenha constrói o argumento sobre a coletânea?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4,
+        5
+      ],
+      "level": "C2",
+      "options": [
+        "Ao falar em paciente, compara o próprio debate a um doente que só se recuperou graças à plateia.",
+        "Ao elogiar a eloquência dos convidados, critica o fato de que eles quase não responderam um ao outro.",
+        "Ao dizer que não pode ajudar, admite que a noite terminou sem nenhum indício sobre o futuro da leitura.",
+        "Ao anunciar o terreno comum entre os convidados, mostra que as posições deles acabaram se aproximando.",
+        "Ao falar em paciente, retoma a ideia de que a leitura estaria morrendo e a desmente com o público presente.",
+        "Ao chamar o episódio dos celulares de único achado sem roteiro, insinua que o resto da noite já vinha pronto."
+      ],
+      "passage": "Well. We were promised a debate, and I think it's fair to say we got two very eloquent monologues that occasionally shared a stage. I'm told my job now is to find the common ground, so, here goes: both our panelists agree that the other one is wrong, and both, I noticed, checked their phones during the question about attention spans. I'd call that the evening's one unscripted finding. Seriously, though, if you came for an answer on whether anyone still reads, I can't help you. But three hundred people gave up a Thursday night to hear it argued, so I'm inclined to think the patient's doing fine. Thank you, and get home safe.",
+      "question": "O que a pessoa que modera o debate dá a entender nas palavras de encerramento?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "Que o violino pendurado na parede basta para confirmar que a caminhada aconteceu.",
+        "Que o tio Ethan está enganado e que o bilhete de trem não prova nada sobre a viagem.",
+        "Que o valor da história está no que ela faz pela família reunida em volta da mesa.",
+        "Que acrescentar detalhes à história é um jeito legítimo de recebê-la como herança.",
+        "Que os filhos precisam ser poupados de descobrir que o cachorro foi um acréscimo recente."
+      ],
+      "passage": "So the way my grandmother told it, her father walked from Atlanta to Chicago in the winter of 1919 with a fiddle and eleven dollars. Now, my uncle Ethan says it was a train, and he's got the ticket stub, which, fine. Nobody ever asked a ticket stub to say grace. The fiddle's real, anyway; it's on my wall, and it has never, to my knowledge, been in tune. Every time Grandma told it the snow got deeper, and nobody at that table once reached for a map. I've added a dog, myself. My kids will find out about the dog eventually, and I trust they'll have the manners to keep him.",
+      "question": "O que a pessoa que conta a história dá por certo, sem dizer com todas as letras?",
+      "skill": "listening"
+    }
+  ]
+}

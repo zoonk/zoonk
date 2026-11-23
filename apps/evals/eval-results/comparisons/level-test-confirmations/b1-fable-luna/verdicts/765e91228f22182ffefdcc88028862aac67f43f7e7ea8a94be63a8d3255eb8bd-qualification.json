@@ -1,0 +1,155 @@
+{
+  "attempt": "qualification",
+  "costUsd": 0.0026616,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "765e91228f22182ffefdcc88028862aac67f43f7e7ea8a94be63a8d3255eb8bd",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both test a single stated fact, which fits the A1 expectation.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A’s key correctly marks statements 1 and 3; B also marks statement 2, but the message says the bus leaves at ten, not nine.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message and Brazilian Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct, but the message says the bus leaves at ten.",
+            "criterion": "answers",
+            "learnerCost": "A learner using this key would be told that a false statement is correct.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct answer key; B incorrectly marks the bus statement as true."
+        },
+        "pairId": "10bc173d-432d-493b-af18-e9faeacaf3a4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use B1-level reasons and recommendations, though A’s travel question includes a correct option that can be identified by matching the stated places and order.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A makes clear that learners should select all correct options. B gives multiple keyed answers for questions that do not say to select all, leaving the expected response unclear.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The keyed travel recommendation repeats the passage’s named places and sequence, so a learner who matches those words can select a correct answer rather than being led to a wrong one.",
+            "criterion": "calibration",
+            "learnerCost": "This weakens the intended test of understanding at B1.",
+            "location": {
+              "detail": "Start in the historic center early, then visit the Botanical Garden.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "None of the four questions says “Select all that apply,” despite each having multiple keyed answers.",
+            "criterion": "answers",
+            "learnerCost": "Learners may reasonably choose only one answer and be unsure how to respond to the provided key.",
+            "location": {
+              "detail": "All four question fields.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A clearly signals that multiple answers may be correct. B’s questions omit that instruction even though each key contains multiple answers."
+        },
+        "pairId": "441834f8-f0cf-4465-a030-01721635651c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets broadly target B1 reasons and opinions, although A’s travel option directly matches the stated places and order instead of trapping a word-matcher with a wrong option.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A explicitly asks learners to select all that apply. B has multiple keyed answers for every question but does not tell learners to select more than one.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The keyed travel recommendation repeats the passage’s named places and sequence, so a learner who matches those words can select a correct answer rather than being led to a wrong one.",
+            "criterion": "calibration",
+            "learnerCost": "This weakens the intended test of understanding at B1.",
+            "location": {
+              "detail": "Start in the historic center early, then visit the Botanical Garden.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "None of the four questions says “Select all that apply,” despite each having multiple keyed answers.",
+            "criterion": "answers",
+            "learnerCost": "Learners may reasonably choose only one answer and be unsure how to respond to the provided key.",
+            "location": {
+              "detail": "All four question fields.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A clearly signals that multiple answers may be correct. B’s questions omit that instruction even though each key contains multiple answers."
+        },
+        "pairId": "c48142d7-1eeb-456e-832d-e84340c1fbc7"
+      }
+    ]
+  }
+}

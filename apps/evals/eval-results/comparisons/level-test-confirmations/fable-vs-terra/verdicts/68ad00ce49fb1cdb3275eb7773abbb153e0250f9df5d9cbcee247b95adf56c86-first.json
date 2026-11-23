@@ -1,0 +1,227 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00269414,
+  "failures": [],
+  "packetId": "68ad00ce49fb1cdb3275eb7773abbb153e0250f9df5d9cbcee247b95adf56c86",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both check A1-level facts stated directly in the message, using short, common Portuguese options.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marks the two supported statements, 1 and 3. A incorrectly includes statement 2 and omits statement 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message and Brazilian Portuguese question and options, as appropriate for the stated languages.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes option 2, but the message says the bus leaves at ten, not nine; it omits option 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would learn the wrong fact and be marked wrong for a correct answer.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct key; A marks a false statement as correct and leaves out a true one."
+        },
+        "pairId": "07c01fcf-f0ef-41b9-b77d-7e79c3910cc2"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets include several inference questions, but each also has a cooking item whose keyed answers closely paraphrase explicit wording in the passage, making that item easier than the stated B2 target.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "A’s first key selects a false option and omits a true one. B’s keyed sets are supported by its passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use Mexican Spanish passages and Brazilian Portuguese questions and options. Each has the awkward Spanish phrase “cuántas horas se reunieron.”",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B2 could select these answers by matching paraphrased details rather than interpreting an implied attitude.",
+            "location": {
+              "detail": "Second confirmation, options 3 and 4.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The first key selects option 4, which says the closing ceremony especially recognized the residents’ work, although the passage says it mentioned only packages and hours. It omits option 5, which is supported by the passage.",
+            "criterion": "answers",
+            "learnerCost": "A learner following the key would be taught the opposite of the passage’s point and penalized for selecting a supported answer.",
+            "location": {
+              "detail": "First confirmation, answerIndices [0, 3].",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The phrase “cuántas horas se reunieron” is not idiomatic Spanish for counting volunteer hours; “se acumularon” or “se dedicaron” would be more natural.",
+            "criterion": "language",
+            "learnerCost": "The unnatural phrasing may distract learners or make the passage harder to understand.",
+            "location": {
+              "detail": "cuántas horas se reunieron",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B2 could select these answers by matching paraphrased details rather than interpreting an implied attitude.",
+            "location": {
+              "detail": "Second confirmation, options 3 and 4.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The phrase “cuántas horas se reunieron” is not idiomatic Spanish for counting volunteer hours; “se acumularon” or “se dedicaron” would be more natural.",
+            "criterion": "language",
+            "learnerCost": "The unnatural phrasing may distract learners or make the passage harder to understand.",
+            "location": {
+              "detail": "cuántas horas se reunieron",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A has a major key error in the first item. Both have a cooking item that falls short of the implied B2 target, but B’s answer keys are otherwise supported."
+        },
+        "pairId": "45fb3123-89e2-4202-8c2b-70d4406c2235"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, including the cooking item whose keyed answers closely paraphrase explicit details rather than requiring the implied B2 understanding specified.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs have the same answer key: the first item selects a false option and omits a supported one.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs use the same Spanish passages and Portuguese questions, including the awkward phrase “cuántas horas se reunieron.”",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B2 could select these answers by matching paraphrased details rather than interpreting an implied attitude.",
+            "location": {
+              "detail": "Second confirmation, options 3 and 4.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The first key selects option 4, which says the closing ceremony especially recognized the residents’ work, although the passage says it mentioned only packages and hours. It omits option 5, which is supported by the passage.",
+            "criterion": "answers",
+            "learnerCost": "A learner following the key would be taught the opposite of the passage’s point and penalized for selecting a supported answer.",
+            "location": {
+              "detail": "First confirmation, answerIndices [0, 3].",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The phrase “cuántas horas se reunieron” is not idiomatic Spanish for counting volunteer hours; “se acumularon” or “se dedicaron” would be more natural.",
+            "criterion": "language",
+            "learnerCost": "The unnatural phrasing may distract learners or make the passage harder to understand.",
+            "location": {
+              "detail": "cuántas horas se reunieron",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below B2 could select these answers by matching paraphrased details rather than interpreting an implied attitude.",
+            "location": {
+              "detail": "Second confirmation, options 3 and 4.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The first key selects option 4, which says the closing ceremony especially recognized the residents’ work, although the passage says it mentioned only packages and hours. It omits option 5, which is supported by the passage.",
+            "criterion": "answers",
+            "learnerCost": "A learner following the key would be taught the opposite of the passage’s point and penalized for selecting a supported answer.",
+            "location": {
+              "detail": "First confirmation, answerIndices [0, 3].",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The phrase “cuántas horas se reunieron” is not idiomatic Spanish for counting volunteer hours; “se acumularon” or “se dedicaron” would be more natural.",
+            "criterion": "language",
+            "learnerCost": "The unnatural phrasing may distract learners or make the passage harder to understand.",
+            "location": {
+              "detail": "cuántas horas se reunieron",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better; both share the same key error and calibration and language issues."
+        },
+        "pairId": "863939ab-9551-4b6e-9d92-7c41ae3cc326"
+      }
+    ]
+  }
+}

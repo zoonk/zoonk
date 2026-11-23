@@ -1,0 +1,139 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00212074,
+  "failures": [],
+  "packetId": "b15eeb1903a5589768ed0ab94fdc036f559b2644a5e39e3d522320e7b53b3272",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions use a simple A1 fact-check with very common language and directly stated information.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A keys the two statements supported by the message; B incorrectly marks the bus as leaving at nine.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message and Portuguese question and options, as appropriate for the stated languages.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The message says the bus leaves at ten, not nine, so option 2 is false and should not be in the key.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key may learn an incorrect fact from the message.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct answer key; B marks a statement that contradicts the message."
+        },
+        "pairId": "050cb473-bd3a-4d00-add4-b8775c6e6766"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A consistently has two keyed answers per item, as expected. B has three keyed answers in every item, including several clearly supported options beyond two in the travel guide.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets use straightforward B1 comprehension questions, with some answers closely tracking information in the passages; neither is noticeably better calibrated overall.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "All four items have three keyed answers, despite the expectation that each should have two correct options; in the travel guide, the noon-closing churches are also a supported reason, making the third keyed answer valid as well.",
+            "criterion": "answers",
+            "learnerCost": "The extra correct answers break the expected task format and can confuse learners about how many choices to select.",
+            "location": {
+              "detail": "All four items have three indices in answerIndices.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A follows the expected two-answer format in each item. B keys three answers in all four items, including an additional supported reason in the travel guide."
+        },
+        "pairId": "0c76cdf4-bdbf-4afb-8eb5-582e51591b2d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, including their answer counts and question formats.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and use straightforward B1 comprehension questions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and use Brazilian Portuguese passages with English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "All four items have three keyed answers, despite the expectation that each should have two correct options; in the travel guide, the noon-closing churches are also a supported reason, making the third keyed answer valid as well.",
+            "criterion": "answers",
+            "learnerCost": "The extra correct answers break the expected task format and can confuse learners about how many choices to select.",
+            "location": {
+              "detail": "All four items have three indices in answerIndices.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "All four items have three keyed answers, despite the expectation that each should have two correct options; in the travel guide, the noon-closing churches are also a supported reason, making the third keyed answer valid as well.",
+            "criterion": "answers",
+            "learnerCost": "The extra correct answers break the expected task format and can confuse learners about how many choices to select.",
+            "location": {
+              "detail": "All four items have three indices in answerIndices.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so they have the same strengths and the same answer-count problem."
+        },
+        "pairId": "6aa4d0b7-a714-4996-9a76-1f0bfd21a517"
+      }
+    ]
+  }
+}

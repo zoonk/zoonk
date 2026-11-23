@@ -1,0 +1,161 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00258254,
+  "failures": [],
+  "packetId": "d2b6f5ca381781e4bc3c891ddcbf99b7ab1f957f514a558de6253cd14e91b884",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A e B são idênticos; em ambos, as questões pedem inferências relevantes, mas as respostas podem ser encontradas por leitores C1 sem exigir as nuances de C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "A e B têm as mesmas opções e gabaritos, que correspondem às passagens.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "A e B usam as mesmas passagens em inglês e opções em português brasileiro natural.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As questões e opções não exigem de modo consistente uma nuance específica de C2: as respostas são sustentadas por paráfrases relativamente diretas das passagens, acessíveis a um leitor C1.",
+            "criterion": "calibration",
+            "learnerCost": "Um leitor que deveria ser desafiado por uma distinção de C2 pode responder sem perceber diferenças mais finas de sentido ou de construção do argumento.",
+            "location": {
+              "detail": "O conjunto das quatro questões e opções",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As questões e opções não exigem de modo consistente uma nuance específica de C2: as respostas são sustentadas por paráfrases relativamente diretas das passagens, acessíveis a um leitor C1.",
+            "criterion": "calibration",
+            "learnerCost": "Um leitor que deveria ser desafiado por uma distinção de C2 pode responder sem perceber diferenças mais finas de sentido ou de construção do argumento.",
+            "location": {
+              "detail": "O conjunto das quatro questões e opções",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os outputs são idênticos e compartilham a mesma limitação de calibração."
+        },
+        "pairId": "79fc6e8d-0205-4267-9b24-f1ebca193dc3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As opções de ambos verificam fatos simples e explícitos, apropriados para A1; a diferença está no gabarito, não na calibração das opções.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A marca corretamente as opções 1 e 3. B inclui a opção 2, embora a mensagem diga que o ônibus sai às dez.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As opções estão em português brasileiro e a mensagem está em inglês em ambos os outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O gabarito inclui a opção 2, mas a mensagem diz que o ônibus sai às dez, não às nove.",
+            "criterion": "answers",
+            "learnerCost": "O aprendiz que identifica corretamente o horário do ônibus pode ser informado de que sua resposta está errada.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A tem o gabarito correto; B marca como certa uma afirmação contradita pela mensagem."
+        },
+        "pairId": "b0f8c993-6608-47c0-baa9-3c927444f590"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B apresenta inferências sobre ironia, ambiguidade e construção argumentativa mais próximas de C2; as questões de A podem ser resolvidas por um leitor C1 com compreensão geral das passagens.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém gabaritos coerentes com as passagens. B inclui como corretas afirmações que o texto não sustenta, inclusive uma leitura que a própria passagem deixa em aberto.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As opções de ambos estão em português brasileiro natural, e as passagens estão em inglês.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As questões e opções não exigem de modo consistente uma nuance específica de C2: as respostas são sustentadas por paráfrases relativamente diretas das passagens, acessíveis a um leitor C1.",
+            "criterion": "calibration",
+            "learnerCost": "Um leitor que deveria ser desafiado por uma distinção de C2 pode responder sem perceber diferenças mais finas de sentido ou de construção do argumento.",
+            "location": {
+              "detail": "O conjunto das quatro questões e opções",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "O gabarito inclui como correta a leitura de que Priya reconhece o aperto de mão como um pedido de desculpas, mas ela considera duas possibilidades e ainda está decidindo qual preferiria.",
+            "criterion": "answers",
+            "learnerCost": "O aprendiz pode ser levado a tratar como certo um sentido que a passagem mantém deliberadamente ambíguo.",
+            "location": {
+              "detail": "Ao narrar o aperto de mão, o narrador mostra que Priya reconhece nele um pedido de desculpas do tio.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "O gabarito inclui como correta a afirmação de que as falhas dos poemas longos pesam tanto quanto os acertos dos curtos; o crítico elogia os poemas curtos e aponta falhas nos longos, mas não afirma que esses aspectos pesem igualmente.",
+            "criterion": "answers",
+            "learnerCost": "O aprendiz pode entender como equilibrada uma avaliação que o texto não apresenta como tal.",
+            "location": {
+              "detail": "Ele apresenta um juízo dividido, em que as falhas dos poemas longos pesam tanto quanto os acertos dos curtos.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "B oferece questões mais próximas do nível C2, mas tem gabaritos incorretos em dois itens. A também falha na calibração, porém suas respostas marcadas estão de acordo com as passagens."
+        },
+        "pairId": "f5087a12-5acf-43e6-b1f3-3cc5617e34e5"
+      }
+    ]
+  }
+}

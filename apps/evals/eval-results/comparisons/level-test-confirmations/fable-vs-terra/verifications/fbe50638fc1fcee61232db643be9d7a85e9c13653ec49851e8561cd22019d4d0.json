@@ -1,0 +1,138 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-es-a2",
+        "claimId": "c9612f8394ba299f",
+        "criterion": "language",
+        "observationId": "51d3105e3d0fc0cba091cd100e6e1cf909e8645f1e84d176977017f636157bc1.first.311ceb96-daa7-44b4-85a4-545ed1a35af7.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-es-a2",
+        "claimId": "bbf6f7f00bdd37fc",
+        "criterion": "calibration",
+        "observationId": "51d3105e3d0fc0cba091cd100e6e1cf909e8645f1e84d176977017f636157bc1.first.311ceb96-daa7-44b4-85a4-545ed1a35af7.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0024496599999999998,
+    "id": "fbe50638fc1fcee61232db643be9d7a85e9c13653ec49851e8561cd22019d4d0",
+    "packet": [
+      {
+        "A": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "B": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "75e3e0d65135705f",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "efd9164959a8082d",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "1bb7fd66aa6894a287501da8cbdabef2c3d7d5b9f12f592f4d74b33e6bf44523",
+          "format": "text"
+        },
+        "B": {
+          "blob": "54279856423c17c9957f8195101e09ca3900aa025502ee981c195744b2070691",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Passages use generic Spanish with no Mexican Spanish features, and the two listening items do not sound like real voice messages: confirmation 3 ('Atención, familias...') reads like a PA announcement, and confirmation 4 ('Hola, soy Diego. Ayer fui a la peluquería...') has no plausible reason to leave a voicemail narrating an appointment already booked.",
+            "claimId": "c9612f8394ba299f",
+            "criterion": "language",
+            "location": {
+              "detail": "confirmations 1 to 4 passages",
+              "kind": "range"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Confirmations 1 and 3 contain no sequence or change to follow; each right option translates a single clause directly (for example, 'el viernes, los alumnos van a cantar en el patio' to 'The students will sing in the courtyard on Friday'), so an A1 reader matching words within one sentence can pick the right answers.",
+            "claimId": "bbf6f7f00bdd37fc",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "c61d6030b0f2b9a5db3dbd3b3cbf9adf52037b6fe971e9c92b8b4e3eaea800b5",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9915a0caeae9c31dee136c97a652522ed0929f2cafca8c9a18a2923868db9b4f",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "75e3e0d65135705f",
+          "finding": "doesn't hold",
+          "reason": "The message says the bus leaves at ten, so option (2) is false. Output A's key is '1 and 3', which is correct and does not include the bus-at-nine statement."
+        },
+        {
+          "claimId": "efd9164959a8082d",
+          "finding": "doesn't hold",
+          "reason": "The facts cited are right: the bus leaves at ten, so (2) is false, and the cafe is next to the shop, so (3) is true. But Output B's key is '1 and 2', so its answer includes the false option (2) and contradicts its own reasoning."
+        },
+        {
+          "claimId": "c9612f8394ba299f",
+          "finding": "holds",
+          "reason": "Output B's passages have no Mexican Spanish markers, and 'Atención, familias...' reads like a PA announcement rather than a voice message. Output A does contain Mexican-leaning usage such as 'departamento', 'primaria' and 'papás', so the criticism applies to B only."
+        },
+        {
+          "claimId": "bbf6f7f00bdd37fc",
+          "finding": "holds",
+          "reason": "In confirmations 1 and 3 of Output B, each correct option is a single clause from the passage, with no change or sequence to track. Confirmation 1 needs only one film-to-day pairing per clause, which an A1 reader could match within a sentence."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

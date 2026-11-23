@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0019291399999999998,
+  "failures": [],
+  "packetId": "2658dea0ca373ffd71c1f2e69c131434815f26e949b878278e67ffe52458fb31",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and use simple, direct A1 fact-finding questions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The answer keys match the facts stated in the passages in both outputs.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "72da3cdc-45ce-4ce5-bc2b-05f8e669f97f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both ask about simple stated facts appropriate for A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key marks statements 1 and 3, which the message supports; B incorrectly marks statement 2, although the bus leaves at ten, not nine.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same clear, natural English message and Brazilian Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 as correct, but the message says the bus leaves at ten, not nine.",
+            "criterion": "answers",
+            "learnerCost": "A learner relying on this key would be taught to accept a statement the message contradicts.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct answer key. B incorrectly includes the bus statement saying it leaves at nine."
+        },
+        "pairId": "7c56a561-9f91-401c-8b7f-5b25e9ad0c93"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use simple A1-level fact retrieval, and the facts in each passage are directly stated.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked options in both outputs are supported by their passages, and the unmarked options are not.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural English passages and understandable Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs meet the stated requirements with clear, direct passages and supported answer keys."
+        },
+        "pairId": "b3e2a9ed-a456-4f4f-b812-0f145510de88"
+      }
+    ]
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "attempt": "first",
+  "costUsd": 0.048472,
+  "failures": [],
+  "packetId": "8614dd8730a0a1b1fb7e4ce2ae5d38789a30374216dac42c42f1ae5f73dd89bd",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A tests genuine C1 implicit meaning, irony, litotes, and register shifts that trap a literal reader, whereas B spells out its nuances explicitly so a literal paraphrase suffices.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Both have accurate answer keys, but A's distractors target plausible literal misreadings of ironic or understated lines rather than simple contradictions of stated points.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "A",
+            "reason": "A's listening passages sound genuinely spoken in French from France, especially the musician's shift from polished press-speak to casual speech, while B's listening texts sound like written prose read aloud.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Across all four items, the passages state their qualified views explicitly and the correct options closely paraphrase those literal statements (for example, 'lui rendent une troublante proximité. Pourtant, le metteur en scène ne cherche pas à faire oublier la distance' paired with 'It makes the play feel close without concealing its distance from today', and 'je plaisante à moitié' explicitly labeling the light opening), breaking the expectation that a reader who understands every sentence literally gets at least one option wrong.",
+            "criterion": "calibration",
+            "learnerCost": "A learner can pass the C1 check through literal sentence-by-sentence comprehension without grasping implicit stance, irony, or unstated tone.",
+            "location": {
+              "detail": "all four confirmations",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The third passage is marked as listening but uses stiff written syntax and negation ('Ce sont des questions auxquelles les images du projet ne répondent guère') rather than natural spoken French.",
+            "criterion": "language",
+            "learnerCost": "Learners are tested on written-style prose instead of realistic spoken French.",
+            "location": {
+              "detail": "Ce sont des questions auxquelles les images du projet ne répondent guère.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A meets the C1 expectation by conveying stance through irony, understatement, and register shifts that a purely literal reader will misread, whereas B states every nuance explicitly in the text and sounds overly written in its listening items."
+        },
+        "pairId": "204e5856-fd76-4f7f-8a1c-fbb78ee89436"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 passage, question, and options.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives the right key (1 and 3), whereas B marks option 2 right even though the bus leaves at ten, not nine, and leaves out option 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same natural English message and Brazilian Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key selects 1 and 2 instead of 1 and 3: option 2 ('O ônibus sai às nove') contradicts 'The bus leaves at ten', while option 3 ('O café fica ao lado da loja') matches 'The cafe is next to the shop'.",
+            "criterion": "answers",
+            "learnerCost": "A learner who understands the message gets marked wrong for picking the right statement and is taught a false reading of the times.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the accurate answer key for the message, while B marks a false statement right and omits a true one."
+        },
+        "pairId": "8923b363-dc9a-406f-84ae-ffb5631b5297"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Across all four items, the passages state their qualified views explicitly and the correct options closely paraphrase those literal statements (for example, 'La nostalgie n’est pas un programme pour la ville... Elle peut néanmoins servir de point de départ à une conversation' paired with 'It can open a discussion about shared life without providing a ready-made plan', and 'je plaisante à moitié' explicitly labeling the joke), breaking the expectation that a reader who understands every sentence literally gets at least one option wrong.",
+            "criterion": "calibration",
+            "learnerCost": "A learner can pass the C1 check through literal comprehension without demonstrating command of implicit stance or tone.",
+            "location": {
+              "detail": "all four confirmations",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Across all four items, the passages state their qualified views explicitly and the correct options closely paraphrase those literal statements (for example, 'La nostalgie n’est pas un programme pour la ville... Elle peut néanmoins servir de point de départ à une conversation' paired with 'It can open a discussion about shared life without providing a ready-made plan', and 'je plaisante à moitié' explicitly labeling the joke), breaking the expectation that a reader who understands every sentence literally gets at least one option wrong.",
+            "criterion": "calibration",
+            "learnerCost": "A learner can pass the C1 check through literal comprehension without demonstrating command of implicit stance or tone.",
+            "location": {
+              "detail": "all four confirmations",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The third passage is marked as listening but uses formal written phrasing ('Ce sont des questions auxquelles les images du projet ne répondent guère') rather than natural spoken French.",
+            "criterion": "language",
+            "learnerCost": "Learners face written-register syntax where natural speech is expected.",
+            "location": {
+              "detail": "Ce sont des questions auxquelles les images du projet ne répondent guère.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The third passage is marked as listening but uses formal written phrasing ('Ce sont des questions auxquelles les images du projet ne répondent guère') rather than natural spoken French.",
+            "criterion": "language",
+            "learnerCost": "Learners face written-register syntax where natural speech is expected.",
+            "location": {
+              "detail": "Ce sont des questions auxquelles les images du projet ne répondent guère.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "A and B are identical in every passage, question, option, and answer key."
+        },
+        "pairId": "f7564cc9-e8e1-46fa-8d6d-565dc4f10fbe"
+      }
+    ]
+  }
+}

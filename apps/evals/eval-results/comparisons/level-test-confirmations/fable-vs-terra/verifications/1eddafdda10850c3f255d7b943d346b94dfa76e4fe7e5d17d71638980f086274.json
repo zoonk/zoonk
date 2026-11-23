@@ -1,0 +1,130 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-es-b2",
+        "claimId": "07d6d797741a5009",
+        "criterion": "calibration",
+        "observationId": "97158ed7204f393240398a3675a4f857f7b30502709ceb24064f3b19bfd8ce88.first.22e4240e-6a37-4a50-806d-fa975a1fe121.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0008659,
+    "id": "1eddafdda10850c3f255d7b943d346b94dfa76e4fe7e5d17d71638980f086274",
+    "packet": [
+      {
+        "A": {
+          "blob": "e39c910c554e57c756216e77615e4560756c832baff69f965c4190b762e204a6",
+          "format": "text"
+        },
+        "B": {
+          "blob": "8e796b5ca64e4a5ededf68d0a05bd2f6df8280c79837af086075f65243e3b82a",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Right options in confirmations 2 and 4 restate single sentences and can be spotted via cognates or shared words ('explicó cada paso con tanta precisión' -> 'A precisão das explicações da cozinheira foi um ponto positivo'; 'encontró una pequeña fonda la última noche... sigo recordando con una sonrisa' -> 'A noite na pequena fonda foi uma lembrança especial da viagem'), breaking the expectation that right options are implied rather than stated in one sentence or decided by cognates.",
+            "claimId": "07d6d797741a5009",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 2 and 4, options 2",
+              "kind": "range"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "2a043c5d3fa75c9f145db1eff387384504523574bbff0cb9bce7f86332a04a9d",
+          "format": "text"
+        },
+        "input": {
+          "blob": "5ae7e9ba4bc70ba9742baa36de82b9dfcdc57f9f139817a7f65529fd3f47e44f",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "output": "B"
+          },
+          {
+            "claim": "The cooking item’s keyed options closely restate explicit details: the cook explains each step “con tanta precisión,” and the speaker’s hands “apenas habían trabajado.” The answers do not require the implied B2 understanding specified.",
+            "output": "A"
+          },
+          {
+            "claim": "The keyed option is directly supported by the passage’s explicit praise of the cook’s explanations (“da gusto escucharla”), so it does not test an implied impression as required.",
+            "output": "A"
+          }
+        ]
+      },
+      {
+        "A": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "B": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "9a3e6906a71e25d0",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "baf0cd3775671653",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "07d6d797741a5009",
+          "finding": "holds",
+          "reason": "In A, the keyed cooking and Oaxaca options closely echo explicit sentences in their passages, including the cook’s precise explanations and the memorable evening at the fonda. B’s cooking item keys different points, and its fourth confirmation is about a hotel, so this claim does not apply to B."
+        },
+        {
+          "claimId": "9a3e6906a71e25d0",
+          "finding": "doesn't hold",
+          "reason": "A’s key is 1 and 3: both are supported by the message, and it does not include the false statement that the bus leaves at nine."
+        },
+        {
+          "claimId": "baf0cd3775671653",
+          "finding": "holds",
+          "reason": "The message says the bus leaves at ten, making option 2 false, and says the cafe is next to the shop, making option 3 true. B’s key incorrectly includes option 2 and omits option 3."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

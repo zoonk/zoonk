@@ -1,0 +1,120 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00343009,
+  "failureCodes": [
+    "invalid_response",
+    "failed_controls"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "54b5d0bfb68c934eae3c46adc18273e23816659686c60294c340a3d16bc90ed5",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's items need more than matching words: the delivery item requires counting two sodas and the pool item requires combining day and hours, so a learner one level below is more likely to miss something.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in content and both keys are correct, so neither is better on answers.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same Brazilian Portuguese questions and options and the same US English texts, with no language errors in either.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Several items in B can be answered by matching the same words in the passage and option (blue hat, red scarf, red and blue boxes), so a learner below A1 could get them right without understanding the text.",
+            "criterion": "calibration",
+            "learnerCost": "The item checks word recognition more than understanding, so a learner who is not yet ready for A1 would pass it and skip the practice they need.",
+            "location": {
+              "detail": "Lost and found passage and the box-colour question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has a few more items that need real reading, such as counting items and combining day and hour, and its keys are correct, so it gives the learner a better test of A1 reading."
+        },
+        "pairId": "37cc667b-5168-4961-8069-d00a5a42e4aa"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so they test the same things at the same level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so their keys match.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so their language is identical.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": null,
+        "pairId": "508140f8-9467-48ab-b443-bec09b92f1d1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use the same short, easy message, so neither is more or less at the right level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "A's key marks option 2 as true, but the message says the bus leaves at ten, not nine. B's key of 1 and 3 is correct.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same English message and Portuguese question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 (O ônibus sai às nove) as correct, but the message says the bus leaves at ten, so the key should be 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would believe the bus leaves at nine and would mark a wrong answer as right.",
+            "location": {
+              "detail": "Key line at the end of the item",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's key is correct, while A's key marks a false statement as right, which would teach the learner something untrue."
+        },
+        "pairId": "c9c98c0e-b318-4821-ba2d-80cb27fc99fd"
+      }
+    ]
+  }
+}

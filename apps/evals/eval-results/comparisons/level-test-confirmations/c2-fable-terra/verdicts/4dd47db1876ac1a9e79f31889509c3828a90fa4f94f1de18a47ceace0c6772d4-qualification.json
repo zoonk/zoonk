@@ -1,0 +1,139 @@
+{
+  "attempt": "qualification",
+  "costUsd": 0.127488,
+  "failures": [],
+  "packetId": "4dd47db1876ac1a9e79f31889509c3828a90fa4f94f1de18a47ceace0c6772d4",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-carbon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical, and all four items genuinely require C2 understanding of lexical nuance, dialectical argument structure, unstated presupposition, and literary allusion.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical, with accurate answer keys and sharp distractors aimed at literal or surface misreadings.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Outputs A and B are identical, pairing idiomatic Germany German across written and spoken registers (including natural formal \"Sie\") with clear US English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Outputs A and B are identical and deliver well-calibrated, natural C2 German reading and listening items with sound keys."
+        },
+        "pairId": "48be5f28-bbde-47ce-a587-ed1c5be538aa"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same A1 English sentences and fact-checking options that swap times and prepositions so learners cannot pass by matching a single word.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives the right key (1 and 3), whereas B marks a contradicted statement (2) as right and leaves out a supported statement (3).",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same natural A1 English message and natural Brazilian Portuguese prompt and options (\"ônibus\").",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Marks option 2 (\"O ônibus sai às nove.\") as right even though the message states \"The bus leaves at ten.\", and omits option 3 (\"O café fica ao lado da loja.\"), which matches \"The cafe is next to the shop.\"",
+            "criterion": "answers",
+            "learnerCost": "A learner who understood the English sentences accurately is marked wrong and told a false statement is right.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both outputs share the same passage and options, but A has the accurate answer key while B keys a false option and omits a true one."
+        },
+        "pairId": "59192b4f-4de9-43da-86ab-d2216648c7dd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A tests C2 sensitivity to Konjunktiv I distance, wordplay, conversational presuppositions, and a reworked fairy-tale formula, whereas B states its interpretations explicitly in the passages so a B2 or C1 learner can solve the options by matching paraphrases and negations.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Both outputs have accurate keys, but A's distractors tempt a near-C2 reader who misses irony or figurative meaning, while several distractors in B contradict plain surface facts.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "A",
+            "reason": "Both write natural Germany German and US English, but A's listening passages sound genuinely spoken and naturally use formal \"Sie\", while B's listening passages read like written essays and never use \"Sie\" or \"du\".",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Passages state their conclusions outright (for instance \"Ihr Vater hatte Dinge gern mit Namen versehen, die ihnen eine Bestimmung gaben, bevor jemand Zeit fand, nach ihrem Inhalt zu fragen\" in item 1 and \"Sie verrät nur mindestens ebenso viel darüber, wie wir uns erinnern möchten\" in item 4), allowing options to be decided at B2/C1 by matching paraphrases and explicit \"kein\"/\"nicht\" negations rather than C2 nuance or unstated assumptions.",
+            "criterion": "calibration",
+            "learnerCost": "A B2 or C1 learner could skip into C2 without actually grasping unstated assumptions, irony, or fine shades of meaning.",
+            "location": {
+              "detail": "confirmations 1 to 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Several distractors, such as \"The less heroic account proves that the suitcase was never saved\" (against \"Gerettet hat er ihn wohl tatsächlich\") and \"It explains why Lena's father removed the mirror from the hallway\", contradict plain surface facts rather than plausible C2 misreadings.",
+            "criterion": "answers",
+            "learnerCost": "Learners can eliminate wrong options too easily without careful C2-level comprehension.",
+            "location": {
+              "detail": "options of confirmations 1 and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Both listening passages read like polished written prose (\"Wenn Entwürfe erst nach ihrer Verabschiedung öffentlich werden\", \"In der feierlichen Fassung stapft er gegen die Flut\") rather than natural speech, and none of the passages demonstrates natural \"Sie\" or \"du\" usage.",
+            "criterion": "language",
+            "learnerCost": "Listening items test written-style German rather than authentic spoken delivery and address.",
+            "location": {
+              "detail": "passages of confirmations 3 and 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A genuinely confirms C2 mastery through authentic written and spoken German whose options turn on irony, presupposition, and allusion, while B spells out its main points in the text at a B2/C1 level."
+        },
+        "pairId": "fdc3ca0c-ce9f-4518-a2c0-aace5d18c952"
+      }
+    ]
+  }
+}

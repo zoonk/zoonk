@@ -1,0 +1,77 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        3,
+        5
+      ],
+      "level": "A2",
+      "options": [
+        "A ticket for the comedy costs 50 pesos.",
+        "The comedy starts at 11:00 a.m. on Saturday.",
+        "The kids' movie starts at 5:00 p.m. on Sunday.",
+        "A ticket for the kids' movie costs 50 pesos.",
+        "The horror movie starts at 8:00 p.m. on Sunday.",
+        "A ticket for the horror movie costs 80 pesos."
+      ],
+      "passage": "Programa de este fin de semana. Sábado: la comedia empieza a las 5:00 p.m. y la película de terror a las 8:00 p.m. Domingo: solo hay una película para niños, a las 11:00 a.m. El boleto cuesta $80, pero el domingo cuesta $50.",
+      "question": "What is true about the movies in this weekend's program?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "Diego knocked on Regina's door before the package arrived.",
+        "Regina received the package after Diego knocked on her door.",
+        "Regina can pick up the package after Diego comes back at 6:00 p.m.",
+        "Diego received the package before he knocked on Regina's door.",
+        "Diego is going to knock on Regina's door after he comes back at 6:00 p.m.",
+        "Regina can pick up the package before Diego goes out this afternoon."
+      ],
+      "passage": "Hola, Regina: Ayer llegó un paquete para ti y lo recibí yo. Hoy en la mañana toqué tu puerta, pero nadie abrió. Voy a salir en la tarde y regreso a las 6:00 p.m. Después puedes pasar por el paquete. Diego, tu vecino.",
+      "question": "What is true about the order of events in Diego's note?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3,
+        4
+      ],
+      "level": "A2",
+      "options": [
+        "The teachers sing before Ximena's group dances.",
+        "Ximena's group dances before the teachers sing.",
+        "The teachers dance first, and Ximena's group sings later.",
+        "The teachers sing before everyone eats in the courtyard.",
+        "Everyone eats in the courtyard after Ximena's group dances.",
+        "Everyone eats in the courtyard before Ximena's group dances."
+      ],
+      "passage": "Hola, tía, soy Ximena. Mañana es el festival de mi escuela. Mi grupo baila a las once, pero antes cantan los maestros. Después del baile vamos a comer todos en el patio. Te veo ahí.",
+      "question": "What is true about the order of events at the festival at Ximena's school?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "A2",
+      "options": [
+        "Camila wants to go on Thursday at a later time.",
+        "Camila wants to go on Friday at a different time.",
+        "Camila wants to color her hair and not get a haircut.",
+        "Camila wants to go on Friday at four in the afternoon.",
+        "Camila wants a haircut and also wants to color her hair.",
+        "Camila wants to move her appointment from Friday to Thursday."
+      ],
+      "passage": "Hola, habla Camila. Tengo cita el jueves a las cuatro de la tarde para un corte, pero ese día no puedo. ¿Puedo ir el viernes a la misma hora? También quiero pintarme el cabello. Gracias.",
+      "question": "What does Camila want in her call to the hair salon?",
+      "skill": "listening"
+    }
+  ]
+}

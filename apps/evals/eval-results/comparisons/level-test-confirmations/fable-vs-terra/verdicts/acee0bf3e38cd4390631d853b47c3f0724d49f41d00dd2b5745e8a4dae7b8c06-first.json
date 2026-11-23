@@ -1,0 +1,127 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0020369399999999997,
+  "failures": [],
+  "packetId": "acee0bf3e38cd4390631d853b47c3f0724d49f41d00dd2b5745e8a4dae7b8c06",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and both provide C2-level German passages with English questions that test nuanced interpretation.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The passages support the marked answer sets, and the outputs are identical.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural German passages and US English options; the outputs are identical.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical and serve the learner equally well."
+        },
+        "pairId": "3be622cb-a941-466b-8a8c-a9099af613d0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same A1-level, stated-fact question and options; only the answer key differs.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B marks options 1 and 3, both supported by the message. A incorrectly marks option 2, which says the bus leaves at nine rather than ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The question and options are in Brazilian Portuguese in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 as correct, but the message says the bus leaves at ten; option 3 is supported because the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would learn an incorrect fact and be marked right for a wrong answer.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct answer key. A marks a statement contradicted by the message as correct."
+        },
+        "pairId": "484864f1-2809-4a43-b747-ae1e2e66aca3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A supplies the requested C2 material and asks about implicit meaning and argument structure. B repeats a different set of passages and questions instead of addressing this case.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's answer sets are supported by its passages. B's questions and keys belong to unrelated passages, so they cannot answer the supplied task.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use German passages and US English options; B's problem is that it supplies the wrong material, not that its languages or variants are wrong.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The output repeats passages, questions, and keys about Hannah, a poetry collection, a library discussion, and a family story rather than providing the requested passages and questions for this case.",
+            "criterion": "calibration",
+            "learnerCost": "The learner receives unrelated material and cannot use it to practise the requested task.",
+            "location": {
+              "detail": "The whole output consists of confirmations for a different set of passages and questions.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The answer keys and options refer to passages that are not the ones specified for this pair, so they cannot identify correct answers to the requested questions.",
+            "criterion": "answers",
+            "learnerCost": "The learner has no valid answer set for the task they were given.",
+            "location": {
+              "detail": "All four confirmations in the output.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A addresses the supplied task with relevant C2 material and supported answer keys. B repeats a different set of questions, leaving the learner without usable material for this case."
+        },
+        "pairId": "c427ef5b-2afa-4d86-beaa-4fdfcfe0602a"
+      }
+    ]
+  }
+}

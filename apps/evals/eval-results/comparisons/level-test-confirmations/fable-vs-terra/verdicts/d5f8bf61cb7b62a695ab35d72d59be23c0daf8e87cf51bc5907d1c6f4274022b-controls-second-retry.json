@@ -1,0 +1,134 @@
+{
+  "attempt": "controls-second-retry",
+  "costUsd": 0.0019746399999999997,
+  "failureCodes": [
+    "invalid_response"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs."
+  ],
+  "packetId": "d5f8bf61cb7b62a695ab35d72d59be23c0daf8e87cf51bc5907d1c6f4274022b",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os textos e as opções exigem inferências e leituras de ironia compatíveis com C2 em ambas as versões.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "As versões são idênticas e compartilham o mesmo erro na chave da primeira questão.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam inglês natural nos textos e português brasileiro nas perguntas e opções.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A chave da primeira questão marca as opções 1 e 3 como corretas, mas elas não são sustentadas pelo texto; as opções 2 e 5 são sustentadas e foram omitidas.",
+            "criterion": "answers",
+            "learnerCost": "O aluno pode selecionar uma resposta errada e deixar de selecionar respostas corretas, mesmo tendo entendido o conto.",
+            "location": {
+              "detail": "\"answerIndices\": [1, 3, 4]",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A chave da primeira questão marca as opções 1 e 3 como corretas, mas elas não são sustentadas pelo texto; as opções 2 e 5 são sustentadas e foram omitidas.",
+            "criterion": "answers",
+            "learnerCost": "O aluno pode selecionar uma resposta errada e deixar de selecionar respostas corretas, mesmo tendo entendido o conto.",
+            "location": {
+              "detail": "\"answerIndices\": [1, 3, 4]",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas; ambas têm uma chave de respostas importante incorreta na primeira questão."
+        },
+        "pairId": "14289a2d-619e-43ee-b2d1-d86e2bd0ed66"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões propõem textos e opções que exigem interpretação de nuances e implicações adequadas a C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "As chaves de B correspondem às opções sustentadas pelos textos. A primeira chave de A marca opções não sustentadas e omite duas corretas.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas usam textos naturais em inglês e opções em português brasileiro.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A chave da primeira questão marca as opções 1 e 3 como corretas, mas elas não são sustentadas pelo texto; as opções 2 e 5 são sustentadas e foram omitidas.",
+            "criterion": "answers",
+            "learnerCost": "O aluno pode selecionar uma resposta errada e deixar de selecionar respostas corretas, mesmo tendo entendido o conto.",
+            "location": {
+              "detail": "\"answerIndices\": [1, 3, 4]",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B tem chaves de resposta coerentes com os textos; A contém uma chave incorreta na primeira questão."
+        },
+        "pairId": "97260ec2-b647-4baf-9052-3c25ab526d6d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "A chave de B marca exatamente as afirmações sustentadas pela mensagem; A marca como correta a afirmação de que o ônibus sai às nove, em vez da afirmação sobre o café ao lado da loja.",
+            "criterion": "answers"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A chave inclui a opção 2, mas a mensagem diz que o ônibus sai às dez; a opção 3 é verdadeira e foi omitida.",
+            "criterion": "answers",
+            "learnerCost": "O aluno que compreendeu a mensagem pode ser corrigido como se tivesse escolhido a resposta errada.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B tem a chave correta: as opções 1 e 3 são sustentadas pela mensagem."
+        },
+        "pairId": "e269efa5-b16a-44f6-b064-85d28d5977b6"
+      }
+    ]
+  }
+}

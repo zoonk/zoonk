@@ -1,0 +1,115 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-es-a2",
+        "claimId": "24d7266b98609d4c",
+        "criterion": "calibration",
+        "observationId": "8a5b1fa4eb81d94152249e4ee0907999f3ecd2133dd2428b5d6b81c185331a40.first.7bba7ede-8898-474a-b73f-46a37e1a2084.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0013509599999999998,
+    "id": "cf2fd53a18753ea0280a1eff3d06017966657e29fa02e68b808ba30456118317",
+    "packet": [
+      {
+        "A": {
+          "blob": "d0fe545104a053fe90bb2c953775e3545427758b9c7e60add1d04b9c0bbc0154",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a1c6b5fb53a75691a9fa73506940178e286fcbc7f6e0adb1fdb5802504170f80",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Confirmations 1 and 4 state each fact in a single direct sentence with no sequence or change to follow, allowing an A1 learner to pick the right options by simple phrase matching.",
+            "claimId": "24d7266b98609d4c",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 1 and 4",
+              "kind": "range"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "c61d6030b0f2b9a5db3dbd3b3cbf9adf52037b6fe971e9c92b8b4e3eaea800b5",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9915a0caeae9c31dee136c97a652522ed0929f2cafca8c9a18a2923868db9b4f",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "46ca85b1911aa085",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "4dac27f93d30c697",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "24d7266b98609d4c",
+          "finding": "doesn't hold",
+          "reason": "Confirmation 1 asks the learner to pair each movie with its own time and room, and confirmation 4 requires keeping the sister's appointments apart (Camila cuts, Valentina washes and styles), so both need more than phrase matching. The claim that they are single direct sentences with no change to follow is false."
+        },
+        {
+          "claimId": "46ca85b1911aa085",
+          "finding": "doesn't hold",
+          "reason": "The message does say the bus leaves at ten and the cafe is next to the shop, so those statements are true. But output A's key is 1 and 2, which includes option 2 (the bus at nine) that the claim calls false, and no explanation appears in A. The claim does not match what A contains."
+        },
+        {
+          "claimId": "4dac27f93d30c697",
+          "finding": "doesn't hold",
+          "reason": "Output B's key is 1 and 3, and it does not include option 2, the bus leaving at nine. Option 2 is the only statement about the bus, so B has no such false statement in its answer."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

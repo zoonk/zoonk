@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "C1",
+      "options": [
+        "It makes the play feel close without concealing its distance from today.",
+        "It brings the play up to date by correcting elements that now seem uncomfortable.",
+        "It lets the play challenge present-day audiences rather than adapting it to reassure them.",
+        "It preserves the play’s historical setting by treating the work as a museum piece.",
+        "It recreates the play’s original reception by encouraging audiences to laugh freely."
+      ],
+      "passage": "On aurait pu craindre que cette reprise ne transforme la pièce en objet de musée. Il n’en est rien : le décor dépouillé et le jeu presque familier des acteurs lui rendent une troublante proximité. Pourtant, le metteur en scène ne cherche pas à faire oublier la distance qui nous sépare de l’œuvre. Certains silences, inconfortables, nous empêchent de rire aussi librement qu’on l’imagine à la création. C’est là que le spectacle trouve sa justesse : il ne prétend ni restituer une époque intacte ni corriger le texte au nom de la nôtre. Il nous laisse plutôt aux prises avec ce qui résiste encore à nos habitudes.",
+      "question": "Which assessments of the revival does the reviewer convey?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "C1",
+      "options": [
+        "It can open a discussion about shared life without providing a ready-made plan.",
+        "Its account of the past may be unreliable while expressing a genuine sense of loss.",
+        "It calls for the city to reproduce the neighborhood exactly as the resident remembers it.",
+        "It should be set aside once accurate figures have corrected the resident’s account.",
+        "It offers a dependable picture of the neighborhood’s former economic difficulties."
+      ],
+      "passage": "Il est facile de sourire devant celui qui assure que son quartier était plus vivant autrefois. Sa mémoire a sans doute laissé tomber les loyers trop lourds et les commerces où personne n’entrait. Mais en lui opposant des chiffres impeccables, on risque de manquer ce qu’il cherche, maladroitement, à nommer : la disparition de lieux où l’on se reconnaissait sans avoir besoin d’y consommer. Le passé dont il parle n’a peut-être jamais existé tout à fait ainsi ; le manque, lui, est bien réel. La nostalgie n’est pas un programme pour la ville, encore moins un relevé fidèle de son histoire. Elle peut néanmoins servir de point de départ à une conversation sur ce qu’on voudrait partager aujourd’hui.",
+      "question": "What does the writer suggest about the resident’s nostalgia?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        2
+      ],
+      "level": "C1",
+      "options": [
+        "Its benches demonstrate that the area will function as a public square.",
+        "Its surrounding space needs scrutiny as a place for everyday public life.",
+        "Its success should be assessed beyond the celebrations marking its opening.",
+        "Its construction should be abandoned because it cannot host community events.",
+        "Its architectural appeal settles the question of its contribution to the city."
+      ],
+      "passage": "Alors, ce nouveau stade à Nantes, on peut admirer le bâtiment et se poser des questions sur ce qu’il fera à la ville. Les élus promettent des rencontres, des concerts, de l’activité ; très bien. Mais une place publique ne naît pas simplement parce qu’on a posé des bancs devant une enceinte. Qui pourra s’y attarder les jours sans match, et pour y faire quoi ? Ce sont des questions auxquelles les images du projet ne répondent guère. Je ne demande pas qu’on renonce au stade ; je demande qu’on juge sa réussite autrement qu’au soir de son inauguration.",
+      "question": "Which views does the commentator convey about the new stadium in Nantes?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "C1",
+      "options": [
+        "The musician treats the practical advantages of recognition as the main value of fame.",
+        "The musician uses a light opening before reflecting seriously on closeness to listeners.",
+        "The musician regards a listener’s personal story as the start of a friendship.",
+        "The musician dismisses listeners’ attachment as something impossible to understand.",
+        "The musician treats listeners’ attachment with sympathy while keeping a personal boundary."
+      ],
+      "passage": "La célébrité ? Disons que c’est pratique quand il faut réserver une table. Bon, je plaisante à moitié. Ce qui me frappe surtout, c’est que les gens croient parfois vous connaître parce qu’ils connaissent vos chansons. Et je comprends : moi aussi, j’ai eu l’impression de grandir avec des voix à la radio. Mais quand quelqu’un me raconte ce qu’une chanson a changé pour lui, j’essaie d’écouter sans faire semblant d’être son ami. Il y a quelque chose de précieux dans cette rencontre, justement parce qu’elle ne nous autorise pas à tout confondre.",
+      "question": "What does the musician’s way of speaking convey about fame and encounters with listeners?",
+      "skill": "listening"
+    }
+  ]
+}

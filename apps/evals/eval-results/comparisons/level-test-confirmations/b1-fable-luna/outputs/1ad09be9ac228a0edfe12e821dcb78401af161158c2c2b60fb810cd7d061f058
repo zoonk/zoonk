@@ -1,0 +1,73 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The writer has already learned to play quickly.",
+        "The writer now practices every day with friends.",
+        "The writer stopped making mistakes while practicing.",
+        "Listening to recordings helps the writer notice progress.",
+        "Shorter practice sessions make the writer less frustrated."
+      ],
+      "passage": "Comecei a aprender violão no ano passado porque queria acompanhar as músicas que canto com meus amigos. No início, eu praticava todos os dias, mas ficava frustrado quando errava. Minha professora sugeriu sessões mais curtas e gravações. Segui o conselho: agora pratico quinze minutos por dia e gravo os exercícios. Assim, não fico tão frustrado e, ao ouvir as gravações, percebo meu progresso. Ainda não sou rápido, mas estudar ficou mais divertido.",
+      "question": "Why does the writer say learning has become more enjoyable now? Select all that apply.",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "Save the historic center for the evening, when it is quieter.",
+        "Plan an outdoor visit and keep an indoor option for rainy weather.",
+        "Spend the whole day traveling between distant attractions by bus.",
+        "Start in the historic center early, then visit the Botanical Garden.",
+        "Visit only the Botanical Garden’s greenhouse, not the rest of the park."
+      ],
+      "passage": "Para conhecer Curitiba sem passar o dia inteiro no ônibus, comece pelo centro histórico de manhã, quando as ruas estão mais tranquilas. Depois, siga para o Jardim Botânico; a estufa é bonita, mas o parque também vale a visita. Se chover, reserve um tempo para o Museu Oscar Niemeyer. Assim, você combina passeio ao ar livre com uma opção coberta.",
+      "question": "Which recommendations capture the guide’s overall advice for visiting Curitiba? Select all that apply.",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The team won despite the heavy field.",
+        "The players already finish every chance calmly.",
+        "The team became better organized after the break.",
+        "The team had no trouble passing in the first half.",
+        "The players kept supporting one another in defense."
+      ],
+      "passage": "Quero falar do jogo de hoje. O resultado foi uma derrota, mas saio satisfeito com a equipe. No primeiro tempo, tivemos dificuldade para trocar passes porque o campo estava pesado. Depois do intervalo, os jogadores se organizaram melhor e criaram duas boas chances. Ainda precisamos finalizar com mais calma, porém ninguém deixou de ajudar na defesa. Esse esforço coletivo me deixa confiante para a próxima partida.",
+      "question": "What makes the coach confident about the next match? Select all that apply.",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        3,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Pretend to know an answer if they are unsure.",
+        "Prepare examples of times they solved a problem.",
+        "Memorize complete answers before the interview.",
+        "Research the company without copying its wording.",
+        "Explain how they would find information they do not know."
+      ],
+      "passage": "Olha, para a entrevista de amanhã, não tente decorar respostas inteiras. Acho melhor você preparar dois exemplos de situações em que resolveu um problema, porque isso mostra como você trabalha. Também vale pesquisar a empresa, mas sem repetir frases do site. Se não souber responder algo, seja sincero e explique como buscaria a informação.",
+      "question": "What does the friend think the listener should do for the interview? Select all that apply.",
+      "skill": "listening"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "Deixa em aberto se a mãe quis esconder ou assinalar os vestígios.",
+        "Mostra que a mãe pretendia preservar intacta a lembrança da fotografia.",
+        "Trata o silêncio sobre o ano da retirada como uma dúvida exclusiva de Emma.",
+        "Faz da casa um possível objeto de interrogação, e não apenas de reverência.",
+        "Apresenta a casa como uma fonte disposta a esclarecer o passado por iniciativa própria."
+      ],
+      "passage": "By the time Emma returned to the house on the edge of Chicago, the porch had acquired a list to the left, as though it had been listening at the door. Her mother had called the place a witness, never a monument. Monuments, Emma supposed, were permitted to keep their mouths shut; witnesses could be asked awkward questions. There were, for instance, the nail holes above the mantel, where a photograph had hung until the year nobody would name. Her mother had filled them with putty, but had chosen a shade too pale for the wall. Whether from carelessness or design Emma could not tell. She set down her suitcase and waited, absurdly, for the house to volunteer an answer.",
+      "question": "Que efeitos a narração produz ao apresentar a casa e os vestígios nela?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "Apresenta a omissão expressiva como uma pausa que deixa intacta a forma do poema.",
+        "Apresenta a omissão expressiva como um segredo cuja solução completa o poema.",
+        "Usa os poemas menos bem-sucedidos para tornar mais nítido o mérito dos melhores.",
+        "Usa os poemas menos bem-sucedidos para contestar o valor da coletânea como um todo.",
+        "Usa o efeito da omissão sobre a forma para distinguir ausência expressiva de mero silêncio."
+      ],
+      "passage": "At first, this collection seems to prize silence for its own sake. Yet its most conspicuous omissions are not blank spaces on the page. When a poem moves from a family dinner to an empty chair, the missing occasion is made audible in the change of meter. This is not reticence as good manners; the withheld particulars are allowed to unsettle the form that contains them. Granted, a few of the shorter pieces mistake obscurity for pressure, leaving the reader with a puzzle rather than a felt absence. But that occasional failure makes the better poems easier, not harder, to recognize: in them, what goes unsaid is neither a secret to be solved nor a license for any interpretation, but a constraint on what the poem can honestly say.",
+      "question": "Como a resenha constrói sua avaliação das omissões na coletânea?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "Apresentar a lista organizada como prova de que o debate foi simples.",
+        "Distinguir o registro dos desacordos de uma declaração de consenso.",
+        "Apresentar as propostas com menos oposição como resultado da discussão.",
+        "Distinguir a organização das objeções da resolução das próprias objeções.",
+        "Tratar a redução das divergências a frases de efeito como forma de facilitar o debate."
+      ],
+      "passage": "Before we close, a word about tonight's discussion of the library. The minutes won't be a statement that everyone agreed, or even a list of the proposals with the least opposition. Think of them as a map of the disagreements. I won't pretend that putting two objections next to each other settles either one. But it does let the next group see what each proposal asks people to give up. So, when you read the minutes, please don't mistake a tidy list for proof of a tidy debate. Our job was to leave the disagreements in a form someone else can argue with, rather than reduce them to slogans.",
+      "question": "Qual é a função dos contrastes usados por quem encerra a discussão sobre a biblioteca?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "A insistência da tia resolve a dúvida sobre o embarque perdido.",
+        "A mudança de final faz a família deixar de contar a história nos atrasos.",
+        "A repetição da história associa o atraso a um gesto recorrente de ajuda.",
+        "A expressão favorita da tia ganha graça pelo relógio ter sido emprestado.",
+        "A referência ao relógio apresenta um objeto capaz de confirmar os acontecimentos."
+      ],
+      "passage": "My grandfather supposedly missed the ferry one morning because his watch had stopped, and that's why he met my grandmother on the next crossing. Even my aunt, who swears he never missed the ferry, tells it that way. She says the watch was borrowed from a neighbor, which makes 'living on borrowed time' her favorite part of the story. I don't know whether any ferry was missed, and I don't suppose the watch can testify. But when someone in our family is late, the story comes out, usually just before somebody else offers them a ride. Somehow the ending keeps changing, but that part never does.",
+      "question": "Que efeitos surgem da maneira como a história da família é contada?",
+      "skill": "listening"
+    }
+  ]
+}

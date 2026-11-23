@@ -1,0 +1,77 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "B2",
+      "options": [
+        "A ajuda deveria partir do que a escola de fato precisa.",
+        "A escola precisa que o muro seja pintado todos os anos.",
+        "A gratidão da diretora prova que a ação é bem-vinda.",
+        "A ação serve mais à imagem da empresa do que à escola.",
+        "Os funcionários vão à escola obrigados e de má vontade.",
+        "A empresa deveria levar os funcionários mais vezes para pintar."
+      ],
+      "passage": "Cada diciembre, mi empresa nos lleva un sábado a pintar una primaria en las afueras de Puebla. Llegamos con playeras iguales, nos tomamos fotos con las brochas y a las dos ya estamos de regreso. La directora nos agradece, cómo no. Pero el año pasado noté que la barda que pintamos era la misma del año anterior, mientras el techo del salón de sexto seguía goteando. Nadie le había preguntado a ella qué hacía falta. Las fotos, eso sí, salieron en el boletín interno antes del lunes.",
+      "question": "O que o texto dá a entender sobre o dia de voluntariado da empresa?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        5
+      ],
+      "level": "B2",
+      "options": [
+        "Não gostou do sabor do molho provado no final.",
+        "Estranhou a chef deixar a pimenta quase queimar.",
+        "Considera que aprendeu na aula tudo o que queria.",
+        "Sentiu falta de pôr a mão na massa durante a aula.",
+        "Achou as explicações da chef chatas de acompanhar.",
+        "Duvida de conseguir repetir o prato por conta própria."
+      ],
+      "passage": "Tomé la clase de mole negro en un taller del centro de Oaxaca. La chef conoce su oficio como pocas: explica cada chile, de dónde viene y por qué se tuesta hasta casi quemarlo, y da gusto escucharla. Eso sí, de las cuatro horas que duró la clase, mis manos tocaron el metate unos diez minutos; el resto lo pasé de pie, tomando apuntes. El mole que probamos al final, preparado por ella, era extraordinario. Si a mí me saldría igual en mi cocina, todavía no lo sé.",
+      "question": "O que a pessoa que escreveu a avaliação sente em relação à aula?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        5
+      ],
+      "level": "B2",
+      "options": [
+        "O ônibus de hora em hora resolve bem o trajeto até lá.",
+        "A beleza do terminal vai bastar para atrair os passageiros.",
+        "Os voos para Monterrey ficaram mais curtos com o novo aeroporto.",
+        "O acesso difícil pesa mais do que a qualidade das instalações.",
+        "As pistas do novo aeroporto ficam abaixo do padrão internacional.",
+        "Os passageiros dificilmente vão trocar o aeroporto antigo pelo novo."
+      ],
+      "passage": "Mire, la terminal es preciosa, eso nadie lo discute, y las pistas están a la altura de cualquier aeropuerto del mundo. Pero yo hice la prueba la semana pasada: del centro hasta la puerta, hora y cuarenta en taxi, porque el tren prometido sigue en el papel y el único camión sale cada hora. Un vuelo a Monterrey dura menos que eso. Entonces, cuando me preguntan si la gente va a dejar el aeropuerto viejo, yo nada más les enseño el recibo.",
+      "question": "O que a pessoa convidada defende sobre o novo aeroporto?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3,
+        5
+      ],
+      "level": "B2",
+      "options": [
+        "Cobrar de Diego um pagamento que ele ainda deve.",
+        "Recomendar o hotel a Diego por causa da boa comida.",
+        "Mostrar que o hotel não é o que os anúncios prometem.",
+        "Fazer Diego repensar a reserva que ia fazer naquele hotel.",
+        "Relatar a viagem sem querer influenciar a escolha de Diego.",
+        "Evitar que Regina se decepcione na viagem de aniversário."
+      ],
+      "passage": "Diego, ya regresamos de la playa. Oye, vi que ibas a apartar el mismo hotel para su aniversario, ¿ya pagaste? Nada más te cuento: la alberca que sale en las fotos estuvo cerrada los cinco días, el supuesto frente al mar es cruzando una avenida y el aire del cuarto sonaba como licuadora. La comida, bien, no me quejo. Pero tú sabes cuánto lleva Regina esperando ese viaje. En fin, tú decides.",
+      "question": "Com que intenção a pessoa deixa esta mensagem de voz para Diego?",
+      "skill": "listening"
+    }
+  ]
+}

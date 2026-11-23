@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Practicing for hours once a week is her preferred way to improve.",
+        "Playing familiar songs helps her stay motivated despite her mistakes.",
+        "Practicing exercises alone keeps her more motivated than playing songs.",
+        "Waiting until she stops making mistakes makes playing songs more useful.",
+        "Short daily practice helps her progress more than an occasional long session."
+      ],
+      "passage": "Comecei a aprender violão há alguns meses. No início, eu praticava durante horas no domingo, mas passava a semana sem tocar. Agora, separo um pouco de tempo todos os dias e sinto que avanço mais. Acho que tocar músicas que conheço também me ajuda a continuar, mesmo quando erro; fazer só exercícios me desanima.",
+      "question": "What does the writer think about learning the guitar?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "B1",
+      "options": [
+        "Leave room in the day for unexpected discoveries.",
+        "Explore neighborhoods to get a sense of everyday life.",
+        "Use the bus instead of walking around the neighborhoods.",
+        "Fit as many tourist attractions as possible into one day.",
+        "Follow the original plan rather than stopping at new places."
+      ],
+      "passage": "Para conhecer Belo Horizonte além dos pontos turísticos, caminhe pelos bairros e observe a vida nas ruas. Entre numa padaria, sente numa praça e converse com os moradores, em vez de tentar visitar tudo num único dia. Se a distância for grande, use o ônibus. O importante é deixar tempo para descobrir lugares que não estavam no seu plano.",
+      "question": "What does the travel guide suggest about visiting Belo Horizonte?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "B1",
+      "options": [
+        "The team showed improvement in how it organized its play.",
+        "The team still needs to improve how it finishes its chances.",
+        "The team had more chances before the second half than during it.",
+        "The team should concentrate only on shooting in future training.",
+        "The team’s main difficulty was passing the ball calmly."
+      ],
+      "passage": "Mesmo com a derrota, nossa equipe mostrou que consegue trocar passes com calma e chegar perto do gol. No segundo tempo, criamos mais chances do que antes, mas erramos na hora de finalizar. Foi bom ver a melhora na organização, embora ainda precisemos treinar os chutes. Na próxima semana, vamos trabalhar nisso, sem esquecer o que já fizemos bem.",
+      "question": "What is the coach’s main message about the team?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "B1",
+      "options": [
+        "To help the applicant judge whether they would enjoy working there.",
+        "To help the applicant explain how their experience fits the position.",
+        "To help the applicant give broad answers instead of specific examples.",
+        "To help the applicant judge the job without learning about the company.",
+        "To help the applicant avoid discussing how their experience fits the position."
+      ],
+      "passage": "Antes da entrevista, vale a pena pesquisar o que a empresa faz e pensar em exemplos do seu trabalho. Assim, você consegue mostrar como sua experiência combina com a vaga, em vez de dar respostas muito gerais. E, quando conhecer melhor a empresa, fica mais fácil perceber se você gostaria mesmo de trabalhar lá. Boa sorte!",
+      "question": "Why does the friend recommend preparing for the interview this way?",
+      "skill": "listening"
+    }
+  ]
+}

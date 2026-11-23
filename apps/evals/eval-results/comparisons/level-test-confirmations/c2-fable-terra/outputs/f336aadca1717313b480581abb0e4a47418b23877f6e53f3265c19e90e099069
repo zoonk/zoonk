@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "It records a decision that Lena and her father made together.",
+        "It explains why Lena's father removed the mirror from the hallway.",
+        "It establishes that the letters have already answered Lena's questions.",
+        "It gives an appearance of closure to something whose contents remain unknown.",
+        "It illustrates the father's habit of assigning meaning before others can inquire."
+      ],
+      "passage": "Als Lena die Wohnung ihres Vaters betrat, lag der Schlüssel noch immer auf dem Küchentisch, als hätte jemand ihn dort nur für einen Augenblick abgelegt. Neben ihm stand eine Schachtel mit Briefen, sorgfältig verschnürt und mit einem einzigen Wort beschriftet: „Erledigt“. Sie löste die Schnur nicht. Im Flur fehlte der Spiegel; an seiner Stelle zeichnete sich auf der Tapete ein helles Rechteck ab, dessen Umrisse genauer waren als jede Erinnerung, die sie an ihn hatte. Ihr Vater hatte Dinge gern mit Namen versehen, die ihnen eine Bestimmung gaben, bevor jemand Zeit fand, nach ihrem Inhalt zu fragen. Lena nahm den Schlüssel an sich und ließ die Schachtel stehen. Draußen fuhr die S-Bahn vorbei, und das leere Rechteck im Flur schien für einen Moment zu zittern.",
+      "question": "What does the label on the box contribute to the opening?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "The reviewer treats the ordinary objects mainly as clues to a concealed solution.",
+        "The reviewer argues that more spectacular images would provide a better measure of change.",
+        "The reviewer concludes that recognizable settings keep the poems from disturbing the reader.",
+        "The reviewer turns an apparent limitation of familiar images into a condition of their effectiveness.",
+        "The reviewer contrasts searching for a hidden solution with attending to gradual changes in what seems known."
+      ],
+      "passage": "Die Gedichte dieses Bandes geben sich zunächst gastfreundlich: vertraute Küchen, Haltestellen, Gespräche über das Wetter. Man könnte darin eine Ästhetik des Wiedererkennens sehen, die den Leser beruhigt, statt ihn zu beunruhigen. Tatsächlich sind diese Gegenstände aber keine Anker, sondern Messinstrumente. Je länger man sie betrachtet, desto deutlicher registrieren sie kleinste Verschiebungen in den Beziehungen der Menschen, die sie benutzen. Dass die Bilder zugänglich sind, ist deshalb kein Zugeständnis, das man der Autorin nachsehen müsste; gerade ihre Vertrautheit macht die Veränderungen wahrnehmbar, für die ein spektakuläreres Bild keinen Maßstab böte. Der Band verlangt keine Entschlüsselung im Sinne eines Rätsels mit verborgener Lösung. Er verlangt Geduld mit dem scheinbar bereits Verstandenen, bis dessen Selbstverständlichkeit brüchig wird.",
+      "question": "How does the reviewer build the argument about the poetry collection?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "Disagreement at the meeting establishes that the discussion has failed.",
+        "The treatment of objections can help show whether a discussion mattered.",
+        "A meeting's value can be judged from participants' satisfaction at its close.",
+        "Only points shared by everyone can be relevant to further work on the proposal.",
+        "Public discussion can affect a proposal differently before and after it is adopted."
+      ],
+      "passage": "Damit sind wir am Ende unserer Diskussion über die Neugestaltung des Platzes. Einigkeit gab es heute nicht, und ich wäre vorsichtig, das schon als Misserfolg zu verbuchen. Interessant wird sein, was im Protokoll neben den gemeinsamen Punkten von den Einwänden übrig bleibt, wenn der Entwurf weiterbearbeitet wird. Und noch etwas: Wenn Entwürfe erst nach ihrer Verabschiedung öffentlich werden, kann man zwar immer noch darüber sprechen, aber das Gespräch hat einen anderen Gegenstand. Ob der heutige Abend mehr war als eine höfliche Bestandsaufnahme, wird sich also nicht daran zeigen, wie zufrieden wir jetzt nach Hause gehen, sondern daran, was mit dem Gesagten auf dem weiteren Weg geschieht. Vielen Dank fürs Mitdiskutieren.",
+      "question": "Which assumptions underlie the moderator's closing remarks?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "The less heroic account proves that the suitcase was never saved.",
+        "The family values the story only because it preserves an exact record of events.",
+        "The embellishment reveals something about the family's preferred picture of itself.",
+        "The family's telling makes an accidental circumstance sound like deliberate heroism.",
+        "The aunt's account presents the grandfather as having deliberately gone to the station to save the suitcase."
+      ],
+      "passage": "Bei uns in der Familie heißt es, mein Großvater habe eines Nachts einen Koffer vor dem Hochwasser gerettet. In der feierlichen Fassung stapft er gegen die Flut zum Bahnhof, während alle anderen längst in Sicherheit sind. Meine Tante erzählt es etwas anders: Er saß ohnehin im Bahnhof, weil er seinen Zug verpasst hatte, und nahm den Koffer mit, als das Wasser näher kam. Gerettet hat er ihn wohl tatsächlich; darin waren Fotos, die wir sonst nicht hätten. Aber in unserer Familienchronik wird aus einem verpassten Zug eben gern ein Entschluss zur rechten Zeit. Ich glaube nicht, dass die Geschichte dadurch wertlos wird. Sie verrät nur mindestens ebenso viel darüber, wie wir uns erinnern möchten, wie darüber, was damals geschah.",
+      "question": "What does the contrast between the versions of the story suggest?",
+      "skill": "listening"
+    }
+  ]
+}

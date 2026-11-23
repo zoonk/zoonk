@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        2
+      ],
+      "level": "C1",
+      "options": [
+        "Its contemporary setting makes the original text feel safely familiar.",
+        "Its departures from the familiar production give the text a fresh force.",
+        "Its faithfulness lies somewhere other than in reproducing familiar effects.",
+        "Its strongest achievement is restoring the laughter of earlier productions.",
+        "Its interrupted dialogue prevents the actors from conveying the text’s force."
+      ],
+      "passage": "On aurait tort de prendre cette reprise pour un hommage sage. À Lyon, la mise en scène déplace l’action dans une salle d’attente contemporaine et laisse les acteurs interrompre leurs répliques. Les habitués de la pièce chercheront en vain certains effets qui faisaient autrefois rire la salle. Pourtant, ce spectacle qui malmène nos souvenirs rend au texte son pouvoir de dérangement : les silences y pèsent autant que les mots. On sort moins avec l’impression d’avoir retrouvé une œuvre familière que de l’avoir enfin rencontrée. La fidélité, ici, ne se mesure décidément pas au nombre de gestes conservés.",
+      "question": "Which observations reflect the reviewer’s view of the revival?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "C1",
+      "options": [
+        "Its shared stories deserve scrutiny for whom they allow to belong.",
+        "Its tendency to reshape the past makes shared memories best avoided.",
+        "Its selective character need not make the stories people share worthless.",
+        "Its warmth depends on keeping neighborhood memories among longtime residents.",
+        "Its main value is providing an accurate record of a neighborhood’s past."
+      ],
+      "passage": "La nostalgie a mauvaise presse : on l’accuse de repeindre le passé aux couleurs du présent. Le reproche n’est pas sans fondement, mais il arrive qu’on lui demande une exactitude qu’aucun souvenir ne possède. Quand des voisins racontent le quartier de leur enfance, ils ne dressent pas un inventaire ; ils choisissent des scènes qui leur permettent encore de se reconnaître. Reste à savoir qui peut prendre part à ce récit. Une mémoire commune qui ne laisse de place qu’aux anciens résidents risque de devenir un club fermé, si chaleureuse soit son ambiance. Le problème n’est donc pas tant le regard en arrière que la façon dont il accueille les autres.",
+      "question": "Which observations reflect the writer’s stance on nostalgia?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "C1",
+      "options": [
+        "The full stands show that residents have agreed on how to use the stadium.",
+        "The celebration was misplaced because residents should not enjoy the new stadium.",
+        "The images from opening night reveal which events residents want on ordinary days.",
+        "The opening celebration cannot settle the question of the stadium’s place in city life.",
+        "Enjoying the opening need not prevent residents from discussing the stadium’s future."
+      ],
+      "passage": "À Bordeaux, on parle du nouveau stade comme s’il avait déjà réglé la question de ce que la ville veut en faire. Le soir de l’inauguration, les tribunes pleines ont fourni de belles images, c’est entendu. Mais une image de fête ne nous dit pas qui viendra un mardi ordinaire, ni pour quels événements les portes s’ouvriront. Ce n’est pas une raison pour bouder notre plaisir ; simplement, il serait dommage que la photo de famille tienne lieu de conversation entre les habitants.",
+      "question": "What does the commentator suggest about the new stadium?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "C1",
+      "options": [
+        "She would prefer her songs to reach only a small audience.",
+        "She regards her song as a complete account of her own life.",
+        "She welcomes listeners’ responses without accepting that they define her.",
+        "She considers listeners’ interpretations useful only when they match her life.",
+        "She finds listeners’ interpretations sometimes revealing and sometimes restrictive."
+      ],
+      "passage": "Quand une chanson touche beaucoup de monde, bien sûr que ça me fait plaisir. Je ne vais pas faire semblant de jouer pour une salle vide ! Ce qui me surprend, c’est qu’ensuite on me raconte ma chanson comme si elle expliquait toute ma vie. Parfois, la version que les gens s’en font m’apprend quelque chose ; parfois, elle me serre un peu aux entournures. Alors je continue à écouter ce qu’on y entend, sans pour autant me sentir obligée d’habiter le personnage qu’on y voit.",
+      "question": "Which observations reflect the musician’s view of fame and her song?",
+      "skill": "listening"
+    }
+  ]
+}

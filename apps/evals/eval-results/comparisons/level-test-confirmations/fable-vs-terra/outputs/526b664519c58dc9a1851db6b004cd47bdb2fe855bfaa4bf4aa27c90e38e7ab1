@@ -1,0 +1,75 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Paying a teacher for lessons is money well spent.",
+        "Internet videos are a great way for a beginner to learn.",
+        "A beginner should study alone before looking for a teacher.",
+        "Lessons with a teacher cost more than they are really worth.",
+        "A beginner is better off with someone fixing mistakes early on."
+      ],
+      "passage": "Comecei a aprender violão aos 40 anos, sozinho, com vídeos da internet. No começo achei ótimo, porque não gastava nada e estudava na hora que queria. Porém, depois de seis meses, percebi que segurava o instrumento do jeito errado e meus dedos doíam. Hoje faço aula com um professor e, na minha opinião, vale cada centavo. Para quem está começando, acho melhor ter alguém que corrija você desde o início.",
+      "question": "What is the writer's opinion today about learning the guitar?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "Rain is more likely later in the day in that city.",
+        "The bus stops close to the main gate of the garden.",
+        "The entrance to the garden is free only at that time.",
+        "The afternoons are too hot during the summer months.",
+        "Photos of the greenhouse are not allowed on weekends.",
+        "The garden is less crowded than on Saturdays and Sundays."
+      ],
+      "passage": "Curitiba: Jardim Botânico. O jardim abre todos os dias e a entrada é gratuita. Recomendamos a visita logo cedo, em dias de semana. Nos fins de semana o lugar fica lotado, então é difícil tirar fotos da estufa sem gente na frente. Além disso, à tarde costuma chover na cidade, mesmo no verão. Leve um casaco: o tempo muda rápido. Quem vai de ônibus desce bem perto do portão principal.",
+      "question": "Why does the guide recommend visiting the garden early in the day on a weekday?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "The team played poorly during the whole match.",
+        "The team has little chance of winning on Saturday.",
+        "The players lost because they missed too many chances.",
+        "The players should stay positive in spite of the result.",
+        "The players should spend the week practicing their shots.",
+        "The team needs to build up its stamina before the next match."
+      ],
+      "passage": "Pessoal, escutem aqui. A gente perdeu de dois a um, eu sei, mas não quero ninguém desanimado. No primeiro tempo vocês jogaram muito bem e criaram várias chances. O problema foi o cansaço no final, por isso tomamos os dois gols. Então, em vez de treinar chute, esta semana vamos correr mais. Sábado tem outro jogo e dá para ganhar.",
+      "question": "What is the coach's main message to the team?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The subway has been having a lot of delays lately.",
+        "The interviewers only ask about a person's last job.",
+        "Camila has too little time to prepare before tomorrow.",
+        "The friend sounded unnatural after doing the same thing.",
+        "The friend had no answer when an unexpected question came up.",
+        "The friend forgot the memorized answers during the interview."
+      ],
+      "passage": "Oi, Camila! Soube da sua entrevista amanhã. Um conselho: não decore as respostas. Eu fiz isso na minha e fiquei parecendo um robô. Quando me perguntaram uma coisa diferente, não soube o que dizer. É melhor você pensar em dois ou três exemplos do seu último trabalho e contar com calma. E saia cedo de casa, porque o metrô anda parando muito. Boa sorte!",
+      "question": "Why does the friend tell Camila not to memorize her answers?",
+      "skill": "listening"
+    }
+  ]
+}

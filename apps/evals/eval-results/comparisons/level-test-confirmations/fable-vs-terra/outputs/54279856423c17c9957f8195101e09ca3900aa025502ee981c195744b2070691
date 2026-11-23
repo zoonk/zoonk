@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "The animal film starts at 3 p.m. on Sunday.",
+        "The travel film starts at 3 p.m. on Sunday.",
+        "The travel film starts at 6 p.m. on Sunday.",
+        "The animal film starts at 4 p.m. on Saturday.",
+        "The travel film starts at 4 p.m. on Saturday."
+      ],
+      "passage": "Programa del cine: El sábado, la película de animales empieza a las 4 de la tarde y la de viajes a las 6. El domingo, la de viajes empieza a las 3 y la de animales a las 5.",
+      "question": "Which showtimes are correct?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "Camila watered the plants, then cleaned the balcony.",
+        "Camila took the plants outside, then cleaned the balcony.",
+        "Camila cleaned the balcony, then took the plants outside.",
+        "Camila watered the plants, then put them back on the balcony.",
+        "Camila put the plants back on the balcony, then watered them."
+      ],
+      "passage": "Hola, Sofía. Ayer saqué las plantas al patio y después limpié el balcón. Hoy por la mañana regué las plantas y luego las puse otra vez en el balcón. Gracias, Camila.",
+      "question": "Which events happened in this order?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A2",
+      "options": [
+        "The students will sing in the library on Friday.",
+        "The students will sing in the courtyard on Friday.",
+        "The students will sing in the courtyard on Saturday.",
+        "The students will show their drawings in the library on Saturday.",
+        "The students will show their drawings in the courtyard on Saturday."
+      ],
+      "passage": "Atención, familias: el viernes, los alumnos van a cantar en el patio a las diez de la mañana. El sábado, van a presentar sus dibujos en la biblioteca a las once. Pueden venir los dos días.",
+      "question": "Which details about the school event are correct?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "A2",
+      "options": [
+        "Diego went to the salon, then called it.",
+        "Diego called the salon, then got a message with the time.",
+        "Diego got a message with the time, then called the salon.",
+        "Diego called the salon, then went there to ask for an appointment.",
+        "Diego got a message with the time, then went to ask for an appointment."
+      ],
+      "passage": "Hola, soy Diego. Ayer fui a la peluquería para pedir una cita, pero estaba cerrada. Hoy llamé por teléfono y después recibí un mensaje con la hora. Mañana voy a cortarme el pelo. Gracias.",
+      "question": "Which events happened in this order?",
+      "skill": "listening"
+    }
+  ]
+}

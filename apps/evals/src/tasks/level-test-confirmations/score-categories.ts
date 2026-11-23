@@ -8,7 +8,7 @@ export const LEVEL_TEST_CONFIRMATIONS_SCORE_CATEGORIES = defineScoreCategories([
     weight: 40,
   },
   {
-    expectations: `Every option is right or wrong on its own according to the passage (check the passage for each), exactly the options marked right are right, and a careful reader at the level picks exactly that set. Wrong options are plausible to someone who misread the text but clearly wrong; none is a milder or stronger version of a right one; no option can be decided from general knowledge alone; options are similar in length and form. Score at most 4 when an option is defensible both ways or a key is wrong.`,
+    expectations: `Read answerIndices as zero-based: 0 selects the first option. Check the text of each selected option. Every option is right or wrong on its own according to the passage (check the passage for each), exactly the options marked right are right, and a careful reader at the level picks exactly that set. Wrong options are plausible to someone who misread the text but clearly wrong; none is a milder or stronger version of a right one; no option can be decided from general knowledge alone; options are similar in length and form. Score at most 4 when an option is defensible both ways or a key is wrong.`,
     id: "answers",
     label: "One clearly right set",
     weight: 35,

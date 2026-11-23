@@ -1,0 +1,92 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00237914,
+  "failureCodes": [
+    "invalid_response",
+    "failed_controls"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Missed the control bank defect."
+  ],
+  "packetId": "d5f8bf61cb7b62a695ab35d72d59be23c0daf8e87cf51bc5907d1c6f4274022b",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As saídas são idênticas, e os textos e as questões apresentam inferências e nuances compatíveis com o nível solicitado.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "As saídas são idênticas; as alternativas marcadas como corretas têm apoio no texto, e não há uma diferença entre as versões na clareza do gabarito.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As saídas são idênticas, com passagens em inglês americano e opções em português brasileiro natural.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas saídas são idênticas e servem igualmente ao leitor."
+        },
+        "pairId": "14289a2d-619e-43ee-b2d1-d86e2bd0ed66"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "As questões de B exploram com mais consistência distinções de argumento e implicações sutis, em vez de depender de reconhecer formulações próximas às do texto.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "As alternativas corretas de B correspondem claramente ao texto, e os distratores contrastam com elas sem parecer versões mais fracas da mesma resposta.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam passagens em inglês americano natural e opções em português brasileiro compreensível.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B oferece um conjunto mais consistente de questões que exige interpretar nuances e apresenta alternativas com gabarito claro."
+        },
+        "pairId": "97260ec2-b647-4baf-9052-3c25ab526d6d"
+      },
+      {
+        "criteria": [],
+        "observations": [
+          {
+            "claim": "O gabarito marca a opção 2 como correta, mas a mensagem diz que o ônibus sai às dez, não às nove; a opção 3, sobre o café ficar ao lado da loja, é verdadeira e não está marcada.",
+            "criterion": "answers",
+            "learnerCost": "O aprendiz pode escolher uma resposta falsa e deixar de receber crédito pela afirmação verdadeira sobre o café.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": null,
+        "pairId": "e269efa5-b16a-44f6-b064-85d28d5977b6"
+      }
+    ]
+  }
+}

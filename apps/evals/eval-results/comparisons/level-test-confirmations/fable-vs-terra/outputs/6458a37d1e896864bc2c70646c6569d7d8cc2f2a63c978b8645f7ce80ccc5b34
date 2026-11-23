@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "Chaves.",
+        "Um livro.",
+        "Um lápis.",
+        "Um caderno.",
+        "Um chapéu."
+      ],
+      "passage": "Lost and found: A blue bag has a book and a pencil. A red bag has a hat, keys, and a notebook.",
+      "question": "O que tem na bolsa azul?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "A1",
+      "options": [
+        "Ioga.",
+        "Natação.",
+        "Jogos na água.",
+        "Saltos na água.",
+        "Limpeza da piscina."
+      ],
+      "passage": "Pool schedule: Monday, 3 p.m.: swimming and diving. Tuesday, 4 p.m.: water games, pool cleaning, and yoga.",
+      "question": "O que acontece na piscina na segunda-feira, às três da tarde?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Papel.",
+        "Um livro.",
+        "O cartão.",
+        "Uma caneta.",
+        "O remédio."
+      ],
+      "passage": "Hi, Emma. Please bring your card and your medicine to the doctor's office. You don't need a pen, paper, or a book.",
+      "question": "O que Emma deve levar ao consultório?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "Ava.",
+        "Emma.",
+        "Liam.",
+        "Noah.",
+        "Diego."
+      ],
+      "passage": "Hi! This box is for Emma and Liam. The bag is for Noah, Ava, and Diego. Have a nice day!",
+      "question": "Para quem é a caixa?",
+      "skill": "listening"
+    }
+  ]
+}

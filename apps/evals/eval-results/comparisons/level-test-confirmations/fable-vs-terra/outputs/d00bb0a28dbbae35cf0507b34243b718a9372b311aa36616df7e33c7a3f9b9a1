@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "Uma boa fotografia é a melhor prova do impacto de um grupo.",
+        "A pintura das escolas resolve os problemas que surgem durante o ano.",
+        "As visitas mensais importam menos que a ajuda oferecida em dezembro.",
+        "Ouvir as pessoas da comunidade pode orientar melhor o trabalho dos voluntários.",
+        "O compromisso contínuo pode fazer mais diferença que uma ação visível e isolada."
+      ],
+      "passage": "Cada diciembre aparecen fotografías de voluntarios que pintan escuelas en comunidades de Oaxaca. Las paredes recién pintadas ayudan, desde luego, pero en febrero las maestras siguen buscando quién repare las goteras y consiga libros. Una vecina me contó que el grupo que más había cambiado su escuela no llegó con cámaras: regresaba cada mes y preguntaba qué hacía falta antes de organizar cualquier actividad. Al final del año no tenía una imagen tan vistosa para publicar, aunque las maestras ya sabían a quién llamar cuando surgía un problema.",
+      "question": "Que ideias sobre o voluntariado o autor sugere?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "B2",
+      "options": [
+        "A pouca prática deixou o autor menos seguro para cozinhar sozinho.",
+        "A prática individual foi mais útil ao autor do que as explicações.",
+        "As explicações ajudaram o autor a fazer escolhas sobre os ingredientes.",
+        "A aula convenceu o autor de que as variedades de chile dão o mesmo resultado.",
+        "A instrutora evitou responder às dúvidas sobre outras variedades de chile."
+      ],
+      "passage": "En la clase de cocina de Puebla, la instructora explicó qué cambiaba al tostar el chile más o menos tiempo y nos dejó probar las dos versiones de la salsa. Respondió con paciencia cuando alguien preguntó por otras variedades. Sin embargo, durante las dos horas compartimos una sola mesa: quien alcanzó a mover la salsa lo hizo apenas un minuto, mientras los demás mirábamos. Al llegar a mi cocina, sabía elegir entre los chiles del mercado; ante el sartén, en cambio, me descubrí buscando de nuevo el video de la clase.",
+      "question": "O que a avaliação sugere sobre a experiência do autor na aula de culinária?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "B2",
+      "options": [
+        "O projeto não oferece nenhuma perspectiva de ganho para a região.",
+        "A pergunta da moradora recebeu uma resposta detalhada para cada rua.",
+        "A apresentação mostrou que todas as áreas terão o mesmo nível de ruído.",
+        "A apresentação deixou moradores sem informação clara sobre suas próprias ruas.",
+        "Os números regionais podem esconder diferenças importantes entre as áreas afetadas."
+      ],
+      "passage": "Miren, el nuevo aeropuerto promete reducir los tiempos de traslado y atraer inversión a la región. Ahora bien, en la presentación, esas ganancias aparecían como un promedio regional, mientras que el ruido y el tránsito se concentraban en unas cuantas colonias. Cuando una vecina pidió ver el mapa por calle, le mostraron otra vez la cifra general. Al salir, varios asistentes seguían tratando de averiguar qué significaba el proyecto para sus propias casas.",
+      "question": "Que ideias sobre o novo aeroporto o convidado sugere?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "B2",
+      "options": [
+        "Quem fala preferia ter feito ainda mais paradas no mesmo tempo.",
+        "Quem fala ficou frustrado com o pouco tempo livre durante o passeio.",
+        "Quem fala se decepcionou principalmente com os lugares que conheceu.",
+        "Quem fala ainda tem interesse em voltar a lugares visitados na viagem.",
+        "Quem fala acha que as fotos compensaram a falta de contato com os lugares."
+      ],
+      "passage": "Hola, Sofía. Ya regresé de Oaxaca. Los pueblos me encantaron y hasta guardé el nombre de un mercado para volver. Pero el recorrido que reservamos tenía una parada tras otra, con el reloj encima todo el tiempo. Cuando quería quedarme a conversar con alguien o mirar los puestos, ya nos estaban llamando para subir al transporte. Llegué a casa con muchas fotos, sí, y con la sensación de haber visto todo desde la ventana.",
+      "question": "O que a mensagem sugere sobre a opinião de quem fala a Sofía?",
+      "skill": "listening"
+    }
+  ]
+}

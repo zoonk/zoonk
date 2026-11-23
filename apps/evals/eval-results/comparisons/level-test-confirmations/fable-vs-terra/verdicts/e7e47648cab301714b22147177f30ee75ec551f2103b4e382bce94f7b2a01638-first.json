@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00358929,
+  "failures": [],
+  "packetId": "e7e47648cab301714b22147177f30ee75ec551f2103b4e382bce94f7b2a01638",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets are at C1 and ask about stance, tone and implied meaning, so both meet the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's keys hold up on every passage. B's first passage has an option, 'tasteful but rather lifeless', that the text does not clearly support.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural French and the same English question frame with no language problems.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The text praises the set's elegance and calls it a showcase, but it never says the reviewer finds it lifeless. The option is an inference that a careful reader could dispute.",
+            "criterion": "answers",
+            "learnerCost": "A learner could mark this option right or wrong with equal justification and come away unsure how the text reads.",
+            "location": {
+              "detail": "option of the first passage's question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's keys are clean and its wrong options are clearly wrong, while B has one contestable option."
+        },
+        "pairId": "8cc2b48e-d620-411a-b3e8-5b33b1f0f8f9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use the same short A1 format that a learner can check by matching words.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key 1 and 3 matches the message. B's key includes option (2), which the message contradicts.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same English message with Portuguese options and no language problems.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The message says the bus leaves at ten, so option (2) O ônibus sai às nove is false. The key marks it as correct.",
+            "criterion": "answers",
+            "learnerCost": "A learner would learn that the bus leaves at nine and would get this question wrong.",
+            "location": {
+              "detail": "the answer key",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has a correct key, while B's key marks a false statement as right and would mislead the learner."
+        },
+        "pairId": "9e30c6f2-009c-4dce-aaab-e1327397cd0d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and both meet the C1 level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their answer sets are equally right.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and use the same natural French.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "9f2264d1-7507-4f22-a944-1eab14c4f9be"
+      }
+    ]
+  }
+}

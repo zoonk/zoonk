@@ -1,0 +1,161 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0055417899999999996,
+  "failures": [],
+  "packetId": "ae222d0a3a425bf8375a79c45c81640a2914a5481ef6cc3d6b54c94a6ac2848e",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are A1 quizzes with the same passage and options, and the stated facts can be checked by matching words, so both sit at the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key (1 and 3) matches the message: the shop opens at nine and the cafe is next to it. B's key (1 and 2) marks the bus leaving at nine, but the message says ten, so B teaches a false fact.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The English passage and Portuguese question and options are identical in both and correct for the learner's language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key marks option 2 (the bus leaves at nine) as correct, but the message says the bus leaves at ten. The correct set is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key learns that the bus leaves at nine and marks a wrong answer as right.",
+            "location": {
+              "detail": "Key line at the end of the quiz",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has a correct answer key and B gives a wrong one that teaches a false fact about the bus time, which outweighs otherwise identical quality."
+        },
+        "pairId": "49796f7c-25bd-4e2a-b3ab-a5c4ee1a5b86"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are C2 sets with demanding texts on stance, irony and argument, so the level is confirmed about equally.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's keys are supported by the passages, with wrong options clearly wrong. B's reading item keys an option (\"indiferência\") that the passage contradicts by showing Olivia suppressing grief, and its option about the poem being proof of what the others lack is contestable.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use Brazilian Portuguese options and US English passages suited to the learner's language and variant.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes the option that Olivia is indifferent, but the passage shows her avoiding grief (she inventories the mustard as though grief were a matter of knowing what remained), not treating the visit as a practical task. The key is contestable.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who sees the avoidance would mark this option wrong, and would learn a misreading of the character.",
+            "location": {
+              "detail": "Option 6 of the first confirmation",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The key accepts that the exception poem is proof of what the other poems lack, but the review only says the exception fails and the reviewer hopes for more lapses. The option is a stretch the passage does not support.",
+            "criterion": "answers",
+            "learnerCost": "A learner may take an overreaching reading as the right answer and miss the reviewer's actual point.",
+            "location": {
+              "detail": "Option 1 of the second confirmation",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "One option pairs two items in a way that is hard to decide from the passage: it says the speaker distinguishes the organization of objections from the resolution of the objections, which the passage does not spell out.",
+            "criterion": "answers",
+            "learnerCost": "The learner may struggle to see why this option is right and may doubt the item.",
+            "location": {
+              "detail": "Option 4 of the third confirmation",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's answer keys are more clearly supported by the passages, while B's first reading item keys a contestable option and its second reading item rests on a stretch."
+        },
+        "pairId": "794bd3c5-7c7c-4d26-8ebe-8649172041dd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so calibration is the same.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the answer keys are the same.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so language is the same.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes the option that Olivia is indifferent, but the passage shows her avoiding grief, not treating the visit as a practical task. The key is contestable.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who sees the avoidance would mark this option wrong, and would learn a misreading of the character.",
+            "location": {
+              "detail": "Option 6 of the first confirmation",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The key includes the option that Olivia is indifferent, but the passage shows her avoiding grief, not treating the visit as a practical task. The key is contestable.",
+            "criterion": "answers",
+            "learnerCost": "A careful C2 reader who sees the avoidance would mark this option wrong, and would learn a misreading of the character.",
+            "location": {
+              "detail": "Option 6 of the first confirmation",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are the same text, so neither serves its reader better."
+        },
+        "pairId": "93d4e383-f07e-41c5-9ee1-6ca1d4ac6427"
+      }
+    ]
+  }
+}

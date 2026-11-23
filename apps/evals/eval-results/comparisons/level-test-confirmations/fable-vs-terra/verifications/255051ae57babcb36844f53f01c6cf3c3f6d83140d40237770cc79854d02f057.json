@@ -1,0 +1,215 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-c2",
+        "claimId": "64050a534e321cc5",
+        "criterion": "answers",
+        "observationId": "a8f5d208de6a55d437c37389a55126a90a66f2e02357adb555cb0514eb73f175.first.459eaf6a-0a6d-4545-b596-0e6208071804.0",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-c2",
+        "claimId": "e79d1eca2e1de1c7",
+        "criterion": "answers",
+        "observationId": "a8f5d208de6a55d437c37389a55126a90a66f2e02357adb555cb0514eb73f175.first.459eaf6a-0a6d-4545-b596-0e6208071804.1",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-c2",
+        "claimId": "5911e5529aaea542",
+        "criterion": "calibration",
+        "observationId": "d2b6f5ca381781e4bc3c891ddcbf99b7ab1f957f514a558de6253cd14e91b884.first.f5087a12-5acf-43e6-b1f3-3cc5617e34e5.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-en-c2",
+        "claimId": "1e3e0b3204e15bad",
+        "criterion": "answers",
+        "observationId": "d2b6f5ca381781e4bc3c891ddcbf99b7ab1f957f514a558de6253cd14e91b884.first.f5087a12-5acf-43e6-b1f3-3cc5617e34e5.1",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-c2",
+        "claimId": "069ac08b2ea3cfa2",
+        "criterion": "answers",
+        "observationId": "d2b6f5ca381781e4bc3c891ddcbf99b7ab1f957f514a558de6253cd14e91b884.first.f5087a12-5acf-43e6-b1f3-3cc5617e34e5.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.049398000000000004,
+    "id": "255051ae57babcb36844f53f01c6cf3c3f6d83140d40237770cc79854d02f057",
+    "packet": [
+      {
+        "A": {
+          "blob": "f151d71b4e106ffedbf7217fa317692bbe42422c0902e355bf7cde7044ec8dbd",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c936dc3491415bb8f2b1b0506912ae99de8892a0fc4636f026253b2bf9e7c9ba",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The key for this item omits option 3. The passage ends with Priya standing in the hallway deciding which of two meanings she would prefer, so the option that she is trying to work out what the uncle meant is supported by the text.",
+            "claimId": "64050a534e321cc5",
+            "criterion": "answers",
+            "location": {
+              "detail": "Ao deixar Priya no corredor, o narrador mostra que ela tenta descobrir o que o tio quis dizer com o gesto.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The key excludes option 4, but the moderator says the numbers do not add up and that nobody offered to add them. That supports the reading that the numbers were wrong and no one corrected them, so the option is defensible and the key is contestable.",
+            "claimId": "e79d1eca2e1de1c7",
+            "criterion": "answers",
+            "location": {
+              "detail": "Ao comentar os números de Olivia, ele sugere que os cálculos dela estavam errados e ninguém os corrigiu.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "As questões e opções não exigem de modo consistente uma nuance específica de C2: as respostas são sustentadas por paráfrases relativamente diretas das passagens, acessíveis a um leitor C1.",
+            "claimId": "5911e5529aaea542",
+            "criterion": "calibration",
+            "location": {
+              "detail": "O conjunto das quatro questões e opções",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "O gabarito inclui como correta a leitura de que Priya reconhece o aperto de mão como um pedido de desculpas, mas ela considera duas possibilidades e ainda está decidindo qual preferiria.",
+            "claimId": "1e3e0b3204e15bad",
+            "criterion": "answers",
+            "location": {
+              "detail": "Ao narrar o aperto de mão, o narrador mostra que Priya reconhece nele um pedido de desculpas do tio.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "O gabarito inclui como correta a afirmação de que as falhas dos poemas longos pesam tanto quanto os acertos dos curtos; o crítico elogia os poemas curtos e aponta falhas nos longos, mas não afirma que esses aspectos pesem igualmente.",
+            "claimId": "069ac08b2ea3cfa2",
+            "criterion": "answers",
+            "location": {
+              "detail": "Ele apresenta um juízo dividido, em que as falhas dos poemas longos pesam tanto quanto os acertos dos curtos.",
+              "kind": "quote"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "9a93d50785be369ecf10527fe9476ac6798ca634c46312ff2c10da12167e52cb",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9b6e890b0c0a5aff217f138f37f285229475225dc28531b74838fefd20dcef73",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "All four items explain their own takeaway directly in the passage (for example, 'a list of things she could no longer claim', 'gave the morning the air of a task, and a task, unlike grief', 'more exact than either a confession that he'd made it up or a guarantee about the route') and pair correct paraphrases against direct negations of stated words, while item 3 reads like a plain B2/C1 municipal update rather than a demanding C2 spoken text.",
+            "output": "B"
+          }
+        ]
+      },
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "7f67d40f71f8b31b",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "81b989a33f269cfe",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "google",
+      "model": "google/gemini-4-carbon",
+      "reserve": false
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "64050a534e321cc5",
+          "finding": "doesn't hold",
+          "reason": "The passage states that Priya stood in the hallway 'deciding which she would prefer' between two interpretations, not trying to discover what her uncle actually meant ('tenta descobrir o que o tio quis dizer'), so excluding index 3 from the key in Output A is accurate."
+        },
+        {
+          "claimId": "e79d1eca2e1de1c7",
+          "finding": "doesn't hold",
+          "reason": "In context ('an empty budget'), 'the numbers don't add up' and 'nobody up here offered to add them' play on financial insufficiency and the panel's failure to propose funding, not arithmetic mistakes in Olivia's calculations, so Output A rightly excludes index 4."
+        },
+        {
+          "claimId": "5911e5529aaea542",
+          "finding": "holds",
+          "reason": "Output B's passages explicitly state their own takeaways (such as 'a list of things she could no longer claim' and 'The risk of monotony is real; it is also inseparable from the collection's method') and pair direct paraphrases with clear contradictions, whereas Output A tests unstated C2 irony, wordplay, and rhetorical structure."
+        },
+        {
+          "claimId": "1e3e0b3204e15bad",
+          "finding": "doesn't hold",
+          "reason": "Using 0-based indexing (as shown across Output A, which uses indices 0 through 5), the quoted option is at index 0 and is not included in the item's answerIndices [1, 2, 4]."
+        },
+        {
+          "claimId": "069ac08b2ea3cfa2",
+          "finding": "doesn't hold",
+          "reason": "In 0-based indexing, the quoted option is at index 3 and is excluded from Output A's answerIndices [1, 4, 5], while index 4 states the opposite ('e não para equilibrá-la')."
+        },
+        {
+          "claimId": "7f67d40f71f8b31b",
+          "finding": "holds",
+          "reason": "Based on the message, only options 1 ('A loja abre às nove') and 3 ('O café fica ao lado da loja') are true and option 2 ('O ônibus sai às nove') is false; Output A's key ('1 and 2') gets this wrong, whereas Output B's key ('1 and 3') is right."
+        },
+        {
+          "claimId": "81b989a33f269cfe",
+          "finding": "doesn't hold",
+          "reason": "Output B gives the key '1 and 3' and does not include option 2 ('O ônibus sai às nove'); that error appears only in Output A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

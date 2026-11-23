@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0023672399999999996,
+  "failures": [],
+  "packetId": "616ec495a3b265afecb45bca16a595f0228798aac18b4b331bc74b6bfea0f792",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, and the questions ask learners to interpret implications, argument structure, and tone appropriate to C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answer sets match the passages in both outputs.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The German passages are natural, and the options are in US English in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and serve the learner equally well."
+        },
+        "pairId": "020e8ec5-1116-4351-a39a-cc19d990775c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B’s questions more consistently test fine shades of meaning, irony, and allusion, making them a stronger fit for C2 than A’s already challenging set.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs’ marked answer sets are supported by their passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural German passages and US English options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B offers a more consistent C2 challenge through its focus on subtle implications and ironic or allusive meaning, while remaining text-grounded."
+        },
+        "pairId": "5919bfbd-cba0-4031-994c-33dc5e645784"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions use simple, direct statements that test one stated fact at a time.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A marks statements 1 and 3, both supported by the message. B wrongly marks statement 2 and omits statement 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions present the question and options in Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct even though the message says the bus leaves at ten, not nine; it also omits statement 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would learn an incorrect fact and could lose credit for a correct answer.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A’s key matches the message, while B marks a false statement and leaves out a true one."
+        },
+        "pairId": "96a839a4-8c0f-41b3-9764-f62a19959bf8"
+      }
+    ]
+  }
+}

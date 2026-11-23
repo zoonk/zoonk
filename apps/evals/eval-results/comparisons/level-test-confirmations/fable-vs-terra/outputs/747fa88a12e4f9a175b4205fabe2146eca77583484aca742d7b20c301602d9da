@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "It establishes that the official has already arranged a date for the room to reopen.",
+        "It presents the change as a provisional administrative step while the details give it a more unsettled weight.",
+        "It suggests that Hannah has accepted the official’s wording as an adequate account of the change.",
+        "It makes the narrator’s principal concern the official’s failure to identify the correct door.",
+        "It creates a gap between the official’s orderly formulation and Hannah’s inability to place the change in time."
+      ],
+      "passage": "Als Hannah den Schlüssel abgab, sagte der Mann vom Amt, der Begegnungsraum werde zunächst anderweitig genutzt. Er sprach das Wort so aus, als hätte es einen festen Platz im Kalender. Auf dem Rückweg blieb sie vor dem Schaufenster des ehemaligen Schreibwarenladens stehen. Dahinter lagen noch immer die bunten Hefte, deren Preise niemand mehr abwischte. Zu Hause stellte sie die leere Schlüsselschachtel auf den Tisch und rückte sie neben die Obstschale, als könne sie dort auf etwas warten. Die Nachbarin hatte angeboten, die übrig gebliebenen Stühle in ihren Keller zu tragen. Hannah hatte ihr gedankt, ohne zu fragen, für wie lange. Am Abend fiel ihr ein, dass sie dem Mann vom Amt gar nicht gesagt hatte, welche Tür der Schlüssel öffnete.",
+      "question": "What does the use of “zunächst” contribute to the opening?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "The reviewer invokes the danger of speculation to argue that the omissions should have been filled in.",
+        "The reviewer presents recurring images as clues that resolve the collection into a single family history.",
+        "The reviewer acknowledges a risk of arbitrary interpretation and then identifies features that constrain it.",
+        "The reviewer uses the poems’ silence to justify interpretations unconstrained by their form.",
+        "The reviewer treats the failure to reconstruct a complete history as part of the poems’ effect rather than a defect to repair."
+      ],
+      "passage": "Die Gedichte dieses Bandes sind voller Auslassungen: Ein Gespräch setzt nach seinem entscheidenden Satz ein, ein Haus erscheint erst, nachdem seine Bewohner fortgezogen sind. Man könnte darin eine bequeme Verweigerung von Auskunft sehen; schließlich lässt sich über das Verschwiegene beinahe alles behaupten. Doch gerade diese Gefahr nimmt der Band ernst. Seine Leerstellen sind nicht beliebig, sondern durch wiederkehrende Bilder und eine auffallend genaue Syntax begrenzt. Wer aus ihnen eine lückenlose Familiengeschichte zusammensetzen will, wird enttäuscht. Das ist kein Mangel, den eine kundigere Lesart beheben müsste. Die Gedichte machen vielmehr erfahrbar, wie Erinnerung durch Formen gebunden wird, die sie zugleich bewahren und verändern. Ihre Zurückhaltung ist also weder ein Rätsel mit versteckter Lösung noch ein Freibrief für jede Deutung. Sie verlangt, dass man auf die Grenzen des eigenen Ergänzens achtet.",
+      "question": "How does the reviewer build the argument about the collection’s omissions?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "C2",
+      "options": [
+        "The way feedback is invited can influence whose views become visible.",
+        "The people heard at an event may not reflect everyone affected by the matter.",
+        "The contributions made at the event have little value until absent people endorse them.",
+        "People who applauded at the event were concealing objections they did not want to express.",
+        "Written feedback is valuable chiefly because it prevents participants from expressing approval."
+      ],
+      "passage": "Damit sind wir am Ende unserer Runde über die Stadtbibliothek. Vielen Dank an alle, die heute hier gesprochen haben. Bevor wir aus dem Applaus schließen, dass die Sache nun geklärt ist, sollten wir allerdings an die Menschen denken, die heute nicht am Mikrofon standen. Manche konnten um diese Uhrzeit nicht kommen; andere schreiben vielleicht lieber, als vor einem Saal zu sprechen. Das macht die Beiträge von heute nicht weniger wertvoll. Es heißt nur, dass die Lautstärke einer Zustimmung noch nichts darüber verrät, wessen Einwände wir gar nicht erst hören konnten. Die Bibliothek sammelt übrigens noch bis Ende des Monats schriftliche Rückmeldungen. Einen schönen Abend Ihnen allen.",
+      "question": "Which assumptions underlie the moderator’s caution about the response at the event?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        2
+      ],
+      "level": "C2",
+      "options": [
+        "The label rests on proof that the event happened exactly as the grandmother described it.",
+        "The label gives value to the act of retelling, which reveals relationships between storyteller and audience.",
+        "The label is playful because the story has been preserved through changes rather than repeated word for word.",
+        "The label dismisses the family’s retellings as worthless because their details have changed.",
+        "The label confirms that the father’s version preserves the grandmother’s account in its original form."
+      ],
+      "passage": "Bei uns in der Familie gibt es die Geschichte, dass meine Oma als Kind einmal einen ganzen Marktplatz mit einem einzigen Pfiff zum Schweigen gebracht hat. Wenn sie selbst davon erzählte, war es ein Sonntag und der Pfiff eigentlich gar nicht so laut. Mein Vater machte daraus später einen Werktag, dazu kamen ein entlaufener Hund und ein umgestürzter Obststand. Je nachdem, wer zuhörte, rückte der Hund näher an den Obststand oder verschwand wieder. Wir nennen das trotzdem unsere getreu überlieferte Familiengeschichte. Denn wenn wir sie erzählen, erkennen wir sofort, wer gerade erzählt und für wen. Nur den Marktplatz hat bisher niemand verlegt.",
+      "question": "What does the storyteller’s description of the family story as faithfully handed down suggest?",
+      "skill": "listening"
+    }
+  ]
+}

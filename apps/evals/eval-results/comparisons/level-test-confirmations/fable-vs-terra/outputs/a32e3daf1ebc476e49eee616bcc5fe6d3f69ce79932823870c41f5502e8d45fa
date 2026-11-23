@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        2,
+        3
+      ],
+      "level": "A1",
+      "options": [
+        "Uma bolsa azul.",
+        "Um casaco preto.",
+        "Um chapéu azul.",
+        "Uma bolsa vermelha.",
+        "Um chapéu vermelho."
+      ],
+      "passage": "Found items: A blue hat and a red bag are at the front desk. A black coat is in the office.",
+      "question": "Quais itens encontrados estão na recepção?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Sexta-feira.",
+        "Quarta-feira.",
+        "Quinta-feira.",
+        "Terça-feira.",
+        "Segunda-feira."
+      ],
+      "passage": "Pool hours: Open Monday and Wednesday, 9 a.m. to 5 p.m. Closed Tuesday, Thursday, and Friday.",
+      "question": "Em quais dias a piscina está aberta?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Às 2 da tarde.",
+        "Às 3 da tarde.",
+        "Às 4 da tarde.",
+        "Às 9 da manhã.",
+        "Às 10 da manhã."
+      ],
+      "passage": "Hi, Emma. This is the doctor's office. We have appointments at 10 a.m. and 2 p.m. today, and at 4 p.m. tomorrow.",
+      "question": "Quais horários para hoje a recepcionista oferece a Emma?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "Uma caixa de livros.",
+        "Um buquê de flores.",
+        "Uma caixa de sapatos.",
+        "Uma sacola de livros.",
+        "Uma sacola de sapatos."
+      ],
+      "passage": "Hi, Liam. I have two things for you: a box of books and a bag of shoes. These flowers are for Emma next door.",
+      "question": "Quais itens o entregador trouxe para Liam?",
+      "skill": "listening"
+    }
+  ]
+}

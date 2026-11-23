@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00549489,
+  "failures": [],
+  "packetId": "dcccce0e87411e94c3cad9b7bdf2134de8413221a2d12a96cecbd335b50bfa63",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so both are equally at B1 with stated-opinion and main-point questions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and their keys are the same on each item.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and use Brazilian Portuguese and US English in the right places.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "29dbc6ed-2d29-4c87-a93b-fb28fea0806f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are B1 sets with a main point, reasons and stated opinions, and neither can be matched by words alone.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Every key in A checks out against its text, while B's Camila key has a distractor, 'forgot the memorized answers', that is close enough to the right reason to make the key defensible both ways.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese and US English questions.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The distractor 'The friend forgot the memorized answers during the interview' is close to the correct option 'had no answer when an unexpected question came up', and the text supports reading the friend's problem as a failure to answer rather than forgetting. A careful reader could select it, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A learner could mark a wrong option as right, and would learn that the reason was forgetting memorized answers, which the text does not say.",
+            "location": {
+              "detail": "The friend forgot the memorized answers during the interview.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has a clean answer set on every item, while B's Camila item has a distractor that a careful reader could mark as right."
+        },
+        "pairId": "2cf9f4a3-9aa6-4aa6-9696-2767078515a6"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs have the same message, question and A1 level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A keys options 1 and 3, which the message supports; B keys option 2, which says the bus leaves at nine, but the message says ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message with a Portuguese question and options, which suits a Portuguese learner of English.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option (2) 'O ônibus sai às nove' as right, but the message says the bus leaves at ten, so option (2) is false.",
+            "criterion": "answers",
+            "learnerCost": "A learner would be taught that the bus leaves at nine and would be marked right for picking a false sentence.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's key matches the message exactly, while B's key marks a false statement as correct."
+        },
+        "pairId": "7a40db1b-6004-40e3-a4c0-699cddffecb8"
+      }
+    ]
+  }
+}

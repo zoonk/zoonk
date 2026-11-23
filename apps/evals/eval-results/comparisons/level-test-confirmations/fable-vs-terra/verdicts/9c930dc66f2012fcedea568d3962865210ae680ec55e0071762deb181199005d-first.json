@@ -1,0 +1,92 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00193874,
+  "failureCodes": [
+    "invalid_response",
+    "failed_controls"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Missed the control bank defect."
+  ],
+  "packetId": "9c930dc66f2012fcedea568d3962865210ae680ec55e0071762deb181199005d",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither offers a clearer level match than the other.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The answer keys and options are identical, and the keyed answers are supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and have the same strengths and weaknesses."
+        },
+        "pairId": "5d91cecc-3ff6-47f0-8822-e63cc9999be3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B asks learners to distinguish the writer’s changing view, infer the coach’s advice from the stated cause of the loss, and connect the interview advice to the friend’s experience. A’s items are more directly stated and easier to solve by matching wording.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both keys select statements supported by their passages, and the distractors are contradicted or not supported.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B’s questions require more B1-level interpretation while keeping the answers grounded in the passages."
+        },
+        "pairId": "a6c3109b-de8a-4582-b1ce-7601595755b1"
+      },
+      {
+        "criteria": [],
+        "observations": [
+          {
+            "claim": "The key includes option 2, but the message says the bus leaves at ten, not nine. It also omits option 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would mark a false statement as correct and miss a true one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": null,
+        "pairId": "b78f67ee-7b5c-4584-9e7d-9def75d9a357"
+      }
+    ]
+  }
+}

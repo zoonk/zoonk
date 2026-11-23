@@ -1,0 +1,171 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "2658ac498bbd9091",
+        "criterion": "calibration",
+        "observationId": "f03ad61245d90879b10fd62afad9dcca4c2af487b0fabfb258920c2c71033325.first.ba499543-9335-4b53-9390-7a72fa6d10d0.0",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "bb33872efa730b63",
+        "criterion": "calibration",
+        "observationId": "f03ad61245d90879b10fd62afad9dcca4c2af487b0fabfb258920c2c71033325.first.ba499543-9335-4b53-9390-7a72fa6d10d0.1",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "5a8047fcaa916001",
+        "criterion": "calibration",
+        "observationId": "f03ad61245d90879b10fd62afad9dcca4c2af487b0fabfb258920c2c71033325.first.ba499543-9335-4b53-9390-7a72fa6d10d0.4",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.001807,
+    "id": "843e2ef28292c4a845bfa075f26b93a37b4c2a87e830fa56bd2dc26381dd3355",
+    "packet": [
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "0423e83d47805f81",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "9fbc34ca8d45fc1d",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "b41466cf12e087abf16d417713c63381cad3bf663e08d3be1b7c27aacb3f0d62",
+          "format": "text"
+        },
+        "B": {
+          "blob": "2919c6e0693c288d53d1f2784a26a6ef05675a7bc913c60eb2b32b5c4c29ea5d",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Confirmations 1 and 3 do not draw wrong options from values the text gives for something else, as required; instead they negate lists of items ('are not here', 'but not your...'), and three of the four items focus on colors, objects, or documents rather than everyday times, prices, and places.",
+            "claimId": "2658ac498bbd9091",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 1 and 3",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Confirmation 3 requires understanding 'photo ID and insurance card', where 'insurance card' sits above A1 'very common words' vocabulary.",
+            "claimId": "bb33872efa730b63",
+            "criterion": "calibration",
+            "location": {
+              "detail": "Please bring your photo ID and insurance card, but not your passport, bank card, or library card.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Confirmations 1, 3, and 4 use wrong options whose values never appear in the passage ('É uma mochila preta.', 'A consulta é às 10 da manhã.', 'A consulta é na terça-feira.', 'A entrega custa doze dólares.'), breaking the expectation that wrong options be other values of the same kind the text gives for something else.",
+            "claimId": "5a8047fcaa916001",
+            "criterion": "calibration",
+            "location": {
+              "detail": "options in confirmations 1, 3, and 4",
+              "kind": "range"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "0a5d17ddd43202f9ccdd62a00b8775e2e1740e4293dd670aab02be1a5b1e7533",
+          "format": "text"
+        },
+        "input": {
+          "blob": "befd6f9310301606e2449f203fe1b8342929cc4d3ea2fd4e317e6c30757059f4",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "The set has only one question about a time and none about a price or place; the other questions focus on objects, documents, colors, and days instead of the requested time, price, or place facts.",
+            "output": "A"
+          },
+          {
+            "claim": "Three questions focus mainly on identifying objects, document types, or colors rather than the requested everyday details such as times, prices, and places.",
+            "output": "A"
+          }
+        ]
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "0423e83d47805f81",
+          "finding": "holds for both",
+          "reason": "The message in both outputs says the bus leaves at ten and the cafe is next to the shop, so option 2 is false and option 3 is true. Output A’s key conflicts with those facts, while output B’s key matches them."
+        },
+        {
+          "claimId": "9fbc34ca8d45fc1d",
+          "finding": "doesn't hold",
+          "reason": "Output B’s key is 1 and 3; it does not include option 2, the statement that the bus leaves at nine."
+        },
+        {
+          "claimId": "2658ac498bbd9091",
+          "finding": "holds",
+          "reason": "In A, confirmations 1 and 3 use wrong options drawn from the passages’ explicit lists of things not present or not requested. Confirmations 1, 3, and 4 focus on objects, colors, or documents, unlike confirmation 2’s days and times; this description does not fit B’s confirmations 1 and 3."
+        },
+        {
+          "claimId": "bb33872efa730b63",
+          "finding": "holds",
+          "reason": "A’s third passage asks the learner to understand “photo ID and insurance card,” including vocabulary beyond very common A1 words. B’s third confirmation is about an appointment and does not use that vocabulary."
+        },
+        {
+          "claimId": "5a8047fcaa916001",
+          "finding": "holds",
+          "reason": "B includes the listed options with values absent from their passages: a backpack, 10 a.m., Tuesday, and twelve dollars. These are not alternative values of the same kind supplied elsewhere in those passages, and the cited options are not in A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

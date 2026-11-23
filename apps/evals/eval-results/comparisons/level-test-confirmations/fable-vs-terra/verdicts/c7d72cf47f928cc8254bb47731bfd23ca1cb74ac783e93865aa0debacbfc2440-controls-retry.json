@@ -1,0 +1,104 @@
+{
+  "attempt": "controls-retry",
+  "costUsd": 0.00156404,
+  "failures": [],
+  "packetId": "c7d72cf47f928cc8254bb47731bfd23ca1cb74ac783e93865aa0debacbfc2440",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use French passages and English options suited to C1, with questions about stance, tone, or implied meaning.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The passages support the marked answer sets, and the distractors are clearly wrong on a careful reading.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural French and English options in the learner’s language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, and they both meet the stated expectations."
+        },
+        "pairId": "235f12a9-107d-4281-bc38-6e04a29e5369"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets test simple, directly stated A1 facts.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A marks the supported statements, while B marks the bus-at-nine statement and omits the correct cafe statement.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The message and options are in English and Brazilian Portuguese respectively in both outputs.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes statement 2, but the message says the bus leaves at ten, not nine; it also omits statement 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the key would learn to select a false statement and miss a true one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct key; B's key both marks a false statement and leaves out a true one."
+        },
+        "pairId": "ac483375-00fa-4730-b39b-6b989c4ebce6"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask learners to infer a stance or implication rather than merely match wording, though some options in each are relatively direct.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The marked answer sets in both outputs are supported by their passages, and the other options are clearly contradicted or unsupported.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural French passages and English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs provide sound C1 inference questions with supported answer keys and appropriate language."
+        },
+        "pairId": "dbd94e38-5c48-4168-bc15-1edb8f4cba0b"
+      }
+    ]
+  }
+}

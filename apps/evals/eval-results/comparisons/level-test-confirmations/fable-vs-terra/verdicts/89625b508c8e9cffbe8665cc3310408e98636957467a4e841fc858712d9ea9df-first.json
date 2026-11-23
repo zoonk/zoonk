@@ -1,0 +1,127 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0025263399999999997,
+  "failures": [],
+  "packetId": "89625b508c8e9cffbe8665cc3310408e98636957467a4e841fc858712d9ea9df",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam frases muito simples em inglês e verificam fatos explícitos, como esperado para A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A chave de A marca as frases 1 e 3, ambas apoiadas pela mensagem. B inclui a frase 2, mas o ônibus sai às dez, não às nove.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam a mensagem em inglês e as perguntas e opções em português brasileiro.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A chave marca a frase 2 como correta, embora a mensagem diga que o ônibus sai às dez.",
+            "criterion": "answers",
+            "learnerCost": "O aluno que compreendeu corretamente a mensagem pode ser levado a marcar uma resposta errada.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A apresenta a chave correta; B ensina uma resposta errada para um fato explícito."
+        },
+        "pairId": "6a6c7292-4f8d-4ea1-a463-f5f277fad9f1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e trazem textos literários e falados com inferências e nuances compatíveis com C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas, e as chaves parecem corresponder às interpretações sustentadas pelos textos.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e usam inglês americano nos textos e português brasileiro nas questões e opções.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e não apresentam diferença de qualidade."
+        },
+        "pairId": "ab7d18d2-1cfc-4b05-8b5e-4aeecbaddaf8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois conjuntos incluem textos literários e falados que exigem inferências e atenção a nuances próprias de C2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "As chaves de A estão bem apoiadas pelas passagens. Em B, algumas respostas corretas da primeira questão dependem de leituras mais discutíveis, como afirmar que Olivia percebe uma contradição entre cuidar da casa e vendê-la.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "B",
+            "reason": "Os textos de B soam naturais e fluentes; a formulação de A sobre a varanda ter adquirido uma inclinação é mais estranha em inglês.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A opção marcada como correta afirma que Olivia percebe uma contradição entre cuidar da casa e vendê-la, mas a passagem só mostra que ela abre a geladeira e acaba limpando o balcão; não estabelece claramente que ela interprete isso como contradição entre cuidado e venda.",
+            "criterion": "answers",
+            "learnerCost": "O aluno pode rejeitar uma opção que a chave exige ou concluir que uma interpretação possível é a única correta.",
+            "location": {
+              "detail": "\"O advérbio que acompanha o gesto de limpar a bancada mostra que Olivia percebe a contradição entre cuidar da casa e vendê-la.\"",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A expressão \"the porch had acquired a list to the left\" é pouco natural para descrever a inclinação de uma varanda em inglês americano.",
+            "criterion": "language",
+            "learnerCost": "A formulação pode distrair ou soar como um uso incorreto de uma palavra para o leitor.",
+            "location": {
+              "detail": "\"the porch had acquired a list to the left\"",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A tem um conjunto de respostas mais claramente sustentado. B traz textos naturais, mas sua primeira questão inclui uma resposta marcada como certa cuja interpretação não é suficientemente inequívoca."
+        },
+        "pairId": "f38b6440-9c90-4c8e-9dc9-91a4e3a4bcfa"
+      }
+    ]
+  }
+}

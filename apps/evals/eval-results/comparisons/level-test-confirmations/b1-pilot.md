@@ -12,4 +12,4 @@ The interview question from Flash Lite also asks learners to endorse “It preve
 
 One reviewer solved the options before inspecting the saved keys. The B1 case now explicitly checks for duplicated correct ideas and unsupported claims about causes. Each sealed manifest preserves the original expectations.
 
-This pilot measures writer cost and identifies defects on one input. Choosing a production writer and a fallback still requires repeated cases across levels, independent checks of the keys and blind comparisons. Measuring how well a B1 placement describes a learner requires separately assessed learners.
+This pilot measured writer cost and identified defects on one input. The [full comparison](writers.md) followed with repeated cases across levels, independent checks of the keys and blind comparisons. Measuring how well a B1 placement describes a learner requires separately assessed learners.

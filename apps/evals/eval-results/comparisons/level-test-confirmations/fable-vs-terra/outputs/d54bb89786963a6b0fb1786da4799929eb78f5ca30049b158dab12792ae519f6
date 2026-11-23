@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Practicing only on Sundays is the best way to make progress.",
+        "Playing with friends is more enjoyable than practicing alone.",
+        "Playing alone is more enjoyable because friends make mistakes.",
+        "Practicing for hours at a time works better than a short routine.",
+        "Short, regular practice is more effective than a long session all at once."
+      ],
+      "passage": "Comecei a aprender violão no ano passado e, no início, só tocava aos domingos. Agora pratico um pouco todos os dias. Para mim, essa rotina curta funciona melhor do que passar horas tentando aprender tudo de uma vez. Também gosto de tocar com amigos: mesmo quando erramos, é mais divertido do que estudar sozinho. Ainda tenho muito a aprender, mas não quero parar.",
+      "question": "Which opinions does the writer express about learning the guitar?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The local museums open during the morning.",
+        "The weather is usually more comfortable then.",
+        "The temperature is usually highest in the morning.",
+        "The streets are already at their busiest in the morning.",
+        "The sellers have more time to talk before the streets get busy."
+      ],
+      "passage": "Para conhecer o centro histórico de Recife, prefira a manhã. Nessa hora, o calor costuma ser menos forte, e os vendedores ainda têm tempo para conversar antes de as ruas ficarem cheias. À tarde, visite os museus da região: eles abrem nesse período e têm salas climatizadas, uma boa opção quando a temperatura sobe. Reserve também algum tempo para experimentar a comida local.",
+      "question": "Why does the guide recommend visiting the historic center of Recife in the morning?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "B1",
+      "options": [
+        "The team has made progress despite losing.",
+        "The team's main problem was creating chances.",
+        "The team still needs to improve its finishing.",
+        "The team's defense was stronger in the previous game.",
+        "The team's loss shows that its training is on the wrong track."
+      ],
+      "passage": "Pessoal, embora a gente tenha perdido hoje, vi uma melhora importante no time. A defesa trabalhou mais unida do que no último jogo e conseguiu parar vários ataques. Agora precisamos levar essa atenção para a frente também. Criamos boas chances, mas faltou calma na hora de finalizar. Vamos continuar treinando isso, porque o time está no caminho certo.",
+      "question": "Which ideas summarize the coach's message about the team?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "They can help her choose an earlier bus.",
+        "They can help her feel calmer when answering.",
+        "They can help her memorize complete sentences.",
+        "They can help her avoid talking about past work.",
+        "They can help her show her strengths through real situations."
+      ],
+      "passage": "Ana, antes da entrevista, pense em alguns exemplos do que você já fez no trabalho. Assim, você consegue mostrar suas qualidades com situações reais e fica menos nervosa na hora de responder. Não precisa decorar frases inteiras, tá? Só escolha os exemplos com calma. Ah, e confira o horário do ônibus para chegar cedo.",
+      "question": "Why does the friend advise Ana to prepare examples before the interview?",
+      "skill": "listening"
+    }
+  ]
+}

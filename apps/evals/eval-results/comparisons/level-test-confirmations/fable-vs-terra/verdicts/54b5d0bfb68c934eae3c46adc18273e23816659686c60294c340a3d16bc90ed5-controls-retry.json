@@ -1,0 +1,116 @@
+{
+  "attempt": "controls-retry",
+  "costUsd": 0.0032890899999999997,
+  "failures": [],
+  "packetId": "54b5d0bfb68c934eae3c46adc18273e23816659686c60294c340a3d16bc90ed5",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's options often need reading the schedule or noticing a day or time change, such as Friday versus Saturday hours, while B's options are mostly direct word matches like blue hat and red scarf, which fits a level below A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same correct answer sets for every question, and each key matches its passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use Brazilian Portuguese questions and options with English passages, with no language problems.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Several options can be matched by a shared word alone (for example Um chapéu azul matches blue hat, Vermelha matches red), so a learner below A1 could get them right without understanding the text.",
+            "criterion": "calibration",
+            "learnerCost": "A learner below A1 could get these right by matching words, so the items do not test whether they reached A1.",
+            "location": {
+              "detail": "Um chapéu azul.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the same correct answers as B but its items ask more of an A1 reader, so it checks the level better."
+        },
+        "pairId": "37cc667b-5168-4961-8069-d00a5a42e4aa"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they check the same level in the same way.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same answer sets.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and use the same language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "508140f8-9467-48ab-b443-bec09b92f1d1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same message and options and give no level target, so neither checks the level better.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "The message says the bus leaves at ten, so option 2 is false and the key should be 1 and 3; B gives this key while A wrongly includes option 2 and misses option 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use an English message with Portuguese options, with no language problems.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2, O ônibus sai às nove, as right, but the message says the bus leaves at ten. The key also leaves out option 3, O café fica ao lado da loja, which the message supports.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine, which is false, and is told a true statement is wrong.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's answer key matches the message, while A's key teaches a false fact and marks a true option wrong."
+        },
+        "pairId": "c9c98c0e-b318-4821-ba2d-80cb27fc99fd"
+      }
+    ]
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00538079,
+  "failures": [],
+  "packetId": "d46570145eba0e27836d7e65d0baf1624c0f17119ad9ee71878861ce03b2f994",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, and their passages and questions sit at B2 with implied answers.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, and their keys match the passages on checking.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, in natural Mexican Spanish with Brazilian Portuguese questions.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same, so neither serves its reader better."
+        },
+        "pairId": "4d1f89bf-dc73-4b03-9891-efe865cf87e1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use the same A1 message and the same five options in Portuguese, which fit the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B's key (1 and 3) matches the message; A's key marks the bus as leaving at nine and leaves out the cafe fact the message supports.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same English message with Portuguese question and options, which is the learner's language.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key says 1 and 2 are correct, but the message says the bus leaves at ten, so option (2) is false. Option (3) 'O café fica ao lado da loja' is supported by 'The cafe is next to the shop' and should be in the key.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine and that the cafe fact is wrong, which reverses two true and false statements.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A's answer key is wrong and would teach a false reading of the message, while B's key is correct."
+        },
+        "pairId": "a377c000-cffc-44af-869e-f40af8a94486"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets are B2 with implied answers; A's passages are longer and B's are more compact, and both fit the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets have checkable keys, with clearly wrong distractors and the right options supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Mexican Spanish texts and Brazilian Portuguese questions with no brands or stereotypes.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are sound B2 sets with correct keys and natural language, so neither serves the reader noticeably better."
+        },
+        "pairId": "d1fa694e-a4d0-465a-bfb5-4616851d6337"
+      }
+    ]
+  }
+}

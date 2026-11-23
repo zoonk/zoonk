@@ -1,0 +1,80 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        3,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "A carteira perdida é preta.",
+        "A carteira perdida é marrom.",
+        "A carteira foi perdida na livraria.",
+        "A carteira foi perdida na biblioteca.",
+        "A carteira foi perdida na quinta-feira.",
+        "A carteira foi perdida na terça-feira."
+      ],
+      "passage": "LOST: a brown wallet, at the library, on Tuesday. Please call Noah after 6 p.m. Phone: 555-0136.",
+      "question": "O que o bilhete diz sobre a carteira perdida?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "A piscina fecha às 5 da tarde no sábado.",
+        "A piscina abre às 6 da manhã no sábado.",
+        "A piscina fica fechada o dia todo no domingo.",
+        "A piscina fecha às 5 da tarde na sexta-feira.",
+        "A piscina tem aula para crianças no domingo.",
+        "A piscina abre às 6 da manhã na segunda-feira."
+      ],
+      "passage": "CITY POOL\nMonday to Friday: 6 a.m. to 8 p.m.\nSaturday: 9 a.m. to 5 p.m.\nSunday: closed\nKids' class: Saturday, 10 a.m.",
+      "question": "O que é verdade sobre os horários da piscina?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        3,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "A consulta é na sala 2.",
+        "A consulta é na sala 4.",
+        "A consulta é na sexta-feira.",
+        "A consulta é às 2h30 da tarde.",
+        "A consulta é às 4h30 da tarde.",
+        "A consulta é na quarta-feira."
+      ],
+      "passage": "Hello, this is Dr. Lee's office. Your appointment is on Wednesday at 2:30 p.m., in room 4. We are closed on Friday.",
+      "question": "O que a recepcionista diz sobre a consulta?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        3,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "O entregador pede dois dólares.",
+        "O entregador pede doze dólares.",
+        "O entregador pede vinte dólares.",
+        "O entregador traz uma caixa grande.",
+        "O entregador traz duas caixas pequenas.",
+        "O entregador traz duas sacolas pequenas."
+      ],
+      "passage": "Hi, delivery for Diego! I have one big box and two small bags. It's twelve dollars, please.",
+      "question": "O que o entregador diz na porta?",
+      "skill": "listening"
+    }
+  ]
+}

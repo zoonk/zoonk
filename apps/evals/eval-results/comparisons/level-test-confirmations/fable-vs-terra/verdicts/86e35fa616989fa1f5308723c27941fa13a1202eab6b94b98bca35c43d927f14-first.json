@@ -1,0 +1,139 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00417489,
+  "failures": [],
+  "packetId": "86e35fa616989fa1f5308723c27941fa13a1202eab6b94b98bca35c43d927f14",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same A1 items, and each option is decided by matching a simple fact in the message.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's key is correct (1 and 3), while output B wrongly marks option 2 (bus at nine, but the message says ten) as right and leaves out the true option 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same English message with Portuguese options, which suits a Portuguese-speaking A1 learner.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option 2 as right, but the message says the bus leaves at ten, not nine. The key also omits option 3, which the message supports (the cafe is next to the shop).",
+            "criterion": "answers",
+            "learnerCost": "The learner would be taught that the bus leaves at nine and that the cafe fact is not true, so the answer key contradicts the message.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A's answer key matches the message, while output B teaches a false bus time and misses a true statement."
+        },
+        "pairId": "415ee9fb-e94e-482c-a71a-d6d117be039e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A's items are decided by matching simple facts, such as the bag colour and the named item, which fits A1. Output B's pool schedule and multi-option timetable items need cross-referencing across several days, which is closer to A2.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have correct answer keys for every item, and the distractors are clearly wrong on their own.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English passages with Portuguese questions and options in Brazilian Portuguese, which suits the learner.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The items are labelled A1, but the pool schedule question needs the learner to find the right day in a timetable and check several day-and-time facts at once. This is closer to A2 and may be too hard for an A1 learner.",
+            "criterion": "calibration",
+            "learnerCost": "A learner at A1 would get items wrong for reasons beyond their level and might conclude they are not ready for A1 content.",
+            "location": {
+              "detail": "O que é verdade sobre o horário da piscina?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both answer keys are correct, but output A's items sit at A1 as labelled, while output B's timetable items are closer to A2."
+        },
+        "pairId": "78c84fc8-ef3b-4f6c-bc30-e9c94d489d5c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they have the same calibration.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their answer keys are the same.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their language is the same.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The items are labelled A1, but the pool schedule question needs the learner to find the right day in a timetable and check several day-and-time facts at once. This is closer to A2 and may be too hard for an A1 learner.",
+            "criterion": "calibration",
+            "learnerCost": "A learner at A1 would get items wrong for reasons beyond their level and might conclude they are not ready for A1 content.",
+            "location": {
+              "detail": "O que é verdade sobre o horário da piscina?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The items are labelled A1, but the pool schedule question needs the learner to find the right day in a timetable and check several day-and-time facts at once. This is closer to A2 and may be too hard for an A1 learner.",
+            "criterion": "calibration",
+            "learnerCost": "A learner at A1 would get items wrong for reasons beyond their level and might conclude they are not ready for A1 content.",
+            "location": {
+              "detail": "O que é verdade sobre o horário da piscina?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "a2c1d3f2-bec0-4c24-a197-050ec5138efd"
+      }
+    ]
+  }
+}

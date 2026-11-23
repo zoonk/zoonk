@@ -22,16 +22,12 @@ import {
 } from "./level-test-levels";
 
 /**
- * Written once per pair and shared beside the bank's questions, by the bank's own writers: no
- * eval of this prompt has run yet, so it starts on the chain the bank's eval chose.
+ * Each writer passed 64 key checks in level-test-confirmations/fable-vs-terra. Readers differed
+ * on which questions tested the intended level, so the shared bank keeps Fable first.
  */
 const defaultModel = "anthropic/claude-fable-5.2";
 
-const fallbackModels = [
-  "anthropic/claude-opus-5.5",
-  "anthropic/claude-sonnet-5.5",
-  "openai/gpt-6.1-terra",
-] as const;
+const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 
 /** At five options, a blind guess at a select-all answer passes about 1 time in 32. */
 const MIN_OPTIONS = 5;

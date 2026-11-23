@@ -1,0 +1,115 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-es-a2",
+        "claimId": "b0ae49ee91f182df",
+        "criterion": "calibration",
+        "observationId": "8a5b1fa4eb81d94152249e4ee0907999f3ecd2133dd2428b5d6b81c185331a40.first.7bba7ede-8898-474a-b73f-46a37e1a2084.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0008841999999999999,
+    "id": "b0b7d0a6f86ea1de3f2358cf993b2d64e582e4222b25b7b832e42259d2247653",
+    "packet": [
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The message says the bus leaves at ten, so option 2 is false. The cafe is next to the shop, so option 3 is true.",
+            "claimId": "671b0079348828e0",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "e55832f215c7decd",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "d0fe545104a053fe90bb2c953775e3545427758b9c7e60add1d04b9c0bbc0154",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a1c6b5fb53a75691a9fa73506940178e286fcbc7f6e0adb1fdb5802504170f80",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Confirmations 1 and 4 state each fact in a single direct sentence with no sequence or change to follow, allowing an A1 learner to pick the right options by simple phrase matching.",
+            "claimId": "b0ae49ee91f182df",
+            "criterion": "calibration",
+            "location": {
+              "detail": "confirmations 1 and 4",
+              "kind": "range"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "c61d6030b0f2b9a5db3dbd3b3cbf9adf52037b6fe971e9c92b8b4e3eaea800b5",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9915a0caeae9c31dee136c97a652522ed0929f2cafca8c9a18a2923868db9b4f",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": false,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "671b0079348828e0",
+          "finding": "holds for both",
+          "reason": "Both outputs give the same message and options: the bus leaves at ten, making option 2 false, and the café is next to the shop, making option 3 true."
+        },
+        {
+          "claimId": "e55832f215c7decd",
+          "finding": "doesn't hold",
+          "reason": "Output B’s key is “1 and 3”; it does not include option 2, the false statement that the bus leaves at nine."
+        },
+        {
+          "claimId": "b0ae49ee91f182df",
+          "finding": "holds",
+          "reason": "In A’s confirmations 1 and 4, the relevant movie and appointment details are stated directly, without a sequence or change to track, so simple matching can identify the answers. B’s confirmations 1 and 4 require connecting details across a price condition and a changed appointment request."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

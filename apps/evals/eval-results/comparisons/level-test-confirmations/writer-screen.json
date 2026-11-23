@@ -1,0 +1,860 @@
+{
+  "google/gemini-3.5-flash-lite": {
+    "pt-en-a1-1": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "pt-en-a1-2": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "en-es-a2-1": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "en-es-a2-2": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "en-pt-b1-1": {
+      "sha256": "e6b961a7363834bed84316b6f07300fefead9e1d358c822106c7a19b2bc94ae8",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.01304
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-pt-b1-2": {
+      "sha256": "6d9c4f215eefcd7f23774c624901f5a8c1273d70a1edbe265e36aa02be634429",
+      "questions": 4,
+      "keySolve": {
+        "passed": 2,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[0]",
+            "keyedAnswer": "[0, 3]",
+            "kind": "wrongKey",
+            "workedAnswer": "Option 3 gives the main point: consistent daily practice helped the writer overcome early difficulties. Option 0 describes the same change in routine, not a second main point."
+          },
+          {
+            "itemLocator": "confirmations[1]",
+            "keyedAnswer": "[0, 2]",
+            "kind": "wrongKey",
+            "workedAnswer": "Option 2 combines both stated barriers: long flight connections and limited local public transit. Option 0 identifies the travelers deterred by those barriers, not a separate reason for low attendance."
+          }
+        ],
+        "costUsd": 0.026616
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "B1 reading: the text has 77 words, over 75."
+        ]
+      }
+    },
+    "pt-es-b2-1": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "pt-es-b2-2": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "pt-en-a1-retake-1": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "pt-en-a1-retake-2": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "en-fr-c1-1": {
+      "sha256": "2b64604340de4f10f6150d871060e9ff4ed8d09609ba58f3259b3767ae8d2066",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.014943999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-fr-c1-2": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "pt-en-c2-1": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "pt-en-c2-2": {
+      "sha256": "14666cb73d48f1ada77d051f6ea57b6557b25684f3d4bb09329c8f9c935fec3c",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.016216
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-de-c2-1": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    },
+    "en-de-c2-2": {
+      "sha256": "ae5883c7760f2f63ad31b9394fc1e2c6ae88a2d0f4623779f7632160f863e225",
+      "questions": 0,
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 0 usable questions instead of 2.",
+          "listening: 0 usable questions instead of 2."
+        ]
+      }
+    }
+  },
+  "anthropic/claude-haiku-5.5": {
+    "pt-en-a1-1": {
+      "sha256": "412731ed3b91d4e689b67d9b199cc1a27d5368a33c6b086073b7a113118fd6cd",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.010152
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-a1-2": {
+      "sha256": "89c5699bd8a3bd24007d739e7c256e6ebacc03b5f33d8915bb6cda4893c772b7",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.01068
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-es-a2-1": {
+      "sha256": "00e4b74863a1b445c4e609bbb2fdae03eb9c04d3364f6548230c4fe159f6485d",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.012232
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-es-a2-2": {
+      "sha256": "f44fac17befe5bc1077a0846e50687e84a8696d40b0d5b651f5fa57d3cf9908e",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.011552
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-pt-b1-1": {
+      "sha256": "4b8668195eb0123f7f45a7d686b19f23a08229575daed9e486647d212bddb2cc",
+      "questions": 4,
+      "keySolve": {
+        "passed": 3,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[0]",
+            "keyedAnswer": "[3, 4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only option 4 is supported: the writer says regular practice matters more than long sessions. The old routine was already fifteen minutes per day, so the change to shorter sessions and a favorite song does not establish more consistent practice."
+          }
+        ],
+        "costUsd": 0.016624
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-pt-b1-2": {
+      "sha256": "64af4449dce2f2b4d0b32cfafc659f951213c2cf756c69afc42c2de3a81f6dbe",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.012624
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-es-b2-1": {
+      "sha256": "7fd76c9ba05d47372cfabd484b6894e4acee1bbf46c4103ad709832e210b520e",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.014903999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-es-b2-2": {
+      "sha256": "d55356332a2a6ed2ed59c83d9a31e4ac8f97305a41048e6412837157fd600c70",
+      "questions": 4,
+      "keySolve": {
+        "passed": 2,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[0]",
+            "keyedAnswer": "answerIndices [1, 4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only index 1 states the writer’s opinion: helping even a few children makes volunteering worthwhile. Index 4 describes what he does despite his doubts. His continued attendance is evidence for his opinion, not a second answer stating that opinion."
+          },
+          {
+            "itemLocator": "confirmations[3]",
+            "keyedAnswer": "answerIndices [3, 4]",
+            "kind": "noCorrectOption",
+            "workedAnswer": "The speaker appreciates several parts of the trip but criticizes the unannounced tour delay. Nothing indicates that the delay outweighed the positives, as index 3 claims. Saying she will tell Mariana more in person supports postponing details, but not index 4’s claim that she is more frustrated than she admits. No option captures the mixed assessment without adding an unsupported judgment."
+          }
+        ],
+        "costUsd": 0.039136000000000004
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-a1-retake-1": {
+      "sha256": "04f4dc5db7e34fb34c91fbb8250ad8236ba99a04b3ea11d23eb68b7c4fa881b4",
+      "questions": 4,
+      "keySolve": {
+        "passed": 3,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[0]",
+            "keyedAnswer": "[1, 3]",
+            "kind": "twoDefensible",
+            "workedAnswer": "Options 1 and 3 are correct, but option 4 is also defensible: anyone who collects the backpack before 5 p.m. must also collect it before 7 p.m. The question asks which statements are true, not which deadline the notice gives."
+          }
+        ],
+        "costUsd": 0.017128
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-a1-retake-2": {
+      "sha256": "791d898505462de64781738d98ef8ad122cc8c39d43164c4615e456015086b48",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.011007999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-fr-c1-1": {
+      "sha256": "c5cab93ac6e0c833938055d17ffbfc31af056a3cfc962b9c43889854f285a647",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.015704
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-fr-c1-2": {
+      "sha256": "e553b3baefd169c9641db6c712ad0f66b35322d27054f41eaa6cfa6db0fd26fe",
+      "questions": 4,
+      "keySolve": {
+        "passed": 2,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[0, 4, 5]",
+            "kind": "wrongKey",
+            "workedAnswer": "Select 0 and 4 only. The commentator praises the technical design but questions whom the stadium serves. “Je ne dis pas que la ville a eu tort” stops short of saying the city was right to build it, as option 5 claims."
+          },
+          {
+            "itemLocator": "confirmations[3]",
+            "keyedAnswer": "[2, 4, 5]",
+            "kind": "wrongKey",
+            "workedAnswer": "Select 2 only. The musician objects to questions about their private life, not to admiration. Option 4 describes how they cope rather than what they object to. Option 5 also turns “j’ai été flatté,” a reaction to the first encounter, into an unsupported claim about how recognition feels now."
+          }
+        ],
+        "costUsd": 0.023576
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "C1 reading: the text has 121 words, over 120."
+        ]
+      }
+    },
+    "pt-en-c2-1": {
+      "sha256": "54a473cf1469260e26c10c5cfa3728ff1fdcc30d4724f9f822e0a8b58212f807",
+      "questions": 4,
+      "keySolve": {
+        "passed": 0,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[0]",
+            "keyedAnswer": "[1,4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only 4 is supported. “Apologizing to no one” suggests the father answered to his own standard. It does not establish that he felt dissatisfaction he never showed, as 1 claims."
+          },
+          {
+            "itemLocator": "confirmations[1]",
+            "keyedAnswer": "[0,2]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only 2 explains the opening praise: the reviewer attributes it to other critics and immediately challenges it with “which is the trouble.” Option 0 describes a later move, when the reviewer praises “Inventory” before criticizing the mannerism elsewhere."
+          },
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[3,4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only 4 identifies the unchecked assumption: scheduling was the reason the teachers left. The group can accept the dashboard’s figures and guess at the reason for the departures without believing the dashboard explains why the figures changed, as 3 claims."
+          },
+          {
+            "itemLocator": "confirmations[3]",
+            "keyedAnswer": "[3,4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only 3 answers what the grandmother signals about the grandfather’s account. Naming the Bible quietly punctures his claim that the radio was the only loss. Option 4 describes the family’s response to her remark, not what the remark implies about his story."
+          }
+        ],
+        "costUsd": 0.032824000000000006
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-c2-2": {
+      "sha256": "76172b5e91020f2b21408f1d66f5a171ffbc6a3ca224ab71dc4844820897ab2b",
+      "questions": 4,
+      "keySolve": {
+        "passed": 0,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[0]",
+            "keyedAnswer": "[3, 4]",
+            "kind": "twoDefensible",
+            "workedAnswer": "The stem asks about the whole phrase, not specifically about the effect of personification. Index 3 captures the change from habitual noise to post-funeral stillness; index 4 explains why that stillness feels like a gesture of respect. Both answer the singular question."
+          },
+          {
+            "itemLocator": "confirmations[1]",
+            "keyedAnswer": "[1, 4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only index 4 explains the concession's argumentative role: the critic acknowledges that some images fail, making the final praise more credible. Commenting on the middle section does not establish that the critic read every poem, as index 1 claims."
+          },
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[3, 4]",
+            "kind": "noCorrectOption",
+            "workedAnswer": "The question requires a premise the moderator does not state directly. Yet the moderator explicitly says the hours were treated as fixed, that nobody questioned protecting them (index 3), and that the city was expected to protect them once the numbers worked out (index 4). What the closing request implies is that the committee should examine its priorities rather than treat funding as the only issue; no option gives that inference."
+          },
+          {
+            "itemLocator": "confirmations[3]",
+            "keyedAnswer": "[3, 4]",
+            "kind": "twoDefensible",
+            "workedAnswer": "Index 4 captures the unresolved choice in the final question. Index 3 also has textual support: coming just after the aunt's account of Grandpa crying, “just a road trip?” gently undercuts his claim of success. The question can express irony without settling how the family should tell the story."
+          }
+        ],
+        "costUsd": 0.045304000000000004
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-de-c2-1": {
+      "sha256": "481a1bd796930ca9e3dfcca23cf65130a8057054769b69c2daf25e327c233c8c",
+      "questions": 4,
+      "keySolve": {
+        "passed": 3,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[4] That the question of who pays is still open and is left for the next round. [5] That the shortage of skilled workers is a real problem that needs solving.",
+            "kind": "wrongKey",
+            "workedAnswer": "Only option 5 is supported: “Wir alle wissen” presents the shortage as common ground. The moderator says payment is unresolved but gives only the next round’s time and location, not its agenda."
+          }
+        ],
+        "costUsd": 0.021384
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-de-c2-2": {
+      "sha256": "12838faf014d4990d696125a3e181de8603422f242956dd723e5ec33f61c98e4",
+      "questions": 4,
+      "keySolve": {
+        "passed": 2,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[3, 4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only [4] is supported. In [3], “mehr beschäftigt” means Lindqvist’s remark occupied the moderator’s thoughts more than any statistic did. It does not establish that the moderator found it more unsettling."
+          },
+          {
+            "itemLocator": "confirmations[3]",
+            "keyedAnswer": "[3, 4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only [4] is supported: the narrator suggests Opa may have knowingly omitted the broken promise. Option [3] misidentifies the contrast. The legend celebrates the great-grandmother’s generosity, not the baker’s kindness; it is the letters that reveal how clearly she remembered the unpaid debt."
+          }
+        ],
+        "costUsd": 0.027336
+      },
+      "structure": {
+        "passed": 0,
+        "total": 2,
+        "problems": [
+          "reading: 3 usable questions instead of 2.",
+          "listening: 1 usable questions instead of 2.",
+          "C2 listening: the text has 122 words, over 120."
+        ]
+      }
+    }
+  },
+  "openai/gpt-6-luna": {
+    "pt-en-a1-1": {
+      "sha256": "49cc1bad16b6cb306900d2cd39d736197c0154195e2ccd422ad4789b1a749142",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.010552
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-a1-2": {
+      "sha256": "0adadb849937f618d46da79884f868d2d29dbf6a48c403fb0573397f0961d12a",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.009911999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-es-a2-1": {
+      "sha256": "5a796eef101aa77e04b87d1d7a5fbff146e4220b488921a6d4246da4c0477076",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.011872
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-es-a2-2": {
+      "sha256": "e9fbf63bde07d44ef376bffae3288afa352e263b63f6ed5cc98f88f377dbe9d7",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.013543999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-pt-b1-1": {
+      "sha256": "1ad09be9ac228a0edfe12e821dcb78401af161158c2c2b60fb810cd7d061f058",
+      "questions": 4,
+      "keySolve": {
+        "passed": 3,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[2, 4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only option 4 is supported as a reason for confidence. “Esse esforço coletivo” refers to the players continuing to help on defense. The coach reports better organization after halftime but does not identify it as a reason for confidence about the next match."
+          }
+        ],
+        "costUsd": 0.023056
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "B1 listening: the text has 66 words, over 65."
+        ]
+      }
+    },
+    "en-pt-b1-2": {
+      "sha256": "4c17dc1d200af0febf53700c1290ebc41826e1d925d882fd25e9f158cfe27702",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.018552
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-es-b2-1": {
+      "sha256": "20970c96bac31e4e6ddbd4255d3d16711cc08c02c3e8101d8766096ffd42f117",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.014712
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "B2 listening: the text has 88 words, over 85.",
+          "B2 listening: the text has 92 words, over 85."
+        ]
+      }
+    },
+    "pt-es-b2-2": {
+      "sha256": "bd4e4fa5c7c62095a79a525d3092b449317b5d166d3c2a3517424563fd0146d2",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.015664
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "B2 listening: the text has 94 words, over 85."
+        ]
+      }
+    },
+    "pt-en-a1-retake-1": {
+      "sha256": "32a20582b9699cdb274410ec1c07c4eef5cffdb8be25244eb44694f9af50682c",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.011136
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-a1-retake-2": {
+      "sha256": "d9218fffb39f06c8f9c46da903dc28866cc0581aad5f84f77a3cfb7f14644fa7",
+      "questions": 4,
+      "keySolve": {
+        "passed": 3,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[3]",
+            "keyedAnswer": "[2, 3]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only option 3 is supported: the bag is beside the blue chair. Option 2 specifies the front porch, but the message says only “on the porch,” without saying which porch."
+          }
+        ],
+        "costUsd": 0.014079999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-fr-c1-1": {
+      "sha256": "32a1c3cd3ac0ca481ae5a1966b60de6624300afabaa23e356e7111ba5a2542fe",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.016024
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "C1 listening: the text has 105 words, over 100.",
+          "C1 listening: the text has 101 words, over 100."
+        ]
+      }
+    },
+    "en-fr-c1-2": {
+      "sha256": "a9f356e5b74936b2d48f1779a1f86cbcf0e5e6dfe8af9a460bc3b311917da804",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.015111999999999999
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "pt-en-c2-1": {
+      "sha256": "aee152a113c1665f8af0a38713f2d69d930d2795eea7cfb0572b9898c5d5add0",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.016887999999999997
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "C2 listening: the text has 132 words, over 120."
+        ]
+      }
+    },
+    "pt-en-c2-2": {
+      "sha256": "c9db9b5028e7e19b80604c4a0f87315a62e22a3b44d903b661c72c73d6d49885",
+      "questions": 4,
+      "keySolve": {
+        "passed": 3,
+        "total": 4,
+        "problems": [
+          {
+            "itemLocator": "confirmations[2]",
+            "keyedAnswer": "[3,4]",
+            "kind": "wrongKey",
+            "workedAnswer": "Only index 4 answers the question about the allusion: the groundhog at least gets a forecast, while the meeting offers no comparable indication of what comes next. Index 3 draws on the later pause, not the allusion, and shifts the meaning from whom the group considered worth persuading to whom it considered worth hearing."
+          }
+        ],
+        "costUsd": 0.025888
+      },
+      "structure": {
+        "passed": 2,
+        "total": 2,
+        "problems": []
+      }
+    },
+    "en-de-c2-1": {
+      "sha256": "5e144294c90127c2116cf8b9431ecbf90356dcf05f2f2093d619c644618f5143",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.015583999999999999
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "C2 listening: the text has 129 words, over 120."
+        ]
+      }
+    },
+    "en-de-c2-2": {
+      "sha256": "00a917b2e91c2d7a8cfcedd4fbb7a7b6246f3537b0caf55b1ba86b582b4a1d98",
+      "questions": 4,
+      "keySolve": {
+        "passed": 4,
+        "total": 4,
+        "problems": [],
+        "costUsd": 0.017432
+      },
+      "structure": {
+        "passed": 1,
+        "total": 2,
+        "problems": [
+          "C2 listening: the text has 133 words, over 120."
+        ]
+      }
+    }
+  }
+}

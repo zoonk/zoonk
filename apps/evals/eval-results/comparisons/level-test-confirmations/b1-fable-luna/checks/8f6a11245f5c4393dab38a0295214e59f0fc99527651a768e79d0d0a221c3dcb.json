@@ -1,0 +1,13 @@
+{
+  "blockingProblems": [],
+  "caseId": "en-pt-b1",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 1,
+  "problems": [
+    "B1 listening: the text has 66 words, over 65."
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 2
+}

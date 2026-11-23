@@ -1,0 +1,79 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        2,
+        4
+      ],
+      "level": "C2",
+      "options": [
+        "Ao narrar o aperto de mão, o narrador mostra que Priya reconhece nele um pedido de desculpas do tio.",
+        "Ao chamar de herança o hábito de não perguntar, o narrador sugere que Priya o recebe junto com a casa.",
+        "Ao descrever a entrega das chaves, o narrador sugere que o tio abre mão de algo que lhe dava certo gosto.",
+        "Ao deixar Priya no corredor, o narrador mostra que ela tenta descobrir o que o tio quis dizer com o gesto.",
+        "Ao dizer que ninguém ousou mudar nada, o narrador sugere que a casa foi mantida por receio, não por carinho.",
+        "Ao citar a frase do corretor, o narrador confirma que a família cuidou da casa com afeto desde a morte da avó."
+      ],
+      "passage": "The house on Alder Street had been, in the realtor's phrase, lovingly maintained, which Priya took to mean that nobody had dared change anything since her grandmother died. Her uncle met her at the door with the keys and the air of a man relinquishing a burden he had rather enjoyed carrying. He showed her the fuse box, the temperamental faucet, the drawer where the warranties lived. He did not show her the back bedroom, and she did not ask. They were, as a family, accomplished at not asking; it was practically an heirloom. When he left, he shook her hand, which struck her as either a very great formality or a very small apology, and she stood in the hallway a long while, deciding which she would prefer.",
+      "question": "O que a escolha de palavras do narrador dá a entender nessa abertura de conto?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4,
+        5
+      ],
+      "level": "C2",
+      "options": [
+        "Ele sugere que a poeta deveria atender aos críticos e buscar assuntos mais amplos nos próximos livros.",
+        "Ele reinterpreta a volta aos mesmos temas como aprofundamento, sem negar que a poeta de fato retorna a eles.",
+        "Ele reconhece que os detratores têm razão ao ver no livro uma simples continuação do volume anterior.",
+        "Ele apresenta um juízo dividido, em que as falhas dos poemas longos pesam tanto quanto os acertos dos curtos.",
+        "Ele usa a única ressalva que faz ao livro para reforçar a defesa dos poemas curtos, e não para equilibrá-la.",
+        "Ele admite que os poemas são pequenos para, em seguida, separar esse tamanho da acusação de superficialidade."
+      ],
+      "passage": "It would be easy to dismiss this second collection as more of the same, and its detractors have not resisted the temptation. The poems are, admittedly, small: a kitchen at dusk, a father's unanswered voicemail, snow on a parked car. Nothing much happens in them. But smallness is not the same as slightness, and the charge of repetition mistakes a discipline for a limitation. A poet who returns, book after book, to the same four rooms is not failing to leave the house; she is learning what the house contains. If the collection falters, it is in the three longer sequences, where she seems to have listened to her critics. There the lines loosen, the subjects grow dutifully large, and one feels the ambition without once feeling the need.",
+      "question": "Como o crítico constrói seu argumento sobre a coletânea de poemas?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1,
+        2
+      ],
+      "level": "C2",
+      "options": [
+        "Ao elogiar a fala de Jamal, ele revela que tentou cortá-la porque passou muito do tempo previsto.",
+        "Ao falar do café no saguão, ele lembra que para o teatro, ao contrário, continua não havendo verba.",
+        "Ao retomar a fala de Olivia, ele aponta que ninguém na mesa propôs como resolver a questão do dinheiro.",
+        "Ao citar a casa cheia, ele mostra confiança de que o interesse do público vai garantir o futuro do teatro.",
+        "Ao comentar os números de Olivia, ele sugere que os cálculos dela estavam errados e ninguém os corrigiu.",
+        "Ao mencionar o ponto de consenso da mesa, ele indica que os participantes chegaram a um acordo sobre o teatro."
+      ],
+      "passage": "Well, we're out of time, which I'm told is the one thing this panel agreed on. I want to thank our speakers, who came to discuss whether the city should save the old theater and have, I think, settled only the question of who enjoys a microphone. Jamal gave us forty years of history in what was billed as five minutes, and I wouldn't have cut a word, though I did try. Olivia told us the numbers don't add up; I noticed nobody up here offered to add them. So we end where these evenings usually end: a full house, an empty budget, and coffee in the lobby. Do stay. The coffee, at least, is funded.",
+      "question": "O que o moderador dá a entender em suas palavras de encerramento?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        3
+      ],
+      "level": "C2",
+      "options": [
+        "Que o relato da avó é mais fiel ao que aconteceu do que o relato contado pela tia-avó.",
+        "Que uma lenda de família pode guardar uma verdade mesmo quando os fatos a tornam duvidosa.",
+        "Que a descoberta do trem obriga quem conta a história a abandonar a versão da viagem a pé.",
+        "Que um detalhe presente em versões que se contradizem é justamente o que merece mais crédito.",
+        "Que a família só não questiona a caminhada porque desconhece que já existia um trem na época.",
+        "Que o violino é a parte verdadeira porque foi esse o detalhe que ele próprio conseguiu verificar."
+      ],
+      "passage": "Now, the way my grandmother told it, her father walked from Denver to Santa Fe in the winter of 1911 with a mule, a fiddle, and eleven dollars. The way my great-aunt told it, there was no mule, and the eleven dollars were somebody else's. I've checked, and there was a train by then, a perfectly good one. But I'll tell you something. Nobody in my family has ever once asked why he didn't take it. You don't ask a story for its receipts. And whichever sister you believed, he always arrived with the fiddle. So I figure the fiddle's the true part, and the rest is just how you carry it there.",
+      "question": "O que o contador da história toma como certo, sem dizer diretamente?",
+      "skill": "listening"
+    }
+  ]
+}
