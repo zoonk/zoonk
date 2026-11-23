@@ -188,7 +188,11 @@ export function MockRow({
           ) : null}
         </PathRowBody>
       </EventRow>
-      {id && (!funded || funded.status === "todo") && <MockSchedule planItemId={id} />}
+      {id && (!funded || funded.status === "todo") && (
+        <div className="ps-7">
+          <MockSchedule planItemId={id} />
+        </div>
+      )}
     </div>
   );
 }
