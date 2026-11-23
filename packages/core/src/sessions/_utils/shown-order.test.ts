@@ -9,7 +9,7 @@ function shownOrders(count: number): Set<string> {
       getShownOrder({
         count,
         seed: `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`,
-      }).join(),
+      }).join(","),
     ),
   );
 }
@@ -20,12 +20,12 @@ describe(getShownOrder, () => {
   });
 
   it("never shows entries in their stored order", () => {
-    const stored = [0, 1, 2, 3, 4].join();
+    const stored = [0, 1, 2, 3, 4].join(",");
     expect(shownOrders(5).has(stored)).toBe(false);
   });
 
   it("shows an item the same way each time it's read", () => {
     const seed = "3f2b8c1e-0000-4000-8000-000000000001";
-    expect(getShownOrder({ count: 6, seed })).toEqual(getShownOrder({ count: 6, seed }));
+    expect(getShownOrder({ count: 6, seed })).toStrictEqual(getShownOrder({ count: 6, seed }));
   });
 });
