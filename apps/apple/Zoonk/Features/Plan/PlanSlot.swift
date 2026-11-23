@@ -107,8 +107,8 @@ private struct PlanChangePanel: ViewModifier {
 /// puts one off for as long as the app runs.
 /// An answer that changes the plan says what it did, with Undo, for a moment. A change to the plan
 /// (its coverage, an offer, a date that passed) is the whole card at every width, as main's; any other in the
-/// page's column is main's suggestion line, its summary with "View" opening the whole suggestion in
-/// a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
+/// page's column is main's suggestion line, its summary with its own action or "View" opening the
+/// whole suggestion in a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
 /// suggestion.
 struct PlanSuggestionSection: View {
   private enum Focus: Hashable {
@@ -213,9 +213,7 @@ struct PlanSuggestionSection: View {
               summary.text
                 .accessibilityFocused($focus, equals: .item)
             } action: {
-              SuggestionViewButton {
-                context.show(.suggestion(item))
-              }
+              lineAction(item)
             }
           }
         }
@@ -562,6 +560,35 @@ struct PlanSuggestionSection: View {
       icon
     }
     .accessibilityFocused($focus, equals: .item)
+  }
+
+  /// Main's line action: one that acts on its own, or what opening the whole suggestion leads to.
+  @ViewBuilder
+  private func lineAction(_ item: PlanSlotItem) -> some View {
+    switch item {
+    case .tooTight:
+      Button {
+        context.adjust(.top)
+      } label: {
+        Text(
+          "Adjust", tableName: "Plan",
+          comment:
+            "Opens the plan's settings, on the line saying the plan has more lessons than days left"
+        )
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+    case .choice:
+      SuggestionViewButton(
+        label: Text("Choose", tableName: "Plan", comment: "Opens an exam choice's options")
+      ) {
+        context.show(.suggestion(item))
+      }
+    default:
+      SuggestionViewButton {
+        context.show(.suggestion(item))
+      }
+    }
   }
 
   private var tooTightTitle: String {

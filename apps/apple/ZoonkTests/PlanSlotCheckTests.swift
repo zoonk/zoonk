@@ -136,6 +136,36 @@ final class PlanSlotCheckTests: XCTestCase {
       before: String(localized: "See what changes", table: "Plan"), in: window)
   }
 
+  /// The line saying the plan doesn't fit adjusts it with its own "Adjust", as web's and Android's
+  /// do, instead of opening the suggestion in a sheet first.
+  func testTheLineSayingThePlanDoesNotFitAdjustsItDirectly() async throws {
+    var adjusted: [AdjustPlanSheet.Section] = []
+    var shown: [PlanSheet] = []
+    let context = PlanContext(
+      goal: Self.goal(kind: .exam), plan: try goalPlanFixture(status: "needsAdjusting"),
+      adjust: { adjusted.append($0) }, show: { shown.append($0) }, slotChecks: PlanSlotChecks())
+    try await readsWhatVoiceOverReads()
+    let session = SessionStore.preview(account: .planTestAccount)
+    let window = try show(
+      List {
+        PlanSuggestionSection(context: context, answer: .constant(nil))
+      }
+      .environment(PlanStore(api: PlanAPIStub(), cache: AppCache(session: session)))
+      .environment(session)
+      .environment(AppRouter())
+      .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+
+    XCTAssertFalse(
+      spoken(in: window).contains(String(localized: "View", table: "Plan")), "\(spoken(in: window))"
+    )
+    try await activate(String(localized: "Adjust", table: "Plan"), in: window)
+
+    XCTAssertEqual(adjusted, [.top])
+    XCTAssertTrue(shown.isEmpty, "Nothing opens before the plan's settings")
+  }
+
   // MARK: Helpers
 
   private func context(kind: LearnerGoal.Kind = .exam, plan: GoalPlan? = nil) throws
