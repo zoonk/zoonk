@@ -543,7 +543,7 @@ struct LevelTestScreen: View {
       }
       .navigationTitle(Text(PlacementTestCopy.languageName))
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar(removing: .title)
+      .testBar()
       .taskClose {
         Button(role: .close) { dismiss() }
       }

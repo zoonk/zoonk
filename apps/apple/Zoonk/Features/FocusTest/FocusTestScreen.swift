@@ -43,8 +43,7 @@ struct FocusTestScreen: View {
       }
       .navigationTitle(Text(FocusTestCopy.name))
       .navigationBarTitleDisplayMode(.inline)
-      // Each screen's eyebrow names the test; the title stays for VoiceOver and window names.
-      .toolbar(removing: .title)
+      .testBar()
       .taskClose {
         Button(role: .close) { dismiss() }
       }

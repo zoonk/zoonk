@@ -362,7 +362,7 @@ struct PlacementTestScreen: View {
       .id(session.authenticatedSession)
       .navigationTitle(Text(PlacementTestCopy.learnName))
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar(removing: .title)
+      .testBar()
       .taskClose {
         Button(role: .close) { dismiss() }
       }

@@ -173,6 +173,9 @@ private struct GoalSteps: View {
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
   private var startingOver: VisitRequest<Bool> { failures.startingOver }
   @State private var conditionPicks: [String] = []
+  /// How far a test is while its question shows. Its answer is final, so the bar keeps only ✕,
+  /// as main's `OnboardingTestQuestion` does, with this in the dashes' place.
+  @State private var testProgress: Double?
 
   init(
     view: GoalOnboarding,
@@ -252,16 +255,17 @@ private struct GoalSteps: View {
     .environment(\.onboardingAside, .planSoFar(planFacts))
     .id(step)
     .navigationBarBackButtonHidden()
-    // The step counter takes the title's place; without it the bar shows no title.
-    .toolbar(removing: progress == nil ? .title : nil)
+    // The dashes or a test's progress take the title's place; without either, no title shows.
+    .toolbar(removing: progress == nil && testProgress == nil ? .title : nil)
+    .onPreferenceChange(TestQuestionProgressKey.self) { testProgress = $0 }
     .taskOptions(
-      isShown: step != .plan,
+      isShown: step != .plan && testProgress == nil,
       label: Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
     ) {
       moreActions
     }
     .toolbar {
-      if previousStepIndex != nil, step != .plan {
+      if previousStepIndex != nil, step != .plan, testProgress == nil {
         ToolbarItem(placement: .navigation) {
           Button(action: back) {
             Label {
@@ -292,19 +296,18 @@ private struct GoalSteps: View {
         }
       }
 
-      if let progress {
+      if let testProgress {
         ToolbarItem(placement: .principal) {
-          Text(
-            "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",
-            comment: "Where the learner is among the goal's questions"
-          )
-          .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          TestProgressBar(value: testProgress)
+        }
+      } else if let progress {
+        ToolbarItem(placement: .principal) {
+          StepDashes(progress: progress)
         }
       }
 
       // As on main, Back takes the ✕'s place once there's a step to go back to; "Finish later" stays in the menu.
-      if previousStepIndex == nil || step == .plan {
+      if previousStepIndex == nil || step == .plan || testProgress != nil {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
             router.dismissTask()

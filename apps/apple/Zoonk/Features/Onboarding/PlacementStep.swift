@@ -483,9 +483,6 @@ struct PlacementQuestionScreen<Media: View>: View {
         }
       }
 
-      Meter(value: progress, fill: .success)
-        .accessibilityHidden(true)
-
       media()
 
       asked.stimulus
@@ -541,6 +538,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         }
       }
     }
+    .preference(key: TestQuestionProgressKey.self, value: progress)
   }
 
   private var asked: PracticeQuestionView {
