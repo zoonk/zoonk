@@ -83,7 +83,7 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
     return [];
   }
 
-  const sources = await prisma.learnerSource.findMany({
+  const sources = await prisma.goalSource.findMany({
     select: { source: true },
     where: {
       goalId,

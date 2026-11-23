@@ -96,7 +96,7 @@ final class DraftCreationTests: XCTestCase {
       OnboardingDraft.self,
       from: Data(
         #"""
-        {"activeGoalsLeft":2,"generationId":null,"goalId":\#(goal),"id":"\#(draftID)","prompt":"Why is the sky blue?","status":"understood","timeZone":"America/Sao_Paulo","understanding":{"question":"Why is the sky blue?","status":"explain"}}
+        {"activeGoalsLeft":2,"generationId":null,"goalId":\#(goal),"id":"\#(draftID)","materialIntent":null,"materialMissing":false,"prompt":"Why is the sky blue?","sources":[],"status":"understood","timeZone":"America/Sao_Paulo","understanding":{"question":"Why is the sky blue?","status":"explain"}}
         """#.utf8))
   }
 
@@ -168,8 +168,7 @@ private struct DraftHost: View {
         .navigationDestination(for: Int.self) { _ in
           if let id = page.shown, let card = cards[id] {
             DraftView(
-              card: card, sentHere: true, onRewrite: { _ in }, onBack: {}, onGoal: { _ in },
-              sourceIDs: []
+              card: card, sentHere: true, onRewrite: { _ in }, onBack: {}, onGoal: { _ in }
             )
             .id(id)
           }

@@ -66,7 +66,7 @@ async function findFactSources({
       AND: [
         {
           OR: [
-            { learnerSources: { some: { goal: goals } } },
+            { goalSources: { some: { goal: goals } } },
             { steps: { some: { lessonId } } },
             { stepSources: { some: { step: { lessonId } } } },
             { id: { in: productPageIds } },

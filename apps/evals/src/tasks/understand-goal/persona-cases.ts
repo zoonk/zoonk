@@ -1,6 +1,6 @@
 import { SEED_LEARNERS_TODAY, getSeedLearner } from "@/datasets/seed-learners";
 import { type TestCase } from "@/lib/types";
-import { type UnderstandGoalInput } from "@zoonk/ai/tasks/goals/understand-goal";
+import { type UnderstandGoalCaseInput } from "./material-cases";
 import { type UnderstandGoalExpected } from "./scorer";
 
 function personaCase({
@@ -9,7 +9,7 @@ function personaCase({
 }: {
   expected: UnderstandGoalExpected;
   learnerKey: string;
-}): TestCase<UnderstandGoalExpected, UnderstandGoalInput> {
+}): TestCase<UnderstandGoalExpected, UnderstandGoalCaseInput> {
   const { goal, language } = getSeedLearner(learnerKey);
 
   return {
@@ -19,7 +19,7 @@ function personaCase({
   };
 }
 
-export const PERSONA_TEST_CASES: TestCase<UnderstandGoalExpected, UnderstandGoalInput>[] = [
+export const PERSONA_TEST_CASES: TestCase<UnderstandGoalExpected, UnderstandGoalCaseInput>[] = [
   personaCase({
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },
     learnerKey: "maya",

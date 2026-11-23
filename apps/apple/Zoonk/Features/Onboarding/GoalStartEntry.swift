@@ -41,6 +41,11 @@ struct GoalStartEntry: View {
             GoalMaterialButton(material: $goal.material, draft: materialDraft)
           }
         },
+        attached: {
+          if part != .box {
+            GoalMaterialChips(material: $goal.material)
+          }
+        },
         attachment: {
           if part != .box, let materialDraft {
             GoalMaterialSections(
@@ -60,6 +65,22 @@ struct SentGoal {
   var words: String
   var material: [AttachedSource] = []
   var intent: MaterialIntent?
+
+  /// "Ask questions" starts no goal, so only the other choices go with the material.
+  var sentMaterial: SentMaterial {
+    guard !material.isEmpty else {
+      return SentMaterial()
+    }
+
+    let intent: SentMaterial.Intent? =
+      switch self.intent {
+      case .exam: .exam
+      case .understand: .understand
+      case .questions, nil: nil
+      }
+
+    return SentMaterial(sourceIDs: material.map(\.id), intent: intent)
+  }
 
   var start: GoalStart {
     let withMaterial = material.isEmpty ? nil : intent
@@ -90,6 +111,32 @@ struct SentGoal {
   }
 }
 
+extension SentGoal {
+  /// The draft keeps the material it was sent with, so editing it brings that back, even on a
+  /// draft opened again later.
+  init(draft: OnboardingDraft) {
+    let intent: MaterialIntent? =
+      switch draft.materialIntent {
+      case .exam: .exam
+      case .understand: .understand
+      case nil: nil
+      }
+
+    self.init(
+      words: draft.prompt,
+      material: draft.sources.map { AttachedSource(id: $0.id, title: $0.title) },
+      intent: intent)
+  }
+}
+
+/// What a goal is sent with; the draft keeps it, and gives it to the goal "Looks right" makes.
+struct SentMaterial: Equatable, Sendable {
+  typealias Intent = Components.Schemas.GoalUnderstandingInput.MaterialIntentPayload
+
+  var sourceIDs: [String]?
+  var intent: Intent?
+}
+
 enum GoalStart: Equatable {
   case questions
   case goal(String)
@@ -101,7 +148,7 @@ enum GoalEntrySubmission {
   }
 }
 
-struct GoalEntrySections<Attach: View, Attachment: View>: View {
+struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
   @Binding var words: String
   var isSection = false
   var showsExamples = true
@@ -112,7 +159,9 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   let onSubmit: (String) -> Void
   /// Main's paperclip, at the box's leading edge across from "Build my plan".
   @ViewBuilder var attach: () -> Attach
-  /// What the paperclip added, after the box.
+  /// What the paperclip added, under the box in its section, so they sit as close as main's.
+  @ViewBuilder var attached: () -> Attached
+  /// What goes with the added material, after the box's section.
   @ViewBuilder var attachment: () -> Attachment
 
   @FocusState private var isFocused: Bool
@@ -174,6 +223,8 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
       .keepsOffFold()
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
+
+      attached()
     } header: {
       if isSection {
         SectionTitle(

@@ -70,6 +70,7 @@ async function moveUsageRecords({ guestUserId, transaction, userId }: GuestLinkC
   `;
 }
 
+/** A source the account found through research and the guest uploaded stays the guest's upload. */
 async function moveLearnerSources({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -77,11 +78,13 @@ async function moveLearnerSources({ guestUserId, transaction, userId }: GuestLin
       WHERE user_id = ${guestUserId}::uuid
       RETURNING *
     )
-    INSERT INTO learner_sources (id, user_id, source_id, goal_id, origin, created_at)
-    SELECT id, ${userId}::uuid, source_id, goal_id, origin, created_at
+    INSERT INTO learner_sources (id, user_id, source_id, origin, created_at)
+    SELECT id, ${userId}::uuid, source_id, origin, created_at
     FROM guest_rows
     ORDER BY source_id
-    ON CONFLICT (user_id, source_id) DO NOTHING
+    ON CONFLICT (user_id, source_id) DO UPDATE
+    SET origin = EXCLUDED.origin
+    WHERE EXCLUDED.origin = 'upload' AND learner_sources.origin <> 'upload'
   `;
 }
 

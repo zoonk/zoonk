@@ -14,12 +14,12 @@ import { type GoalCountryFields, countryCodeSchema } from "./country-contract";
 import {
   MAX_GOAL_DETAILS_LENGTH,
   MAX_GOAL_PROMPT_LENGTH,
+  MAX_GOAL_SOURCES,
   MAX_GOAL_TITLE_LENGTH,
 } from "./goal-input-limits";
 import { studyTimeSchema } from "./study-time";
 
 const MAX_GOALS_AT_ONCE = 3;
-const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
 
 const languageTagSchema = z

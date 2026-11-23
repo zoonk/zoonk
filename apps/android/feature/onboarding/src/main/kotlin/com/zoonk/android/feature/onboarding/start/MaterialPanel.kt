@@ -22,11 +22,14 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,9 +44,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.AttachedSource
@@ -302,32 +307,85 @@ private fun PanelCard(content: @Composable () -> Unit) {
     }
 }
 
-/** Removing material takes its own button, never a tap on its name. */
+/**
+ * Removing material takes its own button, never a tap on its name; material that can't be read anymore ([unreadable]) is marked,
+ * and a [limitReached] says why no more can be added.
+ */
 @Composable
 internal fun AttachedChips(
     items: List<AttachedSource>,
+    unreadable: Set<String>,
+    limitReached: Int?,
     onRemove: (String) -> Unit,
 ) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items.forEach { item ->
-            val title = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
-            Surface(shape = RoundedCornerShape(ZoonkRadius.md), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painterResource(R.drawable.ic_description), contentDescription = null, modifier = Modifier.size(18.dp))
-                    Text(
-                        title,
-                        modifier = Modifier.padding(start = 6.dp).widthIn(max = 240.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
+    val marked = items.filter { it.id in unreadable }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items.forEach { item -> AttachedChip(item, item in marked, onRemove) }
+        }
+        if (marked.isNotEmpty()) {
+            Text(
+                marked.singleOrNull()?.let { stringResource(R.string.onboarding_material_unreadable_one, materialTitle(it)) }
+                    ?: stringResource(R.string.onboarding_material_unreadable_some),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        if (limitReached != null) {
+            Text(
+                stringResource(R.string.onboarding_material_limit, limitReached),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun materialTitle(item: AttachedSource) = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
+
+@Composable
+private fun AttachedChip(
+    item: AttachedSource,
+    unreadable: Boolean,
+    onRemove: (String) -> Unit,
+) {
+    val title = materialTitle(item)
+    val state = stringResource(R.string.onboarding_material_unreadable_state)
+    val colors = MaterialTheme.colorScheme
+    Surface(
+        shape = RoundedCornerShape(ZoonkRadius.md),
+        color = if (unreadable) colors.errorContainer else colors.surfaceContainerHigh,
+        contentColor = if (unreadable) colors.onErrorContainer else colors.onSurface,
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = LocalContentColor.current,
+            )
+            Text(
+                title,
+                modifier = Modifier.widthIn(max = 240.dp).semantics { if (unreadable) stateDescription = state },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            // Main's 28dp ✕ keeps the chip at main's height; a tap anywhere in the 48dp target around it still removes.
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+                IconButton(onClick = { onRemove(item.id) }, modifier = Modifier.size(28.dp)) {
+                    Icon(
+                        painterResource(R.drawable.ic_close),
+                        contentDescription = stringResource(R.string.onboarding_remove_material, title),
+                        modifier = Modifier.size(16.dp),
                     )
-                    IconButton(onClick = { onRemove(item.id) }) {
-                        Icon(
-                            painterResource(R.drawable.ic_close),
-                            contentDescription = stringResource(R.string.onboarding_remove_material, title),
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
                 }
             }
         }

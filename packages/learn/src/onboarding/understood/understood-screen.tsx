@@ -1,6 +1,9 @@
 "use client";
 
-import { type UnderstoodGoalView } from "@zoonk/core/view-models/onboarding/contract";
+import {
+  type OnboardingDraftView,
+  type UnderstoodGoalView,
+} from "@zoonk/core/view-models/onboarding/contract";
 import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
@@ -169,7 +172,7 @@ export function UnderstoodScreen({
   goalLimit?: GoalLimit | null;
   hasAccount: boolean;
   isCreating: boolean;
-  material: readonly { title: string }[];
+  material: Pick<OnboardingDraftView, "materialMissing" | "sources">;
   onConfirm: () => void;
   onRevise: (edit: OnboardingDraftEdit) => Promise<boolean>;
   onRewrite: (words: string) => void;

@@ -28,6 +28,7 @@ import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
@@ -85,6 +86,12 @@ sealed interface Refusal {
 
     /** Research already read this upload for an earlier ask, so it needs a different one. */
     data object AlreadyRead : Refusal
+
+    /** Material sent with a goal that can't be read anymore, by the ids the app sent: nothing was saved or charged. */
+    @Serializable
+    data class MaterialUnavailable(
+        val sourceIds: List<String>,
+    ) : Refusal
 
     /** The day the goals typed together share is shorter than [minutes], the least that gives each of the [goals] its share. */
     @Serializable
@@ -177,9 +184,19 @@ class OnboardingStore(
     suspend fun sendGoal(
         goal: String,
         language: String,
+        sourceIds: List<UUID>? = null,
+        materialIntent: GoalUnderstandingInput.MaterialIntent? = null,
     ): WriteOutcome<OnboardingDraft> {
         startAsGuest()?.let { return it }
-        return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, goal, language) }
+        val input =
+            GoalUnderstandingInput(
+                goal = goal,
+                language = language,
+                materialIntent = materialIntent,
+                sourceIds = sourceIds,
+                timeZone = TimeZone.getDefault().id,
+            )
+        return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, input) }
             .also {
                 if (it is WriteOutcome.Done) sent += it.value.id.toString()
                 unfinishedGoal.invalidate()
@@ -596,6 +613,10 @@ internal fun ApiException.refusal(receivedAt: Instant): Refusal? =
 
         "UPLOAD_ALREADY_READ" -> {
             Refusal.AlreadyRead
+        }
+
+        "MATERIAL_UNAVAILABLE" -> {
+            details?.decode<Refusal.MaterialUnavailable>()
         }
 
         "USAGE_LIMIT_REACHED" -> {

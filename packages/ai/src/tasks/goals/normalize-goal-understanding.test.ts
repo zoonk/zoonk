@@ -54,6 +54,20 @@ function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstandin
   };
 }
 
+function readWithIntent(
+  materialIntent: "exam" | "understand",
+  kind: "exam" | "language" | "learn",
+) {
+  return normalizeGoalUnderstanding({
+    dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+    materialIntent,
+    raw: raw({
+      goals: [rawGoal({ examName: "Unit test", kind, targetLanguage: "es" }), rawGoal()],
+    }),
+    today: TODAY,
+  });
+}
+
 describe(normalizeGoalUnderstanding, () => {
   it("trims display names without truncating or replacing an empty name with the summary", () => {
     const longName = "Astronomy ".repeat(30).trim();
@@ -237,6 +251,20 @@ describe(normalizeGoalUnderstanding, () => {
       undefined,
       undefined,
     ]);
+  });
+
+  it("gives the main goal the kind the learner chose for their material", () => {
+    expect(readWithIntent("exam", "learn")).toMatchObject({
+      goals: [{ examName: "Unit test", kind: "exam" }, { kind: "learn" }],
+    });
+
+    expect(readWithIntent("understand", "exam")).toMatchObject({
+      goals: [{ examName: undefined, kind: "learn" }, { kind: "learn" }],
+    });
+
+    expect(readWithIntent("understand", "language")).toMatchObject({
+      goals: [{ kind: "language" }, {}],
+    });
   });
 
   it("keeps daily minutes within what the planner accepts", () => {

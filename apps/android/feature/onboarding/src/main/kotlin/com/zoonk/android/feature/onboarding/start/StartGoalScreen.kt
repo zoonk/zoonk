@@ -148,12 +148,10 @@ fun StartGoalScreen(
 
             is StartScreen.Draft -> {
                 {
-                    vm.backToEntry(
+                    val draft =
                         store.drafts[screen.id]
                             .state.value.value
-                            ?.prompt
-                            .orEmpty(),
-                    )
+                    if (draft == null) vm.backToEntry("") else vm.editDraft(draft)
                 }
             }
 
@@ -254,7 +252,7 @@ private fun ColumnScope.Entry(
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
-            IconButton(onClick = vm::toggleAttach) {
+            IconButton(onClick = vm::toggleAttach, enabled = vm.materialLimitReached == null) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
                     Icon(
                         painterResource(R.drawable.ic_attach_file),
@@ -266,7 +264,7 @@ private fun ColumnScope.Entry(
         },
     )
 
-    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm::removeAttached)
+    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm.unreadable, vm.materialLimitReached, vm::removeAttached)
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
     if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
     if (vm.isAttachOpen && canAttach) {
@@ -392,7 +390,7 @@ private fun ColumnScope.DraftContent(
     }
     LaunchedEffect(draft.activeGoalsLeft) { vm.readRoom(draft.activeGoalsLeft) }
 
-    val back = { vm.backToEntry(draft.prompt) }
+    val back = { vm.editDraft(draft) }
     val limit = vm.draftLimit?.takeUnless { it.lifted() }
 
     when (val understanding = draft.understanding) {
@@ -469,25 +467,17 @@ private fun ColumnScope.DraftContent(
                 understanding = understanding.value,
                 activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
-                material = vm.flow.attached.map { it.title },
+                material = draft.sources.map { it.title },
+                materialMissing = draft.materialMissing,
                 hasAccount = hasAccount,
                 isCreating = vm.isCreating || rereading,
                 error = vm.creationError,
                 goalLimit = upFront,
                 onConfirm = {
-                    val flow = vm.flow
-                    vm.confirm(
-                        understoodGoalsInput(
-                            understanding.value,
-                            draft.activeGoalsLeft,
-                            draft.timeZone,
-                            flow.intent.takeIf { flow.attached.isNotEmpty() },
-                            flow.attached.map { it.id },
-                        ),
-                    )
+                    vm.confirm(understoodGoalsInput(understanding.value, draft.activeGoalsLeft, draft.timeZone))
                 },
                 edits = FactEdits(vm.editing, vm.savingEdit, vm.failedEdit, vm::edit, vm::revise),
-                onRewrite = { vm.rewrite(it, language) },
+                onRewrite = { vm.rewrite(draft, it, language) },
                 onCreateAccount = actions.createAccount,
                 onSubscribe = actions.subscribe,
                 onOpenPlan = actions.openPlan,

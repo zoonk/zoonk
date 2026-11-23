@@ -139,7 +139,11 @@ export const uploadResourceSchema = z
   .meta({ id: "Upload" });
 
 export const learnerSourcesQuerySchema = z
-  .object({ goalId: uuidSchema().optional() })
+  .object({
+    goalId: uuidSchema()
+      .optional()
+      .meta({ description: "Only the material this goal of the learner's reads" }),
+  })
   .meta({ id: "LearnerSourcesQuery" });
 
 export const learnerSourcesResponseSchema = z
@@ -147,7 +151,12 @@ export const learnerSourcesResponseSchema = z
     sources: z.array(
       z.object({
         addedAt: z.iso.datetime(),
-        goalId: uuidSchema().nullable(),
+        goalIds: z
+          .array(uuidSchema())
+          .meta({
+            description:
+              "The learner's goals that read it, oldest link first; one source can serve several goals",
+          }),
         origin: z.enum(LearnerSourceOrigin),
         source: sourceResourceSchema,
       }),

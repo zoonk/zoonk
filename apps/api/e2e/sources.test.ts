@@ -118,12 +118,12 @@ test.describe("Sources API", () => {
 
     const allBody = await readBody({ response: all, schema: learnerSourcesResponseSchema });
 
-    expect(allBody.sources.map((link) => [link.source.id, link.goalId, link.origin])).toStrictEqual(
-      [
-        [upload.id, null, "upload"],
-        [shared.id, goal.id, "research"],
-      ],
-    );
+    expect(
+      allBody.sources.map((link) => [link.source.id, link.goalIds, link.origin]),
+    ).toStrictEqual([
+      [upload.id, [], "upload"],
+      [shared.id, [goal.id], "research"],
+    ]);
 
     expect(allBody.sources[0]?.source).toMatchObject({
       kind: "upload",
@@ -140,7 +140,7 @@ test.describe("Sources API", () => {
 
     await expect(
       readBody({ response: forGoal, schema: learnerSourcesResponseSchema }),
-    ).resolves.toMatchObject({ sources: [{ goalId: goal.id, source: { id: shared.id } }] });
+    ).resolves.toMatchObject({ sources: [{ goalIds: [goal.id], source: { id: shared.id } }] });
 
     await expect(
       readBody({ response: forOthersGoal, schema: learnerSourcesResponseSchema }),
@@ -151,8 +151,8 @@ test.describe("Sources API", () => {
       schema: learnerSourcesResponseSchema,
     });
 
-    expect(othersBody.sources.map((link) => [link.source.id, link.goalId])).toStrictEqual([
-      [shared.id, otherGoal.id],
+    expect(othersBody.sources.map((link) => [link.source.id, link.goalIds])).toStrictEqual([
+      [shared.id, [otherGoal.id]],
     ]);
 
     expect(invalid.status()).toBe(400);
@@ -260,9 +260,9 @@ test.describe("Sources API", () => {
 
     const { sources } = await readBody({ response: links, schema: learnerSourcesResponseSchema });
 
-    expect(sources.map((link) => [link.source.id, link.goalId])).toStrictEqual([
-      [unlinked.source.id, null],
-      [created.source.id, goal.id],
+    expect(sources.map((link) => [link.source.id, link.goalIds])).toStrictEqual([
+      [unlinked.source.id, []],
+      [created.source.id, [goal.id]],
     ]);
 
     expect(stored).toMatchObject({ extractedText: pasted.text, ownerId: learner.userId });

@@ -42,6 +42,22 @@ async function mergeIntoPublicSource({
     // A lesson write waiting to save what it read from the upload saves it before the move, or
     // finds the upload gone.
     prisma.$queryRaw`SELECT id FROM sources WHERE id = ${privateSourceId}::uuid FOR UPDATE`,
+    // Clients keep the id the upload returned, in drafts and in screens still open.
+    prisma.$executeRaw`
+      INSERT INTO source_redirects (from_id, to_id, user_id)
+      SELECT id, ${publicSourceId}::uuid, owner_id FROM sources
+      WHERE id = ${privateSourceId}::uuid AND owner_id IS NOT NULL
+    `,
+    // A goal that already reads the shared copy keeps that link, which takes on the upload and the
+    // ask it answered, so sending it again can't answer that goal's ask twice.
+    prisma.$executeRaw`
+      INSERT INTO goal_sources (goal_id, source_id, origin, answered_at, created_at)
+      SELECT goal_id, ${publicSourceId}::uuid, origin, answered_at, created_at FROM goal_sources
+      WHERE source_id = ${privateSourceId}::uuid
+      ON CONFLICT (goal_id, source_id) DO UPDATE
+      SET origin = CASE WHEN EXCLUDED.origin = 'upload' THEN EXCLUDED.origin ELSE goal_sources.origin END,
+        answered_at = COALESCE(goal_sources.answered_at, EXCLUDED.answered_at)
+    `,
     prisma.stepSource.deleteMany({
       where: {
         sourceId: privateSourceId,
@@ -52,13 +68,10 @@ async function mergeIntoPublicSource({
       data: { sourceId: publicSourceId },
       where: { sourceId: privateSourceId },
     }),
-    // A learner who already follows the shared copy keeps that link: it takes on their upload and
-    // the ask it answered, so sending it again can't answer another ask.
+    // A learner who already follows the shared copy keeps that link, which takes on their upload.
     prisma.$executeRaw`
       UPDATE learner_sources AS kept
-      SET origin = 'upload',
-        answered_at = COALESCE(kept.answered_at, moved.answered_at),
-        goal_id = COALESCE(kept.goal_id, moved.goal_id)
+      SET origin = 'upload'
       FROM learner_sources AS moved
       WHERE moved.source_id = ${privateSourceId}::uuid
         AND moved.origin = 'upload'

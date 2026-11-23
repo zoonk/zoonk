@@ -257,6 +257,7 @@ export async function createGoals(
         draft,
         id,
         input,
+        sentSourceIds: index === 0 ? input.sourceIds : undefined,
         testedLanguage:
           (draft.kind === "exam" && testedLanguages.get(draft.examBlueprintId ?? "")) || null,
         userId,

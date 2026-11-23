@@ -8,7 +8,6 @@ import { useState, useTransition } from "react";
 import { useAppLocale } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
 import {
-  type AttachedSource,
   type CreateGoalsOutcome,
   type GoalLimit,
   type OnboardingActions,
@@ -19,7 +18,6 @@ import { toGoalCreateInput, toUnderstandingDraft } from "../understood/understan
 import { UnderstoodScreen } from "../understood/understood-screen";
 import { useDraftGoals } from "./draft-goals";
 import { DeclinedGoal, ExplainGoal, InstrumentGoal, UnclearGoal } from "./goal-outcomes";
-import { type MaterialIntent } from "./material-intent";
 import { getSentGoal } from "./understanding-start";
 import { UnderstandingWait } from "./understanding-wait";
 import { type useDraftActions } from "./use-draft-actions";
@@ -35,13 +33,11 @@ type Creation = {
 
 type DraftStepProps = {
   actions: OnboardingActions;
-  attached: AttachedSource[];
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
   goalLimit: GoalLimit | null;
   hasAccount: boolean;
-  intent: MaterialIntent | null;
   onBack: () => void;
   onRewrite: (words: string) => void;
   routes: OnboardingRoutes;
@@ -90,13 +86,11 @@ function InstrumentDraft({
 
 function ReadDraft({
   actions,
-  attached,
   creation,
   draft,
   draftActions,
   goalLimit,
   hasAccount,
-  intent,
   onBack,
   onRewrite,
   routes,
@@ -118,18 +112,8 @@ function ReadDraft({
           goalLimit={goalLimit}
           hasAccount={hasAccount}
           isCreating={creation.isCreating}
-          material={attached}
-          onConfirm={() =>
-            creation.run(() =>
-              actions.createGoals(
-                toGoalCreateInput({
-                  draft: card,
-                  materialIntent: attached.length > 0 ? intent : null,
-                  sourceIds: attached.map((source) => source.id),
-                }),
-              ),
-            )
-          }
+          material={draft}
+          onConfirm={() => creation.run(() => actions.createGoals(toGoalCreateInput(card)))}
           onRevise={draftActions.revise}
           onRewrite={onRewrite}
           signUpHref={routes.signUp}

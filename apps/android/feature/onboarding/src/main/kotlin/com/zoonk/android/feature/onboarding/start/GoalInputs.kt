@@ -18,21 +18,14 @@ private const val MUSICIANSHIP_MINUTES = 15L
 internal fun GoalUnderstandingOneOf.startableGoals(activeGoalsLeft: Long?): List<UnderstoodGoal> =
     goals.take(activeGoalsLeft?.toInt() ?: goals.size)
 
-/** The first goal carries what the learner wants from their material; the draft's [timeZone] counted the card's dates. */
 internal fun understoodGoalsInput(
     understanding: GoalUnderstandingOneOf,
     activeGoalsLeft: Long?,
     timeZone: String,
-    materialIntent: MaterialIntent?,
-    sourceIds: List<String>,
 ): GoalCreateInput =
     GoalCreateInput(
         dailyMinutes = understanding.schedule.dailyMinutes,
-        goals =
-            understanding.startableGoals(activeGoalsLeft).mapIndexed { index, goal ->
-                goal.draft.toGoalDraft().let { if (index == 0) it.withMaterialIntent(materialIntent) else it }
-            },
-        sourceIds = sourceIds.map(UUID::fromString).ifEmpty { null },
+        goals = understanding.startableGoals(activeGoalsLeft).map { it.draft.toGoalDraft() },
         studyDays = understanding.schedule.studyDays,
         studyTime = understanding.schedule.studyTime,
         timeZone = timeZone,
@@ -109,16 +102,3 @@ private fun GoalDraftOutput.toGoalDraft() =
         targetDate = targetDate,
         targetLanguage = targetLanguage,
     )
-
-/** Understanding material needs a purpose, so one the words didn't give is "other". */
-private fun GoalDraft.withMaterialIntent(intent: MaterialIntent?): GoalDraft {
-    val value =
-        when (intent) {
-            MaterialIntent.Exam -> "exam"
-            MaterialIntent.Understand -> "understand"
-            MaterialIntent.Questions, null -> return this
-        }
-    val withIntent = details.orEmpty() + ("materialIntent" to JsonPrimitive(value))
-    val needsPurpose = intent == MaterialIntent.Understand && withIntent["purpose"] == null
-    return copy(details = if (needsPurpose) withIntent + ("purpose" to JsonPrimitive("other")) else withIntent)
-}

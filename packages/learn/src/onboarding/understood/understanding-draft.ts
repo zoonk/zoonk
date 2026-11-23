@@ -34,41 +34,11 @@ export function toUnderstandingDraft({
   };
 }
 
-type Draft = UnderstoodGoalView["draft"];
-
-function withMaterialIntent({
-  draft,
-  intent,
-}: {
-  draft: Draft;
-  intent: "exam" | "questions" | "understand" | null;
-}): Draft {
-  if (intent !== "exam" && intent !== "understand") {
-    return draft;
-  }
-
-  const details: NonNullable<Draft["details"]> = { ...draft.details, materialIntent: intent };
-  const needsPurpose = intent === "understand" && !details.purpose;
-
-  return { ...draft, details: needsPurpose ? { ...details, purpose: "other" } : details };
-}
-
 /** In the draft's zone, which counted the learner's today for the card's dates. */
-export function toGoalCreateInput({
-  draft,
-  materialIntent = null,
-  sourceIds = [],
-}: {
-  draft: UnderstandingDraft;
-  materialIntent?: "exam" | "questions" | "understand" | null;
-  sourceIds?: string[];
-}): GoalCreateInput {
+export function toGoalCreateInput(draft: UnderstandingDraft): GoalCreateInput {
   return {
     dailyMinutes: draft.schedule.dailyMinutes,
-    goals: draft.goals.map((goal, index) =>
-      index === 0 ? withMaterialIntent({ draft: goal.draft, intent: materialIntent }) : goal.draft,
-    ),
-    sourceIds: sourceIds.length > 0 ? sourceIds : undefined,
+    goals: draft.goals.map((goal) => goal.draft),
     studyDays: draft.schedule.studyDays ?? undefined,
     studyTime: draft.schedule.studyTime ?? undefined,
     timeZone: draft.timeZone,
