@@ -75,12 +75,13 @@ function toJsonb(value: unknown) {
   return value === null || value === undefined ? null : JSON.stringify(value);
 }
 
-/** Undoing the change restores its snapshot and then re-plans, so the written lessons come back. */
 async function carryOpenUndo({
   context,
+  testOutReschedule,
   tx,
 }: {
   context: PlanContext;
+  testOutReschedule: boolean;
   tx: TransactionClient;
 }): Promise<string | null> {
   const open = await tx.planChange.findFirst({
@@ -102,7 +103,7 @@ async function carryOpenUndo({
     data: {
       payload: toPlanChangePayload({
         ...parsePlanChangePayload(open.payload),
-        replannedSince: true,
+        ...(testOutReschedule ? { testOutRescheduled: true } : { replannedSince: true }),
         versionAfter: context.plan.version + 1,
       }),
     },
@@ -120,7 +121,7 @@ export async function writePlan({
   tx,
 }: {
   context: PlanContext;
-  keepsOpenUndo?: boolean;
+  keepsOpenUndo?: boolean | "testOut";
   owe?: typeof oweFollowUps;
   plan: PlanWrite;
   tx: TransactionClient;
@@ -169,7 +170,9 @@ export async function writePlan({
     await tx.goal.update({ data: goalUpdate, where: { id: context.goal.id } });
   }
 
-  const keptUndo = keepsOpenUndo ? await carryOpenUndo({ context, tx }) : null;
+  const keptUndo = keepsOpenUndo
+    ? await carryOpenUndo({ context, testOutReschedule: keepsOpenUndo === "testOut", tx })
+    : null;
 
   await tx.planChangeSnapshot.deleteMany({
     where: {

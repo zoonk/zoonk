@@ -22,6 +22,7 @@ export async function refreshTestedOutPlan({ goalId, userId }: { goalId: string;
     if (
       !change ||
       !payload.testReceipt ||
+      payload.testOutRescheduled ||
       payload.replannedSince ||
       payload.versionAfter !== change.plan.version
     ) {
@@ -42,7 +43,7 @@ export async function refreshTestedOutPlan({ goalId, userId }: { goalId: string;
       context,
       extraWrites: (tx) =>
         keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 }),
-      keepsOpenUndo: true,
+      keepsOpenUndo: "testOut",
     });
   });
 }

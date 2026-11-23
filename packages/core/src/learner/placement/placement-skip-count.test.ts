@@ -8,6 +8,7 @@ import { toCoursePlanGraph } from "../../goals/_utils/course-plan-graph";
 import { recordPlacementPrepared } from "../../lookahead/placement-item-skills";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { refreshTestedOutPlan } from "../../plans/refresh-tested-out-plan";
 import { placementItemBank } from "../_test-utils/placement-tap-items";
@@ -163,6 +164,13 @@ describe("whole-course language placement counts", () => {
         })),
       );
 
+      const shown = await getGoalPlan(goal.id);
+
+      if (shown.status !== "ready") {
+        throw new Error("Expected the plan after part one");
+      }
+
+      const { currentPhase, phases, status } = shown.plan;
       const partTwo = await startPart();
       await confirmTopic({ bank: banks[1]!, goalId: goal.id, opened: partTwo.opened });
       const finished = await finishGoalPlacement({ goalId: goal.id, input: partTwo.input });
@@ -200,6 +208,11 @@ describe("whole-course language placement counts", () => {
           status: item.skillId === first.id ? "testedOut" : "todo",
         })),
       );
+
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+        plan: { currentPhase, phases, status },
+        status: "ready",
+      });
     },
   );
 });

@@ -35,7 +35,7 @@ export async function commitPlan({
   computed: ComputedPlan;
   context: PlanContext;
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
-  keepsOpenUndo?: boolean;
+  keepsOpenUndo?: Parameters<typeof writePlan>[0]["keepsOpenUndo"];
   owe?: Parameters<typeof writePlan>[0]["owe"];
   restorable?: string | null;
   snapshotContext?: PlanContext;
