@@ -315,6 +315,7 @@ fun SuggestionAction(
             enabled = enabled,
             busy = busy,
             size = size,
+            leadingIcon = leadingIcon,
             content = content,
         )
     }

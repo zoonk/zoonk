@@ -607,6 +607,10 @@ class PlanScreenshots {
                 "plan-slot-finished-starting" to Shot(plan(), host = SlotHost(next = next, nextLevel = NextLevelStart.Starting)),
                 "plan-slot-finished-certificate" to Shot(plan(), host = SlotHost(next = next, certificates = oneEarned)),
                 "plan-slot-finished-certificates-locked" to Shot(plan(), host = SlotHost(next = next, certificates = severalLocked)),
+                "plan-slot-finished-claim-failed" to
+                    Shot(plan(), host = SlotHost(next = next, certificates = unclaimed, claimFailed = true)),
+                "plan-slot-finished-start-failed" to
+                    Shot(plan(), host = SlotHost(next = next, certificates = unclaimed, nextLevel = NextLevelStart.Failed)),
                 "plan-slot-course-complete" to Shot(plan(), summary = exam, host = SlotHost(certificates = unclaimed)),
                 "plan-slot-level-complete" to Shot(plan(), host = SlotHost(certificates = levelUnclaimed)),
                 "plan-slot-course-complete-failed" to

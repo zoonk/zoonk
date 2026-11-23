@@ -12,7 +12,6 @@ import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -265,7 +264,6 @@ internal fun FitLessonsSuggestion(
                     onClick = add,
                     modifier = if (checking) Modifier.semantics { stateDescription = checkingWords } else Modifier,
                     busy = pending || checking,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
                 SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(item) }, secondary = true)
             }
@@ -315,7 +313,6 @@ internal fun ExtraOfferSuggestion(
                     onClick = add,
                     modifier = if (checking) Modifier.semantics { stateDescription = checkingWords } else Modifier,
                     busy = pending || checking,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
                 SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(item) }, secondary = true)
             }
