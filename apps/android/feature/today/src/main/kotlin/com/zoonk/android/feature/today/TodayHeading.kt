@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import java.util.UUID
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +53,7 @@ import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayProgress
 import kotlinx.datetime.toJavaLocalDate
+import java.util.UUID
 
 @Composable
 internal fun TodayPageHeader(
@@ -217,7 +217,10 @@ internal fun DayTime(
         footer = { dismiss ->
             val id = funding.planItemId
             if (id != null && schedule != null) {
-                TextButton(onClick = { dismiss(); schedule(id) }) { Text(stringResource(R.string.mock_schedule_change)) }
+                TextButton(onClick = {
+                    dismiss()
+                    schedule(id)
+                }) { Text(stringResource(R.string.mock_schedule_change)) }
             }
         },
         modifier = modifier,

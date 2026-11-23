@@ -238,7 +238,12 @@ fun TodayDay(
                     contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp + noteRoom.height),
                 ) {
                     item(key = "heading", contentType = "heading") {
-                        TodayHeading(model, onAdjustPlan = { actions.navigate(AppRoute.Plan()) }, Modifier.pageItem(), schedule = actions.schedule)
+                        TodayHeading(
+                            model,
+                            onAdjustPlan = { actions.navigate(AppRoute.Plan()) },
+                            Modifier.pageItem(),
+                            schedule = actions.schedule,
+                        )
                     }
 
                     if (schedule != null) {

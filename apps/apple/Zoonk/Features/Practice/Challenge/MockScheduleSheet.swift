@@ -42,7 +42,8 @@ struct MockScheduleSheet: View {
                 save(date)
               } label: {
                 Text(verbatim: PlanDate.weekdayDay(date, today: today))
-                  .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                  .contentShape(.rect)
                   .coveredBySpinner(request.isRunning && selectedDate == date, alignment: .trailing)
               }
             }
@@ -59,7 +60,7 @@ struct MockScheduleSheet: View {
           }
         }
       }
-      .safeAreaInset(edge: .bottom) {
+      .bottomBar {
         if let dates, case .loaded = dates.state {
           VStack {
             if request.outcome == false { FailureLine(message: TodayMainAction.saveFailure) }
@@ -70,7 +71,6 @@ struct MockScheduleSheet: View {
             }
             .buttonStyle(.outline)
           }
-          .padding()
         }
       }
       .disabled(request.isRunning)
