@@ -163,18 +163,13 @@
   "onboarding_paste_text_placeholder": "e516abfa35af5370a416811c0b2278eeb403af102f90081f683b97c9d2a1e2a2",
   "onboarding_placement_answer_failed": "0debd6987dff3330df1a5046deb39041f57bc81bc920e684c1d585e170addfbb",
   "onboarding_placement_confirm": "1392b79f35e9e3bc0cea84aba38951a8a35b9481685ef6adb3d470ca7ecf7be5",
-  "onboarding_placement_description": "9d029a65d4e9675a5c3b7f8724bcc1169e3eb3b0c79796e7efb2193337269450",
-  "onboarding_placement_description_areas": "0ba70c524b39a28533fd1bf9cede5ff1d44ff59186530e54435f55a9945eaa47",
   "onboarding_placement_dont_know": "271233c776d9e5c96baf2490272e515737f686c814b728620f39b2d0c938f522",
   "onboarding_placement_false": "eaf48bf83c5097aa92e6cef95b7d4bea246027e62e1c25738fd23a2ef1a51ce3",
   "onboarding_placement_progress": "fa030ff8c14de3e93965f530516654a1d152f04efa31d38ef098df6545e952d1",
   "onboarding_placement_question_number": "d7d3b5a65553ceec49c944c0b8275bfdb1a23244b247e2861589c0f3d4ba9ad4",
   "onboarding_placement_ready": "2d36e8b4313365d598fe0f9b19b80852dbd7f5718d911feab5b5e25ecf6120f9",
   "onboarding_placement_right": "7a7b2d286ea906414e15037e344704ed4f686ae27b67623738c5a868d42c1db9",
-  "onboarding_placement_skip_basics": "58d34b064d42f8231ffc5f011f5c75dc8f0f63b9120c34780372ccfb2a574d73",
-  "onboarding_placement_start": "1f828427bbdce05e1c0f2fa423ef43f0c425c3973e16b07922bfb729070b2d31",
   "onboarding_placement_stop": "02e273972d7338ed2c1c7bc2586e3509d3080b9e737eab3c95280c84db1db586",
-  "onboarding_placement_title": "acdb6700b66da4d5e1e1928dccae0dbc60e7d6612aa36ceb1b4b89a4bb772350",
   "onboarding_placement_true": "c872e46fbdc965984b41d78a1cda86d2de3279be370c0667d4eada144bc5772c",
   "onboarding_placement_unavailable_title": "09f24a594ddeaf335996a529ce949b200b9d9b05de7164105edcc791d73329eb",
   "onboarding_placement_waiting_material": "b5685e7cc21bfcac74b019e622489c3f81ecc6bc2e8fbbc056d26c017f4662f6",
@@ -533,14 +528,6 @@
     <string name="onboarding_question_sign_in">자료에 대해 질문하려면 계정을 만드세요.</string>
     <string name="onboarding_question_slow_down">짧은 시간에 여러 번 질문하셨어요. 몇 분 후에 다시 시도해 보세요.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
-    <string name="onboarding_placement_title">이미 아는 내용을 확인해 볼게요</string>
-    <!-- %d is how many areas of the goal the questions cover. -->
-    <plurals name="onboarding_placement_description_areas">
-        <item quantity="other">%d개 영역의 간단한 문제 몇 개로 이미 아는 내용을 확인하고 계획에서 건너뛰어요. 점수는 매기지 않으니 “아직 모르겠어요”라고 답해도 괜찮아요.</item>
-    </plurals>
-    <string name="onboarding_placement_description">간단한 문제 몇 개로 이미 아는 내용을 확인하고 계획에서 건너뛰어요. 점수는 매기지 않으니 “아직 모르겠어요”라고 답해도 괜찮아요.</string>
-    <string name="onboarding_placement_start">시작하기</string>
-    <string name="onboarding_placement_skip_basics">건너뛰고 기초부터 시작하기</string>
     <string name="onboarding_placement_waiting_material">자료를 읽는 데 몇 분 걸려요.</string>
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">1~2분 정도 걸려요.</string>

@@ -187,15 +187,6 @@
     <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
 
     <!-- Placement: a few questions that find where the plan starts. -->
-    <string name="onboarding_placement_title">Let\'s see what you already know</string>
-    <!-- %d is how many areas of the goal the questions cover. -->
-    <plurals name="onboarding_placement_description_areas">
-        <item quantity="one">A few quick questions about %d area, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
-        <item quantity="other">A few quick questions about %d areas, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
-    </plurals>
-    <string name="onboarding_placement_description">A few quick questions, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</string>
-    <string name="onboarding_placement_start">Start</string>
-    <string name="onboarding_placement_skip_basics">Skip and start from the basics</string>
     <string name="onboarding_placement_waiting_material">Reading your material takes a few minutes.</string>
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">This takes a minute or two.</string>

@@ -38,6 +38,7 @@ import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.setup.PlanSoFar
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.SetupWaitContext
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WARM_UP_ID
@@ -209,12 +210,12 @@ class WarmUpScreenshots {
                                         PlacementStep(
                                             GOAL_ID,
                                             "beekeeping",
-                                            areaCount = 0,
                                             MAPPING,
                                             onRetryRun = {},
                                             onboarding,
                                             onProgress = {},
                                             onDone = { WriteOutcome.Done(Unit) },
+                                            lengthChoice = SetupTestChoice(0, null, false) {},
                                         )
                                     }
                                 }

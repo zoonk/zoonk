@@ -530,7 +530,6 @@ private fun ColumnScope.QuestionStep(
                 PlacementSetup(
                     goalId = view.goal.id,
                     subject = subject,
-                    areaCount = view.examSubjects.size,
                     language =
                         view.goal.details
                             .text("nativeLanguage")

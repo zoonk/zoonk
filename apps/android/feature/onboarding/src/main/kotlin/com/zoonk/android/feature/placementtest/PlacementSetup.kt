@@ -41,29 +41,9 @@ internal class PlacementSetupEnd(
 )
 
 @Composable
-internal fun ColumnScope.SetupLengthChoice(
-    choice: SetupTestChoice?,
-    pressed: Pressed?,
-    failed: Boolean,
-    onQuick: () -> Unit,
-    notes: @Composable () -> Unit = {},
-    onSkip: () -> Unit,
-) {
-    LengthChoice(
-        wholeCourseMinutes = choice?.minutes ?: 0,
-        pressed = pressed ?: choice?.pressed,
-        failed = failed || choice?.failed == true,
-        onStart = { length -> if (length == PlacementLength.QUICK) onQuick() else choice?.startWhole?.invoke() },
-        onSkip = onSkip,
-        notes = notes,
-    )
-}
-
-@Composable
 internal fun ColumnScope.PlacementSetup(
     goalId: UUID,
     subject: String,
-    areaCount: Int,
     language: String,
     targetLanguage: String?,
     run: GenerationRun,
@@ -96,7 +76,6 @@ internal fun ColumnScope.PlacementSetup(
         PlacementStep(
             id,
             subject,
-            areaCount,
             run,
             onRetryRun,
             store,

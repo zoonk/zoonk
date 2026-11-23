@@ -163,18 +163,13 @@
   "onboarding_paste_text_placeholder": "6d7ff186833351af7bfb7d63ad50092fa108986fcc6d484d7d612b21ddece5e8",
   "onboarding_placement_answer_failed": "2610c70abc59c425f63405d074992e497a80f2f23988f8186bcd00230cd6087c",
   "onboarding_placement_confirm": "4358b2bb592ae544460bef70bbcf0cad3e58143691093a7b0316bb87a4c01e48",
-  "onboarding_placement_description": "5c27ee6f640eee4da1d9c0300eecbea2b77628fa5a6cca4d6fd8687ac5cabb4f",
-  "onboarding_placement_description_areas": "9f93884fe10fdc353d40e8d096214c75ce20f0cd9e6cc9c2f9c54d30792e54b8",
   "onboarding_placement_dont_know": "c12a57eaabe66a48fa20792d0692bff7ac791b25532fcdb16b0f8ec92c3d7ee0",
   "onboarding_placement_false": "ad9aba3becb14c5b51a352b946eee0f0db57b743f2d824f872241ae3592c772e",
   "onboarding_placement_progress": "dec6421572e5a92a42b74628801f8f0ab7c999a4383ef240c18eda9d03505a45",
   "onboarding_placement_question_number": "63cc87dd49d3727c7a520bb597f8eb917b6621d6997d33e27099f5b142b71682",
   "onboarding_placement_ready": "22ccd7582fb8e5bb706a08c8f0fd46f5b4c34d12746b8accb5a9f4f8a378cdde",
   "onboarding_placement_right": "794ec45fa119e4fd61a3f8de722e2d0ca52a6868d4edbe2cc97c3b50d5ee4683",
-  "onboarding_placement_skip_basics": "d4bc3f80cbbff888d016751c4a0e37e2ca5efaa0f36572e1e8448fa75c3c85d3",
-  "onboarding_placement_start": "3a24b4dc9fe444c14d0b7df38149fedb2605efe24c108a32f761b82ad8d497a0",
   "onboarding_placement_stop": "923084fb6166a1b4f3f1aea8cdbcbe5fef486b8d3057c426b4f47cd3cffc6ad9",
-  "onboarding_placement_title": "57eafc9f4a3d4f7bd6a099b136a182865332aec255de75d61bd4b6d17ecf5446",
   "onboarding_placement_true": "e3e29bb9f64665ee96ab1dd95664e876795c3c6f8204415bdca3cc5163ce026c",
   "onboarding_placement_unavailable_title": "a895c6a92640cf07d2def3082a9ce67511a9a5a61974f2f9fc3f8a246bd1223d",
   "onboarding_placement_waiting_material": "eb609017d4f9dc631740d4b8e725ab4ad98cb74c7b36ff3eba6468ab72cb91ad",
@@ -533,14 +528,6 @@
     <string name="onboarding_question_sign_in">資料について質問するには、アカウントを作成してください。</string>
     <string name="onboarding_question_slow_down">短時間に質問が続いています。数分後にもう一度お試しください。</string>
     <!-- Placement: a few questions that find where the plan starts. -->
-    <string name="onboarding_placement_title">すでに知っていることを確かめましょう</string>
-    <!-- %d is how many areas of the goal the questions cover. -->
-    <plurals name="onboarding_placement_description_areas">
-        <item quantity="other">%d分野について、短時間で答えられる問題をいくつか出します。すでに知っている内容は学習計画でスキップできます。スコアはつきません。「まだわかりません」と答えても大丈夫です。</item>
-    </plurals>
-    <string name="onboarding_placement_description">すでに知っている内容を学習計画でスキップするため、短い問題をいくつか出します。スコアはつきません。「まだわからない」でも大丈夫です。</string>
-    <string name="onboarding_placement_start">始める</string>
-    <string name="onboarding_placement_skip_basics">スキップして基礎から始める</string>
     <string name="onboarding_placement_waiting_material">資料の読み取りには数分かかります。</string>
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">1〜2分ほどかかります。</string>

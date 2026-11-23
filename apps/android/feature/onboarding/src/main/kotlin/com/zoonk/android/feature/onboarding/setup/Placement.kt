@@ -14,7 +14,7 @@ internal sealed interface PlacementPhase {
 
     data object LoadFailed : PlacementPhase
 
-    data object Intro : PlacementPhase
+    data object ChooseLength : PlacementPhase
 
     data object Waiting : PlacementPhase
 
@@ -37,7 +37,7 @@ internal data class Shown(
     val spent: Double = 0.0,
 )
 
-/** Questions already started, then the intro until the learner taps Start ([started]). */
+/** Questions already started, then the length choice until the learner taps Start ([started]). */
 internal fun placementPhase(
     placement: LoadState<Placement>,
     started: Boolean,
@@ -55,7 +55,7 @@ internal fun placementPhase(
         }
 
         !started -> {
-            PlacementPhase.Intro
+            PlacementPhase.ChooseLength
         }
 
         read?.status == PlacementStatus.UNAVAILABLE -> {

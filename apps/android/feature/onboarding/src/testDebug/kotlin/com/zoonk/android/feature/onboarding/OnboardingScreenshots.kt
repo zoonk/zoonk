@@ -55,6 +55,7 @@ import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.start.AttachPanel
 import com.zoonk.android.feature.onboarding.start.MaterialAnswer
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.planlink.PlanLinkScreen
@@ -383,7 +384,7 @@ class OnboardingScreenshots {
                         AppRoute.StartGoal(draftId = DRAFT_ID),
                     )
                 },
-                "placement-intro" to {
+                "placement-length-choice" to {
                     Placement(FakeOnboardingApi())
                 },
                 "placement-question" to {
@@ -745,12 +746,12 @@ class OnboardingScreenshots {
                 PlacementStep(
                     GOAL_ID,
                     "bar exam",
-                    areaCount = 4,
                     run,
                     onRetryRun = {},
                     store,
                     onProgress = {},
                     onDone = { WriteOutcome.Done(Unit) },
+                    lengthChoice = SetupTestChoice(0, null, false) {},
                 )
             }
         }

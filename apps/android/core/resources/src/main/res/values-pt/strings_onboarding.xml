@@ -163,18 +163,13 @@
   "onboarding_paste_text_placeholder": "66500062805aaa171b6f974f5799575560f1fef8a3b7b4c3a2c0a04da45c64dc",
   "onboarding_placement_answer_failed": "dc315ea7e40da9cd12686d3981efe28490609e16dffbc6466d0f9f27495b01e3",
   "onboarding_placement_confirm": "1208dd241d8e4b37ec44a7a575c298eef6250fb55827791c2890355bfa005dcd",
-  "onboarding_placement_description": "db90b627a66f7eca732a3ae0357e717a035ab3e7b1b5ed5c14c6f1851a02748e",
-  "onboarding_placement_description_areas": "d0128ee956c5e5724c6510bbf45fd5572f7b435fa1b864ef23da6c6dc47db1ce",
   "onboarding_placement_dont_know": "b03bea579c0b9952514ca26cc118a8265db2f32a6223e47c61d058c1da0fbd14",
   "onboarding_placement_false": "fa34c8a6a37680452aae488671acf1436a5860c97ad2fac8923cf23911605dff",
   "onboarding_placement_progress": "50c5851803e6e221f905ab08c0faeb028c01be2ad216dd3fb431d8625c8c3178",
   "onboarding_placement_question_number": "667c578cf73c18867dd4d7195f1da2709c636278e1537cec24ce0ea6bf86766f",
   "onboarding_placement_ready": "1cecb0c2f019fb7b709dce0b3e1c7a5e5bef6c17bf60997a06ce2c872fc66831",
   "onboarding_placement_right": "fc74d7569abb1e7a0f762555d6e7db71ba8c9c1f87666d993911e3027443f90e",
-  "onboarding_placement_skip_basics": "a8f9ec2024f046808ca5b3250ee1ad7068237a1590479ede2e0d69ce3b1ca1ca",
-  "onboarding_placement_start": "1e5994f0e178f165e949d72b6bef1a3a039ef5ad7da045e2dafbe723fc8696ef",
   "onboarding_placement_stop": "d2a84c4e3ba085a1a3fcfee4112e6fa73cab22047c71086d26899d2a7bee812e",
-  "onboarding_placement_title": "eaf54d06bfc81a1bd60a79761a436c9f76dde1156a4dd50a304f93ee0d24859a",
   "onboarding_placement_true": "fad82db82db2575a949342914f22ba64571a47479d3cc686c7cca48c44218d81",
   "onboarding_placement_unavailable_title": "9612f1ee126013bab07054f87b7fc84e3750778f21b58f37d01606fd4bf639d7",
   "onboarding_placement_waiting_material": "1550062cdc191bd064cea066eac8dd786ba4400b1167ca7c321be298d83ad0fd",
@@ -537,16 +532,6 @@
     <string name="onboarding_question_sign_in">Crie uma conta para fazer perguntas sobre seu material.</string>
     <string name="onboarding_question_slow_down">Você está fazendo perguntas muito rápido. Tente de novo em alguns minutos.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
-    <string name="onboarding_placement_title">Vamos descobrir o que você já sabe</string>
-    <!-- %d is how many areas of the goal the questions cover. -->
-    <plurals name="onboarding_placement_description_areas">
-        <item quantity="one">Algumas perguntas rápidas sobre %d área para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “ainda não sei”.</item>
-        <item quantity="many">Algumas perguntas rápidas sobre %d áreas para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “ainda não sei”.</item>
-        <item quantity="other">Algumas perguntas rápidas sobre %d áreas para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “ainda não sei”.</item>
-    </plurals>
-    <string name="onboarding_placement_description">Algumas perguntas rápidas para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”.</string>
-    <string name="onboarding_placement_start">Começar</string>
-    <string name="onboarding_placement_skip_basics">Pular e começar pelo básico</string>
     <string name="onboarding_placement_waiting_material">A leitura do seu material leva alguns minutos.</string>
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">Isso leva um ou dois minutos.</string>

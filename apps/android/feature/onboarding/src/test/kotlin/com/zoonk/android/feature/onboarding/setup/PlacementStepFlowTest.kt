@@ -32,6 +32,7 @@ import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.plan
@@ -60,7 +61,6 @@ class PlacementStepFlowTest {
 
     private val api = FakeOnboardingApi()
     private val planApi = FakePlanApi()
-    private var done = 0
 
     private fun show(inSetup: Boolean = false) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
@@ -81,15 +81,12 @@ class PlacementStepFlowTest {
                         PlacementStep(
                             GOAL_ID,
                             "bar exam",
-                            areaCount = 3,
                             GenerationRun(),
                             onRetryRun = null,
                             store,
                             onProgress = {},
-                            onDone = {
-                                done++
-                                WriteOutcome.Done(Unit)
-                            },
+                            onDone = { WriteOutcome.Done(Unit) },
+                            lengthChoice = SetupTestChoice(0, null, false) {},
                         )
                     }
                 }
@@ -121,16 +118,6 @@ class PlacementStepFlowTest {
     }
 
     @Test
-    fun aFinishThatFailedKeepsTheLearnerHere() {
-        api.writeFailure = ApiException(ApiError.Network)
-        show()
-        tap("Skip and start from the basics")
-
-        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        assertEquals(0, done)
-    }
-
-    @Test
     fun startReadsThePlacementFirstSoQuestionsWrittenMeanwhileOpenWithoutTheWait() {
         api.placement = placementOf(status = "preparing", next = null)
         show()
@@ -140,7 +127,7 @@ class PlacementStepFlowTest {
         tap("Start")
 
         rule.onNodeWithText("Getting your test ready").assertDoesNotExist()
-        rule.onNodeWithText("Let's see what you already know").assertIsDisplayed()
+        rule.onNodeWithText("Skip what you already know").assertIsDisplayed()
         rule.onNodeWithText("Start").assertIsNotEnabled()
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
 
@@ -247,23 +234,6 @@ class PlacementStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-    }
-
-    @Test
-    fun aFailedIntroSkipDoesNotCountAsAQuestionFailure() {
-        api.writeFailure = ApiException(ApiError.Network)
-        show()
-        tap("Skip and start from the basics")
-        api.writeFailure = null
-        tap("Start")
-
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
-        api.writeFailure = ApiException(ApiError.Network)
-        tap("The Supreme Court")
-        tap("Confirm")
-
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
     }
 
     @Test

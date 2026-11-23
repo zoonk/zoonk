@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -38,6 +37,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -45,7 +45,7 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
-import com.zoonk.android.feature.placementtest.SetupLengthChoice
+import com.zoonk.android.feature.placementtest.LengthChoice
 import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
@@ -61,7 +61,6 @@ import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -72,6 +71,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,14 +83,13 @@ import kotlin.time.Duration.Companion.seconds
 internal fun ColumnScope.PlacementStep(
     goalId: String,
     subject: String,
-    areaCount: Int,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
-    lengthChoice: SetupTestChoice? = null,
+    lengthChoice: SetupTestChoice,
 ) {
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle(), onDone) }
     VisitOf(vm.visit)
@@ -115,31 +114,20 @@ internal fun ColumnScope.PlacementStep(
             SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
         }
 
-        PlacementPhase.Intro -> {
-            com.zoonk.android.data
-                .TrackOnboardingQuestion(goalId, "placement")
-            if (lengthChoice != null) {
-                SetupLengthChoice(
-                    lengthChoice,
+        PlacementPhase.ChooseLength -> {
+            TrackOnboardingQuestion(goalId, "placement")
+            LengthChoice(
+                wholeCourseMinutes = lengthChoice.minutes,
+                pressed =
                     when {
                         vm.isStarting -> Pressed.Main
                         vm.isSaving -> Pressed.Other
-                        else -> null
+                        else -> lengthChoice.pressed
                     },
-                    vm.finishFailed,
-                    vm::start,
-                ) { finish(true) }
-            } else {
-                PlacementIntro(
-                    subject = subject,
-                    areaCount = areaCount,
-                    pending = vm.isSaving,
-                    starting = vm.isStarting,
-                    failed = vm.finishFailed,
-                    onStart = vm::start,
-                    onScratch = { finish(true) },
-                )
-            }
+                failed = vm.finishFailed || lengthChoice.failed,
+                onStart = { length -> if (length == PlacementLength.QUICK) vm.start() else lengthChoice.startWhole() },
+                onSkip = { finish(true) },
+            )
         }
 
         PlacementPhase.Waiting -> {
@@ -187,45 +175,6 @@ internal fun ColumnScope.PlacementStep(
 internal fun ColumnScope.StepLoading() {
     SetupContent {
         Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-    }
-}
-
-@Composable
-private fun ColumnScope.PlacementIntro(
-    subject: String,
-    areaCount: Int,
-    pending: Boolean,
-    starting: Boolean,
-    failed: Boolean,
-    onStart: () -> Unit,
-    onScratch: () -> Unit,
-) {
-    SetupContent {
-        Eyebrow(subject.labelCase())
-        OnboardingHeading(
-            stringResource(R.string.onboarding_placement_title),
-            if (areaCount > 0) {
-                pluralStringResource(R.plurals.onboarding_placement_description_areas, areaCount, areaCount)
-            } else {
-                stringResource(R.string.onboarding_placement_description)
-            },
-        )
-        OnboardingActions {
-            FinishFailed(failed)
-            TaskActions { main ->
-                OutlinedButton(
-                    busy = pending,
-                    onClick = onScratch,
-                    enabled = !starting,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-                ) {
-                    Text(stringResource(R.string.onboarding_placement_skip_basics))
-                }
-                Button(busy = starting, onClick = onStart, modifier = main, enabled = !pending) {
-                    Text(stringResource(R.string.onboarding_placement_start))
-                }
-            }
-        }
     }
 }
 
