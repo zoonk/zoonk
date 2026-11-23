@@ -18,6 +18,7 @@ import { writePlan } from "./write-plan";
 export async function commitPlan({
   afterChange,
   change,
+  changeDay,
   computed,
   context,
   extraWrites,
@@ -32,6 +33,8 @@ export async function commitPlan({
   afterChange?: (tx: TransactionClient, changeId: string) => Promise<unknown>;
   replacement?: ProposalReplacement;
   change: PlanChangeRecord | null;
+  /** Receives the original day in the undo snapshot before updating its blocks. */
+  changeDay?: (tx: TransactionClient) => Promise<void>;
   computed: ComputedPlan;
   context: PlanContext;
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
@@ -96,6 +99,7 @@ export async function commitPlan({
       await savePlanSnapshot({ changeId: undoable, context: snapshotContext, tx });
     }
 
+    await changeDay?.(tx);
     return created?.id ?? null;
   });
 

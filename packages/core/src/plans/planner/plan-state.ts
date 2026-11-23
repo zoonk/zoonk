@@ -139,6 +139,16 @@ const planSettingsSchema = z.object({
   fullCourse: z.boolean().default(false),
   lightWeeks: z.array(lightWeekSchema).default([]),
   mockFunding: z.array(mockFundingSchema).default([]),
+  mockSchedule: z
+    .array(
+      z.object({
+        from: isoDateSchema,
+        fullLength: z.boolean(),
+        minutes: z.number().positive(),
+        to: isoDateSchema.nullable(),
+      }),
+    )
+    .optional(),
   movedEvents: z.array(movedEventSchema).default([]),
   noticeDate: isoDateSchema.nullable().default(null),
   pace: z

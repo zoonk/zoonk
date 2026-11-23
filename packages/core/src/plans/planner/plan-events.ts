@@ -61,7 +61,10 @@ function getPlanEvents({
   if (!targetDate) {
     // A move the learner made is kept even past the plan's last lesson: it never cancels the
     // challenge they were shown.
-    const movedTo = new Set(input.settings.movedEvents.map((move) => move.to));
+    const movedTo = new Set([
+      ...input.settings.movedEvents.map((move) => move.to),
+      ...(input.settings.mockSchedule ?? []).flatMap((entry) => entry.to ?? []),
+    ]);
 
     return events.filter(
       (event) =>
@@ -86,6 +89,7 @@ function getPlanEvents({
         mockMinutes,
         moves: input.settings.movedEvents,
         targetDate,
+        vacated: new Set(input.settings.mockSchedule?.map((entry) => entry.from)),
         weeks: getMockWeeks({
           calendar: {
             dailyMinutes: input.goal.dailyMinutes,

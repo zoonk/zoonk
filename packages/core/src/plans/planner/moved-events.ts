@@ -1,6 +1,7 @@
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
-import { type MovedEvent } from "./plan-state";
+import { type MovedEvent, type PlanSettings } from "./plan-state";
 import { type DayShape, type FixedEvent } from "./schedule-units";
+import { mockEvent } from "./short-exam-plan";
 
 const MOVABLE_EVENT_KINDS = new Set<FixedEvent["kind"]>(["checkpoint", "mock"]);
 
@@ -48,5 +49,41 @@ export function withMovedEvents({
       );
 
     return { ...shape, events: [...staying, ...movedIn] };
+  };
+}
+
+export function withMockSchedule(
+  describeDay: (date: Date) => DayShape,
+  overrides: PlanSettings["mockSchedule"],
+) {
+  if (!overrides?.length) {
+    return describeDay;
+  }
+
+  return (date: Date): DayShape => {
+    const shape = describeDay(date);
+    const day = toIsoDate(date);
+    const moved = overrides.find((entry) => entry.to === day);
+
+    if (!moved && !overrides.some((entry) => entry.from === day)) {
+      return shape;
+    }
+
+    const events = shape.events.filter(
+      (event) => event.kind !== "mock" && !(moved && event.kind === "review"),
+    );
+
+    if (moved) {
+      events.push(
+        mockEvent({
+          date,
+          fullLength: moved.fullLength,
+          minutes: moved.minutes,
+          replacesDay: true,
+        }),
+      );
+    }
+
+    return { ...shape, events };
   };
 }

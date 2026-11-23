@@ -314,7 +314,7 @@ test.describe("Today API", () => {
     const view = todayResponseSchema.parse(await response.json());
     const expected = { mockDate, mockMinutes: 165, setAsideMinutes: 30.125 };
 
-    expect(view.mockFunding).toStrictEqual(expected);
+    expect(view.mockFunding).toStrictEqual({ ...expected, planItemId: mock.id });
     expect(view.session.minutes.dailyGoal).toBe(14.875);
     expect(view.session.week.days.find((weekDay) => weekDay.isToday)?.goalMinutes).toBe(14.875);
 

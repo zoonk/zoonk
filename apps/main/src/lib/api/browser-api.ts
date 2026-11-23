@@ -39,7 +39,7 @@ export async function sendFromBrowser({
 }: BrowserWrite & {
   /** For a save made as the page goes away: the request outlives the page. */
   keepalive?: boolean;
-  method: "PATCH" | "POST" | "PUT";
+  method: "DELETE" | "PATCH" | "POST" | "PUT";
 }): Promise<Response | null> {
   const { data: response } = await safeAsync(async () => {
     const headers = await getWorkflowAuthHeaders();

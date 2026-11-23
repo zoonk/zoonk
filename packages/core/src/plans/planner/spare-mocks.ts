@@ -65,6 +65,7 @@ export function addSpareMocks({
   lastLessonDate,
   mockMinutes,
   moves,
+  vacated,
   targetDate,
   weeks,
 }: {
@@ -73,6 +74,7 @@ export function addSpareMocks({
   lastLessonDate: Date | null;
   mockMinutes: number;
   moves: readonly MovedEvent[];
+  vacated: ReadonlySet<string>;
   targetDate: Date;
   weeks: number;
 }): ScheduledEvent[] {
@@ -90,7 +92,7 @@ export function addSpareMocks({
   return events.map((event): ScheduledEvent => {
     const day = toIsoDate(event.date);
 
-    return event.kind === "review" && placed.has(day)
+    return event.kind === "review" && placed.has(day) && !vacated.has(day)
       ? {
           ...event,
           key: `mock:${day}`,

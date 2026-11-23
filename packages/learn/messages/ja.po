@@ -541,6 +541,7 @@ msgstr "{done, number}/{total, number}"
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
 #: src/mock/mock-frame.tsx
+#: src/mock/mock-schedule.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -2340,6 +2341,7 @@ msgstr "この{duration}の模試は、{date}の学習計画に入りきりま�
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-screen.tsx
 #: src/memory/memory-updated.tsx
+#: src/mock/mock-schedule.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
@@ -2353,6 +2355,7 @@ msgid "Undo"
 msgstr "元に戻す"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/mock/mock-schedule.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "{date}に移動しました"
@@ -8567,6 +8570,31 @@ msgstr "回答は保存されています。中断中も残り時間は減り続
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
 msgstr "模試を中断しますか？"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "pY9LbF"
+msgid "Mock exam skipped"
+msgstr "模試をスキップしました"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "U7EcaD"
+msgid "Change schedule"
+msgstr "日程を変更"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "LChkTg"
+msgid "Change mock exam date"
+msgstr "模試の日程を変更"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "iFsDVR"
+msgid "Loading"
+msgstr "読み込み中"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "TaWtjb"
+msgid "Skip this mock exam"
+msgstr "この模試をスキップ"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"

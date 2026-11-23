@@ -48,10 +48,10 @@ import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.feature.goalcontent.rememberWriteNow
 import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.feature.language.alphabetSkip
+import com.zoonk.android.feature.mock.MockScheduleSheet
 import com.zoonk.android.feature.speaking.speakingMockStart
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
@@ -77,6 +77,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.Syllabus
+import java.util.UUID
 
 class PlanLinks(
     private val navigator: AppNavigator,
@@ -84,6 +85,7 @@ class PlanLinks(
     private val openFarTopic: ((FarTopic) -> Unit)? = null,
     /** "Write" where the estimate waits on the written part. */
     val writeNow: WriteNow? = null,
+    val scheduleMock: ((String) -> Unit)? = null,
     private val leaving: () -> Unit = {},
 ) {
     val hasExam: Boolean get() = page.isExam
@@ -136,7 +138,19 @@ class PlanLinks(
         }
 
     /** These links run [close] before leaving, so a sheet they're in doesn't stay over the page they open. */
-    fun closing(close: () -> Unit) = PlanLinks(navigator, page, openFarTopic, writeNow) { close() }
+    fun closing(close: () -> Unit) =
+        PlanLinks(
+            navigator,
+            page,
+            openFarTopic,
+            writeNow,
+            scheduleMock?.let { show ->
+                { id ->
+                    close()
+                    show(id)
+                }
+            },
+        ) { close() }
 
     fun open(route: AppRoute) {
         leaving()
@@ -226,7 +240,11 @@ internal fun PlanPage(
     }
     var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
     var studyingEverything by rememberSaveable { mutableStateOf(focus == STUDY_EVERYTHING && fullCourse(page) != null) }
-    val links = PlanLinks(navigator, page, farTopics::open, rememberWriteNow(app, page.goal.id, navigator))
+    var scheduleId by rememberSaveable(page.goal.id) { mutableStateOf<String?>(null) }
+    scheduleId?.let { id ->
+        MockScheduleSheet(app.mockSchedule, UUID.fromString(id), navigator) { scheduleId = null }
+    }
+    val links = PlanLinks(navigator, page, farTopics::open, rememberWriteNow(app, page.goal.id, navigator), { scheduleId = it })
     val edits =
         PlanEdits(
             pending = pending,

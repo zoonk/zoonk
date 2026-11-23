@@ -1495,6 +1495,319 @@
         }
       }
     },
+    "/challenges/{planItemId}/schedule": {
+      "get": {
+        "description": "The available study days after this mock and before the next mock or exam. An empty list permits skipping only.",
+        "operationId": "getMockScheduleDates",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get dates for rescheduling a mock",
+        "tags": [
+          "Study sessions"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "planItemId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The challenge's plan item ID"
+            },
+            "required": true,
+            "description": "The challenge's plan item ID"
+          },
+          {
+            "in": "query",
+            "name": "timeZone",
+            "schema": {
+              "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+              "type": "string"
+            },
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available study days",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockScheduleOptions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Moves one unstarted mock to a chosen study day or skips that occurrence. The original plan item ID and the change ID identify the undo.",
+        "operationId": "changeMockSchedule",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Reschedule or skip a scheduled mock",
+        "tags": [
+          "Study sessions"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "planItemId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The challenge's plan item ID"
+            },
+            "required": true,
+            "description": "The challenge's plan item ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MockScheduleInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved change and its plan item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockScheduleChange"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/challenges/{planItemId}/schedule/{changeId}": {
+      "delete": {
+        "description": "Restores the mock and its plan while the schedule change can still be undone.",
+        "operationId": "undoMockSchedule",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Undo a mock schedule change",
+        "tags": [
+          "Study sessions"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "planItemId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The challenge's plan item ID"
+            },
+            "required": true,
+            "description": "The challenge's plan item ID"
+          },
+          {
+            "in": "path",
+            "name": "changeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The plan change that moved it"
+            },
+            "required": true,
+            "description": "The plan change that moved it"
+          },
+          {
+            "in": "query",
+            "name": "timeZone",
+            "schema": {
+              "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+              "type": "string"
+            },
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The mock is back on its previous day"
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/challenges/{planItemId}": {
       "get": {
         "description": "A plan's phase boss or the week's Big Challenge (an exam's mock), by its plan item, before its day and on it: when it is, what it asks (questions, minutes, a mock's sections and start time), what it's worth, whether it can move to Monday, and where it stands today. On its day, start it to open its block of today's session.",
@@ -25941,7 +26254,7 @@
     },
     "/study-sessions/{sessionId}/extra-blocks": {
       "post": {
-        "description": "More study after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them beforehand), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each call, with capped Brain Power.",
+        "description": "On a scheduled mock day, adds the first of up to three upcoming lessons without changing the mock. After other sessions, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them beforehand), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each call, with capped Brain Power.",
         "operationId": "createStudyExtraBlock",
         "security": [
           {
@@ -27839,6 +28152,26 @@
         ],
         "description": "A complete replacement for one optional profile answer",
         "type": "object"
+      },
+      "MockScheduleInput": {
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+            "type": "string"
+          },
+          "date": {
+            "nullable": true,
+            "description": "A new study day, or null to skip this mock.",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          }
+        },
+        "required": [
+          "date"
+        ],
+        "additionalProperties": false
       },
       "StudySessionTimeZone": {
         "type": "object",
@@ -38534,6 +38867,43 @@
         },
         "required": [
           "certificates"
+        ],
+        "additionalProperties": false
+      },
+      "MockScheduleOptions": {
+        "type": "object",
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            }
+          }
+        },
+        "required": [
+          "dates"
+        ],
+        "additionalProperties": false
+      },
+      "MockScheduleChange": {
+        "type": "object",
+        "properties": {
+          "changeId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "planItemId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "changeId",
+          "planItemId"
         ],
         "additionalProperties": false
       },
@@ -91572,6 +91942,11 @@
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "nextPlanItemId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               }
             },
             "required": [
@@ -92150,6 +92525,12 @@
             "minimum": 0,
             "exclusiveMinimum": true,
             "description": "The mock's real duration in minutes."
+          },
+          "planItemId": {
+            "description": "The saved mock this day funds, when available.",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "setAsideMinutes": {
             "type": "number",
@@ -99544,7 +99925,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done), when it isn't available, and on a day with lessons of its own still to come (`lessonsComing`, `lessonsToPrepare`, `emptyDay`) or with nothing new"
+            "description": "The next lessons in plan order. On a mock day, up to three lessons are available to study one at a time; empty when it adds practice instead (every lesson is done), when it isn't available, and on a day with lessons of its own still to come (`lessonsComing`, `lessonsToPrepare`, `emptyDay`) or with nothing new"
           },
           "minutes": {
             "type": "integer",
@@ -99553,7 +99934,7 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished (a scheduled mock still being prepared doesn't count)",
+            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished (scheduled mocks and their preparation reviews allow extra study)",
             "type": "string",
             "enum": [
               "dayOver",

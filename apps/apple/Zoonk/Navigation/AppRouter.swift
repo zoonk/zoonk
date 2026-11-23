@@ -5,6 +5,7 @@ enum AppSheet: Hashable, Identifiable {
   case account(AccountPage? = nil)
   case feedback(screen: String)
   case makeRoom(LearnerWaitingGoal)
+  case mockSchedule(planItemId: String, today: String)
   case signIn
   case subscription
   /// Over the screen, above its panes, so a resize never takes it away.

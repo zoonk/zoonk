@@ -541,6 +541,7 @@ msgstr "{done, number} su {total, number}"
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
 #: src/mock/mock-frame.tsx
+#: src/mock/mock-schedule.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -2340,6 +2341,7 @@ msgstr "Il tuo piano non riesce a fare spazio a questa simulazione di {duration}
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-screen.tsx
 #: src/memory/memory-updated.tsx
+#: src/mock/mock-schedule.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
@@ -2353,6 +2355,7 @@ msgid "Undo"
 msgstr "Annulla"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/mock/mock-schedule.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "Spostata a {date}"
@@ -8567,6 +8570,31 @@ msgstr "Le tue risposte restano salvate. Il tempo continua a scorrere anche quan
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
 msgstr "Vuoi uscire dalla simulazione?"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "pY9LbF"
+msgid "Mock exam skipped"
+msgstr "Simulazione saltata"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "U7EcaD"
+msgid "Change schedule"
+msgstr "Cambia data"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "LChkTg"
+msgid "Change mock exam date"
+msgstr "Cambia la data della simulazione d’esame"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "iFsDVR"
+msgid "Loading"
+msgstr "Caricamento"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "TaWtjb"
+msgid "Skip this mock exam"
+msgstr "Salta questa simulazione"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"

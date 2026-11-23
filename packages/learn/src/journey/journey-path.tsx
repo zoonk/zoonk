@@ -130,6 +130,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
               <MockRow
                 challengeHref={links.challenge}
                 date={mocks.nextDate}
+                planItemId={mocks.nextPlanItemId ?? null}
                 examHref={links.exam}
               />
             </li>

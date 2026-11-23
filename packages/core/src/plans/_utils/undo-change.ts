@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
+import { removeUnstartedMockBlocks } from "../../checkpoints/_utils/mock-schedule-blocks";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { findOldTestFocus, keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
@@ -8,7 +9,8 @@ import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
 import { keepOpenSessionSelection } from "../../sessions/_utils/skip-tested-out-blocks";
-import { unlessPlanConflict } from "../plan-conflict";
+import { PlanConflictError, unlessPlanConflict } from "../plan-conflict";
+import { fromIsoDate } from "../planner/plan-calendar";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
@@ -86,9 +88,8 @@ export async function undoChange({
 
   const keepSession = payload.todaySession === "unchanged";
 
-  const skipped = new Set(
-    change.kind === "testedOut" || payload.livingPlanDay ? payload.planItemIds : [],
-  );
+  const restoresTestOut = change.kind === "testedOut" || Boolean(payload.livingPlanDay);
+  const skipped = new Set(restoresTestOut ? payload.planItemIds : []);
 
   const skillIds =
     skipped.size > 0
@@ -101,8 +102,35 @@ export async function undoChange({
       : item,
   );
 
+  const returned = new Set(payload.livingPlanDay ? payload.carriedItemIds : []);
+
+  const testedOut = Map.groupBy(
+    items.filter((item) => returned.has(item.id) && item.status === "testedOut"),
+    (item) => item.completedAt?.toISOString(),
+  );
+
   const restored = await prisma.$transaction(async (tx) => {
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
+
+    const scheduled = payload.mockSchedule;
+
+    if (scheduled?.to) {
+      const moved = await tx.planItem.findFirst({
+        select: { id: true, status: true },
+        where: { kind: "mock", planId: change.planId, scheduledFor: fromIsoDate(scheduled.to) },
+      });
+
+      if (!moved || moved.status !== "todo") {
+        throw new PlanConflictError();
+      }
+
+      await removeUnstartedMockBlocks({
+        goalId: context.goal.id,
+        planItemId: moved.id,
+        today: context.today,
+        tx,
+      });
+    }
 
     const session =
       !keepSession &&
@@ -114,13 +142,6 @@ export async function undoChange({
         tx,
         userId: context.goal.userId,
       }));
-
-    const returned = new Set(payload.livingPlanDay ? payload.carriedItemIds : []);
-
-    const testedOut = Map.groupBy(
-      items.filter((item) => returned.has(item.id) && item.status === "testedOut"),
-      (item) => item.completedAt?.toISOString(),
-    );
 
     for (const [completedAt, group] of testedOut) {
       // oxlint-disable-next-line no-await-in-loop -- Restore the snapshot dates under the plan lock.
@@ -148,13 +169,10 @@ export async function undoChange({
 
     await tx.planChange.update({
       data:
-        (change.kind === "testedOut" || payload.livingPlanDay) && undone.status === "undone"
+        restoresTestOut && undone.status === "undone"
           ? {
               ...undone,
-              payload: toPlanChangePayload({
-                ...parsePlanChangePayload(change.payload),
-                undoneAt: new Date().toISOString(),
-              }),
+              payload: toPlanChangePayload({ ...payload, undoneAt: new Date().toISOString() }),
             }
           : undone,
       where: { id: change.id },
@@ -191,7 +209,7 @@ export async function undoChange({
       : null;
   });
 
-  if (parsePlanChangePayload(change.payload).replannedSince) {
+  if (payload.replannedSince) {
     await refreshGoalPlan({
       goalId: context.goal.id,
       onConflict: "yield",

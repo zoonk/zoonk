@@ -344,6 +344,14 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let targetMinutes: Double
   }
 
+  struct FundedMock: Decodable, Equatable, Sendable {
+    let id: String
+    let scheduledFor: String?
+    let minutes: Double?
+    let status: String
+  }
+
+  var fundedMocks: [FundedMock]?
   let areas: [Area]
   let bases: Bases?
   var changes: [TodayView.PlanChange]?
@@ -452,6 +460,7 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   struct Mocks: Decodable, Equatable, Sendable {
     let count: Int
     let nextDate: String?
+    var nextPlanItemId: String?
   }
 
   /// The phase keeps lessons but its challenge has no room before the plan's date.

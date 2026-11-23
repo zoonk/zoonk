@@ -78,13 +78,7 @@ export function toDayViewFields({
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({
-      blocks: session.blocks.map((block) => ({
-        preparing: preparing.has(block.position),
-        status: block.status,
-      })),
-      current,
-    }),
+    extraTime: getExtraTime({ blocks: session.blocks, current }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),

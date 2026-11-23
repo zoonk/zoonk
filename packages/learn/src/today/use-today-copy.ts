@@ -92,7 +92,6 @@ export function useStepGettingReady() {
 
 type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
 
-/** Core lists them only once the day has nothing of its own left to open. */
 export function useUpNextLessons(): UpNextLesson[] {
   const pastDate = useTodayPastDate();
   const { today } = useTodayScreen();

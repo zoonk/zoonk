@@ -15,6 +15,7 @@ import { useExtracted } from "next-intl";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
+import { MockSchedule } from "../mock/mock-schedule";
 import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
@@ -129,6 +130,7 @@ export function DayTime({ className }: { className?: string }) {
             })}
           </PopoverDescription>
         </PopoverHeader>
+        {mockFunding.planItemId && <MockSchedule planItemId={mockFunding.planItemId} />}
       </PopoverContent>
     </Popover>
   );

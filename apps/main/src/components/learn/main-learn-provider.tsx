@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
 import { loadCountries } from "@/lib/countries/load-countries";
 import { useWriteNow } from "@/lib/essays/use-write-now";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
@@ -8,6 +9,7 @@ import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { type LearnAdapters, LearnProvider } from "@zoonk/learn/provider";
 import { useMemo } from "react";
 import { LearningLink } from "./learning-link";
+import { change, dates, undo } from "./mock-schedule-requests";
 import { useSignUpHref } from "./use-sign-up-href";
 
 const MAIN_LEARN_ADAPTERS: LearnAdapters = {
@@ -24,16 +26,26 @@ const MAIN_LEARN_ADAPTERS: LearnAdapters = {
 };
 
 export function MainLearnProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const signUp = useSignUpHref();
   const writeNow = useWriteNow();
 
   const adapters = useMemo(
     (): LearnAdapters => ({
       ...MAIN_LEARN_ADAPTERS,
+      mockSchedule: {
+        change,
+        dates,
+        showToday: () => {
+          router.replace("/today");
+          router.refresh();
+        },
+        undo,
+      },
       routes: { ...MAIN_LEARN_ADAPTERS.routes, signUp },
       writeNow,
     }),
-    [signUp, writeNow],
+    [router, signUp, writeNow],
   );
 
   return (

@@ -208,15 +208,19 @@ function buildMocks({
   const isAhead = (item: PlanReadItem) =>
     !today || !isPastPlusOnlyMock({ includesMockExams: !mocksRequirePlus, item, today });
 
-  const next = mocks
+  const [next] = mocks
     .flatMap((item) =>
       item.status === "todo" && item.scheduledFor && isAhead(item)
-        ? [toIsoDate(item.scheduledFor)]
+        ? [{ date: toIsoDate(item.scheduledFor), id: item.id }]
         : [],
     )
-    .toSorted()[0];
+    .toSorted((a, b) => a.date.localeCompare(b.date));
 
-  return { count: mocks.length, nextDate: next ?? null };
+  return {
+    count: mocks.length,
+    nextDate: next?.date ?? null,
+    ...(next?.id && { nextPlanItemId: next.id }),
+  };
 }
 
 function getPhaseMinutes({

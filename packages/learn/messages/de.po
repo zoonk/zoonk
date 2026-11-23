@@ -541,6 +541,7 @@ msgstr "{done, number} von {total, number}"
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
 #: src/mock/mock-frame.tsx
+#: src/mock/mock-schedule.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -2340,6 +2341,7 @@ msgstr "Dein Plan bietet am {date} keinen Platz für diese Probeprüfung mit ein
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-screen.tsx
 #: src/memory/memory-updated.tsx
+#: src/mock/mock-schedule.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
@@ -2353,6 +2355,7 @@ msgid "Undo"
 msgstr "Rückgängig machen"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/mock/mock-schedule.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "Auf {date} verschoben"
@@ -8567,6 +8570,31 @@ msgstr "Deine Antworten sind gespeichert. Die Zeit läuft weiter, während du we
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
 msgstr "Probeprüfung verlassen?"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "pY9LbF"
+msgid "Mock exam skipped"
+msgstr "Probeprüfung übersprungen"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "U7EcaD"
+msgid "Change schedule"
+msgstr "Termin ändern"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "LChkTg"
+msgid "Change mock exam date"
+msgstr "Termin der Probeprüfung ändern"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "iFsDVR"
+msgid "Loading"
+msgstr "Wird geladen"
+
+#: src/mock/mock-schedule.tsx
+msgctxt "TaWtjb"
+msgid "Skip this mock exam"
+msgstr "Diese Probeprüfung überspringen"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"

@@ -11,6 +11,7 @@ import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
 import { MockPreparingNote } from "../mock/mock-preparing";
+import { MockSchedule } from "../mock/mock-schedule";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChoiceLine } from "../writing/writing-choice";
 import { useChallengeScreen } from "./challenge-context";
@@ -42,7 +43,7 @@ function StartButton() {
 
   return (
     <TaskActions>
-      <MoveToMondayButton />
+      <ScheduleButton />
       <TaskMainButton busy={start.busy} disabled={move.pending} onClick={() => void start.start()}>
         {t("Start")}
       </TaskMainButton>
@@ -56,28 +57,31 @@ function StartButton() {
  */
 function useMovable(): boolean {
   const { challenge, move } = useChallengeScreen();
+
+  if (challenge.mock) {
+    return (
+      challenge.access !== "plusRequired" &&
+      challenge.date !== null &&
+      (challenge.status === "ready" ||
+        challenge.status === "upcoming" ||
+        challenge.status === "waiting")
+    );
+  }
+
   return challenge.canMove && !move.refusal;
 }
 
-function MoveToMondayButton({ className, main = false }: { className?: string; main?: boolean }) {
+function ScheduleButton({ className }: { className?: string }) {
   const t = useExtracted();
-  const { move, start } = useChallengeScreen();
+  const { challenge, move, start } = useChallengeScreen();
   const movable = useMovable();
 
   if (!movable) {
     return null;
   }
 
-  if (main) {
-    return (
-      <TaskMainButton
-        busy={move.pending}
-        disabled={start.busy}
-        onClick={() => void move.moveToMonday()}
-      >
-        {t("Move to Monday")}
-      </TaskMainButton>
-    );
+  if (challenge.mock) {
+    return <MockSchedule planItemId={challenge.planItemId} disabled={start.busy} />;
   }
 
   return (
@@ -115,7 +119,7 @@ function KeepStudyingLink() {
 
   return (
     <TaskActions>
-      <MoveToMondayButton />
+      <ScheduleButton />
       <TaskMainLink href={hrefs.exit}>{t("Keep studying")}</TaskMainLink>
     </TaskActions>
   );
@@ -290,7 +294,7 @@ export function ChallengeFooter() {
     return (
       <TaskActions className="max-lg:flex-col max-lg:items-stretch max-lg:gap-0 lg:gap-4">
         <StatusRegion className="lg:me-auto">{line}</StatusRegion>
-        <MoveToMondayButton />
+        <ScheduleButton />
       </TaskActions>
     );
   }
@@ -301,7 +305,7 @@ export function ChallengeFooter() {
       {actions}
       {moves && (
         <TaskActions>
-          <MoveToMondayButton className="w-full lg:w-auto" />
+          <ScheduleButton className="w-full lg:w-auto" />
         </TaskActions>
       )}
     </>

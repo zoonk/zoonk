@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "a55d617e76009ae0f9a0b274f81062866fd881fe7f6ba4bc443b8c306025cdcc",
+  "mock_schedule_moved": "34de061e779cddcef8a10e1c58bfb52fcc0d071e68776b0e9d2d9c7bfe550c9a",
+  "mock_schedule_skip": "a2d1ee4c538907fe1e09834f587fe266734b8b53eef20d22d4fbb41f566d38a1",
+  "mock_schedule_skipped": "674c2f767709b8819935091fd94ac4dbcb0311e54914bb92e6f43096d2809a13",
+  "mock_schedule_title": "92dc3e25e5190cb4caf0265098b4b5c4e28102ee327f4fb6af589d8aa01b12a0",
   "today_add_to_today": "cf9aaa52af17e96e19f1414baa8c5ab873b63f8c4e4c79ea030790ac6ba6a6de",
   "today_adjust_your_plan": "8a6b992de436036fc19ec91a785f56af5137b64a428372b8de48f2e29dd7a070",
   "today_already_know_chapter": "089829427d3604f0b73e4161674f5440b2be2629f30c37dab6aa3bfb5bed6e20",
@@ -380,4 +385,9 @@
     <string name="today_add_to_today">Bugüne ekle</string>
     <string name="today_unfinished_setup">Bu hedefi oluşturmayı tamamlamadın.</string>
     <string name="today_step_every_topic">Tüm konular</string>
+    <string name="mock_schedule_title">Deneme sınavının tarihini değiştir</string>
+    <string name="mock_schedule_change">Tarihi değiştir</string>
+    <string name="mock_schedule_skip">Bu deneme sınavını atla</string>
+    <string name="mock_schedule_skipped">Deneme sınavı atlandı</string>
+    <string name="mock_schedule_moved">%1$s tarihine taşındı</string>
 </resources>
