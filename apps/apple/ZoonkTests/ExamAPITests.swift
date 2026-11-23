@@ -53,6 +53,16 @@ final class ExamAPITests: XCTestCase {
     }
   }
 
+  func testSkippingScheduledMockSendsExplicitNullDate() async throws {
+    let transport = RecordingTransport(answer: #"{"changeId":"changed","planItemId":"scheduled"}"#)
+    let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let change = try await api.changeMockSchedule(token: "token", itemId: itemId, date: nil)
+
+    XCTAssertEqual(change, "changed")
+    let sent = try XCTUnwrap(transport.sent.value.first)
+    XCTAssertEqual(sent.json["date"] as? NSNull, NSNull())
+  }
+
   func testScheduledMockStartDistinguishesPreparationFromRefusals() async throws {
     let preparing = RecordingTransport(status: .accepted, answer: #"{"status":"preparing"}"#)
     let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: preparing))

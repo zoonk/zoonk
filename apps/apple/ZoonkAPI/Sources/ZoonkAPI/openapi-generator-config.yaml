@@ -208,6 +208,9 @@ filter:
     - listSourceChangeNotices
     - markCertificateShown
     - markPlanRevealed
+    - changeMockSchedule
+    - getMockScheduleDates
+    - undoMockSchedule
     - moveChallenge
     - moveWeeklyChallenge
     - openMistakeLesson

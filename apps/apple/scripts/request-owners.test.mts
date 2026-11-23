@@ -76,6 +76,10 @@ const OWNERS: Record<string, string> = {
     "Playback of the spoken words, not a request.",
   "Features/Practice/Challenge/ChallengeScreen.swift: action":
     "The challenge's action, owned above its layout.",
+  "Features/Practice/Challenge/MockScheduleSheet.swift: request":
+    "The mock schedule sheet owns the request from opening to dismissal.",
+  "Features/Practice/Challenge/MockScheduleSheet.swift: request #2":
+    "Today shows the undo for this change; leaving its notice ends the request feedback.",
   "Features/Practice/Mistakes/MistakesScreen.swift: lesson":
     "The notebook owns lesson navigation above both lists and their panes.",
   "Features/Practice/QuestionBlock/QuestionBlockScreen.swift: stopping":

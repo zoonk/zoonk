@@ -503,6 +503,42 @@ struct PracticeAPI: Sendable {
     }
   }
 
+  func mockScheduleDates(token: String, itemId: String) async throws -> [String] {
+    try await perform(token) { client in
+      switch try await client.getMockScheduleDates(
+        path: .init(planItemId: itemId), query: .init(timeZone: timeZone))
+      {
+      case .ok(let response): return try response.body.json.dates
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func changeMockSchedule(token: String, itemId: String, date: String?) async throws -> String {
+    try await clients.perform(token: token, sendingNull: ["date"]) { client in
+      switch try await client.changeMockSchedule(
+        path: .init(planItemId: itemId), body: .json(.init(timeZone: timeZone, date: date)))
+      {
+      case .ok(let response): return try response.body.json.changeId
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func undoMockSchedule(token: String, itemId: String, changeId: String) async throws {
+    try await perform(token) { client in
+      switch try await client.undoMockSchedule(
+        path: .init(planItemId: itemId, changeId: changeId), query: .init(timeZone: timeZone))
+      {
+      case .noContent: return
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
   func moveChallenge(token: String, planItemId: String) async throws
     -> Components.Schemas.ChallengeMove
   {

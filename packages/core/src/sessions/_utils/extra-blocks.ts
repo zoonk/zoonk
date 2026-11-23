@@ -11,7 +11,7 @@ import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
-import { type ExtraTime, type UpNextDay, listsUpNext } from "../extra-time";
+import { type ExtraTime, type UpNextDay, isScheduledMock, listsUpNext } from "../extra-time";
 import { type PlannedBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
@@ -118,11 +118,13 @@ function getLessonsDoneToday(session: ExtraDay): Set<string> {
 export async function buildExtraLessons({
   areaId = null,
   minutes = 0,
+  lessonLimit,
   planItemIds,
   session,
 }: {
   areaId?: string | null;
   minutes?: number;
+  lessonLimit?: number;
   planItemIds?: readonly string[];
   session: ExtraDay;
 }): Promise<PlannedBlock[]> {
@@ -159,11 +161,14 @@ export async function buildExtraLessons({
       lessons.findIndex((other) => other.lessonId === lesson.lessonId) === index,
   );
 
-  const fitting = unique.filter(
-    (_lesson, index) =>
-      index === 0 ||
-      unique.slice(0, index).reduce((sum, earlier) => sum + earlier.minutes, 0) < minutes,
-  );
+  const fitting =
+    lessonLimit === undefined
+      ? unique.filter(
+          (_lesson, index) =>
+            index === 0 ||
+            unique.slice(0, index).reduce((sum, earlier) => sum + earlier.minutes, 0) < minutes,
+        )
+      : unique.slice(0, lessonLimit);
 
   return fitting.map((lesson) => ({
     canDo: lesson.canDo,
@@ -185,15 +190,20 @@ export async function buildExtraLessons({
 export async function planExtraBlocks({
   minutes,
   readSkillIds,
+  preview = false,
   session,
   userId,
 }: {
   minutes: number;
   readSkillIds: () => Promise<string[]>;
+  preview?: boolean;
   session: ExtraDay;
   userId: string;
 }): Promise<ExtraBlocks | null> {
-  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
+  const mockDay = session.blocks.some(isScheduledMock);
+  const mockLessonLimit = preview ? 3 : 1;
+  const lessonLimit = mockDay ? mockLessonLimit : undefined;
+  const [lesson, ...lessons] = await buildExtraLessons({ lessonLimit, minutes, session });
 
   if (lesson) {
     return [lesson, ...lessons];
@@ -232,6 +242,7 @@ export async function withExtraStudyCheck({
 
   const planned = await planExtraBlocks({
     minutes: extraTime.minutes,
+    preview: true,
     readSkillIds: readSkillIds ?? (async () => (goalId ? loadGoalSkillIds(goalId) : [])),
     session,
     userId,

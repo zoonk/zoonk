@@ -16,6 +16,66 @@ final class PracticeStore {
     saves = LearnerSaves(cache: cache)
   }
 
+  struct ScheduledChange: Equatable {
+    let owner: AuthenticatedSession
+    let itemId: String
+    let changeId: String
+    let date: String?
+  }
+
+  private var scheduledChange: ScheduledChange?
+  var mockScheduleNotice: ScheduledChange? {
+    guard let change = scheduledChange, change.owner == cache.session.authenticatedSession else {
+      return nil
+    }
+    return change
+  }
+
+  func changeMockSchedule(itemId: String, date: String?) async -> Bool? {
+    switch await write(
+      .planChanged, onPurpose: true,
+      { [api] session in
+        let change = try await api.changeMockSchedule(
+          token: session.bearerToken, itemId: itemId, date: date)
+        return ScheduledChange(owner: session, itemId: itemId, changeId: change, date: date)
+      })
+    {
+    case .done(let change):
+      scheduledChange = change
+      return true
+    case .failed, .refused: return false
+    case .obsolete: return nil
+    }
+  }
+
+  func dismissMockScheduleNotice(_ change: ScheduledChange) {
+    if scheduledChange == change { scheduledChange = nil }
+  }
+
+  func undoMockSchedule(_ change: ScheduledChange) async -> Bool? {
+    guard mockScheduleNotice == change else { return nil }
+    switch await write(
+      .planChanged, onPurpose: true,
+      { [api] session in
+        try await api.undoMockSchedule(
+          token: session.bearerToken, itemId: change.itemId, changeId: change.changeId)
+      })
+    {
+    case .done:
+      dismissMockScheduleNotice(change)
+      return true
+    case .failed, .refused: return false
+    case .obsolete: return nil
+    }
+  }
+
+  func mockScheduleDates(itemId: String) -> Resource<[String]> {
+    cache.resource(audience: .signedIn, domains: [.goals]) { [api] session in
+      guard let session else { return nil }
+      return try await api.mockScheduleDates(token: session.bearerToken, itemId: itemId)
+    }
+  }
+
   func mistakes(goalId: String?, fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
     let key = "\(goalId ?? "-"):\(fixed)"
 
@@ -108,7 +168,7 @@ extension PracticeChange {
     case .answered: [.learnerModel, .userProgress, .userSession]
     case .patternDone: [.learnerModel, .userProgress]
     case .finished: [.goals, .learnerModel, .userProgress, .userSession]
-    case .planChanged: [.goals, .learnerModel]
+    case .planChanged: [.goals, .learnerModel, .userSession]
     }
   }
 }

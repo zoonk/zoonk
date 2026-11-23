@@ -1,9 +1,11 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
 export const mockFundingSchema = z
   .object({
     mockDate: z.iso.date().describe("The scheduled date of the mock this day funds."),
     mockMinutes: z.number().positive().describe("The mock's real duration in minutes."),
+    planItemId: uuidSchema().optional().describe("The saved mock this day funds, when available."),
     setAsideMinutes: z
       .number()
       .positive()

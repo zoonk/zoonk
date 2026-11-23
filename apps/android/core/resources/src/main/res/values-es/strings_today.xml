@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "bdea2f9149772fa83286b38ee471490a671a01f3e3c7a94f83f86913e4269e5c",
+  "mock_schedule_moved": "e658cdec7c2b4adc9acdb78ee35b106aed9497da13173fc78e43bc43552fe1e6",
+  "mock_schedule_skip": "d63c1a523cfe952d0abfe72574f3e58225d8db2bb18bdd52533d199d4018a9e5",
+  "mock_schedule_skipped": "3837c356ffb5208e694e9c079e24e0ffdca6313f34e0aa4cd5a5c928c9ad0e12",
+  "mock_schedule_title": "b07dd53c1268e87a99060801fbc024b50f602e8aa8df5e001c8a18da1980a358",
   "today_add_to_today": "a924616cb0ffd60e5a5c84ac80b29b031f6e4d11f8f169420a7ed5918d299d77",
   "today_adjust_your_plan": "031dac4df8604d3c3a795e38f0eaaf7c2149d550ea3494e613956c536c49a762",
   "today_already_know_chapter": "049a493b6b17ec3a19457c4ec33489f8f1d2206c0a87fe49f79a2a777604751f",
@@ -392,4 +397,9 @@
     <string name="today_add_to_today">Agregar para hoy</string>
     <string name="today_unfinished_setup">No terminaste de configurarlo.</string>
     <string name="today_step_every_topic">Todos los temas</string>
+    <string name="mock_schedule_title">Cambiar la fecha del simulacro</string>
+    <string name="mock_schedule_change">Cambiar fecha</string>
+    <string name="mock_schedule_skip">Omitir este simulacro</string>
+    <string name="mock_schedule_skipped">Simulacro omitido</string>
+    <string name="mock_schedule_moved">Se movió al %1$s</string>
 </resources>

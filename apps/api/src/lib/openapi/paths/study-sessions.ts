@@ -247,7 +247,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
-        "More study after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them beforehand), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each call, with capped Brain Power.",
+        "On a scheduled mock day, adds the first of up to three upcoming lessons without changing the mock. After other sessions, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them beforehand), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each call, with capped Brain Power.",
       operationId: "createStudyExtraBlock",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },

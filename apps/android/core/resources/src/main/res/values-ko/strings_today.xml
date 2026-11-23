@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "7e075a4d5d8aa1688de0b20cbf55d7c43443b072a4251f8b6e9ae43d056e59ba",
+  "mock_schedule_moved": "bdc263acdd2783518d66ca780ccfd284ec29d58b273a46cae33ac2ab7ef73f66",
+  "mock_schedule_skip": "622c1cb75b6d2af8442066d697a5a8fef17a90bc52df9219fc05a7cc036675dd",
+  "mock_schedule_skipped": "f96eebf688a045bad9393dd488819e88d506f0902236b5b4ba12d87642164f6f",
+  "mock_schedule_title": "c5de27961426a6be8a377a2a7f8cd196a191c4e3aa604238663cf01729a128c5",
   "today_add_to_today": "2923e7d0503f01b22042bf049b31e494f72880f508f6afba45db6c4712b47179",
   "today_adjust_your_plan": "7388d7896f0ba317f52a4b11d4b9dee426c95c572e1798bb78b044f7bf51ad05",
   "today_already_know_chapter": "cc05bee1a285892704444dbe77e9ed54cd4ee6081600beaed4151745e14b35fe",
@@ -368,4 +373,9 @@
     <string name="today_add_to_today">오늘 학습에 추가하기</string>
     <string name="today_unfinished_setup">아직 목표 설정을 마치지 않았어요.</string>
     <string name="today_step_every_topic">모든 주제</string>
+    <string name="mock_schedule_title">모의고사 날짜 변경</string>
+    <string name="mock_schedule_change">일정 변경</string>
+    <string name="mock_schedule_skip">이번 모의고사 건너뛰기</string>
+    <string name="mock_schedule_skipped">모의고사를 건너뛰었어요</string>
+    <string name="mock_schedule_moved">%1$s로 옮겼어요</string>
 </resources>

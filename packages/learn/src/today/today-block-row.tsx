@@ -9,6 +9,7 @@ import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { type MissionView } from "../missions/mission-links";
+import { MockSchedule } from "../mock/mock-schedule";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
@@ -208,6 +209,9 @@ export function BlockRow({
           <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
           <RowLines block={block} isNext={isNext} showSubject={showSubject} />
+          {block.checkpoint?.mock && block.status === "pending" && block.planItemId && (
+            <MockSchedule planItemId={block.planItemId} />
+          )}
         </div>
 
         {(block.extra || !finished) && (
@@ -230,27 +234,27 @@ export function BlockRow({
 
 export function PlanLessonRow({
   busy,
+  current,
   disabled = busy,
   minutes,
   onOpen,
   title,
 }: {
   busy: boolean;
+  current: boolean;
   disabled?: boolean;
   minutes: number;
   onOpen: (() => void) | null;
   title: string;
 }) {
-  const isNext = onOpen !== null;
-
   const name = (
     <span className="min-w-0 flex-1 text-sm leading-5 font-medium text-balance">{title}</span>
   );
 
   return (
     <li
-      aria-current={isNext ? "step" : undefined}
-      className={cn(getRowClass({ isNext }), isNext && disabled && !busy && "opacity-50")}
+      aria-current={current ? "step" : undefined}
+      className={cn(getRowClass({ isNext: current }), onOpen && disabled && !busy && "opacity-50")}
     >
       <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />

@@ -77,6 +77,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 
   struct MockFunding: Decodable, Equatable, Sendable {
+    var planItemId: String?
     let mockDate: String
   }
 

@@ -126,6 +126,9 @@ test.describe("Checkpoints API", () => {
       api.post(`/v1/challenges/${id}/starts`, { data: { timeZone: "UTC" } }),
       api.post(`/v1/challenges/${id}/moves`, { data: { timeZone: "UTC" } }),
       api.delete(`/v1/challenges/${id}/moves/${randomUUID()}?timeZone=UTC`),
+      api.get(`/v1/challenges/${id}/schedule?timeZone=UTC`),
+      api.post(`/v1/challenges/${id}/schedule`, { data: { date: null, timeZone: "UTC" } }),
+      api.delete(`/v1/challenges/${id}/schedule/${randomUUID()}?timeZone=UTC`),
       api.post(`/v1/challenges/${id}/generations`),
     ]);
 

@@ -32,7 +32,13 @@ struct TodayUpNextSection: View {
           .tint(.primary)
           .disabled(busy != nil && busy != .upNextLesson)
           .accessibilityBusy(busy == .upNextLesson)
-          .currentRow()
+          .currentRow(view.session.nextBlock == nil)
+
+          if view.session.nextBlock != nil, failed == .upNextLesson {
+            FailureLine(
+              message: LocalizedStringResource(
+                "We couldn't open the next step. Try again.", table: "Today"))
+          }
         } else {
           row
         }

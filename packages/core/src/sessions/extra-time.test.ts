@@ -16,10 +16,35 @@ describe(getExtraTime, () => {
     ).toStrictEqual({ available: false, lessons: [], minutes: 10, reason: "sessionNotFinished" });
   });
 
-  it("doesn't wait for a mock still being prepared", () => {
-    expect(
-      getExtraTime({ blocks: [done, { preparing: true, status: "pending" }], current: true }),
-    ).toStrictEqual({ available: true, lessons: [], minutes: 10, reason: null });
+  it("offers lessons while a scheduled mock is waiting, and waits for an added lesson to finish", () => {
+    const mock = {
+      kind: "checkpoint" as const,
+      payload: {
+        checkpoint: {
+          kind: "weekly",
+          mock: true,
+          passMark: 0,
+          phase: null,
+          timeLimitMinutes: null,
+        },
+      },
+      status: "pending" as const,
+    };
+
+    expect(getExtraTime({ blocks: [done, mock], current: true }).available).toBe(true);
+
+    expect(getExtraTime({ blocks: [mock, { status: "pending" }], current: true }).available).toBe(
+      false,
+    );
+
+    const fallback = {
+      kind: "practice" as const,
+      payload: { mockPreparationReview: true },
+      status: "pending" as const,
+    };
+
+    expect(getExtraTime({ blocks: [mock, fallback], current: true }).available).toBe(true);
+    expect(getExtraTime({ blocks: [mock], current: false }).available).toBe(false);
   });
 
   it("lets practice the learner asks for start before the session is done", () => {

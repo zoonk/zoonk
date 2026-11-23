@@ -2,32 +2,44 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { findMockFundingOn } from "../../../plans/planner/mock-funding";
+import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
+import { type SelectedDayPlan } from "../../../sessions/_utils/selected-day-plan";
 
 /** Internal saved-ledger read, called only for an owned goal; previews provide their selected settings. */
 export async function loadDayMockFunding({
   goal,
   localDate,
-  selectedSettings,
+  selection,
 }: {
   goal: Goal;
   localDate: Date;
-  selectedSettings?: unknown;
+  selection?: SelectedDayPlan | null;
 }) {
   if (goal.kind !== "exam") {
     return null;
   }
 
-  if (selectedSettings !== undefined) {
-    return findMockFundingOn({
-      date: localDate,
-      funding: parsePlanSettings(selectedSettings).mockFunding,
-    });
+  const plan = selection
+    ? { items: selection.items, settings: selection.state.settings }
+    : await readSavedPlan(goal.userId, goal.id);
+
+  const funding = findMockFundingOn({
+    date: localDate,
+    funding: parsePlanSettings(plan?.settings).mockFunding,
+  });
+
+  if (!funding) {
+    return null;
   }
 
-  const plan = await readSavedPlan(goal.userId, goal.id);
+  const mock = plan?.items.find(
+    (item) =>
+      item.kind === "mock" &&
+      item.status === "todo" &&
+      item.scheduledFor &&
+      toIsoDate(item.scheduledFor) === funding.mockDate,
+  );
 
-  return plan
-    ? findMockFundingOn({ date: localDate, funding: parsePlanSettings(plan.settings).mockFunding })
-    : null;
+  return { ...funding, ...(mock?.id && { planItemId: mock.id }) };
 }

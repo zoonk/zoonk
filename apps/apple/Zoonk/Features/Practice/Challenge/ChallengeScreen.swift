@@ -208,6 +208,10 @@ struct ChallengeScreen: View {
         }
       }
     } actions: {
+      if canSchedule(challenge) {
+        MockScheduleLink(planItemId: challenge.planItemId, today: challenge.today)
+          .disabled(isStarting || isMoving)
+      }
       actions(challenge)
     }
     .practiceActionsHidden(!hasActions(challenge))
@@ -288,7 +292,7 @@ struct ChallengeScreen: View {
       }
     } else if isPreparing(challenge) {
       PracticeActionRow {
-        if challenge.canMove, moved == nil {
+        if !challenge.mock, challenge.canMove, moved == nil {
           PracticeSecondaryButton(
             title: LocalizedStringResource(
               "Move to Monday", table: "Practice",
@@ -311,7 +315,7 @@ struct ChallengeScreen: View {
 
         if writeLimit?.letsTry(at: now) ?? true {
           PracticeActionRow {
-            if challenge.canMove, moved == nil {
+            if !challenge.mock, challenge.canMove, moved == nil {
               PracticeSecondaryButton(
                 title: LocalizedStringResource(
                   "Move to Monday", table: "Practice",
@@ -338,7 +342,7 @@ struct ChallengeScreen: View {
         Text(status).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
-      if challenge.canMove, moved == nil {
+      if !challenge.mock, challenge.canMove, moved == nil {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "Move to Monday", table: "Practice",
@@ -420,9 +424,14 @@ struct ChallengeScreen: View {
   }
 
   /// Before its day a challenge has nothing to do yet: no pinned bar.
+  private func canSchedule(_ challenge: Components.Schemas.Challenge) -> Bool {
+    challenge.mock && challenge.access != .plusRequired && challenge.date != nil
+      && [.ready, .upcoming, .waiting].contains(challenge.status)
+  }
+
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
     isLocked(challenge)
-      || challenge.canMove
+      || canSchedule(challenge) || (!challenge.mock && challenge.canMove)
       || statusLine(challenge) != nil
       || [.ready, .started].contains(challenge.status)
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)

@@ -35,6 +35,12 @@ type LearnRoutes = Record<LearnTab, LearnRoute> & { signUp: LearnRoute; upgrade:
 /** Keep the object stable (define it at module level) so consumers don't re-render needlessly. */
 export type LearnAdapters = {
   analytics: LearnAnalytics;
+  mockSchedule?: {
+    dates: (planItemId: string) => Promise<string[] | null>;
+    change: (planItemId: string, date: string | null) => Promise<string | null>;
+    undo: (planItemId: string, changeId: string) => Promise<boolean>;
+    showToday: () => void;
+  };
   /** Every country, named and sorted in `language`; null when it couldn't be read. */
   loadCountries: (language: string) => Promise<CountryChoice[] | null>;
   linkComponent: LearnLinkComponent;
@@ -76,4 +82,8 @@ export function useWriteNow(): LearnAdapters["writeNow"] {
 
 export function useLearnRoutes(): LearnRoutes {
   return useLearnAdapters().routes;
+}
+
+export function useMockSchedule() {
+  return useLearnAdapters().mockSchedule;
 }

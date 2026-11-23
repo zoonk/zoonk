@@ -3,9 +3,10 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
+import { StepOpenFailed } from "../_components/step-open-failed";
 import { useKeepLearning } from "./today-action";
 import { PlanLessonRow } from "./today-block-row";
-import { useUpNextLessons } from "./use-today-copy";
+import { useHasNextBlock, useUpNextLessons } from "./use-today-copy";
 
 const UP_NEXT_TITLE_ID = "today-up-next-title";
 
@@ -13,6 +14,7 @@ const UP_NEXT_TITLE_ID = "today-up-next-title";
 export function TodayUpNext({ className }: { className?: string }) {
   const t = useExtracted();
   const lessons = useUpNextLessons();
+  const hasNext = useHasNextBlock();
   const keep = useKeepLearning();
 
   if (lessons.length === 0) {
@@ -34,12 +36,14 @@ export function TodayUpNext({ className }: { className?: string }) {
             disabled={keep.isPending}
             // oxlint-disable-next-line react/no-array-index-key -- two plan lessons can share a title, and a read replaces the list whole.
             key={index}
+            current={index === 0 && !hasNext}
             minutes={lesson.minutes}
             onOpen={index === 0 ? keep.openFromRow : null}
             title={lesson.title}
           />
         ))}
       </ol>
+      {hasNext && keep.failed && <StepOpenFailed />}
     </section>
   );
 }

@@ -91,6 +91,7 @@ const planChangePayloadSchema = z.object({
   fromProposal: z.boolean().default(false),
   lessonHoldKey: z.string().optional(),
   lessonsSkipped: z.int().min(0).nullable().default(null),
+  mockSchedule: z.object({ from: z.iso.date(), to: z.iso.date().nullable() }).optional(),
   noticeId: z.string().nullable().default(null),
   officialDate: z
     .object({ date: z.iso.date(), source: z.string().nullable() })

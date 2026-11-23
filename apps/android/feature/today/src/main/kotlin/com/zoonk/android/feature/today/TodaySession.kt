@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.SessionBar
 import com.zoonk.android.feature.session.StepOpenFailed
+import com.zoonk.android.feature.session.checkpointFacts
 import com.zoonk.android.feature.session.drawsDayProgress
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonSize
@@ -82,7 +84,7 @@ internal fun LazyListScope.todaySession(
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
 
     if (model.upNext.isNotEmpty()) {
-        upNext(model.upNext, viewModel.pending, failed = viewModel.failed == TodayTap.UpNext, actions)
+        upNext(model.upNext, day.nextStep == null, viewModel.pending, failed = viewModel.failed == TodayTap.UpNext, actions)
     }
 
     item(key = "more", contentType = "more") { TodayMore(model, viewModel, actions, buddyName, Modifier.pageItem().padding(top = 16.dp)) }
@@ -145,6 +147,13 @@ private fun LazyListScope.sessionQueue(
             onNavigate = actions.navigate,
             divider = index != beforeNext && !(stepsEnd && index == rowsShown.lastIndex),
         )
+        if (step.checkpointFacts?.mock == true && step.status == StudyBlock.Status.PENDING && step.planItemId != null &&
+            actions.schedule != null
+        ) {
+            TextButton(onClick = { actions.schedule.invoke(requireNotNull(step.planItemId)) }, modifier = Modifier.pageItem()) {
+                Text(stringResource(R.string.mock_schedule_change))
+            }
+        }
     }
 
     if (showsComing) {
@@ -246,6 +255,7 @@ internal fun comingNote(asks: Boolean): Int = if (asks) R.string.today_coming_no
 
 private fun LazyListScope.upNext(
     lessons: List<StudyExtraTimeLessonsInner>,
+    isCurrent: Boolean,
     pending: TodayTap?,
     failed: Boolean,
     actions: TodayActionHandlers,
@@ -257,7 +267,7 @@ private fun LazyListScope.upNext(
     items(lessons.withIndex().toList(), key = { "up-next-${it.index}" }, contentType = { "up-next" }) { (index, lesson) ->
         val first = index == 0
         DayQueueRow(
-            isNext = first,
+            isNext = first && isCurrent,
             busy = first && pending == TodayTap.UpNext,
             waiting = pending != null && pending != TodayTap.UpNext,
             onClick = if (first) actions.upNext else null,

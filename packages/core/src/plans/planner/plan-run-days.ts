@@ -4,7 +4,7 @@ import { type BuildPlanInput } from "./build-plan";
 import { listTakenMockDays } from "./mock-days";
 import { fundMocks } from "./mock-funding";
 import { type MockResolution } from "./mock-identity";
-import { withMovedEvents } from "./moved-events";
+import { withMockSchedule, withMovedEvents } from "./moved-events";
 import {
   type StudyCalendar,
   addDays,
@@ -111,7 +111,7 @@ function describeRunDays({
   settings,
 }: {
   days: Pick<ReturnType<typeof createDays>, "describeDay" | "windows">;
-  settings: Pick<PlanSettings, "movedEvents">;
+  settings: Pick<PlanSettings, "movedEvents" | "mockSchedule">;
 }) {
   const resolveMoved = (event: FixedEvent, date: Date): FixedEvent =>
     event.mock
@@ -124,13 +124,13 @@ function describeRunDays({
         }
       : event;
 
-  return {
-    describeDay: withMovedEvents({
-      describeDay: days.describeDay,
-      moves: settings.movedEvents,
-      resolveMoved,
-    }),
-  };
+  const describe = withMovedEvents({
+    describeDay: days.describeDay,
+    moves: settings.movedEvents,
+    resolveMoved,
+  });
+
+  return { describeDay: withMockSchedule(describe, settings.mockSchedule) };
 }
 
 /** Lessons finished today already took part of today's time, so the rest of today holds only what's left. */

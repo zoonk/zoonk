@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,7 @@ import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayProgress
 import kotlinx.datetime.toJavaLocalDate
+import java.util.UUID
 
 @Composable
 internal fun TodayPageHeader(
@@ -67,9 +69,10 @@ internal fun TodayHeading(
     model: TodayDayModel,
     onAdjustPlan: () -> Unit,
     modifier: Modifier = Modifier,
+    schedule: ((UUID) -> Unit)? = null,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        PageTitleRow(stringResource(R.string.today_title)) { DayTime(model, MaterialTheme.typography.headlineSmall) }
+        PageTitleRow(stringResource(R.string.today_title)) { DayTime(model, MaterialTheme.typography.headlineSmall, schedule = schedule) }
         TodayLine(model, onAdjustPlan)
     }
 }
@@ -168,6 +171,7 @@ internal fun DayTime(
     model: TodayDayModel,
     style: androidx.compose.ui.text.TextStyle,
     modifier: Modifier = Modifier,
+    schedule: ((UUID) -> Unit)? = null,
 ) {
     val locale = currentLocale()
     val studied = model.day.studiedToday()
@@ -210,6 +214,15 @@ internal fun DayTime(
         title = stringResource(R.string.today_shorter_day),
         facts = null,
         note = stringResource(R.string.today_shorter_day_note, date),
+        footer = { dismiss ->
+            val id = funding.planItemId
+            if (id != null && schedule != null) {
+                TextButton(onClick = {
+                    dismiss()
+                    schedule(id)
+                }) { Text(stringResource(R.string.mock_schedule_change)) }
+            }
+        },
         modifier = modifier,
     ) { open ->
         Readout(text, open.dottedUnderline(MaterialTheme.colorScheme.onSurfaceVariant), style)

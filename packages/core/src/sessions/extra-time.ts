@@ -1,5 +1,6 @@
-import { type StudyBlockStatus } from "@zoonk/db";
+import { type StudySessionBlock } from "@zoonk/db";
 import { type EmptyDay } from "./_utils/session-view";
+import { readBlockPayload } from "./block-payload";
 
 export const EXTRA_BLOCK_MINUTES = 10;
 
@@ -16,17 +17,30 @@ export type ExtraTime = {
   minutes: number;
 } & ({ available: true; reason: null } | { available: false; reason: ExtraTimeReason });
 
-type ExtraTimeBlock = { preparing?: boolean; status: StudyBlockStatus };
+type ExtraTimeBlock = Pick<StudySessionBlock, "status"> &
+  Partial<Pick<StudySessionBlock, "kind" | "payload">>;
 
-/** A mock still being prepared waits on no one's study, so it never holds more lessons back. */
-function isBehindLearner({ preparing = false, status }: ExtraTimeBlock): boolean {
-  return status === "completed" || status === "skipped" || (status === "pending" && preparing);
+export function isScheduledMock(
+  block: Partial<Pick<StudySessionBlock, "kind" | "payload">>,
+): boolean {
+  return (
+    block.kind === "checkpoint" &&
+    block.payload !== undefined &&
+    readBlockPayload({ payload: block.payload }).checkpoint?.mock === true
+  );
 }
 
-/**
- * Adds only to the learner's current day, and requires its planned blocks finished unless anytime
- * is set.
- */
+function allowsExtraStudy(block: ExtraTimeBlock): boolean {
+  return (
+    block.status === "completed" ||
+    block.status === "skipped" ||
+    isScheduledMock(block) ||
+    ((block.kind === "review" || block.kind === "practice") &&
+      block.payload !== undefined &&
+      readBlockPayload({ payload: block.payload }).mockPreparationReview === true)
+  );
+}
+
 export function getExtraTime({
   anytime = false,
   blocks,
@@ -43,7 +57,7 @@ export function getExtraTime({
     return { available: false, lessons: [], minutes, reason: "dayOver" };
   }
 
-  if (!anytime && !blocks.every((block) => isBehindLearner(block))) {
+  if (!anytime && !blocks.every((block) => allowsExtraStudy(block))) {
     return { available: false, lessons: [], minutes, reason: "sessionNotFinished" };
   }
 

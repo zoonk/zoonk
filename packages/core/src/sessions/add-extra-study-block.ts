@@ -4,7 +4,6 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { isCurrentSession } from "./_utils/current-session";
 import { appendExtraBlocks, planExtraBlocks, withSessionAppendLock } from "./_utils/extra-blocks";
 import { readBlockLessonStates } from "./_utils/lesson-screens";
-import { loadPreparingMockPositions } from "./_utils/preparing-mock-blocks";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
@@ -19,8 +18,7 @@ export type ExtraStudyBlockResult =
   | { reason: ExtraTimeReason; status: "unavailable" };
 
 /**
- * Adds to the learner's current day only, once its planned blocks are finished (a mock still being
- * prepared aside); returns the first added block.
+ * Adds to the learner's current day only, once its planned work is done or only a scheduled mock remains.
  */
 export async function addExtraStudyBlock({
   input,
@@ -38,18 +36,12 @@ export async function addExtraStudyBlock({
   const { userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone });
 
-  const [skillIds, preparing] = await Promise.all([
-    owned.session.goalId ? loadGoalSkillIds(owned.session.goalId) : [],
-    loadPreparingMockPositions(owned.session),
-  ]);
+  const skillIds = owned.session.goalId ? await loadGoalSkillIds(owned.session.goalId) : [];
 
   const added = await withSessionAppendLock<ExtraStudyBlockResult>({
     run: async ({ session, transaction }) => {
       const extraTime = getExtraTime({
-        blocks: session.blocks.map((block) => ({
-          preparing: preparing.has(block.position),
-          status: block.status,
-        })),
+        blocks: session.blocks,
         current: isCurrentSession({ now: new Date(), session, timeZone }),
       });
 

@@ -231,4 +231,9 @@
     <string name="today_add_to_today">Add to today</string>
     <string name="today_unfinished_setup">You didn\'t finish setting this up.</string>
     <string name="today_step_every_topic">Every topic</string>
+    <string name="mock_schedule_title">Change mock exam date</string>
+    <string name="mock_schedule_change">Change schedule</string>
+    <string name="mock_schedule_skip">Skip this mock exam</string>
+    <string name="mock_schedule_skipped">Mock exam skipped</string>
+    <string name="mock_schedule_moved">Moved to %1$s</string>
 </resources>

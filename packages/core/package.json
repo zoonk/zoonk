@@ -60,6 +60,8 @@
     "./certificates/public": "./src/certificates/get-public-certificate.ts",
     "./checkpoints/challenge": "./src/checkpoints/get-challenge.ts",
     "./checkpoints/challenge-contract": "./src/checkpoints/challenge-contract.ts",
+    "./checkpoints/mock-schedule": "./src/checkpoints/mock-schedule.ts",
+    "./checkpoints/mock-schedule-contract": "./src/checkpoints/mock-schedule-contract.ts",
     "./checkpoints/challenge-move": "./src/checkpoints/move-challenge.ts",
     "./checkpoints/challenge-questions": "./src/checkpoints/challenge-questions.ts",
     "./checkpoints/challenge-start": "./src/checkpoints/start-challenge.ts",

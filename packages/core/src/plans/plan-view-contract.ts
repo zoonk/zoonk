@@ -129,7 +129,7 @@ export type PlanPhaseView = {
   lessonsDone: number;
   lessonsTotal: number;
   milestone: string | null;
-  mocks: { count: number; nextDate: string | null };
+  mocks: { count: number; nextDate: string | null; nextPlanItemId?: string };
   /** Empty for exam phases, which the apps name by kind. */
   name: string;
   short: ShortPhaseView | null;
