@@ -29,7 +29,6 @@ private struct ProcessOrderCanvas: View {
 
   @ActivityState private var order: [String]
   @ActivityState("selectedId") private var selectedId: String? = nil
-  @State private var targetedId: String?
 
   init(fields: ProcessOrderFields, context: ActivityCanvasContext) {
     self.fields = fields
@@ -60,97 +59,12 @@ private struct ProcessOrderCanvas: View {
   private var answering: some View {
     let byId = Dictionary(fields.steps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
 
-    return VStack(alignment: .leading, spacing: 8) {
-      ForEach(Array(order.enumerated()), id: \.element) { index, id in
-        if let step = byId[id] {
-          row(step, index: index)
-        }
-      }
-
-      ActivityCaption(
-        Text(
-          "Drag the steps into order, or tap one and then its place.", tableName: "Activities",
-          comment: "Under the steps of a process to put in order"))
-    }
-  }
-
-  private func row(_ step: ProcessOrderFields.Step, index: Int) -> some View {
-    let isSelected = selectedId == step.id
-
-    return Button {
-      if let selectedId, selectedId != step.id {
-        move(selectedId, to: index)
-      } else {
-        selectedId = isSelected ? nil : step.id
-      }
-    } label: {
-      ProcessStepRow(position: index + 1, icon: step.icon, mark: .plain, isDraggable: true) {
-        LessonRichText(step.text)
-          .typeWeight(.medium)
-      }
-    }
-    .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
-    .overlay {
-      if targetedId == step.id {
-        RoundedRectangle(cornerRadius: Radius.option).fill(.selectedTint)
-      }
-    }
-    .draggable(ActivityDragItem(id: step.id))
-    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
-      guard let id = dropped.first?.id, order.contains(id) else {
-        return false
-      }
-
-      move(id, to: index)
-      return true
-    } isTargeted: { isTargeted in
-      if isTargeted {
-        targetedId = step.id
-      } else if targetedId == step.id {
-        targetedId = nil
-      }
-    }
-    .accessibilityLabel(
-      Text(
-        "\(index + 1). \(LessonRichText.spoken(step.text))", tableName: "Activities",
-        comment: "VoiceOver: a step's place in the learner's order, then the step")
-    )
-    .accessibilityAddTraits(isSelected ? .isSelected : [])
-    .accessibilityActions {
-      if index > 0 {
-        Button {
-          move(step.id, to: index - 1)
-        } label: {
-          Text("Move up", tableName: "Activities", comment: "VoiceOver action on a step to order")
-        }
-      }
-
-      if index < order.count - 1 {
-        Button {
-          move(step.id, to: index + 1)
-        } label: {
-          Text("Move down", tableName: "Activities", comment: "VoiceOver action on a step to order")
-        }
-      }
-    }
-  }
-
-  private func move(_ id: String, to index: Int) {
-    guard let from = order.firstIndex(of: id), from != index else {
-      selectedId = nil
-      return
-    }
-
-    order.remove(at: from)
-    order.insert(id, at: index)
-    selectedId = nil
-    context.setAnswer(.order(order))
-
-    let text = fields.steps.first { $0.id == id }.map { LessonRichText.spoken($0.text) } ?? ""
-    announcePolitely(
-      String(
-        localized: "\(text) is now step \(index + 1).", table: "Activities",
-        locale: .appLanguage, comment: "VoiceOver, after a step of a process moves"))
+    return OrderSteps(
+      order: order, selectedId: $selectedId, text: { byId[$0]?.text }, icon: { byId[$0]?.icon },
+      onReorder: { moved in
+        order = moved
+        context.setAnswer(.order(moved))
+      })
   }
 
   private func solved(results: [ProcessOrder.StepResult]?) -> some View {
@@ -199,65 +113,6 @@ private struct ProcessOrderCanvas: View {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
     default: Color.boxBackground
-    }
-  }
-}
-
-private struct ProcessStepRow<Content: View>: View {
-  let position: Int
-  let icon: String?
-  let mark: ActivityTileMark
-  var isDraggable = false
-  @ViewBuilder let content: Content
-
-  var body: some View {
-    MarkedRow(stackedSpacing: 8) {
-      ProcessStepMarks(position: position, icon: icon, mark: mark)
-    } content: {
-      content
-    } end: {
-      if isDraggable {
-        Image(systemName: "line.3.horizontal")
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
-      }
-    }
-  }
-}
-
-private struct ProcessStepMarks: View {
-  let position: Int
-  let icon: String?
-  let mark: ActivityTileMark
-
-  @ScaledMetric(relativeTo: .subheadline) private var badge = 28.0
-
-  var body: some View {
-    HStack(spacing: 10) {
-      Text(position, format: .number)
-        .typeStyle(.note.weight(.semibold).monospaced())
-        .foregroundStyle(mark == .plain ? Color.primary : Color(.background))
-        .frame(width: badge, height: badge)
-        .background(fill, in: .circle)
-
-      if let symbol = ProcessIcons.symbol(for: icon) {
-        // In one square box, as Lucide draws every icon, so a wide one (a battery) isn't wider.
-        Image(systemName: symbol)
-          .resizable()
-          .scaledToFit()
-          .foregroundStyle(.mutedForeground)
-          .frame(width: badge * 0.7, height: badge * 0.7)
-          .frame(width: badge)
-      }
-    }
-    .accessibilityHidden(true)
-  }
-
-  private var fill: Color {
-    switch mark {
-    case .right: .success
-    case .wrong: .destructive
-    default: Color.muted
     }
   }
 }

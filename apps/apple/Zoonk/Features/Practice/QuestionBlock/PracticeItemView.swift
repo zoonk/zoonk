@@ -54,7 +54,7 @@ struct PracticeItemView: View {
       MatchPairsItemView(
         left: question.left, right: question.right, isLocked: locked, draft: $draft)
     case .order:
-      OrderItemView(steps: question.options, result: result, isLocked: locked, draft: $draft)
+      OrderItemView(question: question, result: result, isLocked: locked, draft: $draft)
     case .numeric:
       NumericItemView(
         entry: question.entry, unit: question.unit, mark: result?.mark, isLocked: locked,
@@ -405,38 +405,40 @@ private struct PairBadge: View {
 }
 
 struct OrderItemView: View {
-  let steps: [String]
+  let question: PracticeQuestion
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
+  @State private var selectedId: Int?
+
   var body: some View {
-    let placed: [Int] = if case .order(let given) = result?.answer { given } else { order }
+    let steps = question.options
+    if let result {
+      let placed: [Int] = if case .order(let order) = result.answer { order } else { [] }
 
-    VStack(alignment: .leading, spacing: 10) {
-      Text(
-        "Tap the steps in order.", tableName: "Practice",
-        comment: "Instruction above an ordering question."
-      )
-      .typeStyle(.note.weight(.medium))
-      .foregroundStyle(.mutedForeground)
-
-      ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-        let place = placed.firstIndex(of: index)
-        let result = stepResult(index, placed: placed)
-
-        AnswerOption(
-          shortcut: index + 1,
-          isPicked: place != nil,
-          result: result,
-          isLocked: isLocked,
-          tag: place.map { AnyView(PairBadge(number: $0 + 1)) },
-          text: LessonRichText.typeset(step),
-          action: { tap(index) }
-        )
-        .accessibilityValue(placeValue(place, result: result))
-        .practiceFocus(index == 0 ? .answer : nil)
+      VStack(alignment: .leading, spacing: 8) {
+        ForEach(placed.isEmpty ? Array(steps.indices) : placed, id: \.self) { index in
+          if steps.indices.contains(index) {
+            let place = placed.firstIndex(of: index)
+            let mark = stepResult(index, place: place)
+            AnswerOption(
+              marker: place.map { $0 + 1 }, isPicked: place != nil, result: mark,
+              text: LessonRichText.typeset(steps[index]), action: nil
+            )
+            .accessibilityValue(placeValue(place, result: mark))
+          }
+        }
       }
+    } else if case .order(let order) = question.answerToSubmit(draft) {
+      OrderSteps(
+        order: order, selectedId: $selectedId,
+        text: { steps.indices.contains($0) ? steps[$0] : nil },
+        onReorder: { moved in
+          if !isLocked { draft = .order(moved) }
+        }
+      )
+      .disabled(isLocked)
     }
   }
 
@@ -461,28 +463,9 @@ struct OrderItemView: View {
     }
   }
 
-  private func stepResult(_ index: Int, placed: [Int]) -> AnswerOptionResult? {
-    guard let result, case .order(let correctOrder) = result.correctAnswer else { return nil }
-    return placed.firstIndex(of: index) == correctOrder.firstIndex(of: index) ? .right : .wrong
-  }
-
-  private var order: [Int] {
-    switch draft {
-    case .partial(let placed): placed.compactMap(\.self)
-    case .order(let given): given
-    default: []
-    }
-  }
-
-  private func tap(_ index: Int) {
-    let next = order.contains(index) ? order.filter { $0 != index } : order + [index]
-
-    draft =
-      if next.count == steps.count {
-        .order(next)
-      } else {
-        next.isEmpty ? nil : .partial(next)
-      }
+  private func stepResult(_ index: Int, place: Int?) -> AnswerOptionResult? {
+    guard let place, case .order(let correctOrder) = result?.correctAnswer else { return nil }
+    return place == correctOrder.firstIndex(of: index) ? .right : .wrong
   }
 }
 

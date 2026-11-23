@@ -220,6 +220,7 @@ struct MistakePracticeScreen: View {
         ask(step, answered: true)
       }
     case .answering, .checking, .answerFailed:
+      let answer = step.question?.answerToSubmit(draft)
       if case .answerFailed(let sent) = state.phase {
         PracticeSaveError(
           failures: state.saveFailures, onReport: { showsSaveReport = true },
@@ -247,9 +248,9 @@ struct MistakePracticeScreen: View {
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
           isBusy: checking?.pressesCheck == true,
-          isDisabled: !state.acceptsAnswer || draft?.complete == nil
+          isDisabled: !state.acceptsAnswer || answer == nil
         ) {
-          if let answer = draft?.complete {
+          if let answer {
             press(.check)
             Task { await check(answer, by: .check) }
           }

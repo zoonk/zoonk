@@ -390,6 +390,7 @@ struct QuestionBlockView: View {
   private func answerButtons(phase: QuestionBlockPhase) -> some View {
     let question = run.question
     let accepts = phase.acceptsAnswer
+    let answer = question?.answerToSubmit(run.draft)
 
     PracticeActionRow {
       if run.drill?.kind == .noGuessing {
@@ -423,9 +424,9 @@ struct QuestionBlockView: View {
         title: LocalizedStringResource(
           "Check", table: "Practice", comment: "Sends the answer to be graded."),
         isBusy: phase.checking?.pressesCheck == true,
-        isDisabled: !accepts || run.draft?.complete == nil
+        isDisabled: !accepts || answer == nil
       ) {
-        if let answer = run.draft?.complete {
+        if let answer {
           press(.check)
           Task { await run.submit(answer) }
         }
