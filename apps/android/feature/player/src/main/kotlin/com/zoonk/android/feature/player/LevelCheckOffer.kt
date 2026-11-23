@@ -1,16 +1,23 @@
 package com.zoonk.android.feature.player
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.ButtonSize
-import com.zoonk.android.ui.components.SuggestionActions
-import com.zoonk.android.ui.components.SuggestionCard
-import com.zoonk.android.ui.components.SuggestionDescription
-import com.zoonk.android.ui.components.SuggestionHeader
-import com.zoonk.android.ui.components.SuggestionMainAction
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.LibraryLessonCompletionPlacementOffer
@@ -44,34 +51,38 @@ internal fun LevelCheckOffer(
     onDismiss: () -> Unit,
 ) {
     val level = offer.level
-    val title = stringResource(R.string.placementtest_offer_title)
-    SuggestionCard(label = title, card = {
-        SuggestionHeader(title)
-        SuggestionDescription(
-            if (level !=
-                null
-            ) {
-                stringResource(R.string.placementtest_offer_level, level)
-            } else {
-                stringResource(R.string.placementtest_offer_quick)
-            },
-        )
-        if (failed) SuggestionSaveError()
-        SuggestionActions {
-            SuggestionMainAction(
-                if (level !=
-                    null
-                ) {
-                    stringResource(R.string.placementtest_test_out, level)
-                } else {
-                    stringResource(R.string.placementtest_title)
-                },
-                onClick = { onOpen(offer.route()) },
-                enabled = !dismissing,
-            )
-            TextButton(onClick = onDismiss, busy = dismissing, size = ButtonSize.Small) {
-                Text(stringResource(R.string.placementtest_not_now))
+    OutlinedCard(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    stringResource(R.string.placementtest_offer_title),
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    if (level != null) {
+                        stringResource(R.string.placementtest_offer_level, level)
+                    } else {
+                        stringResource(R.string.placementtest_offer_quick)
+                    },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { onOpen(offer.route()) }, enabled = !dismissing) {
+                    Text(
+                        if (level != null) {
+                            stringResource(R.string.placementtest_test_out, level)
+                        } else {
+                            stringResource(R.string.placementtest_title)
+                        },
+                    )
+                }
+                TextButton(onClick = onDismiss, busy = dismissing) { Text(stringResource(R.string.placementtest_not_now)) }
+            }
+            if (failed) SuggestionSaveError()
         }
-    })
+    }
 }
