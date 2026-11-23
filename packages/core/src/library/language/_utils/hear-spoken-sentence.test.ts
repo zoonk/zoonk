@@ -96,6 +96,32 @@ describe(hearSpokenSentence, () => {
   );
 
   it.each([true, false])(
+    "uses the recording when only the opening word is missing from the transcript (said: %s)",
+    async (said) => {
+      const expected = "Ho tempo.";
+      const transcript = said ? expected : "Tempo.";
+      transcribe("Tempo.");
+      vi.mocked(assessPronunciation).mockResolvedValueOnce({
+        data: {
+          transcript,
+          words: [
+            { heard: null, issue: null, status: said ? "correct" : "missed", text: "Ho" },
+            { heard: null, issue: null, status: "correct", text: "tempo." },
+          ],
+        },
+      } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+      const result = await hearSpokenSentence({ ...recording, expected, language: "it" });
+
+      expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ audio: recording.audio.bytes, expectedText: expected }),
+      );
+      expect(result.transcript).toBe(transcript);
+      expect(result.match.isCorrect).toBe(said);
+    },
+  );
+
+  it.each([true, false])(
     "grades the authored surname reading from the audio (%s)",
     async (correct) => {
       const expected = "我姓单";
