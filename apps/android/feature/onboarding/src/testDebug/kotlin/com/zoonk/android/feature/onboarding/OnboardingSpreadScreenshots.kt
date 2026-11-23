@@ -206,6 +206,8 @@ class OnboardingSpreadScreenshots {
 
         val SCREENS =
             listOf(
+                Screen("question-dots") { question(listOf("schedule", "buddy", "plan"), answered = """["level"]""") },
+                Screen("country-dots") { question(listOf("contentCountry", "level", "schedule", "plan"), answered = "[]") },
                 Screen("placement-intro") { placement(placementOf()) },
                 Screen("placement-choice", start = true) { placement(placementOf()) },
                 Screen("placement-order", start = true) { placement(placementOf(next = orderQuestion())) },
@@ -213,6 +215,11 @@ class OnboardingSpreadScreenshots {
                 Screen("level-test-reading") { levelTest(levelTestOf(answered = 3)) },
                 Screen("level-test-listening") { levelTest(levelTestOf(next = listeningQuestion(), answered = 6)) },
             )
+
+        fun question(
+            steps: List<String>,
+            answered: String,
+        ) = FakeOnboardingApi().apply { setup = { setupView(steps, details = """{"answered":$answered}""") } }
 
         fun placement(placement: Placement) =
             FakeOnboardingApi().apply {

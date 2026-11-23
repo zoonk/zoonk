@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
@@ -14,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
@@ -50,8 +53,9 @@ import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
  * bottom in the [BottomBar], with its buttons in `TaskActions { main -> … }` so on a wide window the main
  * action sits at its own width at the end of the page's column; [barWidth] is that column's width, so the
  * bar stays under what it acts on. A page that centers its column says its width, its margins included, with
- * [columnWidth] instead, and the whole top bar keeps to it too: the way back, the title and the actions. The page
- * lays out its content in [pagePadding].
+ * [columnWidth] instead, and the whole top bar keeps to it too: the way back, the title and the actions. What the whole
+ * screen shares in place of a title, such as a step counter, goes in [middle], centered on the bar as main's `PageTopRow`
+ * centers it, and on the page before a book's fold. The page lays out its content in [pagePadding].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +63,7 @@ fun PageScaffold(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit = {},
+    middle: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     barWidth: Dp = Dp.Unspecified,
@@ -95,29 +100,54 @@ fun PageScaffold(
                             } else {
                                 ((maxWidth - columnWidth) / 2).coerceAtLeast(0.dp)
                             }
-                        TopAppBar(
-                            title = {
-                                BeforeFold { beforeFold ->
-                                    Box(
-                                        // Drawn by where the heading is in this frame, so the title doesn't flash in before the content lays out.
-                                        Modifier
-                                            .graphicsLayer { alpha = if (focus.headingInView()) 0f else 1f }
-                                            .then(if (inContent) Modifier.clearAndSetSemantics {} else Modifier)
-                                            .then(beforeFold.titleTarget(focus.bar)),
-                                    ) { title() }
-                                }
-                            },
-                            modifier = Modifier.pageBar(focus),
-                            navigationIcon = {
+                        val back =
+                            @Composable {
                                 BackButton(
                                     onClick = onBack,
                                     modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
                                     enabled = backEnabled,
                                 )
-                            },
-                            actions = { PageBarActions(actions) },
-                            windowInsets = TopAppBarDefaults.windowInsets.add(WindowInsets(left = columnInset, right = columnInset)),
-                        )
+                            }
+                        val insets = TopAppBarDefaults.windowInsets.add(WindowInsets(left = columnInset, right = columnInset))
+                        if (middle == null) {
+                            TopAppBar(
+                                title = {
+                                    BeforeFold { beforeFold ->
+                                        Box(
+                                            // Drawn by where the heading is in this frame, so the title doesn't flash in before the content lays out.
+                                            Modifier
+                                                .graphicsLayer { alpha = if (focus.headingInView()) 0f else 1f }
+                                                .then(if (inContent) Modifier.clearAndSetSemantics {} else Modifier)
+                                                .then(beforeFold.titleTarget(focus.bar)),
+                                        ) { title() }
+                                    }
+                                },
+                                modifier = Modifier.pageBar(focus),
+                                navigationIcon = back,
+                                actions = { PageBarActions(actions) },
+                                windowInsets = insets,
+                            )
+                        } else {
+                            val fold = screenSplit(maxWidth, span)
+                            CenterAlignedTopAppBar(
+                                title = { if (fold == null) middle() },
+                                modifier = Modifier.pageBar(focus),
+                                navigationIcon = {
+                                    if (fold == null) {
+                                        back()
+                                    } else {
+                                        // Material's bar starts its navigation slot [BAR_INSET] in, so the spacer is that much wider to center the middle on the page.
+                                        Row(Modifier.width(fold.start - BAR_INSET), verticalAlignment = Alignment.CenterVertically) {
+                                            back()
+                                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { middle() }
+                                            Spacer(Modifier.width(BACK_WIDTH + BAR_INSET))
+                                        }
+                                    }
+                                },
+                                actions = { PageBarActions(actions) },
+                                windowInsets = insets,
+                            )
+                        }
                     }
                 },
                 bottomBar = {
@@ -178,6 +208,10 @@ fun pageMargin(): Dp {
  * lines up by its ink with the page's margin, as the task bar's close button does.
  */
 private val BACK_INK_START = 4.dp + (48.dp - 24.dp) / 2 + 4.dp
+
+/** Where Material's bar starts its navigation slot, and the back button's width there. */
+private val BAR_INSET = 4.dp
+private val BACK_WIDTH = 48.dp
 
 /** Where Material's bar puts a bare icon button's glyph: its actions end 4dp from the window, the button 12dp past its glyph. */
 private val BAR_GLYPH_END = 4.dp + ICON_BUTTON_BLANK

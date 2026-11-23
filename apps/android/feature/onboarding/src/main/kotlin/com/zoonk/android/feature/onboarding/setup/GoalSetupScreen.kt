@@ -207,7 +207,7 @@ fun GoalSetupScreen(
         onBack = {
             if (backDispatcher?.hasEnabledCallbacks() == true) backDispatcher.onBackPressed() else navigator.back()
         },
-        title = {
+        middle = {
             when {
                 testing != null -> {
                     TestProgress(testing)
