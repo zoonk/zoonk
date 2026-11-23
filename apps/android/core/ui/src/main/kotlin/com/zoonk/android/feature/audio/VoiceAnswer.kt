@@ -217,6 +217,7 @@ fun rememberRecordTap(
     val currentOnAllowed by rememberUpdatedState(onAllowed)
     val permission =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            recorder.endPermissionRequest()
             if (granted) {
                 currentRecord()
             } else {
@@ -230,7 +231,13 @@ fun rememberRecordTap(
     LifecycleStartEffect(recorder) {
         onStopOrDispose { if (activity?.isChangingConfigurations != true) recorder.cancel() }
     }
-    return { if (recorder.hasPermission) currentRecord() else permission.launch(Manifest.permission.RECORD_AUDIO) }
+    return {
+        if (recorder.hasPermission) {
+            currentRecord()
+        } else if (recorder.beginPermissionRequest()) {
+            permission.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
 }
 
 /**
@@ -246,7 +253,7 @@ fun RecordButton(
     busy: Boolean = false,
 ) {
     val recording = status as? VoiceRecorder.Status.Recording
-    val held = busy && recording == null
+    val held = status == VoiceRecorder.Status.Acquiring || (busy && recording == null)
     val press = if (recording != null) onStop else onStart
     TakeTaskBarKey(TaskBarKey.Main, press.takeUnless { held })
     Button(

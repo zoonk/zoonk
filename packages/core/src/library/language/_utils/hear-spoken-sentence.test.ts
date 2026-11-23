@@ -56,6 +56,7 @@ describe(hearSpokenSentence, () => {
     ["fr-CA", "Ils parlent.", "Il parle.", undefined],
     ["nl", "Lijden.", "Leiden.", undefined],
     ["es", "Hola.", "Ola.", undefined],
+    ["ja", "今日は雨です。", "は雨です。", undefined],
     ["ko", "타이브레이크", "타이 브레이크", undefined],
     ["ja", "「住所」をよむ", "じゅうしょをよむ", undefined],
   ])(
@@ -92,6 +93,34 @@ describe(hearSpokenSentence, () => {
       const result = await hearSpokenSentence({ ...recording, expected, language, romanization });
       expect(result.match.isCorrect).toBe(false);
       expect(assessPronunciation).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([true, false])(
+    "uses the recording when only the opening word is missing from the transcript (said: %s)",
+    async (said) => {
+      const expected = "Ho tempo.";
+      const transcript = said ? expected : "Tempo.";
+      transcribe("Tempo.");
+
+      vi.mocked(assessPronunciation).mockResolvedValueOnce({
+        data: {
+          transcript,
+          words: [
+            { heard: null, issue: null, status: said ? "correct" : "missed", text: "Ho" },
+            { heard: null, issue: null, status: "correct", text: "tempo." },
+          ],
+        },
+      } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+      const result = await hearSpokenSentence({ ...recording, expected, language: "it" });
+
+      expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ audio: recording.audio.bytes, expectedText: expected }),
+      );
+
+      expect(result.transcript).toBe(transcript);
+      expect(result.match.isCorrect).toBe(said);
     },
   );
 

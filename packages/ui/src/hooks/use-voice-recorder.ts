@@ -40,10 +40,15 @@ function getRecordingType(): string | undefined {
   return RECORDING_TYPES.find((type) => MediaRecorder.isTypeSupported(type));
 }
 
+export function stopTracks(stream: MediaStream) {
+  stream.getTracks().forEach((track) => track.stop());
+}
+
 type ActiveRecording = {
+  ready: ReturnType<typeof Promise.withResolvers<boolean>>;
   recorder: MediaRecorder;
   released: boolean;
-  startedAt: number;
+  startedAt: number | null;
   stream: MediaStream;
   timeout: ReturnType<typeof setTimeout>;
 };
@@ -54,88 +59,164 @@ function finishRecording(active: ActiveRecording) {
   }
 
   active.released = true;
+  active.ready.resolve(false);
   globalThis.clearTimeout(active.timeout);
 
   if (active.recorder.state !== "inactive") {
     active.recorder.stop();
   }
 
-  active.stream.getTracks().forEach((track) => track.stop());
+  stopTracks(active.stream);
 }
 
-async function createRecording({
+function createRecording({
   onStopped,
   stream,
 }: {
   onStopped: (recording: Recording) => void;
   stream: MediaStream;
-}): Promise<ActiveRecording | null> {
-  const session: { active: ActiveRecording | null; started: boolean } = {
-    active: null,
-    started: false,
+}): ActiveRecording {
+  const chunks: Blob[] = [];
+  const type = getRecordingType();
+  const recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+
+  const active: ActiveRecording = {
+    ready: Promise.withResolvers<boolean>(),
+    recorder,
+    released: false,
+    startedAt: null,
+    stream,
+    timeout: globalThis.setTimeout(() => finishRecording(active), MAX_RECORDING_MS),
   };
 
-  const { data: active } = await safeAsync(async () => {
-    const chunks: Blob[] = [];
-    const type = getRecordingType();
-    const recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
-
-    const recording: ActiveRecording = {
-      recorder,
-      released: false,
-      startedAt: Date.now(),
-      stream,
-      timeout: globalThis.setTimeout(() => finishRecording(recording), MAX_RECORDING_MS),
-    };
-
-    session.active = recording;
-    recorder.addEventListener("dataavailable", (event) => chunks.push(event.data));
-
-    recorder.addEventListener("stop", () => {
-      finishRecording(recording);
-
-      if (session.started) {
-        onStopped({
-          audio: new Blob(chunks, { type: recorder.mimeType }),
-          durationMs: Date.now() - recording.startedAt,
-        });
-      }
-    });
-
-    recorder.start();
-    session.started = true;
-    return recording;
+  recorder.addEventListener("start", () => {
+    if (!active.released) {
+      active.startedAt = Date.now();
+      active.ready.resolve(true);
+    }
   });
 
-  if (!active) {
-    if (session.active) {
-      finishRecording(session.active);
-    } else {
-      stream.getTracks().forEach((track) => track.stop());
+  recorder.addEventListener("dataavailable", (event) => chunks.push(event.data));
+
+  recorder.addEventListener("stop", () => {
+    finishRecording(active);
+
+    if (active.startedAt !== null) {
+      onStopped({
+        audio: new Blob(chunks, { type: recorder.mimeType }),
+        durationMs: Date.now() - active.startedAt,
+      });
     }
-  }
+  });
 
   return active;
 }
 
+type StartResult = MicrophoneProblem | "recording" | null;
+
+type Take = { active?: ActiveRecording; confirmed: boolean; opening?: Promise<StartResult> };
+
 export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recording) => void }) {
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const [elapsedMs, setElapsedMs] = useState(0);
-  const activeRef = useRef<ActiveRecording | null>(null);
-  const acquisitionRef = useRef<symbol | null>(null);
-  const unmountedRef = useRef(false);
+  const takeRef = useRef<Take | null>(null);
+  const permissionRef = useRef<PermissionStatus | null>(null);
 
-  const stop = useCallback(() => {
-    const active = activeRef.current;
+  useEffect(() => {
+    if (navigator.permissions) {
+      void safeAsync(() => navigator.permissions.query({ name: "microphone" })).then(({ data }) => {
+        permissionRef.current = data;
+      });
+    }
+  }, []);
+
+  const release = useCallback(() => {
+    const active = takeRef.current?.active;
+    takeRef.current = null;
 
     if (active) {
       finishRecording(active);
     }
   }, []);
 
-  /** Null means a busy or departed owner has no new recording to start. */
-  const start = useCallback(async (): Promise<MicrophoneProblem | "recording" | null> => {
-    if (acquisitionRef.current || unmountedRef.current) {
+  const open = useCallback(
+    async (take: Take): Promise<StartResult> => {
+      const { data: stream, error } = await safeAsync(() =>
+        navigator.mediaDevices.getUserMedia({ audio: true }),
+      );
+
+      if (takeRef.current !== take) {
+        if (stream) {
+          stopTracks(stream);
+        }
+
+        return null;
+      }
+
+      if (!stream) {
+        return getMicrophoneProblem(error);
+      }
+
+      try {
+        const active = createRecording({
+          onStopped: (recording) => {
+            if (takeRef.current !== take) {
+              return;
+            }
+
+            takeRef.current = null;
+            setStatus("idle");
+
+            if (take.confirmed) {
+              onRecorded(recording);
+            }
+          },
+          stream,
+        });
+
+        take.active = active;
+        active.recorder.start();
+        return (await active.ready.promise) ? "recording" : "unavailable";
+      } catch {
+        if (take.active) {
+          finishRecording(take.active);
+        } else {
+          stopTracks(stream);
+        }
+
+        return "unavailable";
+      }
+    },
+    [onRecorded],
+  );
+
+  const prepare = useCallback(() => {
+    // A cancelled press must never show a permission prompt.
+    if (takeRef.current || permissionRef.current?.state !== "granted") {
+      return;
+    }
+
+    const take: Take = { confirmed: false };
+    takeRef.current = take;
+    take.opening = open(take);
+  }, [open]);
+
+  const cancelPreparation = useCallback(() => {
+    if (!takeRef.current?.confirmed) {
+      release();
+    }
+  }, [release]);
+
+  const stop = useCallback(() => {
+    const active = takeRef.current?.active;
+
+    if (active) {
+      finishRecording(active);
+    }
+  }, []);
+
+  const start = useCallback(async (): Promise<StartResult> => {
+    if (takeRef.current?.confirmed) {
       return null;
     }
 
@@ -144,59 +225,26 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
       return "unavailable";
     }
 
-    const acquisition = Symbol("voice-recording");
-    acquisitionRef.current = acquisition;
+    takeRef.current ??= { confirmed: false };
+    takeRef.current.confirmed = true;
+    const take = takeRef.current;
     setStatus("acquiring");
+    const result = await (take.opening ?? open(take));
 
-    const { data: stream, error } = await safeAsync(() =>
-      navigator.mediaDevices.getUserMedia({ audio: true }),
-    );
-
-    if (unmountedRef.current || acquisitionRef.current !== acquisition) {
-      stream?.getTracks().forEach((track) => track.stop());
+    if (takeRef.current !== take) {
       return null;
     }
 
-    if (!stream) {
-      acquisitionRef.current = null;
+    if (result === "recording") {
+      setElapsedMs(0);
+      setStatus("recording");
+    } else {
+      release();
       setStatus("denied");
-      return getMicrophoneProblem(error);
     }
 
-    const active = await createRecording({
-      onStopped: (recording) => {
-        if (unmountedRef.current || acquisitionRef.current !== acquisition) {
-          return;
-        }
-
-        activeRef.current = null;
-        acquisitionRef.current = null;
-        setStatus("idle");
-        onRecorded(recording);
-      },
-      stream,
-    });
-
-    if (unmountedRef.current || acquisitionRef.current !== acquisition) {
-      if (active) {
-        finishRecording(active);
-      }
-
-      return null;
-    }
-
-    if (!active) {
-      acquisitionRef.current = null;
-      setStatus("denied");
-      return "unavailable";
-    }
-
-    activeRef.current = active;
-
-    setElapsedMs(0);
-    setStatus("recording");
-    return "recording";
-  }, [onRecorded]);
+    return result;
+  }, [open, release]);
 
   useEffect(() => {
     if (status !== "recording") {
@@ -204,28 +252,20 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     }
 
     const interval = globalThis.setInterval(() => {
-      setElapsedMs(Date.now() - (activeRef.current?.startedAt ?? Date.now()));
+      setElapsedMs(Date.now() - (takeRef.current?.active?.startedAt ?? Date.now()));
     }, TICK_MS);
 
     return () => globalThis.clearInterval(interval);
   }, [status]);
 
-  useEffect(() => {
-    unmountedRef.current = false;
-
-    return () => {
-      unmountedRef.current = true;
-      acquisitionRef.current = null;
-      const active = activeRef.current;
-      activeRef.current = null;
+  useEffect(
+    () => () => {
+      release();
       setStatus("idle");
       setElapsedMs(0);
+    },
+    [release],
+  );
 
-      if (active) {
-        finishRecording(active);
-      }
-    };
-  }, []);
-
-  return { elapsedMs, start, status, stop };
+  return { cancelPreparation, elapsedMs, prepare, start, status, stop };
 }

@@ -12697,6 +12697,14 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Aufnehmen"
 
+#: src/speech/record-note.tsx
+#: src/today/today-block-row.tsx
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "Wir bereiten alles vor…"
+
 #. “Stop” is the label of the button that ends the recording.
 #: src/speech/record-note.tsx
 msgctxt "CzQFwa"
@@ -13126,13 +13134,6 @@ msgstr ", übersprungen"
 msgctxt "PFPoFb"
 msgid ", counts toward a mission"
 msgstr ", zählt für eine Mission"
-
-#: src/today/today-block-row.tsx
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "2LhxfA"
-msgid "Getting ready…"
-msgstr "Wir bereiten alles vor…"
 
 #. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
 #: src/today/today-block-row.tsx

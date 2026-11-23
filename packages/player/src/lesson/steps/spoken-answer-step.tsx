@@ -76,6 +76,7 @@ function RecordAnswer({
   const limit = issue?.status === "noSpeech" ? null : issue;
 
   const note = useRecordNote({
+    acquiring: recorder.status === "acquiring",
     problem: issue?.status === "noSpeech" ? "noSpeech" : null,
     recording: isRecording,
   });
@@ -92,6 +93,7 @@ function RecordAnswer({
           elapsedMs={recorder.elapsedMs}
           onStart={() => void startRecording()}
           onStop={recorder.stop}
+          preparation={recorder}
           recording={isRecording}
         />
       </MainActionInBar>

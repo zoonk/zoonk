@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { allowMicrophone } from "../_test-utils/microphone";
 import {
   type Actions,
   practiceFeedback as feedback,
@@ -182,11 +183,7 @@ describe("exact lesson mistake practice", () => {
   });
 
   it("keeps a throttled recording for retry, but starts a fresh attempt when no speech was heard", async () => {
-    const audio = new AudioContext();
-
-    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
-      async () => audio.createMediaStreamDestination().stream,
-    );
+    allowMicrophone();
 
     const grade = {
       attemptId: crypto.randomUUID(),
@@ -215,15 +212,10 @@ describe("exact lesson mistake practice", () => {
     expect(record.mock.calls[0]?.[0]).toStrictEqual(record.mock.calls[1]?.[0]);
     expect(record.mock.calls[1]?.[0].attemptId).not.toBe(record.mock.calls[2]?.[0].attemptId);
     expect(record.mock.calls[0]?.[0].practiceDurationMs).toBeGreaterThanOrEqual(0);
-    await audio.close();
   });
 
   it("keeps a spoken recording for a network retry, still offering Record in the bar, and sends its original step", async () => {
-    const audio = new AudioContext();
-
-    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
-      async () => audio.createMediaStreamDestination().stream,
-    );
+    allowMicrophone();
 
     const grade = {
       attemptId: crypto.randomUUID(),
@@ -254,15 +246,10 @@ describe("exact lesson mistake practice", () => {
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
     expect(record.mock.calls[0]?.[0]).toStrictEqual(record.mock.calls[1]?.[0]);
     expect(record.mock.calls[1]?.[0].stepId).toBe(step.id);
-    await audio.close();
   });
 
   it("shows the timed practice verdict while retaining the spoken transcript", async () => {
-    const audio = new AudioContext();
-
-    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
-      async () => audio.createMediaStreamDestination().stream,
-    );
+    allowMicrophone();
 
     const checked = feedback();
 
@@ -300,6 +287,5 @@ describe("exact lesson mistake practice", () => {
     await expect.element(verdict).toBeVisible();
     await expect.element(verdict).toMatchTextContent(/Not quite/u);
     await expect.element(verdict).toMatchTextContent(/How much is the rent\?/u);
-    await audio.close();
   });
 });

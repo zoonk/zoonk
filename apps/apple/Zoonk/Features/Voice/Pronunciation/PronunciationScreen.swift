@@ -194,7 +194,7 @@ private struct PronunciationRoundView: View {
         Image(systemName: "forward.end")
       }
     }
-    .disabled(round.isPending || recorder.isRecording)
+    .disabled(round.isPending || recorder.isRecording || recorder.status == .acquiring)
   }
 
   @ViewBuilder
@@ -223,8 +223,8 @@ private struct PronunciationRoundView: View {
           table: "Voice", comment: "How to say a word when the microphone is off"))
     }
 
-    if recorder.isRecording {
-      return .recording
+    if let active = RecordNote(active: recorder.status) {
+      return active
     }
 
     if round?.isPending == true {

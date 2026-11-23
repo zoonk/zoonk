@@ -56,8 +56,8 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
           table: "Voice", comment: "How to turn the microphone back on to record a spoken answer"))
     }
 
-    if recorder.isRecording {
-      return .recording
+    if let active = RecordNote(active: recorder.status) {
+      return active
     }
 
     if checking {

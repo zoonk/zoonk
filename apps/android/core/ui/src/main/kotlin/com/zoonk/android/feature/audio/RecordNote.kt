@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.audio
 
+import androidx.annotation.StringRes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +30,7 @@ fun recordNote(
 ): (@Composable () -> Unit)? {
     VisitOf(model.visit)
     val status by model.recorder.state.collectAsStateWithLifecycle()
-    return recordNote(status is VoiceRecorder.Status.Recording, model.checking, model.issue.value, navigator)
+    return recordNote(status, model.checking, model.issue.value, navigator)
 }
 
 /**
@@ -38,14 +39,15 @@ fun recordNote(
  */
 @Composable
 fun recordNote(
-    recording: Boolean,
+    status: VoiceRecorder.Status,
     checking: Boolean,
     issue: VoiceIssue?,
     navigator: AppNavigator? = null,
 ): (@Composable () -> Unit)? {
-    val check = checkNote(checking, failed = !recording && issue == VoiceIssue.Failed)
+    val check = checkNote(checking, failed = status == VoiceRecorder.Status.Idle && issue == VoiceIssue.Failed)
     return when {
-        recording -> ({ ListeningLine() })
+        status == VoiceRecorder.Status.Acquiring -> ({ RecordingHint(R.string.today_step_being_written) })
+        status is VoiceRecorder.Status.Recording -> ({ RecordingHint(R.string.audio_listening) })
         checking || issue == VoiceIssue.Failed -> check
         issue == VoiceIssue.NoSpeech -> ({ NoteLine(stringResource(R.string.audio_no_speech), wrong = true) })
         issue is VoiceIssue.Limited -> navigator?.let { ({ LimitNote(issue, it) }) }
@@ -78,8 +80,10 @@ fun checkNote(
 
 /** TalkBack reading it would speak into the take, so it stays out of what TalkBack reads, as main's `aria-hidden` line does. */
 @Composable
-private fun ListeningLine() {
-    Text(stringResource(R.string.audio_listening), Modifier.clearAndSetSemantics {}, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun RecordingHint(
+    @StringRes line: Int,
+) {
+    Text(stringResource(line), Modifier.clearAndSetSemantics {}, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable

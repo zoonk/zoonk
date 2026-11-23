@@ -145,6 +145,7 @@ export function SpeakingStep({
   const recording = recorder.status === "recording";
 
   const note = useRecordNote({
+    acquiring: recorder.status === "acquiring",
     checking: isPending,
     problem,
     recording,
@@ -168,6 +169,7 @@ export function SpeakingStep({
                 elapsedMs={recorder.elapsedMs}
                 onStart={() => void recorder.start()}
                 onStop={recorder.stop}
+                preparation={recorder}
                 recording={recording}
               />
             )}
