@@ -27,12 +27,12 @@ function useRowFacts() {
       return [t("In progress"), time.left(test.estimatedMinutes)];
     }
 
-    if (test.kind === "language") {
-      return [t("Find your level and skip what you know")];
-    }
-
     if (test.state === "start" || !test.result) {
-      return [t("Skip lessons you already know")];
+      return [
+        test.kind === "language"
+          ? t("Find your level and skip what you know")
+          : t("Skip lessons you already know"),
+      ];
     }
 
     return [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)];

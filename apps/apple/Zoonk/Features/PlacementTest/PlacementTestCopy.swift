@@ -82,19 +82,15 @@ enum PlacementTestCopy {
       ]
     }
 
-    if test.kind == .language {
-      return [
-        String(
-          localized: "Find your level and skip what you know", table: "Onboarding",
-          comment: "The level test's line on a language plan")
-      ]
-    }
-
     guard test.state == .result, let result = test.result else {
       return [
-        String(
-          localized: "Skip lessons you already know", table: "Onboarding",
-          comment: "The test's line on a plan before it's taken")
+        test.kind == .language
+          ? String(
+            localized: "Find your level and skip what you know", table: "Onboarding",
+            comment: "The level test's line on a language plan")
+          : String(
+            localized: "Skip lessons you already know", table: "Onboarding",
+            comment: "The test's line on a plan before it's taken")
       ]
     }
 

@@ -102,13 +102,13 @@ fun lessonsSkippedLine(lessons: Int): String =
 @Composable
 private fun placementTestLine(test: PlanPlacementTest): String {
     val locale = currentLocale()
-    val (state, minutes, finishedAt) =
+    val (state, minutes, result) =
         when (test) {
             is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
                 Triple(
                     test.value.state.value,
                     test.value.estimatedMinutes,
-                    test.value.result?.finishedAt,
+                    test.value.result?.let { it.finishedAt to it.lessonsSkipped },
                 )
             }
 
@@ -116,7 +116,7 @@ private fun placementTestLine(test: PlanPlacementTest): String {
                 Triple(
                     test.value.state.value,
                     test.value.estimatedMinutes,
-                    test.value.result?.finishedAt,
+                    test.value.result?.let { it.finishedAt to it.lessonsSkipped },
                 )
             }
         }
@@ -126,18 +126,11 @@ private fun placementTestLine(test: PlanPlacementTest): String {
             stringResource(R.string.placementtest_time_left, formatMinutes(minutes.toInt(), locale)),
         )
     }
-    if (test !is PlanPlacementTest.PlanPlacementTestOneOfValue) {
-        return stringResource(R.string.placementtest_find_level)
-    }
-    finishedAt ?: return stringResource(R.string.placementtest_skip_lessons)
-    return factsLine(
-        lessonsSkippedLine(
-            test.value.result
-                ?.lessonsSkipped
-                ?.toInt() ?: 0,
-        ),
-        formatMomentDay(finishedAt, locale),
-    )
+    val (finishedAt, lessonsSkipped) =
+        result ?: return stringResource(
+            if (test.isLanguage) R.string.placementtest_find_level else R.string.placementtest_skip_lessons,
+        )
+    return factsLine(lessonsSkippedLine(lessonsSkipped.toInt()), formatMomentDay(finishedAt, locale))
 }
 
 val PlanPlacementTest.isLanguage: Boolean get() = this is PlanPlacementTest.PlanPlacementTestOneOf1Value
