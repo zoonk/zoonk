@@ -256,7 +256,7 @@ export function GoalPausedSuggestion({ control }: { control: GoalStatusControl }
 
   return (
     <Suggestion label={title} mark={<PauseIcon />}>
-      <SuggestionLine className="items-start px-3 *:data-[slot=suggestion-mark]:mt-0.5">
+      <SuggestionLine className="px-3 **:data-[slot=suggestion-mark]:mt-0.5 **:data-[slot=suggestion-mark]:self-start">
         <div>
           <SuggestionSummary>{title}</SuggestionSummary>
           <SuggestionDescription>{description}</SuggestionDescription>

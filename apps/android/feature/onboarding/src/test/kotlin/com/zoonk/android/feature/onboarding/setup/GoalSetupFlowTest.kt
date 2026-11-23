@@ -385,16 +385,37 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun theTimesWorthStopsAskingAfterItsLoadAndThreeFailedPollsAndTryAgainAsksAgain() {
+    fun aShorterTimeOnADatedGoalAsksNothingAndOffersTheSuggestion() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
         api.cover = { coverOf(recommended = 45) }
+        var reads = 0
+        api.advice = {
+            reads++
+            adviceOf(0.6)
+        }
+        show()
+        pickTime(from = "45\u00A0min", to = "30\u00A0min")
+        rule.waitForIdle()
+
+        rule
+            .onNodeWithText(
+                "We suggest 45\u00A0min a day to be ready for your exam by",
+                substring = true,
+            ).performScrollTo()
+            .assertIsDisplayed()
+        rule.onNodeWithText("Use 45\u00A0min").performScrollTo().assertIsDisplayed()
+        assertEquals(0, reads)
+    }
+
+    @Test
+    fun theFinishStopsAskingAfterItsLoadAndThreeFailedPollsAndTryAgainAsksAgain() {
+        api.setup = { setupView(listOf("schedule", "plan")) }
         var reads = 0
         api.advice = {
             reads++
             throw ApiException(ApiError.Unavailable)
         }
         show()
-        pickTime(from = "45\u00A0min", to = "30\u00A0min")
 
         rule.waitForIdle()
         repeat(3) {
@@ -402,13 +423,13 @@ class GoalSetupFlowTest {
             rule.waitForIdle()
         }
         rule.runOnIdle { assertEquals(4, reads) }
-        rule.onNodeWithText("We couldn't work out what 30\u00A0min a day covers.").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("We couldn't work out when you'd finish.").performScrollTo().assertIsDisplayed()
 
-        api.advice = { adviceOf(0.6) }
+        api.advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2027, 3, 15), targetDate = null) }
         rule.onNodeWithText("Try again").performScrollTo().performClick()
         rule.waitForIdle()
 
-        rule.onNodeWithText("Covers about 60% of your exam topics", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("You finish around", substring = true).performScrollTo().assertIsDisplayed()
     }
 
     @Test

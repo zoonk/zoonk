@@ -8,7 +8,7 @@ import {
   focusAt,
   foundTime,
 } from "../_test-utils/time-answers";
-import { getMarkedTimes, getOffer, getSuggestedMinutes, getTimeLine } from "./time-answer";
+import { getOffer, getSuggestedMinutes, getTimeLine } from "./time-answer";
 
 describe(getSuggestedMinutes, () => {
   it("takes the plan's suggestion, or none while the plan hasn't answered", () => {
@@ -23,41 +23,36 @@ describe(getTimeLine, () => {
     expect(getTimeLine({ ...LINE, hasDays: false })).toStrictEqual({ kind: "noDays" });
   });
 
-  it("says why the suggested time without asking the plan again", () => {
-    expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything" });
+  it("says the suggestion, whatever time is picked", () => {
+    const suggestion = { focus: false, kind: "suggestion", minutes: 35 };
 
-    expect(getTimeLine({ ...LINE, found: foundTime(focusAt(805)), minutes: 240 })).toStrictEqual({
-      coveredShare: 0.32,
-      kind: "focus",
-    });
+    expect(getTimeLine(LINE)).toStrictEqual(suggestion);
+    expect(getTimeLine({ ...LINE, minutes: 15 })).toStrictEqual(suggestion);
+    expect(getTimeLine({ ...LINE, minutes: 480 })).toStrictEqual(suggestion);
   });
 
-  it("says what another time covers once the plan answers for it", () => {
-    expect(getTimeLine({ ...LINE, minutes: 15 })).toStrictEqual({ kind: "asking" });
-
-    expect(getTimeLine({ ...LINE, advice: adviceAt(), minutes: 15 })).toStrictEqual({
-      kind: "share",
-      share: 0.48,
+  it("says a capped suggestion starts with what matters most", () => {
+    expect(getTimeLine({ ...LINE, found: foundTime(focusAt(805)), minutes: 60 })).toStrictEqual({
+      focus: true,
+      kind: "suggestion",
+      minutes: 240,
     });
-
-    expect(
-      getTimeLine({ ...LINE, advice: adviceAt({ coveredShare: 1 }), minutes: 60 }),
-    ).toStrictEqual({ kind: "everything" });
   });
 
   it("says the time is being worked out, or that it couldn't be", () => {
     expect(getTimeLine({ ...LINE, found: null, minutes: null })).toStrictEqual({ kind: "working" });
+    expect(getTimeLine({ ...LINE, found: null })).toStrictEqual({ kind: "working" });
 
-    expect(getTimeLine({ ...LINE, findFailed: true, found: null, minutes: 15 })).toStrictEqual({
+    expect(getTimeLine({ ...LINE, findFailed: true, found: null })).toStrictEqual({
       kind: "findFailed",
     });
 
-    expect(getTimeLine({ ...LINE, askFailed: true, minutes: 15 })).toStrictEqual({
-      kind: "askFailed",
+    expect(getTimeLine({ ...LINE, found: foundTime(TOO_CLOSE) })).toStrictEqual({
+      kind: "findFailed",
     });
   });
 
-  it("says a date that has passed instead of what any time covers by it", () => {
+  it("says a date that has passed instead of a suggestion", () => {
     expect(getTimeLine({ ...LINE, found: foundTime(PAST_DATE) })).toStrictEqual({
       kind: "pastDate",
     });
@@ -67,96 +62,34 @@ describe(getTimeLine, () => {
     const undated = { ...LINE, dated: false, found: null, minutes: 15 };
 
     expect(getTimeLine(undated)).toStrictEqual({ kind: "asking" });
+    expect(getTimeLine({ ...undated, askFailed: true })).toStrictEqual({ kind: "askFailed" });
 
-    expect(
-      getTimeLine({ ...undated, advice: adviceAt({ coveredShare: null, endDate: "2027-03-15" }) }),
-    ).toStrictEqual({ endDate: "2027-03-15", kind: "finish" });
-
-    expect(getTimeLine({ ...undated, advice: adviceAt({ coveredShare: null }) })).toStrictEqual({
-      kind: "noFinish",
+    expect(getTimeLine({ ...undated, advice: adviceAt({ endDate: "2027-03-15" }) })).toStrictEqual({
+      endDate: "2027-03-15",
+      kind: "finish",
     });
+
+    expect(getTimeLine({ ...undated, advice: adviceAt() })).toStrictEqual({ kind: "noFinish" });
   });
 });
 
-describe(getOffer, () => {
-  const SHORT = { kind: "share", share: 0.48 } as const;
-
-  it("offers the suggestion back only while another time falls short", () => {
-    expect(getOffer({ found: foundTime(), line: SHORT, minutes: 35 })).toBeNull();
-
-    expect(getOffer({ found: foundTime(), line: SHORT, minutes: 15 })).toStrictEqual({
-      kind: "everything",
-      minutes: 35,
-    });
-  });
-
-  it("offers nothing to a time that already covers everything", () => {
-    const covers = { kind: "everything" } as const;
-    const found = foundTime(everythingAt(240));
-
-    expect(getOffer({ found, line: covers, minutes: 900 })).toBeNull();
-  });
-
-  it("offers the time that covers everything beside a focus, and the focus beside any other", () => {
-    const found = foundTime(focusAt(805));
-    const covers = { kind: "everything" } as const;
-    const focus = getTimeLine({ ...LINE, found, minutes: 240 });
-
-    expect(getOffer({ found, line: focus, minutes: 240 })).toStrictEqual({
-      kind: "everything",
-      minutes: 805,
-    });
-
-    expect(getOffer({ found, line: covers, minutes: 805 })).toStrictEqual({
-      kind: "suggested",
-      minutes: 240,
-    });
-
-    expect(getOffer({ found, line: SHORT, minutes: 120 })).toStrictEqual({
-      kind: "suggested",
-      minutes: 240,
-    });
-
-    expect(getOffer({ found: foundTime(focusAt(null)), line: focus, minutes: 240 })).toBeNull();
-  });
-});
-
-function plateauAt(minutes: number) {
-  return foundTime({ ...focusAt(null), most: { coveredShare: 0.99, minutes } });
+function lineAt(found: ReturnType<typeof foundTime>) {
+  return getTimeLine({ ...LINE, found });
 }
 
-describe("a goal part of which never fits, whatever the time", () => {
-  it("offers the longest useful time as more, never as covering everything", () => {
-    const line = getTimeLine({ ...LINE, found: plateauAt(480), minutes: 240 });
-
-    expect(getOffer({ found: plateauAt(480), line, minutes: 240 })).toStrictEqual({
-      kind: "more",
-      minutes: 480,
-    });
+describe(getOffer, () => {
+  it("offers the suggestion while a shorter time is picked", () => {
+    expect(getOffer({ line: lineAt(foundTime()), minutes: 15 })).toBe(35);
+    expect(getOffer({ line: lineAt(foundTime(focusAt(805))), minutes: 120 })).toBe(240);
   });
 
-  it("says nothing more once the suggestion already covers the most", () => {
-    const found = foundTime({
-      most: { coveredShare: 0.99, minutes: 195 },
-      recommendedMinutes: null,
-      suggested: { coveredShare: 0.99, everyTopic: true, kind: "focus", minutes: 195, split: null },
-    });
-
-    const line = getTimeLine({ ...LINE, found, minutes: 195 });
-
-    expect(getOffer({ found, line, minutes: 195 })).toBeNull();
+  it("offers nothing at the suggestion or above it", () => {
+    expect(getOffer({ line: lineAt(foundTime()), minutes: 35 })).toBeNull();
+    expect(getOffer({ line: lineAt(foundTime(everythingAt(120))), minutes: 480 })).toBeNull();
   });
 
-  it("marks only a time that covers everything as covering everything", () => {
-    expect(getMarkedTimes(plateauAt(480))).toStrictEqual({ full: null, suggested: 240 });
-    expect(getMarkedTimes(foundTime(focusAt(805)))).toStrictEqual({ full: 805, suggested: 240 });
-  });
-});
-
-describe("a line for a time whose coverage is already known", () => {
-  it("says what the plan's own time covers before the time question answers", () => {
-    expect(
-      getTimeLine({ ...LINE, advice: adviceAt({ coveredShare: 0.29 }), found: null, minutes: 120 }),
-    ).toStrictEqual({ kind: "share", share: 0.29 });
+  it("offers nothing without a suggestion", () => {
+    expect(getOffer({ line: lineAt(foundTime(PAST_DATE)), minutes: 15 })).toBeNull();
+    expect(getOffer({ line: { kind: "working" }, minutes: 15 })).toBeNull();
   });
 });

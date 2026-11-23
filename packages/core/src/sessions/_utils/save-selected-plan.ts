@@ -2,6 +2,7 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
+import { owePlanSuggestion } from "../../plans/_utils/owe-plan-suggestion";
 import { preparePhaseDatesProposal } from "../../plans/_utils/phase-dates-proposal";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { type PlanContext } from "../../plans/_utils/plan-context";
@@ -148,6 +149,7 @@ export async function saveSelectedPlan({
   if (prepared.kind === "metadata") {
     if (prepared.data) {
       await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
+      await owePlanSuggestion({ goal: context.goal, summary: prepared.data.summary, tx });
     }
 
     await keepSummaryCurrent({

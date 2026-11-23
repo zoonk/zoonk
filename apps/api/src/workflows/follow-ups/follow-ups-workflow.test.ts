@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { PlanConflictError } from "@zoonk/core/plans/conflict";
+import { refreshPlanSuggestion } from "@zoonk/core/plans/refresh-suggestion";
 import { refreshOwedStudyDay } from "@zoonk/core/sessions/refresh-owed-day";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -27,6 +28,7 @@ import { followUpsWorkflow } from "./follow-ups-workflow";
 
 // Force a competing plan write after core's quick retry without timing real database writers.
 vi.mock("@zoonk/core/sessions/refresh-owed-day", () => ({ refreshOwedStudyDay: vi.fn() }));
+vi.mock("@zoonk/core/plans/refresh-suggestion", () => ({ refreshPlanSuggestion: vi.fn() }));
 
 const CAUSE = {
   correctAnswer: "since",
@@ -274,6 +276,30 @@ describe(followUpsWorkflow, () => {
       { experimental_hook: { token: `placement-items:${goal.id}:${owed.id}:2` } },
     );
 
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("runs and acknowledges a goal's owed time suggestion after a plan conflict", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    await prisma.followUp.create({
+      data: {
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "refreshPlanSuggestion",
+        userId: user.id,
+      },
+    });
+
+    vi.mocked(refreshPlanSuggestion)
+      .mockRejectedValueOnce(new PlanConflictError())
+      .mockResolvedValueOnce();
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(refreshPlanSuggestion).toHaveBeenCalledTimes(2);
+    expect(refreshPlanSuggestion).toHaveBeenLastCalledWith({ goalId: goal.id, userId: user.id });
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 

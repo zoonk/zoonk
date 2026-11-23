@@ -62,7 +62,7 @@ describe(getBudgetForGoal, () => {
   });
 
   it("finds a day for every time the main goal can get in a day's saved time", () => {
-    const times = Array.from({ length: 288 }, (_, index) => (index + 1) * 5);
+    const times = Array.from({ length: 96 }, (_, index) => (index + 1) * 5);
 
     for (const count of [2, 3, 4]) {
       const savedMains = new Set(times.map((day) => splitDailyBudget({ budget: day, count })[0]));
@@ -77,22 +77,31 @@ describe(getBudgetForGoal, () => {
   });
 
   it("suggests no day longer than a day's time can be saved", () => {
-    expect(getBudgetForGoal({ count: 1, minutes: 1440, place: 0 })).toBe(1440);
-    expect(getBudgetForGoal({ count: 2, minutes: 950, place: 0 })).toBe(1420);
-    expect(getBudgetForGoal({ count: 2, minutes: 1000, place: 0 })).toBeNull();
-    expect(getBudgetForGoal({ count: 2, minutes: 600, place: 1 })).toBeNull();
+    expect(getBudgetForGoal({ count: 1, minutes: 480, place: 0 })).toBe(480);
+    expect(getBudgetForGoal({ count: 1, minutes: 481, place: 0 })).toBeNull();
+    expect(getBudgetForGoal({ count: 2, minutes: 324, place: 0 })).toBe(479);
+    expect(getBudgetForGoal({ count: 2, minutes: 325, place: 0 })).toBeNull();
+    expect(getBudgetForGoal({ count: 2, minutes: 160, place: 1 })).toBe(480);
+    expect(getBudgetForGoal({ count: 2, minutes: 165, place: 1 })).toBeNull();
   });
 
   it("gives a goal typed after the main one exactly its time, from the least day that does", () => {
     expect(getBudgetForGoal({ count: 2, minutes: 40, place: 1 })).toBe(120);
-
-    const times = Array.from({ length: 48 }, (_, index) => (index + 1) * 5);
 
     for (const [count, place] of [
       [2, 1],
       [3, 1],
       [3, 2],
     ] as const) {
+      const times = [
+        ...new Set(
+          Array.from(
+            { length: 96 },
+            (_, index) => splitDailyBudget({ budget: (index + 1) * 5, count })[place],
+          ),
+        ),
+      ].filter((minutes) => minutes !== undefined);
+
       const shares = times.map((minutes) => {
         const budget = getBudgetForGoal({ count, minutes, place }) ?? 0;
         const split = splitDailyBudget({ budget, count });

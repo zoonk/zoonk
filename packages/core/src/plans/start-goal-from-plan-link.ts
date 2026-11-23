@@ -127,7 +127,12 @@ export async function startGoalFromPlanLink({
   }
 
   if (created.status !== "created" || !created.goals[0]) {
-    return { status: created.status === "created" ? "notFound" : created.status };
+    return {
+      status:
+        created.status === "created" || created.status === "dayTooShort"
+          ? "notFound"
+          : created.status,
+    };
   }
 
   const [goal] = created.goals;

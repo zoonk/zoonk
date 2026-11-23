@@ -40,7 +40,7 @@ import { buildScheduleView } from "./plan-schedule-view";
 import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
-import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
+import { readPlanOffers, readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
@@ -150,17 +150,6 @@ function isPlanReady(context: PlanContext): boolean {
   );
 }
 
-function readExtraOffer({
-  fresh,
-  pastDate,
-}: {
-  fresh: ReturnType<typeof readFreshPlanSummary>;
-  pastDate: boolean;
-}): PlanView["extraOffer"] {
-  const offer = pastDate ? null : fresh?.advice.extraOffer;
-  return offer ? { ...offer, canApply: true } : null;
-}
-
 export async function buildPlanView({
   context: savedContext,
   now,
@@ -255,7 +244,7 @@ export async function buildPlanView({
   });
 
   const pastDate = status?.kind === "pastDate";
-  const fitOffer = pastDate ? null : (summary?.advice.fitOffer ?? null);
+  const feasibility = readSavedFeasibility(summary);
 
   return {
     access,
@@ -277,12 +266,7 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
-    extraOffer: readExtraOffer({ fresh, pastDate }),
-    feasibility: readSavedFeasibility(summary),
-    fitOffer: fitOffer && {
-      ...foldChangeAreas({ change: fitOffer, partAreas }),
-      canApply: fresh !== null,
-    },
+    feasibility,
     focusTest: readPlanFocusTest(context),
     goalId: goal.id,
     hasNotice: hasSyllabusNotice(syllabus?.notice),
@@ -291,8 +275,11 @@ export async function buildPlanView({
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })
         : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
-    numbers: summary ? buildSavedPlanNumbersView(context, writing) : null,
+    numbers: summary
+      ? buildSavedPlanNumbersView({ context, coverage: feasibility, writing })
+      : null,
     ownLevel: getOwnLevel({ goal }),
+    ...readPlanOffers({ fresh, partAreas, pastDate, summary }),
     phases: buildPlanPath({
       access,
       challengeResults,

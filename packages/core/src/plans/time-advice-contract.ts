@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { type LanguageAim } from "../language/aims/language-aims";
+import { MAX_SUGGESTED_DAILY_MINUTES } from "./daily-minutes";
 import { planNumbersSchema } from "./numbers-contract";
 
 const isoDateSchema = z.iso.date();
@@ -66,9 +67,9 @@ const suggestedTimeSchema = z
       .enum(["everything", "focus"])
       .meta({
         description:
-          "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, which doesn't cover everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything",
+          "everything: the minutes fit the selected curriculum by the goal's date; focus: the suggested time prioritizes the most important material",
       }),
-    minutes: z.int(),
+    minutes: z.int().max(MAX_SUGGESTED_DAILY_MINUTES),
     split: daySplitSchema.meta({
       description:
         "How these minutes split among the goals typed together, as saving the schedule splits them. Null for a goal typed alone, or when asked without studyDays",
@@ -78,7 +79,7 @@ const suggestedTimeSchema = z
   .default(null)
   .meta({
     description:
-      "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. It can be shorter than recommendedMinutes (or most), which is what everything takes. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+      "The fitting time when available, or the time that fits the most material, capped at 4 hours. Defaults to 4 hours when neither time is available. Null without a date, while the plan is being built, or when the date has passed. With studyDays, the day the goals typed together share",
   });
 
 const targetDateNamedMonthSchema = z
@@ -164,7 +165,7 @@ export const planTimeToCoverSchema = z
       .nullable()
       .meta({
         description:
-          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. With studyDays, the least day the goals typed together share that gives this goal those minutes, at least 5 minutes for each goal. More than 4 hours a day is more than most people keep up: suggested is then the recommendation",
+          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does. For goals typed together with studyDays, the least shared day that gives this goal those minutes, or null if that day exceeds 8 hours. See suggested for the recommended daily time",
       }),
     suggested: suggestedTimeSchema,
     targetDate: isoDateSchema

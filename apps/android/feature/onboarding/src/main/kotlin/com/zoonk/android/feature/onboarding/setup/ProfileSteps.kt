@@ -26,6 +26,7 @@ import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
@@ -88,7 +89,7 @@ internal fun ColumnScope.ProfileStep(
                         busy = vm.isSaving && startingLesson,
                         focusableWhenDisabled = vm.isSaving,
                         size = ButtonSize.Small,
-                        forward = true,
+                        trailingIcon = ForwardIcon,
                     ) {
                         Text(
                             stringResource(

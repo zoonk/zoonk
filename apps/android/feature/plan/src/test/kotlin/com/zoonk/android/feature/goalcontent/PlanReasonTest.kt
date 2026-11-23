@@ -45,7 +45,7 @@ class PlanReasonTest {
         val decoded = ApiJson.decodeFromJsonElement(Syllabus.serializer(), wire)
         compose.setContent { ZoonkTheme { PlanSyllabusSection(decoded, {}) } }
         compose.onNodeWithText("Not in your plan").assertExists()
-        compose.onNodeWithText("Not in your plan · your time doesn't cover it").assertDoesNotExist()
+        compose.onNodeWithText("Not in your plan · other topics come first").assertDoesNotExist()
     }
 
     @Test
@@ -78,7 +78,7 @@ class PlanReasonTest {
             "skippedBase" to "Skipped · your choice",
             "known" to "Skipped · you already know it",
             "skipped" to "Not in your plan · you took this subject out",
-            "time" to "Not in your plan · your time doesn't cover it",
+            "time" to "Not in your plan · other topics come first",
             "missing" to "Not ready yet",
         )) {
             compose.runOnIdle { reason.value = value }
@@ -94,6 +94,6 @@ class PlanReasonTest {
         val syllabus = original.copy(subjects = listOf(original.subjects.first().copy(notPlannedReason = reason)))
         compose.setContent { ZoonkTheme { PlanSyllabusSection(syllabus, {}) } }
         compose.onNodeWithText(label).assertExists()
-        compose.onNodeWithText("Not in your plan · your time doesn't cover it").assertDoesNotExist()
+        compose.onNodeWithText("Not in your plan · other topics come first").assertDoesNotExist()
     }
 }

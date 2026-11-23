@@ -206,7 +206,7 @@ fun ListRow(
                 supporting?.let { lines ->
                     {
                         CompositionLocalProvider(LocalContentColor provides quiet) {
-                            ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                            ProvideTextStyle(MaterialTheme.typography.bodySmall.balanced()) {
                                 Descriptions(
                                     parts,
                                     Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note).drawnDescriptions { parts.descriptions },

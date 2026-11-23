@@ -2,7 +2,8 @@
 <resources>
     <string name="today_title">Today</string>
     <string name="today_welcome_back_line">Welcome back. Today is short, so it\'s easy to start again.</string>
-    <string name="today_not_enough_time">Not enough time left for all your lessons.</string>
+    <!-- Under Today's heading when the plan has more lessons than days left; "Adjust your plan" follows it as a link. -->
+    <string name="today_fit_time_left">Let\'s fit your plan to the time left.</string>
     <string name="today_adjust_your_plan">Adjust your plan</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s in %2$d day</item>
@@ -166,8 +167,8 @@
     <string name="today_plan_keep_mine">Keep mine</string>
     <string name="today_next_suggestion">Next suggestion</string>
     <string name="today_notice_falling_behind">Plan change</string>
-    <string name="today_behind_exam">%1$s a day now covers %2$s of the exam, down from %3$s.</string>
-    <string name="today_behind_goal">%1$s a day now covers %2$s of your goal, down from %3$s.</string>
+    <!-- A plan change after missed days, when some lessons would no longer happen before the goal's date; the card's choices follow. -->
+    <string name="today_behind_fit_days_left">Let\'s fit your plan to the days left.</string>
     <string name="today_more_time_a_day">Add time</string>
     <string name="today_choose_focus">Choose where to focus</string>
     <string name="today_study_everything">Remove end date</string>

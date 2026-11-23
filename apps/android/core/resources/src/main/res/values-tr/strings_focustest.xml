@@ -20,7 +20,7 @@
   "focustest_how_sessions_title": "228b3d2b550533828be39192180d3be7b84f4f6ebe49cd474f307bdffb3d14e2",
   "focustest_how_stop": "ffeff7620370940e6d74ca596ef0321666c62e567374f3bff5a6d85a5f2a0bd1",
   "focustest_how_stop_title": "f8796f650266d5587ce93f53c1070f0d5546c26bd2f8b404575e9b65067fe796",
-  "focustest_how_subjects": "2c4547e8946dbaed0692441861c374049ed3c354eb2410a263bba53d19bafc70",
+  "focustest_how_subjects": "4fadb7450c9537b53250a85beab8fae14a5efdbc9b6f3467a67b40567e2fc262",
   "focustest_how_subjects_title": "2e8ed208a553d93d3d1b8daf7d90505b9cf9b40f806ebd7a559d329651092f47",
   "focustest_how_weight": "90e172ef15ff44ff439d2a601da359c31deeca181ddc5f4069915c0e25866742",
   "focustest_how_weight_title": "c2fb05f28d4b7e068b5a0623683e96febb8d6deb9fde7038936f17f33f75bb7e",
@@ -38,7 +38,7 @@
   "focustest_practical_not_checked": "cc4cf6ba3e0a917d27a270aec4a559d23ee3ac14a0579cd1e6902a4aa9d1cb4c",
   "focustest_proposal_applied": "be855d0681da6cec1ffa0a27b040ae2f27a616d47ddddcf2b940684118883bd5",
   "focustest_proposal_declined": "a8d107680aa407e046d2071571f61e2978a03b0db74613fe4306ab8455768240",
-  "focustest_proposal_description": "90e8850bd8e9553a1965958adfb320949b8aa5aa2e8f5e2672635ea00529ab1b",
+  "focustest_proposal_picked": "8116b354ad25b02bbabfd79a0bf2446a543f9abe2518959acd7e7e3fec17bb6a",
   "focustest_proposal_title": "1edc49b237d2f647471004e0bf643720f73beae3b3f70d2560c83462788a9b3e",
   "focustest_proposal_undone": "aeb4a9de4e06a6428e1fee3d485a11c2fa511c1ef58c20895dc6bd1d7aa9ee69",
   "focustest_question_number": "81de4b331c785dd940dc08df886b97f9e91187a5ee113952bca639c41dac1ac4",
@@ -48,7 +48,6 @@
   "focustest_result_hand_picked": "87085c2f8e23e9ff5979cb74cac992bb1f32062116cb7fc335afcfd975f5be33",
   "focustest_result_title": "7c7de4d9c8955ff270e534ebee64ea5f89c3da7827d933b95041e908d6b01082",
   "focustest_resume_title": "5e0de0e7049aae1a3d6648ba88286f4e77d63873231ed934d406c280f23300a4",
-  "focustest_schedule_focus": "6e45ef12ed96bc7dc032cc13ba768d88653864ce7f6c9fac4cb428c2fbe7a04b",
   "focustest_see_all_subjects": "a4a72dad5a5ad4affe0d18da1428789415c68fd9878aea4e209b1946c89d7136",
   "focustest_see_my_result": "914b3fcd4f66021086ff7cc0be1b4eacd8fcd2eb7008fbeedf9ad1ce8d9b0dd0",
   "focustest_see_your_result": "4720f6a30d3c33a4f16ed6368d2b975e7faeefd146952748d9d24140e85d26d7",
@@ -61,7 +60,7 @@
   "focustest_stop": "400a92fd3efd4663eb8c7e6bbdc4449b9ed96ebbb73ec53d369ffe7e82e13d89",
   "focustest_subject_right": "dd9ae875db6708a3719d58b0368431bf861080627403069f98fa61a30787cc8e",
   "focustest_subjects": "c812afb6dfda2e49a1c6b915d0f34894c2f0ef1f5ccd615ba504d15d36c7cc63",
-  "focustest_suggestion_body": "64f1d0533f0f5ed71a4cfa396f45e8104bcfc81eccb34fe8a2c983e7e6b596f1",
+  "focustest_suggestion_body": "6bde3d8007cff10917b48a35cfe69a53aa030b71670010cba46cec96f49ea8e3",
   "focustest_suggestion_dismissed": "271a42b1b05dae6f68bd1ae7bfee102b1bbee6c253631442e7d2a8ebd10614c3",
   "focustest_suggestion_line": "db14df5e7aee36571dffebd8875c4e7c9d436c73cdab888a9c30a5d21153a984",
   "focustest_take_test": "e26753e8c0f1f53fbde6997bd7a9c5b148f0c5d9e002b5ba5c7d73f3665a7776",
@@ -92,7 +91,7 @@
     <string name="focustest_how_stop_title">İstediğin zaman dur</string>
     <string name="focustest_how_stop">Her cevabın kaydedilir.</string>
     <string name="focustest_how_subjects_title">Odaklanmak hiçbir branşı plandan çıkarmaz</string>
-    <string name="focustest_how_subjects">Zamanın hepsine yetmezse en çok çalışman gereken branşlara daha fazla zaman ayrılır.</string>
+    <string name="focustest_how_subjects">En çok ihtiyacın olan konulara daha fazla zaman ayrılır.</string>
     <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
     <string name="focustest_how_sessions_title">İlk haftanda birkaç soru daha</string>
     <string name="focustest_how_sessions">Çalışmalarında bu sorulardan birkaç tane daha sorulur. Buna ara verebilirsin.</string>
@@ -140,7 +139,8 @@
     <string name="focustest_answer_more">Daha fazla soru cevapla</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">Bu branşlara daha fazla zaman ayıralım mı?</string>
-    <string name="focustest_proposal_description">Sınava kadar her şeye zamanın yetmiyor.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">Bu seçim, verdiğin cevaplara ve sınavında her branştan kaç soru çıktığına dayanıyor.</string>
     <string name="focustest_update_plan">Planımı güncelle</string>
     <string name="focustest_proposal_applied">Planın artık bu branşlara daha fazla zaman ayırıyor.</string>
     <string name="focustest_proposal_declined">Planın olduğu gibi kalıyor.</string>
@@ -164,12 +164,10 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">Çalışmalarındaki sorulara ara verildi</string>
     <string name="focustest_take_test">Odak testini çöz</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">Bu sürede %1$s için daha fazla zaman ayırmanı öneriyoruz.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Odak testi en çok neye çalışman gerektiğini gösterir.</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık %1$s içinde en çok neye çalışman gerektiğini gösterir.</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">%1$s süren bir seviye tespit testi, zaten bildiklerini gösterir; böylece zamanının daha fazlasını en çok ihtiyacın olan konulara ayırırsın. Hiçbir konuyu plandan çıkarmaz.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Tamam. Testi planından çözebilirsin.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->

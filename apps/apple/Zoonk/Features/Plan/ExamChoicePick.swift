@@ -49,12 +49,31 @@ struct ExamOptionPicks: Equatable {
 }
 
 extension Text {
-  static func examPickLimit(_ take: Int) -> Text {
+  static func examChoiceQuestion(group: String, take: Int) -> Text {
+    take > 1
+      ? Text(
+        "\(group): which ones will you take?", tableName: "Plan",
+        comment:
+          "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
+      )
+      : Text(
+        "\(group): which one will you take?", tableName: "Plan",
+        comment:
+          "Asks which option of an exam's choice, like its foreign language, the learner takes")
+  }
+}
+
+struct ExamPickLimit: View {
+  let take: Int
+
+  var body: some View {
     Text(
       "Pick up to \(take).", tableName: "Plan",
       comment:
         "Over the options of an exam's choice whose candidates take several of them, like two of a course's modules"
     )
+    .typeStyle(.body)
+    .foregroundStyle(.mutedForeground)
   }
 }
 

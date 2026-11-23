@@ -24,7 +24,6 @@ import {
 import { OnboardingRailSection } from "../onboarding-rail";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
-import { RevealCoverage } from "./reveal-coverage";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
 import { RevealDayOpener, findRevealStart } from "./reveal-start";
@@ -91,7 +90,6 @@ function RevealPlan({ onAdjust }: { onAdjust: (section: PlanEditorSection) => vo
   return (
     <div className="flex min-w-0 flex-col gap-5" data-slot="reveal-plan">
       <RevealReadouts />
-      <RevealCoverage onAddTime={() => onAdjust("time")} />
       <PlanChoiceLines choices={plan.examChoices} onChange={() => onAdjust("choices")} />
       <RevealNoticeDay />
       {plan.notice === "usual" && <UsualStructureNote />}

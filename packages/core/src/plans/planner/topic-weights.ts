@@ -11,6 +11,11 @@ function toKey({ subject, topic }: { subject: string; topic: string }): string {
   return `${normalizeString(subject)}|${toTopicKey(topic)}`;
 }
 
+/** A topic is its subject's: two subjects' topics of the same name are two topics. */
+export function listSkillTopicKeys(skill: PlanGraphSkill): string[] {
+  return (skill.topics ?? []).map((topic) => toKey({ subject: skill.area ?? "", topic }));
+}
+
 export type ScoredTopic = { key: string; score: number };
 
 function isMostAsked(topic: ScoredTopic): boolean {
@@ -29,10 +34,7 @@ export function scoreSkillTopics({
   return new Map(
     graph.skills.map((skill) => [
       skill.skillId,
-      (skill.topics ?? []).map((topic) => {
-        const key = toKey({ subject: skill.area ?? "", topic });
-        return { key, score: scores.get(key) ?? UNRATED_SCORE };
-      }),
+      listSkillTopicKeys(skill).map((key) => ({ key, score: scores.get(key) ?? UNRATED_SCORE })),
     ]),
   );
 }

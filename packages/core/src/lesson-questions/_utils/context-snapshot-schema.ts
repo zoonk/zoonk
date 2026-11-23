@@ -161,14 +161,7 @@ const planScopeSnapshotSchema = z.object({
           skipped: z.boolean(),
         }),
       ),
-      coverage: z
-        .object({
-          coreFits: z.boolean(),
-          coveredShare: z.number(),
-          fits: z.boolean(),
-          measure: z.enum(["exam", "goal"]),
-        })
-        .nullable(),
+      coverage: z.object({ coreFits: z.boolean(), fits: z.boolean() }).nullable(),
       difficultyBias: z.string(),
       lightWeeks: z.array(z.object({ endDate: z.string(), startDate: z.string() })),
       ownLevel: z.string().nullable(),

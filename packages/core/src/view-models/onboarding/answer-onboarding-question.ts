@@ -172,6 +172,7 @@ export async function answerOnboardingQuestion({
         .filter((id) => id !== goalId)
         .map(async (id) => {
           await refreshGoalPlan({ goalId: id, mode: "forced", onConflict: "yield" });
+
           await followSavedPlan(id);
         }),
     );

@@ -25,6 +25,7 @@ import { replaceWaitingProposals } from "./_utils/replace-waiting-proposals";
 import { revalidatePlanTags } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { undoChange } from "./_utils/undo-change";
+import { MAX_PICKABLE_DAILY_MINUTES } from "./daily-minutes";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
 import { type PlanChangeDecision, type PlanChangeQuote } from "./plan-decision-contract";
 import { type PlanChangeView } from "./plan-view-contract";
@@ -90,6 +91,16 @@ async function acceptProposal({
   quote,
 }: Decision & { quote: PlanChangeQuote | null }) {
   const payload = parsePlanChangePayload(change.payload);
+
+  const exceedsDailyLimit = payload.operations.some(
+    (operation) =>
+      (operation.kind === "setDailyMinutes" || operation.kind === "setWeekdayMinutes") &&
+      operation.minutes > MAX_PICKABLE_DAILY_MINUTES,
+  );
+
+  if (exceedsDailyLimit) {
+    return { status: "conflict" as const };
+  }
 
   if (proposesNoticeGraph(payload.operations)) {
     return { status: "conflict" as const };

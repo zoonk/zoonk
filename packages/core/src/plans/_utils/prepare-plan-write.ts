@@ -15,6 +15,7 @@ import { readPlanSummary, toPlanSummary } from "./plan-summary";
 import { type ProposalReplacement, getReplacedProposalIds } from "./replace-waiting-proposals";
 import { type ComputedPlan } from "./replan";
 import { retainPlanAllocation } from "./retained-plan-allocation";
+import { maySuggestPlanTime } from "./suggested-time";
 import { type PlanWrite } from "./write-plan";
 
 function getComputedPlanContext({
@@ -66,6 +67,14 @@ async function prepareReadModel({
     prepareProposalPreviews({ baseline: computed, context: saved, replacement }),
   ]);
 
+  const { dailyMinutes, targetDate } = saved.goal;
+
+  const suggestionPending = maySuggestPlanTime({
+    dailyMinutes,
+    pastDate: targetDate !== null && targetDate < saved.today,
+    shown: feasibility,
+  });
+
   const extraOffer = fitOffer ? null : await loadExtraOffer({ baseline: computed, context: saved });
 
   return {
@@ -80,6 +89,8 @@ async function prepareReadModel({
           end: computed.selected.endDate,
           targetDate: computed.state.goal.targetDate,
         }),
+        suggested: null,
+        ...(suggestionPending && { suggestionPending }),
       },
       context,
       selected: computed.selected,

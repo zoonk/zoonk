@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -115,9 +116,9 @@ fun LinkedInSheet(
                 onClick = { openWebPage(context, certificate.linkedInUrl.toString()) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = LIST_ITEM_INSET),
                 size = ButtonSize.Large,
+                trailingIcon = { ButtonIcon(R.drawable.ic_north_east) },
             ) {
                 Text(stringResource(R.string.certificates_linkedin_open))
-                Icon(painterResource(R.drawable.ic_north_east), contentDescription = null, Modifier.padding(start = 8.dp).size(18.dp))
             }
         }
     }

@@ -29,7 +29,11 @@ export function usePlanStatusText() {
       case "finished":
         return t("Finished");
       case "needsAdjusting":
-        return t("Not enough time");
+        return t({
+          description:
+            "A plan's status: it has more lessons than days left, so the learner should change their time or date.",
+          message: "Needs adjusting",
+        });
       case "onTrack":
         return t("Up to date");
       case "pastDate":

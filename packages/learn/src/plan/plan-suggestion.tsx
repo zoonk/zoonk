@@ -18,7 +18,6 @@ import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
 import { RequestScope } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
-import { usePlanCoverage, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
 import { ExamChoiceSuggestion } from "./plan-exam-choices";
 import { ExtraLessonsSuggestion, FitLessonsSuggestion } from "./plan-fit-suggestion";
@@ -46,8 +45,6 @@ function isLearnerOnSlot(): boolean {
 
 function useTimeItems(): SlotItem[] {
   const { plan } = usePlanScreen();
-  const coverage = usePlanCoverage();
-  const timeEnough = useTimeEnough();
   const open = plan.status?.kind !== "pastDate";
   const { extraOffer, fitOffer } = plan;
 
@@ -56,7 +53,7 @@ function useTimeItems(): SlotItem[] {
     open && fitOffer === null && extraOffer
       ? { key: "extraLessons", kind: "extraLessons", offer: extraOffer }
       : false,
-    open && coverage !== null && !timeEnough && { key: "coverage", kind: "coverage" },
+    open && plan.suggestedTime !== null && { key: "coverage", kind: "coverage" },
   ];
 
   return items.filter((item) => item !== false);
@@ -160,7 +157,7 @@ export function PlanSuggestionProvider({
 function DoesNotFitSuggestion() {
   const t = useExtracted();
   const { host } = usePlanSuggestionSlot();
-  const title = t("More lessons than days left");
+  const title = t("Let's fit your plan to the time left");
 
   return (
     <Suggestion label={title} mark={<CalendarClockIcon />}>
@@ -185,7 +182,6 @@ function DoesNotFitSuggestion() {
 }
 
 function SlotSuggestion({ item }: { item: SlotItem }) {
-  const coverage = usePlanCoverage();
   const { host } = usePlanSuggestionSlot();
 
   switch (item.kind) {
@@ -203,7 +199,7 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
         )
       );
     case "coverage":
-      return <CoverageSuggestion coverage={coverage} />;
+      return <CoverageSuggestion />;
     case "finished":
       return (
         host.next && (

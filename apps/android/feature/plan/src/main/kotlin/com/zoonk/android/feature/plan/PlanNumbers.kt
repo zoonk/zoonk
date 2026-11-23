@@ -50,6 +50,7 @@ import com.zoonk.android.feature.speaking.SpeakingPracticeRow
 import com.zoonk.android.feature.today.WeekDayRing
 import com.zoonk.android.feature.today.weekDayStatus
 import com.zoonk.android.ui.components.DetailRow
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -427,7 +428,7 @@ internal fun PaceDetails(
             ) { Text(stringResource(R.string.plan_adjust_plan)) }
         }
         if (fix?.today == true) {
-            OutlinedButton(onClick = links::today, modifier = Modifier.padding(top = 4.dp), forward = true) {
+            OutlinedButton(onClick = links::today, modifier = Modifier.padding(top = 4.dp), trailingIcon = ForwardIcon) {
                 Text(stringResource(R.string.plan_go_to_today))
             }
         }

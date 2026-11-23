@@ -6,7 +6,6 @@ struct WaitReady {
   /// The progress view's heading already says the note.
   var noteOnQuizOnly = false
   let label: Text
-  var icon: ActionIcon?
   let action: () -> Void
 }
 
@@ -309,7 +308,7 @@ struct WaitBar<Extra: View>: View {
             .multilineTextAlignment(.center)
         }
 
-        BusyButton(isBusy: false, icon: ready.icon, action: ready.action) {
+        Button(action: ready.action) {
           ready.label
         }
         .buttonStyle(.mainAction)

@@ -73,7 +73,7 @@
   "goalcontent_subject_count": "23d12da8f631bedbad1022dc4d5ec5a06580c71cfbf82872e2cabd6742d61609",
   "goalcontent_subject_missing": "901db95bbdcfd02a7e798e5a23db656059b68ca32ac4ad2b3fb67f520ff9f076",
   "goalcontent_subject_skipped": "203c04e7d2e47a3c6ba7ce6715b2faac912f59438a78bf02e8b2a297ef6d6d68",
-  "goalcontent_subject_time": "6d0e4dc5a3abe954630004f09f182ceb5f1582d955c5ee40bf99e4fc8b1d15a3",
+  "goalcontent_subject_time": "99bdf2bc2447ba4d62651f639922b6b81f0b043a7e76b3351ba2bed19e63d636",
   "goalcontent_subjects": "b538496e9ae30dda7aa4aa45c3abe518db0b61590554c5d39dfb853f2fef4368",
   "goalcontent_to_review": "e781eb9464829b9f8f8be585b781cda91b61b78f339b09730b6060af53912a74",
   "goalcontent_topic_count": "d4c1d18b50cd244595eddd865024cd340109cfdb38d0bff4fbf76eeec0768328",
@@ -234,7 +234,8 @@
         <item quantity="other">%d aulas puladas</item>
     </plurals>
     <string name="goalcontent_subject_skipped">Você tirou esta matéria do seu plano.</string>
-    <string name="goalcontent_subject_time">Essa matéria não está no seu plano: não tem tempo suficiente.</string>
+    <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
+    <string name="goalcontent_subject_time">Esta matéria não está no seu plano. As outras vêm primeiro.</string>
     <string name="goalcontent_subject_missing">Essa matéria ainda não está no seu plano.</string>
     <string name="goalcontent_adjust_plan">Ajustar plano</string>
     <string name="goalcontent_add_back">Adicionar de novo</string>

@@ -45,6 +45,7 @@ import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanSuggestedTime
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import com.zoonk.api.models.Syllabus
@@ -134,6 +135,17 @@ class PlanScreenshots {
         RuntimeEnvironment.setFontScale(2f)
         capture("plan-exam-phone-font200", exam = examPage(dated = true))
     }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examBelowItsSuggestionPhone() =
+        capture(
+            "plan-card-page-exam-below-suggestion",
+            exam =
+                examPage(dated = true).let {
+                    it.copy(plan = it.plan.copy(suggestedTime = PlanSuggestedTime(PlanSuggestedTime.Kind.EVERYTHING, 110)))
+                },
+        )
 
     @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
@@ -236,9 +248,11 @@ class PlanScreenshots {
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun sheetContents() {
         val page = page()
+        val timeLeft = page.copy(plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"))
         val sheets: Map<String, @Composable ColumnScope.(PlanLinks) -> Unit> =
             mapOf(
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
+                "plan-sheet-pace-time-left" to { links -> PaceDetails(timeLeft, timeLeft.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
                     { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
                 "plan-sheet-preparation-review" to
@@ -280,6 +294,7 @@ class PlanScreenshots {
         val sheetTitles: Map<String, @Composable () -> String> =
             mapOf(
                 "plan-sheet-pace" to { stringResource(R.string.plan_your_pace) },
+                "plan-sheet-pace-time-left" to { stringResource(R.string.plan_your_pace) },
                 "plan-sheet-progress" to { stringResource(R.string.plan_your_progress) },
                 "plan-sheet-preparation-review" to { stringResource(R.string.plan_your_preparation) },
                 "plan-sheet-preparation-reviewed" to { stringResource(R.string.plan_your_preparation) },
@@ -489,7 +504,12 @@ class PlanScreenshots {
     ) {
         val learn = learnerSummary()
         val exam = learnerSummary(kind = "exam", title = "ENEM")
-        val goalPlan = coveragePlan(areas = "[${area("Mathematics")},${area("Natural sciences")}]")
+        val goalAreas = "[${area("Mathematics")},${area("Natural sciences")}]"
+        val goalPlan = coveragePlan(areas = goalAreas)
+        val goalCard = coveragePlan(areas = goalAreas, suggested = SUGGESTED_EVERYTHING)
+        val goalCapped = coveragePlan(areas = goalAreas, suggested = SUGGESTED_FOCUS)
+        val examCard = coveragePlan(kind = "exam", suggested = SUGGESTED_EVERYTHING)
+        val examCapped = coveragePlan(kind = "exam", suggested = SUGGESTED_FOCUS)
         val fitPlan =
             plan(
                 """"fitOffer":{"canApply":true,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
@@ -499,9 +519,16 @@ class PlanScreenshots {
         val laterFitPlan = fitPlan.copy(fitOffer = fitPlan.fitOffer?.copy(canApply = false))
         val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
         val pastDate = pastDatePlan()
-        val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75))
+        val timeLeft = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null")
+        val goalRevision = planAdviceRevision(goalCard)
+        val dateFound = TimeToCoverState.Answered(goalRevision, timeToCover(recommended = 105, fittingDate = "2027-04-18"))
+        val noDate = TimeToCoverState.Answered(goalRevision, timeToCover(recommended = 105))
+        val askedDate = { SlotState(intent = CoverageIntent.Date) }
+        val suggestedTime = listOf<PlanOp>(PlanOp.DailyMinutes(105))
+        // More time adds many lessons while the weekly mock it funds takes a few study days.
+        val moreAndFewer = """"lessonsAdded":102,"lessonsRemoved":12"""
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
-        val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
+        val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":105}]""", effect = effect(""""lessonsAdded":14"""))
         val course = java.util.UUID.fromString(CHANGE_ID)
         val next =
             com.zoonk.api.models.StudyNext(
@@ -534,15 +561,13 @@ class PlanScreenshots {
         fun ready(
             operations: List<PlanOp>,
             plan: com.zoonk.api.models.Plan,
+            fields: String = """"lessonsAdded":14,"endDateBefore":"2027-01-31","endDateAfter":"2027-04-18"""",
         ) = PlanPreviewState.Loading(operations, plan).let {
             it.resolve(
                 it,
                 PlanChangePreview(
                     finishDate = null,
-                    effect =
-                        ApiJson.decodeFromString(
-                            effect(""""lessonsAdded":14,"endDateBefore":"2027-01-31","endDateAfter":"2027-04-18""""),
-                        ),
+                    effect = ApiJson.decodeFromString(effect(fields)),
                     feasibility = null,
                     ready = true,
                     unchanged = false,
@@ -559,32 +584,33 @@ class PlanScreenshots {
         )
         val shots =
             mapOf(
-                "plan-slot-coverage-ask" to Shot(goalPlan),
-                "plan-slot-coverage-focus-test" to Shot(goalPlan.withFocusTest(NOT_STARTED), summary = exam),
-                "plan-slot-coverage-found" to Shot(goalPlan, edits = PlanEdits(timeToCover = found)),
-                "plan-slot-coverage-preview" to
+                "plan-card-exam-fitting" to Shot(examCard, summary = exam),
+                "plan-card-exam-capped" to Shot(examCapped, summary = exam),
+                "plan-card-goal-fitting" to Shot(goalCard),
+                "plan-card-goal-capped" to Shot(goalCapped),
+                "plan-card-exam-capped-focus-test" to Shot(examCapped.withFocusTest(NOT_STARTED), summary = exam),
+                "plan-card-exam-checking" to
+                    Shot(examCard, summary = exam, host = SlotHost(preview = PlanPreviewState.Loading(suggestedTime, examCard))),
+                "plan-card-exam-preview" to
+                    Shot(examCard, summary = exam, host = SlotHost(preview = ready(suggestedTime, examCard, moreAndFewer))),
+                "plan-card-goal-move-date-checking" to
+                    Shot(goalCard, edits = PlanEdits(timeToCover = TimeToCoverState.Pending(goalRevision)), state = askedDate),
+                "plan-card-goal-move-date-preview" to
                     Shot(
-                        goalPlan,
-                        edits = PlanEdits(timeToCover = found),
-                        host = SlotHost(preview = ready(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
+                        goalCard,
+                        edits = PlanEdits(timeToCover = dateFound),
+                        host = SlotHost(preview = ready(moved, goalCard)),
+                        state = askedDate,
                     ),
-                "plan-slot-coverage-checking" to
-                    Shot(
-                        goalPlan,
-                        edits = PlanEdits(timeToCover = found),
-                        host = SlotHost(preview = PlanPreviewState.Loading(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
-                    ),
-                "plan-slot-coverage-checking-date" to
-                    Shot(
-                        goalPlan,
-                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(planAdviceRevision(goalPlan))),
-                        state = { SlotState(intent = CoverageIntent.Date) },
-                    ),
-                "plan-slot-coverage-applied" to
+                "plan-card-goal-move-date-no-date" to Shot(goalCard, edits = PlanEdits(timeToCover = noDate), state = askedDate),
+                "plan-card-goal-move-date-failed" to
+                    Shot(goalCard, edits = PlanEdits(timeToCover = TimeToCoverState.Failed(goalRevision)), state = askedDate),
+                "plan-card-at-suggestion" to Shot(coveragePlan(kind = "exam"), summary = exam),
+                "plan-card-applied" to
                     Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
-                "plan-slot-coverage-undo-failed" to
+                "plan-card-undo-failed" to
                     Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change, undoFailed = true))), state = {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
@@ -600,6 +626,7 @@ class PlanScreenshots {
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
                         SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons(pagedPlan.fitOffer!!), change) }
                     }),
+                "plan-slot-time-left" to Shot(timeLeft),
                 "plan-slot-past-date" to Shot(pastDate),
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
                 "plan-slot-past-date-preview" to Shot(pastDate, host = SlotHost(preview = ready(moved, pastDate))),
@@ -608,6 +635,10 @@ class PlanScreenshots {
                 "plan-slot-finished-starting" to Shot(plan(), host = SlotHost(next = next, nextLevel = NextLevelStart.Starting)),
                 "plan-slot-finished-certificate" to Shot(plan(), host = SlotHost(next = next, certificates = oneEarned)),
                 "plan-slot-finished-certificates-locked" to Shot(plan(), host = SlotHost(next = next, certificates = severalLocked)),
+                "plan-slot-finished-claim-failed" to
+                    Shot(plan(), host = SlotHost(next = next, certificates = unclaimed, claimFailed = true)),
+                "plan-slot-finished-start-failed" to
+                    Shot(plan(), host = SlotHost(next = next, certificates = unclaimed, nextLevel = NextLevelStart.Failed)),
                 "plan-slot-course-complete" to Shot(plan(), summary = exam, host = SlotHost(certificates = unclaimed)),
                 "plan-slot-level-complete" to Shot(plan(), host = SlotHost(certificates = levelUnclaimed)),
                 "plan-slot-course-complete-failed" to
@@ -787,33 +818,52 @@ class PlanScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheSuggestion() = captureEditorTime("plan-editor-time-suggested", minutes = 240, share = 0.32)
+    fun editorTimeUnderTheFocusSuggestion() = captureEditorTime("plan-editor-time-focus-short", minutes = 90)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
-    fun editorTimeOnTheSuggestionDark() = captureEditorTime("plan-editor-time-suggested-dark", minutes = 240, share = 0.32, dark = true)
+    fun editorTimeUnderTheFocusSuggestionDark() = captureEditorTime("plan-editor-time-focus-short-dark", minutes = 90, dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheFullTime() = captureEditorTime("plan-editor-time-full", minutes = 805, share = 1.0)
+    fun editorTimeOnTheFocusSuggestion() = captureEditorTime("plan-editor-time-focus-suggested", minutes = 240)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeShort() = captureEditorTime("plan-editor-time-short", minutes = 90, share = 0.14)
+    fun editorTimeWhenNoTimeCoversEverything() = captureEditorTime("plan-editor-time-none", minutes = 240, recommended = null)
 
-    /** An exam whose whole syllabus takes 13 h 25 min a day, at [minutes] a day, with the time question's answer in. */
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeAboveTheFocusSuggestion() = captureEditorTime("plan-editor-time-focus-longer", minutes = 480)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeUnderASuggestionThatCoversEverything() =
+        captureEditorTime("plan-editor-time-covers-short", minutes = 90, recommended = 150)
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xhdpi")
+    fun editorTimeAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureEditorTime("plan-editor-time-focus-short-font200", minutes = 90)
+    }
+
+    /**
+     * An exam at [minutes] a day with the time question's answer in: a suggestion of 4 h a day while covering everything
+     * takes [recommended] minutes (13 h 25 min by default, null when no time does), or that time when it's 4 h or less.
+     */
     private fun captureEditorTime(
         name: String,
         minutes: Int,
-        share: Double,
         dark: Boolean = false,
+        recommended: Long? = 805,
     ) {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
-        val fits = share >= 1
+        val fits = recommended != null && minutes >= recommended
         val plan =
             plan(
                 """
-                "feasibility":{"coreFits":false,"coveredShare":$share,"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
+                "feasibility":{"coreFits":$fits,"coveredShare":${if (fits) 1.0 else 0.32},"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
                  "measure":"exam","timeCovers":$fits},
                 "schedule":{"dailyMinutes":$minutes,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-11-07",
                  "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":$minutes,
@@ -821,7 +871,7 @@ class PlanScreenshots {
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = 805, focus = 240))
+        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = recommended, focus = 240))
         compose.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
@@ -927,6 +977,10 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
     fun callsKnownPathLarge() = captureCallsPath("calls-known-path-large", "known")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun callsOutOfTimePathPhone() = captureCallsPath("calls-time-path-phone", "time")
 
     private fun captureCallsPath(
         name: String,

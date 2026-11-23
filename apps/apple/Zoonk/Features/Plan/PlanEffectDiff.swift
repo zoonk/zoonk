@@ -114,6 +114,7 @@ enum PlanChangeEffect {
     let topicsOut = topicNames(effect.topicsLeftOut)
     let topicsIn = topicNames(effect.topicsAdded)
     let (added, removed) = counts(effect, byDate: options.byDate)
+    let lead = options.byDate ? lessonLead(added: added, removed: removed) : nil
 
     if !topicsOut.isEmpty {
       let topics = planTopicList(topicsOut, named: namedInSentence)
@@ -133,11 +134,12 @@ enum PlanChangeEffect {
         whole: topicsOut.count <= namedInSentence && removed == 0)
     }
 
-    if options.byDate && removed > 0 {
+    if case .fewer(let count) = lead {
       let left = (effect.lessonsLeftOut ?? []).count + (effect.unwrittenLeftOut ?? []).count
 
       return PlanChangeConsequence(
-        key: "notInPlan", text: fewerLessons(removed, options.dateKind), whole: left == 0)
+        key: "notInPlan", text: fewerLessons(count, options.dateKind),
+        whole: added == 0 && left == 0)
     }
 
     if !topicsIn.isEmpty {
@@ -155,13 +157,29 @@ enum PlanChangeEffect {
             comment:
               "A plan change's consequence: several topics join the plan, named as a list such as \"Statistics, Geometry and 3 more topics\""
           ),
-        whole: topicsIn.count <= namedInSentence && added == 0)
+        whole: topicsIn.count <= namedInSentence && added == 0 && removed == 0)
     }
 
-    return options.byDate && added > 0
-      ? PlanChangeConsequence(
-        key: "added", text: moreLessons(added, options.dateKind), whole: true)
-      : nil
+    guard case .more(let count) = lead else {
+      return nil
+    }
+
+    return PlanChangeConsequence(
+      key: "added", text: moreLessons(count, options.dateKind), whole: removed == 0)
+  }
+
+  private enum LessonLead {
+    case fewer(Int)
+    case more(Int)
+  }
+
+  /// Main's `getLessonLead`: a change that moves lessons both ways leads with what it does overall.
+  private static func lessonLead(added: Int, removed: Int) -> LessonLead? {
+    if added == removed {
+      return nil
+    }
+
+    return added > removed ? .more(added - removed) : .fewer(removed - added)
   }
 
   /// What a learner studies before their date, said for them and never for the lessons.

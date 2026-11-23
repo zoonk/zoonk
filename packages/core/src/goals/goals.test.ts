@@ -263,6 +263,40 @@ describe(createGoals, () => {
     ]);
   });
 
+  it("gives unassigned goals the time left after explicit allocations", async () => {
+    await useLearner({ plus: true });
+
+    const result = await createGoals({
+      dailyMinutes: 480,
+      goals: [draft({ title: "Drawing" }), draft({ dailyMinutes: 475, title: "Geometry" })],
+    });
+
+    expect(result).toMatchObject({
+      goals: [{ dailyMinutes: 5 }, { dailyMinutes: 475 }],
+      status: "created",
+    });
+  });
+
+  it.each([
+    { budget: 480, dailyMinutes: 480, minimum: 485 },
+    { budget: 5, dailyMinutes: undefined, minimum: 10 },
+    { budget: 30, dailyMinutes: 30, minimum: 35 },
+  ])(
+    "refuses an infeasible shared day of $budget minutes before any goal is created",
+    async ({ budget, dailyMinutes, minimum }) => {
+      const user = await useLearner({ plus: true });
+
+      const result = await createGoals({
+        dailyMinutes: budget,
+        goals: [draft({ dailyMinutes, title: "Drawing" }), draft({ title: "Geometry" })],
+      });
+
+      expect(result).toStrictEqual({ goals: 2, minutes: minimum, status: "dayTooShort" });
+      await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
+      await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+    },
+  );
+
   it("creates the three goals the free plan follows and says why the rest wasn't created", async () => {
     await useLearner();
 
@@ -328,7 +362,7 @@ describe(listCurrentUserGoals, () => {
     const user = await useLearner({ plus: true });
 
     const created = await createGoals({
-      dailyMinutes: 55,
+      dailyMinutes: 70,
       goals: [
         draft({ dailyMinutes: 45, title: "ENEM" }),
         draft({ dailyMinutes: 10 }),

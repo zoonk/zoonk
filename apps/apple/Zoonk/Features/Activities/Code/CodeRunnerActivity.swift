@@ -124,7 +124,8 @@ private struct CodeRunnerCanvas: View {
       if !isChecked {
         CodeRunBar(
           runtimeName: fields.language.runtimeName, status: runtime, hasRun: run != nil,
-          isRunning: activeRun != nil, run: { startRun() }, retry: { runtimeAttempt += 1 },
+          isExploring: isExploring, isRunning: activeRun != nil, run: { startRun() },
+          retry: { runtimeAttempt += 1 },
           reset: edits.isEmpty ? nil : { reset() })
       }
     }

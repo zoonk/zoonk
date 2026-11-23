@@ -22,9 +22,7 @@ export async function refreshOwedStudyDay({
 
   const zone = getAnswerTimeZone({ goal: owned.session.goal, timeZone });
 
-  if (!isCurrentSession({ now: new Date(), session: owned.session, timeZone: zone })) {
-    return;
+  if (isCurrentSession({ now: new Date(), session: owned.session, timeZone: zone })) {
+    await followSavedDay({ session: owned.session, timeZone: zone });
   }
-
-  await followSavedDay({ session: owned.session, timeZone: zone });
 }

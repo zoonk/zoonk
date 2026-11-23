@@ -308,11 +308,10 @@ const clip: Scene = async (stage) => {
   arrive(tl, [planTitle.q("h1"), planTitle.q("p")], B.toPlan + 0.32, { stagger: 0.08, rise: 14 });
   const readoutRow = plan.q('[data-slot="reveal-plan"] > div:first-child');
   const readouts = plan.all<HTMLElement>('[data-slot="reveal-plan"] > div:first-child > div');
-  const coverage = plan.q('[data-slot="reveal-coverage"]');
-  const rest = [...plan.q('[data-slot="reveal-plan"]').children].slice(2) as HTMLElement[];
+  const rest = [...plan.q('[data-slot="reveal-plan"]').children].slice(1) as HTMLElement[];
   arrive(tl, [readoutRow], B.toPlan + 0.5, { rise: 0, dur: 0.5 });
   arrive(tl, readouts, B.toPlan + 0.54, { stagger: 0.12, rise: 14 });
-  arrive(tl, [coverage, ...rest], B.toPlan + 0.84, { stagger: 0.1, rise: 12 });
+  arrive(tl, rest, B.toPlan + 0.84, { stagger: 0.1, rise: 12 });
   arrive(tl, [path.q('[data-slot="page-section-header"]')], B.path - 0.2, { rise: 12 });
   arrive(tl, path.all("ol > li, ul > li"), B.path, { stagger: 0.24, rise: 16, dur: 0.7 });
 

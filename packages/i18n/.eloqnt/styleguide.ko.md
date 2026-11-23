@@ -38,6 +38,7 @@
 - “session” (study): “학습” (“오늘의 학습”), not “세션”, which is the sign-in session
 - “subject” (of an exam or a plan): “과목”
 - “topic”: “주제”
+- “first lessons” (a topic's first, most important lessons): “초반 레슨”
 - “area” (a weighted part of an exam or a goal): “영역”
 - “phase” (a part of the plan) and a “step” in a process or a flow: “단계”, not “스텝”; a solution's steps: “풀이 과정”
 - “section” (a part of a mock exam): “파트”, not “영역”

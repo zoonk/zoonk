@@ -233,23 +233,12 @@ extension TimeChoice {
 }
 
 struct TimeAdvice: PlanAnswer, Decodable {
-  /// Nil for a plan with nothing to cover by.
-  let coveredShare: Double?
   /// When a goal without a date finishes at this time; nil when the time can't hold it all.
   let endDate: String?
-  /// The subjects this time would give more of it, from the learner's Focus test answers.
-  let focusSubjects: [FocusTest.SubjectLabel]?
   /// For an exam studying everything: when everything ends at this time, once the plan holds it.
   let fullCourseEndDate: String?
   let readingNotice: Bool
   let ready: Bool
-}
-
-/// When part of the goal never fits, whatever the time: the fewest minutes that cover as much as any
-/// time does, and that share.
-struct MostCoverage: Decodable, Equatable, Sendable {
-  let coveredShare: Double
-  let minutes: Int
 }
 
 struct TimeToCover: PlanAnswer, Decodable {
@@ -260,8 +249,6 @@ struct TimeToCover: PlanAnswer, Decodable {
       case focus
     }
 
-    let coveredShare: Double
-    let everyTopic: Bool
     let kind: Kind
     let minutes: Int
     let split: DaySplit?
@@ -269,12 +256,11 @@ struct TimeToCover: PlanAnswer, Decodable {
 
   /// For a goal that isn't an exam: the date its saved time covers everything by.
   let fittingDate: String?
-  let most: MostCoverage?
   let pastDate: Bool
   let readingNotice: Bool
   let ready: Bool
-  let recommendedMinutes: Int?
-  /// The time the question starts on: what covers everything, else what's worth most first.
+  /// The time the question starts on, never more than 4 hours: what covers everything, else what's
+  /// worth most first.
   let suggested: Suggested?
   let targetDate: String?
   let targetDateNamedMonth: Bool

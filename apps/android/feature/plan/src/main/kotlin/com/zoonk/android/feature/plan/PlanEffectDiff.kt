@@ -52,7 +52,7 @@ data class GoalDateMove(
 /**
  * Main's `PlanEffectDiff`: the one consequence a learner would notice about a plan change, and
  * every other change behind "All changes". [repriced] says the plan changed since the learner saw the card,
- * to answer again; [summary] false leaves the consequence to the screen's own sentence.
+ * to answer again.
  */
 @Composable
 fun PlanEffectDiff(
@@ -63,14 +63,12 @@ fun PlanEffectDiff(
     goalDate: GoalDateMove? = null,
     repriced: Boolean = false,
     said: EffectSaid? = null,
-    summary: Boolean = true,
 ) {
     val found = effect?.let { consequence(it, byDate, dateKind, goalDate) }
     val rows = effect?.let { changeRows(it, byDate, dateKind, goalDate) }.orEmpty()
     val repeatsTitle = said == EffectSaid.LessonsAdded && found?.key == ADDED && !namesAdded(effect)
-    val stated = if (summary) found else null
-    val saidWhole = stated != null && stated.whole && rows.singleOrNull()?.key == stated.key
-    val shown = if (summary && !repeatsTitle) found else null
+    val saidWhole = found != null && found.whole && rows.singleOrNull()?.key == found.key
+    val shown = if (repeatsTitle) null else found
     val hasMore = rows.isNotEmpty() && !saidWhole
 
     if (shown == null && !hasMore && !repriced) return
@@ -162,6 +160,22 @@ private fun countLessons(
     return net.coerceAtLeast(0) to (-net).coerceAtLeast(0)
 }
 
+/** Main's `getLessonLead`: a change that moves lessons both ways leads with what it does overall. */
+internal data class LessonLead(
+    val count: Int,
+    val fewer: Boolean,
+)
+
+internal fun lessonLead(
+    added: Int,
+    removed: Int,
+): LessonLead? =
+    when {
+        added == removed -> null
+        added > removed -> LessonLead(added - removed, fewer = false)
+        else -> LessonLead(removed - added, fewer = true)
+    }
+
 /** The first [limit] names, then how many more: a card never lists every topic or lesson. */
 @Composable
 private fun names(
@@ -206,6 +220,7 @@ private fun lessonConsequence(
     val topicsOut = topicNames(effect.topicsLeftOut)
     val topicsIn = topicNames(effect.topicsAdded)
     val (added, removed) = countLessons(effect, byDate)
+    val lead = if (byDate) lessonLead(added, removed) else null
 
     if (topicsOut.isNotEmpty()) {
         val named = names(ListKind.Topics, NAMED_IN_SENTENCE, topicsOut)
@@ -215,19 +230,19 @@ private fun lessonConsequence(
             whole = topicsOut.size <= NAMED_IN_SENTENCE && removed == 0,
         )
     }
-    if (byDate && removed > 0) {
+    if (lead?.fewer == true) {
         val named = effect.lessonsLeftOut.orEmpty().size + effect.unwrittenLeftOut.orEmpty().size
-        return Consequence(NOT_IN_PLAN, lessonCount(removed, dateKind, fewer = true, newDate), whole = named == 0)
+        return Consequence(NOT_IN_PLAN, lessonCount(lead.count, dateKind, fewer = true, newDate), whole = added == 0 && named == 0)
     }
     if (topicsIn.isNotEmpty()) {
         val named = names(ListKind.Topics, NAMED_IN_SENTENCE, topicsIn)
         return Consequence(
             key = ADDED,
             text = stringResource(if (topicsIn.size == 1) R.string.plan_effect_topic_added else R.string.plan_effect_topics_added, named),
-            whole = topicsIn.size <= NAMED_IN_SENTENCE && added == 0,
+            whole = topicsIn.size <= NAMED_IN_SENTENCE && added == 0 && removed == 0,
         )
     }
-    return if (byDate && added > 0) Consequence(ADDED, lessonCount(added, dateKind, fewer = false, newDate), whole = true) else null
+    return lead?.let { Consequence(ADDED, lessonCount(it.count, dateKind, fewer = false, newDate), whole = removed == 0) }
 }
 
 /** What a learner studies before their date, said for them and never for the lessons; a change that moves the date names the new one. */

@@ -233,11 +233,7 @@ struct CallStartFooter: View {
         .buttonStyle(.mainAction)
     } else {
       Button(action: onStart) {
-        Label {
-          CallButtonTitle(callee: callee)
-        } icon: {
-          Image(systemName: "phone.fill")
-        }
+        CallButtonTitle(callee: callee)
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
@@ -287,11 +283,7 @@ struct CallMicrophoneOff: View {
     .buttonStyle(.outline)
 
     Button(action: onType) {
-      Label {
-        Text("Type instead", tableName: "Voice", comment: "Does the call by typing")
-      } icon: {
-        Image(systemName: "keyboard")
-      }
+      Text("Type instead", tableName: "Voice", comment: "Does the call by typing")
     }
     .buttonStyle(.mainAction)
   }

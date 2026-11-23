@@ -166,7 +166,8 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                 SandboxRunBar(
                     SQLITE,
                     runtime,
-                    needsRun = if (props.isExploring) null else props.answer == null,
+                    isExploring = props.isExploring,
+                    canRun = query.text.jsTrim().isNotEmpty(),
                     hasRun = run != null,
                     isRunning = editorRun.isRunning,
                     onRun = ::runQuery,

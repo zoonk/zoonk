@@ -69,22 +69,19 @@ function useShownEffect({
   effect,
   options,
   said,
-  summary,
 }: {
   effect: PlanEffect | null;
   options: ChangeOptions;
   said?: "lessonsAdded";
-  summary: boolean;
 }) {
   const found = usePlanChangeConsequence()(effect, options);
   const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded(effect);
   const rows = usePlanChangeRows()(effect, options);
-  const stated = summary ? found : null;
-  const onlyRow = rows.length === 1 && rows[0]?.key === stated?.key;
+  const onlyRow = rows.length === 1 && rows[0]?.key === found?.key;
 
   return {
-    consequence: summary && !repeatsTitle ? found : null,
-    hasMore: rows.length > 0 && !(onlyRow && stated?.whole),
+    consequence: repeatsTitle ? null : found,
+    hasMore: rows.length > 0 && !(onlyRow && found?.whole),
     rows,
   };
 }
@@ -114,7 +111,6 @@ export function PlanEffectDiff({
   goalDate,
   repriced = false,
   said,
-  summary = true,
 }: {
   byDate?: boolean;
   className?: string;
@@ -124,8 +120,6 @@ export function PlanEffectDiff({
   repriced?: boolean;
   /** What the screen's title already states, so the same count isn't said twice under it. */
   said?: "lessonsAdded";
-  /** False where the screen's own sentence already says what matters most. */
-  summary?: boolean;
 }) {
   const t = useExtracted();
 
@@ -133,7 +127,6 @@ export function PlanEffectDiff({
     effect,
     options: { byDate, dateKind, goalDate },
     said,
-    summary,
   });
 
   if (!consequence && !hasMore && !repriced) {

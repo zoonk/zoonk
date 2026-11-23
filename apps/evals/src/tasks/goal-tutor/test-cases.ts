@@ -149,7 +149,7 @@ const CONCURSO_PLAN = {
         skipped: false,
       },
     ],
-    coverage: { coreFits: true, coveredShare: 1, fits: true, measure: "exam" },
+    coverage: { coreFits: true, fits: true },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "intermediate",
@@ -254,7 +254,7 @@ const UX_PLAN = {
         skipped: false,
       },
     ],
-    coverage: { coreFits: true, coveredShare: 1, fits: true, measure: "goal" },
+    coverage: { coreFits: true, fits: true },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "none",
@@ -393,10 +393,8 @@ const ARGENTINE_SPANISH_PLAN = {
 const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
   timeToCover: {
     fittingDate: null,
-    most: null,
-    recommendedMinutes: 95,
     status: "found",
-    suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 95 },
+    suggested: { kind: "everything", minutes: 95 },
     targetDate: "2026-11-08",
     what: "timeToCover",
   },
@@ -447,7 +445,7 @@ const ENEM_WITH_SETUP = {
         skipped: false,
       },
     ],
-    coverage: { coreFits: true, coveredShare: 0.7, fits: false, measure: "exam" },
+    coverage: { coreFits: true, fits: false },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "basic",
@@ -530,7 +528,7 @@ const OAB_PLAN = {
         skipped: false,
       },
     ],
-    coverage: { coreFits: true, coveredShare: 0.52, fits: false, measure: "exam" },
+    coverage: { coreFits: true, fits: false },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "intermediate",
@@ -1389,7 +1387,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ENEM_WITH_SETUP,
-    expectations: `${LOOKUP_EXPECTATIONS} A question about the plan's reach. Says plainly that at one hour a day the plan studies every topic of the exam, the ones it asks most in more depth; it may add, from the timeToCover lookup, that 95 minutes a day would cover everything in depth (a number not taken from the lookup is a major error, cap 5.0); never says topics are left out (coreFits is true), and never promises a score. proposedChange is null unless the learner asked to change their time.`,
+    expectations: `${LOOKUP_EXPECTATIONS} A question about the plan's reach. Says plainly that every topic of the exam is in the plan (coreFits is true) and how it prioritizes them: the ones the exam asks most first or in more depth. It may suggest, from the timeToCover lookup, 95 minutes a day to be ready by the exam (a number not taken from the lookup is a major error, cap 5.0). Giving a percentage or fraction of the exam the plan or their time covers, or saying their time isn't enough, is a major error (cap 6.0); saying topics are left out is a major error (cap 5.0). Never promises a score. proposedChange is null unless the learner asked to change their time.`,
     id: "pt-enem-coverage",
     lookUps: ENEM_TIME_TO_COVER,
     question: "meu plano cobre a prova toda?",
@@ -1397,20 +1395,15 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: {
       ...ENEM_WITH_SETUP,
-      setup: {
-        ...ENEM_WITH_SETUP.setup,
-        coverage: { coreFits: false, coveredShare: 0.2, fits: false, measure: "exam" },
-      },
+      setup: { ...ENEM_WITH_SETUP.setup, coverage: { coreFits: false, fits: false } },
     },
-    expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study, with the exam close. Says, from the timeToCover lookup, that studying everything in depth by the exam takes about 13 h 25 min a day and that this is more than most people can keep up; recommends 4 hours a day instead and says what that plan does: every topic of the exam, the ones it asks most in more depth, about 60% of everything in depth. Saying or implying that 4 hours a day covers everything is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). It may say they can still choose the longer time. Writes only Portuguese: a word in another language or script is a major error (cap 6.0). Never promises a score. proposedChange is null or sets 4 hours a day.`,
-    id: "pt-enem-time-past-what-people-keep-up",
+    expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study, with the exam close. Recommends, from the timeToCover lookup, 4 hours a day and says the plan starts with what matters most for the exam (kind is focus). Suggesting more than 4 hours a day, giving a percentage or fraction of the exam that time covers, or saying the time isn't enough to cover everything is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). Writes only Portuguese: a word in another language or script is a major error (cap 6.0). Never promises a score. proposedChange is null or sets 4 hours a day.`,
+    id: "pt-enem-time-focus-at-cap",
     lookUps: {
       timeToCover: {
         fittingDate: null,
-        most: null,
-        recommendedMinutes: 805,
         status: "found",
-        suggested: { coveredShare: 0.6, everyTopic: true, kind: "focus", minutes: 240 },
+        suggested: { kind: "focus", minutes: 240 },
         targetDate: "2026-11-08",
         what: "timeToCover",
       },
@@ -1420,20 +1413,15 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: {
       ...ENEM_WITH_SETUP,
-      setup: {
-        ...ENEM_WITH_SETUP.setup,
-        coverage: { coreFits: true, coveredShare: 0.87, fits: false, measure: "exam" },
-      },
+      setup: { ...ENEM_WITH_SETUP.setup, coverage: { coreFits: true, fits: false } },
     },
-    expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study when part of the goal never fits, whatever the time. Says, from the timeToCover lookup, that 3 h 15 min a day covers about 99% in depth by the exam, as much as any daily time does, and recommends it; studying more doesn't cover more. Saying that no daily time or not even a whole day covers everything, or implying more time would reach 100%, is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). Writes only Portuguese: a word in another language or script is a major error (cap 6.0). Never promises a score. proposedChange is null or sets 3 h 15 min a day.`,
-    id: "pt-enem-time-part-never-fits",
+    expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study when more time past a point adds nothing. Recommends, from the timeToCover lookup, 3 h 15 min a day and says the plan starts with what matters most for the exam (kind is focus). Suggesting more time than that, giving a percentage or fraction of the exam that time covers, or saying that no daily time covers everything is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). Writes only Portuguese: a word in another language or script is a major error (cap 6.0). Never promises a score. proposedChange is null or sets 3 h 15 min a day.`,
+    id: "pt-enem-time-focus-below-cap",
     lookUps: {
       timeToCover: {
         fittingDate: null,
-        most: { coveredShare: 0.99, minutes: 195 },
-        recommendedMinutes: null,
         status: "found",
-        suggested: { coveredShare: 0.99, everyTopic: true, kind: "focus", minutes: 195 },
+        suggested: { kind: "focus", minutes: 195 },
         targetDate: "2026-11-08",
         what: "timeToCover",
       },
@@ -1458,7 +1446,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: UX_PLAN,
     expectations:
-      "A plan change the plan can't make: the tool answered `unchanged` (the portfolio already comes as early as what it builds on allows). proposedChange asks to bring the portfolio forward, but the answer says plainly that the plan stays as it is and why, never that it changed or will change once confirmed, and offers something that would help instead (such as starting a small portfolio piece alongside the lessons, or more daily time from coverage). No job promise.",
+      "A plan change the plan can't make: the tool answered `unchanged` (the portfolio already comes as early as what it builds on allows). proposedChange asks to bring the portfolio forward, but the answer says plainly that the plan stays as it is and why, never that it changed or will change once confirmed, and offers something that would help instead (such as starting a small portfolio piece alongside the lessons, or the suggested daily time from timeToCover). No job promise.",
     id: "pt-ux-portfolio-unchanged",
     planChange: "unchanged",
     question: "quero começar o portfólio desde o início do plano",
@@ -1524,7 +1512,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: ENEM_TARGET,
     expectations:
-      "A two-part request. proposedChange puts Ciências da Natureza and Redação first. The tool returned that 'mirar 800 pontos' is left out: the answer says plainly that aiming for 800 doesn't change the plan by itself and what helps (more practice, or more daily time from coverage), without promising 800 or any score. Ignoring the 800 part is a major error (cap 6.0).",
+      "A two-part request. proposedChange puts Ciências da Natureza and Redação first. The tool returned that 'mirar 800 pontos' is left out: the answer says plainly that aiming for 800 doesn't change the plan by itself and what helps (practice on the areas the exam asks most, or the suggested daily time from timeToCover), without promising 800 or any score. Ignoring the 800 part is a major error (cap 6.0).",
     id: "pt-enem-focus-and-score",
     planChange: { leftOut: ["mirar 800 pontos"] },
     question: "coloca natureza e redação primeiro e quero mirar 800",
@@ -1737,8 +1725,8 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ENEM_WITH_SETUP,
-    expectations: `${LOOKUP_EXPECTATIONS} He lowers his daily time to 40 minutes, below the 95 that cover everything in depth by the exam, which only the timeToCover lookup says (the context doesn't). proposedChange asks for 40 minutes a day, and lookUps has timeToCover. The answer says that 95 minutes a day would cover everything in depth by the date and that 40 still covers every topic, the ones asked most in more depth (coreFits is true). Not mentioning the 95 minutes is a major error (cap 6.5); a time not taken from the lookup is a major error (cap 5.0). No promise of a score.`,
-    id: "pt-enem-less-time-recommended",
+    expectations: `${LOOKUP_EXPECTATIONS} He lowers his daily time to 40 minutes. proposedChange asks for 40 minutes a day, the time he chose. The answer says what the change does as the card says it (14 lessons no longer come before the date) and how the plan prioritizes: every topic stays in the plan (coreFits is true), the ones the exam asks most first. If lookUps has timeToCover, it may mention the suggested 95 minutes a day once, calmly; a time not taken from the lookup is a major error (cap 5.0). Proposing a time other than 40 minutes, giving a percentage or fraction of the exam the time covers, or saying 40 minutes isn't enough is a major error (cap 5.0). No promise of a score.`,
+    id: "pt-enem-less-time-chosen",
     lookUps: ENEM_TIME_TO_COVER,
     planChange: {
       effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 14 },

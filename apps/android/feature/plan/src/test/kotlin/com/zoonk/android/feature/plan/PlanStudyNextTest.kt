@@ -37,10 +37,28 @@ class PlanStudyNextTest {
         compose.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
     }
 
-    private fun show(claimFailed: Boolean = false) {
+    /** As main's panel: what to study next under its title, and a start that didn't save said under its buttons. */
+    @Test
+    fun aNextLevelThatDidNotStartSaysSoInThePanel() {
+        show(
+            next = """{"nextLevel":{"chapterCount":0,"courseId":"$COURSE","level":"intermediate","title":"Python"},"related":[]}""",
+            nextLevel = NextLevelStart.Failed,
+            layout = SuggestionLayout.Panel,
+        )
+
+        compose.onNodeWithText("Here's what to study next.").assertIsDisplayed()
+        compose.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
+    }
+
+    private fun show(
+        claimFailed: Boolean = false,
+        next: String = """{"nextLevel":null,"related":[]}""",
+        nextLevel: NextLevelStart = NextLevelStart.Idle,
+        layout: SuggestionLayout = SuggestionLayout.Line,
+    ) {
         val summary = learnerSummary()
         val page = PlanPageState(summary.goals.first(), plan(), summary)
-        val next = ApiJson.decodeFromString<StudyNext>("""{"nextLevel":null,"related":[]}""")
+        val next = ApiJson.decodeFromString<StudyNext>(next)
         val certificates = ApiJson.decodeFromString<PlanCertificates>("""{"earned":[],"unclaimed":[{"courseLevel":null}]}""")
 
         compose.setContent {
@@ -50,9 +68,9 @@ class PlanStudyNextTest {
                         page,
                         PlanEdits(),
                         PlanLinks(rememberAppNavigator(), page),
-                        SlotHost(next = next, certificates = certificates, claimFailed = claimFailed),
+                        SlotHost(next = next, certificates = certificates, claimFailed = claimFailed, nextLevel = nextLevel),
                         SlotState(),
-                        SuggestionLayout.Line,
+                        layout,
                         SlotFocus(),
                     )
                 StudyNextSuggestion(next, slot)
@@ -60,3 +78,5 @@ class PlanStudyNextTest {
         }
     }
 }
+
+private const val COURSE = "00000000-0000-0000-0000-000000000001"
