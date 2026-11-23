@@ -288,6 +288,7 @@ private fun CheckQuestion(text: String) {
  * Main's `NumericAnswerField`: the learner's own typing stays as typed until Check, which writes it with the fewest
  * digits that keep its grade, as core decides; money keeps its sign where the language writes it.
  */
+@Suppress("DEPRECATION")
 @Composable
 private fun NumericCheckField(
     check: NumericCheck,

@@ -20,7 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
@@ -31,6 +34,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -79,13 +83,22 @@ class BottomBarTest {
     @Test
     fun focusReachesTheNotesActionBeforeTheBarsButtons() {
         lateinit var focus: FocusManager
+        lateinit var inputMode: InputModeManager
         compose.setContent {
             ZoonkTheme {
                 focus = LocalFocusManager.current
-                BottomBar(note = { Button(onClick = {}) { Text("Subscribe") } }) { Button(onClick = {}) { Text("Start") } }
+                inputMode = LocalInputModeManager.current
+                Column(Modifier.fillMaxSize()) {
+                    Button(onClick = {}) { Text("Previous") }
+                    Spacer(Modifier.weight(1f))
+                    BottomBar(note = { Button(onClick = {}) { Text("Subscribe") } }) { Button(onClick = {}) { Text("Start") } }
+                }
             }
         }
 
+        compose.onNodeWithText("Subscribe").assertIsDisplayed()
+        compose.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        compose.onNodeWithText("Previous").requestFocus().assertIsFocused()
         compose.runOnIdle { focus.moveFocus(FocusDirection.Next) }
         compose.onNodeWithText("Subscribe").assertIsFocused()
         compose.runOnIdle { focus.moveFocus(FocusDirection.Next) }

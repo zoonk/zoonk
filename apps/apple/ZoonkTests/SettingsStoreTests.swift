@@ -220,8 +220,8 @@ final class SettingsStoreTests: XCTestCase {
     let deletion = Task { await store.deleteMemoryFact(id: MemoryFact.evenings.id) }
     await waitUntil { store.memory.value?.facts.count == 1 }
     await api.releaseEdits(throwing: APIError.network)
-    await edit.value
-    await deletion.value
+    _ = await edit.value
+    _ = await deletion.value
 
     XCTAssertEqual(store.memory.value?.facts, [.sciFi], "the deleted fact stays deleted")
   }

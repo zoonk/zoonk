@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -453,7 +452,7 @@ private fun SuggestionSheet(
     onFocus: () -> Unit,
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberExpandedBottomSheetState()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Sheet) {
             Column(
                 modifier =

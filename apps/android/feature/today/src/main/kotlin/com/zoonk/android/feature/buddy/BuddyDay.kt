@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -54,6 +53,7 @@ import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -147,7 +147,7 @@ private fun BuddyTodaySheet(
     navigator: AppNavigator,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberExpandedBottomSheetState()) {
         Column(
             Modifier
                 .verticalScroll(rememberScrollState())

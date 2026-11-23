@@ -1,6 +1,7 @@
 const POSTHOG_DEFAULTS = "2026-05-30" as const;
 
 export const POSTHOG_SYSTEM_DISTINCT_ID = "zoonk-system";
+export const POSTHOG_SHUTDOWN_TIMEOUT_MS = 5000;
 
 type PostHogConfig = { defaults: typeof POSTHOG_DEFAULTS; host: string; projectToken: string };
 

@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +36,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 
 /**
  * Main's buddy editor, in Preferences and on the buddy tab: its kind and name, and its glasses
@@ -58,7 +58,7 @@ fun BuddyEditor(
     var glasses by rememberSaveable { mutableStateOf(look.glasses) }
     var typed by rememberSaveable { mutableStateOf(name) }
 
-    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberExpandedBottomSheetState()) {
         Column(Modifier.navigationBarsPadding().imePadding()) {
             Column(
                 modifier =

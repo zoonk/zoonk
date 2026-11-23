@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -265,7 +264,7 @@ internal fun SearchPanel(
         }
 
     if (docked) {
-        ExpandedDockedSearchBar(state = state, inputField = inputField, modifier = Modifier.atBarWidth(state)) { results(groups, Modifier) }
+        ExpandedDockedSearchBar(state = state, inputField = inputField) { results(groups, Modifier) }
     } else {
         ExpandedFullScreenSearchBar(
             state = state,
@@ -300,15 +299,6 @@ private fun SearchSpread(
         }
     }
 }
-
-/** Material opens the docked panel at least 360dp wide; it keeps to its bar, which ends at a book's fold. */
-@OptIn(ExperimentalMaterial3Api::class)
-private fun Modifier.atBarWidth(state: SearchBarState): Modifier =
-    layout { measurable, constraints ->
-        val bar = state.collapsedCoords?.size?.width ?: constraints.maxWidth
-        val placeable = measurable.measure(constraints.copy(maxWidth = bar.coerceIn(constraints.minWidth, constraints.maxWidth)))
-        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
-    }
 
 internal class SearchGoalSwitch(
     private val appScope: CoroutineScope,

@@ -41,8 +41,8 @@ No environment variable is required: the apps use local defaults, sign-in codes 
 
 ### Local Development
 
-- `pnpm dev` to start every app through Portless. Routes include the clone name, such as `http://main.zoonk.localhost:1355`, and linked worktrees also receive a branch prefix
-- `pnpm dev:lan` when testing from a phone or another device on the same trusted network. It prints the `.local` Main URL to open on that device, such as `http://main.zoonk.local:1356`
+- `pnpm dev` to start every app through Portless. Open the URLs it prints. Their hostnames include the clone name, such as `main.zoonk.localhost`, and linked worktrees also receive a branch prefix
+- `pnpm dev:lan` when testing from a phone or another device on the same trusted network. Open the `.local` Main URL it prints on that device
 - `pnpm dev:direct` to bypass Portless and use the original fixed localhost ports
 - `pnpm dev:prune` to let Portless remove orphaned servers left by crashed sessions. A stack's services stop by themselves within seconds of its `pnpm dev` or `pnpm start` ending, even when that process is force-killed
 - `pnpm build` to create a production build

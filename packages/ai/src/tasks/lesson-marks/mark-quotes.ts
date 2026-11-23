@@ -70,10 +70,11 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
 function findCodeSpans(text: string): { end: number; start: number }[] {
   const lines = text.split("\n");
 
-  const starts = lines.reduce<number[]>(
-    (offsets, line, index) => [...offsets, (offsets[index] ?? 0) + line.length + 1],
-    [0],
-  );
+  const starts = [0];
+
+  for (const line of lines) {
+    starts.push((starts.at(-1) ?? 0) + line.length + 1);
+  }
 
   return findCodeFences(lines).map(({ end, start }) => ({
     end: (starts[end] ?? text.length + 1) - 1,
