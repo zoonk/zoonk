@@ -11,9 +11,7 @@
   "activities_sorting_badge_sort_groups": "de1fc9014580df7f1dddb9a2f1085df2eeaa60f4bdbaa00387a442dc755bd845",
   "activities_sorting_belongs_in": "728f10ae59f5a546499a56970fafcb3db3598621b6faa52831c4c3d5d421cc3c",
   "activities_sorting_card_matched": "6265c8be97c7b552570c0bece1659254bdc2a9a3bc62dcf9a471624599261e2b",
-  "activities_sorting_card_no_match": "9b1894c32fda3c2831ac7872520c1a7d67a1dfe91d05db351d5bf89a25af3c51",
   "activities_sorting_cards_to_match": "21326c0be5582fa43567c4847b94359aae548c5193af8a46676d454c429d117f",
-  "activities_sorting_cards_without_match": "eb1c94fafaff9ad25cc5dc4e21b93b4485ab5e48ade0afcb826a4ca35647f38e",
   "activities_sorting_cause": "7be45bbce4ed8d380f00edd4a12e61b3700fde419aed234f25ab9ec5e0887a5b",
   "activities_sorting_cause_picked": "03543341fa699b3fc0902279aac95d9cd8280e96f7cff295d5111a6d5a149379",
   "activities_sorting_causes_and_effects": "ecf6825f480538f2c72d9a7e976468bb40f6beed760f8503e52b9125f7c00291",
@@ -32,7 +30,6 @@
   "activities_sorting_led_to": "eee877fb4e5f192626460756c90816a5c40b0df2bd6ae7a865f5c0e20983ee6f",
   "activities_sorting_linked": "f2af7076bf34ccffce3bf56ed892d2c5621d3b95344dfe09294568d2e5db181a",
   "activities_sorting_links_count": "330aaeecab9fec20b5fd31dcd48f43c74cb7982be53e2027645617bcd1e2e439",
-  "activities_sorting_look_alikes": "18a70650c8e080e43ce48856afd45189368b3c96da0a039e15b50ec3e609603c",
   "activities_sorting_matched": "2ad55345b406a9dfbd23e1b885025d7c65c545b4f835a70e9369bafcd4c1cd3d",
   "activities_sorting_missed_first_try": "2a34f198e13687e1b696e7a1cbaac1ab75c1ad4d5e936bc0a17febc212416b62",
   "activities_sorting_missed_link": "2172b0dff79516a630835c23aa9d198ac07953105bd228dc2c5407c16abaafd7",
@@ -42,7 +39,6 @@
   "activities_sorting_name_taken_off": "bbab5917e3913a85b533e75f5be565a94879929e3d0227202d369619e4091d52",
   "activities_sorting_names": "ffed8368815d040b11c7f791f83e63fcf712472ea23230ac3de39f9329fc635a",
   "activities_sorting_no_cards": "8175d67e16195c5191b34fb4f367c6f9fbe891be6bb796d1fa56a6608b0e26e9",
-  "activities_sorting_no_match_note": "3972e0b2c8f458fd3ddb7756250d5e24edbf9a451abad19543833c739f49c087",
   "activities_sorting_not_a_link": "d4b44a4bae477b10ca75dbea6b3b4313a32eab5b4d9bafc87a79c0550219f661",
   "activities_sorting_not_quite": "7fd9f5589f35ac228f40c74b7bc155139e7300c50b95e4c9080af1a9214c3d43",
   "activities_sorting_not_straight": "312b3a3e4a2a37244e296cb954fd29694c5311d67461972b1e3248d67a39d363",
@@ -127,22 +123,12 @@
         <item quantity="many">%1$d paires associées sur %2$d</item>
         <item quantity="other">%1$d paires associées sur %2$d</item>
     </plurals>
-    <!-- Cards that look like they match one on the other side but don't. -->
-    <plurals name="activities_sorting_cards_without_match">
-        <item quantity="one">%d carte sans correspondance</item>
-        <item quantity="many">%d cartes sans correspondance</item>
-        <item quantity="other">%d cartes sans correspondance</item>
-    </plurals>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Cartes à associer</string>
     <!-- A matched card, for TalkBack, like "pregnant, matched". -->
     <string name="activities_sorting_card_matched">%1$s, association trouvée</string>
-    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
-    <string name="activities_sorting_card_no_match">%1$s, aucune association</string>
     <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
     <string name="activities_sorting_matched">Tu as associé %1$s à %2$s. Paires associées : %3$d sur %4$d.</string>
-    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
-    <string name="activities_sorting_no_match_note">« %1$s » n’a pas de correspondance.</string>
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
     <string name="activities_sorting_dont_go_together">%1$s et %2$s ne vont pas ensemble.</string>
     <string name="activities_sorting_dont_go_together_short">Ces deux éléments ne vont pas ensemble.</string>
@@ -152,8 +138,6 @@
     <string name="activities_sorting_missed_first_try">Raté au premier essai</string>
     <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
     <string name="activities_sorting_goes_with">%1$s va avec %2$s, pas avec %3$s.</string>
-    <!-- Above the cards that look like a match but have none. -->
-    <string name="activities_sorting_look_alikes">Éléments ressemblants sans correspondance</string>
     <string name="activities_sorting_badge_link_causes">Relie les causes</string>
     <string name="activities_sorting_pick_cause">Choisis une cause, puis sa conséquence.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

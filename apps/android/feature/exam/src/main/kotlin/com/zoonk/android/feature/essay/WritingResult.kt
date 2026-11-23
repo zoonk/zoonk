@@ -47,6 +47,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.R
+import com.zoonk.android.feature.writing.MinimumLegend
 import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.RangeMeter
 import com.zoonk.android.feature.writing.deductionRange
@@ -114,7 +115,12 @@ private fun PointsHeader(
 ) {
     val errorCount = grade.errors.size
     val lines = grade.estimatedLines ?: countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
-    val partMinimum = prompt.partMinimum?.let { part -> minimumShare(part.minimum.unit.value == "percent", part.minimum.value, part.max) }
+    val part = prompt.partMinimum
+    val partMax = part?.max
+    val percent = part?.minimum?.unit?.value == "percent"
+    val share = part?.let { minimumShare(percent, it.minimum.value, it.max) }
+    val partPoints = if (percent) partMax?.let { share?.times(it) } else part?.minimum?.value
+    val sameScale = partMax == points.max
     val decimals = points.decimals
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -133,8 +139,34 @@ private fun PointsHeader(
             }
         }
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            RangeMeter(points.total.low, points.total.high, points.max, minimumShare = partMinimum)
-            partMinimum?.let { MinimumLegend(stringResource(R.string.essay_part_minimum, formatPercent(it, currentLocale()))) }
+            RangeMeter(points.total.low, points.total.high, points.max, minimumShare = share.takeIf { sameScale })
+            val locale = currentLocale()
+            val label =
+                when {
+                    !sameScale && partPoints != null -> {
+                        val minimum = formatPoints(partPoints, locale)
+                        if (partMax == null) {
+                            stringResource(R.string.essay_part_minimum_points, minimum)
+                        } else {
+                            stringResource(R.string.essay_part_minimum_total, minimum, formatPoints(partMax, locale))
+                        }
+                    }
+
+                    share != null -> {
+                        stringResource(R.string.essay_part_minimum, formatPercent(share, locale))
+                    }
+
+                    else -> {
+                        null
+                    }
+                }
+            if (label != null) {
+                if (sameScale) {
+                    MinimumLegend(label)
+                } else {
+                    Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                }
+            }
         }
         val zero = points.zeroReason
         if (zero != null) {
@@ -162,22 +194,6 @@ private fun PointsHeader(
                 )
             }
         }
-    }
-}
-
-/** The tick's legend under a meter, marked as the tick is. */
-@Composable
-private fun MinimumLegend(text: String) {
-    Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(
-            Modifier
-                .padding(vertical = 2.dp)
-                .width(2.dp)
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(1.dp))
-                .background(MaterialTheme.colorScheme.onSurface),
-        )
-        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 

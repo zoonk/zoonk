@@ -266,8 +266,18 @@ export function needsWordByWordCheck({
   language: string;
   words: readonly SpokenWordResult[];
 }): boolean {
+  const target = toTokens({ language, text: expected });
+  const transcript = toTokens({ language, text: heard });
+
+  const openingWordMissing =
+    transcript.length > 0 &&
+    target.length === transcript.length + 1 &&
+    transcript.every((token, index) => token === target[index + 1]);
+
   return (
-    toDigitRuns(expected) !== toDigitRuns(heard) || hasTranscribedLetterNames({ language, words })
+    openingWordMissing ||
+    toDigitRuns(expected) !== toDigitRuns(heard) ||
+    hasTranscribedLetterNames({ language, words })
   );
 }
 

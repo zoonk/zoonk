@@ -950,7 +950,7 @@ fun WritingAnswerScreen(
         is LoadState.Loaded -> {
             val answer = read.value
             val grade = remember(answer.grade) { answer.grade.toGrade() }
-            RunPage(onClose = navigator::closeTask, title = { BarTitle(writingLabel(answer.writing)) }) {
+            RunPage(onClose = navigator::closeTask, title = { BarTitle(answer.writing.title) }) {
                 WritingResultView(grade, answer.writing, answer.text)
             }
         }

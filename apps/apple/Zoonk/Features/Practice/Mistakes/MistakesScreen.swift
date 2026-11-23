@@ -4,6 +4,7 @@ struct MistakesScreen: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(LearnerSummaryStore.self) private var summary
+  @State private var lesson = NotebookLesson()
   @State private var showsFixed = false
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
@@ -70,6 +71,8 @@ struct MistakesScreen: View {
         comment: "Title of the mistakes notebook.")
     )
     .modifier(LoadsPattern(pattern: pattern))
+    .environment(lesson)
+    .onDisappear { lesson.leave() }
   }
 
   private var title: Text {
@@ -138,6 +141,40 @@ struct MistakesScreen: View {
     if let noticed = pattern?.value {
       Section {
         PatternRow(pattern: noticed) { hooks.navigate(.pattern(patternId: noticed.id)) }
+      }
+    }
+  }
+}
+
+@MainActor
+@Observable
+private final class NotebookLesson {
+  let request = VisitRequest<MutationResult<String>>()
+  private(set) var mistakeId: String?
+  private(set) var failed: Set<String> = []
+
+  func leave() {
+    request.leave()
+    failed.removeAll()
+    mistakeId = nil
+  }
+
+  func open(_ mistake: Components.Schemas.Mistake, practice: PracticeStore, hooks: PracticeHooks) {
+    failed.remove(mistake.id)
+    if let lesson = mistake.lesson {
+      request.leave()
+      hooks.navigate(.lesson(lessonId: lesson.id))
+      return
+    }
+
+    mistakeId = mistake.id
+    request.run {
+      await practice.openLesson(mistakeId: mistake.id)
+    } then: { result in
+      switch result {
+      case .done(let id): hooks.navigate(.lesson(lessonId: id))
+      case .failed: self.failed.insert(mistake.id)
+      case .obsolete, nil: break
       }
     }
   }
@@ -268,6 +305,8 @@ private struct MistakeEntryView: View {
   /// `__init__` keeps its underscores; other answers are item text with their math.
   private static let writtenAnswerFormats: Set = ["spoken", "spokenAnswer", "typed", "typedAnswer"]
 
+  @Environment(NotebookLesson.self) private var lesson
+  @Environment(PracticeStore.self) private var practice
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
   /// The page already says practice opens tomorrow, so the entry doesn't say it again.
@@ -333,40 +372,46 @@ private struct MistakeEntryView: View {
     let skillId = mistake.practiceAvailable ? mistake.skill?.id : nil
     let tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
 
-    if tomorrow || skillId != nil || mistake.lesson != nil {
-      ButtonRow(spacing: 12) {
-        if tomorrow {
-          Text(
-            "Practice tomorrow", tableName: "Practice",
-            comment: "A mistake from today, ready to practice tomorrow."
-          )
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-        }
-
-        if let skillId {
-          Button {
-            hooks.navigate(.mistakePractice(skillId: skillId))
-          } label: {
-            Text(
-              "Practice this topic", tableName: "Practice",
-              comment: "Practices only this topic's mistakes.")
-          }
-          .buttonStyle(.outline)
-        }
-
-        if let lesson = mistake.lesson {
-          Button {
-            hooks.navigate(.lesson(lessonId: lesson.id))
-          } label: {
-            Text(
-              "Open the lesson", tableName: "Practice",
-              comment: "Opens the lesson that teaches a mistake's idea.")
-          }
-          .buttonStyle(.ghost)
-        }
+    ButtonRow(spacing: 12) {
+      if tomorrow {
+        Text(
+          "Practice tomorrow", tableName: "Practice",
+          comment: "A mistake from today, ready to practice tomorrow."
+        )
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
       }
-      .controlSize(.small)
+
+      if let skillId {
+        Button {
+          hooks.navigate(.mistakePractice(skillId: skillId))
+        } label: {
+          Text(
+            "Practice this topic", tableName: "Practice",
+            comment: "Practices only this topic's mistakes.")
+        }
+        .buttonStyle(.outline)
+      }
+
+      BusyButton(isBusy: lesson.mistakeId == mistake.id && lesson.request.isRunning) {
+        lesson.open(mistake, practice: practice, hooks: hooks)
+      } label: {
+        Text(
+          "Open the lesson", tableName: "Practice",
+          comment: "Opens the lesson that teaches a mistake's idea.")
+      }
+      .buttonStyle(.ghost)
+      .padding(
+        .leading, skillId == nil && !tomorrow ? -ZoonkButtonStyle.horizontalPadding(.small) : 0)
+    }
+    .controlSize(.small)
+    if lesson.failed.contains(mistake.id) {
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't open this step. Try again.", table: "Today",
+          comment: "Under a step of the day, or a mission, that didn't open")
+      )
+      .typeStyle(.note)
     }
   }
 

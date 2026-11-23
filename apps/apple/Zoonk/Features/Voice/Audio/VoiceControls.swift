@@ -68,6 +68,7 @@ final class RecordInBar {
 /// screen that records. A check that isn't slow yet has none: Record's busy button says it.
 enum RecordNote: Equatable {
   case ready
+  case acquiring
   /// Not read as it shows: VoiceOver's speech would end up in the take.
   case recording
   case noSpeech
@@ -75,6 +76,14 @@ enum RecordNote: Equatable {
   case slow
   /// The microphone is off where skipping is the other way on: how to turn it back on.
   case microphoneOff(String)
+
+  init?(active status: VoiceRecorder.Status) {
+    switch status {
+    case .acquiring: self = .acquiring
+    case .recording: self = .recording
+    case .idle, .denied: return nil
+    }
+  }
 
   @MainActor
   var note: BarNote {
@@ -84,6 +93,8 @@ enum RecordNote: Equatable {
         LocalizedStringResource(
           "Tap Record and say it out loud", table: "Voice",
           comment: "Asks the learner to record their answer"), tone: .status)
+    case .acquiring:
+      BarNote(LocalizedStringResource("Getting ready…", table: "Today"), tone: .hint)
     case .recording:
       BarNote(
         LocalizedStringResource(

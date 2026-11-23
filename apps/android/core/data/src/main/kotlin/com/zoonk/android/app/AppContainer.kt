@@ -41,7 +41,6 @@ import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.buddy.BuddyStore
-import com.zoonk.android.feature.buddy.EarlierQuestionsStore
 import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
@@ -260,12 +259,6 @@ class AppContainer private constructor(
             plans::setContentCountry,
             learningProfile::setHomeCountry,
             plans::decideChange,
-        )
-    val earlierQuestions =
-        EarlierQuestionsStore(
-            api = { session, cursor -> perform { api.clients(session).lessons.listEarlierQuestions(cursor) } },
-            cache = cache,
-            sessions = sessions,
         )
 
     // Speech clips and recorded answers.

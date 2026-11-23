@@ -1405,12 +1405,6 @@ msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and 
 msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배우고 싶은 걸 알려 주시면 계획을 세워 드릴게요."
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "이전 질문"
-
-#: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
@@ -7526,6 +7520,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "레슨 열기"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "내일 연습할 수 있어요"
@@ -7534,11 +7533,6 @@ msgstr "내일 연습할 수 있어요"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "이 주제 연습하기"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "레슨 열기"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
@@ -12854,6 +12848,14 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "녹음"
 
+#: src/speech/record-note.tsx
+#: src/today/today-block-row.tsx
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "준비하고 있어요…"
+
 #. “Stop” is the label of the button that ends the recording.
 #: src/speech/record-note.tsx
 msgctxt "CzQFwa"
@@ -13283,13 +13285,6 @@ msgstr ", 건너뜀"
 msgctxt "PFPoFb"
 msgid ", counts toward a mission"
 msgstr ", 미션 달성에 반영돼요"
-
-#: src/today/today-block-row.tsx
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "2LhxfA"
-msgid "Getting ready…"
-msgstr "준비하고 있어요…"
 
 #. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
 #: src/today/today-block-row.tsx
@@ -14071,6 +14066,16 @@ msgstr "모든 기준을 충족했어요."
 msgctxt "HiVJjN"
 msgid "For example: {example}"
 msgstr "예: {example}"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "서술형 시험 합격에 필요한 총점: {minimum}점"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "서술형 시험 합격에 필요한 점수: 총 {max}점 중 {minimum}점"
 
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"

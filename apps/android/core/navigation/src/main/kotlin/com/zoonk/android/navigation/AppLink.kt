@@ -271,7 +271,7 @@ object AppLink {
                 when (first) {
                     "plan" -> AppRoute.Subject(subjectKey = second)
 
-                    "buddy" -> if (second == "earlier-questions") AppRoute.EarlierQuestions else null
+                    "buddy" -> if (second == "earlier-questions") AppRoute.Buddy() else null
 
                     "mock" -> if (second == "new") AppRoute.MockChooser else AppRoute.Mock(second, session)
 

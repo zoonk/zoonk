@@ -106,6 +106,7 @@ test.describe("Learner model API", () => {
       apiContext.get("/v1/me/skills"),
       apiContext.get("/v1/me/reviews"),
       apiContext.get("/v1/me/mistakes"),
+      apiContext.post(`/v1/me/mistakes/${randomUUID()}/lesson`),
       apiContext.get(`/v1/me/completed-lessons?goalId=${goalId}`),
       apiContext.get("/v1/me/mistake-practice"),
       apiContext.post(`/v1/me/mistakes/${randomUUID()}/answers`, {

@@ -20693,6 +20693,90 @@
         }
       }
     },
+    "/me/mistakes/{mistakeId}/lesson": {
+      "post": {
+        "description": "Opens the lesson where the current learner made this mistake, or a teaching lesson on the same skill. Prefers a lesson the learner finished, then one already written. If no accessible lesson exists, creates a lesson for the mistake. Another learner's mistake returns 404.",
+        "operationId": "openMistakeLesson",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Open a mistake's lesson",
+        "tags": [
+          "Mistakes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Mistake ID"
+            },
+            "required": true,
+            "description": "Mistake ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The lesson to open",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MistakeLesson"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/mock-writing": {
       "get": {
         "description": "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A supply run can write several papers. Each paper has its own stream namespace, whether supply started in the background or after a learner asked to start. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
@@ -62538,6 +62622,8 @@
                         "type": "object",
                         "properties": {
                           "distractors": {
+                            "default": [],
+                            "maxItems": 0,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -62566,8 +62652,7 @@
                                 "why"
                               ],
                               "additionalProperties": false
-                            },
-                            "description": "Aim for 3 or fewer."
+                            }
                           },
                           "pairs": {
                             "minItems": 2,
@@ -94773,7 +94858,7 @@
           },
           "lesson": {
             "nullable": true,
-            "description": "The lesson \"Open the lesson\" opens: the one the mistake was made in; for a question answered outside a lesson, the first teaching lesson the learner completed, otherwise the first written (already generated) teaching lesson, otherwise the current first teaching lesson. Only lessons the learner can open qualify; null when there is none",
+            "description": "The original lesson, or a lesson on the same skill, at the time the notebook was read. Null when there is no existing lesson. POST /v1/me/mistakes/{mistakeId}/lesson also works when this field is null.",
             "type": "object",
             "properties": {
               "id": {
@@ -94847,6 +94932,24 @@
           "open",
           "fixed"
         ]
+      },
+      "MistakeLesson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "additionalProperties": false
       },
       "MockWriting": {
         "type": "object",

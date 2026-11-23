@@ -14,6 +14,9 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
+import { listCatalogChapterLessons } from "../catalog/chapter-lessons";
+import { listCatalogCourseChapters } from "../catalog/course-chapters";
+import { getCatalogLesson } from "../catalog/lesson";
 import { LIST_COURSES_LIMIT, listCourses, listCoursesPage } from "./list-courses";
 
 function createTestLanguage() {
@@ -319,6 +322,50 @@ describe(listCourses, () => {
 
     expect(totals(list)).toStrictEqual(expected);
     expect(totals(page.courses)).toStrictEqual(expected);
+  });
+
+  it("adds the minutes shown on each lesson page, including language lessons and dedicated activities", async () => {
+    const language = createTestLanguage();
+    const { chapters, course } = await catalogCourseFixture({ language, lessonCounts: [0] });
+    const chapterId = chapters[0]!.id;
+
+    const lessons = await Promise.all([
+      libraryLessonFixture({ estimatedMinutes: 4, targetLanguage: "es" }),
+      libraryLessonFixture({ estimatedMinutes: 4, targetLanguage: "es" }),
+      libraryLessonFixture({ estimatedMinutes: 5 }),
+      libraryLessonFixture({
+        estimatedMinutes: 5,
+        identityKey: "alphabet:ja-Jpan",
+        language,
+        targetLanguage: "ja",
+      }),
+      libraryLessonFixture({ estimatedMinutes: 6, identityKey: `challenge:${chapterId}` }),
+    ]);
+
+    await Promise.all(
+      lessons.map((lesson, position) =>
+        chapterLessonFixture({ chapterId, lessonId: lesson.id, position }),
+      ),
+    );
+
+    const [listing, outline, chapter, pages] = await Promise.all([
+      listCourses({ language }),
+      listCatalogCourseChapters({ courseId: course.id }),
+      listCatalogChapterLessons({ chapterId, courseId: course.id }),
+      Promise.all(
+        lessons.map((lesson) => getCatalogLesson({ courseId: course.id, lessonId: lesson.id })),
+      ),
+    ]);
+
+    const minutes = [3, 3, 5, 5, 6];
+    expect(listing).toMatchObject([{ estimatedMinutes: 22, lessonCount: 5 }]);
+
+    expect(outline?.[0]?.chapter.lessons.map((lesson) => lesson.estimatedMinutes)).toStrictEqual(
+      minutes,
+    );
+
+    expect(chapter?.lessons.map((lesson) => lesson.estimatedMinutes)).toStrictEqual(minutes);
+    expect(pages.map((lesson) => lesson?.estimatedMinutes)).toStrictEqual(minutes);
   });
 
   it("sorts courses by popularity", async () => {

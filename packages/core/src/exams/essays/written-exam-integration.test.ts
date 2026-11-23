@@ -513,7 +513,7 @@ describe("CGU written exam preparation", () => {
     await expect(submitEssay({ blockId: block.id, input })).resolves.toMatchObject({
       grade: {
         criteria: [{ id: "case", level: "strong" }],
-        estimatedLines: 23,
+        estimatedLines: 22,
         ignoredFrom: null,
         kind: "levels",
       },
@@ -522,7 +522,7 @@ describe("CGU written exam preparation", () => {
 
     const first = await prisma.attempt.findFirstOrThrow({ where: { itemId, userId: user.id } });
     expect(first.score).toBeNull();
-    expect(first.answer).toMatchObject({ conditions: { estimatedLines: 23 } });
+    expect(first.answer).toMatchObject({ conditions: { estimatedLines: 22 } });
     await expectDraftFlag(false);
 
     const currentTask = { ...shortTask, lines: 1, points: 12 };
@@ -553,7 +553,7 @@ describe("CGU written exam preparation", () => {
 
     await expect(getWritingAttempt(first.id)).resolves.toMatchObject({
       attempt: {
-        grade: { estimatedLines: 23 },
+        grade: { estimatedLines: 22 },
         writing: { partMinimum: { max: 100, minimum: { unit: "points", value: 50 } } },
         writingTask: currentTask,
       },

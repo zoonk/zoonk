@@ -161,28 +161,10 @@ function ExtraMoment({
   );
 }
 
-function useCompletionNextStep() {
-  const t = useExtracted();
-  const { routes } = useLessonPlayerConfig();
-  const { state } = useLessonPlayer();
-  const replay = state.run.status === "started" && state.run.replay;
-
-  if (!replay && routes.nextLesson) {
-    return null;
-  }
-
-  if (routes.exitTo) {
-    return <BackLabel exitTo={routes.exitTo} />;
-  }
-
-  return routes.exit === "/today" ? t("Go to Today") : null;
-}
-
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { completion, onRetry } = props;
   const t = useExtracted();
   const { linkComponent: LinkComponent, routes, slots } = useLessonPlayerConfig();
-  const nextStep = useCompletionNextStep();
   const { result } = completion;
   const isSaved = completion.status === "saved";
   const planReveal = isSaved ? (result?.planReveal ?? null) : null;
@@ -195,10 +177,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   return (
     <>
       <TaskBody data-slot="lesson-completion">
-        <MomentHeader
-          detail={isSaved && !planReveal && !slots.completionActions && nextStep}
-          title={isSaved ? title : <MomentSavingTitle />}
-        >
+        <MomentHeader title={isSaved ? title : <MomentSavingTitle />}>
           {isSaved && <SavedReadouts {...props} />}
         </MomentHeader>
 

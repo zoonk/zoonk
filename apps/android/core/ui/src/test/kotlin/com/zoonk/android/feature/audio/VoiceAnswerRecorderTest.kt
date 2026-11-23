@@ -51,6 +51,25 @@ class VoiceAnswerRecorderTest {
     }
 
     @Test
+    fun tappingRecordWithPermissionPendingReplacesTheIdleHint() {
+        shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
+        rule.setContent {
+            ZoonkTheme { Recorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator()) }
+        }
+
+        rule.onNodeWithText("Record").performClick()
+        rule.onNodeWithText("Tap Record and say it out loud").assertDoesNotExist()
+        rule.onNodeWithText("Stop").assertDoesNotExist()
+
+        rule.runOnIdle {
+            shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
+            val request = shadowOf(rule.activity).lastRequestedPermission
+            rule.activity.activityResultRegistry.dispatchResult(request.requestCode, true)
+        }
+        rule.onNodeWithText("Stop").assertIsDisplayed()
+    }
+
+    @Test
     fun aTakeStopsWhenTheRecorderLeavesTheScreenItsViewModelOutlives() {
         shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
         var shown by mutableStateOf(true)

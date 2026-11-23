@@ -1,35 +1,19 @@
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 
-type MatchFields = ActivityContentFor<"matchPairs">["fields"];
+type MatchFields = Pick<ActivityContentFor<"matchPairs">["fields"], "pairs">;
 
-export type MatchCard = { id: string; isTrap: boolean; text: string; why: string | null };
-type MatchRow = { left: MatchCard | null; right: MatchCard | null };
+export type MatchCard = { id: string; text: string; why: string | null };
+type MatchRow = { left: MatchCard; right: MatchCard };
 
 const MAX_ATTEMPTS = 32;
 
 function sideCards(fields: MatchFields, side: "left" | "right"): MatchCard[] {
-  const pairs = fields.pairs.map((pair) => ({
-    id: pair.id,
-    isTrap: false,
-    text: side === "left" ? pair.left : pair.right,
-    why: pair.why ?? null,
-  }));
-
-  const traps = fields.distractors
-    .filter((distractor) => distractor.side === side)
-    .map((distractor, index) => ({
-      id: `${side}-trap-${index}`,
-      isTrap: true,
-      text: distractor.text,
-      why: distractor.why,
-    }));
-
-  return [...pairs, ...traps];
+  return fields.pairs.map((pair) => ({ id: pair.id, text: pair[side], why: pair.why ?? null }));
 }
 
 function hasAlignedPair(left: readonly MatchCard[], right: readonly MatchCard[]): boolean {
-  return left.some((card, index) => !card.isTrap && right[index]?.id === card.id);
+  return left.some((card, index) => right[index]?.id === card.id);
 }
 
 export function arrangeMatchColumns(fields: MatchFields): {
@@ -56,22 +40,8 @@ export function solvedRows({
   left: readonly MatchCard[];
   right: readonly MatchCard[];
 }): MatchRow[] {
-  const leftRows = left.map((card) => ({
-    left: card,
-    right: card.isTrap ? null : (right.find((other) => other.id === card.id) ?? null),
-  }));
-
-  const rightTrapRows = right
-    .filter((card) => card.isTrap)
-    .map((card) => ({ left: null, right: card }));
-
-  return [...leftRows, ...rightTrapRows];
-}
-
-export function explainMismatch({ left, right }: { left: MatchCard; right: MatchCard }): {
-  reason: string | null;
-  trap: MatchCard | null;
-} {
-  const trap = [right, left].find((card) => card.isTrap) ?? null;
-  return { reason: trap?.why ?? right.why ?? left.why, trap };
+  return left.flatMap((card) => {
+    const partner = right.find((other) => other.id === card.id);
+    return partner ? [{ left: card, right: partner }] : [];
+  });
 }

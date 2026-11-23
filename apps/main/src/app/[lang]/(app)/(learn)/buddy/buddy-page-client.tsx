@@ -9,8 +9,8 @@ import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
 import { useMissionLinks } from "@/lib/session/use-mission-links";
 import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import {
+  type BuddyDayHrefs,
   BuddyScreen,
-  type BuddyScreenHrefs,
   type BuddyStatusView,
   type TutorSituation,
   useBuddyTutor,
@@ -18,16 +18,7 @@ import {
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
 
-const HREFS: BuddyScreenHrefs = {
-  energy: "/energy",
-  logbook: "/logbook",
-  memory: "/settings/memory",
-};
-
-const WITH_EARLIER_QUESTIONS: BuddyScreenHrefs = {
-  ...HREFS,
-  earlierQuestions: "/buddy/earlier-questions",
-};
+const HREFS: BuddyDayHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
 
 type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
 
@@ -64,7 +55,6 @@ function BuddyConversation({
 export function BuddyPageClient({
   canAsk,
   goalId,
-  hasEarlierQuestions,
   initialThread,
   memoryCount,
   readAt,
@@ -74,7 +64,6 @@ export function BuddyPageClient({
 }: {
   canAsk: boolean;
   goalId: string;
-  hasEarlierQuestions: boolean;
   initialThread: ThreadPage | null;
   memoryCount: number;
   readAt: number;
@@ -109,7 +98,7 @@ export function BuddyPageClient({
         },
         tools,
       }}
-      hrefs={hasEarlierQuestions ? WITH_EARLIER_QUESTIONS : HREFS}
+      hrefs={HREFS}
       memoryCount={memoryCount}
       situation={situation}
       status={status}

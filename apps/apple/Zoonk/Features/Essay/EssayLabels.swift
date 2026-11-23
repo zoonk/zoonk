@@ -13,6 +13,14 @@ enum WritingLabels {
     return value.formatted(.number.precision(.fractionLength(decimals)).locale(locale))
   }
 
+  static func partPoints(_ value: Double) -> String {
+    let format = FloatingPointFormatStyle<Double>.number
+      .precision(.fractionLength(0...2))
+      .rounded(rule: .toNearestOrAwayFromZero)
+      .locale(locale)
+    return value.formatted(format)
+  }
+
   /// A share, like "50%".
   static func share(_ value: Double) -> String {
     value.formatted(.percent.precision(.fractionLength(0)).locale(locale))
@@ -74,9 +82,12 @@ enum WritingLabels {
   }
 
   /// "16–19 of 30": the scale with the range's own decimals, so a 1.25-point question reads 1.25.
-  static func range(_ range: WritingRange, of max: Double, decimals: Int? = nil) -> String {
+  static func range(
+    _ range: WritingRange, of max: Double, decimals: Int? = nil, headline: Bool = false
+  ) -> String {
     String(
-      localized: "\(self.range(range, decimals: decimals)) of \(points(max, decimals: decimals))",
+      localized:
+        "\(self.range(range, decimals: decimals, headline: headline)) of \(points(max, decimals: decimals))",
       table: "Essay", comment: "A range of points of a question's total, like '16–19 of 30'")
   }
 

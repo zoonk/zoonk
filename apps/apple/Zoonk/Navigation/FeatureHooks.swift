@@ -77,8 +77,6 @@ extension TutorPlaces {
         router.open(.statistics(section: .energy))
       case .logbook:
         router.open(.logbook)
-      case .earlierQuestions:
-        router.open(.earlierQuestions)
       case .mission(let opens):
         switch opens {
         case .case1(let block):

@@ -1677,11 +1677,6 @@ msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs ma
 msgstr "{left}와(과) {right}의 짝을 맞췄어요. {matched, plural, other {#쌍을 맞췄어요(총 {total}쌍).}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "95nYEN"
-msgid "“{card}” has no match."
-msgstr "“{card}”의 짝은 없어요."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "5sU5Ih"
 msgid "{left} and {right} don't go together."
 msgstr "{left}와(과) {right}은(는) 짝이 아니에요."
@@ -1692,19 +1687,14 @@ msgid "{text}, matched"
 msgstr "{text}, 짝 맞춤"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "aj5odZ"
-msgid "{text}, no match"
-msgstr "{text}, 짝 없음"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "짝을 맞출 카드"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Dzn88L"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "카드가 두 열로 나뉘어 있어요. 왼쪽과 오른쪽에서 카드를 하나씩 골라 짝을 맞추세요. {count, plural, =0 {} other {짝이 없는 카드가 #개 있어요.}} {matched, plural, other {맞춘 짝은 #쌍이고, 전체는 {total}쌍이에요.}}"
+msgctxt "jih4mf"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
+msgstr "카드가 두 열로 나뉘어 있어요. 왼쪽과 오른쪽에서 카드를 하나씩 골라 짝을 맞추세요. {matched, plural, other {맞춘 짝은 #쌍이고, 전체는 {total}쌍이에요.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
@@ -1715,11 +1705,6 @@ msgstr "<left></left>의 짝은 <right></right>이고, <guess></guess>은(는) �
 msgctxt "kzygtu"
 msgid "Missed on the first try"
 msgstr "첫 시도에서 틀린 짝"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "_Hm0lS"
-msgid "Look-alikes with no match"
-msgstr "비슷해 보이지만 짝이 없는 카드"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2880,11 +2865,6 @@ msgctxt "nDkRHw"
 msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
 msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
 
-#: src/components/match-board.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {짝이 없는 카드 #장}}"
-
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
@@ -3089,11 +3069,6 @@ msgstr "챕터로 돌아가기"
 msgctxt "UI79fv"
 msgid "Next lesson"
 msgstr "다음 레슨"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "오늘의 학습으로 이동하기"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"

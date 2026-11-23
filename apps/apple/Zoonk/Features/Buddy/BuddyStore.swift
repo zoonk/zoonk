@@ -5,12 +5,9 @@ import Observation
 @Observable
 final class BuddyStore {
   let status: Resource<BuddyStatus>
-  let earlierQuestions: Resource<EarlierQuestionsPage>
 
   /// Waits in the Buddy tab's composer for the learner's own send.
   var broughtQuestion: String?
-  private(set) var isLoadingOlder = false
-  private(set) var olderFailed = false
 
   @ObservationIgnored private let api: any BuddyAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -32,18 +29,6 @@ final class BuddyStore {
       return try await api.status(
         timeZone: TimeZone.current.identifier, token: session.bearerToken)
     }
-
-    earlierQuestions = cache.resource(
-      audience: .signedIn,
-      maxAge: .seconds(60 * 60 * 24),
-      isEmpty: { $0.questions.isEmpty },
-      fetch: { session in
-        guard let session else {
-          return nil
-        }
-
-        return try await api.earlierQuestions(cursor: nil, token: session.bearerToken)
-      })
   }
 
   /// Saves even when the screen that asked goes away first. A failed save puts the buddy before
@@ -84,34 +69,6 @@ final class BuddyStore {
     }
 
     return false
-  }
-
-  func loadOlderQuestions() async {
-    guard let page = earlierQuestions.value, let cursor = page.nextCursor, !isLoadingOlder,
-      let session = cache.session.authenticatedSession
-    else {
-      return
-    }
-
-    let revision = earlierQuestions.revision
-    isLoadingOlder = true
-    olderFailed = false
-    defer { isLoadingOlder = false }
-
-    do {
-      let older = try await api.earlierQuestions(cursor: cursor, token: session.bearerToken)
-
-      guard earlierQuestions.revision == revision else {
-        return
-      }
-
-      earlierQuestions.update { page in
-        EarlierQuestionsPage(
-          questions: page.questions + older.questions, nextCursor: older.nextCursor)
-      }
-    } catch {
-      olderFailed = !(error is CancellationError)
-    }
   }
 
   /// Saves even when the screen that asked goes away first, which then gets `.obsolete`.

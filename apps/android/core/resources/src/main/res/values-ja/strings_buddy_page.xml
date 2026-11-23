@@ -4,7 +4,6 @@
   "buddy_page_change": "b10ddacb48cf33d505ccc5288a76c18046d36658a41a66235144a90033ac99f5",
   "buddy_page_choose": "1a4adae2d3b347e9baeb2df0bf0bd7454cf55b098b6322119c73d51ca695a8eb",
   "buddy_page_count": "a1c5f65da1861afbac70eb8331988bacde12af5788d4ca05b62f0f3212655d35",
-  "buddy_page_earlier_questions": "5bf81751a6d78218f9433548e7ce8e0bbbc55dc21241639b21be67232514afc1",
   "buddy_page_energy_named": "b9f9be4aaf2e83b17be0ed46897063b317da7c83f8a0c074e43eaba7d2ce9071",
   "buddy_page_energy_napping": "fe3204f45a79c764d4d65c7bd504a378b09b00ac5f2091c4a6154bcad5b4fce6",
   "buddy_page_energy_starts": "3c8df6053f325318dd2889974c7947c416fff895701db7e0fe2f027fec49c2bc",
@@ -57,7 +56,6 @@
     <string name="buddy_page_change">%1$sを変える</string>
     <string name="buddy_page_choose">相棒を選ぶ</string>
     <string name="buddy_page_weekly_summary">週間まとめ</string>
-    <string name="buddy_page_earlier_questions">以前の質問</string>
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s個（全%2$s個中）</string>
     <string name="buddy_page_save_failed">保存できませんでした。もう一度お試しください。</string>

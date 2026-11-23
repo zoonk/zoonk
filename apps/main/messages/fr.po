@@ -817,41 +817,6 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Développer la barre latérale"
 
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "Questions précédentes"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "6hIrBQ"
-msgid "From an earlier version of {course}"
-msgstr "D’une version précédente de {course}"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "TnUbiV"
-msgid "From an earlier version of this course"
-msgstr "D’une version précédente de ce cours"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "vgDvJf"
-msgid "No answer was saved."
-msgstr "Aucune réponse n’a été enregistrée."
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "ttMteQ"
-msgid "Your questions from lessons that were updated, with their answers."
-msgstr "Tes questions sur des leçons mises à jour depuis, avec leurs réponses."
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "QKPtX3"
-msgid "No earlier questions"
-msgstr "Aucune question précédente"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O3OEwU"
-msgid "Older questions"
-msgstr "Questions plus anciennes"
-
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"

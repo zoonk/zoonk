@@ -205,6 +205,17 @@ struct PracticeAPI: Sendable {
     }
   }
 
+  func openMistakeLesson(token: String, mistakeId: String) async throws -> String {
+    try await perform(token) { client in
+      switch try await client.openMistakeLesson(path: .init(mistakeId: mistakeId)) {
+      case .ok(let response): return try response.body.json.id
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
   func mistakePractice(token: String, goalId: String?, skillId: String?) async throws
     -> MistakePracticeSet
   {

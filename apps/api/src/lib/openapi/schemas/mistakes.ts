@@ -23,6 +23,10 @@ const mistakeCauseSchema = z
 
 const mistakeStatusSchema = z.enum(MistakeStatus).meta({ id: "MistakeStatus" });
 
+const lessonReferenceSchema = z.object({ id: uuidSchema(), title: z.string() });
+
+export const mistakeLessonSchema = lessonReferenceSchema.meta({ id: "MistakeLesson" });
+
 const mistakeSchema = z
   .object({
     cause: mistakeCauseSchema
@@ -32,12 +36,11 @@ const mistakeSchema = z
     fixedAt: z.iso.datetime().nullable(),
     id: uuidSchema(),
     itemId: uuidSchema().nullable(),
-    lesson: z
-      .object({ id: uuidSchema(), title: z.string() })
+    lesson: lessonReferenceSchema
       .nullable()
       .meta({
         description:
-          'The lesson "Open the lesson" opens: the one the mistake was made in; for a question answered outside a lesson, the first teaching lesson the learner completed, otherwise the first written (already generated) teaching lesson, otherwise the current first teaching lesson. Only lessons the learner can open qualify; null when there is none',
+          "The original lesson, or a lesson on the same skill, at the time the notebook was read. Null when there is no existing lesson. POST /v1/me/mistakes/{mistakeId}/lesson also works when this field is null.",
       }),
     practiceAvailable: z
       .boolean()

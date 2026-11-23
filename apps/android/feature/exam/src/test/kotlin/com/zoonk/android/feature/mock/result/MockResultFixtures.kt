@@ -62,7 +62,7 @@ internal fun pendingEssay(
 internal fun gradedEssay(unsure: Boolean = false) =
     """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","unsure":$unsure,
     "text":"Cities grow and that is it. Transport must follow them.",
-    "writing":{"charactersPerLine":55,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,"taskKey":"essay",
+    "writing":{"charactersPerLine":87,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,"taskKey":"essay",
       "title":"Cities and transport","unit":"answer","criteria":[{"id":"c1","name":"Argument","points":null},
       {"id":"c2","name":"Cohesion","points":null}]},
     "grade":{"kind":"levels","errors":[],"ignoredFrom":null,"progress":null,

@@ -7,8 +7,9 @@ import {
   buildWritingFeedback,
 } from "@zoonk/core/exams/essays/writing-feedback";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { scoreWritingGrade } from "./scorer";
-import { type GradeWritingExpected, type GradeWritingInput, TEST_CASES } from "./test-cases";
+import { TEST_CASES } from "./test-cases";
 
 export type GradeWritingOutput = {
   estimatedLines: number;

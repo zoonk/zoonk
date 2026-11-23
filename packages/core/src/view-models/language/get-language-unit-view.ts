@@ -17,6 +17,7 @@ import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getSkillLevelRows, toIdKey } from "../../library/_utils/shared-rows";
 import { readLessonMapSentences } from "../../library/lessons/lesson-map";
+import { getDefaultLessonMinutes } from "../../library/lessons/lesson-minutes";
 import { getSession } from "../../users/get-session";
 import { findUpNextLessonId } from "../_utils/up-next-lesson";
 import { readLessonSkills } from "./_utils/lesson-skills";
@@ -37,7 +38,9 @@ function findVisibleUnit({ chapterId, userId }: { chapterId: string; userId: str
               contentStatus: true,
               estimatedMinutes: true,
               id: true,
+              identityKey: true,
               summary: true,
+              targetLanguage: true,
               title: true,
             },
           },
@@ -211,7 +214,7 @@ export async function getLanguageUnitView({
       lessons: chapter.lessons.map(({ lesson }) => ({
         done: done.has(lesson.id),
         lessonId: lesson.id,
-        minutes: lesson.estimatedMinutes,
+        minutes: getDefaultLessonMinutes(lesson),
         state: getLessonState({ done: done.has(lesson.id), next: lesson.id === nextId }),
         title: lesson.title,
         written: lesson.contentStatus === "completed",

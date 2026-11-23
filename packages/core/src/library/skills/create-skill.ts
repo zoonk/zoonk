@@ -30,6 +30,7 @@ export type CreateSkillInput = {
 /** Internal workflow bridge: derive the owner from the authenticated public boundary. */
 export async function createSkill(
   input: CreateSkillInput,
+  sourceId?: string,
 ): Promise<{ created: boolean; skill: Skill }> {
   assertIdentityKeyScope({ key: input.identityKey, ownerId: input.ownerId });
 
@@ -40,6 +41,7 @@ export async function createSkill(
           country: getContentCountryScope(input),
           description: input.description,
           example: input.example,
+          id: sourceId,
           identityKey: input.identityKey,
           language: input.language,
           level: input.level,
@@ -52,7 +54,9 @@ export async function createSkill(
       }),
     findExisting: () =>
       prisma.skill.findUnique({
-        where: { languageIdentity: { identityKey: input.identityKey, language: input.language } },
+        where: sourceId
+          ? { id: sourceId, ownerId: input.ownerId }
+          : { languageIdentity: { identityKey: input.identityKey, language: input.language } },
       }),
   });
 

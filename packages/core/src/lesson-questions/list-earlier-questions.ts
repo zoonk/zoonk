@@ -5,7 +5,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
 
 /** Titles come from the saved snapshot when the original course or lesson is gone. */
-export type EarlierQuestion = {
+type EarlierQuestion = {
   answer: string | null;
   askedAt: string;
   courseTitle: string | null;
@@ -14,7 +14,7 @@ export type EarlierQuestion = {
   question: string;
 };
 
-export type EarlierQuestionsResult =
+type EarlierQuestionsResult =
   | { nextCursor: string | null; questions: EarlierQuestion[]; status: "ready" }
   | { status: "invalidCursor" }
   | { status: "unauthorized" };
@@ -37,23 +37,6 @@ function earlierThreadWhere(userId: string) {
 function readSnapshotTitle(snapshot: unknown, key: "course" | "lesson"): string | null {
   const part = isJsonObject(snapshot) ? snapshot[key] : null;
   return getString(part, "title");
-}
-
-export async function hasEarlierQuestions(): Promise<boolean> {
-  "use cache: private";
-
-  const session = await getSession();
-
-  if (!session) {
-    return false;
-  }
-
-  const question = await prisma.lessonQuestion.findFirst({
-    select: { id: true },
-    where: { thread: earlierThreadWhere(session.user.id) },
-  });
-
-  return question !== null;
 }
 
 async function getOlderWhere({ cursor, userId }: { cursor?: string; userId: string }) {

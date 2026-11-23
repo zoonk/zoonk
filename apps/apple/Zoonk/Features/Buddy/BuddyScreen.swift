@@ -25,7 +25,7 @@ struct BuddyScreen: View {
         EmptyView()
       }
     }
-    .loads(store.status, store.earlierQuestions, refreshable: false)
+    .loads(store.status, refreshable: false)
   }
 
   private var loading: some View {
@@ -452,20 +452,6 @@ private struct BuddyContent: View {
         Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
       } icon: {
         Image(systemName: "calendar")
-      }
-    }
-
-    if case .loaded = store.earlierQuestions.state {
-      Button {
-        places.open(.earlierQuestions)
-      } label: {
-        Label {
-          Text(
-            "Earlier questions", tableName: "Buddy",
-            comment: "Opens questions asked before the courses were rewritten")
-        } icon: {
-          Image(systemName: "clock.arrow.circlepath")
-        }
       }
     }
   }

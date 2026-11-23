@@ -1405,12 +1405,6 @@ msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and 
 msgstr "Ciao! Sono {name}, il tuo socio di studio con l’IA. Dimmi cosa vuoi imparare e creerò il tuo piano."
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "Domande precedenti"
-
-#: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
@@ -7526,6 +7520,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Rispondi solo se non hai dubbi. Va bene anche dire che ne hai."
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "Apri la lezione"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Puoi esercitarti domani"
@@ -7534,11 +7533,6 @@ msgstr "Puoi esercitarti domani"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Esercitati su questo argomento"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "Apri la lezione"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
@@ -12854,6 +12848,14 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Registra"
 
+#: src/speech/record-note.tsx
+#: src/today/today-block-row.tsx
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "Stiamo preparando…"
+
 #. “Stop” is the label of the button that ends the recording.
 #: src/speech/record-note.tsx
 msgctxt "CzQFwa"
@@ -13283,13 +13285,6 @@ msgstr ", attività saltata"
 msgctxt "PFPoFb"
 msgid ", counts toward a mission"
 msgstr ", contribuisce a una missione"
-
-#: src/today/today-block-row.tsx
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "2LhxfA"
-msgid "Getting ready…"
-msgstr "Stiamo preparando…"
 
 #. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
 #: src/today/today-block-row.tsx
@@ -14071,6 +14066,16 @@ msgstr "Tutti i criteri sono soddisfatti."
 msgctxt "HiVJjN"
 msgid "For example: {example}"
 msgstr "Per esempio: {example}"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "Minimo per superare la prova scritta: {minimum} punti in totale"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "Punteggio minimo totale per superare la prova scritta: {minimum} su {max} punti"
 
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"

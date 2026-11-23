@@ -52,7 +52,6 @@ import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -65,7 +64,7 @@ val matchPairsRenderer =
         canvas = { MatchPairsActivity(it) },
     )
 
-private enum class CardState { Idle, Selected, Matched, Missed, NoMatch }
+private enum class CardState { Idle, Selected, Matched, Missed }
 
 private data class Miss(
     val left: String,
@@ -97,7 +96,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
         selectedRight = null
         props.onAnswerChange(matchAnswer(pairIds, next))
 
-        if (isMatch(leftCard, rightCard)) {
+        if (leftCard.id == rightCard.id) {
             miss = null
             announcement =
                 resources.getString(
@@ -110,11 +109,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             return
         }
 
-        val (reason, trap) = explainMismatch(leftCard, rightCard)
-        val explanation =
-            listOfNotNull(trap?.let { resources.getString(R.string.activities_sorting_no_match_note, it.text) }, reason)
-                .joinSentences()
-                .ifEmpty { null }
+        val explanation = rightCard.why ?: leftCard.why
         miss = Miss(leftCard.id, rightCard.id, explanation)
         announcement =
             listOfNotNull(resources.getString(R.string.activities_sorting_dont_go_together, leftCard.text, rightCard.text), explanation)
@@ -144,8 +139,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
         side: MatchSide,
     ): CardState =
         when {
-            !card.isTrap && card.id in progress.matched -> CardState.Matched
-            card.isTrap && (isComplete || card.id in progress.traps) -> CardState.NoMatch
+            card.id in progress.matched -> CardState.Matched
             (if (side == MatchSide.Left) miss?.left else miss?.right) == card.id -> CardState.Missed
             (if (side == MatchSide.Left) selectedLeft else selectedRight) == card.id -> CardState.Selected
             else -> CardState.Idle
@@ -153,17 +147,13 @@ private fun MatchPairsActivity(props: ActivityProps) {
 
     Box {
         ActivityCanvas(gap = 16.dp) {
-            val traps = fields.distractors.size
             Text(
-                listOfNotNull(
-                    pluralStringResource(
-                        R.plurals.activities_sorting_pairs_matched,
-                        progress.matched.size,
-                        progress.matched.size,
-                        pairIds.size,
-                    ),
-                    if (traps > 0) pluralStringResource(R.plurals.activities_sorting_cards_without_match, traps, traps) else null,
-                ).factsLine(),
+                pluralStringResource(
+                    R.plurals.activities_sorting_pairs_matched,
+                    progress.matched.size,
+                    progress.matched.size,
+                    pairIds.size,
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
@@ -180,7 +170,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
                 MatchCardButton(
                     card = card,
                     state = state,
-                    enabled = !props.isChecked && !props.isLocked && state != CardState.Matched && state != CardState.NoMatch,
+                    enabled = !props.isChecked && !props.isLocked && state != CardState.Matched,
                     missKey = miss,
                     onPick = { pick(side, card) },
                     modifier = modifier,
@@ -216,7 +206,6 @@ private fun MatchCardButton(
     val label =
         when (state) {
             CardState.Matched -> stringResource(R.string.activities_sorting_card_matched, card.text)
-            CardState.NoMatch -> stringResource(R.string.activities_sorting_card_no_match, card.text)
             else -> null
         }
     val (border, container) =
@@ -225,7 +214,6 @@ private fun MatchCardButton(
             CardState.Selected -> answerTone(picked = true, result = null).let { it.border to it.container }
             CardState.Matched -> answerTone(picked = false, result = AnswerResult.Right).let { it.border to it.container }
             CardState.Missed -> BorderStroke(2.dp, colors.error) to colors.errorContainer
-            CardState.NoMatch -> null to Color.Transparent
         }
 
     LaunchedEffect(state == CardState.Missed, missKey) {
@@ -252,7 +240,7 @@ private fun MatchCardButton(
             .graphicsLayer { translationX = shake.value * density }
             .clip(shape)
             .background(container)
-            .then(if (border == null) Modifier.dashedOutline(colors.outline) else Modifier.border(border, shape))
+            .border(border, shape)
             .selectable(selected = state == CardState.Selected, enabled = enabled, role = Role.Button, onClick = onPick)
             .then(if (label == null) Modifier else Modifier.semantics { contentDescription = label })
             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -268,7 +256,6 @@ private fun MatchCardButton(
                     color =
                         when (state) {
                             CardState.Matched -> colors.onTertiaryContainer
-                            CardState.NoMatch -> colors.onSurfaceVariant
                             else -> colors.onSurface
                         },
                 ),
@@ -330,45 +317,32 @@ private fun MatchPairsResults(
     expected: Map<String, String>,
     firstTries: Map<String, String>,
 ) {
-    val missed = left.filter { !it.isTrap && firstTries[it.id] != expected[it.id] }
-    val traps = (left + right).filter { it.isTrap }
-    val textOf = { id: String? -> right.firstOrNull { it.id == id }?.text.orEmpty() }
+    val missed = left.filter { firstTries[it.id] != expected[it.id] }
+    val textOf = { id: String? -> right.firstOrNull { it.id == id }?.text }
 
     if (missed.isNotEmpty()) {
-        ResultsSection(stringResource(R.string.activities_sorting_missed_first_try)) {
-            missed.forEach { card ->
-                ActivityReason(card.why) {
-                    Text(
-                        stringResource(
-                            R.string.activities_sorting_goes_with,
-                            card.text,
-                            textOf(expected[card.id]),
-                            textOf(firstTries[card.id]),
-                        ),
-                    )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                stringResource(R.string.activities_sorting_missed_first_try),
+                modifier = Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+            )
+            ActivityReasons {
+                missed.forEach { card ->
+                    ActivityReason(card.why) {
+                        val partner = textOf(expected[card.id]) ?: card.text
+                        val picked = textOf(firstTries[card.id])
+                        Text(
+                            if (picked == null) {
+                                "${card.text} → $partner"
+                            } else {
+                                stringResource(R.string.activities_sorting_goes_with, card.text, partner, picked)
+                            },
+                        )
+                    }
                 }
             }
         }
-    }
-    if (traps.isNotEmpty()) {
-        ResultsSection(stringResource(R.string.activities_sorting_look_alikes)) {
-            traps.forEach { card -> ActivityReason(card.why) { RichText(card.text) } }
-        }
-    }
-}
-
-@Composable
-private fun ResultsSection(
-    title: String,
-    reasons: @Composable () -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            title,
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-        )
-        ActivityReasons { reasons() }
     }
 }
 
@@ -382,10 +356,9 @@ private val MatchProgressSaver =
                     },
                 ),
                 ArrayList(it.matched),
-                ArrayList(it.traps),
             )
         },
-        restore = { (tries, matched, traps) -> MatchProgress(tries.chunked(2).associate { (key, value) -> key to value }, matched, traps) },
+        restore = { (tries, matched) -> MatchProgress(tries.chunked(2).associate { (key, value) -> key to value }, matched) },
     )
 
 private const val SHAKE_MILLIS = 300

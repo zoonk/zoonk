@@ -817,41 +817,6 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
 
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "이전 질문"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "6hIrBQ"
-msgid "From an earlier version of {course}"
-msgstr "{course}의 이전 버전에서 한 질문"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "TnUbiV"
-msgid "From an earlier version of this course"
-msgstr "이 코스의 이전 버전에서 한 질문"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "vgDvJf"
-msgid "No answer was saved."
-msgstr "저장된 답변이 없어요."
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "ttMteQ"
-msgid "Your questions from lessons that were updated, with their answers."
-msgstr "업데이트된 레슨에서 했던 질문과 답변이에요."
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "QKPtX3"
-msgid "No earlier questions"
-msgstr "이전 질문이 없어요"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O3OEwU"
-msgid "Older questions"
-msgstr "더 오래된 질문"
-
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"

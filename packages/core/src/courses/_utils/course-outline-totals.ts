@@ -1,17 +1,24 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { ALPHABET_IDENTITY_PREFIX } from "../../library/language/alphabet/alphabet-identity";
+import { LANGUAGE_LESSON_TIME_FACTOR } from "../../plans/planner/plan-pace";
 
 type CourseOutlineTotals = { estimatedMinutes: number; lessonCount: number };
 
 const NO_LESSONS: CourseOutlineTotals = { estimatedMinutes: 0, lessonCount: 0 };
 
 /** Shared catalog caches must never count private content. */
-async function findOutlineTotals(courseIds: string[]) {
+export async function findOutlineTotals(courseIds: string[]) {
   const rows = await prisma.$queryRaw<(CourseOutlineTotals & { courseId: string })[]>`
     SELECT
       cc.course_id AS "courseId",
       count(*)::int AS "lessonCount",
-      coalesce(sum(l.estimated_minutes), 0)::int AS "estimatedMinutes"
+      sum(CASE
+        WHEN l.target_language IS NOT NULL
+          AND NOT starts_with(l.identity_key, ${ALPHABET_IDENTITY_PREFIX})
+        THEN greatest(1, round(l.estimated_minutes * ${LANGUAGE_LESSON_TIME_FACTOR}::numeric))
+        ELSE l.estimated_minutes
+      END)::int AS "estimatedMinutes"
     FROM course_chapters cc
     JOIN library_chapters ch ON ch.id = cc.chapter_id AND ch.visibility = 'public'
     JOIN chapter_lessons cl ON cl.chapter_id = cc.chapter_id

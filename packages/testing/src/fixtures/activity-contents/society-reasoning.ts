@@ -146,18 +146,6 @@ export const societyReasoningActivities = {
       "Embarazada, éxito and librería look like embarrassed, exit and library, but they mean pregnant, success and bookstore.",
     ),
     fields: {
-      distractors: [
-        {
-          side: "right",
-          text: "embarrassed",
-          why: "Embarrassed is avergonzada in Spanish. Embarazada looks like it but means pregnant.",
-        },
-        {
-          side: "right",
-          text: "library",
-          why: "A library is a biblioteca. A librería sells books: it's a bookstore.",
-        },
-      ],
       pairs: [
         { id: "a", left: "embarazada", right: "pregnant" },
         { id: "b", left: "éxito", right: "success" },

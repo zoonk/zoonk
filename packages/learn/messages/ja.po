@@ -1405,12 +1405,6 @@ msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and 
 msgstr "こんにちは！学習の相棒としてお手伝いするAIの{name}です。学びたいことを教えてください。わたしが学習計画を作ります。"
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "以前の質問"
-
-#: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
@@ -7526,6 +7520,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "レッスンを開く"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "明日から練習できます"
@@ -7534,11 +7533,6 @@ msgstr "明日から練習できます"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "このトピックを練習する"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "レッスンを開く"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
@@ -12854,6 +12848,14 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "録音"
 
+#: src/speech/record-note.tsx
+#: src/today/today-block-row.tsx
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "準備しています…"
+
 #. “Stop” is the label of the button that ends the recording.
 #: src/speech/record-note.tsx
 msgctxt "CzQFwa"
@@ -13283,13 +13285,6 @@ msgstr "、スキップ済み"
 msgctxt "PFPoFb"
 msgid ", counts toward a mission"
 msgstr "、ミッションの達成にカウントされます"
-
-#: src/today/today-block-row.tsx
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "2LhxfA"
-msgid "Getting ready…"
-msgstr "準備しています…"
 
 #. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
 #: src/today/today-block-row.tsx
@@ -14071,6 +14066,16 @@ msgstr "すべての基準を満たしています。"
 msgctxt "HiVJjN"
 msgid "For example: {example}"
 msgstr "例：{example}"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "筆記試験に合格するための最低点：合計{minimum}点"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "筆記試験の合格に必要な最低点：合計{max}点中{minimum}点"
 
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"

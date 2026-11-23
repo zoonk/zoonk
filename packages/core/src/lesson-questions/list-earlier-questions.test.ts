@@ -5,7 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { hasEarlierQuestions, listEarlierQuestions } from "./list-earlier-questions";
+import { listEarlierQuestions } from "./list-earlier-questions";
 
 const PAGE_SIZE = 50;
 
@@ -82,8 +82,6 @@ describe(listEarlierQuestions, () => {
 
     mockSession(user.id);
 
-    await expect(hasEarlierQuestions()).resolves.toBe(true);
-
     await expect(listEarlierQuestions()).resolves.toStrictEqual({
       nextCursor: null,
       questions: [
@@ -112,8 +110,6 @@ describe(listEarlierQuestions, () => {
     const user = await userFixture();
     mockSession(user.id);
 
-    await expect(hasEarlierQuestions()).resolves.toBe(false);
-
     await expect(listEarlierQuestions()).resolves.toStrictEqual({
       nextCursor: null,
       questions: [],
@@ -137,11 +133,9 @@ describe(listEarlierQuestions, () => {
 
     mockSession(user.id);
 
-    const presence = await countDatabaseStatements(hasEarlierQuestions);
     const first = await countDatabaseStatements(() => listEarlierQuestions());
     const firstPage = first.result.status === "ready" ? first.result : null;
 
-    expect(presence.result).toBe(true);
     expect(firstPage?.questions).toHaveLength(PAGE_SIZE);
     expect(firstPage?.questions[0]?.question).toBe(`Question ${PAGE_SIZE + 1}`);
 
@@ -155,7 +149,7 @@ describe(listEarlierQuestions, () => {
       status: "ready",
     });
 
-    expect([presence.writes, first.writes, next.writes]).toStrictEqual([0, 0, 0]);
+    expect([first.writes, next.writes]).toStrictEqual([0, 0]);
 
     await expect(listEarlierQuestions({ cursor: randomUUID() })).resolves.toStrictEqual({
       status: "invalidCursor",
@@ -165,7 +159,6 @@ describe(listEarlierQuestions, () => {
   it("needs a session", async () => {
     mockSession(null);
 
-    await expect(hasEarlierQuestions()).resolves.toBe(false);
     await expect(listEarlierQuestions()).resolves.toStrictEqual({ status: "unauthorized" });
   });
 });

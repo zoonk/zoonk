@@ -2,7 +2,6 @@ import { AuthGatePage } from "@/components/auth-gate";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
-import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
 import { countCurrentUserMemory } from "@zoonk/core/memory/count";
 import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
@@ -62,12 +61,11 @@ async function hasGoalMistake(goalId: string): Promise<boolean> {
 }
 
 async function BuddyContent() {
-  const [readAt, result, goal, session, earlierQuestions, memoryCount] = await Promise.all([
+  const [readAt, result, goal, session, memoryCount] = await Promise.all([
     getReadAt(),
     getBuddyStatus({}),
     findTutoredGoal(),
     getSession(),
-    hasEarlierQuestions(),
     countCurrentUserMemory(),
   ]);
 
@@ -84,7 +82,7 @@ async function BuddyContent() {
   }
 
   if (!goal) {
-    return <BuddyGoalStartClient hasEarlierQuestions={earlierQuestions} status={result.buddy} />;
+    return <BuddyGoalStartClient status={result.buddy} />;
   }
 
   const canAsk = !session.user.isAnonymous;
@@ -98,7 +96,6 @@ async function BuddyContent() {
     <BuddyPageClient
       canAsk={canAsk}
       goalId={goal.id}
-      hasEarlierQuestions={earlierQuestions}
       initialThread={thread}
       memoryCount={memoryCount ?? 0}
       readAt={readAt}

@@ -1,14 +1,12 @@
 "use client";
 
-import { type MicrophoneProblem, getMicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
+import {
+  type MicrophoneProblem,
+  getMicrophoneProblem,
+  stopTracks,
+} from "@zoonk/ui/hooks/voice-recorder";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type SpeechSample, sampleSpeech } from "./speech-activity";
-
-function stopTracks(stream: MediaStream) {
-  for (const track of stream.getTracks()) {
-    track.stop();
-  }
-}
 
 /** Called on fail, end and close; an AudioContext closes only once. */
 function closeContext(context: AudioContext) {
