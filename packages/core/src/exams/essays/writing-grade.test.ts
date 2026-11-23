@@ -445,6 +445,59 @@ describe("writing grades", () => {
     ).toMatchObject({ kind: "points", total: { high: 0, low: 0 }, zeroReason: "Blank essay" });
   });
 
+  it("skips complete Enem competences even when their score has a range", () => {
+    const criteria = ["c1", "c2", "c3", "c4", "c5"].map((id) => ({ id, name: id, points: 200 }));
+
+    const rubric = {
+      ...basis,
+      criteria,
+      grading: { criteria: [], kind: "enem" as const, language: null, rounding: null, zeroing: [] },
+      points: 1000,
+    };
+
+    const graded: WritingEvidence = {
+      ...evidence,
+      criteria: criteria.map(({ id }) => ({
+        comment: "Explanation",
+        example: null,
+        id,
+        level: "complete",
+        quote: null,
+      })),
+      interventionElements: { action: true, agent: true, detail: true, effect: true, means: true },
+      nextStep: {
+        criterionId: "c1",
+        example: null,
+        quote: null,
+        text: "Revise the first competence.",
+        title: "Revise your writing",
+      },
+    };
+
+    const gate = { ...arithmetic, rounding: null };
+
+    expect(assess(graded, { gate, ignoredFrom: null, rubric })).toMatchObject({
+      kind: "points",
+      nextStep: null,
+      rows: [
+        { id: "c1", range: { high: 200, low: 160 } },
+        ...criteria.slice(1).map(({ id }) => ({ id })),
+      ],
+    });
+
+    const mixed: WritingEvidence = {
+      ...graded,
+      criteria: graded.criteria.map((criterion) =>
+        criterion.id === "c3" ? { ...criterion, level: "strong" } : criterion,
+      ),
+    };
+
+    expect(assess(mixed, { gate, ignoredFrom: null, rubric })).toMatchObject({
+      kind: "points",
+      nextStep: { criterionId: "c3", kind: "criterion" },
+    });
+  });
+
   it.each([
     [5, 0, 2],
     [1.25, 2, 0.5],
