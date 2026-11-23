@@ -21,7 +21,7 @@ const complete: WritingEvidence = {
 };
 
 describe(scoreEnemWriting, () => {
-  it("includes 980 when one examiner could award 160 on one competence", () => {
+  it("bounds the total discrepancy when the first examiner awards 1000", () => {
     const score = scoreEnemWriting(complete, false);
 
     expect(score?.content).toStrictEqual({ high: 1000, low: 960 });
@@ -30,6 +30,40 @@ describe(scoreEnemWriting, () => {
     expect(score?.rows.map(({ range }) => range)).toStrictEqual(
       Array.from({ length: 5 }, () => ({ high: 200, low: 160 })),
     );
+  });
+
+  it("caps the second examiner's marks before averaging", () => {
+    const score = scoreEnemWriting(
+      {
+        ...complete,
+        criteria: complete.criteria.map((criterion) =>
+          criterion.id === "c1" ? { ...criterion, level: "strong" } : criterion,
+        ),
+      },
+      false,
+    );
+
+    expect(score?.content).toStrictEqual({ high: 980, low: 920 });
+    expect(score?.rows[0]?.range).toStrictEqual({ high: 180, low: 120 });
+  });
+
+  it("averages a proposal awarded 160 with a second mark up to 200", () => {
+    const score = scoreEnemWriting(
+      {
+        ...complete,
+        interventionElements: {
+          action: true,
+          agent: true,
+          detail: false,
+          effect: true,
+          means: true,
+        },
+      },
+      false,
+    );
+
+    expect(score?.content).toStrictEqual({ high: 980, low: 920 });
+    expect(score?.rows[4]?.range).toStrictEqual({ high: 180, low: 120 });
   });
 
   it("applies the discrepancy limit in both directions and keeps proposal caps", () => {
@@ -44,9 +78,9 @@ describe(scoreEnemWriting, () => {
       false,
     );
 
-    expect(score?.content).toStrictEqual({ high: 880, low: 800 });
-    expect(score?.rows[0]?.range).toStrictEqual({ high: 200, low: 120 });
-    expect(score?.rows[4]?.range).toStrictEqual({ high: 80, low: 40 });
+    expect(score?.content).toStrictEqual({ high: 860, low: 800 });
+    expect(score?.rows[0]?.range).toStrictEqual({ high: 180, low: 120 });
+    expect(score?.rows[4]?.range).toStrictEqual({ high: 80, low: 60 });
   });
 
   it("keeps a missing or invalid proposal at zero", () => {

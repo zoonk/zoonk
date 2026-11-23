@@ -21,7 +21,6 @@ const PROPOSAL_CAP = { conditional: 80, invalid: 0, tangent: 40 } as const;
 // multiples of 40, so the largest difference within 100 is 80.
 const COMPETENCE_DISCREPANCY_LIMIT = 80;
 const TOTAL_DISCREPANCY_LIMIT = 100;
-const COMPETENCE_MEAN_DELTA = COMPETENCE_DISCREPANCY_LIMIT / 2;
 const TOTAL_MEAN_DELTA = (Math.floor(TOTAL_DISCREPANCY_LIMIT / STEP) * STEP) / 2;
 
 export function hasEnemCompetences(criteria: readonly { id: string }[]) {
@@ -29,6 +28,16 @@ export function hasEnemCompetences(criteria: readonly { id: string }[]) {
     criteria.length === COMPETENCE_IDS.length &&
     COMPETENCE_IDS.every((id) => criteria.some((criterion) => criterion.id === id))
   );
+}
+
+function competenceBand(assessed: WritingRange, min = 0, max = COMPETENCE_MAX) {
+  const secondLow = Math.max(min, assessed.low - COMPETENCE_DISCREPANCY_LIMIT);
+  const secondHigh = Math.min(max, assessed.high + COMPETENCE_DISCREPANCY_LIMIT);
+
+  return {
+    assessed,
+    range: { high: (assessed.high + secondHigh) / 2, low: (assessed.low + secondLow) / 2 },
+  };
 }
 
 function proposalBand({ interventionElements, proposalLimit }: WritingEvidence) {
@@ -41,23 +50,7 @@ function proposalBand({ interventionElements, proposalLimit }: WritingEvidence) 
   const count = Object.values(interventionElements).filter(Boolean).length;
   const points = Math.min(cap, STEP * Math.max(count, 1));
 
-  return {
-    assessed: { high: points, low: points },
-    range: {
-      high: Math.min(cap, points + COMPETENCE_MEAN_DELTA),
-      low: Math.max(STEP, points - COMPETENCE_MEAN_DELTA),
-    },
-  };
-}
-
-function competenceBand(assessed: WritingRange) {
-  return {
-    assessed,
-    range: {
-      high: Math.min(COMPETENCE_MAX, assessed.high + COMPETENCE_MEAN_DELTA),
-      low: Math.max(0, assessed.low - COMPETENCE_MEAN_DELTA),
-    },
-  };
+  return competenceBand({ high: points, low: points }, STEP, cap);
 }
 
 export function scoreEnemWriting(evidence: WritingEvidence, zero: boolean) {
