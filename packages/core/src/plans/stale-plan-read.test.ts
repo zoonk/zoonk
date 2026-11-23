@@ -11,7 +11,7 @@ import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { seedPersonaCopy } from "../seed/seed";
 import { toDayBlockRef } from "../sessions/day-block";
 import { openStudyDay } from "../sessions/open-study-day";
-import { refreshOwedStudyDay } from "../sessions/refresh-owed-study-day";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { finishChallengesFixture } from "./_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -19,6 +19,7 @@ import { planSummarySchema } from "./_utils/plan-summary";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
+import { refreshPlanSuggestion } from "./refresh-plan-suggestion";
 
 const START = new Date("2020-09-28T12:00:00Z");
 const RETURN = new Date("2020-10-01T12:00:00Z");
@@ -323,6 +324,53 @@ describe("the visible Plan after days away, before any learner POST", () => {
     ).resolves.toBe(1);
   });
 
+  it("saves the onboarding schedule before finding and persisting its time suggestion", async () => {
+    const { goal, plan, user } = await daysAwayFixture({
+      skills: [{ lessons: 20 }, { lessons: 20 }],
+      targetDate: new Date("2020-10-07T00:00:00Z"),
+    });
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 15, question: "schedule" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const pending = await saved(plan.id);
+
+    expect(planSummarySchema.parse(pending.summary).advice).toMatchObject({
+      suggested: null,
+      suggestionPending: true,
+    });
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toContainEqual(
+      expect.objectContaining({
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "refreshPlanSuggestion",
+      }),
+    );
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: null },
+      status: "ready",
+    });
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: user.id });
+
+    const refreshed = await saved(plan.id);
+    const suggested = planSummarySchema.parse(refreshed.summary).advice.suggested;
+    expect(suggested).toStrictEqual({ kind: "everything", minutes: 40 });
+    expect(refreshed.items).toStrictEqual(pending.items);
+    expect(refreshed.version).toBe(pending.version);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: suggested },
+      status: "ready",
+    });
+  });
+
   it("saves the returning day's time suggestion through the owed refresh after Open", async () => {
     const { goal, plan, user } = await daysAwayFixture({
       skills: [{ lessons: 20 }, { lessons: 20 }],
@@ -365,15 +413,15 @@ describe("the visible Plan after days away, before any learner POST", () => {
     });
 
     await expect(
-      prisma.followUp.findMany({ where: { kind: "refreshStudyDay", userId: user.id } }),
-    ).resolves.toMatchObject([{ input: { sessionId: opened.sessionId, timeZone: "UTC" } }]);
+      prisma.followUp.findMany({ where: { kind: "refreshPlanSuggestion", userId: user.id } }),
+    ).resolves.toMatchObject([{ input: { goalId: goal.id }, key: goal.id }]);
 
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: { suggestedTime: null },
       status: "ready",
     });
 
-    await refreshOwedStudyDay({ sessionId: opened.sessionId, timeZone: "UTC", userId: user.id });
+    await refreshPlanSuggestion({ goalId: goal.id, userId: user.id });
 
     const after = await saved(plan.id);
     const suggested = planSummarySchema.parse(after.summary).advice.suggested;

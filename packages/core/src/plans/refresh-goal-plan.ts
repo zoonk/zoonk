@@ -53,6 +53,7 @@ async function saveOrLetGo(lostSave: LostSave, write: () => Promise<unknown>): P
 
 async function settleLeftWork({
   context,
+  deferSuggestion,
   extraWrites,
   left,
   lostSave,
@@ -60,6 +61,7 @@ async function settleLeftWork({
   revalidation,
 }: {
   context: PlanContext;
+  deferSuggestion?: boolean;
   extraWrites?: PlanWrites;
   left: PlanContext["items"];
   lostSave: LostSave;
@@ -74,6 +76,7 @@ async function settleLeftWork({
       change: getSettledPlanChange({ computed, context, left }),
       computed,
       context,
+      deferSuggestion,
       extraWrites,
       phaseDates: { mode: "forced", pace },
       revalidation,
@@ -155,6 +158,7 @@ export async function planGoalForPick(goalId: string): Promise<PlannedRefresh> {
 type PlanWrites = (tx: TransactionClient) => Promise<unknown>;
 
 type RefreshInput = {
+  deferSuggestion?: boolean;
   /** Runs inside the transaction that saves a changed plan, once its items are written; never when the plan stays as it was. */
   extraWrites?: PlanWrites;
   goalId: string;
@@ -170,6 +174,7 @@ type RefreshInput = {
 };
 
 async function refreshPlanned({
+  deferSuggestion,
   extraWrites,
   goalId,
   keepsOpenUndo = false,
@@ -205,7 +210,15 @@ async function refreshPlanned({
   const left = settleMissedDays ? await loadLeftWork(context) : [];
 
   if (left.length > 0) {
-    return settleLeftWork({ context, extraWrites, left, lostSave, pace, revalidation });
+    return settleLeftWork({
+      context,
+      deferSuggestion,
+      extraWrites,
+      left,
+      lostSave,
+      pace,
+      revalidation,
+    });
   }
 
   if (settleOnly && isPlanLaidOut(context)) {
@@ -224,6 +237,7 @@ async function refreshPlanned({
 
   return saveRefreshedPlan({
     context,
+    deferSuggestion,
     extraWrites,
     keepsOpenUndo,
     lostSave,
@@ -235,6 +249,7 @@ async function refreshPlanned({
 
 async function saveRefreshedPlan({
   context,
+  deferSuggestion,
   extraWrites,
   keepsOpenUndo,
   refreshed,
@@ -243,6 +258,7 @@ async function saveRefreshedPlan({
   revalidation,
 }: {
   context: PlanContext;
+  deferSuggestion?: boolean;
   extraWrites?: PlanWrites;
   keepsOpenUndo: boolean;
   refreshed: NonNullable<Awaited<ReturnType<typeof computeRefreshedPlan>>>;
@@ -270,7 +286,7 @@ async function saveRefreshedPlan({
         ? await computePlan({ context, mode: "automatic", pace: "saved" })
         : computed;
 
-    const retained = await prepareRetainedPlanWrite({ computed: quoted, context });
+    const retained = await prepareRetainedPlanWrite({ computed: quoted, context, deferSuggestion });
 
     await saveOrLetGo(lostSave, () =>
       savePlanInputsKey({
@@ -289,7 +305,9 @@ async function saveRefreshedPlan({
 
   const unchanged = !change && isPlanUnchanged({ computed, context });
 
-  const retained = unchanged ? await prepareRetainedPlanWrite({ computed, context }) : null;
+  const retained = unchanged
+    ? await prepareRetainedPlanWrite({ computed, context, deferSuggestion })
+    : null;
 
   const phaseWrite = unchanged
     ? await preparePhaseDatesProposal({ computed, context: planned, mode, pace })
@@ -309,6 +327,7 @@ async function saveRefreshedPlan({
           change,
           computed,
           context,
+          deferSuggestion,
           extraWrites,
           keepsOpenUndo,
           phaseDates: { mode, pace },

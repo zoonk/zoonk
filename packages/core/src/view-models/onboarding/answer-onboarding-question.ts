@@ -171,12 +171,19 @@ export async function answerOnboardingQuestion({
       saved.goalIds
         .filter((id) => id !== goalId)
         .map(async (id) => {
-          await refreshGoalPlan({ goalId: id, mode: "forced", onConflict: "yield" });
+          await refreshGoalPlan({
+            deferSuggestion: true,
+            goalId: id,
+            mode: "forced",
+            onConflict: "yield",
+          });
+
           await followSavedPlan(id);
         }),
     );
   } else {
     await refreshGoalPlan({
+      deferSuggestion: true,
       goalId,
       mode: input.question === "targetDate" ? "forced" : "automatic",
       onConflict: "yield",

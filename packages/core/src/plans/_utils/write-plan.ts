@@ -6,6 +6,7 @@ import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
+import { owePlanSuggestion } from "./owe-plan-suggestion";
 import {
   type StoredPlanChangePayload,
   UNDOABLE_KINDS,
@@ -209,6 +210,8 @@ export async function writePlan({
 
   await creditFinishedNewLessons({ context, plan, tx });
 
+  await owePlanSuggestion({ goal, owe, summary: plan.summary, tx });
+
   await saveProposalPreviews({ previews: plan.previews, tx });
 
   if (goal.kind === "exam") {
@@ -255,6 +258,8 @@ export async function savePlanInputsKey({
       }
 
       await saveProposalPreviews({ previews, tx });
+
+      await owePlanSuggestion({ goal: context.goal, summary, tx });
 
       await extraWrites?.(tx);
     },

@@ -2,6 +2,7 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
+import { owePlanSuggestion } from "../../plans/_utils/owe-plan-suggestion";
 import { preparePhaseDatesProposal } from "../../plans/_utils/phase-dates-proposal";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { type PlanContext } from "../../plans/_utils/plan-context";
@@ -55,11 +56,9 @@ export type PreparedSelectedPlanSave =
 
 /** Prepare before row locks; the write and notice must share the same selected plan. */
 export async function prepareSelectedPlanSave({
-  deferSuggestion = false,
   selection,
   shown,
 }: {
-  deferSuggestion?: boolean;
   selection: SelectedDayPlan;
   shown: boolean;
 }): Promise<PreparedSelectedPlanSave> {
@@ -95,7 +94,7 @@ export async function prepareSelectedPlanSave({
             ...context,
             plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
           },
-          deferSuggestion,
+          deferSuggestion: true,
         })
       : null;
 
@@ -126,7 +125,7 @@ export async function prepareSelectedPlanSave({
         ...context,
         plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
       },
-      deferSuggestion,
+      deferSuggestion: true,
     }),
   };
 }
@@ -152,6 +151,7 @@ export async function saveSelectedPlan({
   if (prepared.kind === "metadata") {
     if (prepared.data) {
       await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
+      await owePlanSuggestion({ goal: context.goal, summary: prepared.data.summary, tx });
     }
 
     await keepSummaryCurrent({

@@ -1,6 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
@@ -37,15 +36,7 @@ export async function persistStudyDay({
     selection.computed !== null ||
     selection.inputKeyUpdate !== undefined;
 
-  const prepared = await prepareSelectedPlanSave({
-    deferSuggestion: true,
-    selection,
-    shown: persistsPlan,
-  });
-
-  const computedSummary = prepared.kind === "computed" && prepared.write.summary;
-  const retainedSummary = prepared.kind === "metadata" && prepared.data?.summary;
-  const summary = computedSummary || retainedSummary;
+  const prepared = await prepareSelectedPlanSave({ selection, shown: persistsPlan });
 
   try {
     return await prisma.$transaction(async (tx) => {
@@ -118,16 +109,6 @@ export async function persistStudyDay({
           };
         }),
       });
-
-      if (summary && summary.advice.suggestionPending) {
-        await oweFollowUps({
-          db: tx,
-          followUps: [
-            { input: { sessionId: session.id, timeZone: day.timeZone }, kind: "refreshStudyDay" },
-          ],
-          userId: day.userId,
-        });
-      }
 
       return { sessionId: session.id, status: "created" };
     });
