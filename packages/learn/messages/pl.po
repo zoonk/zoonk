@@ -5391,7 +5391,7 @@ msgstr "Plan ukończony"
 #: src/journey/study-next.tsx
 msgctxt "vzHrGX"
 msgid "Here's what to study next."
-msgstr ""
+msgstr "Zobacz, czego uczyć się dalej."
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
