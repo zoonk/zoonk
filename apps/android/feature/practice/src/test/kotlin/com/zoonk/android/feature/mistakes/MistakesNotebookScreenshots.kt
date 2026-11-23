@@ -74,20 +74,20 @@ class MistakesNotebookScreenshots {
         "lesson":$lesson,"practiceAvailable":${id != 3},
         "practiceAvailableTomorrow":${id == 3},
         "skill":${skill?.let {
-        """{"id":"00000000-0000-4000-8000-0000000000${if (it.startsWith(
-                "P",
-            )
-        ) {
-            "b1"
-        } else {
-            "b2"
-        }}","name":"$it"}"""
-    } ?: "null"},
+            """{"id":"00000000-0000-4000-8000-0000000000${if (it.startsWith(
+                    "P",
+                )
+            ) {
+                "b1"
+            } else {
+                "b2"
+            }}","name":"$it"}"""
+        } ?: "null"},
         "snapshot":{"answer":"$answer","correctAnswer":"$correct",${format?.let {
-        "\"format\":\"$it\","
-    } ?: ""}"question":"$question"${explanation?.let {
-        ""","explanation":"$it""""
-    } ?: ""}},
+            "\"format\":\"$it\","
+        } ?: ""}"question":"$question"${explanation?.let {
+            ""","explanation":"$it""""
+        } ?: ""}},
         "status":"open"}"""
     }
 
