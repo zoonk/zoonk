@@ -77,6 +77,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.QuotedSource
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.questions.initialAnswer
 import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
@@ -552,7 +553,7 @@ internal data class Draft(
 internal fun Draft?.answerFor(
     step: Int,
     question: Question?,
-): Answer? = this?.takeIf { it.step == step && it.itemId == question?.itemId }?.answer
+): Answer? = this?.takeIf { it.step == step && it.itemId == question?.itemId }?.answer ?: question?.initialAnswer
 
 /** A run belongs to the account that started it: another account signing in gets its own. */
 @Composable

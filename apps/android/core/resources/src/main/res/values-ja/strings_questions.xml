@@ -33,10 +33,8 @@
   "questions_mistake_fixed": "cd5460a3f4fe549052ed9d0a9c456ae159294f5156ef4457e6f1bf702e4eeb58",
   "questions_mistakes_fixed": "dd935979acfeac761f921a8a20c7b70c1809d9eb0de4415e40c7d70576d69c5b",
   "questions_not_quite": "38468003acf180f62333d09da61f8fe53000399a705d79a560106afd78291ee7",
-  "questions_order_hint": "ec866cd8cb1fe8b35283c309e1ef990efa638d8ef47bf514647683ca9e7866b4",
   "questions_pick_all": "b243c73a143410df84faea675eb40ac9a33296249cb0e4cdeea94f23804f0420",
   "questions_pick_count": "294a260c9774c85614feb4fcd1d7a9ca927ac87f39e2bdef824276feaa407400",
-  "questions_place": "9be392a90251ce415dd45e2c29dd34a4ec68f6549aa2df06153057f31242af57",
   "questions_place_right": "f7be98884c9c2868ed4d228f7931331b637fc7f9dbd9ad8b4bd90e8600267e0f",
   "questions_place_wrong": "bab336ae6b2d73c4689cd62330e7a04a708e96527e1b0dac24df328f9c174779",
   "questions_placement_note": "9dd353609a1676c8c29f6e3e4503bd7b41eb71ccea9588f13c9cca6bdb4e1984",
@@ -70,9 +68,7 @@
     <string name="questions_wrong">誤っている</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">回答しない</string>
-    <string name="questions_order_hint">手順を正しい順番にタップしてください。</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">%1$d番目</string>
     <string name="questions_place_right">%1$d番目、正しい位置です</string>
     <string name="questions_place_wrong">%1$d番目、位置が違います</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

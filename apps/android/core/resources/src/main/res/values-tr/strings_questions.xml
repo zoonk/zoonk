@@ -33,10 +33,8 @@
   "questions_mistake_fixed": "56d8658e12db4f902bf4effac8604f086d49eeab70d8c3c99970fe46bda77914",
   "questions_mistakes_fixed": "a215ad447ac56c5a3b44536b82c747c9c747a58907a14c86057d3776d57fb70f",
   "questions_not_quite": "73554ed2b99b75ac002c57ec525c0ce71ae0361f3975c0f8126257d46d05a004",
-  "questions_order_hint": "a95f4f7da50f224884130b25ea88648f33be907cb40815512bd93c75bdbd3c5f",
   "questions_pick_all": "b00b8afaacce418cbbe2ccbb3253b9918c984e4471f38b5106327ba082b803a5",
   "questions_pick_count": "19c7e25d95bc10f24bda080bac04176be841890abbbe27f253c72db96f743c88",
-  "questions_place": "1facdce352ad59053d01c7d343e4099ce3be821d58152983f9ab223887d8d1ea",
   "questions_place_right": "ea40b8c702c32cb2469b90ecd499f9e770a6e98e0c4d488ef830e4499c0c4fdd",
   "questions_place_wrong": "544cc054f4f75010fe608f6c3828ef0343c09aea0ea91f91397b68d037cef6e4",
   "questions_placement_note": "3d8c5e093d312ff61346a3a53357a63205d52724d171fd603a3feec1f43bfbd1",
@@ -71,9 +69,7 @@
     <string name="questions_wrong">Yanlış</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Boş bırak</string>
-    <string name="questions_order_hint">Adımlara sırayla dokun.</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">%1$d. sıra</string>
     <string name="questions_place_right">%1$d. sıra, doğru yerde</string>
     <string name="questions_place_wrong">%1$d. sıra, yanlış yerde</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

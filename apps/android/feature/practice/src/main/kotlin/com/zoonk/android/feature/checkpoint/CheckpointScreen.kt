@@ -85,6 +85,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.WorkedSteps
+import com.zoonk.android.feature.questions.initialAnswer
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
@@ -470,11 +471,12 @@ private fun DuelActions(
             }
 
             else -> {
+                val answer = state.selected ?: question.initialAnswer
                 Button(
                     busy = state.pending,
-                    onClick = { state.selected?.let(viewModel::confirm) },
+                    onClick = { answer?.let(viewModel::confirm) },
                     modifier = width,
-                    enabled = state.selected != null,
+                    enabled = answer != null,
                 ) { Text(stringResource(R.string.checkpoint_confirm)) }
             }
         }

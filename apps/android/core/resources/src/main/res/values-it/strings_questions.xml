@@ -33,10 +33,8 @@
   "questions_mistake_fixed": "35a246bf7ca3d42cb99fb2995863e109d74eebdb27f0d69c0ff27d8e71f4c817",
   "questions_mistakes_fixed": "5ab4316176c0a6ae3f409c6cc0de54cddeca916b1ddd9eafd93646f1e9dbe735",
   "questions_not_quite": "589d955109e2f825e6cf5b66c420fb9231d0f26aa3b860437e88867950b50cb1",
-  "questions_order_hint": "6ea1fe0dc0f984fa167849c676c20b9d4c5a1c592f1ea29706eae08b5d00ad30",
   "questions_pick_all": "6d28ba82c14953788277725937de6f9c59442c21a9abe9f3cb60750c1cc28570",
   "questions_pick_count": "6afcda4bc467e55e5c793545f9e5c444af132bfb47ef5803389d34e6f27719f9",
-  "questions_place": "b48f805bbaeda6bca638f0490bf51275db5fbe68c6fda5f81e5c27d4932541f8",
   "questions_place_right": "7dea2aa836862b8180d78307d18ead0af00273896edf257473259ccb2f76a9ca",
   "questions_place_wrong": "84e9975589d287ca1199591402ec826a78c5734dd0d18e24b9efa71391ed5669",
   "questions_placement_note": "305948be5751317f242b6c68ae66aedddbedd5fff302a1cf3f3c540592e4bb9c",
@@ -72,9 +70,7 @@
     <string name="questions_wrong">Errato</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Lascia in bianco</string>
-    <string name="questions_order_hint">Tocca i passaggi in ordine.</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">Posizione %1$d</string>
     <string name="questions_place_right">Posizione %1$d, posizione corretta</string>
     <string name="questions_place_wrong">Posizione %1$d, posizione sbagliata</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

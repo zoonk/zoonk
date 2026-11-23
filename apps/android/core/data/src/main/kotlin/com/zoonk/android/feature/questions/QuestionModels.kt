@@ -57,6 +57,10 @@ data class Question(
     val area: String? = null,
 )
 
+val Question.initialAnswer: Answer.Order?
+    get() =
+        options?.takeIf { format == QuestionFormat.Order && it.isNotEmpty() }?.let { Answer.Order(it.indices.toList()) }
+
 @Serializable
 enum class QuestionFormat {
     @SerialName("multipleChoice")

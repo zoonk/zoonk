@@ -81,5 +81,4 @@ private fun Placement.phase(shown: Shown): PlacementPhase {
     }
 }
 
-/** Placement asks by taps alone, in the runners' shape so their answer controls take it. */
 internal fun PlacementQuestion.item(): Question = recode()

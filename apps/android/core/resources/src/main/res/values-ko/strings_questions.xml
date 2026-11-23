@@ -33,10 +33,8 @@
   "questions_mistake_fixed": "9ebfa1cdcda5602c4d111df264321e267dcadb3f92febe3cf8e4a4d7d8515b7b",
   "questions_mistakes_fixed": "acb3820d35f1709094fe89227d421638143166c71949d72a02490b46c601fd1d",
   "questions_not_quite": "1cc0cfef3c1a9b06305c65c56f639bf5443c70d5831391ccd82389bb0ff5cd05",
-  "questions_order_hint": "b8d6adebb6f2125be5d4a9eb2c6dec08a4bb457085311a8b86bb06f988816dfe",
   "questions_pick_all": "5e40865407ecf31cbfc49eac61c494a52e310ca3cd145cc89ca351ab251a8c02",
   "questions_pick_count": "6ba0440bad0423cec81c835bb2102ac42518c9c4abc56ab2cd968ada49be1f2a",
-  "questions_place": "3ca7e21e1a9e599b7574a8454aea92d2daa10db37ca2f3e2aa08d7c7c85d0435",
   "questions_place_right": "c41f5afd11de1b794f173d9615462f73586c693c5b4d72c7acb05ed3e1ebd032",
   "questions_place_wrong": "6dcca0bfa1e4a49352af9de46850a67fcc6077e9dd92adb4c3cb9b6012f43314",
   "questions_placement_note": "55ad8fc5b26d4433f60539e02154c119d76bc48be70e477e8115967275b1167d",
@@ -70,9 +68,7 @@
     <string name="questions_wrong">틀려요</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">빈칸으로 남기기</string>
-    <string name="questions_order_hint">단계를 순서대로 눌러 주세요.</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">%1$d번째 위치</string>
     <string name="questions_place_right">%1$d번째 위치, 올바른 위치</string>
     <string name="questions_place_wrong">%1$d번째 위치, 잘못된 위치</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

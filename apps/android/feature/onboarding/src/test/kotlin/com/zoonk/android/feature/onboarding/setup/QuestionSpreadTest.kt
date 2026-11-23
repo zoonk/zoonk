@@ -1,14 +1,17 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performCustomAccessibilityActionWithLabel
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.AppCache
@@ -28,9 +31,11 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.closeBook
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,16 +98,31 @@ class QuestionSpreadTest {
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun anOrderStaysPlacedAsTheBookOpensClosesAndOpensAgain() {
         api.placement = placementOf(next = orderQuestion())
         showQuestion()
-        for (step in listOf("Complaint", "Answer", "Discovery", "Trial")) rule.onNodeWithText(step).performScrollTo().performClick()
+        val trial = rule.onNodeWithText("Trial")
+        val discovery = rule.onNodeWithText("Discovery")
+        val shift = discovery.fetchSemanticsNode().boundsInRoot.center - trial.fetchSemanticsNode().boundsInRoot.center
+        trial.performTouchInput {
+            down(center)
+            advanceEventTime(viewConfiguration.longPressTimeoutMillis + 100)
+            moveTo(center + shift)
+            up()
+        }
+        rule.onNodeWithText("Answer").performCustomAccessibilityActionWithLabel("Move up")
 
         for (change in listOf(::open, ::close, ::open, ::recreate, ::open)) {
             change()
-            rule.onNodeWithText("Trial").assertIsOn()
+            val row = rule.onNodeWithText("Answer").fetchSemanticsNode()
+            assertEquals(0, row.config[SemanticsProperties.CollectionItemInfo].rowIndex)
             rule.onNodeWithText("Confirm").assertIsEnabled()
         }
+        assertEquals(0, api.placementAnswers.size)
+        rule.onNodeWithText("Confirm").performClick()
+        val answer = api.placementAnswers.single().answer as TapAnswer.OrderAnswerValue
+        assertEquals(listOf(1L, 0L, 3L, 2L), answer.value.order)
     }
 }

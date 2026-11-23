@@ -55,6 +55,7 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.questions.initialAnswer
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.VisitOf
@@ -256,7 +257,7 @@ internal fun ColumnScope.PlacementWaiting(
 private enum class PlacementSender { Confirm, DontKnow, Stop }
 
 /**
- * Shared with the Focus test, the plan's tests and the language level test. Placement asks by taps alone: a
+ * Shared with the Focus test, the plan's tests and the language level test. A
  * statement keeps its plain two options under its title, and every other format takes the runners' controls.
  */
 @Composable
@@ -279,7 +280,7 @@ internal fun ColumnScope.PlacementQuestion(
     media: @Composable () -> Unit = {},
 ) {
     var draftJson by rememberSaveable { mutableStateOf<String?>(null) }
-    val answer = draftJson?.let { Json.decodeFromString(Answer.serializer(), it) }
+    val answer = draftJson?.let { Json.decodeFromString(Answer.serializer(), it) } ?: item.initialAnswer
     val setAnswer = { picked: Answer? -> draftJson = picked?.let { Json.encodeToString(Answer.serializer(), it) } }
     var sender by rememberSaveable { mutableStateOf<PlacementSender?>(null) }
     val shownAt = remember { SystemClock.elapsedRealtime() }

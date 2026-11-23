@@ -33,10 +33,8 @@
   "questions_mistake_fixed": "c61b55baa2c2924595aaf2481eb5232018ae33589fafc3fbd7499f554bc6a01c",
   "questions_mistakes_fixed": "2b132a3b72ac26ffc19971ffe92e33c6cdd6bc3e30051f109b075adc78222614",
   "questions_not_quite": "d07e50f2948994559cbc9bd689e60d905acd4a44602b14fa1786622f250577b2",
-  "questions_order_hint": "6cb3c78bf075225c4adc5c61781eac079cea9402431551e611b777ef45a4f7c8",
   "questions_pick_all": "591aabe79ea073ab12d821200e561488db0e99332d5a74f8751390dcd7138fce",
   "questions_pick_count": "a38e9a721cf9072c1e4a8b4d97d42ed80db27e2333b78ffd313e84752bf5147f",
-  "questions_place": "490f25078308adafb3c9354e10f81a6d99e76875fd047a35f835cb46aaebe63b",
   "questions_place_right": "275cbb41d1613a6479840374007eed8fd7a1b8735c50fc7833447fa7372b16eb",
   "questions_place_wrong": "3fc92688ac7a9b92fb270f6684983aa171a55b9b6d7d14401de45a90f834ccdb",
   "questions_placement_note": "624309e51e7a5f0fa46e9c11d00f83dda602abfbfadb920be82cc3caa958e072",
@@ -72,9 +70,7 @@
     <string name="questions_wrong">Faux</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Laisser vide</string>
-    <string name="questions_order_hint">Appuie sur les étapes dans l’ordre.</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">Position %1$d</string>
     <string name="questions_place_right">Position %1$d, bonne place</string>
     <string name="questions_place_wrong">Position %1$d, mauvaise place</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

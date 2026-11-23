@@ -26,7 +26,6 @@ fun trueFalseQuestion(itemId: String = ITEM_ID) =
      "options":null,"question":"A contract needs consideration to be binding."}
     """.trimIndent()
 
-/** A low-guess tap: four steps to put in order. */
 fun orderQuestion() =
     """
     {"context":null,"image":null,"itemId":"$ITEM_ID","skillId":"$SKILL_ID","visual":null,"format":"order",

@@ -77,8 +77,9 @@ fun QuestionAnswer(
             val order = check?.answer as? Answer.Order
             OrderQuestion(
                 steps = question.options.orEmpty(),
-                check = order?.let { OrderCheck(it.order, (check.marked as? Answer.Order)?.order.orEmpty()) },
-                enabled = enabled,
+                order = order?.order ?: (draft as? Answer.Order)?.order ?: question.initialAnswer?.order.orEmpty(),
+                check = order?.let { (check.marked as? Answer.Order)?.order.orEmpty() },
+                enabled = enabled && check == null,
                 onAnswer = onAnswer,
                 modifier = modifier,
             )
