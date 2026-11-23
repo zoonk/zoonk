@@ -3071,11 +3071,6 @@ msgid "Next lesson"
 msgstr "Przejdź do kolejnej lekcji"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Przejdź do zakładki Dziś"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "To już znasz"

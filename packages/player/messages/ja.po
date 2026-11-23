@@ -3071,11 +3071,6 @@ msgid "Next lesson"
 msgstr "次のレッスン"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "「今日」へ移動する"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "もともと知っていた内容でした"

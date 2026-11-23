@@ -57,6 +57,25 @@ describe("a lesson's end", () => {
 
     expect(page.getByRole("link", { name: /^Next lesson/u }).elements()).toHaveLength(0);
     expect(page.getByRole("link", { name: "Back to chapter" }).elements()).toHaveLength(0);
+    expect(page.getByText("Back to chapter", { exact: true }).elements()).toHaveLength(0);
+  });
+
+  it("ends a replay from Today with a single Continue link to Today", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson: async () => startedRun({ replay: true }) }),
+      lesson,
+      routes: { ...ROUTES, exit: "/today", exitTo: null, nextLesson: null },
+    });
+
+    await finishLesson();
+
+    await expect
+      .element(page.getByRole("link", { name: /^Continue/u }))
+      .toHaveAttribute("href", "/today");
+
+    expect(page.getByText("Go to Today", { exact: true }).elements()).toHaveLength(0);
   });
 
   it("leads a goal's first lesson to the plan the learner hasn't seen yet", async () => {
