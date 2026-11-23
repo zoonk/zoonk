@@ -260,33 +260,6 @@ private fun PlanRows(
     }
 }
 
-/** "How it works": what a learner may want to know before starting, for whoever asks. */
-@Composable
-internal fun HowItWorks(suggestsFocus: Boolean) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    val title = stringResource(R.string.focustest_how_it_works)
-    TextButton(onClick = { open = true }, edge = ButtonEdge.Start) { Text(title) }
-    if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows(suggestsFocus) }
-}
-
-@Composable
-internal fun HowItWorksRows(suggestsFocus: Boolean) {
-    val rows =
-        listOfNotNull(
-            R.string.focustest_how_weight_title to R.string.focustest_how_weight,
-            R.string.focustest_how_grade_title to R.string.focustest_how_grade,
-            R.string.focustest_how_stop_title to R.string.focustest_how_stop,
-            (R.string.focustest_how_subjects_title to R.string.focustest_how_subjects).takeIf { suggestsFocus },
-            R.string.focustest_how_sessions_title to R.string.focustest_how_sessions,
-        )
-    Column(Modifier.bleed(LIST_ITEM_INSET)) {
-        rows.forEachIndexed { index, (title, line) ->
-            if (index > 0) ListDivider()
-            ListRow(headline = { Text(stringResource(title)) }, supporting = { Text(stringResource(line)) })
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FocusTestSheet(

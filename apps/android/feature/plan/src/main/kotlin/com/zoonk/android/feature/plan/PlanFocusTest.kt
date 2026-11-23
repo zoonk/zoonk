@@ -37,12 +37,12 @@ internal fun focusTestLine(summary: FocusTestSummary): String {
         FocusTestSummary.State.NOT_STARTED -> {
             factsLine(
                 stringResource(if (summary.suggestsFocus) R.string.focustest_find_focus else R.string.focustest_find_start),
-                minutes?.let { stringResource(R.string.focustest_about, it) },
+                minutes,
             )
         }
 
         FocusTestSummary.State.SITTING -> {
-            factsLine(stringResource(R.string.focustest_in_progress), minutes?.let { stringResource(R.string.focustest_about_left, it) })
+            factsLine(stringResource(R.string.focustest_in_progress), minutes?.let { stringResource(R.string.focustest_time_left, it) })
         }
 
         FocusTestSummary.State.CHECKED -> {
