@@ -18,16 +18,15 @@ import {
   hashText,
   withLevelTestRules,
 } from "./_utils/level-test-writing";
+import { type LevelTestBankPart, getLevelTestQuestionBatches } from "./level-test-bank-parts";
 import template from "./level-test-bank.prompt.md";
 import {
-  type GenerateLevelTestConfirmationsParams,
   type LevelTestConfirmation,
   generateLevelTestConfirmations,
 } from "./level-test-confirmations";
 import {
   LEVEL_TEST_LEVELS,
   LEVEL_TEST_PASSAGE_WORDS,
-  LEVEL_TEST_SKILLS,
   type LevelTestSkill,
   type TestLevel,
 } from "./level-test-levels";
@@ -47,12 +46,6 @@ const fallbackModels = [
   "anthropic/claude-sonnet-5.5",
   "openai/gpt-6.1-terra",
 ] as const;
-
-/** A level's questions per skill: enough for a whole-course test to stop on its own. */
-const LEVEL_TEST_QUESTIONS_PER_SKILL = 12;
-
-/** Short calls side by side, so a learner waiting on the bank waits for the longest of them. */
-const QUESTIONS_PER_CALL = 4;
 
 /** The test's scoring counts on a one-in-four guess, so every question shows four options. */
 const WRONG_OPTIONS = 3;
@@ -141,15 +134,16 @@ ${situations.map((situation, index) => `- ${index + 1}: ${situation}`).join("\n"
 `;
 }
 
-type QuestionsCall = GenerateLevelTestBankParams & {
+async function writeQuestions({
+  part: { count, offset, skill },
+  ...params
+}: GenerateLevelTestBankParams & {
   level: TestLevel;
-  situations: readonly string[];
-  skill: LevelTestSkill;
-};
-
-async function writeQuestions(params: QuestionsCall) {
-  const { analytics, level, model = defaultModel, reasoning, skill, useFallback = true } = params;
-  const userPrompt = buildQuestionsPrompt(params);
+  part: Exclude<LevelTestBankPart, "confirmations">;
+}) {
+  const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
+  const situations = QUESTION_SITUATIONS[level][skill].slice(offset, offset + count);
+  const userPrompt = buildQuestionsPrompt({ ...params, situations, skill });
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -172,67 +166,25 @@ async function writeQuestions(params: QuestionsCall) {
     .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
     .map((question) => toTestQuestion({ level, question, skill }));
 
-  return { provenance, questions, usage: result.usage, userPrompt };
+  return { data: { questions }, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-function chunk<Item>(items: readonly Item[], size: number): Item[][] {
-  return Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
-    items.slice(index * size, (index + 1) * size),
-  );
-}
-
-/** `count` questions of one skill at one level, each on its own situation. */
-async function generateLevelTestQuestions({
-  count = LEVEL_TEST_QUESTIONS_PER_SKILL,
+export async function generateLevelTestBankPart({
+  part,
   ...params
-}: GenerateLevelTestBankParams & { count?: number; level: TestLevel; skill: LevelTestSkill }) {
-  const situations = QUESTION_SITUATIONS[params.level][params.skill].slice(0, count);
+}: GenerateLevelTestBankParams & { level: TestLevel; part: LevelTestBankPart }) {
+  const result =
+    part === "confirmations"
+      ? await generateLevelTestConfirmations(params)
+      : await writeQuestions({ ...params, part });
 
-  const calls = await Promise.all(
-    chunk(situations, QUESTIONS_PER_CALL).map((slice) =>
-      writeQuestions({ ...params, situations: slice }),
-    ),
-  );
-
-  return {
-    data: { questions: calls.flatMap((call) => call.questions) },
-    provenance: combineTaskProvenance(calls.map((call) => call.provenance)),
-    systemPrompt,
-    usage: sumLanguageModelUsage(calls.map((call) => call.usage)),
-    userPrompt: calls.map((call) => call.userPrompt).join("\n"),
-  };
-}
-
-type GenerateLevelTestBankLevelParams = GenerateLevelTestBankParams &
-  Pick<GenerateLevelTestConfirmationsParams, "level">;
-
-/** A whole level: its questions in each skill and its confirmations. */
-export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLevelParams) {
-  const [reading, listening, confirmations] = await Promise.all([
-    generateLevelTestQuestions({ ...params, skill: "reading" }),
-    generateLevelTestQuestions({ ...params, skill: "listening" }),
-    generateLevelTestConfirmations(params),
-  ]);
-
-  const parts = [reading, listening, confirmations];
-
-  const data: GenerateLevelTestBankSchema = {
-    confirmations: confirmations.data.confirmations,
-    questions: [...reading.data.questions, ...listening.data.questions],
-  };
-
-  return {
-    data,
-    provenance: combineTaskProvenance(parts.map((part) => part.provenance)),
-    systemPrompt,
-    usage: sumLanguageModelUsage(parts.map((part) => part.usage)),
-    userPrompt: parts.map((part) => part.userPrompt).join("\n"),
-  };
+  const data: GenerateLevelTestBankSchema = { confirmations: [], questions: [], ...result.data };
+  return { ...result, data };
 }
 
 /** Every level's questions, `questionsPerSkill` per skill: the bank its eval reads, levels side by side. */
 export async function generateLevelTestBank({
-  questionsPerSkill = LEVEL_TEST_QUESTIONS_PER_SKILL,
+  questionsPerSkill,
   ...params
 }: GenerateLevelTestBankParams & { questionsPerSkill?: number }) {
   // The levels are one job, so their calls share a trace unless the caller's job already has one.
@@ -240,14 +192,8 @@ export async function generateLevelTestBank({
 
   const parts = await Promise.all(
     LEVEL_TEST_LEVELS.flatMap((level) =>
-      LEVEL_TEST_SKILLS.map((skill) =>
-        generateLevelTestQuestions({
-          ...params,
-          analytics,
-          count: questionsPerSkill,
-          level,
-          skill,
-        }),
+      getLevelTestQuestionBatches(questionsPerSkill).map((part) =>
+        generateLevelTestBankPart({ ...params, analytics, level, part }),
       ),
     ),
   );

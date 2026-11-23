@@ -69,7 +69,7 @@ function isValidConfirmation({
   );
 }
 
-const levelTestConfirmationsInputSchema = z.array(
+export const levelTestConfirmationsInputSchema = z.array(
   z.object(confirmationFields).refine(isValidConfirmation),
 );
 
@@ -79,17 +79,12 @@ const levelTestConfirmationSchema = z
 
 export type LevelTestConfirmation = z.infer<typeof levelTestConfirmationSchema>;
 
-export const levelTestWrittenExtrasSchema = z.object({
-  confirmations: levelTestConfirmationsInputSchema.optional(),
-  speaking: z
-    .object({ level: z.enum(CEFR_LEVELS), sentence: z.string(), translation: z.string() })
-    .optional(),
-});
-
 export const levelTestBankSchema = z.object({
   confirmations: z.array(levelTestConfirmationSchema).optional(),
   questions: z.array(levelTestQuestionSchema),
-  speaking: z.array(levelTestWrittenExtrasSchema.shape.speaking.unwrap()).default([]),
+  speaking: z
+    .array(z.object({ level: z.enum(CEFR_LEVELS), sentence: z.string(), translation: z.string() }))
+    .default([]),
 });
 
 export type LevelTestQuestion = z.infer<typeof levelTestQuestionSchema>;

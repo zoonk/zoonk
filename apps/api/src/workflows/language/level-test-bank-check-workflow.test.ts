@@ -1,8 +1,8 @@
 import { checkLevelTestQuestions } from "@zoonk/ai/tasks/language/check-level-test-questions";
+import { checkLikeTheKeys, writtenLevel } from "@zoonk/ai/tasks/language/level-test-bank-fixture";
 import { LEVEL_TEST_LEVELS } from "@zoonk/ai/tasks/language/level-test-levels";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
-import { checkLikeTheKeys, writtenLevel } from "../_test-utils/level-test-bank";
 import { levelTestBankCheckWorkflow } from "./level-test-bank-check-workflow";
 
 async function storeUncheckedBank(passage: string) {

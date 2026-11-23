@@ -1,7 +1,8 @@
 import { type LanguageModelUsage, generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { QUESTION_SITUATIONS } from "./_utils/level-test-writing";
-import { generateLevelTestBank, generateLevelTestBankLevel } from "./level-test-bank";
+import { generateLevelTestBank, generateLevelTestBankPart } from "./level-test-bank";
+import { writeLevelTestBankParts } from "./level-test-bank-parts";
 import { generateLevelTestConfirmations } from "./level-test-confirmations";
 import type * as Ai from "ai";
 
@@ -105,17 +106,22 @@ function answerAsAsked() {
   });
 }
 
-describe(generateLevelTestBankLevel, () => {
+describe(generateLevelTestBankPart, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     answerAsAsked();
   });
 
   it("writes twelve questions per skill in short calls side by side, and the level's confirmations", async () => {
-    const { data, provenance } = await generateLevelTestBankLevel({
-      learnerLanguage: "pt",
-      level: "C2",
-      targetLanguage: "en",
+    const { provenance, ...data } = await writeLevelTestBankParts(async (part) => {
+      const result = await generateLevelTestBankPart({
+        learnerLanguage: "pt",
+        level: "C2",
+        part,
+        targetLanguage: "en",
+      });
+
+      return { ...result.data, provenance: result.provenance };
     });
 
     const prompts = vi.mocked(generateText).mock.calls.map(([options]) => promptOf(options));

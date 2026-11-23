@@ -1,5 +1,6 @@
 import { progressStep } from "@/workflows/_shared/stream-status";
 import { type CallWait } from "@zoonk/ai/provider-options";
+import { type LevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
 import {
   checkLevelTestBankQuestions,
@@ -17,7 +18,7 @@ import {
   claimLevelTestBank,
   releaseLevelTestBankClaim,
   storeLevelTestBank,
-  writeLevelTestBankLevel,
+  writeLevelTestBankPart,
 } from "@zoonk/core/language/level-test/write-bank";
 import { type LevelTestBankStepName } from "@zoonk/core/library/generation/steps";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -44,14 +45,15 @@ export async function claimLevelTestBankStep(
   return upgrade ? claimLevelTestBank(pair, true) : claimLevelTestBank(pair);
 }
 
-export async function writeLevelTestBankLevelStep({
+export async function writeLevelTestBankPartStep({
   level,
   pair,
+  part,
   ...analytics
-}: BankAnalytics & { level: TestLevel; pair: LanguagePair }): Promise<LevelTestBankLevel> {
+}: BankAnalytics & { level: TestLevel; pair: LanguagePair; part: LevelTestBankPart }) {
   "use step";
 
-  return writeLevelTestBankLevel({ analytics: toBankAnalytics(analytics), level, pair });
+  return writeLevelTestBankPart({ analytics: toBankAnalytics(analytics), level, pair, part });
 }
 
 export async function checkLevelTestBankQuestionsStep<

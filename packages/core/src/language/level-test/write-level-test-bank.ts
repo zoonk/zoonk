@@ -1,5 +1,6 @@
 import "server-only";
-import { generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
+import { generateLevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank";
+import { type LevelTestBankPart } from "@zoonk/ai/tasks/language/level-test-bank-parts";
 import { type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
 import {
   type LanguagePair,
@@ -11,7 +12,7 @@ import {
   releaseClaim,
   storeBank,
 } from "./_utils/level-test-bank";
-import { levelTestWrittenExtrasSchema } from "./level-test-contract";
+import { levelTestConfirmationsInputSchema } from "./level-test-contract";
 
 export type { LevelTestBankLevel } from "./_utils/level-test-bank";
 
@@ -40,24 +41,31 @@ export async function claimLevelTestBank(
   return claim ? { claimId: claim.claimId, status: "claimed" } : { status: "running" };
 }
 
-/** System workflow capability: one level's questions as written, before their check. */
-export async function writeLevelTestBankLevel({
+/** System workflow capability: one model call from the level's bank. */
+export async function writeLevelTestBankPart({
   analytics = {},
   level,
   pair,
+  part,
 }: {
   analytics?: LevelTestBankAnalytics;
   level: TestLevel;
   pair: LanguagePair;
-}): Promise<LevelTestBankLevel> {
-  const { data, provenance } = await generateLevelTestBankLevel({
+  part: LevelTestBankPart;
+}) {
+  const { data, provenance } = await generateLevelTestBankPart({
     analytics: { ...analytics, contentScope: "shared" },
     learnerLanguage: pair.language,
     level,
+    part,
     targetLanguage: pair.targetLanguage,
   });
 
-  return { ...levelTestWrittenExtrasSchema.parse(data), provenance, questions: data.questions };
+  return {
+    confirmations: levelTestConfirmationsInputSchema.parse(data.confirmations),
+    provenance,
+    questions: data.questions,
+  };
 }
 
 /** System workflow capability: `lost` when a newer run took the claim over, so its bank stays. */

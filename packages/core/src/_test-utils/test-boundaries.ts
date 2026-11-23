@@ -2,10 +2,10 @@ import {
   type GradeTypedAnswerParams,
   type gradeTypedAnswer,
 } from "@zoonk/ai/tasks/grading/grade-typed-answer";
+import { checkLikeTheKeys } from "@zoonk/ai/tasks/language/level-test-bank-fixture";
 import { type shuffle } from "@zoonk/utils/shuffle";
 import { vi } from "vitest";
 import { type getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { checkLikeTheKeys } from "./level-test-bank";
 
 export const nextCache = {
   cacheTag: vi.fn(),
@@ -89,7 +89,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/language/exam-speaking-photo": { drawExamSpeakingPhoto: vi.fn() },
   "@zoonk/ai/tasks/language/explain-spoken-answer": { explainSpokenAnswer: vi.fn() },
   "@zoonk/ai/tasks/language/language-lesson": { generateLanguageLesson: vi.fn() },
-  "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBankLevel: vi.fn() },
+  "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBankPart: vi.fn() },
   "@zoonk/ai/tasks/language/live-call-session": {
     createLiveCallSession: vi.fn(),
     hangUpLiveCallSession: vi.fn(),

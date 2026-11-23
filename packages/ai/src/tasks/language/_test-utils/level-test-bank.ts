@@ -1,11 +1,12 @@
 import {
   type CheckLevelTestQuestionsParams,
   type LevelTestQuestionCheck,
-} from "@zoonk/ai/tasks/language/check-level-test-questions";
-import { type generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
-import { type TestLevel } from "@zoonk/ai/tasks/language/level-test-levels";
+} from "../check-level-test-questions";
+import { type generateLevelTestBankPart } from "../level-test-bank";
+import { type LevelTestBankPart } from "../level-test-bank-parts";
+import { type TestLevel } from "../level-test-levels";
 
-type WrittenLevel = Awaited<ReturnType<typeof generateLevelTestBankLevel>>;
+type WrittenLevel = Awaited<ReturnType<typeof generateLevelTestBankPart>>;
 
 const NO_USAGE: WrittenLevel["usage"] = {
   inputTokenDetails: { cacheReadTokens: undefined, cacheWriteTokens: undefined, noCacheTokens: 0 },
@@ -62,6 +63,31 @@ export function writtenLevel({
       })),
     ),
   });
+}
+
+export function writtenPart({
+  level,
+  part,
+  passage,
+}: {
+  level: TestLevel;
+  part: LevelTestBankPart;
+  passage: string;
+}): WrittenLevel {
+  const result = writtenLevel({ level, passage });
+
+  return {
+    ...result,
+    data: {
+      confirmations: part === "confirmations" ? result.data.confirmations : [],
+      questions:
+        part === "confirmations"
+          ? []
+          : result.data.questions
+              .filter(({ skill }) => skill === part.skill)
+              .slice(part.offset, part.offset + part.count),
+    },
+  };
 }
 
 function answerAsKeyed(
