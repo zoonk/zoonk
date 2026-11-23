@@ -527,9 +527,10 @@ struct LevelTestScreen: View {
 
     NavigationStack {
       Group {
-        if let targetLanguage = standing.value?.goal.targetLanguage {
+        switch standing.state {
+        case .loaded(let standing):
           LevelTestFlow(
-            goalID: goalId, targetLanguage: targetLanguage,
+            goalID: goalId, targetLanguage: standing.goal.targetLanguage,
             wholeCourseMinutes: plan.value?.plan.placementTest?.estimatedMinutes ?? 0,
             testOutLevel: plan.value?.plan.placementTest?.nextTestOutLevel,
             testOutFirst: testOutFirst, subject: goal?.displayName ?? "",
@@ -538,7 +539,11 @@ struct LevelTestScreen: View {
             dismiss()
           }
           .id(session.authenticatedSession)
-        } else {
+        case .failed(let error):
+          PracticeLoadFailureView(error: error) { Task { await standing.refresh() } }
+        case .empty:
+          NotFoundView()
+        case .idle, .loading:
           StepLoading()
         }
       }
