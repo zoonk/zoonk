@@ -11,7 +11,6 @@ struct Chip: View {
   }
 
   let text: Text
-  var facts: [String] = []
   var systemImage: String?
   var tone = Tone.neutral
 
@@ -19,11 +18,6 @@ struct Chip: View {
     self.text = text
     self.systemImage = tone == .success ? systemImage ?? "checkmark" : systemImage
     self.tone = tone
-  }
-
-  init(facts: [String]) {
-    text = Text(verbatim: "")
-    self.facts = facts
   }
 
   var body: some View {
@@ -34,15 +28,31 @@ struct Chip: View {
           .accessibilityHidden(true)
       }
 
-      if facts.isEmpty {
-        text
-      } else {
-        FactSegments(facts)
-      }
+      text
     }
     // Before the chip's own muted style, which only fills in what this leaves unset.
     .foregroundStyle(tone == .success ? Color.successText : Color.mutedForeground)
     .chip(wraps: true)
+  }
+}
+
+/// Main's `OnboardingSubject`: where the learner is sits at the chip's row's end, never inside it.
+struct ChipRow: View {
+  let chip: Chip
+  var position: Text?
+
+  var body: some View {
+    HStack(spacing: 12) {
+      chip
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      if let position {
+        position
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+          .fixedSize()
+      }
+    }
   }
 }
 

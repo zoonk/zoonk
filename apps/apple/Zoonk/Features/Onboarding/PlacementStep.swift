@@ -458,29 +458,8 @@ struct PlacementQuestionScreen<Media: View>: View {
 
   var body: some View {
     PracticeTaskLayout {
-      // Main's `OnboardingSubject`: the chip, and where the question sits at the row's end.
       if let subject {
-        HStack(spacing: 12) {
-          Chip(Text(verbatim: subject))
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-          Group {
-            if let position {
-              position
-            } else if let total {
-              Text(
-                "Question \(number) of \(total)", tableName: "Onboarding",
-                comment: "Which question of a test with a promised count this is")
-            } else {
-              Text(
-                "Question \(number)", tableName: "Onboarding",
-                comment: "Which placement question this is")
-            }
-          }
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .fixedSize()
-        }
+        ChipRow(chip: Chip(Text(verbatim: subject)), position: shownPosition)
       }
 
       media()
@@ -539,6 +518,20 @@ struct PlacementQuestionScreen<Media: View>: View {
       }
     }
     .preference(key: TestQuestionProgressKey.self, value: progress)
+  }
+
+  private var shownPosition: Text {
+    if let position {
+      position
+    } else if let total {
+      Text(
+        "Question \(number) of \(total)", tableName: "Onboarding",
+        comment: "Which question of a test with a promised count this is")
+    } else {
+      Text(
+        "Question \(number)", tableName: "Onboarding",
+        comment: "Which placement question this is")
+    }
   }
 
   private var asked: PracticeQuestionView {

@@ -12,25 +12,13 @@ enum FocusTestCopy {
       comment: "How long the rest of an open Focus test takes, such as \"9 min left\"")
   }
 
-  /// "Focus test · 15 min", over the offer.
-  static func offered(minutes: Int) -> [String] {
-    [String(localized: name), studyDuration(minutes: minutes)]
-  }
-
-  /// "Focus test · 13 min left", over an open sitting the learner came back to.
-  static func left(minutes: Int) -> [String] {
-    [String(localized: name), timeLeft(minutes: minutes)]
-  }
-
   /// One subject, or no date, leaves nothing to focus on: the test only finds what to skip.
   static func title(findsFocus: Bool) -> LocalizedStringResource {
     findsFocus
       ? LocalizedStringResource(
         "Find what to study most", table: "FocusTest",
         comment: "What the Focus test does, for an exam with a date and more than one subject")
-      : LocalizedStringResource(
-        "Skip what you already know", table: "FocusTest",
-        comment: "What the Focus test does, for an exam without a date or with one subject")
+      : LocalizedStringResource("Already know some of this?", table: "FocusTest")
   }
 
   /// What the test is and why, wherever it's offered with its time over it. "It never removes a
@@ -47,8 +35,7 @@ enum FocusTestCopy {
         comment: "What the Focus test is and why, for an exam without a date or with one subject")
   }
 
-  static let start = LocalizedStringResource(
-    "Start", table: "FocusTest", comment: "Starts the Focus test")
+  static let start = LocalizedStringResource("Start the test", table: "FocusTest")
 
   /// Leaves the test with the answers it has, for its result.
   /// The test's actions, from its own table wherever they show, Today included, so each language

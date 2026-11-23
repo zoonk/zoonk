@@ -125,6 +125,64 @@
         }
       }
     },
+    "Already know some of this?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kennst du dich damit schon etwas aus?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Ya sabes algo de esto?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu connais déjà certaines notions ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne sai già qualcosa?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すでに知っていることはありますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 아는 내용이 있나요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znasz już coś z tego?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já sabe um pouco disso?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunların bir kısmını zaten biliyor musun?"
+          }
+        }
+      }
+    },
     "Answer more questions" : {
       "comment" : "Opens another Focus test sitting from its result on the plan",
       "localizations" : {
@@ -1537,65 +1595,6 @@
         }
       }
     },
-    "Skip what you already know" : {
-      "comment" : "What the Focus test does, for an exam without a date or with one subject",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Überspringen, was du schon weißt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sáltate lo que ya sabes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sauter ce que tu sais déjà"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salta ciò che sai già"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すでに知っている内容をスキップする"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이미 아는 내용 건너뛰기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pomiń to, co już umiesz"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pular o que você já sabe"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaten bildiklerini atla"
-          }
-        }
-      }
-    },
     "Speaking: not in this test" : {
       "comment" : "A speaking part of the exam that the Focus test can't ask about",
       "localizations" : {
@@ -1655,61 +1654,60 @@
         }
       }
     },
-    "Start" : {
-      "comment" : "Starts the Focus test",
+    "Start the test" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Starten"
+            "value" : "Test starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar"
+            "value" : "Iniciar la prueba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer"
+            "value" : "Commencer le test"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia"
+            "value" : "Inizia il test"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "始める"
+            "value" : "テストを始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시작하기"
+            "value" : "테스트 시작하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zacznij"
+            "value" : "Rozpocznij test"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar"
+            "value" : "Começar o teste"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Başla"
+            "value" : "Teste başla"
           }
         }
       }
