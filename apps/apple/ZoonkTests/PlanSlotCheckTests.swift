@@ -178,7 +178,7 @@ final class PlanSlotCheckTests: XCTestCase {
         claims += 1
         return nil
       }, slotChecks: PlanSlotChecks())
-    let window = try await showLine(
+    let window = try await showSuggestion(
       context,
       end: #"""
         {"certificates": {"earned": [], "unclaimed": [{"courseLevel": null}]},
@@ -200,7 +200,7 @@ final class PlanSlotCheckTests: XCTestCase {
   /// With nothing more to show, the line is its certificate alone.
   func testTheFinishedPlansLineWithNothingNextIsItsCertificate() async throws {
     let context = try context(kind: .learn, plan: goalPlanFixture(end: "finished"))
-    let window = try await showLine(
+    let window = try await showSuggestion(
       context,
       end: #"""
         {"certificates": {"earned": [{"code": "abc", "locked": false}], "unclaimed": []},
@@ -213,10 +213,41 @@ final class PlanSlotCheckTests: XCTestCase {
     XCTAssertFalse(spoken.contains(String(localized: "View", table: "Plan")), "\(spoken)")
   }
 
+  /// Beside the page the finished plan reads as main's panel: what to study next under its title,
+  /// "Continue at" before the certificate in one row, and a start that didn't save said under them.
+  func testTheFinishedPlansPanelSaysAStartThatDidNotSaveUnderItsButtons() async throws {
+    let context = try context(kind: .learn, plan: goalPlanFixture(end: "finished"))
+    let window = try await showSuggestion(
+      context,
+      end: #"""
+        {"certificates": {"earned": [], "unclaimed": [{"courseLevel": null}]},
+         "next": {"nextLevel": {"level": "intermediate", "title": "Intermediate"}, "related": []}}
+        """#, isInline: true)
+    let isContinue = { (label: String) in label.hasPrefix("Continue at") }
+    let spoken = spoken(in: window)
+    let description = try XCTUnwrap(
+      spoken.firstIndex(of: String(localized: "Here's what to study next.", table: "Plan")),
+      "\(spoken)")
+    let start = try XCTUnwrap(spoken.firstIndex(where: isContinue), "\(spoken)")
+    let claim = try XCTUnwrap(
+      spoken.firstIndex(of: String(localized: "Get your certificate", table: "Plan")), "\(spoken)")
+    XCTAssertLessThan(description, start, "\(spoken)")
+    XCTAssertLessThan(start, claim, "\(spoken)")
+
+    try await activate(where: isContinue, in: window)
+
+    try await waitForTestCondition("The panel never said the start didn't save") {
+      self.spoken(in: window).contains(String(localized: SuggestionSaveError.message))
+    }
+  }
+
   // MARK: Helpers
 
-  /// The suggestion line in the page's column, with the plan's end read as `end`.
-  private func showLine(_ context: PlanContext, end: String) async throws -> UIWindow {
+  /// The suggestion in the page's column, or beside the page when `isInline`, with the plan's end
+  /// read as `end`.
+  private func showSuggestion(_ context: PlanContext, end: String, isInline: Bool = false)
+    async throws -> UIWindow
+  {
     try await readsWhatVoiceOverReads()
     let session = SessionStore.preview(account: .planTestAccount)
     let api = PlanAPIStub()
@@ -225,7 +256,7 @@ final class PlanSlotCheckTests: XCTestCase {
     await store.planEnd(goalId: context.goal.id).load()
     let window = try show(
       List {
-        PlanSuggestionSection(context: context, answer: .constant(nil))
+        PlanSuggestionSection(context: context, answer: .constant(nil), isInline: isInline)
       }
       .environment(store)
       .environment(session)

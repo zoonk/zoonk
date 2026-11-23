@@ -163,15 +163,9 @@ struct PlanSuggestionSection: View {
 
     return Group {
       if isShowing {
-        if item == .finished {
-          SuggestionSheetBody {
-            slot(item)
-          }
-        } else {
-          slot(item)
-            .environment(
-              \.suggestionSheetNote, failed(item) ? BarNote(SuggestionSaveError.message) : nil)
-        }
+        slot(item)
+          .environment(
+            \.suggestionSheetNote, failed(item) ? BarNote(SuggestionSaveError.message) : nil)
       }
     }
     .disabled(currentAnswer?.editor.isSaving == true)
@@ -901,17 +895,14 @@ private struct PlanFinishedLineActions: View {
 
   var body: some View {
     let end = store.planEnd(goalId: context.goal.id).value
-    let certificates = end?.certificates.flatMap {
-      $0.unclaimed.isEmpty && $0.earned.isEmpty ? nil : $0
-    }
-    let hasMore = end?.next.map { $0.nextLevel != nil || !$0.related.isEmpty } ?? false
+    let certificates = end?.offeredCertificates
 
     HStack(spacing: 8) {
       if let certificates {
         PlanCertificateAction(context: context, certificates: certificates)
       }
 
-      if certificates == nil || hasMore {
+      if certificates == nil || end?.hasMore == true {
         SuggestionViewButton(action: open)
       }
     }
@@ -920,77 +911,117 @@ private struct PlanFinishedLineActions: View {
   }
 }
 
+extension PlanEnd {
+  /// The certificates to get or view, once there's one of either.
+  fileprivate var offeredCertificates: Certificates? {
+    certificates.flatMap { $0.unclaimed.isEmpty && $0.earned.isEmpty ? nil : $0 }
+  }
+
+  /// A next level or related courses: what to study next.
+  fileprivate var hasMore: Bool {
+    next.map { $0.nextLevel != nil || !$0.related.isEmpty } ?? false
+  }
+}
+
 private struct PlanFinishedSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
+  @Environment(\.isInSuggestionSheet) private var isInSheet
 
   let context: PlanContext
 
   var body: some View {
     let end = store.planEnd(goalId: context.goal.id)
 
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over")
-          .typeStyle(.body.weight(.semibold))
-      } icon: {
-        StatusMark(status: .done)
-      }
-
-      // Main's: the next level is the main answer when there is one, else the certificate.
-      if let certificates = end.value?.certificates {
-        if end.value?.next?.nextLevel == nil {
-          PlanCertificateAction(context: context, certificates: certificates)
-            .mainActionUnlessBarHoldsOne()
-        } else {
-          PlanCertificateAction(context: context, certificates: certificates)
+    Group {
+      if isInSheet {
+        SuggestionSheetBody(note: failed ? BarNote(SuggestionSaveError.message) : nil) {
+          words(end.value)
+          related(end.value)
+        } actions: {
+          actions(end.value)
             .buttonStyle(.outline)
         }
+      } else {
+        VStack(alignment: .leading, spacing: 8) {
+          words(end.value)
 
-        if context.slotCheck(.finished, request: .claim).failed {
-          SuggestionSaveError()
-        }
-      }
-
-      if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {
-        Text(
-          "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-
-        if let level = value.nextLevel {
-          BusyButton(isBusy: start.isWorking, icon: .play) {
-            continueAtNextLevel()
-          } label: {
-            Text(
-              "Continue at \(planLevelName(level.level))", tableName: "Plan",
-              comment: "Starts the next level of the plan's course")
+          ButtonRow(wraps: true) {
+            actions(end.value)
           }
-          .mainActionUnlessBarHoldsOne()
-        }
+          .buttonStyle(.outline)
 
-        ForEach(value.related) { course in
-          Button {
-            router.open(.course(courseId: course.courseId, title: course.title))
-          } label: {
-            Label(course.title, systemImage: "books.vertical")
-              .typeStyle(.body)
+          if failed {
+            SuggestionSaveError()
           }
-          .buttonStyle(.borderless)
-        }
-      }
 
-      if start.failed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Plan",
-            comment: "Says the next level didn't start")
-        )
-        .typeStyle(.body)
+          related(end.value)
+        }
       }
     }
     .loads(end, refreshable: false)
+  }
+
+  @ViewBuilder
+  private func words(_ end: PlanEnd?) -> some View {
+    Label {
+      Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over")
+        .typeStyle(.body.weight(.semibold))
+    } icon: {
+      StatusMark(status: .done)
+    }
+
+    if end?.hasMore == true {
+      Text(
+        "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  /// Main's: the next level is the main answer when there is one, else the certificate.
+  @ViewBuilder
+  private func actions(_ end: PlanEnd?) -> some View {
+    let certificates = end?.offeredCertificates
+
+    SuggestionActions {
+      if let level = end?.next?.nextLevel {
+        BusyButton(isBusy: start.isWorking, icon: .play) {
+          continueAtNextLevel()
+        } label: {
+          Text(
+            "Continue at \(planLevelName(level.level))", tableName: "Plan",
+            comment: "Starts the next level of the plan's course")
+        }
+        .mainActionUnlessBarHoldsOne()
+      } else if let certificates {
+        PlanCertificateAction(context: context, certificates: certificates)
+          .mainActionUnlessBarHoldsOne()
+      }
+    } other: {
+      if end?.next?.nextLevel != nil, let certificates {
+        PlanCertificateAction(context: context, certificates: certificates)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func related(_ end: PlanEnd?) -> some View {
+    ForEach(end?.next?.related ?? []) { course in
+      Button {
+        router.open(.course(courseId: course.courseId, title: course.title))
+      } label: {
+        Label(course.title, systemImage: "books.vertical")
+          .typeStyle(.body)
+      }
+      .buttonStyle(.borderless)
+    }
+  }
+
+  /// A claim or the next level's start that didn't save, said under the buttons, as main's is.
+  private var failed: Bool {
+    start.failed || context.slotCheck(.finished, request: .claim).failed
   }
 
   /// "Continue at" the next level, the finished plan's own.
