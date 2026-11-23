@@ -32,7 +32,8 @@ struct SuggestionMark: View {
 }
 
 /// Main's `SuggestionLine`: a panel with the suggestion's mark, its title in two lines at most, and
-/// one small action at its end; stacked, the whole title and the action under it.
+/// its small action at its end, or under the title when the action would leave it less than half
+/// the line; stacked, the whole title and the action under it.
 struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
@@ -45,12 +46,7 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   var body: some View {
     // Stacked, two lines of large text say too little, so the summary wraps whole and the action
     // goes under it.
-    let layout =
-      isStacked
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
-      : AnyLayout(HStackLayout(spacing: 10))
-
-    layout {
+    SuggestionLineLayout(isStacked: isStacked) {
       HStack(alignment: isStacked ? .firstTextBaseline : alignment, spacing: 10) {
         mark
           .accessibilityHidden(true)
@@ -61,13 +57,102 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
           .frame(maxWidth: .infinity, alignment: .leading)
       }
 
-      action
+      // One part however many views the action is, and none at all.
+      HStack(spacing: 8) {
+        action
+      }
+      .labelStyle(SuggestionLineLabelStyle())
     }
     // The same room on every side, as main's card: the mark sits as far from its edge as the
     // action from its own.
     .padding(8)
     .frame(minHeight: 48)
     .panel()
+  }
+}
+
+/// The summary, then the action: beside it while the action leaves it half the line, its buttons
+/// keeping their words whole; under it otherwise, as when content stacks.
+private struct SuggestionLineLayout: Layout {
+  let isStacked: Bool
+
+  private static let besideSpacing: CGFloat = 10
+  private static let underSpacing: CGFloat = 8
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    guard let (lead, action) = parts(subviews) else { return .zero }
+
+    if let actionSize = besideActionSize(proposal.width, action) {
+      let actionWidth = besideWidth(actionSize)
+      let width = proposal.width.map { $0 - actionWidth }
+      let leadSize = lead.sizeThatFits(ProposedViewSize(width: width, height: nil))
+      return CGSize(
+        width: proposal.width ?? leadSize.width + actionWidth,
+        height: max(leadSize.height, actionSize.height))
+    }
+
+    let under = ProposedViewSize(width: proposal.width, height: nil)
+    let leadSize = lead.sizeThatFits(under)
+    let actionSize = action.sizeThatFits(under)
+    return CGSize(
+      width: proposal.width ?? max(leadSize.width, actionSize.width),
+      height: leadSize.height + underSpacing(actionSize) + actionSize.height)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    guard let (lead, action) = parts(subviews) else { return }
+
+    if let actionSize = besideActionSize(bounds.width, action) {
+      let leadWidth = bounds.width - besideWidth(actionSize)
+      lead.place(
+        at: CGPoint(x: bounds.minX, y: bounds.midY), anchor: .leading,
+        proposal: ProposedViewSize(width: leadWidth, height: nil))
+      action.place(
+        at: CGPoint(x: bounds.maxX, y: bounds.midY), anchor: .trailing,
+        proposal: ProposedViewSize(actionSize))
+      return
+    }
+
+    let under = ProposedViewSize(width: bounds.width, height: nil)
+    let leadHeight = lead.sizeThatFits(under).height
+    let spacing = underSpacing(action.sizeThatFits(under))
+    lead.place(at: bounds.origin, proposal: under)
+    action.place(
+      at: CGPoint(x: bounds.minX, y: bounds.minY + leadHeight + spacing), proposal: under)
+  }
+
+  private func parts(_ subviews: Subviews) -> (LayoutSubview, LayoutSubview)? {
+    subviews.count == 2 ? (subviews[0], subviews[1]) : nil
+  }
+
+  /// The action's own size when it goes beside the summary.
+  private func besideActionSize(_ width: CGFloat?, _ action: LayoutSubview) -> CGSize? {
+    guard !isStacked else { return nil }
+    let size = action.sizeThatFits(.unspecified)
+    guard let width else { return size }
+    return besideWidth(size) <= width / 2 ? size : nil
+  }
+
+  private func underSpacing(_ action: CGSize) -> CGFloat {
+    action.height > 0 ? Self.underSpacing : 0
+  }
+
+  /// What the action takes from the summary's width: nothing when there's none.
+  private func besideWidth(_ action: CGSize) -> CGFloat {
+    action.width > 0 ? action.width + Self.besideSpacing : 0
+  }
+}
+
+/// A list row would set a button's icon in its own column, far from its words.
+private struct SuggestionLineLabelStyle: LabelStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    HStack(spacing: 6) {
+      configuration.icon
+        .accessibilityHidden(true)
+      configuration.title
+    }
   }
 }
 
