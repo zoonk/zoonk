@@ -2,12 +2,18 @@ package com.zoonk.android.feature.writing
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -187,6 +193,21 @@ fun RangeMeter(
     }
 }
 
+@Composable
+fun MinimumLegend(text: String) {
+    Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Box(
+            Modifier
+                .padding(vertical = 2.dp)
+                .width(TICK_WIDTH)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(TICK_WIDTH / 2))
+                .background(MaterialTheme.colorScheme.onSurface),
+        )
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
 /** "17–19 of 30" at a row's end, or what stands for it while it isn't measured, or is graded by level. */
 @Composable
 fun PointsValue(
@@ -196,12 +217,17 @@ fun PointsValue(
     decimals: Int,
     modifier: Modifier = Modifier,
     levels: Boolean = false,
+    headline: Boolean = false,
 ) {
     val measured = low != null && high != null && max != null
     Text(
         when {
             low != null && high != null && max != null -> {
-                stringResource(R.string.essay_points_of, pointsRange(low, high, decimals), formatPoints(max, currentLocale(), decimals))
+                stringResource(
+                    R.string.essay_points_of,
+                    pointsRange(low, high, decimals, headline),
+                    formatPoints(max, currentLocale(), decimals),
+                )
             }
 
             levels -> {

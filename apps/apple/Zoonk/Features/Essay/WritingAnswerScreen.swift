@@ -35,7 +35,7 @@ struct WritingAnswerScreen: View {
           .lonePage()
         }
       }
-      .navigationTitle(attempt.value.map { WritingLabels.header($0.writing.unit) } ?? "")
+      .navigationTitle(attempt.value?.writing.title ?? "")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {

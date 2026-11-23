@@ -63,6 +63,8 @@
   "essay_nothing_lost": "a9db8f9f176fd9a93fc18eb46a871f09684b71e1a23a082e02d4924d5a20d456",
   "essay_of_max": "4f88ff36b1286b8066104cb1e9f62510d1cb106e7762d63872caafe23011b27b",
   "essay_part_minimum": "8fe510a8d584aa66023896110e048e4a2dc21938dc8039e021d8cb87c531b25b",
+  "essay_part_minimum_points": "bfff3ab5848a5cb2eb8c6a8347f4a7af68eceeaade803f09fa1a90ef9924dc48",
+  "essay_part_minimum_total": "92557ee09a736e0da35a84cc912271255ede51dea8d174cd3beda6e1aa31246f",
   "essay_past_limit": "b91225329a0610a4ab414cbab9209f4ba22e6801f63d22ccc02fc46cbddfd8a8",
   "essay_past_line": "50171b3fa4d68271d0e83ad2d8d8fcb8d9255459a53e794621efc930042a6267",
   "essay_points": "1ff1cf211bb78504d3d5c18fe7044201291d9c802b305a535d953c944b7e8baf",
@@ -223,6 +225,8 @@
     <string name="essay_more_tomorrow">내일 다시 이용할 수 있어요.</string>
     <string name="essay_left_for_tomorrow">내일 할 일</string>
     <string name="essay_part_minimum">서술형 시험 합격에 필요한 최소 점수: 총점의 %1$s</string>
+    <string name="essay_part_minimum_points">서술형 시험 합격에 필요한 총점: %1$s점</string>
+    <string name="essay_part_minimum_total">서술형 시험 합격에 필요한 점수: 총 %2$s점 중 %1$s점</string>
     <string name="essay_content">내용</string>
     <string name="essay_language_errors">언어 오류</string>
     <plurals name="essay_errors">

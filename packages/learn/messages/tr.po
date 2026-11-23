@@ -13911,6 +13911,16 @@ msgid "For example: {example}"
 msgstr "Örneğin: {example}"
 
 #: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "Yazılı sınavı geçmek için gereken minimum toplam puan: {minimum} puan"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "Yazılı sınavı geçmek için toplam {max} puan üzerinden en az {minimum} puan alman gerekir"
+
+#: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
 msgstr "Yazılı sınavı geçmek için gereken en düşük puan oranı: {share}"

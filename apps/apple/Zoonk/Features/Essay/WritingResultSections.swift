@@ -45,19 +45,40 @@ private struct WritingPointsSection: View {
         }
         .accessibilityElement(children: .combine)
 
-        // The written test's minimum is on the sum of its questions: its tick sits at the same
-        // share of this question's points and says it's the test's, never this question's.
-        if let share = prompt.partMinimum?.share {
-          VStack(alignment: .leading, spacing: 6) {
-            RangeBar(range: points.total, max: points.max, minimum: share * points.max)
-            MinimumLegend(
-              Text(
+        VStack(alignment: .leading, spacing: 6) {
+          let part = prompt.partMinimum
+          let sameScale = part?.max == points.max
+          RangeBar(
+            range: points.total, max: points.max,
+            minimum: sameScale ? part?.share.map { $0 * points.max } : nil)
+
+          if let part {
+            if !sameScale, let minimum = part.points {
+              let minimumLabel = WritingLabels.partPoints(minimum)
+              Group {
+                if let max = part.max {
+                  Text(
+                    "Minimum to pass the written test: \(minimumLabel) of \(WritingLabels.partPoints(max)) points in total",
+                    tableName: "Essay")
+                } else {
+                  Text(
+                    "Minimum to pass the written test: \(minimumLabel) points in total",
+                    tableName: "Essay")
+                }
+              }
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+            } else if let share = part.share {
+              let label = Text(
                 "Minimum to pass the written test: \(WritingLabels.share(share)) of the points",
-                tableName: "Essay"
-              ))
+                tableName: "Essay")
+              if sameScale {
+                MinimumLegend(label)
+              } else {
+                label.typeStyle(.note).foregroundStyle(.mutedForeground)
+              }
+            }
           }
-        } else {
-          RangeBar(range: points.total, max: points.max)
         }
       }
       .padding(.vertical, 4)

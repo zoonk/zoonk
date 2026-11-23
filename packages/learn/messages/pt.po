@@ -13911,6 +13911,16 @@ msgid "For example: {example}"
 msgstr "Por exemplo: {example}"
 
 #: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "Pontuação mínima para passar na prova discursiva: {minimum} pontos no total"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "Mínimo para passar na prova discursiva: {minimum} de {max} pontos no total"
+
+#: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
 msgstr "Mínimo para passar na prova discursiva: {share} dos pontos"

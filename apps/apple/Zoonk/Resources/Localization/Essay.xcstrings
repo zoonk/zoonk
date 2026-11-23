@@ -3967,6 +3967,70 @@
         }
       }
     },
+    "Minimum to pass the written test: %@ of %@ points in total" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum Bestehen der schriftlichen Prüfung sind insgesamt mindestens %1$@ von %2$@ Punkten nötig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Minimum to pass the written test: %1$@ of %2$@ points in total"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntaje mínimo para aprobar la prueba escrita: %1$@ de %2$@ puntos en total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum pour réussir l’épreuve écrite : %1$@ points sur %2$@ au total"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punteggio minimo totale per superare la prova scritta: %1$@ su %2$@ punti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "筆記試験の合格に必要な最低点：合計%2$@点中%1$@点"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서술형 시험 합격에 필요한 점수: 총 %2$@점 중 %1$@점"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum punktów potrzebne do zdania egzaminu pisemnego: łącznie %1$@ z %2$@ pkt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mínimo para passar na prova discursiva: %1$@ de %2$@ pontos no total"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılı sınavı geçmek için toplam %2$@ puan üzerinden en az %1$@ puan alman gerekir"
+          }
+        }
+      }
+    },
     "Minimum to pass the written test: %@ of the points" : {
       "localizations" : {
         "de" : {
@@ -4021,6 +4085,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazılı sınavı geçmek için gereken en düşük puan oranı: %@"
+          }
+        }
+      }
+    },
+    "Minimum to pass the written test: %@ points in total" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindestpunktzahl zum Bestehen der schriftlichen Prüfung: insgesamt %@ Punkte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntaje mínimo para aprobar la prueba escrita: %@ puntos en total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum pour réussir l’épreuve écrite : %@ points au total"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimo per superare la prova scritta: %@ punti in totale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "筆記試験に合格するための最低点：合計%@点"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서술형 시험 합격에 필요한 총점: %@점"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum do zaliczenia testu pisemnego: %@ pkt łącznie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontuação mínima para passar na prova discursiva: %@ pontos no total"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılı sınavı geçmek için gereken minimum toplam puan: %@ puan"
           }
         }
       }

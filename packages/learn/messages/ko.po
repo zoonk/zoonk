@@ -13911,6 +13911,16 @@ msgid "For example: {example}"
 msgstr "예: {example}"
 
 #: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "서술형 시험 합격에 필요한 총점: {minimum}점"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "서술형 시험 합격에 필요한 점수: 총 {max}점 중 {minimum}점"
+
+#: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
 msgstr "서술형 시험 합격에 필요한 최소 점수: 총점의 {share}"

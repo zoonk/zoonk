@@ -45,7 +45,9 @@ export function selectNextStep(
   const gap = ({ id, level }: Feedback["criteria"][number]) =>
     rows ? (pointGaps.get(id) ?? 0) : LEVEL_GAP[level];
 
-  const remaining = criteria.filter((criterion) => gap(criterion) > 0);
+  const remaining = criteria.filter(
+    (criterion) => criterion.level !== "complete" && gap(criterion) > 0,
+  );
 
   if (nextStep && remaining.some(({ id }) => id === nextStep.criterionId)) {
     return nextStep;
