@@ -34,7 +34,11 @@ export function useRecordNote({
   }
 
   if (acquiring) {
-    return <p className="text-muted-foreground">{t("Getting ready…")}</p>;
+    return (
+      <p aria-hidden="true" className="text-muted-foreground">
+        {t("Getting ready…")}
+      </p>
+    );
   }
 
   if (recording) {

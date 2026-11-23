@@ -266,11 +266,12 @@ export function needsWordByWordCheck({
   language: string;
   words: readonly SpokenWordResult[];
 }): boolean {
-  const [first, ...rest] = words;
+  const target = toTokens({ language, text: expected });
+  const transcript = toTokens({ language, text: heard });
   const openingWordMissing =
-    first?.status === "missed" &&
-    rest.length > 0 &&
-    rest.every((word) => word.status === "correct");
+    transcript.length > 0 &&
+    target.length === transcript.length + 1 &&
+    transcript.every((token, index) => token === target[index + 1]);
 
   return (
     openingWordMissing ||

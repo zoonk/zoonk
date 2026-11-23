@@ -36,9 +36,17 @@ export function RecordButton({
   const { cancelPreparation, prepare } = preparation;
 
   useEffect(() => {
+    function cancelOnSecondPointer(event: PointerEvent) {
+      if (!event.isPrimary) {
+        cancelPreparation();
+      }
+    }
+
+    window.addEventListener("pointerdown", cancelOnSecondPointer, true);
     window.addEventListener("blur", cancelPreparation);
 
     return () => {
+      window.removeEventListener("pointerdown", cancelOnSecondPointer, true);
       window.removeEventListener("blur", cancelPreparation);
       cancelPreparation();
     };

@@ -56,6 +56,7 @@ describe(hearSpokenSentence, () => {
     ["fr-CA", "Ils parlent.", "Il parle.", undefined],
     ["nl", "Lijden.", "Leiden.", undefined],
     ["es", "Hola.", "Ola.", undefined],
+    ["ja", "今日は雨です。", "は雨です。", undefined],
     ["ko", "타이브레이크", "타이 브레이크", undefined],
     ["ja", "「住所」をよむ", "じゅうしょをよむ", undefined],
   ])(
