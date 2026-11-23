@@ -1008,14 +1008,18 @@ private struct PlanFinishedSlot: View {
 
   @ViewBuilder
   private func related(_ end: PlanEnd?) -> some View {
+    // Main's related courses are list rows, each opening its course.
     ForEach(end?.next?.related ?? []) { course in
       Button {
         router.open(.course(courseId: course.courseId, title: course.title))
       } label: {
-        Label(course.title, systemImage: "books.vertical")
-          .typeStyle(.body)
+        ListRow(Text(course.title)) {
+          Image(systemName: "books.vertical")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .disclosureChevron()
       }
-      .buttonStyle(.borderless)
+      .buttonStyle(.plain)
     }
   }
 
