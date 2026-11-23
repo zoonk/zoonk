@@ -218,7 +218,7 @@ private struct SpeakingPaperView: View {
 
       // The gate takes Start's place only; the last result stays one tap away.
       if showsStart || task.lastTry != nil {
-        ButtonRow(spacing: 12) {
+        ButtonRow(spacing: 8) {
           if showsStart {
             BusyButton(isBusy: start.isRunning && startingTask == task.key, icon: .play) {
               if locked {
