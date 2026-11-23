@@ -284,6 +284,30 @@ export type AlignmentException = {
 export const EXCEPTIONS: AlignmentException[] = [
   {
     configuration: "phone touch",
+    issue: 3136,
+    piece: "list-group",
+    reason: "The expanded language phase's child rows count as a gap on iOS, on main too",
+    relation: "gap",
+    scenario: "plan-language-after-test-light",
+  },
+  {
+    configuration: "phone touch",
+    issue: 3136,
+    piece: "list-group",
+    reason: "The expanded language phase's child rows count as a gap on iOS, on main too",
+    relation: "gap",
+    scenario: "plan-language-after-test-dark",
+  },
+  {
+    configuration: "laptop keys",
+    issue: 2832,
+    piece: "page",
+    reason: "The Plan's 10 px phase-row hover fill is read as a box on main too",
+    relation: "column",
+    scenario: "/plan",
+  },
+  {
+    configuration: "phone touch",
     issue: 2929,
     piece: "page",
     reason: "A far topic's row gives its title only the width its start line leaves, on main too",
