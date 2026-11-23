@@ -8,7 +8,7 @@ import { findOwnedPlan } from "../plans/_utils/owned-plan";
 import { parsePlanChangePayload, toPlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { computePlan } from "../plans/_utils/replan";
 import { decidePlanChange } from "../plans/decide-plan-change";
-import { PlanConflictError, unlessPlanConflict } from "../plans/plan-conflict";
+import { unlessPlanConflict } from "../plans/plan-conflict";
 import {
   addDays,
   daysBetween,
@@ -18,9 +18,8 @@ import {
   toIsoDate,
 } from "../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../plans/planner/plan-state";
-import { oweStartedDaySettlements } from "../sessions/_utils/owe-started-day-settlements";
 import { getSession } from "../users/get-session";
-import { findMockProgress, mockBlocksFor } from "./_utils/mock-schedule-blocks";
+import { findMockProgress, removeUnstartedMockBlocks } from "./_utils/mock-schedule-blocks";
 import { rescheduleMock } from "./_utils/mock-schedule-settings";
 import { type OwnedChallenge, findOwnedChallenge } from "./_utils/owned-challenge";
 
@@ -197,20 +196,7 @@ export async function changeMockSchedule({
         status: "applied",
       },
       changeDay: async (tx) => {
-        if (await findMockProgress({ client: tx, goalId: challenge.goal.id, planItemId })) {
-          throw new PlanConflictError();
-        }
-
-        const blocks = await tx.studySessionBlock.findMany({
-          select: { id: true, sessionId: true },
-          where: mockBlocksFor({ goalId: challenge.goal.id, planItemId }),
-        });
-
-        await tx.studySessionBlock.deleteMany({
-          where: { id: { in: blocks.map((block) => block.id) }, status: "pending" },
-        });
-
-        await oweStartedDaySettlements(tx, blocks);
+        await removeUnstartedMockBlocks({ goalId: challenge.goal.id, planItemId, tx });
         await oweGoalLessons({ db: tx, goalId: challenge.goal.id, userId: challenge.userId });
       },
       computed,

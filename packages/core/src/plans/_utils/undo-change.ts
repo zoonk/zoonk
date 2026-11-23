@@ -1,6 +1,6 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
-import { findMockProgress, mockBlocksFor } from "../../checkpoints/_utils/mock-schedule-blocks";
+import { removeUnstartedMockBlocks } from "../../checkpoints/_utils/mock-schedule-blocks";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { findOldTestFocus, keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
@@ -108,20 +108,11 @@ export async function undoChange({
         where: { kind: "mock", planId: change.planId, scheduledFor: fromIsoDate(scheduled.to) },
       });
 
-      if (
-        !moved ||
-        moved.status !== "todo" ||
-        (await findMockProgress({ client: tx, goalId: context.goal.id, planItemId: moved.id }))
-      ) {
+      if (!moved || moved.status !== "todo") {
         throw new PlanConflictError();
       }
 
-      await tx.studySessionBlock.deleteMany({
-        where: {
-          ...mockBlocksFor({ goalId: context.goal.id, planItemId: moved.id }),
-          status: "pending",
-        },
-      });
+      await removeUnstartedMockBlocks({ goalId: context.goal.id, planItemId: moved.id, tx });
     }
 
     const session =
