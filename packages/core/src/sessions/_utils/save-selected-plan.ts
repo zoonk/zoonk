@@ -94,7 +94,6 @@ export async function prepareSelectedPlanSave({
             ...context,
             plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
           },
-          deferSuggestion: true,
         })
       : null;
 
@@ -125,7 +124,6 @@ export async function prepareSelectedPlanSave({
         ...context,
         plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
       },
-      deferSuggestion: true,
     }),
   };
 }

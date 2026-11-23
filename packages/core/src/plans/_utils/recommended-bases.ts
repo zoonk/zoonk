@@ -129,5 +129,5 @@ export async function settleNewPlan({ goalId }: { goalId: string }): Promise<voi
     await ensureQuickBaseLessons(settings);
   }
 
-  await refreshGoalPlan({ deferSuggestion: true, goalId, mode: "forced", onConflict: "yield" });
+  await refreshGoalPlan({ goalId, mode: "forced", onConflict: "yield" });
 }

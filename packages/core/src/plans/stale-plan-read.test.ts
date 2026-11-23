@@ -377,11 +377,11 @@ describe("the visible Plan after days away, before any learner POST", () => {
       targetDate: new Date("2020-10-07T00:00:00Z"),
     });
 
+    vi.setSystemTime(START);
+    await refreshPlanSuggestion({ goalId: goal.id, userId: user.id });
     const original = await saved(plan.id);
     const originalSuggestion = planSummarySchema.parse(original.summary).advice.suggested;
     expect(originalSuggestion).toMatchObject({ kind: "everything" });
-
-    vi.setSystemTime(START);
 
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: { suggestedTime: originalSuggestion },

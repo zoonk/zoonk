@@ -19,7 +19,6 @@ export async function commitPlan({
   change,
   computed,
   context,
-  deferSuggestion,
   extraWrites,
   keepsOpenUndo,
   owe,
@@ -32,7 +31,6 @@ export async function commitPlan({
   change: PlanChangeRecord | null;
   computed: ComputedPlan;
   context: PlanContext;
-  deferSuggestion?: boolean;
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   keepsOpenUndo?: boolean;
   owe?: Parameters<typeof writePlan>[0]["owe"];
@@ -43,7 +41,6 @@ export async function commitPlan({
   const prepared = await preparePlanWrite({
     computed,
     context: { ...context, plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 } },
-    deferSuggestion,
     replacement,
   });
 

@@ -14,11 +14,13 @@ import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { MAX_PICKABLE_DAILY_MINUTES } from "./daily-minutes";
+import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
 import { parsePlanSettings } from "./planner/plan-state";
+import { refreshPlanSuggestion } from "./refresh-plan-suggestion";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
 /** Before other tests' learning events, so their pace never changes these plans. */
@@ -375,22 +377,59 @@ describe(getPlanTimeAdvice, () => {
   });
 
   it("carries the time it suggests on the plan while the learner's own time is below it", async () => {
-    const { goal, library } = await setup();
+    const { goal, library } = await setup(12);
     await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const { suggested } = await readPlanTime(goal.id);
     const minutes = suggested?.minutes ?? 0;
 
-    expect(minutes).toBeGreaterThan(goal.dailyMinutes);
+    expect(minutes - 5).toBeGreaterThan(goal.dailyMinutes);
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: goal.userId });
 
     await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
       kind: "everything",
       minutes,
     });
 
-    await change(goal.id, [{ kind: "setDailyMinutes", minutes }]);
+    await expect(
+      change(goal.id, [{ kind: "setDailyMinutes", minutes: minutes - 5 }]),
+    ).resolves.toMatchObject({ status: "applied" });
+
     await expect(readSuggestedTime(goal.id)).resolves.toBeNull();
-    await change(goal.id, [{ kind: "setDailyMinutes", minutes: minutes - 5 }]);
+    await refreshPlanSuggestion({ goalId: goal.id, userId: goal.userId });
+
+    await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
+      kind: "everything",
+      minutes,
+    });
+
+    const applied = await change(goal.id, [{ kind: "setDailyMinutes", minutes }]);
+
+    if (applied.status !== "applied" || !applied.change) {
+      throw new Error(`Expected an applied change, got ${applied.status}`);
+    }
+
+    expect(applied.change.canUndo).toBe(true);
+    await expect(readSuggestedTime(goal.id)).resolves.toBeNull();
+
+    await expect(
+      decidePlanChange({
+        changeId: applied.change.id,
+        goalId: goal.id,
+        input: { status: "undone", timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(readSuggestedTime(goal.id)).resolves.toBeNull();
+
+    await expect(
+      prisma.followUp.findMany({
+        where: { key: goal.id, kind: "refreshPlanSuggestion", userId: goal.userId },
+      }),
+    ).resolves.toHaveLength(1);
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: goal.userId });
 
     await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
       kind: "everything",
@@ -406,6 +445,8 @@ describe(getPlanTimeAdvice, () => {
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       suggested: { kind: "focus", minutes: 240 },
     });
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: goal.userId });
 
     await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
       kind: "focus",

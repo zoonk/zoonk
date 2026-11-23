@@ -15,7 +15,7 @@ import { readPlanSummary, toPlanSummary } from "./plan-summary";
 import { type ProposalReplacement, getReplacedProposalIds } from "./replace-waiting-proposals";
 import { type ComputedPlan } from "./replan";
 import { retainPlanAllocation } from "./retained-plan-allocation";
-import { findPlanSuggestion, maySuggestPlanTime } from "./suggested-time";
+import { maySuggestPlanTime } from "./suggested-time";
 import { type PlanWrite } from "./write-plan";
 
 function getComputedPlanContext({
@@ -49,12 +49,10 @@ function getComputedPlanContext({
 async function prepareReadModel({
   computed,
   context,
-  deferSuggestion,
   replacement,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
-  deferSuggestion?: boolean;
   replacement?: ProposalReplacement;
 }) {
   const saved = getComputedPlanContext({ computed, context });
@@ -71,13 +69,12 @@ async function prepareReadModel({
 
   const { dailyMinutes, targetDate } = saved.goal;
 
-  const maySuggest = maySuggestPlanTime({
+  const suggestionPending = maySuggestPlanTime({
     dailyMinutes,
     pastDate: targetDate !== null && targetDate < saved.today,
     shown: feasibility,
   });
 
-  const suggestionPending = maySuggest && deferSuggestion;
   const extraOffer = fitOffer ? null : await loadExtraOffer({ baseline: computed, context: saved });
 
   return {
@@ -92,10 +89,7 @@ async function prepareReadModel({
           end: computed.selected.endDate,
           targetDate: computed.state.goal.targetDate,
         }),
-        suggested:
-          maySuggest && !suggestionPending
-            ? findPlanSuggestion({ dailyMinutes, feasibility: computed.feasibility })
-            : null,
+        suggested: null,
         ...(suggestionPending && { suggestionPending }),
       },
       context,
@@ -161,7 +155,6 @@ async function prepareProposalPreviews({
 export async function preparePlanWrite(input: {
   computed: ComputedPlan;
   context: PlanContext;
-  deferSuggestion?: boolean;
   replacement?: ProposalReplacement;
 }): Promise<PlanWrite> {
   return { ...toComputedPlanWrite(input), ...(await prepareReadModel(input)) };
@@ -170,11 +163,9 @@ export async function preparePlanWrite(input: {
 export async function prepareRetainedPlanWrite({
   computed,
   context,
-  deferSuggestion,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
-  deferSuggestion?: boolean;
 }) {
   const built = retainPlanAllocation({ built: computed.built, context });
   const selected = computed.summarizeRetained();
@@ -189,7 +180,6 @@ export async function prepareRetainedPlanWrite({
       ? await prepareReadModel({
           computed: { ...computed, built, selected },
           context: { ...context, plan: { ...context.plan, version: context.plan.version - 1 } },
-          deferSuggestion,
         })
       : { previews: [], summary: saved };
 

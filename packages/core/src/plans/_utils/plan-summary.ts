@@ -203,7 +203,14 @@ export function reduceRestoredSummary({
     return null;
   }
 
-  const restored = { ...summary, basis: { ...summary.basis, planVersion } };
+  const restored = {
+    ...summary,
+    advice: summary.advice.suggested
+      ? { ...summary.advice, suggested: null, suggestionPending: true }
+      : summary.advice,
+    basis: { ...summary.basis, planVersion },
+  };
+
   const reduction = reduceCompletedSummary({ completed, summary: restored });
 
   return reduction.kind === "reduced" ? reduction.summary : restored;
