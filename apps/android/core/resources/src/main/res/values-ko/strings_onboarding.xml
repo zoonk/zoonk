@@ -157,7 +157,11 @@
   "onboarding_material_description": "fda211790dbf70b9e42cd9e846a5f1e9a3098b30a2c08a9d36b2620242a4b658",
   "onboarding_material_goal_exam": "d1de9ea4f7007ece2dcbd119af0bef11184344c2b807ea2ba36203e9325933cf",
   "onboarding_material_goal_understand": "d32bcb9ab2a44f4484ff0d1a42fd9a9ea13576e3641f8d3538148d90112c2404",
+  "onboarding_material_limit": "9fe1418f45f37147ca5978deeec6f02a6377ba102ada26401f12353514530636",
   "onboarding_material_sign_up": "64cc7f00339ae455522222d56dd0f44508dec23a2867fcfb4999a4ca701fd0b8",
+  "onboarding_material_unreadable_one": "e68fcff90ec7278655a3f8e31aeb989dbceb7f5d487904f1c22e79bc9c5bf614",
+  "onboarding_material_unreadable_some": "6e1ee75af1afea9d2c047e2fa6f7bfba879b48b840a3ce861484eb46da6b0d4a",
+  "onboarding_material_unreadable_state": "a4c21f4d676db01a4b193ca917e033b0468464ad75cb099aefe32dea87fb27ef",
   "onboarding_more": "6075638bb61d25533d08d0d8c77992b5ee11a07d11c7a0fdc1800bc8a00ce3bb",
   "onboarding_musicianship_card": "436a54218ed49ea51bbb1cebd2544a83d771ea30430b7811f3f2028765686b74",
   "onboarding_musicianship_subject": "66e5f141b1f5ba58fb8e5b7b3763c52f7c551b150c2c231cc17198ef62c18bea",
@@ -279,6 +283,7 @@
   "onboarding_row_date_not_out_guide": "a4cad4a25a8c8353e5496ae515fe4e0f576a70114664f1b444630c8e3a20fb94",
   "onboarding_row_date_not_out_notice": "b223e0ac5d436cd4a9b48cf50809770f2dabeb8e6532dbe6b38c000f51b517e4",
   "onboarding_row_date_to_be_confirmed": "8c9edf31f3dccfbaea688ddd8dcb68ab798074a0b21495fdcd90a50d4537f710",
+  "onboarding_row_date_unknown": "1ec96f0aa70a4824e60d1281681b404c999402fb49cc93e5015846c2fafdb4c0",
   "onboarding_row_dates_estimated": "24740656e693ebcc6ec99fcab33c6aaf99ac25142643dc49ee1b5cabb1b7e0e6",
   "onboarding_row_days_left": "999ee620ff84d73562cae4b5e9d4e2729495a9753c531a44b9c1793d6748a25c",
   "onboarding_row_deadline": "f213d80642e82f580d73586be0fc864f86e4a555ba5546a24f4eeb71d4b709b9",
@@ -289,6 +294,8 @@
   "onboarding_row_last_cutoff": "13f2a4cd34b515418f2462e3f0d570c124323d6a5ea4b5460b5b8dfaa8df93ee",
   "onboarding_row_level": "1615c224767c8f4fb52438aea5cfadc421400a3b3d9741610d9bca42b7a40e42",
   "onboarding_row_material": "1646e8f11b3f1d150be03e0b2bcd177e6e2e5fb63a1fc82ac31235e3a72cdac6",
+  "onboarding_row_material_all_missing_note": "0655cb4c5fed71bd267ff5a57600203ed9462a68d80aa09cbd87a7d336d30a4b",
+  "onboarding_row_material_missing_note": "b1263a348997d8f98eb0219314b405f4f450d8e5a4389059008600f410e92054",
   "onboarding_row_material_note": "063e584a90bc127b7b77b42d1ab4149023de7e95e9d2ced35cb635de38a37546",
   "onboarding_row_minutes_a_day": "1fc429e09904fd162c8db767b02d748a86b6a28a80a187594a1303ba622cc85c",
   "onboarding_row_notice_says": "d32f8b4a8b87e0569ae067db7ada2791c29663e83342eb1d0af2560449e2a276",
@@ -473,6 +480,10 @@
     <string name="onboarding_row_minutes_a_day">하루 %1$s</string>
     <string name="onboarding_row_material">내 자료</string>
     <string name="onboarding_row_material_note">이 자료에 맞춰 계획과 레슨을 만들어요</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">계획과 레슨은 이 자료만 바탕으로 진행돼요. 나머지는 더 이상 읽을 수 없어요.</string>
+    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">더 이상 읽을 수 없어 계획에 반영되지 않아요.</string>
     <string name="onboarding_row_exam_date">시험일</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">시험 일정</string>
@@ -485,6 +496,8 @@
     <string name="onboarding_row_year_to_be_confirmed">%1$s년, 추후 확정</string>
     <!-- %1$s is a month and year, like "November 2027". -->
     <string name="onboarding_row_date_to_be_confirmed">%1$s년, 추후 확정</string>
+    <!-- Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date. -->
+    <string name="onboarding_row_date_unknown">날짜를 알고 있나요? 여기서 설정해 주세요.</string>
     <string name="onboarding_row_date_not_out_notice">공식 시험일은 시험 공고에 나와요. 이미 날짜를 알고 있나요? 여기에 입력하세요.</string>
     <string name="onboarding_row_date_not_out_guide">시험일은 공식 시험 일정표에 나와요. 이미 날짜를 알고 있나요? 여기에 입력하세요.</string>
     <string name="onboarding_row_date_booked">예약할 때 시험 날짜를 정해요. 이미 예약했나요? 여기서 날짜를 설정해 주세요.</string>
@@ -535,6 +548,14 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">이미 읽은 문서예요. 다른 문서를 업로드해 주세요.</string>
     <string name="onboarding_attach_failed">자료를 추가하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">“%1$s”을(를) 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요.</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">일부 파일을 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">읽을 수 없음</string>
+    <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
+    <string name="onboarding_material_limit">목표 하나에는 파일을 최대 %1$d개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요.</string>
     <string name="onboarding_intent_title">무엇을 하고 싶으세요?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">시험을 준비하고 싶어요</string>

@@ -93,7 +93,10 @@ export function useStartError() {
   const goalLimitWords = useGoalLimitWords();
 
   return (
-    outcome: Exclude<StartUnderstandingOutcome, { status: "started" | "startFailed" }>,
+    outcome: Exclude<
+      StartUnderstandingOutcome,
+      { status: "materialUnavailable" | "started" | "startFailed" }
+    >,
   ): GoalError => {
     if (outcome.status === "limitReached") {
       return limitError(received(outcome));

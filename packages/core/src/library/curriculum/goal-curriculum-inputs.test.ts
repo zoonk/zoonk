@@ -64,7 +64,12 @@ describe(loadGoalCurriculumInputs, () => {
 
     await Promise.all([
       planFixture({ goalId: goal.id }),
-      learnerSourceFixture({ goalId: goal.id, sourceId: source.id, userId: user.id }),
+      learnerSourceFixture({
+        goalId: goal.id,
+        origin: "research",
+        sourceId: source.id,
+        userId: user.id,
+      }),
     ]);
 
     const inputs = await loadGoalCurriculumInputs(goal.id);

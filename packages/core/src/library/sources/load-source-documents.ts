@@ -2,6 +2,7 @@ import "server-only";
 import { type Source, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { PermanentDocumentError, fetchDocument } from "./fetch-document";
+import { followSourceRedirects } from "./own-sources";
 import { type DocumentImage, isCutText, parseDocument } from "./parse-document";
 import {
   DOCX_CONTENT_TYPE,
@@ -104,9 +105,10 @@ async function toSourceDocument({
  * `preferText` downloads only the files of sources with no stored text, for a reading done from text.
  */
 export async function loadSourceDocuments(
-  sourceIds: string[],
+  sentIds: string[],
   { preferText = false }: { preferText?: boolean } = {},
 ): Promise<SourceDocument[]> {
+  const sourceIds = await followSourceRedirects(sentIds);
   const sources = await prisma.source.findMany({ where: { id: { in: sourceIds } } });
   const byId = new Map(sources.map((source) => [source.id, source]));
 

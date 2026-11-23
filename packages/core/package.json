@@ -739,6 +739,7 @@
     "./view-models/onboarding/onboarding-limits": "./src/view-models/onboarding/onboarding-limits.ts",
     "./view-models/onboarding/prepare-understanding-run": "./src/view-models/onboarding/prepare-goal-understanding-run.ts",
     "./view-models/onboarding/questions-that-add-questions": "./src/view-models/onboarding/questions-that-add-questions.ts",
+    "./view-models/onboarding/reading-material": "./src/view-models/onboarding/reading-material.ts",
     "./view-models/onboarding/resume": "./src/view-models/onboarding/get-onboarding-resume.ts",
     "./view-models/onboarding/revise-draft": "./src/view-models/onboarding/revise-onboarding-draft.ts",
     "./view-models/onboarding/start-understanding": "./src/view-models/onboarding/start-goal-understanding.ts",

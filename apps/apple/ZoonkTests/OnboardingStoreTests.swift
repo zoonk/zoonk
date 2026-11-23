@@ -185,6 +185,43 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(creates, 1)
   }
 
+  /// A draft opened again later still has the material it was sent with, so new words on it start
+  /// with that material.
+  func testNewWordsOnAReopenedDraftStartWithItsMaterial() async throws {
+    var reopened = Self.draft(prompt: "test on Friday", goalsLeft: 2)
+    reopened.materialIntent = .exam
+    reopened.sources = [.init(id: Self.sourceID, title: "Cell cycle notes")]
+    let server = DraftServer(reopened)
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+
+    var edited = SentGoal(draft: try XCTUnwrap(card.value))
+    edited.words = "biology test on Friday"
+    _ = try await store.understand(goal: edited.words, material: edited.sentMaterial)
+    let starts = await server.starts
+    let start = try XCTUnwrap(starts.first)
+
+    XCTAssertEqual(start.goal, "biology test on Friday")
+    XCTAssertEqual(start.sourceIds, [Self.sourceID])
+    XCTAssertEqual(start.materialIntent, .exam)
+  }
+
+  /// A start refused for material that's gone names it by id, so the box marks just that.
+  func testAStartRefusedForGoneMaterialNamesTheGoneSources() async throws {
+    let server = DraftServer(Self.draft(prompt: "test on Friday", goalsLeft: 2))
+    await server.refuseStarts(unavailable: [Self.sourceID])
+    let store = makeStore(transport: server)
+    let sent = SentMaterial(sourceIDs: [Self.sourceID, Self.otherSourceID], intent: .exam)
+
+    do {
+      _ = try await store.understand(goal: "test on Friday", material: sent)
+      XCTFail("The start is refused")
+    } catch {
+      XCTAssertEqual(error as? OnboardingError, .materialUnavailable(sourceIDs: [Self.sourceID]))
+    }
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -197,12 +234,17 @@ final class OnboardingStoreTests: XCTestCase {
 
   private static let goalID = "00000000-0000-4000-8000-0000000000a1"
 
+  private static let sourceID = "00000000-0000-4000-8000-0000000000c1"
+
+  private static let otherSourceID = "00000000-0000-4000-8000-0000000000c2"
+
   private static func draft(prompt: String, goalsLeft: Int, goalID: String? = nil)
     -> OnboardingDraft
   {
     OnboardingDraft(
-      activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID, prompt: prompt,
-      status: .failed, timeZone: "America/Sao_Paulo", understanding: nil)
+      activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID,
+      materialIntent: nil, materialMissing: false, prompt: prompt, sources: [], status: .failed,
+      timeZone: "America/Sao_Paulo", understanding: nil)
   }
 
   private func makeStore(event: String) -> OnboardingStore {
@@ -266,9 +308,11 @@ actor DraftServer: ClientTransport {
   private var readsAfterEdit = 0
   private(set) var creates = 0
   private(set) var reads = 0
+  private(set) var starts: [Components.Schemas.GoalUnderstandingInput] = []
   private var createAnswer = CreateAnswer.created
   private var holdsCreate = false
   private var heldCreate: TestContinuation<Void>?
+  private var unavailableSources: [String]?
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -318,6 +362,35 @@ actor DraftServer: ClientTransport {
       )
     }
 
+    if operationID == "createGoalUnderstanding", let body {
+      starts.append(
+        try JSONDecoder().decode(
+          Components.Schemas.GoalUnderstandingInput.self,
+          from: try await Data(collecting: body, upTo: .max)))
+
+      if let unavailableSources {
+        let details = try String(decoding: JSONEncoder().encode(unavailableSources), as: UTF8.self)
+
+        return (
+          HTTPResponse(
+            status: .unprocessableContent, headerFields: [.contentType: "application/json"]),
+          HTTPBody(
+            #"{"error":{"code":"MATERIAL_UNAVAILABLE","details":{"sourceIds":\#(details)},"message":"Gone"}}"#
+          )
+        )
+      }
+
+      return (
+        HTTPResponse(
+          status: .created,
+          headerFields: [
+            .contentType: "application/json",
+            HTTPField.Name("Location")!: "/v1/goal-understandings/\(served.id)",
+          ]),
+        HTTPBody(try JSONEncoder().encode(served))
+      )
+    }
+
     if operationID == "reviseGoalUnderstanding" {
       if editsFail {
         return (HTTPResponse(status: .internalServerError), nil)
@@ -353,6 +426,10 @@ actor DraftServer: ClientTransport {
     editAnswered = true
     heldEdit?.resume()
     heldEdit = nil
+  }
+
+  func refuseStarts(unavailable sourceIDs: [String]) {
+    unavailableSources = sourceIDs
   }
 
   func answerCreates(_ answer: CreateAnswer) {

@@ -143,7 +143,7 @@ export const researchSourcePaths = {
   "/research": {
     post: {
       description:
-        "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers one request, so when research asks again, the answer needs a new upload.",
+        "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once, so when research asks that goal again, the answer needs a new upload; the same upload can still answer another goal's request.",
       operationId: "createResearch",
       requestBody: {
         content: { "application/json": { schema: createResearchRequestSchema } },
@@ -160,7 +160,7 @@ export const researchSourcePaths = {
         "409": {
           ...conflictResponse,
           description:
-            "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
+            "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer to this goal (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
         },
       },
       security: AUTHENTICATED_SECURITY,

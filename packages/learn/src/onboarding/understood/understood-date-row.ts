@@ -277,6 +277,26 @@ export function useDateRow(timeZone: string) {
   // The draft's zone, as core counts a goal's days and as the date editor bounds them.
   const today = getTodayInZone({ now: useMountTime(), timeZone });
 
+  // Only a public exam the learner names has a notice or a calendar; a class test on their notes doesn't.
+  const unknownDateNote = (draft: GoalDraft): string => {
+    if (draft.details?.examDay === "booked") {
+      return t("You pick this test's day when you book it. Booked already? Set it here.");
+    }
+
+    if (!draft.details?.examName) {
+      return t({
+        description:
+          "Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.",
+        message: "Know the date? Set it here.",
+      });
+    }
+
+    return t(
+      "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}",
+      { document: getExamDocument(draft) },
+    );
+  };
+
   return function toDateRow({
     draft,
     examDates,
@@ -299,13 +319,7 @@ export function useDateRow(timeZone: string) {
         editable: { key: "targetDate", kind: "date" },
         id: "targetDate",
         label: t("Exam date"),
-        note:
-          draft.details?.examDay === "booked"
-            ? t("You pick this test's day when you book it. Booked already? Set it here.")
-            : t(
-                "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}",
-                { document: getExamDocument(draft) },
-              ),
+        note: unknownDateNote(draft),
         value: toBeConfirmed({
           month: readExamMonth(draft),
           year: readExamYear({ dates: examDates, draft }),

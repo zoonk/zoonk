@@ -8,6 +8,7 @@ import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
+import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
@@ -739,6 +740,34 @@ describe(saveExamBlueprint, () => {
     await expect(searchedCandidates({ name: "Bioquímica prova" })).resolves.not.toContainEqual(
       expect.objectContaining({ id: saved.blueprint.id }),
     );
+  });
+
+  it("saves a notice read from an upload merged into a shared copy meanwhile as that copy", async () => {
+    const owner = await userFixture();
+    const { shared, upload } = await uploadWithSharedCopyFixture(owner.id);
+    const examIdentity = identity({ board: null, ownerId: owner.id, role: null });
+
+    const read = (questions: number) => ({
+      content: content({ questions, sourceHash: upload.contentHash, sourceId: upload.id }),
+      identity: examIdentity,
+      notice: { message: "A prova agora tem mais itens.", provenance: PROVENANCE },
+      provenance: PROVENANCE,
+      sourceId: upload.id,
+    });
+
+    await mergeIntoSharedCopy(upload);
+
+    const created = await saveExamBlueprint(read(10));
+    const updated = await saveExamBlueprint(read(20));
+
+    expect([created.blueprint.sourceId, updated.blueprint.sourceId]).toStrictEqual([
+      shared.id,
+      shared.id,
+    ]);
+
+    await expect(
+      prisma.sourceChangeNotice.findUniqueOrThrow({ where: { id: updated.noticeId ?? "" } }),
+    ).resolves.toMatchObject({ sourceId: shared.id });
   });
 
   it("deletes a blueprint read from private material with its owner, never a shared one", async () => {

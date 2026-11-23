@@ -5,24 +5,28 @@ import { useEffect, useRef, useState } from "react";
 import { useAppLocale } from "../../_utils/locale";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
-import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
+import {
+  type SentMaterial,
+  type StartUnderstandingOutcome,
+  type UnderstandingActions,
+} from "../onboarding-actions";
 import { startOnboardingAttempt } from "./attempt-clock";
 import { forgetSentGoal, holdSentGoal, sendGoal, takeSentGoal } from "./understanding-start";
 
 export function useSubmitUnderstanding({
   draftId,
-  hasAttachment,
   onDraft,
   onError,
   onExplanation,
+  onMaterialUnavailable,
   onSending,
   understanding,
 }: {
   draftId: string | null;
-  hasAttachment: boolean;
   onDraft: (draft: OnboardingDraftView) => void;
   onError: (input: { error: GoalError; words: string }) => void;
   onExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
+  onMaterialUnavailable: (input: { sourceIds: string[]; words: string }) => void;
   onSending: (sent: { attemptId?: string; goal: string; sentAt: number }) => void;
   understanding: UnderstandingActions;
 }) {
@@ -48,9 +52,18 @@ export function useSubmitUnderstanding({
 
   /**
    * One goal on its way at a time: taps replayed once the page's code arrived would otherwise save
-   * a second draft.
+   * a second draft. `words` are what the learner typed, which a refusal gives back; the goal sent
+   * is made from their material when they typed none.
    */
-  async function send(goal: string) {
+  async function send({
+    goal,
+    material,
+    words = goal,
+  }: {
+    goal: string;
+    material: SentMaterial;
+    words?: string;
+  }) {
     if (submitted.current) {
       return;
     }
@@ -59,7 +72,7 @@ export function useSubmitUnderstanding({
     submitted.current = controller;
 
     try {
-      await sendOnce({ goal, signal: controller.signal });
+      await sendOnce({ goal, material, signal: controller.signal, words });
     } finally {
       if (submitted.current === controller) {
         submitted.current = null;
@@ -67,11 +80,22 @@ export function useSubmitUnderstanding({
     }
   }
 
-  async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
+  async function sendOnce({
+    goal,
+    material,
+    signal,
+    words,
+  }: {
+    goal: string;
+    material: SentMaterial;
+    signal: AbortSignal;
+    words: string;
+  }) {
+    const hasAttachment = Boolean(material.sourceIds?.length);
     const attempt = startOnboardingAttempt({ hasAttachment, track: analytics.track });
     const sentAt = attempt.submittedAt;
-    const outcome = sendGoal({ attempt, goal, language: locale, signal, understanding });
-    await follow({ attemptId: attempt.id, goal, outcome, sentAt, signal });
+    const outcome = sendGoal({ attempt, goal, language: locale, material, signal, understanding });
+    await follow({ attemptId: attempt.id, goal, outcome, sentAt, signal, words });
   }
 
   /** Shows the goal on its way, then what was understood or what went wrong, unless `signal` aborted. */
@@ -81,12 +105,14 @@ export function useSubmitUnderstanding({
     outcome,
     sentAt,
     signal,
+    words = goal,
   }: {
     goal: string;
     attemptId?: string;
     outcome: Promise<StartUnderstandingOutcome>;
     sentAt: number;
     signal: AbortSignal;
+    words?: string;
   }) {
     setIsSubmitting(true);
     onSending({ attemptId, goal, sentAt });
@@ -99,8 +125,13 @@ export function useSubmitUnderstanding({
 
     setIsSubmitting(false);
 
+    if (result.status === "materialUnavailable") {
+      onMaterialUnavailable({ sourceIds: result.sourceIds, words });
+      return;
+    }
+
     if (result.status !== "started" && result.status !== "startFailed") {
-      onError({ error: toError(result), words: goal });
+      onError({ error: toError(result), words });
       return;
     }
 

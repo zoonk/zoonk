@@ -21509,7 +21509,7 @@
     },
     "/goal-understandings": {
       "post": {
-        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. The same words in the same language sent again before their draft is understood answer with that draft (202): its run still reading them at no cost, or, when that run ended without finishing, a new run counted like a retry, so a retry after a lost response or a second tab reads them once. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
+        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. Material sent in `sourceIds` is read together with the words, and the draft's main goal is created with it; when any id isn't one of the learner's uploads, it answers `MATERIAL_UNAVAILABLE` (422) with those ids in `details.sourceIds`, before anything is charged. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up, or come with material. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. The same words, language and material sent again before their draft is understood answer with that draft (202): its run still reading them at no cost, or, when that run ended without finishing, a new run counted like a retry, so a retry after a lost response or a second tab reads them once. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
         "operationId": "createGoalUnderstanding",
         "security": [
           {
@@ -21606,6 +21606,16 @@
           },
           "403": {
             "description": "A guest is asked to create a free account, where their work moves: their own cap is used (`USAGE_LIMIT_REACHED` with `details.limit`), or the day's AI budget all guests share is spent (`SIGN_UP_REQUIRED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "`MATERIAL_UNAVAILABLE`: ids in `sourceIds` name none of the learner's uploads, listed in `details.sourceIds`. Nothing is saved or charged",
             "content": {
               "application/json": {
                 "schema": {
@@ -22892,7 +22902,7 @@
     },
     "/research": {
       "post": {
-        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers one request, so when research asks again, the answer needs a new upload.",
+        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once, so when research asks that goal again, the answer needs a new upload; the same upload can still answer another goal's request.",
         "operationId": "createResearch",
         "security": [
           {
@@ -22958,7 +22968,7 @@
             }
           },
           "409": {
-            "description": "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
+            "description": "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer to this goal (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
             "content": {
               "application/json": {
                 "schema": {
@@ -23146,10 +23156,12 @@
             "in": "query",
             "name": "goalId",
             "schema": {
+              "description": "Only the material this goal of the learner's reads",
               "type": "string",
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            }
+            },
+            "description": "Only the material this goal of the learner's reads"
           }
         ],
         "responses": {
@@ -31924,6 +31936,24 @@
             "minLength": 2,
             "maxLength": 10,
             "description": "The learner's language, for titles and notes"
+          },
+          "materialIntent": {
+            "description": "What the learner wants from the material in `sourceIds`: `exam` to prepare for a test on it, `understand` to learn what it covers. Left out when they didn't choose; refused without `sourceIds`",
+            "type": "string",
+            "enum": [
+              "exam",
+              "understand"
+            ]
+          },
+          "sourceIds": {
+            "description": "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id `POST /v1/uploads` returned keeps working after the upload is merged into a shared copy. When an id names none of the learner's uploads, the start is refused with 422 `MATERIAL_UNAVAILABLE` before anything is charged; a repeated id counts once",
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           "timeZone": {
             "description": "The learner's IANA timezone, for relative dates; UTC when left out",
@@ -95618,9 +95648,29 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "materialIntent": {
+            "nullable": true,
+            "description": "What the learner wants from `sources`: `exam` to prepare for a test on it, `understand` to learn what it covers; null when they didn't choose or sent no material. The main goal created from the draft carries it in `details.materialIntent`",
+            "type": "string",
+            "enum": [
+              "exam",
+              "understand"
+            ]
+          },
+          "materialMissing": {
+            "type": "boolean",
+            "description": "Material sent with the words is gone: an id no longer names one of the learner's uploads. `sources` leaves it out, and the goal is read and created without it"
+          },
           "prompt": {
             "type": "string",
             "description": "What the learner typed"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnboardingDraftSource"
+            },
+            "description": "The learner's material read together with the words, in the order they attached it: the uploads `sourceIds` named that hold text, each as it is now (a merged upload is its shared copy). The draft's main goal is created with every upload `sourceIds` still names. Empty when none was sent"
           },
           "status": {
             "type": "string",
@@ -95650,10 +95700,32 @@
           "generationId",
           "goalId",
           "id",
+          "materialIntent",
+          "materialMissing",
           "prompt",
+          "sources",
           "status",
           "timeZone",
           "understanding"
+        ],
+        "additionalProperties": false
+      },
+      "OnboardingDraftSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "description": "The file's name or the link's title; empty for pasted text"
+          }
+        },
+        "required": [
+          "id",
+          "title"
         ],
         "additionalProperties": false
       },
@@ -100230,11 +100302,14 @@
                   "format": "date-time",
                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                 },
-                "goalId": {
-                  "nullable": true,
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                "goalIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "description": "The learner's goals that read it, oldest link first; one source can serve several goals"
                 },
                 "origin": {
                   "type": "string",
@@ -100249,7 +100324,7 @@
               },
               "required": [
                 "addedAt",
-                "goalId",
+                "goalIds",
                 "origin",
                 "source"
               ],

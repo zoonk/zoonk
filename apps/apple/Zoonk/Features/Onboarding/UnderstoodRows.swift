@@ -87,6 +87,8 @@ struct UnderstoodFacts: Decodable {
     let targetScore: String?
     /// "booked" when each candidate books their own day, so no notice gives it.
     let examDay: String?
+    /// Set only for a public exam the learner names, which has an official notice or calendar.
+    let examName: String?
     let examMonth: Int?
     let examYear: Int?
   }
@@ -244,6 +246,51 @@ enum UnderstoodRows {
       valueFacts: parts,
       field: .studyTime,
       editValue: schedule.studyTime ?? "")
+  }
+
+  /// The material the draft was sent with, by title; pasted text has none. Material gone since
+  /// shows only in the note, which says so even when nothing is left.
+  static func materialRow(titles: [String], missing: Bool) -> UnderstoodRow? {
+    guard !titles.isEmpty || missing else {
+      return nil
+    }
+
+    let names = titles.map {
+      $0.isEmpty
+        ? String(
+          localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+        : $0
+    }
+
+    return UnderstoodRow(
+      id: "material",
+      label: LocalizedStringResource(
+        "Your material", table: "Onboarding",
+        comment: "Header over the material attached to a goal"),
+      value: names.joined(separator: ", "),
+      note: missingNote(missing: missing, anyLeft: !titles.isEmpty)
+        ?? String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
+  }
+
+  private static func missingNote(missing: Bool, anyLeft: Bool) -> String? {
+    guard missing else {
+      return nil
+    }
+
+    return anyLeft
+      ? String(
+        localized:
+          "Your plan and lessons follow only this material. The rest can't be read anymore.",
+        table: "Onboarding",
+        comment:
+          "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists."
+      )
+      : String(
+        localized: "It can't be read anymore, so your plan won't follow it.",
+        table: "Onboarding",
+        comment:
+          "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material."
+      )
   }
 
   private static func text(_ value: String?) -> String? {
@@ -450,7 +497,9 @@ enum UnderstoodRows {
       return UnderstoodRow(
         id: "targetDate", label: examDateLabel,
         value: toBeConfirmed(month: month, year: year),
-        note: unknownDateNote(booked: facts.details?.examDay == "booked", isGuide: isGuide),
+        note: unknownDateNote(
+          booked: facts.details?.examDay == "booked",
+          named: facts.details?.examName?.isEmpty == false, isGuide: isGuide),
         field: .targetDate, editValue: "")
     }
 
@@ -546,13 +595,23 @@ enum UnderstoodRows {
       field: .targetDate, editValue: first.date, choiceDates: open.map(\.date))
   }
 
-  private static func unknownDateNote(booked: Bool, isGuide: Bool) -> String {
+  private static func unknownDateNote(booked: Bool, named: Bool, isGuide: Bool) -> String {
     if booked {
       return String(
         localized: LocalizedStringResource(
           "You pick this test's day when you book it. Booked already? Set it here.",
           table: "Onboarding",
           comment: "Under the date of a test each candidate books a day for, such as the GRE"))
+    }
+
+    if !named {
+      return String(
+        localized: LocalizedStringResource(
+          "Know the date? Set it here.",
+          table: "Onboarding",
+          comment:
+            "Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date."
+        ))
     }
 
     return isGuide
