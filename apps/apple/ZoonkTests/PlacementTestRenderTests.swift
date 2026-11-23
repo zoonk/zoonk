@@ -240,7 +240,7 @@ final class PlacementTestRenderTests: XCTestCase {
     let context = PlanContext(goal: goal, plan: plan, adjust: { _ in }, show: { _ in })
     let row = try XCTUnwrap(PlanTestRow(goalId: goalID, plan: plan))
     try await capture(
-      "plan-skill-ranges", title: "English level", detail: "Find your level and skip what you know",
+      "plan-skill-ranges", title: "English level", detail: "Reading B1–B2 · Listening A2–B1",
       absent: ["B2+ → C1"]
     ) {
       ZoonkList {
