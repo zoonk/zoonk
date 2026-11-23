@@ -84,7 +84,8 @@ async function answerRight(page: Page) {
     await sortSteps(page);
   }
 
-  await page.getByRole("button", { exact: true, name: "Confirm" }).press("Enter");
+  // The drag sensor suppresses clicks for 50 ms after pointer release.
+  await page.getByRole("button", { exact: true, name: "Confirm" }).click({ delay: 80 });
   await expect(title.filter({ hasText: text })).toBeHidden();
 }
 
