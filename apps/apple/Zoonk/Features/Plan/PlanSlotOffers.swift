@@ -7,26 +7,23 @@ struct PlanSlotActions {
   let notNow: () -> Void
 }
 
-/// A suggestion's card: its mark and title, at most one line under it, what it holds, then its
+/// A suggestion's card: its title, at most one line under it, what it holds, then its
 /// buttons in one row, ordered by `SuggestionActions`. In the suggestion's sheet its buttons are the
 /// sheet's bottom bar.
 struct PlanSlotCard<Content: View, Actions: View>: View {
   @Environment(\.isInSuggestionSheet) private var isInSheet
   @Environment(\.suggestionSheetNote) private var sheetNote
-  @Environment(\.isPlanChangeCard) private var isPlanChange
 
   let title: Text
-  let mark: SuggestionMark.Kind
   let description: Text?
   let content: Content
   let actions: Actions
 
   init(
-    title: Text, mark: SuggestionMark.Kind, description: Text?,
+    title: Text, description: Text?,
     @ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions
   ) {
     self.title = title
-    self.mark = mark
     self.description = description
     self.content = content()
     self.actions = actions()
@@ -55,16 +52,7 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
   }
 
   @ViewBuilder private var words: some View {
-    // Main's change to the plan is titled alone, its card saying what it is.
-    if isPlanChange {
-      title.typeStyle(.body.weight(.semibold))
-    } else {
-      Label {
-        title.typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: mark)
-      }
-    }
+    SuggestionHeader(title)
 
     if let description {
       description
@@ -76,17 +64,12 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
   }
 }
 
-extension EnvironmentValues {
-  /// Main's `PlanChangeSuggestion`: a change to the plan's card, titled without a mark.
-  @Entry var isPlanChangeCard = false
-}
-
 extension PlanSlotCard where Content == EmptyView {
   init(
-    title: Text, mark: SuggestionMark.Kind, description: Text?,
+    title: Text, description: Text?,
     @ViewBuilder actions: () -> Actions
   ) {
-    self.init(title: title, mark: mark, description: description) {
+    self.init(title: title, description: description) {
       EmptyView()
     } actions: {
       actions()
@@ -111,7 +94,7 @@ private struct PlanSlotAskedCard: View {
 
   var body: some View {
     PlanSlotCard(
-      title: Text(asked.question), mark: .sparkle, description: asked.why.map { Text($0) }
+      title: Text(asked.question), description: asked.why.map { Text($0) }
     ) {
       PlanEffectDiff(
         effect: asked.effect, today: context.plan.today, options: context.changeOptions)
@@ -215,7 +198,7 @@ struct PlanPastDateSlot: View {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
       PlanSlotCard(
-        title: Text(planPastDateTitle(isExam: false)), mark: .symbol("calendar.badge.clock"),
+        title: Text(planPastDateTitle(isExam: false)),
         description: Text(description(lessons: lessons))
       ) {
         if check.failed {
@@ -355,7 +338,7 @@ struct PlanCoverageSlot: View {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
       PlanSlotCard(
-        title: Text(Self.title(suggested)), mark: .sparkle, description: Text(description)
+        title: Text(Self.title(suggested)), description: Text(description)
       ) {
         if check.noDate {
           Text("We couldn't find a date that covers everything.", tableName: "Plan")
@@ -562,7 +545,7 @@ struct PlanOfferSlot: View {
     let repriced = check.repriced?.preview
     let facts = facts(repriced?.effect)
 
-    PlanSlotCard(title: title(repriced?.effect), mark: .sparkle, description: nil) {
+    PlanSlotCard(title: title(repriced?.effect), description: nil) {
       if !facts.isEmpty {
         FactSegments(facts)
           .typeStyle(.note)

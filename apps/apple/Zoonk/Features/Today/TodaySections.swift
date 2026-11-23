@@ -304,9 +304,7 @@ struct TodayPlanChangeSection: View {
     let today = view.session.localDate
 
     VStack(alignment: .leading, spacing: 4) {
-      Text(title)
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(Color(.foreground))
+      SuggestionHeader(Text(title))
 
       if change.source != "focusTest", let why = words.why {
         Text(why)
@@ -481,9 +479,7 @@ struct TodayPlanChangeSection: View {
       isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil,
       label: Text("See what changes", tableName: "Today"), onDismiss: openChosen
     ) {
-      missedDaysTitle
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(Color(.foreground))
+      SuggestionHeader(missedDaysTitle)
 
       PlanEffectDiff(
         effect: change.effect, today: view.session.localDate,

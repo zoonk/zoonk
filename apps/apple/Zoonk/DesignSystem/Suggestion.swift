@@ -31,6 +31,25 @@ struct SuggestionMark: View {
   }
 }
 
+/// Main's `SuggestionHeader`: a suggestion's title alone, starting on the edge its lines and buttons
+/// start on, the kind's mark staying with its line; at a sheet title's size in its sheet.
+struct SuggestionHeader: View {
+  @Environment(\.isInSuggestionSheet) private var isInSheet
+
+  let title: Text
+
+  init(_ title: Text) {
+    self.title = title
+  }
+
+  var body: some View {
+    title
+      .typeStyle(isInSheet ? .sheetTitle : .body.weight(.semibold))
+      .foregroundStyle(Color(.foreground))
+      .accessibilityAddTraits(.isHeader)
+  }
+}
+
 /// Main's `SuggestionLine`: a panel with the suggestion's mark, its title in two lines at most, and
 /// its small actions at its end, or under the title's words when they would leave it less than half
 /// the line; stacked, the whole title and the actions under it.

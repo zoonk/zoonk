@@ -221,7 +221,6 @@ struct PlanSuggestionSection: View {
         .padding(.vertical, isInline ? 4 : 0)
         // A change to the plan is main's card on its panel, in the page's column and beside it.
         .modifier(PlanChangePanel(isShown: isPlanChange(item)))
-        .environment(\.isPlanChangeCard, isPlanChange(item))
         // Beside the page a card's actions sit beside its words, so they're small, as main's
         // panel draws them; the sheet a line opens draws them large.
         .controlSize(isInline ? .small : .regular)
@@ -267,13 +266,13 @@ struct PlanSuggestionSection: View {
   ) -> some View {
     // An exam choice keeps its question, as main's does.
     if case .choice(let choice) = answer.item {
-      header(
-        choiceTitle(choice), icon: SuggestionMark(kind: .symbol("signpost.right")))
-    } else {
-      // Main's "Plan updated" heads the card on its own, with no mark.
-      Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied")
-        .typeStyle(.body.weight(.semibold))
+      SuggestionHeader(choiceTitle(choice))
         .accessibilityFocused($focus, equals: .item)
+    } else {
+      SuggestionHeader(
+        Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied")
+      )
+      .accessibilityFocused($focus, equals: .item)
     }
 
     Text(sentence)
@@ -471,7 +470,7 @@ struct PlanSuggestionSection: View {
       PlanPausedSlot(context: context, isLine: !isInline)
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
-        title: choiceTitle(choice), mark: .symbol("signpost.right"),
+        title: choiceTitle(choice),
         description: Text(choice.leftOut.line)
       ) {
         Text.examPickLimit(choice.take)
@@ -499,7 +498,7 @@ struct PlanSuggestionSection: View {
       }
     case .choice(let choice):
       PlanSlotCard(
-        title: choiceTitle(choice), mark: .symbol("signpost.right"),
+        title: choiceTitle(choice),
         description: Text(choice.leftOut.line)
       ) {
         // Equal picks: one under the other in their order, none drawn as the main answer.
@@ -538,7 +537,7 @@ struct PlanSuggestionSection: View {
         PlanCoverageSlot(context: context, suggested: suggested, actions: offers)
       }
     case .courseComplete:
-      PlanSlotCard(title: completeTitle, mark: claimMark(item), description: nil) {
+      PlanSlotCard(title: completeTitle, description: nil) {
         CertificateClaimButton(context: context, item: .courseComplete)
           .mainActionUnlessBarHoldsOne()
       }
@@ -546,7 +545,7 @@ struct PlanSuggestionSection: View {
       PlanFinishedSlot(context: context)
     case .tooTight:
       PlanSlotCard(
-        title: Text(tooTightTitle), mark: .symbol("calendar.badge.clock"),
+        title: Text(tooTightTitle),
         description: Text(
           "Study longer each day or pick a later date.", tableName: "Plan",
           comment: "Under the Plan's notice when the plan has more lessons than days left")
@@ -560,15 +559,6 @@ struct PlanSuggestionSection: View {
         .mainActionUnlessBarHoldsOne()
       }
     }
-  }
-
-  private func header(_ title: Text, icon: some View) -> some View {
-    Label {
-      title.typeStyle(.body.weight(.semibold))
-    } icon: {
-      icon
-    }
-    .accessibilityFocused($focus, equals: .item)
   }
 
   /// Main's line action: one that acts on its own, or what opening the whole suggestion leads to.
@@ -776,14 +766,7 @@ struct PlanStatement: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
-        MarkedRow {
-          SuggestionMark(kind: mark)
-        } content: {
-          title
-            .typeStyle(.body.weight(.semibold))
-        } end: {
-          EmptyView()
-        }
+        SuggestionHeader(title)
 
         description
           .typeStyle(.note)
@@ -954,12 +937,8 @@ private struct PlanFinishedSlot: View {
 
   @ViewBuilder
   private func words(_ end: PlanEnd?) -> some View {
-    Label {
-      Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over")
-        .typeStyle(.body.weight(.semibold))
-    } icon: {
-      StatusMark(status: .done)
-    }
+    SuggestionHeader(
+      Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"))
 
     if end?.hasMore == true {
       Text(

@@ -533,9 +533,7 @@ struct TodayFocusTestSection: View {
 
   @ViewBuilder
   private func details(_ shown: FocusTestSummary.Size) -> some View {
-    Text(FocusTestCopy.title(findsFocus: true))
-      .typeStyle(.body.weight(.semibold))
-      .foregroundStyle(Color(.foreground))
+    SuggestionHeader(Text(FocusTestCopy.title(findsFocus: true)))
 
     Text(
       "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
@@ -617,10 +615,7 @@ struct TodayExamMomentSection: View {
 
   @ViewBuilder
   private func details(_ words: ExamMoment.Words) -> some View {
-    Text(words.title)
-      .typeStyle(.body.weight(.semibold))
-      .foregroundStyle(Color(.foreground))
-      .accessibilityAddTraits(.isHeader)
+    SuggestionHeader(Text(words.title))
 
     if let day = moment.dayFacts {
       FactSegments(facts: day)
