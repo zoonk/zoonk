@@ -36,7 +36,7 @@ final class PlacementTestContractTests: XCTestCase {
       goal: .init(targetLanguage: "en"), level: .init(label: "B2+", target: "C1"), levels: [])
     XCTAssertEqual(
       standing.levelText(ranges: PlacementTestCopy.rangeFacts(result.skillRanges)),
-      "Reading B1–B2 · Listening A2–B1")
+      "Reading B1–B2\nListening A2–B1")
   }
 
   func testALevelTestWhoseQuestionsAreBeingWrittenReads() throws {
