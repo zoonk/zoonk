@@ -2,6 +2,7 @@ import SwiftUI
 
 /// An example fills the field for the learner to edit first.
 struct BuddyGoalStart: View {
+  @Environment(\.tutorPlaces) private var places
   @Environment(\.stacksContent) private var isStacked
 
   let name: String

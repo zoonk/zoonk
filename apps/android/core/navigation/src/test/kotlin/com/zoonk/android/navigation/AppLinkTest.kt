@@ -90,9 +90,11 @@ class AppLinkTest {
             "/blog" to AppRoute.Blog,
         )
 
-    /** Routes without a page of their own on main: Android shows them alone, main inside another page. */
+    /** Routes without a page of their own on main. */
     private val routesWithoutMainPages =
         setOf(
+            // An old Buddy stack can restore this key, but links open Buddy directly.
+            AppRoute.EarlierQuestions::class.java,
             AppRoute.QuestionBlock::class.java,
             AppRoute.MindMap::class.java,
             // The study reader opens from the Mind maps page; no link leads to it.
