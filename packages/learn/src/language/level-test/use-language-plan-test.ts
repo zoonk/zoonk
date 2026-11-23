@@ -29,6 +29,7 @@ type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 export type TestOutView = Extract<LanguageLevelTestOutResult, { status: "ready" }>["test"];
 
 type TestOutQuestion = NonNullable<TestOutView["next"]>;
+type TestOutTapQuestion = TestOutQuestion & { format: PlacementQuestion["format"] };
 
 type TestOutAnswer = PlacementAnswer;
 
@@ -71,7 +72,7 @@ type Phase =
       nextTestOutLevel: string | null;
       result: LevelTestResult | null;
     }
-  | { failures: number; kind: "testOut"; question: PlacementQuestion; view: TestOutView }
+  | { failures: number; kind: "testOut"; question: TestOutTapQuestion; view: TestOutView }
   | { kind: "testOutResult"; view: TestOutView }
   /** A test-out whose questions are still being written. */
   | { attemptId: string; kind: "testOutWaiting" };
@@ -116,13 +117,9 @@ const TAP_FORMATS: readonly PlacementQuestion["format"][] = [
   "trueFalse",
 ];
 
-function isTapFormat(format: string): format is PlacementQuestion["format"] {
-  return TAP_FORMATS.some((tap) => tap === format);
-}
-
 /** A test-out asks taps only; anything else would be a question its screen can't take. */
-function toPlacementQuestion(question: TestOutQuestion): PlacementQuestion | null {
-  return isTapFormat(question.format) ? { ...question, format: question.format } : null;
+function isTapQuestion(question: TestOutQuestion): question is TestOutTapQuestion {
+  return TAP_FORMATS.some((tap) => tap === question.format);
 }
 
 function toTestOutPhase(view: TestOutView): Phase {
@@ -130,9 +127,9 @@ function toTestOutPhase(view: TestOutView): Phase {
     return { attemptId: view.attemptId, kind: "testOutWaiting" };
   }
 
-  const question = view.next && toPlacementQuestion(view.next);
+  const question = view.next;
 
-  return question
+  return question && isTapQuestion(question)
     ? { failures: 0, kind: "testOut", question, view }
     : { kind: "testOutResult", view };
 }

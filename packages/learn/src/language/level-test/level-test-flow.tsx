@@ -10,6 +10,7 @@ import { PlacementDone } from "../../onboarding/steps/placement-screens";
 import { PlacementWaiting } from "../../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../../onboarding/steps/step-parts";
 import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
+import { ItemSetStimulus } from "../../questions/item-set-stimulus";
 import { LevelTestPreparing } from "./level-test-preparing";
 import { LevelResult, TestOutResult } from "./level-test-results";
 import { TestIntro } from "./level-test-screens";
@@ -70,17 +71,7 @@ function LengthStep({
   );
 }
 
-export function LanguagePlanTestFlow({
-  actions,
-  onDone,
-  onboarding,
-  readWarmUp,
-  targetLanguage,
-  testOutFirst = false,
-  testOutLevel,
-  trueFalseLabels,
-  wholeCourseMinutes,
-}: {
+type LanguagePlanTestProps = {
   actions: LanguagePlanTestActions;
   /** Goes back to the plan, read again; false when it didn't. */
   onDone: () => Promise<boolean>;
@@ -93,7 +84,19 @@ export function LanguagePlanTestFlow({
   testOutLevel: string | null;
   trueFalseLabels: TrueFalseLabels;
   wholeCourseMinutes: number;
-}) {
+};
+
+export function LanguagePlanTestFlow({
+  actions,
+  onDone,
+  onboarding,
+  readWarmUp,
+  targetLanguage,
+  testOutFirst = false,
+  testOutLevel,
+  trueFalseLabels,
+  wholeCourseMinutes,
+}: LanguagePlanTestProps) {
   const t = useExtracted();
   const test = useLanguagePlanTest({ actions, onDone, onboarding: Boolean(onboarding) });
   const { failed, phase, pressed } = test;
@@ -178,25 +181,30 @@ export function LanguagePlanTestFlow({
           onUndo={actions.undo}
         />
       );
-    case "testOut":
+    case "testOut": {
+      const { question, view } = phase;
+      const askedIn = `${view.attemptId}:${question.itemId}`;
+
       return (
         <PlacementQuestionScreen
           failures={phase.failures}
-          key={phase.question.itemId}
-          number={phase.view.answered + 1}
+          key={question.itemId}
+          media={question.set && <ItemSetStimulus askedIn={askedIn} set={question.set} />}
+          number={view.answered + 1}
           onAnswer={test.onTestOutAnswer(phase)}
-          onStop={() => test.onTestOutStop(phase.view.attemptId)}
+          onStop={() => test.onTestOutStop(view.attemptId)}
           pending={test.isPending}
           position={t("Question {number, number} of {total, number}", {
-            number: phase.view.answered + 1,
-            total: phase.view.total,
+            number: view.answered + 1,
+            total: view.total,
           })}
-          progress={phase.view.answered / phase.view.total}
-          question={phase.question}
-          subject={t("Test out of {level}", { level: phase.view.level })}
+          progress={view.answered / view.total}
+          question={question}
+          subject={t("Test out of {level}", { level: view.level })}
           trueFalseLabels={trueFalseLabels}
         />
       );
+    }
     case "testOutWaiting":
       return (
         <PlacementWaiting
