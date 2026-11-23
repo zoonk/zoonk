@@ -188,7 +188,7 @@ internal fun MockResult(
                                 ResultStep(
                                     step.id,
                                     part.beside,
-                                ) { EssayStepContent(step, view.essayRubric, grading, viewModel::gradeEssays) }
+                                ) { EssayStepContent(step, grading, viewModel::gradeEssays) }
                             }
                         }
 

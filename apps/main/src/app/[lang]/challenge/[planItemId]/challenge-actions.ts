@@ -30,7 +30,7 @@ export async function startChallengeAction(
   afterWriting: unknown = false,
 ): Promise<
   | ChallengeDestination
-  | Extract<StartChallengeResult, { status: "earlierFirst" }>
+  | Extract<StartChallengeResult, { status: "earlierFirst" | "needsChoice" }>
   | "blockFinished"
   | "notToday"
   | "plusRequired"
@@ -57,7 +57,7 @@ export async function startChallengeAction(
     return result.status;
   }
 
-  if (result.status === "earlierFirst") {
+  if (result.status === "earlierFirst" || result.status === "needsChoice") {
     return result;
   }
 

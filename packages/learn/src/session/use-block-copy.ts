@@ -2,6 +2,7 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
+import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
 import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
@@ -13,6 +14,7 @@ type BlockCopyInput = Pick<
   | "checkpoint"
   | "estimatedMinutes"
   | "fullReview"
+  | "hasWritingDraft"
   | "kind"
   | "mistakesOnly"
   | "questions"
@@ -20,6 +22,9 @@ type BlockCopyInput = Pick<
   | "title"
   | "topics"
   | "weakest"
+  | "writingAvailability"
+  | "writingTask"
+  | "writingUnit"
 >;
 
 /** A challenge's row has one name, from what the learner does in it. */
@@ -69,6 +74,7 @@ export function useBlockTitle() {
   const format = useFormatter();
   const checkpointTitle = useCheckpointTitle();
   const reviewTitle = useReviewTitle();
+  const writingTitle = useWritingTaskTitle();
 
   return (block: BlockCopyInput): string => {
     if (block.checkpoint) {
@@ -89,7 +95,7 @@ export function useBlockTitle() {
     }
 
     if (block.kind === "produce") {
-      return block.title ?? t("Writing practice");
+      return writingTitle({ task: block.writingTask, title: block.title, unit: block.writingUnit });
     }
 
     if (block.mistakesOnly) {
@@ -123,8 +129,17 @@ export function useBlockTitle() {
 export function useBlockDetail() {
   const t = useExtracted();
   const shortList = useShortList();
+  const writingLine = useWritingLine();
 
-  function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
+  /**
+   * A written task's row says when it waits for tomorrow, or that its draft is kept. A drill says
+   * what it's for, since its name is the same after every lesson.
+   */
+  function writingDetail(block: BlockCopyInput & Pick<StudyBlock, "canDo" | "subject">) {
+    return writingLine(block) ?? block.subject ?? block.canDo;
+  }
+
+  function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo" | "subject">): string | null {
     if (hasCapsules(block) && block.weakest) {
       return t(
         "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}",
@@ -147,7 +162,7 @@ export function useBlockDetail() {
     }
 
     if (block.kind === "produce") {
-      return block.canDo;
+      return writingDetail(block);
     }
 
     // A call has no questions to count, and its name says what it is.

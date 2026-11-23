@@ -3,7 +3,7 @@
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
-import { PHONE_CONTENT_WIDTH, useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
@@ -145,7 +145,9 @@ function MapCanvas({
   const mapName = useBaseMapName();
   const mapNote = useBaseMapNote();
   const { fields } = content;
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(0);
+
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>(undefined, { measureBeforePaint: true });
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
 
@@ -154,7 +156,7 @@ function MapCanvas({
     places: fields.places,
     selectedId,
     visited,
-    width: width || PHONE_CONTENT_WIDTH,
+    width,
   });
 
   const selectedIndex = fields.places.findIndex((place) => place.id === selectedId);
@@ -180,27 +182,25 @@ function MapCanvas({
         </ActivityCanvasLabel>
       </div>
 
-      <MapFrame ref={ref} style={width ? undefined : { height }}>
-        {width > 0 && (
-          <BaseMapView
-            crop={crop}
-            drawing={drawing}
-            references={[
-              questionReferences(content.check),
-              ...fields.places.map((place) => place.label),
-            ].join(" ")}
-            question={
-              content.check.kind === "choice" || content.check.kind === "numeric"
-                ? content.check.question
-                : ""
-            }
-            height={height}
-            labelText={labelText}
-            onSelect={select}
-            pins={pins}
-            width={width}
-          />
-        )}
+      <MapFrame ref={ref}>
+        <BaseMapView
+          crop={crop}
+          drawing={drawing}
+          references={[
+            questionReferences(content.check),
+            ...fields.places.map((place) => place.label),
+          ].join(" ")}
+          question={
+            content.check.kind === "choice" || content.check.kind === "numeric"
+              ? content.check.question
+              : ""
+          }
+          height={height}
+          labelText={labelText}
+          onSelect={select}
+          pins={pins}
+          width={width}
+        />
       </MapFrame>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">

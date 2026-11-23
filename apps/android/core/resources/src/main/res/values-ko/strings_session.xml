@@ -18,7 +18,7 @@
   "session_block_weakest": "2f1e7d0f0d938fc3c542635802502ddc7d03c295201724ac3f562cd8af1c0aa7",
   "session_block_weekly_challenge": "428cb49bf066815db87d79f3619e1d330e4f1af38a6bcec36a07d5259ed923d1",
   "session_block_what_you_know": "436e680ef117da403ee6e9272e3078a4c684c4bb575811d24af768e667a00dec",
-  "session_block_writing_practice": "4dba196e6fd4c6ea71a0d1046863fb742cc3425a7c158698b8fcf83d2ce61c0c",
+  "session_block_writing_draft_saved": "72a3914047c9b15b2098b0f96fe748568b631b01db9a5762e135aa7f04e038da",
   "session_catch_up_to_go": "a7db382aeee3696b735945ceabd9c754e74f27e9ff81a072f3b23f8774877168",
   "session_caught_up_today": "92d3da28a40bb676ac6287918f83936e7dd7e3b8ed41c852fc99a08dd45966ab",
   "session_day_done": "a3e9aa6d51192381dca92372eefa913b4b43024e0eef2272783e3745dbdc3c42",
@@ -97,7 +97,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">이미 아는 내용</string>
     <string name="session_block_new_lesson">새 레슨</string>
-    <string name="session_block_writing_practice">쓰기 연습</string>
+    <string name="session_block_writing_draft_saved">초안이 저장됐어요</string>
     <string name="session_block_practice_mistakes">틀린 문제 연습</string>
     <string name="session_block_mixed_practice">섞어서 연습하기</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

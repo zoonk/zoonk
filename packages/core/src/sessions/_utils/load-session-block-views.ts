@@ -1,24 +1,28 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
+import { loadExtraWritingAvailability } from "./extra-writing-availability";
 import { type LessonStatesReader, readLessonScreens } from "./lesson-screens";
 import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { toStudyBlockViews } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
+import { loadSessionWritingTasks } from "./writing-block-tasks";
 
 export async function loadSessionBlockViews({
   answers: knownAnswers,
-  blueprint,
+  blueprint: knownBlueprint,
   plan,
   preparing: knownPreparing,
   readLessonStates,
-  session,
+  session: saved,
   timeZone,
   userId,
 }: {
@@ -31,9 +35,21 @@ export async function loadSessionBlockViews({
   timeZone: string;
   userId: string;
 }) {
-  const now = new Date();
+  const [now, { blueprint, removed, writingTasks }] = await Promise.all([
+    getRequestInstant(),
+    loadSessionWritingTasks({ blueprint: knownBlueprint, session: saved }),
+  ]);
 
-  const [answers, subjects, blockedChapters, oftenTestedSkillIds, preparing] = await Promise.all([
+  const session = { ...saved, blocks: saved.blocks.filter(({ id }) => !removed.has(id)) };
+
+  const [
+    answers,
+    subjects,
+    blockedChapters,
+    oftenTestedSkillIds,
+    withWritingAvailability,
+    preparing,
+  ] = await Promise.all([
     knownAnswers ?? loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
     loadBlockSubjects({ blocks: session.blocks, blueprint, goal: session.goal }),
     session.goalId
@@ -53,6 +69,12 @@ export async function loadSessionBlockViews({
         })
       : new Set<string>(),
     loadOftenTestedSkillIds(session.goal),
+    loadExtraWritingAvailability({
+      blocks: session.blocks,
+      now,
+      timeZone: getAnswerTimeZone({ goal: session.goal, timeZone }),
+      userId,
+    }),
     knownPreparing ?? loadPreparingMockPositions({ ...session, blueprint }),
   ]);
 
@@ -67,6 +89,7 @@ export async function loadSessionBlockViews({
         oftenTestedSkillIds,
         preparing,
         subjects,
+        writingTasks,
       }),
       current,
       status: session.status,
@@ -74,5 +97,11 @@ export async function loadSessionBlockViews({
     readLessonStates,
   );
 
-  return { answers, blocks, current, displayBlocks: session.blocks, preparing };
+  return {
+    answers,
+    blocks: blocks.map((block) => withWritingAvailability(block)),
+    current,
+    displayBlocks: session.blocks,
+    preparing,
+  };
 }

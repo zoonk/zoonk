@@ -70,11 +70,9 @@
   "plan_building_description": "608c7036f78c01e8640a7918350521dea0c128cba520662549532d3af5736831",
   "plan_building_eyebrow": "af5050c5511fc9b289360aa853b79cf6548b17d5162acc06abd8dd3cc55d53ec",
   "plan_cadence_biweekly": "1cd29a3c73bc1d42ade29288f7d061d3704cbfed962b56c66abd34ef39601471",
-  "plan_cadence_biweekly_effect": "844ad276620f8796f69e464fb44f4d52f6731d736ba0e98cd42001aeeed4f29b",
   "plan_cadence_final_weeks": "373a5868de0477b372d987a9ab97cf811b08b4e9321560d3900c4795578d5d5b",
-  "plan_cadence_final_weeks_effect": "b21ae7b31b69c5fa864c823cd1043d223aa1a81d2ed8ce4a08e48d45ef5430fb",
   "plan_cadence_weekly": "c231275879c99b347940b74b1ac3b4825e6e2df95fc79fe034810465420aba0c",
-  "plan_cadence_weekly_effect": "30ef6e67fdb9cc733732635231fed6e5d83aa95c850abd304cc6c759983128e6",
+  "plan_cadence_weekly_recommended": "9e26221345784d8c67e89361af8644dc443170a1c88adba31e274839dfff3f97",
   "plan_call_not_in_plan": "0e3f89203d71f1ff23d1ced8e20d4bcef2477464b3b5d1886427eac6e41a8c13",
   "plan_cancel": "cabd34e89ddd2d27312bbed403c2c3c296a60d264568707cf9af27ed58f67706",
   "plan_challenge_live_call": "d38265fa77f8c1d05497ab497ce594ac21cc1eba0d0064bedde2f7219ee568a6",
@@ -517,13 +515,23 @@
   "plan_week_time": "7498a8511c1052d3d63b65c862ac129e9d98147b959d63080e0cc01037dcf810",
   "plan_weekly_challenges": "5b1cf084d366cfbf3b6f9f9df9e5eab8f52657f10ada6559dbf16969273ef7bf",
   "plan_what_you_practice": "7ca3e03e273e90c6eeb3efd58cb8d17e01751c822b013f2c43eb83344786bc83",
-  "plan_when_to_practice": "6720680c6f3117e37299f345b412066b3038046e2c452a48f2e5bc8c6ba9ac20",
+  "plan_when_to_practice_writing": "de21b47137b0dadc074504d3cf912838b95dc10e4ffbb1f3c80494e437142620",
   "plan_where_to_focus": "390cd30cdc6e429a7e2f90f69771a420dff2b4afe308a413ff8d9e601e204503",
   "plan_where_to_focus_description": "c9baa074dc260d2ce49c8bec70b38b69b483bc67234199a96530bb42024655f3",
   "plan_why_phase_dates_later": "25cc217193fa536a3a98cb055971330199a831a820123a3ccde63f5906c073c2",
   "plan_why_phase_end_later": "ea3566b09f0ba12d24184749ecad50d0523f4a0102a728368de78c64f19e4156",
   "plan_why_phase_end_off_rest": "9e2db39b53ce6dee1ea2616e14289438475c882c4261febb6a5d2ba93b0e55dd",
   "plan_working_out_coverage": "04d1e5d57de99689635797e6193c016b7456515145a14a8801cc148ff72701c1",
+  "plan_written_above_minimum": "54cbe721f76e78bd1907d3ed87e76f7616b357e6f066d76f73a61dbd3c46d46f",
+  "plan_written_asks_for": "28011ab17fb6fe35696681cabd5560399391fb6bb21d24350510a35ee3bb568d",
+  "plan_written_asks_for_share": "48e5bfc721044f2fee365cff0b07294616235c2c578de34354824ae309418008",
+  "plan_written_below_minimum": "f5b0b520a7713dde69d0ab1fcd1259601f90178c1ee2412751bbbb22e9b64cfa",
+  "plan_written_close_to_minimum": "699aba1b886587344036d0264576d60e4f285f71832a6b29bdcbdd506ada765c",
+  "plan_written_not_measured": "4774b0a8cc21bfbefe5c0302fe54ae2720db966a64eca64aa84d10043a6bba09",
+  "plan_written_not_measured_half": "2000c264a82db56a2053c7a32537d03d0c8a6701147e62ce383b325ec2fa982c",
+  "plan_written_not_measured_share": "05ebba53a7a7affe2bfff69b7c741953bcf20951cb213b1562edeba429081d5a",
+  "plan_written_objective": "182a782d79767d8cd6128e6cc0a835467e6bbd4e32dcca2667e75f17e1ed16b1",
+  "plan_written_points_below": "f6d1b969692c3ff8c51e0c6f113e4ffaf08f6dc68f79ba567f2a05a3573ea204",
   "plan_you_are_here_suffix": "9d64cf09d078f7cc2626d1755e49e5bbeeb464fb8fd7dd14dd3f55a7841310f0",
   "plan_your_level": "370a93f94cfec369c1e3c38e31c6e412346647f0f6d45c7f20aa1be027a9c771",
   "plan_your_pace": "50c353ac1cfcac0d6f9964d4205d74f3a5e1e48f45e0a9d1dbb4dcf4ab9fdc58",
@@ -1117,13 +1125,11 @@
     <string name="plan_tool_writing_setup_line_3">Ajout d’un test rapide pour vérifier que tout fonctionne…</string>
     <string name="plan_tool_device">Ton appareil</string>
     <string name="plan_what_you_practice">Ce que tu pratiques</string>
-    <string name="plan_when_to_practice">Quand travailler %1$s</string>
+    <string name="plan_when_to_practice_writing">Quand s’entraîner à écrire</string>
     <string name="plan_cadence_weekly">Chaque semaine</string>
     <string name="plan_cadence_biweekly">Une semaine sur deux</string>
     <string name="plan_cadence_final_weeks">Seulement les dernières semaines</string>
-    <string name="plan_cadence_weekly_effect">Recommandé : un peu chaque semaine, pour progresser au mieux à l’écrit.</string>
-    <string name="plan_cadence_biweekly_effect">Autant d’entraînement une semaine sur deux : des séances moins fréquentes, mais plus chargées.</string>
-    <string name="plan_cadence_final_weeks_effect">Une pratique moins espacée, concentrée sur les dernières semaines avant l’examen.</string>
+    <string name="plan_cadence_weekly_recommended">Chaque semaine (recommandé)</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_none">Il n’y a pas assez de temps pour tout voir avant le %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
@@ -1439,4 +1445,14 @@
     <string name="plan_call_not_in_plan">L’appel n’est pas prévu dans ton plan</string>
     <string name="plan_outside_past_basics">Sauté · tu connais déjà les bases</string>
     <string name="plan_outside_skipped_base">Sauté · à ta demande</string>
+    <string name="plan_written_below_minimum">En dessous du minimum requis pour réussir</string>
+    <string name="plan_written_asks_for">Il faut obtenir %2$s points dans %1$s, quels que soient tes autres scores.</string>
+    <string name="plan_written_asks_for_share">Il faut obtenir %2$s des points de %1$s, quels que soient tes autres scores.</string>
+    <string name="plan_written_not_measured">Le résultat de %1$s n’est pas encore mesuré.</string>
+    <string name="plan_written_not_measured_half">La mesure de %1$s, qui compte pour la moitié de ton Score final, n’est pas encore disponible.</string>
+    <string name="plan_written_not_measured_share">Le résultat de %1$s (%2$s de ton Score final) n’est pas encore mesuré.</string>
+    <string name="plan_written_objective">Épreuve objective</string>
+    <string name="plan_written_above_minimum">Au-dessus des %1$s points requis</string>
+    <string name="plan_written_points_below">Il te manque %1$s points pour atteindre le minimum de %2$s</string>
+    <string name="plan_written_close_to_minimum">Presque au minimum de %1$s points</string>
 </resources>

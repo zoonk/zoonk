@@ -11,6 +11,7 @@ import { Page } from "../_components/page";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { useLearnRoutes } from "../learn-context";
 import { PageWithAside } from "../shell/learn-shell";
+import { ChooseOnTodayLink } from "../writing/writing-choice";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 import { MockPreparingNote, type MockWritingWait } from "./mock-preparing";
 
@@ -144,17 +145,27 @@ function ChooserMainAction({
 
 /** Start on every screen size, after the list: the choice comes before the action. */
 export function ChooserBar({
+  choose = false,
   disabled,
   onStart,
   ...props
-}: ChooserBarProps & { disabled: boolean; onStart: () => void }) {
+}: ChooserBarProps & {
+  /** The picked option waits for an exam choice, which its row names: the way on is Today's question. */
+  choose?: boolean;
+  disabled: boolean;
+  onStart: () => void;
+}) {
   const note = useChooserNote(props);
 
   return (
     <BottomBar note={note}>
-      {props.gated ? (
-        <SubscribeMainAction />
-      ) : (
+      {props.gated && <SubscribeMainAction />}
+      {!props.gated && choose && (
+        <BottomBarActions>
+          <ChooseOnTodayLink />
+        </BottomBarActions>
+      )}
+      {!props.gated && !choose && (
         <BottomBarActions>
           <ChooserMainAction
             busy={props.busy}

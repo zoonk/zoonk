@@ -153,6 +153,7 @@ class DraftStore(
         suspend fun write(
             key: String,
             entry: JsonElement?,
+            matches: (JsonElement?) -> Boolean = { true },
         ) {
             if (owner != accountId) return
             try {
@@ -161,7 +162,7 @@ class DraftStore(
                 withContext(io) {
                     store.updateData { drafts ->
                         when {
-                            owner != accountId -> drafts
+                            owner != accountId || !matches(drafts.entries[key]) -> drafts
                             entry == null -> LearnerDrafts(drafts.entries - key)
                             else -> LearnerDrafts(drafts.entries + (key to entry))
                         }

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "a59c48fb6a27c9dc9f1567c4803842e4a4570176001bc0cd2d2a57069c787446",
+  "mock_chooser_both_tests": "1e353c2ca3d96b9267b842a895e5d625735d7bbd2045e03c8c1624e104e4fafc",
   "mock_chooser_day": "d86c8ad1de5e1c4eb67b678975fbbd2de4662bb6744ea20eb796cea68f52fe4e",
   "mock_chooser_day_without": "91a0c45338efff009ea4eca6351241652ee83a41ac59a79bb0f335f2ac265e05",
+  "mock_chooser_exam_tests": "2ac82658cb8f00087ec107f3ad934e147c2885a0a43a5f26d9adf86c316943b6",
   "mock_chooser_failed": "efd8a305d6486868cf72eef782f4d440325db9b5ced6270f8f982ca9acafba6d",
   "mock_chooser_full_exam": "218b55567b91cf1381b38c787573fc90fc79ad70945845f02d5c670734f1d1a8",
   "mock_chooser_full_exam_without": "806686d9cf5476a5d8d718727b31854e7cafae830550071b9f4891ebcd0cd485",
@@ -11,6 +14,7 @@
   "mock_chooser_last_mock": "b7d8423c88cd598464a9d867b311e1cc1c58db8a34c4bbc5314a3d41e4891acd",
   "mock_chooser_line": "1a18952e83c6767a74eca190c46d0080f5d1ea6d4caa5b974a4e63422c775d33",
   "mock_chooser_no_written_part": "853056d2150b1868f8e4ce7d282591475e05aaa1973b622118520d8b1d397f99",
+  "mock_chooser_objective_only": "66203a63715fe078109965300b627a21f756e757018d17e84314f68c9b6d10a2",
   "mock_chooser_one_subject": "bb643e4c1836624c66a4933d36f9f6b91fd2556c2e8f6b5f2bd21e7a5ff0ca6e",
   "mock_chooser_option_size": "cbd8204b4b3fc3b1a26443957471437014872d764b6676f9e62b8d85bc4d936b",
   "mock_chooser_start": "ca34c5635b72b1e75b75b02db0d1aa60079665ca23ed1cfcded75997d05a215b",
@@ -26,6 +30,23 @@
     <string name="mock_chooser_one_subject">Jeden przedmiot</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">Egzamin</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Twój egzamin obejmuje %d test</item>
+        <item quantity="few">Twój egzamin obejmuje %d testy</item>
+        <item quantity="many">Twój egzamin obejmuje %d testów</item>
+        <item quantity="other">Twój egzamin obejmuje %d testu</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">Tylko krótsze pytania zamknięte</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">Oba testy</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">Cały %1$d test</item>
+        <item quantity="few">Wszystkie %1$d testy</item>
+        <item quantity="many">Wszystkie %1$d testów</item>
+        <item quantity="other">Wszystkie testy (%1$d)</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Dzień %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

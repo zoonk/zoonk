@@ -169,6 +169,8 @@ struct ExamView: Hashable, Decodable, Sendable {
   var speakingMockPaused: Bool
   var stage: Stage
   var tools: [String]
+  /// The exam's projected score with its written part; nil for an exam without one.
+  var writtenProjection: WrittenProjection?
 
   var takesResult: Bool { stage == .examDay || stage == .afterExam }
 }

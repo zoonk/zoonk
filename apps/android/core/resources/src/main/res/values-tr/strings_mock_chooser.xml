@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "2d65b7865b2fd54ad90d6b00a2e136806483c82586598ab10f67f746609998e1",
+  "mock_chooser_both_tests": "50ccf96c58111328efdabcff5c118519da40417fbc245c582492a51a5ed738e6",
   "mock_chooser_day": "362d4b4b34578ac3ecc7d633518be97d873cbb1be4c2961330b566a376e79d35",
   "mock_chooser_day_without": "e966729c55f8dbe03b257ef9a74a413a582fe137219f3acda51e2e5240b662c4",
+  "mock_chooser_exam_tests": "628b2ae861cf6d74998ca05f7296f917f529d4fa3fce9df260b9d44af95af320",
   "mock_chooser_failed": "931046e9d49fbeb43b8af6f88776bb90e72b1ec9bd51faa94b7ae46e459ccb03",
   "mock_chooser_full_exam": "8acfff91716edbecfcd969c8bca0096e4fb2b9a7fac4d6436afd16164077e616",
   "mock_chooser_full_exam_without": "98e3ca2b1bc92d4d3685841ccfe6fbf8c8519c2cce9ee773a3b8f5155662981b",
@@ -11,6 +14,7 @@
   "mock_chooser_last_mock": "b00b3257758801749577f292c949b1f32a9a032cc19715b3dd2b5110606aae59",
   "mock_chooser_line": "247fd2850a78991750055d8e8294b5b410391c434d9d10e9cdb97ba1e983ad8a",
   "mock_chooser_no_written_part": "42b1fc48acb9d9de64bb1c907c32a14cc71b7498e5bf16ae0acf9af6617368e1",
+  "mock_chooser_objective_only": "e62c625b22b5de1167c911c874f05a3095e6c96de8a8c5e83eb18c8344d66573",
   "mock_chooser_one_subject": "cc2b25c2807f2df45acb99125f39e169339203ec220978b0426dc62a6396e8bb",
   "mock_chooser_option_size": "9a5b3bb5ea2502fd55fd6b029508dec15e572e7ea30396a097c50101e97bb28f",
   "mock_chooser_start": "3be2e8fcd8004e3c2989fa2571c2c30b23fe5807ab55b303f025b43b460e8beb",
@@ -26,6 +30,19 @@
     <string name="mock_chooser_one_subject">Tek branş</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">Sınav</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Sınavında %d test var</item>
+        <item quantity="other">Sınavında %d test bulunuyor</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">Daha kısa, yalnızca test soruları</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">Her iki test</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">Testin tamamı: %1$d</item>
+        <item quantity="other">Tüm testler: %1$d</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">%1$d. gün</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

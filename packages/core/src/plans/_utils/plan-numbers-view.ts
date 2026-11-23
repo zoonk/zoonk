@@ -4,6 +4,7 @@ import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { type PlanNumbers } from "../numbers-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { getItemKey } from "../planner/plan-items";
+import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
 import { type ShownFeasibility } from "./plan-feasibility-view";
 import { getPlanNumbers, getPlanWorkload } from "./plan-numbers";
 import { type PlanReadContext } from "./plan-read-projection";
@@ -44,11 +45,14 @@ export async function buildPlanNumbersView({
     paceFactor: pace.factor,
   });
 
+  const today = toIsoDate(context.today);
+  const schedule = built.writingSchedule?.filter(({ date }) => date >= today) ?? [];
+
   return getPlanNumbers({
     built,
     context: {
       dailyMinutes: state.goal.dailyMinutes,
-      fromDate: toIsoDate(context.today),
+      fromDate: today,
       fullCourse: context.goal.kind === "exam" && settings.fullCourse,
       ownLevel: getOwnLevel({ goal: context.goal }),
       paceFactor: pace.factor,
@@ -60,10 +64,14 @@ export async function buildPlanNumbersView({
     isExam: context.goal.kind === "exam",
     settings,
     workload,
+    writing: listRemainingWriting({ attempts: [], schedule, today }),
   });
 }
 
-export function buildSavedPlanNumbersView(context: PlanReadContext): PlanNumbers {
+export function buildSavedPlanNumbersView(
+  context: PlanReadContext,
+  writing: readonly WritingWork[],
+): PlanNumbers {
   const { state, goal, today } = context;
 
   const items = context.items.map((item) => ({
@@ -121,5 +129,6 @@ export function buildSavedPlanNumbersView(context: PlanReadContext): PlanNumbers
       practiceMinutes: sum("practice"),
       unwrittenLessonMinutes: sum("unwritten"),
     },
+    writing,
   });
 }

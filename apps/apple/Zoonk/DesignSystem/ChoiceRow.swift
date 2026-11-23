@@ -61,6 +61,8 @@ struct ChoiceRowLabel<Words: View>: View {
 struct ChoiceWords: View {
   let title: Text
   var detail: Text?
+  /// Why the choice can't be taken now, under its detail.
+  var note: Text?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
@@ -72,6 +74,13 @@ struct ChoiceWords: View {
       if let detail {
         detail
           .layoutPart(.note, text: detail)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if let note {
+        note
+          .layoutPart(.note, text: note)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }

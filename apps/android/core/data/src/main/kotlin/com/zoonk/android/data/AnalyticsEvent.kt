@@ -79,6 +79,12 @@ sealed class AnalyticsEvent(
             ).toMap(),
         )
 
+    /** A written task's wait while its question is written, once per visible wait. */
+    data class WritingPromptWaitViewed(
+        val generationId: String,
+        val surface: WritingSurface,
+    ) : AnalyticsEvent("Writing Prompt Wait Viewed", mapOf("generation_id" to generationId, "surface" to surface.value))
+
     data class HookAnswered(
         val lessonId: String,
     ) : AnalyticsEvent("Hook Answered", mapOf("lesson_id" to lessonId))
@@ -224,6 +230,13 @@ sealed class AnalyticsEvent(
         PlanWait("planWait"),
         PlacementWait("placementWait"),
         LessonWait("lessonWait"),
+    }
+
+    enum class WritingSurface(
+        val value: String,
+    ) {
+        Practice("practice"),
+        Mock("mock"),
     }
 
     enum class PublicPage(

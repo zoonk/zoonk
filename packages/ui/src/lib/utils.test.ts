@@ -46,4 +46,9 @@ describe(cn, () => {
     expect(cn("animate-settle", "animate-none")).toBe("animate-none");
     expect(cn("animate-spin", "animate-pop")).toBe("animate-pop");
   });
+
+  it("treats the frame's gutter as a spacing value, so a later padding replaces it", () => {
+    expect(cn("px-frame flex", "px-0")).toBe("flex px-0");
+    expect(cn("px-4", "px-frame")).toBe("px-frame");
+  });
 });

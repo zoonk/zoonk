@@ -3,6 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
+import { writeMockWritingPrompts } from "../sessions/writing-prompt-workflow";
 import { openMockPaperProgress } from "./mock-paper-progress";
 import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
 import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
@@ -107,7 +108,10 @@ async function writePaper({
 
   try {
     await progress.step("writeMockQuestions", () =>
-      writeMockQuestions({ ...supply, goalId, workflowRunId }),
+      Promise.all([
+        writeMockQuestions({ ...supply, goalId, workflowRunId }),
+        writeMockWritingPrompts(supply.writing),
+      ]),
     );
 
     const { recordings } = supply;

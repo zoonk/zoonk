@@ -7,8 +7,7 @@ import {
   pastQuestionsSchema,
   pastTopicFrequencySchema,
 } from "./blueprint-past-contract";
-
-const citationSchema = z.object({ passage: z.string(), sourceId: z.string() });
+import { citationSchema, sectionTaskSchema } from "./written-grading";
 
 const EXAM_FORMAT_KINDS = [
   "multipleChoice",
@@ -82,15 +81,8 @@ const mockSectionSchema = z.object({
   name: z.string(),
   navigation: sectionNavigationSchema.nullable().optional(),
   questions: z.number().int().nullable(),
-  tasks: z
-    .array(
-      z.object({
-        count: z.number().int().min(1),
-        description: z.string(),
-        plays: z.number().int().min(1).max(2).nullable().optional(),
-      }),
-    )
-    .optional(),
+  session: z.string().optional(),
+  tasks: z.array(sectionTaskSchema).optional(),
   tools: z.string().nullable().optional(),
 });
 

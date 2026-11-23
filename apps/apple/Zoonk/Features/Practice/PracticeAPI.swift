@@ -4,6 +4,7 @@ import OpenAPIRuntime
 /// Transport, sign-in and missing resources stay `APIError`.
 enum PracticeAPIError: Error, Equatable, Sendable {
   case conflict(code: String?)
+  case needsExamChoice([String])
   case invalid(code: String?)
   case limit(HelpLimit)
   case plusRequired
@@ -473,8 +474,18 @@ struct PracticeAPI: Sendable {
       case .ok(let response): return try response.body.json
       case .accepted: return nil
       case .code402: throw PracticeAPIError.plusRequired
+      case .forbidden(let response):
+        let refusal = voiceRefusal(status: 403, error: try? response.body.json)
+        if refusal.code == "SIGN_UP_REQUIRED" {
+          throw PracticeAPIError.limit(.signUpRequired)
+        }
+        throw APIError.unavailable
       case .conflict(let response):
-        throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
+        let problem = try response.body.json
+        if let groups = pendingChoice(problem) {
+          throw PracticeAPIError.needsExamChoice(groups)
+        }
+        throw PracticeAPIError.conflict(code: problem.error.code)
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }

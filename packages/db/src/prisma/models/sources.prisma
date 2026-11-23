@@ -106,6 +106,7 @@ model ExamBlueprint {
   sourceId             String?               @map("source_id") @db.Uuid
   source               Source?               @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   validUntil           DateTime?             @map("valid_until")
+  noticeRereadSource   String?               @map("notice_reread_source")
   nextCheckAt          DateTime?             @map("next_check_at")
   registrationEndsAt   DateTime?             @map("registration_ends_at")
   examDate             DateTime?             @map("exam_date")

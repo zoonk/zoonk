@@ -4,6 +4,7 @@ import { findExamSpeakingSetup } from "../../../language/exam-speaking/_utils/ex
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
+import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { readExamPicks } from "../../choices/exam-choices";
 import { loadExamPicks } from "../../choices/load-exam-choices";
@@ -21,11 +22,13 @@ import { loadMockEssays } from "./mock-essays";
 import { type MockListening, loadListeningCandidates } from "./mock-listening";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
+import { withMockWritingAvailability } from "./mock-writing-choices";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
 import { readMockSizeSource, readMockStructure, readUnpickedChoices } from "./read-mock-structure";
 
 export type AnytimeMockSetup = {
   blueprint: ExamBlueprint | null;
+  /** The written prompts the learner has not seen yet. */
   essays: MockEssayCandidate[];
   examName: string;
   goalAreas: string[];
@@ -66,7 +69,11 @@ export async function loadAnytimeMockSetup(
 
   const buildable = blueprint !== null || areas.size > 0;
 
-  const structure = blueprint ? readMockStructure({ blueprint, picks }) : null;
+  const notice = blueprint ? readBlueprintContent(blueprint).structure : null;
+
+  const structure = blueprint
+    ? readMockStructure({ blueprint, includePendingWriting: true, picks })
+    : null;
 
   const { recordings, unvoiced, missingParts } = await loadListeningCandidates({
     goalId: goal.id,
@@ -86,7 +93,6 @@ export async function loadAnytimeMockSetup(
     missingParts,
     options: buildable
       ? listMockOptions({
-          essays,
           goalAreas,
           listening: new Set([...recordings.keys(), ...unvoiced]),
           pace,
@@ -94,7 +100,7 @@ export async function loadAnytimeMockSetup(
           structure,
           typed,
           unpicked: readUnpickedChoices({ blueprint, picks }),
-        })
+        }).map((option) => withMockWritingAvailability({ option, picks, structure: notice }))
       : [],
     sizeSource: readMockSizeSource(blueprint),
     speaking: speaking !== null,
@@ -110,7 +116,7 @@ export function listMissingRecordings({
   option: Pick<MockOption, "kind" | "day">;
   setup: AnytimeMockSetup;
 }): string[] {
-  if (option.kind === "area" || setup.unvoiced.size === 0) {
+  if ((option.kind !== "full" && option.kind !== "half") || setup.unvoiced.size === 0) {
     return [];
   }
 

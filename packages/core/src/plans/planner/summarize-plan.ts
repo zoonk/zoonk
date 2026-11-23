@@ -4,7 +4,7 @@ import { listWonPhases } from "./phase-time";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
-import { type PlanGraph, type PlanPhase } from "./plan-state";
+import { type PlanGraph, type PlanPhase, type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 
 type PlanEstimate = { endDate: Date | null; remainingMinutes: number; totalMinutes: number };
@@ -113,14 +113,22 @@ function summarizeAfterExam(span: AfterExamSpan | null): PlanPhase | null {
   };
 }
 
+type WritingDay = NonNullable<PlanSettings["writingSchedule"]>[number];
+
+export function sumWriting(schedule: readonly WritingDay[]): number {
+  return schedule.reduce((sum, { minutes }) => sum + minutes, 0);
+}
+
 function summarizeExamPhases({
   afterExam,
   items,
   windows,
+  writingSchedule,
 }: {
   afterExam: AfterExamSpan | null;
   items: readonly PlannedItem[];
   windows: readonly ExamWindow[];
+  writingSchedule: readonly WritingDay[];
 }) {
   const after = summarizeAfterExam(afterExam);
 
@@ -129,7 +137,15 @@ function summarizeExamPhases({
       endDate: toIsoDate(window.endDate),
       kind: window.kind,
       milestone: null,
-      minutes: Math.round(sumMinutes(items.filter((item) => item.phase === index))),
+      minutes: Math.round(
+        sumMinutes(items.filter((item) => item.phase === index)) +
+          sumWriting(
+            writingSchedule.filter(
+              ({ date }) =>
+                date >= toIsoDate(window.startDate) && date <= toIsoDate(window.endDate),
+            ),
+          ),
+      ),
       name: "",
       startDate: toIsoDate(window.startDate),
     })),
@@ -146,6 +162,7 @@ export function summarizePlan({
   queue = [],
   scheduleStart,
   windows,
+  writingSchedule = [],
 }: {
   afterExam?: AfterExamSpan | null;
   challengesLeftOut?: ReadonlySet<number>;
@@ -155,19 +172,30 @@ export function summarizePlan({
   queue?: readonly QueueUnit[];
   scheduleStart: Date;
   windows: readonly ExamWindow[];
+  writingSchedule?: readonly WritingDay[];
 }): PlanOutline {
   const todo = items.filter((item) => item.status === "todo");
-  const ends = [getDates(items).at(-1), afterExam?.end].filter((date) => date !== undefined);
+  const lastWriting = writingSchedule.at(-1);
+
+  const ends = [
+    getDates(items).at(-1),
+    afterExam?.end,
+    lastWriting && new Date(lastWriting.date),
+  ].filter((date) => date !== undefined);
+
+  const start = toIsoDate(scheduleStart);
 
   return {
     estimate: {
       endDate: ends.toSorted((a, b) => a.getTime() - b.getTime()).at(-1) ?? null,
-      remainingMinutes: Math.round(sumMinutes(todo)),
-      totalMinutes: Math.round(sumMinutes(items)),
+      remainingMinutes: Math.round(
+        sumMinutes(todo) + sumWriting(writingSchedule.filter(({ date }) => date >= start)),
+      ),
+      totalMinutes: Math.round(sumMinutes(items) + sumWriting(writingSchedule)),
     },
     phases:
       windows.length > 0
-        ? summarizeExamPhases({ afterExam, items, windows })
+        ? summarizeExamPhases({ afterExam, items, windows, writingSchedule })
         : summarizeLearnPhases({ challengesLeftOut, graph, items, kept, scheduleStart }),
     skillLessons: countSkillLessons(queue),
   };

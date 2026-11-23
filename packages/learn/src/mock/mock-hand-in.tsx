@@ -50,20 +50,38 @@ function useQuestionsLeftOpen(): string {
   return total > essays ? t("Every question is answered.") : "";
 }
 
-function useLeftOpen(): string {
+/** A whole written answer is a question: "written" tells it apart only beside objective ones. */
+function useBlankWritten(): string {
   const t = useExtracted();
-  const { blankEssays } = useSectionCounts();
+  const { blankEssays, essays, total } = useSectionCounts();
+
+  if (blankEssays === 0) {
+    return "";
+  }
+
+  if (essays === total) {
+    return t({
+      description: "Before handing in a mock exam: how many of its questions are blank or flagged.",
+      message: "{count, plural, one {# question is blank.} other {# questions are blank.}}",
+      values: { count: blankEssays },
+    });
+  }
+
+  return t({
+    description:
+      "Before handing in a mock exam with objective and written questions: how many written answers are blank.",
+    message:
+      "{count, plural, one {The written question is blank.} other {# written questions are blank.}}",
+    values: { count: blankEssays },
+  });
+}
+
+function useLeftOpen(): string {
   const questions = useQuestionsLeftOpen();
+  const written = useBlankWritten();
   const space = useSentenceSpace();
 
-  const essays =
-    blankEssays > 0
-      ? t("{count, plural, one {The essay is blank.} other {# essays are blank.}}", {
-          count: blankEssays,
-        })
-      : "";
-
-  return [questions, essays].filter(Boolean).join(space);
+  return [questions, written].filter(Boolean).join(space);
 }
 
 export function MockHandInDialog({

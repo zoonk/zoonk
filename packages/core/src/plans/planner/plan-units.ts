@@ -54,6 +54,7 @@ export type QueueUnit = {
   reduced?: boolean;
   skillId: string | null;
   title: string;
+  teachingShare?: number;
 };
 
 /**

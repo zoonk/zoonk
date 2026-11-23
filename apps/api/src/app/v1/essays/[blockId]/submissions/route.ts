@@ -6,7 +6,7 @@ import { essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { submitEssay } from "@zoonk/core/exams/essays/submit";
 import { type NextRequest, NextResponse } from "next/server";
 
-async function postSubmission(
+async function postEssaySubmission(
   request: NextRequest,
   context: RouteContext<"/v1/essays/[blockId]/submissions">,
 ) {
@@ -16,11 +16,11 @@ async function postSubmission(
 
   const result = await submitEssay({ blockId: path.blockId, input: body });
 
-  if (result.status !== "graded") {
+  if (result.status !== "writingGraded") {
     return examError({ status: result.status });
   }
 
   return NextResponse.json(result.grade);
 }
 
-export const POST = withApiErrorBoundary(postSubmission);
+export const POST = withApiErrorBoundary(postEssaySubmission);

@@ -29,6 +29,7 @@ import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
+import com.zoonk.android.data.networkAvailable
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.shownLanguage
 import com.zoonk.android.data.shownLocale
@@ -171,6 +172,7 @@ class AppContainer private constructor(
     val api = ApiClients("${BuildConfig.API_BASE_URL}/v1/".toHttpUrl(), apiHttpClient { buildTypeSetup() })
     val images = PrivateImages(api.baseUrl, imageLoader(context, api.http))
     val drafts = DraftStore(File(context.filesDir, "drafts"), scope)
+    val networkAvailable = networkAvailable(context)
     private val integrity =
         BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
             .toLongOrNull()

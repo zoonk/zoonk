@@ -5,7 +5,8 @@ import { commandUsage } from "./help.ts";
 import { isRecord, parseJson } from "./http.ts";
 import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
 import { type OutputShape } from "./output.ts";
-import { parseOrder, parseWhereOptions, splitList } from "./query-options.ts";
+import { parseFields, parseOrder, parseWhereOptions, parseWholeNumber } from "./query-options.ts";
+import { writingRepairCommand } from "./writing-repair.ts";
 
 export type ApiRequest =
   | { method: "GET"; path: string }
@@ -13,13 +14,15 @@ export type ApiRequest =
 
 export type Command =
   | { name: "help" }
-  | { name: "login" }
+  | { name: "login"; writingRepair?: true }
   | { name: "logout" }
   | { name: "request"; note?: Note; request: ApiRequest; shape?: OutputShape };
 
 type RequestCommand = Extract<Command, { name: "request" }>;
 
 type Options = {
+  after?: string;
+  apply?: boolean;
   batch?: string;
   check?: boolean;
   fields?: string;
@@ -27,6 +30,7 @@ type Options = {
   offset?: string;
   order?: string;
   reason?: string;
+  "repair-writing"?: boolean;
   where?: string[];
 };
 
@@ -40,36 +44,7 @@ type CommandSpec = {
 
 export const WHOAMI_REQUEST: ApiRequest = { method: "GET", path: "/staff/me" };
 
-const WHOLE_NUMBER_PATTERN = /^\d+$/u;
 const LONGEST_COMMAND_WORDS = 3;
-
-function parseWholeNumber(name: OptionName, value: string | undefined) {
-  if (value === undefined) {
-    return;
-  }
-
-  const number = Number(value);
-
-  if (!WHOLE_NUMBER_PATTERN.test(value) || !Number.isSafeInteger(number)) {
-    throw usageError(`--${name} needs a whole number, not "${value}".`);
-  }
-
-  return number;
-}
-
-function parseFields(fields: string | undefined): OutputShape | undefined {
-  if (fields === undefined) {
-    return;
-  }
-
-  const names = splitList(fields);
-
-  if (names.length === 0) {
-    throw usageError(`--fields needs comma-separated field names, such as "id,status,createdAt".`);
-  }
-
-  return { fields: names, kind: "fields" };
-}
 
 function readText(path: string): string {
   try {
@@ -128,11 +103,25 @@ function post(path: string, body: Record<string, unknown>, shape?: OutputShape):
 }
 
 const COMMANDS = new Map<string, CommandSpec>([
-  ["login", { arguments: 0, build: () => ({ name: "login" }), options: [] }],
+  [
+    "login",
+    {
+      arguments: 0,
+      build: (_args, options) => ({
+        name: "login",
+        ...(options["repair-writing"] && { writingRepair: true as const }),
+      }),
+      options: ["repair-writing"],
+    },
+  ],
   ["logout", { arguments: 0, build: () => ({ name: "logout" }), options: [] }],
   [
     "whoami",
     { arguments: 0, build: () => ({ name: "request", request: WHOAMI_REQUEST }), options: [] },
+  ],
+  [
+    "staff repair-writing",
+    { arguments: 1, build: writingRepairCommand, options: ["after", "apply"] },
   ],
   [
     "staff models",
@@ -316,7 +305,9 @@ function parseCommandLine(argv: string[]) {
       allowPositionals: true,
       args: argv,
       options: {
+        after: { type: "string" },
         api: { type: "string" },
+        apply: { type: "boolean" },
         batch: { type: "string" },
         check: { type: "boolean" },
         fields: { type: "string" },
@@ -325,6 +316,7 @@ function parseCommandLine(argv: string[]) {
         offset: { type: "string" },
         order: { type: "string" },
         reason: { type: "string" },
+        "repair-writing": { type: "boolean" },
         where: { multiple: true, type: "string" },
       },
     });

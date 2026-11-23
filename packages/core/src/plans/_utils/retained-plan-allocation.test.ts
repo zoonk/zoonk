@@ -50,7 +50,27 @@ function setup() {
     position,
   }));
 
-  return { built, context: { items, phases: built.phases }, input };
+  const settings = parsePlanSettings({
+    ...input.settings,
+    writingSchedule: [
+      {
+        date: "2026-09-30",
+        minutes: 15,
+        tasks: [{ minutes: 25, taskKey: "essay", title: "Essay", unit: "answer" }],
+      },
+      { date: "2026-10-01", minutes: 10, tasks: [] },
+    ],
+  });
+
+  return {
+    built,
+    context: {
+      items,
+      phases: built.phases,
+      state: { goal: { dailyMinutes: 30, targetDate: null }, graph: input.graph, settings },
+    },
+    input,
+  };
 }
 
 describe("summary of an unchanged saved allocation", () => {
@@ -69,6 +89,10 @@ describe("summary of an unchanged saved allocation", () => {
     expect(summary.coverage?.coveredShare).toBe(0.5 / 3);
     expect(summary.coverage?.fits).toBe(false);
     expect(summary.endDate).toBe("2026-10-01");
+
+    expect(summary.totalMinutes).toBe(
+      Math.round(context.items.reduce((sum, item) => sum + item.minutes, 25)),
+    );
 
     expect(context).toStrictEqual(before);
   });

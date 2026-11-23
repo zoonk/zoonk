@@ -4,6 +4,7 @@ import { useExtracted } from "next-intl";
 import { type DayStep } from "../session/session-types";
 import { practisesTopics } from "../session/use-block-copy";
 import { useExtraLabel } from "../syllabus/use-extra-label";
+import { useWritingLine } from "../writing/writing-header";
 import { useTodayScreen } from "./today-context";
 
 /** The subject a lesson belongs to, or that the exam doesn't test it. */
@@ -26,8 +27,14 @@ export function useBlockSubject() {
  */
 export function useStepLabel({ includeSubject = true } = {}) {
   const t = useExtracted();
+  const writingLine = useWritingLine();
 
   return function stepLabel(block: DayStep): string | null {
+    // A refused start is the one thing to know before tapping it, even while lessons come first.
+    if (block.writingAvailability?.status === "tomorrow") {
+      return writingLine(block);
+    }
+
     if (block.waitReason) {
       return t("After today's lessons");
     }
@@ -49,6 +56,6 @@ export function useStepLabel({ includeSubject = true } = {}) {
       return t("Every topic");
     }
 
-    return includeSubject ? block.subject : null;
+    return writingLine(block) ?? (includeSubject ? block.subject : null);
   };
 }

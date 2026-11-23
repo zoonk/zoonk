@@ -224,6 +224,21 @@ class StudyOpenerTest {
         }
 
     @Test
+    fun openingAWrittenBlockStartsItSoItsEssayOpensPastTheStart() =
+        runTest {
+            val api = FakeStudyApi()
+            val essay = step(0, kind = StudyBlock.Kind.PRODUCE, screen = StudyBlock.Screen.ESSAY, lessonId = null)
+            api.openings = listOf(opening("essay", "blockId" to blockId(0).toString(), "sessionId" to SESSION.toString()))
+            api.writingStart = "wrun_1"
+
+            assertEquals(
+                MutationResult.Done(AppRoute.Essay(blockId(0).toString(), writing = "wrun_1")),
+                opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL),
+            )
+            assertEquals(listOf(blockId(0)), api.writingStarts)
+        }
+
+    @Test
     fun aMissionOpensItsBlockOnlyWhileFree() =
         runTest {
             val api = FakeStudyApi()

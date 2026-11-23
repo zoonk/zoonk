@@ -2565,6 +2565,11 @@ msgctxt "Jo0iJd"
 msgid "Writing practice"
 msgstr "小論文の練習"
 
+#: src/app/[lang]/essay/answers/[attemptId]/page.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "選んだ答え"
+
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"
 msgid "Build a plan for {course}"

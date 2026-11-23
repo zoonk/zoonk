@@ -432,6 +432,18 @@ private fun FieldContainer(
 
 private val FIELD_SHAPE = RoundedCornerShape(ZoonkRadius.lg)
 
+/**
+ * Main's writing editor: a long answer's field keeps its soft `input` line while focused, since its
+ * caret already shows where the learner is; more contrast still draws the ink ring.
+ */
+@Composable
+fun writingAreaColors(): TextFieldColors =
+    if (LocalMoreContrast.current) {
+        OutlinedTextFieldDefaults.colors()
+    } else {
+        OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.outline)
+    }
+
 /** Main's `h-11 px-3`: 44dp on one line of 24sp text. */
 private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
 

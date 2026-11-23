@@ -11,11 +11,13 @@ import {
   type GoalSkillNode,
   loadPlanEntries,
 } from "../../_utils/goal-skill-graph";
+import { loadWritingSkillIds } from "../../writing-skills";
 
 /** Excludes listening-only skills because a text test cannot justify skipping their lessons. */
 export type TestOutPlan = {
   items: (GoalPlanItem & { lessonId?: string | null })[];
   skills: Pick<GoalSkillNode, "areaId" | "id">[];
+  writtenSkillIds?: ReadonlySet<string>;
 };
 
 type SavedSource = GoalPlanSource | null | Promise<GoalPlanSource | null>;
@@ -79,10 +81,15 @@ export async function loadTestOutPlan(
   goalId: string,
   known: KnownFacts = {},
 ): Promise<TestOutPlan> {
-  const [plan, listening] = await Promise.all([
+  const [plan, listening, writtenSkillIds] = await Promise.all([
     known.plan ?? loadTestOutItems(goalId, known.source),
     loadTestOutListening(goalId, known),
+    known.goal && known.goal.kind !== "exam" ? new Set<string>() : loadWritingSkillIds(goalId),
   ]);
 
-  return { items: plan.items, skills: plan.skills.filter((skill) => !listening.has(skill.id)) };
+  return {
+    items: plan.items,
+    skills: plan.skills.filter((skill) => !listening.has(skill.id)),
+    writtenSkillIds,
+  };
 }

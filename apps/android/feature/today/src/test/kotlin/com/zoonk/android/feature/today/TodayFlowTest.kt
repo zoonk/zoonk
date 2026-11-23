@@ -52,6 +52,7 @@ import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.testing.captureRender
@@ -655,6 +656,11 @@ class TodayFlowTest {
             sessionId: UUID,
             timeZone: String,
         ) = Unit
+
+        override suspend fun startWriting(
+            session: AuthenticatedSession,
+            blockId: UUID,
+        ) = AppRoute.Essay(blockId.toString())
 
         override suspend fun summary(
             session: AuthenticatedSession,

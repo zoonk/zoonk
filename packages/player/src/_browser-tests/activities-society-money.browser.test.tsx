@@ -299,14 +299,14 @@ describe("money and society activities", () => {
     await atViewport({ height: 1100, width: 320 }, async () => {
       document.documentElement.style.fontSize = "200%";
       expect(getComputedStyle(document.documentElement).fontSize).toBe("32px");
-      const mapObservation = Promise.withResolvers<() => void>();
+      const mapObservation = Promise.withResolvers<boolean>();
 
       vi.stubGlobal(
         "ResizeObserver",
         class MapResizeObserver extends ResizeObserver {
           override observe(element: Element, options?: ResizeObserverOptions) {
             if (element.matches('[data-slot="map-frame"]')) {
-              mapObservation.resolve(() => super.observe(element, options));
+              mapObservation.resolve(true);
               return;
             }
 
@@ -320,11 +320,8 @@ describe("money and society activities", () => {
       });
 
       openActivity({ template: "mapExplorer" });
-      const observeMap = await mapObservation.promise;
-      const pump = page.getByRole("button", { name: "Broad Street pump" });
-      expect(pump.query()).toBeNull();
-      observeMap();
-      await expect.element(pump).toBeVisible();
+      await mapObservation.promise;
+      await expect.element(page.getByRole("button", { name: "Broad Street pump" })).toBeVisible();
 
       await expect
         .poll(

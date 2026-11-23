@@ -19,6 +19,31 @@ function sentRequest(argv: string[]) {
 }
 
 describe(parseInvocation, () => {
+  it("requests writing repair authority only on an explicit login", () => {
+    expect(parseInvocation(["login"]).command).toStrictEqual({ name: "login" });
+
+    expect(parseInvocation(["login", "--repair-writing"]).command).toStrictEqual({
+      name: "login",
+      writingRepair: true,
+    });
+  });
+
+  it("previews writing repair by default and sends the cursor when explicitly applying", () => {
+    expect(sentRequest(["staff", "repair-writing", "blueprints"])).toStrictEqual({
+      body: { apply: false, phase: "blueprints" },
+      method: "POST",
+      path: "/staff/writing-repair",
+    });
+
+    expect(
+      sentRequest(["staff", "repair-writing", "learners", "--apply", "--after", "cursor"]),
+    ).toStrictEqual({
+      body: { after: "cursor", apply: true, phase: "learners" },
+      method: "POST",
+      path: "/staff/writing-repair",
+    });
+  });
+
   it("turns list filters into the request body", () => {
     expect(
       sentRequest([

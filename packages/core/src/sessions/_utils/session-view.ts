@@ -29,6 +29,7 @@ export function toStudyBlockViews({
   oftenTestedSkillIds,
   preparing,
   subjects,
+  writingTasks,
 }: {
   answers: DayViewFieldsInput["answers"];
   blocks: readonly StudySessionBlock[];
@@ -36,19 +37,30 @@ export function toStudyBlockViews({
   oftenTestedSkillIds?: ReadonlySet<string>;
   preparing: ReadonlySet<number>;
   subjects?: ReadonlyMap<number, BlockSubject>;
+  writingTasks?: Parameters<typeof toDayBlockView>[0]["writingTasks"];
 }): StudyBlockView[] {
+  const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
   const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
+
+  const savedWritingTasks = new Map(
+    answers.flatMap(({ itemId, writingTask }) =>
+      itemId && writingTask !== undefined ? [[itemId, writingTask] as const] : [],
+    ),
+  );
 
   return inDayOrder(
     blocks.map((block) =>
       toStudyBlockView({
+        answeredAttemptIds,
         answeredItemIds,
         block,
         blockedTestOutChapters,
         blocks,
         oftenTestedSkillIds,
         preparing: preparing.has(block.position),
+        savedWritingTasks,
         ...subjects?.get(block.position),
+        writingTasks,
       }),
     ),
   );
@@ -126,6 +138,7 @@ export function toStudySessionView({
 }): StudySessionView {
   const { session } = input;
   const preparing = new Set(blocks.flatMap((block) => (block.preparing ? [block.position] : [])));
+  const next = getNextBlock(blocks);
 
   return withDayState(
     {
@@ -133,7 +146,8 @@ export function toStudySessionView({
       blocks,
       id: session.id,
       missions: input.missions,
-      nextBlockId: getNextBlock(blocks)?.id ?? null,
+      nextBlockId: next?.id ?? null,
+      nextPosition: next?.position ?? null,
       status: session.status,
     },
     session.endedAt,

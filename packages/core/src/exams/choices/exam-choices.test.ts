@@ -8,9 +8,8 @@ import {
   MODULES,
   PREMED,
 } from "./_test-utils/choice-blueprint";
-import { listChoiceGroups, listCountedSubjects } from "./choice-groups";
+import { findChosenOptions, listChoiceGroups, listCountedSubjects } from "./choice-groups";
 import {
-  findChosenOptions,
   findPartAreas,
   listUnchosenSubjects,
   readExamPicks,

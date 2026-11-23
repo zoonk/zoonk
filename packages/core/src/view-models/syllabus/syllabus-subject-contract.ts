@@ -216,5 +216,6 @@ export const syllabusSubjectSchema = z
     topicsStudied: countSchema
       .nullable()
       .meta({ description: "Topics `studied`; null when the plan doesn't map topics" }),
+    writtenPart: z.string().optional().describe("Written section name in writtenPractice"),
   })
   .meta({ id: "SyllabusSubject" });

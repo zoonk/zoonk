@@ -1,7 +1,9 @@
 import { type Page } from "@playwright/test";
+import { writtenAnswerSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { isJsonObject } from "@zoonk/utils/json";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
 import {
   answerMockQuestions,
@@ -52,9 +54,9 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.goto("/mock/new");
 
-    const exam = page.getByRole("radiogroup", { name: "The exam" });
-    await exam.getByText("The full exam", { exact: true }).click();
-    await expect(exam.getByRole("radio", { name: /^The full exam/u })).toBeChecked();
+    const exam = page.getByRole("radiogroup", { name: "Your exam has 2 tests" });
+    await exam.getByText("Both tests", { exact: true }).click();
+    await expect(exam.getByRole("radio", { name: /^Both tests/u })).toBeChecked();
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
@@ -64,14 +66,18 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await expect(page.getByText(/^Written part · Mathematics$/u)).toBeVisible();
 
-    await expect(
-      page.getByRole("heading", { level: 2, name: WRITTEN_ESSAY.question }),
-    ).toBeVisible();
+    await expect(page.getByRole("timer", { name: "Time left" })).toHaveText(
+      /^(?:30:00|29:[0-5]\d)$/u,
+    );
+
+    await expect(page.getByRole("heading", { level: 2, name: "Controle externo" })).toBeVisible();
+    await expect(page.getByText(WRITTEN_ESSAY.question)).toBeVisible();
 
     const answer = page.getByLabel("Your answer");
 
     await answer.fill(essayText);
-    await expect(page.getByText(/^\d+ words$/u)).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Not sure" }).click();
+    await expect(page.getByText(/^about \d+ of 30 lines$/u)).toBeVisible();
 
     const resumeGrading = await failEssayGrading(page);
 
@@ -94,9 +100,10 @@ test.describe("Mocks whenever the learner wants", () => {
           where: { answer: { equals: { text: essayText } }, mockExamId: mockId },
         }),
       )
-      .not.toBeNull();
+      .toMatchObject({ flagged: true });
 
-    await continueToStep(page, "Your answer");
+    await continueToStep(page, "Controle externo");
+    await expect(page.getByText("Not sure", { exact: true })).toBeVisible();
     await expect(page.getByText("That didn't go through. Try again in a moment.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Grade it" })).toBeEnabled();
     await resumeGrading();
@@ -105,28 +112,51 @@ test.describe("Mocks whenever the learner wants", () => {
       where: { examBlueprintId: goal.examBlueprintId, format: "essay" },
     });
 
+    const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id: mockId } });
+    const conditions = sitting.conditions as { writingAdmissionId?: string };
+
     await prisma.attempt.create({
       data: {
         answer: {
+          conditions: {
+            admissionId: conditions.writingAdmissionId ?? "",
+            estimatedLines: 4,
+            origin: "mock",
+            timed: true,
+            version: "firstDraft",
+          },
+          examBlueprintId: essay.examBlueprintId,
           grade: {
             criteria: [
               {
                 comment: "Clear thesis.",
-                example: null,
-                id: "criterion-1",
-                maxScore: 10,
+                id: "thesis",
+                level: "strong",
                 name: "Thesis",
                 quote: null,
-                score: 7,
               },
             ],
-            enemInterventionElements: null,
-            nextStep: { criterionId: "criterion-1", text: "Back the thesis with the law." },
-            range: { high: 8, low: 6 },
-            total: { maxScore: 10, score: 7 },
-            zeroReason: null,
+            errors: [],
+            ignoredFrom: null,
+            kind: "levels",
+            nextStep: {
+              criterionId: "thesis",
+              example: null,
+              quote: null,
+              text: "Back the thesis with the law.",
+            },
+            progress: null,
+          },
+          itemId: essay.id,
+          mockPrompt: {
+            area: "Mathematics",
+            context: WRITTEN_ESSAY.context,
+            question: WRITTEN_ESSAY.question,
           },
           text: essayText,
+          writing: writtenAnswerSchema.shape.writing.parse(
+            isJsonObject(essay.content) ? essay.content.writing : undefined,
+          ),
         },
         durationMs: 60_000,
         hour: 12,
@@ -139,13 +169,14 @@ test.describe("Mocks whenever the learner wants", () => {
       },
     });
 
+    await prisma.item.delete({ where: { id: essay.id } });
     await page.reload();
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1/u })).toBeVisible();
-    await continueToStep(page, /^Your answer/u);
+    await continueToStep(page, "Thesis");
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: /^Your answer\s*6–8$/u }),
-    ).toBeVisible();
+    await expect(page.getByText("Controle externo", { exact: true })).toBeVisible();
+    await expect(page.getByText("Not sure", { exact: true })).toBeVisible();
+    await expect(page.getByText("Back the thesis with the law.")).toBeVisible();
   });
 
   test("keeps the mock action bar in place, with no empty row, when an answer fails to save", async ({

@@ -3,6 +3,7 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { loadWritingSkillIds } from "../../writing-skills";
 import { getTestQuestionStatuses, listUnaskedAreas } from "../focus-test-progress";
 import { type TestSubject } from "../focus-test-subjects";
 import { getKnownSubjects, getOwnLevel } from "../placement-contract";
@@ -126,8 +127,12 @@ export async function pickSessionPlacementItems({
   test?: SessionTest;
   userId: string;
 }): Promise<string[]> {
-  const listening = listeningSkillIds ?? (await loadListeningSkillIds(goal.id));
-  const skills = planSkills.filter((skill) => !listening.has(skill.id));
+  const [listening, written] = await Promise.all([
+    listeningSkillIds ?? loadListeningSkillIds(goal.id),
+    loadWritingSkillIds(goal.id),
+  ]);
+
+  const skills = planSkills.filter((skill) => !listening.has(skill.id) && !written.has(skill.id));
   const skillIds = skills.map((skill) => skill.id);
 
   const [{ evidence, placementAnswers, seenItemIds, testSkills }, bankItems, blueprint] =

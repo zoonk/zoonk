@@ -45,6 +45,17 @@ class DraftHandle<T> internal constructor(
         drafts.write(key, null)
     }
 
+    suspend fun replace(
+        expected: T?,
+        next: T?,
+    ) {
+        val drafts = drafts() ?: return
+        drafts.flush(key)
+        drafts.write(key, next?.let { json.encodeToJsonElement(serializer, it) }) { entry ->
+            entry?.let(::decode) == expected
+        }
+    }
+
     suspend fun flush() {
         drafts()?.flush(key)
     }

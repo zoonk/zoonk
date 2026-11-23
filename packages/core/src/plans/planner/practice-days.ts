@@ -41,7 +41,9 @@ export function addPracticeDays({
 
   const practice = days.flatMap((day): ScheduledEvent[] => {
     const { phase } = day.shape;
-    const minutes = day.shape.minutes - (used.get(day.date.getTime()) ?? 0);
+
+    const minutes =
+      day.shape.minutes - (day.shape.writtenMinutes ?? 0) - (used.get(day.date.getTime()) ?? 0);
 
     if (!isSpareDay({ day, lastLessonDate }) || taken.has(day.date.getTime()) || minutes <= 0) {
       return [];

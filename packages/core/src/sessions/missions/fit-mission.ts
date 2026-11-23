@@ -33,7 +33,17 @@ export function fitMission({
     Math.max(0, facts.dailyMinutes - facts.plannedMinutes) -
     chosen.reduce((sum, entry) => sum + outsideMinutes(facts, entry), 0);
 
-  if (minutes(facts, pick) <= remaining && outsideMinutes(facts, pick) <= outsideRemaining) {
+  const wholeAnswer =
+    pick.kind === "essay" &&
+    chosen.length === 0 &&
+    getMissionBlocks({ blocks: facts.blocks, pick }).some(
+      (block) => block.payload.writing?.unit === "answer",
+    );
+
+  if (
+    (wholeAnswer || minutes(facts, pick) <= remaining) &&
+    outsideMinutes(facts, pick) <= outsideRemaining
+  ) {
     return pick;
   }
 

@@ -3,7 +3,9 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { type ExamPicks, NO_EXAM_PICKS, toChosenStructure } from "../../exams/choices/exam-choices";
 import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { toMockStructure } from "../../exams/mocks/mock-structure";
+import { getWritingSkillIds } from "../../learner/writing-skills";
 import {
+  type ExamStructure,
   examEditionSchema,
   examStructureSchema,
   topicFrequencySchema,
@@ -25,6 +27,8 @@ type ExamFacts = {
   mockMinutes: number;
   shortMockMinutes: number | null;
   topicLevels: TopicLevel[];
+  writtenSkillIds?: string[];
+  writingNotice?: { classTest: boolean; picks: ExamPicks; structure: ExamStructure };
 };
 
 type NoticeBlueprint = Pick<ExamBlueprint, "edition" | "ownerId" | "structure" | "topicFrequency">;
@@ -36,6 +40,10 @@ function readNoticeBlueprint(goal: Pick<Goal, "examBlueprintId">) {
         where: { id: goal.examBlueprintId },
       })
     : null;
+}
+
+function readQuestionCount(blueprint: NoticeBlueprint | null) {
+  return examEditionSchema.safeParse(blueprint?.edition).data?.questionCount ?? null;
 }
 
 async function loadNoticeFacts({
@@ -51,15 +59,13 @@ async function loadNoticeFacts({
 }): Promise<ExamFacts> {
   const blueprint = known === undefined ? await readNoticeBlueprint(goal) : known;
 
-  const stored = examStructureSchema.safeParse(blueprint?.structure).data;
+  const stored = examStructureSchema.safeParse(blueprint?.structure).data ?? null;
 
-  const parsed = stored ? toChosenStructure({ picks, structure: stored }) : null;
+  const parsed = stored && toChosenStructure({ picks, structure: stored });
   const ownerId = blueprint?.ownerId ?? null;
-  const noticeQuestions = examEditionSchema.safeParse(blueprint?.edition).data?.questionCount;
+  const noticeQuestions = readQuestionCount(blueprint);
 
-  const structure =
-    parsed &&
-    toMockStructure({ noticeQuestions: noticeQuestions ?? null, ownerId, structure: parsed });
+  const structure = parsed && toMockStructure({ noticeQuestions, ownerId, structure: parsed });
 
   const topicFrequency = topicFrequencySchema.safeParse(blueprint?.topicFrequency).data ?? [];
 
@@ -72,6 +78,8 @@ async function loadNoticeFacts({
     mockClocks: listMockClocks(structure),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
+    writtenSkillIds: [...getWritingSkillIds({ graph, structure: stored })],
+    ...(stored && { writingNotice: { classTest: Boolean(ownerId), picks, structure: stored } }),
     topicLevels: parsed ? listTopicLevels({ structure: parsed, topicFrequency }) : [],
   };
 }

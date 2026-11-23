@@ -7,6 +7,7 @@ import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
 import { type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { listLeftOutChoices } from "../mock-unpicked";
+import { outlineWrittenPrompts, planWrittenTest } from "../written-test-plan";
 import { isScheduledPaperComplete } from "./mock-complete";
 import { type OwnedMock } from "./owned-mock";
 import { loadWeeklyOutline, planWeeklyMock } from "./plan-weekly-mock";
@@ -46,12 +47,32 @@ function paperInputs({ goal, payload, sessionDate, structure, userId }: Schedule
   };
 }
 
-export async function previewMockConditions(owned: ScheduledMock): Promise<MockConditions> {
-  const { outline } = await loadWeeklyOutline(paperInputs(owned));
+/** The plan's written test sits only the written questions, so it draws nothing from the bank. */
+function planScheduledWrittenTest({ payload, structure }: ScheduledMock) {
+  const day = payload.checkpoint?.mockIdentity?.day ?? null;
 
+  return payload.checkpoint?.written
+    ? planWrittenTest({ day, essays: outlineWrittenPrompts({ day, structure }), structure })
+    : null;
+}
+
+async function outlineScheduledPaper(owned: ScheduledMock): Promise<MockPlan> {
+  const writtenTest = planScheduledWrittenTest(owned);
+
+  if (writtenTest) {
+    return writtenTest;
+  }
+
+  const { outline } = await loadWeeklyOutline(paperInputs(owned));
+  return outline;
+}
+
+export async function previewMockConditions(owned: ScheduledMock): Promise<MockConditions> {
+  const outline = await outlineScheduledPaper(owned);
   return toPlannedConditions({ ...owned, bank: { candidates: [], outline }, plan: outline });
 }
 
+/** `hasQuestions` covers the bank's questions and recordings; the caller checks the written prompts. */
 export async function buildMockConditions({
   owned,
   client,
@@ -61,11 +82,24 @@ export async function buildMockConditions({
   client: TransactionClient;
   graph: unknown;
 }) {
+  const writtenTest = planScheduledWrittenTest(owned);
+
+  if (writtenTest) {
+    return {
+      conditions: toPlannedConditions({
+        ...owned,
+        bank: { candidates: [], outline: writtenTest },
+        plan: writtenTest,
+      }),
+      hasQuestions: true,
+    };
+  }
+
   const bank = await planWeeklyMock({ ...paperInputs(owned), client, graph });
 
   return {
-    complete: isScheduledPaperComplete(bank),
     conditions: toPlannedConditions({ ...owned, bank, plan: bank }),
+    hasQuestions: isScheduledPaperComplete(bank, true),
   };
 }
 
@@ -73,34 +107,36 @@ export function toPlannedConditions({
   bank,
   blueprint,
   goal,
+  payload,
   plan,
   structure,
   unpicked,
 }: Pick<OwnedMock, "blueprint" | "goal" | "structure" | "unpicked"> & {
   bank: Pick<Awaited<ReturnType<typeof planWeeklyMock>>, "candidates" | "outline">;
+  payload?: OwnedMock["payload"];
   plan: MockPlan;
 }): MockConditions {
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
+  const written = payload?.checkpoint?.written === true;
 
   return {
     day: plan.day,
     examQuestions: countPlannedQuestions(bank.outline),
     fullLength: plan.fullLength,
     ...markPlannedItems({ candidates: bank.candidates, plan, structure }),
+    ...(written && { pacing: "official" as const }),
     partialCredit: getPartialCredit(structure),
     purpose: "planned",
     reused: plan.reused,
     scoring: getMockScoring({ blueprint, goal, structure }),
     sections: plan.sections,
-    shape: null,
+    shape: written ? { area: null, day: plan.day, kind: "written" } : null,
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
-    unpicked: listLeftOutChoices({
-      day: plan.day,
-      kind: plan.fullLength ? "full" : "half",
-      unpicked,
-    }),
+    unpicked: written
+      ? []
+      : listLeftOutChoices({ day: plan.day, kind: plan.fullLength ? "full" : "half", unpicked }),
     wrongPenalty: getWrongPenalty(structure),
   };
 }

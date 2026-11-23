@@ -4,6 +4,7 @@ import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { getItemKey } from "../planner/plan-items";
 import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
+import { sumWriting } from "../planner/summarize-plan";
 import { type PlanContext } from "./plan-context";
 import { readSelectedItemFacts } from "./selected-item-contract";
 
@@ -12,7 +13,7 @@ export function retainPlanAllocation({
   context,
 }: {
   built: BuiltPlan;
-  context: Pick<PlanContext, "items" | "phases">;
+  context: Pick<PlanContext, "items" | "phases" | "state">;
 }): BuiltPlan | null {
   const rows = context.items.map((item) => ({
     facts: readSelectedItemFacts(item.facts),
@@ -52,11 +53,15 @@ export function retainPlanAllocation({
     return [{ days, end: fromIsoDate(facts.teachingEnd ?? toIsoDate(item.scheduledFor)), key }];
   });
 
+  const writingSchedule = context.state.settings.writingSchedule;
+
   return {
     ...built,
     estimate: {
       ...built.estimate,
-      totalMinutes: Math.round(items.reduce((total, item) => total + item.minutes, 0)),
+      totalMinutes: Math.round(
+        items.reduce((total, item) => total + item.minutes, 0) + sumWriting(writingSchedule ?? []),
+      ),
     },
     items,
     lessonDayMinutes: new Map(
@@ -70,6 +75,7 @@ export function retainPlanAllocation({
     ),
     phases: context.phases,
     teachingEnds: new Map(intervals.map(({ end, key }) => [key, end])),
+    writingSchedule,
   };
 }
 
@@ -80,7 +86,7 @@ export function summarizeRetainedPlan({
   input,
 }: {
   built: BuiltPlan;
-  context: Pick<PlanContext, "items" | "phases">;
+  context: Pick<PlanContext, "items" | "phases" | "state">;
   examSubjects: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
 }) {

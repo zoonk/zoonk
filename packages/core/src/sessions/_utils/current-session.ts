@@ -1,15 +1,17 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { AnyNull, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
+import { readBlockPayload } from "../block-payload";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /** Crossing midnight must not interrupt an active study day; the new day waits until the learner has been away. */
 const CARRY_OVER_MS = 60 * 60 * 1000;
 
 type SessionTimes = Pick<StudySessionRow, "endedAt" | "localDate" | "startedAt" | "status"> & {
-  blocks: readonly Pick<StudySessionRow["blocks"][number], "completedAt" | "startedAt">[];
+  blocks: readonly (Pick<StudySessionRow["blocks"][number], "completedAt" | "startedAt"> &
+    Partial<Pick<StudySessionRow["blocks"][number], "kind" | "payload" | "status">>)[];
 };
 
 function getLastActivity(session: SessionTimes): number {
@@ -56,7 +58,33 @@ function isCarriedOver({
   );
 }
 
-/** Includes yesterday's still-active session, never older sessions. */
+export function hasContinuingAnswer(session: SessionTimes): boolean {
+  return session.blocks.some((block) => {
+    if (block.kind !== "produce" || block.status !== "active" || block.payload === undefined) {
+      return false;
+    }
+
+    const { extra, writing } = readBlockPayload({ payload: block.payload });
+    return !extra && writing?.unit === "answer" && writing.admissionId !== null;
+  });
+}
+
+export const CONTINUING_ANSWER_SESSION_WHERE = {
+  blocks: {
+    some: {
+      AND: [
+        { payload: { equals: "answer", path: ["writing", "unit"] } },
+        { payload: { equals: false, path: ["extra"] } },
+        { payload: { not: AnyNull, path: ["writing", "admissionId"] } },
+      ],
+      kind: "produce" as const,
+      status: "active" as const,
+    },
+  },
+  goal: { kind: "exam" as const },
+};
+
+/** Includes yesterday within the carry window and any earlier day with a continuing answer. */
 export function isCurrentSession({
   now,
   session,
@@ -69,7 +97,10 @@ export function isCurrentSession({
   const today = getDateInTimeZone({ date: now, timeZone });
   const yesterday = new Date(today.getTime() - MS_PER_DAY);
 
-  if (session.localDate.getTime() === today.getTime()) {
+  if (
+    session.localDate.getTime() === today.getTime() ||
+    (session.localDate < today && hasContinuingAnswer(session))
+  ) {
     return true;
   }
 
@@ -96,22 +127,6 @@ export function isRunStartDay({
   );
 }
 
-/** Today's started session takes precedence; otherwise a still-active yesterday may remain current. */
-export function pickCurrentDay<Session extends SessionTimes>({
-  now,
-  previous,
-  timeZone,
-  today,
-}: {
-  now: Date;
-  previous: Session | null;
-  timeZone: string;
-  today: Session | null;
-}): Session | null {
-  const carried = previous && isCarriedOver({ now, session: previous, timeZone }) ? previous : null;
-  return carried && !today?.startedAt ? carried : today;
-}
-
 export async function findCarriedOverSession({
   goalId,
   now,
@@ -125,12 +140,23 @@ export async function findCarriedOverSession({
 }): Promise<StudySessionRow | null> {
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  const previous = await prisma.studySession.findUnique({
+  const yesterday = new Date(today.getTime() - MS_PER_DAY);
+
+  const candidates = await prisma.studySession.findMany({
     include: STUDY_SESSION_INCLUDE,
-    where: { userGoalDate: { goalId, localDate: new Date(today.getTime() - MS_PER_DAY), userId } },
+    orderBy: { localDate: "desc" },
+    take: 2,
+    where: {
+      OR: [
+        { localDate: yesterday },
+        { ...CONTINUING_ANSWER_SESSION_WHERE, localDate: { lt: yesterday } },
+      ],
+      goalId,
+      userId,
+    },
   });
 
-  return previous && isCarriedOver({ now, session: previous, timeZone }) ? previous : null;
+  return candidates.find((session) => isCurrentSession({ now, session, timeZone })) ?? null;
 }
 
 export async function hasStartedDay({

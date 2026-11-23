@@ -8,8 +8,8 @@ import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
-import { EssayGradeCard, NextStepComment } from "../essay/essay-feedback";
 import { useWritingName } from "../essay/essay-labels";
+import { WritingResultView } from "../writing/writing-result";
 import { useMockScreen } from "./mock-context";
 import { UnsureFact } from "./mock-labels";
 
@@ -32,20 +32,16 @@ function PendingState() {
     );
   }
 
-  const line = {
-    failed: t("That didn't go through. Try again in a moment."),
-    idle: t("It hasn't been graded yet."),
-    limitReached: t("You've used today's essay grades. Try again tomorrow."),
-  }[status];
-
   return (
     <>
-      <StepDetail role={status === "idle" ? undefined : "alert"}>{line}</StepDetail>
-      {status !== "limitReached" && (
-        <Button onClick={() => void runner.gradeEssays()} size="sm" variant="outline">
-          {t("Grade it")}
-        </Button>
-      )}
+      <StepDetail role={status === "idle" ? undefined : "alert"}>
+        {status === "idle"
+          ? t("It hasn't been graded yet.")
+          : t("That didn't go through. Try again in a moment.")}
+      </StepDetail>
+      <Button onClick={() => void runner.gradeEssays()} size="sm" variant="outline">
+        {t("Grade it")}
+      </Button>
     </>
   );
 }
@@ -54,15 +50,15 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
   const t = useExtracted();
   const { runner } = useMockScreen();
   const writingName = useWritingName();
-  const tooShort = essay.grade?.zeroReason === "tooShort";
 
   return (
     <StepCard>
       <StepHeader>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <StepTitle>{writingName(runner.view.essayRubric ?? "custom")}</StepTitle>
+        <StepTitle>
+          {essay.writing?.title ?? writingName(runner.view.essayRubric ?? "custom")}
+        </StepTitle>
         {essay.status === "blank" && <StepDetail>{t("You left it blank.")}</StepDetail>}
-        {tooShort && <StepDetail>{t("Too short to grade")}</StepDetail>}
         {essay.unsure && <UnsureFact className="text-sm" />}
       </StepHeader>
       {essay.status === "pending" && <PendingState />}
@@ -73,7 +69,7 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
 export function useEssayItems(): StepsItem[] {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  const { essayRubric, essays } = runner.view;
+  const { essays } = runner.view;
 
   return essays.flatMap((essay, index): StepsItem[] => {
     const eyebrow =
@@ -87,22 +83,23 @@ export function useEssayItems(): StepsItem[] {
     const id = `essay-${essay.itemId}`;
     const { grade } = essay;
 
-    if (!grade || grade.zeroReason === "tooShort") {
+    if (!grade || !essay.writing) {
       return [{ content: <UngradedEssayStep essay={essay} eyebrow={eyebrow} />, id }];
     }
 
     return [
       {
         content: (
-          <EssayGradeCard
+          <WritingResultView
+            eyebrow={essay.writing.title}
             grade={grade}
-            mark={essay.unsure && <UnsureFact className="text-sm" />}
-            rubric={essayRubric ?? "custom"}
+            note={essay.unsure && <UnsureFact className="text-sm" />}
+            prompt={essay.writing}
+            text={essay.text ?? ""}
           />
         ),
         id,
       },
-      { content: <NextStepComment grade={grade} />, id: `${id}-next` },
     ];
   });
 }

@@ -43,7 +43,7 @@ export const mockSittingPaths = {
         "409": {
           ...conflictResponse,
           description:
-            "The mock isn't running, the time ran out, or a forward-only section keeps that answer (MOCK_ANSWER_LOCKED)",
+            "The mock isn't running, the time ran out, a forward-only section keeps that answer (MOCK_ANSWER_LOCKED), or a newer edit is already saved (MOCK_ANSWER_STALE)",
         },
         "422": { ...unprocessableEntityResponse, description: "Not in the running section" },
       },

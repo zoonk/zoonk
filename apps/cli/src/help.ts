@@ -1,7 +1,7 @@
 export const HELP = `Usage: pnpm zoonk <command> [--api <url>]
 
 Account
-  login                                    Log in through your browser (once per machine)
+  login [--repair-writing]                 Log in through your browser. Request permission to apply writing repairs with --repair-writing.
   logout                                   End this machine's login
   whoami                                   Show who is logged in
 
@@ -20,6 +20,11 @@ Staff (production data)
       --offset <n>
       --fields <field>,<field>...          Print only these fields of each record
   staff count <model> [--where ...]        Number of records matching every --where
+
+Written exam preparation repair
+  staff repair-writing <blueprints|learners> [--after <cursor>] [--apply]
+                                           Preview one page. --apply starts notice rereads
+                                           or reopens unsupported writing claims.
 
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
   staff fixes propose [--check] <file.json>  Propose the fix or batch in the file, and print its review

@@ -139,8 +139,10 @@ extension AppRoute {
       ChallengeScreen(planItemId: planItemId, sessionId: sessionId)
     case .checkpoint(let blockId, let sessionId):
       CheckpointScreen(blockId: blockId, sessionId: sessionId)
-    case .essay(let blockId):
-      EssayScreen(blockId: blockId)
+    case .essay(let blockId, let start):
+      EssayScreen(blockId: blockId, start: start)
+    case .writingAnswer(let attemptId):
+      WritingAnswerScreen(attemptId: attemptId)
     case .mock(let blockId, let sessionId):
       MockScreen(blockId: blockId, sessionId: sessionId)
     case .mindMap(let goalId, let chapterId):

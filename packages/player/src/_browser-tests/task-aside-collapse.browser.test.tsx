@@ -1,6 +1,6 @@
-import { EssayScreen } from "@zoonk/learn/essay";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { SessionSummary } from "@zoonk/learn/session/summary";
+import { WritingScreen } from "@zoonk/learn/writing";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { SIDEBAR_STATE } from "@zoonk/ui/components/sidebar";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -49,17 +49,35 @@ const LEARN_ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
 function renderEssay() {
   return render(
     <LearnProvider adapters={LEARN_ADAPTERS}>
-      <EssayScreen
-        actions={{ finish: vi.fn(async () => true), submit: vi.fn() }}
+      <WritingScreen
+        actions={{
+          finish: vi.fn(async () => true),
+          saveDraft: vi.fn(async () => ({ status: "failed" as const })),
+          start: vi.fn(async () => ({ status: "failed" as const })),
+          submit: vi.fn(async () => null),
+        }}
         essay={{
           blockId: "essay-block",
           context: SUPPORTING_TEXT,
+          draft: null,
           drafts: [],
           gradesLeft: 3,
+          pacing: { minutes: 70, source: "estimated" },
           question: "Should cities charge cars to enter the center?",
-          rubric: "custom",
+          rubric: "levels",
           sessionId: "session",
           status: "pending",
+          writing: {
+            charactersPerLine: 55,
+            criteria: [{ id: "a1", name: "Argument", points: null }],
+            keySource: "practiceKey",
+            lines: 30,
+            minimumWords: 30,
+            points: null,
+            taskKey: "short",
+            title: "Charging cars in city centers",
+            unit: "answer",
+          },
         }}
         hrefs={{ exit: "/today" }}
       />
@@ -186,13 +204,14 @@ describe("collapsing a task's sidebar", () => {
 
   it("keeps the choice on every task, each showing what its sidebar held in the column", async () => {
     const essay = renderEssay();
-    const essayAside = page.getByRole("complementary", { name: "Supporting texts" });
+    await page.getByRole("button", { exact: true, name: "Write" }).click();
+    const essayAside = page.getByRole("complementary", { name: "Question" });
     await expect.element(essayAside).toBeVisible();
 
     await page.getByRole("button", { name: "Collapse sidebar" }).click();
 
     await expect.poll(() => essayAside.query()).toBeNull();
-    await expect.element(page.getByRole("heading", { name: "Supporting texts" })).toBeVisible();
+    await expect.element(page.getByRole("heading", { name: "What to write" })).toBeVisible();
     essay.unmount();
 
     playQuestion();

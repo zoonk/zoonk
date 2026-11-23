@@ -15,6 +15,7 @@ import {
   toLessonBlock,
 } from "./session-lessons";
 import { holdUnwrittenTime } from "./unwritten-time";
+import { addWritingDrill } from "./writing-drills";
 
 /** The minutes the day's unwritten lessons hold once the lessons before them in the plan take theirs. */
 export function getWritingMinutes({
@@ -143,8 +144,21 @@ export function fillRemainingLessonTime({
     sum,
   });
 
-  return {
-    blocks: orderDayBlocks({ blocks: filled, items: input.planItems ?? [] }),
-    plannedMinutes,
-  };
+  const ordered = orderDayBlocks({ blocks: filled, items: input.planItems ?? [] });
+
+  const withDrills = ordered.flatMap((block) =>
+    addWritingDrill({
+      block,
+      lesson:
+        block.kind === "learn"
+          ? fill.find(
+              (lesson) =>
+                lesson.lessonId === block.lessonId &&
+                (lesson.planItemKey ?? null) === block.payload.planItemKey,
+            )
+          : undefined,
+    }),
+  );
+
+  return { blocks: withDrills, plannedMinutes };
 }
