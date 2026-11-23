@@ -5,9 +5,6 @@ import { BaseBuilder, createBaseBuilderConfig } from "@workflow/builders";
 /** Where `@workflow/vitest` looks for the bundle by default. */
 const OUT_DIR = join(import.meta.dirname, ".workflow-vitest");
 
-/** Where `@workflow/vitest` keeps runs by default, made here once so workers don't race to make it. */
-const DATA_DIR = join(import.meta.dirname, ".workflow-data");
-
 /**
  * Workspace packages stay imports so steps share the test's copy: its `vi.mock` reaches them, and an
  * inlined `@zoonk/db`'s `sql` fragments would fail the test's Prisma `instanceof Sql`. Inlined, they
@@ -45,5 +42,5 @@ class ApiWorkflowTestBuilder extends BaseBuilder {
 }
 
 export default async function setup() {
-  await Promise.all([new ApiWorkflowTestBuilder().build(), mkdir(DATA_DIR, { recursive: true })]);
+  await new ApiWorkflowTestBuilder().build();
 }

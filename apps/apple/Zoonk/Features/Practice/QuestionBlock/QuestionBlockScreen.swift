@@ -361,7 +361,7 @@ struct QuestionBlockView: View {
         retry: { Task { await run.finish() } })
     case .finishing, .finished:
       EmptyView()
-    case .feedback(_, let feedback):
+    case .feedback:
       PracticeActionRow {
         PracticeMainButton(title: continueTitle, icon: .forward) { Task { await run.next() } }
           .practiceFocus(.next)

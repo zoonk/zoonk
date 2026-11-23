@@ -45,8 +45,6 @@ export type SaveExamBlueprintInput = {
 
 export type NoticeReading = { problems: ReadingProblem[]; read: boolean };
 
-const UNREAD: NoticeReading = { problems: [], read: false };
-
 export type SavedExamBlueprint = {
   blueprint: ExamBlueprint;
   changes: BlueprintChange[];
@@ -293,7 +291,7 @@ export async function findNoticeReading({
   const edition = blueprint ? examEditionSchema.safeParse(blueprint.edition).data : undefined;
 
   if (!edition || !source || edition.sourceHash !== source.contentHash) {
-    return UNREAD;
+    return { problems: [], read: false };
   }
 
   return { problems: edition.check?.problems ?? [], read: true };

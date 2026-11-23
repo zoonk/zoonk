@@ -15,7 +15,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -96,6 +95,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.limitWords
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.writingAreaColors
@@ -642,7 +642,7 @@ internal fun WriteScreen(
     if (questionOpen) {
         ModalBottomSheet(
             onDismissRequest = { questionOpen = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            sheetState = rememberExpandedBottomSheetState(),
         ) {
             SheetColumn {
                 Text(essay.writing.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)

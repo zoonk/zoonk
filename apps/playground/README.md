@@ -7,7 +7,7 @@ A local tool for developers with two halves:
 
 ## Running the app
 
-`pnpm dev` from the repository root starts it with the other apps, at the playground's Portless address (`http://playground.<project>.localhost:1355`). To run it alone:
+`pnpm dev` from the repository root starts it with the other apps and prints the Playground URL. To run it alone:
 
 ```bash
 pnpm --filter playground dev:direct

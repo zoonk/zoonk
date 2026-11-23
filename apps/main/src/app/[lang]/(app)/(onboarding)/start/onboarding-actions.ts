@@ -18,8 +18,6 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
-import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
-import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
@@ -263,12 +261,6 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
 
   const revealed = await readRevealedPlan(goalId);
   return revealed ? { ...revealed, status: "ready" } : { status: "failed" };
-}
-
-/** Null when there's no ready deck to show: the card is optional. */
-export async function readWarmUpAction(warmUpId: string): Promise<WarmUpDeck | null> {
-  const result = await getWarmUp(warmUpId);
-  return result.status === "ready" ? result.deck : null;
 }
 
 export async function joinWaitlistAction(input: unknown): Promise<WaitlistOutcome> {

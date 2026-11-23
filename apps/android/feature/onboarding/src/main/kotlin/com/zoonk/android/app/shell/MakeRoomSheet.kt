@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +36,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.goalSpokenName
 import com.zoonk.android.ui.components.iconButtonEdge
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.scaffold.CloseButton
 import com.zoonk.api.models.LearnerSummaryGoal
 import java.util.UUID
@@ -57,7 +57,7 @@ internal fun MakeRoomSheet(
     onSubscribe: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberExpandedBottomSheetState()) {
         MakeRoomContent(waitingName, active, pausing, failed, onPause, onSubscribe, onDismiss)
     }
 }

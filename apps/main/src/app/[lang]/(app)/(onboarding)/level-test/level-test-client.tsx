@@ -1,8 +1,8 @@
 "use client";
 
 import { getLanguagePlanTestActions } from "@/app/[lang]/(app)/(onboarding)/start/language-plan-test-client-actions";
-import { readWarmUpAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { useRouter } from "@/i18n/navigation";
+import { readWarmUp } from "@/lib/goals/read-warm-up";
 import { LanguagePlanTestFlow } from "@zoonk/learn/language/level-test-flow";
 import { OnboardingFrame } from "@zoonk/learn/onboarding/frame";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -47,7 +47,7 @@ export function LevelTestClient({
           },
         })}
         onDone={leave}
-        readWarmUp={readWarmUpAction}
+        readWarmUp={readWarmUp}
         targetLanguage={targetLanguage}
         testOutFirst={testOutFirst}
         testOutLevel={testOutLevel}

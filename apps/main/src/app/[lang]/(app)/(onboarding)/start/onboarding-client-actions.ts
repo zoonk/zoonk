@@ -6,6 +6,7 @@ import { getGoalFocusTestHref } from "@/lib/focus-test/focus-test-href";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
+import { readWarmUp } from "@/lib/goals/read-warm-up";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import {
   type CreateGoalsOutcome,
@@ -27,7 +28,6 @@ import {
   getPlacementMinutesAction,
   getPlanAction,
   joinWaitlistAction,
-  readWarmUpAction,
   startOverAction,
 } from "./onboarding-actions";
 import { changeOnboardingAimAction, readFirstLessonAction } from "./onboarding-aim-actions";
@@ -80,7 +80,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   markPlanRevealed: markPlanRevealedAction,
   placementTest: getPlacementTestActions,
   readFirstLesson: readFirstLessonAction,
-  readWarmUp: readWarmUpAction,
+  readWarmUp,
   startOver: startOverAction,
   understanding: WEB_UNDERSTANDING_ACTIONS,
 };

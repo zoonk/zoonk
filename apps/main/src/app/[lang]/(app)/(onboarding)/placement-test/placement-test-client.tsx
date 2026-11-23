@@ -1,8 +1,8 @@
 "use client";
 
-import { readWarmUpAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { getPlacementTestActions } from "@/app/[lang]/(app)/(onboarding)/start/placement-test-client-actions";
 import { useRouter } from "@/i18n/navigation";
+import { readWarmUp } from "@/lib/goals/read-warm-up";
 import { OnboardingFrame } from "@zoonk/learn/onboarding/frame";
 import { FocusTestSkeleton } from "@zoonk/learn/onboarding/skeletons";
 import { PlacementTestFlow } from "@zoonk/learn/placement-test";
@@ -49,7 +49,7 @@ export function PlacementTestClient({
       <PlacementTestFlow
         actions={getPlacementTestActions(goalId)}
         onDone={leave}
-        readWarmUp={readWarmUpAction}
+        readWarmUp={readWarmUp}
         subject={subject}
         wholeCourseMinutes={wholeCourseMinutes}
       />

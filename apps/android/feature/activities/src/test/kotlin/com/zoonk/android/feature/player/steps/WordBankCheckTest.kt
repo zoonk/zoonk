@@ -8,17 +8,19 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.WindowInfo
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -35,6 +37,7 @@ class WordBankCheckTest {
     @Test
     fun crossingToWideKeepsWhatTheLearnerDidInTheFeedback() {
         var width by mutableIntStateOf(PHONE)
+        lateinit var inputMode: InputModeManager
         val window =
             object : WindowInfo {
                 override val isWindowFocused = true
@@ -43,6 +46,7 @@ class WordBankCheckTest {
             }
 
         rule.setContent {
+            inputMode = LocalInputModeManager.current
             CompositionLocalProvider(
                 LocalDensity provides Density(1f),
                 LocalWindowInfo provides window,
@@ -57,7 +61,8 @@ class WordBankCheckTest {
         }
 
         rule.onNodeWithText("Not now").performClick()
-        rule.onNodeWithText("Explain").performSemanticsAction(SemanticsActions.RequestFocus)
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        rule.onNodeWithText("Explain").requestFocus().assertIsFocused()
         assertTrue(rule.onNodeWithText("Explain").getBoundsInRoot().bottom <= rule.onNodeWithText("Bank").getBoundsInRoot().top)
 
         width = WIDE

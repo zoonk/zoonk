@@ -155,9 +155,13 @@ struct ActivityGuessScaleView: View {
             comment: "VoiceOver: the slider the learner guesses with")
         }
         .accessibilityValue(
-          guess.map {
-            Text(verbatim: format($0))
-              + (guessUnitLabel(unit).map { Text(verbatim: ". ") + $0 } ?? Text(verbatim: ""))
+          guess.map { value in
+            let number = Text(verbatim: format(value))
+            return guessUnitLabel(unit).map {
+              Text(
+                "\(number). \($0)", tableName: "Activities",
+                comment: "VoiceOver: the learner's guess, then the scale's unit")
+            } ?? number
           }
             ?? Text(
               "No guess yet", tableName: "Activities",

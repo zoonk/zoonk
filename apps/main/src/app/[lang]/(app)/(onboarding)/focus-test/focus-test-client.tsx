@@ -2,9 +2,9 @@
 
 import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { getFocusTestActions } from "@/app/[lang]/(app)/(onboarding)/start/focus-test-client-actions";
-import { readWarmUpAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { useRouter } from "@/i18n/navigation";
 import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
+import { readWarmUp } from "@/lib/goals/read-warm-up";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { FocusTestFlow } from "@zoonk/learn/focus-test";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
@@ -44,7 +44,7 @@ export function FocusTestClient({
             setSessionQuestions: (sessionQuestions) =>
               updateFocusTestAction(goalId, { sessionQuestions, timeZone: getLocalTimeZone() }),
           }}
-          readWarmUp={readWarmUpAction}
+          readWarmUp={readWarmUp}
           run={null}
           started={started}
           subject={subject}
