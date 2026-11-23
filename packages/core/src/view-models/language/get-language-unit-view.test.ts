@@ -131,7 +131,7 @@ describe("a language unit's page", () => {
       {
         done: true,
         lessonId: done?.id,
-        minutes: 6,
+        minutes: 5,
         state: "done",
         title: done?.title,
         written: true,
@@ -139,7 +139,7 @@ describe("a language unit's page", () => {
       {
         done: false,
         lessonId: next?.id,
-        minutes: 4,
+        minutes: 3,
         state: "next",
         title: next?.title,
         written: false,

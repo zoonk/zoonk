@@ -57,28 +57,12 @@ final class BuddyStoreTests: XCTestCase {
     }
     XCTAssertNil(session.authenticatedSession)
   }
-
-  func testOlderEarlierQuestionsAppend() async {
-    let api = BuddyAPIStub()
-    api.pages = [
-      nil: EarlierQuestionsPage(questions: [.fixture("new")], nextCursor: "older"),
-      "older": EarlierQuestionsPage(questions: [.fixture("old")], nextCursor: nil),
-    ]
-    let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
-    await store.earlierQuestions.load()
-
-    await store.loadOlderQuestions()
-
-    XCTAssertEqual(store.earlierQuestions.value?.questions.map(\.id), ["new", "old"])
-    XCTAssertNil(store.earlierQuestions.value?.nextCursor)
-  }
 }
 
 private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
   var shownStatus = BuddyStatus.fixture
   var saveFailure: Error?
   var answerFailure: Error?
-  var pages: [String?: EarlierQuestionsPage] = [:]
 
   func status(timeZone: String, token: String) async throws -> BuddyStatus {
     shownStatus
@@ -88,10 +72,6 @@ private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
     if let saveFailure {
       throw saveFailure
     }
-  }
-
-  func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage {
-    pages[cursor] ?? EarlierQuestionsPage(questions: [], nextCursor: nil)
   }
 
   func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
@@ -124,14 +104,6 @@ extension MemoryInsight {
   fileprivate static let fixture = MemoryInsight(
     createdAt: .now, goalId: nil, id: "insight", kind: .tip, message: "Review before bed.",
     planChange: nil, status: .pending, studyTime: nil)
-}
-
-extension Components.Schemas.EarlierQuestion {
-  fileprivate static func fixture(_ id: String) -> Self {
-    .init(
-      answer: "Answer", askedAt: .now, courseTitle: "Course", id: id, lessonTitle: nil,
-      question: "Question")
-  }
 }
 
 extension CurrentAccount {

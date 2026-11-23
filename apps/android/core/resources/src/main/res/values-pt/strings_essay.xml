@@ -63,6 +63,8 @@
   "essay_nothing_lost": "44e0df5b809d93f08cdc493f681888dd37bd7442bf0e365a3be98343b2b08de8",
   "essay_of_max": "b9f17fa7315a26e4005f8c5e64d003ab34a7ac8b81b69fd4ba7a859544946605",
   "essay_part_minimum": "7509b1c0802cfe7d51842f414f69ab204980ff22f138a603784dcda547dda98c",
+  "essay_part_minimum_points": "2cbd8e1af5224a7b259a9cd3768c6eec84dd00479a42c44c4db4ea50b613194a",
+  "essay_part_minimum_total": "509da3491a9b1d503a04c1c0baa488820f4feead397a761c939bf6f3dc579e06",
   "essay_past_limit": "ad5b49fb13ec2288298f3603f6e4c40933e946dd904f0178536f34460ba5c0f6",
   "essay_past_line": "46036a4202e45fcfe307029fe7c9a870066bdb5a4e88cb404c77e6673acd1fd2",
   "essay_points": "66b3867ff3c1e706f810f92383b922e8a961bb938f1aa9bd2cd7ec75f704f7c9",
@@ -233,6 +235,8 @@
     <string name="essay_more_tomorrow">Amanhã você terá mais.</string>
     <string name="essay_left_for_tomorrow">Para amanhã</string>
     <string name="essay_part_minimum">Mínimo para passar na prova discursiva: %1$s dos pontos</string>
+    <string name="essay_part_minimum_points">Pontuação mínima para passar na prova discursiva: %1$s pontos no total</string>
+    <string name="essay_part_minimum_total">Mínimo para passar na prova discursiva: %1$s de %2$s pontos no total</string>
     <string name="essay_content">Conteúdo</string>
     <string name="essay_language_errors">Erros de linguagem</string>
     <plurals name="essay_errors">

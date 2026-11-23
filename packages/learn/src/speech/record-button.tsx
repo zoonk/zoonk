@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { useEffect } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { formatClock } from "../_utils/clock";
 
@@ -17,6 +18,7 @@ export function RecordButton({
   elapsedMs,
   onStart,
   onStop,
+  preparation,
   recording,
   size,
 }: Pick<React.ComponentProps<typeof EnterButton>, "size"> & {
@@ -27,9 +29,28 @@ export function RecordButton({
   elapsedMs: number;
   onStart: () => void;
   onStop: () => void;
+  preparation: { cancelPreparation: () => void; prepare: () => void };
   recording: boolean;
 }) {
   const t = useExtracted();
+  const { cancelPreparation, prepare } = preparation;
+
+  useEffect(() => {
+    function cancelOnSecondPointer(event: PointerEvent) {
+      if (!event.isPrimary) {
+        cancelPreparation();
+      }
+    }
+
+    globalThis.addEventListener("pointerdown", cancelOnSecondPointer, true);
+    globalThis.addEventListener("blur", cancelPreparation);
+
+    return () => {
+      globalThis.removeEventListener("pointerdown", cancelOnSecondPointer, true);
+      globalThis.removeEventListener("blur", cancelPreparation);
+      cancelPreparation();
+    };
+  }, [cancelPreparation]);
 
   return (
     <EnterButton
@@ -38,7 +59,28 @@ export function RecordButton({
       className={className}
       data-slot="record-button"
       disabled={disabled}
+      onBlur={cancelPreparation}
       onClick={recording ? onStop : onStart}
+      onContextMenu={cancelPreparation}
+      onPointerCancel={cancelPreparation}
+      onPointerDown={(event) => {
+        if (!busy && !disabled && !recording && event.isPrimary && event.button === 0) {
+          prepare();
+        }
+      }}
+      onPointerLeave={(event) => {
+        if (event.buttons !== 0) {
+          cancelPreparation();
+        }
+      }}
+      onPointerUp={(event) => {
+        // Touch implicitly captures the pointer, even when the finger lifts outside the button.
+        if (
+          !event.currentTarget.contains(document.elementFromPoint(event.clientX, event.clientY))
+        ) {
+          cancelPreparation();
+        }
+      }}
       size={size}
     >
       {recording

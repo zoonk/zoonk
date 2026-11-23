@@ -1376,12 +1376,6 @@ msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and 
 msgstr "Merhaba! Ben {name}, yapay zekâ destekli ders arkadaşın. Ne öğrenmek istediğini söyle, planını hazırlayayım."
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "ijwVvk"
-msgid "Earlier questions"
-msgstr "Önceki sorular"
-
-#: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
@@ -7458,6 +7452,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil."
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "Dersi aç"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Yarın tekrar çözebilirsin"
@@ -7466,11 +7465,6 @@ msgstr "Yarın tekrar çözebilirsin"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Bu konuda alıştırma yap"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "Dersi aç"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
@@ -12655,6 +12649,14 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Kaydet"
 
+#: src/speech/record-note.tsx
+#: src/today/today-block-row.tsx
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "Hazırlıyoruz…"
+
 #. “Stop” is the label of the button that ends the recording.
 #: src/speech/record-note.tsx
 msgctxt "CzQFwa"
@@ -13085,13 +13087,6 @@ msgstr ", atlandı"
 msgctxt "PFPoFb"
 msgid ", counts toward a mission"
 msgstr ", bir görevde ilerleme sağlar"
-
-#: src/today/today-block-row.tsx
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "2LhxfA"
-msgid "Getting ready…"
-msgstr "Hazırlıyoruz…"
 
 #. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
 #: src/today/today-block-row.tsx
@@ -13875,6 +13870,16 @@ msgstr "Tüm ölçütler tamamlandı."
 msgctxt "HiVJjN"
 msgid "For example: {example}"
 msgstr "Örneğin: {example}"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "Yazılı sınavı geçmek için gereken minimum toplam puan: {minimum} puan"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "2Elj6c"
+msgid "Minimum to pass the written test: {minimum} of {max} points in total"
+msgstr "Yazılı sınavı geçmek için toplam {max} puan üzerinden en az {minimum} puan alman gerekir"
 
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"

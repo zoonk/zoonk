@@ -4,6 +4,7 @@ import {
   mistakePracticeInputSchema,
 } from "@zoonk/core/mistakes/contract";
 import {
+  mistakeLessonSchema,
   mistakeListQuerySchema,
   mistakeListResponseSchema,
   mistakePracticeCompletionSchema,
@@ -106,6 +107,26 @@ export const mistakePaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Answer a mistake practice question",
+      tags: ["Mistakes"],
+    },
+  },
+  "/me/mistakes/{mistakeId}/lesson": {
+    post: {
+      description:
+        "Opens the lesson where the current learner made this mistake, or a teaching lesson on the same skill. Prefers a lesson the learner finished, then one already written. If no accessible lesson exists, creates a lesson for the mistake. Another learner's mistake returns 404.",
+      operationId: "openMistakeLesson",
+      requestParams: { path: mistakePathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: mistakeLessonSchema } },
+          description: "The lesson to open",
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Open a mistake's lesson",
       tags: ["Mistakes"],
     },
   },

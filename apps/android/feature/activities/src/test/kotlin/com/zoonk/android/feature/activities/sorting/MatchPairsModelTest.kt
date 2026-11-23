@@ -1,10 +1,8 @@
 package com.zoonk.android.feature.activities.sorting
 
 import com.zoonk.android.feature.activities.assignmentAnswer
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27Fields
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27FieldsDistractorsInner
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27FieldsDistractorsInner.Side
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27FieldsPairsInner
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -12,77 +10,37 @@ import org.junit.Test
 /** Main's `match-pairs-columns.test.ts` and `match-pairs-progress.test.ts`; the layout is what main's returns. */
 class MatchPairsModelTest {
     private val fields =
-        PlayableLibraryStepAnyOfContentOneOf27Fields(
-            distractors =
-                listOf(
-                    PlayableLibraryStepAnyOfContentOneOf27FieldsDistractorsInner(Side.RIGHT, "embarrassed", "Embarrassed is avergonzado."),
-                    PlayableLibraryStepAnyOfContentOneOf27FieldsDistractorsInner(Side.LEFT, "carpeta", "Carpeta means folder."),
-                ),
-            pairs =
-                listOf(
-                    PlayableLibraryStepAnyOfContentOneOf27FieldsPairsInner("a", "embarazada", "pregnant"),
-                    PlayableLibraryStepAnyOfContentOneOf27FieldsPairsInner("b", "éxito", "success"),
-                    PlayableLibraryStepAnyOfContentOneOf27FieldsPairsInner("c", "librería", "bookstore", "A library is biblioteca."),
-                ),
+        ApiJson.decodeFromString<PlayableLibraryStepAnyOfContentOneOf27Fields>(
+            """
+            {
+              "distractors": [
+                {"side":"left","text":"carpeta","why":"Carpeta means folder."},
+                {"side":"right","text":"embarrassed","why":"Embarrassed is avergonzado."}
+              ],
+              "pairs": [
+                {"id":"a","left":"embarazada","right":"pregnant"},
+                {"id":"b","left":"éxito","right":"success"},
+                {"id":"c","left":"librería","right":"bookstore"}
+              ]
+            }
+            """.trimIndent(),
         )
     private val columns = arrangeMatchColumns(fields)
 
-    private fun card(
-        cards: List<MatchCard>,
-        text: String,
-    ) = cards.first { it.text == text }
-
-    private fun card(
-        id: String,
-        isTrap: Boolean = false,
-    ) = MatchCard(id, isTrap, id, null)
+    private fun card(id: String) = MatchCard(id, id, null)
 
     @Test
-    fun laysOutBothColumnsAsMainDoesWithNoPairSideBySide() {
-        assertEquals(listOf("left-trap-0", "c", "a", "b"), columns.first.map { it.id })
-        assertEquals(listOf("a", "b", "right-trap-0", "c"), columns.second.map { it.id })
+    fun laysOutOnlyRealPairsFromAnOlderLessonWithNoPairSideBySide() {
+        assertEquals(listOf("c", "a", "b"), columns.first.map { it.id })
+        assertEquals(listOf("b", "c", "a"), columns.second.map { it.id })
         assertEquals(columns, arrangeMatchColumns(fields))
     }
 
     @Test
-    fun solvedRowsPutEachPairSideBySideInTheLeftOrderAndEveryTrapAlone() {
-        val rows = solvedRows(columns.first, columns.second).map { (left, right) -> left?.id to right?.id }
+    fun solvedRowsPutEachPairSideBySideInTheLeftOrder() {
+        val rows = solvedRows(columns.first, columns.second).map { (left, right) -> left.id to right.id }
 
-        assertEquals(
-            listOf("left-trap-0" to null, "c" to "c", "a" to "a", "b" to "b", null to "right-trap-0"),
-            rows,
-        )
-    }
-
-    @Test
-    fun namesTheTrapWithItsOwnReasonOnEitherSide() {
-        val (left, right) = columns
-        assertEquals(
-            "Embarrassed is avergonzado." to card(right, "embarrassed"),
-            explainMismatch(card(left, "embarazada"), card(right, "embarrassed")),
-        )
-        assertEquals("Carpeta means folder." to card(left, "carpeta"), explainMismatch(card(left, "carpeta"), card(right, "bookstore")))
-    }
-
-    @Test
-    fun explainsAMixUpOfTwoPairsWithThePairsReasonIfItHasOne() {
-        val (left, right) = columns
-        assertEquals("A library is biblioteca." to null, explainMismatch(card(left, "librería"), card(right, "success")))
-        assertEquals(null to null, explainMismatch(card(left, "éxito"), card(right, "pregnant")))
-    }
-
-    @Test
-    fun keepsEachPairsFirstTryAndLocksInMatches() {
-        val missed = MatchProgress().recordTry(card("a"), card("right-trap-0", isTrap = true))
-        val matched = missed.recordTry(card("a"), card("a"))
-
-        assertEquals(MatchProgress(mapOf("a" to "right-trap-0"), emptyList(), listOf("right-trap-0")), missed)
-        assertEquals(MatchProgress(mapOf("a" to "right-trap-0"), listOf("a"), listOf("right-trap-0")), matched)
-    }
-
-    @Test
-    fun marksALeftTrapThatCaughtTheLearnerWithoutCountingAFirstTry() {
-        assertEquals(MatchProgress(traps = listOf("left-trap-0")), MatchProgress().recordTry(card("left-trap-0", isTrap = true), card("a")))
+        assertEquals(listOf("c" to "c", "a" to "a", "b" to "b"), rows)
     }
 
     @Test

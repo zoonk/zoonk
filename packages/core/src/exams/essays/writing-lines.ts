@@ -1,7 +1,8 @@
 export const WRITING_LINE_BREAK = /\r\n|[\r\n\u2028\u2029]/u;
 const GRAPHEMES = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
-export const WRITING_CHARACTERS_PER_LINE = 55;
+// Median of 38 published handwritten answers from CACD 2024–2025 and Inep’s 2020 booklet.
+export const WRITING_CHARACTERS_PER_LINE = 87;
 
 export function countWritingLines({
   charactersPerLine,

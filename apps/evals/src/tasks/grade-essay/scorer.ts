@@ -3,8 +3,8 @@ import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
 import { createWritingQuoteLookup } from "@zoonk/core/exams/essays/writing-feedback";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { type GradeWritingOutput } from "./task";
-import { type GradeWritingExpected, type GradeWritingInput } from "./test-cases";
 
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
@@ -62,7 +62,7 @@ function compareErrors({
   output: GradeWritingOutput;
   text: string;
 }) {
-  const real = spansOf(text, expected.languageErrors);
+  const real = spansOf(text, expected.languageErrors ?? []);
   const traps = spansOf(text, expected.traps ?? []);
   const reported = output.result.errors.map((error) => ({ ...error, span: changedSpan(error) }));
   const matched = reported.map((error) => real.filter((span) => overlaps(error.span, [span])));
@@ -79,9 +79,13 @@ function compareErrors({
 
 function errorChecks({
   errors,
+  expected,
+  reportedCount,
   text,
 }: {
   errors: ReturnType<typeof compareErrors>;
+  expected: GradeWritingExpected;
+  reportedCount: number;
   text: string;
 }): Check[] {
   const { missed, real, trapped, wrong } = errors;
@@ -95,12 +99,27 @@ function errorChecks({
   const recall = `Found ${real.length - missed.length}/${real.length} keyed error occurrences.`;
 
   return [
-    {
-      detail:
-        wrong.length > 0 ? `Unkeyed corrections: ${describe(wrong)}.` : "No unkeyed corrections.",
-      name: "false-errors",
-      passed: wrong.length === 0,
-    },
+    ...(expected.languageErrors
+      ? [
+          {
+            detail:
+              wrong.length > 0
+                ? `Unkeyed corrections: ${describe(wrong)}.`
+                : "No unkeyed corrections.",
+            name: "false-errors",
+            passed: wrong.length === 0,
+          },
+        ]
+      : []),
+    ...(expected.officialErrorCount === undefined
+      ? []
+      : [
+          {
+            detail: `Found ${reportedCount} errors against the board's ${expected.officialErrorCount}.`,
+            name: "error-count",
+            passed: reportedCount === expected.officialErrorCount,
+          },
+        ]),
     {
       detail:
         trapped.length > 0
@@ -183,7 +202,11 @@ function creditChecks({
   const value = (chosen: Iterable<number>) =>
     [...chosen].reduce((sum, index) => sum + (input.basis.aspects[index]?.points ?? 0), 0);
 
-  const truth = { high: value([...earned, ...uncertain]), low: value(earned) };
+  const truth = {
+    high: expected.officialContent ?? value([...earned, ...uncertain]),
+    low: expected.officialContent ?? value(earned),
+  };
+
   const predicted = value(credited);
   const tolerance = input.basis.points * CONTENT_TOLERANCE;
 
@@ -459,14 +482,20 @@ function assessWritingGrade({
   const { result } = output;
   const text = input.text.slice(0, result.ignoredFrom ?? input.text.length);
   const errors = compareErrors({ expected, output, text });
-  const truth = expectedScore({ errors: errors.real.length, expected, input });
+
+  const truth = expectedScore({
+    errors: expected.officialErrorCount ?? errors.real.length,
+    expected,
+    input,
+  });
+
   const predicted = result.kind === "points" ? result.total : null;
   const pass = comparePassSide({ expected, predicted, truth });
   const range = truth && scoreCoverage({ predicted, truth });
   const zero = zeroCheck({ expected, input, output });
 
   const checks = [
-    ...errorChecks({ errors, text }),
+    ...errorChecks({ errors, expected, reportedCount: result.errors.length, text }),
     ...zero,
     ...creditChecks({ expected, input, output, text }),
     ...feedbackChecks({ expected, output }),

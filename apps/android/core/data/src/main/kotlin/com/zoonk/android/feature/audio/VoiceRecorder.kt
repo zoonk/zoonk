@@ -47,6 +47,8 @@ class VoiceRecorder(
     sealed interface Status {
         data object Idle : Status
 
+        data object Acquiring : Status
+
         /** [startedAt] is on [SystemClock.elapsedRealtime]. */
         data class Recording(
             val startedAt: Long,
@@ -68,6 +70,12 @@ class VoiceRecorder(
 
     val hasPermission: Boolean
         get() = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+
+    fun beginPermissionRequest(): Boolean = status.compareAndSet(Status.Idle, Status.Acquiring)
+
+    fun endPermissionRequest() {
+        status.compareAndSet(Status.Acquiring, Status.Idle)
+    }
 
     /** False without the microphone permission, or when the microphone couldn't start. */
     fun start(onRecorded: (VoiceRecording) -> Unit): Boolean {
@@ -110,6 +118,7 @@ class VoiceRecorder(
     }
 
     fun cancel() {
+        endPermissionRequest()
         finish(deliver = false)
     }
 

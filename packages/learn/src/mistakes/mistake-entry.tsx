@@ -1,7 +1,7 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   CircleDashedIcon,
@@ -16,11 +16,13 @@ import { useExtracted } from "next-intl";
 import { AnswerPair } from "../_components/answer-pair";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
+import { StepOpenFailed } from "../_components/step-open-failed";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatMomentDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
+import { useSessionAction } from "../session/use-session-action";
 import { MistakeStimulus } from "./mistake-stimulus";
 import { type MistakeEntry } from "./mistakes-notebook";
 import { useCauseLabel } from "./use-cause-label";
@@ -73,18 +75,39 @@ export function getMistakeEntryLinks({
   };
 }
 
+function OpenMistakeLessonButton({
+  action,
+  edge,
+}: {
+  action: () => Promise<boolean>;
+  edge?: "start";
+}) {
+  const t = useExtracted();
+  const { failed, isPending, run } = useSessionAction({ action });
+
+  return (
+    <form action={() => void run()} className="contents">
+      <Button busy={isPending} edge={edge} size="sm" type="submit" variant="ghost">
+        {t("Open the lesson")}
+      </Button>
+      {failed && <StepOpenFailed className="w-full" />}
+    </form>
+  );
+}
+
 function MistakeEntryActions({
   links,
   availableTomorrow,
+  openLesson,
 }: {
   links: MistakeEntryLinks;
   availableTomorrow: boolean;
+  openLesson: () => Promise<boolean>;
 }) {
   const t = useExtracted();
 
-  if (!links.practiceSkill && !links.lesson && !availableTomorrow) {
-    return null;
-  }
+  // Alone on its line, its words start on the column's edge like the text above.
+  const edge = links.practiceSkill || availableTomorrow ? undefined : "start";
 
   return (
     <div className="flex flex-wrap items-center gap-2 pt-1" data-slot="mistake-entry-actions">
@@ -102,20 +125,17 @@ function MistakeEntryActions({
         </LearnLink>
       )}
 
-      {links.lesson && (
+      {links.lesson ? (
         <LearnLink
-          className={buttonVariants({
-            // Alone on its line, its words start on the column's edge like the text above.
-            edge: links.practiceSkill || availableTomorrow ? undefined : "start",
-            size: "sm",
-            variant: "ghost",
-          })}
+          className={buttonVariants({ edge, size: "sm", variant: "ghost" })}
           href={links.lesson}
           // The lesson may still be unwritten (it writes itself once opened), as in lesson lists.
           prefetch="auto"
         >
-          {t("Open the lesson")}
+          <BusyContent>{t("Open the lesson")}</BusyContent>
         </LearnLink>
+      ) : (
+        <OpenMistakeLessonButton action={openLesson} edge={edge} />
       )}
     </div>
   );
@@ -125,12 +145,14 @@ export function MistakeEntryCard({
   continued = false,
   links,
   mistake,
+  openLesson,
   tomorrowOnPage = false,
   trueFalseLabels,
 }: {
   continued?: boolean;
   links: MistakeEntryLinks;
   mistake: MistakeEntry;
+  openLesson: (mistakeId: string) => Promise<boolean>;
   /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
   tomorrowOnPage?: boolean;
   trueFalseLabels: TrueFalseLabels;
@@ -185,6 +207,7 @@ export function MistakeEntryCard({
       <MistakeEntryActions
         availableTomorrow={mistake.practiceAvailableTomorrow && !tomorrowOnPage}
         links={links}
+        openLesson={() => openLesson(mistake.id)}
       />
     </li>
   );

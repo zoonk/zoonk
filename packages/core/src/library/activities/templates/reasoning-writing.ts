@@ -14,7 +14,6 @@ import { duplicateIssues, evaluateOrNull, isClose, issue } from "./_utils/templa
 const GROUPS_TARGET = 4;
 const ITEMS_TARGET = 10;
 const PAIRS_TARGET = 6;
-const DISTRACTORS_TARGET = 3;
 const CANDIDATES_TARGET = 4;
 const STEPS_TARGET = 6;
 
@@ -59,6 +58,7 @@ export const categorizeTemplate = defineActivityTemplate({
 
 const matchPairsFields = z
   .object({
+    // Shipped players require this list; generated clients also decode cards cached from older servers.
     distractors: z
       .array(
         z
@@ -69,7 +69,9 @@ const matchPairsFields = z
           })
           .strict(),
       )
-      .describe(aimForItems(DISTRACTORS_TARGET)),
+      .overwrite(() => [])
+      .max(0)
+      .default([]),
     pairs: uniqueIdsSchema(
       z
         .object({
@@ -87,7 +89,7 @@ const matchPairsFields = z
 export const matchPairsTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up. A distractor's why shows the moment it catches the learner, so it teaches: what that card really is or means, and what it gets mixed up with (“Embarrassed is avergonzada. Embarazada looks like it but means pregnant.”), never only that it looks alike.",
+    "Match each left item to its one right partner, such as a word and its meaning. Every card belongs to exactly one pair. Fills: the pairs and a why for each likely mix-up.",
   expected: (fields) => ({
     kind: "assignment",
     pairs: Object.fromEntries(fields.pairs.map((pair) => [pair.id, pair.id])),
@@ -97,18 +99,12 @@ export const matchPairsTemplate = defineActivityTemplate({
   needsData: false,
   verify: (fields) => [
     ...duplicateIssues(
-      [
-        ...fields.pairs.map((pair) => pair.left),
-        ...fields.distractors.filter((item) => item.side === "left").map((item) => item.text),
-      ],
+      fields.pairs.map((pair) => pair.left),
       "fields.pairs",
       "Left item",
     ),
     ...duplicateIssues(
-      [
-        ...fields.pairs.map((pair) => pair.right),
-        ...fields.distractors.filter((item) => item.side === "right").map((item) => item.text),
-      ],
+      fields.pairs.map((pair) => pair.right),
       "fields.pairs",
       "Right item",
     ),

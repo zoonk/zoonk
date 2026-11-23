@@ -7,6 +7,7 @@ import {
   getLibraryChapterCacheTag,
   getLibraryLessonCacheTag,
 } from "../../cache/tags";
+import { findOutlineTotals } from "../../courses/_utils/course-outline-totals";
 
 /** startChapterId begins Build my plan at the played chapter; null lets normal level/placement choose from the course beginning. */
 export type LessonFit = {
@@ -33,15 +34,12 @@ async function findHomeCourse({
 
   cacheTag(getCourseCacheTag(courseId));
 
-  const [course, lessons, first, placed] = await Promise.all([
+  const [course, totals, first, placed] = await Promise.all([
     prisma.course.findFirst({
       select: { _count: { select: { courseChapters: true } }, id: true, title: true },
       where: { id: courseId, isPublished: true, visibility: "public" },
     }),
-    prisma.chapterLesson.findMany({
-      select: { lesson: { select: { estimatedMinutes: true } } },
-      where: { chapter: { courses: { some: { courseId } } } },
-    }),
+    findOutlineTotals([courseId]),
     prisma.courseChapter.findFirst({
       orderBy: [{ level: "asc" }, { position: "asc" }],
       where: { courseId },
@@ -55,7 +53,7 @@ async function findHomeCourse({
     ? {
         chapterCount: course._count.courseChapters,
         id: course.id,
-        minutes: lessons.reduce((sum, item) => sum + item.lesson.estimatedMinutes, 0),
+        minutes: totals.get(courseId)?.estimatedMinutes ?? 0,
         startChapterId: startsAtChapter ? chapterId : null,
         title: course.title,
       }

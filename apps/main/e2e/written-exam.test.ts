@@ -102,7 +102,7 @@ test.describe("Written exam practice", () => {
       ).toBeVisible();
 
       await expect(
-        page.getByText("Minimum to pass the written test: 50% of the points"),
+        page.getByText("Minimum to pass the written test: 50 of 100 points in total"),
       ).toBeVisible();
 
       await expect(page.getByText("17–19", { exact: true })).toBeVisible();

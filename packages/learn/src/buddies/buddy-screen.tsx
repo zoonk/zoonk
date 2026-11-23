@@ -13,14 +13,7 @@ import {
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
-import {
-  CalendarDaysIcon,
-  EllipsisIcon,
-  GlassesIcon,
-  HistoryIcon,
-  PencilIcon,
-  SmileIcon,
-} from "lucide-react";
+import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, PencilIcon, SmileIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   createContext,
@@ -51,7 +44,7 @@ import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 import { BuddyToday } from "./buddy-today";
 import { type LearnBuddy } from "./use-buddy-name";
 
-export { BuddyDaySkeleton } from "./buddy-day";
+export { type BuddyDayHrefs, BuddyDaySkeleton } from "./buddy-day";
 export { BUDDY_COLUMN_CLASS } from "./buddy-header";
 export { BuddyGoalStart } from "./buddy-goal-start";
 export type { MissionLinks } from "../missions/mission-links";
@@ -72,8 +65,6 @@ export function useBuddyTutor(): TutorConversationContent {
 
   return content;
 }
-
-export type BuddyScreenHrefs = BuddyDayHrefs & { earlierQuestions?: string };
 
 type BuddyScreenActions = {
   decidePlanChange: DecideTutorPlanChange;
@@ -135,7 +126,7 @@ function BuddyMenu({
 }: {
   buddy: ResolvedBuddy;
   glassesCount: string;
-  hrefs: BuddyScreenHrefs;
+  hrefs: BuddyDayHrefs;
   name: string;
   onEdit: () => void;
   onGlasses: () => void;
@@ -174,13 +165,6 @@ function BuddyMenu({
           <CalendarDaysIcon aria-hidden="true" />
           {t("Weekly summary")}
         </DropdownMenuItem>
-
-        {hrefs.earlierQuestions && (
-          <DropdownMenuItem render={<LearnLink href={hrefs.earlierQuestions} />}>
-            <HistoryIcon aria-hidden="true" />
-            {t("Earlier questions")}
-          </DropdownMenuItem>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -228,7 +212,7 @@ export function BuddyScreen({
 }: {
   actions: BuddyScreenActions;
   children: React.ReactNode;
-  hrefs: BuddyScreenHrefs;
+  hrefs: BuddyDayHrefs;
   memoryCount?: number;
   situation: TutorSituation;
   status: BuddyStatusView;

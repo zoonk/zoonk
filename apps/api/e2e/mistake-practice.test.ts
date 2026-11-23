@@ -23,6 +23,7 @@ import {
 } from "../../../packages/core/src/library/items/_test-utils/math-problems";
 import { withRecordedNumbers } from "../../../packages/core/src/library/items/item-math";
 import {
+  mistakeLessonSchema,
   mistakePracticeCompletionSchema,
   mistakePracticeFeedbackSchema,
   mistakePracticeResponseSchema,
@@ -158,6 +159,13 @@ test.describe("Mistake practice API", () => {
       stepId: otherStep.id,
       userId,
     });
+
+    const opened = await readBody({
+      response: await api.post(`/v1/me/mistakes/${mistake.id}/lesson`),
+      schema: mistakeLessonSchema,
+    });
+
+    expect(opened).toStrictEqual({ id: lesson!.id, title: lesson!.title });
 
     const practice = await readBody({
       response: await api.get(`/v1/me/mistake-practice?goalId=${goal.id}&includeAllFormats=true`),

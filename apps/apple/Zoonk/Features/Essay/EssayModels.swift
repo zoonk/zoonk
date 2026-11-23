@@ -29,11 +29,17 @@ struct WritingPrompt: Hashable, Decodable, Sendable {
     var max: Double?
     var minimum: PointsMinimum
 
-    /// The minimum's share of the part's points, which is where it sits on this question's scale.
     var share: Double? {
       switch minimum.unit {
       case .percent: minimum.value / 100
       case .points: max.map { minimum.value / $0 }
+      }
+    }
+
+    var points: Double? {
+      switch minimum.unit {
+      case .percent: max.map { minimum.value / 100 * $0 }
+      case .points: minimum.value
       }
     }
   }

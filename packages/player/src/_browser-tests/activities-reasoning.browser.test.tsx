@@ -1,7 +1,7 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { act } from "react";
 import { describe, expect, it } from "vitest";
-import { type Locator, page } from "vitest/browser";
+import { page } from "vitest/browser";
 import {
   checkActivity,
   expectCount,
@@ -33,21 +33,6 @@ async function expectHeard(text: string) {
 async function matchCards(left: string, right: string) {
   await page.getByRole("button", { exact: true, name: left }).click();
   await page.getByRole("button", { exact: true, name: right }).click();
-}
-
-async function expectAloneInItsRow(card: Locator) {
-  await expect
-    .poll(() => {
-      const top = card.element().getBoundingClientRect().top;
-
-      return page
-        .getByRole("group", { name: "Cards to match" })
-        .getByRole("button")
-        .elements()
-        .filter((other) => other !== card.element() && other.getBoundingClientRect().top === top)
-        .map((other) => other.getAttribute("aria-label"));
-    })
-    .toStrictEqual([]);
 }
 
 describe("reasoning activities", () => {
@@ -256,18 +241,10 @@ describe("reasoning activities", () => {
     await matchCards("éxito", "success");
     await matchCards("librería", "bookstore");
 
-    await expect
-      .element(page.getByText("3 of 3 pairs matched · 2 cards have no match", { exact: true }))
-      .toBeVisible();
+    await expect.element(page.getByText("3 of 3 pairs matched", { exact: true })).toBeVisible();
 
-    await expect
-      .element(page.getByRole("button", { name: "embarrassed, no match" }))
-      .toBeDisabled();
-
-    await expect.element(page.getByRole("button", { name: "library, no match" })).toBeDisabled();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("Look-alikes with no match")).toBeVisible();
   });
 
   it("match pairs: each card answers its own number key, the left column first, and a matched card answers none", async () => {
@@ -275,26 +252,24 @@ describe("reasoning activities", () => {
     const libreria = page.getByRole("button", { exact: true, name: "librería" });
     const bookstore = page.getByRole("button", { exact: true, name: "bookstore" });
     await expect.element(libreria).toHaveAttribute("aria-keyshortcuts", "1");
-    await expect.element(bookstore).toHaveAttribute("aria-keyshortcuts", "6");
+    await expect.element(bookstore).toHaveAttribute("aria-keyshortcuts", "5");
 
     await press("2");
-    await press("4");
+    await press("6");
     const pregnant = page.getByRole("button", { name: "pregnant, matched" });
     await expect.element(pregnant).toBeDisabled();
     await expect.element(pregnant).not.toHaveAttribute("aria-keyshortcuts");
 
     await press("1");
     await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
-    await press("4");
-    await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
     await press("6");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
+    await press("5");
 
-    await expect
-      .element(page.getByText("2 of 3 pairs matched · 2 cards have no match", { exact: true }))
-      .toBeVisible();
+    await expect.element(page.getByText("2 of 3 pairs matched", { exact: true })).toBeVisible();
   });
 
-  it("match pairs: puts each card beside its match and each look-alike in a row of its own once every pair is matched", async () => {
+  it("match pairs: puts each card beside its match once every pair is matched", async () => {
     openActivity({ template: "matchPairs" });
     const pairs = activityContentFixtures.matchPairs.fields.pairs;
 
@@ -310,28 +285,11 @@ describe("reasoning activities", () => {
         page.getByRole("button", { name: `${right}, matched` }),
       );
     }
-
-    await expectAloneInItsRow(page.getByRole("button", { name: "embarrassed, no match" }));
-    await expectAloneInItsRow(page.getByRole("button", { name: "library, no match" }));
   });
 
-  it("match pairs: a trap explains itself, stays marked and the first try counts", async () => {
+  it("match pairs: mixing up two pairs counts as a wrong first try", async () => {
     openActivity({ template: "matchPairs" });
-    await matchCards("embarazada", "embarrassed");
-
-    await expect
-      .element(
-        page.getByText(
-          "“embarrassed” has no match. Embarrassed is avergonzada in Spanish. Embarazada looks like it but means pregnant.",
-          { exact: true },
-        ),
-      )
-      .toBeVisible();
-
-    await expect
-      .element(page.getByRole("button", { name: "embarrassed, no match" }))
-      .toBeDisabled();
-
+    await matchCards("embarazada", "success");
     await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
     await matchCards("embarazada", "pregnant");
     await matchCards("éxito", "success");
@@ -340,7 +298,7 @@ describe("reasoning activities", () => {
     await expectVerdict("Not quite");
 
     await expect
-      .element(page.getByText("embarazada goes with pregnant, not embarrassed."))
+      .element(page.getByText("embarazada goes with pregnant, not success."))
       .toBeVisible();
   });
 
@@ -349,15 +307,13 @@ describe("reasoning activities", () => {
       content: {
         ...activityContentFixtures.matchPairs,
         fields: {
-          distractors: [
-            {
-              side: "right",
-              text: "1.2",
-              why: String.raw`$\frac{1}{2}$ is one divided by two, not the digits 1 and 2.`,
-            },
-          ],
           pairs: [
-            { id: "half", left: String.raw`$\frac{1}{2}$`, right: "0.5" },
+            {
+              id: "half",
+              left: String.raw`$\frac{1}{2}$`,
+              right: "0.5",
+              why: String.raw`$\frac{1}{2}$ is one divided by two.`,
+            },
             { id: "square", left: "$3^2$", right: "9" },
           ],
         },
@@ -366,14 +322,13 @@ describe("reasoning activities", () => {
       template: "matchPairs",
     });
 
-    await matchCards("1 over 2", "1.2");
+    await matchCards("1 over 2", "9");
 
     await expect
       .element(
-        page.getByText(
-          "1 over 2 and 1.2 don't go together. “1.2” has no match. 1 over 2 is one divided by two, not the digits 1 and 2.",
-          { exact: true },
-        ),
+        page.getByText("1 over 2 and 9 don't go together. 1 over 2 is one divided by two.", {
+          exact: true,
+        }),
       )
       .toBeInTheDocument();
 

@@ -565,6 +565,7 @@
     "./mistakes/count-goal": "./src/mistakes/count-goal-mistakes.ts",
     "./mistakes/drills": "./src/mistakes/mistake-drills.ts",
     "./mistakes/list-current-user": "./src/mistakes/list-current-user-mistakes.ts",
+    "./mistakes/open-mistake-lesson": "./src/mistakes/open-mistake-lesson.ts",
     "./mistakes/practice": "./src/mistakes/get-mistake-practice.ts",
     "./mistakes/practice-answer": "./src/mistakes/answer-mistake-practice.ts",
     "./mistakes/practice-finish": "./src/mistakes/finish-mistake-practice.ts",

@@ -9,15 +9,9 @@ struct BuddyChoice: Equatable, Sendable {
   var glasses: BuddyGlasses
 }
 
-struct EarlierQuestionsPage: Equatable, Sendable {
-  var questions: [Components.Schemas.EarlierQuestion]
-  var nextCursor: String?
-}
-
 protocol BuddyAPIClient: Sendable {
   func status(timeZone: String, token: String) async throws -> BuddyStatus
   func save(_ buddy: BuddyChoice, token: String) async throws
-  func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage
   /// The insight as the answer left it; nil when it was answered elsewhere.
   func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
     async throws -> MemoryInsight?
@@ -56,20 +50,6 @@ struct BuddyAPI: BuddyAPIClient {
       case .notFound:
         throw APIError.notFound
       case .badRequest, .unprocessableContent, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage {
-    try await clients.perform(token: token) { client in
-      switch try await client.listEarlierQuestions(query: .init(cursor: cursor)) {
-      case .ok(let response):
-        let page = try response.body.json
-        return EarlierQuestionsPage(questions: page.questions, nextCursor: page.nextCursor)
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
     }

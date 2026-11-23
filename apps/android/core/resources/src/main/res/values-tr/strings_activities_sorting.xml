@@ -11,9 +11,7 @@
   "activities_sorting_badge_sort_groups": "ac253a0c5e67c8c2ff091b3bb83473f6fd4d31c8ca97f81c77f9a0fdcd45be55",
   "activities_sorting_belongs_in": "32bd5a9feaf64cbf900e7c09a77706ebbf1045734447363abe9151c2541a01e5",
   "activities_sorting_card_matched": "5518dbd72a895d1c174fc5cb14f43251040fa33f8507098e79d07577d9ca1e46",
-  "activities_sorting_card_no_match": "02d165a835357730d4a0c3ab88e023017e6ded493c68751a117a335c3ba388a6",
   "activities_sorting_cards_to_match": "2c011b92a6425b8063cdc6d358df81aeda87a36c33ed56954b7cf273011b1284",
-  "activities_sorting_cards_without_match": "26d4b4775b5bc4db8b45fecffc1b2b90d6f3709a7ec54100a4b9d1c4d752ddb2",
   "activities_sorting_cause": "e0ea16558be44896c34dc7a9c15fe4d6c973c0767ce8addfbb6ef50875b1d6ee",
   "activities_sorting_cause_picked": "3e18ab18265bed4db7d44725272e396106cf5d7543c00fd13333cc6822fe329d",
   "activities_sorting_causes_and_effects": "1c98d95684ec5dd5b646410fbd4bad17dc047667950db4cd604d3c141b04b465",
@@ -32,7 +30,6 @@
   "activities_sorting_led_to": "aa196169303041db547ec25114e31a1b878e0945e996686eb2d21816d92efc2e",
   "activities_sorting_linked": "99d19c77c5322db8b220e7a1656c0b3057b4b95bea6c87eefe6000f2f985d7eb",
   "activities_sorting_links_count": "4072fb0849d794739add44e253a0a120bb457c3fbdd1fad6b8f02939e30d190e",
-  "activities_sorting_look_alikes": "07421e8ab2a948d97035da6dd2d0536efc27512adb17e8a11aada4226d602735",
   "activities_sorting_matched": "505ad1aab1b0101cf40b3ee261e0550ae5815ae612f873a547ac8b31c93956ff",
   "activities_sorting_missed_first_try": "3a033fa2d91b705f4a2370f896fb4c29d2a086f6ce9c7a58fbbd310f3f562abe",
   "activities_sorting_missed_link": "b3ecf523ebab21b6811e30e3b6ae6c02179bde4bfd0ac3b26fb90016196c88ad",
@@ -42,7 +39,6 @@
   "activities_sorting_name_taken_off": "a170fd1ceb9074e95aad2e4ec4c510deddd5864b0220cacde5ccb87a9d12bd5b",
   "activities_sorting_names": "ffa97042e684ec692fa095bb1aabb8431264f3a87417c0ec81b4a6dc6a5496a7",
   "activities_sorting_no_cards": "ea5d04714303498b9b700a573b74ab0fb56dede8e77714d822828173da839ca6",
-  "activities_sorting_no_match_note": "6fa944dcac3a4d12b25472f242bf356dea032e32879949352d491680795e0b07",
   "activities_sorting_not_a_link": "3f79f58bdad2f5ec5b80b445316d8139fa90861db6915747596db52d9810bfa5",
   "activities_sorting_not_quite": "1ddaa1d455e83abf4dbdf0446ca6a3a6acfd1f9c8d78264b21e9d3e9fd4c45f8",
   "activities_sorting_not_straight": "db832e539cba0c47e5f86ccfaf147f03e57cb1f303094c5c64d6d457b44b16bf",
@@ -125,21 +121,12 @@
         <item quantity="one">%1$d / %2$d çift eşleştirildi</item>
         <item quantity="other">%1$d / %2$d çift eşleştirildi</item>
     </plurals>
-    <!-- Cards that look like they match one on the other side but don't. -->
-    <plurals name="activities_sorting_cards_without_match">
-        <item quantity="one">%d kartın eşi yok</item>
-        <item quantity="other">%d kartın eşi yok</item>
-    </plurals>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Eşleştirilecek kartlar</string>
     <!-- A matched card, for TalkBack, like "pregnant, matched". -->
     <string name="activities_sorting_card_matched">%1$s, eşleşti</string>
-    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
-    <string name="activities_sorting_card_no_match">%1$s, eşi yok</string>
     <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
     <string name="activities_sorting_matched">%1$s ile %2$s eşleşti. Eşleşen çift: %3$d (toplam %4$d).</string>
-    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
-    <string name="activities_sorting_no_match_note">“%1$s” kartının eşi yok.</string>
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
     <string name="activities_sorting_dont_go_together">%1$s ile %2$s eşleşmiyor.</string>
     <string name="activities_sorting_dont_go_together_short">Bu ikisi eşleşmiyor.</string>
@@ -149,8 +136,6 @@
     <string name="activities_sorting_missed_first_try">İlk denemede yanlış eşleştirdiklerin</string>
     <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
     <string name="activities_sorting_goes_with">%1$s ile %2$s eşleşir, %3$s ile eşleşmez.</string>
-    <!-- Above the cards that look like a match but have none. -->
-    <string name="activities_sorting_look_alikes">Benzer görünen ama eşi olmayanlar</string>
     <string name="activities_sorting_badge_link_causes">Neden-sonuç ilişkisi kur</string>
     <string name="activities_sorting_pick_cause">Önce bir neden, sonra yol açtığı sonucu seç.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

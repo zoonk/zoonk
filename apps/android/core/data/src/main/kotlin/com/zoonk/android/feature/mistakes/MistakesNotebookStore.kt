@@ -21,6 +21,11 @@ data class NotebookKey(
 )
 
 interface NotebookApi {
+    suspend fun openLesson(
+        session: AuthenticatedSession,
+        mistakeId: UUID,
+    ): UUID
+
     suspend fun page(
         session: AuthenticatedSession,
         key: NotebookKey,
@@ -37,6 +42,11 @@ interface NotebookApi {
 class LiveNotebookApi(
     private val api: ApiClients,
 ) : NotebookApi {
+    override suspend fun openLesson(
+        session: AuthenticatedSession,
+        mistakeId: UUID,
+    ) = perform { api.clients(session).mistakes.openMistakeLesson(mistakeId) }.id
+
     override suspend fun page(
         session: AuthenticatedSession,
         key: NotebookKey,
@@ -65,7 +75,7 @@ class LiveNotebookApi(
 
 class MistakesNotebookStore(
     private val api: NotebookApi,
-    cache: AppCache,
+    private val cache: AppCache,
     private val sessions: SessionSource,
     private val timeZone: () -> String,
 ) {
@@ -78,6 +88,9 @@ class MistakesNotebookStore(
         cache.keyed<UUID, GoalMistakePattern>(Audience.SignedIn, DOMAINS) { session, goalId ->
             session?.let { api.pattern(it, goalId) }
         }
+
+    suspend fun openLesson(mistakeId: UUID) =
+        cache.mutate(invalidating = setOf(DataDomain.LearnerModel)) { session -> api.openLesson(session, mistakeId) }
 
     /**
      * Appends the next page, unless a refresh or another session replaced the list meanwhile.

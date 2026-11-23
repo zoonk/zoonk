@@ -226,6 +226,35 @@ describe("coming back to a lesson", () => {
     expect(adapters.checkStep).not.toHaveBeenCalled();
   });
 
+  it("shows the correct pair when an old first try picked a removed card", async () => {
+    const matching = activityStep({ content: activityContentFixtures.matchPairs });
+    const lesson = buildLesson([matching, teachingStep("explanation"), teachingStep("check")]);
+
+    const pairs = Object.fromEntries(
+      activityContentFixtures.matchPairs.fields.pairs.map(({ id }) => [
+        id,
+        id === "a" ? "right-trap-0" : id,
+      ]),
+    );
+
+    const saved = runAnswer({
+      answer: { answer: { kind: "assignment", pairs }, kind: "activity" },
+      isCorrect: false,
+      stepId: matching.id,
+    });
+
+    const resume = [saved];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect.element(page.getByText("embarazada → pregnant")).toBeVisible();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
+  });
+
   it("shows a reopened step solver with the learner's wrong first pick", async () => {
     const solver = activityStep({ content: activityContentFixtures.stepSolver });
     const lesson = buildLesson([solver, teachingStep("explanation"), teachingStep("check")]);

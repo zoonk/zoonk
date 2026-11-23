@@ -2,6 +2,7 @@ import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playabl
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
+import { allowMicrophone } from "../_test-utils/microphone";
 import {
   buildAdapters,
   renderLessonPlayer,
@@ -28,15 +29,6 @@ function openSpokenLesson({
 }) {
   const lesson = buildLesson([step, teachingStep("summary")]);
   return renderLessonPlayer({ adapters: buildAdapters(lesson, { gradeSpokenAnswer }), lesson });
-}
-
-// The test browser has no microphone; each recording needs a fresh stream because stopping closes it.
-function allowMicrophone() {
-  const audio = new AudioContext();
-
-  vi.spyOn(navigator.mediaDevices, "getUserMedia").mockImplementation(
-    async () => audio.createMediaStreamDestination().stream,
-  );
 }
 
 function barNote() {

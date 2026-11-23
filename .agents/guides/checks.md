@@ -18,7 +18,7 @@ Run commands from the repository root with the Node.js and pnpm versions in `.to
 | App runtime or build integration  | `pnpm --filter <app> build`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                 |
 | E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                      |
 | Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                             |
-| Apple app                         | [Apple verification](../../apps/apple/AGENTS.md#verification) covers Mac units on PRs and iPhone checks for device-specific changes    |
+| Apple app                         | [Apple verification](../../apps/apple/AGENTS.md#verification) covers the local Mac units and iPhone checks for device-specific changes |
 | Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                       |
 | Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                     |
 | Next.js or Turborepo version      | `pnpm agent-rules:sync`, which updates the blocks they write into `AGENTS.md`                                                          |

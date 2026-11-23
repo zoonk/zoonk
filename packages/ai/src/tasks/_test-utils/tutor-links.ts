@@ -6,7 +6,6 @@ export const TEST_TUTOR_LINKS: GoalTutorLinks = {
     appearance: "/appearance",
     buddy: "/buddy",
     courses: "/courses",
-    earlierQuestions: "/earlierQuestions",
     energy: "/energy",
     exam: "/exam",
     level: "/level",

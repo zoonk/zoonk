@@ -63,6 +63,8 @@
   "essay_nothing_lost": "8d1f38e4ad5fa175529f112cdb489476f19b31dda5a9ba95e19e58c22d375ddf",
   "essay_of_max": "156c8c1ec72e2a130838cd7c4ebb4f24555ae096ce3931feb782092b0a37a4ae",
   "essay_part_minimum": "9f31c924267eda524f19fc8d8c0d847609e910c2e93bc2512ff69ee27b6358b8",
+  "essay_part_minimum_points": "187bde9f512fe828a4ae25dcc19f4285ab8af61155b99c2cf043bd163cd409c6",
+  "essay_part_minimum_total": "674ac868510a8cc4a074b0c39e215cb6b5ca6d9c167dfd2569a69e45ef03a4b7",
   "essay_past_limit": "c232c64eac6022a930b8749233f1f77e3a927d0b68cb2435eaac0a7291cd8e2d",
   "essay_past_line": "0e210ea46e7761ef996a27305f8d37a1d02515f68c065a6a332b78294e1df3d5",
   "essay_points": "1b1c312be7a66903363c737b2bb4bfff2739dd83c78868cfa4f03bcb350b3e1e",
@@ -228,6 +230,8 @@
     <string name="essay_more_tomorrow">Yarın daha fazla değerlendirme yapabileceksin.</string>
     <string name="essay_left_for_tomorrow">Yarına kalanlar</string>
     <string name="essay_part_minimum">Yazılı sınavı geçmek için gereken en düşük puan oranı: %1$s</string>
+    <string name="essay_part_minimum_points">Yazılı sınavı geçmek için gereken minimum toplam puan: %1$s puan</string>
+    <string name="essay_part_minimum_total">Yazılı sınavı geçmek için toplam %2$s puan üzerinden en az %1$s puan alman gerekir</string>
     <string name="essay_content">İçerik</string>
     <string name="essay_language_errors">Dil hataları</string>
     <plurals name="essay_errors">

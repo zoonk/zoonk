@@ -25,6 +25,8 @@ import com.zoonk.android.feature.writing.RangeMeter
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
 import com.zoonk.android.feature.writing.pointsRange
+import com.zoonk.android.feature.writing.toName
+import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
@@ -97,7 +99,11 @@ internal fun WrittenProjectionScore(
                     minimumShare = part.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, part.max) },
                     decimals = part.decimals?.toInt() ?: 0,
                     levels = !part.inPoints(),
-                ) { Standing(part) }
+                    written = true,
+                ) {
+                    TaskRows(part)
+                    Standing(part)
+                }
             }
         }
 
@@ -136,15 +142,39 @@ private fun ScoreRow(
     decimals: Int = 0,
     /** Graded by level: no points to wait for, so no meter holds their place. */
     levels: Boolean = false,
+    written: Boolean = false,
     below: @Composable () -> Unit = {},
 ) {
     Column(Modifier.padding(vertical = 12.dp).semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-            PointsValue(range?.low, range?.high, max, decimals = decimals, levels = levels)
+            PointsValue(range?.low, range?.high, max, decimals = decimals, levels = levels, headline = written)
         }
         if (!(levels && range == null)) max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = minimumShare) }
         below()
+    }
+}
+
+@Composable
+private fun TaskRows(part: WrittenPartPoints) {
+    if (!part.inPoints() || part.tasks.size < 2) return
+
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        part.tasks.forEach { task ->
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    writingTaskName(task.writingTask?.toName(), task.name),
+                    Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                PointsValue(task.range?.low, task.range?.high, task.max, decimals = part.decimals?.toInt() ?: 0)
+            }
+        }
     }
 }
 

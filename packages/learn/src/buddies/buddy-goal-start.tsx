@@ -1,10 +1,8 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { HistoryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TutorMessage, useTutorIdentity } from "../conversation/tutor-identity";
-import { LearnLink } from "../learn-link";
 import { GoalBox } from "../onboarding/entry/goal-box";
 import { useGoalExamples } from "../onboarding/entry/goal-examples";
 import { GoalFieldSubmit, useGoalFieldAction } from "../onboarding/entry/goal-field";
@@ -33,12 +31,10 @@ function GoalChips({ onPick }: { onPick: (goal: string) => void }) {
 
 export function BuddyGoalStart({
   draft = "",
-  earlierQuestionsHref,
   onSend,
   status,
 }: {
   draft?: string;
-  earlierQuestionsHref?: string;
   onSend: (goal: string) => void;
   status: BuddyStatusView;
 }) {
@@ -61,16 +57,6 @@ export function BuddyGoalStart({
       <TutorMessage identity={identity} page>
         <p>{greeting}</p>
       </TutorMessage>
-
-      {earlierQuestionsHref && (
-        <LearnLink
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-1.5 self-start rounded-md text-sm transition-colors outline-none focus-visible:ring-[3px]"
-          href={earlierQuestionsHref}
-        >
-          <HistoryIcon aria-hidden="true" className="size-4" />
-          {t("Earlier questions")}
-        </LearnLink>
-      )}
 
       <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
         <GoalChips onPick={goal.fill} />

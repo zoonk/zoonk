@@ -200,7 +200,6 @@ filter:
     - listCurrentUserCompletedLessons
     - listCurrentUserMilestones
     - listCurrentUserMistakes
-    - listEarlierQuestions
     - listGoalMindMaps
     - listGoals
     - listInstrumentWaitlist
@@ -211,6 +210,7 @@ filter:
     - markPlanRevealed
     - moveChallenge
     - moveWeeklyChallenge
+    - openMistakeLesson
     - openStudyBlock
     - openStudyDay
     - practiceMistakePattern

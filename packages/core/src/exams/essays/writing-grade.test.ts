@@ -14,6 +14,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
+import cacd2024Essay from "./_test-utils/cacd-2024-essay.json";
 import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
@@ -37,7 +38,7 @@ import {
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
-import { countWritingLines } from "./writing-lines";
+import { WRITING_CHARACTERS_PER_LINE, countWritingLines } from "./writing-lines";
 import {
   type WritingArithmetic,
   getWritingArithmetic,
@@ -417,18 +418,18 @@ describe("writing grades", () => {
     expect(assess(graded, { gate: null, rubric })).toMatchObject({ kind: "levels" });
 
     expect(assess(graded, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
-      content: { high: 800, low: 760 },
+      content: { high: 840, low: 720 },
       deduction: { high: 0, low: 0 },
       kind: "points",
       max: 1000,
       rows: [
-        { earned: 200, id: "c1", max: 200, range: { high: 200, low: 200 } },
-        { earned: 80, id: "c2", max: 200, range: { high: 120, low: 80 } },
-        { earned: 200, id: "c3", max: 200, range: { high: 200, low: 200 } },
-        { earned: 200, id: "c4", max: 200, range: { high: 200, low: 200 } },
-        { earned: 80, id: "c5", max: 200, range: { high: 80, low: 80 } },
+        { earned: 160, id: "c1", max: 200, range: { high: 200, low: 160 } },
+        { earned: 40, id: "c2", max: 200, range: { high: 160, low: 40 } },
+        { earned: 160, id: "c3", max: 200, range: { high: 200, low: 160 } },
+        { earned: 160, id: "c4", max: 200, range: { high: 200, low: 160 } },
+        { earned: 60, id: "c5", max: 200, range: { high: 80, low: 60 } },
       ],
-      total: { high: 800, low: 760 },
+      total: { high: 840, low: 720 },
     });
 
     const zero = {
@@ -442,6 +443,59 @@ describe("writing grades", () => {
     expect(
       assess(graded, { gate: { ...arithmetic, rounding: null }, rubric: zero, text: " " }),
     ).toMatchObject({ kind: "points", total: { high: 0, low: 0 }, zeroReason: "Blank essay" });
+  });
+
+  it("skips complete Enem competences even when their score has a range", () => {
+    const criteria = ["c1", "c2", "c3", "c4", "c5"].map((id) => ({ id, name: id, points: 200 }));
+
+    const rubric = {
+      ...basis,
+      criteria,
+      grading: { criteria: [], kind: "enem" as const, language: null, rounding: null, zeroing: [] },
+      points: 1000,
+    };
+
+    const graded: WritingEvidence = {
+      ...evidence,
+      criteria: criteria.map(({ id }) => ({
+        comment: "Explanation",
+        example: null,
+        id,
+        level: "complete",
+        quote: null,
+      })),
+      interventionElements: { action: true, agent: true, detail: true, effect: true, means: true },
+      nextStep: {
+        criterionId: "c1",
+        example: null,
+        quote: null,
+        text: "Revise the first competence.",
+        title: "Revise your writing",
+      },
+    };
+
+    const gate = { ...arithmetic, rounding: null };
+
+    expect(assess(graded, { gate, ignoredFrom: null, rubric })).toMatchObject({
+      kind: "points",
+      nextStep: null,
+      rows: [
+        { id: "c1", range: { high: 200, low: 160 } },
+        ...criteria.slice(1).map(({ id }) => ({ id })),
+      ],
+    });
+
+    const mixed: WritingEvidence = {
+      ...graded,
+      criteria: graded.criteria.map((criterion) =>
+        criterion.id === "c3" ? { ...criterion, level: "strong" } : criterion,
+      ),
+    };
+
+    expect(assess(mixed, { gate, ignoredFrom: null, rubric })).toMatchObject({
+      kind: "points",
+      nextStep: { criterionId: "c3", kind: "criterion" },
+    });
   });
 
   it.each([
@@ -673,6 +727,22 @@ describe(getWritingRubricFingerprint, () => {
 });
 
 describe(countWritingLines, () => {
+  // CACD 2024 Portuguese essay, 69.5/70 on 70 handwritten lines, guide pp. 34–36:
+  // https://guiasirbr.wordpress.com/wp-content/uploads/2025/06/guia_da_sarue_malabarista.pdf
+  it("keeps a full 70-line answer that the board graded in full", () => {
+    expect(
+      countWritingLines({
+        charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+        limit: 70,
+        text: cacd2024Essay,
+      }).ignoredFrom,
+    ).toBeNull();
+
+    expect(
+      countWritingLines({ charactersPerLine: 55, limit: 70, text: cacd2024Essay }).ignoredFrom,
+    ).toBeGreaterThan(0);
+  });
+
   it.each(lineFixtures)(
     "counts lines and retains UTF-16 cutoff offsets for $text",
     ({ estimatedLines, ignoredFrom, ...input }) => {

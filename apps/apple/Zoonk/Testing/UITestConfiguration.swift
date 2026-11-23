@@ -140,10 +140,6 @@
 
     func save(_ buddy: BuddyChoice, token: String) async throws {}
 
-    func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage {
-      EarlierQuestionsPage(questions: [], nextCursor: nil)
-    }
-
     func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
       async throws -> MemoryInsight?
     {

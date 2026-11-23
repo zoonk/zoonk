@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getLibraryChapterCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
 import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-visibility";
+import { getDefaultLessonMinutes } from "../lessons/lesson-minutes";
 
 async function getCachedLibraryChapter(chapterId: string) {
   "use cache";
@@ -39,7 +40,11 @@ export async function getLibraryChapter({ chapterId }: { chapterId: string }) {
   }
 
   const lessons = await filterVisibleLibraryRows(
-    chapter.lessons.map((item) => ({ ...item.lesson, position: item.position })),
+    chapter.lessons.map(({ lesson, position }) => ({
+      ...lesson,
+      estimatedMinutes: getDefaultLessonMinutes(lesson),
+      position,
+    })),
   );
 
   return { ...chapter, lessons };
