@@ -756,9 +756,7 @@ struct PlanStatement: View {
       } summary: {
         VStack(alignment: .leading, spacing: 2) {
           title
-          description
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(description)
         }
         .accessibilityElement(children: .combine)
       } action: {
@@ -768,9 +766,7 @@ struct PlanStatement: View {
       VStack(alignment: .leading, spacing: 8) {
         SuggestionHeader(title)
 
-        description
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        SuggestionDescription(description)
       }
     }
   }
@@ -941,11 +937,9 @@ private struct PlanFinishedSlot: View {
       Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"))
 
     if end?.hasMore == true {
-      Text(
-        "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
+      SuggestionDescription(
+        Text(
+          "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"))
     }
   }
 

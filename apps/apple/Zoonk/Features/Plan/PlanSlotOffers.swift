@@ -55,9 +55,7 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
     SuggestionHeader(title)
 
     if let description {
-      description
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+      SuggestionDescription(description)
     }
 
     content
@@ -341,9 +339,8 @@ struct PlanCoverageSlot: View {
         title: Text(Self.title(suggested)), description: Text(description)
       ) {
         if check.noDate {
-          Text("We couldn't find a date that covers everything.", tableName: "Plan")
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(
+            Text("We couldn't find a date that covers everything.", tableName: "Plan"))
         }
 
         if check.failed {
@@ -547,9 +544,9 @@ struct PlanOfferSlot: View {
 
     PlanSlotCard(title: title(repriced?.effect), description: nil) {
       if !facts.isEmpty {
-        FactSegments(facts)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        SuggestionDescription {
+          FactSegments(facts)
+        }
       }
 
       if facts.isEmpty || repriced != nil {

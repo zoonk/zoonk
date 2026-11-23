@@ -50,6 +50,31 @@ struct SuggestionHeader: View {
   }
 }
 
+/// Main's `SuggestionDescription`: what the title leaves to say, in the secondary color, at a
+/// line's size in its line, at a sheet's reading size in its sheet, and at a row description's size
+/// on the page.
+struct SuggestionDescription<Content: View>: View {
+  @Environment(\.isInSuggestionSheet) private var isInSheet
+  @Environment(\.isInSuggestionLine) private var isInLine
+
+  var color = Color.mutedForeground
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    content
+      .typeStyle(isInSheet ? .sheetText : isInLine ? .note : .meta)
+      .foregroundStyle(color)
+  }
+}
+
+extension SuggestionDescription where Content == Text {
+  init(_ text: Text, color: Color = .mutedForeground) {
+    self.init(color: color) {
+      text
+    }
+  }
+}
+
 /// Main's `SuggestionLine`: a panel with the suggestion's mark, its title in two lines at most, and
 /// its small actions at its end, or under the title's words when they would leave it less than half
 /// the line; stacked, the whole title and the actions under it.
@@ -78,6 +103,7 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
         .typeStyle(.body)
         .lineLimit(isStacked ? nil : 2)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .environment(\.isInSuggestionLine, true)
 
       HStack(spacing: 8) {
         action
@@ -348,6 +374,8 @@ struct SuggestionActions<Main: View, Other: View>: View {
 extension EnvironmentValues {
   /// Inside a suggestion's sheet, where a suggestion's card draws the whole `SuggestionSheetBody`.
   @Entry var isInSuggestionSheet = false
+  /// Inside a suggestion's line, whose words take its size.
+  @Entry var isInSuggestionLine = false
   /// What failed in that sheet, for its bar's line.
   @Entry var suggestionSheetNote: BarNote?
 }

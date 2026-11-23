@@ -29,14 +29,14 @@ struct SuggestedGoalSection: View {
     Section {
       VStack(alignment: .leading, spacing: 12) {
         VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "Continue \(suggestion.title)?", tableName: "Today",
-            comment: "Offers a goal from the learner's last course"
-          )
-          .typeStyle(.body.weight(.semibold))
+          SuggestionHeader(
+            Text(
+              "Continue \(suggestion.title)?", tableName: "Today",
+              comment: "Offers a goal from the learner's last course"))
 
-          Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(
+            Text(
+              "Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise"))
         }
 
         if !buttonsInBar {
@@ -193,8 +193,7 @@ struct TodayExamChoiceSection: View {
             }
             .typeStyle(.body.weight(.semibold))
 
-            Text(choice.leftOut.line)
-              .foregroundStyle(.mutedForeground)
+            SuggestionDescription(Text(choice.leftOut.line))
 
             if choice.take > 1 {
               Text.examPickLimit(choice.take)
@@ -535,13 +534,13 @@ struct TodayFocusTestSection: View {
   private func details(_ shown: FocusTestSummary.Size) -> some View {
     SuggestionHeader(Text(FocusTestCopy.title(findsFocus: true)))
 
-    Text(
-      "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
-      tableName: "Today",
-      comment:
-        "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
-    )
-    .foregroundStyle(.mutedForeground)
+    SuggestionDescription(
+      Text(
+        "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
+        tableName: "Today",
+        comment:
+          "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
+      ))
   }
 
   private func dismiss() {
@@ -622,7 +621,9 @@ struct TodayExamMomentSection: View {
         .typeStyle(.data)
     }
 
-    ExamMomentBody(words: words)
+    SuggestionDescription {
+      ExamMomentBody(words: words)
+    }
 
     ExamChecklistRows(moment: moment, checked: $checked)
 

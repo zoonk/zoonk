@@ -307,9 +307,7 @@ struct TodayPlanChangeSection: View {
       SuggestionHeader(Text(title))
 
       if change.source != "focusTest", let why = words.why {
-        Text(why)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        SuggestionDescription(Text(why))
       }
     }
 
@@ -320,11 +318,11 @@ struct TodayPlanChangeSection: View {
       repriced: shown.repriced)
 
     if let date = change.officialDate?.date {
-      Text(
-        "The official exam date is \(PlanDate.longDay(date, today: today)).", tableName: "Today",
-        comment: "Under a change that moves the exam off its official date; the argument is a day"
-      )
-      .typeStyle(.note.weight(.medium))
+      SuggestionDescription(
+        Text(
+          "The official exam date is \(PlanDate.longDay(date, today: today)).", tableName: "Today",
+          comment: "Under a change that moves the exam off its official date; the argument is a day"
+        ))
     }
 
   }
@@ -390,13 +388,10 @@ struct TodayPlanChangeSection: View {
   ) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        title
-          .typeStyle(.body.weight(.semibold))
+        SuggestionHeader(title)
 
         if let sentence {
-          Text(sentence)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(Text(sentence))
         }
       }
 
@@ -427,13 +422,9 @@ struct TodayPlanChangeSection: View {
 
       VStack(alignment: .leading, spacing: 12) {
         VStack(alignment: .leading, spacing: 4) {
-          missedDaysTitle
-            .typeStyle(.body.weight(.semibold))
-            .accessibilityAddTraits(.isHeader)
+          SuggestionHeader(missedDaysTitle)
 
-          Text(behindSentence)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(Text(behindSentence))
         }
 
         missedDaysOpen(behind)
