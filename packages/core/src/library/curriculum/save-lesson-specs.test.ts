@@ -42,14 +42,13 @@ function splitPart(title: string): LessonSpec {
   };
 }
 
-async function chapterWithLessons(targetLanguage: string | null = null) {
+async function chapterWithLessons() {
   const chapter = await libraryChapterFixture();
 
   const [first, planned, last] = await Promise.all([
     libraryLessonFixture({
       homeChapterId: chapter.id,
       specStatus: "pending",
-      targetLanguage,
       title: "Temperatures",
     }),
     libraryLessonFixture({ homeChapterId: chapter.id }),
@@ -97,10 +96,6 @@ describe(saveLessonSpecs, () => {
         workflowRunId,
       });
 
-      await expect(
-        prisma.lesson.findUniqueOrThrow({ where: { id: first.id } }),
-      ).resolves.toMatchObject({ estimatedMinutes: 4, spec: { estimatedMinutes: 4 } });
-
       expect(fetch).toHaveBeenCalledWith(
         expect.any(URL),
         expect.objectContaining({
@@ -121,7 +116,7 @@ describe(saveLessonSpecs, () => {
   });
 
   it("stores the spec for the run that holds the claim and places split parts right after the lesson", async () => {
-    const { chapter, first, last, planned } = await chapterWithLessons("de");
+    const { chapter, first, last, planned } = await chapterWithLessons();
     const workflowRunId = randomUUID();
 
     await claimLibraryGeneration({ id: first.id, target: "lessonSpec", workflowRunId });
@@ -140,7 +135,7 @@ describe(saveLessonSpecs, () => {
       homeChapterId: chapter.id,
       lessonId: first.id,
       provenance,
-      scope: { ...scope, targetLanguage: first.targetLanguage },
+      scope,
       specs: [temperatureSpec(), splitPart("Temperatures, part two")],
       workflowRunId,
     });
@@ -165,22 +160,17 @@ describe(saveLessonSpecs, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: splitId ?? "" } }),
     ]);
 
-    expect(stored).toMatchObject({
-      canDo: temperatureSpec().canDo,
-      estimatedMinutes: 3,
-      specStatus: "completed",
-    });
+    expect(stored).toMatchObject({ canDo: temperatureSpec().canDo, specStatus: "completed" });
 
     expect(split).toMatchObject({
-      estimatedMinutes: 3,
       homeChapterId: chapter.id,
       specRunId: workflowRunId,
       specStatus: "completed",
     });
 
     expect([stored.spec, split.spec]).toStrictEqual([
-      expect.objectContaining({ estimatedMinutes: 4, plannedAt: expect.any(String) }),
-      expect.objectContaining({ estimatedMinutes: 4, plannedAt: expect.any(String) }),
+      expect.objectContaining({ plannedAt: expect.any(String) }),
+      expect.objectContaining({ plannedAt: expect.any(String) }),
     ]);
   });
 

@@ -60,18 +60,3 @@ export function parseStoredLessonSpec(spec: unknown): LessonSpec | null {
   const parsed = storedLessonSpecSchema.safeParse(spec);
   return parsed.success ? parsed.data : null;
 }
-
-/** Median ratio of recorded to authored minutes for language lessons, weighted equally per learner. */
-const LANGUAGE_LESSON_TIME_FACTOR = 0.84;
-
-export function getPlannedLessonMinutes({
-  authoredMinutes,
-  targetLanguage,
-}: {
-  authoredMinutes: number;
-  targetLanguage: string | null;
-}): number {
-  return targetLanguage === null
-    ? authoredMinutes
-    : Math.max(1, Math.round(authoredMinutes * LANGUAGE_LESSON_TIME_FACTOR));
-}

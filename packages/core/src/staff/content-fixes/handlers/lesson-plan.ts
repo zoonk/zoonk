@@ -9,10 +9,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
 import { parseChallengeLessonSpec } from "../../../library/challenges/challenge-lesson-spec";
-import {
-  getPlannedLessonMinutes,
-  parseStoredLessonSpec,
-} from "../../../library/lessons/_utils/stored-lesson-spec";
+import { parseStoredLessonSpec } from "../../../library/lessons/_utils/stored-lesson-spec";
 import { type Resolution, refuse } from "../_utils/resolved-change";
 import { defineFixHandler, fieldTargets, idSchema } from "./fix-handler";
 
@@ -98,12 +95,10 @@ function preparePlan({
   after,
   before,
   linkedNames,
-  targetLanguage,
 }: {
   after: Plan;
   before: Plan;
   linkedNames: string[];
-  targetLanguage: string | null;
 }): PreparedPlan {
   const plans =
     before.kind === "challenge"
@@ -127,13 +122,7 @@ function preparePlan({
     };
   }
 
-  return {
-    estimatedMinutes:
-      plans.estimatedMinutes === undefined
-        ? undefined
-        : getPlannedLessonMinutes({ authoredMinutes: plans.estimatedMinutes, targetLanguage }),
-    spec: { ...before, ...plans.after },
-  };
+  return { estimatedMinutes: plans.estimatedMinutes, spec: { ...before, ...plans.after } };
 }
 
 async function resolve(
@@ -145,7 +134,6 @@ async function resolve(
       estimatedMinutes: true,
       skills: { select: { skill: { select: { normalizedName: true } } } },
       spec: true,
-      targetLanguage: true,
     },
     where: { id },
   });
@@ -170,7 +158,7 @@ async function resolve(
 
   const next: PreparedPlan = restore
     ? { estimatedMinutes: restore.estimatedMinutes, spec: setPlan }
-    : preparePlan({ after: setPlan, before, linkedNames, targetLanguage: row.targetLanguage });
+    : preparePlan({ after: setPlan, before, linkedNames });
 
   if ("problem" in next) {
     return refuse(next.problem);

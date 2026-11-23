@@ -51,12 +51,9 @@ function fixPlan(id: string, setPlan: object) {
 
 const savedPlan = { ...plan, ...provenance };
 
-async function lessonWithPlan({
-  spec = savedPlan,
-  targetLanguage,
-}: { spec?: object; targetLanguage?: string } = {}) {
+async function lessonWithPlan(spec: object = savedPlan) {
   const [lesson, skill] = await Promise.all([
-    libraryLessonFixture({ contentStatus: "completed", estimatedMinutes: 2, spec, targetLanguage }),
+    libraryLessonFixture({ contentStatus: "completed", estimatedMinutes: 2, spec }),
     skillFixture({ name: skillName }),
   ]);
 
@@ -125,7 +122,7 @@ describe("Lesson setPlan", () => {
 
   it("accepts a correction when an existing plan issue remains", async () => {
     const legacy = { ...plan, screens: plan.screens.slice(1) };
-    const { lesson } = await lessonWithPlan({ spec: legacy });
+    const { lesson } = await lessonWithPlan(legacy);
 
     await signInProposer();
     const fix = await proposeFix(fixPlan(lesson.id, { ...legacy, description: "Ética pública." }));
@@ -170,7 +167,7 @@ describe("Lesson setPlan", () => {
       variant: "work",
     };
 
-    const { lesson } = await lessonWithPlan({ spec: challenge });
+    const { lesson } = await lessonWithPlan(challenge);
 
     const corrected = {
       ...challenge,
@@ -191,8 +188,8 @@ describe("Lesson setPlan", () => {
     });
   });
 
-  it("recomputes authored and learner estimates when a language lesson changes screen kinds", async () => {
-    const { lesson } = await lessonWithPlan({ targetLanguage: "pt" });
+  it("recomputes both estimates when screen kinds change", async () => {
+    const { lesson } = await lessonWithPlan();
 
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -205,7 +202,7 @@ describe("Lesson setPlan", () => {
       ...plan,
       screens: [
         ...plan.screens.slice(0, 2),
-        ...Array.from({ length: 4 }, () => ({ ...plan.screens[1], kind: "workedExample" })),
+        ...Array.from({ length: 3 }, () => ({ ...plan.screens[1], kind: "workedExample" })),
         plan.screens[2],
       ],
     };
@@ -221,7 +218,7 @@ describe("Lesson setPlan", () => {
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
       estimatedMinutes: 3,
-      spec: { ...corrected, estimatedMinutes: 4 },
+      spec: { ...corrected, estimatedMinutes: 3 },
     });
 
     await expect(readDependent()).resolves.toMatchObject({

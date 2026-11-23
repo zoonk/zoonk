@@ -42,6 +42,15 @@ describe(choosePace, () => {
     ).toStrictEqual({ factor: 1.2, source: "typical" });
   });
 
+  it("uses the language default only until a measured pace is available", () => {
+    const samples = { course: null, family: "language" as const, own: null, typical: null };
+
+    expect(choosePace(samples).factor).toBe(0.84);
+    expect(choosePace({ ...samples, own: { count: 5, ratio: 0.5 } }).factor).toBe(0.75);
+    expect(choosePace({ ...samples, typical: { count: 50, ratio: 1.05 } }).factor).toBe(1.05);
+    expect(choosePace({ ...samples, course: { count: 20, ratio: 0.9 } }).factor).toBe(0.9);
+  });
+
   it("uses the lessons' own estimates without data and keeps the factor in bounds", () => {
     expect(choosePace({ course: null, own: null, typical: null })).toStrictEqual({
       factor: 1,

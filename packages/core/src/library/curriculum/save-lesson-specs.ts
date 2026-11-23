@@ -8,7 +8,6 @@ import { type LibraryProvenance } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags, getLessonOutlineCacheTags } from "../chapters/chapter-cache-tags";
 import { type IdentityCourse } from "../identity/_utils/identity-requests";
-import { getPlannedLessonMinutes } from "../lessons/_utils/stored-lesson-spec";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { resolveScopeLessons } from "./resolve-lesson-skills";
 
@@ -37,13 +36,10 @@ export const SOURCED_PLAN_KEY = "sourcedProvisions";
  * A plan keeps when it was planned, so a one-time reset after a planner change can plan again only
  * the lessons planned before it.
  */
-function toSpecData({ spec, targetLanguage }: { spec: LessonSpec; targetLanguage: string | null }) {
+function toSpecData(spec: LessonSpec) {
   return {
     canDo: spec.canDo,
-    estimatedMinutes: getPlannedLessonMinutes({
-      authoredMinutes: spec.estimatedMinutes,
-      targetLanguage,
-    }),
+    estimatedMinutes: spec.estimatedMinutes,
     spec: { ...spec, [SOURCED_PLAN_KEY]: true, plannedAt: new Date().toISOString() },
   };
 }
@@ -59,7 +55,7 @@ async function saveSplitLessons({
     ...context,
     goalSkills: [],
     lessons: specs.map((spec) => ({
-      ...toSpecData({ spec, targetLanguage: context.scope.targetLanguage }),
+      ...toSpecData(spec),
       description: spec.description,
       skills: spec.skills.map((skill) => ({ description: skill.description, name: skill.name })),
       specRunId: context.workflowRunId,
@@ -205,10 +201,7 @@ export async function saveLessonSpecs({
       }
 
       const updated = await tx.lesson.updateMany({
-        data: {
-          ...toSpecData({ spec: first, targetLanguage: scope.targetLanguage }),
-          specStatus: "completed",
-        },
+        data: { ...toSpecData(first), specStatus: "completed" },
         where: claim,
       });
 

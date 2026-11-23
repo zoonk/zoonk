@@ -5,6 +5,7 @@ import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type PublicFirstScreen, toPublicFirstScreen } from "./_utils/public-first-screen";
 import { readLessonMap } from "./lesson-map";
+import { getDefaultLessonMinutes } from "./lesson-minutes";
 import { CURRENT_STEPS } from "./lesson-versions";
 
 async function getCachedPublicLesson(lessonId: string) {
@@ -17,6 +18,7 @@ async function getCachedPublicLesson(lessonId: string) {
       description: true,
       estimatedMinutes: true,
       id: true,
+      identityKey: true,
       language: true,
       slug: true,
       steps: {
@@ -26,6 +28,7 @@ async function getCachedPublicLesson(lessonId: string) {
         where: CURRENT_STEPS,
       },
       summary: true,
+      targetLanguage: true,
       title: true,
       updatedAt: true,
       visibility: true,
@@ -51,7 +54,7 @@ export async function getPublicLibraryLesson({ lessonId }: { lessonId: string })
 
   return {
     description: lesson.description,
-    estimatedMinutes: lesson.estimatedMinutes,
+    estimatedMinutes: getDefaultLessonMinutes(lesson),
     firstScreen,
     id: lesson.id,
     language: lesson.language,
