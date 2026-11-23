@@ -1,6 +1,7 @@
 import "server-only";
 import { isExampleQuote, isUnderlineQuote } from "@zoonk/ai/tasks/lesson-marks/quotes";
 import { type StepKind, type TransactionClient } from "@zoonk/db";
+import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
 import {
   type SavedStepMarks,
   parseMarkedScreen,
@@ -57,8 +58,15 @@ export function fittingQuotes(marks: unknown, text: string): MarkedText {
   };
 }
 
-export function lacksQuotes({ example, underline }: MarkedText): boolean {
-  return !example || !underline;
+/** Only an explanation frames an example, so a worked example lacks no more than its underline. */
+export function lacksQuotes({
+  kept,
+  kind,
+}: {
+  kept: MarkedText;
+  kind: MarksNeed["screens"][number]["kind"];
+}): boolean {
+  return !kept.underline || (kind === "explanation" && !kept.example);
 }
 
 /**
@@ -92,7 +100,14 @@ export async function stepMarksNeed(
   const step = await db.step.findUniqueOrThrow({
     select: {
       kind: true,
-      lesson: { select: { language: true, targetLanguage: true, title: true } },
+      lesson: {
+        select: {
+          language: true,
+          steps: { select: { marks: true }, where: CURRENT_STEPS },
+          targetLanguage: true,
+          title: true,
+        },
+      },
       marks: true,
     },
     where: { id },
@@ -107,8 +122,8 @@ export async function stepMarksNeed(
     !kept ||
     !rewritten ||
     step.lesson.targetLanguage ||
-    !readSavedStepMarks(step.marks) ||
-    !lacksQuotes(kept)
+    !isTaggedLesson(step.lesson.steps) ||
+    !lacksQuotes({ kept, kind: target.kind })
   ) {
     return [];
   }

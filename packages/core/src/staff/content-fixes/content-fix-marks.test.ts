@@ -2,6 +2,7 @@ import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, vi } from "vitest";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import {
@@ -234,5 +235,51 @@ describe("marks on screens a fix rewrites", () => {
     await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({
       marks: { ...savedMarks, example },
     });
+  });
+
+  it("marks an unmarked screen of a marked lesson, and asks a worked example only for an underline", async () => {
+    const { lesson } = await markedLesson();
+    const worked = playableStepContent.workedExample;
+
+    const [unmarked, workedExample] = await Promise.all([
+      libraryStepFixture({
+        content: { text: before, title: "Adding" },
+        lessonId: lesson.id,
+        position: 2,
+      }),
+      libraryStepFixture({
+        content: worked,
+        kind: "workedExample",
+        lessonId: lesson.id,
+        marks: { ...savedMarks, example: null, underline: "most likely to find the electron" },
+        position: 3,
+      }),
+    ]);
+
+    await signInProposer();
+
+    const unmarkedFix = await proposeFix({
+      changes: [
+        { id: unmarked.id, model: "Step", set: { content: { text: after, title: "Adding" } } },
+      ],
+      reason,
+    });
+
+    await expect(listPendingFixMedia(unmarkedFix.id)).resolves.toMatchObject([
+      { key: `marks:${unmarked.id}`, kind: "marks" },
+    ]);
+
+    const workedFix = await proposeFix({
+      changes: [
+        {
+          id: workedExample.id,
+          model: "Step",
+          set: { content: { ...worked, problem: `${worked.problem} Look at the shading.` } },
+        },
+      ],
+      reason: "Point at the shading",
+    });
+
+    await expect(listPendingFixMedia(workedFix.id)).resolves.toStrictEqual([]);
   });
 });

@@ -230,7 +230,11 @@ function prepareScreenMarks({
     const rewritten = !original || toMarksNeedScreen(original)?.text !== target?.text;
     const kept = target && fittingQuotes(screen.marks, target.text);
 
-    return marked && target && kept && (asked || rewritten) && lacksQuotes(kept)
+    return marked &&
+      target &&
+      kept &&
+      (asked || rewritten) &&
+      lacksQuotes({ kept, kind: target.kind })
       ? [{ kept, position: screen.position, screen: target }]
       : [];
   });
