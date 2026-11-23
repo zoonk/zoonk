@@ -91,6 +91,46 @@ async function takeTest({
 }
 
 describe("a language level test-out", () => {
+  it("offers the next eligible level after the learner finishes or tests out of their own level", async () => {
+    const { goal, items, skills, user } = await languageGoalFixture();
+
+    await Promise.all([
+      prisma.goal.update({ data: { details: { level: "B2" } }, where: { id: goal.id } }),
+      prisma.skill.updateMany({
+        data: { cefrLevel: "B2" },
+        where: { id: { in: skills.slice(0, 2).map(({ id }) => id) } },
+      }),
+      prisma.skill.updateMany({
+        data: { cefrLevel: "C1" },
+        where: { id: { in: skills.slice(2).map(({ id }) => id) } },
+      }),
+    ]);
+
+    mockSession(user.id);
+    await expect(getNextAvailableLevelTestOut(goal.id)).resolves.toBe("B2");
+
+    await Promise.all(
+      items
+        .slice(0, 2)
+        .map(({ id }, index) =>
+          prisma.planItem.update({
+            data: { completedAt: new Date(), status: index === 0 ? "done" : "testedOut" },
+            where: { id },
+          }),
+        ),
+    );
+
+    await expect(getNextAvailableLevelTestOut(goal.id)).resolves.toBe("C1");
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { placementTest: { nextTestOutLevel: "C1" } },
+    });
+
+    await expect(
+      startLanguageLevelTestOut({ goalId: goal.id, level: "C1" }),
+    ).resolves.toMatchObject({ status: "ready", test: { level: "C1", preparing: true } });
+  });
+
   it("still offers an open test-out after today's misses rule its level out of a new one", async () => {
     const { goal, skills, user } = await languageGoalFixture();
     const [reading, listening] = skills;

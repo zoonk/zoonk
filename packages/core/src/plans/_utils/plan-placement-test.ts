@@ -68,7 +68,7 @@ export async function readPlanPlacementTest(
       summary.openTestOutLevel ??
         availableLevelTestOut({
           goalId: goal.id,
-          level: summary.nextTestOutLevel,
+          levels: summary.eligibleTestOutLevels,
           now,
           timeZone: context.timeZone,
           userId: goal.userId,

@@ -63,17 +63,17 @@ export function readLevelTestSummary(goal: Pick<Goal, "details">) {
     ...skipped.map((level) => CEFR_LEVELS.indexOf(level)),
   );
 
-  const nextTestOutLevel =
+  const eligibleTestOutLevels =
     current === null
-      ? null
-      : levelTestOutLevelSchema.options.find((level) => {
+      ? []
+      : levelTestOutLevelSchema.options.filter((level) => {
           const index = CEFR_LEVELS.indexOf(level);
           return index >= current && index <= highestKnown + 1 && !skipped.includes(level);
         });
 
   return {
     attempt: readOpenAttempt(progress),
-    nextTestOutLevel: nextTestOutLevel ?? null,
+    eligibleTestOutLevels,
     /** Offered whatever happened since it started, so the learner can always go back to it. */
     openTestOutLevel: isOpenLevelTestOut(progress.testOut)
       ? (progress.testOut?.level ?? null)

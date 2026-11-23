@@ -75,13 +75,13 @@ export async function getNextAvailableLevelTestOut(goalId: string) {
   }
 
   const { goal, userId } = owned;
-  const { nextTestOutLevel, openTestOutLevel } = readLevelTestSummary(goal);
+  const { eligibleTestOutLevels, openTestOutLevel } = readLevelTestSummary(goal);
 
   return (
     openTestOutLevel ??
     availableLevelTestOut({
       goalId,
-      level: nextTestOutLevel,
+      levels: eligibleTestOutLevels,
       timeZone: getAnswerTimeZone({ goal }),
       userId,
     })

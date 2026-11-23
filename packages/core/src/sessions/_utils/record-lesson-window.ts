@@ -35,9 +35,11 @@ async function selectPlacementOffer({
 
   const { id: goalId } = goal;
 
+  const candidate = levelTestOutLevelSchema.safeParse(window.levelTestOut).data;
+
   const level = await availableLevelTestOut({
     goalId,
-    level: levelTestOutLevelSchema.safeParse(window.levelTestOut).data ?? null,
+    levels: candidate ? [candidate] : [],
     now,
     timeZone: getAnswerTimeZone({ goal }),
     tx,

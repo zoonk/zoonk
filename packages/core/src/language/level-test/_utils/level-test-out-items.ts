@@ -39,54 +39,64 @@ function pickTopicQuestions(
     : [];
 }
 
-export async function listTestOutSkillIds({
-  goalId,
-  level,
-  now = new Date(),
-  timeZone,
-  tx,
-  userId,
-}: {
+type TestOutAvailability = {
   goalId: string;
-  level: LevelTestOutLevel;
   now?: Date;
   timeZone: string;
   tx: TransactionClient;
   userId: string;
-}) {
+};
+
+async function listTestOutSkills({
+  goalId,
+  levels,
+  now = new Date(),
+  timeZone,
+  tx,
+  userId,
+}: TestOutAvailability & { levels: LevelTestOutLevel[] }) {
   const lessons = await tx.planItem.findMany({
     orderBy: { position: "asc" },
     select: {
       lesson: {
-        select: { skills: { select: { skillId: true }, where: { skill: { cefrLevel: level } } } },
+        select: {
+          skills: {
+            select: { skill: { select: { cefrLevel: true, id: true } } },
+            where: { skill: { cefrLevel: { in: levels } } },
+          },
+        },
       },
     },
     where: { kind: "lesson", plan: { goalId }, status: "todo" },
   });
 
-  const skillIds = [
-    ...new Set(lessons.flatMap(({ lesson }) => lesson?.skills.map(({ skillId }) => skillId) ?? [])),
-  ];
+  const skills = new Map(
+    lessons.flatMap(
+      ({ lesson }) => lesson?.skills.map(({ skill }) => [skill.id, skill] as const) ?? [],
+    ),
+  );
 
-  if (skillIds.length === 0) {
-    return skillIds;
+  if (skills.size === 0) {
+    return [];
   }
 
   const today = getDateInTimeZone({ date: now, timeZone });
-  const undone = await loadUndoneTestOuts(goalId, { timeZone, tx });
 
-  const misses = await tx.attempt.findMany({
-    distinct: ["skillId"],
-    select: { skillId: true },
-    where: {
-      isCorrect: false,
-      itemId: { not: null },
-      localDate: { gte: today },
-      skillId: { in: skillIds },
-      stepId: null,
-      userId,
-    },
-  });
+  const [undone, misses] = await Promise.all([
+    loadUndoneTestOuts(goalId, { timeZone, tx }),
+    tx.attempt.findMany({
+      distinct: ["skillId"],
+      select: { skillId: true },
+      where: {
+        isCorrect: false,
+        itemId: { not: null },
+        localDate: { gte: today },
+        skillId: { in: [...skills.keys()] },
+        stepId: null,
+        userId,
+      },
+    }),
+  ]);
 
   const blocked = new Set([
     ...misses.map(({ skillId }) => skillId),
@@ -95,23 +105,28 @@ export async function listTestOutSkillIds({
       .map(({ skillId }) => skillId),
   ]);
 
-  return skillIds.filter((id) => !blocked.has(id));
+  return [...skills.values()].filter(({ id }) => !blocked.has(id));
+}
+
+export async function listTestOutSkillIds({
+  level,
+  ...input
+}: TestOutAvailability & { level: LevelTestOutLevel }) {
+  const skills = await listTestOutSkills({ ...input, levels: [level] });
+  return skills.map(({ id }) => id);
 }
 
 export async function availableLevelTestOut({
-  level,
+  levels,
   tx = prisma,
   ...input
-}: Omit<Parameters<typeof listTestOutSkillIds>[0], "level" | "tx"> & {
-  level: LevelTestOutLevel | null;
-  tx?: TransactionClient;
-}) {
-  if (!level) {
+}: Omit<TestOutAvailability, "tx"> & { levels: LevelTestOutLevel[]; tx?: TransactionClient }) {
+  if (levels.length === 0) {
     return null;
   }
 
-  const skillIds = await listTestOutSkillIds({ ...input, level, tx });
-  return skillIds.length > 0 ? level : null;
+  const skills = await listTestOutSkills({ ...input, levels, tx });
+  return levels.find((level) => skills.some(({ cefrLevel }) => cefrLevel === level)) ?? null;
 }
 
 export async function readTestOutBank({
