@@ -171,7 +171,7 @@ test.describe("Testing what you know from the plan", () => {
     await page.goto("/plan");
 
     await expect(
-      page.getByRole("button", { name: /English level Reading B1–B2 · Listening A2–B1/u }),
+      page.getByRole("button", { name: /English level Reading B1–B2\s*Listening A2–B1/u }),
     ).toBeVisible();
 
     await page.goto("/level-test");
