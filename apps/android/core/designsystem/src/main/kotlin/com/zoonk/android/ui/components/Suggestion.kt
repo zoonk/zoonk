@@ -347,7 +347,7 @@ private fun SuggestionLine(
                             painterResource(R.drawable.ic_error),
                             contentDescription = null,
                             modifier = Modifier.size(PANEL_MARK * glyphScale()),
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     } else {
                         Mark(PANEL_MARK)
@@ -382,15 +382,23 @@ private fun SuggestionLine(
                         }
                     }
                 },
-                action = action,
+                // The line's actions are one group, beside the summary or under it together.
+                action =
+                    action?.let {
+                        {
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                it()
+                            }
+                        }
+                    },
             )
         }
     }
 }
 
 /**
- * The mark, the summary and the action side by side, the action at the end, or the action under the summary when that
- * makes the line shorter (a long action or large text squeezes the words beside it) or beside it a word would break.
+ * The mark, the summary and the action side by side, the action at the end while it leaves the summary half the room
+ * after the mark and no word of it breaks; otherwise the action goes under the summary's words.
  */
 @Composable
 private fun LineLayout(
@@ -408,14 +416,9 @@ private fun LineLayout(
         val words = summaryPart.single()
         val besideWidth = textMax - (actionPlaced?.let { it.width + gap } ?: 0)
         val stackGap = STACKED_ACTION_GAP.roundToPx()
-        // In order, so the words are only measured at a width they can have: an action that leaves them none goes under.
         val beside =
             actionPlaced == null ||
-                (
-                    besideWidth > 0 &&
-                        besideWidth >= words.minIntrinsicWidth(constraints.maxHeight) &&
-                        words.minIntrinsicHeight(besideWidth) <= words.minIntrinsicHeight(textMax) + stackGap + actionPlaced.height
-                )
+                (besideWidth >= textMax / 2 && besideWidth >= words.minIntrinsicWidth(constraints.maxHeight))
         val textWidth = if (beside) besideWidth else textMax
         val summaryPlaced = words.measure(Constraints.fixedWidth(textWidth))
         val content =
