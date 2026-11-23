@@ -105,3 +105,93 @@ extension MemoryInsight {
     createdAt: .now, goalId: nil, id: "insight", kind: .tip, message: "Review before bed.",
     planChange: nil, status: .pending, studyTime: nil)
 }
+
+extension CurrentAccount {
+  fileprivate static let buddyTestAccount = CurrentAccount(
+    account: AccountAccess(
+      deletion: AccountDeletionRequirements(hasAppleAccount: false),
+      subscription: nil),
+    user: AccountUser(
+      email: "learner@zoonk.test",
+      id: "buddy-test-user",
+      image: nil,
+      name: "Learner",
+      username: "learner"))
+}
+
+@MainActor
+final class BuddyDayOpeningTests: XCTestCase {
+  func testClosingDayBeforeAMissionAnswersOpensNothingThenOrLater() async throws {
+    let (window, api, opened) = try await waitingMission()
+    try await closeRequestSheet(in: window)
+    try await waitForTestCondition("The sheet did not close") {
+      window.rootViewController?.presentedViewController == nil
+    }
+    await api.releaseHeldCall()
+    // A closed day sheet must not open a mission after its response.
+    let closedDayWindow: Duration = .milliseconds(200)
+    try await Task.sleep(for: closedDayWindow)
+    XCTAssertEqual(opened.count, 0)
+    try await showDay(in: window)
+    XCTAssertEqual(opened.count, 0)
+  }
+
+  private func waitingMission() async throws
+    -> (UIWindow, StudyAPIStub, OpenedMissions)
+  {
+    let api = StudyAPIStub(
+      openings: [
+        try JSONDecoder().decode(
+          StudyBlockOpening.self,
+          from: Data(#"{"kind":"lesson","lessonId":"l1","sessionId":"s1"}"#.utf8))
+      ],
+      holdsOpening: true)
+    let buddy = BuddyAPIStub()
+    buddy.shownStatus.today = .init(
+      fullMeal: .init(bonus: 10, earned: false), goalId: PageServer.goalID,
+      localDate: "2026-11-16",
+      missions: [
+        .init(
+          done: 0, kind: .somethingNew,
+          opens: .init(value1: .case1(.init(blockId: "b1", kind: .block))), status: .todo, total: 1)
+      ])
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live(), learnerSummaryAPI: OneGoalSummary(kind: .learn))
+    await dependencies.learnerSummaryStore.summary.load()
+    let store = BuddyStore(api: buddy, cache: dependencies.cache)
+    await store.status.load()
+    let today = TodayStore(api: api, cache: dependencies.cache)
+    let opened = OpenedMissions()
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack { BuddyScreen() }
+        .environment(store)
+        .environment(today)
+        .appDependencies(dependencies)
+        .environment(AppRouter())
+        .environment(\.tutorPlaces, TutorPlaces { _ in opened.count += 1 })
+        .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+    try await showDay(in: window)
+    try await activate(
+      where: { $0.contains(String(localized: "Do a new lesson", table: "Today")) }, in: window)
+    try await api.waitForHeldCall()
+    return (window, api, opened)
+  }
+
+  private func showDay(in window: UIWindow) async throws {
+    try await activate("0 of 1 mission", in: window)
+    try await waitForTestCondition("The day sheet did not appear") {
+      window.rootViewController?.presentedViewController != nil
+    }
+  }
+}
+
+@MainActor
+private final class OpenedMissions {
+  var count = 0
+}
