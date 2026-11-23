@@ -389,6 +389,26 @@ final class MockRunKeptAnswersTests: XCTestCase {
     XCTAssertEqual(fetches, 2, "Opening again reads the mock again")
   }
 
+  func testWrittenTextIsKeptBeforeDebounceAndSentWithItsOriginalEditOnReopen() async throws {
+    let transport = MockTransport(itemIds: [Self.itemOne], format: "essay")
+    let store = makeStore(transport, session: .preview(account: .keptAnswersFixture))
+    let firstVisit = try await open(store)
+    let question = try XCTUnwrap(firstVisit.question)
+    XCTAssertEqual(question.format, .essay)
+    firstVisit.show(Self.itemOne)
+    firstVisit.write(.text("A first paragraph."))
+    let edit = try XCTUnwrap(unsent.read().first?.edit)
+    firstVisit.stop()
+
+    let reopened = try await open(store)
+    await reopened.queue.idle()
+
+    let saved = await transport.saved
+    XCTAssertEqual(saved.map(\.answer), [.text("A first paragraph.")])
+    XCTAssertEqual(saved.first?.edit, edit)
+    XCTAssertTrue(unsent.read().isEmpty)
+  }
+
   func testAnAnswerWhoseSessionEndedStaysKeptAndUnsaved() async throws {
     let transport = MockTransport(itemIds: [Self.itemOne])
     let session = SessionStore.preview(account: .keptAnswersFixture)
@@ -552,9 +572,10 @@ private struct HeldAccountAPI: AccountAPIClient {
 /// Serves one mock and stores its answers, as the API does, so opening it again shows them.
 private actor MockTransport: ClientTransport {
   private let itemIds: [String]
-  private let drafts: [MockDraft]
+  private var storedDrafts: [MockDraft]
   private let review: (allowed: Int, changed: [String])?
   private let status: String
+  private let format: String
   private var offline = false
   private var sessionEnded = false
   private(set) var saved: [MockDraft] = []
@@ -562,12 +583,13 @@ private actor MockTransport: ClientTransport {
 
   init(
     itemIds: [String], drafts: [MockDraft] = [], review: (allowed: Int, changed: [String])? = nil,
-    status: String = "running"
+    status: String = "running", format: String = "multipleChoice"
   ) {
     self.itemIds = itemIds
-    self.drafts = drafts
+    self.storedDrafts = drafts
     self.review = review
     self.status = status
+    self.format = format
   }
 
   func setOffline(_ value: Bool) {
@@ -601,21 +623,21 @@ private actor MockTransport: ClientTransport {
 
     if let body {
       let data = try await Data(collecting: body, upTo: 1 << 20)
-      saved.append(try JSONDecoder().decode(MockDraft.self, from: data))
+      let draft = try JSONDecoder().decode(MockDraft.self, from: data)
+      saved.append(draft)
+
+      var stored = draft
+      stored.edit = nil
+      stored.revision = UUID().uuidString.lowercased()
+      storedDrafts.removeAll { $0.itemId == stored.itemId }
+      storedDrafts.append(stored)
     }
 
     return (HTTPResponse(status: .noContent), nil)
   }
 
   private func mockJSON() -> String {
-    var current = drafts
-
-    for draft in saved {
-      current.removeAll { $0.itemId == draft.itemId }
-      current.append(draft)
-    }
-
-    let draftsJSON = String(decoding: try! JSONEncoder().encode(current), as: UTF8.self)
+    let draftsJSON = String(decoding: try! JSONEncoder().encode(storedDrafts), as: UTF8.self)
     let changedJSON = String(
       decoding: try! JSONEncoder().encode(review?.changed ?? []), as: UTF8.self)
     let changesLeft = review.map { String($0.allowed - $0.changed.count) } ?? "null"
@@ -626,7 +648,7 @@ private actor MockTransport: ClientTransport {
     let resume = review == nil ? 0 : itemIds.count - 1
     let questions = itemIds.enumerated().map { index, id in
       """
-      {"area":null,"context":null,"entry":null,"format":"multipleChoice","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
+      {"area":null,"context":null,"entry":null,"format":"\(format)","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
       """
     }.joined(separator: ",")
     let currentJSON =

@@ -17,6 +17,7 @@ import {
   persistLearnerAnswer,
   publishLearnerAnswer,
 } from "../record-learner-answer";
+import { loadWritingSkillIds } from "../writing-skills";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
 import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
@@ -159,23 +160,25 @@ export async function answerPlacementQuestion({
     return owned;
   }
 
-  const [plan, item] = await Promise.all([
+  const [plan, item, written] = await Promise.all([
     owned.goal.kind === "exam" ? null : loadPlacementPlan(goalId),
     findGoalItem({
       examBlueprintId: owned.goal.examBlueprintId,
       itemId: input.itemId,
       userId: owned.userId,
     }),
+    loadWritingSkillIds(goalId),
   ]);
 
-  const graded = item
-    ? await gradeAnswer({
-        answer: input.answer,
-        item,
-        practicedLanguage: owned.goal.targetLanguage,
-        userId: owned.userId,
-      })
-    : null;
+  const graded =
+    item && !written.has(item.skillId)
+      ? await gradeAnswer({
+          answer: input.answer,
+          item,
+          practicedLanguage: owned.goal.targetLanguage,
+          userId: owned.userId,
+        })
+      : null;
 
   if (!item || graded === null) {
     return { status: "invalidItem" };

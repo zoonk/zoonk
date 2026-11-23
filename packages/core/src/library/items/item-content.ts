@@ -10,13 +10,16 @@ import {
 import { isJsonObject, mapJsonStrings } from "@zoonk/utils/json";
 import { replaceEmDashes } from "@zoonk/utils/string";
 import { z } from "zod";
+import { writtenItemSchema } from "../../exams/essays/writing-contract";
 import { shuffleAnswerOptions, stripOptionLabels } from "../_utils/answer-options";
 import { ANY_NUMBER } from "./_utils/numeric-entry";
 
 const quotedField = { quoted: z.literal(true).optional() };
 
 const ITEM_CONTENT_SCHEMAS = {
-  essay: GENERATED_ITEM_SCHEMAS.essay.omit({ difficulty: true, format: true }),
+  essay: GENERATED_ITEM_SCHEMAS.essay
+    .omit({ difficulty: true, format: true })
+    .extend({ writing: writtenItemSchema.optional() }),
   matchPairs: GENERATED_ITEM_SCHEMAS.matchPairs.omit({ difficulty: true, format: true }),
   multipleChoice: GENERATED_ITEM_SCHEMAS.multipleChoice
     .omit({ difficulty: true, format: true })

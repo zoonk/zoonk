@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { WRITING_DRILL_MINUTES } from "../../exams/essays/produce-block";
 import { getPlanInputsKey, shouldSkipPlanBuild } from "../_utils/plan-inputs-key";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
-import { placeLandedLessons } from "./landed-placement";
+import { placeLandedLessons, reservePlaced } from "./landed-placement";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
-import { type PlanDay } from "./schedule-units";
+import { type PlanDay, scheduleUnits } from "./schedule-units";
 import { listSelectedItemFacts } from "./selected-item-facts";
 
 const TODAY = fromIsoDate("2026-10-12");
@@ -179,6 +180,46 @@ describe(placeLandedLessons, () => {
       ["lesson:law-1", "2026-10-13"],
     ]);
   });
+
+  it.each([2, 0])(
+    "holds a landed writing lesson of %i minutes and its drill before filling the day",
+    (lessonMinutes) => {
+      const minutes = lessonMinutes + WRITING_DRILL_MINUTES;
+
+      const planDays = days.map((day) => ({
+        ...day,
+        shape: { ...day.shape, minutes: minutes * 2 },
+      }));
+
+      const writing = unit({
+        key: "lesson:essays-0",
+        lessonId: "essays-0",
+        minutes,
+        skillId: "essays",
+        teachingShare: lessonMinutes / minutes,
+      });
+
+      const other = unit({ key: "lesson:politics-0", lessonId: "politics-0", skillId: "politics" });
+
+      const { units: placed } = scheduleUnits({ days: planDays, units: [writing] });
+
+      expect(placed[0]?.studyPortions).toStrictEqual([
+        {
+          date: "2026-10-12",
+          drillMinutes: WRITING_DRILL_MINUTES,
+          lessonMinutes,
+          minutes: minutes * 2,
+        },
+      ]);
+
+      const remaining = scheduleUnits({
+        days: reservePlaced({ days: planDays, placed }),
+        units: [other],
+      });
+
+      expect(remaining.units[0]?.date).toStrictEqual(addDays(TODAY, 1));
+    },
+  );
 
   it("keeps the stand-in's own time for its lessons on a day kept work fills past its time", () => {
     const placed = place({

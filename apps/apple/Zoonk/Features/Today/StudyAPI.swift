@@ -30,6 +30,8 @@ protocol StudyAPIClient: Sendable {
     -> Components.Schemas.LessonReadiness
   /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
+  /// Only on the learner's tap: opening a written question admits its grading, or writes it.
+  func startWriting(token: String, blockID: String) async throws -> WritingStart
   /// How the lesson stands once no run writes it; `run` is the one the learner's tap started.
   func followWriting(token: String, lessonID: String, run: String?) async throws
     -> Components.Schemas.LessonReadiness
@@ -315,6 +317,10 @@ struct StudyAPI: StudyAPIClient {
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
     try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
+  }
+
+  func startWriting(token: String, blockID: String) async throws -> WritingStart {
+    try await ExamAPI(clients: clients).startWriting(token: token, blockId: blockID)
   }
 
   func followWriting(token: String, lessonID: String, run: String?) async throws

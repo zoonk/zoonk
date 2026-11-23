@@ -4,7 +4,7 @@ import { getWorkflowMetadata, sleep } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
-import { whileLessonsAsked } from "../goals/goal-outlines";
+import { startAll, whileLessonsAsked } from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
@@ -21,6 +21,7 @@ import {
   selectPlanLessons,
 } from "./prepare-plan-lessons";
 import { prepareToolVersion } from "./prepare-tool-version";
+import { prepareWriting } from "./prepare-writing";
 import { writeLanguageCalls } from "./steps/language-call-steps";
 import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
 import {
@@ -163,44 +164,43 @@ async function prepareLessons({
   analytics: ContentAnalytics;
   input: SessionPreparationInput;
 }): Promise<SessionPreparationResult> {
-  const sessionWork: Promise<unknown>[] = [];
+  const selected = selectPlanLessons({ analytics, input });
 
-  const preparation = await whileLessonsAsked({
+  const lessonWork = whileLessonsAsked({
     goalId: input.goalId,
     lessonsAskedAt: input.lessonsAskedAt,
     run: async (started) => {
-      const selected = await selectPlanLessons({ analytics, input });
-
-      if (!selected) {
-        return null;
-      }
-
-      // The session's own questions and calls don't wait for its next topics to be outlined.
-      if (!input.guest) {
-        sessionWork.push(
-          writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
-          writeClaimQuestions({ analytics, input }).catch(() => null),
-          writePlacementWeekQuestions({ analytics, input }).catch(() => null),
-        );
-      }
-
-      return outlineAndReselect({ analytics, input, preparation: selected, started });
+      const preparation = await selected;
+      return preparation ? outlineAndReselect({ analytics, input, preparation, started }) : null;
     },
   });
 
+  if (input.guest) {
+    return { status: (await lessonWork) ? "guest" : "alreadyRunning" };
+  }
+
+  await startAll([
+    lessonWork.then((preparation) =>
+      preparation?.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
+    ),
+    // The session's own prompts, questions and calls don't wait for the next topic's outline.
+    selected.then((preparation) =>
+      preparation
+        ? startAll([
+            prepareWriting(input),
+            writeLanguageCalls({ goalId: input.goalId, userId: input.userId }),
+            writeClaimQuestions({ analytics, input }),
+            writePlacementWeekQuestions({ analytics, input }),
+          ])
+        : null,
+    ),
+  ]);
+
+  const preparation = await lessonWork;
+
   if (!preparation) {
-    await Promise.all(sessionWork);
     return { status: "alreadyRunning" };
   }
-
-  if (input.guest) {
-    return { status: "guest" };
-  }
-
-  await Promise.all([
-    preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
-    ...sessionWork,
-  ]);
 
   return {
     laterLessonIds: preparation.laterLessonIds,

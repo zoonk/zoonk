@@ -14,8 +14,10 @@ import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { isMultiPick } from "../questions/pick-rule";
+import { WritingLineCount } from "../writing/writing-editor";
+import { WritingQuestionBody } from "../writing/writing-question";
 import { useMockScreen } from "./mock-context";
-import { useMockQuestionLabel } from "./mock-labels";
+import { isNumberedMockQuestion, useMockQuestionLabel } from "./mock-labels";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
 
 const MAX_TYPED_ANSWER = 500;
@@ -96,7 +98,11 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
         readOnly={runner.pending}
         value={text}
       />
-      <EssayWordCount id={`${textId}-count`} words={words} />
+      {question.writing ? (
+        <WritingLineCount id={`${textId}-count`} text={text} writing={question.writing} />
+      ) : (
+        <EssayWordCount id={`${textId}-count`} words={words} />
+      )}
     </section>
   );
 }
@@ -112,6 +118,10 @@ export function useQuestionPlace({
   const label = useMockQuestionLabel();
 
   if (question.format === "essay") {
+    if (isNumberedMockQuestion({ question, total })) {
+      return label({ number: question.number, total });
+    }
+
     return question.area ? t("Written part · {area}", { area: question.area }) : t("Written part");
   }
 
@@ -177,8 +187,25 @@ export function MockQuestionCard({ question }: { question: MockQuestion }) {
         <ItemSetStimulus continued={previous?.set?.id === question.set.id} set={question.set} />
       )}
 
-      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <QuestionTitle text={question.question} />
+      {question.writing ? (
+        // A written question reads as on its practice screen, so its field stays in reach.
+        <>
+          <QuestionTitle>{question.writing.title}</QuestionTitle>
+          <WritingQuestionBody
+            className="pb-4"
+            question={{
+              context: question.context,
+              question: question.question,
+              writing: question.writing,
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <ItemSupport context={question.context} image={question.image} visual={question.visual} />
+          <QuestionTitle text={question.question} />
+        </>
+      )}
 
       <MockAnswerInput question={question} />
     </div>

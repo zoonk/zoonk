@@ -8,8 +8,7 @@ import {
 } from "@zoonk/db";
 import { z } from "zod";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { getBlockItemIds, readBlockPayload } from "../block-payload";
-import { ONE_PER_DAY } from "./day-block-content";
+import { getBlockItemIds, hasWritingProgress, readBlockPayload } from "../block-payload";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -102,12 +101,39 @@ function isHeldBy({
   return since.some(
     (started) =>
       (block.lessonId !== null && started.lessonId === block.lessonId) ||
-      (ONE_PER_DAY.has(block.kind) && started.kind === block.kind) ||
+      (block.kind === "review" && started.kind === "review") ||
       (block.kind === "practice" && sharesQuestion({ block, started })) ||
       (block.kind === "checkpoint" &&
         started.kind === "checkpoint" &&
         getChallengeItemId(started) === getChallengeItemId(block)),
   );
+}
+
+function writingOccurrence(block: Pick<StudySessionBlock, "kind" | "payload">) {
+  if (block.kind !== "produce") {
+    return null;
+  }
+
+  const { extra, writing, writingLessonId, writingPlacement } = readBlockPayload(block);
+
+  if (extra || !writing) {
+    return null;
+  }
+
+  if (writing.unit === "drill") {
+    return writingLessonId ? `drill:${writingLessonId}` : null;
+  }
+
+  return JSON.stringify([writing.unit, writing.taskKey, Boolean(writingPlacement)]);
+}
+
+function matchesStartedWriting(since: readonly StudySessionBlock[]) {
+  const available = Map.groupBy(since, writingOccurrence);
+
+  return (block: SnapshotBlock) => {
+    const key = writingOccurrence(block);
+    return key !== null && available.get(key)?.pop() !== undefined;
+  };
 }
 
 /** Restore shown positions unless intervening started work occupies them; append those returning blocks in order. */
@@ -154,21 +180,28 @@ function planRestore({
 }) {
   const before = new Map(snapshot.blocks.map((block) => [block.id, block]));
   const current = new Set(blocks.map((block) => block.id));
-  const since = blocks.filter((block) => !before.has(block.id) && block.status !== "pending");
+  const added = blocks.filter((block) => !before.has(block.id));
+
+  const since = added.filter(
+    (block) => block.status !== "pending" || hasWritingProgress(readBlockPayload(block)),
+  );
+
+  const held = new Set(since.map((block) => block.id));
 
   const returning = snapshot.blocks.filter(
     (block) => block.status === "pending" && !current.has(block.id),
   );
 
-  const back = returning.filter((block) => !isHeldBy({ block, since }));
+  const alreadyWriting = matchesStartedWriting(since);
+  const back = returning.filter((block) => !isHeldBy({ block, since }) && !alreadyWriting(block));
 
   return {
     back: placeBlocks({
       back,
-      staying: blocks.filter((block) => before.has(block.id) || block.status !== "pending"),
+      staying: blocks.filter((block) => before.has(block.id) || held.has(block.id)),
     }),
     dropped: returning.filter((block) => !back.includes(block)),
-    leaving: blocks.filter((block) => !before.has(block.id) && block.status === "pending"),
+    leaving: added.filter((block) => !held.has(block.id)),
     progressed:
       since.length > 0 ||
       blocks.some((block) => {

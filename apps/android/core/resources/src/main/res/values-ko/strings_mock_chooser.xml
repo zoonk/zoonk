@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "b27a9145f8317da70d8410e84361ac49258bc51b8cd374ddb9e3b58546be91b1",
+  "mock_chooser_both_tests": "9155f86449c7636a366fc686b67f1155db915d73b459dac2d5b2ffab810a2de0",
   "mock_chooser_day": "18a3c177f626fae2d3b5eb111edfce00d08e8b79ab6279b9dfb459dbabb5c05b",
   "mock_chooser_day_without": "869e50c36e08ebc89f4841dc57cdcf933b907ebfe291d2c9dffa849c140a7b4f",
+  "mock_chooser_exam_tests": "ebfacc7dfc01c7febdc8aac39ee96f36b8a06cd8139a726b1919b0caeb86dcec",
   "mock_chooser_failed": "6af053baea0bb024cd0723150c42782f282d654b8a6d0f836c06387cda4c05d6",
   "mock_chooser_full_exam": "ec96209182f70bbcc7c5cf2a52fd95dc8b180ed146f2d94b7e2ce4e2e7f71053",
   "mock_chooser_full_exam_without": "f97a7ee29a17a9a5c6550c903dfc51f4684d86c45d18be8269b4aaaaa545917f",
@@ -11,6 +14,7 @@
   "mock_chooser_last_mock": "3995d50ff26ddbc4242ac008a2d2a27f2a32a759140ec590fe0a38790217bac7",
   "mock_chooser_line": "266dedaa78f0e90bf83611c1f09015e49f8ab3d1822f063b868a98091063263a",
   "mock_chooser_no_written_part": "965308a8aa80b49a57d6cf37015588eeaf6ac80305dae830a80c53894d883262",
+  "mock_chooser_objective_only": "627730f424150294395ac328cbe658d83a23f2f3f29c8aadb58e42398199919b",
   "mock_chooser_one_subject": "ecf1a837b56fa65fa1d930cd28ffe2b8d6f20e48c6171086022feb6dbf105782",
   "mock_chooser_option_size": "1edd91f911a679aa5146249c252e5f634c7c7a340050d69cabdb77caa1f0709b",
   "mock_chooser_start": "d9503f3c347b873925fbe36a228211f591701404193c3ae726479d1064616aa7",
@@ -26,6 +30,17 @@
     <string name="mock_chooser_one_subject">한 과목</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">시험</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="other">시험이 %d개 있어요</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">더 짧고 객관식 문제만 있는 시험</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">두 시험 모두</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="other">전체 %1$d개 시험</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">%1$d일 차</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

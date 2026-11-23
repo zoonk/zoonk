@@ -24,12 +24,15 @@ class MockChooserViewModel(
 ) : ViewModel() {
     private val mutableBusy = MutableStateFlow(false)
     private val mutableFailed = MutableStateFlow(false)
+    private val mutableRefusal = MutableStateFlow<MockStartOutcome?>(null)
     private val mutableOpened = MutableStateFlow<String?>(null)
     private val mutableTriedLocked = MutableStateFlow(false)
 
     val busy: StateFlow<Boolean> = mutableBusy.asStateFlow()
 
     val failed: StateFlow<Boolean> = mutableFailed.asStateFlow()
+
+    val refusal: StateFlow<MockStartOutcome?> = mutableRefusal.asStateFlow()
 
     /** The mock to open: started, or the one that was running. */
     val opened: StateFlow<String?> = mutableOpened.asStateFlow()
@@ -57,6 +60,10 @@ class MockChooserViewModel(
 
                         MockStartOutcome.PlusRequired -> {
                             metTheLock()
+                        }
+
+                        is MockStartOutcome.GradesUsed, is MockStartOutcome.NeedsChoice, MockStartOutcome.SignUpRequired -> {
+                            mutableRefusal.value = outcome
                         }
                     }
                 }

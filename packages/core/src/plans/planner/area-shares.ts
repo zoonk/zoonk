@@ -5,7 +5,7 @@ function lessonsOf(skills: PlanGraph["skills"]): number {
   return skills.reduce((sum, skill) => sum + skill.lessons, 0);
 }
 
-function averageWeight(skills: PlanGraph["skills"]): number {
+export function averageWeight(skills: PlanGraph["skills"]): number {
   const lessons = lessonsOf(skills);
   const mass = skills.reduce((sum, skill) => sum + (skill.weight ?? 1) * skill.lessons, 0);
 

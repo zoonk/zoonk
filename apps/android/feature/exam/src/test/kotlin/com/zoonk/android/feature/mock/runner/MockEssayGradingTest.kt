@@ -36,7 +36,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MockEssayGradingTest {
@@ -88,64 +87,6 @@ class MockEssayGradingTest {
             assertEquals(1, api.grades)
             assertEquals(EssayGrading.Idle, viewModel.essayGrading.value)
             assertEquals(listOf(MockEssay.Status.GRADED), viewModel.essayStatuses)
-        }
-
-    @Test
-    fun todaysLimitShowsWhatGotGradedAndSaysSo() =
-        runTest(dispatcher) {
-            api.afterFinish = essays(pendingEssay(), pendingEssay(ESSAY_TWO))
-            api.afterGrade = essays(gradedEssay(), pendingEssay(ESSAY_TWO))
-            api.gradeOutcome = EssayGradeOutcome.LimitReached
-            val viewModel = viewModel()
-
-            viewModel.finish()
-            advanceUntilIdle()
-
-            assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
-            assertEquals(listOf(MockEssay.Status.GRADED, MockEssay.Status.PENDING), viewModel.essayStatuses)
-        }
-
-    @Test
-    fun gradeItComesBackOnceTheLearnersDayTurns() =
-        runTest(dispatcher) {
-            api.afterFinish = essays(pendingEssay())
-            api.afterGrade = essays(pendingEssay())
-            api.gradeOutcome = EssayGradeOutcome.LimitReached
-            val clock = SetClock(Instant.parse("2026-10-29T22:00:00Z"))
-            val viewModel = viewModel(clock = clock)
-
-            viewModel.finish()
-            advanceUntilIdle()
-            viewModel.onStop()
-            viewModel.onStart()
-            assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
-
-            clock.now = Instant.parse("2026-10-30T08:00:00Z")
-            viewModel.onStop()
-            viewModel.onStart()
-            assertEquals(EssayGrading.Idle, viewModel.essayGrading.value)
-        }
-
-    @Test
-    fun aLimitAnsweredAfterMidnightCountsForTheDayItWasAskedOn() =
-        runTest(dispatcher) {
-            api.afterFinish = essays(pendingEssay())
-            api.afterGrade = essays(pendingEssay())
-            api.gradeOutcome = EssayGradeOutcome.LimitReached
-            api.gradeGate = CompletableDeferred()
-            val clock = SetClock(Instant.parse("2026-10-29T23:59:00Z"))
-            val viewModel = viewModel(clock = clock)
-
-            viewModel.finish()
-            runCurrent()
-            clock.now = Instant.parse("2026-10-30T00:01:00Z")
-            api.gradeGate!!.complete(Unit)
-            runCurrent()
-            assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
-
-            viewModel.onStop()
-            viewModel.onStart()
-            assertEquals(EssayGrading.Idle, viewModel.essayGrading.value)
         }
 
     @Test
@@ -210,10 +151,4 @@ class MockEssayGradingTest {
 
             assertEquals(2, reads)
         }
-}
-
-private class SetClock(
-    var now: Instant,
-) : Clock {
-    override fun now() = now
 }

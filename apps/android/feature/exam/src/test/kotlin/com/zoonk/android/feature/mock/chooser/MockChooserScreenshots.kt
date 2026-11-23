@@ -7,6 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
@@ -16,6 +18,8 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -29,6 +33,7 @@ import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,6 +46,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.time.LocalDate
 
 /** Review screenshots of the mock chooser, written only with `-Pzoonk.shots=<folder>`. No goldens. */
 @RunWith(AndroidJUnit4::class)
@@ -176,6 +182,57 @@ class MockChooserScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("chooser-expanded-dark", dark = true)
 
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneTwoTests() = capture("chooser-phone-two-tests", options = TWO_TESTS)
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneTwoTestsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("chooser-phone-two-tests-font200", options = TWO_TESTS)
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneTwoTestsWaitingForAChoice() =
+        capture("chooser-phone-two-tests-needs-choice", options = TWO_TESTS_NEEDS_CHOICE) {
+            pickWrittenTest()
+            compose.onNodeWithText("Choose on Today").assertIsDisplayed()
+        }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneWrittenTestPreparing() {
+        starts.starts = listOf { preparing() }
+        capture("chooser-phone-written-preparing", mocks = writingPaperApi(mockOptions(TWO_TESTS))) {
+            pickWrittenTest()
+            compose.onNodeWithText("Start").performSemanticsAction(SemanticsActions.OnClick)
+            compose.onNodeWithText("Keep studying").assertIsDisplayed()
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneWrittenTestRefusedForToday() {
+        starts.starts =
+            listOf {
+                throw ApiException(
+                    ApiError.Unavailable,
+                    "USAGE_LIMIT_REACHED",
+                    status = 429,
+                    details = ApiJson.parseToJsonElement("""{"returnsOn":"${LocalDate.now().plusDays(1)}"}"""),
+                )
+            }
+        capture("chooser-phone-written-refused", options = TWO_TESTS) {
+            pickWrittenTest()
+            compose.onNodeWithText("Start").performSemanticsAction(SemanticsActions.OnClick)
+            compose.onNodeWithText("Start").assertIsNotEnabled()
+        }
+    }
+
+    private fun pickWrittenTest() = compose.onNodeWithText("Written test").performSemanticsAction(SemanticsActions.OnClick)
+
     private fun startLocked() {
         compose.onNodeWithText("Day 1").performClick()
         compose.onNodeWithText("Start").performClick()
@@ -238,6 +295,32 @@ class MockChooserScreenshots {
     }
 
     private companion object {
+        val TWO_TESTS =
+            """
+            "examName":"CGU",
+            "options":[
+             {"area":null,"areas":["Public administration"],"covers":null,"day":null,"estimatedMinutes":300,"kind":"objective","leftOut":[],
+              "minutes":300,"objectiveOnly":true,"questions":170,"written":[],
+              "sections":[{"kind":"objective","minutes":300,"name":"Objective test","questions":170,"session":"Morning"}]},
+             {"area":null,"areas":[],"covers":null,"day":null,"estimatedMinutes":210,"kind":"written","leftOut":[],"minutes":210,
+              "objectiveOnly":false,"questions":0,"written":["Written test"],"pacing":"official",
+              "sections":[{"kind":"written","minutes":210,"name":"Written test","questions":2,"session":"Afternoon"}]},
+             {"area":null,"areas":["Public administration"],"covers":null,"day":null,"estimatedMinutes":510,"kind":"full","leftOut":[],
+              "minutes":510,"objectiveOnly":false,"questions":170,"written":["Written test"],
+              "sections":[{"kind":"objective","minutes":300,"name":"Objective test","questions":170,"session":"Morning"},
+               {"kind":"written","minutes":210,"name":"Written test","questions":2,"session":"Afternoon"}]},
+             {"area":null,"areas":["Public administration"],"covers":null,"day":null,"estimatedMinutes":150,"kind":"half",
+              "leftOut":[{"name":"Written test","part":"writtenInFull"}],"minutes":150,"objectiveOnly":true,"questions":85,"written":[],
+              "sections":[{"kind":"objective","minutes":150,"name":"Objective test","questions":85,"session":"Morning"}]}]
+            """.trimIndent()
+
+        private const val NEEDS_CHOICE = """"availability":{"status":"needsChoice","choiceGroups":["Specialty"]},"""
+
+        val TWO_TESTS_NEEDS_CHOICE =
+            TWO_TESTS
+                .replace(""""pacing":"official",""", """"pacing":"official",$NEEDS_CHOICE""")
+                .replace(""""kind":"full","leftOut":[],""", """"kind":"full","leftOut":[],$NEEDS_CHOICE""")
+
         val OPTIONS =
             """
             "examName":"ENEM",

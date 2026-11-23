@@ -1,159 +1,73 @@
 import { generateText } from "ai";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { type EssayRubric, gradeEssay } from "./grade-essay";
+import { gradeWritingEvidence } from "./grade-essay";
 import type * as Ai from "ai";
-
-vi.mock("../_utils/address-form.prompt.md", () => ({
-  default:
-    "{{#neutral}}Neutral address.{{/neutral}}{{#feminine}}Feminine address.{{/feminine}}{{#masculine}}Masculine address.{{/masculine}}",
-}));
 
 vi.mock("server-only", () => ({}));
 
+vi.mock("../_utils/address-form.prompt.md", () => ({
+  default: "{{#neutral}}Neutral address.{{/neutral}}",
+}));
+
 vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
 
-vi.mock("./grade-essay.prompt.md", () => ({
-  default: [
-    "Grade the essay.",
-    "{{#enem}}",
-    "ENEM rubric.",
-    "{{/enem}}",
-    "{{#oab}}",
-    "OAB rubric.",
-    "{{/oab}}",
-    "{{#ap}}",
-    "AP rubric.",
-    "{{/ap}}",
-    "{{#custom}}",
-    "Custom rubric.",
-    "{{/custom}}",
-    "Answer.",
-    "{{#enem}}",
-    "ENEM fields.",
-    "{{/enem}}",
-    "",
-  ].join("\n"),
-}));
+vi.mock("./grade-essay.prompt.md", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const prompt = await readFile(new URL("grade-essay.prompt.md", import.meta.url), "utf8");
+  return { default: prompt };
+});
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
   return { ...actual, generateText: vi.fn() };
 });
 
-const ESSAY = Array.from({ length: 40 }, () => "Uma frase completa sobre o tema proposto.").join(
-  " ",
-);
+const evidence = {
+  aspects: [],
+  criteria: [],
+  errors: [],
+  nextStep: null,
+  onTopicQuote: null,
+  zeroKind: null,
+  zeroQuote: null,
+  zeroRuleIndex: null,
+};
 
-const criterion = { comment: "Ok.", example: null, nextStep: "Revise.", quote: null, score: 0 };
+describe(gradeWritingEvidence, () => {
+  it.each([
+    { heading: "The ENEM redação", kind: "enem" },
+    { heading: "The OAB legal brief and questions", kind: "oab" },
+    { heading: "Points", kind: "points" },
+    { heading: "No points", kind: "levels" },
+  ] as const)("selects the $kind instructions and evidence fields", async ({ heading, kind }) => {
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult(evidence));
 
-function criteriaOutput(ids: string[]) {
-  return Object.fromEntries(ids.map((id) => [id, criterion]));
-}
-
-async function requestedSchemaFields(): Promise<string[]> {
-  const output = vi.mocked(generateText).mock.calls[0]?.[0].output;
-  const format = await output?.responseFormat;
-  const schema = format?.type === "json" ? format.schema : undefined;
-  return Object.keys((schema as { properties?: object } | undefined)?.properties ?? {});
-}
-
-describe(gradeEssay, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("sends only the ENEM rubric, and asks for the proposal's elements and limit and annulment", async () => {
-    vi.mocked(generateText).mockResolvedValueOnce(
-      createGenerateTextResult({
-        criteria: criteriaOutput(["c1", "c2", "c3", "c4", "c5"]),
-        interventionElements: null,
-        proposalLimit: null,
-        zeroReason: null,
-      }),
-    );
-
-    const { systemPrompt } = await gradeEssay({
-      essay: ESSAY,
+    const grade = await gradeWritingEvidence({
+      aspects: [],
+      context: null,
+      keyPoints: [],
       language: "pt",
-      prompt: "Tema",
-      rubric: { kind: "enem" },
+      question: "Escreva sobre o tema.",
+      scoringBasis: { kind },
+      text: "O tema é relevante.",
     });
 
-    expect(systemPrompt).toBe(
-      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.\nNeutral address.",
-    );
+    expect(grade.systemPrompt).toContain(`# ${heading}`);
+    expect(grade.systemPrompt).not.toContain("For the structured response");
+    expect(grade.userPrompt).toContain("O tema é relevante.");
 
-    expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(systemPrompt);
+    const output = vi.mocked(generateText).mock.lastCall?.[0].output;
+    const format = await output?.responseFormat;
 
-    await expect(requestedSchemaFields()).resolves.toStrictEqual([
-      "criteria",
-      "interventionElements",
-      "proposalLimit",
-      "zeroReason",
-    ]);
-  });
-
-  it.each<{ rubric: EssayRubric; prompt: string; ids: string[] }>([
-    {
-      ids: ["addressing-and-parties", "facts", "legal-basis", "requests", "closing-and-form"],
-      prompt: "OAB rubric.",
-      rubric: { kind: "oab" },
-    },
-    {
-      ids: ["criterion-1"],
-      prompt: "AP rubric.",
-      rubric: {
-        criteria: [{ criterion: "Claim", description: "A claim.", points: 1 }],
-        kind: "ap",
+    expect(format).toMatchObject({
+      schema: {
+        properties: { zeroQuote: { description: expect.stringContaining("exact passage") } },
       },
-    },
-    {
-      ids: ["criterion-1"],
-      prompt: "Custom rubric.",
-      rubric: {
-        criteria: [{ criterion: "Clarity", description: "Clear." }],
-        kind: "custom",
-        maxScore: 10,
-      },
-    },
-  ])(
-    "sends only the $rubric.kind rubric and no ENEM-only fields",
-    async ({ ids, prompt, rubric }) => {
-      vi.mocked(generateText).mockResolvedValueOnce(
-        createGenerateTextResult({ criteria: criteriaOutput(ids) }),
-      );
-
-      const { data, systemPrompt } = await gradeEssay({
-        essay: ESSAY,
-        language: "en",
-        prompt: "Question",
-        rubric,
-      });
-
-      expect(systemPrompt).toBe(
-        `Grade the essay.\n${prompt}\nAnswer.\n\nRegional forms.\nNeutral address.`,
-      );
-
-      await expect(requestedSchemaFields()).resolves.toStrictEqual(["criteria"]);
-      expect(data.enemInterventionElements).toBeNull();
-      expect(data.zeroReason).toBeNull();
-    },
-  );
-
-  it("returns the rubric's prompt for a text too short to grade, without a model", async () => {
-    const { data, systemPrompt } = await gradeEssay({
-      essay: "Curta.",
-      language: "pt",
-      prompt: "Tema",
-      rubric: { kind: "enem" },
+      type: "json",
     });
 
-    expect(generateText).not.toHaveBeenCalled();
-    expect(data.zeroReason).toBe("tooShort");
-
-    expect(systemPrompt).toBe(
-      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.\nNeutral address.",
-    );
+    const properties = format?.type === "json" ? format.schema?.properties : {};
+    expect(Object.hasOwn(properties ?? {}, "interventionElements")).toBe(kind === "enem");
   });
 });

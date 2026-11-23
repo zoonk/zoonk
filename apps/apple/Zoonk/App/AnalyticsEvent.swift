@@ -85,6 +85,8 @@ enum AnalyticsEvent: Equatable {
   case todayViewed
   /// `position` counts from 1, the deck's first card.
   case warmUpAnswered(surface: WarmUpSurface, cardID: String, position: Int, correct: Bool)
+  /// A written question's wait came on screen: `surface` is `practice` or `mock`.
+  case writingPromptWaitViewed(generationID: String, surface: String)
   case warmUpShown(
     surface: WarmUpSurface, cardCount: Int, deckID: String, goalID: String?, at: Date)
 
@@ -108,6 +110,7 @@ enum AnalyticsEvent: Equatable {
     case .todayViewed: "Today Viewed"
     case .warmUpAnswered: "Warm-Up Answered"
     case .warmUpShown: "Warm-Up Shown"
+    case .writingPromptWaitViewed: "Writing Prompt Wait Viewed"
     }
   }
 
@@ -155,6 +158,8 @@ enum AnalyticsEvent: Equatable {
       ["content_id": contentID, "page": page.rawValue]
     case .subscriptionCheckoutStarted(let billingPeriod):
       ["billingPeriod": billingPeriod.rawValue, "plan": "plus"]
+    case .writingPromptWaitViewed(let generationID, let surface):
+      ["generation_id": generationID, "surface": surface]
     case .warmUpAnswered(let surface, let cardID, let position, let correct):
       ["card_id": cardID, "correct": correct, "position": position, "surface": surface.rawValue]
     case .warmUpShown(let surface, let cardCount, let deckID, let goalID, let at):

@@ -7,6 +7,7 @@ import type * as Ai from "ai";
 vi.mock("server-only", () => ({}));
 vi.mock("./extract-exam-blueprint.prompt.md", () => ({ default: "Read the exam's documents." }));
 vi.mock("./extract-question-formats.prompt.md", () => ({ default: "List the formats." }));
+vi.mock("./find-written-task-subjects.prompt.md", () => ({ default: "Tie tasks to subjects." }));
 
 vi.mock("./extract-exam-blueprint-reading-again.prompt.md", () => ({
   default: "Include what LEFT_OUT lists.",

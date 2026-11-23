@@ -57,6 +57,16 @@ function MockChooserVisit({
         return;
       }
 
+      if (outcome.status === "limitReached") {
+        setStatus({ kind: "writingUsedUp", returnsOn: outcome.returnsOn });
+        return;
+      }
+
+      if (outcome.status === "needsChoice") {
+        setStatus({ choiceGroups: outcome.choiceGroups, kind: "needsChoice" });
+        return;
+      }
+
       setStatus({ kind: "failed" });
     });
 

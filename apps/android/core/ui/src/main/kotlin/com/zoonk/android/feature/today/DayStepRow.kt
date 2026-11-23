@@ -21,6 +21,8 @@ import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StepOpenFailed
+import com.zoonk.android.feature.session.WritingRow
+import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
@@ -133,11 +135,22 @@ private fun StepLines(
     val line =
         when {
             step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
+
+            step.writing == WritingRow.Tomorrow -> blockDetail(step)
+
             step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
+
+            // A written task says when it waits for tomorrow, that its draft is kept, or what a drill is for, over its subject.
+            step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> blockDetail(step)
+
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
+
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
+
             step.fullReview -> stringResource(R.string.today_step_every_topic)
+
             extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
+
             else -> step.subject
         }
 

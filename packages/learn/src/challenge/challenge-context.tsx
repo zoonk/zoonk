@@ -24,7 +24,7 @@ export type ChallengeActions = {
     | { unfundedMove: UnfundedMove }
   >;
   start: () => Promise<
-    | Extract<StartChallengeResult, { status: "earlierFirst" }>
+    | Extract<StartChallengeResult, { status: "earlierFirst" | "needsChoice" }>
     | "failed"
     | "notToday"
     | "plusRequired"

@@ -2,6 +2,8 @@
 
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { startWritingFromBrowser } from "@/lib/essays/writing-requests";
+import { handOverWritingStart } from "@/lib/essays/writing-start-handoff";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
@@ -230,7 +232,19 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
       } else if (destination.kind === "mock") {
         router.push(`/mock/${destination.blockId}?session=${destination.sessionId}`);
       } else if (destination.kind === "essay") {
-        router.push(`/essay/${destination.blockId}`);
+        // Opening a written question is its start: the tap admits the grading or starts the question's writing.
+        const blockId = destination.blockId;
+        const started = await answerHere(startWritingFromBrowser({ blockId }), here);
+
+        if (typeof started === "string") {
+          return started === "left";
+        }
+
+        router.push(
+          started.answer === "notWriting"
+            ? `/essay/${blockId}`
+            : handOverWritingStart({ answer: started.answer, blockId }),
+        );
       } else if (destination.kind === "today") {
         router.push("/today");
       } else if (destination.kind === "changed") {

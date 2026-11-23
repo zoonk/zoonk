@@ -70,11 +70,9 @@
   "plan_building_description": "269fab99e20257f1339ed2a53744e9ea5322aa09cb7b2c8bf5a80029b092b6d3",
   "plan_building_eyebrow": "121c1d31f5263a6b6263bcabbb1a0fc015f018b40945ccde81d3fc074b7fb099",
   "plan_cadence_biweekly": "b4952cadce3c1d15cb1d066dc0406c690506b5dd64629e312b256294c711c263",
-  "plan_cadence_biweekly_effect": "3374a0d33e1ed4920cf76fef8aa1c22e9f78ae44b2763a24deef31a4cb2ad2b2",
   "plan_cadence_final_weeks": "db2c634de1b64b1c06131c0cb91f43a44c7e6fef0a0d260d07f4baaa01e48d21",
-  "plan_cadence_final_weeks_effect": "7c87ff812fa14e9da3db4bb7032948801c2dc9966e015232981ca909d6193349",
   "plan_cadence_weekly": "6ee6c385ae9b545e24becdcd2131a9985cab0679829b4220aa863d48b48d18a4",
-  "plan_cadence_weekly_effect": "59fbc5b436bf465f790e3ab7ece0e96f1029bed3feb39ddcd8d10645027e26ec",
+  "plan_cadence_weekly_recommended": "fce6e5e76a3a5d1425de4fbb0481300e618c5ef0966b3895bf34bd2eee2c1301",
   "plan_call_not_in_plan": "56c9108ddd357a7aaa0ee60e0650038509e3b45d6c654f79c2c5ea5836086b83",
   "plan_cancel": "824454a3774b06d69b4fe4d10b0dec13e6588bbfef88fb57ff02164d4bcba937",
   "plan_challenge_live_call": "5d4553e44800a8febf240326085026dcefd62e00b829449fa000920a2282a3d5",
@@ -517,13 +515,23 @@
   "plan_week_time": "f3cb1974ab0eea4ec74de156fdce07524398876930e7d43edafdd8f877abc730",
   "plan_weekly_challenges": "01c239cd61095378b213640131e6de05e0cdc610aa99ac3517c326fcb264cc6d",
   "plan_what_you_practice": "9c8504139742c75c4ba140e37eff772d6c8943821cf112a558149953cb712ada",
-  "plan_when_to_practice": "5f32195655184661b14c7e14b2da5b8f86beeedb36422494ca120616cda99d1a",
+  "plan_when_to_practice_writing": "7b7b26a8355bbbbe1265bec2a2ecf4a120981b390732beba8570a5d535382560",
   "plan_where_to_focus": "5e9d24cdd46a2406bab1d5cbb6a3ecce915d9546d612436e54ed843dc4730c19",
   "plan_where_to_focus_description": "489e8fda4a5f279dae4e03e10bfd167cb9ae79f6b8d6c596b7fcb3c9428fa758",
   "plan_why_phase_dates_later": "f5e6cd1db4db695ecb4b800eaa7d4014ed5be3de57afe058855da70e2c629fbb",
   "plan_why_phase_end_later": "b6970dbfb4af2db631cdf7dd2166ce5044c671a274528c2b28ee7d538a3d42d0",
   "plan_why_phase_end_off_rest": "b25cbff6e1716acd22aec0c36c03fa6c53f17c2b71501d072bb901d9d49da962",
   "plan_working_out_coverage": "c6a6d13218b7b15dbae6255633bfd8ebe68f5ef9748003b2096c4ee11ebff94b",
+  "plan_written_above_minimum": "0e29fc4f92020b23fecce9467413518b2f8cdccd4fc643b0207f218b6caa98ae",
+  "plan_written_asks_for": "7176bc445a48b4d1039132656c0475b05529c9f73ac11511516ef52d26274a5c",
+  "plan_written_asks_for_share": "df154ff12b9d9526bb76aca18a01d110e1845c739dc1ed72d28b558a29b09f41",
+  "plan_written_below_minimum": "e5dbbad068a34f4a35c257438d8e06190536171f2a94ed5120e9170175a45089",
+  "plan_written_close_to_minimum": "dd6d35c2673629c90d74edff689cfa5023768c3ef64f43071a27564b4e7a4845",
+  "plan_written_not_measured": "886a69fc3bdeea017abeea9e1f0ba71a58dec46b9e3b6b10ac496bb0032410b0",
+  "plan_written_not_measured_half": "70f9d2ac9e701221dcc007a387d8207ac1c63e5d88f47a6f5208390a877e27d7",
+  "plan_written_not_measured_share": "efd1d19fb0e539e4a6c573d0bea81fee8f237e7ac04e7036dbd615409fed3406",
+  "plan_written_objective": "c9ec7f11ca2c94d404a352535a20770366eb23add507187759469a7dd5b63a82",
+  "plan_written_points_below": "42c60c6437ff305f8e3de713f90a4302a7cdd962da61e85da50e0b10b0e8b8a6",
   "plan_you_are_here_suffix": "322e11b13faa1b0a66abc5fc83c0934f5d2d365b2a5191aa4ed36e88dbd56c6c",
   "plan_your_level": "35dd06b441fe0339368a4db98ce18196288602e9200e8100588844cf2ab0d32b",
   "plan_your_pace": "068099c5aef3b057080c748eb6b014d2e554424889423b50db56db23df9cc9c0",
@@ -1015,13 +1023,11 @@
     <string name="plan_tool_writing_setup_line_3">簡単な動作確認の手順を追加しています…</string>
     <string name="plan_tool_device">使う端末</string>
     <string name="plan_what_you_practice">練習内容</string>
-    <string name="plan_when_to_practice">%1$sを練習する時期</string>
+    <string name="plan_when_to_practice_writing">ライティングを練習するタイミング</string>
     <string name="plan_cadence_weekly">毎週</string>
     <string name="plan_cadence_biweekly">隔週</string>
     <string name="plan_cadence_final_weeks">試験前の数週間のみ</string>
-    <string name="plan_cadence_weekly_effect">おすすめ：毎週少しずつ練習すると、書く力が最も伸びます。</string>
-    <string name="plan_cadence_biweekly_effect">練習量は同じですが、隔週にまとめるため、1回の量が多くなります。</string>
-    <string name="plan_cadence_final_weeks_effect">練習する期間を短くし、試験前の数週間に集中して取り組みます。</string>
+    <string name="plan_cadence_weekly_recommended">毎週（おすすめ）</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_none">%1$sまでにすべてを学習する時間がありません。</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
@@ -1307,4 +1313,14 @@
     <string name="plan_call_not_in_plan">会話は学習計画に入りきりません</string>
     <string name="plan_outside_past_basics">スキップ・基礎はすでに知っています</string>
     <string name="plan_outside_skipped_base">スキップ・自分で選びました</string>
+    <string name="plan_written_below_minimum">合格に必要な最低点を下回っています</string>
+    <string name="plan_written_asks_for">ほかのスコアにかかわらず、%1$sは%2$s点が必要です。</string>
+    <string name="plan_written_asks_for_share">ほかのスコアにかかわらず、%1$sは配点の%2$sが必要です。</string>
+    <string name="plan_written_not_measured">%1$sはまだ測定されていません。</string>
+    <string name="plan_written_not_measured_half">%1$sは最終スコアの半分を占めますが、まだ測定されていません。</string>
+    <string name="plan_written_not_measured_share">%1$sは最終スコアの%2$sを占めますが、まだ測定されていません。</string>
+    <string name="plan_written_objective">選択式テスト</string>
+    <string name="plan_written_above_minimum">必要な%1$s点を上回っています</string>
+    <string name="plan_written_points_below">必要な%2$s点まであと%1$s点です</string>
+    <string name="plan_written_close_to_minimum">必要な%1$s点に近い状態です</string>
 </resources>

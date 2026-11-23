@@ -4,231 +4,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 10/11 (read 11). passages found 91/91. problems left 0. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}",
-          "kind": "majorErrors",
-          "score": 9.709090909090909
-        },
-        {
-          "conclusion": "Facts kept 10/11 (read 11). passages found 91/91. problems left 0. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}",
-          "kind": "minorErrors",
-          "score": 9.709090909090909
-        },
-        {
-          "conclusion": "Facts kept 10/11 (read 11). passages found 91/91. problems left 0. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}",
-          "kind": "potentialImprovements",
-          "score": 9.709090909090909
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "scoring",
-              "method": "wrongCancelsRight"
-            },
-            {
-              "groups": [
-                "P1",
-                "P2",
-                "P3",
-                "P4"
-              ],
-              "kind": "groupedSubjects"
-            },
-            {
-              "kind": "subject",
-              "name": "Prova discursiva"
-            },
-            {
-              "kind": "markingRow",
-              "part": [
-                "P3"
-              ],
-              "points": 2,
-              "wrongPoints": 2
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 8
-              },
-              "part": [
-                "P1"
-              ],
-              "questions": 40
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 12
-              },
-              "part": [
-                "P2"
-              ],
-              "questions": 40
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 54
-              },
-              "part": [
-                "P3"
-              ],
-              "questions": 90
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 50
-              },
-              "part": [
-                "P4",
-                "discursiva"
-              ]
-            },
-            {
-              "kind": "totalMinimum",
-              "minimum": {
-                "unit": "points",
-                "value": 78
-              }
-            },
-            {
-              "kind": "finalShare",
-              "parts": [
-                "P1",
-                "P2",
-                "P3"
-              ],
-              "share": 0.5
-            },
-            {
-              "kind": "finalShare",
-              "parts": [
-                "discursiva"
-              ],
-              "share": 0.5
-            }
-          ]
-        },
-        "id": "cgu-2026-affc-ti-points-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
-              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
-            }
-          ],
-          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 44/44. problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 44/44. problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 44/44. problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "questionCount",
-              "value": 180
-            },
-            {
-              "date": "2026-11-08",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-11-15",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-06-05",
-              "dateKind": "registrationEnd",
-              "kind": "date"
-            },
-            {
-              "kind": "subject",
-              "name": "Linguagens",
-              "questions": 45
-            },
-            {
-              "kind": "subject",
-              "name": "Matemática",
-              "questions": 45
-            },
-            {
-              "kind": "choice",
-              "options": [
-                "Inglês",
-                "Espanhol"
-              ],
-              "partOf": "Linguagens"
-            },
-            {
-              "format": "multipleChoice",
-              "kind": "format"
-            },
-            {
-              "format": "essay",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "itemResponseTheory"
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 330
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 300
-            },
-            {
-              "kind": "testedLanguage",
-              "language": null
-            }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 5/5 (read 5). passages found 49/49. problems left 0",
           "kind": "majorErrors",
           "score": 10
@@ -441,6 +216,287 @@
             }
           ],
           "exam": "Concurso CGU 2026, Auditor Federal de Finanças e Controle"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 13/15 (read 13). passages found 44/44. problems left 0. missing: {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "majorErrors",
+          "score": 9.573333333333334
+        },
+        {
+          "conclusion": "Facts kept 13/15 (read 13). passages found 44/44. problems left 0. missing: {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "minorErrors",
+          "score": 9.573333333333334
+        },
+        {
+          "conclusion": "Facts kept 13/15 (read 13). passages found 44/44. problems left 0. missing: {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "potentialImprovements",
+          "score": 9.573333333333334
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            },
+            {
+              "kind": "sharedClock"
+            },
+            {
+              "count": 1,
+              "grading": "enem",
+              "kind": "writtenTask",
+              "lines": null,
+              "points": 1000,
+              "zeroing": true
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      },
+      "score": 9.573333333333334
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 10/15 (read 11). passages found 91/91. problems left 0. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"session\",\"mentions\":\"manhã\"}; {\"kind\":\"session\",\"mentions\":\"tarde\"}; {\"count\":1,\"criterionPoints\":[30],\"drawsOn\":\"P2\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"lines\":30,\"points\":30,\"rounding\":false,\"zeroing\":true}; {\"count\":1,\"criterionPoints\":[70],\"drawsOn\":\"P3\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"lines\":60,\"points\":70,\"rounding\":false,\"zeroing\":true}",
+          "kind": "majorErrors",
+          "score": 8.933333333333334
+        },
+        {
+          "conclusion": "Facts kept 10/15 (read 11). passages found 91/91. problems left 0. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"session\",\"mentions\":\"manhã\"}; {\"kind\":\"session\",\"mentions\":\"tarde\"}; {\"count\":1,\"criterionPoints\":[30],\"drawsOn\":\"P2\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"lines\":30,\"points\":30,\"rounding\":false,\"zeroing\":true}; {\"count\":1,\"criterionPoints\":[70],\"drawsOn\":\"P3\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"lines\":60,\"points\":70,\"rounding\":false,\"zeroing\":true}",
+          "kind": "minorErrors",
+          "score": 8.933333333333334
+        },
+        {
+          "conclusion": "Facts kept 10/15 (read 11). passages found 91/91. problems left 0. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"session\",\"mentions\":\"manhã\"}; {\"kind\":\"session\",\"mentions\":\"tarde\"}; {\"count\":1,\"criterionPoints\":[30],\"drawsOn\":\"P2\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"lines\":30,\"points\":30,\"rounding\":false,\"zeroing\":true}; {\"count\":1,\"criterionPoints\":[70],\"drawsOn\":\"P3\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"lines\":60,\"points\":70,\"rounding\":false,\"zeroing\":true}",
+          "kind": "potentialImprovements",
+          "score": 8.933333333333334
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "groups": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ],
+              "kind": "groupedSubjects"
+            },
+            {
+              "kind": "subject",
+              "name": "Prova discursiva"
+            },
+            {
+              "kind": "markingRow",
+              "part": [
+                "P3"
+              ],
+              "points": 2,
+              "wrongPoints": 2
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 8
+              },
+              "part": [
+                "P1"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 12
+              },
+              "part": [
+                "P2"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 54
+              },
+              "part": [
+                "P3"
+              ],
+              "questions": 90
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 50
+              },
+              "part": [
+                "P4",
+                "discursiva"
+              ]
+            },
+            {
+              "kind": "totalMinimum",
+              "minimum": {
+                "unit": "points",
+                "value": 78
+              }
+            },
+            {
+              "kind": "finalShare",
+              "parts": [
+                "P1",
+                "P2",
+                "P3"
+              ],
+              "share": 0.5
+            },
+            {
+              "kind": "finalShare",
+              "parts": [
+                "discursiva"
+              ],
+              "share": 0.5
+            },
+            {
+              "kind": "session",
+              "mentions": "manhã"
+            },
+            {
+              "kind": "session",
+              "mentions": "tarde"
+            },
+            {
+              "count": 1,
+              "criterionPoints": [
+                30
+              ],
+              "drawsOn": "P2",
+              "grading": "points",
+              "handwritten": true,
+              "kind": "writtenTask",
+              "language": {
+                "factor": 6,
+                "method": "errorsPerLine"
+              },
+              "lines": 30,
+              "points": 30,
+              "rounding": false,
+              "zeroing": true
+            },
+            {
+              "count": 1,
+              "criterionPoints": [
+                70
+              ],
+              "drawsOn": "P3",
+              "grading": "points",
+              "handwritten": true,
+              "kind": "writtenTask",
+              "language": {
+                "factor": 14,
+                "method": "errorsPerLine"
+              },
+              "lines": 60,
+              "points": 70,
+              "rounding": false,
+              "zeroing": true
+            }
+          ]
+        },
+        "id": "cgu-2026-affc-ti-points-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
         }
       }
     }

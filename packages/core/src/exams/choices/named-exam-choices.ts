@@ -3,8 +3,8 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { toNameWords } from "@zoonk/utils/name-words";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
-import { type ChoiceGroup, listChoiceGroups } from "./choice-groups";
-import { type ExamChoice, type ExamPicks, findChosenOptions } from "./exam-choices";
+import { type ChoiceGroup, findChosenOptions, listChoiceGroups } from "./choice-groups";
+import { type ExamChoice, type ExamPicks } from "./exam-choices";
 import { scopeExamStructure } from "./exam-scope";
 
 type Subject = ExamStructure["subjects"][number];

@@ -1,9 +1,12 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
+import { getVisibleSessionTotal } from "../session-minutes";
+import { hasSameBlocks } from "./day-block-content";
 import { withSessionAppendLock } from "./extra-blocks";
-import { hasSameBlocks, planRestOfDayWithPlan } from "./refresh-day-session";
+import { oweStartedDaySettlements } from "./owe-started-day-settlements";
+import { planRestOfDayWithPlan } from "./refresh-day-session";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
@@ -11,20 +14,25 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 
 /** Append only within the day's remaining time; preserve shown order and never change a finished day. */
 export async function appendLandedLessons({
+  dropped,
   goal,
   session,
   timeZone,
   selection,
 }: Parameters<typeof planRestOfDayWithPlan>[0]["day"] & {
+  dropped: StudySessionBlock[];
   selection: SelectedDayPlan;
 }): Promise<StudySessionRow> {
   if (session.status === "completed") {
     return session;
   }
 
+  const droppedIds = new Set(dropped.map(({ id }) => id));
+  const kept = session.blocks.filter(({ id }) => !droppedIds.has(id));
+
   const { blocks: lessons, plannedMinutes } = await planRestOfDayWithPlan({
     day: { goal, session, timeZone },
-    kept: session.blocks,
+    kept,
     selection,
   });
 
@@ -53,7 +61,20 @@ export async function appendLandedLessons({
         return;
       }
 
+      const previousMinutes = getVisibleSessionTotal({
+        blocks: locked.blocks,
+        planned: locked.plannedMinutes,
+        visibleIds: new Set(kept.map(({ id }) => id)),
+      });
+
       await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
+
+      if (dropped.length > 0) {
+        await transaction.studySessionBlock.updateMany({
+          data: { estimatedMinutes: null, status: "skipped" },
+          where: { id: { in: [...droppedIds] }, sessionId: session.id },
+        });
+      }
 
       const items = selection.computed
         ? await transaction.planItem.findMany({ where: { planId: selection.context.plan.id } })
@@ -82,10 +103,12 @@ export async function appendLandedLessons({
           planVersion: savedVersion,
           plannedMinutes: locked.endedAt
             ? locked.plannedMinutes
-            : Math.max(locked.plannedMinutes, plannedMinutes),
+            : Math.max(previousMinutes, plannedMinutes),
         },
         where: { id: session.id },
       });
+
+      await oweStartedDaySettlements(transaction, lessons.length > 0 ? [] : dropped);
     },
     session,
   });

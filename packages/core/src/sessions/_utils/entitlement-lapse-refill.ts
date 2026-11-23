@@ -10,10 +10,11 @@ import {
   withoutLockedPhaseChallenges,
 } from "../../checkpoints/_utils/phase-challenge-access";
 import { readBlockPayload } from "../block-payload";
+import { hasSameBlocks } from "./day-block-content";
 import { type DayBlockInput } from "./day-block-view";
 import { withSessionAppendLock } from "./extra-blocks";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
-import { hasSameBlocks, planRestOfDayWithPlan } from "./refresh-day-session";
+import { planRestOfDayWithPlan } from "./refresh-day-session";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 type EntitlementRefill = {

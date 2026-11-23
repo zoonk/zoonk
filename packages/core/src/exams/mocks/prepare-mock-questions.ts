@@ -11,6 +11,7 @@ import {
   getPlacementQuickFormat,
 } from "../../learner/placement/placement-quick-format";
 import "server-only";
+import { type WritingSupplyInput } from "../../library/items/writing-prompt-pool";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toListeningExam } from "../listening/listening-exam";
 import { type PartsToPrepare } from "../listening/prepare-listening-part";
@@ -31,8 +32,10 @@ import {
   SCHEDULED_SUPPLY_PLAN_SELECT,
   listScheduledSupplyOptions,
 } from "./_utils/scheduled-supply-options";
+import { planWrittenTestSupply } from "./_utils/written-test-supply";
 import { getPlannedItemIds } from "./mock-plan";
 import { type MockFormatShortfall } from "./mock-shortfall";
+import { listMissingMockWriting } from "./written-test-plan";
 
 export type MockQuestionWrites = {
   recordings?: PartsToPrepare;
@@ -42,6 +45,8 @@ export type MockQuestionWrites = {
   key: string;
   quickFormat: PlacementQuickFormat;
   writes: MockFormatShortfall[];
+  /** The written questions the learner has no unseen prompt for. */
+  writing: WritingSupplyInput[];
 };
 
 export async function listDueMockGoals() {
@@ -192,7 +197,11 @@ async function planAnytimeSupply({
   const askedKey = asked && mockPaperKey(asked);
 
   const allowed = reuse || priority ? [asked].filter((option) => option !== null) : setup.options;
-  const options = allowed.filter((option) => !only || mockPaperKey(option) === only);
+
+  // A written test that waits on an exam choice has no question to write yet.
+  const options = allowed.filter(
+    (option) => !option.availability && (!only || mockPaperKey(option) === only),
+  );
 
   if (options.length === 0) {
     return [];
@@ -268,6 +277,17 @@ export async function listMockPrepWrites({
       ? await loadMockWriteSkills({ goalId, graph: parsePlanGraph(goal.plan?.graph) })
       : [];
 
+  const toWritingSupply = (
+    requests: ReturnType<typeof listMissingMockWriting>,
+    later: boolean,
+  ): WritingSupplyInput[] =>
+    requests.map((request) => ({
+      ...request,
+      goalId,
+      userId: goal.userId,
+      ...(later && { wait: "later" as const }),
+    }));
+
   const papers = missing.map((target) => {
     const { option } = target.planned;
     const available = target.planned.available;
@@ -276,19 +296,44 @@ export async function listMockPrepWrites({
     const writes = planMockWrites({ option, planned: target.planned, setup: available, skills });
 
     const alternative = "alternative" in target && target.alternative;
+    const later = alternative || priority !== target.key;
 
     return {
       ...(alternative && { alternative: true as const }),
       key: target.key,
-      later: alternative || priority !== target.key,
+      later,
       quickFormat,
       writes,
+      writing: toWritingSupply(
+        listMissingMockWriting({
+          essays: setup.essays,
+          shape: option,
+          structure: available.structure,
+        }),
+        later,
+      ),
       ...(writes.length > 0 && !reuse ? { allowStimulusSets: true } : {}),
       ...(exam && parts.length > 0 && { recordings: { exam, parts } }),
     };
   });
 
-  return { papers, urgentShort: missing.some(({ urgent }) => urgent) };
+  const writtenTests = planWrittenTestSupply({ goal, setup }).filter(
+    ({ key }) => !only || key === only,
+  );
+
+  return {
+    papers: [
+      ...papers,
+      ...writtenTests.map(({ key, writing }) => ({
+        key,
+        later: priority !== key,
+        quickFormat,
+        writes: [],
+        writing: toWritingSupply(writing, priority !== key),
+      })),
+    ],
+    urgentShort: [...missing, ...writtenTests].some(({ urgent }) => urgent),
+  };
 }
 
 export { pickMockSetTargets } from "./mock-set-targets";

@@ -20,9 +20,11 @@ import { getGoalPlan } from "../../plans/get-goal-plan";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import { listListeningParts } from "../listening/listening-parts";
+import { CGU_WRITTEN_GRADING } from "./_test-utils/cgu-written";
 import { getMock } from "./get-mock";
 import { mockConditionsSchema } from "./mock-contract";
 import { getMockClock } from "./mock-plan";
+import { listMockPrepWrites } from "./prepare-mock-questions";
 import { startMock } from "./start-mock";
 
 const START = "2020-09-28";
@@ -375,14 +377,28 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     expect(recordings.every((item) => sets.some((set) => set.id === item.setId))).toBe(true);
   });
 
-  it("keeps a missing written section's time without creating an empty playback section", async () => {
+  it("keeps the scheduled full clock and waits for the missing written prompt", async () => {
     const structure = examStructureSchema.parse({
       ...TWO_OBJECTIVE,
       mock: {
         ...TWO_OBJECTIVE.mock,
         sections: [
           { day: 1, kind: "objective", minutes: 60, name: "Math", questions: 40 },
-          { day: 1, kind: "written", minutes: 30, name: "Writing", questions: null },
+          {
+            day: 1,
+            kind: "written",
+            minutes: 30,
+            name: "Writing",
+            questions: null,
+            tasks: [
+              {
+                count: 1,
+                description: "Explain the rule",
+                grading: CGU_WRITTEN_GRADING,
+                key: "rule",
+              },
+            ],
+          },
         ],
         timeLimitMinutes: 90,
         totalQuestions: 40,
@@ -402,8 +418,114 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
       ),
     );
 
-    const conditions = await assertScheduledClock({ ...fixture, minutes: 90, questions: 40 });
-    expect(conditions.sections).toHaveLength(1);
-    expect(conditions.sections[0]).toMatchObject({ essays: [], minutes: 90, questions: 40 });
+    vi.setSystemTime(new Date(`${fixture.date}T12:00:00Z`));
+    const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+
+    if (today.status !== "ready") {
+      throw new Error("Expected the scheduled block");
+    }
+
+    const block = today.today.session.blocks.find((entry) => entry.checkpoint?.mock);
+
+    if (!block) {
+      throw new Error("Expected the scheduled mock block");
+    }
+
+    expect(block).toMatchObject({ preparing: true });
+
+    await expect(getMock(block.id)).resolves.toMatchObject({
+      mock: {
+        minutes: 90,
+        questions: 40,
+        sections: [
+          { essays: 0, questions: 40 },
+          { essays: 1, minutes: 30, questions: 0 },
+        ],
+      },
+    });
+
+    await expect(
+      getChallenge({ input: {}, planItemId: fixture.planItemId }),
+    ).resolves.toMatchObject({
+      challenge: {
+        access: "preparing",
+        fullLength: true,
+        written: [{ asked: true, minutes: 30, name: "Writing" }],
+      },
+    });
+
+    const paper = new Date(fixture.date).toISOString();
+    const start = () => startMock({ blockId: block.id, input: { timeZone: "UTC" } });
+
+    await expect(start()).resolves.toStrictEqual({ status: "preparing" });
+    await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.followUp.findFirst({ where: { key: fixture.goal.id, kind: "prepareMockSupply" } }),
+    ).resolves.toMatchObject({ input: { later: false, paper } });
+
+    await expect(
+      listMockPrepWrites({ goalId: fixture.goal.id, only: paper, priority: paper }),
+    ).resolves.toMatchObject({
+      papers: [
+        {
+          key: paper,
+          writes: [],
+          writing: [
+            {
+              count: 1,
+              goalId: fixture.goal.id,
+              taskKey: "rule",
+              unit: "answer",
+              userId: fixture.goal.userId,
+            },
+          ],
+        },
+      ],
+    });
+
+    const skillId = fixture.library.skills[0]!.id;
+
+    const essay = await itemFixture({
+      content: {
+        context: null,
+        keyPoints: ["Apply the rule"],
+        question: "Explain the rule.",
+        rubric: [{ criterion: "Application", description: "Apply the rule.", points: null }],
+        sampleOutline: "Rule then facts",
+        writing: {
+          aspects: [],
+          assessedSkillIds: [skillId],
+          charactersPerLine: 55,
+          criteria: [],
+          grading: CGU_WRITTEN_GRADING,
+          keySource: "practiceKey",
+          lines: null,
+          minimumWords: 1,
+          points: null,
+          taskKey: "rule",
+          title: "Explain the rule",
+          unit: "answer",
+        },
+      },
+      examBlueprintId: fixture.goal.examBlueprintId,
+      format: "essay",
+      skillId,
+    });
+
+    await expect(start()).resolves.toStrictEqual({ status: "ready" });
+
+    await expect(
+      prisma.writingAdmission.findMany({ where: { userId: fixture.goal.userId } }),
+    ).resolves.toMatchObject([{ extra: false, itemIds: [essay.id] }]);
+
+    await expect(
+      prisma.mockExam.findUnique({ where: { blockId: block.id } }),
+    ).resolves.toMatchObject({
+      conditions: {
+        sections: [{ questions: 40 }, { essays: [essay.id], minutes: 30, questions: 0 }],
+        writtenParts: [{ tasks: [{ itemIds: [essay.id], key: "rule" }] }],
+      },
+    });
   });
 });

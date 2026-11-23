@@ -1,7 +1,7 @@
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
-import { essayGradeSchema, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
+import { essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
+import { writingResultSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { studySessionErrorCodes } from "../../study-session-errors";
 import { essayViewResponseSchema } from "../schemas/essays";
@@ -12,14 +12,13 @@ import { planChangeInvalidResponse, planChangedWhileSavingResponse } from "../sc
 import { planChangeResultSchema } from "../schemas/plans";
 import {
   conflictResponse,
-  forbiddenResponse,
   notFoundResponse,
-  tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
+import { writingGradePaths } from "./writing-grades";
 
 const TAGS = ["Exams"];
 
@@ -30,6 +29,7 @@ const commonErrors = {
 };
 
 export const examPaths = {
+  ...writingGradePaths,
   "/essays/{blockId}": {
     get: {
       description:
@@ -51,7 +51,7 @@ export const examPaths = {
   "/essays/{blockId}/submissions": {
     post: {
       description:
-        "Grades a draft with the official rubric and records it as learning: every criterion with a comment on the learner's own words, an estimated range and one next step. Rewriting sends a new draft. Finish the block through the study session's block endpoints.",
+        "Grades an admitted draft against its assigned prompt and returns its saved feedback.",
       operationId: "submitEssay",
       requestBody: {
         content: { "application/json": { schema: essaySubmissionInputSchema } },
@@ -60,19 +60,14 @@ export const examPaths = {
       requestParams: { path: essayPathParamsSchema },
       responses: {
         "200": {
-          content: { "application/json": { schema: essayGradeSchema } },
+          content: { "application/json": { schema: writingResultSchema } },
           description: "The grade",
         },
         ...commonErrors,
-        "403": {
-          ...forbiddenResponse,
-          description: `A guest must create an account because the AI budget all guests share today is spent (${LESSON_PLAYER_ERROR_CODES.signUpRequired}).`,
-        },
         "409": {
           ...conflictResponse,
           description: `The block is finished or can't start. Error code: ${studySessionErrorCodes.blockNotActive}.`,
         },
-        "429": { ...tooManyRequestsResponse, description: "Today's essay grades are used up" },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Send an essay for grading",

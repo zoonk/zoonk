@@ -18,7 +18,7 @@ import {
   toBlockPayload,
 } from "../../../sessions/block-payload";
 import { getSession } from "../../../users/get-session";
-import { readExamPicks } from "../../choices/exam-choices";
+import { type ExamPicks, readExamPicks } from "../../choices/exam-choices";
 import { isMockAnswerPresent } from "../mock-answer-presence";
 import {
   MOCK_ABANDONMENT_DELAY_MS,
@@ -48,6 +48,7 @@ export type OwnedMock = {
   goal: Goal | null;
   mock: MockSitting | null;
   payload: BlockPayload;
+  picks: ExamPicks;
   sessionDate: Date;
   structure: ExamStructure | null;
   unpicked: UnpickedChoice[];
@@ -115,6 +116,7 @@ async function findScheduledMock({
     goal: studySession.goal,
     mock: toSitting(mockExam),
     payload,
+    picks,
     sessionDate: studySession.localDate,
     structure: readScheduledStructure({
       blueprint,
@@ -164,6 +166,7 @@ async function findAnytimeMock({
     goal,
     mock,
     payload: toBlockPayload({ itemIds }),
+    picks,
     sessionDate: getDateInTimeZone({ date: mock.startedAt, timeZone }),
     structure: examBlueprint ? readMockStructure({ blueprint: examBlueprint, picks }) : null,
     unpicked: readUnpickedChoices({ blueprint: examBlueprint, picks }),

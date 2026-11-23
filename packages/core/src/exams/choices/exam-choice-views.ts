@@ -2,9 +2,9 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectPoints } from "../../library/exams/subject-points";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { findExamQuestions } from "../mocks/mock-structure";
-import { type ChoiceGroup, listChoiceGroups } from "./choice-groups";
+import { type ChoiceGroup, findChosenOptions, listChoiceGroups } from "./choice-groups";
 import { type ExamChoiceView } from "./exam-choice-contract";
-import { type ExamPicks, findChosenOptions, toChosenStructure } from "./exam-choices";
+import { type ExamPicks, toChosenStructure } from "./exam-choices";
 import { scopeExamStructure } from "./exam-scope";
 
 type Subject = ExamStructure["subjects"][number];

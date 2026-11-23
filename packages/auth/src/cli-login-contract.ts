@@ -7,3 +7,5 @@ export const STAFF_PROPOSE_SCOPE = "staff:propose";
 
 /** The browser page where a signed-in person approves a CLI login, relative to Main. */
 export const CLI_LOGIN_APPROVAL_PATH = "/device";
+
+export const STAFF_WRITING_REPAIR_SCOPE = "staff:repair-writing";

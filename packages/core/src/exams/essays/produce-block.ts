@@ -1,19 +1,18 @@
-import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
+import { type StudySessionBlock } from "@zoonk/db";
 import { type BlockPayload, toBlockPayload } from "../../sessions/block-payload";
+import { type WritingPacing } from "./writing-contract";
+import { type WritingRequest } from "./writing-supply";
 
-const ESSAY_BLOCK_MINUTES = 20;
-
-const DISCURSIVE_ANSWER_MINUTES = 8;
-
-export function getEssayMinutes({ classTest }: { classTest: boolean }): number {
-  return classTest ? DISCURSIVE_ANSWER_MINUTES : ESSAY_BLOCK_MINUTES;
-}
+export const WRITING_DRILL_MINUTES = 8;
 
 export type PlannedProduce = {
-  itemId: string;
   minutes: number;
-  skillId: string;
-  title: string | null;
+  pacing?: WritingPacing["source"];
+  placement?: boolean;
+  skillId?: string;
+  taskKey: string;
+  title: string;
+  unit: WritingRequest["unit"];
 };
 
 type ProduceBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"> & {
@@ -21,32 +20,18 @@ type ProduceBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"> & {
   payload: BlockPayload;
 };
 
-export function toProduceBlock({
-  freshStart,
-  minBlockMinutes,
-  produce,
-  room,
-}: {
-  freshStart: StudyFreshStart | null;
-  minBlockMinutes: number;
-  produce: PlannedProduce | null;
-  room: number;
-}): ProduceBlock | null {
-  const fits = produce !== null && room >= produce.minutes + minBlockMinutes;
-
-  if (!produce || freshStart === "welcomeBack" || !fits) {
-    return null;
-  }
-
+export function toProduceBlock(produce: PlannedProduce): ProduceBlock {
   return {
     canDo: null,
     estimatedMinutes: produce.minutes,
     kind: "produce",
     lessonId: null,
     payload: toBlockPayload({
-      itemIds: [produce.itemId],
-      skillIds: [produce.skillId],
+      skillIds: produce.skillId ? [produce.skillId] : [],
       title: produce.title,
+      writing: { admissionId: null, draft: null, taskKey: produce.taskKey, unit: produce.unit },
+      writingPacing: produce.pacing ?? "practice",
+      writingPlacement: produce.placement,
     }),
   };
 }

@@ -18,7 +18,13 @@ import {
   withoutKey,
 } from "./syllabus-chapters";
 import { type SyllabusInput, type SyllabusItem, hasSyllabusNotice } from "./syllabus-input";
-import { draftSubjects, getShortName, listAreas, toKeys } from "./syllabus-subjects";
+import {
+  draftSubjects,
+  findWrittenPart,
+  getShortName,
+  listAreas,
+  toKeys,
+} from "./syllabus-subjects";
 import {
   buildTopic,
   getNotPlannedReason,
@@ -207,6 +213,8 @@ export function buildSyllabus(
       sections: extra ? null : sections,
     });
 
+    const writtenPart = extra ? undefined : findWrittenPart(draft, input.writtenPractice);
+
     return {
       areas: draft.areas,
       chapters: chapters.map((chapter) => withoutKey(chapter)),
@@ -232,6 +240,7 @@ export function buildSyllabus(
       topicsStudied: subjectMapped
         ? topics.filter((topic) => topic.status === "studied").length
         : null,
+      ...(writtenPart && { writtenPart }),
     };
   });
 

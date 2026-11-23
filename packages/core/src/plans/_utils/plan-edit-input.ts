@@ -2,6 +2,7 @@ import { type PlanEditInput } from "@zoonk/ai/tasks/plans/edit-intent";
 import { getSkillArea, getWrittenTestAreas } from "../planner/graph-areas";
 import { getWeekdayMinutes, toIsoDate } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../planner/plan-state";
+import { keptWritingArea } from "../planner/plan-writing-scope";
 import { type PlanContext } from "./plan-context";
 
 function getAreas(context: PlanContext): string[] {
@@ -37,6 +38,9 @@ export function toPlanEditInput(
     weekdayMinutes: Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
       getWeekdayMinutes({ calendar, weekday }),
     ),
-    writtenParts: goal.kind === "exam" ? [...getWrittenTestAreas(state.graph)] : [],
+    writtenParts:
+      goal.kind === "exam"
+        ? [...getWrittenTestAreas(state.graph)].filter(keptWritingArea(state.settings.skippedAreas))
+        : [],
   };
 }

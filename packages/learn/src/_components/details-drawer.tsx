@@ -9,16 +9,17 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { SheetHeader } from "./sheet-header";
+import { TaskHeaderAction } from "./task-header";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
 type Trigger = "bar" | "link" | "option" | "secondary" | "small" | "tag";
 
 const TRIGGER: Record<Trigger, React.ReactElement> = {
-  bar: <Button className="shrink-0" size="bar" variant="outline" />,
+  bar: <TaskHeaderAction />,
   link: <Button className="self-start" variant="link" />,
   option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
-  small: <Button className="shrink-0" size="sm" variant="outline" />,
+  small: <Button className="shrink-0 self-start" size="sm" variant="outline" />,
   tag: (
     <button
       className="hit-area text-muted-foreground decoration-faint focus-visible:ring-ring/50 relative self-start justify-self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"

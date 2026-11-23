@@ -431,6 +431,22 @@ enum class GenerationKind(
                 "writeSetupLessons" to StepPlace.Phase("write"),
             ),
     ),
+
+    /** The question a written task opens on (`apps/api/src/workflows/sessions/writing-prompt-workflow.ts`). */
+    WritingPrompt(
+        label = R.string.generation_writing_prompt,
+        phases =
+            listOf(
+                // One model call: its wait shows no steps (`IndeterminateWait`), so this names the run only.
+                GenerationPhase("question", 45, R.string.generation_writing_prompt, emptyList()),
+            ),
+        steps =
+            mapOf(
+                "ready" to StepPlace.Done,
+                "signUpRequired" to StepPlace.Done,
+                "writeWritingPrompt" to StepPlace.Phase("question"),
+            ),
+    ),
     ;
 
     fun isDone(steps: Map<String, StepState>): Boolean =

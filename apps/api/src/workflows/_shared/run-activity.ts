@@ -99,6 +99,20 @@ export async function readClientRunStatus(runId: string): Promise<string | null>
   return stalled ? "failed" : status;
 }
 
+export async function readClientRun(runId: string) {
+  const { data: run } = await safeAsync(async () => {
+    const world = await getWorld();
+    return world.runs.get(runId, { resolveData: "none" });
+  });
+
+  if (!run) {
+    return null;
+  }
+
+  const stalled = ACTIVE_STATUSES.has(run.status) && (await isStalled(runId));
+  return { status: stalled ? "failed" : run.status, workflowName: run.workflowName };
+}
+
 export async function stopStalledRun(runId: string): Promise<RunState> {
   const state = await readRunState(runId);
 

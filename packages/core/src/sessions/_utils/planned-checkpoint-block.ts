@@ -30,3 +30,12 @@ export function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBloc
     }),
   };
 }
+
+export function buildMockDay(checkpoints: readonly PlannedCheckpoint[]) {
+  const mocks = checkpoints.filter((checkpoint) => checkpoint.mock);
+
+  return {
+    blocks: mocks.map((mock) => buildCheckpointBlock(mock)),
+    plannedMinutes: Math.ceil(mocks.reduce((sum, mock) => sum + mock.minutes, 0)),
+  };
+}

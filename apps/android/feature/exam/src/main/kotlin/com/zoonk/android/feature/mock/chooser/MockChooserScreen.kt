@@ -20,6 +20,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
@@ -75,10 +76,12 @@ internal fun MockChooser(
     mockStore: MockStore = app.mocks,
     starter: MockStarter = app.mockStarter,
 ) {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val sessionId = (session as? SessionState.SignedIn)?.session?.localId
     val options = mockStore.options[goalId]
     val state by options.collectShown()
     val viewModel =
-        viewModel(key = "mock-chooser-$goalId") {
+        viewModel(key = "mock-chooser:$goalId:$sessionId") {
             MockChooserViewModel(goalId, starter, { scope -> mockStore.paperWait(scope, goalId) }) { mockStore.refused(goalId) }
         }
     val opened by viewModel.opened.collectAsStateWithLifecycle()

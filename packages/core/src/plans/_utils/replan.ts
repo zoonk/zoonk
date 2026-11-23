@@ -93,11 +93,22 @@ export async function computePlan({
 }: ComputePlanRequest & { skipUnchangedInputs?: boolean }): Promise<ComputedPlan | null> {
   const { context, mode, state = context.state, studyScheduleAt } = request;
 
-  const { advise, examSubjects, extraSkills, fullGraph, graph, input, materialExam, settings } =
-    await readReplanInputs({ ...request, state });
+  const {
+    advise,
+    examSubjects,
+    extraSkills,
+    fullGraph,
+    graph,
+    input,
+    materialExam,
+    settings,
+    writtenSkillIds,
+  } = await readReplanInputs({ ...request, state });
 
-  // Compare the inputs before the producer changes its own funding: its output isn't news.
-  if (shouldSkipPlanBuild({ input, savedKey: context.plan.inputsKey, skipUnchangedInputs })) {
+  const savedKey =
+    writtenSkillIds && !state.settings.writtenSkillIds ? null : context.plan.inputsKey;
+
+  if (shouldSkipPlanBuild({ input, savedKey, skipUnchangedInputs })) {
     return null;
   }
 
@@ -142,7 +153,7 @@ export async function computePlan({
     skillLessons: built.skillLessons,
   });
 
-  const savedSettings = withBuiltSettings({ built, settings });
+  const savedSettings = withBuiltSettings({ built, settings, writtenSkillIds });
 
   return {
     get bases() {

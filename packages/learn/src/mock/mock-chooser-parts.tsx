@@ -9,7 +9,11 @@ import { type MockOptionsView, type MockShape } from "@zoonk/core/exams/mocks/co
 export type MockChooserStatus =
   | { kind: "choosing" }
   | { kind: "failed" }
-  | { kind: "preparing"; optionKey: string; over: MockOptionsView };
+  | { kind: "preparing"; optionKey: string; over: MockOptionsView }
+  /** Today's extra writing is used, so a mock with the written test waits for that day. */
+  | { kind: "writingUsedUp"; returnsOn: string }
+  /** The written test's questions depend on an exam choice the learner hasn't made yet. */
+  | { choiceGroups: string[]; kind: "needsChoice" };
 
 export function getMockOptionKey(option: MockShape): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");

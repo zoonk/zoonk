@@ -1,5 +1,5 @@
-import { prisma } from "@zoonk/db";
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -31,7 +31,7 @@ import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
 import { getPlanEnd } from "./plan-end";
-import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
+import { MINUTES_PER_HOUR, buildEstimateView, loadPlanWritingWork } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
@@ -203,6 +203,7 @@ export async function buildPlanView({
     taughtSkillIds,
     challengeResults,
     syllabus,
+    writing,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
@@ -229,6 +230,7 @@ export async function buildPlanView({
       ),
     ),
     readSyllabusInput(goal.userId, goal.id),
+    loadPlanWritingWork(context),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -272,7 +274,7 @@ export async function buildPlanView({
       timeZone: context.timeZone,
       today: context.today,
     }),
-    estimate: buildEstimateView({ context }),
+    estimate: buildEstimateView({ context, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
     extraOffer: readExtraOffer({ fresh, pastDate }),
@@ -289,7 +291,7 @@ export async function buildPlanView({
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })
         : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
-    numbers: summary ? buildSavedPlanNumbersView(context) : null,
+    numbers: summary ? buildSavedPlanNumbersView(context, writing) : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
       access,
@@ -315,6 +317,8 @@ export async function buildPlanView({
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studyDays: studyWeek.days }),
     weekTime: studyWeek.time,
-    writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
+    writtenPractice:
+      syllabus?.writtenPractice ??
+      getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
   };
 }
