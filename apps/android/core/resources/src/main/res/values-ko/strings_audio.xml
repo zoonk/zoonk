@@ -7,7 +7,6 @@
   "audio_getting_ready": "6a3cb635bc2c931d425df52230fac0f642a557532182b3fa61a3dc8c6556ccc6",
   "audio_here_is_what_it_says": "28b64a90050a314345a8c6bfeb9c3549ffb801cba0f54a4da588418d3e9f4363",
   "audio_listening": "f624e50f1754294f8fdf909a84df0ddc628ab24af96d8ba7b9c3d355a012c4c6",
-  "audio_microphone_off_answer": "aca61891ea9565d1b6d98888f6e836985a2c6f2c6b622f79bdd32b4c68ff07b4",
   "audio_microphone_off_title": "8bbbfa02fa1e291c64c1536ad2b82d940365a279e298e90354db96aaab291f39",
   "audio_no_speech": "0bd0f847da0e1aaca98415ed733588e8598fe58fd1c5da2c4b34acbfdf0555dc",
   "audio_open_settings": "eea75fb9dbe49ddac9b9946d4e166e152c92eba47c6cccb7f2af796986284eb4",
@@ -38,6 +37,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">녹음 버튼을 누르고 소리 내어 말하세요</string>
     <string name="audio_microphone_off_title">마이크가 꺼져 있어요</string>
-    <string name="audio_microphone_off_answer">소리 내어 답하려면 설정에서 Zoonk의 마이크 사용을 허용하세요.</string>
     <string name="audio_open_settings">설정 열기</string>
 </resources>

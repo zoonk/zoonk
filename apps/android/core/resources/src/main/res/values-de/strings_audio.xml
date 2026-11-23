@@ -7,7 +7,6 @@
   "audio_getting_ready": "3455a448e240b5d943045aee48ce4994296af154acbe13145909677f7fbf78d4",
   "audio_here_is_what_it_says": "2d69b8ce3e90cf023d0131389069f2dc426b0b595466b145d47f486d3a2e771c",
   "audio_listening": "c07ac25fa7dab78174874c44c10c6641d70ba75e11ebb2344b37b364d72c7a41",
-  "audio_microphone_off_answer": "c8cd147c64664b2980e1da74026a9dfc8deb6c631a33d9e3ea83e18be4bc5474",
   "audio_microphone_off_title": "5f7afc0750443c7193fcc591441dc373e4dffaca8ec864256e84cd4815954356",
   "audio_no_speech": "287cba3f7b11ebe3497f8830a7f44053015c5ea676048609f135d423934274c9",
   "audio_open_settings": "3c509064eed7ea6452dc877695c6a226781d7be7b1aeb09662bea8655e3a1b5d",
@@ -38,6 +37,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Tippe auf „Aufnehmen“ und sprich es laut aus</string>
     <string name="audio_microphone_off_title">Das Mikrofon ist ausgeschaltet</string>
-    <string name="audio_microphone_off_answer">Aktiviere das Mikrofon für Zoonk in den Einstellungen, um laut zu antworten.</string>
     <string name="audio_open_settings">Einstellungen öffnen</string>
 </resources>

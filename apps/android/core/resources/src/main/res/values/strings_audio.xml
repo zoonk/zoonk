@@ -18,6 +18,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Tap Record and say it out loud</string>
     <string name="audio_microphone_off_title">The microphone is off</string>
-    <string name="audio_microphone_off_answer">Turn on the microphone for Zoonk in Settings to answer out loud.</string>
     <string name="audio_open_settings">Open Settings</string>
 </resources>

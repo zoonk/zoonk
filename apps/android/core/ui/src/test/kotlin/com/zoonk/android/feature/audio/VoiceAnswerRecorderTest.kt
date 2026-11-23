@@ -162,7 +162,7 @@ internal fun Recorder(
     navigator: AppNavigator,
 ) {
     if (model.microphoneOff) {
-        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
+        MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
         return
     }
     Column {

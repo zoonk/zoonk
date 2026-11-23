@@ -7,7 +7,6 @@
   "audio_getting_ready": "ad8ec761d371f30c6c4114ab5a65ff36ca50106ecf96b77013f781d4b2bed9a2",
   "audio_here_is_what_it_says": "eb97ed078237248084acc9e738e94c81721a8d61102b3d27f2f46183d6c2a086",
   "audio_listening": "93c097bfe679dc900bbbcbf547a828a19351a43b1869e131e0a439554c69c2f2",
-  "audio_microphone_off_answer": "62dc3eb527b9f50f9fbf4e5c8caa4e141bda9f7891de82fbb9f13db4150741dc",
   "audio_microphone_off_title": "fc19121e877983c6dfd585ca1121454d7a29b5834b0cbeb0c1f3d487240e1b2b",
   "audio_no_speech": "1408b1168e74b616d853cf8b1df81737a042fe701c9dfabe53725fc49026db85",
   "audio_open_settings": "23162c5b9dbe02a234b7ade9008b02385d5b2879d19d28cdb6a4e0b6a61b119a",
@@ -38,6 +37,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Kaydet düğmesine dokun ve sesli söyle</string>
     <string name="audio_microphone_off_title">Mikrofon kapalı</string>
-    <string name="audio_microphone_off_answer">Sesli cevap vermek için Ayarlar’dan Zoonk’a mikrofon izni ver.</string>
     <string name="audio_open_settings">Ayarlar’ı aç</string>
 </resources>

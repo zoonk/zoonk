@@ -7,7 +7,6 @@
   "audio_getting_ready": "67f07e24b6fc6dba259570961ba82acb113da806e3f46b12cd7b29bfda2c5bc4",
   "audio_here_is_what_it_says": "3d023a62e9951d4ebad166624ee4b54fa9540da6aa1c0176818d37ce2958e750",
   "audio_listening": "bca6f3ffe4f547398a94510432bd3dbac7d872908e217b2ee8e51e8d4edcd8bc",
-  "audio_microphone_off_answer": "ed0c7bc5538e384e983e9f742aee5fabc5381d534a89c1b5734fca7b9e1a8ee5",
   "audio_microphone_off_title": "31d9a5396e04209c3ec3aeb69813158053c536ebd83cd781396c89ba2232b016",
   "audio_no_speech": "edbb064c72e192a31655fe945e0accac9da3e0716a94f033c7ab40eede025e34",
   "audio_open_settings": "2455c82d9d0ca9677bc1ca41098608b541a8879899e9fc342c18624603680dbc",
@@ -38,6 +37,5 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Tocca Registra e dillo ad alta voce</string>
     <string name="audio_microphone_off_title">Il microfono è disattivato</string>
-    <string name="audio_microphone_off_answer">Attiva il microfono per Zoonk da Impostazioni per rispondere a voce.</string>
     <string name="audio_open_settings">Apri Impostazioni</string>
 </resources>
