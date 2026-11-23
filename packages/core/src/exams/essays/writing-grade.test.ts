@@ -14,6 +14,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
+import cacd2024Essay from "./_test-utils/cacd-2024-essay.json";
 import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
@@ -37,7 +38,7 @@ import {
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
-import { countWritingLines } from "./writing-lines";
+import { WRITING_CHARACTERS_PER_LINE, countWritingLines } from "./writing-lines";
 import {
   type WritingArithmetic,
   getWritingArithmetic,
@@ -673,6 +674,22 @@ describe(getWritingRubricFingerprint, () => {
 });
 
 describe(countWritingLines, () => {
+  // CACD 2024 Portuguese essay, 69.5/70 on 70 handwritten lines, guide pp. 34–36:
+  // https://guiasirbr.wordpress.com/wp-content/uploads/2025/06/guia_da_sarue_malabarista.pdf
+  it("keeps a full 70-line answer that the board graded in full", () => {
+    expect(
+      countWritingLines({
+        charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+        limit: 70,
+        text: cacd2024Essay,
+      }).ignoredFrom,
+    ).toBeNull();
+
+    expect(
+      countWritingLines({ charactersPerLine: 55, limit: 70, text: cacd2024Essay }).ignoredFrom,
+    ).toBeGreaterThan(0);
+  });
+
   it.each(lineFixtures)(
     "counts lines and retains UTF-16 cutoff offsets for $text",
     ({ estimatedLines, ignoredFrom, ...input }) => {

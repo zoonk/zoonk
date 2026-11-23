@@ -96,8 +96,6 @@ function oabCases({
         arithmetic: { rounding: null, zeroRules: zeroing.map((_, index) => index) },
         basis: {
           ...input.basis,
-          // Use the wider answer sheets to keep the transcribed text inside the official 30 lines.
-          charactersPerLine: 75,
           grading: { ...input.basis.grading, zeroing },
           minimumWords: 0,
           partMinimum: { max: 10, minimum: { unit: "points", value: 6 } },

@@ -1,6 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type writtenItemSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { type applyWritingArithmetic } from "@zoonk/core/exams/essays/writing-feedback";
+import { WRITING_CHARACTERS_PER_LINE } from "@zoonk/core/exams/essays/writing-lines";
 import { type z } from "zod";
 
 export type Basis = z.infer<typeof writtenItemSchema>;
@@ -51,7 +52,6 @@ export type GradeWritingExpected = {
 };
 
 const ANCHOR_SKILL = "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90";
-const CHARACTERS_PER_LINE = 55;
 
 export function points(aspects: [string, number][], criterionId = "content") {
   return aspects.map(([description, value]) => ({ criterionId, description, points: value }));
@@ -79,7 +79,7 @@ export function basis({
   return {
     aspects,
     assessedSkillIds: [ANCHOR_SKILL],
-    charactersPerLine: CHARACTERS_PER_LINE,
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
     grading,
     keySource: "publishedStandard",
