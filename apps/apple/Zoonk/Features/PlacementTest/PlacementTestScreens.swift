@@ -217,11 +217,9 @@ struct PlacementTestResultView: View {
     ) {
       if let nextTopic, undo?.restored == nil {
         VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "Up next", tableName: "Onboarding", comment: "Over the topic the plan goes on with"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Chip(
+            Text(
+              "Up next", tableName: "Onboarding", comment: "Over the topic the plan goes on with"))
 
           Text(verbatim: nextTopic)
             .typeStyle(.rowTitle)
