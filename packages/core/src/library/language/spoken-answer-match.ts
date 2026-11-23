@@ -268,6 +268,7 @@ export function needsWordByWordCheck({
 }): boolean {
   const target = toTokens({ language, text: expected });
   const transcript = toTokens({ language, text: heard });
+
   const openingWordMissing =
     transcript.length > 0 &&
     target.length === transcript.length + 1 &&

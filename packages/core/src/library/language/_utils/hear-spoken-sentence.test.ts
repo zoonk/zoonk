@@ -102,6 +102,7 @@ describe(hearSpokenSentence, () => {
       const expected = "Ho tempo.";
       const transcript = said ? expected : "Tempo.";
       transcribe("Tempo.");
+
       vi.mocked(assessPronunciation).mockResolvedValueOnce({
         data: {
           transcript,
@@ -117,6 +118,7 @@ describe(hearSpokenSentence, () => {
       expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({ audio: recording.audio.bytes, expectedText: expected }),
       );
+
       expect(result.transcript).toBe(transcript);
       expect(result.match.isCorrect).toBe(said);
     },

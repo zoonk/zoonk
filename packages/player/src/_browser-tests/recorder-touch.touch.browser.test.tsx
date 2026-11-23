@@ -28,14 +28,22 @@ describe("recording by touch", () => {
     // Chromium needs a completed gesture to run the Web Audio microphone fixture.
     await page.getByRole("heading", { name: "The electron is a cloud" }).click();
     const first = await holdFinger(record);
-    const stream = await microphone.mock.results[0]?.value;
+    const [opened] = microphone.mock.results;
+
+    if (opened?.type !== "return") {
+      throw new Error("The first press did not open a microphone");
+    }
+
+    const stream = await opened.value;
     const other = { x: first.x, y: first.y - 100 };
+
     await commands.touch([
       { touchPoints: [first, other], type: "touchStart" },
       { touchPoints: [other], type: "touchEnd" },
       { touchPoints: [], type: "touchEnd" },
     ]);
-    await expect.poll(() => stream?.getTracks()[0]?.readyState).toBe("ended");
+
+    await expect.poll(() => stream.getTracks()[0]?.readyState).toBe("ended");
     await holdFinger(record);
     await expect.poll(() => microphone.mock.calls.length).toBe(2);
     await liftFinger();

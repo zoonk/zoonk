@@ -42,12 +42,12 @@ export function RecordButton({
       }
     }
 
-    window.addEventListener("pointerdown", cancelOnSecondPointer, true);
-    window.addEventListener("blur", cancelPreparation);
+    globalThis.addEventListener("pointerdown", cancelOnSecondPointer, true);
+    globalThis.addEventListener("blur", cancelPreparation);
 
     return () => {
-      window.removeEventListener("pointerdown", cancelOnSecondPointer, true);
-      window.removeEventListener("blur", cancelPreparation);
+      globalThis.removeEventListener("pointerdown", cancelOnSecondPointer, true);
+      globalThis.removeEventListener("blur", cancelPreparation);
       cancelPreparation();
     };
   }, [cancelPreparation]);
