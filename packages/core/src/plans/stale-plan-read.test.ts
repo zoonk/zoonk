@@ -301,7 +301,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
       days: 0,
       extraMinutesPerDay: 0,
       kind: "behind",
-      lessons: 14,
+      lessons: 12,
     });
 
     const persisted = after.today.session.catchUp;

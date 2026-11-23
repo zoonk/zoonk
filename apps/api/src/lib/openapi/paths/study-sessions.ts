@@ -19,6 +19,7 @@ import {
 } from "../schemas/paths";
 import {
   conflictResponse,
+  forbiddenResponse,
   jsonResponse,
   notFoundResponse,
   unauthorizedResponse,
@@ -212,9 +213,10 @@ export const studySessionPaths = {
           "The scheduled mock needs questions before it can start",
         ),
         ...readErrors,
+        "403": forbiddenResponse,
         "409": {
           ...conflictResponse,
-          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), a phase challenge waits for earlier work in the same session (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or a non-mock challenge needs questions (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`).`,
+          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), a phase challenge waits for earlier work in the same session (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or a non-mock challenge needs questions (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`). A written test requiring an exam choice answers \`EXAM_CHOICE_REQUIRED\` with \`details.choiceGroups\`.`,
         },
       },
       security: AUTHENTICATED_SECURITY,

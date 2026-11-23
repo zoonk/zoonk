@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { DOCUMENTS, blueprintExtraction } from "./_test-utils/blueprint-extraction";
 import { isUsableBlueprint, toBlueprintContent, toReusePolicy } from "./blueprint-content";
 import { listBlueprintFacts } from "./blueprint-facts";
+import { listWrittenTasks } from "./written-tasks";
 
 const DETAILS = /\.(?:day|description|minutes|questions|weight)$/u;
 
@@ -918,5 +919,181 @@ describe(toReusePolicy, () => {
     });
 
     expect(toReusePolicy({ extraction, facts, supportedIds: [] })).toBeNull();
+  });
+});
+
+describe("keeping written facts from a checked notice", () => {
+  type Reading = ReturnType<typeof blueprintExtraction>;
+  type Mock = NonNullable<Reading["mock"]>;
+  type Section = Mock["sections"][number];
+  type Task = Section["tasks"][number];
+
+  const task = {
+    count: 1,
+    description: "an essay",
+    grading: null,
+    lines: 30,
+    passages: [{ document: 1, passage: "The written test asks for an essay of at most 30 lines." }],
+    plays: null,
+    points: null,
+  } satisfies Task;
+
+  const written = {
+    breakAfterMinutes: null,
+    day: null,
+    kind: "written",
+    minutes: null,
+    name: "Written test",
+    navigation: null,
+    passages: [],
+    questions: null,
+    tasks: [task],
+    tools: null,
+  } satisfies Section;
+
+  function check({
+    sections,
+    source,
+    support,
+  }: {
+    sections: Section[];
+    source: string;
+    support: (fact: ReturnType<typeof listBlueprintFacts>[number]) => boolean;
+  }) {
+    const base = blueprintExtraction();
+    const extraction = { ...base, mock: { ...base.mock!, passages: [], sections } };
+    const documents = [{ sourceId: "notice", text: source }];
+    const facts = listBlueprintFacts({ documents, extraction });
+
+    return toBlueprintContent({
+      documents,
+      extraction,
+      facts,
+      noticeUrl: null,
+      sourceHash: "fixture",
+      supportedIds: facts.filter((fact) => support(fact)).map(({ id }) => id),
+    }).structure;
+  }
+
+  it("names the Enem sitting and its day so the checker can support the combined clock", () => {
+    const first =
+      "On exam day 1, the objective test and essay share a single sitting of 330 minutes.";
+
+    const second = "On exam day 2, the objective test has a single sitting of 300 minutes.";
+
+    const sections: Section[] = [
+      {
+        ...written,
+        day: 1,
+        kind: "objective",
+        minutes: 330,
+        name: "Day 1",
+        passages: [{ document: 1, passage: first }],
+        tasks: [],
+      },
+      {
+        ...written,
+        day: 1,
+        minutes: 330,
+        name: "Day 1",
+        passages: [{ document: 1, passage: first }],
+      },
+      {
+        ...written,
+        day: 2,
+        kind: "objective",
+        minutes: 300,
+        name: "Day 2",
+        passages: [{ document: 1, passage: second }],
+        tasks: [],
+      },
+    ];
+
+    const structure = check({
+      sections,
+      source: `${first}\n${second}\n${task.passages[0]!.passage}`,
+      support: ({ id, statement }) =>
+        !id.endsWith(".minutes") ||
+        statement.includes(id.includes(".2.") ? "exam day 2" : "exam day 1"),
+    });
+
+    expect(structure.mock?.sections.map(({ minutes }) => minutes)).toStrictEqual([330, 330, 300]);
+    expect(listWrittenTasks({ structure })).toMatchObject([{ minutes: null }]);
+  });
+
+  it("keeps an OAB task's verified points when a conduct rule fails and drops a checked administration rule", () => {
+    const score = "The professional brief is worth 5 points for applying the relevant law.";
+    const form = "Choosing an unsuitable type of brief results in a score of zero.";
+    const conduct = "Candidates must copy the answer in the specified order.";
+    const signature = "Candidates must sign only the cover sheet.";
+
+    const section = {
+      ...written,
+      tasks: [
+        {
+          ...task,
+          description: "a professional brief",
+          grading: {
+            criteria: [
+              {
+                document: 1,
+                id: "brief",
+                passage: score,
+                points: 5,
+                text: "Applying the relevant law",
+              },
+            ],
+            kind: "oab",
+            language: null,
+            rounding: null,
+            zeroing: [
+              {
+                document: 1,
+                kinds: ["other"],
+                maxLines: null,
+                passage: signature,
+                text: signature,
+              },
+              { document: 1, kinds: ["other"], maxLines: null, passage: conduct, text: conduct },
+              { document: 1, kinds: ["wrongForm"], maxLines: null, passage: form, text: form },
+            ],
+          },
+          passages: [{ document: 1, passage: score }],
+          points: 5,
+        },
+      ],
+    } satisfies Section;
+
+    const structure = check({
+      sections: [section],
+      source: [score, form, conduct, signature].join("\n"),
+      support: ({ id }) => id !== "mock.sections.0.tasks.0.grading.zeroing.0",
+    });
+
+    expect(listWrittenTasks({ structure })).toMatchObject([
+      {
+        grading: {
+          criteria: [{ id: "brief", points: 5 }],
+          kind: "oab",
+          zeroing: [{ kinds: ["wrongForm"], text: form }],
+        },
+        points: 5,
+      },
+    ]);
+
+    expect(listWrittenTasks({ structure })[0]?.grading.zeroing).toHaveLength(1);
+  });
+
+  it("keeps a no-scale mock whose cited task establishes its section", () => {
+    const structure = check({
+      sections: [written],
+      source: task.passages[0]!.passage,
+      support: ({ id }) =>
+        id === "mock.sections.0.tasks.0" || id === "mock.sections.0.tasks.0.lines",
+    });
+
+    expect(listWrittenTasks({ structure })).toMatchObject([
+      { description: "an essay", grading: { kind: "levels" }, lines: 30, points: null },
+    ]);
   });
 });

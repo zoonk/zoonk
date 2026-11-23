@@ -85,7 +85,21 @@
   "goalcontent_topics_in_notice": "d0d7b9a40bcbf2ea5ae4e463242ce6c6107a01284515b50534b7b0f3e47d5e78",
   "goalcontent_topics_known_skipped": "e387aad286e7a65d1f8e8a59524e66581c47901fb2137bcebd29e6ce9a9dd490",
   "goalcontent_topics_studied_of": "f38a61108e448150e3150361dd5aa3d33b84f9cac1fb2e34924babb1c1b7ce9a",
-  "goalcontent_topics_studied_spoken": "f7aeeaa701d90c4f730937028cf42d2ba1b858b1dc1164ac5113c4b5c29d5d07"
+  "goalcontent_topics_studied_spoken": "f7aeeaa701d90c4f730937028cf42d2ba1b858b1dc1164ac5113c4b5c29d5d07",
+  "goalcontent_written_answers": "1eecf8c389ebf2485124d571c6a6e59f2363b3f29ce9923bd12aced52ffe9ab4",
+  "goalcontent_written_estimated": "ef3fc23e70745586bf609befe0ae91fd1a57d8bc92a10da5ccf6b8dac96e099b",
+  "goalcontent_written_last_answer": "cfc1ba20a990b7ea2a55579ac60ea66f41258c6143c1b55f2e366d34a7b9ad37",
+  "goalcontent_written_last_answers": "496e26769f9779a9351ae3a9978338d661a1132d868b97b205199f56fef279c1",
+  "goalcontent_written_levels": "955bb4c10041cb3aceb9178ebfbdcbd795d4427b45750142a1e137fc3bacd063",
+  "goalcontent_written_lines": "b44f19ceca2005ac0030a9c02a04361a7cac872fddd5fc05942cfa02bec84b47",
+  "goalcontent_written_minimum": "fc589d65e71207b1990c6dfcaa40c215324d2328a9f914d408b5252e096bb26c",
+  "goalcontent_written_minimum_of": "3ce4d90414f4500a73e1d91279414c59db659e536bd4f46dfe8a9098a47c05c4",
+  "goalcontent_written_minimum_share": "91ef4c6e57784e58e8bd9eb9860df0bf3e761d68d6785037851a2bceea1204a2",
+  "goalcontent_written_presentation": "f92dced7719254e68ad501cf6eac0b80f8315bada96c1fe82572b2ab0a95a196",
+  "goalcontent_written_progress": "5a42813541f1fb1efc37c7b191216944fe99da05a1d9e22d1ce3dcd6be19e55e",
+  "goalcontent_written_questions": "6a8cabb96e70e23f9d863f6dc948cc33aab0fb299adc1a53a06ce7598400273b",
+  "goalcontent_written_share": "9551b59db31e5a7fb2c24d8232b493f830f59e2e03854eb5f42bca8ed4276778",
+  "goalcontent_written_versions": "f2ea7010e4edec5a8c024aa68d47e321ba68d3de10bc5aea8507773bbe90b06c"
 }
 -->
 <resources>
@@ -286,4 +300,35 @@
     <string name="goalcontent_skill_solid">Firme</string>
     <string name="goalcontent_skill_mastered">Dominado</string>
     <string name="goalcontent_chapters_progress">%1$s de %2$s</string>
+    <string name="goalcontent_written_estimated">Pontuação estimada</string>
+    <string name="goalcontent_written_minimum">Mínimo para passar: %1$s</string>
+    <string name="goalcontent_written_minimum_of">Mínimo para passar: %1$s de %2$s</string>
+    <string name="goalcontent_written_levels">Suas respostas são avaliadas por nível. Ainda não há uma estimativa de pontuação para esta prova.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d questão</item>
+        <item quantity="many">%d questões</item>
+        <item quantity="other">%d questões</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s da pontuação</string>
+    <string name="goalcontent_written_minimum_share">Mínimo para passar: %1$s dos pontos</string>
+    <string name="goalcontent_written_progress">Seu progresso</string>
+    <string name="goalcontent_written_last_answer">última resposta</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">última resposta %d</item>
+        <item quantity="many">últimas %d respostas</item>
+        <item quantity="other">últimas %d respostas</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">Apresentação e estrutura</string>
+    <string name="goalcontent_written_answers">Suas respostas</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d linha</item>
+        <item quantity="many">%d linhas</item>
+        <item quantity="other">%d linhas</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d versão</item>
+        <item quantity="many">%d versões</item>
+        <item quantity="other">%d versões</item>
+    </plurals>
 </resources>

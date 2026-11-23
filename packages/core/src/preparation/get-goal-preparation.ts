@@ -1,4 +1,5 @@
 import "server-only";
+import { type WrittenProjection } from "../exams/scoring/written-points-contract";
 import { type SkillStateCounts } from "../learner/mastery-state";
 import { loadGoalPreparation } from "./_utils/load-goal-preparation";
 import { type AreaPreparation } from "./area-preparation";
@@ -12,6 +13,7 @@ type GoalPreparation = {
   areas: AreaPreparation[];
   components: PreparationComponents;
   estimatedScore: EstimatedScore | null;
+  writtenProjection?: WrittenProjection;
   goalId: string;
   sections: SectionPreparation[];
   skills: SkillStateCounts;

@@ -7,7 +7,7 @@ import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
-import { type SkillRequirement, isCompleted } from "./selected-requirement";
+import { type SkillRequirement, getWrittenCoverage, isCompleted } from "./selected-requirement";
 
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
 
@@ -172,6 +172,23 @@ function listShortLessons({
     .toSorted((a, b) => a.lessonId.localeCompare(b.lessonId));
 }
 
+function readCoveredTeaching({
+  built,
+  deadline,
+  requirement,
+}: {
+  built: BuiltPlan;
+  deadline: string;
+  requirement: ReadonlyMap<string, SkillRequirement>;
+}) {
+  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
+
+  return {
+    lessons: listCoveredLessons({ built, deadline, raw }),
+    standIns: listCoveredStandIns({ built, deadline }),
+  };
+}
+
 /** Each lesson counts once, however many skills share it. */
 export function getWholeShortfall({
   built,
@@ -188,13 +205,12 @@ export function getWholeShortfall({
   requirement: ReadonlyMap<string, SkillRequirement>;
   settled: ReadonlySet<string>;
 }): number {
-  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
-  const lessons = listCoveredLessons({ built, deadline, raw });
-  const standIns = listCoveredStandIns({ built, deadline });
+  const { lessons, standIns } = readCoveredTeaching({ built, deadline, requirement });
 
   const measured = listScope({ examSubjects, input }).skills.flatMap(({ skillId }) => {
     const required = requirement.get(skillId);
-    return required && !settled.has(skillId) ? [{ required, skillId }] : [];
+    const written = built.writingRequirement && input.writing?.skillIds.has(skillId);
+    return required && !settled.has(skillId) && !written ? [{ required, skillId }] : [];
   });
 
   const lessonsLeft = new Map(
@@ -234,10 +250,9 @@ export function getCoverage({
 }): SelectedCoverage {
   const scope = listScope({ examSubjects, input });
 
-  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
+  const { lessons, standIns } = readCoveredTeaching({ built, deadline, requirement });
 
-  const lessons = listCoveredLessons({ built, deadline, raw });
-  const standIns = listCoveredStandIns({ built, deadline });
+  const written = getWrittenCoverage({ built, input });
 
   const isInPlan = readTopicMembership({
     items: built.items.filter(
@@ -248,6 +263,11 @@ export function getCoverage({
   });
 
   const skills = scope.skills.map(({ skillId, worth }) => {
+    if (written?.skillIds.has(skillId)) {
+      const { skillIds: _skillIds, ...coverage } = written;
+      return { ...coverage, skillId, worth };
+    }
+
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
     const requiredRaw = lessonMinutes + (required?.standIn ?? 0);
@@ -269,7 +289,16 @@ export function getCoverage({
     };
   });
 
-  const coreFits = skills.every((skill) => isInPlan(skill.skillId) || getSkillValue(skill) > 0);
+  const writingFits = !written || written.coveredRaw >= written.requiredRaw - PLAN_EPSILON;
+
+  const coreFits =
+    writingFits &&
+    skills.every(
+      (skill) =>
+        written?.skillIds.has(skill.skillId) ||
+        isInPlan(skill.skillId) ||
+        getSkillValue(skill) > 0,
+    );
 
   return {
     basis: "selected",
@@ -277,7 +306,12 @@ export function getCoverage({
     ...measureDepth({ coreFits, skills }),
     deadline,
     measure: scope.measure,
-    shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
+    shortLessons: listShortLessons({
+      built,
+      covered: lessons,
+      requirement,
+      skills: skills.filter(({ skillId }) => !written?.skillIds.has(skillId)),
+    }),
     skills,
     targetDate,
   };

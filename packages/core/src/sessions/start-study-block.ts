@@ -3,6 +3,7 @@ import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/d
 import { safeAsync } from "@zoonk/utils/error";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { type WritingNeedsChoice } from "../exams/essays/writing-contract";
 import { startScheduledSitting } from "../exams/mocks/_utils/start-scheduled-mock";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
@@ -43,7 +44,9 @@ export type StartStudyBlockResult =
   | { status: "plusRequired" }
   | { status: "preparing" }
   | { status: "questionsNeeded" }
-  | { status: "unauthorized" };
+  | { status: "signUpRequired" }
+  | { status: "unauthorized" }
+  | WritingNeedsChoice;
 
 /** Replays and refusals must roll back the marks taken before the domain locks. */
 class StudyBlockStartUnchangedError extends Error {
@@ -155,8 +158,9 @@ async function lockStartableSession({
       SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
     `;
 
+  // Relations load one at a time: a transaction's connection runs one query at once.
   const locked = await tx.studySession.findFirst({
-    include: STUDY_SESSION_INCLUDE,
+    include: { blocks: STUDY_SESSION_INCLUDE.blocks },
     where: { id: sessionId, userId },
   });
 
@@ -170,7 +174,9 @@ async function lockStartableSession({
     throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
   }
 
-  return locked;
+  const goal = locked.goalId ? await tx.goal.findUnique({ where: { id: locked.goalId } }) : null;
+
+  return { ...locked, goal };
 }
 
 /** Requires ownership; fills checkpoint questions before starting, and owes the session's preparation. */
@@ -247,12 +253,17 @@ export async function startStudyBlock({
         goal: locked.goal,
         now,
         sessionDate: locked.localDate,
+        timeZone,
         tx,
         userId,
       });
 
-      if (sitting === "plusRequired") {
-        throw new StudyBlockStartUnchangedError({ status: "plusRequired" });
+      if (sitting === "plusRequired" || sitting === "signUpRequired") {
+        throw new StudyBlockStartUnchangedError({ status: sitting });
+      }
+
+      if (typeof sitting === "object" && sitting !== null) {
+        throw new StudyBlockStartUnchangedError(sitting);
       }
 
       if (sitting === "preparing") {

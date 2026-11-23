@@ -1,5 +1,7 @@
+import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { type PlanView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
+import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
 import { type PlanReadContext } from "./plan-read-projection";
 import { readPlanSummary } from "./plan-summary";
 
@@ -18,7 +20,33 @@ function getShownEnd(context: PlanReadContext): string | null {
   return [...dates, ...(afterExam ? [afterExam] : [])].toSorted().at(-1) ?? null;
 }
 
-export function buildEstimateView({ context }: { context: PlanReadContext }): PlanView["estimate"] {
+export async function loadPlanWritingWork({ goal, state, today }: PlanReadContext) {
+  const schedule = state.settings.writingSchedule;
+
+  if (!schedule?.length) {
+    return [];
+  }
+
+  const attempts = await readScheduledAnswers(goal.userId, goal.id);
+  const keys = new Set(schedule.flatMap(({ tasks }) => tasks.map(({ taskKey }) => taskKey)));
+
+  return listRemainingWriting({
+    attempts:
+      state.settings.skippedAreas.length > 0
+        ? attempts.filter(({ taskKey }) => keys.has(taskKey))
+        : attempts,
+    schedule,
+    today: toIsoDate(today),
+  });
+}
+
+export function buildEstimateView({
+  context,
+  writing,
+}: {
+  context: PlanReadContext;
+  writing: readonly WritingWork[];
+}): PlanView["estimate"] {
   const pace = context.state.settings.pace;
   const endDate = getShownEnd(context);
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
@@ -29,6 +57,8 @@ export function buildEstimateView({ context }: { context: PlanReadContext }): Pl
     .filter((item) => item.status === "todo")
     .reduce((sum, item) => sum + (item.minutes ?? 0), 0);
 
+  const remainingWriting = writing.reduce((sum, entry) => sum + entry.minutes, 0);
+
   return {
     endDate,
     fullCourseEndDate: fullCourse
@@ -38,7 +68,7 @@ export function buildEstimateView({ context }: { context: PlanReadContext }): Pl
         })?.advice.fullCourseEndDate ?? null)
       : null,
     pace: pace ? { factor: pace.factor, source: pace.source } : null,
-    remainingHours: toHours(remainingMinutes),
+    remainingHours: toHours(remainingMinutes + remainingWriting),
     totalHours: Math.round(totalHours * 10) / 10,
   };
 }

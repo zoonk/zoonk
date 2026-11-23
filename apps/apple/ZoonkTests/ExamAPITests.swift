@@ -10,17 +10,74 @@ final class ExamAPITests: XCTestCase {
   private let itemId = "01a12229-b961-72ae-a802-006ceef4fd0d"
 
   func testStartingAMockSendsOnlyItsShapeWithItsNullsAndTheBodysOwnLength() async throws {
-    let transport = RecordingTransport(answer: #"{"id": null, "status": "preparing"}"#)
-    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    for kind in [MockShape.Kind.half, .objective, .written] {
+      let transport = RecordingTransport(answer: #"{"id": null, "status": "preparing"}"#)
+      let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
 
-    let outcome = try await api.startMock(
-      token: "token", goalId: goalId, shape: MockShape(kind: .half))
+      let outcome = try await api.startMock(
+        token: "token", goalId: goalId, shape: MockShape(kind: kind))
 
-    XCTAssertEqual(outcome, .preparing)
-    let sent = try XCTUnwrap(transport.sent.value.first)
-    XCTAssertEqual(sent.contentLength, sent.body.count, "A server would wait for missing bytes")
-    XCTAssertEqual(
-      sent.json, ["shape": ["area": NSNull(), "day": NSNull(), "kind": "half"]] as NSDictionary)
+      XCTAssertEqual(outcome, .preparing)
+      let sent = try XCTUnwrap(transport.sent.value.first)
+      XCTAssertEqual(sent.contentLength, sent.body.count, "A server would wait for missing bytes")
+      XCTAssertEqual(
+        sent.json,
+        ["shape": ["area": NSNull(), "day": NSNull(), "kind": kind.rawValue]] as NSDictionary)
+    }
+  }
+
+  func testWrittenMockRefusalsDoNotBecomePreparation() async throws {
+    let cases: [(HTTPResponse.Status, String, MockStartOutcome)] = [
+      (.conflict, Self.choiceRequired, .needsChoice(choiceGroups: ["Specialty"])),
+      (
+        .tooManyRequests,
+        """
+        {"returnsOn":"2026-11-23","status":"limitReached","error":{
+          "code":"USAGE_LIMIT_REACHED","details":{"returnsOn":"2026-11-23"},"message":"Try tomorrow"
+        }}
+        """,
+        .writingLimitReached(returnsOn: "2026-11-23")
+      ),
+      (.forbidden, Self.signUpRequired, .refused(.signUpRequired)),
+    ]
+
+    for (status, body, expected) in cases {
+      let transport = RecordingTransport(status: status, answer: body)
+      let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+      let outcome = try await api.startMock(
+        token: "token", goalId: goalId, shape: MockShape(kind: .written))
+
+      XCTAssertEqual(outcome, expected)
+      XCTAssertEqual(transport.sent.value.count, 1)
+    }
+  }
+
+  func testScheduledMockStartDistinguishesPreparationFromRefusals() async throws {
+    let preparing = RecordingTransport(status: .accepted, answer: #"{"status":"preparing"}"#)
+    let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: preparing))
+    let outcome = try await api.startChallenge(
+      token: "token", planItemId: itemId, afterWriting: false)
+    XCTAssertNil(outcome)
+    XCTAssertNil(preparing.sent.value.first?.json["afterWriting"])
+
+    let refusals: [(HTTPResponse.Status, String, PracticeAPIError)] = [
+      (.conflict, Self.choiceRequired, .needsExamChoice(["Specialty"])),
+      (.forbidden, Self.signUpRequired, .limit(.signUpRequired)),
+    ]
+
+    for (status, body, expected) in refusals {
+      let transport = RecordingTransport(status: status, answer: body)
+      let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+      do {
+        _ = try await api.startChallenge(token: "token", planItemId: itemId, afterWriting: false)
+        XCTFail("The start should return its refusal")
+      } catch {
+        XCTAssertEqual(error as? PracticeAPIError, expected)
+      }
+      XCTAssertEqual(transport.sent.value.count, 1)
+    }
   }
 
   func testABlankDraftSavesAnExplicitNullAnswer() async throws {
@@ -49,6 +106,13 @@ final class ExamAPITests: XCTestCase {
     XCTAssertEqual(sent.contentLength, sent.body.count)
     XCTAssertEqual(sent.json["answer"] as? NSDictionary, ["selectedIndex": 3])
   }
+
+  private static let choiceRequired = """
+    {"error":{"code":"EXAM_CHOICE_REQUIRED","message":"Choose a specialty",
+      "details":{"choiceGroups":["Specialty"]}}}
+    """
+  private static let signUpRequired =
+    #"{"error":{"code":"SIGN_UP_REQUIRED","message":"Create an account"}}"#
 
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 }

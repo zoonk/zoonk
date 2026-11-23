@@ -275,6 +275,10 @@ class PlanScreenshots {
                             links,
                         )
                     },
+                "09-score-before" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_BEFORE)), links) },
+                "09-score-before-levels" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_LEVELS)), links) },
+                "10-score-after" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_AFTER)), links) },
+                "10b-score-below-minimum" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_BELOW)), links) },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
                 "plan-change-diff" to
                     { _ ->
@@ -294,10 +298,21 @@ class PlanScreenshots {
                 "plan-sheet-progress" to { stringResource(R.string.plan_your_progress) },
                 "plan-sheet-preparation-review" to { stringResource(R.string.plan_your_preparation) },
                 "plan-sheet-preparation-reviewed" to { stringResource(R.string.plan_your_preparation) },
+                "09-score-before" to { stringResource(R.string.plan_your_preparation) },
+                "09-score-before-levels" to { stringResource(R.string.plan_your_preparation) },
+                "10-score-after" to { stringResource(R.string.plan_your_preparation) },
+                "10b-score-below-minimum" to { stringResource(R.string.plan_your_preparation) },
             )
         var shown by mutableStateOf(sheets.keys.first())
         compose.setContent {
-            val links = PlanLinks(rememberAppNavigator(), page)
+            val links =
+                PlanLinks(
+                    rememberAppNavigator(),
+                    page,
+                    writeNow =
+                        com.zoonk.android.feature.goalcontent
+                            .WriteNow(false, false) {},
+                )
             ZoonkTheme {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
                     val title = sheetTitles[shown]?.invoke()
@@ -321,6 +336,19 @@ class PlanScreenshots {
         compose.onNodeWithText("All changes").performClick()
         compose.waitForIdle()
         write("plan-change-diff-open", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** An exam whose written part is half its score: the objective estimate with the written part's projection. */
+    private fun withWritten(projection: String): com.zoonk.api.models.GoalProgress {
+        val progress = progress(mocks = """{"kind":"mockExams","taken":1,"value":0.65}""")
+        val written =
+            com.zoonk.api.ApiJson
+                .decodeFromString(
+                    com.zoonk.api.models.WrittenProjection
+                        .serializer(),
+                    projection,
+                )
+        return progress.copy(preparation = progress.preparation?.copy(writtenProjection = written))
     }
 
     /** A far topic's sheet in each state, driven through its view model as the sheet is. */
@@ -1047,6 +1075,29 @@ class PlanScreenshots {
     }
 
     private companion object {
+        val WRITTEN_BEFORE =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":null,"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":null,"standing":"unmeasured","scale":"points",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":null},{"key":"long","name":"60-line question","max":70,"range":null}]}]}"""
+
+        /** What learners see today: no rubric has passed its check, so the written test is graded by level. */
+        val WRITTEN_LEVELS =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":null,"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":null,"standing":"unmeasured","scale":"levels",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":null},{"key":"long","name":"60-line question","max":70,"range":null}]}]}"""
+
+        val WRITTEN_AFTER =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":118,"high":131},"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":56,"high":63},"standing":"met",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":17,"high":19}},
+               {"key":"long","name":"60-line question","max":70,"range":{"low":39,"high":44}}]}]}"""
+
+        val WRITTEN_BELOW =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":103,"high":115},"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":41,"high":47},"standing":"below",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":12,"high":14}},
+               {"key":"long","name":"60-line question","max":70,"range":{"low":29,"high":33}}]}]}"""
+
         val EDITOR_CHOICES =
             """
             "examChoices":[{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},"options":[{"name":"Inglês","shortName":null},

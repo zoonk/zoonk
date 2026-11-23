@@ -22,6 +22,7 @@ import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
+import * as languageCalls from "./steps/language-call-steps";
 
 vi.mock("../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
@@ -152,6 +153,16 @@ describe("session preparation records admission for its children", () => {
     ).resolves.toMatchObject({ laterLessonIds: [tomorrow.id], lessonIds: [], status: "prepared" });
 
     expect(sleep).not.toHaveBeenCalled();
+  });
+
+  it("surfaces preparation failures after the other members have settled", async () => {
+    const { goal, user } = await sessionWithLesson();
+    const failure = new Error("Language-call preparation exhausted its step retries");
+    vi.spyOn(languageCalls, "writeLanguageCalls").mockRejectedValueOnce(failure);
+
+    await expect(
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
+    ).rejects.toThrow(failure);
   });
 
   it.each([

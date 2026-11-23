@@ -85,7 +85,21 @@
   "goalcontent_topics_in_notice": "e6ef6845697b25fe5686f669e88822a937b3535a7236854f1ff73ce667a21307",
   "goalcontent_topics_known_skipped": "efc5eb9aa3e5961470da3e21209b8b526ab4205af0f4e41452125d030d716eb2",
   "goalcontent_topics_studied_of": "016804117d2a4418de1be0c860e3717cfb05b76314e93370729e4fc332519800",
-  "goalcontent_topics_studied_spoken": "75b32bbcb91b11e9696e5bde9e60f93d54707269a56af652a85631e0fe3d4e71"
+  "goalcontent_topics_studied_spoken": "75b32bbcb91b11e9696e5bde9e60f93d54707269a56af652a85631e0fe3d4e71",
+  "goalcontent_written_answers": "42ed6890e62c652b908d89423b39ec708e3c3793278fd4673e10927b3a97b834",
+  "goalcontent_written_estimated": "91237212099d9605c0859ea75b0e227376ebd4f541b277e1fcc4071f160848c1",
+  "goalcontent_written_last_answer": "9c54458b34c8cc307cb1f22b85aa2e505336d94483b88a5849245ed9daea558e",
+  "goalcontent_written_last_answers": "af0c81683d32c59fbc8cac0c940f4a6ae8c7680dfccf703d0c1162287e2fc7f1",
+  "goalcontent_written_levels": "d4c3a440909649bc25a8935e5341334df4891366d193133d596434422e7c0b10",
+  "goalcontent_written_lines": "a9227311581e74b283b1cd81c3877b54ba5de9dca28642273b96b9a9b4a14ca4",
+  "goalcontent_written_minimum": "c7034cb52f7cad6a5d8fb405a6870bef4c169b19d854e444b80fddf787f36a94",
+  "goalcontent_written_minimum_of": "35a7bf35a3549d062f31c8745417263316b5703d20038adf6304e47c60f5bc21",
+  "goalcontent_written_minimum_share": "778293842f18a4b826eb6c21758879c6bcc4845b5baacab2d3d6a0051118d3d4",
+  "goalcontent_written_presentation": "2a117bc78ed94c96d7da5b2ed639e7dd4bf13c808617e6922a44dadb46a62e36",
+  "goalcontent_written_progress": "668c0047c7bf0d5f0d2b31d6984613b67e90c9c6cdb1e110179c385eaf79a849",
+  "goalcontent_written_questions": "baab4c816f9ac2cbd91c36f40caca58cf74d5ce0a6561823f41d7b3ca2ac76f2",
+  "goalcontent_written_share": "e3894bac66a0c990559c935542e737c5b774a179dd076c22631c81958147fd2c",
+  "goalcontent_written_versions": "3639aa4e04ddc0a1cfa00961ed336dbdbbb734e88930ecfceb944bd3c84158b7"
 }
 -->
 <resources>
@@ -286,4 +300,35 @@
     <string name="goalcontent_skill_solid">Solido</string>
     <string name="goalcontent_skill_mastered">Padroneggiato</string>
     <string name="goalcontent_chapters_progress">%1$s di %2$s</string>
+    <string name="goalcontent_written_estimated">Punteggio stimato</string>
+    <string name="goalcontent_written_minimum">Minimo per superare la prova: %1$s</string>
+    <string name="goalcontent_written_minimum_of">Minimo per superare la prova: %1$s su %2$s</string>
+    <string name="goalcontent_written_levels">Le risposte vengono valutate per livello. Per questa prova non è ancora disponibile una stima del punteggio.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d domanda</item>
+        <item quantity="many">%d domande</item>
+        <item quantity="other">%d domande</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s del punteggio</string>
+    <string name="goalcontent_written_minimum_share">Minimo per superare la prova: %1$s dei punti</string>
+    <string name="goalcontent_written_progress">I tuoi progressi</string>
+    <string name="goalcontent_written_last_answer">ultima risposta</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">ultima %d risposta</item>
+        <item quantity="many">ultime %d risposte</item>
+        <item quantity="other">ultime %d risposte</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">Presentazione e struttura</string>
+    <string name="goalcontent_written_answers">Le tue risposte</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d riga</item>
+        <item quantity="many">%d righe</item>
+        <item quantity="other">%d righe</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d versione</item>
+        <item quantity="many">%d versioni</item>
+        <item quantity="other">%d versioni</item>
+    </plurals>
 </resources>

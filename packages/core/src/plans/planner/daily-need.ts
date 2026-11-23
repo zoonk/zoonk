@@ -127,6 +127,7 @@ function toFixedShape({
     open: day.shape.open,
     phase: day.shape.phase,
     share: day.shape.share,
+    writtenMinutes: day.shape.writtenMinutes,
   };
 }
 

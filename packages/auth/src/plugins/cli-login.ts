@@ -13,6 +13,7 @@ import {
   CLI_LOGIN_APPROVAL_PATH,
   STAFF_PROPOSE_SCOPE,
   STAFF_READ_SCOPE,
+  STAFF_WRITING_REPAIR_SCOPE,
 } from "../cli-login-contract";
 
 /**
@@ -36,7 +37,7 @@ const cliOAuthProvider = oauthProvider({
   loginPage: APPROVAL_URL,
   refreshTokenReuseInterval: REFRESH_TOKEN_REUSE_SECONDS,
   resourcePrivileges: () => false,
-  scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE, "offline_access"],
+  scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE, STAFF_WRITING_REPAIR_SCOPE, "offline_access"],
 });
 
 /**

@@ -85,7 +85,21 @@
   "goalcontent_topics_in_notice": "b5c7dc68e4617fffd87f240e52fd293c86060dc02af9df5b3281f14389e4987a",
   "goalcontent_topics_known_skipped": "8b5bb68ef60f347311f274c9228256cae5eec8c6e5090bba11178b685d52a1f1",
   "goalcontent_topics_studied_of": "97f82f0c4f924595578b789b65d5d348570eabcdd262996897b3502e8334b608",
-  "goalcontent_topics_studied_spoken": "9e9a63555ffc37a80d8902415d1fa6df58aac40912ba314e53fbdf258cec5782"
+  "goalcontent_topics_studied_spoken": "9e9a63555ffc37a80d8902415d1fa6df58aac40912ba314e53fbdf258cec5782",
+  "goalcontent_written_answers": "e3788d7c80223ec1ce205a649f59a6c1667e4722adb59a6e06273a705755ad5e",
+  "goalcontent_written_estimated": "6794996279fb85ea35a98d36eb19afdee8a052ea45057d744452bc106b04265d",
+  "goalcontent_written_last_answer": "f95792075057a829140d9ec808a73252770fc46ccf425dd8a6a6f59c9b1ca4aa",
+  "goalcontent_written_last_answers": "7dcf074f080c2e777444c40005b8a9e8201dbdb87b25c7368cd1aedab3967680",
+  "goalcontent_written_levels": "7dd8c8b16189b7137dbb2ff3228db639e6b1de513cea942ebd6c86875d8c4182",
+  "goalcontent_written_lines": "35a151ce3ed0b738a2789f05440538ba36d1231878d30d65ecbec29ed0b60bc2",
+  "goalcontent_written_minimum": "ea33af182b91e3f90221147a4c9970f6f3aeef29df3d40431f8bf584c622bdad",
+  "goalcontent_written_minimum_of": "578f5868927578213648dfc8448eb4440946bfa94f599390ec25a4edd879fc7a",
+  "goalcontent_written_minimum_share": "adf7f2501cbdcab7e28583043a6d6f51e3c52f9cdfe8224f98f0a2787fd4d994",
+  "goalcontent_written_presentation": "a2ae7a1903c8831dba06448d079e3e4b10500b34a3cffd6ca2c889cae6671127",
+  "goalcontent_written_progress": "4e0747b6a4184d9a59a7880eeadc3495d7b1b9c049c80bbbcfa77ddf17047146",
+  "goalcontent_written_questions": "92ae459f055cad01e505fbd0b7c5765ce5ab9f140968c98e19a3c2e0d00cde7f",
+  "goalcontent_written_share": "17b2484065015838057d0f07c538dc7c7d04fec16b2d76992be90c077bdb2822",
+  "goalcontent_written_versions": "822bffce02ecd8038a8e286ba3478769cf45b93beb2345050cad81ada7dab064"
 }
 -->
 <resources>
@@ -248,4 +262,27 @@
     <string name="goalcontent_skill_solid">定着</string>
     <string name="goalcontent_skill_mastered">習得済み</string>
     <string name="goalcontent_chapters_progress">%1$s / %2$s</string>
+    <string name="goalcontent_written_estimated">推定スコア</string>
+    <string name="goalcontent_written_minimum">合格に必要な最低点：%1$s</string>
+    <string name="goalcontent_written_minimum_of">合格に必要な最低点：%2$s点中%1$s点</string>
+    <string name="goalcontent_written_levels">このテストは段階別に採点されます。現時点では推定スコアを確認できません。</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="other">%d問</item>
+    </plurals>
+    <string name="goalcontent_written_share">スコアのうち%1$s</string>
+    <string name="goalcontent_written_minimum_share">合格に必要な最低点：得点の%1$s以上</string>
+    <string name="goalcontent_written_progress">進み具合</string>
+    <string name="goalcontent_written_last_answer">直近の解答</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="other">直近の%d件の解答</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">表現と構成</string>
+    <string name="goalcontent_written_answers">解答一覧</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="other">%d行</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="other">%d回分</item>
+    </plurals>
 </resources>

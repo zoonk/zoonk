@@ -12,6 +12,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockPaperWait
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.mock.chooser.examChoiceGroups
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
@@ -67,6 +68,7 @@ data class ChallengeUi(
     val problem: StartProblem? = null,
     val writing: Boolean = false,
     val refused: Limit? = null,
+    val choiceGroups: List<String>? = null,
     val moving: Boolean = false,
     val moveFailed: Boolean = false,
     val refusal: MoveRefusal? = null,
@@ -196,6 +198,12 @@ class ChallengeViewModel(
 
         data object PlusRequired : Outcome
 
+        data object SignUpRequired : Outcome
+
+        data class NeedsChoice(
+            val groups: List<String>,
+        ) : Outcome
+
         data object Failed : Outcome
     }
 
@@ -224,6 +232,14 @@ class ChallengeViewModel(
 
             failed.code == "PLUS_REQUIRED" -> {
                 Outcome.PlusRequired
+            }
+
+            failed.code == "SIGN_UP_REQUIRED" -> {
+                Outcome.SignUpRequired
+            }
+
+            failed.code == "EXAM_CHOICE_REQUIRED" -> {
+                Outcome.NeedsChoice(failed.details.examChoiceGroups())
             }
 
             failed.code == "QUESTIONS_NEEDED" && !afterWriting -> {
@@ -316,6 +332,14 @@ class ChallengeViewModel(
 
             Outcome.PlusRequired -> {
                 reread(StartProblem.PlusRequired)
+            }
+
+            Outcome.SignUpRequired -> {
+                mutableUi.update { it.copy(starting = false, slow = false, refused = Limit.SignUpRequired) }
+            }
+
+            is Outcome.NeedsChoice -> {
+                mutableUi.update { it.copy(starting = false, slow = false, choiceGroups = outcome.groups) }
             }
 
             Outcome.Failed -> {

@@ -6,6 +6,19 @@
     <string name="mock_chooser_one_subject">One subject</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">The exam</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Your exam has %d test</item>
+        <item quantity="other">Your exam has %d tests</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">Shorter, objective questions only</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">Both tests</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">All %1$d test</item>
+        <item quantity="other">All %1$d tests</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Day %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

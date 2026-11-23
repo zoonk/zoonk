@@ -1,7 +1,7 @@
 "use client";
 
 import { type MockShape, type MockView } from "@zoonk/core/exams/mocks/contract";
-import { type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
+import { type MockQuestion, type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookmarkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -67,6 +67,16 @@ export function useMockQuestionLabel() {
       ? t("Question {number} of {total} · {area}", { ...place, area })
       : t("Question {number} of {total}", place);
   };
+}
+
+export function isNumberedMockQuestion({
+  question,
+  total,
+}: {
+  question: MockQuestion;
+  total: number;
+}): boolean {
+  return question.format !== "essay" || (total > 1 && question.number <= total);
 }
 
 /** A one-subject mock exam is told apart by its subject; a full or half one needs no label. */

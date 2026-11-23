@@ -20,9 +20,9 @@ import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import { planChangedWhileSavingResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
+  forbiddenResponse,
   notFoundResponse,
   paymentRequiredResponse,
-  tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -97,10 +97,34 @@ export const mockPaths = {
         },
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
-        "409": { ...conflictResponse, description: "The goal is paused" },
+        "403": forbiddenResponse,
+        "409": {
+          ...conflictResponse,
+          description:
+            "The goal is paused, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
+        },
         "422": {
           ...unprocessableEntityResponse,
           description: "The goal is not an exam or does not offer the requested option",
+        },
+        "429": {
+          content: {
+            "application/json": {
+              schema: z.object({
+                error: z
+                  .object({
+                    code: z.literal("USAGE_LIMIT_REACHED"),
+                    details: z.object({ returnsOn: z.iso.date() }),
+                    message: z.string(),
+                  })
+                  .optional(),
+                returnsOn: z.iso.date(),
+                status: z.literal("limitReached"),
+              }),
+            },
+          },
+          description:
+            "The extra writing allowance is used for the day. `error.details.returnsOn` is the date it renews.",
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -129,7 +153,7 @@ export const mockPaths = {
   "/mocks/{blockId}/essay-grades": {
     post: {
       description:
-        "Grades a finished full mock's essays (its written part, `essays` with `pending` on GET /mocks/{blockId}) with the exam's official rubric, and records them as learning: call it right after the hand-in, while the objective result already shows. Each essay is graded once; a second request waits for the first one's grades. They count toward the day's essay grades: past them, the rest wait for another day (`ESSAY_LIMIT_REACHED`).",
+        "Grades a finished mock's submitted writing tasks using the admissions issued at its start. Each answer is graded once, and concurrent requests replay the saved results.",
       operationId: "gradeMockEssays",
       requestBody: {
         content: { "application/json": { schema: mockTimeZoneInputSchema } },
@@ -143,7 +167,6 @@ export const mockPaths = {
         },
         ...commonErrors,
         "409": { ...conflictResponse, description: "The mock isn't handed in yet" },
-        "429": { ...tooManyRequestsResponse, description: "Today's essay grades are used up" },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Grade a mock's essays",

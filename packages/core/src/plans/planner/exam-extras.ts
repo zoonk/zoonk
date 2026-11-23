@@ -163,6 +163,7 @@ function listSpareDays({ built, input }: { built: BuiltPlan; input: BuildPlanInp
           events: [],
           minutes: mockDates.has(date) ? 0 : Math.max(0, capacity - used) / (day.shape.share || 1),
           reserved: 0,
+          writtenMinutes: 0,
         },
       };
     });
@@ -279,7 +280,11 @@ export function appendExamExtras<T extends BuiltPlan>({
     lessonRawMinutes: new Map([...built.lessonRawMinutes, ...portions.lessonRawMinutes]),
     phases: built.phases.map((phase, index) => ({
       ...phase,
-      minutes: Math.round(totalMinutes(items.filter((item) => item.phase === index))),
+      minutes: Math.round(
+        phase.minutes +
+          totalMinutes(items.filter((item) => item.phase === index)) -
+          totalMinutes(built.items.filter((item) => item.phase === index)),
+      ),
     })),
     skillLessons,
     skillMinutes: [

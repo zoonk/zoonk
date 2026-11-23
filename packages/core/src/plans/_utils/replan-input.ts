@@ -31,17 +31,43 @@ function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
   );
 }
 
-function withPastBasicsLessons<
-  Loaded extends Pick<Awaited<ReturnType<typeof loadPlannerInputs>>, "lessons" | "missedSkillIds">,
->({ graph, loaded, state }: { graph: PlanState["graph"]; loaded: Loaded; state: PlanState }) {
+function shapePlannerInputs<
+  Loaded extends Pick<
+    Awaited<ReturnType<typeof loadPlannerInputs>>,
+    "bands" | "lessons" | "missedSkillIds"
+  >,
+>({
+  context,
+  loaded,
+  resolved,
+  state,
+}: {
+  context: PlanContext;
+  loaded: Loaded;
+  resolved: PlanState["graph"];
+  state: PlanState;
+}) {
+  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
+    bands: loaded.bands,
+    goal: context.goal,
+    graph: resolved,
+    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
+    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
+    state,
+  });
+
   return {
-    ...loaded,
-    lessons: keepPastBasicsBands({
-      graph,
-      keepSkillIds: loaded.missedSkillIds,
-      lessons: loaded.lessons,
-      pastBasicsAreas: state.settings.pastBasicsAreas,
-    }),
+    fullGraph,
+    graph,
+    inputs: {
+      ...loaded,
+      lessons: keepPastBasicsBands({
+        graph,
+        keepSkillIds: loaded.missedSkillIds,
+        lessons: loaded.lessons,
+        pastBasicsAreas: state.settings.pastBasicsAreas,
+      }),
+    },
   };
 }
 
@@ -70,7 +96,7 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
   const targetDate = getStateTargetDate(state);
 
   const [
-    { areaShares, examSubjects, materialExam, topicLevels, ...loaded },
+    { areaShares, examSubjects, materialExam, topicLevels, writtenSkillIds, ...loaded },
     carryOver,
     todayShown,
     quick,
@@ -80,31 +106,17 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
       examPicks: state.settings,
       goal: context.goal,
       graph: resolved,
+      skippedAreas: state.settings.skippedAreas,
       targetDate,
       userId: context.goal.userId,
     }),
-    loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }).then(
-      (loadedCarry) =>
-        loadedCarry && {
-          ...loadedCarry,
-          todayExceptAreas: options.todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
-        },
-    ),
+    loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }),
     shownToday ??
       (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
     loadQuickBaseLessons(state.settings),
   ]);
 
-  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
-    bands: loaded.bands,
-    goal: context.goal,
-    graph: resolved,
-    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
-    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
-    state,
-  });
-
-  const inputs = withPastBasicsLessons({ graph, loaded, state });
+  const { fullGraph, graph, inputs } = shapePlannerInputs({ context, loaded, resolved, state });
 
   const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
   const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
@@ -123,7 +135,10 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     bossFacts: await bossFacts,
     bossMinutes: listSavedBossMinutes(context.items),
     bringBackSetAside: options.bringBackSetAside ?? false,
-    carryOver,
+    carryOver: carryOver && {
+      ...carryOver,
+      todayExceptAreas: options.todayExceptAreas ?? carryOver.todayExceptAreas ?? null,
+    },
     examWindows: toExamWindows(context.phases),
     extras: {
       activeItemIds: activeExtraItemIds,
@@ -157,5 +172,15 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     topicLevels,
   });
 
-  return { advise, examSubjects, extraSkills, fullGraph, graph, input, materialExam, settings };
+  return {
+    advise,
+    examSubjects,
+    extraSkills,
+    fullGraph,
+    graph,
+    input,
+    materialExam,
+    settings,
+    writtenSkillIds,
+  };
 }

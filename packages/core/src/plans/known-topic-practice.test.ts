@@ -426,10 +426,10 @@ describe("a known topic Pedro's time left without lessons", () => {
   });
 
   it("brings its lessons into the plan when practice misses it", async () => {
-    const { goal, itemsOf, ordinary, plan } = await setup(PEDRO, {
-      dailyMinutes: 10,
-      testOut: false,
-    });
+    const { goal, itemsOf, ordinary, plan } = await setup(
+      { ...PEDRO, blueprint: PUBLIC_EXAM.blueprint },
+      { dailyMinutes: 10, testOut: false },
+    );
 
     await expect(loadLessonItems({ planId: plan.id, skillId: ordinary.id })).resolves.toStrictEqual(
       [],

@@ -41,6 +41,7 @@ final class MockDraftQueue {
   @ObservationIgnored private var sending = false
   @ObservationIgnored private var attempt = 0
   @ObservationIgnored private var refused: Set<String> = []
+  @ObservationIgnored private(set) var refusals = 0
   @ObservationIgnored private var retryTask: Task<Void, Never>?
   @ObservationIgnored private var sendTask: Task<Void, Never>?
   @ObservationIgnored private var isStopped = false
@@ -60,6 +61,8 @@ final class MockDraftQueue {
   func isWaiting(_ itemId: String) -> Bool {
     waiting.contains { $0.itemId == itemId }
   }
+
+  func wasRefused(_ itemId: String) -> Bool { refused.contains(itemId) }
 
   func add(_ draft: MockDraft) {
     guard !isStopped else {
@@ -147,7 +150,10 @@ final class MockDraftQueue {
         settle()
       case .stored, .refused:
         attempt = 0
-        if outcome == .refused { refused.insert(draft.itemId) }
+        if outcome == .refused {
+          refused.insert(draft.itemId)
+          refusals += 1
+        }
         sendNext()
       }
     }

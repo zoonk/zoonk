@@ -27,7 +27,10 @@ function getAreaPhases(graph: PlanGraph): Map<string, number> {
 }
 
 export function getWrittenTestAreas(graph: PlanGraph): Set<string> {
-  const byArea = Map.groupBy(graph.skills, (skill) => getSkillArea({ graph, skill }));
+  const byArea = Map.groupBy(
+    graph.skills.filter((skill) => !skill.extra),
+    (skill) => getSkillArea({ graph, skill }),
+  );
 
   return new Set(
     [...byArea]

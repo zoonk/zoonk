@@ -1,4 +1,5 @@
 import { EXAM_SCALES } from "@zoonk/core/exams/scales";
+import { writtenProjectionSchema } from "@zoonk/core/exams/scoring/written-points-contract";
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -225,5 +226,6 @@ export const goalPreparationResponseSchema = z
         description:
           "Preparation gained since the start of the learner's week (Monday, in their time zone)",
       }),
+    writtenProjection: writtenProjectionSchema.optional(),
   })
   .meta({ id: "GoalPreparation" });

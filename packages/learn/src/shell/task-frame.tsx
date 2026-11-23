@@ -24,7 +24,7 @@ import {
 } from "../_components/task-layout";
 import { useSteady } from "../_utils/use-steady";
 import { goBackToApp } from "./app-history";
-import { type TaskExitConfirmation } from "./task-exit-dialog";
+import { type TaskExitConfirmation, type TaskExitDialog } from "./task-exit-dialog";
 
 export type TaskFrameAside = {
   children?: React.ReactNode;
@@ -45,6 +45,7 @@ export function TaskFrame({
   beforeExit,
   children,
   confirmExit = null,
+  exitDialog,
   exitHref,
   exitToApp = false,
   fit,
@@ -62,6 +63,7 @@ export function TaskFrame({
   children: React.ReactNode;
   /** Asked first, by the ✕ and by Esc, while leaving would lose something. */
   confirmExit?: TaskExitConfirmation | null;
+  exitDialog?: typeof TaskExitDialog;
   /** Null while leaving would lose work, such as a call being saved. */
   exitHref: string | null;
   exitToApp?: boolean;
@@ -107,6 +109,7 @@ export function TaskFrame({
             <TaskClose
               beforeExit={beforeExit}
               confirm={confirmExit}
+              confirmationDialog={exitDialog}
               href={exitHref}
               toApp={exitToApp}
             />

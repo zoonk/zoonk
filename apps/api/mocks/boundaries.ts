@@ -98,6 +98,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/find-subject-questions": { findSubjectQuestions: vi.fn() },
   "@zoonk/ai/tasks/research/find-target-cutoff": { findTargetCutoff: vi.fn() },
   "@zoonk/ai/tasks/research/find-topic-frequency": { findTopicFrequency: vi.fn() },
+  "@zoonk/ai/tasks/research/find-written-task-subjects": { findWrittenTaskSubjects: vi.fn() },
   "@zoonk/ai/tasks/research/plan": { generateExamResearchPlan: vi.fn() },
   "@zoonk/ai/tasks/research/read-product-pages": { readProductPages: vi.fn() },
   "@zoonk/ai/tasks/research/source-change-notice": { generateSourceChangeNotice: vi.fn() },

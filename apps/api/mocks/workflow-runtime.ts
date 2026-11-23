@@ -10,7 +10,11 @@ export function mockLastRunEvent(runId: string, event: RunEvent): void {
 
 export function resetWorkflowRuntimeMock(): void {
   lastEvents = new Map();
+  mockRunRecord.mockReset();
 }
+
+export const mockRunRecord =
+  vi.fn<(runId: string) => Promise<{ status: string; workflowName: string }>>();
 
 export const getWorld = vi.fn(() =>
   Promise.resolve({
@@ -21,6 +25,6 @@ export const getWorld = vi.fn(() =>
       },
     },
     hooks: { list: () => Promise.resolve({ data: [], hasMore: false }) },
-    runs: { list: () => Promise.resolve({ data: [], hasMore: false }) },
+    runs: { get: mockRunRecord, list: () => Promise.resolve({ data: [], hasMore: false }) },
   }),
 );

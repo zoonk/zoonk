@@ -121,6 +121,10 @@ function ChallengeVisit({
 
       const started = answered.answer;
 
+      if (started && typeof started === "object" && "choiceGroups" in started) {
+        return started;
+      }
+
       // None of these is worth retrying: the intro, read again, says where it stands.
       if (
         started === "notToday" ||

@@ -85,7 +85,21 @@
   "goalcontent_topics_in_notice": "a9a79b6ef0abad57c7a60c50ae8c7e3b957a557234008b927dcd5d967446c62e",
   "goalcontent_topics_known_skipped": "df6332ac219485d551540f27a58d128d9a154b18c644a1df522e6c5202d1df6a",
   "goalcontent_topics_studied_of": "f08aaca96376686fcfd77f311b65123c15662c2a89d2120dc4e89475fc732548",
-  "goalcontent_topics_studied_spoken": "e2c715bbd47a96b637721ed0b3fa1a2c54dd1ad9fe282c658818c33b576c15d1"
+  "goalcontent_topics_studied_spoken": "e2c715bbd47a96b637721ed0b3fa1a2c54dd1ad9fe282c658818c33b576c15d1",
+  "goalcontent_written_answers": "41000b7e3845e6233b245116648f3e66b224df784c58b70c43b4c41e989b704d",
+  "goalcontent_written_estimated": "9dd80eb4812dc17b427b209fdc8f109d61c943ec338faaad7841baba6a6fda30",
+  "goalcontent_written_last_answer": "74423c9c2cef264acf328638d5edc6d1ab7971d9a4f693dee9973bbcb070d1de",
+  "goalcontent_written_last_answers": "b29a7c8fa9f2487b268110a4e9d5e2f18848e498c7a210160f6588c88d989903",
+  "goalcontent_written_levels": "6998990949d54f206314ebeec4bcd29599b8b4558c8b04483faddfbd48be0521",
+  "goalcontent_written_lines": "687e5613d90de629c58982295bce7245cc9838bd3c4d52d311288952c4adfa3c",
+  "goalcontent_written_minimum": "e02037f3ba112ad917fc9b1d976e5f9d16b76c11bd4a73691434d2f901e91037",
+  "goalcontent_written_minimum_of": "79a6a33cc9d80762f646a24313195d10e3a3d5258d1c35ce4809b2b2168f48b3",
+  "goalcontent_written_minimum_share": "952bdb8b101010740299e27aa659f12efcfee2d2197463ae10880adf878a274c",
+  "goalcontent_written_presentation": "e1437dd6563cc9a9cd416298dc198397815ea4332bfc52df6d420ddd7b4e4c08",
+  "goalcontent_written_progress": "9a741280145abd9d5728c2076b25a62b2652522fa1bd1f07fac5a7820da888f5",
+  "goalcontent_written_questions": "1130e2b797f9b7e4052136e802f4ba6069115083ce9b4056e2842b7f110ceb03",
+  "goalcontent_written_share": "3b0d00c4b8d9075e9bd701100d85c5ad800053b98465e8128a32f29aabfa0906",
+  "goalcontent_written_versions": "347a29da98f1290f3664eed503bfc4582beef9deb90bd20378151b61c0b7289d"
 }
 -->
 <resources>
@@ -305,4 +319,39 @@
     <string name="goalcontent_skill_solid">Utrwalone</string>
     <string name="goalcontent_skill_mastered">Opanowane</string>
     <string name="goalcontent_chapters_progress">%1$s z %2$s</string>
+    <string name="goalcontent_written_estimated">Szacowany wynik</string>
+    <string name="goalcontent_written_minimum">Minimum do zaliczenia: %1$s</string>
+    <string name="goalcontent_written_minimum_of">Minimum do zaliczenia: %1$s z %2$s</string>
+    <string name="goalcontent_written_levels">Odpowiedzi są oceniane według poziomu. Dla tego testu nie ma jeszcze szacunkowego wyniku punktowego.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d pytanie</item>
+        <item quantity="few">%d pytania</item>
+        <item quantity="many">%d pytań</item>
+        <item quantity="other">Łącznie: %d pytań</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s wyniku</string>
+    <string name="goalcontent_written_minimum_share">Minimum do zaliczenia: %1$s punktów</string>
+    <string name="goalcontent_written_progress">Twoje postępy</string>
+    <string name="goalcontent_written_last_answer">ostatnia odpowiedź</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">ostatnia %d odpowiedź</item>
+        <item quantity="few">ostatnie %d odpowiedzi</item>
+        <item quantity="many">ostatnich %d odpowiedzi</item>
+        <item quantity="other">ostatnich %d odpowiedzi</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">Prezentacja i struktura</string>
+    <string name="goalcontent_written_answers">Twoje odpowiedzi</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d linia</item>
+        <item quantity="few">%d linie</item>
+        <item quantity="many">%d linii</item>
+        <item quantity="other">Łącznie: %d linii</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d wersja</item>
+        <item quantity="few">%d wersje</item>
+        <item quantity="many">%d wersji</item>
+        <item quantity="other">Łącznie: %d wersji</item>
+    </plurals>
 </resources>

@@ -16,6 +16,8 @@ import { LearnLink } from "../learn-link";
 export type SubjectActions = {
   restore: (areas: string[]) => Promise<boolean>;
   setWrittenCadence: (cadence: WrittenPractice["cadence"]) => Promise<boolean>;
+  /** Starts a written task of this part and opens it; false when it couldn't. */
+  write?: () => Promise<boolean>;
 };
 
 function RestoreButton({

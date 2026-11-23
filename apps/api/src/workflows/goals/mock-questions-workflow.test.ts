@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, getWritable } from "workflow";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
+import { writeMockWritingPrompts } from "../sessions/writing-prompt-workflow";
 import { writeMockQuestions } from "./mock-question-writes";
 import { mockSupplyWorkflow } from "./mock-questions-workflow";
 import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
@@ -19,6 +20,9 @@ vi.mock("./mock-question-writes", () => ({
   prepareMockRecordings: vi.fn(),
   writeMockQuestions: vi.fn(),
 }));
+
+// Stand in for the child prompt workflows and their provider while exercising the paper's stream.
+vi.mock("../sessions/writing-prompt-workflow", () => ({ writeMockWritingPrompts: vi.fn() }));
 
 vi.mock(import("./steps/mock-question-steps"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -43,6 +47,7 @@ function paper(
     later,
     quickFormat: "multipleChoice",
     writes: [],
+    writing: [],
     ...rest,
   } satisfies MockQuestionWrites;
 }
@@ -186,6 +191,69 @@ describe(mockSupplyWorkflow, () => {
 
       expect(writeMockQuestions).toHaveBeenCalledTimes(2);
     });
+
+    it.each([
+      { failure: null, outcome: ["writeMockQuestions:completed", "mockPaperReady:completed"] },
+      {
+        failure: new Error("Written prompt provider unavailable"),
+        outcome: ["workflowError:error"],
+      },
+    ])(
+      "keeps the question step open until written supply settles ($outcome)",
+      async ({ failure, outcome }) => {
+        const writing = [
+          {
+            count: 1,
+            goalId: GOAL_ID,
+            taskKey: "policy",
+            unit: "answer" as const,
+            userId: "learner",
+          },
+        ];
+
+        const waited = paper(DAY_1, { later: false, writing });
+        plan([waited], failure ? [waited] : []);
+
+        const started = Promise.withResolvers<true>();
+        const prompt = Promise.withResolvers<true>();
+
+        vi.mocked(writeMockWritingPrompts).mockImplementationOnce(async () => {
+          started.resolve(true);
+          await prompt.promise;
+        });
+
+        const run = mockSupplyWorkflow(waitedRequest());
+        await Promise.race([started.promise, run]);
+
+        const stepsWhileWriting = streamedSteps(DAY_1);
+
+        const readsWhileWriting = vi
+          .mocked(listMockPrepWritesStep)
+          .mock.calls.map(([input]) => input.only);
+
+        if (failure && vi.mocked(writeMockWritingPrompts).mock.calls.length > 0) {
+          prompt.reject(failure);
+        } else {
+          prompt.resolve(true);
+        }
+
+        await run;
+
+        expect(writeMockWritingPrompts).toHaveBeenCalledExactlyOnceWith(writing);
+        expect(stepsWhileWriting).toStrictEqual(["writeMockQuestions:started"]);
+        expect(readsWhileWriting).not.toContain(DAY_1);
+
+        expect(listMockPrepWritesStep).toHaveBeenCalledWith(
+          expect.objectContaining({ only: DAY_1 }),
+        );
+
+        expect(streamedSteps(DAY_1)).toStrictEqual(["writeMockQuestions:started", ...outcome]);
+
+        expect(vi.mocked(captureException).mock.calls.map(([error]) => error)).toStrictEqual(
+          failure ? [failure] : [],
+        );
+      },
+    );
 
     it("releases a paper's claim before writing the next paper", async () => {
       plan([paper(DAY_1, { later: false }), paper(DAY_2)]);

@@ -82,6 +82,13 @@ export function TaskHeaderSide({
   );
 }
 
+export function TaskHeaderAction({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof Button>, "size" | "variant">) {
+  return <Button className={cn("shrink-0", className)} size="bar" variant="outline" {...props} />;
+}
+
 const MAIN_ACTION_SELECTOR = "[data-enter]:not(:disabled, [aria-disabled='true'])";
 
 /**

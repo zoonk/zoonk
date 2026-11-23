@@ -10,6 +10,8 @@ import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
 import { useFormatPlanDate } from "../plan/plan-date-text";
+import { type WrittenSubject } from "./subject-written-score";
+import { WrittenStanding, getWrittenScale } from "./subject-written-standing";
 
 function getCoverage(subject: SyllabusSubject) {
   if (subject.lessonsTotal === 0) {
@@ -121,6 +123,11 @@ export function SubjectCoverage({
   );
 }
 
+/** Whether Details has a row to show: a written part with no question count, date or skipped lesson has none. */
+function hasSubjectDetails(subject: SyllabusSubject): boolean {
+  return Boolean(subject.questions || subject.nextDate || subject.lessonsKnown > 0);
+}
+
 function SubjectDetails({
   questionsSource,
   subject,
@@ -173,15 +180,29 @@ function SubjectDetails({
 export function SubjectAside({
   questionsSource,
   subject,
+  written,
 }: {
   questionsSource: SyllabusView["questionsSource"];
   subject: SyllabusSubject;
+  /** A written part shows where it stands in its place of its lessons' preparation. */
+  written: WrittenSubject | null;
 }) {
   const t = useExtracted();
+  const levels = written && getWrittenScale(written) === "levels";
 
   return (
     <>
-      {(!subject.notPlannedReason || subject.preparation !== null) && (
+      {written && (
+        <DetailAsideSection
+          className="hidden min-[72rem]:flex"
+          title={levels ? t("Grading") : t("Estimated score")}
+          titleId="subject-written-standing-title"
+        >
+          <WrittenStanding titled={false} written={written} />
+        </DetailAsideSection>
+      )}
+
+      {!written && (!subject.notPlannedReason || subject.preparation !== null) && (
         <DetailAsideSection
           className="hidden min-[72rem]:flex"
           title={subject.preparation === null ? t("Coverage") : t("Preparation")}
@@ -191,13 +212,15 @@ export function SubjectAside({
         </DetailAsideSection>
       )}
 
-      <DetailAsideSection
-        className="hidden min-[72rem]:flex"
-        title={t("Details")}
-        titleId="subject-details-title"
-      >
-        <SubjectDetails questionsSource={questionsSource} subject={subject} />
-      </DetailAsideSection>
+      {hasSubjectDetails(subject) && (
+        <DetailAsideSection
+          className="hidden min-[72rem]:flex"
+          title={t("Details")}
+          titleId="subject-details-title"
+        >
+          <SubjectDetails questionsSource={questionsSource} subject={subject} />
+        </DetailAsideSection>
+      )}
     </>
   );
 }

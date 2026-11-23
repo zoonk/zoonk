@@ -14,7 +14,7 @@ import { createConversation } from "./create-conversation";
 
 export type CheckpointRefusal = Exclude<
   StartStudyBlockResult,
-  { status: "notFound" | "preparing" | "ready" | "unauthorized" }
+  { status: "needsChoice" | "notFound" | "preparing" | "ready" | "unauthorized" }
 >;
 
 type StartedCheckpointCall =
@@ -170,7 +170,7 @@ export async function startCheckpointCall({
   const startBlock = async () => {
     const started = await startStudyBlock({ blockId, input: {}, sessionId });
 
-    if (started.status === "preparing") {
+    if (started.status === "preparing" || started.status === "needsChoice") {
       throw new Error(`Language checkpoint ${blockId} was treated as a scheduled mock.`);
     }
 

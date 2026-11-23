@@ -18,7 +18,7 @@
   "session_block_weakest": "f39e904a0b2f3006125e7032325bffb659277ed586810724beac7b5ca675ee98",
   "session_block_weekly_challenge": "a1d8bc4f37b93c7e3063e09e9e79117748fe4e1551c912140b9ba665988eb96d",
   "session_block_what_you_know": "478cf5bc9fc6ae3f9206edfb9e2d3dfbc6cd0b8839af307725548103307dfe98",
-  "session_block_writing_practice": "ab972e73b77584a0cedec2923dc635f18f287cbe6061e1cbfa21286731e22259",
+  "session_block_writing_draft_saved": "ab2f96e7c92f541f19122d35cb749bce29429357cd1d531a3c49cd624808e072",
   "session_catch_up_to_go": "5669dacf38d415b7f43a2e8e6cd2cb1b7ce872defd7fc0316c67ad6245398dbc",
   "session_caught_up_today": "9cbbb64b324525c399d7af5463ad42c1663f851f924516c5090420301aa75faf",
   "session_day_done": "2f69458af53a3dbad31637b5d260cf125edb4966c6dd8aecfd756040d96cdef2",
@@ -97,7 +97,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">Zaten bildiklerin</string>
     <string name="session_block_new_lesson">Yeni ders</string>
-    <string name="session_block_writing_practice">Yazma alıştırması</string>
+    <string name="session_block_writing_draft_saved">Taslağın kaydedildi</string>
     <string name="session_block_practice_mistakes">Yanlışlarına çalış</string>
     <string name="session_block_mixed_practice">Karma alıştırma</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

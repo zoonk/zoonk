@@ -48,7 +48,8 @@
   "generation_understanding_read": "eb44a181689923a263f840b236970d7f746a3f25bca519e0b24ef050c81c11c2",
   "generation_understanding_read_line_1": "d5faa17cf155527acc7f2ade89c8bb95c327b86236b48d272059371434a1b1fd",
   "generation_understanding_read_line_2": "15a2ecfafe78f70d5a040b639fafa4ec642c6f942fac7763783adaac45ea2b8e",
-  "generation_understanding_read_line_3": "9fe76b7ca3e865400c725514798bbf954785a6328570e35ccd45d8a3938b8c3f"
+  "generation_understanding_read_line_3": "9fe76b7ca3e865400c725514798bbf954785a6328570e35ccd45d8a3938b8c3f",
+  "generation_writing_prompt": "edc609ed6432c9b65d0e9db649e12b5832016a7cdd4f7d54097f8c5ef7241596"
 }
 -->
 <resources>
@@ -81,6 +82,7 @@
     <string name="generation_skills_line_1">목표 달성에 필요한 내용을 정리하고 있어요…</string>
     <string name="generation_skills_line_2">스킬을 배울 순서를 정하고 있어요…</string>
     <string name="generation_skills_line_3">중요한 내용이 빠지지 않았는지 확인하고 있어요…</string>
+    <string name="generation_writing_prompt">질문을 만들고 있어요</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">목표를 읽고 있어요</string>
     <string name="generation_understanding_read">목표를 읽고 있어요</string>

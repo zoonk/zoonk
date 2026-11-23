@@ -17,6 +17,7 @@ import { findOfficialSources } from "@zoonk/ai/tasks/research/find-official-sour
 import { findSubjectQuestions } from "@zoonk/ai/tasks/research/find-subject-questions";
 import { findTargetCutoff } from "@zoonk/ai/tasks/research/find-target-cutoff";
 import { findTopicFrequency } from "@zoonk/ai/tasks/research/find-topic-frequency";
+import { findWrittenTaskSubjects } from "@zoonk/ai/tasks/research/find-written-task-subjects";
 import { type ExamResearchPlan, generateExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/research/source-change-notice";
 import { generateSourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
@@ -345,6 +346,77 @@ describe(researchWorkflow, () => {
     });
 
     expect(blueprint.nextCheckAt).not.toBeNull();
+  });
+
+  it("records the subjects the notice ties a written task to, among the subjects it read", async () => {
+    const { goal } = await examGoal();
+    const { extraction, plan } = await replayTcdfResearch();
+
+    const test = "10.1 A prova discursiva (P4) valerá 50,00 pontos e consistirá de:";
+
+    const question =
+      "a) uma questão discursiva, a ser respondida em até 20 linhas cada, no valor de 15,00 pontos, a respeito de tema relacionado aos conhecimentos especializados, e";
+
+    const mock = extraction.mock && {
+      ...extraction.mock,
+      sections: extraction.mock.sections.map((section) =>
+        section.kind === "written"
+          ? {
+              ...section,
+              passages: [{ document: 1, passage: test }],
+              tasks: [
+                {
+                  count: 1,
+                  description: "questão discursiva de até 20 linhas",
+                  passages: [{ document: 1, passage: question }],
+                  plays: null,
+                },
+              ],
+            }
+          : section,
+      ),
+    };
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { ...extraction, mock },
+    });
+
+    vi.mocked(findWrittenTaskSubjects).mockResolvedValue({
+      ...TASK_RESULT,
+      data: [
+        {
+          document: 1,
+          passage: question,
+          subjects: ["Direito Administrativo", "Auditoria Governamental"],
+          task: "4.1",
+        },
+      ],
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      where: {
+        languageIdentity: {
+          identityKey: buildExamIdentityKey({
+            country: plan.country,
+            name: plan.name,
+            ownerId: null,
+            role: plan.role,
+          }),
+          language: "pt",
+        },
+      },
+    });
+
+    const written = examStructureSchema
+      .parse(blueprint.structure)
+      .mock?.sections.find((section) => section.kind === "written");
+
+    expect(written?.tasks).toMatchObject([
+      { description: "questão discursiva de até 20 linhas", subjects: ["Direito Administrativo"] },
+    ]);
   });
 
   it("translates the notice's pass marks into the app's languages beside its checks", async () => {

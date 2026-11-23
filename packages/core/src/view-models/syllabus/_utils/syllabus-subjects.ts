@@ -1,6 +1,7 @@
 import { toSlug } from "@zoonk/utils/string";
 import { followsNotice, matchNoticeAreas } from "../../../exams/_utils/match-areas";
 import { namesMatch } from "../../../exams/_utils/name-match";
+import { subjectNamesSection } from "../../../exams/_utils/written-tasks";
 import { orderByQuestions } from "../../../library/exams/subject-questions";
 import { type TopicFrequencySource } from "../../../library/exams/topic-frequency";
 import { type SyllabusSubject, type SyllabusView } from "../syllabus-contract";
@@ -28,6 +29,15 @@ export type SubjectDraft = Pick<
 
 export function listAreas(skills: readonly SyllabusSkill[]): string[] {
   return [...new Set(skills.map((skill) => skill.area).filter((area) => area.length > 0))];
+}
+
+export function findWrittenPart(draft: SubjectDraft, practice: SyllabusInput["writtenPractice"]) {
+  const parts = practice?.subjects?.map(({ points }) => points.name) ?? [];
+
+  const named =
+    draft.source === "notice" ? parts.find((part) => subjectNamesSection(draft, part)) : undefined;
+
+  return named ?? parts.find((part) => draft.areas.includes(part));
 }
 
 function toModule(area: string): SubjectDraft {

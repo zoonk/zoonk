@@ -48,7 +48,8 @@
   "generation_understanding_read": "79226ff73a99f0a5bb631cbbd1c34d8511902d9bb1b8ae0d16e2b2a0a730b50c",
   "generation_understanding_read_line_1": "c439491b4fd4e7c869d405c5ac2f1aba8f2126607df4c178662ee36c9ef9d860",
   "generation_understanding_read_line_2": "16391e8dceb931e766e11895fd75f5711bff053ca09ac502d57e12fab98d9a69",
-  "generation_understanding_read_line_3": "ea0d787e4ec534c920f5c7fe763f4384c29a5ccad84d650e897d3078b6ae6385"
+  "generation_understanding_read_line_3": "ea0d787e4ec534c920f5c7fe763f4384c29a5ccad84d650e897d3078b6ae6385",
+  "generation_writing_prompt": "90ceea0eef49c8840241d15aa068a82be66979c8fe30a5259a848e23b9430fe8"
 }
 -->
 <resources>
@@ -81,6 +82,7 @@
     <string name="generation_skills_line_1">Listando o que seu objetivo exige…</string>
     <string name="generation_skills_line_2">Organizando as habilidades em ordem…</string>
     <string name="generation_skills_line_3">Conferindo se não falta nada importante…</string>
+    <string name="generation_writing_prompt">Criando sua questão</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">Lendo seu objetivo</string>
     <string name="generation_understanding_read">Lendo seu objetivo</string>

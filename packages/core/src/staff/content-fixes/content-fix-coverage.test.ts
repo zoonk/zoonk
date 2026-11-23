@@ -127,6 +127,8 @@ const NOT_FIXED: Record<string, string> = {
   Verification: SIGN_IN,
   "Word: text other lessons' tiles find it by, beyond its case":
     "Tiles look the row up by their text.",
+  WritingAdmission: ONE_LEARNERS,
+  WritingPromptSpend: BOOKKEEPING,
 };
 
 /** Shared rows learners see that no fix reaches yet. */

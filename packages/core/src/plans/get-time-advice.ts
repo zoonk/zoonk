@@ -293,7 +293,9 @@ export async function findPlanTimeToCover({
   const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
 
   const searchStart =
-    week.weekendMinutes === undefined ? context.state.goal.dailyMinutes : MIN_DAILY_MINUTES;
+    week.studyDays === undefined && week.weekendMinutes === undefined
+      ? context.state.goal.dailyMinutes
+      : MIN_DAILY_MINUTES;
 
   const [computed, dateKind] = await Promise.all([
     computePlan({

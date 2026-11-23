@@ -5,18 +5,19 @@ import { useExtracted } from "next-intl";
 
 /** An answer sheet cell's spoken name: the question's, and whether the learner marked it "Not sure". */
 export function useQuestionCellLabel({
+  numbered,
   question,
   unsure,
 }: {
+  numbered: boolean;
   question: MockQuestion;
   unsure: boolean;
 }): string {
   const t = useExtracted();
 
-  const label =
-    question.format === "essay"
-      ? t("Written part")
-      : t("Question {number}", { number: String(question.number) });
+  const label = numbered
+    ? t("Question {number}", { number: String(question.number) })
+    : t("Written part");
 
   return unsure
     ? t({
