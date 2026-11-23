@@ -113,4 +113,4 @@ Release builds send usage analytics to the "Zoonk" project in PostHog, the one t
 
 ## Continuous Integration
 
-On a pull request that changes the Apple app, GitHub Actions checks Swift formatting, runs the Mac-compatible unit tests and checks the String Catalogs. After merge, it builds the iPhone and iPad app and runs the full iPhone unit suite. To run the iPhone tests a change affects before merge, use `make test ONLY_TESTING=ZoonkTests/<Suite>`. Run UI tests locally with `make ui-test`.
+On a pull request that changes the Apple app, GitHub Actions checks only Swift formatting; run `pnpm apple:check` locally for the Mac unit tests, translations and String Catalogs. After merge, it builds the iPhone and iPad app, checks the String Catalogs and runs the full iPhone unit suite. To run the iPhone tests a change affects before merge, use `make test ONLY_TESTING=ZoonkTests/<Suite>`. Run UI tests locally with `make ui-test`.
