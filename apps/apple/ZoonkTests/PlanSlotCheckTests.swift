@@ -61,9 +61,9 @@ final class PlanSlotCheckTests: XCTestCase {
       plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in }, slotChecks: PlanSlotChecks())
   }
 
-  private func fitOffer() throws -> GoalPlan.FitOffer {
+  private func fitOffer() throws -> GoalPlan.Offer {
     try JSONDecoder().decode(
-      GoalPlan.FitOffer.self,
+      GoalPlan.Offer.self,
       from: Data(
         """
         {"canApply":false,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,
