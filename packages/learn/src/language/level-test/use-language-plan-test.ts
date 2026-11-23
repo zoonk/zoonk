@@ -6,7 +6,6 @@ import {
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
 import { type LanguageLevelTestOutResult } from "@zoonk/core/language/level-test/test-out";
-import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type PlacementAnswer, type PlacementQuestion } from "../../onboarding/onboarding-actions";
@@ -73,6 +72,7 @@ type Phase =
       result: LevelTestResult | null;
     }
   | { failures: number; kind: "testOut"; question: TestOutTapQuestion; view: TestOutView }
+  | { attemptId: string; kind: "testOutFinish" }
   | { kind: "testOutResult"; view: TestOutView }
   /** A test-out whose questions are still being written. */
   | { attemptId: string; kind: "testOutWaiting" };
@@ -129,9 +129,24 @@ function toTestOutPhase(view: TestOutView): Phase {
 
   const question = view.next;
 
+  if (!question && !view.result && view.total > 0) {
+    return { attemptId: view.attemptId, kind: "testOutFinish" };
+  }
+
   return question && isTapQuestion(question)
     ? { failures: 0, kind: "testOut", question, view }
     : { kind: "testOutResult", view };
+}
+
+function saveTestOutAnswer(
+  actions: LanguagePlanTestActions["testOut"],
+  from: Extract<Phase, { kind: "testOut" }>,
+  answer: TestOutAnswer,
+  durationMs: number,
+) {
+  return actions
+    .answer({ answer, attemptId: from.view.attemptId, durationMs, itemId: from.question.itemId })
+    .catch(() => null);
 }
 
 export function useLanguagePlanTest({
@@ -238,6 +253,12 @@ export function useLanguagePlanTest({
     return true;
   };
 
+  const finishTestOut = (attemptId: string) =>
+    actions.testOut
+      .finish(attemptId)
+      .then(showTestOut)
+      .catch(() => false);
+
   /** Writing the questions again, only from the learner's "Try again". */
   const retry = () =>
     startTransition(async () => {
@@ -270,27 +291,13 @@ export function useLanguagePlanTest({
     onStop: (attemptId: string, length: LevelTestLength) =>
       save("other", () => finish(attemptId, length)),
     onTestOut: (level: string) =>
-      save("other", async () => showTestOut(await actions.testOut.start(level))),
+      save("other", () => actions.testOut.start(level).then(showTestOut)),
     onTestOutAnswer:
       (from: Extract<Phase, { kind: "testOut" }>) => (answer: TestOutAnswer, durationMs: number) =>
         startTransition(async () => {
-          const { data: view } = await safeAsync(() =>
-            actions.testOut.answer({
-              answer,
-              attemptId: from.view.attemptId,
-              durationMs,
-              itemId: from.question.itemId,
-            }),
-          );
+          const view = await saveTestOutAnswer(actions.testOut, from, answer, durationMs);
 
-          // A test-out that asks nothing more closes in the same save. If closing fails, the
-          // question stays with its save error, and sending it again closes the test.
-          const shown =
-            view && !view.next
-              ? await actions.testOut.finish(view.attemptId).catch(() => null)
-              : view;
-
-          if (!shown) {
+          if (!view) {
             setPhase((current) =>
               current.kind === "testOut" ? { ...current, failures: current.failures + 1 } : current,
             );
@@ -298,10 +305,14 @@ export function useLanguagePlanTest({
             return;
           }
 
-          setPhase(toTestOutPhase(shown));
+          const next = toTestOutPhase(view);
+          setPhase(next);
+
+          if (next.kind === "testOutFinish") {
+            setFailed(!(await finishTestOut(next.attemptId)));
+          }
         }),
-    onTestOutStop: (attemptId: string) =>
-      save("other", async () => showTestOut(await actions.testOut.finish(attemptId))),
+    onTestOutStop: (attemptId: string) => save("other", () => finishTestOut(attemptId)),
     onView: (attemptId: string) => (view: LanguageLevelTestView) => {
       void show(view, attemptId);
     },

@@ -153,10 +153,15 @@ export function LanguagePlanTestFlow({
         />
       );
     case "finish":
+    case "testOutFinish":
       return (
         <PlacementDone
           failed={failed}
-          onContinue={() => test.onStop(phase.attemptId, phase.length)}
+          onContinue={() =>
+            phase.kind === "finish"
+              ? test.onStop(phase.attemptId, phase.length)
+              : test.onTestOutStop(phase.attemptId)
+          }
           pending={test.isPending}
         />
       );

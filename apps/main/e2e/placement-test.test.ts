@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
@@ -180,6 +181,62 @@ test.describe("Testing what you know from the plan", () => {
 
     await expect(page.getByRole("radio", { name: /Quick/u })).toBeVisible();
     await expect(page.getByRole("radio", { name: /Test out of B2/u })).toBeHidden();
+  });
+
+  test("reopens and scores a test-out whose last answer was saved before finishing", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { goal, skills } = await languageGoalFixture({ userId: noProgressUser.id });
+    const skill = skills.at(0);
+
+    if (!skill) {
+      throw new Error("Expected a language topic");
+    }
+
+    const item = await itemFixture({ skillId: skill.id });
+    const attemptId = crypto.randomUUID();
+
+    await Promise.all([
+      attemptFixture({
+        focusTestId: attemptId,
+        isPlacement: true,
+        itemId: item.id,
+        skillId: skill.id,
+        userId: noProgressUser.id,
+      }),
+      prisma.goal.update({
+        data: {
+          details: {
+            answered: [...ANSWERED, "placement"],
+            level: "B1",
+            levelTest: {
+              testOut: {
+                id: attemptId,
+                level: "B2",
+                questions: [{ id: item.id, skill: "reading", skillId: skill.id }],
+              },
+            },
+          },
+          planRevealedAt: new Date(),
+        },
+        where: { id: goal.id },
+      }),
+    ]);
+
+    await page.goto("/level-test");
+    await page.getByRole("radio", { name: /Test out of B2/u }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(page.getByRole("heading", { name: "Your answers are saved" })).toBeVisible();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByRole("heading", { name: "B2 stays in your plan" })).toBeVisible();
+    const finished = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    expect(finished.details).toMatchObject({
+      levelTest: { testOut: { id: attemptId, result: { finishedAt: expect.any(String) } } },
+    });
+
+    expect(await prisma.attempt.count({ where: { focusTestId: attemptId } })).toBe(1);
   });
 
   test("the last part of a language course test keeps its result until Done", async ({
