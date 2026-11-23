@@ -62,6 +62,7 @@ struct CertificateLinkedInSheet: View {
           } icon: {
             Image(systemName: "arrow.up.right")
           }
+          .labelStyle(.trailingIcon)
         }
         .buttonStyle(.mainAction)
       }
