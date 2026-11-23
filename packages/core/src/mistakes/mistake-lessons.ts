@@ -1,10 +1,31 @@
 import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
+import { readMistakeReplay } from "./mistake-replay";
 
 export type MistakeLesson = { id: string; title: string };
 
-type MistakeWithPlace = { id: string; skillId: string | null; step: { lessonId: string } | null };
+type MistakeWithPlace = {
+  id: string;
+  item?: { skillId: string } | null;
+  skillId: string | null;
+  snapshot: unknown;
+  step: { lessonId: string } | null;
+};
+
+export function getMistakeLessonPlace({ id, item, skillId, snapshot, step }: MistakeWithPlace) {
+  const replay = readMistakeReplay(snapshot);
+
+  return {
+    id,
+    lessonId: step?.lessonId ?? (replay?.kind === "lesson" ? replay.lesson.lessonId : null),
+    skillId:
+      skillId ??
+      item?.skillId ??
+      (replay?.kind === "item" ? replay.item.skillId : replay?.lesson.step.skillId) ??
+      null,
+  };
+}
 
 function lessonPreference({
   finished,
@@ -34,7 +55,10 @@ async function findNotebookTeachingLessons({
   const rows = await prisma.lessonSkill.findMany({
     include: { lesson: { select: { contentStatus: true, id: true, title: true } } },
     orderBy: { createdAt: "asc" },
-    where: { lesson: libraryRowsVisibleTo(userId), skillId: { in: [...skillIds] } },
+    where: {
+      lesson: { ...libraryRowsVisibleTo(userId), setAsideAt: null },
+      skillId: { in: [...skillIds] },
+    },
   });
 
   if (rows.length === 0) {
@@ -72,26 +96,25 @@ async function findNotebookTeachingLessons({
 
 /** Only accessible lessons qualify; absent entries have no accessible teaching lesson. */
 export async function findMistakeLessons({
-  mistakes,
+  places,
   userId,
 }: {
-  mistakes: readonly MistakeWithPlace[];
+  places: readonly ReturnType<typeof getMistakeLessonPlace>[];
   userId: string;
 }): Promise<Map<string, MistakeLesson>> {
+  // A snapshot-only lesson teaches a private skill identified by the original mistake.
   const skillIds = [
-    ...new Set(mistakes.flatMap((mistake) => (mistake.skillId ? [mistake.skillId] : []))),
+    ...new Set(places.flatMap(({ id, skillId }) => (skillId ? [skillId, id] : [id]))),
   ];
 
-  const lessonIds = [
-    ...new Set(mistakes.flatMap((mistake) => (mistake.step ? [mistake.step.lessonId] : []))),
-  ];
+  const lessonIds = [...new Set(places.flatMap((place) => place.lessonId ?? []))];
 
   const [teaching, lessons] = await Promise.all([
     findNotebookTeachingLessons({ skillIds, userId }),
     lessonIds.length > 0
       ? prisma.lesson.findMany({
           select: { id: true, title: true },
-          where: { ...libraryRowsVisibleTo(userId), id: { in: lessonIds } },
+          where: { ...libraryRowsVisibleTo(userId), id: { in: lessonIds }, setAsideAt: null },
         })
       : [],
   ]);
@@ -99,10 +122,11 @@ export async function findMistakeLessons({
   const byId = new Map(lessons.map((lesson) => [lesson.id, lesson]));
 
   return new Map(
-    mistakes.flatMap((mistake) => {
+    places.flatMap((mistake) => {
       const lesson =
-        (mistake.step && byId.get(mistake.step.lessonId)) ||
-        (mistake.skillId && teaching.get(mistake.skillId));
+        (mistake.lessonId && byId.get(mistake.lessonId)) ||
+        (mistake.skillId && teaching.get(mistake.skillId)) ||
+        teaching.get(mistake.id);
 
       return lesson ? [[mistake.id, lesson] as const] : [];
     }),

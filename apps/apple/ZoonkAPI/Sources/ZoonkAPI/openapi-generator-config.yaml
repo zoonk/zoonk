@@ -211,6 +211,7 @@ filter:
     - markPlanRevealed
     - moveChallenge
     - moveWeeklyChallenge
+    - openMistakeLesson
     - openStudyBlock
     - openStudyDay
     - practiceMistakePattern

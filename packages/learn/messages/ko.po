@@ -7474,6 +7474,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "레슨 열기"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "내일 연습할 수 있어요"
@@ -7482,11 +7487,6 @@ msgstr "내일 연습할 수 있어요"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "이 주제 연습하기"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "레슨 열기"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"

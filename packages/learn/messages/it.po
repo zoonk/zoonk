@@ -7474,6 +7474,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Rispondi solo se non hai dubbi. Va bene anche dire che ne hai."
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "Apri la lezione"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Puoi esercitarti domani"
@@ -7482,11 +7487,6 @@ msgstr "Puoi esercitarti domani"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Esercitati su questo argomento"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "Apri la lezione"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"

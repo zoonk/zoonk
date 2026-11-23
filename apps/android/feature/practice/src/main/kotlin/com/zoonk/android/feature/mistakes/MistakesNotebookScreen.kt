@@ -52,9 +52,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
@@ -65,10 +70,14 @@ import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.savedAnswerText
+import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.CountTab
 import com.zoonk.android.ui.components.CountTabs
 import com.zoonk.android.ui.components.DisclosureRow
@@ -104,7 +113,9 @@ import com.zoonk.api.models.Mistake
 import com.zoonk.api.models.MistakeCause
 import com.zoonk.api.models.MistakeList
 import com.zoonk.api.models.MistakeStatus
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
@@ -158,6 +169,10 @@ internal fun Notebook(
     navigator: AppNavigator,
     nextChangeAt: Long? = null,
 ) {
+    val lesson = viewModel(key = "notebook-lesson-$goalId") { NotebookLessonViewModel(store) }
+    VisitOf(lesson.visit)
+    ActOn(lesson.opened) { navigator.open(AppRoute.Lesson(it.toString())) }
+
     var fixed by rememberSaveable { mutableStateOf(false) }
     // Each list keeps what's open in it and where it's scrolled, under the tabs or on its own page of a book.
     val toFix = rememberListMemory()
@@ -183,6 +198,7 @@ internal fun Notebook(
                     goalId = goalId,
                     fixed = fixed && fold == null,
                     store = store,
+                    lesson = lesson,
                     navigator = navigator,
                     memory = first,
                     nextChangeAt = nextChangeAt,
@@ -197,6 +213,7 @@ internal fun Notebook(
                         goalId = goalId,
                         fixed = true,
                         store = store,
+                        lesson = lesson,
                         navigator = navigator,
                         memory = fixedOnes,
                         nextChangeAt = nextChangeAt,
@@ -221,12 +238,66 @@ internal fun Notebook(
     }
 }
 
+private class NotebookLessonViewModel(
+    private val store: MistakesNotebookStore,
+) : ViewModel() {
+    private var request: Job? = null
+
+    var busy by mutableStateOf<UUID?>(null)
+        private set
+
+    var failed by mutableStateOf(emptySet<UUID>())
+        private set
+
+    val visit =
+        Visit {
+            request?.cancel()
+            failed = emptySet()
+            busy = null
+        }
+    val opened = visit.outcome<UUID>()
+
+    fun open(mistake: Mistake) {
+        if (busy == mistake.id) return
+        request?.cancel()
+        failed -= mistake.id
+        opened.clear()
+        val started = visit.number
+        val lesson = mistake.lesson
+        if (lesson != null) {
+            busy = null
+            opened.send(started, lesson.id)
+            return
+        }
+
+        busy = mistake.id
+        request =
+            viewModelScope.launch {
+                val result = store.openLesson(mistake.id)
+                ensureActive()
+                when (result) {
+                    is MutationResult.Done -> {
+                        opened.send(started, result.value)
+                    }
+
+                    is MutationResult.Failed -> {
+                        failed += mistake.id
+                    }
+
+                    MutationResult.Obsolete -> {}
+                }
+                busy = null
+            }
+    }
+}
+
 /** One of the notebook's lists: what's to fix or what's fixed, under the tabs that switch them or under its own title. */
 @Composable
 private fun NotebookList(
     goalId: UUID,
     fixed: Boolean,
     store: MistakesNotebookStore,
+    lesson: NotebookLessonViewModel,
     navigator: AppNavigator,
     memory: ListMemory,
     nextChangeAt: Long?,
@@ -289,7 +360,7 @@ private fun NotebookList(
             onRetry = { scope.launch { store.notebooks[key].refresh() } },
             onPattern = { navigator.open(AppRoute.Pattern(it.toString())) },
             onPracticeSkill = { navigator.open(AppRoute.MistakePractice(it.toString())) },
-            onLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
+            lesson = lesson,
             onMore = {
                 scope.launch {
                     loadingMore = true
@@ -359,7 +430,7 @@ private class NotebookActions(
     val onRetry: () -> Unit,
     val onPattern: (UUID) -> Unit,
     val onPracticeSkill: (UUID) -> Unit,
-    val onLesson: (UUID) -> Unit,
+    val lesson: NotebookLessonViewModel,
     val onMore: () -> Unit,
 )
 
@@ -643,24 +714,27 @@ private fun MistakeEntry(
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
         val tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
-        if (tomorrow || skillId != null || mistake.lesson != null) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                if (tomorrow) {
-                    Text(
-                        stringResource(R.string.mistakes_practice_tomorrow),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
-                skillId?.let {
-                    OutlinedButton(
-                        onClick = { actions.onPracticeSkill(it) },
-                    ) { Text(stringResource(R.string.mistakes_practice_topic)) }
-                }
-                mistake.lesson?.let { lesson ->
-                    TextButton(onClick = { actions.onLesson(lesson.id) }) { Text(stringResource(R.string.mistakes_open_lesson)) }
-                }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
+            if (tomorrow) {
+                Text(
+                    stringResource(R.string.mistakes_practice_tomorrow),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
+            skillId?.let {
+                OutlinedButton(
+                    onClick = { actions.onPracticeSkill(it) },
+                ) { Text(stringResource(R.string.mistakes_practice_topic)) }
+            }
+            TextButton(
+                onClick = { actions.lesson.open(mistake) },
+                busy = actions.lesson.busy == mistake.id,
+                edge = if (skillId == null && !tomorrow) ButtonEdge.Start else null,
+            ) { Text(stringResource(R.string.mistakes_open_lesson)) }
+        }
+        if (mistake.id in actions.lesson.failed) {
+            StepOpenFailed()
         }
     }
 }

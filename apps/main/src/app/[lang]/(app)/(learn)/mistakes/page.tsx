@@ -4,13 +4,14 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getTodayPattern } from "@zoonk/core/language/patterns/today";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
-import { MistakesNotebook, MistakesNotebookBar } from "@zoonk/learn/mistakes";
+import { MistakesNotebookBar } from "@zoonk/learn/mistakes";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { LearnNoGoal } from "../_components/learn-no-goal";
 import { LearnNotFound } from "../_components/learn-not-found";
+import { MistakesNotebookClient } from "./mistakes-notebook-client";
 
 type Props = PageProps<"/[lang]/mistakes">;
 
@@ -71,7 +72,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
 
   return (
     <DrawnMath content={result}>
-      <MistakesNotebook
+      <MistakesNotebookClient
         filters={{
           nextOffset: result.hasMore ? input.offset + input.limit : null,
           status: input.status ?? "open",

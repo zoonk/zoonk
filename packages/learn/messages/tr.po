@@ -7474,6 +7474,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil."
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "Dersi aç"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Yarın tekrar çözebilirsin"
@@ -7482,11 +7487,6 @@ msgstr "Yarın tekrar çözebilirsin"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Bu konuda alıştırma yap"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "Dersi aç"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
