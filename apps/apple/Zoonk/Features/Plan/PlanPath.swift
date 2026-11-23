@@ -108,7 +108,7 @@ private struct PlanPhaseRow: View {
       if isOpen {
         events
       }
-    } else if phase.chapters.isEmpty && phase.checkpoint == nil {
+    } else if phase.chapters.isEmpty && phase.checkpoint == nil && phase.mocks.nextDate == nil {
       header(next: false)
     } else {
       DisclosureGroup(isExpanded: expansion) {
@@ -170,6 +170,32 @@ private struct PlanPhaseRow: View {
 
   @ViewBuilder
   private var events: some View {
+    if let date = phase.mocks.nextDate {
+      let funded = context.plan.fundedMocks?.first { $0.scheduledFor == date }
+      let itemId = phase.mocks.nextPlanItemId ?? funded?.id
+      let row = ListRow(
+        Text("Mock exam", tableName: "Today"),
+        description: funded?.minutes.flatMap {
+          $0 > 0 ? Text(verbatim: studyDuration(minutes: Int($0.rounded()))) : nil
+        }
+      ) {
+        KindMark(kind: .mock)
+      } trailing: {
+        Text(verbatim: PlanDate.text(date, today: context.plan.today))
+      }
+      if let itemId {
+        PlanRouteLink(route: .challenge(planItemId: itemId)) { row }
+        if funded == nil || funded?.status == "todo" {
+          MockScheduleLink(planItemId: itemId, today: context.plan.today) {
+            context.show(.mockSchedule(itemId))
+          }
+        }
+      } else if context.goal.kind == .exam {
+        PlanRouteLink(route: .exam) { row }
+      } else {
+        row
+      }
+    }
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
         checkpoint: checkpoint, isLanguage: context.goal.kind == .language,

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "efcfc4c8b24c7391a825500601a31f60f2afac8d5741cec301300551c4365373",
+  "mock_schedule_moved": "b7ca56feb09035982961ebbf7b6d5686172309a2ee37db8a53ae111b7b7a0f6c",
+  "mock_schedule_skip": "ed68bb09c9f0d85fe735a76c8ce3fc1d51bb5250f4a2b464862bf54fbc06181a",
+  "mock_schedule_skipped": "6ebeae5772c40171c7ce05476b23b2eb58e22f5e409cbc3655fb0bacc841e4fc",
+  "mock_schedule_title": "9f4c7d130781b67ce4843ea959a2c32329d767d6b8e7fbc38d179c69c6c1c365",
   "today_add_to_today": "9534c74430271e6a9ebb9344ff3ffddc510c1a61d80e4f3b1a0f691443dfef3f",
   "today_adjust_your_plan": "8e3a5c0dfd3221cac8857c4c5b4bbf695818a2231cc6ad69cdcb48fd248e491d",
   "today_already_know_chapter": "37acd26458816f28210df3f3c804a2d17446a44968896e34e29fbc34b1db0abb",
@@ -404,4 +409,9 @@
     <string name="today_add_to_today">Dodaj na dziś</string>
     <string name="today_unfinished_setup">Nie dokończono jeszcze tworzenia tego celu.</string>
     <string name="today_step_every_topic">Wszystkie tematy</string>
+    <string name="mock_schedule_title">Zmień termin egzaminu próbnego</string>
+    <string name="mock_schedule_change">Zmień termin</string>
+    <string name="mock_schedule_skip">Pomiń ten egzamin próbny</string>
+    <string name="mock_schedule_skipped">Pominięto egzamin próbny</string>
+    <string name="mock_schedule_moved">Przeniesiono: %1$s</string>
 </resources>

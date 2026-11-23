@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "eb1fe6c674058288fc00a87de372a07a1d5a68743a21916aca37f1a4a1dc637e",
+  "mock_schedule_moved": "60f05dc586956feb0bdca00c4f1fae4cfe8bbbed5eedcac3e6c04b9cfe7a5f68",
+  "mock_schedule_skip": "b580a8a4effe88ac787a1d9d2a3b6562254eb686296719585fc0ce52c02b8228",
+  "mock_schedule_skipped": "2195baacc2105dff4745cdb2c59eafc77f6577355e39038a7a60bb0b5a9c3b4c",
+  "mock_schedule_title": "d31989176dadc7bb70164b62dcf222925d5679fb258a3b4a4ec710b2ced167bf",
   "today_add_to_today": "c9d7caee3f8fca1baff6ad2b850305a1bab8981effdf60d19aec4252566b6bea",
   "today_adjust_your_plan": "7427ea395266e702cc220ed45af02de16690f9a9824fd9f022e0e8abbdab81d1",
   "today_already_know_chapter": "702d6f001e9da0a91cfce6f2b45f5e81dd42a3055ef2d0c660a8fb58ddaa1691",
@@ -392,4 +397,9 @@
     <string name="today_add_to_today">Ajouter aux leçons du jour</string>
     <string name="today_unfinished_setup">Tu n’as pas fini de le configurer.</string>
     <string name="today_step_every_topic">Tous les sujets</string>
+    <string name="mock_schedule_title">Changer la date de l’examen blanc</string>
+    <string name="mock_schedule_change">Changer la date</string>
+    <string name="mock_schedule_skip">Ignorer cet examen blanc</string>
+    <string name="mock_schedule_skipped">Examen blanc retiré du planning</string>
+    <string name="mock_schedule_moved">Déplacé au %1$s</string>
 </resources>

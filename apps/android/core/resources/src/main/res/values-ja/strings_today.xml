@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "31cd9e126543a334a33df71d895e78190621f7af778346f17db923dda606a3c8",
+  "mock_schedule_moved": "fb040b091c873752c4472c1869e4f46daaaaf8a8548ff341297ff73efd584b0c",
+  "mock_schedule_skip": "97bf69115b2bc3a839beae47acd15f519f0bb7eb38e4fe4c21a9b5442820f80f",
+  "mock_schedule_skipped": "82098574207de4f05eb60f4f4c5bc9e8cbb235d33461a6665c2b9eacb58a719e",
+  "mock_schedule_title": "08880cd7502e3f599a4e24b576ec4ed1f7b798430dd23093f259e23415c21f58",
   "today_add_to_today": "e21ce5ced929be13ad467642633438ce4a22f6ce73186ddac20a956820c832a6",
   "today_adjust_your_plan": "07dbd3872c290beb0bbf86d4b9d165a16650bf53f77352a1b9e9e5dd604f9d69",
   "today_already_know_chapter": "af955ac1705aa070ffe85fa1be9000f669c9eab81fbefdb4609af848655dce0f",
@@ -368,4 +373,9 @@
     <string name="today_add_to_today">今日の学習に追加する</string>
     <string name="today_unfinished_setup">この目標の設定がまだ終わっていません。</string>
     <string name="today_step_every_topic">すべてのトピック</string>
+    <string name="mock_schedule_title">模試の日程を変更</string>
+    <string name="mock_schedule_change">日程を変更</string>
+    <string name="mock_schedule_skip">この模試をスキップ</string>
+    <string name="mock_schedule_skipped">模試をスキップしました</string>
+    <string name="mock_schedule_moved">%1$sに移動しました</string>
 </resources>

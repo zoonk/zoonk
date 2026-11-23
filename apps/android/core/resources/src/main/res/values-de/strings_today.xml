@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "8900d1e473339831cb07dae2ab826657fa6158163821fb985a5a7e3f210c1edf",
+  "mock_schedule_moved": "c9fb9218ae23016d2a1691d4fbdba992a9692590a9de9f6ae78c303d16ba57d0",
+  "mock_schedule_skip": "5b52d8e89379f9d5959cfd6ecdc1b13aec72213495915ee204c050ff1d545f6d",
+  "mock_schedule_skipped": "0d05993386ff14dfb492f95b72ea1217ba8ca28d56b956a17f0628c1d1e8a306",
+  "mock_schedule_title": "c4fe4d8db76dfd5cea8858067ffb3850718cb04859370b186cef6acc5d5c5613",
   "today_add_to_today": "f9a24dd2c33dbe9160e8d5f5b79d1b3b1e3da898e78d33aec30e4c7bc16da1bc",
   "today_adjust_your_plan": "dc078f43c211846ac313aac076642f386066e3950b01f07a97275f64c0f28032",
   "today_already_know_chapter": "3d3d7cb051dd4abe689ae8d277d72587d78ba568f046b2fecb2ea385e30e8d13",
@@ -380,4 +385,9 @@
     <string name="today_add_to_today">Für heute hinzufügen</string>
     <string name="today_unfinished_setup">Du hast die Einrichtung noch nicht abgeschlossen.</string>
     <string name="today_step_every_topic">Alle Themen</string>
+    <string name="mock_schedule_title">Termin der Probeprüfung ändern</string>
+    <string name="mock_schedule_change">Termin ändern</string>
+    <string name="mock_schedule_skip">Diese Probeprüfung überspringen</string>
+    <string name="mock_schedule_skipped">Probeprüfung übersprungen</string>
+    <string name="mock_schedule_moved">Auf %1$s verschoben</string>
 </resources>

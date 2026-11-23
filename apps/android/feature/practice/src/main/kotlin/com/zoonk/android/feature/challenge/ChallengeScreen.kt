@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +56,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
 import com.zoonk.android.feature.mock.MockPreparingNote
+import com.zoonk.android.feature.mock.MockScheduleSheet
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -137,6 +139,10 @@ fun ChallengeScreen(
                 app.mocks,
             )
         }
+    var scheduling by rememberSaveable { mutableStateOf(false) }
+    if (scheduling) {
+        MockScheduleSheet(app.mockSchedule, planItemId, navigator) { scheduling = false }
+    }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     if (ui.moved != null) {
         ChallengeMoved(ui, viewModel, navigator)
@@ -167,10 +173,11 @@ fun ChallengeScreen(
                 RunLoading(navigator::closeTask)
                 return
             }
-            ChallengeView(challenge, ui, viewModel, navigator, route.sessionId)
+            ChallengeView(challenge, ui, viewModel, navigator, route.sessionId) { scheduling = true }
         }
 
         is LoadState.Failed -> {
+            if (scheduling) return
             if (read.error == ApiError.NotFound) {
                 ToToday(navigator)
             } else {
@@ -179,6 +186,7 @@ fun ChallengeScreen(
         }
 
         LoadState.Empty -> {
+            if (scheduling) return
             ToToday(navigator)
         }
 
@@ -202,8 +210,9 @@ internal fun ChallengeView(
     viewModel: ChallengeViewModel,
     navigator: AppNavigator,
     sessionId: String?,
+    schedule: (() -> Unit)? = null,
 ) {
-    val actions = remember(viewModel, navigator, sessionId) { ChallengeActions(viewModel, navigator, sessionId) }
+    val actions = remember(viewModel, navigator, sessionId, schedule) { ChallengeActions(viewModel, navigator, sessionId, schedule) }
     if (ui.writing) WritingScreen(viewModel, navigator::closeTask) else IntroScreen(challenge, ui, actions)
 }
 
@@ -211,6 +220,7 @@ private class ChallengeActions(
     val viewModel: ChallengeViewModel,
     val navigator: AppNavigator,
     private val sessionId: String?,
+    val schedule: (() -> Unit)?,
 ) {
     fun close() = navigator.closeTask()
 
@@ -722,7 +732,7 @@ private fun ChallengeFooter(
 ) {
     val vm = actions.viewModel
     // A refusal is a fact about the plan this screen can't change, so the move isn't offered again.
-    val movable = challenge.canMove && ui.refusal == null
+    val movable = !challenge.mock && challenge.canMove && ui.refusal == null
     val ready = challenge.status == Challenge.Status.READY && challenge.waitReason == null
 
     // A challenge that needs a subscription looks like any other until Start is pressed.
@@ -739,6 +749,13 @@ private fun ChallengeFooter(
     if (ui.refused == Limit.SignUpRequired) {
         LimitNotice(Limit.SignUpRequired, LimitSubject.Help, onCreateAccount = actions::createAccount, onSubscribe = actions::seePlus)
         return
+    }
+    if (challenge.mock && challenge.access != Challenge.Access.PLUS_REQUIRED && challenge.date != null &&
+        challenge.status in setOf(Challenge.Status.READY, Challenge.Status.UPCOMING, Challenge.Status.WAITING)
+    ) {
+        actions.schedule?.let { open ->
+            TextButton(onClick = open, enabled = !ui.starting) { Text(stringResource(R.string.mock_schedule_change)) }
+        }
     }
     when (challenge.status) {
         Challenge.Status.READY, Challenge.Status.STARTED -> {

@@ -40,7 +40,7 @@ internal fun TodayPopover(
     modifier: Modifier = Modifier,
     status: String? = null,
     kind: LearnKind? = null,
-    footer: @Composable () -> Unit = {},
+    footer: @Composable (() -> Unit) -> Unit = {},
     anchor: @Composable (Modifier) -> Unit,
 ) {
     val state = rememberTooltipState(isPersistent = true)
@@ -63,7 +63,7 @@ internal fun TodayPopover(
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         if (status != null || facts != null) Text(factsWithStatus(status, facts), style = MaterialTheme.zoonkType.data)
                         if (note != null) Text(note)
-                        footer()
+                        footer(state::dismiss)
                     }
                 }
             },

@@ -94,6 +94,7 @@ struct TodaySessionSection: View {
       if next == nil {
         BlockRow(
           block: block, view: view, isNext: false, countsTowardMission: false, tagsExtra: true)
+        scheduleLink(block)
       } else {
         blockButton(block, isNext: false)
       }
@@ -141,6 +142,14 @@ struct TodaySessionSection: View {
       .accessibilityBusy(busy == .block(block.position))
     } else {
       row
+    }
+    scheduleLink(block)
+  }
+
+  @ViewBuilder
+  private func scheduleLink(_ block: StudyBlock) -> some View {
+    if block.checkpoint?.mock == true, block.status == .pending, let itemId = block.planItemId {
+      MockScheduleLink(planItemId: itemId, today: view.session.localDate).disabled(busy != nil)
     }
   }
 
@@ -245,7 +254,7 @@ struct TodaySessionAction: View {
       }
     }
 
-    if !view.upNextLessons.isEmpty {
+    if !view.upNextLessons.isEmpty, session.nextBlock == nil {
       return TodayMainAction(
         kind: .keepLearning, isBusy: busy == .keepLearning,
         failed: failed == .keepLearning || failed == .upNextLesson, action: keepLearning)

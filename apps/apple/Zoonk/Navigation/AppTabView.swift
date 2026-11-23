@@ -238,6 +238,8 @@ struct AppSheetView: View {
         FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
       case .makeRoom(let waitingGoal):
         MakeRoomSheet(waitingGoal: waitingGoal)
+      case .mockSchedule(let itemId, let today):
+        MockScheduleSheet(planItemId: itemId, today: today)
       case .signIn:
         AccountSheet(signsIn: true)
       case .subscription:

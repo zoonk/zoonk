@@ -199,6 +199,7 @@ private fun TodayRead(
                             )
                         },
                         snackbars = app.snackbars,
+                        schedule = app.mockSchedule,
                         refreshIfChanged = app.today::refreshIfChanged,
                         language = language,
                         onboarding = app.onboarding,

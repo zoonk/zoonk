@@ -50,6 +50,7 @@ import com.zoonk.android.feature.certificates.CertificateStore
 import com.zoonk.android.feature.certificates.LiveCertificatesApi
 import com.zoonk.android.feature.challenge.ChallengeStore
 import com.zoonk.android.feature.challenge.LiveChallengeApi
+import com.zoonk.android.feature.challenge.MockScheduleStore
 import com.zoonk.android.feature.checkpoint.CheckpointStore
 import com.zoonk.android.feature.checkpoint.LiveCheckpointApi
 import com.zoonk.android.feature.completedlessons.CompletedLessonsStore
@@ -338,6 +339,7 @@ class AppContainer private constructor(
     val completedLessons = CompletedLessonsStore(LiveCompletedLessonsApi(api), cache, sessions)
     val patterns = PatternStore(LivePatternApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
+    val mockSchedule = MockScheduleStore(api, cache, timeZone)
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
     val testOuts = TestOutStore(LiveTestOutApi(api), cache, drafts, timeZone)
     val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, studySessions, learnerSummary.summary, timeZone)

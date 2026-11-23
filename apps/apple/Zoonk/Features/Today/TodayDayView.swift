@@ -159,7 +159,9 @@ struct TodayDayView: View {
         ) {
           if let dayTime {
             if let mockDay = view.mockDay {
-              ShorterDayTime(time: dayTime, mockDay: mockDay)
+              ShorterDayTime(
+                time: dayTime, mockDay: mockDay, itemId: view.mockFunding?.planItemId,
+                today: view.session.localDate)
             } else {
               BigQuantity(dayTime)
             }
@@ -179,6 +181,8 @@ struct TodayDayView: View {
           .typeStyle(.body.weight(.medium))
           .foregroundStyle(Color(.foreground))
         }
+
+        MockScheduleNotice(today: view.session.localDate)
 
         if !lead.isEmpty {
           lead
@@ -684,9 +688,13 @@ extension TodayView {
 
 /// Main's day time on a day kept short for a mock exam: why opens from the time itself.
 private struct ShorterDayTime: View {
+  @Environment(AppRouter.self) private var router
   let time: String
   let mockDay: String
+  let itemId: String?
+  let today: String
 
+  @State private var willSchedule = false
   @State private var isExplaining = false
 
   var body: some View {
@@ -716,6 +724,18 @@ private struct ShorterDayTime: View {
         )
         .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
+        if let itemId {
+          MockScheduleLink(planItemId: itemId, today: today) {
+            willSchedule = true
+            isExplaining = false
+          }
+        }
+      }
+      .onDisappear {
+        if willSchedule, let itemId {
+          willSchedule = false
+          router.present(.mockSchedule(planItemId: itemId, today: today))
+        }
       }
       .padding()
       .frame(idealWidth: 280)

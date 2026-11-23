@@ -15,6 +15,10 @@ import { looseRoutesIn, screenFailuresIn, sitesIn } from "./request-owners.mts";
 const OWNERS: Record<string, string> = {
   "DesignSystem/Characters/CharacterActor.swift: cueTask":
     "An animation cue the character plays, not a request.",
+  "Features/Practice/Challenge/MockScheduleSheet.swift: request":
+    "The mock schedule sheet owns the request from opening to dismissal.",
+  "Features/Practice/Challenge/MockScheduleSheet.swift: request #2":
+    "Today shows the undo for this change; leaving its notice ends the request feedback.",
   "Features/Account/ProfileEditorView.swift: saving":
     "The profile, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
   "Features/Activities/Music/RhythmTapperActivity.swift: calibration":

@@ -3,6 +3,7 @@ import SwiftUI
 /// The sheets a plan's rows open. The screen presents them from above its `PaneSplit`: folding
 /// iPhone Duo recreates the panes, and a sheet presented from a row in one closes with it.
 enum PlanSheet: Identifiable, Hashable {
+  case mockSchedule(String)
   case path
   case standing
   case schedule
@@ -51,6 +52,8 @@ private struct PlanSheets: ViewModifier {
       .sheet(item: $sheet, onDismiss: doThen) { sheet in
         Group {
           switch sheet {
+          case .mockSchedule(let id):
+            MockScheduleSheet(planItemId: id, today: context.plan.today)
           case .path:
             PlanPathSheet(context: context)
           case .standing:
@@ -169,7 +172,9 @@ private struct PlanPathSheet: View {
     .presentationDetents([.large])
     .presentationDragIndicator(.visible)
     .sheet(item: $outline, onDismiss: openPendingRoute) { sheet in
-      if case .farTopic(let skillId, let title) = sheet {
+      if case .mockSchedule(let id) = sheet {
+        MockScheduleSheet(planItemId: id, today: context.plan.today).zoonkSheet()
+      } else if case .farTopic(let skillId, let title) = sheet {
         FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
           .environment(
             \.planSheetOpen,

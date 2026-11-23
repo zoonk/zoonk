@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_schedule_change": "3c02d15ff3b15916d5479d94d1e47f09e336512096e44f289623aa49cc3c447e",
+  "mock_schedule_moved": "acb8ac98afca6ed02761054114f303447db72c3d8a886445f068acd3ac96bde1",
+  "mock_schedule_skip": "35098c3cbdf752114ea2f4e1f80763da5b32e6968a80cd104218b071dc2a6122",
+  "mock_schedule_skipped": "0788f21125fca408617fe8750ddf9dd3230223b2b95e759e3661f9b34db91d8a",
+  "mock_schedule_title": "e6288ffe8c4747aeac1d784220daef4a41b3a555383163949a21e61441ce860f",
   "today_add_to_today": "bc43729ec7171d05327409458093747d2c30e9e16a4d900eca1ba8a219c8ec55",
   "today_adjust_your_plan": "efe71285b1c033c4a2606d44c4fb284cccefd2904c2d1a38353a70b4fdc4cba1",
   "today_already_know_chapter": "82ec9bcd044d8a833c6428c35922d45e3d2fa61c80329464e5229fc1e348514e",
@@ -392,4 +397,9 @@
     <string name="today_add_to_today">Aggiungi alle lezioni di oggi</string>
     <string name="today_unfinished_setup">Non hai completato la configurazione.</string>
     <string name="today_step_every_topic">Tutti gli argomenti</string>
+    <string name="mock_schedule_title">Cambia la data della simulazione d’esame</string>
+    <string name="mock_schedule_change">Cambia data</string>
+    <string name="mock_schedule_skip">Salta questa simulazione</string>
+    <string name="mock_schedule_skipped">Simulazione saltata</string>
+    <string name="mock_schedule_moved">Spostata a %1$s</string>
 </resources>

@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +38,10 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.challenge.MockScheduleStore
 import com.zoonk.android.feature.language.LanguageLevelCard
+import com.zoonk.android.feature.mock.MockScheduleNotice
+import com.zoonk.android.feature.mock.MockScheduleSheet
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.ExamOverActions
 import com.zoonk.android.feature.session.DayStep
@@ -66,6 +70,7 @@ import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /** What Today shows of a day, worked out once per read. */
 internal class TodayDayModel(
@@ -125,6 +130,7 @@ fun TodayDay(
     language: LoadState<LanguageToday>? = null,
     onboarding: OnboardingStore? = null,
     snackbars: AppSnackbars,
+    schedule: MockScheduleStore? = null,
     refreshIfChanged: suspend () -> Boolean,
 ) {
     val poll =
@@ -146,6 +152,12 @@ fun TodayDay(
     val scope = rememberCoroutineScope()
     var pulled by remember { mutableStateOf(false) }
     val list = rememberLazyListState()
+    var scheduleId by rememberSaveable { mutableStateOf<String?>(null) }
+    if (schedule != null) {
+        scheduleId?.let { id ->
+            MockScheduleSheet(schedule, UUID.fromString(id), navigator) { scheduleId = null }
+        }
+    }
     val actions =
         remember(viewModel, navigator, model, switching) {
             val idle = { !switching }
@@ -157,6 +169,7 @@ fun TodayDay(
                 upNext = { if (idle()) viewModel.keepLearning(read, fromUpNext = true) },
                 prepare = { if (idle()) viewModel.prepareLessons(read) },
                 navigate = navigator::open,
+                schedule = schedule?.let { { id -> if (idle()) scheduleId = id.toString() } },
             )
         }
 
@@ -225,9 +238,12 @@ fun TodayDay(
                     contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp + noteRoom.height),
                 ) {
                     item(key = "heading", contentType = "heading") {
-                        TodayHeading(model, onAdjustPlan = { actions.navigate(AppRoute.Plan()) }, Modifier.pageItem())
+                        TodayHeading(model, onAdjustPlan = { actions.navigate(AppRoute.Plan()) }, Modifier.pageItem(), schedule = actions.schedule)
                     }
 
+                    if (schedule != null) {
+                        item(key = "mock-notice") { MockScheduleNotice(schedule, Modifier.pageItem()) }
+                    }
                     todaySession(model, viewModel, actions, list, buddyName)
 
                     if (!beside) {
@@ -275,6 +291,7 @@ internal class TodayActionHandlers(
     val upNext: () -> Unit,
     val prepare: () -> Unit,
     val navigate: (AppRoute) -> Unit,
+    val schedule: ((UUID) -> Unit)? = null,
 )
 
 /** The day's one action, pinned to the bottom at every width; what it waits for or why it failed shows over the bar. */

@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,11 +58,13 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanCourse
+import com.zoonk.api.models.PlanFundedMocksInner
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanPhaseCheckpoint
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
+import java.util.UUID
 import kotlin.math.roundToInt
 
 @Composable
@@ -132,13 +135,14 @@ private fun PhaseItem(
                 nextChapter = own.takeIf { isNext },
             )
             if (open) {
+                phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
                 phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested, brief = brief) }
             }
         }
         return
     }
 
-    val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null
+    val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
     if (!hasContent) {
         PhaseRow(page.plan, phase, phaseMeta(page, phase, open))
         return
@@ -158,7 +162,10 @@ private fun PhaseItem(
             // The current phase keeps its name open, as main's does.
             byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
-        if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
+        if (expanded) {
+            PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
+            phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
+        }
     }
 }
 
@@ -553,12 +560,14 @@ internal fun MockRow(
     page: PlanPageState,
     date: LocalDate,
     links: PlanLinks,
+    itemId: UUID?,
 ) {
     val funded = page.plan.fundedMocks.firstOrNull { it.scheduledFor?.toJavaLocalDate() == date }
+    val scheduled = itemId ?: funded?.id
     val onClick: (() -> Unit)? =
         when {
-            funded != null -> {
-                { links.challenge(funded.id.toString()) }
+            scheduled != null -> {
+                { links.challenge(scheduled.toString()) }
             }
 
             links.hasExam -> {
@@ -580,6 +589,11 @@ internal fun MockRow(
         supporting = minutes?.let { { Text(formatMinutes(it.roundToInt(), locale)) } },
         meta = { TrailingText(planDate(date, page.today)) },
     )
+    if (scheduled != null && links.scheduleMock != null && (funded == null || funded.status == PlanFundedMocksInner.Status.TODO)) {
+        TextButton(onClick = { links.scheduleMock.invoke(scheduled.toString()) }) {
+            Text(stringResource(R.string.mock_schedule_change))
+        }
+    }
 }
 
 @Composable
@@ -715,7 +729,7 @@ internal fun ColumnScope.PhaseDetails(
         if (learn) {
             PhaseChapters(page, phase.chapters, phase.checkpoint, links)
         } else {
-            phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links) }
+            phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
             if (phase.mocks.nextDate == null && phase.mocks.count > 0) {
                 Row(
                     modifier = Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
