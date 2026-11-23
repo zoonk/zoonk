@@ -252,7 +252,6 @@ private fun WordStep(
     val normal = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val slow = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val status by model.recorder.state.collectAsStateWithLifecycle()
-    val recording = status is VoiceRecorder.Status.Recording
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
@@ -269,7 +268,7 @@ private fun WordStep(
         when {
             step.grade != null -> null
             model.microphoneOff -> ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
-            else -> recordNote(recording, checking = round.pending, issue = round.issue, navigator = navigator)
+            else -> recordNote(status, checking = round.pending, issue = round.issue, navigator = navigator)
         }
 
     LaunchedEffect(step.grade) {
@@ -285,7 +284,7 @@ private fun WordStep(
             title = { Text(stringResource(R.string.pronunciation_title)) },
             actions = {
                 if (step.grade == null && !model.microphoneOff) {
-                    WordMenu(enabled = !round.pending && !recording, onSkip = model::next)
+                    WordMenu(enabled = !round.pending && status == VoiceRecorder.Status.Idle, onSkip = model::next)
                 }
             },
             bottomBar = {
