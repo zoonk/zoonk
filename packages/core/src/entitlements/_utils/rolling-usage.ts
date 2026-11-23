@@ -1,4 +1,4 @@
-import { type TransactionClient, UsageKind, sql } from "@zoonk/db";
+import { type TransactionClient, USAGE_KINDS, type UsageKind, sql } from "@zoonk/db";
 import { type AllowanceLimit, type EntitlementTier } from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
@@ -27,7 +27,7 @@ export async function loadRollingUsage({
   now: Date;
   userId: string;
 }): Promise<Map<RollingKind, RollingUsage>> {
-  const caps = Object.values(UsageKind).map(
+  const caps = Object.values(USAGE_KINDS).map(
     (kind) => sql`(${kind}, ${getRollingClaimReadLimit(kind)}::int)`,
   );
 
@@ -39,7 +39,7 @@ export async function loadRollingUsage({
     { kind: RollingKind; at: Date; seconds: number; count: bigint; totalSeconds: bigint }[]
   >(sql`
  WITH caps(kind,cap) AS (VALUES ${caps.reduce((joined, cap, index) => (index === 0 ? cap : sql`${joined},${cap}`))}), records AS (
- SELECT CASE kind::text WHEN 'lesson_start' THEN CASE WHEN counted_at IS NULL THEN 'lessonPreparation' ELSE 'lessonStart' END WHEN 'mind_map' THEN 'mindMap' WHEN 'mock_questions' THEN 'mockQuestions' WHEN 'tutor_message' THEN 'tutorMessage' ELSE kind::text END AS kind,
+ SELECT CASE kind::text WHEN 'lesson_start' THEN CASE WHEN counted_at IS NULL THEN 'lessonPreparation' ELSE 'lessonStart' END WHEN 'mind_map' THEN 'mindMap' WHEN 'tutor_message' THEN 'tutorMessage' ELSE kind::text END AS kind,
  COALESCE(counted_at,created_at) AS at, seconds, id
  FROM usage_records WHERE user_id=${userId}::uuid AND
  ((kind='lesson_start' AND (counted_at>${cutoff} OR (counted_at IS NULL AND created_at>${cutoff}))) OR (kind<>'lesson_start' AND created_at>${cutoff}))

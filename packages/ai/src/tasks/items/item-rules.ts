@@ -9,6 +9,7 @@ import numericPictureRule from "./item-rules/numeric-pictures.prompt.md";
 import numericRules from "./item-rules/numeric.prompt.md";
 import orderRules from "./item-rules/order.prompt.md";
 import pictureRules from "./item-rules/pictures.prompt.md";
+import plotRule from "./item-rules/plot.prompt.md";
 import trueFalseRules from "./item-rules/true-false.prompt.md";
 import typedQuestionRules from "./item-rules/typed-question.prompt.md";
 import typedSpokenRules from "./item-rules/typed-spoken.prompt.md";
@@ -18,6 +19,7 @@ export type ItemRulesScope = {
   formats: readonly ItemFormat[];
   field: boolean;
   languageGoal: boolean;
+  mock?: boolean;
   numericEntry?: boolean;
   /** By default when their formats can. A set's questions share the set's stimulus instead. */
   pictures?: boolean;
@@ -42,6 +44,10 @@ const LANGUAGE_GOAL_EXCEPTION =
 
 const LANGUAGE_GOAL_CHECK = " (in a language goal, the practiced language is in `TARGET_LANGUAGE`)";
 
+export function withPlotRule(template: string): string {
+  return template.replace("{{PLOT}}\n", () => `${plotRule.trim()}\n`);
+}
+
 function showsPictures(format: ItemFormat): boolean {
   return "image" in GENERATED_ITEM_SCHEMAS[format].shape;
 }
@@ -56,7 +62,10 @@ function pictureRulesFor({
   formats,
   pictures = formats.some((format) => showsPictures(format)),
 }: Pick<ItemRulesScope, "formats" | "pictures">): string {
-  return [pictures ? pictureRules : "", formats.includes("numeric") ? numericPictureRule : ""]
+  return [
+    pictures ? withPlotRule(pictureRules) : "",
+    formats.includes("numeric") ? numericPictureRule : "",
+  ]
     .filter(Boolean)
     .map((rules) => `${rules.trim()}\n`)
     .join("");
@@ -66,6 +75,7 @@ function buildItemRules({
   field,
   formats,
   languageGoal,
+  mock = false,
   numericEntry = false,
   pictures,
   severalPicks = false,
@@ -83,7 +93,14 @@ function buildItemRules({
 
   return selectPromptVariants({
     template: rules,
-    variants: { numericEntry, onePick: !severalPicks, severalPicks, usedSituations },
+    variants: {
+      mock,
+      numericEntry,
+      onePick: !severalPicks,
+      practice: !mock,
+      severalPicks,
+      usedSituations,
+    },
   });
 }
 

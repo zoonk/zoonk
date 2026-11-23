@@ -2,7 +2,10 @@ import { weeklyRecapResponseSchema } from "@/lib/openapi/schemas/milestones";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../../../../../../../packages/core/src/_test-utils/mock-session";
@@ -109,6 +112,21 @@ describe("GET /v1/me/weekly-recap", () => {
       }),
     ]);
 
+    const partial = await studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date("2026-10-14T00:00:00Z"),
+      userId: user.id,
+    });
+
+    await studySessionBlockFixture({ sessionId: partial.id });
+
+    await learningEventFixture({
+      goalId: goal.id,
+      localDate: partial.localDate,
+      seconds: 60,
+      userId: user.id,
+    });
+
     const response = await getRecap(
       new Request(`http://localhost/v1/me/weekly-recap?goalId=${goal.id}&weekStart=2026-10-12`),
     );
@@ -119,13 +137,22 @@ describe("GET /v1/me/weekly-recap", () => {
 
     expect(body.days[0]).toMatchObject({
       date: "2026-10-12",
-      hitGoal: false,
+      hitGoal: true,
       minutes: 1,
       studied: true,
     });
 
     expect(body.days[1]).toMatchObject({ date: "2026-10-13", hitGoal: true, studied: true });
-    expect(body.days[2]).toMatchObject({ kind: "study", studied: false });
+
+    expect(body.days[2]).toMatchObject({
+      completed: 0,
+      hitGoal: false,
+      kind: "study",
+      studied: true,
+      total: 1,
+    });
+
+    expect(body.days[3]).toMatchObject({ kind: "study", studied: false });
     expect(body.days.slice(5).map((day) => day.kind)).toStrictEqual(["rest", "rest"]);
     expect(body.days.every((day) => !day.isToday)).toBe(true);
   });

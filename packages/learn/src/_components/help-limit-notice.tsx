@@ -98,7 +98,7 @@ type LimitNoticeProps = {
 export type LimitWords = { line?: string; opened?: boolean; provisional?: boolean; title?: string };
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
-export type HelpKind = "explanations" | "messages" | "mockExams" | "questions" | "uploads";
+export type HelpKind = "explanations" | "messages" | "questions" | "uploads";
 
 type NoticeLimit =
   | { status: "signUpRequired" | "slowDown" }
@@ -202,12 +202,6 @@ function useHelpTitles(kind: HelpKind | undefined): CapTitles {
         day: t("No more explanations today"),
         guest,
         rolling: t("You've used your explanations"),
-      };
-    case "mockExams":
-      return {
-        day: t("No more mock exams today"),
-        guest,
-        rolling: t("You've used your mock exams"),
       };
     case "questions":
       return { day: t("No more questions today"), guest, rolling: t("You've used your questions") };

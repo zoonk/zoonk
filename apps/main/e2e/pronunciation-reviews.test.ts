@@ -46,6 +46,7 @@ test.describe("Pronunciation reviews", () => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
       const { rent, deposit } = await seedDueWords(user.id);
 
+      await page.setViewportSize({ height: 900, width: 1440 });
       await allowPronunciationRecording(page);
       await page.goto("/today");
 
@@ -61,12 +62,9 @@ test.describe("Pronunciation reviews", () => {
       await page.reload();
 
       const missions = page.getByRole("region", { name: "Today's missions" });
-      const showMissions = missions.getByRole("button", { name: "Today's missions" });
       const mission = missions.getByRole("link", { name: /^Practice pronunciation/u });
 
-      await expectHydrated(showMissions);
-      await showMissions.click();
-
+      await expectHydrated(mission);
       await expect(mission).toHaveAttribute("href", `/pronunciation?goal=${user.goalId}`);
       await mission.click();
       await expect(page.getByRole("region", { name: "The word to say" })).toContainText(rent.word);

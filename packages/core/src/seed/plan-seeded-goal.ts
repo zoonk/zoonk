@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { recordFollowUps } from "../follow-ups/owe-follow-ups";
 import { commitPlan } from "../plans/_utils/commit-plan";
 import { parsePlanChangePayload, toPlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { loadPlanContext } from "../plans/_utils/plan-context";
@@ -151,5 +152,5 @@ export async function planSeededGoal({ goalId, now }: { goalId: string; now: Dat
   }
 
   const computed = await computePlan({ context, mode: "automatic", now });
-  await commitPlan({ change: null, computed, context, revalidation: "skip" });
+  await commitPlan({ change: null, computed, context, owe: recordFollowUps, revalidation: "skip" });
 }

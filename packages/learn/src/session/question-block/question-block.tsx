@@ -11,7 +11,7 @@ import { type QuestionTutor } from "../../questions/question-tutor";
 import { usePreloadMath } from "../../rich-text/use-preload-math";
 import { type MomentCeremony } from "../moment-ceremony";
 import { SessionFrame } from "../session-frame";
-import { type StudyBlockDetail, type StudySession } from "../session-types";
+import { type StudyBlock, type StudyBlockDetail } from "../session-types";
 import { StudyMoment } from "../study-moment";
 import { useBlockTitle } from "../use-block-copy";
 import { useBlockAside } from "./block-aside";
@@ -24,7 +24,7 @@ import {
   useBlockDrill,
   useDraftAnswer,
 } from "./block-question";
-import { getBlockTutorItem, withTutorAside } from "./block-tutor-item";
+import { getBlockTutorItem } from "./block-tutor-item";
 import { PauseSuggestion } from "./pause-suggestion";
 import { QuestionBlockClose, QuestionBlockHeader } from "./question-block-header";
 import { type QuestionBlockPhase, type QuestionBlockState } from "./question-block-state";
@@ -56,8 +56,6 @@ function getQuestionSegments({
   });
 }
 
-type SessionContext = Pick<StudySession, "blocks" | "id" | "minutes">;
-
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
   stop: () => Promise<boolean>;
@@ -65,20 +63,20 @@ type SessionActions = QuestionBlockActions & {
 
 function FinishedBlock({
   actions,
+  blocks,
   buddy,
   detail,
   exitHref,
   moment,
   renderCeremony,
-  session,
 }: {
   actions: SessionActions;
+  blocks: readonly StudyBlock[];
   buddy?: LearnBuddy | null;
   detail: StudyBlockDetail;
   exitHref: string;
   moment: Extract<QuestionBlockPhase, { kind: "finished" }>["moment"];
   renderCeremony?: MomentCeremony;
-  session: SessionContext;
 }) {
   return (
     <StudyMoment
@@ -87,7 +85,7 @@ function FinishedBlock({
       exitHref={exitHref}
       kind={detail.block.kind}
       moment={moment}
-      next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
+      next={blocks.find((block) => block.id === moment.nextBlockId) ?? null}
       onContinue={actions.continueSession}
       onStop={actions.stop}
     />
@@ -133,21 +131,21 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
 
 export function QuestionBlock({
   actions,
+  blocks,
   buddy,
   detail,
   exitHref,
   lessonHref = null,
   renderCeremony,
-  session,
   tutor,
 }: {
   actions: SessionActions;
+  blocks: readonly StudyBlock[];
   buddy?: LearnBuddy | null;
   detail: StudyBlockDetail;
   exitHref: string;
   lessonHref?: LessonHref | null;
   renderCeremony?: MomentCeremony;
-  session: SessionContext;
   tutor?: QuestionTutor | null;
 }) {
   const blockTitle = useBlockTitle();
@@ -157,18 +155,18 @@ export function QuestionBlock({
   const { question } = run;
   const blockDrill = useBlockDrill({ detail, index: run.state.index });
   const draft = useDraftAnswer(run.state.index);
-  const aside = useBlockAside({ detail, question, session });
+  const aside = useBlockAside({ question, tutor });
 
   if (phase.kind === "finished") {
     return (
       <FinishedBlock
         actions={actions}
+        blocks={blocks}
         buddy={buddy}
         renderCeremony={renderCeremony}
         detail={detail}
         exitHref={exitHref}
         moment={phase.moment}
-        session={session}
       />
     );
   }
@@ -176,7 +174,7 @@ export function QuestionBlock({
   const askButton = tutor?.button;
 
   const block = (
-    <SessionFrame aside={withTutorAside({ aside, tutor })}>
+    <SessionFrame aside={aside}>
       <QuestionBlockHeader
         close={<QuestionBlockClose href={exitHref} />}
         index={run.state.index}

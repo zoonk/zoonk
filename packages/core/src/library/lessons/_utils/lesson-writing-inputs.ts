@@ -9,6 +9,7 @@ import {
 } from "../../activities/writer-templates";
 import { getLessonCountry } from "../../content-country";
 import { type HeldBackDraft, parseHeldBackDrafts } from "../../generation/held-back-drafts";
+import { loadUsedSituations } from "../../items/used-situations";
 import { type LessonWritingContext } from "../../quality/lesson-quality-gate";
 import { getSiblingsChapterId } from "../../quick-lessons/quick-lesson-identity";
 import { type MaterialPage, formatMaterialPages } from "../../sources/material-pages";
@@ -17,9 +18,12 @@ import { loadLessonExams, loadLessonShortAnswers } from "./lesson-exams";
 import { loadLessonDocuments } from "./lesson-sources";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
+const MAX_LESSON_SITUATIONS = 32;
+
 export type LessonWritingInputs = {
   country: string | null;
   activityTemplates: WriterActivityTemplate[];
+  usedSituations?: string[];
   chapterLessons: ChapterLesson[];
   chapterTitle: string;
   courseTitle: string;
@@ -86,16 +90,22 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
     lessonId: lesson.id,
   };
 
-  const [{ material, sources }, chapterLessons, exams, shortAnswers] = await Promise.all([
-    loadLessonDocuments({ ...goalsOf, query: toMaterialQuery(spec) }),
-    loadChapterLessons({
-      chapterId: getSiblingsChapterId(lesson),
-      lessonId: lesson.id,
-      ownerId: lesson.ownerId,
-    }),
-    loadLessonExams(goalsOf),
-    loadLessonShortAnswers(goalsOf),
-  ]);
+  const [{ material, sources }, chapterLessons, exams, shortAnswers, usedSituations] =
+    await Promise.all([
+      loadLessonDocuments({ ...goalsOf, query: toMaterialQuery(spec) }),
+      loadChapterLessons({
+        chapterId: getSiblingsChapterId(lesson),
+        lessonId: lesson.id,
+        ownerId: lesson.ownerId,
+      }),
+      loadLessonExams(goalsOf),
+      loadLessonShortAnswers(goalsOf),
+      loadUsedSituations({
+        includeMockReserve: true,
+        publicOnly: true,
+        skillIds: lesson.skills.map((entry) => entry.skillId),
+      }),
+    ]);
 
   const course = lesson.homeChapter?.homeCourse;
 
@@ -122,6 +132,10 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       }),
       sources,
       spec,
+      usedSituations: [...new Set([...usedSituations.values()].flat())].slice(
+        0,
+        MAX_LESSON_SITUATIONS,
+      ),
     },
     status: "ready",
   };
@@ -158,6 +172,7 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
     shortAnswers: inputs.shortAnswers,
     sources: inputs.sources.length > 0 ? formatMaterialPages(inputs.sources) : undefined,
     spec: inputs.spec,
+    usedSituations: inputs.usedSituations,
   };
 }
 

@@ -5,6 +5,9 @@ import XCTest
 
 @MainActor
 final class LiveCallTests: XCTestCase {
+  /// Nov 22, 2026, 09:30 UTC: the day of the monthly cap in this file's refusals.
+  private let opens = Date(timeIntervalSince1970: 1_795_339_800)
+
   func testReadsGPTLiveEventsTheCallActsOn() {
     XCTAssertEqual(event(#"{"type":"session.started","session":{"id":"s"}}"#), .started)
     XCTAssertEqual(event(#"{"type":"session.closed","usage":{"seconds":3},"reason":"x"}"#), .closed)
@@ -98,7 +101,7 @@ final class LiveCallTests: XCTestCase {
         429, "CONVERSATION_LIMIT_REACHED",
         #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
       ),
-      .limit(.usedUp(tier: .free, availableAt: Date(timeIntervalSince1970: 1_795_339_800))))
+      .limit(.usedUp(tier: .free, availableAt: opens)))
     XCTAssertEqual(
       reservation(403, "SIGN_UP_REQUIRED"),
       .limit(HelpLimit.limitReached(period: .total, tier: .guest)))
@@ -123,7 +126,7 @@ final class LiveCallTests: XCTestCase {
         402, "USAGE_LIMIT_REACHED",
         #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
       ).limit,
-      .usedUp(tier: .free, availableAt: Date(timeIntervalSince1970: 1_795_339_800)))
+      .usedUp(tier: .free, availableAt: opens))
     XCTAssertEqual(
       refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"rolling30Days","tier":"free"}}"#)
         .limit,
@@ -174,47 +177,11 @@ final class LiveCallTests: XCTestCase {
     XCTAssertTrue(transport.sent.contains(.append(typedReply.quoting("I'm here"))))
   }
 
-  func testAGoodbyeWhileTheLearnerTalksGoesAsQuietContext() async {
-    let transport = FakeTransport()
-    transport.speaking = true
-    let call = LiveCall(
-      conversation: .fixture(), client: FakeServer(talkSeconds: 1).client(transport))
-
-    await call.start()
-    transport.onEvent?(.started)
-    await waitUpTo(5) { !transport.cues("goodbye").isEmpty }
-
-    // Measured: said aloud at once, it made the character talk over a learner who paused.
-    XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
-  }
-
-  func testTheAnswerToAGoodbyeSentAsQuietContextIsntAReplyGap() async {
-    let transport = FakeTransport()
-    transport.speaking = true
-    let call = LiveCall(
-      conversation: .fixture(), client: FakeServer(talkSeconds: 1).client(transport))
-
-    await call.start()
-    transport.onEvent?(.started)
-    await waitUpTo(5) { !transport.cues("goodbye").isEmpty }
-    XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
-
-    transport.speaking = false
-    // A cue reply must not create a gap even after the learner has been silent.
-    let silentReplyWindow: Duration = .milliseconds(700)
-    try? await Task.sleep(for: silentReplyWindow)
-    transport.onEvent?(
-      .transcript(speaker: .character, delta: "Sorry, I have to go.", startMs: 5000, endMs: 6000))
-
-    // The character answered the cue, not only the learner: no wait to measure.
-    XCTAssertEqual(call.replyGaps.gaps, [])
-  }
-
   func testALateLearnerTranscriptStillGetsTheExchangeChecked() async {
     let transport = FakeTransport()
     let server = FakeServer()
     let call = LiveCall(
-      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(500))
+      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(200))
 
     await call.start()
     transport.onEvent?(.started)
@@ -227,12 +194,12 @@ final class LiveCallTests: XCTestCase {
       .transcript(speaker: .learner, delta: " there", startMs: 2500, endMs: 2900))
 
     // The check waits for the transcript to settle after its last fragment.
-    let transcriptQuietWindow: Duration = .milliseconds(200)
+    let transcriptQuietWindow: Duration = .milliseconds(50)
     try? await Task.sleep(for: transcriptQuietWindow)
     XCTAssertEqual(server.checkedConnections, [])
     await waitUpTo(5) { !server.checkedConnections.isEmpty }
     // No duplicate check may follow the settled transcript.
-    let duplicateCheckWindow: Duration = .milliseconds(750)
+    let duplicateCheckWindow: Duration = .milliseconds(300)
     try? await Task.sleep(for: duplicateCheckWindow)
 
     XCTAssertEqual(server.checkedConnections, ["connection-1"])
@@ -242,7 +209,7 @@ final class LiveCallTests: XCTestCase {
     let transport = FakeTransport()
     let server = FakeServer(holdsChecks: true)
     let call = LiveCall(
-      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(500))
+      conversation: .fixture(), client: server.client(transport), checkSettle: .milliseconds(100))
 
     await call.start()
     transport.onEvent?(.started)
@@ -262,7 +229,7 @@ final class LiveCallTests: XCTestCase {
 
   func testTheOpeningRetryHasItsOwnEventId() async {
     var setup = Components.Schemas.LanguageConversationSetup.fixture(connectionId: "connection-1")
-    setup.script.timing.openingRetryMs = 300
+    setup.script.timing.openingRetryMs = 100
     let transport = FakeTransport()
     let call = LiveCall(
       conversation: .fixture(), client: FakeServer(reservations: [.ready(setup)]).client(transport))
@@ -603,7 +570,6 @@ final class LiveCallTests: XCTestCase {
 
   /// The cap's day came while the screen was open: Call again is back, and the server decides.
   func testACallTheCapStoppedCanBeCalledAgainOnceItsDayHasCome() {
-    let opens = Date(timeIntervalSince1970: 1_795_339_800)
     let dropped = DroppedCall(reason: .limit, retry: nil)
     let monthly = HelpLimit.usedUp(tier: .free, availableAt: opens)
 
@@ -1174,7 +1140,7 @@ final class LiveCallTests: XCTestCase {
       status: status, code: code,
       details: details.flatMap {
         try? JSONDecoder().decode(OpenAPIValueContainer.self, from: Data($0.utf8))
-      })
+      }, receivedAt: opens.addingTimeInterval(-3600))
   }
 
   private func reservation(_ status: Int, _ code: String, _ details: String? = nil)

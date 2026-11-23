@@ -48,8 +48,7 @@ export const questionImageSchema = itemImageSchema.nullable();
 
 export const questionVisualSchema = lessonVisualSchema
   .meta({
-    description:
-      "A bar or line chart (categories with one or more series of values) or a timeline of dated events, drawn from its data",
+    description: "A category chart, numeric plot, or timeline of dated events, drawn from its data",
     id: "LessonVisual",
   })
   .nullable();

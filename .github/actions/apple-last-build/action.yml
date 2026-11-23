@@ -5,7 +5,7 @@ description: >-
 
 inputs:
   build:
-    description: The build to restore, `device` for `make build` or `simulator` for `make test`.
+    description: The build to restore, `device` for `make build`, `simulator` for `make test` or `catalyst` for `make test-mac`.
     required: true
 
 outputs:
@@ -45,7 +45,7 @@ runs:
       with:
         path: ${{ runner.temp }}/apple-source-packages
         # Frozen resolution needs a cache containing this lockfile's revisions.
-        key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-v2-${{ hashFiles('apps/apple/**/Package.resolved') }}
 
     # Each commit on main saves its build, and the newest one is restored. A new Xcode, new package
     # versions or a change to how CI builds start from an empty build instead, which also keeps

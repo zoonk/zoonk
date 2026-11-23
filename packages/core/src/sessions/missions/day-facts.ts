@@ -23,6 +23,7 @@ import { type loadPreparationInputs } from "../../preparation/_utils/load-prepar
 import { getGoalDayMinutes } from "../_utils/day-minutes";
 import { type loadDayPlan } from "../_utils/day-plan";
 import { loadExamStructure } from "../_utils/exam-structure";
+import { loadPreparingMockPositions } from "../_utils/preparing-mock-blocks";
 import { type SelectedDayPlan } from "../_utils/selected-day-plan";
 import { type MissionFactBlock, blockCandidates, finishChapterCandidate } from "./block-candidates";
 import { hasMissionAllowance } from "./candidate-allowance";
@@ -167,6 +168,7 @@ export async function loadDayMissionFacts({
   localDate,
   now = new Date(),
   plannedMinutes,
+  preparing: knownPreparing,
   readMistakes,
   readPreparation,
   readSubscription,
@@ -183,6 +185,7 @@ export async function loadDayMissionFacts({
   localDate: Date;
   now?: Date;
   plannedMinutes: number;
+  preparing?: ReadonlySet<number>;
   /** A GET's request-wide practice mistakes; without it, they're read fresh. */
   readMistakes?: () => Promise<PracticeMistake[]>;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
@@ -229,7 +232,7 @@ export async function loadDayMissionFacts({
 
   const items = plan?.items ?? [];
 
-  const [mistakes, language, weakSpot, structure] = await Promise.all([
+  const [mistakes, language, weakSpot, structure, preparing] = await Promise.all([
     readyMistakes({ goalPlan, localDate, readMistakes, timeZone, userId }),
     languageCandidates({ blocks, goal, items, now, tier, usage, userId }),
     weakSpotCandidate({
@@ -243,6 +246,10 @@ export async function loadDayMissionFacts({
       userId,
     }),
     loadExamStructure(goal, { blueprint, picks: readExamPicks(plan?.settings) }),
+    knownPreparing ??
+      (tier === "plus"
+        ? loadPreparingMockPositions({ blocks, blueprint, goal, localDate })
+        : new Set<number>()),
   ]);
 
   const chapter = finishChapterCandidate({ blocks, goalPlan, items });
@@ -255,7 +262,7 @@ export async function loadDayMissionFacts({
   });
 
   const candidates = await withChapterTitles([
-    ...blockCandidates({ blocks, plannedMinutes, tier }),
+    ...blockCandidates({ blocks, plannedMinutes, preparing, tier }),
     ...(chapter ? [chapter] : []),
     ...fixCandidate({ count: mistakes.length, plannedMinutes: dailyMinutes }),
     ...language.candidates,

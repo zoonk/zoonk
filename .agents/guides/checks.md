@@ -18,12 +18,12 @@ Run commands from the repository root with the Node.js and pnpm versions in `.to
 | App runtime or build integration  | `pnpm --filter <app> build`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                 |
 | E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                      |
 | Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                             |
-| Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                                                    |
+| Apple app                         | [Apple verification](../../apps/apple/AGENTS.md#verification) covers Mac units on PRs and iPhone checks for device-specific changes    |
 | Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                       |
 | Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                     |
 | Next.js or Turborepo version      | `pnpm agent-rules:sync`, which updates the blocks they write into `AGENTS.md`                                                          |
 | Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint` ([translations](translations.md))                                                     |
 
-PR CI leaves out Apple's unit tests and Android's lint and release build: they run after merge or on demand (`gh workflow run apple-tests.yml --ref <branch>`, `gh workflow run android.yml --ref <branch>`), so the native rows are run locally before a PR is marked ready.
+Android's lint and release build run after merge or on demand (`gh workflow run android.yml --ref <branch>`), so run the Android row before its PR is marked ready.
 
 Heavy commands take turns on a shared machine, and a busy one can run a branch's checks on GitHub instead ([sharing one machine](shared-machine.md)). How tests reach their databases is in [running tests locally](local-tests.md).

@@ -14,15 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.GenerationSource
-import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -78,41 +74,24 @@ internal fun MockChooser(
     navigator: AppNavigator,
     mockStore: MockStore = app.mocks,
     starter: MockStarter = app.mockStarter,
-    generations: (AuthenticatedSession?) -> GenerationSource = { LiveGenerationSource(app.api, it) },
 ) {
     val options = mockStore.options[goalId]
     val state by options.collectShown()
     val viewModel =
-        viewModel(
-            key = "mock-chooser-$goalId",
-        ) { MockChooserViewModel(goalId, starter, app.sessions, generations) { mockStore.refused(goalId) } }
+        viewModel(key = "mock-chooser-$goalId") {
+            MockChooserViewModel(goalId, starter, { scope -> mockStore.paperWait(scope, goalId) }) { mockStore.refused(goalId) }
+        }
     val opened by viewModel.opened.collectAsStateWithLifecycle()
-    val status by viewModel.status.collectAsStateWithLifecycle()
-    val run by viewModel.run.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val loaded = state.value
     val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state)
-    val writing = status == ChooserStatus.Writing
     val focus =
         rememberPressFocus(
-            when {
-                loaded == null -> null
-                writing -> "wait"
-                else -> "start"
-            },
+            loaded?.let { "start" },
             // On a phone the action is in the list's first row, which can be scrolled away.
             reveal = { listState.scrollToItem(0) },
         )
-    val retry = {
-        focus.pressInHolder()
-        viewModel.retry()
-    }
-
-    LifecycleStartEffect(viewModel) {
-        viewModel.onShown(true)
-        onStopOrDispose { viewModel.onShown(false) }
-    }
 
     if (exit != null) {
         Leave(exit, navigator)
@@ -123,8 +102,7 @@ internal fun MockChooser(
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
-            writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester)
-            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
+            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press) { options.refresh() }
         }
     }
 }

@@ -1309,16 +1309,6 @@ msgctxt "b0QQkx"
 msgid "The sound plays: {notes}"
 msgstr "Der Ton spielt: {notes}"
 
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "xAzh1Y"
-msgid "I can listen now"
-msgstr "Ich kann wieder zuhören"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "K8wsFm"
-msgid "I can't listen now"
-msgstr "Ich kann gerade nicht zuhören"
-
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
 msgid "Spot {number}: empty"
@@ -2817,6 +2807,16 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Wähle Wörter für deine Antwort"
 
+#: src/components/cant-listen-switch.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "Ich kann wieder zuhören"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "Ich kann gerade nicht zuhören"
+
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx
 msgctxt "3W8LgY"
@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "Schreibaufgaben sind für heute ausgeschaltet."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Wir prüfen noch. Das dauert länger als üblich."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "Hör noch einmal zu"
@@ -3427,6 +3417,12 @@ msgstr "Hör noch einmal zu"
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "Noch nicht ganz. Schau noch einmal hin und korrigier es selbst. Prüf dann deine Antwort."
+
+#. Opens the figures shown at the start of a challenge.
+#: src/lesson/steps/challenge/challenge-conversation.tsx
+msgctxt "sMBshP"
+msgid "Starting figures"
+msgstr "Startwerte"
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
@@ -3549,18 +3545,6 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Schreib deine Antwort"
 
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Tippe auf „Aufnehmen“ und sprich es laut aus"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Wir hören zu… Tipp zum Prüfen auf Stopp."
-
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
@@ -3581,11 +3565,6 @@ msgstr "Ich kann jetzt sprechen"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Stattdessen laut sagen"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "pjy2sy"
-msgid "Type what you'd say"
-msgstr "Schreib, was du sagen würdest"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "eUqe2x"

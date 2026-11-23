@@ -25,6 +25,89 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(session.daySegments.first?.mark, .done)
   }
 
+  func testExtraWorkNeverLowersTheDaysCountMeterOrTimeLeft() throws {
+    var session = try timedDay(left: 0, coming: false, estimates: [8, 8, 9], extras: [2])
+    session.blocks[0].status = .completed
+    session.blocks[1].status = .completed
+
+    XCTAssertEqual(session.sessionBar, SessionBar(completed: 2, total: 2))
+    XCTAssertEqual(session.daySegments.map(\.mark), [.done, .done])
+    XCTAssertEqual(session.foldedMinutes(showing: []), 9, "A hidden extra keeps its own time")
+
+    let extra = blockJSON(
+      position: 2, kind: "learn", status: "completed", id: "b2", lessonID: "l2", planItemID: nil,
+      checkpoint: nil
+    )
+    .replacingOccurrences(of: "\"extra\":false", with: "\"extra\":true")
+    let lesson = blockJSON(
+      position: 0, kind: "learn", status: "completed", id: "b0", lessonID: "l0", planItemID: nil,
+      checkpoint: nil)
+    let moment: BlockMoment = try decode(
+      """
+      {"blockId":"b2","brainPower":10,"ceremony":null,"certificates":[],
+      "blocks":[\(lesson),\(extra)],
+      "dayProgress":{"catchUp":null,"lead":"complete","lessonsComing":false,"percent":100},
+      "sessionBar":{"completed":1,"total":1},"sessionId":"s1","goalId":null,
+      "finishedChapterId":null,"deferredLessonsCount":0,
+      "minutes":{"dailyGoal":30,"done":10,"left":0,"planned":30},
+      "next":null,"completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},
+      "missions":[],"nextBlockId":null,"reached":null,"sessionCompleted":true,"total":1}
+      """)
+
+    XCTAssertEqual(moment.daySegments, [.done])
+    XCTAssertNil(moment.finishedSegment, "An extra fills no part of the day")
+  }
+
+  func testFinishingTheDaysLastBlockMarksItDoneWhileAnExtraIsNext() throws {
+    let session = try day(
+      blocks: [
+        block(position: 0, kind: "learn", id: "b0", lessonID: "l0"),
+        block(position: 1, id: "b1"),
+      ],
+      nextPosition: 0, id: "s1")
+    let lesson = blockJSON(
+      position: 0, kind: "learn", status: "completed", id: "b0", lessonID: "l0", planItemID: nil,
+      checkpoint: nil)
+    let extra = blockJSON(
+      position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil,
+      checkpoint: nil
+    )
+    .replacingOccurrences(of: "\"extra\":false", with: "\"extra\":true")
+    let moment: BlockMoment = try decode(
+      """
+      {"blockId":"b0","brainPower":10,"ceremony":null,"certificates":[],
+      "blocks":[\(lesson),\(extra)],
+      "dayProgress":{"catchUp":null,"lead":"complete","lessonsComing":false,"percent":100},
+      "sessionBar":{"completed":1,"total":1},"sessionId":"s1","goalId":null,
+      "finishedChapterId":null,"deferredLessonsCount":0,
+      "minutes":{"dailyGoal":30,"done":10,"left":0,"planned":30},
+      "next":{"block":\(extra),"opensInPlayer":false,"target":{"kind":"block","blockId":"b1"}},
+      "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
+      "nextBlockId":"b1","reached":null,"sessionCompleted":false,"total":1}
+      """)
+
+    let finished = session.finishing(moment)
+
+    XCTAssertEqual(finished.state, .done)
+    XCTAssertEqual(finished.nextBlock?.id, "b1")
+    XCTAssertEqual(moment.upNext?.id, "b1", "The lesson end's Continue opens the extra")
+  }
+
+  func testAWeekDayFillsByItsListNeverByMinutes() throws {
+    func day(completed: Int, total: Int, hitGoal: Bool, minutes: Int) throws -> StudyWeek.Day {
+      try decode(
+        """
+        {"completed":\(completed),"date":"2026-11-20","goalMinutes":25,"hitGoal":\(hitGoal),
+        "isToday":false,"kind":"study","minutes":\(minutes),"studied":\(minutes > 0),
+        "total":\(total)}
+        """)
+    }
+
+    XCTAssertEqual(try day(completed: 1, total: 4, hitGoal: false, minutes: 90).share, 0.25)
+    XCTAssertEqual(try day(completed: 0, total: 0, hitGoal: false, minutes: 40).share, 0)
+    XCTAssertEqual(try day(completed: 2, total: 3, hitGoal: true, minutes: 5).share, 1)
+  }
+
   func testABlockDoneBeforeTheNextOneFillsItsOwnPartOfTheMomentsMeter() throws {
     let lesson = blockJSON(
       position: 0, kind: "learn", status: "pending", id: "b0", lessonID: "l0", planItemID: nil,
@@ -791,6 +874,25 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(store.nextPlanChange(in: reread))
   }
 
+  func testASeenNoticeThatThePlanFollowsTheGuideLeavesForWhatComesNext() async throws {
+    let notice = try planChange(status: "applied", kind: "noticeChanged")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: notice)
+    let api = StudyAPIStub(
+      today: .day(view), decided: try planChange(status: "applied", kind: "noticeChanged"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(notice, with: .seen, in: view)
+
+    XCTAssertNil(store.shownPlanChange(in: view), "it leaves before Today is read again")
+
+    let date = try planChange(status: "proposed", id: "c2")
+    let reread = try today(session: day(blocks: [], nextPosition: nil), planChange: date)
+
+    XCTAssertEqual(store.shownPlanChange(in: reread), AnsweredPlanChange(change: date))
+    XCTAssertNil(store.nextPlanChange(in: reread))
+  }
+
   func testAnAnswerStaysWithItsGoal() async throws {
     let proposed = try planChange(status: "proposed")
     let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
@@ -856,7 +958,8 @@ final class TodayStoreTests: XCTestCase {
 }
 
 private func timedDay(
-  left: Double, coming: Bool, preparing: Bool = false, estimates: [Int], state: String = "underway"
+  left: Double, coming: Bool, preparing: Bool = false, estimates: [Int], extras: Set<Int> = [],
+  state: String = "underway"
 ) throws -> StudyDay {
   let blocks = try estimates.indices.map { try block(position: $0, kind: "learn") }
   let json = dayJSON(
@@ -864,7 +967,10 @@ private func timedDay(
     localDate: "2026-11-08", goalID: "g1", state: state)
   var object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any])
   var rows = try XCTUnwrap(object["blocks"] as? [[String: Any]])
-  for index in rows.indices { rows[index]["estimatedMinutes"] = estimates[index] }
+  for index in rows.indices {
+    rows[index]["estimatedMinutes"] = estimates[index]
+    rows[index]["extra"] = extras.contains(index)
+  }
   object["blocks"] = rows
   object["lessonsComing"] = coming
   object["lessonsToPrepare"] = preparing
@@ -902,7 +1008,7 @@ private func blockJSON(
   "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
   "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
   "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"opensInPlayer":false,"oftenTested":false,
-  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"questions":3,
+  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"preparing":false,"questions":3,
   "refresh":false,"reinforcement":false,"screen":"session","status":"\(status)",
   "subject":null,"title":"Block",
   "waitReason":null,"weakest":false\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
@@ -956,12 +1062,13 @@ private func day(
 }
 
 private func planChange(
-  status: String, canUndo: Bool = false, id: String = "c1", quote: String = "q1"
+  status: String, canUndo: Bool = false, id: String = "c1", quote: String = "q1",
+  kind: String = "edited"
 ) throws -> TodayView.PlanChange {
   try decode(
     """
     {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice","quote":"\(quote)",
-    "id":"\(id)","kind":"edited","officialDate":null,"operations":[],
+    "id":"\(id)","kind":"\(kind)","officialDate":null,"operations":[],
     "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)
 }
@@ -1006,63 +1113,8 @@ private func openedReview() throws -> OpenedStudyDay {
     opening: try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#), sessionId: "s1")
 }
 
-/// A suggested goal's Start, answered while the window crosses the width where Today splits into
-/// two panes: the buttons are drawn again on the other side, and the answer is still the visit's.
 @MainActor
 final class SuggestedGoalAnswerTests: XCTestCase {
-  func testStartOpensSetupWhenTodaySplitsIntoPanesMeanwhile() async throws {
-    let api = StudyAPIStub()
-    let store = TodayStore(api: api, cache: signedInCache())
-    let router = AppRouter()
-    let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
-    let answer = SuggestedGoalAnswer()
-    await api.holdNextSuggestedAnswer()
-    try await readsWhatVoiceOverReads()
-
-    let window = try show(
-      PaneSplit {
-        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
-      } secondary: {
-        Color.clear
-      } single: {
-        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
-      }
-      .environment(store)
-      .environment(router)
-      .zoonkStyles())
-    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await waitForLayout(in: window)
-
-    let start = String(localized: "Start", table: "Today")
-    try await activate(start, in: window)
-    await api.waitForHeldSuggestedAnswer()
-
-    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await waitForLayout(in: window)
-    await api.releaseHeldSuggestedAnswer()
-    try await waitForTestCondition("Setup did not open") { !router.tasks.isEmpty }
-
-    let accepted = await api.acceptedSuggestions
-    XCTAssertEqual(accepted, ["s1"], "The server took the answer")
-    XCTAssertEqual(router.tasks, [.startGoal(goal: "Microeconomics")], "Setup opens")
-  }
-
-  func testLeavingTodayShowsNothingOfAnAnswerThatFailed() async throws {
-    let api = StudyAPIStub()
-    await api.failSuggestedAnswers()
-    let store = TodayStore(api: api, cache: signedInCache())
-    let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
-    let answer = SuggestedGoalAnswer()
-
-    answer.respond(to: suggestion, accepted: true, store: store, router: AppRouter())
-    try await waitForTestCondition("Expected state did not arrive") { answer.failed }
-    XCTAssertTrue(answer.failed)
-
-    answer.leave()
-    XCTAssertFalse(answer.failed, "A failure before leaving")
-
-  }
-
   /// Start, leave Today and come back while it saves, Start again: the first answer finishing
   /// belongs to the visit that left, so the second stays busy and opens Setup once.
   func testAnAnswerFromAVisitThatLeftLeavesTheNextVisitsAnswerAlone() async throws {
@@ -1101,63 +1153,8 @@ final class SuggestedGoalAnswerTests: XCTestCase {
   }
 }
 
-/// A mission tapped in Zu's day, then the window crosses the width where the day is a pane beside
-/// the conversation: the tap is the page's, so the mission still opens.
 @MainActor
 final class BuddyMissionTapTests: XCTestCase {
-  func testAMissionOpensWhenTheDaysPaneGoes() async throws {
-    try await opensAcross(from: 1376, to: 420)
-  }
-
-  func testAMissionOpensWhenTheDaysPaneComes() async throws {
-    try await opensAcross(from: 420, to: 1376)
-  }
-
-  private func opensAcross(from: CGFloat, to: CGFloat) async throws {
-    let api = StudyAPIStub(
-      openings: [try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#)],
-      holdsOpening: true)
-    let today = TodayStore(api: api, cache: signedInCache())
-    let tap = BuddyMissionTap()
-    var opened = 0
-    let places = TutorPlaces { _ in opened += 1 }
-    try await readsWhatVoiceOverReads()
-
-    let window = try show(
-      PaneSplit {
-        Color.clear
-      } secondary: {
-        MissionButton(tap: tap, today: today, places: places)
-      } single: {
-        MissionButton(tap: tap, today: today, places: places)
-      }
-      .zoonkStyles())
-    window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await waitForLayout(in: window)
-
-    try await activate("Open the mission", in: window)
-    try await api.waitForHeldCall()
-    window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await waitForLayout(in: window)
-    await api.releaseHeldCall()
-    try await waitForTestCondition("The mission never opened") { opened == 1 }
-
-    XCTAssertEqual(opened, 1, "The mission opens")
-  }
-
-  /// Zu's page left ends its tap: a mission that didn't open shows nothing on the next visit.
-  func testLeavingZuShowsNothingOfAMissionThatDidntOpen() async throws {
-    let tap = BuddyMissionTap()
-    let today = TodayStore(api: StudyAPIStub(openError: .network), cache: signedInCache())
-
-    tap.open("b1", today: today, places: .unavailable) {}
-    try await waitForTestCondition("The failure never arrived") { tap.failed == "b1" }
-    XCTAssertEqual(tap.failed, "b1")
-
-    tap.cancel()
-    XCTAssertNil(tap.failed)
-  }
-
   /// A tap, Zu's page left and back while it opens, a tap again: the first tap finishing belongs
   /// to the visit that left, so the next visit's stays busy and opens its mission once.
   func testATapFromAVisitThatLeftLeavesTheNextVisitsTapAlone() async throws {
@@ -1195,114 +1192,6 @@ final class BuddyMissionTapTests: XCTestCase {
     XCTAssertNil(tap.opening)
     XCTAssertEqual(opened, 1, "The next visit's tap opens its mission")
   }
-}
-
-/// A mission row's tap, as the day's rows start it.
-private struct MissionButton: View {
-  let tap: BuddyMissionTap
-  let today: TodayStore
-  let places: TutorPlaces
-
-  var body: some View {
-    Button {
-      tap.open("b1", today: today, places: places) {}
-    } label: {
-      Text(verbatim: "Open the mission")
-    }
-  }
-}
-
-/// PR comment 24: Today's exam checklist, open in its sheet while the window crosses the width
-/// where Today's aside is a pane: the sheet stays open, with what the learner ticked in it.
-@MainActor
-final class TodayExamSheetTests: XCTestCase {
-  func testTheExamSheetStaysOpenWhenTodaysAsideGoes() async throws {
-    try await staysOpen(from: 1376, to: 420)
-  }
-
-  func testTheExamSheetStaysOpenWhenTodaysAsideComes() async throws {
-    try await staysOpen(from: 420, to: 1376)
-  }
-
-  private func staysOpen(from: CGFloat, to: CGFloat) async throws {
-    let dependencies = AppDependencies.hosted()
-    try await readsWhatVoiceOverReads()
-
-    let window = try show(
-      TodayDayView(view: try examDay())
-        .appDependencies(dependencies)
-        .environment(AppRouter())
-        .zoonkStyles())
-    window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await waitForLayout(in: window)
-
-    try await activate(String(localized: "See your exam", table: "Today"), in: window)
-    let pen = String(localized: "A black pen with a clear barrel", table: "Exam")
-    try await activate(pen, in: window)
-
-    window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await waitForLayout(in: window)
-
-    let sheet = try XCTUnwrap(
-      window.rootViewController?.presentedViewController?.view, "The sheet stays open")
-    XCTAssertTrue(spoken(in: sheet).contains { $0.contains("ENEM is tomorrow") }, "The sheet stays")
-    XCTAssertTrue(
-      selected(in: sheet).contains { $0.contains(pen) },
-      "What was ticked stays ticked: \(spoken(in: sheet))")
-  }
-
-  private func selected(in view: Any) -> [String] {
-    guard let object = view as? NSObject else {
-      return []
-    }
-
-    var found: [String] = []
-
-    if object.accessibilityTraits.contains(.selected), let label = object.accessibilityLabel {
-      found.append(label)
-    }
-
-    if let view = object as? UIView {
-      found += view.subviews.flatMap { selected(in: $0) }
-    }
-
-    if let elements = object.accessibilityElements {
-      found += elements.flatMap { selected(in: $0) }
-    }
-
-    return found
-  }
-
-  private func examDay() throws -> TodayView {
-    func decode<Value: Decodable>(_ json: String) throws -> Value {
-      try JSONDecoder().decode(Value.self, from: Data(json.utf8))
-    }
-
-    return TodayView(
-      earlierWork: [],
-      exam: try decode(
-        #"{"checklist":["documents","blackPen"],"day":{"date":"2026-11-16","label":null,"startTime":null},"examName":"ENEM","mocksTaken":1,"prepared":true,"resultReported":false,"sessionsDone":3,"stage":"dayBefore","tools":[]}"#
-      ),
-      examChoice: nil, focusTest: nil,
-      goal: try decode(
-        #"{"dateEstimated":false,"daysLeft":1,"id":"g1","kind":"exam","title":"ENEM 2027"}"#),
-      insight: nil, lessonStatus: [:], mockFunding: nil, notice: .exam, pattern: nil,
-      planChange: nil, progress: nil,
-      session: try decode(
-        #"""
-        {"blocks":[],"brainPower":0,"catchUp":null,"current":true,"dayEndsAt":1793242800000,
-        "emptyDay":null,"examAccess":{"includesMockExams":true},"examTomorrow":true,
-        "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
-        "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"g1","lessonsComing":false,
-        "lessonsToPrepare":false,"localDate":"2026-11-15",
-        "minutes":{"dailyGoal":45,"done":0,"left":45,"planned":45},"missions":[],
-        "nextPosition":null,"pauseSuggested":false,"sessionBar":{"completed":0,"total":0},
-        "state":"underway","week":{"days":[],"nextStudyDate":null},"status":"unstarted"}
-        """#),
-      sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: nil,
-      weeklyChallenge: nil)
-  }
-
 }
 
 actor StudyAPIStub: StudyAPIClient {

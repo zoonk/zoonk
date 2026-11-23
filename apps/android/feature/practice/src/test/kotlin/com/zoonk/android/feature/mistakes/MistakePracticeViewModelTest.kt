@@ -148,13 +148,13 @@ class MistakePracticeViewModelTest {
             api.answer = { practiceFeedback(isCorrect = false) }
             val store = MistakesStore(api, AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))) { "UTC" }
             val key = PracticeKey(goalId = null, skillId = null)
-            val first = MistakePracticeViewModel(key, store, SavedStateHandle()) { 0L }
+            val first = MistakePracticeViewModel(key, store, noChoices(), FakeSession(null), SavedStateHandle()) { 0L }
             started(first)
             first.answer()
             advanceUntilIdle()
 
             api.read = practice(practiceEntry(SECOND_MISTAKE, practiceQuestion(SECOND)))
-            val next = MistakePracticeViewModel(key, store, SavedStateHandle()) { 0L }
+            val next = MistakePracticeViewModel(key, store, noChoices(), FakeSession(null), SavedStateHandle()) { 0L }
             next.begin((next.practice.state.value as LoadState.Loaded).value)
             next.practice.load()
             advanceUntilIdle()

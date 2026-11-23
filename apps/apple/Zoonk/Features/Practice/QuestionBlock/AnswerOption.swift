@@ -14,7 +14,7 @@ struct AnswerOption: View {
   var marker: Int?
   var isPicked = false
   var result: AnswerOptionResult?
-  /// The learner's pick was a guess, so it's "Your guess", never "Your answer".
+  /// The learner's pick was a guess, so it says "Your guess".
   var isGuessed = false
   var isLocked = false
   var tag: AnyView?
@@ -73,20 +73,30 @@ struct AnswerOption: View {
   private var tagContent: some View {
     if let tag {
       tag
-    } else if let result {
-      Text(resultLabel(result))
+    } else if let result, let label = resultLabel(result) {
+      Text(label)
         .typeStyle(.tag)
         .foregroundStyle(tagColor(result))
-    } else if isPicked {
+    } else if isPicked && isGuessed {
       // Unspoken: VoiceOver already says the option is selected.
-      Text(isGuessed ? yourGuess : yourAnswer)
+      Text(yourGuess)
         .typeStyle(.tag)
         .foregroundStyle(Color(.foreground))
         .accessibilityHidden(true)
     }
   }
 
-  private var hasTag: Bool { tag != nil || result != nil || isPicked }
+  private var hasTag: Bool {
+    if tag != nil {
+      return true
+    }
+
+    if let result {
+      return resultLabel(result) != nil
+    }
+
+    return isPicked && isGuessed
+  }
 
   private var yourGuess: LocalizedStringResource {
     LocalizedStringResource(
@@ -94,28 +104,20 @@ struct AnswerOption: View {
       comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
   }
 
-  private var yourAnswer: LocalizedStringResource {
-    LocalizedStringResource(
-      "Your answer", table: "Practice",
-      comment: "Mark beside the learner's wrong pick once a question is graded.")
-  }
-
-  /// A right pick says whose it is, so it isn't called correct twice under its verdict.
-  private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource {
-    switch result {
-    case .guess:
+  /// The right option says "Correct" when the learner missed it. A pick needs no word of its own:
+  /// its color and the verdict say it, and only a guess, which counts as neither, says so.
+  private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource? {
+    if result == .guess || (isPicked && isGuessed) {
       return yourGuess
-    case .right:
-      if isPicked {
-        return isGuessed ? yourGuess : yourAnswer
-      }
-
-      return LocalizedStringResource(
-        "Correct", table: "Practice",
-        comment: "Mark beside the right option once a question is graded.")
-    case .wrong:
-      return yourAnswer
     }
+
+    guard result == .right, !isPicked else {
+      return nil
+    }
+
+    return LocalizedStringResource(
+      "Correct", table: "Practice",
+      comment: "Mark beside the right option once a question is graded.")
   }
 
   private func tagColor(_ result: AnswerOptionResult) -> Color {
@@ -127,8 +129,10 @@ struct AnswerOption: View {
   }
 }
 
-/// An answer's words and its tag. The tag moves under the words rather than leave them less than
-/// half the row or narrower than their widest line-break unit.
+/// An answer's words, or its code, and its tag. The tag moves under the words rather than leave them
+/// less than half the row or narrower than their widest line-break unit. Code keeps its shape, so its
+/// tag holds the card's end edge: on its last line while that line leaves room, and otherwise under
+/// it. Code never wraps to make room.
 struct TagBesideOrUnder: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.legibilityWeight) private var legibilityWeight
@@ -140,9 +144,15 @@ struct TagBesideOrUnder: View {
   var hasMarker = false
 
   var body: some View {
-    AnswerOptionLayout(isStacked: isStacked, hasTag: tag != nil, hasMarker: hasMarker) {
+    AnswerOptionLayout(
+      isStacked: isStacked, isCode: text.snippet != nil, hasTag: tag != nil, hasMarker: hasMarker
+    ) {
       VStack(alignment: .leading, spacing: 2) {
-        Text(text, legibility: legibilityWeight)
+        if let snippet = text.snippet {
+          CodeSnippet(code: snippet.code, language: snippet.language)
+        } else {
+          RichInlineText(text)
+        }
 
         if let detail {
           Text(verbatim: detail)
@@ -176,7 +186,17 @@ struct TagBesideOrUnder: View {
           }
         }
       }
+
+      if let snippet = text.snippet, tag != nil {
+        CodeSnippet(code: lastLine(of: snippet.code), language: snippet.language)
+          .hidden()
+          .accessibilityHidden(true)
+      }
     }
+  }
+
+  private func lastLine(of code: String) -> String {
+    String(code.split(separator: "\n", omittingEmptySubsequences: false).last ?? "")
   }
 
   private func readingUnits(in text: AttributedString) -> [AttributedString] {
@@ -211,6 +231,7 @@ struct TagBesideOrUnder: View {
 /// Text's minimum width can split a word or its punctuation, so probes measure whole line-break units.
 private struct AnswerOptionLayout: Layout {
   var isStacked: Bool
+  var isCode = false
   var hasTag: Bool
   var hasMarker: Bool
   private let spacing: CGFloat = 12
@@ -221,6 +242,12 @@ private struct AnswerOptionLayout: Layout {
     let fitting =
       proposal.width == nil && hasMarker
       ? ProposedViewSize(width: widestUnit(in: subviews), height: proposal.height) : proposal
+
+    if let width = fitting.width, tagEndsLastLine(width: width, subviews: subviews) {
+      let words = subviews[0].sizeThatFits(ProposedViewSize(width: width, height: nil))
+      return CGSize(width: width, height: words.height)
+    }
+
     let layout = layout(for: fitting, subviews: subviews)
     var layoutCache = layout.makeCache(subviews: content)
     return layout.sizeThatFits(proposal: fitting, subviews: content, cache: &layoutCache)
@@ -229,6 +256,20 @@ private struct AnswerOptionLayout: Layout {
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
+    if tagEndsLastLine(width: bounds.width, subviews: subviews) {
+      let wordsProposal = ProposedViewSize(width: bounds.width, height: nil)
+      let lastBaseline = subviews[0].dimensions(in: wordsProposal)[
+        VerticalAlignment.lastTextBaseline]
+      let tag = subviews[1].dimensions(in: .unspecified)
+      subviews[0].place(at: bounds.origin, proposal: wordsProposal)
+      subviews[1].place(
+        at: CGPoint(
+          x: bounds.maxX - tag.width,
+          y: bounds.minY + lastBaseline - tag[VerticalAlignment.firstTextBaseline]),
+        proposal: .unspecified)
+      return
+    }
+
     let content = subviews.prefix(hasTag ? 2 : 1)
     let layout = layout(
       for: ProposedViewSize(width: bounds.width, height: proposal.height), subviews: subviews)
@@ -236,22 +277,34 @@ private struct AnswerOptionLayout: Layout {
     layout.placeSubviews(in: bounds, proposal: proposal, subviews: content, cache: &layoutCache)
   }
 
+  /// Code's last line is the last subview, measured on its own.
+  private func tagEndsLastLine(width: CGFloat, subviews: Subviews) -> Bool {
+    guard isCode, hasTag, !isStacked, width.isFinite, let lastLine = subviews.last else {
+      return false
+    }
+
+    let tagWidth = subviews[1].sizeThatFits(.unspecified).width
+    return lastLine.sizeThatFits(.unspecified).width + spacing + tagWidth <= width
+  }
+
   private func layout(for proposal: ProposedViewSize, subviews: Subviews) -> AnyLayout {
     var stacked = isStacked
 
     if hasTag, let width = proposal.width, width.isFinite {
       let tagWidth = subviews[1].sizeThatFits(.unspecified).width
-      let readingWidth = max(width / 2, min(widestUnit(in: subviews), width))
+      let readingWidth = isCode ? width : max(width / 2, min(widestUnit(in: subviews), width))
       stacked = stacked || width - tagWidth - spacing < readingWidth
     }
 
+    // Under code, the tag keeps the card's end edge it holds on code's last line.
     return stacked
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
+      ? AnyLayout(VStackLayout(alignment: isCode ? .trailing : .leading, spacing: spacing))
       : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: spacing))
   }
 
   private func widestUnit(in subviews: Subviews) -> CGFloat {
-    subviews.dropFirst(2).map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
+    subviews.dropFirst(2).dropLast(isCode && hasTag ? 1 : 0)
+      .map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
   }
 }
 

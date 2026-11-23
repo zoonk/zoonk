@@ -1,4 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { todayFocusTestSchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
@@ -56,6 +57,7 @@ export const todayResponseSchema = z
             "Whole days until the goal's date, 0 on the day itself; null for a goal without one and once its date passed",
         }),
       displayName: z.string(),
+      examDocument: examDocumentSchema.optional(),
       id: uuidSchema(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),
@@ -168,7 +170,7 @@ export const todayResponseSchema = z
     }),
     weeklyChallenge: z
       .object({
-        access: z.enum(["open", "plusRequired"]),
+        access: z.enum(["open", "plusRequired", "preparing"]),
         date: logicalDateSchema.nullable(),
         kind: z.enum(["mixed", "mock"]),
         planItemId: uuidSchema()

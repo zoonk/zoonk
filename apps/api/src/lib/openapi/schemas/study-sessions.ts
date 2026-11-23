@@ -24,6 +24,10 @@ export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local
 
 export const studyWeekDaySchema = z
   .object({
+    completed: z
+      .int()
+      .nonnegative()
+      .meta({ description: "Completed day blocks, excluding extra work." }),
     date: logicalDateSchema,
     goalMinutes: z
       .number()
@@ -33,7 +37,12 @@ export const studyWeekDaySchema = z
           "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
         examples: [EXAMPLE_DAILY_MINUTES],
       }),
-    hitGoal: z.boolean(),
+    hitGoal: z
+      .boolean()
+      .meta({
+        description:
+          "The session first finished, or the day has no day blocks and the learner studied.",
+      }),
     isToday: z.boolean(),
     kind: z
       .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
@@ -52,6 +61,12 @@ export const studyWeekDaySchema = z
     studied: z
       .boolean()
       .meta({ description: "Any study of this goal counts, partial days included" }),
+    total: z
+      .int()
+      .nonnegative()
+      .meta({
+        description: "Day blocks not skipped, excluding extra work; zero without a session.",
+      }),
   })
   .meta({ id: "StudyWeekDay" });
 
@@ -69,7 +84,7 @@ export const extraTimeSchema = z
       .array(z.object({ minutes: z.number().int().min(0), title: z.string() }))
       .meta({
         description:
-          "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available",
+          "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done), when it isn't available, and on a day with lessons of its own still to come (`lessonsComing`, `lessonsToPrepare`, `emptyDay`) or with nothing new",
       }),
     minutes: z.number().int().min(0),
     reason: z
@@ -77,7 +92,7 @@ export const extraTimeSchema = z
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished",
+          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished (a scheduled mock still being prepared doesn't count)",
       }),
   })
   .meta({ id: "StudyExtraTime" });
@@ -130,7 +145,9 @@ export const studySessionResponseSchema = z
     pauseSuggested: z.boolean(),
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
-      .meta({ description: "One step per block still in the day, filled as blocks are done" }),
+      .meta({
+        description: "Completed day blocks and total day blocks not skipped, excluding extra work",
+      }),
     state: dayStateSchema,
     status: z.enum(StudySessionStatus),
     week: z

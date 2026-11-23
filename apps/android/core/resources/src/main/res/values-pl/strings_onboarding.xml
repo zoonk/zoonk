@@ -125,7 +125,6 @@
   "onboarding_language_test_preparing_description": "963974c9cf21fa782c4f9ef6bcf560bbe5560cd946a263861afdb1e496be05d7",
   "onboarding_language_test_preparing_title": "bf61be75c6284a62a65c4a6d5dffe3c5b242ecaff82c8343b096c5097b4bb5a2",
   "onboarding_language_test_reading": "05dd2e9dc31591b3e5a10fc5905d8fb6a7a614d90ec02040539e5768cfd51762",
-  "onboarding_language_test_say_it": "ecddc760110172839befc071cfef88e02c66d6bee424ab98f6c8a4e9aae81adc",
   "onboarding_language_test_skip": "2932c0432c1ee1a2f332d8336529f07bbe4599325c4ee17d9d423aa00295ee61",
   "onboarding_language_test_skip_note": "df89b0c659bd52b2c5a2e3230b53407c2717e0b63e569f6d29c329d1f7387ed8",
   "onboarding_language_test_skip_part": "e40985e7eb65b5a2a3998e0a3766d2e05c891edb964a65b6eef9f32f57b18e14",
@@ -325,7 +324,7 @@
   "onboarding_start_over_confirm": "c3c6c859cff999e9587a0c125ac4783d5dcb3f38a8f10ca36c4276af2fd11412",
   "onboarding_start_over_description": "c016c746202f8148bc857885feef66c803822418b12105feba7fa5ca3eb5a4f7",
   "onboarding_start_over_title": "ae3319eb62c3cdab8a05e0f464183e68108a53f8cf82289132b2f9d323d1b1b5",
-  "onboarding_start_title": "df5415d2b112d2848484ac24f152921928e41b5612fc374572701eea920091d6",
+  "onboarding_start_title": "a1c851fcebf38d78ca3993b0a579bd0e2dda2657ea22db51df716b77846756fe",
   "onboarding_step_of": "687d865bd79660a4c332ce717a9aecba250ae0148fe902e5392d3c8cf641ea1b",
   "onboarding_study_days": "5844468366721bbb6aed11552424891aaf34af5e404d4c8f230a93c743d4037b",
   "onboarding_study_material": "e6f69576dabaa04fa6b8d4d0a0fd8b4af6948134ce3971bf218bedeb7ab8735c",
@@ -350,7 +349,7 @@
   "onboarding_try_another_goal": "4e598011ea570ecd9adeed130c55236a48fc08b0f5e525e750eb780b719761bf",
   "onboarding_unclear_description": "ab9ca1683ecd5745ac9d1c4f94f621027849cc764a4b1c5e078b16ce1267b42b",
   "onboarding_unclear_title": "67c37cf98e9f8c20240abcc2d2c8957894e62ec2c0569b9d3a60f3d4e550b796",
-  "onboarding_understanding_description": "4f53e9c86ba01b0e86cf128d7b681686142c52a69c5d2d39307d7acbc86cf192",
+  "onboarding_understanding_description": "6ca6c982e8362d48f78805949c6dc3cb1aea355c2be521fd75a6e4f32c9d25b6",
   "onboarding_understanding_title": "ac327d7e0f7b39ce9e9a063b49068d6e1808f4af92af6753522fca7b535f8981",
   "onboarding_understood_description": "0f229bc90d9f09d8a535de3731c08980c6fd74cd325f688a8f97500878b31739",
   "onboarding_understood_description_shared": "06e56943cf885fd2971ebc2048071d709ed77b22fc26714b2c736024ebc460a6",
@@ -378,8 +377,7 @@
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Title of the screen where a learner writes their goal. -->
-    <string name="onboarding_start_title">Co chcesz osiągnąć?</string>
+    <string name="onboarding_start_title">Jaki masz cel?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description">Opisz to własnymi słowami. Ułożymy plan.</string>
     <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -428,7 +426,7 @@
     <string name="onboarding_back_to_today">Dziś</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Analizujemy twój cel</string>
-    <string name="onboarding_understanding_description">Potem sprawdzisz, jak rozumiemy twój cel.</string>
+    <string name="onboarding_understanding_description">Następnie pokażemy ci, jak rozumiemy twój cel.</string>
     <string name="onboarding_understood_title">Tak rozumiemy twój cel</string>
     <string name="onboarding_understood_description">Wszystko możesz później zmienić.</string>
     <!-- When the learner's words became more than one goal. -->
@@ -442,7 +440,6 @@
     <string name="onboarding_understood_locked_line_more">Wstrzymaj inny cel, by zacząć realizować te.</string>
     <string name="onboarding_looks_right">Potwierdź</string>
     <string name="onboarding_fix_something">Popraw coś</string>
-    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">Twój tekst</string>
     <string name="onboarding_rewrite_hint">Przeczytamy tekst jeszcze raz. Aby poprawić jeden szczegół, użyj ołówka przy odpowiednim polu poniżej.</string>
     <string name="onboarding_read_again">Przeczytaj jeszcze raz</string>
@@ -617,7 +614,6 @@
     <string name="onboarding_language_test_play_again">Odtwórz wiadomość ponownie</string>
     <string name="onboarding_language_test_message_loading">Przygotowujemy wiadomość. Za pierwszym razem może to potrwać kilka sekund.</string>
     <string name="onboarding_language_test_message">Masz wiadomość głosową. Posłuchaj i odpowiedz.</string>
-    <string name="onboarding_language_test_say_it">Powiedz to na głos</string>
     <string name="onboarding_language_test_skip_part">Pomiń tę część</string>
     <string name="onboarding_language_test_done_title">Twój poziom: %1$s</string>
     <string name="onboarding_language_test_done_description">Na podstawie testu. Z każdym tygodniem coraz dokładniej określamy twój poziom.</string>

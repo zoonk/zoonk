@@ -109,7 +109,26 @@ const PLAN: PlanView = {
   suggestedTime: null,
   tools: [],
   week: {
-    days: [{ date: "2026-11-16", items: [], minutes: 30, mockFunding: null, state: "today" }],
+    days: [
+      {
+        date: "2026-11-16",
+        items: [],
+        minutes: 30,
+        mockFunding: null,
+        state: "today",
+        study: {
+          completed: 0,
+          date: "2026-11-16",
+          goalMinutes: 30,
+          hitGoal: false,
+          isToday: true,
+          kind: "study",
+          minutes: 0,
+          studied: false,
+          total: 0,
+        },
+      },
+    ],
     endDate: "2026-11-22",
     startDate: "2026-11-16",
   },
@@ -152,6 +171,8 @@ function renderPlan(
     return answer.promise;
   });
 
+  const readPlanAgain = vi.fn<PlanActions["readPlanAgain"]>();
+
   const actions: PlanActions = {
     adviseOnBases,
     change,
@@ -160,6 +181,7 @@ function renderPlan(
     decide: async () => false,
     findTimeToCover: async () => null,
     preview,
+    readPlanAgain,
   };
 
   const screenFor = (plan: PlanView) => (
@@ -180,6 +202,7 @@ function renderPlan(
   return {
     change,
     preview,
+    readPlanAgain,
     releaseChange: () => heldChange.resolve({ change: null, status: "applied" }),
     /** Answers the oldest check still waiting; `null` is a check that failed. */
     releasePreview: (answer: PlanChangePreview | null = TODAY_PREVIEW) =>
@@ -403,6 +426,20 @@ describe("the Plan's offer to fit more lessons", () => {
     });
   });
 
+  it("reads the plan again when today's check finds the plan already holds it", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromCard(held);
+
+      held.release({ ...TODAY_PREVIEW, effect: null, unchanged: true });
+
+      await expect.poll(() => held.readPlanAgain).toHaveBeenCalledOnce();
+      expect(page.getByText("Your plan stays as it is.").query()).toBeNull();
+      expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+
   it("changes nothing when the learner says Not now before the check answers", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
@@ -499,7 +536,26 @@ const NEXT_DAY_PLAN: PlanView = {
   ...PLAN,
   week: {
     ...PLAN.week,
-    days: [{ date: "2026-11-17", items: [], minutes: 30, mockFunding: null, state: "today" }],
+    days: [
+      {
+        date: "2026-11-17",
+        items: [],
+        minutes: 30,
+        mockFunding: null,
+        state: "today",
+        study: {
+          completed: 0,
+          date: "2026-11-17",
+          goalMinutes: 30,
+          hitGoal: false,
+          isToday: true,
+          kind: "study",
+          minutes: 0,
+          studied: false,
+          total: 0,
+        },
+      },
+    ],
   },
 };
 

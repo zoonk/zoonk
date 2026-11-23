@@ -298,6 +298,10 @@ const RECOUNTED = { focusTest: { summary: { inputsKey: expect.any(String), quick
 
 describe(freshnessWorkflow, () => {
   beforeEach(() => {
+    // The stored notice's exam is on 22 November 2026, and a check after that day reads it as passed.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-15T12:00:00Z"));
+
     vi.mocked(generateSearchTerms).mockImplementation(
       async ({ subjects }) =>
         ({

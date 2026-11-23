@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
+import { getSelectedCoverage } from "./plan-coverage";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
-import { getSelectedCoverage } from "./selected-plan-summary";
 
 const TODAY = fromIsoDate("2026-10-12");
 

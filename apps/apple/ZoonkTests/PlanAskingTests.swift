@@ -52,8 +52,8 @@ final class PlanAskingTests: XCTestCase {
       await withTestVoidContinuation(file: file, line: line) { waiters.append((count, $0)) }
     }
 
-    func releaseNext(ready: Bool = true) {
-      held.removeFirst().resume(returning: Answer(id: asked.count, ready: ready))
+    func releaseNext() {
+      held.removeFirst().resume(returning: Answer(id: asked.count, ready: true))
     }
   }
 

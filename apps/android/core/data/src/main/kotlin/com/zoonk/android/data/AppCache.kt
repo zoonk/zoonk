@@ -10,7 +10,7 @@ import kotlin.time.TimeSource
 
 /** Call it on the main thread; [scope] is the app scope on `Dispatchers.Main.immediate`. */
 class AppCache(
-    private val session: SessionSource,
+    val session: SessionSource,
     private val scope: CoroutineScope,
     private val timeSource: TimeSource = TimeSource.Monotonic,
 ) {

@@ -33,6 +33,14 @@ export function useSessionState() {
   };
 }
 
+/** A block to play next, an extra one included: a done day can still have one. */
+export function useHasNextBlock(): boolean {
+  const { today } = useTodayScreen();
+  const { blocks, nextPosition } = today.session;
+
+  return blocks.some((block) => block.position === nextPosition);
+}
+
 /** A wait for the day's lessons that ran out asks for them, as a day nobody is preparing does. */
 export function useDayState(): DayState {
   const { today, writingStalled } = useTodayScreen();
@@ -74,24 +82,21 @@ export function isStopBeingWritten({
   );
 }
 
-export function useLessonGettingReady() {
+export function useStepGettingReady() {
   const { today, writingStalled } = useTodayScreen();
 
-  return (block: StopLesson): boolean =>
-    !writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus });
+  return (block: StopLesson & { preparing: boolean }): boolean =>
+    block.preparing ||
+    (!writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus }));
 }
 
 type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
 
+/** Core lists them only once the day has nothing of its own left to open. */
 export function useUpNextLessons(): UpNextLesson[] {
-  const state = useDayState();
   const pastDate = useTodayPastDate();
   const { today } = useTodayScreen();
   const { extraTime } = today.session;
 
-  if (pastDate || (state !== "done" && state !== "rest") || !extraTime.available) {
-    return [];
-  }
-
-  return extraTime.lessons;
+  return pastDate || !extraTime.available ? [] : extraTime.lessons;
 }

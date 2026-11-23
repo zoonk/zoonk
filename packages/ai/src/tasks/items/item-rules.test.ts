@@ -3,7 +3,7 @@ import { withItemRules } from "./item-rules";
 
 vi.mock("./item-rules.prompt.md", () => ({
   default:
-    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
+    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n{{#practice}}\n- Fit `LEVEL`.\n{{/practice}}\n{{#mock}}\n- Like the exam.\n{{/mock}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
 }));
 
 vi.mock("./item-rules/field.prompt.md", () => ({ default: "Set in `FIELD`.\n" }));
@@ -12,7 +12,11 @@ vi.mock("./item-rules/language-goals.prompt.md", () => ({
   default: "# Language goals\n\nPractice it.\n",
 }));
 
-vi.mock("./item-rules/pictures.prompt.md", () => ({ default: "- Charts.\n- Pictures.\n" }));
+vi.mock("./item-rules/pictures.prompt.md", () => ({
+  default: "- Charts.\n{{PLOT}}\n- Pictures.\n",
+}));
+
+vi.mock("./item-rules/plot.prompt.md", () => ({ default: "- Plots.\n" }));
 vi.mock("./item-rules/numeric-pictures.prompt.md", () => ({ default: "- No numeric pictures.\n" }));
 
 vi.mock("./item-rules/multiple-choice.prompt.md", () => ({
@@ -43,8 +47,8 @@ describe(withItemRules, () => {
     ).toBe(
       [
         "# Role",
-        "# Good\n\n- Concrete. Set in `FIELD`.\n- In `LANGUAGE`.\n",
-        "# Text\n\n- Tables.\n- Charts.\n- Pictures.\n- No em dashes.\n",
+        "# Good\n\n- Concrete. Set in `FIELD`.\n- Fit `LEVEL`.\n- In `LANGUAGE`.\n",
+        "# Text\n\n- Tables.\n- Charts.\n- Plots.\n- Pictures.\n- No em dashes.\n",
         "# Formats\n\n## multipleChoice\n\n- Options, one correct.\n",
         "# Final check\n\nIn `LANGUAGE`.\n",
       ].join("\n"),
@@ -58,7 +62,7 @@ describe(withItemRules, () => {
       languageGoal: false,
     });
 
-    expect(prompt).toContain("- Concrete.\n- In `LANGUAGE`.\n\n# Text");
+    expect(prompt).toContain("- Concrete.\n- Fit `LEVEL`.\n- In `LANGUAGE`.\n\n# Text");
     expect(prompt).toContain("- Tables.\n- No em dashes.");
     expect(prompt).toContain("# Formats\n\n## essay\n\n- Rubric.\n\n# Final check");
 
@@ -73,7 +77,7 @@ describe(withItemRules, () => {
     const scope = { field: false, formats: ["trueFalse"], languageGoal: false } as const;
 
     expect(withItemRules("# Role", { ...scope, usedSituations: true })).toContain(
-      "- Concrete.\n- Not a used situation.\n- In `LANGUAGE`.",
+      "- Concrete.\n- Not a used situation.\n- Fit `LEVEL`.\n- In `LANGUAGE`.",
     );
 
     expect(withItemRules("# Role", scope)).not.toContain("used situation");
@@ -156,5 +160,17 @@ describe(withItemRules, () => {
 
     expect(prompt).toContain("- Tables.\n- No em dashes.");
     expect(prompt).not.toMatch(/Charts|Pictures/u);
+  });
+
+  it("drops the lesson level for a mock, whose difficulty follows the exam", () => {
+    const prompt = withItemRules("# Role", {
+      field: false,
+      formats: ["trueFalse"],
+      languageGoal: false,
+      mock: true,
+    });
+
+    expect(prompt).toContain("- Concrete.\n- Like the exam.\n- In `LANGUAGE`.");
+    expect(prompt).not.toContain("LEVEL");
   });
 });

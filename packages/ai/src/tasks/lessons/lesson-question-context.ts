@@ -146,6 +146,7 @@ export type PlanScopeContext = {
   estimate: { endDate: string | null; remainingHours: number };
   /** Null for other goals and exams without a stored notice. */
   exam: ExamFactsContext | null;
+  examStrategyOffer?: { lessons: number };
   goal: {
     dailyMinutes: number;
     kind: string;

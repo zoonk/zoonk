@@ -5,13 +5,14 @@ import { type UnfundedMove } from "../plan-error-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
 import { moveWeeklyEvent } from "./move-weekly-event";
 import { addDays, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
-import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
+import { DAYS_PER_WEEK, type PlanState } from "./plan-state";
 import { setTools } from "./plan-tools";
 import { applyStudyOperation, isStudyOperation } from "./study-operations";
 
 export type PlanOperationError =
   | "badMove"
   | "baseChoiceClosed"
+  | "extraUnavailable"
   | "mockCollision"
   | "moveBeforeNextMonday"
   | "noStudyDays"
@@ -101,7 +102,9 @@ function addSkills({
   skills: readonly AddedSkill[];
   state: PlanState;
 }): PlanState {
-  const present = new Set(state.graph.skills.map((skill) => skill.skillId));
+  const present = new Set(
+    [...state.graph.skills, ...(state.graph.extraSkills ?? [])].map((skill) => skill.skillId),
+  );
 
   const graphSkills = skills
     .filter((added) => !present.has(added.skillId))
@@ -120,6 +123,7 @@ function addSkills({
         name: added.name,
         phase: anchor?.phase ?? 0,
         skillId: added.skillId,
+        topics: [],
         weight: anchor?.weight ?? null,
       };
 
@@ -127,28 +131,6 @@ function addSkills({
     }, state.graph.skills);
 
   return { ...state, graph: { ...state.graph, skills: graphSkills } };
-}
-
-function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanState }): PlanState {
-  if (!graph) {
-    return state;
-  }
-
-  const noticeIds = new Set(graph.skills.map((skill) => skill.skillId));
-  const current = state.graph.skills;
-
-  const skills = current.reduce((list, skill, index) => {
-    if (noticeIds.has(skill.skillId)) {
-      return list;
-    }
-
-    const next = current.slice(index + 1).find((later) => noticeIds.has(later.skillId));
-    const at = next ? list.findIndex((item) => item.skillId === next.skillId) : -1;
-
-    return at === -1 ? [...list, skill] : [...list.slice(0, at), skill, ...list.slice(at)];
-  }, graph.skills);
-
-  return { ...state, graph: { phases: graph.phases, skills } };
 }
 
 function withTargetDate({
@@ -202,14 +184,12 @@ function setExamChoice({
 function applyOperation({
   goalKind,
   maxDailyMinutes,
-  noticeGraph,
   operation,
   state,
   today,
 }: {
   goalKind: GoalKind;
   maxDailyMinutes: number;
-  noticeGraph: PlanGraph | null;
   operation: PlanOperation;
   state: PlanState;
   today: string;
@@ -285,7 +265,7 @@ function applyOperation({
     case "setTools":
       return { state: setTools({ state, tools: operation.tools }) };
     case "followNotice":
-      return { state: followNotice({ graph: noticeGraph, state }) };
+      return { state };
     case "setNoticeDate":
       return withTargetDate({
         noticeDate: operation.targetDate,
@@ -318,19 +298,17 @@ function applyOperation({
 export function applyPlanOperations({
   goalKind,
   maxDailyMinutes = MAX_PICKABLE_DAILY_MINUTES,
-  noticeGraph = null,
   operations,
   state,
   today,
 }: {
   goalKind: GoalKind;
   maxDailyMinutes?: number;
-  noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
   state: PlanState;
   today: Date;
 }): OperationResult {
-  const options = { goalKind, maxDailyMinutes, noticeGraph, today: toIsoDate(today) };
+  const options = { goalKind, maxDailyMinutes, today: toIsoDate(today) };
 
   return operations.reduce<OperationResult>(
     (result, operation) =>

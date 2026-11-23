@@ -1309,16 +1309,6 @@ msgctxt "b0QQkx"
 msgid "The sound plays: {notes}"
 msgstr "재생되는 음: {notes}"
 
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "xAzh1Y"
-msgid "I can listen now"
-msgstr "이제 들을 수 있어요"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "K8wsFm"
-msgid "I can't listen now"
-msgstr "지금은 들을 수 없어요"
-
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
 msgid "Spot {number}: empty"
@@ -2817,6 +2807,16 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "단어를 골라 답을 만드세요"
 
+#: src/components/cant-listen-switch.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "이제 들을 수 있어요"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "지금은 들을 수 없어요"
+
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx
 msgctxt "3W8LgY"
@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "오늘은 쓰기 문제를 건너뛰어요."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "이번에는 답을 확인하지 못했어요. 다시 시도해 보세요."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "다시 들어 보세요"
@@ -3427,6 +3417,12 @@ msgstr "다시 들어 보세요"
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "아직 정답은 아니에요. 다시 살펴보고 직접 고친 뒤 확인해 보세요."
+
+#. Opens the figures shown at the start of a challenge.
+#: src/lesson/steps/challenge/challenge-conversation.tsx
+msgctxt "sMBshP"
+msgid "Starting figures"
+msgstr "시작 수치"
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
@@ -3549,18 +3545,6 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "답을 써 주세요"
 
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "듣고 있어요… 답을 확인하려면 중지를 누르세요."
-
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
@@ -3581,11 +3565,6 @@ msgstr "이제 말할 수 있어요"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "대신 말로 답하기"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "pjy2sy"
-msgid "Type what you'd say"
-msgstr "말할 내용을 입력하세요"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "eUqe2x"

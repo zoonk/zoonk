@@ -247,10 +247,62 @@ final class PlanStoreTests: XCTestCase {
     await api.setPreview(preview(effect: offer.effect))
     var applied: [[PlanEdit]] = []
 
-    let check = await makeStore(api: api).addFitOffer(offer, goalId: "goal") { applied.append($0) }
+    let check = await makeStore(api: api).addOffer(offer, goalId: "goal") { applied.append($0) }
 
     XCTAssertEqual(check, .applied)
     XCTAssertEqual(applied.count, 1)
+  }
+
+  func testAnOfferThePlanNoLongerTakesReadsThePlanAgainSoItLeaves() async throws {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    var applied: [[PlanEdit]] = []
+
+    let check = await store.addOffer(try fitOffer(), goalId: "goal") { applied.append($0) }
+    await api.setChanged(true)
+    await plan.load()
+
+    XCTAssertEqual(check, .refused)
+    XCTAssertEqual(applied, [])
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
+  }
+
+  func testAnOfferThePlanAlreadyHoldsReadsThePlanAgainSoItLeaves() async throws {
+    let api = PlanAPIStub()
+    await api.setPreview(
+      PlanChangePreview(
+        effect: nil, feasibility: nil, finishDate: nil, ready: true, unchanged: true))
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    var applied: [[PlanEdit]] = []
+
+    let check = await store.addOffer(try fitOffer(), goalId: "goal") { applied.append($0) }
+    await api.setChanged(true)
+    await plan.load()
+
+    XCTAssertEqual(check, .refused)
+    XCTAssertEqual(applied, [])
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
+  }
+
+  func testARefusedChangeReadsThePlanAgain() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    await api.setChangeOutcome(.invalid)
+
+    await PlanEditor(goalId: "goal", store: store).change([.dailyMinutes(20)], sentence: "")
+    await api.setChanged(true)
+    await plan.load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
   }
 
   func testAFitOfferPutOffWhileItsCheckWaitsChangesNothing() async throws {
@@ -261,7 +313,7 @@ final class PlanStoreTests: XCTestCase {
     let store = makeStore(api: api)
     var applied: [[PlanEdit]] = []
 
-    let check = Task { await store.addFitOffer(offer, goalId: "goal") { applied.append($0) } }
+    let check = Task { await store.addOffer(offer, goalId: "goal") { applied.append($0) } }
     try await api.waitForHeldCall()
     check.cancel()
     await api.releaseHeldCall()
@@ -539,9 +591,9 @@ final class PlanStoreTests: XCTestCase {
   }
 
   /// A fixed clock and zone: a real one in the minute after midnight puts a plan's read on the day before.
-  private func fitOffer() throws -> GoalPlan.FitOffer {
+  private func fitOffer() throws -> GoalPlan.Offer {
     try JSONDecoder().decode(
-      GoalPlan.FitOffer.self,
+      GoalPlan.Offer.self,
       from: Data(
         #"""
         {"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,
@@ -570,20 +622,6 @@ final class PlanStoreTests: XCTestCase {
 
 @MainActor
 final class PlanReadsOnScreenTests: XCTestCase {
-  func testThePrerequisitesSheetAsksOnceAcrossAReopen() async throws {
-    let api = PlanAPIStub()
-    let screen = try Screen(api: api)
-    try show(screen.view { $0.basesSheet })
-    try await waitForTestCondition("Advice did not finish") {
-      screen.store.basesAdvice(goalId: "goal").value != nil
-    }
-
-    try await screen.reopen()
-
-    let calls = await api.calls
-    XCTAssertEqual(calls.advice, 1)
-  }
-
   func testTheTimeSectionAsksOnceAcrossAReopen() async throws {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
@@ -624,91 +662,22 @@ final class PlanReadsOnScreenTests: XCTestCase {
     XCTAssertEqual(timeToCover.freshValue?.targetDate, "2027-11-14")
   }
 
-  func testReopeningThePrerequisitesSheetWhileItAsksAsksNothingMore() async throws {
+  func testReopeningTheTimeSectionWhileItAsksAsksNothingMore() async throws {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
-    await api.hold(.advice)
-    try show(screen.view { $0.basesSheet })
+    await api.hold(.timeToCover)
+    try show(screen.view { $0.timeSection })
     try await api.waitForHeldCall()
 
     try await screen.reopen()
     await api.releaseHeldCall()
-    try await waitForTestCondition("Advice did not finish") {
-      screen.store.basesAdvice(goalId: "goal").value != nil
-    }
-
-    let calls = await api.calls
-    XCTAssertEqual(calls.advice, 1)
-    XCTAssertEqual(PlanBasesView.recommended(screen.store.basesAdvice(goalId: "goal")), .essential)
-  }
-
-  /// No blank room waits for the offer: the row under the time sits right under the sentence until
-  /// the offer comes and takes its place.
-  func testTheTimeSectionHoldsNoRoomForAnOfferStillComing() async throws {
-    let api = PlanAPIStub()
-    await api.setSuggested(
-      TimeToCover.Suggested(kind: .everything, minutes: 60, split: nil))
-    let rows = try await rowUnderTimeSection(api: api) { await api.releaseHeldCall() }
-
-    XCTAssertGreaterThan(
-      rows.last ?? 0, rows.first ?? 0, "The row under it didn't make way for the offer: \(rows)")
-  }
-
-  /// Where the row under the time section sits, at a large text size in a narrow column, from the
-  /// moment the time is asked until after `answer` lets it land.
-  private func rowUnderTimeSection(
-    api: PlanAPIStub, answer: () async -> Void
-  ) async throws -> [CGFloat] {
-    let screen = try Screen(api: api)
-    var rows: [CGFloat] = []
-    await api.hold(.timeToCover)
-
-    try show(
-      screen.view { screen in
-        List {
-          PlanTimeSection(
-            editor: screen.editor, goal: screen.goal, plan: screen.plan, weekendOn: false)
-
-          Text(verbatim: "Next row")
-            .onGeometryChange(for: CGFloat.self, of: { $0.frame(in: .global).minY }) {
-              rows.append($0)
-            }
-        }
-        .frame(width: 320)
-        .dynamicTypeSize(.accessibility2)
-      })
-    try await api.waitForHeldCall()
-    try await waitForTestCondition("The measured row did not appear") { !rows.isEmpty }
-
-    await answer()
     try await waitForTestCondition("Time-to-cover did not finish") {
-      screen.store.timeToCover(goalId: "goal").freshState != .loading
+      screen.store.timeToCover(goalId: "goal").freshValue != nil
     }
-    return rows
-  }
 
-  func testThePrerequisitesSheetAsksAgainOnAVisitAfterAFailedRead() async throws {
-    let api = PlanAPIStub()
-    let screen = try Screen(api: api)
-    let advice = screen.store.basesAdvice(goalId: "goal")
-    await advice.load()
-    XCTAssertNotNil(advice.freshValue)
-
-    await screen.editor.change([.dailyMinutes(45)], sentence: "")
-    await api.setAdviceFails(true)
-    try show(screen.view { $0.basesSheet })
-    try await waitForTestCondition("Advice did not fail") {
-      if case .failed = advice.freshState { return true }
-      return false
-    }
-    await api.setAdviceFails(false)
-    try await screen.reopen()
-
-    try await waitForTestCondition("Advice did not reload") {
-      advice.freshValue != nil
-    }
     let calls = await api.calls
-    XCTAssertEqual(calls.advice, 3, "the visit after a failed read asks again")
+    XCTAssertEqual(calls.timeToCover, 1)
+    XCTAssertEqual(screen.store.timeToCover(goalId: "goal").freshValue?.targetDate, "2027-11-14")
   }
 }
 
@@ -733,12 +702,6 @@ private final class Screen {
   var timeSection: some View {
     List {
       PlanTimeSection(editor: editor, goal: goal, plan: plan, weekendOn: false)
-    }
-  }
-
-  var basesSheet: some View {
-    NavigationStack {
-      PlanBasesView(editor: editor, goal: goal, plan: plan, bases: GoalPlan.Bases(items: []))
     }
   }
 
@@ -813,7 +776,6 @@ actor PlanAPIStub: PlanAPIClient {
   private var shownPlan: GoalPlan?
   private var fittingDate: String?
   private var end = PlanEnd(certificates: nil, next: nil)
-  private var languageUnitsRead: LanguageUnitsOverview?
   private var heldCall: TestContinuation<Void>?
 
   private var heldKind: HeldCall?
@@ -836,7 +798,6 @@ actor PlanAPIStub: PlanAPIClient {
   func setPlanEnd(_ end: PlanEnd) { self.end = end }
   /// The later end date the time to cover finds for a passed one.
   func setFittingDate(_ date: String) { fittingDate = date }
-  func setLanguageUnits(_ units: LanguageUnitsOverview) { languageUnitsRead = units }
   /// Every read answers the same plan, as a read after progress that changed nothing it plans does.
   func setPlanId(_ id: String) { planId = id }
   func setToday(_ day: String) { today = day }
@@ -876,14 +837,6 @@ actor PlanAPIStub: PlanAPIClient {
       "The released plan operation did not finish", file: file, line: line
     ) {
       await self.completionCount(kind) > before
-    }
-  }
-
-  func waitForCompleted(
-    _ kind: HeldCall, count: Int = 1, file: StaticString = #filePath, line: UInt = #line
-  ) async throws {
-    try await waitForTestCondition("The plan operation did not complete", file: file, line: line) {
-      await self.completionCount(kind) >= count
     }
   }
 
@@ -965,11 +918,7 @@ actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview {
-    guard let languageUnitsRead else {
-      throw APIError.notFound
-    }
-
-    return languageUnitsRead
+    throw APIError.notFound
   }
   func planEnd(token: String, goalId: String) async throws -> PlanEnd {
     end

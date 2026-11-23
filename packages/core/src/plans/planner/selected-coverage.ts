@@ -48,6 +48,7 @@ function listScope({
   const pastBasics = getHarderStartSkillIds(input);
 
   const skills = input.graph.skills
+    .filter((skill) => !skill.extra)
     .map((skill) => ({
       area: getSkillArea({ graph: input.graph, skill }),
       skillId: skill.skillId,
@@ -243,7 +244,7 @@ export function getCoverage({
       (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
     ),
     known: settled,
-    skills: input.graph.skills,
+    skills: input.graph.skills.filter((skill) => !skill.extra),
   });
 
   const skills = scope.skills.map(({ skillId, worth }) => {

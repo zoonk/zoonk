@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Title of the screen where a learner writes their goal. -->
-    <string name="onboarding_start_title">What do you want to achieve?</string>
+    <string name="onboarding_start_title">What\'s your goal?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description">Tell us in your own words. We\'ll build the plan.</string>
     <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -51,7 +50,7 @@
 
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Understanding your goal</string>
-    <string name="onboarding_understanding_description">Next, you check what we understood.</string>
+    <string name="onboarding_understanding_description">Next, we\'ll show you what we understood.</string>
 
     <string name="onboarding_understood_title">Here\'s what we understood</string>
     <string name="onboarding_understood_description">You can change all of this later.</string>
@@ -66,7 +65,6 @@
     <string name="onboarding_understood_locked_line_more">Pause another goal to start these.</string>
     <string name="onboarding_looks_right">Looks right</string>
     <string name="onboarding_fix_something">Fix something</string>
-    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">What you wrote</string>
     <string name="onboarding_rewrite_hint">We\'ll read it again. To fix one detail, use its pencil below.</string>
     <string name="onboarding_read_again">Read it again</string>
@@ -243,7 +241,6 @@
     <string name="onboarding_language_test_play_again">Play the message again</string>
     <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
     <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
-    <string name="onboarding_language_test_say_it">Say it out loud</string>
     <string name="onboarding_language_test_skip_part">Skip this part</string>
     <string name="onboarding_language_test_done_title">Your %1$s level</string>
     <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>

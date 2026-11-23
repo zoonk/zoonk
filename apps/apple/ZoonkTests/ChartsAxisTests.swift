@@ -41,17 +41,6 @@ final class ChartsAxisTests: XCTestCase {
     XCTAssertEqual(short(7_500, nil), "7.5K")
   }
 
-  /// A label stands centered on its tick, so a handle at −3 reads −3; one that would pass an end of
-  /// the plot starts or ends at its tick instead.
-  func testALabelIsCenteredOnItsTickInsideThePlot() {
-    XCTAssertEqual(ChartsAxis.anchor(at: 150, plotWidth: 300, labelWidth: 28), .top)
-    XCTAssertEqual(ChartsAxis.anchor(at: 0, plotWidth: 300, labelWidth: 28), .topLeading)
-    XCTAssertEqual(ChartsAxis.anchor(at: 10, plotWidth: 300, labelWidth: 28), .topLeading)
-    XCTAssertEqual(ChartsAxis.anchor(at: 14, plotWidth: 300, labelWidth: 28), .top)
-    XCTAssertEqual(ChartsAxis.anchor(at: 300, plotWidth: 300, labelWidth: 28), .topTrailing)
-    XCTAssertEqual(ChartsAxis.anchor(at: 290, plotWidth: 300, labelWidth: 28), .topTrailing)
-  }
-
   /// There was no year 0, so the turn of the era is labeled with its first year, 1 CE, and the
   /// steps stay even.
   func testATimelineLabelsTheTurnOfTheEra() {

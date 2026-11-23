@@ -10,6 +10,7 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
+import { getNextBlock } from "../day-blocks";
 import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadCarriedItemIds } from "./catch-up";
 import { getGoalDayMinutes } from "./day-minutes";
@@ -17,8 +18,9 @@ import { getDayCatchUp, getDayProgress } from "./day-progress";
 import { loadExamPrepAccess } from "./load-exam-access";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { getDayOutlines } from "./outlining-stand-ins";
+import { persistSavedMockReview } from "./saved-mock-review";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
-import { getNextBlockId, getSessionBar } from "./session-view";
+import { getSessionBar } from "./session-view";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -75,6 +77,7 @@ export async function loadSessionTime({
           planSettings: plan?.settings,
         })
       : 0,
+    endedAt: session.endedAt,
     planned: getVisibleSessionTotal({
       blocks: stored.blocks,
       planned: stored.plannedMinutes,
@@ -121,10 +124,12 @@ export async function loadCompletionQueue({
   timeZone: string;
   userId: string;
 }) {
-  const stored = await prisma.studySession.findFirstOrThrow({
+  const beforeReview = await prisma.studySession.findFirstOrThrow({
     include: STUDY_SESSION_INCLUDE,
     where: { id: sessionId, userId },
   });
+
+  const stored = await persistSavedMockReview({ session: beforeReview, timeZone });
 
   const [{ minutes, plan, reserved, session }, carriedItemIds] = await Promise.all([
     loadSessionTime({ stored, userId }),
@@ -136,8 +141,8 @@ export async function loadCompletionQueue({
     areLessonsComing({ plan, reserved, session }),
   ]);
 
-  const nextBlockId = getNextBlockId(session.blocks);
-  const nextBlock = projection.blocks.find((block) => block.id === nextBlockId) ?? null;
+  const nextBlock = getNextBlock(projection.blocks);
+  const nextBlockId = nextBlock?.id ?? null;
   const sessionBar = getSessionBar(session.blocks);
   const sessionCompleted = session.status === "completed" && nextBlockId === null;
 
@@ -153,7 +158,7 @@ export async function loadCompletionQueue({
         freshStart: session.freshStart,
         items: plan?.items ?? [],
       }),
-      complete: sessionCompleted,
+      complete: session.endedAt !== null,
       lessonsComing,
       reserved,
       sessionBar,

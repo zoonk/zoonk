@@ -21,7 +21,8 @@ import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-c
 import { MomentHeader } from "../../session/moment-header";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { RecordButton } from "../../speech/record-button";
-import { PronunciationWord, RecorderStatus, useWordRecorder } from "./pronunciation-word-card";
+import { useRecordNote } from "../../speech/record-note";
+import { PronunciationWord, useWordRecorder } from "./pronunciation-word-card";
 import { type PronunciationRoundActions, usePronunciationRound } from "./use-pronunciation-round";
 
 export type {
@@ -108,6 +109,17 @@ export function PronunciationReviewScreen({
   const mic = useWordRecorder(round.record);
   const { current, step } = round;
   const total = round.segments.length;
+  const recording = mic.recorder.status === "recording";
+  const ready = step.kind === "word" && step.word.kind === "ready" ? step.word : null;
+
+  const note = useRecordNote({
+    checking: round.isPending,
+    problem: ready?.notice,
+    recording,
+    unavailable: mic.available
+      ? null
+      : t("The microphone isn't available here. You can skip this word."),
+  });
 
   if (step.kind === "result" || !current) {
     const result = step.kind === "result" ? step.result : null;
@@ -144,9 +156,7 @@ export function PronunciationReviewScreen({
   }
 
   const graded = step.word.kind === "graded" ? step.word.grade : null;
-  const notice = step.word.kind === "ready" ? step.word.notice : null;
   const isLast = round.index + 1 === total;
-  const recording = mic.recorder.status === "recording";
 
   const position = t("Word {current, number} of {total, number}", {
     current: round.index + 1,
@@ -171,6 +181,7 @@ export function PronunciationReviewScreen({
           />
         </>
       }
+      footerNote={ready && note}
       headerEnd={
         !graded &&
         mic.available && <WordMenu disabled={round.isPending || recording} onSkip={round.next} />
@@ -183,17 +194,7 @@ export function PronunciationReviewScreen({
       }}
     >
       <PronunciationWord key={current.id} language={reviews.language} word={current} />
-
-      {graded ? (
-        <GradeNote grade={graded} />
-      ) : (
-        <RecorderStatus
-          available={mic.available}
-          notice={notice}
-          pending={round.isPending}
-          recording={recording}
-        />
-      )}
+      {graded && <GradeNote grade={graded} />}
     </TaskFrame>
   );
 }
@@ -242,7 +243,7 @@ function WordActions({
   return (
     <TaskActions>
       <RecordButton
-        busy={mic.status === "acquiring"}
+        busy={mic.status === "acquiring" || round.isPending}
         disabled={round.isPending}
         elapsedMs={mic.elapsedMs}
         onStart={() => void mic.start()}

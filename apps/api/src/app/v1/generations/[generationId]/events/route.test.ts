@@ -4,6 +4,7 @@ import { getRun } from "workflow/api";
 import { GET as streamGenerationEvents } from "./route";
 
 const RUN_ID = "wrun_cancelled";
+const PAPER = 'mock-paper:goal:["full",1,null]';
 
 const WRITTEN = [
   'data: {"status":"completed","step":"understandGoal"}\n\n',
@@ -12,27 +13,40 @@ const WRITTEN = [
 
 /** A cancelled run's stream holds what it wrote and stays open, as Workflow leaves it. */
 function cancelledRun() {
+  const getReadable = vi.fn(({ startIndex = 0 }: { startIndex?: number } = {}) =>
+    Object.assign(
+      new ReadableStream<string>({
+        start: (controller) => {
+          WRITTEN.slice(startIndex).forEach((chunk) => controller.enqueue(chunk));
+        },
+      }),
+      { getTailIndex: () => Promise.resolve(WRITTEN.length - 1) },
+    ),
+  );
+
   vi.mocked(getRun).mockReturnValue({
     exists: Promise.resolve(true),
-    getReadable: ({ startIndex = 0 }: { startIndex?: number } = {}) =>
-      Object.assign(
-        new ReadableStream<string>({
-          start: (controller) => {
-            WRITTEN.slice(startIndex).forEach((chunk) => controller.enqueue(chunk));
-          },
-        }),
-        { getTailIndex: () => Promise.resolve(WRITTEN.length - 1) },
-      ),
+    getReadable,
     status: Promise.resolve("cancelled"),
   } as unknown as ReturnType<typeof getRun>);
+
+  return getReadable;
 }
 
 /** What the stream sent, or null when it was still open a second later. */
-async function readEvents(startIndex?: number): Promise<string | null> {
-  const query = startIndex === undefined ? "" : `?startIndex=${startIndex}`;
+async function readEvents(startIndex?: number, namespace?: string): Promise<string | null> {
+  const query = new URLSearchParams();
+
+  if (startIndex !== undefined) {
+    query.set("startIndex", String(startIndex));
+  }
+
+  if (namespace) {
+    query.set("namespace", namespace);
+  }
 
   const response = await streamGenerationEvents(
-    new NextRequest(`http://localhost/v1/generations/${RUN_ID}/events${query}`),
+    new NextRequest(`http://localhost/v1/generations/${RUN_ID}/events?${query}`),
     { params: Promise.resolve({ generationId: RUN_ID }) },
   );
 
@@ -59,6 +73,13 @@ describe("GET /v1/generations/{generationId}/events", () => {
     cancelledRun();
 
     await expect(readEvents()).resolves.toBe(WRITTEN.join(""));
+  });
+
+  it("resumes the requested mock paper stream even after its run ended", async () => {
+    const getReadable = cancelledRun();
+
+    await expect(readEvents(1, PAPER)).resolves.toBe(WRITTEN[1]);
+    expect(getReadable).toHaveBeenCalledWith({ namespace: PAPER, startIndex: 1 });
   });
 
   it("resumes an ended run from the event asked for and still ends it", async () => {

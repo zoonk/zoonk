@@ -75,6 +75,26 @@ function scheduleOperationSchemas(maxDailyMinutes: number) {
   ] as const;
 }
 
+const setAreaStartOperationSchema = z
+  .object({
+    areas: areasSchema.min(1),
+    kind: z.literal("setAreaStart"),
+    start: z
+      .enum(AREA_STARTS)
+      .meta({
+        description:
+          "pastBasics: these areas start past their foundations, at their higher bands (the learner said their lessons are too basic). basics: they start from their foundations again",
+      }),
+  })
+  .strict();
+
+const setExtrasOperationSchema = z
+  .object({ kind: z.literal("setExtras"), skillIds: z.array(z.string().min(1)).max(100) })
+  .strict()
+  .describe(
+    "Sets the optional exam skills the learner chose. New skills must be offered by the current plan.",
+  );
+
 function makePlanOperationSchema(maxDailyMinutes: number) {
   return z.discriminatedUnion("kind", [
     ...scheduleOperationSchemas(maxDailyMinutes),
@@ -211,18 +231,8 @@ function makePlanOperationSchema(maxDailyMinutes: number) {
         description:
           "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals",
       }),
-    z
-      .object({
-        areas: areasSchema.min(1),
-        kind: z.literal("setAreaStart"),
-        start: z
-          .enum(AREA_STARTS)
-          .meta({
-            description:
-              "pastBasics: these areas start past their foundations, at their higher bands (the learner said their lessons are too basic). basics: they start from their foundations again",
-          }),
-      })
-      .strict(),
+    setAreaStartOperationSchema,
+    setExtrasOperationSchema,
   ]);
 }
 

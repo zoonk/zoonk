@@ -139,31 +139,6 @@ struct PracticeImage: Hashable, Sendable, Decodable {
   let width: Int?
 }
 
-enum PracticeVisual: Hashable, Sendable, Decodable {
-  case chart(LessonChart)
-  case timeline(PracticeTimeline)
-
-  private enum CodingKeys: String, CodingKey { case kind }
-
-  init(from decoder: any Decoder) throws {
-    let kind = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .kind)
-    self =
-      kind == "timeline"
-      ? .timeline(try PracticeTimeline(from: decoder)) : .chart(try LessonChart(from: decoder))
-  }
-}
-
-struct PracticeTimeline: Hashable, Sendable, Decodable {
-  struct Event: Hashable, Sendable, Decodable {
-    let date: String
-    let detail: String?
-    let label: String
-  }
-
-  let events: [Event]
-  let title: String
-}
-
 struct PracticeTranscriptLine: Hashable, Sendable, Decodable {
   let speaker: String
   let text: String
@@ -195,7 +170,7 @@ struct PracticeItemSet: Hashable, Sendable, Decodable {
   let source: String?
   let text: String?
   let title: String?
-  let visual: PracticeVisual?
+  let visual: LessonVisual?
 }
 
 struct PracticeCitation: Hashable, Sendable, Decodable {
@@ -271,7 +246,7 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
   var set: PracticeItemSet?
   var skillId: String?
   var unit: PracticeNumericUnit?
-  var visual: PracticeVisual?
+  var visual: LessonVisual?
 
   var id: String { itemId }
 
@@ -318,7 +293,7 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
     set = try container.decodeIfPresent(PracticeItemSet.self, forKey: .set)
     skillId = try container.decodeIfPresent(String.self, forKey: .skillId)
     unit = try container.decodeIfPresent(PracticeNumericUnit.self, forKey: .unit)
-    visual = try container.decodeIfPresent(PracticeVisual.self, forKey: .visual)
+    visual = try container.decodeIfPresent(LessonVisual.self, forKey: .visual)
   }
 }
 
@@ -368,7 +343,6 @@ struct PracticeBlock: Hashable, Sendable, Decodable {
   let capsules: [PracticeCapsule]
   let checkpoint: PracticeBlockCheckpoint?
   let estimatedMinutes: Int
-  let extra: Bool
   let fullReview: Bool
   let id: String
   let kind: Kind

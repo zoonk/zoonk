@@ -33,6 +33,7 @@ export function challengePlanFixture(): ChallengePlan {
         pull: "The manager wants an answer now",
         situation: "Version B is ahead after one day",
         skills: ["chance"],
+        visual: null,
       },
       {
         choices: [
@@ -62,6 +63,7 @@ export function challengePlanFixture(): ChallengePlan {
         pull: "The manager wants one line",
         situation: "The manager asks what to tell the team",
         skills: ["explain"],
+        visual: null,
       },
     ],
     endings: [
@@ -88,5 +90,6 @@ export function challengePlanFixture(): ChallengePlan {
       { ai: true, expertise: "Runs checks", id: "ai", role: "AI assistant" },
     ],
     title: "Is version B ready?",
+    visuals: [],
   };
 }

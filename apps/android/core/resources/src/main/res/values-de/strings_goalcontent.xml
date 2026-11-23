@@ -5,7 +5,6 @@
   "goalcontent_adjust_plan": "3d7265c4323202eefcda27104464ac78ef11e7fabcab634ef2d05948220d10fd",
   "goalcontent_also_in_exam_count": "f59428d55a41aec5a38f4c59d6762d34ecc6345951610c9f1c4d200e7c5b37c7",
   "goalcontent_also_in_exams": "238fa410145c103d7b1604b8a3b30c5a0bd382929cdef4850161d3d833a33f78",
-  "goalcontent_also_in_plan": "40b142a39287bf335dded0d1b18aaee0c92192bb211858ffd656a437fe31fe0e",
   "goalcontent_asked_a_lot": "6cd96110390465ff7596adab5e83f579f88e99834c7905e40775df82559b7ac5",
   "goalcontent_chapter_number": "b9a1166ee675087897c76b3af0cb159045ac1d8bade50a9de04220452d5963b1",
   "goalcontent_chapter_summary": "3afc9e3113e86b681023e29f8a19f0a6577ac572bb399bc41c22cbc02072c83b",
@@ -42,7 +41,10 @@
   "goalcontent_more_chapters": "d36f3eefa885482c9e5488d10d497f6090f150fd09728774d1df604f0642b07a",
   "goalcontent_new": "f452a2f84d6ef09ba6af2c08c73a57b8259245fe1a7ed3418f887dce3b7e9d56",
   "goalcontent_next_date": "e7e591dce51f426ae09b82ffbfe684806632c782b99ef8bb56662f621ce4b616",
+  "goalcontent_not_in_guide": "db87de53afcb68453df8f27807378e758f5dfa8bd7dfea912d4d430728158f00",
+  "goalcontent_not_in_notice": "0026f2785c571593598f163119b18a80c63529d5206a3dc98f6203418dedba2f",
   "goalcontent_not_in_plan": "de67559653341fa4e7513ff3efd7a5851e9165cef0b635a01f3d57a31438e9e7",
+  "goalcontent_optional_study": "cfff5e4db9c82e2297ffe17744b1e692ddcc4f431eddc019a4e641cf40e4d240",
   "goalcontent_percent_done": "bdb115ed6bcac880436a8d1d20732c9fa9c36e192312eefb3472f1752e8d71da",
   "goalcontent_practice": "9aa47799fc3026ce701ddf0e39813c1a453beaa17fcdaf990d150bfecc2253b5",
   "goalcontent_practice_chapter": "e962310778a592b233e550e3fdefaf99266fac08b973322967a1cb42e9acd86c",
@@ -142,8 +144,11 @@
     <string name="goalcontent_preparation">Vorbereitung</string>
     <string name="goalcontent_coverage">Abdeckung</string>
     <string name="goalcontent_not_in_plan">Nicht in deinem Plan</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">Auch in deinem Plan</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">Nicht in der Prüfungsausschreibung</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">Nicht im offiziellen Prüfungsleitfaden</string>
+    <string name="goalcontent_optional_study">Optional</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">Fragen pro Fach für %1$s, gezählt von %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

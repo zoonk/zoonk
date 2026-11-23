@@ -10,13 +10,15 @@ Agents working in parallel share the machine's memory, disk and devices. Read th
 
 ## When the machine is busy, run on GitHub
 
-Push the branch and run its full checks there: `gh workflow run ci.yml --ref <branch>` (code quality, Vitest and both E2E suites), `gh workflow run android.yml --ref <branch>` (adds the release lint and build) and `gh workflow run apple-tests.yml --ref <branch>` (adds the unit tests), then follow them with `gh run list --branch <branch>`. Several branches can run at once. `measure-pages.yml` times pages on a runner of its own (`gh workflow run measure-pages.yml -f paths="/today /plan" -f base=main`), and `preview.yml` deploys a pull request's Vercel preview.
+Push the branch and use its PR checks. To run a full suite on GitHub, use `gh workflow run ci.yml --ref <branch>` (code quality, Vitest and both E2E suites), `gh workflow run android.yml --ref <branch>` (adds the release lint and build) or `gh workflow run apple-tests.yml --ref <branch>` (full iPhone units when the automatic Mac check cannot exercise the change). Follow them with `gh run list --branch <branch>`. Several branches can run at once. `measure-pages.yml` times pages on a runner of its own (`gh workflow run measure-pages.yml -f paths="/today /plan" -f base=main`), and `preview.yml` deploys a pull request's Vercel preview.
 
 Turbo shares task results through Vercel Remote Cache, so typecheck, lint and test runs replay what CI or another checkout already ran for unchanged packages. Link a machine once with `pnpm exec turbo login` and `pnpm exec turbo link` (it needs access to Zoonk's Vercel team); runs then print "Remote caching enabled". Only builds hash the database URL, which differs between CI, the primary checkout and each worktree.
 
 ## Worktrees, branches and handing back
 
-Every worktree fills the disk with its own dependencies, builds and database copies.
+Every worktree fills the disk with its own builds and database copies; its dependencies cost little, since pnpm clones them from its store.
+
+- Each `pnpm worktree:setup` starts a sweep in the background (`pnpm worktree:sweep` runs one now, `--dry-run` lists what it would delete, `~/.cache/zoonk/sweep.log` records each run). It deletes build output (Xcode, Next.js and Gradle builds, and `node_modules` outside worktrees) that nothing touched for 12 hours and no process runs inside: in other worktrees, in `/tmp` and in `~/zoonk-review`, where a lead keeps its notes, reports and evidence so they survive a reboot and the lanes' worktrees. It also drops Swift packages no build used for a week and the wallpaper snapshots that pile up on shut-down simulators. Notes, reports, screenshots and source files stay.
 
 - Before an agent hands back, it commits its work (its branch keeps the commits) and stops the servers it started.
 - The agent that owns the task's PR pushes and keeps its worktree, since review fixes and the user's follow-up changes happen there; the harness removes it once the PR merges.

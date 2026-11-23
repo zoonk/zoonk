@@ -44,6 +44,7 @@ export const PLAN_EDIT_KINDS = [
   "setDifficultyBias",
   "setAreaStart",
   "setWrittenCadence",
+  "addExamStrategy",
   "addTopics",
 ] as const;
 
@@ -79,6 +80,7 @@ export type PlanEditInput = {
   /** The only names "focus" and "skip" may use. */
   areas: string[];
   dailyMinutes: number;
+  examStrategyOffered?: boolean;
   goalKind: "exam" | "explain" | "language" | "learn";
   language: string;
   /** It fills in what the request leaves open and never adds a change on its own. */
@@ -127,6 +129,7 @@ function buildUserPrompt(input: PlanEditInput): string {
     LANGUAGE: ${getPromptLanguageName({ language: input.language })}
     TODAY: ${formatToday(input.today)}
     GOAL_KIND: ${input.goalKind}
+    EXAM_STRATEGY_OFFERED: ${input.examStrategyOffered === true}
     DAILY_MINUTES: ${input.dailyMinutes}
     WEEK: ${formatWeek(input.weekdayMinutes)}
     TARGET_DATE: ${input.targetDate ?? "none"}
@@ -177,6 +180,7 @@ export async function interpretPlanEdit(
 function toClassifierInput(input: PlanEditInput): Record<string, string> {
   return {
     AREAS: input.areas.join("\n") || "none",
+    EXAM_STRATEGY_OFFERED: String(input.examStrategyOffered === true),
     REQUEST: input.request,
     TARGET_DATE: input.targetDate ?? "none",
     TODAY: formatToday(input.today),
@@ -187,6 +191,7 @@ function toClassifierInput(input: PlanEditInput): Record<string, string> {
 export const planEditKindClassifier = {
   instructions: systemPrompt,
   labels: {
+    addExamStrategy: "Add the optional exam strategy lessons currently offered by the plan.",
     addLightWeek: "A lighter week at half the time: a trip, a busy or tiring week.",
     addTopics:
       "Add topics or a project the plan doesn't teach yet, such as more of the learner's field or a portfolio project.",

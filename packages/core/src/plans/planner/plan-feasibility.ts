@@ -14,8 +14,8 @@ import { findFittingDate } from "./fitting-date";
 import { getFittingFloor } from "./fitting-floor";
 import { type MostCoverage, findMostCoverage } from "./most-coverage";
 import { fromIsoDate } from "./plan-calendar";
+import { getSelectedCoverage } from "./plan-coverage";
 import { type ExamSubjectShare } from "./selected-coverage";
-import { getSelectedCoverage } from "./selected-plan-summary";
 
 export type TimeCoverage = { coreFits: boolean; coveredShare: number };
 
@@ -60,7 +60,7 @@ function hasEveryTopic({ built, input }: { built: BuiltPlan; input: BuildPlanInp
   const isInPlan = readTopicMembership({
     items: built.items,
     known: input.knownSkillIds ?? new Set(),
-    skills: input.graph.skills,
+    skills: input.graph.skills.filter((skill) => !skill.extra),
   });
 
   return built.skillMinutes.every(({ skillId }) => isInPlan(skillId));

@@ -41,15 +41,15 @@ export function startDecision() {
           {
             kind: "good" as const,
             skill: "sample",
-            text: "You asked how much data there was before deciding.",
+            text: "You asked if there was enough data before deciding.",
           },
         ],
         quality: "fair" as const,
         replies: [
-          { from: "product", text: "About 1,200 each. Why?" },
+          { from: "product", text: "I figured 1,200 each would be enough." },
           { from: "data", text: "That's not many visits for a gap this small." },
         ],
-        text: "How many people saw each version?",
+        text: "Have we had enough visits to decide?",
       },
       {
         effects: [

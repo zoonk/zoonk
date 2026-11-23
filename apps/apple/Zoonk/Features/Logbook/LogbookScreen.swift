@@ -285,32 +285,23 @@ private struct WeekRings: View {
   @ScaledMetric(relativeTo: .title3) private var ringSize = 36.0
 
   var body: some View {
-    let start = studyDate(recap.weekStart)
+    let today = PlanDate.today()
 
     WeekDaysRow {
-      ForEach(0..<7, id: \.self) { offset in
-        let date = start.map { $0.addingTimeInterval(Double(offset) * 86_400) }
-        let key = date?.formatted(.iso8601.year().month().day()) ?? ""
-        let studied = recap.week.daysStudied.contains(key)
-
+      ForEach(recap.days, id: \.date) { day in
         VStack(spacing: 6) {
-          GoalRing(share: studied ? 1 : 0, size: ringSize) {
-            if studied {
-              Image(systemName: "checkmark")
-                .foregroundStyle(.success)
-            }
-          }
-          .layoutAnchor("week-ring")
+          WeekDayRing(day: day, localDate: today, size: ringSize)
+            .layoutAnchor("week-ring")
 
-          Text(PlanDate.weekdayLetter(key))
+          Text(PlanDate.weekdayLetter(day.date))
             .typeStyle(.small.monospaced())
-            .foregroundStyle(studied ? Color(.foreground) : .faint)
+            .foregroundStyle(day.studied ? Color(.foreground) : .faint)
         }
         .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(PlanDate.weekdayName(key)))
+        .accessibilityLabel(Text(PlanDate.weekdayName(day.date)))
         .accessibilityValue(
-          studied
+          day.studied
             ? Text("Studied", tableName: "Session", comment: "A day studied this week")
             : Text("Not studied", tableName: "Session", comment: "A day not studied"))
       }

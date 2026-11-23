@@ -47,6 +47,7 @@ export type PlanEffect = {
   lessonsAdded: number;
   lessonsAddedEstimated?: true;
   lessonsLeftOut?: string[];
+  noticeRemoved?: string[];
   lessonsRemoved: number;
   listeningPastBasics?: string[];
   nextMock?: NextMockMove;

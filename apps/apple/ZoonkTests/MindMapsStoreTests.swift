@@ -248,7 +248,7 @@ final class MindMapsStoreTests: XCTestCase {
   /// The page's stop gives each map its Create back once its day has come, and the page reads its
   /// offer again then, so its counts and Create all are today's; Create asks the server.
   func testAStopWhoseDayCameLetsAMapStartAgain() async {
-    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let opens = Date.now.addingTimeInterval(3600)
     let stop = MindMapAllowanceStop(
       availableAt: opens, period: "rolling30Days", reason: .limitReached, resource: .mindMap)
     XCTAssertFalse(stop.isOver(at: opens.addingTimeInterval(-60)))
@@ -991,8 +991,8 @@ final class MindMapsStoreTests: XCTestCase {
   /// day, whichever tab is shown, as main's `useReadWhenOfferOpens` does.
   func testAnEmptyStoppedListReadsAgainAtItsStop() async throws {
     let stop = MindMapAllowanceStop(
-      availableAt: .now.addingTimeInterval(1), period: "rolling30Days", reason: .limitReached,
-      resource: .mindMap)
+      availableAt: .now.addingTimeInterval(0.5), period: "rolling30Days",
+      reason: .limitReached, resource: .mindMap)
     let api = MindMapsAPIStub(server: .available, statuses: [])
     await api.answerLists(chapters: [], saved: [])
     await api.stopNewMaps(stop)

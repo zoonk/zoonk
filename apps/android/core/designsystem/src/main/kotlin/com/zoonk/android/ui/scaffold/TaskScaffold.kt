@@ -45,14 +45,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
+import com.zoonk.android.ui.components.TASK_COLUMN_WIDTH
 import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WithStatusAction
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
@@ -290,5 +293,12 @@ private fun TaskBottomBar(
     note: (@Composable () -> Unit)? = null,
     noteRoom: BarNoteRoom? = null,
 ) {
-    BottomBar(note = note, columnMargin = TASK_MARGIN, noteRoom = noteRoom) { content() }
+    // Below a wide layout the bar keeps to the task's column, and so does its note; on one it spans the frame.
+    BottomBar(
+        note = note,
+        columnWidth = if (isWideLayout()) Dp.Unspecified else TASK_COLUMN_WIDTH,
+        columnAtStart = spreadShows(),
+        columnMargin = TASK_MARGIN,
+        noteRoom = noteRoom,
+    ) { content() }
 }

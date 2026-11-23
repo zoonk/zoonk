@@ -186,7 +186,7 @@ const PIECES: Piece[] = [
     web: {
       group: "[data-slot=bottom-bar]",
       groupParts: {
-        end: ":scope > [data-slot=bottom-bar-row] > :first-child",
+        end: ":scope > [data-slot=bottom-bar-row] > *",
         note: ":scope > [data-slot=bottom-bar-note] > div > div",
       },
       parts: {},

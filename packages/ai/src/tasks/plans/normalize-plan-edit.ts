@@ -32,6 +32,7 @@ type PlanEditOperation =
   | DateOperation
   | TimeOperation
   | { cadence: (typeof WRITTEN_CADENCES)[number]; kind: "setWrittenCadence" }
+  | { kind: "addExamStrategy" }
   | { kind: "addTopics"; startDate: string | null; topics: PlanEditTopic[] };
 
 export type PlanEdit = {
@@ -65,6 +66,7 @@ export type PlanEditSkill = { area: string; name: string; skillId: string };
 
 type Context = {
   dailyMinutesLimits: { min: number; max: number };
+  examStrategyOffered?: boolean;
   areas: readonly string[];
   goalKind: string;
   language?: string;
@@ -247,6 +249,8 @@ function toOperation({
       return toActivityOperation({ change, context, kind: change.kind });
     case "setWrittenCadence":
       return toCadenceOperation({ change, context });
+    case "addExamStrategy":
+      return context.examStrategyOffered ? { kind: "addExamStrategy" } : null;
     case "addTopics":
       return toTopicsOperation({
         areas: context.areas,

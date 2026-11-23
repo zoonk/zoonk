@@ -7,6 +7,7 @@ import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
 import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
+import { type PlanExtraInput, appendExamExtras, withoutExamExtras } from "./exam-extras";
 import { listLessonDays } from "./interval-study-minutes";
 import {
   keepThisWeek,
@@ -88,6 +89,7 @@ export type BuildPlanInput = {
   openedKeys?: readonly string[];
   paceFactor: number;
   examWindows?: readonly ExamWindow[];
+  extras?: PlanExtraInput;
   finishedOn?: ReadonlyMap<string, Date>;
   phaseEnds?: ReadonlyMap<number, Date>;
   prerequisites: ReadonlyMap<string, readonly string[]>;
@@ -107,9 +109,14 @@ export type { BuiltPlan } from "./built-plan";
 
 /** Pure: the same inputs always give the same plan. */
 export function buildPlan(given: BuildPlanInput) {
-  return withoutUntestableChallenges({
-    built: settlePlannedBosses({ build: buildWithBosses, input: given }),
-    input: given,
+  const input = withoutExamExtras(given);
+
+  const built = settlePlannedBosses({ build: buildWithBosses, input });
+
+  return appendExamExtras({
+    built: withoutUntestableChallenges({ built, input }),
+    input,
+    requested: given,
   });
 }
 

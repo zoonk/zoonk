@@ -1,8 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { toListeningExam } from "../exams/listening/listening-exam";
-import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import {
   type ExamAnswerFormat,
   getAreaFormat,
@@ -14,8 +12,7 @@ import { takesNumericAnswers } from "../library/items/numeric-skills";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
 import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
-import { parsePlanGraph } from "../plans/planner/plan-state";
-import { toItemExam } from "./item-exam";
+import { readItemExamPlan, toItemExam } from "./item-exam";
 import { type PlacementItemSkill } from "./placement-item-skills";
 
 const EXAM_FORMAT_SKILLS = 3;
@@ -93,31 +90,20 @@ export async function pickExamFormatSkills({
 }: {
   goalId: string;
 }): Promise<ExamFormatPick[]> {
-  const goal = await prisma.goal.findUnique({
-    select: {
-      examBlueprint: true,
-      kind: true,
-      plan: { select: { graph: true } },
-      targetLanguage: true,
-    },
-    where: { id: goalId },
-  });
+  const plan = await readItemExamPlan(goalId);
 
-  const blueprint = goal?.kind === "exam" ? goal.examBlueprint : null;
-
-  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
-
-  const formats = blueprint
-    ? getMockFormatMix(structure).filter((format) => format.writer.kind === "item")
-    : [];
-
-  if (!blueprint || formats.length === 0) {
+  if (!plan) {
     return [];
   }
 
-  const graph = parsePlanGraph(goal?.plan?.graph);
-  const firstPhase = Math.min(...graph.skills.map((skill) => skill.phase));
-  const listening = goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : new Set();
+  const { blueprint, firstPhase, graph, listening } = plan;
+
+  const structure = readBlueprintContent(blueprint).structure;
+  const formats = getMockFormatMix(structure).filter((format) => format.writer.kind === "item");
+
+  if (formats.length === 0) {
+    return [];
+  }
 
   const rankedSkills = graph.skills
     .filter((skill) => skill.phase === firstPhase && !listening.has(skill.skillId))
@@ -137,7 +123,7 @@ export async function pickExamFormatSkills({
       isQuantitative: true,
       items: {
         select: { content: true, examBlueprintId: true, format: true },
-        where: { format: { in: ["multipleChoice", "numeric"] } },
+        where: { format: { in: ["multipleChoice", "numeric"] }, mockOnly: false },
       },
       language: true,
       level: true,
@@ -182,6 +168,7 @@ export async function pickExamFormatSkills({
 
   const usedSituations = await loadUsedSituations({
     examBlueprintId: blueprint.id,
+    includeMockReserve: true,
     skillIds: picks.map(({ skill }) => skill.id),
   });
 

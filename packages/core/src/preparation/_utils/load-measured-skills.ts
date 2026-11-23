@@ -55,10 +55,15 @@ export async function loadMeasuredSkills({
   const graph = parsePlanGraph(row?.graph);
   const { examChoices, examSubjects, fullCourse, skippedAreas } = parsePlanSettings(row?.settings);
   const skipped = new Set(skippedAreas);
-  const graphSkills = graph.skills.filter((skill) => !skipped.has(getSkillArea({ graph, skill })));
+
+  const graphSkills = graph.skills.filter(
+    (skill) => !skill.extra && !skipped.has(getSkillArea({ graph, skill })),
+  );
 
   const graphSections = new Map(
-    graph.skills.map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),
+    graph.skills
+      .filter((skill) => !skill.extra)
+      .map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),
   );
 
   const sectionOf = new Map([

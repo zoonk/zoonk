@@ -143,6 +143,32 @@ struct DrillCountdownView: View {
   }
 }
 
+/// An answer can fix more than the mistake it replays, when others were the same mistake. Drawn as
+/// the lesson's own note under a verdict ("Saved to your mistakes"), as on the web and Android.
+struct FixedMistakesNote: View {
+  let count: Int
+
+  var body: some View {
+    if count > 0 {
+      Group {
+        if count == 1 {
+          Text(
+            "Mistake fixed. It leaves your notebook.", tableName: "Practice",
+            comment: "After answering a saved mistake right.")
+        } else {
+          Text(
+            "\(count) mistakes fixed. They leave your notebook.", tableName: "Practice",
+            comment:
+              "\"Your notebook\" is the learner's Mistakes notebook. Shown only for 2 or more; one mistake shows \"Mistake fixed. It leaves your notebook.\" instead."
+          )
+        }
+      }
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
 struct DrillAnswerNotes: View {
   static var timesUp: String {
     String(

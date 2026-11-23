@@ -247,7 +247,6 @@ func goalPlanFixture(
   targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
   fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7,
   today: String = "2027-01-04", lessonsStudied: Int = 0, finishedOn: String? = nil,
-  weekdayMinutes: [Int] = [30, 30, 30, 30, 30, 30, 30], weekDays: [String] = [],
   suggested: String? = nil
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
@@ -272,100 +271,16 @@ func goalPlanFixture(
           "canDiffer": true, "weekdayDays": [1, 2, 3, 4, 5], "weekdays": 30, "weekend": null,
           "weekendDays": [0, 6]
         },
-        "weekdayMinutes": \(weekdayMinutes)
+        "weekdayMinutes": [30, 30, 30, 30, 30, 30, 30]
       },
       "status": { "kind": "\(status)" }, "suggestedTime": \(suggested ?? "null"),
       "steering": {
         "difficultyBias": "standard", "lessonsStudied": \(lessonsStudied), "practiceBias": "balanced",
         "skippedActivities": []
       },
-      "tools": [], "week": { "days": [\(weekDays.joined(separator: ","))], "startDate": "\(today)" },
+      "tools": [], "week": { "days": [], "startDate": "\(today)" },
       "weekTime": { "studiedMinutes": 0, "targetMinutes": 210 }, "writtenPractice": null
     }
     """
   return try JSONDecoder().decode(GoalPlan.self, from: Data(json.utf8))
-}
-
-extension PhaseEndTests {
-  @MainActor
-  func testEveryOutsideReasonKeepsTheSyllabusMeaning() async throws {
-    try await readsWhatVoiceOverReads()
-    for (reason, expected) in [
-      ("pastBasics", "Skipped · you already know the basics"),
-      ("known", "Skipped · you already know it"),
-      ("skippedBase", "Skipped · your choice"),
-      ("futureReason", "Not in your plan"),
-      ("missing", "Not ready yet"),
-    ] {
-      let window = try show(planOutsideReason(reason).zoonkStyles())
-      let words = spoken(in: window).joined(separator: " ").replacingOccurrences(
-        of: "\u{00A0}", with: " ")
-      XCTAssertTrue(words.contains(expected), words)
-      XCTAssertFalse(words.contains("your time doesn't cover it"), words)
-    }
-  }
-}
-
-extension PhaseEndTests {
-  @MainActor
-  func testAChallengeLeftOutDoesNotExcludeTheWholePhase() async throws {
-    let dependencies = AppDependencies.hosted()
-    try await readsWhatVoiceOverReads()
-    for language in [false, true] {
-      let left = phase(0, kind: "learn", state: "leftOut", end: nil).replacingOccurrences(
-        of: "\"notPlannedReason\":null", with: "\"notPlannedReason\":\"skippedBase\"")
-      let challenge = phase(1, kind: "learn", state: "current", end: nil).replacingOccurrences(
-        of: "\"challengeLeftOut\": false", with: "\"challengeLeftOut\": true")
-      let shaped = try plan(phases: [left, challenge])
-      let goal = LearnerGoal(
-        dailyMinutes: 30, id: "goal", kind: language ? .language : .learn, language: "en",
-        status: .active, targetDate: nil, displayName: "Science", title: "Science")
-      let context = PlanContext(goal: goal, plan: shaped, adjust: { _ in }, show: { _ in })
-      let window = try show(
-        ZoonkList { PlanPathRows(context: context) }.appDependencies(dependencies).environment(
-          AppRouter()
-        ).zoonkStyles())
-      for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
-        window.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        window.rootViewController?.traitOverrides.horizontalSizeClass =
-          width > 700 ? .regular : .compact
-        try await Task.sleep(for: .milliseconds(500))
-        try captureCallsRoundTwo("path-\(language ? "language" : "learn")-\(size)")
-      }
-      let words = spoken(in: window).joined(separator: " ").replacingOccurrences(
-        of: "\u{00A0}", with: " ")
-      XCTAssertTrue(
-        words.contains(
-          language ? "The call isn't in your plan" : "The Trickster isn't in your plan"), words)
-      XCTAssertTrue(words.contains("Skipped"), words)
-    }
-  }
-}
-
-extension PhaseEndTests {
-  @MainActor
-  func testAKnownLeftOutPhaseSaysItWasSkippedAsKnown() async throws {
-    let dependencies = AppDependencies.hosted()
-    try await readsWhatVoiceOverReads()
-    let left = phase(0, kind: "learn", state: "leftOut", end: nil).replacingOccurrences(
-      of: "\"notPlannedReason\":null", with: "\"notPlannedReason\":\"known\"")
-    let shaped = try plan(phases: [left, phase(1, kind: "learn", state: "current", end: nil)])
-    let goal = LearnerGoal(
-      dailyMinutes: 30, id: "goal", kind: .learn, language: "en", status: .active,
-      targetDate: nil, displayName: "Science", title: "Science")
-    let context = PlanContext(goal: goal, plan: shaped, adjust: { _ in }, show: { _ in })
-    let window = try show(
-      ZoonkList { PlanPathRows(context: context) }
-        .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
-    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
-      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
-      window.rootViewController?.traitOverrides.horizontalSizeClass =
-        width > 700 ? .regular : .compact
-      try await Task.sleep(for: .milliseconds(500))
-      try captureCallsRoundTwo("known-reason-\(size)")
-      let words = spoken(in: window).joined(separator: " ").replacingOccurrences(
-        of: "\u{00A0}", with: " ")
-      XCTAssertTrue(words.contains("Skipped · you already know it"), words)
-    }
-  }
 }

@@ -9,7 +9,7 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 import { type ItemExamFormat } from "./generate-items";
-import { withItemRules } from "./item-rules";
+import { withItemRules, withPlotRule } from "./item-rules";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
@@ -45,6 +45,7 @@ export type WriteItemSetParams = {
   skills: ItemSetSkill[];
   format: ItemSetFormat;
   questionCount: number;
+  mockOnly?: boolean;
   language: string;
   /** The country the skills are set in; null is the language's own. */
   country: string | null;
@@ -150,7 +151,7 @@ export async function writeItemSet(params: WriteItemSetParams) {
 
   // The questions share the stimulus's chart; the prompt's own rules describe it.
   const setPrompt = selectPromptVariants({
-    template: taskPrompt,
+    template: withPlotRule(taskPrompt),
     variants: { usedTitles: Boolean(params.usedTitles?.length) },
   });
 
@@ -176,7 +177,7 @@ export async function writeItemSet(params: WriteItemSetParams) {
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
+    libraryInput: !params.mockOnly,
     systemPrompt,
     task: "write-item-set",
   });

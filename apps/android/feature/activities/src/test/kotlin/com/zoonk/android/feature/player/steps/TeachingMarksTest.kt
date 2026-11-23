@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.player.steps
 
+import com.zoonk.android.ui.richtext.RichBlock
+import com.zoonk.android.ui.richtext.parseRichBlocks
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -24,15 +26,11 @@ class TeachingMarksTest {
     }
 
     @Test
-    fun keepsANumberedListWholeRatherThanFramingAnExampleInsideIt() {
+    fun framesAnExampleInsideANumberedListAndTheListCountsOnAfterIt() {
         val steps = "Para somar frações:\n\n1. Ache o denominador comum.\n2. Some 1/4 + 2/4 = 3/4.\n3. Simplifique."
+        val split = checkNotNull(splitExample(steps, "2. Some 1/4 + 2/4 = 3/4."))
 
-        assertNull(splitExample(steps, "Some 1/4 + 2/4 = 3/4."))
-        assertNull(splitExample(steps, "2. Some 1/4 + 2/4 = 3/4."))
-        assertEquals(
-            "Para somar frações:",
-            splitExample("Para somar frações:\n\n- Ache o denominador comum.", "Para somar frações:")?.example,
-        )
+        assertEquals(listOf(null, 1, 2, 3), split.parts.flatMap(::parseRichBlocks).map { (it as? RichBlock.ListBlock)?.start })
     }
 
     @Test

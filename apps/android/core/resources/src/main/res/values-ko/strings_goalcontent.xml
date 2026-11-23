@@ -5,7 +5,6 @@
   "goalcontent_adjust_plan": "ad0b1bb190075f7d1cda4d199e8349a486315d6a97bfa207a71657f5e7423d4e",
   "goalcontent_also_in_exam_count": "b61d23f5380bef9380f52cec3694faeafa4e8bd5ed7d2c20c8a1e21457a87a8a",
   "goalcontent_also_in_exams": "5413d76ed0c4e3fb9e8ac68b3c35d59b7d4706c033a649ab29be66270edfd508",
-  "goalcontent_also_in_plan": "63280142ff0026005674a514ffcbb9f231d4173e1bbcf23eb3a06aec2f6a327d",
   "goalcontent_asked_a_lot": "43b3da3cba0dbb63bf08613564c7066d71f8ac3a5e4f0881ebec7d51e482f1a7",
   "goalcontent_chapter_number": "450d37f08bc4719c86abcc83b8926a938b01b3a648351a0080a351934ffdb420",
   "goalcontent_chapter_summary": "619964db74ba71dfc5ec4111a30825cda418fb38dabaffc48918c04cc3e16125",
@@ -42,7 +41,10 @@
   "goalcontent_more_chapters": "299c88859a8d877b96e5489d6667d413145d512fafba2379affd6adc118f8842",
   "goalcontent_new": "573ddc1f641b5ee9e0f6db06f67d3d0736fff0243039fb5c7470d1aafbd17cae",
   "goalcontent_next_date": "0177544db471476c1c35e87e1a5462caac72aec89124a0969d66b49e2436761f",
+  "goalcontent_not_in_guide": "2fd8b296807cca734e68132515a4a02c86bbd1c818f5d6170c01db87277b3374",
+  "goalcontent_not_in_notice": "33b0574c93b9fcee4f4e7ad63758699057f988d7f8ca2370eb9fff75cdfb45d2",
   "goalcontent_not_in_plan": "d7a6ebd686a1cf0704d2beadf39d8aa1d25a92a79a8065bd7d8dc858429d888f",
+  "goalcontent_optional_study": "f7d1705b81c180f5bd015fbe2dce14a4ac18dc761a5c2fd49afe82d79e7844c6",
   "goalcontent_percent_done": "438e94e4475dc13d921eb911eaf0400c0f7710926070843399c6c532640a1d88",
   "goalcontent_practice": "cdd331e2252879b7b4e4b96bd289565e448433c74afb17abfc4ec97b4e5f364f",
   "goalcontent_practice_chapter": "c6d8e264bb265a90217040f615a86113b8ac8ff7f2d9efdbd97fda71b9caf791",
@@ -133,8 +135,11 @@
     <string name="goalcontent_preparation">준비도</string>
     <string name="goalcontent_coverage">학습 진도</string>
     <string name="goalcontent_not_in_plan">계획에 없어요</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">내 계획에도 포함</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">공식 공고에 없는 내용</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">공식 안내서에 없는 내용</string>
+    <string name="goalcontent_optional_study">선택 사항</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">%1$s의 과목별 문제 수로, %2$s에서 집계한 수치예요.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

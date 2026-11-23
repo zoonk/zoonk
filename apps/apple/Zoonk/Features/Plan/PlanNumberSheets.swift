@@ -175,7 +175,7 @@ struct PlanScheduleSheet: View {
       }
 
       Section {
-        PlanWeekRings(plan: plan)
+        PlanWeekRings(plan: plan, isExam: context.goal.kind == .exam)
       } header: {
         SectionTitle(
           Text("This week", tableName: "Plan", comment: "Section of the plan's week")
@@ -254,66 +254,30 @@ struct PlanScheduleSheet: View {
   }
 }
 
-/// A study day missed is dashed, never red.
+/// Today's week ring for each day, so both screens draw and say a day alike.
 private struct PlanWeekRings: View {
   @ScaledMetric(relativeTo: .body) private var ringSize = 28.0
 
   let plan: GoalPlan
+  let isExam: Bool
 
   var body: some View {
     WeekDaysRow {
       ForEach(plan.week.days) { day in
         VStack(spacing: 6) {
-          ring(day)
-            .frame(width: ringSize, height: ringSize)
+          WeekDayRing(day: day.study, localDate: plan.today, size: ringSize)
             .layoutAnchor("week-ring")
 
           Text(PlanDate.weekdayLetter(day.date))
-            .typeStyle(.small.weight(day.state == .today ? .bold : .regular))
-            .foregroundStyle(day.state == .today ? Color(.foreground) : .mutedForeground)
+            .typeStyle(.small.weight(day.study.isToday ? .bold : .regular))
+            .foregroundStyle(day.study.isToday ? Color(.foreground) : .mutedForeground)
         }
         .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(PlanDate.text(day.date, today: plan.today)))
-        .accessibilityValue(status(day))
+        .accessibilityValue(Text(day.study.status(on: plan.today, isExam: isExam)))
       }
     }
     .padding(.vertical, 4)
-  }
-
-  private func ring(_ day: PlanWeekDay) -> some View {
-    let lineWidth = ringSize / 7
-
-    return ZStack {
-      Circle()
-        .stroke(
-          track(day),
-          style: StrokeStyle(lineWidth: lineWidth, dash: day.state == .missed ? [2, 3] : []))
-
-      Circle()
-        .trim(from: 0, to: day.share)
-        .stroke(.success, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-        .rotationEffect(.degrees(-90))
-    }
-    .padding(lineWidth / 2)
-  }
-
-  private func track(_ day: PlanWeekDay) -> Color {
-    switch day.state {
-    case .today: Color.mutedForeground
-    case .rest: Color.muted
-    default: Color.surface3
-    }
-  }
-
-  private func status(_ day: PlanWeekDay) -> Text {
-    switch day.state {
-    case .done: Text("done", tableName: "Plan", comment: "Spoken state of a day studied")
-    case .missed:
-      Text("not studied", tableName: "Plan", comment: "Spoken state of a study day missed")
-    case .rest: Text("rest day", tableName: "Plan", comment: "Spoken state of a rest day")
-    case .today: Text("today", tableName: "Plan", comment: "Spoken state of today")
-    case .upcoming: Text("planned", tableName: "Plan", comment: "Spoken state of a day ahead")
-    }
   }
 }

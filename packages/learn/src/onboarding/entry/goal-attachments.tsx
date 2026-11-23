@@ -36,14 +36,14 @@ function AttachedChips({
     <ul aria-label={t("Your material")} className="flex flex-wrap gap-2">
       {items.map((item) => (
         <li
-          className="bg-muted flex max-w-full items-center gap-1.5 rounded-full py-1 pr-1 pl-3 text-sm"
+          className="bg-muted flex max-w-full items-center gap-1.5 rounded-md py-1 pr-1 pl-3 text-sm"
           key={item.id}
         >
           <FileTextIcon aria-hidden="true" className="size-4 shrink-0" />
           <span className="truncate">{item.title || t("Your text")}</span>
           <Button
             aria-label={t("Remove {title}", { title: item.title || t("Your text") })}
-            className="size-7 rounded-full"
+            className="size-7"
             onClick={() => onRemove(item.id)}
             size="icon"
             variant="ghost"

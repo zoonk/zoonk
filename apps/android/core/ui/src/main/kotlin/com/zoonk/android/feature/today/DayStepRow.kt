@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
@@ -23,12 +24,14 @@ import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.StudyBlock
 
@@ -48,6 +51,7 @@ fun DayStepRow(
     day: DayView,
     step: DayStep,
     isNext: Boolean,
+    examDocument: ExamDocument,
     modifier: Modifier = Modifier,
     lessonStatus: Map<String, LessonGenerationStatus> = emptyMap(),
     writingStalled: Boolean = false,
@@ -55,7 +59,6 @@ fun DayStepRow(
     busy: Boolean = false,
     openFailed: Boolean = false,
     testOut: (@Composable () -> Unit)? = null,
-    tag: (@Composable () -> Unit)? = null,
     divider: Boolean = true,
 ) {
     val finished = step.isFinished
@@ -82,26 +85,28 @@ fun DayStepRow(
                 {
                     if (openFailed) StepOpenFailed()
                     if (!finished) {
-                        tag?.invoke()
-                        StepLines(lessonStatus, writingStalled, step)
+                        StepLines(lessonStatus, writingStalled, step, examDocument)
                         testOut?.invoke()
                     }
                 }
             },
         meta =
-            if (finished) {
+            if (finished && !step.extra) {
                 null
             } else {
                 {
-                    if (mission) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_checklist),
-                            contentDescription = stringResource(R.string.today_step_counts_toward_mission),
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.zoonk.brain,
-                        )
+                    if (step.extra) Eyebrow(stringResource(R.string.today_step_extra))
+                    if (!finished) {
+                        if (mission) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_checklist),
+                                contentDescription = stringResource(R.string.today_step_counts_toward_mission),
+                                modifier = Modifier.size(14.dp),
+                                tint = MaterialTheme.zoonk.brain,
+                            )
+                        }
+                        DayMinutes(step.estimatedMinutes)
                     }
-                    DayMinutes(step.estimatedMinutes)
                 }
             },
     ) {
@@ -121,15 +126,18 @@ private fun StepLines(
     lessonStatus: Map<String, LessonGenerationStatus>,
     writingStalled: Boolean,
     step: DayStep,
+    examDocument: ExamDocument,
 ) {
     val count = step.questions.toInt()
+    val extra = step.subjectExtra
     val line =
         when {
-            !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
+            step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
             step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
             step.fullReview -> stringResource(R.string.today_step_every_topic)
+            extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
             else -> step.subject
         }
 
@@ -197,3 +205,8 @@ fun DayMinutes(minutes: Double) {
  */
 fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
     kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
+
+fun DayStep.isGettingReady(
+    lessonStatus: Map<String, LessonGenerationStatus>,
+    writingStalled: Boolean,
+): Boolean = preparing || (!writingStalled && isBeingWritten(lessonStatus))

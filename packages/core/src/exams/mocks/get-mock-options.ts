@@ -1,4 +1,5 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { readMockEssays } from "../../learner/facts/mock-essays";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
@@ -6,8 +7,14 @@ import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamDocument } from "../exam-document";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
-import { findRunningAnytimeMock, loadAnytimeMockSetup } from "./_utils/anytime-mock-setup";
+import {
+  findRunningAnytimeMock,
+  loadAnytimeMockSetup,
+  resolveAnytimeOption,
+} from "./_utils/anytime-mock-setup";
+import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
 import { findLastMock } from "./_utils/finished-mocks";
+import { readMockSupplyRequest } from "./_utils/mock-supply-request";
 import { getBankTypedParts } from "./_utils/mock-typed-parts";
 import { type MockOptionsView, mockConditionsSchema } from "./mock-contract";
 
@@ -32,22 +39,39 @@ export async function getMockOptions({
     return { status: "notExam" };
   }
 
+  const now = await getRequestInstant();
+
   const [setup, access, running, lastMock] = await Promise.all([
     loadAnytimeMockSetup(
       goal,
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
       {
         essays: readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
+        now,
         plan: readSavedPlan(goal.userId, goal.id),
         typed: getBankTypedParts(goal.examBlueprintId),
       },
     ),
     getAnytimeMockAccess(goal),
-    findRunningAnytimeMock({ goalId: goal.id, now: getRequestInstant(), userId: goal.userId }),
+    findRunningAnytimeMock({ goalId: goal.id, now, userId: goal.userId }),
     findLastMock(goal.id),
   ]);
 
   const conditions = running ? mockConditionsSchema.safeParse(running.conditions).data : null;
+
+  const { shape } = readMockSupplyRequest(goal.requestedMock);
+  const option = shape && resolveAnytimeOption({ choice: { shape }, setup });
+
+  const requestedPlan =
+    option &&
+    (await planFromBank({
+      goal,
+      now,
+      option,
+      reuse: await canReuseMockItems(prisma, goal.userId, now),
+      setup,
+      userId: goal.userId,
+    }));
 
   return {
     status: "ready",
@@ -58,6 +82,19 @@ export async function getMockOptions({
       goalId: goal.id,
       lastMock,
       options: setup.options,
+      requested:
+        option && shape && requestedPlan
+          ? {
+              shape,
+              status: isCompleteMock({
+                option,
+                plan: requestedPlan.plan,
+                setup: requestedPlan.available,
+              })
+                ? "ready"
+                : "preparing",
+            }
+          : null,
       running:
         running && conditions
           ? { id: running.id, purpose: conditions.purpose, shape: conditions.shape }

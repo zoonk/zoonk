@@ -1,14 +1,17 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { unavailableMockUse } from "../mocks/_utils/mock-item-uses";
 import { type ListeningPart } from "./listening-parts";
 
 export const MAX_SETS_PER_PART = 10;
 
 export function getPartSetsFilter({
+  mockOnly = false,
   examBlueprintId,
   scriptLanguage,
   task,
 }: {
+  mockOnly?: boolean;
   examBlueprintId: string;
   scriptLanguage: string;
   task: string;
@@ -21,14 +24,20 @@ export function getPartSetsFilter({
     examBlueprintId,
     items: { some: { retiredAt: null } },
     kind: "audio" as const,
+    mockOnly,
   };
 }
 
-export type ListeningPartPick = { part: ListeningPart; setId: string | null; needsSet: boolean };
+export type ListeningPartPick = {
+  part: ListeningPart;
+  setId: string | null;
+  needsSet: boolean;
+  lastMockUse?: number;
+};
 
 type StoredSet = {
   id: string;
-  items: { attempts: { answeredAt: Date }[] }[];
+  items: { attempts: { answeredAt: Date }[]; mockUses: { spentAt: Date | null }[] }[];
   mediaAssetId: string | null;
 };
 
@@ -54,21 +63,41 @@ function pickSet(sets: readonly StoredSet[]): Omit<ListeningPartPick, "part"> {
   };
 }
 
+function getLastMockUse(set: StoredSet): number | undefined {
+  const spent = set.items.flatMap((item) =>
+    item.mockUses.flatMap((use) => (use.spentAt ? [use.spentAt.getTime()] : [])),
+  );
+
+  return spent.length > 0 ? Math.max(...spent) : (getLastAnswered(set) ?? undefined);
+}
+
 /** Internal: the caller must derive `userId` from the authenticated session. */
 export async function pickListeningSets({
+  client = prisma,
+  mockOnly = false,
+  now,
+  exclude = [],
   examBlueprintId,
   parts,
+  reuse = false,
   scriptLanguage,
   userId,
 }: {
+  now?: Date;
+  mockOnly?: boolean;
   examBlueprintId: string;
+  exclude?: readonly string[];
+  client?: TransactionClient;
   parts: readonly ListeningPart[];
+  reuse?: boolean;
   scriptLanguage: string;
   userId: string;
 }): Promise<ListeningPartPick[]> {
-  return Promise.all(
-    parts.map(async (part) => {
-      const sets = await prisma.itemSet.findMany({
+  const blocked = mockOnly ? await unavailableMockUse(client, userId, reuse, now) : null;
+
+  const candidates = await Promise.all(
+    parts.map((part) =>
+      client.itemSet.findMany({
         orderBy: [{ createdAt: "asc" }, { id: "asc" }],
         select: {
           id: true,
@@ -80,14 +109,51 @@ export async function pickListeningSets({
                 take: 1,
                 where: { userId },
               },
+              mockUses: { select: { spentAt: true }, where: { userId } },
             },
           },
           mediaAssetId: true,
         },
-        where: getPartSetsFilter({ examBlueprintId, scriptLanguage, task: part.task }),
-      });
-
-      return { part, ...pickSet(sets) };
-    }),
+        where: {
+          ...getPartSetsFilter({ examBlueprintId, mockOnly, scriptLanguage, task: part.task }),
+          ...(blocked && {
+            items: {
+              none: {
+                OR: [
+                  { mockUses: { some: blocked } },
+                  ...(reuse ? [] : [{ attempts: { some: { userId } } }]),
+                  { id: { in: [...exclude] } },
+                  { mockOnly: false },
+                  { retiredAt: { not: null } },
+                ],
+              },
+              some: { retiredAt: null },
+            },
+          }),
+        },
+      }),
+    ),
   );
+
+  const selected = new Set<string>();
+
+  return parts.map((part, index) => {
+    const sets = candidates[index] ?? [];
+
+    if (!mockOnly) {
+      return { part, ...pickSet(sets) };
+    }
+
+    const [recording] = sets
+      .filter((set) => set.mediaAssetId && set.items.length === part.count && !selected.has(set.id))
+      .map((set) => ({ id: set.id, lastMockUse: getLastMockUse(set) }))
+      .toSorted((first, second) => (first.lastMockUse ?? 0) - (second.lastMockUse ?? 0));
+
+    if (!recording) {
+      return { needsSet: true, part, setId: null };
+    }
+
+    selected.add(recording.id);
+    return { lastMockUse: recording.lastMockUse, needsSet: false, part, setId: recording.id };
+  });
 }

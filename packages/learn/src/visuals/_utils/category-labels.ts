@@ -1,25 +1,44 @@
-/** About how wide one character of a 12px label is, to keep category labels from overlapping. */
+/** About how wide one character of a 12px Latin label is, where the chart's font can't be measured. */
 const LABEL_CHAR_WIDTH = 6.6;
 const LABEL_GAP = 6;
 const MAX_LINES_UNDER_BAR = 2;
 
 export type CategoryLabelLayout = { lines: string[][]; step: number };
 
-export function getLabelWidth(text: string): number {
-  return text.length * LABEL_CHAR_WIDTH + LABEL_GAP;
+/** A label's drawn width, without the gap after it; point names are drawn in medium weight. */
+export type TextWidth = (text: string, weight?: "medium") => number;
+
+export const estimateTextWidth: TextWidth = (text) => text.length * LABEL_CHAR_WIDTH;
+
+/** The room a label takes: its drawn width and the gap that keeps it off its neighbor. */
+export type LabelWidth = (text: string) => number;
+
+export function toLabelWidth(textWidth: TextWidth): LabelWidth {
+  return (text) => textWidth(text) + LABEL_GAP;
 }
+
+/** @internal */
+export const getLabelWidth = toLabelWidth(estimateTextWidth);
 
 function splitWords(label: string): string[] {
   return label.split(/(?<=[\s-])/u);
 }
 
-function breakWord({ room, word }: { room: number; word: string }): string[] {
+function breakWord({
+  labelWidth,
+  room,
+  word,
+}: {
+  labelWidth: LabelWidth;
+  room: number;
+  word: string;
+}): string[] {
   const pieces = [""];
 
   for (const character of word) {
     const piece = `${pieces.at(-1)}${character}`;
 
-    if (pieces.at(-1) === "" || getLabelWidth(piece.trim()) <= room) {
+    if (pieces.at(-1) === "" || labelWidth(piece.trim()) <= room) {
       pieces[pieces.length - 1] = piece;
     } else {
       pieces.push(character);
@@ -29,15 +48,33 @@ function breakWord({ room, word }: { room: number; word: string }): string[] {
   return pieces;
 }
 
+export function getWidestWord(
+  labels: readonly string[],
+  labelWidth: LabelWidth = getLabelWidth,
+): number {
+  return Math.max(
+    0,
+    ...labels.flatMap((label) => splitWords(label).map((word) => labelWidth(word.trim()))),
+  );
+}
+
 /** Wraps at spaces and hyphens; only a word wider than the whole room breaks between letters. */
-export function wrapLabel({ label, room }: { label: string; room: number }): string[] {
+export function wrapLabel({
+  label,
+  labelWidth = getLabelWidth,
+  room,
+}: {
+  label: string;
+  labelWidth?: LabelWidth;
+  room: number;
+}): string[] {
   const lines = [""];
-  const words = splitWords(label).flatMap((word) => breakWord({ room, word }));
+  const words = splitWords(label).flatMap((word) => breakWord({ labelWidth, room, word }));
 
   for (const word of words) {
     const line = `${lines.at(-1)}${word}`;
 
-    if (getLabelWidth(line.trim()) <= room) {
+    if (labelWidth(line.trim()) <= room) {
       lines[lines.length - 1] = line;
     } else {
       lines.push(word);
@@ -55,19 +92,19 @@ export function wrapLabel({ label, room }: { label: string; room: number }): str
 export function getCategoryLabels({
   band,
   categories,
+  labelWidth = getLabelWidth,
 }: {
   band: number;
   categories: readonly string[];
+  labelWidth?: LabelWidth;
 }): CategoryLabelLayout {
-  const widestWord = Math.max(
-    ...categories.flatMap((category) =>
-      splitWords(category).map((word) => getLabelWidth(word.trim())),
-    ),
-  );
-
+  const widestWord = getWidestWord(categories, labelWidth);
   const step = Math.min(Math.max(Math.ceil(widestWord / band), 1), categories.length);
 
-  return { lines: categories.map((label) => wrapLabel({ label, room: band * step })), step };
+  return {
+    lines: categories.map((label) => wrapLabel({ label, labelWidth, room: band * step })),
+    step,
+  };
 }
 
 export function fitsUnderBars({ lines, step }: CategoryLabelLayout): boolean {
@@ -75,14 +112,18 @@ export function fitsUnderBars({ lines, step }: CategoryLabelLayout): boolean {
 }
 
 export function clampLabelCenter({
+  labelWidth = getLabelWidth,
   lines,
+  start = 0,
   width,
   x,
 }: {
+  labelWidth?: LabelWidth;
   lines: string[];
+  start?: number;
   width: number;
   x: number;
 }): number {
-  const half = Math.max(...lines.map((line) => getLabelWidth(line))) / 2;
-  return Math.min(Math.max(x, half), width - half);
+  const half = Math.max(...lines.map((line) => labelWidth(line))) / 2;
+  return Math.min(Math.max(x, start + half), width - half);
 }

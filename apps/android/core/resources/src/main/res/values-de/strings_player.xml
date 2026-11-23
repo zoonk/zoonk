@@ -21,7 +21,9 @@
   "player_back_to_chapter": "8e9b89f0ca64b060dd0b2aca24a5eb4d0b236835d555ed0acc9788c527d3b1ee",
   "player_back_to_unit": "7a1ebe70809412b22a085c4c06c5653286c439050c24b75074113a97ec20dc83",
   "player_build_my_plan": "868d48c4980ee68f9c39f5a514f736e82c32a191245057cefd438272df0ae74c",
+  "player_can_listen_now": "dce55a0c371c896cf7a9c4b6defdea20b3bba9bf1dbe755305466ead07509eda",
   "player_can_talk_now": "7b6786dc3557d2000faa6cc97cb9290d1829d6b88c4ef8ec1b30e2daaab38168",
+  "player_cant_listen_now": "e07f89cefe826b7dbc4f706af066baaf43daf10750c5fab83752eef68e0be8cf",
   "player_cant_talk_now": "5504e6740ff02d286a588b9c1f33f2ea6692ddf16c736b4bdb36a1da18dd8c68",
   "player_cant_write_now": "4127ce2f1cdbcc1d34a69024daa96d2d65e3fdb4dd39ea30ff94e1bc0b20f3bd",
   "player_challenge_bit_higher": "9b32a6f6d9ecc3f419988e916c0321929c84ea54f0dde83a2569e06752b5cf8d",
@@ -49,13 +51,13 @@
   "player_challenge_said": "50235ee5a1a21c272cb68d6a99bbd01f221782a77852c63b254369187ffc8e1c",
   "player_challenge_scenario_complete": "c41dbd969a2474048184d5779dd614e01f424fd83cb29ea2e4a848fcf6bcd45f",
   "player_challenge_skills": "94cfc6a6d63b760716a61d5850d00846a2acfc193a3a935757a51921930d291e",
+  "player_challenge_starting_figures": "4302cd4e87cade369552bc4de4f5e9a3dc283314dee65778c6cd8f64fb2f1be6",
   "player_challenge_team": "a7b3f6b8576c0b7d4d27b654f8597967d565d1563465c925332d21695525beeb",
   "player_challenge_wait_stopped": "898a2f945d992207ccb098b7ac52ccd0c3595179db55df035d388d3d7488fc0b",
   "player_challenge_what_happened": "a8710958ac38ba5d82dbfa0d77a6d9cc9d6686270112d5b1278d580399dec21f",
   "player_challenge_what_if": "d22d76b686051841be9f71257c3886df6adf58657d9a902503a6b5e145601902",
   "player_challenge_you": "7bccbcf1f1b810d4ef4692ea303e2557279940857c5f117a8285609a8a9e4a2d",
   "player_challenge_your_options": "714b68eb851017aa5f78ece01667c3c27ff7d6f8ea88236bcbc06f781ebc634c",
-  "player_check_failed": "8447ec96937dd7018df2d6b770721ae627b2aa692406b6e4158f539bacd8fb1f",
   "player_citation_from_material": "c4484655781da691f0ed8b704aef00ca226f40de9338b136f2b479090486e097",
   "player_citation_not_in_material": "f644d7f727f398feda4311d6be35204160f498d0e56baca3318c0cf3f9f25cfe",
   "player_comes_back_at_end": "31e82a9d706a3dfaefb2f399973e582504ce2c18c953562b171ecffd84a5328f",
@@ -158,7 +160,6 @@
   "player_start_the_lesson": "6128d9f5111103aa777edc13a8a308ce1526d01b917dabf1ec865008b09c0455",
   "player_start_this_challenge": "f4f8e6a2ba9a61a1e907a9ad9fbd0d93b273c19e95080d8a1de6f5338ce42006",
   "player_start_this_lesson": "3849ef323c3843a7ba47d90f302b1653709cb5352fef16cfcb2868e1e0b75929",
-  "player_still_checking": "edede2860025c358ea2da0d1c64445dbff8cfe4737354fb49972672e82f2545f",
   "player_stop_failed": "828b44860cd68e520d332e2a71ddcf159beebcb8d3d94b495c25de8fba4faedc",
   "player_stop_for_today": "043063d23dd9b7dc637f9ef660b3b0b44c26380ef10adfc1a74417ec6ea05142",
   "player_summary": "c9948aea0fc2f66f20c56d44f9f820d3eedf155673b2cf098077f293e08cad9c",
@@ -289,8 +290,6 @@
     <string name="player_dont_know_yet">Ich weiß es noch nicht</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Erst Erklärung anzeigen</string>
-    <string name="player_check_failed">Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal.</string>
-    <string name="player_still_checking">Wir prüfen noch. Das dauert länger als üblich.</string>
     <string name="player_enter_hint">Drück Enter zum Prüfen und Shift+Enter für eine neue Zeile.</string>
     <string name="player_your_answer">Deine Antwort</string>
     <string name="player_write_your_answer">Schreib deine Antwort</string>
@@ -349,6 +348,8 @@
     <string name="player_not_found_title">Diese Lektion ist nicht verfügbar</string>
     <string name="player_cant_talk_now">Ich kann gerade nicht sprechen</string>
     <string name="player_can_talk_now">Ich kann jetzt sprechen</string>
+    <string name="player_cant_listen_now">Ich kann gerade nicht zuhören</string>
+    <string name="player_can_listen_now">Ich kann wieder zuhören</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Sag es stattdessen</string>
     <string name="player_microphone_is_blocked">Der Zugriff auf das Mikrofon ist blockiert.</string>
@@ -370,6 +371,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">Was wäre, wenn · %1$s</string>
     <string name="player_challenge_mission">Deine Mission</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">Startwerte</string>
     <string name="player_challenge_team">Dein Team</string>
     <string name="player_challenge_meters">Wie sich der Fall entwickelt</string>
     <!-- How a meter moved after the learner's decision. -->

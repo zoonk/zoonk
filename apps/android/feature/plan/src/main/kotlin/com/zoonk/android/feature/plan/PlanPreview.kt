@@ -57,10 +57,10 @@ sealed class PlanPreviewState {
     ) : Asked(operations, plan)
 }
 
-/** Fit checks use the whole plan; date and coverage previews depend only on its advice inputs. */
+/** Offer checks use the whole plan; date and coverage previews depend only on its advice inputs. */
 internal fun PlanPreviewState.Asked.matchesPlan(other: Plan?): Boolean =
     other != null &&
-        if (PlanOp.FitLessons in operations) {
+        if (operations.any { it == PlanOp.FitLessons || it is PlanOp.Extras }) {
             plan.copy(focusTest = null) == other.copy(focusTest = null)
         } else {
             planAdviceRevision(plan) == planAdviceRevision(other)

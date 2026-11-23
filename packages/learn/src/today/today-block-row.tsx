@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ListChecksIcon, Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -15,8 +16,8 @@ import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { getLessonAgainId, isFinished } from "./today-queue";
 import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
-import { useStepLabel } from "./use-row-label";
-import { useLessonGettingReady } from "./use-today-copy";
+import { useBlockSubject, useStepLabel } from "./use-row-label";
+import { useStepGettingReady } from "./use-today-copy";
 
 export function getRowClass({ isNext }: { isNext: boolean }): string {
   return cn(
@@ -104,13 +105,16 @@ function RowLines({
 }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
-  const isGettingReady = useLessonGettingReady();
+  const isGettingReady = useStepGettingReady();
   const stepLabel = useStepLabel({ includeSubject: false });
+  const subject = useBlockSubject()(block);
   const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
 
   return (
     <>
-      {showSubject && block.subject && <span className={ROW_LINE_CLASS}>{block.subject}</span>}
+      {(showSubject || block.subjectExtra) && subject && (
+        <span className={ROW_LINE_CLASS}>{subject}</span>
+      )}
       {!isFinished(block) && line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
@@ -141,7 +145,7 @@ function RowTarget({
     );
   }
 
-  if (isFinished(block) || block.waitReason || !opens) {
+  if (isFinished(block) || block.waitReason || block.preparing || !opens) {
     return name;
   }
 
@@ -149,6 +153,21 @@ function RowTarget({
     <RowOpen block={block} isNext={isNext}>
       {name}
     </RowOpen>
+  );
+}
+
+/** Work past the day's list: it never counts toward the day's progress. */
+function ExtraTag() {
+  const t = useExtracted();
+
+  return (
+    <Badge className="font-sans" variant="outline">
+      {t({
+        description:
+          "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.",
+        message: "Extra",
+      })}
+    </Badge>
   );
 }
 
@@ -191,8 +210,9 @@ export function BlockRow({
           <RowLines block={block} isNext={isNext} showSubject={showSubject} />
         </div>
 
-        {!finished && (
+        {(block.extra || !finished) && (
           <span className="text-muted-foreground flex h-5 shrink-0 items-center gap-1.5 font-mono text-xs tabular-nums">
+            {block.extra && <ExtraTag />}
             {countsTowardMission && (
               <ListChecksIcon
                 aria-hidden="true"
@@ -200,7 +220,7 @@ export function BlockRow({
                 data-slot="mission-row-mark"
               />
             )}
-            <RowTime minutes={block.estimatedMinutes} />
+            {!finished && <RowTime minutes={block.estimatedMinutes} />}
           </span>
         )}
       </div>

@@ -87,7 +87,26 @@ const PLAN = {
   suggestedTime: null,
   tools: [],
   week: {
-    days: [{ date: "2026-11-16", items: [], minutes: 30, mockFunding: null, state: "today" }],
+    days: [
+      {
+        date: "2026-11-16",
+        items: [],
+        minutes: 30,
+        mockFunding: null,
+        state: "today",
+        study: {
+          completed: 0,
+          date: "2026-11-16",
+          goalMinutes: 30,
+          hitGoal: false,
+          isToday: true,
+          kind: "study",
+          minutes: 0,
+          studied: false,
+          total: 0,
+        },
+      },
+    ],
     endDate: "2026-11-22",
     startDate: "2026-11-16",
   },
@@ -115,6 +134,7 @@ function renderEditor(plan: PlanView = PLAN) {
     decide: async () => false,
     findTimeToCover: async () => null,
     preview: async () => null,
+    readPlanAgain: () => {},
   };
 
   render(
@@ -155,6 +175,7 @@ function renderPlanSlots({
     decide: async () => false,
     findTimeToCover,
     preview: async () => null,
+    readPlanAgain: () => {},
   };
 
   const screen = (shown: { host: PlanSuggestionHost; plan: PlanView }) => (
@@ -520,6 +541,7 @@ describe("the Plan's requests belong to its screen", () => {
         decide,
         findTimeToCover: async () => null,
         preview: async () => null,
+        readPlanAgain: () => {},
       };
 
       function Screen() {

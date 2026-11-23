@@ -13,6 +13,17 @@ const planOfferSchema = z.object({
   operations: savedPlanOfferOperationsSchema,
 });
 
+export const planExtraOfferSchema = planOfferSchema
+  .extend({
+    canApply: z.boolean().describe("Whether the offer was calculated for the current study day."),
+    lessons: z.int().positive().describe("The number of optional lessons added by the change."),
+  })
+  .nullable()
+  .optional()
+  .describe(
+    "The optional exam strategy lessons that all fit before the exam, when the notice selection fits and no fit offer takes priority.",
+  );
+
 export const planFitOfferSchema = planOfferSchema
   .extend({
     canApply: z

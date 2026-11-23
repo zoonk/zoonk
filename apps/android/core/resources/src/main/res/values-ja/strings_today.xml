@@ -108,6 +108,7 @@
   "today_step_counts_toward_mission": "69c98e985bf8dc91eab8fa8edf72903bd1ac0472c71b2a16365bfcb5b567e619",
   "today_step_done": "90d9d386e7e18b5c6778264cc6c389e26dfd3249b760eccb1e1fdedbc6e983e3",
   "today_step_every_topic": "da3e6173ae801da1955dae47f97b6517d95205f573094fbf0f2fafe7c89a7b66",
+  "today_step_extra": "2d0007030951976bd029bb5833f68abb52e86f480cafd081567bbb13ab6aebe8",
   "today_step_next": "565ec18b1fea89f3c8e3846f16c35926b4d93874d974a9a584b4a2a312b41228",
   "today_step_often_tested": "a97731e5a441a4c9c97afed54e0ac2aa46da575ca4ac9a39d41e2bc8e6be7764",
   "today_step_open_failed": "5049e930375960e8f1fbf788b5c4565e4ff97ce8c9bb55fa9055c8690dbf7375",
@@ -191,6 +192,8 @@
     <string name="today_step_done">完了</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">次のステップ</string>
+    <!-- Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress. -->
+    <string name="today_step_extra">追加分</string>
     <string name="today_step_skipped">スキップ</string>
     <string name="today_step_counts_toward_mission">ミッションにカウントされます</string>
     <string name="today_step_often_tested">よく出題される</string>

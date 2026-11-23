@@ -21,7 +21,9 @@
   "player_back_to_chapter": "c9fade0c18023a45274b8a3393927db3cce5cd16773ce3a2ca45aa4fa88b4006",
   "player_back_to_unit": "637faaea21a78bc36c210895c2b75cb9ac23815faa9d45e2ebf33ea8466d27f9",
   "player_build_my_plan": "e2f5c84df1374865b2f8687e948a634ba49b44f8c10118f37101b233fae7a595",
+  "player_can_listen_now": "6614d8c1576f8bf40c94e21b8e72680895dfb1bb030e92b89a628020f12779de",
   "player_can_talk_now": "779ef9042bc4d3a7d2d6e6ca1f2dd4bf96e9b93d3e5be489dcdd2f28107f2812",
+  "player_cant_listen_now": "8fe06bfd6fd4abb6424db4d4d60d257671bfbcd6fcb71c4e86482fbd966053b5",
   "player_cant_talk_now": "606d2d643b5d85519c818e9b10301b83b040dbcbccc7182a7f818d91fa3d0b90",
   "player_cant_write_now": "2e6dee1ed5b5d4cdb97b3f165744b812907361a0a6a41fc09bdba0340c5106de",
   "player_challenge_bit_higher": "d3f9c99633816e44704f70c48dde737c42cc3cb2436c37b1efb8d4b0fde61f11",
@@ -49,13 +51,13 @@
   "player_challenge_said": "cb9be45036d3d5db0c5b4a042b3637f2b2eef4a893d96c696b6e2ce4b9ef5392",
   "player_challenge_scenario_complete": "fedb7d2d81894dfa0911aebf9468edad03498f28995de904e33f9def7f9ebcdb",
   "player_challenge_skills": "1ca43b2015763ac33099f0b5619ae0b603288dea2b926e3761aa27d645b020af",
+  "player_challenge_starting_figures": "eb5867e6b3aebf740b82121d39795b2feb010716ddb6d3d24b175872cb0c1fa1",
   "player_challenge_team": "902258f8e89e4e760f1d02533ac7018e73140938af4504d30fb97b5feb07fc89",
   "player_challenge_wait_stopped": "6248016546e8745ae29918f6f2de8777fda32d1106c97cd7e2ed4837649f05ed",
   "player_challenge_what_happened": "1186241f292a549f7d64d152e697871a301ce6c97a918dd1a527180c6918e21e",
   "player_challenge_what_if": "a90ca944394d277a044f3ce9fc0265295c4666aa596d00c6499c9b8cfe83bc9b",
   "player_challenge_you": "64d4afbe99cad4fe41836f925f3aa9990b9d496f342dc567288db382c3164dc5",
   "player_challenge_your_options": "6b96393b366c390eadcd6850c72942644613c6e669fc4a9546cf304934808f21",
-  "player_check_failed": "624207ebf676c1120eaf4885f570184cbc6d24b06bb31439cb5ab3daaeee208b",
   "player_citation_from_material": "31933b12a8351fe754c1f03d5294b40730eb52b7b001d0b3fa79fee7904c47d1",
   "player_citation_not_in_material": "2bc41c0ab4ca49752fd693851b0db3f9a12bcf623e3e1449e3da0505c2009f31",
   "player_comes_back_at_end": "30b8f9fea16f213a400d7be354c77a36d084fa228a571076c13cb3fa7de3bbb3",
@@ -158,7 +160,6 @@
   "player_start_the_lesson": "bac25661bca7720d1bb2287d963ac3b4d1ddb54e64d730be7b736e0f94561369",
   "player_start_this_challenge": "c5efbb5e452481b661a43f8926351a4e7b992925902806ac76542b5af0ef2997",
   "player_start_this_lesson": "c8079ef598906c297d4de2f1a8e0bf0461c95253839781170c3a65283ac712a8",
-  "player_still_checking": "cd641ccee08d2fbbba068b5a2c4aaf0696dca14795b31e66e4ba286e1e5d17b2",
   "player_stop_failed": "bacf92739ba6d6ce5820f7a347860fc437c77c6c30ae5128c0d9fa66f03e1c14",
   "player_stop_for_today": "497ad2132602f69e16d525b4ea84bd24d2fa495fcd70fa25a960bbc5c306073e",
   "player_summary": "76a023fcd9a571d3cc608a04bbd9aa6f9dd224f566fd949dfc65770d3da51b42",
@@ -289,8 +290,6 @@
     <string name="player_dont_know_yet">Henüz bilmiyorum</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Önce açıklamayı göster</string>
-    <string name="player_check_failed">Bu kez cevabını kontrol edemedik. Tekrar dene.</string>
-    <string name="player_still_checking">Hâlâ kontrol ediyoruz. Normalden uzun sürüyor.</string>
     <string name="player_enter_hint">Kontrol etmek için Enter’a, yeni satır için Shift+Enter’a bas.</string>
     <string name="player_your_answer">Cevabın</string>
     <string name="player_write_your_answer">Cevabını yaz</string>
@@ -349,6 +348,8 @@
     <string name="player_not_found_title">Bu ders kullanılamıyor</string>
     <string name="player_cant_talk_now">Şu an konuşamıyorum</string>
     <string name="player_can_talk_now">Şu an konuşabilirim</string>
+    <string name="player_cant_listen_now">Şu an dinleyemiyorum</string>
+    <string name="player_can_listen_now">Artık dinleyebilirim</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Sesli söyle</string>
     <string name="player_microphone_is_blocked">Mikrofon erişimi engellendi.</string>
@@ -370,6 +371,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">Ya şöyle olsaydı · %1$s</string>
     <string name="player_challenge_mission">Görevin</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">Başlangıç değerleri</string>
     <string name="player_challenge_team">Ekibin</string>
     <string name="player_challenge_meters">Durumun gidişatı</string>
     <!-- How a meter moved after the learner's decision. -->

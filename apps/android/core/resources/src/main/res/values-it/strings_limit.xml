@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "5d8b3c1475bfd2fbf456e07bfa0b4cb5d707e59eaea669ed9c397eabda7a2b30",
   "limit_mind_maps_guest": "f5dcb7c766c707dd4fe676755200352dae0a7326e4d428c90b97c647205ab4e3",
   "limit_mind_maps_used": "8fb775c0d7b5f53632d29b92753c2e5d5173d78d2a4c9b6276c076160a0e8b00",
-  "limit_mock_exams_used": "f8e0dd5859663f9a1b915dec4288ade9c5d3f8f9ca2000d69a459f7f2d93d175",
   "limit_more_later_today": "fa89bfcf98f2c9b2f14bce8912e6d6ee5d8b749076143b16dd7c738ed7154add",
   "limit_more_later_today_or_subscribe": "8490b76b43d96e3c449f10dd2bbb0e70146d9b3ca969885aa522613bb7b1715e",
   "limit_more_on": "bc6860bab0fab00c7bbdbd9e47e3c309d133e0ba9a70a084ba681a61a899f728",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">Hai esaurito il tempo per le conversazioni</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Hai di nuovo tempo per le conversazioni</string>
-    <string name="limit_mock_exams_used">Hai esaurito le simulazioni</string>
     <string name="limit_lessons_guest">Per altre lezioni serve un account</string>
     <string name="limit_lessons_free">Hai esaurito le tue lezioni gratuite</string>
     <string name="limit_lessons_day">Hai raggiunto il limite di nuove lezioni per oggi</string>

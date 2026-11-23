@@ -2,9 +2,12 @@ package com.zoonk.android.feature.audio
 
 import android.Manifest
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -12,6 +15,7 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
@@ -52,7 +56,7 @@ class VoiceAnswerRecorderTest {
         var shown by mutableStateOf(true)
         rule.setContent {
             ZoonkTheme {
-                if (shown) VoiceAnswerRecorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator())
+                if (shown) Recorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator())
             }
         }
         val record = rule.onNodeWithText("Record").fetchSemanticsNode().id
@@ -65,7 +69,7 @@ class VoiceAnswerRecorderTest {
         shown = true
 
         rule.onNodeWithText("Record").assertIsDisplayed()
-        rule.onNodeWithText("Press Record and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
     }
 
     /** The microphone turned off for good shows how to turn it on; back from Settings with it on, Record returns. */
@@ -75,7 +79,7 @@ class VoiceAnswerRecorderTest {
         rule.setContent {
             ZoonkTheme {
                 model = voiceAnswerModel(KEY) { GradeOutcome.Failed }
-                VoiceAnswerRecorder(model, rememberAppNavigator())
+                Recorder(model, rememberAppNavigator())
             }
         }
         rule.runOnIdle { model.microphoneOff = true }
@@ -110,7 +114,7 @@ class VoiceAnswerRecorderTest {
             ZoonkTheme {
                 if (shown) {
                     model = voiceAnswerModel(KEY) { graded.await() }
-                    VoiceAnswerRecorder(model, rememberAppNavigator())
+                    Recorder(model, rememberAppNavigator())
                 }
             }
         }
@@ -134,7 +138,7 @@ class VoiceAnswerRecorderTest {
                 navigator = rememberAppNavigator()
                 if (navigator.currentRoute != AppRoute.Login) {
                     model = voiceAnswerModel(KEY) { GradeOutcome.Limited(Limit.SignUpRequired) }
-                    VoiceAnswerRecorder(model, navigator)
+                    Recorder(model, navigator)
                 }
             }
         }
@@ -143,10 +147,27 @@ class VoiceAnswerRecorderTest {
         rule.runOnIdle { navigator.back() }
 
         rule.onNodeWithText("Create a free account").assertDoesNotExist()
-        rule.onNodeWithText("Press Record and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
     }
 
     private companion object {
         const val KEY = "microphone"
+    }
+}
+
+/** A screen's take as its pieces draw it: Record, the column's limit and the bar's note, or how to turn the microphone on. */
+@Composable
+internal fun Recorder(
+    model: VoiceAnswerModel,
+    navigator: AppNavigator,
+) {
+    if (model.microphoneOff) {
+        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
+        return
+    }
+    Column {
+        VoiceAnswerButton(model)
+        VoiceAnswerLimit(model, navigator)
+        recordNote(model)?.invoke()
     }
 }

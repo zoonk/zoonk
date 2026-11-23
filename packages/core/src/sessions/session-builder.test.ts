@@ -405,6 +405,22 @@ describe(buildSessionBlocks, () => {
     expect(practiced.flatMap((block) => block.payload.itemIds)).toHaveLength(12);
   });
 
+  it("uses only the remaining time for practice when a spare review shares the day with strategy", () => {
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      allowsReviewLessons: true,
+      capsules: [],
+      dailyMinutes: 18,
+      lessons: [lesson("strategy", 14)],
+      reviewPlanItemId: "plan-review",
+    });
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["learn", "practice"]);
+    expect(blocks[0]?.lessonId).toBe("strategy");
+    expect(blocks[1]?.payload.planItemId).toBe("plan-review");
+    expect(plannedMinutes).toBeLessThanOrEqual(18);
+  });
+
   it("gives a day whose mock the learner's plan doesn't include to a full review of every skill", () => {
     const pool = Array.from({ length: 30 }, (_, index) => ({
       itemId: `p${index}`,

@@ -21,8 +21,10 @@ internal sealed interface PlanAsker {
         val item: SlotItem.Choice,
     ) : PlanAsker
 
-    /** The fit offer's lessons, added once its check showed today's numbers: a failure says so in the app's snackbar. */
-    data object FitLessons : PlanAsker
+    /** An offer's lessons, added once its check showed today's numbers: a failure says so in the app's snackbar. */
+    data class Offer(
+        val item: SlotItem,
+    ) : PlanAsker
 
     /** A save whose failure the app's snackbar says. */
     data object SaysFailure : PlanAsker

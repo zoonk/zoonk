@@ -11,7 +11,7 @@ import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
-import { type ExtraTime } from "../extra-time";
+import { type ExtraTime, type UpNextDay, listsUpNext } from "../extra-time";
 import { type PlannedBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
@@ -38,6 +38,7 @@ async function loadPracticePlan(goalId: string | null) {
 /** Null without an askable question; never reuses questions already asked by the session. */
 export async function buildExtraPractice({
   areaId = null,
+  includeUnstudied,
   minutes,
   refresh = false,
   session,
@@ -46,10 +47,13 @@ export async function buildExtraPractice({
   userId,
 }: {
   areaId?: string | null;
+  includeUnstudied?: boolean;
   minutes: number;
   /** Content's "Review" of the goal's fading and due skills. */
   refresh?: boolean;
-  session: ExtraDay;
+  session: Pick<ExtraDay, "goal" | "goalId"> & {
+    blocks: readonly Pick<DayBlockInput, "payload">[];
+  };
   skillIds: string[];
   title?: string | null;
   userId: string;
@@ -67,6 +71,7 @@ export async function buildExtraPractice({
     examBlueprintId: session.goal?.examBlueprintId ?? null,
     excludeItemIds: used,
     field: getGoalField(session.goal?.details),
+    includeUnstudied,
     listeningSkillIds,
     maxMinutes: minutes,
     now: new Date(),
@@ -206,17 +211,19 @@ export async function planExtraBlocks({
 
 /** Offer more time only after checking it has actual work to add; expose those lessons before the tap. */
 export async function withExtraStudyCheck({
-  extraTime,
+  day,
   readSkillIds,
   session,
   userId,
 }: {
-  extraTime: ExtraTime;
+  day: UpNextDay & { extraTime: ExtraTime };
   /** A GET passes its request-cached goal plan; without it, the skills are read fresh. */
   readSkillIds?: () => Promise<string[]>;
   session: ExtraDay;
   userId: string;
 }): Promise<ExtraTime> {
+  const { extraTime } = day;
+
   if (!extraTime.available) {
     return extraTime;
   }
@@ -234,11 +241,13 @@ export async function withExtraStudyCheck({
     return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };
   }
 
-  const lessons = planned.flatMap((block) =>
-    block.kind === "learn"
-      ? [{ minutes: block.estimatedMinutes, title: block.payload.title ?? "" }]
-      : [],
-  );
+  const lessons = listsUpNext(day)
+    ? planned.flatMap((block) =>
+        block.kind === "learn"
+          ? [{ minutes: block.estimatedMinutes, title: block.payload.title ?? "" }]
+          : [],
+      )
+    : [];
 
   return { ...extraTime, lessons };
 }
@@ -294,15 +303,7 @@ export async function appendExtraBlocks({
     })),
   });
 
-  await transaction.studySession.update({
-    data: {
-      plannedMinutes: {
-        increment: planned.reduce((sum, block) => sum + block.estimatedMinutes, 0),
-      },
-      status: "active",
-    },
-    where: { id: session.id },
-  });
+  await transaction.studySession.update({ data: { status: "active" }, where: { id: session.id } });
 
   const first = blocks.find((block) => block.position === start);
 

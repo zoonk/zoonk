@@ -50,15 +50,11 @@ test.describe("Exams API", () => {
       api.put(`/v1/goals/${id}/exam-result`, { data: REPORT }),
       api.post(`/v1/goals/${id}/exam-moves`),
       api.get(`/v1/mocks/${id}`),
-      api.post(`/v1/mocks/${id}/starts`, { data: {} }),
       api.post(`/v1/mocks/${id}/finishes`, { data: {} }),
       api.post(`/v1/mocks/${id}/break-ends`),
       api.post(`/v1/mocks/${id}/plan-changes`, { data: { offer: "skip", timeZone: "UTC" } }),
       api.get(`/v1/goals/${id}/mocks`),
       api.post(`/v1/goals/${id}/mocks`, {
-        data: { shape: { area: null, day: null, kind: "full" } },
-      }),
-      api.post(`/v1/goals/${id}/mocks/generations`, {
         data: { shape: { area: null, day: null, kind: "full" } },
       }),
       api.get(`/v1/essays/${id}`),
@@ -87,11 +83,13 @@ test.describe("Exams API", () => {
 
     const [hidden, start] = await Promise.all([
       other.api.get(path),
-      api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+      api.post(`/v1/study-sessions/${today.id}/blocks/${block?.id}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
     ]);
 
     expect(hidden.status()).toBe(404);
-    expect(start.status()).toBe(204);
+    expect(start.status()).toBe(200);
 
     const running = await readBody({
       response: await api.get(path),
@@ -210,8 +208,12 @@ test.describe("Exams API", () => {
     expect(notStarted.status()).toBe(409);
     await expect(notStarted.json()).resolves.toMatchObject({ error: { code: "MOCK_NOT_RUNNING" } });
 
-    const started = await api.post(`${path}/starts`, inUtc);
-    expect(started.status()).toBe(204);
+    const started = await api.post(
+      `/v1/study-sessions/${today.id}/blocks/${mock?.id}/starts`,
+      inUtc,
+    );
+
+    expect(started.status()).toBe(200);
 
     const running = await readBody({
       response: await api.get(path),
@@ -304,7 +306,7 @@ test.describe("Exams API", () => {
       createBearerLearner({ baseURL, prefix: "anytime-mock-other" }),
     ]);
 
-    const { goal } = await createExamGoal(userId);
+    const { goal } = await createExamGoal(userId, 2 * MOCK_QUESTIONS);
     const mocksPath = `/v1/goals/${goal.id}/mocks`;
     const half = { area: null, day: null, kind: "half" } as const;
 
@@ -319,17 +321,17 @@ test.describe("Exams API", () => {
     ]);
 
     expect(hidden.status()).toBe(404);
-    expect(full).toStrictEqual({ id: null, status: "needsQuestions" });
+    expect(full).toStrictEqual({ id: null, status: "preparing" });
 
-    // After a writing run, the server asks first instead of starting a shorter mock exam.
-    const afterWriting = await readBody({
-      response: await api.post(mocksPath, {
-        data: { afterWriting: true, shape: { ...half, kind: "full" } },
-      }),
-      schema: anytimeMockResponseSchema,
+    const chooser = await readBody({
+      response: await api.get(mocksPath),
+      schema: mockOptionsResponseSchema,
     });
 
-    expect(afterWriting).toMatchObject({ examQuestions: 12, questions: 6, status: "short" });
+    expect(chooser.requested).toStrictEqual({
+      shape: { ...half, kind: "full" },
+      status: "preparing",
+    });
 
     const started = await readBody({
       response: await api.post(mocksPath, { data: { shape: half } }),
@@ -522,22 +524,19 @@ test.describe("Exams API", () => {
     const shape = { area: null, day: null, kind: "half" } as const;
     const placement = { length: "short", purpose: "placement" } as const;
 
-    const [options, start, writing, placementStart] = await Promise.all([
+    const [options, start, placementStart] = await Promise.all([
       readBody({
         response: await api.get(`/v1/goals/${goal.id}/mocks`),
         schema: mockOptionsResponseSchema,
       }),
       api.post(`/v1/goals/${goal.id}/mocks`, { data: { shape } }),
-      api.post(`/v1/goals/${goal.id}/mocks/generations`, { data: { shape } }),
       api.post(`/v1/goals/${goal.id}/mocks`, { data: placement }),
     ]);
 
     expect(options).toMatchObject({ access: "plusRequired" });
     expect(options).not.toHaveProperty("placement");
 
-    expect([start.status(), writing.status(), placementStart.status()]).toStrictEqual([
-      402, 402, 400,
-    ]);
+    expect([start.status(), placementStart.status()]).toStrictEqual([402, 400]);
 
     await expect(start.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
 

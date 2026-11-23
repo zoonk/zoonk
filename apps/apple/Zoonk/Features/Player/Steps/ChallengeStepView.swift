@@ -2,6 +2,12 @@ import SwiftUI
 
 /// The team's names fill `{{slotId}}`.
 struct ChallengeStepView: View {
+  static let decisionVisualId = "challenge-decision-visual"
+
+  private struct StartingFiguresID: Hashable {
+    let node: String
+  }
+
   let step: LessonStep
   let content: ChallengeContent
   let state: LessonPlayerState
@@ -27,6 +33,9 @@ struct ChallengeStepView: View {
       played(decisions, upcoming: upcoming(progress))
     case (.deciding(let node, let confirmed, _, let pending), .turn):
       LessonQuestionText(text: named(node.prompt))
+      if !content.panels.isEmpty {
+        startingFigures.id(StartingFiguresID(node: node.id))
+      }
       LessonOptionList(
         options: node.choices.map { LessonOption(id: $0.id, text: named($0.text)) },
         selectedId: pending,
@@ -75,9 +84,7 @@ struct ChallengeStepView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .panel()
 
-      ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
-        self.panel(panel)
-      }
+      openingPanels
 
       SectionLabel(
         Text("Your team", tableName: "Player", comment: "Above the people in a challenge"))
@@ -104,6 +111,29 @@ struct ChallengeStepView: View {
     }
   }
 
+  private var openingPanels: some View {
+    ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
+      self.panel(panel)
+    }
+  }
+
+  private var startingFigures: some View {
+    DisclosureGroup {
+      VStack(alignment: .leading, spacing: 16) {
+        openingPanels
+      }
+      .padding(.top, 8)
+    } label: {
+      Label {
+        Text(
+          "Starting figures", tableName: "Player",
+          comment: "Opens the figures shown at the start of a challenge.")
+      } icon: {
+        Image(systemName: "doc.text")
+      }
+    }
+  }
+
   /// One view while deciding and once ended, so what the last decision brings is read out too.
   private func played(_ decisions: [ChallengeWalk.Decision], upcoming: ChallengeContent.Node?)
     -> some View
@@ -115,6 +145,11 @@ struct ChallengeStepView: View {
       if let upcoming {
         ForEach(Array(upcoming.messages.enumerated()), id: \.offset) { _, message in
           self.message(message)
+        }
+
+        if let visual = upcoming.visual {
+          LessonVisualView(visual: visual)
+            .id(Self.decisionVisualId)
         }
       }
     }
@@ -149,7 +184,9 @@ struct ChallengeStepView: View {
       latest.choice.timeJump.map {
         [([named($0.label)] + ($0.panel.map(panelLines) ?? [])).joined(separator: "\n")]
       } ?? []
-    let lines = latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
+    let lines =
+      latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
+      + [upcoming?.visual?.title].compactMap(\.self)
 
     let parts = [
       moved.isEmpty ? nil : moved.formatted(.list(type: .and)),
@@ -248,6 +285,10 @@ struct ChallengeStepView: View {
     ForEach(Array(decisions.enumerated()), id: \.offset) { _, decision in
       ForEach(Array(decision.node.messages.enumerated()), id: \.offset) { _, message in
         self.message(message)
+      }
+      // Stays where it was while deciding, so the pick moves nothing.
+      if let visual = decision.node.visual {
+        LessonVisualView(visual: visual)
       }
       VStack(alignment: .trailing, spacing: 8) {
         pick(decision.choice.text)

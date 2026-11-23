@@ -67,6 +67,7 @@ export async function appendLandedLessons({
           ...block,
           payload: {
             ...block.payload,
+            ...(locked.endedAt && { extra: true }),
             planItemId: block.payload.planItemKey
               ? (ids.get(block.payload.planItemKey) ?? block.payload.planItemId)
               : block.payload.planItemId,
@@ -79,7 +80,9 @@ export async function appendLandedLessons({
       await transaction.studySession.update({
         data: {
           planVersion: savedVersion,
-          plannedMinutes: Math.max(locked.plannedMinutes, plannedMinutes),
+          plannedMinutes: locked.endedAt
+            ? locked.plannedMinutes
+            : Math.max(locked.plannedMinutes, plannedMinutes),
         },
         where: { id: session.id },
       });

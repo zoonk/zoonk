@@ -3,6 +3,7 @@ import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/d
 import { safeAsync } from "@zoonk/utils/error";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { startScheduledSitting } from "../exams/mocks/_utils/start-scheduled-mock";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
@@ -40,6 +41,7 @@ export type StartStudyBlockResult =
   | { reason: "challenge" | "lessons"; status: "earlierFirst" }
   | { status: "notFound" }
   | { status: "plusRequired" }
+  | { status: "preparing" }
   | { status: "questionsNeeded" }
   | { status: "unauthorized" };
 
@@ -138,6 +140,39 @@ async function loadStartableBlock({
   return { block: current, changed: current !== saved };
 }
 
+async function lockStartableSession({
+  block,
+  sessionId,
+  tx,
+  userId,
+}: {
+  block: StudySessionBlock;
+  sessionId: string;
+  tx: TransactionClient;
+  userId: string;
+}) {
+  await tx.$queryRaw`
+      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
+    `;
+
+  const locked = await tx.studySession.findFirst({
+    include: STUDY_SESSION_INCLUDE,
+    where: { id: sessionId, userId },
+  });
+
+  if (!locked) {
+    throw new StudyBlockStartUnchangedError({ status: "notFound" });
+  }
+
+  const wait = getStoredBlockWait({ block, blocks: locked.blocks });
+
+  if (wait) {
+    throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+  }
+
+  return locked;
+}
+
 /** Requires ownership; fills checkpoint questions before starting, and owes the session's preparation. */
 export async function startStudyBlock({
   blockId,
@@ -205,26 +240,36 @@ export async function startStudyBlock({
         return { status: "blockFinished" as const };
       }
 
-      await tx.$queryRaw`
-      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
-    `;
+      const locked = await lockStartableSession({ block: current, sessionId, tx, userId });
 
-      const locked = await tx.studySession.findFirst({
-        include: STUDY_SESSION_INCLUDE,
-        where: { id: sessionId, userId },
+      const sitting = await startScheduledSitting({
+        block: current,
+        goal: locked.goal,
+        now,
+        sessionDate: locked.localDate,
+        tx,
+        userId,
       });
 
-      if (!locked) {
-        throw new StudyBlockStartUnchangedError({ status: "notFound" });
+      if (sitting === "plusRequired") {
+        throw new StudyBlockStartUnchangedError({ status: "plusRequired" });
       }
 
-      const wait = getStoredBlockWait({ block: current, blocks: locked.blocks });
-
-      if (wait) {
-        throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+      if (sitting === "preparing") {
+        return { status: "preparing" as const };
       }
 
-      if (!changed && locked.status === "active" && locked.startedAt && isRunningBlock(current)) {
+      if (sitting === "finished") {
+        return { status: "blockFinished" as const };
+      }
+
+      if (
+        sitting !== "created" &&
+        !changed &&
+        locked.status === "active" &&
+        locked.startedAt &&
+        isRunningBlock(current)
+      ) {
         const { id, kind, lessonId, startedAt, status } = current;
 
         throw new StudyBlockStartUnchangedError({
@@ -265,7 +310,7 @@ export async function startStudyBlock({
               elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
             },
           },
-          startedAt: current.startedAt ?? now,
+          startedAt: filledBlock.startedAt ?? now,
           status: "active",
         },
         select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
@@ -292,7 +337,7 @@ export async function startStudyBlock({
 
   const result = attempt.data;
 
-  if (result.status === "blockFinished") {
+  if (result.status !== "ready") {
     return result;
   }
 

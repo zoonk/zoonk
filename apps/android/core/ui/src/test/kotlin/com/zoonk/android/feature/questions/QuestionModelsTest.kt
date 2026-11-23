@@ -60,4 +60,26 @@ class QuestionModelsTest {
             parseItemLine("The **cell**\n  wall: \$C_{A0} = 2$ mol/L costs $5 or $10"),
         )
     }
+
+    @Test
+    fun itemTextKeepsAProgramsIndentationInAFencedBlockAndReadsTextAfterIt() {
+        val code = "for i in range(3):\n    if i > 0:\n        print(i)\nprint(\"done\")"
+        val blocks = parseItemText("What does this print?\n```python\n$code\n```\nPick one.")
+
+        assertEquals(3, blocks.size)
+        assertEquals(ItemBlock.Code(code, "python"), blocks[1])
+        assertEquals("Pick one.", (blocks[2] as ItemBlock.Paragraph).segments.joinToString("") { it.text })
+    }
+
+    @Test
+    fun anAnswersCodeBlockReadsAsOneRunOfInlineCode() {
+        assertEquals(
+            listOf(
+                RichSegment(SegmentKind.Text, "Troque por"),
+                RichSegment(SegmentKind.Text, " "),
+                RichSegment(SegmentKind.Code, "int total = 0; total++;"),
+            ),
+            parseItemLine("Troque por\n```java\nint total = 0;\ntotal++;\n```"),
+        )
+    }
 }

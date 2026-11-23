@@ -58,6 +58,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanStatus
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
@@ -288,6 +289,7 @@ private fun StepRow(
         model.day,
         step,
         isNext,
+        model.today.goal.examDocument ?: ExamDocument.NOTICE,
         modifier,
         model.today.lessonStatus,
         model.writingStalled,
@@ -393,7 +395,7 @@ private fun TodayDayStatus(
     when (model.state) {
         StudySession.State.DONE -> {
             val link =
-                if (model.keepLearning) {
+                if (model.action != TodayMainAction.Summary) {
                     statusLink(stringResource(R.string.today_see_summary)) {
                         actions.navigate(model.summaryRoute)
                     }

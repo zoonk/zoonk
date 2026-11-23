@@ -301,7 +301,7 @@ private struct MistakeEntryView: View {
       ItemSupportView(
         context: snapshot.context,
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
-        visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
+        visual: try? snapshot.visual.map { try PracticeJSON.recode($0) }, isMuted: true)
 
       QuestionTitle(text: snapshot.question, isHeading: false)
 
@@ -426,6 +426,12 @@ struct MistakeAnswerRow: View {
       text: isLiteral ? RichInline(text: AttributedString(text)) : LessonRichText.typeset(text),
       action: nil
     )
+    .accessibilityValue(
+      isRight
+        ? Text(verbatim: "")
+        : Text(
+          "Your answer", tableName: "Practice",
+          comment: "VoiceOver value of the learner's wrong answer shown after the fact."))
   }
 }
 

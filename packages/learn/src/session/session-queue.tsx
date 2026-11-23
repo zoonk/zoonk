@@ -19,7 +19,7 @@ import { type SessionQueueRow } from "./session-queue-rows";
 import { useBlockTitle } from "./use-block-copy";
 
 /** One block as a list row; the next one is highlighted. */
-export function BlockRow({ block, state }: SessionQueueRow) {
+function BlockRow({ block, state }: SessionQueueRow) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const blockTitle = useBlockTitle();
@@ -58,35 +58,13 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
 
 type SessionQueueView = { left: number; rows: readonly SessionQueueRow[] };
 
-/**
- * Under a header that already says "Today", the time left heads the list; a screen whose header
- * names something else asks for `named`.
- */
-export function useSessionQueueAside(
-  { left, rows }: SessionQueueView,
-  { named = false }: { named?: boolean } = {},
-): TaskFrameAside {
+export function useSessionQueueAside({ left, rows }: SessionQueueView): TaskFrameAside {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const timeLeft = left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined;
   const children = <SessionQueue rows={rows} />;
 
-  if (named) {
-    return { children, label: t("Today"), meta: timeLeft, title: t("Today") };
-  }
-
   return { children, label: t("Today"), title: timeLeft };
-}
-
-export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
-  return (
-    <section aria-label={aside.label} className="with-aside:hidden flex flex-col gap-2">
-      {(aside.title || aside.meta) && (
-        <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
-      )}
-      {aside.children}
-    </section>
-  );
 }
 
 export function SessionQueueAsideContent({ aside }: { aside: TaskFrameAside }) {

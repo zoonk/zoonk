@@ -98,12 +98,13 @@ function describeChoice(operation: ChoiceOperation): string {
 
 type NoticeOperation = Extract<
   PlanOperation,
-  { kind: "fitPhaseDates" | "followNotice" | "setNoticeDate" }
+  { kind: "fitPhaseDates" | "followNotice" | "setExtras" | "setNoticeDate" }
 >;
 
 function isNoticeOperation(operation: PlanOperation): operation is NoticeOperation {
   return (
     operation.kind === "fitPhaseDates" ||
+    operation.kind === "setExtras" ||
     operation.kind === "followNotice" ||
     operation.kind === "setNoticeDate"
   );
@@ -115,6 +116,10 @@ function describeNoticeOperation(operation: NoticeOperation): string {
       return "the plan follows the exam notice";
     case "setNoticeDate":
       return `the exam date moves to ${operation.targetDate}`;
+    case "setExtras":
+      return operation.skillIds.length > 0
+        ? "adds the optional exam strategy lessons"
+        : "leaves the optional exam strategy lessons out";
     case "fitPhaseDates":
       return "the phase dates move so more lessons fit before the goal's date";
     default:

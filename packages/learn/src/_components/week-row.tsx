@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { useFormatWeekday } from "../_utils/iso-date";
 import { type StudySession } from "../session/session-types";
 import { GOAL_RING_SIZE_CLASS, GoalRing, type GoalRingTrack } from "./goal-ring";
@@ -37,17 +38,16 @@ export function WeekDayLetterSkeleton() {
   return <span className={DAY_LETTER_CLASS}>{"\u00A0"}</span>;
 }
 
-/** Core marks completed study, including study without planned time, through hitGoal. */
-export function getDayShare(day: WeekDay): number {
+/**
+ * The day's list as far as it's done; a finished list, or study on a day without one, is full. Extra
+ * work never counts, so it can't lower a day.
+ */
+export function getDayShare(day: Pick<WeekDay, "completed" | "hitGoal" | "total">): number {
   if (day.hitGoal) {
     return 1;
   }
 
-  if (day.goalMinutes === 0) {
-    return 0;
-  }
-
-  return Math.min(1, day.minutes / day.goalMinutes);
+  return day.total > 0 ? day.completed / day.total : 0;
 }
 
 export function isMissed(day: WeekDay, localDate: Date): boolean {
@@ -68,6 +68,47 @@ function getTrack(day: WeekDay, localDate: Date): GoalRingTrack {
   }
 
   return day.kind === "rest" ? "rest" : "default";
+}
+
+/** What a day says to a screen reader, on Today's week and the plan's alike. */
+export function useWeekDayStatus({ examGoal, localDate }: { examGoal: boolean; localDate: Date }) {
+  const t = useExtracted();
+
+  return (day: WeekDay): string => {
+    if (day.hitGoal) {
+      return t("done");
+    }
+
+    if (day.studied) {
+      return t("studied");
+    }
+
+    if (day.kind === "exam") {
+      return t("exam day");
+    }
+
+    if (day.kind === "deadline") {
+      return t("end date");
+    }
+
+    if (day.kind === "beforeStart") {
+      return t("before your plan");
+    }
+
+    if (day.kind === "afterEnd") {
+      return examGoal ? t("after your exam") : t("after your end date");
+    }
+
+    if (day.kind === "rest") {
+      return t("rest day");
+    }
+
+    if (day.isToday) {
+      return t("today");
+    }
+
+    return day.date > localDate ? t("planned") : t("not studied");
+  };
 }
 
 export function WeekDayRing({

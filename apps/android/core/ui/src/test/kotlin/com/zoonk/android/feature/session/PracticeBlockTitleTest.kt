@@ -23,7 +23,7 @@ class PracticeBlockTitleTest {
         )
 
     @Test
-    fun practiceAndBonusPracticeUseTheirFirstTopic() {
+    fun extraPracticeKeepsItsTitleAndUsesTheFirstTopic() {
         val blocks =
             listOf(false, true).flatMap { extra ->
                 listOf("Calculating discounts", "Comparing fractions").map { lead ->
@@ -36,18 +36,25 @@ class PracticeBlockTitleTest {
             listOf(
                 "Practice: Calculating discounts",
                 "Practice: Comparing fractions",
-                "Bonus practice: Calculating discounts",
-                "Bonus practice: Comparing fractions",
+                "Practice: Calculating discounts",
+                "Practice: Comparing fractions",
             ),
         )
     }
 
     @Test
-    fun practiceAndBonusPracticeWithoutTopicsUseTheirAreas() {
+    fun extraPracticeWithoutTopicsKeepsItsTitleAndUsesTheAreas() {
         assertTitles(
             listOf(practice, practice.copy(extra = true)),
-            listOf("Practice: Math and Languages", "Bonus practice: Math and Languages"),
+            listOf("Practice: Math and Languages", "Practice: Math and Languages"),
         )
+    }
+
+    @Test
+    fun extraPracticeWithoutTopicsOrAreasIsMixedPractice() {
+        val mixed = practice.copy(areas = emptyList(), topics = emptyList())
+
+        assertTitles(listOf(mixed, mixed.copy(extra = true)), listOf("Mixed practice", "Mixed practice"))
     }
 
     private fun assertTitles(

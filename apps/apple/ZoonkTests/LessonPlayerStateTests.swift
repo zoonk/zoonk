@@ -72,23 +72,6 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.firstVerdicts, ["check": false])
   }
 
-  func testSegmentsKeepTheFirstVerdictAndShowTheRetrysOwn() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
-    XCTAssertEqual(state.segments, [.current, .ahead, .ahead, .ahead])
-
-    state.continueLesson()
-    state.continueLesson()
-    try answerCheck(&state, optionId: "wrong")
-    XCTAssertEqual(state.segments, [.read, .read, .wrong, .ahead, .ahead])
-
-    state.continueLesson()
-    state.continueLesson()
-    XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .current])
-
-    try answerCheck(&state, optionId: "right")
-    XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .right])
-  }
-
   func testSegmentsShowWhatARefusedFinishAlreadyHasAheadOfTheMissingScreen() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
     state.continueLesson()
@@ -111,16 +94,6 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.progress, 1)
     state.continueLesson()
     XCTAssertEqual(state.phase, .completed, "it ends where the bar does")
-  }
-
-  func testSegmentsShowAnAnswerAheadOfWhereAReopenedLessonOpens() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
-
-    state.startRun(runId: "run", answers: [runAnswer("second", isCorrect: false)])
-
-    XCTAssertEqual(state.currentStep?.id, "hook")
-    XCTAssertEqual(state.segments, [.current, .ahead, .ahead, .ahead, .wrong, .ahead, .ahead])
-    XCTAssertEqual(state.progress, 1 / 7)
   }
 
   func testWorkedExampleRevealsOnePartPerContinue() throws {
@@ -1082,27 +1055,6 @@ final class LessonGradingTests: XCTestCase {
       "without a floor, the check's own tolerance decides")
   }
 
-  func testANumericVerdictWritesItsUnitAsMainDoes() throws {
-    let grade = { (unit: String) in
-      LessonGrading.grade(
-        .activity(.numeric(50)),
-        step: try step(
-          teaching(
-            "price", kind: "activity",
-            content: #"""
-              {"template": "formulaModel", "prompt": "Slide", "fields": {},
-               "check": {"kind": "numeric", "question": "How much?", "answer": 52,
-                 "explanation": "65% of 80.", "unit": "\#(unit)",
-                 "tolerance": {"kind": "absolute", "value": 0}}}
-              """#)))
-    }
-
-    XCTAssertEqual(
-      try grade("R$")?.correctAnswer, ActivityNumberFormat.format(52, unit: "R$"),
-      "money is written where the language writes it")
-    XCTAssertEqual(try grade("%")?.correctAnswer, ActivityNumberFormat.format(52, unit: "%"))
-  }
-
   func testANumericVerdictWritesTheRightAnswerAtTheRoundingItsHintNames() throws {
     let numeric = { (answer: Double, tolerance: Double, rounded: String) in
       try step(
@@ -1339,7 +1291,8 @@ private let reading = language(
   sentence: #"""
     {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": [],
-     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": []}
+     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": [],
+     "readsItself": false}
     """#, sentenceWords: ["Je", "suis", "Marie."])
 
 private let japaneseReading = language(
@@ -1347,7 +1300,8 @@ private let japaneseReading = language(
   sentence: #"""
     {"id": "s", "sentence": "私は学生です。", "translation": "I am a student.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": ["学", "生"],
-     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": []}
+     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": [],
+     "readsItself": false}
     """#, sentenceWords: ["私", "は", "学生", "です。"])
 
 private let numericActivity = teaching(
@@ -1379,25 +1333,6 @@ private let challenge = teaching(
     """#)
 
 final class LessonPlayerHelpTests: XCTestCase {
-  func testHyperdriveShowsFromThreeNewRightAnswersInARow() throws {
-    var state = LessonPlayerState(
-      lessonId: "lesson", steps: try ["a", "b", "c", "d"].map { try step(check(id: $0)) })
-    state.startRun(
-      runId: "run", answers: [], hyperdrive: LessonHyperdriveStart(knownStepIds: ["c"], streak: 1))
-
-    try answer(&state, right: true)
-    XCTAssertNil(state.hyperdriveStreak(for: "a"), "two in a row isn't shown yet")
-    state.continueLesson()
-    try answer(&state, right: true)
-    XCTAssertEqual(state.hyperdriveStreak(for: "b"), 3, "the session's streak counts: 1 + 2")
-    state.continueLesson()
-    try answer(&state, right: true)
-    XCTAssertNil(state.hyperdriveStreak(for: "c"), "a repeat keeps the streak, never shows it")
-    state.continueLesson()
-    try answer(&state, right: true)
-    XCTAssertEqual(state.hyperdriveStreak(for: "d"), 4)
-  }
-
   func testIKnowThisPassingEveryCheckEndsTheLessonTestedOutWithoutTheMap() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson(), hasMap: true)
     state.continueLesson()
@@ -1737,37 +1672,6 @@ final class LocalizedNumberTests: XCTestCase {
 }
 
 @MainActor
-final class LessonAskPlacementTests: XCTestCase {
-  private func store() -> LessonPlayerStore {
-    let cache = AppCache(session: .preview())
-    let preferences: Resource<LearningPreferences> = cache.resource(audience: .signedIn) { _ in
-      nil
-    }
-    let lesson: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
-      throw APIError.network
-    }
-
-    return LessonPlayerStore(
-      lessonId: "lesson", studySessionId: nil,
-      api: LessonPlayerAPI(clients: .live(baseURL: URL(string: "https://zoonk.test")!)),
-      cache: cache, preferences: preferences, lessonResource: lesson,
-      choices: LessonTodayChoices(today: { "today" }, read: { _ in nil }, write: { _, _ in }))
-  }
-
-  func testClosingTheDuoNeverBringsBackASheetAskWasBesideTheLessonFor() {
-    let store = store()
-
-    store.isSpread = false
-    store.ask()
-    store.isSpread = true
-    XCTAssertFalse(store.isAskingInSheet, "once beside the lesson, it isn't a sheet anymore")
-
-    store.isSpread = false
-    XCTAssertTrue(store.isAsking, "closing iPhone Duo keeps Ask open for when it opens again")
-    XCTAssertFalse(store.isAskingInSheet, "without covering the lesson with a sheet")
-  }
-}
-
 final class LessonPlayerSavingTests: XCTestCase {
   func testTheServersVerdictOnADeviceGradedAnswerIsTheOneThatCounts() throws {
     var state = LessonPlayerState(

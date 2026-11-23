@@ -23,6 +23,7 @@ import {
   loadTomorrow,
 } from "./_utils/load-summary-parts";
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
+import { loadPreparingMockPositions } from "./_utils/preparing-mock-blocks";
 import { loadSessionAnswers } from "./_utils/session-answers";
 import { sumSessionSeconds } from "./_utils/session-ledger";
 import {
@@ -31,11 +32,11 @@ import {
   readSessionEnd,
   readSessionSnapshot,
 } from "./_utils/session-snapshot";
-import { EMPTY_WEEK, toStudySessionView } from "./_utils/session-view";
+import { EMPTY_WEEK, toStudyBlockViews, toStudySessionView } from "./_utils/session-view";
 import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-session-access";
 import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
-import { type ExtraTime, getExtraTime } from "./extra-time";
+import { type ExtraTime } from "./extra-time";
 import { type Mission } from "./missions";
 import { getDayMissions } from "./missions/get-day-missions";
 
@@ -56,7 +57,7 @@ type StudySessionSummary = {
   correct: number;
   energy: Change<number> | null;
   extraTime: ExtraTime;
-  /** False after Stop for today while unfinished blocks remain. */
+  /** True after the first finish, even while extra blocks remain. */
   finished: boolean;
   fullMeal: boolean;
   /** Actual recorded time, consistent with learner stats. */
@@ -108,7 +109,7 @@ async function measureSummaryState({
   timeZone: string;
   userId: string;
 }): Promise<SessionState> {
-  const end = session.status === "completed" ? readSessionEnd(session.endSnapshot) : null;
+  const end = session.endedAt ? readSessionEnd(session.endSnapshot) : null;
   const { goal } = session;
 
   return (
@@ -169,10 +170,19 @@ export async function getStudySessionSummary({
 
   const viewRead = Promise.all([
     answersRead,
-    getDayMissions({ session, timeZone, ...(current && { through: new Date() }) }),
-  ]).then(([answers, missions]) =>
+    loadPreparingMockPositions(session).then(async (preparing) => ({
+      missions: await getDayMissions({
+        preparing,
+        session,
+        timeZone,
+        ...(current && { through: new Date() }),
+      }),
+      preparing,
+    })),
+  ]).then(([answers, { missions, preparing }]) =>
     toStudySessionView({
       answers,
+      blockViews: toStudyBlockViews({ answers, blocks: session.blocks, preparing }),
       current,
       dayMinutes: session.plannedMinutes,
       examAccess: { includesMockExams: true },
@@ -213,12 +223,14 @@ export async function getStudySessionSummary({
     loadCeremony(userId),
     loadUnshownCertificates(userId),
     loadTomorrow({ session }),
-    withExtraStudyCheck({
-      extraTime: getExtraTime({ blocks: session.blocks, current }),
-      readSkillIds: () => readGoalSkillIds(session.goalId),
-      session,
-      userId,
-    }),
+    viewRead.then((day) =>
+      withExtraStudyCheck({
+        day,
+        readSkillIds: () => readGoalSkillIds(session.goalId),
+        session,
+        userId,
+      }),
+    ),
     netScoredItemIds.length > 0
       ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
       : null,
@@ -245,7 +257,7 @@ export async function getStudySessionSummary({
       correct,
       energy: snapshot ? { after: after.energy, before: snapshot.energy } : null,
       extraTime,
-      finished: view.nextBlockId === null,
+      finished: session.endedAt !== null || view.nextBlockId === null,
       fullMeal: view.fullMeal.earned,
       minutes: Math.floor(seconds / SECONDS_PER_MINUTE),
       missions: view.missions,

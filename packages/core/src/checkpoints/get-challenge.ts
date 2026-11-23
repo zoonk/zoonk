@@ -39,7 +39,7 @@ import {
   findChallengeBlock,
   findOwnedChallenge,
 } from "./_utils/owned-challenge";
-import { type ChallengeCall, type ChallengeView } from "./challenge-contract";
+import { type ChallengeCall, type ChallengeView, getChallengeAccess } from "./challenge-contract";
 import { getCheckpointReward } from "./checkpoint-reward";
 import { getPassMark } from "./checkpoint-rules";
 
@@ -290,6 +290,7 @@ export async function getChallenge({
 
   return {
     challenge: {
+      access: getChallengeAccess({ plusRequired, preparing: size.preparing }),
       blockId,
       call,
       canMove: canMoveIt,

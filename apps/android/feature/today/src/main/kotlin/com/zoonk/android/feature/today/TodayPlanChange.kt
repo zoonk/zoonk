@@ -34,8 +34,9 @@ import com.zoonk.api.models.TodayGoal
 import kotlinx.datetime.toJavaLocalDate
 
 /**
- * Only when the learner has a say: what the plan does on its own isn't news on Today. An answer
- * here stays to show what it did; a change answered elsewhere leaves with Today's next read.
+ * Only when the learner has a say: what the plan does on its own isn't news on Today, except what
+ * left it to follow the exam's guide. An answer here stays to show what it did; a change answered
+ * elsewhere leaves with Today's next read.
  */
 @Composable
 internal fun PlanChangeNotice(
@@ -105,6 +106,8 @@ private fun ChangeNotice(
         }
 
     val failure = stringResource(if (result != null) R.string.plan_undo_failed else R.string.suggestion_save_failed)
+    // Done by the plan with nothing to answer, so nothing opens: the card names what left and the learner says they saw it.
+    val followed = change.kind == NOTICE_CHANGED
 
     SuggestionCard(
         label = stringResource(R.string.today_notice_plan_change),
@@ -119,33 +122,48 @@ private fun ChangeNotice(
                 SuggestionHeader(words.title)
                 words.why?.let { SuggestionDescription(it) }
                 SuggestionActions {
-                    SuggestionOpen(stringResource(R.string.today_see_changes))
-                    if (change.source != NOTICE_SOURCE && change.source != PHASE_DATES_SOURCE) {
+                    if (followed) {
                         SuggestionAction(
-                            stringResource(R.string.today_not_now),
-                            { viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.DECLINED) },
-                            enabled = !saving,
+                            stringResource(R.string.today_insight_got_it),
+                            { viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.SEEN) },
+                            busy = saving,
                             secondary = true,
                         )
+                    } else {
+                        SuggestionOpen(stringResource(R.string.today_see_changes))
+                        if (change.source != NOTICE_SOURCE && change.source != PHASE_DATES_SOURCE) {
+                            SuggestionAction(
+                                stringResource(R.string.today_not_now),
+                                { viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.DECLINED) },
+                                enabled = !saving,
+                                secondary = true,
+                            )
+                        }
                     }
                 }
             }
             if (failedHere) SuggestionSaveError(failure)
         },
-    ) {
-        SuggestionHeader(words.title)
-        PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind, repriced = repriced)
-        officialDate?.let { SuggestionDescription(it) }
+        content =
+            if (followed) {
+                null
+            } else {
+                {
+                    SuggestionHeader(words.title)
+                    PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind, repriced = repriced)
+                    officialDate?.let { SuggestionDescription(it) }
 
-        if (result != null) {
-            SuggestionResult(result)
-            after?.let { SuggestionActions { it() } }
-        } else {
-            ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
-        }
+                    if (result != null) {
+                        SuggestionResult(result)
+                        after?.let { SuggestionActions { it() } }
+                    } else {
+                        ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
+                    }
 
-        if (failedHere) SuggestionSaveError(failure)
-    }
+                    if (failedHere) SuggestionSaveError(failure)
+                }
+            },
+    )
 }
 
 /** Answering the notice or the phase dates keeps what the learner has, and the answer stays. */
@@ -302,6 +320,7 @@ private fun BehindChoices(
 }
 
 private const val MISSED_DAYS = "missedDays"
+private const val NOTICE_CHANGED = "noticeChanged"
 private const val NOTICE_SOURCE = "notice"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val NAMED_TOPICS = 2

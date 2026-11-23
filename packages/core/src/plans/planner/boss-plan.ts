@@ -18,19 +18,30 @@ export function toBossPlan({
   skillLessons: ReadonlyMap<string, number>;
   survivors?: ReadonlyMap<string, string>;
 }) {
-  const saved = items.map((item, position) => ({ ...item, id: item.key, position }));
+  const extras = new Set(
+    [...input.graph.skills.filter((skill) => skill.extra), ...(input.graph.extraSkills ?? [])].map(
+      (skill) => skill.skillId,
+    ),
+  );
+
+  const graph = { ...input.graph, skills: input.graph.skills.filter((skill) => !skill.extra) };
+  const ordinary = new Set(graph.skills.map((skill) => skill.skillId));
+
+  const saved = items
+    .map((item, position) => ({ ...item, id: item.key, position }))
+    .filter((item) => !item.skillId || !extras.has(item.skillId) || ordinary.has(item.skillId));
 
   const projected = projectPlanSkills({
-    graph: input.graph,
+    graph,
     items: saved,
     rows,
     survivorOf: (skillId) => survivors.get(skillId) ?? skillId,
   });
 
-  const skipped = getSkippedSkillIds({ graph: input.graph, settings: input.settings });
+  const skipped = getSkippedSkillIds({ graph, settings: input.settings });
 
   return {
-    graphSkills: input.graph.skills.map((skill) => ({
+    graphSkills: graph.skills.map((skill) => ({
       ...skill,
       plannedLessons: skillLessons.get(skill.skillId) ?? 0,
     })),

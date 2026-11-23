@@ -1,7 +1,7 @@
 import { replaceEmDashes } from "@zoonk/utils/string";
 import { z } from "zod";
 import { type IconNeed, toIconNeed } from "../icons/icon-need";
-import { isExampleQuote, isUnderlineQuote } from "./mark-quotes";
+import { isExampleQuote, isUnderlineQuote, withListMarker } from "./mark-quotes";
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the ideas' icons come before the screens' icons that must differ from them, and each screen's idea before what it marks. */
 
@@ -76,12 +76,13 @@ function toUnderline({ quote, screen }: { quote: string | null; screen: MarksScr
 
 function toExample({ quote, screen }: { quote: string | null; screen: MarksScreen }) {
   const trimmed = quote?.trim();
+  const example = trimmed ? withListMarker({ quote: trimmed, text: screen.text }) : null;
 
-  return trimmed &&
+  return example &&
     screen.kind === "explanation" &&
-    trimmed !== screen.text.trim() &&
-    isExampleQuote({ quote: trimmed, text: screen.text })
-    ? trimmed
+    example !== screen.text.trim() &&
+    isExampleQuote({ quote: example, text: screen.text })
+    ? example
     : null;
 }
 

@@ -119,6 +119,19 @@ describe("day work selected before a session exists", () => {
     expect(dayBlockRefSchema.safeParse(sent).success).toBe(false);
   });
 
+  it("keeps a review offered during mock preparation distinct from the usual review at the same position", () => {
+    const usual = lesson({ kind: "review", lessonId: null, planItemKey: null });
+    const offered = { ...usual, mockPreparationReview: true };
+
+    expect(resolveDayBlock({ blocks: [offered], ref: toDayBlockRef(usual) })).toStrictEqual({
+      status: "gone",
+    });
+
+    expect(resolveDayBlock({ blocks: [usual], ref: toDayBlockRef(offered) })).toStrictEqual({
+      status: "gone",
+    });
+  });
+
   it("refuses ambiguous repeated work instead of choosing the first row", () => {
     expect(
       resolveDayBlock({

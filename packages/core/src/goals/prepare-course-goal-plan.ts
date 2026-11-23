@@ -2,6 +2,8 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
+import { toExamOutline } from "../library/curriculum/exam-curriculum-outline";
+import { prunePlanNoticeGraph } from "../library/curriculum/prune-plan-notice-graph";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { loadCourseOutline, plansFromCourseOutline } from "./_utils/course-outline";
@@ -33,10 +35,13 @@ export async function prepareCourseGoalPlan({
     return;
   }
 
-  const [outline, exam] = await Promise.all([
+  const [outline, exam, blueprint] = await Promise.all([
     loadCourseOutline({ courseId: course.id, userId: goal.userId }),
     goal.examBlueprintId
       ? prisma.examSkillGraph.findUnique({ where: { examBlueprintId: goal.examBlueprintId } })
+      : null,
+    goal.examBlueprintId
+      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : null,
   ]);
 
@@ -63,6 +68,10 @@ export async function prepareCourseGoalPlan({
   });
 
   if (graph.skills.length > 0 || exam) {
-    await createGoalPlan({ goalId, graph, platform });
+    const pruned = blueprint
+      ? await prunePlanNoticeGraph({ graph, subjects: toExamOutline(blueprint).subjects })
+      : { graph };
+
+    await createGoalPlan({ goalId, graph: pruned.graph, platform });
   }
 }

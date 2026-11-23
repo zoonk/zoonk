@@ -434,7 +434,7 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Saves one fix on "Here's what I understood"; the server recomputes what depends on it.
+  /// Saves one fix on "Here's what we understood"; the server recomputes what depends on it.
   func revise(
     id: String,
     edit: Components.Schemas.OnboardingDraftEdit,

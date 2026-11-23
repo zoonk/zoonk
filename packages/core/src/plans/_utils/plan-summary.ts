@@ -27,6 +27,15 @@ const planSummaryBasisSchema = z
 export const planSummarySchema = z
   .object({
     advice: z.object({
+      extraOffer: z
+        .object({
+          effect: planEffectSchema,
+          fits: z.boolean(),
+          lessons: z.int().positive(),
+          operations: savedPlanOfferOperationsSchema,
+        })
+        .nullable()
+        .optional(),
       feasibility: z.object({
         coreFits: z.boolean(),
         coveredShare: z.number(),

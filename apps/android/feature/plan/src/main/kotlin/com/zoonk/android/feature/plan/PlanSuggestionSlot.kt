@@ -56,6 +56,7 @@ import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.StudyNext
 import kotlinx.coroutines.delay
@@ -80,8 +81,17 @@ internal sealed interface SlotItem {
         override val key get() = "pastDate"
     }
 
-    data object FitLessons : SlotItem {
-        override val key = "fitLessons"
+    /** The offer it was shown with, so its answer still shows once the plan it adds to no longer offers it. */
+    data class FitLessons(
+        val offer: PlanFitOffer,
+    ) : SlotItem {
+        override val key get() = "fitLessons"
+    }
+
+    data class ExtraOffer(
+        val offer: PlanExtraOffer,
+    ) : SlotItem {
+        override val key get() = "extraOffer"
     }
 
     data object Coverage : SlotItem {
@@ -113,7 +123,8 @@ internal fun slotItems(
     val open = pastDate == null
     val time =
         listOfNotNull(
-            SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
+            plan.fitOffer?.takeIf { open }?.let(SlotItem::FitLessons),
+            plan.extraOffer?.takeIf { open }?.let(SlotItem::ExtraOffer),
             SlotItem.Coverage.takeIf { open && plan.suggestedTime != null },
         )
 
@@ -200,6 +211,7 @@ internal class SlotHost(
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
     val addFitOffer: (PlanFitOffer) -> Unit = {},
+    val addExtraOffer: (PlanExtraOffer) -> Unit = {},
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},
@@ -388,8 +400,12 @@ private fun SlotSuggestion(
             PastDateSuggestion(item, slot, onAdjust)
         }
 
-        SlotItem.FitLessons -> {
-            FitLessonsSuggestion(slot)
+        is SlotItem.FitLessons -> {
+            FitLessonsSuggestion(item, slot)
+        }
+
+        is SlotItem.ExtraOffer -> {
+            ExtraOfferSuggestion(item, slot)
         }
 
         SlotItem.Coverage -> {

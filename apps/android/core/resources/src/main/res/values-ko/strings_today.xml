@@ -108,6 +108,7 @@
   "today_step_counts_toward_mission": "f3e8045031baf95a256e7eb24c236e9d0404f7f586012b0ca3dd5f262bfa7fbc",
   "today_step_done": "5a4b1abee341260d4a954a2c58b91ec6f958ad4c6a482cb829ec30cd223ec254",
   "today_step_every_topic": "a2c68a6691d21c2e54d915bfa9368f68f9dddc3d0def15f8451044bf9d4102f9",
+  "today_step_extra": "7b9a37ecbaa81bf26da98ee8ff120c44c37847793efed9076a2de6de51842939",
   "today_step_next": "317052c506c42893e1b6bd18e50c9b8bdbdd8277d7a0130bcc6a9f0be8a9af89",
   "today_step_often_tested": "06cb37a99b9d43eff8b5d05cda3af07a25e25ec7a1d03f08eff51ff7116f2540",
   "today_step_open_failed": "aaaab4b249fef3513e8ac1aaab9468ab2dba6786adf6d2dbec8c8c46218fe01d",
@@ -191,6 +192,8 @@
     <string name="today_step_done">완료</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">다음 단계</string>
+    <!-- Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress. -->
+    <string name="today_step_extra">추가</string>
     <string name="today_step_skipped">건너뜀</string>
     <string name="today_step_counts_toward_mission">미션 달성에 반영</string>
     <string name="today_step_often_tested">자주 출제됨</string>

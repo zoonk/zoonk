@@ -102,8 +102,6 @@
     <string name="player_dont_know_yet">I don\'t know yet</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Explain first</string>
-    <string name="player_check_failed">We couldn\'t check your answer this time. Try again.</string>
-    <string name="player_still_checking">Still checking. This is taking longer than usual.</string>
     <string name="player_enter_hint">Press Enter to check, Shift+Enter for a new line.</string>
     <string name="player_your_answer">Your answer</string>
     <string name="player_write_your_answer">Write your answer</string>
@@ -164,6 +162,8 @@
     <string name="player_not_found_title">This lesson isn\'t available</string>
     <string name="player_cant_talk_now">I can\'t talk now</string>
     <string name="player_can_talk_now">I can talk now</string>
+    <string name="player_cant_listen_now">I can\'t listen now</string>
+    <string name="player_can_listen_now">I can listen now</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Say it instead</string>
     <string name="player_microphone_is_blocked">The microphone is blocked.</string>
@@ -185,6 +185,8 @@
     <!-- A what-if scenario's label: %1$s is where it happens. -->
     <string name="player_challenge_what_if">What if · %1$s</string>
     <string name="player_challenge_mission">Your mission</string>
+    <!-- Opens the figures shown at the start of a challenge. -->
+    <string name="player_challenge_starting_figures">Starting figures</string>
     <string name="player_challenge_team">Your team</string>
     <string name="player_challenge_meters">How the case is going</string>
     <!-- How a meter moved after the learner's decision. -->

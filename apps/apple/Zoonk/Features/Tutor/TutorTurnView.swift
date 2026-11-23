@@ -71,22 +71,9 @@ struct TutorTurnView: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      // Main's `LearnerBubble`: `muted`, its corner nearest the learner's side tucked in.
-      Text(turn.question)
-        .typeStyle(.button.weight(.regular))
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-          .muted,
-          in: UnevenRoundedRectangle(
-            cornerRadii: .init(
-              topLeading: Radius.option, bottomLeading: Radius.option, bottomTrailing: 4,
-              topTrailing: Radius.option), style: .continuous)
-        )
-        .textSelection(.enabled)
+      LearnerBubble(words: turn.question)
     }
     .frame(maxWidth: .infinity, alignment: .trailing)
-    .padding(.leading, 40)
     .accessibilityElement(children: .combine)
     .accessibilityLabel(
       Text(
@@ -281,7 +268,7 @@ struct TutorAnswerText: View {
   private func blockView(_ block: TutorAnswerBlock) -> some View {
     switch block.kind {
     case .paragraph:
-      Text(block.text, legibility: legibilityWeight)
+      RichInlineText(block.text)
         .padding(.leading, continuationIndent(block))
     case .formula:
       Text(block.text, legibility: legibilityWeight)
@@ -289,17 +276,16 @@ struct TutorAnswerText: View {
         .frame(maxWidth: .infinity)
         .padding(.leading, continuationIndent(block))
     case .heading:
-      Text(block.text, legibility: legibilityWeight)
+      RichInlineText(block.text)
         .typeStyle(.body.weight(.semibold))
         .accessibilityAddTraits(.isHeader)
-    case .code:
-      Text(block.text, legibility: legibilityWeight)
-        .typeStyle(.reading.monospaced())
+    case .code(let language):
+      CodeBlock(code: String(block.text.text.characters), language: language)
     case .listItem(let marker):
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(verbatim: marker)
           .monospacedDigit()
-        Text(block.text, legibility: legibilityWeight)
+        RichInlineText(block.text)
       }
       .padding(.leading, CGFloat(block.depth) * listIndent)
     }
@@ -382,7 +368,8 @@ struct TutorAnswerBlock: Identifiable {
   enum Kind: Equatable {
     case paragraph
     case heading
-    case code
+    /// A fenced block, its language the fence's first word; one still streaming runs to the end.
+    case code(language: String?)
     case listItem(marker: String)
     case formula
   }
@@ -431,17 +418,23 @@ struct TutorAnswerBlock: Identifiable {
           case .listItem(let ordinal):
             .listItem(marker: lists.first?.kind == .orderedList ? "\(ordinal)." : "•")
           case .header: .heading
-          case .codeBlock: .code
+          case .codeBlock(let hint):
+            .code(language: hint?.split(whereSeparator: \.isWhitespace).first?.lowercased())
           default: nil
           }
         }.first ?? .paragraph
 
-      if kind == .code {
-        text.characters.removeLast(text.characters.last == "\n" ? 1 : 0)
+      if case .code = kind {
+        while text.characters.last == "\n" {
+          text.characters.removeLast()
+        }
       }
 
       let listID = lists.last?.identity
-      let pieces = kind == .code ? [Piece(text: RichInline(text: text))] : split(text, at: formulas)
+      let pieces =
+        if case .code = kind { [Piece(text: RichInline(text: text))] } else {
+          split(text, at: formulas)
+        }
 
       for (index, piece) in pieces.enumerated() {
         blocks.append(

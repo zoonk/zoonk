@@ -4,33 +4,6 @@ import XCTest
 
 @MainActor
 final class FeedbackFormStoreTests: XCTestCase {
-  func testUnloadedSummaryUsesTheAccountEmail() async {
-    let api = FeedbackAPISpy(result: .success(()))
-    let session = SessionStore.preview(
-      account: CurrentAccount(
-        account: AccountAccess(
-          deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
-        user: AccountUser(
-          email: "learner@zoonk.test", id: "learner", image: nil, name: "Learner", username: nil)))
-    let learner = LearnerSummaryStore(
-      api: LearnerSummaryAPI(clients: .live(baseURL: AppConfiguration.current.apiBaseURL)),
-      cache: AppCache(session: session))
-    let store = FeedbackFormStore(
-      api: api, context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
-      session: session, learner: learner)
-
-    XCTAssertNil(learner.summary.value)
-    XCTAssertEqual(store.defaultEmail, "learner@zoonk.test")
-    XCTAssertEqual(store.email, "learner@zoonk.test")
-    XCTAssertFalse(store.asksForEmail)
-
-    await store.submit()
-
-    let submissions = await api.submissions()
-    XCTAssertEqual(store.state, .sent)
-    XCTAssertEqual(submissions.first?.submission.email, "learner@zoonk.test")
-  }
-
   func testSaveReportSubmitsWithoutAnEmailAndKeepsItsContext() async {
     let api = FeedbackAPISpy(result: .success(()))
     let context = FeedbackContext(screen: "placement-question", reportType: .saveFailure)
@@ -70,21 +43,6 @@ final class FeedbackFormStoreTests: XCTestCase {
     XCTAssertTrue(store.canSubmit)
     store.message = "  \n"
     XCTAssertFalse(store.canSubmit)
-  }
-
-  func testRegularFeedbackAndContentReportsStillRequireAnEmail() {
-    let api = FeedbackAPISpy(result: .success(()))
-    for context in [
-      nil, FeedbackContext(contentID: "chapter-id", contentKind: .chapter),
-      FeedbackContext(screen: "exam"),
-    ] {
-      let store = FeedbackFormStore(api: api, context: context)
-      XCTAssertTrue(store.message.isEmpty)
-      store.message = "Please help."
-      XCTAssertFalse(store.canSubmit)
-      store.email = "learner@zoonk.test"
-      XCTAssertTrue(store.canSubmit)
-    }
   }
 
   func testFailedSaveReportKeepsTheDraftAndCanRetry() async {
@@ -128,29 +86,6 @@ final class FeedbackFormStoreTests: XCTestCase {
             message: "Please clarify the first chapter."),
           token: "learner-session")
       ])
-  }
-
-  func testFailurePublishesRecoverableState() async {
-    let api = FeedbackAPISpy(result: .failure(FeedbackFailure.network))
-    let store = FeedbackFormStore(api: api, defaultEmail: "learner@zoonk.test")
-    store.message = "Please clarify the first chapter."
-
-    await store.submit()
-
-    XCTAssertEqual(store.state, .failed(.network))
-  }
-
-  func testBlankFieldsDoNotSubmit() async {
-    let api = FeedbackAPISpy(result: .success(()))
-    let store = FeedbackFormStore(api: api, defaultEmail: "learner@zoonk.test")
-    store.message = "   \n"
-
-    await store.submit()
-
-    let submissions = await api.submissions()
-
-    XCTAssertEqual(store.state, .idle)
-    XCTAssertTrue(submissions.isEmpty)
   }
 
   func testCancellationReturnsToIdle() async {

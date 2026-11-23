@@ -29,6 +29,6 @@ class PracticeBlockTitleGermanTest {
         rule.setContent { titles = listOf(practice, practice.copy(extra = true)).map { blockTitle(it.toDayStep()) } }
         rule.waitForIdle()
 
-        assertEquals(listOf("Übung: Rabatte berechnen", "Extraübung: Rabatte berechnen"), titles)
+        assertEquals(listOf("Übung: Rabatte berechnen", "Übung: Rabatte berechnen"), titles)
     }
 }

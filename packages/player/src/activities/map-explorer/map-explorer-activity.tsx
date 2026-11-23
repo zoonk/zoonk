@@ -24,7 +24,6 @@ import { useBaseMapLabels, useBaseMapName, useBaseMapNote } from "./use-base-map
 type MapExplorerProps = ActivityRendererProps<"mapExplorer">;
 type Place = MapExplorerProps["content"]["fields"]["places"][number];
 
-const FALLBACK_WIDTH = 318;
 const PIN_SPACING = 40;
 const MAX_MAP_HEIGHT = 440;
 
@@ -146,7 +145,7 @@ function MapCanvas({
   const mapName = useBaseMapName();
   const mapNote = useBaseMapNote();
   const { fields } = content;
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
 
