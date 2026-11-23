@@ -268,6 +268,13 @@ final class WritingResultDecodingTests: XCTestCase {
         title: "Name two powers", text: "Name at least two powers.", quote: nil, example: nil))
   }
 
+  func testWholeTestPointsKeepUpToTwoDecimals() {
+    XCTAssertEqual(WritingLabels.partPoints(6.25), "6.25")
+    XCTAssertEqual(WritingLabels.partPoints(10.75), "10.75")
+    XCTAssertEqual(WritingLabels.partPoints(10), "10")
+    XCTAssertEqual(WritingLabels.partPoints(6.125), "6.13")
+  }
+
   func testAHeadlineRangeRoundsOutwardSoItNeverClaimsMoreThanItsParts() {
     XCTAssertEqual(
       WritingLabels.roundedOutward(.init(high: 17.41, low: 12.06), decimals: 1),

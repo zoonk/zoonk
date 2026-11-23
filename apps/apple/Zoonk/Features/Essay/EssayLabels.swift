@@ -13,6 +13,14 @@ enum WritingLabels {
     return value.formatted(.number.precision(.fractionLength(decimals)).locale(locale))
   }
 
+  static func partPoints(_ value: Double) -> String {
+    let format = FloatingPointFormatStyle<Double>.number
+      .precision(.fractionLength(0...2))
+      .rounded(rule: .toNearestOrAwayFromZero)
+      .locale(locale)
+    return value.formatted(format)
+  }
+
   /// A share, like "50%".
   static func share(_ value: Double) -> String {
     value.formatted(.percent.precision(.fractionLength(0)).locale(locale))

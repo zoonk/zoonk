@@ -54,11 +54,11 @@ private struct WritingPointsSection: View {
 
           if let part {
             if !sameScale, let minimum = part.points {
-              let minimumLabel = WritingLabels.points(minimum)
+              let minimumLabel = WritingLabels.partPoints(minimum)
               Group {
                 if let max = part.max {
                   Text(
-                    "Minimum to pass the written test: \(minimumLabel) of \(WritingLabels.points(max)) points in total",
+                    "Minimum to pass the written test: \(minimumLabel) of \(WritingLabels.partPoints(max)) points in total",
                     tableName: "Essay")
                 } else {
                   Text(
