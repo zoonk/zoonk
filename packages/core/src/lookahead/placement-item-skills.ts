@@ -14,6 +14,7 @@ import {
   isLowGuessTap,
   isQuickChoice,
 } from "../learner/_utils/placement-guess-rate";
+import { readPlacementAttempt } from "../learner/placement/_utils/placement-attempt-record";
 import { wantsPlacementQuestions } from "../learner/placement/focus-test-state";
 import { getKnownSubjects, getOwnLevel } from "../learner/placement/placement-contract";
 import { pickPlacementItemSkillIds } from "../learner/placement/placement-item-picks";
@@ -125,12 +126,7 @@ function isQuickFormat(format: PlacementItemFormat): format is PlacementQuickFor
   return format !== "tap";
 }
 
-type SkillItem = {
-  attempts: { id: string }[];
-  content: unknown;
-  examBlueprintId: string | null;
-  format: ItemFormat;
-};
+type SkillItem = { content: unknown; examBlueprintId: string | null; format: ItemFormat };
 
 type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & { items: SkillItem[] };
 
@@ -139,7 +135,6 @@ function toPick({
   coversQuick,
   coversTap,
   exam,
-  exceptAnswered,
   quickNeeded,
   row,
   writesQuick,
@@ -148,20 +143,16 @@ function toPick({
   coversQuick: (item: SkillItem) => boolean;
   coversTap: (item: SkillItem) => boolean;
   exam: PlacementItemExam | null;
-  /** Questions the goal's learner already answered don't cover the skill: they won't be asked. */
-  exceptAnswered: boolean;
   quickNeeded: number;
   row: SkillRow;
   writesQuick: boolean;
   writesTaps: boolean;
 }): Omit<PlacementItemPick, "usedSituations"> | null {
-  const unanswered = row.items.filter((item) => !(exceptAnswered && item.attempts.length > 0));
-
   const needsQuick =
-    writesQuick && unanswered.filter((item) => coversQuick(item)).length < quickNeeded;
+    writesQuick && row.items.filter((item) => coversQuick(item)).length < quickNeeded;
 
   const tapsNeeded = writesTaps
-    ? Math.max(0, LOW_GUESS_ANSWERS_TO_SKIP - unanswered.filter((item) => coversTap(item)).length)
+    ? Math.max(0, LOW_GUESS_ANSWERS_TO_SKIP - row.items.filter((item) => coversTap(item)).length)
     : 0;
 
   if (!needsQuick && tapsNeeded === 0) {
@@ -196,6 +187,22 @@ function getNonObjectiveSkillIds(
     ...(goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : []),
     ...getWritingSkillIds({ graph, structure: blueprintStructure }),
   ]);
+}
+
+function getUnansweredFilter({
+  exceptAnswered,
+  forPlacement,
+  goal,
+}: {
+  exceptAnswered: boolean;
+  forPlacement: boolean;
+  goal: Pick<Goal, "details" | "userId"> | null;
+}) {
+  if (goal && (exceptAnswered || (forPlacement && readPlacementAttempt(goal).attempt))) {
+    return { attempts: { none: { userId: goal.userId } } };
+  }
+
+  return {};
 }
 
 /** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
@@ -281,33 +288,19 @@ export async function pickPlacementItemSkills({
 
   const skills = await prisma.skill.findMany({
     select: {
-      country: true,
-      description: true,
-      id: true,
+      ...PLACEMENT_ITEM_SKILL_SELECT,
       items: {
-        orderBy: { createdAt: "desc" },
-        select: {
-          attempts: {
-            select: { id: true },
-            take: 1,
-            where: { userId: { in: goal ? [goal.userId] : [] } },
-          },
-          content: true,
-          examBlueprintId: true,
-          format: true,
+        select: { content: true, examBlueprintId: true, format: true },
+        where: {
+          ...getItemAudienceFilter({ examBlueprintId: blueprint?.id ?? null }),
+          ...getUnansweredFilter({ exceptAnswered, forPlacement, goal }),
         },
-        where: getItemAudienceFilter({ examBlueprintId: blueprint?.id ?? null }),
       },
-      language: true,
-      level: true,
-      name: true,
-      ownerId: true,
-      targetLanguage: true,
     },
     where: { id: { in: picked } },
   });
 
-  const rules = { coversQuick, coversTap, exam, exceptAnswered, writesQuick, writesTaps };
+  const rules = { coversQuick, coversTap, exam, writesQuick, writesTaps };
 
   const picks = picked
     .map((id) => skills.find((row) => row.id === id))

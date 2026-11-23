@@ -10,7 +10,11 @@ import {
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
+import { listFollowUps } from "@zoonk/core/follow-ups/rows";
 import { uploadImage } from "@zoonk/core/images/upload";
+import { answerPlacementQuestion } from "@zoonk/core/learner/placement/answer";
+import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
+import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { prisma } from "@zoonk/db";
@@ -22,6 +26,9 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { sleep } from "workflow";
 import { start } from "workflow/api";
+import { mockSession } from "../../../../../packages/core/src/_test-utils/mock-session";
+import { learnerGoalFixture } from "../../../../../packages/core/src/learner/_test-utils/learner-goal";
+import { lowGuessTapItems } from "../../../../../packages/core/src/learner/_test-utils/placement-tap-items";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
@@ -34,6 +41,8 @@ import { preparePlacementItems } from "./placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import { shortPlanPracticeWorkflow } from "./short-plan-practice-workflow";
 import { pickPlacementBatchesStep, writePlacementBatchStep } from "./steps/placement-items-steps";
+
+vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 
@@ -381,6 +390,69 @@ describe(placementItemsWorkflow, () => {
     ).resolves.toStrictEqual([
       { content: expect.objectContaining({ question: QUICK_ITEMS.multipleChoice.question }) },
     ]);
+  });
+
+  it("replaces the answered quick question on a Quick retake and reuses the remaining bank", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 1,
+      phases: [1],
+      userId: user.id,
+    });
+
+    await lowGuessTapItems(skills[0]!.id);
+    mockSession(user.id);
+
+    const open = () => startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
+    const first = await open();
+
+    if (first.status !== "ready" || !first.placement.attempt || !first.placement.next) {
+      throw new Error("Expected a first Quick question");
+    }
+
+    const attemptId = first.placement.attempt.id;
+    const itemId = first.placement.next.itemId;
+
+    await expect(
+      answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer: { dontKnow: true }, attemptId, durationMs: 1000, itemId },
+      }),
+    ).resolves.toMatchObject({ isCorrect: false });
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(open()).resolves.toMatchObject({
+      placement: { next: null, status: "waitingForQuestions" },
+    });
+
+    const followUps = await listFollowUps(user.id);
+    const owed = followUps.find((row) => row.kind === "preparePlacementItems");
+
+    if (!owed) {
+      throw new Error("Expected the retake to request questions");
+    }
+
+    await placementItemsWorkflow(owed.input);
+
+    await expect(open()).resolves.toMatchObject({
+      placement: {
+        next: {
+          format: "multipleChoice",
+          itemId: expect.not.stringMatching(itemId),
+          skillId: skills[0]!.id,
+        },
+      },
+    });
+
+    await placementItemsWorkflow(owed.input);
+
+    expect(
+      vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.skills),
+    ).toMatchObject([[{ quickCount: 1, tapCount: 0 }]]);
   });
 
   it("writes each picked skill's quick and tap questions, the first pick's in two calls at the learner's wait", async () => {

@@ -58,7 +58,6 @@ export async function placementItemsWorkflow(
 
   const { failed, written } = await preparePlacementItems({
     analytics,
-    exceptAnswered: Boolean(placementPart),
     forPlacement: true,
     goalId,
     skillIds,
