@@ -6,6 +6,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { nextHeaders } from "../_test-utils/test-boundaries";
 import { openMistakeLesson } from "./open-mistake-lesson";
 
 describe("Opening a notebook lesson", () => {
@@ -80,7 +81,13 @@ describe("Opening a notebook lesson", () => {
     const snapshot = {
       answer: "Density",
       explanation: "Metal carries heat away faster.",
-      question: "Why does a metal spoon feel colder than wood?",
+      image: {
+        alt: "A metal spoon and a wooden spoon on the same table",
+        height: null,
+        url: "/spoons.png",
+        width: null,
+      },
+      question: "Why does one spoon feel colder than the other?",
     };
 
     const mistake = await mistakeFixture({ snapshot, userId: owner.id });
@@ -97,6 +104,8 @@ describe("Opening a notebook lesson", () => {
     const row = await prisma.lesson.findUniqueOrThrow({ where: { id: result.lesson.id } });
     expect(row).toMatchObject({ ownerId: owner.id, visibility: "private" });
     expect(row.description).toContain(snapshot.explanation);
+    expect(row.description).toContain(snapshot.image.alt);
+    nextHeaders.headers.mockResolvedValue(new Headers({ "accept-language": "pt" }));
     await expect(openMistakeLesson(mistake.id)).resolves.toStrictEqual(result);
   });
 });
