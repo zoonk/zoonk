@@ -787,6 +787,7 @@
   /// on an exam goal, and a goal suggested from an earlier course.
   private struct DebugTodayNotices: View {
     @State private var isOpen = false
+    @State private var adjusting: AdjustPlanSheet.Section?
     @State private var answer = SuggestedGoalAnswer()
 
     private static func decode<Value: Decodable>(_ json: String) -> Value {
@@ -816,7 +817,12 @@
     private static let change: TodayView.PlanChange = decode(
       #"""
       {"behind":{"canFocus":true,"coveredAfter":0.62,"coveredBefore":0.8,"currentMinutes":45,
-      "measure":"exam"},"canApply":true,"canUndo":false,"effect":null,"examDocument":"notice",
+      "measure":"exam"},"canApply":true,"canUndo":false,"effect":{"areaEnds":null,
+      "areaLessons":null,"endDateAfter":null,"endDateBefore":null,"lessonsAdded":0,
+      "lessonsAddedEstimated":null,"lessonsLeftOut":null,"lessonsRemoved":12,"nextMock":null,
+      "phaseEnds":null,"topicsAdded":null,"topicsLeftOut":[{"area":"Natural Sciences",
+      "topics":["Ecology and Evolution"]}],"unwrittenLeftOut":null,"weeklyEvents":null},
+      "examDocument":"notice",
       "quote":"q1","id":"c1","kind":"missedDays","officialDate":null,"operations":[],"reason":"",
       "source":"memory","status":"proposed","todaySession":null}
       """#)
@@ -826,7 +832,7 @@
         TodayPlanChangeSection(
           view: Self.view, shown: AnsweredPlanChange(change: Self.change), next: nil,
           isOpen: $isOpen, isSaving: false, failed: false, answer: { _ in }, showNext: {},
-          adjust: { _ in })
+          adjust: { adjusting = $0 })
 
         SuggestedGoalSection(
           suggestion: SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics"),
@@ -834,6 +840,11 @@
       }
       .navigationTitle(Text(verbatim: "Today's notices"))
       .navigationBarTitleDisplayMode(.inline)
+      // Where Today opens the Plan editor, so a choice in the missed-days sheet shows it opens.
+      .sheet(item: $adjusting) { section in
+        Text(verbatim: "Plan editor at \(section)")
+          .presentationDetents([.medium])
+      }
     }
   }
 

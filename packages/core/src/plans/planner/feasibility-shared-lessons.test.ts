@@ -55,7 +55,7 @@ describe("outlined shared lesson feasibility", () => {
       ]),
     );
 
-    expect(coverage.coveredShare).toBe(0);
+    expect(coverage).toMatchObject({ coreFits: false, coveredShare: 0 });
   });
 
   it("measures partial shared coverage by written learning minutes instead of assignment ownership", () => {
@@ -73,7 +73,7 @@ describe("outlined shared lesson feasibility", () => {
 
     expect(built.skillMinutes.every((skill) => !skill.standIn)).toBe(true);
     expect([...coverage.skillFits.values()]).toStrictEqual([0.25, 0.25, 0.25]);
-    expect(coverage.coveredShare).toBe(0.25);
+    expect(coverage).toMatchObject({ coreFits: true, coveredShare: 0.25 });
   });
 
   it("covers all three skills while scheduling their shared lesson only once", () => {
@@ -84,7 +84,7 @@ describe("outlined shared lesson feasibility", () => {
     expect(built.items.filter((item) => item.kind === "lesson")).toHaveLength(1);
     expect(built.skillMinutes.every((skill) => !skill.standIn)).toBe(true);
     expect([...coverage.skillFits.values()]).toStrictEqual([1, 1, 1]);
-    expect(coverage.coveredShare).toBe(1);
+    expect(coverage).toMatchObject({ coreFits: true, coveredShare: 1 });
   });
 
   it("keeps a tested-out skill covered without declaring the other shared skills known", () => {

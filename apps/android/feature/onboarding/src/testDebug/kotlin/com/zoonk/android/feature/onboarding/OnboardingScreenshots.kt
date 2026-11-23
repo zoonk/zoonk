@@ -20,12 +20,18 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -67,6 +73,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
@@ -96,6 +103,7 @@ import java.io.File
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 import java.util.UUID
 
 /**
@@ -296,6 +304,67 @@ class OnboardingScreenshots {
         compose.onNodeWithText("Upload the notice").performClick()
         compose.waitForIdle()
         write("research-upload-open-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun timeQuestionPicks() = captureTimePicks("phone-screen", Locale.US)
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
+    fun timeQuestionPicksInPortuguese() = captureTimePicks("pt-phone-screen", Locale.forLanguageTag("pt-BR"))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun timeQuestionPicksTablet() = captureTimePicks("tablet", Locale.US)
+
+    /**
+     * The time question as a learner picks: on a goal whose suggestion covers everything, that time, then shorter ones
+     * that offer it; on one no time covers, the suggestion, then a shorter one.
+     */
+    private fun captureTimePicks(
+        name: String,
+        locale: Locale,
+    ) {
+        val covers =
+            FakeOnboardingApi().apply {
+                setup = { setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08") }
+                cover = { coverOf(recommended = 150) }
+            }
+        val none =
+            FakeOnboardingApi().apply {
+                setup = { setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08") }
+                cover = { coverOf(recommended = 805, focus = 240) }
+            }
+        var api by mutableStateOf(covers)
+        compose.setContent { ZoonkTheme { Surface { key(api) { Setup(api) } } } }
+        compose.waitForIdle()
+        write("time-question-default-$name", compose.onRoot().captureRender(scenario = "default").asAndroidBitmap())
+        listOf(15, 60).forEach { minutes ->
+            pickTime(minutes, locale)
+            write("time-question-$minutes-$name", compose.onRoot().captureRender(scenario = "picked $minutes").asAndroidBitmap())
+        }
+
+        compose.activity.viewModelStore.clear()
+        api = none
+        compose.waitForIdle()
+        write("time-question-none-default-$name", compose.onRoot().captureRender(scenario = "none default").asAndroidBitmap())
+        pickTime(60, locale)
+        write("time-question-none-60-$name", compose.onRoot().captureRender(scenario = "none picked 60").asAndroidBitmap())
+    }
+
+    private fun pickTime(
+        minutes: Int,
+        locale: Locale,
+    ) {
+        compose
+            .onAllNodes(
+                SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList),
+            ).onFirst()
+            .performSemanticsAction(SemanticsActions.OnClick)
+        compose.waitForIdle()
+        compose.onNodeWithText(formatMinutes(minutes, locale)).performSemanticsAction(SemanticsActions.OnClick)
+        compose.waitForIdle()
     }
 
     @Test
@@ -601,7 +670,6 @@ class OnboardingScreenshots {
                                 setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
                             }
                             cover = { coverOf(recommended = 805, focus = 240) }
-                            advice = { adviceOf(0.6) }
                         },
                     )
                 },

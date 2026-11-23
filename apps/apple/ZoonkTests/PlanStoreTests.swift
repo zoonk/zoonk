@@ -382,7 +382,7 @@ final class PlanStoreTests: XCTestCase {
 
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 1)
-    XCTAssertEqual(store.timeToCover(goalId: "goal").freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(store.timeToCover(goalId: "goal").freshValue?.targetDate, "2027-11-14")
   }
 
   func testAFailedTimeToCoverRefreshKeepsTheAnswer() async {
@@ -394,7 +394,7 @@ final class PlanStoreTests: XCTestCase {
     await api.setTimeToCoverFails(true)
     await time.refresh()
 
-    XCTAssertEqual(time.freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(time.freshValue?.targetDate, "2027-11-14")
   }
 
   func testAPlanChangeHidesTheEarlierTimeToCoverAndAsksAgain() async {
@@ -412,36 +412,7 @@ final class PlanStoreTests: XCTestCase {
 
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 2)
-    XCTAssertEqual(time.freshValue?.recommendedMinutes, 45)
-  }
-
-  func testAReopenedCoverageSuggestionShowsTheAnswerWithoutAsking() async {
-    let api = PlanAPIStub()
-    let store = makeStore(api: api)
-    await store.timeToCover(goalId: "goal").load()
-
-    let reopened = PlanCoverageSlot.found(store.timeToCover(goalId: "goal"))
-
-    let calls = await api.calls
-    XCTAssertEqual(calls.timeToCover, 1)
-    guard case .time(let time) = reopened else {
-      return XCTFail("the answer it had shows at once, so See what changes needs no request")
-    }
-    XCTAssertEqual(time.recommendedMinutes, 45)
-  }
-
-  func testAFailedRefreshKeepsTheCoverageSuggestionsAnswer() async {
-    let api = PlanAPIStub()
-    let store = makeStore(api: api)
-    let time = store.timeToCover(goalId: "goal")
-    await time.load()
-    await api.setTimeToCoverFails(true)
-
-    await time.refresh()
-
-    guard case .time = PlanCoverageSlot.found(time) else {
-      return XCTFail("a failed refresh keeps the answer instead of an error")
-    }
+    XCTAssertEqual(time.freshValue?.targetDate, "2027-11-14")
   }
 
   func testAChangedPlanFromTheServerHidesItsEarlierAnswersWithoutAsking() async {
@@ -506,7 +477,7 @@ final class PlanStoreTests: XCTestCase {
 
     let calls = await api.calls
     XCTAssertEqual(calls.plan, 2, "the server said it changed, so it's read again")
-    XCTAssertEqual(time.freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(time.freshValue?.targetDate, "2027-11-14")
   }
 
   func testANewDaysPlanHidesYesterdaysAdviceAndTheNextOpeningAsks() async {
@@ -572,7 +543,7 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(calls.advice, 2)
     XCTAssertEqual(calls.timeToCover, 2)
     XCTAssertEqual(PlanBasesView.recommended(advice), .essential)
-    XCTAssertEqual(time.freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(time.freshValue?.targetDate, "2027-11-14")
   }
 
   func testPrerequisitesHideAdviceALocalChangeInvalidated() async {
@@ -688,7 +659,7 @@ final class PlanReadsOnScreenTests: XCTestCase {
     }
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 3, "the visit after a failed read asks again")
-    XCTAssertEqual(timeToCover.freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(timeToCover.freshValue?.targetDate, "2027-11-14")
   }
 
   func testReopeningTheTimeSectionWhileItAsksAsksNothingMore() async throws {
@@ -706,7 +677,7 @@ final class PlanReadsOnScreenTests: XCTestCase {
 
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 1)
-    XCTAssertEqual(screen.store.timeToCover(goalId: "goal").freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(screen.store.timeToCover(goalId: "goal").freshValue?.targetDate, "2027-11-14")
   }
 }
 
@@ -1000,10 +971,8 @@ actor PlanAPIStub: PlanAPIClient {
     }
 
     return TimeToCover(
-      fittingDate: fittingDate, most: nil, pastDate: false, readingNotice: false,
-      ready: answersReady,
-      recommendedMinutes: 45, suggested: suggested, targetDate: "2027-11-14",
-      targetDateNamedMonth: false)
+      fittingDate: fittingDate, pastDate: false, readingNotice: false, ready: answersReady,
+      suggested: suggested, targetDate: "2027-11-14", targetDateNamedMonth: false)
   }
   func basesAdvice(token: String, goalId: String) async throws -> PlanBasesAdvice {
     calls.advice += 1

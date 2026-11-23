@@ -3,17 +3,28 @@ import SwiftUI
 /// Main's `TodayChangeNotice`: a correction to the source material the goal follows.
 struct TodaySourceChangeSection: View {
   let message: String
+  @Environment(\.isPaneSplit) private var isBeside
 
   var body: some View {
     Section {
-      Text(message)
-    } header: {
-      Label {
-        Text("What changed", tableName: "Today", comment: "A change to the goal's sources")
-      } icon: {
-        Image(systemName: "doc.badge.clock")
+      if isBeside {
+        TodaySuggestionCard {
+          SuggestionHeader(
+            Text("What changed", tableName: "Today", comment: "A change to the goal's sources"))
+          SuggestionDescription(Text(message), color: Color(.foreground))
+        }
+      } else {
+        SuggestionLine {
+          SuggestionMark(kind: .symbol("doc.badge.clock"))
+        } summary: {
+          Text(message)
+            .typeWeight(.medium)
+            .lineLimit(nil)
+        } action: {
+          EmptyView()
+        }
+        .listRowSeparator(.hidden)
       }
-      .sectionTitleStyle()
     }
   }
 }
@@ -27,16 +38,16 @@ struct SuggestedGoalSection: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 12) {
+      TodaySuggestionCard {
         VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "Continue \(suggestion.title)?", tableName: "Today",
-            comment: "Offers a goal from the learner's last course"
-          )
-          .typeStyle(.body.weight(.semibold))
+          SuggestionHeader(
+            Text(
+              "Continue \(suggestion.title)?", tableName: "Today",
+              comment: "Offers a goal from the learner's last course"))
 
-          Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(
+            Text(
+              "Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise"))
         }
 
         if !buttonsInBar {
@@ -50,10 +61,6 @@ struct SuggestedGoalSection: View {
           FailureLine(message: SuggestedGoalAnswer.failure)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(14)
-      .panel()
-      .listRowSeparator(.hidden)
     }
   }
 }
@@ -162,7 +169,7 @@ struct TodayExamChoiceSection: View {
   var body: some View {
     if let editor, case .applied(let change, let sentence) = editor.latest {
       Section {
-        Text(sentence)
+        SuggestionResult(text: sentence)
 
         if change.canUndo {
           BusyButton(isBusy: editor.isSaving, icon: .undo) {
@@ -178,27 +185,12 @@ struct TodayExamChoiceSection: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            Group {
-              if choice.take > 1 {
-                Text(
-                  "\(choice.group): which ones will you take?", tableName: "Plan",
-                  comment:
-                    "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-                )
-              } else {
-                Text(
-                  "\(choice.group): which one will you take?", tableName: "Plan",
-                  comment: "Asks which option of an exam's choice the learner takes")
-              }
-            }
-            .typeStyle(.body.weight(.semibold))
+            SuggestionHeader(Text.examChoiceQuestion(group: choice.group, take: choice.take))
 
-            Text(choice.leftOut.line)
-              .foregroundStyle(.mutedForeground)
+            SuggestionDescription(Text(choice.leftOut.line))
 
             if choice.take > 1 {
-              Text.examPickLimit(choice.take)
-                .foregroundStyle(.mutedForeground)
+              ExamPickLimit(take: choice.take)
             }
           }
         } icon: {
@@ -255,6 +247,7 @@ struct TodayExamChoiceSection: View {
       }
     }
   }
+
 }
 
 /// Main sends a learner who fell behind to the Plan with its editor open; here it opens over Today.
@@ -474,9 +467,7 @@ struct TodayFocusTestSection: View {
           SuggestionLine {
             StatusMark(status: .done)
           } summary: {
-            Text(Self.noted)
-              .typeWeight(.medium)
-              .foregroundStyle(Color(.foreground))
+            SuggestionResult(text: String(localized: Self.noted))
           } action: {
             EmptyView()
           }
@@ -533,17 +524,15 @@ struct TodayFocusTestSection: View {
 
   @ViewBuilder
   private func details(_ shown: FocusTestSummary.Size) -> some View {
-    Text(FocusTestCopy.title(findsFocus: true))
-      .typeStyle(.body.weight(.semibold))
-      .foregroundStyle(Color(.foreground))
+    SuggestionHeader(Text(FocusTestCopy.title(findsFocus: true)))
 
-    Text(
-      "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
-      tableName: "Today",
-      comment:
-        "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
-    )
-    .foregroundStyle(.mutedForeground)
+    SuggestionDescription(
+      Text(
+        "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
+        tableName: "Today",
+        comment:
+          "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
+      ))
   }
 
   private func dismiss() {
@@ -617,17 +606,16 @@ struct TodayExamMomentSection: View {
 
   @ViewBuilder
   private func details(_ words: ExamMoment.Words) -> some View {
-    Text(words.title)
-      .typeStyle(.body.weight(.semibold))
-      .foregroundStyle(Color(.foreground))
-      .accessibilityAddTraits(.isHeader)
+    SuggestionHeader(Text(words.title))
 
     if let day = moment.dayFacts {
       FactSegments(facts: day)
         .typeStyle(.data)
     }
 
-    ExamMomentBody(words: words)
+    SuggestionDescription {
+      ExamMomentBody(words: words)
+    }
 
     ExamChecklistRows(moment: moment, checked: $checked)
 

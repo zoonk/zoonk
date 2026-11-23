@@ -26,6 +26,7 @@ const summary: PlanSummary = {
     },
     fitOffer: null,
     fullCourseEndDate: null,
+    suggested: null,
   },
   basis,
   schemaVersion: 4,

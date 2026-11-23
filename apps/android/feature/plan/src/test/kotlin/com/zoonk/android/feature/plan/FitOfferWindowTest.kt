@@ -110,7 +110,7 @@ class FitOfferWindowTest {
                     plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"),
                 )
         }
-        rule.onNodeWithText("More lessons than days left").assertExists()
+        rule.onNodeWithText("Let's fit your plan to the time left").assertExists()
         rule.onNodeWithText("Add to plan").assertDoesNotExist()
         held.complete(Unit)
         rule.waitForIdle()

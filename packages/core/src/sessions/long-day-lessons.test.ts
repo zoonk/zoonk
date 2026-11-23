@@ -7,7 +7,7 @@ import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { readSavedPlan } from "../learner/facts/saved-plan";
-import { MAX_DAILY_MINUTES } from "../plans/daily-minutes";
+import { MINUTES_PER_DAY } from "../plans/daily-minutes";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
@@ -173,7 +173,7 @@ describe("a long study day", () => {
     const user = await userFixture();
 
     const { goal, plan } = await sessionGoalFixture({
-      goal: { dailyMinutes: MAX_DAILY_MINUTES },
+      goal: { dailyMinutes: MINUTES_PER_DAY },
       itemsPerSkill: 1,
       lessons: 400,
       userId: user.id,
@@ -201,7 +201,7 @@ describe("a long study day", () => {
       .reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
     const today = result.session.week.days.find((day) => day.isToday);
-    expect(lessonMinutes).toBe(MAX_DAILY_MINUTES);
-    expect(today?.goalMinutes).toBe(MAX_DAILY_MINUTES);
+    expect(lessonMinutes).toBe(MINUTES_PER_DAY);
+    expect(today?.goalMinutes).toBe(MINUTES_PER_DAY);
   });
 });

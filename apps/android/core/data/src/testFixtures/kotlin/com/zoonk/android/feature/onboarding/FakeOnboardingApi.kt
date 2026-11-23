@@ -518,7 +518,7 @@ fun suggestion(
     minutes: Long,
 ) = PlanTimeToCoverSuggested(
     coveredShare = if (kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) 1.0 else 0.6,
-    everyTopic = true,
+    everyTopic = kind == PlanTimeToCoverSuggested.Kind.EVERYTHING,
     kind = kind,
     minutes = minutes,
     split = null,
@@ -553,9 +553,8 @@ fun adviceOf(
     targetDateNamedMonth = false,
 )
 
-/** Core's `DAILY_TIME_CHOICES`: 5 and 10 minutes, quarter hours to 4 hours, then half hours to a whole day. */
-val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..1440 step 30)
-
+/** Core's `DAILY_TIME_CHOICES`: 5 and 10 minutes, quarter hours to 4 hours, then half hours to 8 hours. */
+val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..480 step 30)
 private const val MOST_SUGGESTED = 240L
 
 fun languageAimOf(

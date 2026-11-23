@@ -73,7 +73,7 @@
   "goalcontent_subject_count": "16c22188cccaacb6ec30f18f6c4f2a3446a332ce112cbb88d2cc93f95f746b49",
   "goalcontent_subject_missing": "b3a15fab5308eda7850b0b92253e27741c60500cf812ecfaa843ba770dfd4754",
   "goalcontent_subject_skipped": "1ef848968c08a37699270f4c74046b9b8c9783aa0ca82e36f18a7a801ef9b08b",
-  "goalcontent_subject_time": "95ff10e523774ca43a0b085c0cd53747b667d9a239b606a498e10fb9b8c7d8ec",
+  "goalcontent_subject_time": "dd32e7d2da6ba9ff713e126a046b030779254cb490a2e74e3c79433970bee2c4",
   "goalcontent_subjects": "d6f7742e6ce03a3722b1cab692188636dbb90f577715fc17bf7521dbb09c6de9",
   "goalcontent_to_review": "699cc972663a050ba2bf1575f131c097327a96c7e199deb771202c2e9eedb776",
   "goalcontent_topic_count": "a92fa1a73b9c7a543863a3f809ce6b42a9c8d739c57a3e145602f389ee985f89",
@@ -219,7 +219,8 @@
         <item quantity="other">%d Lektionen übersprungen</item>
     </plurals>
     <string name="goalcontent_subject_skipped">Du hast dieses Fach aus deinem Plan genommen.</string>
-    <string name="goalcontent_subject_time">Dieses Fach ist nicht in deinem Plan, weil die Zeit nicht reicht.</string>
+    <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
+    <string name="goalcontent_subject_time">Dieses Fach ist nicht in deinem Plan. Andere Fächer kommen zuerst.</string>
     <string name="goalcontent_subject_missing">Dieses Fach ist noch nicht in deinem Plan.</string>
     <string name="goalcontent_adjust_plan">Plan anpassen</string>
     <string name="goalcontent_add_back">Wieder hinzufügen</string>

@@ -195,6 +195,8 @@ struct TodayChallengeRow: View {
 /// the goal's date at risk with their choices.
 struct TodayPlanChangeSection: View {
   @AccessibilityFocusState private var isResultFocused: Bool
+  /// A missed-days choice that opens the Plan editor once the sheet it was made in has closed.
+  @State private var chosen: MissedDaysChoices.Option?
 
   let view: TodayView
   let shown: AnsweredPlanChange
@@ -212,9 +214,9 @@ struct TodayPlanChangeSection: View {
 
   private var isExam: Bool { view.goal.kind == .exam }
 
-  /// The proposal's answers are in its sheet, so while it's open a failed answer shows there,
-  /// beside them; the page keeps it for Undo and the missed-days choices.
-  private var answersInSheet: Bool { isOpen && shown.decision == nil && !isBehind }
+  /// The answers are in the sheet, so while it's open a failed answer shows there, beside them; the
+  /// page keeps it for Undo.
+  private var answersInSheet: Bool { isOpen && shown.decision == nil }
 
   var body: some View {
     Section {
@@ -222,7 +224,7 @@ struct TodayPlanChangeSection: View {
         SuggestionLine {
           StatusMark(status: .done)
         } summary: {
-          Text(result(decision))
+          SuggestionResult(text: result(decision))
             .accessibilityFocused($isResultFocused)
         } action: {
           Group {
@@ -302,14 +304,10 @@ struct TodayPlanChangeSection: View {
     let today = view.session.localDate
 
     VStack(alignment: .leading, spacing: 4) {
-      Text(title)
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(Color(.foreground))
+      SuggestionHeader(Text(title))
 
       if change.source != "focusTest", let why = words.why {
-        Text(why)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        SuggestionDescription(Text(why))
       }
     }
 
@@ -320,11 +318,11 @@ struct TodayPlanChangeSection: View {
       repriced: shown.repriced)
 
     if let date = change.officialDate?.date {
-      Text(
-        "The official exam date is \(PlanDate.longDay(date, today: today)).", tableName: "Today",
-        comment: "Under a change that moves the exam off its official date; the argument is a day"
-      )
-      .typeStyle(.note.weight(.medium))
+      SuggestionDescription(
+        Text(
+          "The official exam date is \(PlanDate.longDay(date, today: today)).", tableName: "Today",
+          comment: "Under a change that moves the exam off its official date; the argument is a day"
+        ))
     }
 
   }
@@ -388,15 +386,12 @@ struct TodayPlanChangeSection: View {
   private func statement<Answers: View>(
     title: Text, sentence: String?, @ViewBuilder answers: () -> Answers
   ) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
+    TodaySuggestionCard {
       VStack(alignment: .leading, spacing: 4) {
-        title
-          .typeStyle(.body.weight(.semibold))
+        SuggestionHeader(title)
 
         if let sentence {
-          Text(sentence)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(Text(sentence))
         }
       }
 
@@ -406,10 +401,25 @@ struct TodayPlanChangeSection: View {
       .controlSize(.small)
       .disabled(isSaving)
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(14)
-    .panel()
-    .listRowSeparator(.hidden)
+  }
+
+  // MARK: Missed days
+
+  private var missedDaysTitle: Text {
+    Text("You missed a few days", tableName: "Today", comment: "Title after missed study days")
+  }
+
+  /// Main's card: what happened and why, with what changes and the choices in its sheet.
+  @ViewBuilder
+  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
+    TodaySuggestionCard(mark: .symbol("calendar.badge.clock")) {
+      VStack(alignment: .leading, spacing: 4) {
+        SuggestionHeader(missedDaysTitle)
+        SuggestionDescription(Text(behindSentence))
+      }
+
+      missedDaysOpen(behind)
+    }
   }
 
   // MARK: The official guide
@@ -441,64 +451,39 @@ struct TodayPlanChangeSection: View {
     }
   }
 
-  // MARK: Missed days
-
-  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
-    statement(
-      title: Text(
-        "You missed a few days", tableName: "Today", comment: "Title after missed study days"),
-      sentence: behindSentence(behind)
+  private func missedDaysOpen(_ behind: TodayView.PlanChange.Behind) -> some View {
+    SuggestionOpen(
+      isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil,
+      label: Text("See what changes", tableName: "Today"), onDismiss: openChosen
     ) {
-      // On a return after a break, nothing that asks for more hours leads.
-      if view.session.freshStart == .welcomeBack {
-        keepTimeButton
-        addTimeButton
-      } else {
-        addTimeButton
-        keepTimeButton
-      }
+      SuggestionHeader(missedDaysTitle)
 
-      missedDaysMenu(behind)
+      PlanEffectDiff(
+        effect: change.effect, today: view.session.localDate,
+        options: PlanChangeOptions(dateKind: GoalDateKind(isExam: isExam)))
+    } actions: {
+      missedDaysChoices(behind)
     }
   }
 
-  private func missedDaysMenu(_ behind: TodayView.PlanChange.Behind) -> some View {
-    Menu {
-      if behind.canFocus {
+  @ViewBuilder
+  private func missedDaysChoices(_ behind: TodayView.PlanChange.Behind) -> some View {
+    let choices = MissedDaysChoices(
+      canFocus: behind.canFocus, isReturn: view.session.freshStart == .welcomeBack)
+
+    // Sharing a row with the main action, which takes the room they leave, their words stay whole.
+    PlanOtherOptions {
+      ForEach(choices.others, id: \.self) { option in
         Button {
-          adjust(.focus)
+          choose(option)
         } label: {
-          Text(
-            "Choose where to focus", tableName: "Today",
-            comment: "Opens the choice of the plan's areas to focus on")
+          label(option)
         }
       }
-
-      Button {
-        adjust(.everything)
-      } label: {
-        isExam
-          ? Text(
-            "Keep studying after the exam", tableName: "Today",
-            comment: "Opens studying every topic, past the exam's date")
-          : Text("Remove end date", tableName: "Today")
-      }
-    } label: {
-      Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
     }
     .buttonStyle(.outline)
-  }
+    .layoutPriority(1)
 
-  private var addTimeButton: some View {
-    Button {
-      adjust(isExam ? .time : .date)
-    } label: {
-      Text("Add time", tableName: "Today", comment: "Opens the plan's time a day after missed days")
-    }
-    .buttonStyle(.outline)
-  }
-
-  private var keepTimeButton: some View {
     Button {
       answer(.seen)
     } label: {
@@ -507,20 +492,62 @@ struct TodayPlanChangeSection: View {
         comment: "Keeps the time a day after missed days, with less of the plan covered")
     }
     .buttonStyle(.outline)
+    .disabled(isSaving)
+    .layoutPriority(1)
+
+    if let lead = choices.lead {
+      Button {
+        choose(lead)
+      } label: {
+        label(lead)
+      }
+      .buttonStyle(.mainAction)
+    }
   }
 
-  private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
-    let time = studyDuration(minutes: behind.currentMinutes)
-    let after = behind.coveredAfter.formatted(.percent.precision(.fractionLength(0)))
-    let before = behind.coveredBefore.formatted(.percent.precision(.fractionLength(0)))
+  /// The Plan editor opens over Today once this sheet has closed: a sheet can't open from Today
+  /// while another is still up.
+  private func choose(_ option: MissedDaysChoices.Option) {
+    chosen = option
+    isOpen = false
+  }
 
-    return behind.measure == "exam"
-      ? String(
-        localized: "\(time) a day now covers \(after) of the exam, down from \(before).",
-        table: "Today", comment: "Missed days left an exam plan covering less")
-      : String(
-        localized: "\(time) a day now covers \(after) of your goal, down from \(before).",
-        table: "Today", comment: "Missed days left a plan covering less of its goal")
+  private func openChosen() {
+    guard let option = chosen else {
+      return
+    }
+
+    chosen = nil
+    adjust(option.section)
+  }
+
+  private func label(_ option: MissedDaysChoices.Option) -> Text {
+    switch option {
+    case .adjustTime:
+      isExam
+        ? Text(
+          "Add time", tableName: "Today", comment: "Opens the plan's time a day after missed days")
+        : Text(
+          "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+    case .focus:
+      Text(
+        "Choose where to focus", tableName: "Today",
+        comment: "Opens the choice of the plan's areas to focus on")
+    case .studyEverything:
+      isExam
+        ? Text(
+          "Keep studying after the exam", tableName: "Today",
+          comment: "Opens studying every topic, past the exam's date")
+        : Text("Remove end date", tableName: "Today")
+    }
+  }
+
+  private var behindSentence: String {
+    String(
+      localized: "Let's fit your plan to the days left.", table: "Today",
+      comment:
+        "Under \"You missed a few days\": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes."
+    )
   }
 
   private func result(_ decision: PlanChangeDecision) -> String {
@@ -540,6 +567,36 @@ struct TodayPlanChangeSection: View {
         localized: "Okay. Your time stays the same.", table: "Today",
         comment: "The learner kept their time a day after missed days")
     }
+  }
+}
+
+/// Main's missed-days choices. On a return after a break, nothing that asks for more hours leads.
+struct MissedDaysChoices: Equatable {
+  enum Option: Hashable {
+    case adjustTime
+    case focus
+    case studyEverything
+
+    var section: AdjustPlanSheet.Section {
+      switch self {
+      case .adjustTime: .time
+      case .focus: .focus
+      case .studyEverything: .everything
+      }
+    }
+  }
+
+  let lead: Option?
+  /// Behind "Other options".
+  let others: [Option]
+
+  init(canFocus: Bool, isReturn: Bool) {
+    let options: [Option] =
+      canFocus ? [.adjustTime, .focus, .studyEverything] : [.adjustTime, .studyEverything]
+    let lead: Option? = !isReturn ? .adjustTime : canFocus ? .focus : nil
+
+    self.lead = lead
+    others = options.filter { $0 != lead }
   }
 }
 

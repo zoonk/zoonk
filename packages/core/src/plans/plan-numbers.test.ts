@@ -11,6 +11,7 @@ import { loadCourseEstimateData } from "../catalog/_utils/course-estimate-data";
 import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createSetUpGoalPlan } from "./_test-utils/set-up-plan";
+import { toFeasibilityView } from "./_utils/plan-feasibility-view";
 import { getPlanNumbers } from "./_utils/plan-numbers";
 import { changeGoalPlan } from "./change-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -178,6 +179,42 @@ describe("learner plan numbers", () => {
     expect(numbers.beforeDeadlineMinutes).toBe(65);
     expect(numbers.scheduledMinutes).toBe(145);
     expect(numbers.workload).toStrictEqual(workload);
+  });
+
+  it("shows the whole percent a plan's feasibility shows for coverage that falls short", () => {
+    const numbers = getPlanNumbers({
+      built: { items: [], lessonDayMinutes: new Map() },
+      context: {
+        dailyMinutes: 15,
+        fromDate: "2020-09-28",
+        fullCourse: false,
+        ownLevel: "none",
+        paceFactor: 1,
+        targetDate: "2020-09-30",
+        weekdayMinutes: Array.from({ length: 7 }, () => 15),
+      },
+      coverage: { coveredShare: 0.999, fits: false, measure: "exam" },
+      isExam: true,
+      settings: parsePlanSettings({}),
+      workload: {
+        checkpointMinutes: 0,
+        lessonMinutes: 0,
+        practiceMinutes: 0,
+        unwrittenLessonMinutes: 0,
+      },
+    });
+
+    expect(numbers.coverage?.coveredShare).toBe(
+      toFeasibilityView({
+        coreFits: false,
+        coveredShare: 0.999,
+        deadline: new Date("2020-09-30T00:00:00Z"),
+        deepensMostAsked: false,
+        fits: false,
+        measure: "exam",
+        timeCovers: false,
+      }).coveredShare,
+    );
   });
 
   it.each([10, 15, 30])(

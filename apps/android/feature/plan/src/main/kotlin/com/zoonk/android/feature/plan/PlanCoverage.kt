@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,8 +29,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFeasibility
 import kotlinx.datetime.toJavaLocalDate
@@ -45,33 +42,10 @@ internal fun timeEnough(plan: Plan): Boolean = plan.feasibility?.timeCovers ?: f
 
 internal fun canMoveDate(page: PlanPageState): Boolean = !page.isExam && planCoverage(page.plan) != null && !timeEnough(page.plan)
 
-/** Main's `useCoveredText`: what the learner's time a day covers now, named by that time beside an offer of another. */
+/** What the plan does with a time that doesn't cover everything by the date, never a share. */
 @Composable
-fun coveredText(
-    plan: Plan,
-    coverage: PlanFeasibility,
-): String {
-    val time = formatMinutes(plan.schedule.dailyMinutes.toInt(), currentLocale())
-    if (coverage.coveredShare < MIN_SHOWN_SHARE || plan.schedule.targetDate == null) {
-        return stringResource(R.string.plan_covered_not_enough, time)
-    }
-    return stringResource(
-        if (coverage.measure ==
-            PlanFeasibility.Measure.EXAM
-        ) {
-            R.string.plan_time_covers_share_exam
-        } else {
-            R.string.plan_time_covers_share_goal
-        },
-        time,
-        formatPercent(coverage.coveredShare, currentLocale()),
-    )
-}
-
-/** Below half a percent, the share would read "0%". */
-private const val MIN_SHOWN_SHARE = 0.005
-
-private const val DAYS_PER_WEEK = 7
+internal fun startsWithMost(isExam: Boolean): String =
+    stringResource(if (isExam) R.string.plan_starts_with_most_exam else R.string.plan_starts_with_most_goal)
 
 /** A goal's date as learn's `useGoalDateValues` writes it: a date standing for its month says the month. */
 @Composable
@@ -82,22 +56,9 @@ internal fun goalDate(
     style: DateStyle = DateStyle.Long,
 ): String = formatDate(date, currentLocale(), if (namedMonth) DateStyle.Month else style, today)
 
-@Composable
-internal fun fittingDateText(
-    dailyMinutes: Int,
-    fittingDate: LocalDate,
-    today: LocalDate,
-): String =
-    stringResource(
-        R.string.plan_find_fitting_date,
-        formatMinutes(dailyMinutes, currentLocale()),
-        formatDate(fittingDate, currentLocale(), DateStyle.Long, today),
-    )
-
 /**
  * Main's `DailyCoverage`, under the time a day: the time question's whole answer for the plan's own
- * [minutes]. While the schedule's change saves, its place says the new coverage is being worked
- * out: the old one would describe a time no longer picked.
+ * [minutes]. While the schedule's change saves, its place says the new answer is being worked out.
  */
 @Composable
 internal fun DailyCoverage(
@@ -115,63 +76,39 @@ internal fun DailyCoverage(
         FinishLine(page, pending)
         return
     }
-    val date = GoalDate(target, plan.schedule.targetDateNamedMonth)
+    val date = GoalDate(target, plan.schedule.targetDateNamedMonth, plan.schedule.targetDateEstimated)
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
     val line =
         timeLine(
-            advice = LineAdvice(coveredShare = if (feasibility.fits) 1.0 else feasibility.coveredShare, endDate = null),
+            advice = null,
             askFailed = false,
             dated = true,
-            findFailed = false,
+            findFailed = search is TimeToCoverState.Failed || search is TimeToCoverState.Building,
             found = found,
             hasDays = true,
             minutes = minutes,
         )
-    val studiesEveryDay = plan.schedule.weekdayMinutes.count { it > 0 } == DAYS_PER_WEEK
-    val fittingDate = found?.fittingDate?.takeIf { !page.isExam && line !is TimeLine.Everything }
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
-    Box(Modifier.heightIn(min = 60.dp)) {
+    Box {
         Column(Modifier.hiddenIf(pending), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (plan.fitOffer?.fits == true) {
-                Text(
-                    text =
-                        stringResource(
-                            if (date.namedMonth) R.string.plan_time_covers_everything_by_month else R.string.plan_time_covers_everything_by,
-                            goalDateText(date, page.today),
-                        ),
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = muted,
-                )
-            } else {
-                TimeAnswer(
-                    date = date,
-                    exam = page.isExam,
-                    line = line,
-                    minutes = minutes,
-                    note = fullTimeNote(found, line, studiesEveryDay),
-                    // Asked as the editor opens, so a search not answered yet is being found; one that failed shows nothing.
-                    finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
-                    offer = timeOffer(found, line, minutes),
-                    offerAsButton = true,
-                    onRetry = { edits.findTimeToCover(plan, null) },
-                    onUseOffer = {
-                        onUseTime(it)
-                        // The button goes once its time is the plan's, so the keyboard waits on the picker.
-                        focus.pickedTime.requestFocus()
-                    },
-                    today = page.today,
-                )
-            }
-            fittingDate?.let {
-                Text(
-                    fittingDateText(plan.schedule.dailyMinutes.toInt(), it.toJavaLocalDate(), page.today),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = muted,
-                )
-            }
+            TimeAnswer(
+                date = date,
+                exam = page.isExam,
+                line = line,
+                minutes = minutes,
+                // Asked as the editor opens, so a search not answered yet is being found.
+                finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
+                offer = timeOffer(line, minutes),
+                onRetry = { edits.findTimeToCover(plan, null) },
+                onUseOffer = {
+                    onUseTime(it)
+                    // The button goes once its time is the plan's, so the keyboard waits on the picker.
+                    focus.pickedTime.requestFocus()
+                },
+                today = page.today,
+            )
             val canMove = canMoveDate(page)
             val canFocus = canChooseFocus(plan)
             if (canMove || canFocus) {
@@ -183,7 +120,7 @@ internal fun DailyCoverage(
         }
         if (pending) {
             Text(
-                stringResource(R.string.plan_working_out_coverage),
+                stringResource(R.string.plan_time_working),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.bodyMedium,
                 color = muted,
@@ -222,7 +159,7 @@ private fun FinishLine(
  * Main's `invisible`: laid out, so the block keeps its height, but not placed, so it's neither drawn,
  * tapped nor read.
  */
-private fun Modifier.hiddenIf(hidden: Boolean): Modifier =
+internal fun Modifier.hiddenIf(hidden: Boolean): Modifier =
     if (!hidden) {
         this
     } else {

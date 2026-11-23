@@ -62,7 +62,7 @@ export const planAdvicePaths = {
   "/goals/{goalId}/plan/time-to-cover": {
     post: {
       description:
-        "Finds the daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything; null when not even a whole day does, or when the date has passed. Also the time to suggest (`suggested`): that time when it's at most 4 hours a day, else 4 hours with what it covers first, since more is more than most people keep up; the time everything takes stays in `recommendedMinutes`, and either can be applied. For a goal that isn't an exam, also the earliest date the learner's own time covers everything by. Planning at each time takes seconds for a big exam, so ask once for the week the learner sees (onboarding's time question starts on its `suggested` time) or when they ask, never on every view. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "Finds the suggested daily study time (at most 4 hours) for the goal's date and the study week requested. Also returns the fitting time in `recommendedMinutes` when one exists, which can exceed the 8-hour limit for a learner's schedule, and the earliest later fitting date at the saved time for eligible non-exam goals. A goal with a passed date has no suggested time. This calculation can take seconds for a large exam. It makes no changes, and `ready` is false while the plan is being built.",
       operationId: "findPlanTimeToCover",
       requestBody: {
         content: { "application/json": { schema: planTimeToCoverInputSchema } },
@@ -73,11 +73,11 @@ export const planAdvicePaths = {
         ...planErrors,
         "200": {
           content: { "application/json": { schema: planTimeToCoverSchema } },
-          description: "The daily time that covers everything",
+          description: "The suggested daily study time and fit estimates",
         },
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Find the daily time that covers a goal",
+      summary: "Find the suggested daily study time",
       tags: ["Plans"],
     },
   },

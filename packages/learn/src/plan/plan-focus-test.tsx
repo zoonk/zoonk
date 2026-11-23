@@ -10,7 +10,7 @@ import {
 import { FactSegments } from "../_components/task-meta";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
 import { usePlanScreen } from "./plan-context";
-import { usePlanCoverage } from "./plan-coverage";
+import { useFallsShort } from "./plan-coverage";
 
 /**
  * Where the test opens, for a learner who hasn't started it and whose time doesn't cover
@@ -18,8 +18,8 @@ import { usePlanCoverage } from "./plan-coverage";
  */
 export function useFocusTestOfferHref(): string | null {
   const { focusTestHref, plan } = usePlanScreen();
-  const coverage = usePlanCoverage();
-  const offered = coverage && plan.focusTest?.state === "notStarted" && plan.focusTest.offer;
+  const fallsShort = useFallsShort();
+  const offered = fallsShort && plan.focusTest?.state === "notStarted" && plan.focusTest.offer;
 
   return (offered && focusTestHref) || null;
 }

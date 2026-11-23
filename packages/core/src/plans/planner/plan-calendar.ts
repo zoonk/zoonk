@@ -1,5 +1,5 @@
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY } from "../daily-minutes";
 import { DAYS_PER_WEEK, type LightWeek, type PlanSettings } from "./plan-state";
 import { getWeekShape, isWeekend } from "./week-shape";
 
@@ -124,10 +124,12 @@ export function getStudyMinutes({
 export function scaleWeekdayMinutes({
   dailyMinutes,
   from,
+  maxMinutes = MINUTES_PER_DAY,
   weekdayMinutes,
 }: {
   dailyMinutes: number;
   from: number;
+  maxMinutes?: number;
   weekdayMinutes: readonly number[] | null;
 }): number[] | null {
   if (!weekdayMinutes) {
@@ -138,11 +140,11 @@ export function scaleWeekdayMinutes({
 
   return weekdayMinutes.map((minutes, weekday) => {
     if (minutes === 0 || (weekend !== null && isWeekend(weekday))) {
-      return minutes;
+      return Math.min(maxMinutes, minutes);
     }
 
     const scaled = Math.round((minutes * dailyMinutes) / Math.max(from, 1));
-    return Math.min(MAX_DAILY_MINUTES, Math.max(1, scaled));
+    return Math.min(maxMinutes, Math.max(1, scaled));
   });
 }
 

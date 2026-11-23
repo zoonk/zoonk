@@ -317,8 +317,7 @@ struct PlanBuilding: View {
         comment: "Over Start, while the plan is still built"),
       label: Text(
         "Start", tableName: "Onboarding",
-        comment: "Opens the goal's first lesson, written before its plan"),
-      icon: .play
+        comment: "Opens the goal's first lesson, written before its plan")
     ) {
       router.open(.lesson(lessonId: firstLesson.id))
     }
@@ -599,7 +598,6 @@ private struct PlanReveal: View {
     Section {
       VStack(alignment: .leading, spacing: 20) {
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
-        coverage
         ForEach(plan.examChoices) { choice in
           if let line = choice.followingLine {
             PlanChoiceLine(line: line) { adjusting = .choice(choice.group) }
@@ -627,45 +625,6 @@ private struct PlanReveal: View {
         }
       }
     }
-  }
-
-  /// Main's `RevealCoverage`: the one thing a learner may want to change before starting, when
-  /// their time doesn't cover the goal. What fits lives on the Plan. A plan that goes on after the
-  /// exam covers the rest then.
-  @ViewBuilder private var coverage: some View {
-    if !plan.schedule.fullCourse, let covered = planCoverageText(plan) {
-      ViewThatFits(in: .horizontal) {
-        HStack(spacing: 16) {
-          coverageLine(covered)
-          addTime
-        }
-
-        VStack(alignment: .leading, spacing: 8) {
-          coverageLine(covered)
-          addTime
-        }
-      }
-    }
-  }
-
-  private func coverageLine(_ text: String) -> some View {
-    Text(text)
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-      .frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  private var addTime: some View {
-    Button {
-      adjusting = .time
-    } label: {
-      Text(
-        "Add time", tableName: "Onboarding",
-        comment: "Opens the plan's time a day, beside the line saying it doesn't cover the goal")
-    }
-    .buttonStyle(.outline)
-    .controlSize(.small)
-    .fixedSize()
   }
 
   /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.

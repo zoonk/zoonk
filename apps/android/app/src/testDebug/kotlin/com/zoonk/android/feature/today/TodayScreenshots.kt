@@ -10,8 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
@@ -37,6 +41,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -165,6 +170,28 @@ class TodayScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun focusTestNoticeDark() = captureFocusTestNotice("today-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun missedDaysNotice() = captureFocusTestNotice("today-behind-light", day = "notice-behind")
+
+    /** "See what changes" opens the sheet with what the missed days cost the plan; its window alone is drawn. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun missedDaysNoticePanel() {
+        val read = DAYS.first { it.first == "notice-behind" }.second
+        compose.setContent { ZoonkTheme { Screen(read) } }
+        compose.onNodeWithText("See what changes").performClick()
+        compose.waitForIdle()
+        write(
+            "today-behind-sheet-light",
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
+    }
 
     /** Beside the day, the suggestion opens as a panel with what a phone's sheet shows; the sheet's dialog window isn't captured. */
     @Test
@@ -433,6 +460,13 @@ class TodayScreenshots {
                                         "plan-change",
                                         "status" to "applied",
                                         "kind" to "missedDays",
+                                        "effect" to
+                                            ApiJson.parseToJsonElement(
+                                                """
+                                                {"endDateAfter":"2026-12-10","endDateBefore":"2026-12-10","lessonsAdded":0,"lessonsRemoved":0,
+                                                 "topicsLeftOut":[{"area":"Biology","topics":["Ecology","Evolution"]}]}
+                                                """.trimIndent(),
+                                            ),
                                         "behind" to
                                             buildJsonObject {
                                                 put("canFocus", true)
@@ -529,6 +563,27 @@ class TodayScreenshots {
                             ),
                     ),
                 "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing", "state" to "waiting")),
+                "time-left" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "progress" to
+                                    buildJsonObject {
+                                        put("measure", "preparation")
+                                        put(
+                                            "status",
+                                            buildJsonObject {
+                                                put("kind", "needsAdjusting")
+                                                put("options", buildJsonArray { add(JsonPrimitive("addTime")) })
+                                            },
+                                        )
+                                        put("value", 0.42)
+                                        put("weekGain", 0.03)
+                                    },
+                            ),
+                    ),
             )
         }
 

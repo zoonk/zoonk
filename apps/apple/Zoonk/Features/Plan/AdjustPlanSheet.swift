@@ -154,30 +154,26 @@ struct AdjustPlanSheet: View {
     let weekdayMinutes = plan.schedule.weekdayMinutes
     let studyCount = weekdayMinutes.filter { $0 > 0 }.count
 
+    let studies = { (weekday: Int) in
+      weekdayMinutes.indices.contains(weekday) && weekdayMinutes[weekday] > 0
+    }
+
     return SwiftUI.Section {
-      ForEach(ScheduleTime.mondayFirst, id: \.self) { weekday in
-        let studies = weekdayMinutes.indices.contains(weekday) && weekdayMinutes[weekday] > 0
+      WeekdayToggles(
+        isOn: studies,
+        onToggle: { weekday, on in
+          let minutes = on ? plan.schedule.shape.minutes(for: weekday) : 0
 
-        Toggle(
-          PlanDate.weekdayName(number: weekday, label: true),
-          isOn: Binding(
-            get: { studies },
-            set: { on in
-              let minutes = on ? plan.schedule.shape.minutes(for: weekday) : 0
-
-              editor.run {
-                await editor.change([.weekdayMinutes(minutes, weekdays: [weekday])])
-              }
-            })
-        )
+          editor.run {
+            await editor.change([.weekdayMinutes(minutes, weekdays: [weekday])])
+          }
+        },
         // A plan needs at least one study day.
-        .disabled(studies && studyCount == 1)
-      }
+        isEnabled: { !(studies($0) && studyCount == 1) })
     } header: {
       SectionTitle(
         Text("Study days", tableName: "Plan", comment: "Setting: the days of the week to study"))
     }
-    .tint(.success)
   }
 
   private var weekendOn: Bool {

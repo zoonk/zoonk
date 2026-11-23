@@ -64,6 +64,23 @@ describe(applyPlanOperations, () => {
     expect("state" in even && even.state.settings.weekdayMinutes).toBeNull();
   });
 
+  it("caps a longer weekday when increasing the usual daily time to eight hours", () => {
+    const result = apply(
+      [
+        { kind: "setWeekdayMinutes", minutes: 120, weekdays: [1] },
+        { kind: "setDailyMinutes", minutes: 480 },
+      ],
+      { ...state(), goal: { ...state().goal, dailyMinutes: 60 } },
+    );
+
+    expect(result).toMatchObject({
+      state: {
+        goal: { dailyMinutes: 480 },
+        settings: { weekdayMinutes: [480, 480, 480, 480, 480, 480, 480] },
+      },
+    });
+  });
+
   it("adds a light week of seven days and replaces one it overlaps", () => {
     const first = apply([{ kind: "addLightWeek", startDate: "2026-10-05" }]);
 

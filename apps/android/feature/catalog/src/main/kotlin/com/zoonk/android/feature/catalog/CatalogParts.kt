@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
@@ -313,7 +314,7 @@ internal fun StartActions(
             }
 
             if (secondary) {
-                OutlinedButton(onClick = start, busy = saving, forward = true, content = label)
+                OutlinedButton(onClick = start, busy = saving, trailingIcon = ForwardIcon, content = label)
             } else {
                 Button(busy = saving, onClick = start, content = label)
             }

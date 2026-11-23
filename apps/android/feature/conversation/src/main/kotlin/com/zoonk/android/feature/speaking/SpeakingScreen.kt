@@ -72,8 +72,8 @@ import com.zoonk.android.feature.conversation.taskRoleLabel
 import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -461,6 +461,7 @@ private fun TaskRow(
                     {
                         OutlinedButton(
                             onClick = { onLastResult(last.conversationId) },
+                            size = ButtonSize.Small,
                         ) { Text(stringResource(R.string.speaking_last_result)) }
                     }
                 }
@@ -470,11 +471,13 @@ private fun TaskRow(
             } else {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (!paused) {
-                        Button(
+                        OutlinedButton(
                             busy = starting,
                             onClick = { if (locked) triedLocked = true else onStart() },
                             enabled = !busy,
+                            focusableWhenDisabled = true,
                             leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                            size = ButtonSize.Small,
                         ) {
                             Text(stringResource(R.string.speaking_start_task))
                         }

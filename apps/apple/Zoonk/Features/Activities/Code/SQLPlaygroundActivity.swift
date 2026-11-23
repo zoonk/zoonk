@@ -205,7 +205,8 @@ private struct SQLPlaygroundCanvas: View {
       }
 
       CodeRunBar(
-        runtimeName: "SQLite", status: .ready, hasRun: queryRun != nil, isRunning: activeRun != nil,
+        runtimeName: "SQLite", status: .ready, hasRun: queryRun != nil,
+        isExploring: context.phase == .explore, isRunning: activeRun != nil,
         canRun: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, run: runQuery,
         retry: {})
     }

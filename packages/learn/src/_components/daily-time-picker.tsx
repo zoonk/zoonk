@@ -105,7 +105,6 @@ export function TimeSelect({
 
 type DailyTimeProps = {
   disabled?: boolean;
-  full?: number | null;
   label: string;
   onChange: (minutes: number) => void;
   saves?: boolean;
@@ -123,7 +122,6 @@ function TimeOptionLabel({ minutes, suggested }: { minutes: number; suggested: n
 
 function DailyTimeReadout({
   disabled = false,
-  full = null,
   label,
   minutes,
   onChange,
@@ -132,7 +130,7 @@ function DailyTimeReadout({
   suggested = null,
 }: DailyTimeProps & { minutes: number }) {
   const formatDuration = useFormatDuration();
-  const times = getDailyTimes(minutes, suggested, full);
+  const times = getDailyTimes(minutes, suggested);
   const { waiting, ...choice } = useTimeChoice({ disabled, minutes, onChange, saves });
   const kept = useKeptTyping({ value: choice.value });
 

@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MINUTES_PER_DAY, getCandidateDailyMinutesLimit } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { scaleWeekdayMinutes } from "./plan-calendar";
 
@@ -23,11 +23,15 @@ export function withDailyMinutes(
 ): BuildPlanInput {
   const schedule = studyScheduleAt?.(dailyMinutes) ?? {
     dailyMinutes,
-    weekdayMinutes: scaleWeekdayMinutes({
-      dailyMinutes,
-      from: input.goal.dailyMinutes,
-      weekdayMinutes: input.settings.weekdayMinutes,
-    }),
+    weekdayMinutes:
+      dailyMinutes === input.goal.dailyMinutes
+        ? input.settings.weekdayMinutes
+        : scaleWeekdayMinutes({
+            dailyMinutes,
+            from: input.goal.dailyMinutes,
+            maxMinutes: getCandidateDailyMinutesLimit(dailyMinutes),
+            weekdayMinutes: input.settings.weekdayMinutes,
+          }),
   };
 
   return {
@@ -107,7 +111,7 @@ export function findFittingMinutes(
     return found;
   }
 
-  return fitsFromFloor(MAX_DAILY_MINUTES)
-    ? narrowFit({ fits: fitsFromFloor, fitting: MAX_DAILY_MINUTES, short: EVERY_TIME_UP_TO })
+  return fitsFromFloor(MINUTES_PER_DAY)
+    ? narrowFit({ fits: fitsFromFloor, fitting: MINUTES_PER_DAY, short: EVERY_TIME_UP_TO })
     : null;
 }

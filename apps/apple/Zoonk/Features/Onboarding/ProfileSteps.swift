@@ -623,14 +623,20 @@ struct ProfileStep: View {
 
             onStartLesson(hasAnswer ? draft.input : nil)
           } label: {
-            Text(
-              "Start", tableName: "AboutYou",
-              comment:
-                "Opens the goal's first lesson from an About you question, saving its answer first"
-            )
-            .underline()
+            Label {
+              Text(
+                "Start", tableName: "AboutYou",
+                comment:
+                  "Opens the goal's first lesson from an About you question, saving its answer first"
+              )
+              .underline()
+            } icon: {
+              Image(systemName: "chevron.forward")
+            }
+            .labelStyle(.trailingIcon)
           }
           .buttonStyle(.plain)
+          .controlSize(.small)
           .foregroundStyle(Color(.foreground))
           .disabled(isSaving)
         }

@@ -69,6 +69,7 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.MediaPending
@@ -374,9 +375,11 @@ fun WaitQuizAction(
             quiz.hasNext -> R.string.warm_up_next
             else -> return
         }
-    OutlinedButton(onClick = {
-        if (quiz.showingProgress && !progressBeside) quiz.showQuiz(hold) else quiz.next()
-    }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(label)) }
+    OutlinedButton(
+        onClick = { if (quiz.showingProgress && !progressBeside) quiz.showQuiz(hold) else quiz.next() },
+        modifier = Modifier.fillMaxWidth(),
+        trailingIcon = ForwardIcon.takeIf { label == R.string.warm_up_next },
+    ) { Text(stringResource(label)) }
 }
 
 @Composable

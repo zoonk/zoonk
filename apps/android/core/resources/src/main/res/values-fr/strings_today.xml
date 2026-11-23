@@ -4,8 +4,7 @@
   "today_add_to_today": "c9d7caee3f8fca1baff6ad2b850305a1bab8981effdf60d19aec4252566b6bea",
   "today_adjust_your_plan": "7427ea395266e702cc220ed45af02de16690f9a9824fd9f022e0e8abbdab81d1",
   "today_already_know_chapter": "702d6f001e9da0a91cfce6f2b45f5e81dd42a3055ef2d0c660a8fb58ddaa1691",
-  "today_behind_exam": "c2bfbb8a49ee1bbf5810091dfed1990826002ae909272dcd15eaa74ff7025fdc",
-  "today_behind_goal": "52dd99b3845920eb3e338659de7ad87b2d9abd51d3bf25f3a2ae84f5980b8a10",
+  "today_behind_fit_days_left": "f4be967f9130dd550ce706c8548d1223212a5cbe596d71772392f1527a700b8f",
   "today_behind_kept": "0235f205e4b0f98393a8a6800f097b09737683def710dd55c672e1cbaca1cf68",
   "today_building_plan_detail": "280857ccdc3738ad62bf6dfdd5915ff26f597c04d977a7af4ba196c845a51f0b",
   "today_building_plan_goal": "f466b3679c5ad5a164dcd23fb273c9639fd53ddb3926317f85271e10c7238260",
@@ -27,6 +26,7 @@
   "today_exam_speaking": "c3b817ca5b04739e8cf9cd64f3d5d2f7c572ea8e2948628af55a67cf399d64e0",
   "today_exam_speaking_detail": "d3b79f7656efdf1c3d5a74779f492e2d02bddc8ee1e8be7096c9f12127bb8230",
   "today_finished_goal": "5c6fb32d13eb4d00c0a0a747715ec1b4f2b63c6360cf2bd573534b45b19ee6a0",
+  "today_fit_time_left": "bf5e538b651aa8feea8faeaac22fe3765619f1814d01f04fa7a08255dd83e11b",
   "today_get_lessons": "42d711efe633838a96be601bdf5b1742b0cd7d97da962c4257105fa3e520b6bd",
   "today_insight_add_it": "f5681e4c1d531bac01a5f4f8b28c3e95af9815a7a45aa5652927eb4f4164ac44",
   "today_insight_got_it": "98c9816c5fa06040d65dda9c7bf8c765e033e38fd8014d70779c2092e3137146",
@@ -51,7 +51,6 @@
   "today_more_lessons": "24cd9ca7d350bd71d1a920ff0a76e8881d71055e6466f10fbbc06f0f8114a923",
   "today_more_time_a_day": "9c2858f004725a356a938b5721ea39be6788605b0cb1de4934e877423e6ec25d",
   "today_next_suggestion": "f534662308128bf50fc67f205c88bfc808b0fb1b75dfe3577232900c0ae245bf",
-  "today_not_enough_time": "404ad6994966a0148ec2c3a32652bdfd6f873b142b910d8f926da7a1f7da8edd",
   "today_not_now": "9b5acedbbfd2e68ec55be92c116e460be29308bdacbea14cdf13c734c31cc844",
   "today_noted": "bf1c0ae5d4ebf8f997e3cc30d131e08dedb148acaf1e2d237ce6131b1d9856d2",
   "today_nothing_new": "7c0de129d963acaaf226601969c9c26fc13c81eca28c0b0a632b8206b0664c6d",
@@ -159,7 +158,8 @@
 <resources>
     <string name="today_title">Aujourd’hui</string>
     <string name="today_welcome_back_line">Ça fait plaisir de te revoir. Aujourd’hui, il y a peu à faire pour reprendre en douceur.</string>
-    <string name="today_not_enough_time">Il ne reste pas assez de temps pour toutes tes leçons.</string>
+    <!-- Under Today's heading when the plan has more lessons than days left; "Adjust your plan" follows it as a link. -->
+    <string name="today_fit_time_left">Adaptons ton plan au temps qu’il te reste.</string>
     <string name="today_adjust_your_plan">Ajuster ton plan</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s dans %2$d jour</item>
@@ -324,8 +324,8 @@
     <string name="today_plan_keep_mine">Garder mon plan</string>
     <string name="today_next_suggestion">Suggestion suivante</string>
     <string name="today_notice_falling_behind">Changement de plan</string>
-    <string name="today_behind_exam">Avec %1$s par jour, ton plan couvre maintenant %2$s de l’examen, contre %3$s auparavant.</string>
-    <string name="today_behind_goal">Avec %1$s par jour, ton plan couvre maintenant %2$s de ton objectif, contre %3$s auparavant.</string>
+    <!-- A plan change after missed days, when some lessons would no longer happen before the goal's date; the card's choices follow. -->
+    <string name="today_behind_fit_days_left">Adaptons ton plan au nombre de jours qu’il te reste.</string>
     <string name="today_more_time_a_day">Ajouter du temps</string>
     <string name="today_choose_focus">Choisir tes priorités</string>
     <string name="today_study_everything">Supprimer la date de fin</string>

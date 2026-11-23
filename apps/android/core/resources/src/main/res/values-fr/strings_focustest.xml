@@ -20,7 +20,7 @@
   "focustest_how_sessions_title": "2b2897f486bbebcd64392a4dafa3e5ff7db5963ca076b3c1b493cbd782720bdf",
   "focustest_how_stop": "53f4e25943027008056cdba89c6490e700e2728b4acf8846f7ee9ca89ee2899c",
   "focustest_how_stop_title": "f0564ace54dd0bba9176746c5a2f7b413112588eb5cd52bbccf604b6e46c7a4d",
-  "focustest_how_subjects": "6b760024cda44d2007d5e3832c230f28ef75823608b1b0e6e0e40bd7f5781edc",
+  "focustest_how_subjects": "54096c296af5f09db44b4ce17ba311b22708231f0a2786735cec18b45c351ed4",
   "focustest_how_subjects_title": "f4d7d29eb6a1397ce7ceb2bf6d207588e69803bdeee760ef55c6bd9bd78c0021",
   "focustest_how_weight": "2a0fc76ac6ea7e576f91f12743a8afe32ecef6f69dc357e4ac2c76f180efe83c",
   "focustest_how_weight_title": "c066a0f0c023e80b3fccda3309b8fc12f4ec46f3d0e10f7df18e4e18cb8b1b78",
@@ -38,7 +38,7 @@
   "focustest_practical_not_checked": "685b7b5c581a3bfc9b96bc732864030e7b9bedb6d846f671b6e9411d3fa5d297",
   "focustest_proposal_applied": "e14a6843e5228c9923ede90cce64a6520fbe0a0e34e321a2a1e5b0932639c208",
   "focustest_proposal_declined": "03ff9a84105ebbedc7e2bdc214ac05a79e8ee66cb7806d8f29c5f419452cebfa",
-  "focustest_proposal_description": "cc133d912549429f84af13b380abd61a96b581fbe118a7731c6057b71a77bafb",
+  "focustest_proposal_picked": "aa968d434ec77fe78e7c3215a30423f8c62f40bae3360a6c1e9cae539589c0e7",
   "focustest_proposal_title": "ec0b1ceb0626b251a255201b495b6d45ec621aaed575c81bb1fff96d38c50b49",
   "focustest_proposal_undone": "f53007133078310c4edd00e230739667d4650912b40f73aeb4bad843c30a87a5",
   "focustest_question_number": "140a5a52be6c36fbd184ba03695eb9b4bb046d6dbfe9d690820d5fe425c46d3d",
@@ -48,7 +48,6 @@
   "focustest_result_hand_picked": "f78a9864808b4aa6922d0bcfeac3478a0b2bc5ddf09453fd3d822e8a69564e30",
   "focustest_result_title": "c9a6266094e8221bafce0b35911d5cebd6ee45e2819e984573c30d6245abe01b",
   "focustest_resume_title": "ff7103eb04da7373250ed9ef8d865e795544b0330e8c76e30ce9e798462c5816",
-  "focustest_schedule_focus": "a25dbe2e86d5b6885389b259af88068b26c65d62cd1b4eaa3c15d58c419d4c69",
   "focustest_see_all_subjects": "5b15a72673541ae74facf6137006f7390c46ba129d5f4383e8b793f1df10f5f6",
   "focustest_see_my_result": "b9ea16fbd5ecbcf11be5969803383196f9d955282cb9a61cc161b33843a0eefa",
   "focustest_see_your_result": "1e4434001aa4df70ded1408c3b9b622f70b8b966be50d7320a0caa101232fba3",
@@ -61,7 +60,7 @@
   "focustest_stop": "d341e8605ef943d02bf690c585d1d6c55a361742350423e15549f92c5aa89d37",
   "focustest_subject_right": "836d4a7bb768ec5d074fa272c779e1be8a3e28a6f731093eddacdf33c672511d",
   "focustest_subjects": "b2c25ce454efe0fa29d3b0c6c91b6d9a0886078f032da2effa48884d94378744",
-  "focustest_suggestion_body": "2605eeb9c008ec33188dae85261b8936307e6e77d9c924f0a9504e446aae119a",
+  "focustest_suggestion_body": "eb8b8b4b36020b43941e7dae60763cfba72310df7423a4bc04c8647b6164a6e5",
   "focustest_suggestion_dismissed": "0a12e09df9bac437591d29e0c52d4e18c8834a7242ce302a58ccbd439230aa80",
   "focustest_suggestion_line": "626a1142a5092fe31bd1916b4a85f7e3a6a61a1888680c05e9713c2c1d85634a",
   "focustest_take_test": "cc38c6dacaed5e3bf05b6cf70fe9751b272563d2b37bcb44522aa1af7cbe0cd2",
@@ -92,7 +91,7 @@
     <string name="focustest_how_stop_title">Arrête quand tu veux</string>
     <string name="focustest_how_stop">Chaque réponse est enregistrée.</string>
     <string name="focustest_how_subjects_title">Définir des priorités ne supprime aucune matière</string>
-    <string name="focustest_how_subjects">Si tu manques de temps pour tout étudier, ton plan en réserve plus aux matières dont tu as le plus besoin.</string>
+    <string name="focustest_how_subjects">Les matières dont tu as le plus besoin ont plus de temps.</string>
     <!-- The learner's first week of study sessions also asks a few of the test's questions. -->
     <string name="focustest_how_sessions_title">Quelques questions de plus pendant ta première semaine</string>
     <string name="focustest_how_sessions">Tes séances te proposent quelques autres questions du test. Tu peux les mettre en pause.</string>
@@ -143,7 +142,8 @@
     <string name="focustest_answer_more">Répondre à d’autres questions</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">Accorder plus de temps à ces matières ?</string>
-    <string name="focustest_proposal_description">Tu n’as pas le temps de tout étudier avant ton examen.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">Sélectionnées selon tes réponses et le poids de chaque matière à l’examen.</string>
     <string name="focustest_update_plan">Mettre à jour mon plan</string>
     <string name="focustest_proposal_applied">Ton plan accorde maintenant plus de temps à ces matières.</string>
     <string name="focustest_proposal_declined">Ton plan reste inchangé.</string>
@@ -168,12 +168,10 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">En pause dans tes séances</string>
     <string name="focustest_take_test">Passer le Test de priorités</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">Vu le temps disponible, nous te conseillons de privilégier %1$s.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Le Test de priorités t’indique quoi étudier en priorité.</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">Tu n’as pas le temps de tout étudier avant ton examen. En %1$s environ, le Test de priorités t’indique quoi étudier en priorité.</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">Un test de %1$s montre ce que tu sais déjà, pour consacrer plus de temps à ce dont tu as le plus besoin. Il ne supprime jamais de matière.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">C’est noté. Tu peux faire le test depuis ton plan.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->

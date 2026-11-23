@@ -15,6 +15,7 @@ import { type RefusedUsage, isRefusedUsage } from "../entitlements/contract";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
+import { MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { assertTargetDates, withPlannableDate } from "../plans/target-date-range";
 import {
@@ -32,11 +33,14 @@ export type GoalRefusal = { decision: RefusedUsage; index: number };
 /** The runs each goal has saved, which a card confirmed again follows instead of paying again. */
 export type SavedRuns = { generationId: string | null; goalId: string; researchId: string | null };
 
+type DayTooShort = { goals: number; minutes: number; status: "dayTooShort" };
+
 export type GoalCreateResult =
   | { goals: GoalView[]; refused: GoalRefusal[]; saved: SavedRuns[]; status: "created" }
   | { refused: GoalRefusal[]; status: "refused" }
   | { status: "invalidReference" }
-  | { status: "unauthorized" };
+  | { status: "unauthorized" }
+  | DayTooShort;
 
 async function hasValidReferences({ goals, userId }: { goals: GoalDraft[]; userId: string }) {
   const blueprintIds = [...new Set(goals.flatMap((goal) => goal.examBlueprintId ?? []))];
@@ -76,16 +80,28 @@ async function loadTestedLanguages(goals: GoalDraft[]): Promise<Map<string, stri
   );
 }
 
-function assignDailyMinutes(input: GoalCreateInput): number[] {
+function assignDailyMinutes(input: GoalCreateInput): number[] | DayTooShort {
+  if (input.goals.length === 1) {
+    return [input.goals[0]?.dailyMinutes ?? input.dailyMinutes];
+  }
+
   const shared = input.goals.filter((goal) => goal.dailyMinutes === undefined).length;
-  const split = splitDailyBudget({ budget: input.dailyMinutes, count: shared });
+  const explicit = input.goals.reduce((total, goal) => total + (goal.dailyMinutes ?? 0), 0);
+  const minimum = explicit + shared * MIN_DAILY_MINUTES;
+
+  if (input.dailyMinutes < minimum) {
+    return { goals: input.goals.length, minutes: minimum, status: "dayTooShort" };
+  }
+
+  const remaining = input.dailyMinutes - explicit;
+  const split = splitDailyBudget({ budget: remaining, count: shared });
 
   return input.goals.map((goal, index) => {
     const sharedBefore = input.goals
       .slice(0, index)
       .filter((other) => other.dailyMinutes === undefined);
 
-    return goal.dailyMinutes ?? split[sharedBefore.length] ?? input.dailyMinutes;
+    return goal.dailyMinutes ?? split[sharedBefore.length] ?? remaining;
   });
 }
 
@@ -211,12 +227,15 @@ export async function createGoals(
 
   const { userId } = viewer;
   const input = readNewGoalDates(requested);
+  const minutes = assignDailyMinutes(input);
+
+  if (!Array.isArray(minutes)) {
+    return minutes;
+  }
 
   if (!(await hasValidReferences({ goals: input.goals, userId }))) {
     return { status: "invalidReference" };
   }
-
-  const minutes = assignDailyMinutes(input);
 
   const testedLanguages = await loadTestedLanguages(input.goals);
 

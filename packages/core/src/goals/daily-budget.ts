@@ -1,4 +1,4 @@
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 
 const MINUTES_STEP = 5;
 
@@ -82,5 +82,5 @@ export function getBudgetForGoal({
   const day =
     budgets.find((budget) => splitDailyBudget({ budget, count })[place] === minutes) ?? least;
 
-  return day > MAX_DAILY_MINUTES ? null : day;
+  return day > MAX_PICKABLE_DAILY_MINUTES ? null : day;
 }

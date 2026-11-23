@@ -131,6 +131,12 @@ data class ZoonkTypography(
     val context: TextStyle,
     /** A lesson's question (`QUESTION_TEXT_CLASS`). */
     val question: TextStyle,
+    /** The title a sheet's content starts with (`DrawerTitle`). */
+    val sheetTitle: TextStyle,
+    /** The words under a sheet's title (`text-reading leading-normal`). */
+    val sheetText: TextStyle,
+    /** `text-compact`: a suggestion line's words under its summary. */
+    val compact: TextStyle,
     /** A checked answer's verdict (`FeedbackVerdict`), in its tone's word color. */
     val verdict: TextStyle,
     /** The word on a checked answer option (`ANSWER_TAG_CLASS`). */
@@ -154,6 +160,9 @@ internal val ZoonkTypeRoles =
             lessonText = bodyLarge.role(18f, 400, 29.25f),
             context = bodyLarge.role(16f, 400, 26f),
             question = titleMedium.role(19f, 560, 25.65f, -0.02f).balanced(),
+            sheetTitle = titleMedium.role(18f, 600, 22.5f).balanced(),
+            sheetText = bodyLarge.role(15f, 400, 22.5f),
+            compact = bodyMedium.role(13f, 400, 18f),
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
             message = bodyLarge.role(15f, 400, 23.25f),
@@ -224,6 +233,9 @@ internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography =
                 lessonText = lessonText.byPhrase(phrase),
                 context = context.byPhrase(phrase),
                 question = question.byPhrase(phrase),
+                sheetTitle = sheetTitle.byPhrase(phrase),
+                sheetText = sheetText.byPhrase(phrase),
+                compact = compact.byPhrase(phrase),
             )
         }
 

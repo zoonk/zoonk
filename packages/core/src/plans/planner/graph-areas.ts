@@ -120,6 +120,30 @@ export function getAreaFoundationIds({
   );
 }
 
+export function getHarderStartSkillIds({
+  graph,
+  missedSkillIds = new Set(),
+  prerequisites,
+  settings,
+  strongAreas = new Set(),
+}: {
+  graph: PlanGraph;
+  missedSkillIds?: ReadonlySet<string>;
+  prerequisites: ReadonlyMap<string, readonly string[]>;
+  settings: Pick<PlanSettings, "difficultyBias" | "pastBasicsAreas">;
+  strongAreas?: ReadonlySet<string>;
+}): Set<string> {
+  const strong = settings.difficultyBias === "harder" ? strongAreas : [];
+
+  const foundations = getAreaFoundationIds({
+    areas: new Set([...strong, ...settings.pastBasicsAreas]),
+    graph,
+    prerequisites,
+  });
+
+  return new Set([...foundations].filter((skillId) => !missedSkillIds.has(skillId)));
+}
+
 export type PassedOver = { area: string; choice: "pastBasics" | "skip"; skillId: string };
 
 export function listPassedOver({

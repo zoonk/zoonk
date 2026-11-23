@@ -75,7 +75,7 @@ fun paceText(pace: Pace): String =
         }
 
         is Pace.NeedsAdjusting -> {
-            stringResource(R.string.plan_pace_not_enough_time)
+            stringResource(R.string.plan_pace_needs_adjusting)
         }
 
         Pace.OnTrack -> {
@@ -109,7 +109,7 @@ fun paceFix(
         }
 
         is Pace.NeedsAdjusting -> {
-            PaceFix(stringResource(R.string.plan_pace_no_longer_fits), adjust = true)
+            PaceFix(stringResource(R.string.plan_pace_fit_time_left), adjust = true)
         }
 
         is Pace.Behind -> {

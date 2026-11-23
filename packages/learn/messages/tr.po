@@ -841,29 +841,29 @@ msgctxt "vnQGJG"
 msgid "Take the test and skip the unit"
 msgstr "Testi çöz ve üniteyi atla"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. When studying everything by the exam would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what the exam asks most first.
 #: src/_components/time-answer-lines.tsx
-msgctxt "cMciMa"
-msgid "{dateKind, select, month {Covers about <b>{share}</b> of your exam topics by {date}.} other {Covers about <b>{share}</b> of your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {Sınav konularının yaklaşık <b>{share}</b> kadarını {date} tarihine kadar bitirebilirsin.} other {Sınav konularının yaklaşık <b>{share}</b> kadarını {date} tarihine kadar bitirebilirsin.}}"
+msgctxt "Z0YdGI"
+msgid "We suggest {time} a day. Your plan starts with what matters most for your exam."
+msgstr "Günde {time} çalışmanı öneriyoruz. Planın, sınavın için en önemli konularla başlıyor."
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. When studying everything by the goal's date would take more than most people keep up: {time} is the most we suggest a day, and the plan studies what matters most first.
 #: src/_components/time-answer-lines.tsx
-msgctxt "YjPM2d"
-msgid "{dateKind, select, month {Covers about <b>{share}</b> of your goal by {date}.} other {Covers about <b>{share}</b> of your goal by {date}.}}"
-msgstr "{dateKind, select, month {Hedefinin yaklaşık <b>{share}</b> kadarını {date} tarihine kadar tamamlayabilirsin.} other {Hedefinin yaklaşık <b>{share}</b> kadarını {date} tarihine kadar tamamlayabilirsin.}}"
+msgctxt "cOD9je"
+msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
+msgstr "Günde {time} çalışmanı öneriyoruz. Planın, hedefin için en önemli konularla başlıyor."
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
-msgctxt "wtnatU"
-msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {Tüm sınav konularını {date} ayına kadar tamamlar.} other {Tüm sınav konularını {date} tarihine kadar tamamlar.}}"
+msgctxt "aL9GHA"
+msgid "{dateKind, select, month {We suggest {time} a day to be ready for your exam by {date}.} other {We suggest {time} a day to be ready for your exam by {date}.}}"
+msgstr "{dateKind, select, month {Sınava {date} tarihine kadar hazır olman için günde {time} çalışmanı öneriyoruz.} other {Sınava {date} tarihine kadar hazır olman için günde {time} çalışmanı öneriyoruz.}}"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
-msgctxt "foaBe9"
-msgid "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}"
-msgstr "{dateKind, select, month {Hedefindeki tüm konuları {date} ayına kadar tamamlar.} other {Hedefindeki tüm konuları {date} tarihine kadar tamamlar.}}"
+msgctxt "GkZo3V"
+msgid "{dateKind, select, month {We suggest {time} a day to reach your goal by {date}.} other {We suggest {time} a day to reach your goal by {date}.}}"
+msgstr "{dateKind, select, month {Hedefine {date} tarihine kadar ulaşman için günde {time} çalışmanı öneriyoruz.} other {Hedefine {date} tarihine kadar ulaşman için günde {time} çalışmanı öneriyoruz.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -882,6 +882,7 @@ msgid "Choose at least one study day."
 msgstr "En az bir çalışma günü seç."
 
 #: src/_components/time-answer-lines.tsx
+#: src/plan/plan-schedule.tsx
 msgctxt "53o9vK"
 msgid "Working out the time your goal needs…"
 msgstr "Hedefin için gereken süreyi hesaplıyoruz…"
@@ -892,51 +893,37 @@ msgid "We couldn't work out the time your goal needs."
 msgstr "Hedefin için gereken süreyi hesaplayamadık."
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "jQp-oV"
-msgid "Working out what {time} a day covers…"
-msgstr "Günde {time} ile ne kadar ilerleyebileceğini hesaplıyoruz…"
-
-#: src/_components/time-answer-lines.tsx
 #: src/plan/plan-finish.tsx
 msgctxt "OGpEA-"
 msgid "Working out when you'd finish…"
 msgstr "Ne zaman bitireceğini hesaplıyoruz…"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "2885Jq"
-msgid "We couldn't work out what {time} a day covers."
-msgstr "Günde {time} ile ne kadar ilerleyebileceğini hesaplayamadık."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "Ne zaman bitireceğini hesaplayamadık."
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
-msgctxt "OeOmHN"
-msgid "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}"
-msgstr "{dateKind, select, month {{date} tarihine kadar her şeyi yetiştirmek için yeterli zaman yok.} other {{date} tarihine kadar her şeyi yetiştirmek için yeterli zaman yok.}}"
+msgctxt "u1mVPL"
+msgid "{dateKind, select, month {That's enough to be ready for your exam by {date}.} other {That's enough to be ready for your exam by {date}.}}"
+msgstr "{dateKind, select, month {Sınava {date} tarihine kadar hazır olman için bu süre yeterli.} other {Sınava {date} tarihine kadar hazır olman için bu süre yeterli.}}"
+
+#. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "UaCprI"
+msgid "{dateKind, select, month {That's enough to reach your goal by {date}.} other {That's enough to reach your goal by {date}.}}"
+msgstr "{dateKind, select, month {Hedefine {date} tarihine kadar ulaşman için bu süre yeterli.} other {Hedefine {date} tarihine kadar ulaşman için bu süre yeterli.}}"
 
 #: src/_components/time-answer-texts.ts
-msgctxt "DvdMdt"
-msgid "Covering everything takes about {time} a day."
-msgstr "Her şeyi bitirmek için günde yaklaşık {time} ayırman gerekir."
+msgctxt "HK8AHe"
+msgid "Your plan starts with what matters most for your exam."
+msgstr "Planın, sınavın için en önemli konularla başlıyor."
 
 #: src/_components/time-answer-texts.ts
-msgctxt "-50pNu"
-msgid "The most you can cover is about {share}, at {time} a day."
-msgstr "En fazla, günde {time} ayırarak yaklaşık {share} kadarını yetiştirebilirsin."
-
-#: src/_components/time-answer-texts.ts
-msgctxt "LfzIDC"
-msgid "{time} a day covers about {share} of your exam topics"
-msgstr "Günde {time} çalışarak sınav konularının yaklaşık {share} kadarını bitirebilirsin"
-
-#: src/_components/time-answer-texts.ts
-msgctxt "7ELL3j"
-msgid "{time} a day covers about {share} of your goal"
-msgstr "Günde {time} çalışarak hedefinin yaklaşık {share} kadarını tamamlayabilirsin"
+msgctxt "cok93L"
+msgid "Your plan starts with what matters most for your goal."
+msgstr "Planın, hedefin için en önemli konularla başlıyor."
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
@@ -954,20 +941,11 @@ msgctxt "L1otxC"
 msgid "This goal gets {main} a day and your other goals {other} together."
 msgstr "Bu hedefe günde {main}, diğer hedeflerine toplam {other} ayrılır."
 
+#. A button that sets the daily study time to the one we suggest. {time} is like "2 h".
 #: src/_components/time-answer.tsx
-msgctxt "NuWWsb"
-msgid "Use {time} to cover everything"
-msgstr "Her şeyi bitirmek için {time} ayır"
-
-#: src/_components/time-answer.tsx
-msgctxt "vNHEBC"
-msgid "Use the suggested {time}"
-msgstr "Önerilen süreyi seç: {time}"
-
-#: src/_components/time-answer.tsx
-msgctxt "LRCgmd"
-msgid "Use {time} to cover more"
-msgstr "Daha fazlasını bitirmek için {time} ayır"
+msgctxt "T3LP-r"
+msgid "Use {time}"
+msgstr "{time} olarak ayarla"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -3806,11 +3784,11 @@ msgctxt "nWvvzY"
 msgid "Give these subjects more time?"
 msgstr "Bu branşlara daha fazla zaman ayıralım mı?"
 
-#. Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.
+#. How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has.
 #: src/focus-test/focus-test-proposal.tsx
-msgctxt "ZQfsV7"
-msgid "Your time can't cover everything before your exam."
-msgstr "Sınava kadar her şeye zamanın yetmiyor."
+msgctxt "o00v_m"
+msgid "Picked from your answers and how much your exam asks about each."
+msgstr "Bu seçim, verdiğin cevaplara ve sınavında her branştan kaç soru çıktığına dayanıyor."
 
 #: src/focus-test/focus-test-result.tsx
 msgctxt "s2lEZy"
@@ -5265,6 +5243,12 @@ msgstr "İlgili kurslar"
 msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "Planını tamamladın"
+
+#. Leads to what to study next
+#: src/journey/study-next.tsx
+msgctxt "vzHrGX"
+msgid "Here's what to study next."
+msgstr "Sırada çalışacağın konular bunlar."
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
@@ -9654,12 +9638,6 @@ msgctxt "GJAhWB"
 msgid "Why you're learning it"
 msgstr "Bu dili öğrenme nedenin"
 
-#: src/onboarding/steps/reveal-coverage.tsx
-#: src/today/today-falling-behind.tsx
-msgctxt "sS7-IQ"
-msgid "Add time"
-msgstr "Süre ekle"
-
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
 msgctxt "xYZ4fs"
@@ -10294,11 +10272,6 @@ msgid "The Focus test shows what to study most."
 msgstr "Odak testi en çok neye çalışman gerektiğini gösterir."
 
 #: src/plan/plan-coverage.tsx
-msgctxt "qCWuYX"
-msgid "{time} a day isn't enough time to cover your goal."
-msgstr "Günde {time} ayırmak, hedefin için gereken her şeyi çalışmaya yetmiyor."
-
-#: src/plan/plan-coverage.tsx
 msgctxt "0YytO3"
 msgid "Move your date to {date}"
 msgstr "Tarihini {date} olarak değiştir"
@@ -10412,9 +10385,9 @@ msgid "{count, plural, one {Every lesson is done. Win the challenge to finish yo
 msgstr "{count, plural, one {Tüm dersleri bitirdin. Planını tamamlamak için meydan okumayı kazan.} other {Tüm dersleri bitirdin. Planını tamamlamak için meydan okumaları kazan.}}"
 
 #: src/plan/plan-notice.tsx
-msgctxt "l2BN94"
-msgid "You have more lessons than days left. Study longer each day or pick a later date."
-msgstr "Kalan gün sayısından fazla dersin var. Her gün daha uzun çalış ya da daha ileri bir tarih seç."
+msgctxt "4hOU8H"
+msgid "Let's fit your plan to the time left. Study longer each day or pick a later date."
+msgstr "Planını kalan süreye göre ayarlayalım. Her gün daha uzun çalış ya da daha ileri bir tarih seç."
 
 #: src/plan/plan-notice.tsx
 msgctxt "Z7cgdl"
@@ -10428,15 +10401,9 @@ msgstr "{days, plural, other {Günde {minutes, number} dk. daha çalışarak # g
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-schedule.tsx
 msgctxt "VNHyd8"
 msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
 msgstr "{dateKind, select, month {Çalışma süren {date} tarihine kadar her şeyi bitirmeye yetiyor} other {Çalışma süren {date} tarihine kadar her şeyi bitirmeye yetiyor}}"
-
-#: src/plan/plan-offer-preview.tsx
-msgctxt "ni6NP4"
-msgid "{time} a day covers everything"
-msgstr "Günde {time} ayırmak her şeye yeter"
 
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/study-everything.tsx
@@ -10525,11 +10492,6 @@ msgctxt "jvdY5E"
 msgid "Your new plan is ready."
 msgstr "Yeni planın hazır."
 
-#: src/plan/plan-schedule.tsx
-msgctxt "b9QpDx"
-msgid "Working out what your time covers…"
-msgstr "Çalışma sürenin nelere yettiğini hesaplıyoruz…"
-
 #: src/plan/plan-status-label.tsx
 msgctxt "sKBfpV"
 msgid "{days, plural, one {# day ahead} other {# days ahead}}"
@@ -10555,10 +10517,11 @@ msgctxt "EQpfkS"
 msgid "Finished"
 msgstr "Tamamlandı"
 
+#. A plan's status: it has more lessons than days left, so the learner should change their time or date.
 #: src/plan/plan-status-label.tsx
-msgctxt "1f3FcP"
-msgid "Not enough time"
-msgstr "Zaman yetersiz"
+msgctxt "WR0vTU"
+msgid "Needs adjusting"
+msgstr "Ayarlanmalı"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "aOfyGC"
@@ -10608,9 +10571,9 @@ msgid "Plan updated"
 msgstr "Plan güncellendi"
 
 #: src/plan/plan-suggestion.tsx
-msgctxt "xGiUnw"
-msgid "More lessons than days left"
-msgstr "Kalan gün sayısından fazla ders var"
+msgctxt "N8goTu"
+msgid "Let's fit your plan to the time left"
+msgstr "Planını kalan süreye göre ayarlayalım"
 
 #: src/plan/plan-suggestion.tsx
 msgctxt "fhGzJi"
@@ -11334,11 +11297,6 @@ msgstr "Planını hâlâ hazırlıyoruz. Birazdan tekrar dene."
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "Gereken süreyi hesaplayamadık."
-
-#: src/plan/use-time-to-cover.ts
-msgctxt "sshiAK"
-msgid "Finding the time that covers everything…"
-msgstr "Her şeye yetecek süreyi buluyoruz…"
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "wo_0PK"
@@ -12834,10 +12792,11 @@ msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "Bu branşı planından çıkardın."
 
+#. Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.
 #: src/syllabus/subject-not-planned.tsx
-msgctxt "bNkc7y"
-msgid "This subject isn't in your plan: not enough time."
-msgstr "Bu branş planında yok: yeterli zaman yok."
+msgctxt "ydjRGM"
+msgid "This subject isn't in your plan. Other subjects come first."
+msgstr "Bu konu planında yok. Önce diğer konulara yer veriliyor."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13062,11 +13021,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "Atlandı · senin tercihin"
 
-#. Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out".
 #: src/syllabus/topic-note.tsx
-msgctxt "DQ_P5S"
-msgid "Not in your plan · your time doesn't cover it"
-msgstr "Planında yok · çalışma süren yetmiyor"
+msgctxt "drQU7C"
+msgid "Not in your plan · other topics come first"
+msgstr "Planında yok · önce diğer konular geliyor"
 
 #. On a topic's row in the plan: its lessons aren't ready yet.
 #: src/syllabus/topic-note.tsx
@@ -13243,14 +13202,9 @@ msgid "Your exam"
 msgstr "Sınavın"
 
 #: src/today/today-falling-behind.tsx
-msgctxt "nnEO3o"
-msgid "{time} a day now covers {after} of the exam, down from {before}."
-msgstr "Günde {time} ile artık sınavın {after} kadarı planına sığıyor; önceden {before} kadarı sığıyordu."
-
-#: src/today/today-falling-behind.tsx
-msgctxt "OPF07J"
-msgid "{time} a day now covers {after} of your goal, down from {before}."
-msgstr "Günde {time} ile artık hedefinin {after} kadarı planına sığıyor; önceden {before} kadarı sığıyordu."
+msgctxt "sS7-IQ"
+msgid "Add time"
+msgstr "Süre ekle"
 
 #. Keeps the learner's time a day as it is.
 #: src/today/today-falling-behind.tsx
@@ -13274,6 +13228,12 @@ msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Plan değişikliği"
 
+#. Under "You missed a few days": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes.
+#: src/today/today-falling-behind.tsx
+msgctxt "cgM2lt"
+msgid "Let's fit your plan to the days left."
+msgstr "Planını kalan günlere göre ayarlayalım."
+
 #: src/today/today-focus-test.tsx
 msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
@@ -13284,10 +13244,11 @@ msgctxt "AHBKOX"
 msgid "{count, plural, one {# more lesson} other {# more lessons}}"
 msgstr "{count, plural, other {# ders daha}}"
 
+#. Above Today, when the plan has more lessons than days left. Followed by a link that opens the plan to change it.
 #: src/today/today-heading.tsx
-msgctxt "M3adyv"
-msgid "Not enough time left for all your lessons."
-msgstr "Tüm derslerini bitirmek için yeterli zaman kalmadı."
+msgctxt "m-yNq4"
+msgid "Let's fit your plan to the time left."
+msgstr "Planını kalan süreye göre ayarlayalım."
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"

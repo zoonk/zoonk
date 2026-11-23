@@ -84,6 +84,7 @@ const PLAN = {
     practiceBias: "balanced",
     skippedActivities: [],
   },
+  suggestedTime: null,
   tools: [],
   week: {
     days: [

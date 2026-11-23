@@ -4,6 +4,7 @@ import androidx.compose.runtime.saveable.Saver
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.TimeLine
+import com.zoonk.android.feature.plan.coversEverything
 import com.zoonk.android.feature.plan.isBusy
 import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.android.ui.components.missingDays
@@ -157,7 +158,10 @@ internal fun shownAnswer(
     return (if (updating) last else now).copy(updating = updating)
 }
 
-/** The time picked needs the plan's own answer, except the one it suggested. */
+/**
+ * The time picked needs the plan's own answer for when an undated goal finishes, and for when studying everything
+ * finishes; a dated goal's line is about the suggestion, which the plan's first answer already has.
+ */
 internal fun asksAboutTime(
     dated: Boolean,
     found: PlanTimeToCover?,
@@ -168,11 +172,12 @@ internal fun asksAboutTime(
         minutes == null -> false
         !dated -> true
         found == null || found.pastDate -> false
-        else -> fullCourse || found.suggested?.minutes?.toInt() != minutes
+        else -> fullCourse
     }
 
 /** An exam's choice to study everything holds until the time picked is known to cover it all. */
 internal fun keepsFullCourse(
     checked: Boolean,
-    line: TimeLine,
-): Boolean = checked && line !is TimeLine.Everything
+    found: PlanTimeToCover?,
+    minutes: Int?,
+): Boolean = checked && !coversEverything(found, minutes)

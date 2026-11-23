@@ -1,7 +1,8 @@
-import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
+import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalWork } from "@/lib/goal-content";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
+import { dayTooShort } from "@/lib/plan-errors";
 import { profileQuestionError } from "@/lib/profile-question-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
@@ -42,12 +43,7 @@ async function createOnboardingAnswer(
   }
 
   if (result.status === "dayTooShort") {
-    return createErrorResponse({
-      code: "DAY_TOO_SHORT",
-      details: { goals: result.goals, minutes: result.minutes },
-      message: `The goals typed together need at least ${result.minutes} minutes a day`,
-      status: httpStatus.unprocessableEntity,
-    });
+    return dayTooShort(result);
   }
 
   if (result.movedTo?.created) {

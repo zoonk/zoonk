@@ -604,6 +604,7 @@
     "./plans/plan-state": "./src/plans/planner/plan-state.ts",
     "./plans/preview": "./src/plans/preview-plan-change.ts",
     "./plans/preview-contract": "./src/plans/plan-preview-contract.ts",
+    "./plans/refresh-suggestion": "./src/plans/refresh-plan-suggestion.ts",
     "./plans/resume-preview": "./src/plans/get-goal-resume-preview.ts",
     "./plans/setup": "./src/plans/plan-setup.ts",
     "./plans/start-from-link": "./src/plans/start-goal-from-plan-link.ts",

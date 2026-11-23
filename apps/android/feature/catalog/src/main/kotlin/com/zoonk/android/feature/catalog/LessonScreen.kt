@@ -42,6 +42,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -285,7 +286,7 @@ private fun LessonMore(
                     ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
                     TextButton(
                         onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) },
-                        forward = true,
+                        trailingIcon = ForwardIcon,
                         edge = ButtonEdge.Start,
                     ) {
                         Text(stringResource(R.string.catalog_go_to_chapter))

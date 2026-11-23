@@ -38,6 +38,12 @@ extension TypeStyle {
     size: 30, relativeTo: .title, weight: .semibold, tracking: -0.035)
   /// Main's `text-section`.
   static let section = TypeStyle(size: 20, relativeTo: .title3, weight: .semibold, tracking: -0.02)
+  /// Main's `DrawerTitle`: the title a sheet's content starts with.
+  static let sheetTitle = TypeStyle(
+    size: 18, relativeTo: .body, weight: .semibold, lineHeight: 1.25)
+  /// Main's `text-reading leading-normal`: the words under a sheet's title.
+  static let sheetText = TypeStyle(
+    size: 15, relativeTo: .subheadline, weight: .regular, lineHeight: 1.5)
   /// A lesson's question.
   static let question = TypeStyle(
     size: 19, relativeTo: .title3, weight: .semibold, tracking: -0.02)

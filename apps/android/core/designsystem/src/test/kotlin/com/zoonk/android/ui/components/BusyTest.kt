@@ -101,7 +101,12 @@ class BusyTest {
                     ) {
                         Text("Practice")
                     }
-                    OutlinedButton(onClick = {}, Modifier.testTag("trailing"), busy = busy, forward = true) { Text("See the plan") }
+                    OutlinedButton(
+                        onClick = {},
+                        Modifier.testTag("trailing"),
+                        busy = busy,
+                        trailingIcon = ForwardIcon,
+                    ) { Text("See the plan") }
                     Button(onClick = {}, Modifier.testTag("words"), busy = busy) { Text("Start") }
                 }
             }
@@ -134,7 +139,7 @@ class BusyTest {
                                 onClick = {},
                                 modifier = Modifier.width(288.dp),
                                 busy = busy,
-                                forward = true,
+                                trailingIcon = ForwardIcon,
                             ) {
                                 Text(stringResource(R.string.catalog_continue_plan))
                             }

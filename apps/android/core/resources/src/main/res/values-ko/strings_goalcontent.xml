@@ -73,7 +73,7 @@
   "goalcontent_subject_count": "d1f9e0bccfd17d4c0de1c1c1bfdb6dee34ef9b9ef2d18ce72e1641765cc8c016",
   "goalcontent_subject_missing": "c173fa585a202e7f5c039db41d5bd78b0e4c79aad06fe6b4860120fcc328add0",
   "goalcontent_subject_skipped": "52af1e11f8392d71228551ea2b08a2d8aa365f4e90bc58bd950cb21c9f28f90e",
-  "goalcontent_subject_time": "bb04df2064642eaa522019332c0cc3044c4d1faee6248c5482939fb4413ebe73",
+  "goalcontent_subject_time": "ae93422a222c39727ffe3da5b54630d81d8b2f77dd87bdb9db19cf6f64096e98",
   "goalcontent_subjects": "c6766f1698d9408b3e297e8e1512faa9ce0e6abc8503ef6d4a027ca5d7a1971d",
   "goalcontent_to_review": "e598e585d98c27474196bcb8a7cc5b4130998cf4a779be4fcfd7f40b090cfe97",
   "goalcontent_topic_count": "f1f93c1a7f811ac7eac486451f3babd242a536abf25b9b0f0278b3e93d4c17ff",
@@ -204,7 +204,8 @@
         <item quantity="other">레슨 %d개 건너뜀</item>
     </plurals>
     <string name="goalcontent_subject_skipped">이 과목을 계획에서 뺐어요.</string>
-    <string name="goalcontent_subject_time">시간이 부족해 이 과목은 계획에 없어요.</string>
+    <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
+    <string name="goalcontent_subject_time">이 과목은 계획에 없어요. 다른 과목을 먼저 공부해요.</string>
     <string name="goalcontent_subject_missing">이 과목은 아직 계획에 없어요.</string>
     <string name="goalcontent_adjust_plan">계획 조정하기</string>
     <string name="goalcontent_add_back">다시 추가하기</string>

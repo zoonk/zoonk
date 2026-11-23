@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -58,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 /** A line that opens its content in a sheet (beside nothing), or its content in full (beside the page). */
 enum class SuggestionLayout { Line, Panel }
@@ -203,7 +203,7 @@ fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
 fun SuggestionHeader(text: String) {
     val sheet = LocalPresentation.current == Presentation.Sheet
     val frame = LocalFrame.current
-    val style = if (sheet) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall
+    val style = if (sheet) MaterialTheme.zoonkType.sheetTitle else MaterialTheme.zoonkType.compact.copy(fontWeight = FontWeight.SemiBold)
     Text(
         text = text,
         modifier = Modifier.focusRequester(if (sheet) frame.sheetFocus else frame.focus).focusable().semantics { heading() },
@@ -216,12 +216,12 @@ fun SuggestionDescription(
     text: String,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    Text(text = text, style = bodyStyle(), color = color)
+    Text(text = text, style = descriptionStyle(), color = color)
 }
 
 @Composable
 fun SuggestionDescription(text: AnnotatedString) {
-    Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(text = text, style = descriptionStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 /** On a [SuggestionCard], what focus moves to once the answer replaces the controls. */
@@ -234,7 +234,7 @@ fun SuggestionResult(text: String) {
             Modifier
                 .then(if (card) Modifier.focusRequester(LocalFrame.current.focus).focusable() else Modifier)
                 .semantics { liveRegion = LiveRegionMode.Polite },
-        style = bodyStyle(),
+        style = resultStyle(),
         fontWeight = FontWeight.Medium,
     )
 }
@@ -291,6 +291,7 @@ fun SuggestionAction(
     busy: Boolean = false,
     secondary: Boolean = false,
     leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     val presentation = LocalPresentation.current
@@ -305,6 +306,7 @@ fun SuggestionAction(
             busy = busy,
             size = size,
             leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
             content = content,
         )
     } else {
@@ -314,6 +316,8 @@ fun SuggestionAction(
             enabled = enabled,
             busy = busy,
             size = size,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
             content = content,
         )
     }
@@ -331,11 +335,12 @@ private fun SuggestionLine(
     val failed = failure != null
     // With nothing to open, the line is all there is to read.
     val whole = answered || action == null
+    val summaryStyle = if (answered) resultStyle() else MaterialTheme.typography.bodyMedium
     Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
-                firstLine = lineHeight(MaterialTheme.typography.bodyMedium),
+                firstLine = lineHeight(summaryStyle),
                 // A line that failed to save shows the alert mark in the done mark's place, as the failure notice does.
                 mark = {
                     if (failed && LocalFrame.current.mark == SuggestionMark.Done) {
@@ -343,7 +348,7 @@ private fun SuggestionLine(
                             painterResource(R.drawable.ic_error),
                             contentDescription = null,
                             modifier = Modifier.size(PANEL_MARK * glyphScale()),
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     } else {
                         Mark(PANEL_MARK)
@@ -365,28 +370,30 @@ private fun SuggestionLine(
                                             else -> Modifier
                                         },
                                     ),
-                            style = MaterialTheme.typography.bodyMedium.balanced(),
+                            style = summaryStyle.balanced(),
                             fontWeight = FontWeight.Medium,
                             color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         )
-                        description?.let {
-                            Text(
-                                it,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        description?.let { SuggestionDescription(it) }
                     }
                 },
-                action = action,
+                // The line's actions are one group, beside the summary or under it together.
+                action =
+                    action?.let {
+                        {
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                it()
+                            }
+                        }
+                    },
             )
         }
     }
 }
 
 /**
- * The mark, the summary and the action side by side, the action at the end, or the action under the summary when that
- * makes the line shorter (a long action or large text squeezes the words beside it) or beside it a word would break.
+ * The mark, the summary and the action side by side, the action at the end while it leaves the summary half the room
+ * after the mark and no word of it breaks; otherwise the action goes under the summary's words.
  */
 @Composable
 private fun LineLayout(
@@ -404,14 +411,9 @@ private fun LineLayout(
         val words = summaryPart.single()
         val besideWidth = textMax - (actionPlaced?.let { it.width + gap } ?: 0)
         val stackGap = STACKED_ACTION_GAP.roundToPx()
-        // In order, so the words are only measured at a width they can have: an action that leaves them none goes under.
         val beside =
             actionPlaced == null ||
-                (
-                    besideWidth > 0 &&
-                        besideWidth >= words.minIntrinsicWidth(constraints.maxHeight) &&
-                        words.minIntrinsicHeight(besideWidth) <= words.minIntrinsicHeight(textMax) + stackGap + actionPlaced.height
-                )
+                (besideWidth >= textMax / 2 && besideWidth >= words.minIntrinsicWidth(constraints.maxHeight))
         val textWidth = if (beside) besideWidth else textMax
         val summaryPlaced = words.measure(Constraints.fixedWidth(textWidth))
         val content =
@@ -484,8 +486,17 @@ private fun Mark(size: Dp) {
 private fun frameBorder() = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
 @Composable
-private fun bodyStyle() =
-    if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
+private fun resultStyle() =
+    if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.zoonkType.sheetText else MaterialTheme.zoonkType.compact
+
+/** Main's `SuggestionDescription`: a line's size in its line, reading size in its sheet, a row description's on the page. */
+@Composable
+private fun descriptionStyle() =
+    when (LocalPresentation.current) {
+        Presentation.Line -> MaterialTheme.zoonkType.compact
+        Presentation.Sheet -> MaterialTheme.zoonkType.sheetText
+        Presentation.Panel, Presentation.Card -> MaterialTheme.typography.bodySmall
+    }
 
 private enum class Presentation { Line, Panel, Card, Sheet }
 
@@ -545,9 +556,6 @@ private val STACKED_ACTION_GAP = 8.dp
 
 private val SHEET_MARK = 24.dp
 
-/** The quiet disclosure's gap from its words to its chevron's ink. */
-private val MENU_CHEVRON_GAP = 8.dp
-
 /** Main's `SuggestionMenu`: "Other options", a quiet button for a suggestion's other ways on; each [SuggestionMenuItem] closes it with done before acting. */
 @Composable
 fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
@@ -558,14 +566,9 @@ fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
             onClick = { open = true },
             modifier = Modifier.semantics { role = Role.DropdownList },
             secondary = true,
+            trailingIcon = { ButtonIcon(R.drawable.ic_expand_more) },
         ) {
             Text(stringResource(R.string.suggestion_other_options))
-            Spacer(Modifier.size(MENU_CHEVRON_GAP))
-            Icon(
-                painterResource(R.drawable.ic_row_fold),
-                contentDescription = null,
-                modifier = Modifier.size(width = 8.dp * glyphScale(), height = 16.dp * glyphScale()),
-            )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
     }

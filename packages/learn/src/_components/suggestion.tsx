@@ -19,7 +19,6 @@ import { LearnLink } from "../learn-link";
 import { ChangeSaveError } from "./save-error";
 import { type Answered, useFocusOnAnswer, useFocusOnRemovedControl } from "./suggestion-focus";
 import { SURFACE_CLASS } from "./surface";
-import { TITLE_ROW_CLASS } from "./title-row";
 
 type Presentation = "line" | "panel" | "sheet";
 
@@ -118,20 +117,29 @@ export function SuggestionMark() {
   );
 }
 
+/**
+ * The summary, then its actions as one element: beside it while they leave it half the row, else
+ * under its words. The mark sits in the start padding, so it stays centered on the summary.
+ */
+const LINE_ROW_CLASS =
+  "@container flex min-w-0 flex-1 flex-wrap items-center justify-between gap-x-2.5 gap-y-2 ps-6.5 wrap-break-word *:first:-ms-6.5 *:nth-2:min-w-0 *:nth-2:grow *:nth-2:basis-1/2 stacked:*:nth-2:basis-full";
+
 export function SuggestionLine({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <PresentationContext value="line">
       <div
         className={cn(
           SURFACE_CLASS,
-          "flex min-h-12 items-center gap-3 px-4 py-2 min-[72rem]:hidden",
+          "flex min-h-12 items-center px-4 py-2 min-[72rem]:hidden",
           className,
         )}
         data-slot="suggestion-line"
         {...props}
       >
-        <SuggestionMark />
-        <form className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-2")}>{children}</form>
+        <form className={LINE_ROW_CLASS}>
+          <SuggestionMark />
+          {children}
+        </form>
       </div>
     </PresentationContext>
   );
@@ -291,7 +299,7 @@ export function SuggestionSaveError({ className }: { className?: string }) {
 
 /** In the panel each button fills its share of a row, so buttons that wrap stack at one width. */
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
-  line: "flex shrink-0 items-center gap-2",
+  line: "flex max-w-full flex-wrap items-center gap-2",
   panel:
     "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
   sheet: cn(OVERLAY_ACTIONS_CLASS, "pt-1"),
@@ -300,28 +308,31 @@ const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
 /**
  * The answers by role: `main`, the other one, then `menu` ("Other options"). The line and the panel
  * are part of the page and draw them in that order; the sheet is written as every sheet's foot is,
- * ending with `main`.
+ * ending with `main`. The line is already their form, so there they're only kept together.
  */
 export function SuggestionActions({
   children,
   className,
   main,
   menu,
-  ...props
-}: React.ComponentProps<"form"> & { main?: React.ReactNode; menu?: React.ReactNode }) {
+}: React.PropsWithChildren<{
+  className?: string;
+  main?: React.ReactNode;
+  menu?: React.ReactNode;
+}>) {
   const presentation = use(PresentationContext);
   const sheet = presentation === "sheet";
+  const Group = presentation === "line" ? "div" : "form";
 
   return (
-    <form
+    <Group
       className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
       data-slot="suggestion-actions"
-      {...props}
     >
       {sheet ? menu : main}
       {children}
       {sheet ? main : menu}
-    </form>
+    </Group>
   );
 }
 

@@ -502,7 +502,7 @@ struct LessonActionBar: View {
 
   private var primaryButton: some View {
     let primary = primaryAction
-    return BusyButton(isBusy: primary.isBusy, icon: primary.icon) {
+    return BusyButton(isBusy: primary.isBusy) {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
@@ -555,30 +555,29 @@ struct LessonActionBar: View {
     case check, continueLesson, dontKnow
   }
 
-  /// Every label carries its icon, so the bar keeps one shape from screen to screen.
+  /// Main's `EnterButton`: Return presses it, so its label stands alone.
   private struct PrimaryAction {
     let action: PrimaryKind
     let title: LocalizedStringResource
-    let icon: ActionIcon
     var isBusy = false
     var isDisabled = false
   }
 
   private var primaryAction: PrimaryAction {
     guard let step else {
-      return PrimaryAction(action: .continueLesson, title: Self.continueTitle, icon: .forward)
+      return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
     }
 
     if state.phase == .playing, recordInBar?.isChecking == true {
-      return PrimaryAction(action: .check, title: checkTitle(step), icon: .check, isBusy: true)
+      return PrimaryAction(action: .check, title: checkTitle(step), isBusy: true)
     }
 
     switch state.phase {
     case .feedback:
-      return PrimaryAction(action: .continueLesson, title: Self.continueTitle, icon: .forward)
+      return PrimaryAction(action: .continueLesson, title: Self.continueTitle)
     case .checking:
       return PrimaryAction(
-        action: .check, title: checkTitle(step), icon: checkIcon(step), isBusy: true)
+        action: .check, title: checkTitle(step), isBusy: true)
     case .playing, .map, .completed:
       break
     }
@@ -591,8 +590,7 @@ struct LessonActionBar: View {
           action: .continueLesson,
           title: LocalizedStringResource(
             "Next step", table: "Player",
-            comment: "Reveals the next part of a worked example"),
-          icon: .forward)
+            comment: "Reveals the next part of a worked example"))
       }
 
       return PrimaryAction(
@@ -600,8 +598,7 @@ struct LessonActionBar: View {
         title: state.isLastScreen
           ? Self.continueTitle
           : LocalizedStringResource(
-            "Next", table: "Player", comment: "Moves to the next screen of the lesson"),
-        icon: .forward)
+            "Next", table: "Player", comment: "Moves to the next screen of the lesson"))
     }
 
     if case .challenge(let content) = step.content {
@@ -612,20 +609,18 @@ struct LessonActionBar: View {
         return PrimaryAction(
           action: .continueLesson,
           title: LocalizedStringResource(
-            "Start", table: "Player", comment: "Starts a challenge after its intro"),
-          icon: .play)
+            "Start", table: "Player", comment: "Starts a challenge after its intro"))
       case .ended:
         return PrimaryAction(
           action: .check,
           title: LocalizedStringResource(
-            "See result", table: "Player", comment: "Checks a finished challenge"),
-          icon: .forward)
+            "See result", table: "Player", comment: "Checks a finished challenge"))
       case .deciding(_, _, _, let pending):
         return PrimaryAction(
           action: .continueLesson,
           title: LocalizedStringResource(
             "Confirm", table: "Player", comment: "Confirms a decision in a challenge"),
-          icon: .check, isDisabled: pending == nil)
+          isDisabled: pending == nil)
       }
     }
 
@@ -633,12 +628,12 @@ struct LessonActionBar: View {
     // the picture, so it waits for one still being drawn, as the options do.
     if state.revealsWithoutGuess {
       return PrimaryAction(
-        action: .dontKnow, title: checkTitle(step), icon: checkIcon(step),
+        action: .dontKnow, title: checkTitle(step),
         isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt))
     }
 
     return PrimaryAction(
-      action: .check, title: checkTitle(step), icon: checkIcon(step),
+      action: .check, title: checkTitle(step),
       isDisabled: !step.canCheck(state.currentAnswer, openedAt: store.openedAt))
   }
 
@@ -647,10 +642,6 @@ struct LessonActionBar: View {
       ? LocalizedStringResource(
         "See answer", table: "Player", comment: "Reveals a hook's answer after a guess")
       : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer")
-  }
-
-  private func checkIcon(_ step: LessonStep) -> ActionIcon {
-    step.kind == .hook ? .reveal : .check
   }
 
   private static let continueTitle = LocalizedStringResource(

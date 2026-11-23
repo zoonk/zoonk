@@ -111,7 +111,7 @@ private fun Supporting(text: String) {
 
 @Composable
 private fun NotEnoughTime(onAdjustPlan: () -> Unit) {
-    val sentence = stringResource(R.string.today_not_enough_time)
+    val sentence = stringResource(R.string.today_fit_time_left)
     val link = stringResource(R.string.today_adjust_your_plan)
     val ink = MaterialTheme.colorScheme.onSurface
     val text =

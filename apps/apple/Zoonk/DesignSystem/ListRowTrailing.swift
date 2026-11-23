@@ -67,9 +67,21 @@ struct ListRowTrailing: ViewModifier {
   @Environment(\.stacksContent) private var isStacked
   @Namespace private var row
 
+  /// A row, whose kept column holds the chevron unseen, as main's `ListRowChevronSpace` holds its
+  /// room: a layout capture then reads that room as the other rows' chevron's.
+  var isRow = false
+
   func body(content: Content) -> some View {
+    let inset = isStacked ? 0 : alignment.inset(for: row)
+
     content
-      .padding(.trailing, isStacked ? 0 : alignment.inset(for: row))
+      .padding(.trailing, inset)
+      .overlay(alignment: .trailing) {
+        if isRow, inset > 0 {
+          DisclosureChevron()
+            .opacity(0)
+        }
+      }
       .background {
         if let group, !isStacked {
           GeometryReader { proxy in

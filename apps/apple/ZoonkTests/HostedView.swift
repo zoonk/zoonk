@@ -49,6 +49,48 @@ extension XCTestCase {
     accessibilityElements(in: element).compactMap(\.accessibilityLabel).filter { !$0.isEmpty }
   }
 
+  @MainActor
+  func spokenValues(in element: Any) -> [String] {
+    accessibilityElements(in: element).compactMap(\.accessibilityValue).filter { !$0.isEmpty }
+  }
+
+  /// Picks `label` from the open menu as a tap on its row does: the menu closes, then the item's
+  /// action runs. SwiftUI fills a menu's items only once it's open, and its rows ignore a selection
+  /// that isn't a touch, so the test runs the item's action itself.
+  @MainActor
+  func pick(_ label: String, in window: UIWindow) async throws {
+    var item: (menu: UIContextMenuInteraction?, action: UIAction)?
+    try await waitForTestCondition("No open menu offers \(label)") {
+      item =
+        requestViews(UIButton.self, in: window).lazy.compactMap { button in
+          button.menu.flatMap { self.menuAction(label, in: $0) }.map {
+            (button.contextMenuInteraction, $0)
+          }
+        }.first
+      return item != nil
+    }
+    item?.menu?.dismissMenu()
+    try await waitForTestCondition("The menu did not close") {
+      !self.spoken(in: window).contains { $0.contains(label) }
+    }
+    item?.action.performWithSender(nil, target: nil)
+  }
+
+  @MainActor
+  private func menuAction(_ title: String, in menu: UIMenu) -> UIAction? {
+    for child in menu.children {
+      if let action = child as? UIAction, action.title == title {
+        return action
+      }
+
+      if let found = (child as? UIMenu).flatMap({ menuAction(title, in: $0) }) {
+        return found
+      }
+    }
+
+    return nil
+  }
+
   /// Taps what VoiceOver reads as `label`, as a double tap with VoiceOver does.
   @MainActor
   func activate(

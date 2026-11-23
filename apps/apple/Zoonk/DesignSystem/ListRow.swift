@@ -110,7 +110,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
           .fixedSize()
       }
     }
-    .modifier(ListRowTrailing())
+    .modifier(ListRowTrailing(isRow: true))
     .layoutStacks(isStacked)
     .layoutRow(piece)
   }

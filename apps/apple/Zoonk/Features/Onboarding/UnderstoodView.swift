@@ -654,7 +654,7 @@ private struct UnderstoodRowView: View {
               } icon: {
                 Image(systemName: "arrow.up.right")
               }
-              .labelStyle(TrailingIconLabelStyle())
+              .labelStyle(SourceLinkLabelStyle())
               .typeStyle(.note)
             }
             .foregroundStyle(.mutedForeground)
@@ -695,7 +695,7 @@ private struct UnderstoodRowView: View {
   }
 }
 
-private struct TrailingIconLabelStyle: LabelStyle {
+private struct SourceLinkLabelStyle: LabelStyle {
   func makeBody(configuration: Configuration) -> some View {
     HStack(spacing: 2) {
       configuration.title
@@ -766,7 +766,7 @@ private struct RowEditor: View {
       }
 
       ButtonRow {
-        BusyButton(isBusy: isSaving, icon: .check, action: save) {
+        BusyButton(isBusy: isSaving, action: save) {
           Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
         }
         .buttonStyle(.mainAction)

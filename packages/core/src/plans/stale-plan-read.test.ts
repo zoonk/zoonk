@@ -11,6 +11,7 @@ import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { seedPersonaCopy } from "../seed/seed";
 import { toDayBlockRef } from "../sessions/day-block";
 import { openStudyDay } from "../sessions/open-study-day";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { finishChallengesFixture } from "./_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -18,6 +19,7 @@ import { planSummarySchema } from "./_utils/plan-summary";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
+import { refreshPlanSuggestion } from "./refresh-plan-suggestion";
 
 const START = new Date("2020-09-28T12:00:00Z");
 const RETURN = new Date("2020-10-01T12:00:00Z");
@@ -32,9 +34,10 @@ async function saved(planId: string) {
   });
 }
 
-async function daysAwayFixture(
-  skills: Parameters<typeof planLibraryFixture>[0]["skills"] = [{ lessons: 8 }, { lessons: 6 }],
-) {
+async function daysAwayFixture({
+  skills = [{ lessons: 8 }, { lessons: 6 }],
+  targetDate,
+}: { skills?: Parameters<typeof planLibraryFixture>[0]["skills"]; targetDate?: Date } = {}) {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills });
 
@@ -42,6 +45,7 @@ async function daysAwayFixture(
     createdAt: START,
     dailyMinutes: 12,
     settings: { startDate: "2020-09-28" },
+    targetDate,
     timezone: "UTC",
     userId: user.id,
   });
@@ -320,6 +324,117 @@ describe("the visible Plan after days away, before any learner POST", () => {
     ).resolves.toBe(1);
   });
 
+  it("saves the onboarding schedule before finding and persisting its time suggestion", async () => {
+    const { goal, plan, user } = await daysAwayFixture({
+      skills: [{ lessons: 20 }, { lessons: 20 }],
+      targetDate: new Date("2020-10-07T00:00:00Z"),
+    });
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 15, question: "schedule" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const pending = await saved(plan.id);
+
+    expect(planSummarySchema.parse(pending.summary).advice).toMatchObject({
+      suggested: null,
+      suggestionPending: true,
+    });
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toContainEqual(
+      expect.objectContaining({
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "refreshPlanSuggestion",
+      }),
+    );
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: null },
+      status: "ready",
+    });
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: user.id });
+
+    const refreshed = await saved(plan.id);
+    const suggested = planSummarySchema.parse(refreshed.summary).advice.suggested;
+    expect(suggested).toStrictEqual({ kind: "everything", minutes: 40 });
+    expect(refreshed.items).toStrictEqual(pending.items);
+    expect(refreshed.version).toBe(pending.version);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: suggested },
+      status: "ready",
+    });
+  });
+
+  it("saves the returning day's time suggestion through the owed refresh after Open", async () => {
+    const { goal, plan, user } = await daysAwayFixture({
+      skills: [{ lessons: 20 }, { lessons: 20 }],
+      targetDate: new Date("2020-10-07T00:00:00Z"),
+    });
+
+    vi.setSystemTime(START);
+    await refreshPlanSuggestion({ goalId: goal.id, userId: user.id });
+    const original = await saved(plan.id);
+    const originalSuggestion = planSummarySchema.parse(original.summary).advice.suggested;
+    expect(originalSuggestion).toMatchObject({ kind: "everything" });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: originalSuggestion },
+      status: "ready",
+    });
+
+    vi.setSystemTime(RETURN);
+    const read = await countDatabaseStatements(() => getGoalPlan(goal.id));
+
+    expect(read.result).toMatchObject({ plan: { suggestedTime: null }, status: "ready" });
+    expect(read.writes).toBe(0);
+    await expect(saved(plan.id)).resolves.toStrictEqual(original);
+
+    const opened = await openStudyDay({
+      goalId: goal.id,
+      shownDate: "2020-10-01",
+      timeZone: "UTC",
+    });
+
+    if (opened.status !== "opened") {
+      throw new Error("Expected Open to have already saved the day");
+    }
+
+    const before = await saved(plan.id);
+
+    expect(planSummarySchema.parse(before.summary).advice).toMatchObject({
+      suggested: null,
+      suggestionPending: true,
+    });
+
+    await expect(
+      prisma.followUp.findMany({ where: { kind: "refreshPlanSuggestion", userId: user.id } }),
+    ).resolves.toMatchObject([{ input: { goalId: goal.id }, key: goal.id }]);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: null },
+      status: "ready",
+    });
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: user.id });
+
+    const after = await saved(plan.id);
+    const suggested = planSummarySchema.parse(after.summary).advice.suggested;
+    expect(suggested).toMatchObject({ kind: "everything" });
+    expect(after.items).toStrictEqual(before.items);
+    expect(after.version).toBe(before.version);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { suggestedTime: suggested },
+      status: "ready",
+    });
+  });
+
   it("opens the day a learner back from days away was shown, on the first Start", async () => {
     vi.setSystemTime(new Date("2026-11-06T15:00:00Z"));
     const { opened, shown } = await startReturningDay({ away: 7, day: 16, persona: "stocks" });
@@ -459,7 +574,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
   });
 
   it("counts the fitted lessons of a requeued stand-in before Open exactly as the writer", async () => {
-    const fixture = await daysAwayFixture([{ lessons: 2 }, { lessons: 0, size: 6 }]);
+    const fixture = await daysAwayFixture({ skills: [{ lessons: 2 }, { lessons: 0, size: 6 }] });
     const before = await saved(fixture.plan.id);
 
     expect(

@@ -5,7 +5,7 @@ import {
   interpretPlanEdit,
   planEditKindClassifier,
 } from "@zoonk/ai/tasks/plans/edit-intent";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { CLASS_TEST_FOCUS_TEST_CASES, FOCUS_PART_TEST_CASES } from "./focus-part-cases";
 import { MEMORY_TEST_CASES } from "./memory-cases";
 import { PERSONA_TEST_CASES } from "./persona-cases";
@@ -25,7 +25,7 @@ export const planEditIntentTask: Task<
   generate: (params) =>
     interpretPlanEdit({
       ...params,
-      dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
+      dailyMinutesLimits: { max: MAX_PICKABLE_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     }),
   id: "plan-edit-intent",
   name: "Plan edit intent",
