@@ -80,7 +80,10 @@ export function getServiceUrl({
   }).trim();
 }
 
-/** Keep LAN, localhost, and pre-0.18 Portless daemons on separate listeners. */
+/**
+ * LAN mode keeps separate state, so device testing never reconfigures another agent's localhost
+ * proxy.
+ */
 export function getPortlessEnvironment({
   homeDirectory,
   lanMode,
@@ -91,11 +94,8 @@ export function getPortlessEnvironment({
   return {
     PORTLESS_HTTPS: "0",
     PORTLESS_LAN: lanMode ? "1" : "0",
-    PORTLESS_PORT: lanMode ? "1358" : "1357",
-    PORTLESS_STATE_DIR: join(
-      homeDirectory,
-      lanMode ? ".portless-zoonk-v2-lan" : ".portless-zoonk-v2",
-    ),
+    PORTLESS_PORT: lanMode ? "1356" : "1355",
+    PORTLESS_STATE_DIR: join(homeDirectory, lanMode ? ".portless-zoonk-lan" : ".portless-zoonk"),
     PORTLESS_SYNC_HOSTS: "0",
   };
 }
