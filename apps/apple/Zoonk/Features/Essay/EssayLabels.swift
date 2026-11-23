@@ -2,7 +2,7 @@ import Foundation
 
 enum WritingLabels {
   /// Numbers read as main writes them in the app's language, whatever the device's region.
-  private static let locale = Locale.courseLanguage
+  private static let locale = Locale.appLanguage
 
   /// A number of points: exactly the scale's `decimals` when known, else to one decimal at most.
   static func points(_ value: Double, decimals: Int? = nil) -> String {
