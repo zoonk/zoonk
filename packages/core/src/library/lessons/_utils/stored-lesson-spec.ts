@@ -71,7 +71,7 @@ export function getPlannedLessonMinutes({
   authoredMinutes: number;
   targetLanguage: string | null;
 }): number {
-  return targetLanguage !== null
-    ? Math.max(1, Math.round(authoredMinutes * LANGUAGE_LESSON_TIME_FACTOR))
-    : authoredMinutes;
+  return targetLanguage === null
+    ? authoredMinutes
+    : Math.max(1, Math.round(authoredMinutes * LANGUAGE_LESSON_TIME_FACTOR));
 }
