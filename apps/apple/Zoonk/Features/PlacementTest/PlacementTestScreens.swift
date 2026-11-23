@@ -48,10 +48,7 @@ struct PlacementLengthChoice: View {
         title: Text("Skip what you already know", tableName: "Onboarding"),
         description: choices.count > 1
           ? Text("A test finds the lessons you can skip.", tableName: "Onboarding")
-          : Text(
-            "A quick test finds the lessons you can skip. It takes about \(studyDuration(minutes: quickTestMinutes)).",
-            tableName: "Onboarding",
-            comment: "The length choice when only the quick test is offered; the time is such as \"4 min\""))
+          : quickOnlyDescription)
 
       if choices.count > 1 {
         ChoiceRows(
@@ -71,6 +68,15 @@ struct PlacementLengthChoice: View {
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isSaving)
+  }
+
+  private var quickOnlyDescription: Text {
+    let time = studyDuration(minutes: quickTestMinutes)
+
+    return Text(
+      "A quick test finds the lessons you can skip. It takes about \(time).",
+      tableName: "Onboarding",
+      comment: "When only the quick test is offered; the time is like \"4 min\"")
   }
 
   private var choices: [ChoiceRows<PlacementTestChoice>.Choice] {

@@ -1373,7 +1373,7 @@
       }
     },
     "A quick test finds the lessons you can skip. It takes about %@." : {
-      "comment" : "The length choice when only the quick test is offered; the time is such as \"4 min\"",
+      "comment" : "When only the quick test is offered; the time is like \"4 min\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
