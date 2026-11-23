@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -241,13 +242,17 @@ class OnboardingScreenshots {
         dark: Boolean = false,
         moreContrast: Boolean = false,
     ) {
-        val api = FakeOnboardingApi().apply { levelTest = preparingTestOf() }
+        val api =
+            FakeOnboardingApi().apply {
+                levelTest = preparingTestOf()
+                startedLevelTest = { preparingTestOf(attemptId = ATTEMPT) }
+            }
         compose.setContent { ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { LevelTest(api) } } }
         compose.onNodeWithText("Start").performClick()
-        compose.waitForIdle()
+        compose.onNodeWithText("Preparing your level test").assertIsDisplayed()
         write("level-test-waiting-$name", compose.onRoot().captureRender().asAndroidBitmap())
 
-        api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z")
+        api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z", attemptId = ATTEMPT)
         compose.mainClock.advanceTimeBy(3_500)
         compose.waitForIdle()
         write("level-test-writing-$name", compose.onRoot().captureRender().asAndroidBitmap())

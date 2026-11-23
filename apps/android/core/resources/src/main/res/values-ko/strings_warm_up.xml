@@ -13,7 +13,6 @@
   "warm_up_plan_ready_whenever": "3f41b727071dc937f1b8f5357c15a6fd5c15f6f7e25900d6b912951f49089a38",
   "warm_up_plan_waiting": "5fa1d597d6fce291d3f86522edc7187a1872fa711deca38c36a370080e88e6d8",
   "warm_up_play_quiz": "2e61ebc6b87d5c44de650cba5bc319b84dd369f77aa9491424d7b188b69f1d13",
-  "warm_up_questions_ready": "7cdaced74dbd0b36e871668b26b8e8ef42cc4afdaa4439452623de7b89900b30",
   "warm_up_ready_to_start": "7fd3311e465d1ddf2f69dd02e1f44fe11b16c089253980fd48c2269c3c3783ab",
   "warm_up_start_first_lesson": "9792c62fccd9bb30399f686746862c1999a00e61684255f8c5cd7c4670488440",
   "warm_up_title": "1e4928dc7b6dd8412a417e5f3392e3a0f715c94513f4948208aabaa60a4f0594",
@@ -37,7 +36,6 @@
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">준비되면 언제든 확인해 보세요.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
-    <string name="warm_up_questions_ready">문제가 준비됐어요</string>
     <string name="warm_up_back_to_quiz">퀴즈로 돌아가기</string>
     <string name="warm_up_play_quiz">퀴즈 풀기</string>
     <string name="warm_up_first_lesson_writing">첫 레슨을 만들고 있어요: %1$s</string>

@@ -44,8 +44,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TrackVisibleWait
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.SpeechFailedNote
@@ -117,10 +119,6 @@ internal fun ColumnScope.LevelTestSteps(
     VisitOf(vm.visit)
     val test by store.levelTest(goalId, plan.attemptId).collectShown()
     val phase = vm.phase(test)
-    val hold =
-        com.zoonk.android.feature.warmup
-            .rememberReadyHold(phase != LevelTestPhase.Waiting)
-    val shown = if (hold.holding) LevelTestPhase.Waiting else phase
     val poll = rememberPoll(active = phase == LevelTestPhase.Waiting && !vm.bank.isStopped) { vm.check() }
     val audioQuestion = (phase as? LevelTestPhase.Question)?.question?.takeIf { it.audioPending }?.id
     val audioPoll = rememberPoll(active = audioQuestion != null, key = audioQuestion) { vm.check() }
@@ -132,7 +130,7 @@ internal fun ColumnScope.LevelTestSteps(
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
 
-    when (shown) {
+    when (phase) {
         LevelTestPhase.Loading -> {
             StepLoading()
         }
@@ -141,8 +139,7 @@ internal fun ColumnScope.LevelTestSteps(
             val run = vm.bank.run().withPoll(poll.stopped)
             LevelTestWaiting(
                 targetLanguage = targetLanguage,
-                hold = hold,
-                run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready) else run,
+                run = run,
                 onRetry =
                     when {
                         poll.stopped -> poll::restart
@@ -159,9 +156,9 @@ internal fun ColumnScope.LevelTestSteps(
         is LevelTestPhase.Question -> {
             SetupContent {
                 FinishFailed(vm.finishFailed)
-                key(shown.question.id) {
+                key(phase.question.id) {
                     val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
-                    TestQuestion(shown, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
+                    TestQuestion(phase, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
                 }
             }
         }
@@ -236,7 +233,6 @@ private fun InterfaceOffer(language: String) {
 @Composable
 private fun ColumnScope.LevelTestWaiting(
     targetLanguage: String,
-    hold: com.zoonk.android.feature.warmup.ReadyHold,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     pending: Boolean,
@@ -244,16 +240,15 @@ private fun ColumnScope.LevelTestWaiting(
     skipLabel: String,
     skipNote: String?,
 ) {
-    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_language_test_preparing_title)
-    SetupWait(
-        run,
-        GenerationKind.LevelTestBank,
-        com.zoonk.android.data.AnalyticsEvent.WarmUpSurface.PlacementWait,
-        title,
-        hold,
-        stringResource(R.string.onboarding_continue),
-        onRetry,
-        skip = {
+    TrackVisibleWait(AnalyticsEvent.WarmUpSurface.PlacementWait.value, "curriculum", LocalSetupWait.current.goalId)
+    SetupContent {
+        GenerationWait(GenerationKind.LevelTestBank, run, onRetry) {
+            OnboardingHeading(
+                stringResource(R.string.onboarding_language_test_preparing_title),
+                stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
+            )
+        }
+        PageActions {
             OutlinedButton(
                 busy = pending,
                 onClick = onSkip,
@@ -271,13 +266,6 @@ private fun ColumnScope.LevelTestWaiting(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-        },
-    ) { share ->
-        GenerationWait(GenerationKind.LevelTestBank, run, onRetry, share = share) {
-            OnboardingHeading(
-                title,
-                stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
-            )
         }
     }
 }
