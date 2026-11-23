@@ -1,4 +1,4 @@
-import { ENEM_ANSWERS, matchesEnemResearchAnswer, readEnemResearchAnswers } from "./enem-answers";
+import { ENEM_ANSWERS, ENEM_RESEARCH_ANSWERS, ENEM_RESEARCH_DATASET } from "./enem-answers";
 import { type WritingCase, basis, publishedCase } from "./shared";
 
 const INEP_2020 =
@@ -6,11 +6,6 @@ const INEP_2020 =
 
 const EXAM_2019 =
   "https://download.inep.gov.br/educacao_basica/enem/provas/2019/2019_PV_impresso_D1_CD2.pdf";
-
-// Rossman, Silveira and Mauá, section 3: https://aclanthology.org/2026.propor-1.16/
-// The dataset documents research consent. Read the text from a local export of the pinned release.
-const RESEARCH_DATASET =
-  "https://huggingface.co/datasets/laisnuto/self-collected-ENEM-dataset/blob/1062474/enem_dataset.csv";
 
 const THEME = "Democratização do acesso ao cinema no Brasil";
 const QUESTION = `A partir da leitura dos textos motivadores e com base nos conhecimentos construídos ao longo de sua formação, redija texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa sobre o tema “${THEME}”, apresentando proposta de intervenção que respeite os direitos humanos. Selecione, organize e relacione, de forma coerente e coesa, argumentos e fatos para defesa de seu ponto de vista.`;
@@ -118,93 +113,29 @@ const INEP_CASES = [
 
 // One-based CSV data row numbers exclude the header. Each row carries the five official scores.
 const RESEARCH_CASES = [
-  {
-    id: "980-a",
-    row: 135,
-    scores: { c1: 180, c2: 200, c3: 200, c4: 200, c5: 200 },
-    sha256: "c215f97703e0d6f082bbc9ac24d88b98675634b2dd78b1932116b7ad1baa4a66",
-    total: 980,
-  },
-  {
-    id: "960-a",
-    row: 25,
-    scores: { c1: 200, c2: 200, c3: 180, c4: 200, c5: 180 },
-    sha256: "d1180f3897fdbca1a975690b850ab18634ab433efe2a52a9173fc5e469883f20",
-    total: 960,
-  },
-  {
-    id: "960-b",
-    row: 109,
-    scores: { c1: 160, c2: 200, c3: 200, c4: 200, c5: 200 },
-    sha256: "ba9422ac20b1395e41eea1c5b1bd58aeda6760ed62c10ea9f4df255a1d193422",
-    total: 960,
-  },
-  {
-    id: "940-a",
-    row: 149,
-    scores: { c1: 160, c2: 200, c3: 200, c4: 200, c5: 180 },
-    sha256: "509958b962fda2025e6c8b6213dff45b0feb3a3ec3d885610ff8e555c07d72c4",
-    total: 940,
-  },
-  {
-    id: "840-a",
-    row: 3,
-    scores: { c1: 160, c2: 160, c3: 160, c4: 160, c5: 200 },
-    sha256: "2b886d38690c362f18bb0d219a2539f671237888ae5298d1e710ec0a6cc36e82",
-    total: 840,
-  },
-  {
-    id: "800-a",
-    row: 131,
-    scores: { c1: 160, c2: 120, c3: 160, c4: 160, c5: 200 },
-    sha256: "eea91a11f3a22fd9aff030fdf93e6f656b797cbfa512df95a10fda2929418ebd",
-    total: 800,
-  },
-  {
-    id: "700-a",
-    row: 15,
-    scores: { c1: 140, c2: 140, c3: 140, c4: 140, c5: 140 },
-    sha256: "9ec20d951d7b7b1f4691d00fdd6eb2b0ce3b920f666171bb45521713777bacf5",
-    total: 700,
-  },
-  {
-    id: "600-a",
-    row: 17,
-    scores: { c1: 120, c2: 120, c3: 140, c4: 120, c5: 100 },
-    sha256: "4f5194ef175a8378beb2109baa9c8b6affebdc69ddc5d1af6f363821c31e7a44",
-    total: 600,
-  },
-];
+  { id: "980-a", row: 135, scores: { c1: 180, c2: 200, c3: 200, c4: 200, c5: 200 }, total: 980 },
+  { id: "960-a", row: 25, scores: { c1: 200, c2: 200, c3: 180, c4: 200, c5: 180 }, total: 960 },
+  { id: "960-b", row: 109, scores: { c1: 160, c2: 200, c3: 200, c4: 200, c5: 200 }, total: 960 },
+  { id: "940-a", row: 149, scores: { c1: 160, c2: 200, c3: 200, c4: 200, c5: 180 }, total: 940 },
+  { id: "840-a", row: 3, scores: { c1: 160, c2: 160, c3: 160, c4: 160, c5: 200 }, total: 840 },
+  { id: "800-a", row: 131, scores: { c1: 160, c2: 120, c3: 160, c4: 160, c5: 200 }, total: 800 },
+  { id: "700-a", row: 15, scores: { c1: 140, c2: 140, c3: 140, c4: 140, c5: 140 }, total: 700 },
+  { id: "600-a", row: 17, scores: { c1: 120, c2: 120, c3: 140, c4: 120, c5: 100 }, total: 600 },
+] as const;
 
-function researchCases() {
-  const answers = readEnemResearchAnswers();
+const researchCases = RESEARCH_CASES.map(({ id, row, scores, total }) =>
+  publishedCase({
+    expected: { officialCompetences: scores, officialTotal: total, uncertain: [0, 1, 2, 3] },
+    id: `enem-research-2019-cinema-${id}`,
+    source: {
+      author: "De-identified candidate",
+      board: "Inep",
+      notice: `${EXAM_2019}#page=20`,
+      reference: ENEM_RESEARCH_DATASET,
+      scoreReference: ENEM_RESEARCH_DATASET,
+    },
+    userInput: cinemaInput(ENEM_RESEARCH_ANSWERS[row]),
+  }),
+);
 
-  if (!answers) {
-    return [];
-  }
-
-  return RESEARCH_CASES.map(({ id, row, scores, sha256, total }) => {
-    const text = answers[String(row)];
-
-    if (!text || !matchesEnemResearchAnswer(text, sha256)) {
-      throw new Error(
-        `ENEM_RESEARCH_ANSWERS_PATH must contain the exact text from dataset row ${row}.`,
-      );
-    }
-
-    return publishedCase({
-      expected: { officialCompetences: scores, officialTotal: total, uncertain: [0, 1, 2, 3] },
-      id: `enem-research-2019-cinema-${id}`,
-      source: {
-        author: "De-identified candidate",
-        board: "Inep",
-        notice: `${EXAM_2019}#page=20`,
-        reference: RESEARCH_DATASET,
-        scoreReference: RESEARCH_DATASET,
-      },
-      userInput: cinemaInput(text),
-    });
-  });
-}
-
-export const ENEM_PUBLISHED_CASES: WritingCase[] = [...INEP_CASES, ...researchCases()];
+export const ENEM_PUBLISHED_CASES: WritingCase[] = [...INEP_CASES, ...researchCases];
