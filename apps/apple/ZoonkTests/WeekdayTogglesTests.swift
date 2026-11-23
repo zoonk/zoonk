@@ -17,7 +17,9 @@ final class WeekdayTogglesTests: XCTestCase {
 
   /// Polish's "niedz." is too wide for a seventh of the narrowest iPhone, so its days show their
   /// letters rather than seven rows.
-  func testTheWeekSharesOneRowOnAPhoneAtTheDefaultSizeInEveryLanguage() {
+  func testTheWeekSharesOneRowOnAPhoneAtTheDefaultSizeInEveryLanguage() throws {
+    try XCTSkipIf(
+      ProcessInfo.processInfo.isMacCatalystApp, "Measures iOS font metrics in the iPhone suite.")
     for identifier in ["en_US", "pt_BR", "de_DE", "es_ES", "fr_FR", "ja_JP", "ko_KR", "tr_TR"] {
       XCTAssertEqual(names(.large, identifier), .short, identifier)
     }
@@ -25,7 +27,9 @@ final class WeekdayTogglesTests: XCTestCase {
     XCTAssertEqual(names(.large, "pl_PL"), .narrow)
   }
 
-  func testTheWeekShowsLettersThenAListAsTheTextGrows() {
+  func testTheWeekShowsLettersThenAListAsTheTextGrows() throws {
+    try XCTSkipIf(
+      ProcessInfo.processInfo.isMacCatalystApp, "Measures iOS font metrics in the iPhone suite.")
     XCTAssertEqual(names(width: 250), .narrow, "a pane too narrow for short names")
     XCTAssertNil(names(.accessibility1), "at an accessibility size, full names in a list")
     XCTAssertNil(names(width: 100), "a pane too narrow for letters")
