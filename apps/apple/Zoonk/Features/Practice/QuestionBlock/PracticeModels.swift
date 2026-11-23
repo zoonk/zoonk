@@ -61,7 +61,7 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
   case order([Int])
   case text(String)
   case trueFalse(Bool)
-  /// Picks, pairs or steps short of what the question asks for. The screen keeps them, so a fold
+  /// Picks or pairs short of what the question asks for. The screen keeps them, so a fold
   /// keeps them too; they aren't an answer, so they're never checked or sent.
   case partial([Int?])
   /// An answer box's text as typed, kept so a fold keeps "2/" or "1."; only the answer it reads as
@@ -249,6 +249,11 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
   var visual: LessonVisual?
 
   var id: String { itemId }
+
+  func answerToSubmit(_ draft: PracticeAnswer?) -> PracticeAnswer? {
+    if let draft { return draft.complete }
+    return format == .order && !options.isEmpty ? .order(Array(options.indices)) : nil
+  }
 
   private enum CodingKeys: String, CodingKey {
     case answered, area, capsuleKey, citation, context, drill, entry, format, image, itemId, left

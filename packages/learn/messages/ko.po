@@ -725,6 +725,31 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "복습 필요"
 
+#: src/_components/sortable-list.tsx
+msgctxt "TkDZ5b"
+msgid "Stopped moving {item}. It stays where it was."
+msgstr "{item} 항목 이동을 취소했어요. 원래 위치에 그대로 있어요."
+
+#: src/_components/sortable-list.tsx
+msgctxt "wTHLxD"
+msgid "{item} dropped at position {position}."
+msgstr "{item} 항목을 {position}번 위치에 놓았어요."
+
+#: src/_components/sortable-list.tsx
+msgctxt "yCV1Y8"
+msgid "{item} is over position {position}."
+msgstr "{item} 항목이 {position}번 위치 위에 있어요."
+
+#: src/_components/sortable-list.tsx
+msgctxt "hTsP3H"
+msgid "Picked up {item} at position {position}."
+msgstr "{item} 항목을 {position}번 위치에서 집어 들었어요."
+
+#: src/_components/sortable-list.tsx
+msgctxt "NNTjVW"
+msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
+msgstr "항목을 옮기려면 Space 또는 Enter를 누르고, 방향키로 위치를 정한 뒤 Space 또는 Enter를 다시 눌러 놓으세요. 취소하려면 Escape를 누르세요."
+
 #. {date} is a month and year, like "May 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "x8PRvI"
@@ -12405,9 +12430,14 @@ msgid "Wrong place"
 msgstr "틀린 위치"
 
 #: src/session/question-block/order-question.tsx
-msgctxt "DBwoHz"
-msgid "Tap the steps in order."
-msgstr "단계를 순서대로 눌러 주세요."
+msgctxt "QE2rXb"
+msgid "Drag the steps into order."
+msgstr "단계를 끌어서 순서대로 놓으세요."
+
+#: src/session/question-block/order-question.tsx
+msgctxt "YPgZJh"
+msgid "Steps, in your order"
+msgstr "내가 정한 단계 순서"
 
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "41J8pB"

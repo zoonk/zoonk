@@ -42,6 +42,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementLength
+import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -203,8 +204,10 @@ class PlacementStepFlowTest {
         show(inSetup = true)
         tap("Whole course")
         tap("Start")
-        for (step in listOf("Complaint", "Answer", "Discovery", "Trial")) tap(step)
+        assertEquals(0, api.placementAnswers.size)
         tap("Confirm")
+        val order = api.placementAnswers.single().answer as TapAnswer.OrderAnswerValue
+        assertEquals(listOf(0L, 1L, 2L, 3L), order.value.order)
 
         assertEquals(listOf(PlacementPart(id, 1)), api.finishedParts)
         assertEquals(emptyList<Pair<String, OnboardingAnswerInput>>(), api.answers)

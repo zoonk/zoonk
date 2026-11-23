@@ -98,7 +98,8 @@ struct GradedAtEndRun: View {
         PracticeSaveError(failures: failures, onReport: onReport, retry: { onFinish(answers) })
       }
 
-      if question != nil {
+      if let question {
+        let picked = question.answerToSubmit(draft)
         PracticeActionRow {
           PracticeSecondaryButton(
             title: LocalizedStringResource(
@@ -115,9 +116,9 @@ struct GradedAtEndRun: View {
               : LocalizedStringResource(
                 "Next", table: "Practice", comment: "Moves to a test's next question."),
             isBusy: isPending && sentBy == .check,
-            isDisabled: draft?.complete == nil || locked
+            isDisabled: picked == nil || locked
           ) {
-            if let picked = draft?.complete { answer(picked, by: .check, total: total) }
+            if let picked { answer(picked, by: .check, total: total) }
           }
         }
       } else if GradedRunStage(answered: index, asked: questions.count, total: total)

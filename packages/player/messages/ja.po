@@ -154,31 +154,6 @@ msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "右にスクロールする"
 
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "TkDZ5b"
-msgid "Stopped moving {item}. It stays where it was."
-msgstr "{item}の移動を中止しました。元の位置のままです。"
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "wTHLxD"
-msgid "{item} dropped at position {position}."
-msgstr "{item}を{position}番目に置きました。"
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "yCV1Y8"
-msgid "{item} is over position {position}."
-msgstr "{item}は{position}番目の位置に重なっています。"
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "hTsP3H"
-msgid "Picked up {item} at position {position}."
-msgstr "{item}を{position}番目の位置から持ち上げました。"
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "NNTjVW"
-msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "項目を移動するには、SpaceキーかEnterキーを押し、矢印キーで移動してから、もう一度SpaceキーかEnterキーを押して置きます。Escapeキーでキャンセルできます。"
-
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."

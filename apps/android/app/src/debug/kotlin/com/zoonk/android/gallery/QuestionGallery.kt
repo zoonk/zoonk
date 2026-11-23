@@ -225,7 +225,10 @@ internal fun QuestionStatements() {
 @Composable
 internal fun QuestionOrderAndPairs() {
     Samples {
-        Sample(order) { QuestionAnswer(order, TrueFalseWords.TrueFalse, false, null, null, true, {}, {}) }
+        Sample(order) {
+            var draft by remember { mutableStateOf<Answer?>(null) }
+            QuestionAnswer(order, TrueFalseWords.TrueFalse, false, null, draft, true, { draft = it }, {})
+        }
         Sample(order.copy(itemId = "order-checked"), graded = true) {
             QuestionAnswer(
                 order,

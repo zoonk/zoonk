@@ -13,9 +13,7 @@
     <string name="questions_wrong">Wrong</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Leave blank</string>
-    <string name="questions_order_hint">Tap the steps in order.</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">Place %1$d</string>
     <string name="questions_place_right">Place %1$d, right place</string>
     <string name="questions_place_wrong">Place %1$d, wrong place</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

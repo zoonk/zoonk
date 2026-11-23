@@ -503,6 +503,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         .disabled(isSaving && submission != .stop)
       }
     } actions: {
+      let answer = question.answerToSubmit(draft)
       PracticeActionRow {
         PracticeSecondaryButton(
           title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
@@ -516,9 +517,9 @@ struct PlacementQuestionScreen<Media: View>: View {
           title: LocalizedStringResource(
             "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
           isBusy: isSaving && submission == .confirm,
-          isDisabled: isSaving || draft?.complete == nil
+          isDisabled: isSaving || answer == nil
         ) {
-          if let answer = draft?.complete {
+          if let answer {
             submission = .confirm
             onAnswer(answer)
           }
@@ -543,7 +544,9 @@ struct PlacementQuestionScreen<Media: View>: View {
   }
 
   private var asked: PracticeQuestionView {
-    PracticeQuestionView(question: question, labels: labels, askedIn: askedIn, draft: $draft) {
+    PracticeQuestionView(
+      question: question, labels: labels, isLocked: isSaving, askedIn: askedIn, draft: $draft
+    ) {
       answer in
       guard !isSaving else { return }
       submission = .confirm

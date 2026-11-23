@@ -117,16 +117,41 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
-  func testOrderQuestionWithStepsSelected() async throws {
+  func testOrderQuestionWithStepsMoved() async throws {
     try await capture(
-      "placement-order", title: "Tap the steps in order.", detail: "Boil the water"
+      "placement-order", title: "Drag the steps into order", detail: "2. Boil the water"
     ) {
       OrderItemView(
-        steps: ["Boil the water", "Add the pasta", "Drain the pasta"], result: nil,
-        isLocked: false, draft: .constant(.order([0, 1]))
+        question: PracticeQuestion(
+          itemId: goalID, format: .order, question: "How do you cook pasta?",
+          options: ["Boil the water", "Add the pasta", "Drain the pasta"]), result: nil,
+        isLocked: false, draft: .constant(.order([1, 0, 2]))
       )
       .padding()
     }
+  }
+
+  func testOrderWaitsForConfirmAndSendsOriginalOptionIndexes() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .order, question: "How do you cook pasta?",
+      options: ["Boil the water", "Drain the pasta", "Add the pasta"])
+    var submitted: [PracticeAnswer] = []
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      PlacementQuestionScreen(
+        subject: "Cooking", number: 1, progress: 0, question: question, labels: .trueFalse,
+        isSaving: false, failures: 0, onReport: {}, onAnswer: { submitted.append($0) }, onStop: {}
+      )
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await activate("Confirm", in: window)
+    XCTAssertEqual(submitted, [.order([0, 1, 2])])
+    try await activate("3. Add the pasta", in: window)
+    try await activate("2. Drain the pasta", in: window)
+    XCTAssertEqual(submitted.count, 1)
+    try await activate("Confirm", in: window)
+    XCTAssertEqual(submitted.last, .order([0, 2, 1]))
   }
 
   func testLessonEndOfferAndPlanRow() async throws {

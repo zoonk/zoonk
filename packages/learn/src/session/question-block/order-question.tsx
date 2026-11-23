@@ -1,100 +1,82 @@
 "use client";
 
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
-import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
-import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
+import {
+  ANSWER_OPTION_CLASS,
+  ANSWER_TAG_CLASS,
+  ANSWER_TAG_TONE,
+  ANSWER_TONE,
+} from "../../_components/answer-tone";
+import { SortableList } from "../../_components/sortable-list";
 import { ItemLine } from "../../questions/item-text";
 
-export type OrderResult = { correctOrder: readonly number[]; order: readonly number[] };
+export type OrderResult = { correctOrder: readonly number[]; order: readonly number[] | null };
 
-function stepResult({ index, result }: { index: number; result: OrderResult | null }) {
-  if (!result) {
+function placeMark(result: OrderResult | null, place: number) {
+  if (!result?.order || result.correctOrder.length === 0) {
     return null;
   }
 
-  return result.order.indexOf(index) === result.correctOrder.indexOf(index) ? "right" : "wrong";
+  return result.correctOrder[place] === result.order[place] ? "right" : "wrong";
 }
 
-function PlaceTag({ place, result }: { place: number; result: "right" | "wrong" | null }) {
-  const t = useExtracted();
-
-  return (
-    <span className="flex items-center">
-      <span
-        aria-hidden="true"
-        className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums"
-      >
-        {place + 1}
-      </span>
-      {result && (
-        <span className="sr-only">{result === "right" ? t("Right place") : t("Wrong place")}</span>
-      )}
-    </span>
-  );
-}
-
-/** The host gets the order once every step has its place, null before. */
 export function OrderQuestion({
   disabled,
   onChange,
+  order,
   result,
   steps,
 }: {
   disabled: boolean;
-  onChange: (answer: { order: number[] } | null) => void;
+  onChange: (answer: { order: number[] }) => void;
+  order?: readonly number[];
   result: OrderResult | null;
   steps: readonly string[];
 }) {
   const t = useExtracted();
-  const [order, setOrder] = useState<number[]>([]);
-  const groupRef = useRef<HTMLDivElement>(null);
-  const locked = disabled || result !== null;
-  const placed = result?.order ?? order;
 
-  useFocusMainActionWhenComplete({
-    complete: order.length === steps.length,
-    containerRef: groupRef,
-  });
+  const displayed = result?.order ?? order ?? steps.map((_, index) => index);
 
-  const tap = (index: number) => {
-    const next = order.includes(index) ? order.filter((step) => step !== index) : [...order, index];
+  if (disabled || result) {
+    return (
+      <ol className="flex flex-col gap-2">
+        {displayed.map((index, place) => {
+          const mark = placeMark(result, place);
 
-    setOrder(next);
-    onChange(next.length === steps.length ? { order: next } : null);
-  };
-
-  useNumberKeys({ count: steps.length, enabled: !locked, onPick: tap });
+          return (
+            <li className={cn(ANSWER_OPTION_CLASS, ANSWER_TONE[mark ?? "idle"])} key={index}>
+              <span className="text-muted-foreground shrink-0 font-mono text-sm tabular-nums">
+                {place + 1}
+              </span>
+              <span className="flex min-w-0 flex-col gap-1">
+                <ItemLine text={steps[index] ?? ""} />
+                {mark && (
+                  <span className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[mark])}>
+                    {mark === "right" ? t("Right place") : t("Wrong place")}
+                  </span>
+                )}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-muted-foreground text-sm font-medium">{t("Tap the steps in order.")}</p>
-
-      <AnswerOptionGroup ref={groupRef} role="group">
-        {steps.map((step, index) => {
-          const place = placed.indexOf(index);
-          const placeResult = stepResult({ index, result });
-
-          return (
-            <AnswerOption
-              aria-checked={place !== -1}
-              aria-keyshortcuts={shortcutKeys("pick", index)}
-              disabled={locked}
-              key={step}
-              marker={index + 1}
-              onClick={() => tap(index)}
-              picked={place !== -1}
-              result={placeResult}
-              role="checkbox"
-              tag={place === -1 ? null : <PlaceTag place={place} result={placeResult} />}
-            >
-              <ItemLine text={step} />
-            </AnswerOption>
-          );
-        })}
-      </AnswerOptionGroup>
+      <p className="text-muted-foreground text-sm font-medium">{t("Drag the steps into order.")}</p>
+      <SortableList
+        items={displayed.map((index) => ({ id: String(index), label: steps[index] ?? "" }))}
+        label={t("Steps, in your order")}
+        onReorder={(ids) => onChange({ order: ids.map(Number) })}
+        renderItem={(item) => (
+          <span className="text-reading min-w-0 flex-1 py-1 font-medium wrap-break-word">
+            <ItemLine text={item.label} />
+          </span>
+        )}
+      />
     </div>
   );
 }

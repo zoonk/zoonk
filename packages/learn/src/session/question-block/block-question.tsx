@@ -15,6 +15,7 @@ import {
   isIdeaFirst,
   pressesCheck,
 } from "../../mistakes/drill/drill-types";
+import { initialOrderAnswer } from "../../questions/initial-order-answer";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
 import { ItemSupport } from "../../questions/item-text";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
@@ -182,14 +183,14 @@ function QuestionText({
   );
 }
 
-export function useDraftAnswer(index: number) {
+export function useDraftAnswer(index: number, question: StudyQuestion | null) {
   const [draft, setDraft] = useState<{ answer: StudyQuestionAnswer | null; index: number }>({
     answer: null,
     index,
   });
 
   return {
-    answer: draft.index === index ? draft.answer : null,
+    answer: (draft.index === index ? draft.answer : null) ?? initialOrderAnswer(question),
     set: (answer: StudyQuestionAnswer | null) => setDraft({ answer, index }),
   };
 }
@@ -252,6 +253,7 @@ export function BlockQuestion({
         />
         <QuestionView
           detail={detail}
+          order={draft.answer && "order" in draft.answer ? draft.answer.order : undefined}
           onChange={draft.set}
           onSubmit={(answer) => void run.submit(answer)}
           phase={phase}

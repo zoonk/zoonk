@@ -52,7 +52,7 @@ function getTrueFalseResult(result: QuestionResult | null): TrueFalseResult | nu
 }
 
 function getOrderResult(result: QuestionResult | null): OrderResult | null {
-  if (!result || !("order" in result.answer)) {
+  if (!result) {
     return null;
   }
 
@@ -60,7 +60,7 @@ function getOrderResult(result: QuestionResult | null): OrderResult | null {
 
   return {
     correctOrder: correct && "order" in correct ? correct.order : [],
-    order: result.answer.order,
+    order: "order" in result.answer ? result.answer.order : null,
   };
 }
 
@@ -91,12 +91,14 @@ export function QuestionView({
   detail,
   onChange,
   onSubmit,
+  order,
   phase,
   question,
 }: {
   detail: StudyBlockDetail;
   onChange: (answer: StudyQuestionAnswer | null) => void;
   onSubmit: (answer: StudyQuestionAnswer) => void;
+  order?: readonly number[];
   phase: QuestionBlockPhase;
   question: StudyQuestion;
 }) {
@@ -105,6 +107,7 @@ export function QuestionView({
       allowBlank={isNetScoredQuestion({ detail, question })}
       disabled={phase.kind !== "answering" && phase.kind !== "answerFailed"}
       onChange={onChange}
+      order={order}
       onSubmit={onSubmit}
       question={question}
       result={
@@ -126,6 +129,7 @@ export function QuestionInputs({
   disabled,
   onChange,
   onSubmit,
+  order,
   question,
   result,
   trueFalseLabels,
@@ -134,6 +138,7 @@ export function QuestionInputs({
   disabled: boolean;
   onChange: (answer: StudyQuestionAnswer | null) => void;
   onSubmit: (answer: StudyQuestionAnswer) => void;
+  order?: readonly number[];
   question: Pick<
     StudyQuestion,
     "format" | "entry" | "unit" | "options" | "left" | "right" | "question" | "select"
@@ -170,6 +175,7 @@ export function QuestionInputs({
       <OrderQuestion
         disabled={disabled}
         onChange={onChange}
+        order={order}
         result={getOrderResult(result)}
         steps={question.options ?? []}
       />

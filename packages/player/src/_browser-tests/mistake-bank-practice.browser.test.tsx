@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
+import { focusOn, press } from "../_test-utils/activity-player";
 import {
   type Actions,
   openPractice,
@@ -154,17 +155,45 @@ describe("exact standalone bank mistake practice", () => {
   it("keeps the bank ordering controls and sends the selected order", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
-      .mockResolvedValue({ ...bankFeedback(), correctAnswer: { order: [0, 1] } });
+      .mockResolvedValue({ ...bankFeedback(), correctAnswer: { order: [1, 0] } });
 
     openPractice(null, { answer }, question("order"));
-    await page.getByRole("checkbox", { name: "First step" }).click();
-    await page.getByRole("checkbox", { name: "Second step" }).click();
+    await focusOn(page.getByRole("button", { name: "Second step" }));
+    await press("Space");
+    const status = page.getByRole("status").filter({ hasText: "Second step" });
+    await expect.element(status).toHaveTextContent("Second step is over position 2.");
+    await press("ArrowUp");
+    await expect.element(status).toHaveTextContent("Second step is over position 1.");
+    await press("Space");
+    await expect.element(status).toHaveTextContent("Second step dropped at position 1.");
+    expect(answer).not.toHaveBeenCalled();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
 
+    const places = page.getByRole("listitem").filter({ hasText: "Right place" });
+    await expect.element(places.first()).toHaveTextContent("1Second stepRight place");
+    await expect.element(places.last()).toHaveTextContent("2First stepRight place");
+    await expect.element(page.getByRole("radio")).not.toBeInTheDocument();
+
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { order: [0, 1] }, itemId: "original-bank-item" }),
+      expect.objectContaining({ answer: { order: [1, 0] }, itemId: "original-bank-item" }),
     );
+  });
+
+  it("locks the order without grading positions when the learner skips", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({ ...bankFeedback(), correctAnswer: { order: [0, 1] }, isCorrect: false });
+
+    openPractice(null, { answer }, question("order"));
+    await page.getByRole("button", { exact: true, name: "I don't know yet" }).click();
+
+    await expect
+      .element(page.getByRole("listitem").filter({ hasText: "First step" }))
+      .toBeVisible();
+
+    await expect.element(page.getByText("Drag the steps into order.")).not.toBeInTheDocument();
+    await expect.element(page.getByText("Wrong place")).not.toBeInTheDocument();
   });
 
   it("keeps the bank matching controls and sends the original pair indexes", async () => {

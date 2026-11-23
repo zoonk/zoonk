@@ -20,13 +20,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useSpokenText } from "@zoonk/learn/rich-text/speech";
-import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { ACTIVITY_BOX_CLASS } from "./activity-canvas";
+import { SpokenMath } from "../rich-text/spoken-math";
+import { useSpokenText } from "../rich-text/use-spoken-text";
 
 type SortableItem = { id: string; label: string };
 
@@ -89,7 +88,7 @@ function SortableRow({
 
   return (
     <li
-      className={cn(ACTIVITY_BOX_CLASS, isDragging && "relative z-10 shadow-md")}
+      className={cn("bg-background rounded-xl border", isDragging && "relative z-10 shadow-md")}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
@@ -112,7 +111,7 @@ function SortableRow({
   );
 }
 
-export function ActivitySortableList({
+export function SortableList({
   disabled,
   items,
   label,

@@ -70,7 +70,7 @@ A renderer draws the canvas only. It reads `content.check.kind` to know whether 
 - `ActivitySlider`: label, live value, and what's written under the track (its ends or its stops); keyboard, snapping to the step and a spoken `valueText` come from `@zoonk/ui/components/slider`.
 - `ActivityPlot` with `ActivityPlotGridY`, `ActivityPlotAxisX`, `ActivityPlotLine`, `ActivityPlotArea`, `ActivityPlotGuide`, `ActivityPlotDot`, `ActivityPlotBand`, `ActivityPlotLabel`, and `usePlotScales` for custom marks. It measures its width (`useMeasuredWidth` from `@zoonk/ui/hooks/measured-width`) so text stays 12px everywhere. `sampleFormula` draws a formula with core's safe evaluator; `niceTicks`/`niceDomain` (`@zoonk/utils/plot-scale`) give round axes, shared with the charts lessons and questions show (`@zoonk/learn/visual`).
 - `ActivityPlaceHandle` and `usePlacePointer`: something the learner places along an axis, as a slider for keyboards (arrows, Page Up/Down, Home/End) and a drag target with a 44px hit area for pointers, snapping with `snapToStep`.
-- `ActivitySortableList`: order items by dragging or with the keyboard, with announcements.
+- `SortableList`: order items by dragging or with the keyboard, with announcements.
 - `ActivitySelectGrid` and `ActivitySelectGridItem`: tap-to-select toggles with result states.
 - `useFormatNumber` (`@zoonk/learn/format-number`: locale-aware numbers with the activity's unit, shared with lesson and question charts), `parseLocalizedNumber` from `@zoonk/utils/localized-number` (typed numbers with a decimal comma or point, shared with session questions).
 - `ActivityReasons` and `ActivityReason`: what the check found (a misplaced item, a missed pair, a mistake), one card each with its why.

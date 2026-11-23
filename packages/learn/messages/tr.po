@@ -725,6 +725,31 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Tekrar edilecek"
 
+#: src/_components/sortable-list.tsx
+msgctxt "TkDZ5b"
+msgid "Stopped moving {item}. It stays where it was."
+msgstr "{item} için taşıma iptal edildi. Önceki yerinde kaldı."
+
+#: src/_components/sortable-list.tsx
+msgctxt "wTHLxD"
+msgid "{item} dropped at position {position}."
+msgstr "{item}, {position}. sıraya bırakıldı."
+
+#: src/_components/sortable-list.tsx
+msgctxt "yCV1Y8"
+msgid "{item} is over position {position}."
+msgstr "{item}, {position}. sıranın üzerinde."
+
+#: src/_components/sortable-list.tsx
+msgctxt "hTsP3H"
+msgid "Picked up {item} at position {position}."
+msgstr "{item}, {position}. sıradan alındı."
+
+#: src/_components/sortable-list.tsx
+msgctxt "NNTjVW"
+msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
+msgstr "Bir öğeyi taşımak için Boşluk veya Enter tuşuna bas, ok tuşlarıyla yerini değiştir, ardından bırakmak için Boşluk veya Enter tuşuna tekrar bas. İptal etmek için Esc tuşuna bas."
+
 #. {date} is a month and year, like "May 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "x8PRvI"
@@ -12405,9 +12430,14 @@ msgid "Wrong place"
 msgstr "Yanlış yerde"
 
 #: src/session/question-block/order-question.tsx
-msgctxt "DBwoHz"
-msgid "Tap the steps in order."
-msgstr "Adımlara sırayla dokun."
+msgctxt "QE2rXb"
+msgid "Drag the steps into order."
+msgstr "Adımları sürükleyerek sırala."
+
+#: src/session/question-block/order-question.tsx
+msgctxt "YPgZJh"
+msgid "Steps, in your order"
+msgstr "Senin sıraladığın adımlar"
 
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "41J8pB"

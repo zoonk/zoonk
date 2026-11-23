@@ -33,10 +33,8 @@
   "questions_mistake_fixed": "94255fb9db59bff45ed755945879d16a72d1cbdbc58c6b53b6af4cba5d6636d1",
   "questions_mistakes_fixed": "5f606109f5b12ffc939e7e243493dfa22b6d7812a225e3cce0c9cefb2cea5f75",
   "questions_not_quite": "f1db16257f3131d0e5ec5e0e1a8b28fa0d8ff9c291ed92d3bf50762fbc0571c7",
-  "questions_order_hint": "7a1cfdd2b5314a0275df7557a6ab51cc070a59573814e80a65405166db260ab8",
   "questions_pick_all": "741b5f7e7cbbbf1d77e4e21823a61d1aafa703d53f4058b96370cc09d4168959",
   "questions_pick_count": "863b0475d69fede971d2f0eee1c6fa84e088952d4b2ee41533dd77342980a50d",
-  "questions_place": "22e064b67bf6d422683116697c5ac8a6398e42cf6dfc4abb69dc8673fe519203",
   "questions_place_right": "71968d44b7cd4a7e0c1ac506921de3934f5a69af0cec5c09547c27e367cec01e",
   "questions_place_wrong": "20de412472a81696e160d0cef8b1833d22536ea5a2bcc2b7ea286f3990dbac59",
   "questions_placement_note": "a00b9f1f7645b53b66481e81ddd8d5431495874042a76944211d12bc88e6a2af",
@@ -72,9 +70,7 @@
     <string name="questions_wrong">Errado</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Deixar em branco</string>
-    <string name="questions_order_hint">Toque nas etapas em ordem.</string>
     <!-- The place a step was put in, read aloud. -->
-    <string name="questions_place">Posição %1$d</string>
     <string name="questions_place_right">Posição %1$d, lugar certo</string>
     <string name="questions_place_wrong">Posição %1$d, lugar errado</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->

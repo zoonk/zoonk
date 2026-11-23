@@ -52,6 +52,26 @@ async function createLearnGoal(userId: string, { onboarding = false } = {}) {
 
 const confirm = (page: Page) => page.getByRole("button", { exact: true, name: "Confirm" }).click();
 
+async function sortSteps(page: Page) {
+  const list = page.getByRole("list", { name: "Steps, in your order" });
+  const rows = list.getByRole("button");
+  await expect(rows).toHaveCount(STEPS.length);
+  await expect(rows.first()).toBeEnabled();
+
+  // Each move starts from the order left by the last one.
+  /* oxlint-disable no-await-in-loop */
+  for (const [target, step] of STEPS.entries()) {
+    const destination = rows.nth(target);
+
+    if ((await destination.textContent()) !== step) {
+      const row = list.getByRole("button", { exact: true, name: step });
+      await row.dragTo(destination, { steps: 12 });
+      await expect(destination).toHaveText(step);
+    }
+  }
+  /* oxlint-enable no-await-in-loop */
+}
+
 /** The quick question asks "Solve x + a = b": its right answer is b - a. */
 async function answerRight(page: Page) {
   const title = page.getByRole("heading", { level: 1, name: /Solve x \+|Put the/u });
@@ -61,13 +81,11 @@ async function answerRight(page: Page) {
   if (solve) {
     await page.getByRole("radio", { name: String(Number(solve.sum) - Number(solve.add)) }).click();
   } else {
-    for (const step of STEPS) {
-      // oxlint-disable-next-line no-await-in-loop -- Each step is placed after the one before it.
-      await page.getByRole("checkbox", { name: step }).click();
-    }
+    await sortSteps(page);
   }
 
-  await confirm(page);
+  // The drag sensor suppresses clicks for 50 ms after pointer release.
+  await page.getByRole("button", { exact: true, name: "Confirm" }).click({ delay: 80 });
   await expect(title.filter({ hasText: text })).toBeHidden();
 }
 

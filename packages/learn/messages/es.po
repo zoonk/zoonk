@@ -725,6 +725,31 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Por repasar"
 
+#: src/_components/sortable-list.tsx
+msgctxt "TkDZ5b"
+msgid "Stopped moving {item}. It stays where it was."
+msgstr "Dejaste de mover {item}. Se queda donde estaba."
+
+#: src/_components/sortable-list.tsx
+msgctxt "wTHLxD"
+msgid "{item} dropped at position {position}."
+msgstr "Soltaste {item} en la posición {position}."
+
+#: src/_components/sortable-list.tsx
+msgctxt "yCV1Y8"
+msgid "{item} is over position {position}."
+msgstr "{item} está sobre la posición {position}."
+
+#: src/_components/sortable-list.tsx
+msgctxt "hTsP3H"
+msgid "Picked up {item} at position {position}."
+msgstr "Tomaste {item} en la posición {position}."
+
+#: src/_components/sortable-list.tsx
+msgctxt "NNTjVW"
+msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
+msgstr "Para mover un elemento, presiona la barra espaciadora o Enter, usa las flechas para moverlo y vuelve a presionar la barra espaciadora o Enter para soltarlo. Presiona Escape para cancelar."
+
 #. {date} is a month and year, like "May 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "x8PRvI"
@@ -12405,9 +12430,14 @@ msgid "Wrong place"
 msgstr "Lugar incorrecto"
 
 #: src/session/question-block/order-question.tsx
-msgctxt "DBwoHz"
-msgid "Tap the steps in order."
-msgstr "Toca los pasos en orden."
+msgctxt "QE2rXb"
+msgid "Drag the steps into order."
+msgstr "Arrastra los pasos para ordenarlos."
+
+#: src/session/question-block/order-question.tsx
+msgctxt "YPgZJh"
+msgid "Steps, in your order"
+msgstr "Pasos en el orden que elegiste"
 
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "41J8pB"

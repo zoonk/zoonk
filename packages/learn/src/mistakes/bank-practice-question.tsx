@@ -7,7 +7,7 @@ import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { useSpokenText } from "../rich-text/use-spoken-text";
 import { QuestionInputs } from "../session/question-block/question-view";
-import { type PracticeStep as Step } from "./mistake-practice-state";
+import { type PracticeStep as Step, getPracticeAnswer } from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
@@ -40,6 +40,7 @@ export function BankPracticeQuestion({
 }) {
   const spoken = useSpokenText();
   const runId = useMemo(() => crypto.randomUUID(), []);
+  const answer = getPracticeAnswer(run.state);
   const { phase } = run.state;
   const graded = phase.kind === "feedback" ? phase : null;
   const disabled = phase.kind === "checking";
@@ -62,6 +63,7 @@ export function BankPracticeQuestion({
         />
 
         <QuestionInputs
+          order={answer && "order" in answer ? answer.order : undefined}
           allowBlank={false}
           disabled={disabled || graded !== null}
           onChange={run.select}
