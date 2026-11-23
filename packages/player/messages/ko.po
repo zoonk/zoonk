@@ -154,31 +154,6 @@ msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "오른쪽으로 스크롤하기"
 
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "TkDZ5b"
-msgid "Stopped moving {item}. It stays where it was."
-msgstr "{item} 항목 이동을 취소했어요. 원래 위치에 그대로 있어요."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "wTHLxD"
-msgid "{item} dropped at position {position}."
-msgstr "{item} 항목을 {position}번 위치에 놓았어요."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "yCV1Y8"
-msgid "{item} is over position {position}."
-msgstr "{item} 항목이 {position}번 위치 위에 있어요."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "hTsP3H"
-msgid "Picked up {item} at position {position}."
-msgstr "{item} 항목을 {position}번 위치에서 집어 들었어요."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "NNTjVW"
-msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "항목을 옮기려면 Space 또는 Enter를 누르고, 방향키로 위치를 정한 뒤 Space 또는 Enter를 다시 눌러 놓으세요. 취소하려면 Escape를 누르세요."
-
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."

@@ -1,100 +1,67 @@
 "use client";
 
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
-import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
+import { SortableList } from "../../_components/sortable-list";
 import { ItemLine } from "../../questions/item-text";
 
 export type OrderResult = { correctOrder: readonly number[]; order: readonly number[] };
 
-function stepResult({ index, result }: { index: number; result: OrderResult | null }) {
-  if (!result) {
-    return null;
-  }
-
-  return result.order.indexOf(index) === result.correctOrder.indexOf(index) ? "right" : "wrong";
-}
-
-function PlaceTag({ place, result }: { place: number; result: "right" | "wrong" | null }) {
-  const t = useExtracted();
-
-  return (
-    <span className="flex items-center">
-      <span
-        aria-hidden="true"
-        className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums"
-      >
-        {place + 1}
-      </span>
-      {result && (
-        <span className="sr-only">{result === "right" ? t("Right place") : t("Wrong place")}</span>
-      )}
-    </span>
-  );
-}
-
-/** The host gets the order once every step has its place, null before. */
 export function OrderQuestion({
   disabled,
   onChange,
+  order,
   result,
   steps,
 }: {
   disabled: boolean;
-  onChange: (answer: { order: number[] } | null) => void;
+  onChange: (answer: { order: number[] }) => void;
+  order?: readonly number[];
   result: OrderResult | null;
   steps: readonly string[];
 }) {
   const t = useExtracted();
-  const [order, setOrder] = useState<number[]>([]);
-  const groupRef = useRef<HTMLDivElement>(null);
-  const locked = disabled || result !== null;
-  const placed = result?.order ?? order;
 
-  useFocusMainActionWhenComplete({
-    complete: order.length === steps.length,
-    containerRef: groupRef,
-  });
-
-  const tap = (index: number) => {
-    const next = order.includes(index) ? order.filter((step) => step !== index) : [...order, index];
-
-    setOrder(next);
-    onChange(next.length === steps.length ? { order: next } : null);
-  };
-
-  useNumberKeys({ count: steps.length, enabled: !locked, onPick: tap });
-
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-muted-foreground text-sm font-medium">{t("Tap the steps in order.")}</p>
-
-      <AnswerOptionGroup ref={groupRef} role="group">
-        {steps.map((step, index) => {
-          const place = placed.indexOf(index);
-          const placeResult = stepResult({ index, result });
+  if (result) {
+    return (
+      <AnswerOptionGroup role="group">
+        {result.order.map((index, place) => {
+          const right = result.correctOrder[place] === index;
 
           return (
             <AnswerOption
-              aria-checked={place !== -1}
-              aria-keyshortcuts={shortcutKeys("pick", index)}
-              disabled={locked}
-              key={step}
-              marker={index + 1}
-              onClick={() => tap(index)}
-              picked={place !== -1}
-              result={placeResult}
-              role="checkbox"
-              tag={place === -1 ? null : <PlaceTag place={place} result={placeResult} />}
+              disabled
+              key={index}
+              marker={place + 1}
+              picked
+              result={right ? "right" : "wrong"}
+              tag={right ? t("Right place") : t("Wrong place")}
             >
-              <ItemLine text={step} />
+              <ItemLine text={steps[index] ?? ""} />
             </AnswerOption>
           );
         })}
       </AnswerOptionGroup>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-muted-foreground text-sm font-medium">{t("Drag the steps into order.")}</p>
+      <SortableList
+        disabled={disabled}
+        items={(order ?? steps.map((_, index) => index)).map((index) => ({
+          id: String(index),
+          label: steps[index] ?? "",
+        }))}
+        label={t("Steps, in your order")}
+        onReorder={(ids) => onChange({ order: ids.map(Number) })}
+        renderItem={(item) => (
+          <span className="text-reading min-w-0 flex-1 py-1 font-medium wrap-break-word">
+            <ItemLine text={item.label} />
+          </span>
+        )}
+      />
     </div>
   );
 }

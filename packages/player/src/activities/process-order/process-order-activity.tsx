@@ -1,6 +1,7 @@
 "use client";
 
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
+import { SortableList } from "@zoonk/learn/sortable-list";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -11,7 +12,6 @@ import {
   ActivityCanvas,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
-import { ActivitySortableList } from "../_components/activity-sortable-list";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type StepResult, shuffleSteps, stepResults } from "./process-order-model";
 import { ProcessStepIcon } from "./process-step-icon";
@@ -153,7 +153,7 @@ export function ProcessOrderActivity({
 
   return (
     <ActivityCanvas className="gap-2" labelId={labelId}>
-      <ActivitySortableList
+      <SortableList
         items={order.flatMap((id) => {
           const step = byId.get(id);
           return step ? [{ id, label: step.text }] : [];

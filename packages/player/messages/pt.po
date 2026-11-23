@@ -154,31 +154,6 @@ msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Rolar para a direita"
 
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "TkDZ5b"
-msgid "Stopped moving {item}. It stays where it was."
-msgstr "Você parou de mover {item}. Ele continua onde estava."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "wTHLxD"
-msgid "{item} dropped at position {position}."
-msgstr "{item} foi solto na posição {position}."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "yCV1Y8"
-msgid "{item} is over position {position}."
-msgstr "{item} está sobre a posição {position}."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "hTsP3H"
-msgid "Picked up {item} at position {position}."
-msgstr "Você pegou {item} na posição {position}."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "NNTjVW"
-msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "Para mover um item, pressione a barra de espaço ou Enter, mova com as setas e pressione a barra de espaço ou Enter de novo para soltar. Pressione Escape para cancelar."
-
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."

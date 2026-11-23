@@ -154,7 +154,7 @@ export function QuestionBlock({
   const { phase } = run.state;
   const { question } = run;
   const blockDrill = useBlockDrill({ detail, index: run.state.index });
-  const draft = useDraftAnswer(run.state.index);
+  const draft = useDraftAnswer(run.state.index, question);
   const aside = useBlockAside({ question, tutor });
 
   if (phase.kind === "finished") {

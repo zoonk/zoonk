@@ -7,6 +7,7 @@ import { type QuestionAnswer } from "@zoonk/core/sessions/contract";
 import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
 import { mergeReached } from "../_utils/merge-reached";
+import { initialOrderAnswer } from "../questions/initial-order-answer";
 import { type AnswerSender, isIdeaFirst, isUnchangedAnswer } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
@@ -108,7 +109,7 @@ function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
 
   return step.firstOfEntry && isIdeaFirst(step.entry.drill)
     ? { kind: "idea" }
-    : { kind: "answering", selected: null };
+    : { kind: "answering", selected: initialOrderAnswer(step.question) };
 }
 
 export function createPracticeState(practice: readonly PracticeEntry[]): PracticeState {
@@ -191,7 +192,13 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
 export function practiceReducer(state: PracticeState, action: PracticeAction): PracticeState {
   switch (action.type) {
     case "start":
-      return { ...state, phase: { kind: "answering", selected: null } };
+      return {
+        ...state,
+        phase: {
+          kind: "answering",
+          selected: initialOrderAnswer(state.steps[state.index]?.question),
+        },
+      };
     case "select":
       return state.phase.kind === "answerFailed" &&
         isUnchangedAnswer(action.answer, state.phase.answer)

@@ -11,6 +11,7 @@
   "exports": {
     "./numeric-answer-field": "./src/questions/numeric-answer-field.tsx",
     "./answer-field": "./src/questions/answer-field.ts",
+    "./sortable-list": "./src/_components/sortable-list.tsx",
     "./answer-option": "./src/_components/answer-option.tsx",
     "./answer-tone": "./src/_components/answer-tone.ts",
     "./brain-power-reward": "./src/missions/brain-power-reward.tsx",
@@ -261,6 +262,9 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.122",
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",

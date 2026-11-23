@@ -725,6 +725,31 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "要復習"
 
+#: src/_components/sortable-list.tsx
+msgctxt "TkDZ5b"
+msgid "Stopped moving {item}. It stays where it was."
+msgstr "{item}の移動を中止しました。元の位置のままです。"
+
+#: src/_components/sortable-list.tsx
+msgctxt "wTHLxD"
+msgid "{item} dropped at position {position}."
+msgstr "{item}を{position}番目に置きました。"
+
+#: src/_components/sortable-list.tsx
+msgctxt "yCV1Y8"
+msgid "{item} is over position {position}."
+msgstr "{item}は{position}番目の位置に重なっています。"
+
+#: src/_components/sortable-list.tsx
+msgctxt "hTsP3H"
+msgid "Picked up {item} at position {position}."
+msgstr "{item}を{position}番目の位置から持ち上げました。"
+
+#: src/_components/sortable-list.tsx
+msgctxt "NNTjVW"
+msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
+msgstr "項目を移動するには、SpaceキーかEnterキーを押し、矢印キーで移動してから、もう一度SpaceキーかEnterキーを押して置きます。Escapeキーでキャンセルできます。"
+
 #. {date} is a month and year, like "May 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "x8PRvI"
@@ -12405,9 +12430,14 @@ msgid "Wrong place"
 msgstr "違う位置"
 
 #: src/session/question-block/order-question.tsx
-msgctxt "DBwoHz"
-msgid "Tap the steps in order."
-msgstr "手順を正しい順番にタップしてください。"
+msgctxt "QE2rXb"
+msgid "Drag the steps into order."
+msgstr "手順をドラッグして順番に並べてください。"
+
+#: src/session/question-block/order-question.tsx
+msgctxt "YPgZJh"
+msgid "Steps, in your order"
+msgstr "手順（並べた順）"
 
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "41J8pB"

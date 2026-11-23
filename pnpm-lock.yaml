@@ -1390,6 +1390,15 @@ importers:
       '@ai-sdk/openai':
         specifier: 4.0.122
         version: 4.0.122(zod@4.6.7)
+      '@dnd-kit/core':
+        specifier: 'catalog:'
+        version: 6.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@dnd-kit/sortable':
+        specifier: 'catalog:'
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
+      '@dnd-kit/utilities':
+        specifier: 'catalog:'
+        version: 3.2.2(react@19.3.1)
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../auth

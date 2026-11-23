@@ -15,6 +15,7 @@ import {
 import { QuestionTitle } from "../../_components/question-title";
 import { AnswersSaveError } from "../../_components/save-error";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
+import { initialOrderAnswer } from "../../questions/initial-order-answer";
 import { ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
@@ -196,7 +197,7 @@ export function PlacementQuestionScreen({
 }) {
   const t = useExtracted();
   const spoken = useSpokenText();
-  const [value, setValue] = useState<PlacementAnswer | null>(null);
+  const [value, setValue] = useState<PlacementAnswer | null>(() => initialOrderAnswer(question));
   // oxlint-disable-next-line react/hook-use-state -- Read once as the question opens, never updated.
   const [shownAt] = useState(() => Date.now());
   // A saved answer opens the next question as a new screen (keyed by its item), so a send kept
@@ -285,6 +286,7 @@ export function PlacementQuestionScreen({
           />
         ) : (
           <QuestionInputs
+            order={value && "order" in value ? value.order : undefined}
             allowBlank={false}
             disabled={pending}
             onChange={(answer) => setValue(answer && toTapAnswer(answer))}

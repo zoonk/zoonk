@@ -154,31 +154,6 @@ msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Przewiń w prawo"
 
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "TkDZ5b"
-msgid "Stopped moving {item}. It stays where it was."
-msgstr "Anulowano przenoszenie: {item}. Pozycja pozostaje bez zmian."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "wTHLxD"
-msgid "{item} dropped at position {position}."
-msgstr "{item}: umieszczono na pozycji {position}."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "yCV1Y8"
-msgid "{item} is over position {position}."
-msgstr "{item}: nad pozycją {position}."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "hTsP3H"
-msgid "Picked up {item} at position {position}."
-msgstr "{item}: podniesiono z pozycji {position}."
-
-#: src/activities/_components/activity-sortable-list.tsx
-msgctxt "NNTjVW"
-msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "Aby przenieść element, naciśnij spację lub Enter, przesuń go klawiszami strzałek, a następnie ponownie naciśnij spację lub Enter, aby go upuścić. Naciśnij Escape, aby anulować."
-
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."

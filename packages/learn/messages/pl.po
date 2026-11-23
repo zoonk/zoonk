@@ -725,6 +725,31 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Do powtórki"
 
+#: src/_components/sortable-list.tsx
+msgctxt "TkDZ5b"
+msgid "Stopped moving {item}. It stays where it was."
+msgstr "Anulowano przenoszenie: {item}. Pozycja pozostaje bez zmian."
+
+#: src/_components/sortable-list.tsx
+msgctxt "wTHLxD"
+msgid "{item} dropped at position {position}."
+msgstr "{item}: umieszczono na pozycji {position}."
+
+#: src/_components/sortable-list.tsx
+msgctxt "yCV1Y8"
+msgid "{item} is over position {position}."
+msgstr "{item}: nad pozycją {position}."
+
+#: src/_components/sortable-list.tsx
+msgctxt "hTsP3H"
+msgid "Picked up {item} at position {position}."
+msgstr "{item}: podniesiono z pozycji {position}."
+
+#: src/_components/sortable-list.tsx
+msgctxt "NNTjVW"
+msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
+msgstr "Aby przenieść element, naciśnij spację lub Enter, przesuń go klawiszami strzałek, a następnie ponownie naciśnij spację lub Enter, aby go upuścić. Naciśnij Escape, aby anulować."
+
 #. {date} is a month and year, like "May 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "x8PRvI"
@@ -12405,9 +12430,14 @@ msgid "Wrong place"
 msgstr "Niewłaściwe miejsce"
 
 #: src/session/question-block/order-question.tsx
-msgctxt "DBwoHz"
-msgid "Tap the steps in order."
-msgstr "Wybierz kroki w odpowiedniej kolejności."
+msgctxt "QE2rXb"
+msgid "Drag the steps into order."
+msgstr "Przeciągnij kroki, by ułożyć je w kolejności."
+
+#: src/session/question-block/order-question.tsx
+msgctxt "YPgZJh"
+msgid "Steps, in your order"
+msgstr "Kroki w twojej kolejności"
 
 #: src/session/question-block/pause-suggestion.tsx
 msgctxt "41J8pB"
