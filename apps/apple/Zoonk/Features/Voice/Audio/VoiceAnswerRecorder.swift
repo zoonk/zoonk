@@ -125,13 +125,4 @@ extension VoiceServices {
         mistake: mistake)
     }
   }
-
-  func gradeLevelTestSentence(
-    goalId: String,
-    recording: VoiceRecording
-  ) async -> GradeOutcome<Components.Schemas.LanguageLevelTestSpokenResult> {
-    await grade { [api] token in
-      try await api.answerLevelTestOutLoud(goalId: goalId, recording: recording, token: token)
-    }
-  }
 }
