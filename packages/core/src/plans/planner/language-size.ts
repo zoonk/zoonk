@@ -114,24 +114,26 @@ function listLeftOut({
 }
 
 /**
- * Each band's situations share the lessons for that band's hours, in proportion to their sizes. A
- * band that gets none of the hours keeps its situations' sizes.
+ * Each band's open situations share the lessons left after its settled situations. A band that
+ * gets none of the hours keeps its situations' sizes.
  */
 function resize({
   aim,
   bandOf,
   graph,
-  open,
+  leftOut,
+  settledSkillIds,
   start,
 }: {
   aim: number;
   bandOf: (skill: PlanGraphSkill) => CourseLevel;
   graph: PlanGraph;
-  open: ReadonlySet<string>;
+  leftOut: ReadonlySet<string>;
+  settledSkillIds: ReadonlySet<string>;
   start: number;
 }): PlanGraph {
   const byBand = Map.groupBy(
-    graph.skills.filter((skill) => open.has(skill.skillId)),
+    graph.skills.filter((skill) => !leftOut.has(skill.skillId)),
     bandOf,
   );
 
@@ -143,8 +145,19 @@ function resize({
         return [];
       }
 
-      const sizes = scaleSizes({ sizes: skills.map((skill) => skill.lessons), total });
-      return skills.map((skill, index) => [skill.skillId, sizes[index] ?? 1] as const);
+      const open = skills.filter((skill) => !settledSkillIds.has(skill.skillId));
+
+      const settled = skills.reduce(
+        (count, skill) => count + (settledSkillIds.has(skill.skillId) ? skill.lessons : 0),
+        0,
+      );
+
+      const sizes = scaleSizes({
+        sizes: open.map((skill) => skill.lessons),
+        total: Math.max(0, total - settled),
+      });
+
+      return open.map((skill, index) => [skill.skillId, sizes[index] ?? 1] as const);
     }),
   );
 
@@ -223,15 +236,12 @@ export function sizeLanguageGraph({
 
   const leftOut = new Set([...aboveAim, ...covered]);
 
-  const open = new Set(
-    graph.skills
-      .map((skill) => skill.skillId)
-      .filter((skillId) => !settledSkillIds.has(skillId) && !leftOut.has(skillId)),
-  );
-
   const sized = markPastLevel({
     covered,
-    graph: start !== null && aim > start ? resize({ aim, bandOf, graph, open, start }) : graph,
+    graph:
+      start !== null && aim > start
+        ? resize({ aim, bandOf, graph, leftOut, settledSkillIds, start })
+        : graph,
   });
 
   if (leftOut.size === 0) {
